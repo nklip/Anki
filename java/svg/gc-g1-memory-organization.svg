@@ -1,0 +1,215 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1120" viewBox="0 0 1500 1120" role="img" aria-labelledby="title description">
+  <title id="title">G1 heap memory organization</title>
+  <desc id="description">A diagram showing a G1 heap divided into equal-sized regions with non-contiguous Eden, Survivor, Old, Free, and Humongous roles, plus card-based cross-region reference tracking and contiguous humongous allocation.</desc>
+
+  <!-- Arrowheads -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0L10 4L0 8Z" fill="#555"/>
+    </marker>
+    <marker id="red-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0L10 4L0 8Z" fill="#a94442"/>
+    </marker>
+  </defs>
+
+  <!-- Background and title -->
+  <rect width="1500" height="1120" fill="white"/>
+  <text x="750" y="55" text-anchor="middle" font-family="sans-serif" font-size="38" font-weight="bold" fill="black">G1 heap memory organization</text>
+  <text x="750" y="91" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#444">Equal-sized regions with dynamically assigned, non-contiguous roles</text>
+
+  <!-- Heap frame and description -->
+  <rect x="40" y="120" width="1420" height="640" rx="7" fill="#fafafa" stroke="#666" stroke-width="2"/>
+  <text x="65" y="157" font-family="sans-serif" font-size="23" font-weight="bold" fill="black">Java heap</text>
+  <text x="180" y="157" font-family="sans-serif" font-size="18" fill="#555">Each rectangle is one equal-sized G1 region; roles can change after collection.</text>
+  <text x="1435" y="157" text-anchor="end" font-family="sans-serif" font-size="17" fill="#555">typically thousands of regions</text>
+
+  <!-- Region grid: row 1 -->
+  <g stroke="white" stroke-width="4">
+    <rect x="75" y="185" width="135" height="105" fill="#d96b61"/>
+    <rect x="210" y="185" width="135" height="105" fill="#6593c6"/>
+    <rect x="345" y="185" width="135" height="105" fill="#e5e5e5"/>
+    <rect x="480" y="185" width="135" height="105" fill="#e5b94d"/>
+    <rect x="615" y="185" width="135" height="105" fill="#6593c6"/>
+    <rect x="750" y="185" width="135" height="105" fill="#d96b61"/>
+    <rect x="885" y="185" width="135" height="105" fill="#6593c6"/>
+    <rect x="1020" y="185" width="135" height="105" fill="#8967a8"/>
+    <rect x="1155" y="185" width="135" height="105" fill="#8967a8"/>
+    <rect x="1290" y="185" width="135" height="105" fill="#8967a8"/>
+  </g>
+  <g text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold">
+    <text x="142" y="247" fill="white">Eden</text>
+    <text x="277" y="247" fill="white">Old</text>
+    <text x="412" y="247" fill="#555">Free</text>
+    <text x="547" y="247" fill="#553f09">Survivor</text>
+    <text x="682" y="247" fill="white">Old</text>
+    <text x="817" y="247" fill="white">Eden</text>
+    <text x="952" y="247" fill="white">Old</text>
+    <text x="1087" y="237" fill="white">H start</text>
+    <text x="1222" y="237" fill="white">H cont.</text>
+    <text x="1357" y="237" fill="white">H cont.</text>
+  </g>
+  <path d="M1045 265H1400" stroke="#d8c7e8" stroke-width="14"/>
+
+  <!-- Region grid: row 2 -->
+  <g stroke="white" stroke-width="4">
+    <rect x="75" y="290" width="135" height="105" fill="#6593c6"/>
+    <rect x="210" y="290" width="135" height="105" fill="#d96b61"/>
+    <rect x="345" y="290" width="135" height="105" fill="#d96b61"/>
+    <rect x="480" y="290" width="135" height="105" fill="#6593c6"/>
+    <rect x="615" y="290" width="135" height="105" fill="#e5e5e5"/>
+    <rect x="750" y="290" width="135" height="105" fill="#6593c6"/>
+    <rect x="885" y="290" width="135" height="105" fill="#d96b61"/>
+    <rect x="1020" y="290" width="135" height="105" fill="#e5b94d"/>
+    <rect x="1155" y="290" width="135" height="105" fill="#6593c6"/>
+    <rect x="1290" y="290" width="135" height="105" fill="#e5e5e5"/>
+  </g>
+  <g text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold">
+    <text x="142" y="352" fill="white">Old</text>
+    <text x="277" y="352" fill="white">Eden</text>
+    <text x="412" y="352" fill="white">Eden</text>
+    <text x="547" y="352" fill="white">Old</text>
+    <text x="682" y="352" fill="#555">Free</text>
+    <text x="817" y="352" fill="white">Old</text>
+    <text x="952" y="352" fill="white">Eden</text>
+    <text x="1087" y="352" fill="#553f09">Survivor</text>
+    <text x="1222" y="352" fill="white">Old</text>
+    <text x="1357" y="352" fill="#555">Free</text>
+  </g>
+
+  <!-- Region grid: row 3 -->
+  <g stroke="white" stroke-width="4">
+    <rect x="75" y="395" width="135" height="105" fill="#e5e5e5"/>
+    <rect x="210" y="395" width="135" height="105" fill="#6593c6"/>
+    <rect x="345" y="395" width="135" height="105" fill="#d96b61"/>
+    <rect x="480" y="395" width="135" height="105" fill="#6593c6"/>
+    <rect x="615" y="395" width="135" height="105" fill="#6593c6"/>
+    <rect x="750" y="395" width="135" height="105" fill="#e5b94d"/>
+    <rect x="885" y="395" width="135" height="105" fill="#e5e5e5"/>
+    <rect x="1020" y="395" width="135" height="105" fill="#d96b61"/>
+    <rect x="1155" y="395" width="135" height="105" fill="#6593c6"/>
+    <rect x="1290" y="395" width="135" height="105" fill="#d96b61"/>
+  </g>
+  <g text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold">
+    <text x="142" y="457" fill="#555">Free</text>
+    <text x="277" y="457" fill="white">Old</text>
+    <text x="412" y="457" fill="white">Eden</text>
+    <text x="547" y="457" fill="white">Old</text>
+    <text x="682" y="457" fill="white">Old</text>
+    <text x="817" y="457" fill="#553f09">Survivor</text>
+    <text x="952" y="457" fill="#555">Free</text>
+    <text x="1087" y="457" fill="white">Eden</text>
+    <text x="1222" y="457" fill="white">Old</text>
+    <text x="1357" y="457" fill="white">Eden</text>
+  </g>
+
+  <!-- Region grid: row 4 -->
+  <g stroke="white" stroke-width="4">
+    <rect x="75" y="500" width="135" height="105" fill="#e5b94d"/>
+    <rect x="210" y="500" width="135" height="105" fill="#d96b61"/>
+    <rect x="345" y="500" width="135" height="105" fill="#6593c6"/>
+    <rect x="480" y="500" width="135" height="105" fill="#6593c6"/>
+    <rect x="615" y="500" width="135" height="105" fill="#e5e5e5"/>
+    <rect x="750" y="500" width="135" height="105" fill="#6593c6"/>
+    <rect x="885" y="500" width="135" height="105" fill="#8967a8"/>
+    <rect x="1020" y="500" width="135" height="105" fill="#8967a8"/>
+    <rect x="1155" y="500" width="135" height="105" fill="#e5e5e5"/>
+    <rect x="1290" y="500" width="135" height="105" fill="#6593c6"/>
+  </g>
+  <g text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold">
+    <text x="142" y="562" fill="#553f09">Survivor</text>
+    <text x="277" y="562" fill="white">Eden</text>
+    <text x="412" y="562" fill="white">Old</text>
+    <text x="547" y="562" fill="white">Old</text>
+    <text x="682" y="562" fill="#555">Free</text>
+    <text x="817" y="562" fill="white">Old</text>
+    <text x="952" y="552" fill="white">H start</text>
+    <text x="1087" y="552" fill="white">H cont.</text>
+    <text x="1222" y="562" fill="#555">Free</text>
+    <text x="1357" y="562" fill="white">Old</text>
+  </g>
+  <path d="M910 580H1130" stroke="#d8c7e8" stroke-width="14"/>
+
+  <!-- Region grid: row 5 -->
+  <g stroke="white" stroke-width="4">
+    <rect x="75" y="605" width="135" height="105" fill="#6593c6"/>
+    <rect x="210" y="605" width="135" height="105" fill="#e5e5e5"/>
+    <rect x="345" y="605" width="135" height="105" fill="#d96b61"/>
+    <rect x="480" y="605" width="135" height="105" fill="#e5b94d"/>
+    <rect x="615" y="605" width="135" height="105" fill="#6593c6"/>
+    <rect x="750" y="605" width="135" height="105" fill="#d96b61"/>
+    <rect x="885" y="605" width="135" height="105" fill="#e5e5e5"/>
+    <rect x="1020" y="605" width="135" height="105" fill="#6593c6"/>
+    <rect x="1155" y="605" width="135" height="105" fill="#d96b61"/>
+    <rect x="1290" y="605" width="135" height="105" fill="#e5e5e5"/>
+  </g>
+  <g text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold">
+    <text x="142" y="667" fill="white">Old</text>
+    <text x="277" y="667" fill="#555">Free</text>
+    <text x="412" y="667" fill="white">Eden</text>
+    <text x="547" y="667" fill="#553f09">Survivor</text>
+    <text x="682" y="667" fill="white">Old</text>
+    <text x="817" y="667" fill="white">Eden</text>
+    <text x="952" y="667" fill="#555">Free</text>
+    <text x="1087" y="667" fill="white">Old</text>
+    <text x="1222" y="667" fill="white">Eden</text>
+    <text x="1357" y="667" fill="#555">Free</text>
+  </g>
+
+  <!-- Equal-size region note -->
+  <path d="M75 728H210" stroke="#555" stroke-width="2"/>
+  <path d="M75 720V736M210 720V736" stroke="#555" stroke-width="2"/>
+  <text x="225" y="735" font-family="sans-serif" font-size="17" fill="#555">one region; size chosen ergonomically from the maximum heap</text>
+
+  <!-- Cross-region reference tracking -->
+  <rect x="40" y="785" width="690" height="250" rx="6" fill="#fafafa" stroke="#777" stroke-width="2"/>
+  <text x="65" y="822" font-family="sans-serif" font-size="21" font-weight="bold" fill="black">Cross-region reference tracking</text>
+
+  <rect x="75" y="852" width="205" height="112" fill="#6593c6" stroke="#376792" stroke-width="2"/>
+  <text x="92" y="880" font-family="sans-serif" font-size="18" font-weight="bold" fill="white">Old region</text>
+  <rect x="92" y="900" width="38" height="42" fill="#87acd3" stroke="white"/>
+  <rect x="130" y="900" width="38" height="42" fill="#87acd3" stroke="white"/>
+  <rect x="168" y="900" width="38" height="42" fill="#f0b6b2" stroke="#a94442" stroke-width="3"/>
+  <rect x="206" y="900" width="38" height="42" fill="#87acd3" stroke="white"/>
+  <text x="151" y="958" font-family="sans-serif" font-size="14" fill="white">dirty card</text>
+
+  <rect x="470" y="852" width="205" height="112" fill="#d96b61" stroke="#a94442" stroke-width="2"/>
+  <text x="488" y="880" font-family="sans-serif" font-size="18" font-weight="bold" fill="white">Young region</text>
+  <rect x="508" y="900" width="50" height="36" fill="#ef9a92" stroke="white"/>
+  <rect x="566" y="900" width="70" height="36" fill="#ef9a92" stroke="white"/>
+
+  <path d="M206 915C305 850 380 850 508 915" fill="none" stroke="#a94442" stroke-width="3" marker-end="url(#red-arrow)"/>
+  <text x="302" y="846" font-family="sans-serif" font-size="16" font-weight="bold" fill="#a94442">old → young reference</text>
+  <text x="65" y="999" font-family="sans-serif" font-size="16" fill="#444">Write barrier dirties a card; refinement updates remembered-set data.</text>
+  <text x="65" y="1021" font-family="sans-serif" font-size="16" fill="#444">During evacuation, these cards reveal incoming references without scanning the whole heap.</text>
+
+  <!-- Humongous allocation detail -->
+  <rect x="770" y="785" width="690" height="250" rx="6" fill="#fafafa" stroke="#777" stroke-width="2"/>
+  <text x="795" y="822" font-family="sans-serif" font-size="21" font-weight="bold" fill="black">Humongous allocation</text>
+  <text x="1428" y="822" text-anchor="end" font-family="sans-serif" font-size="16" fill="#555">object size ≥ half a region</text>
+
+  <rect x="805" y="852" width="195" height="112" fill="#8967a8" stroke="white" stroke-width="3"/>
+  <rect x="1000" y="852" width="195" height="112" fill="#8967a8" stroke="white" stroke-width="3"/>
+  <rect x="1195" y="852" width="230" height="112" fill="#e5e5e5" stroke="white" stroke-width="3"/>
+  <rect x="1195" y="852" width="145" height="112" fill="#8967a8" stroke="white" stroke-width="3"/>
+  <text x="902" y="902" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="white">H start</text>
+  <text x="1097" y="902" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="white">H continuation</text>
+  <text x="1267" y="902" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="white">H final</text>
+  <text x="1380" y="900" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">unused</text>
+  <text x="1380" y="921" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">tail</text>
+  <path d="M825 940H1320" stroke="#d8c7e8" stroke-width="14"/>
+  <text x="795" y="999" font-family="sans-serif" font-size="16" fill="#444">The object occupies contiguous old-generation regions.</text>
+  <text x="795" y="1021" font-family="sans-serif" font-size="16" fill="#444">Unused tail space cannot be allocated until the complete object is reclaimed.</text>
+
+  <!-- Legend -->
+  <rect x="65" y="1068" width="20" height="20" fill="#d96b61"/>
+  <text x="94" y="1085" font-family="sans-serif" font-size="17" fill="#444">Eden</text>
+  <rect x="175" y="1068" width="20" height="20" fill="#e5b94d"/>
+  <text x="204" y="1085" font-family="sans-serif" font-size="17" fill="#444">Survivor</text>
+  <rect x="323" y="1068" width="20" height="20" fill="#6593c6"/>
+  <text x="352" y="1085" font-family="sans-serif" font-size="17" fill="#444">Old</text>
+  <rect x="430" y="1068" width="20" height="20" fill="#8967a8"/>
+  <text x="459" y="1085" font-family="sans-serif" font-size="17" fill="#444">Humongous</text>
+  <rect x="603" y="1068" width="20" height="20" fill="#e5e5e5" stroke="#aaa"/>
+  <text x="632" y="1085" font-family="sans-serif" font-size="17" fill="#444">Free</text>
+  <text x="1435" y="1085" text-anchor="end" font-family="sans-serif" font-size="16" fill="#555">Schematic layout — counts and roles change dynamically.</text>
+</svg>

@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="820" viewBox="0 0 1440 820" role="img" aria-labelledby="title description">
+  <title id="title">SATB concurrent marking timeline and floating garbage</title>
+  <desc id="description">A timeline shows the Concurrent Start pause, concurrent marking with application writes and SATB buffering, Remark, and liveness finalization. Set diagrams compare the initial reachable objects with end-of-marking reachability and the conservative SATB result.</desc>
+
+  <!-- Background and title -->
+  <rect width="1440" height="820" fill="white"/>
+  <text x="720" y="52" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="bold" fill="#111">SATB concurrent marking: time and liveness</text>
+  <text x="720" y="87" text-anchor="middle" font-family="sans-serif" font-size="19" fill="#444">Short coordination pauses surround concurrent tracing; overwritten references are buffered as the application runs</text>
+
+  <!-- Lane labels -->
+  <text x="45" y="177" font-family="sans-serif" font-size="18" font-weight="bold" fill="#222">GC</text>
+  <text x="45" y="325" font-family="sans-serif" font-size="18" font-weight="bold" fill="#222">App</text>
+
+  <!-- GC lane -->
+  <rect x="100" y="135" width="225" height="82" rx="6" fill="#f7d7d3" stroke="#b34a42" stroke-width="2"/>
+  <text x="212" y="166" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#812e29">Concurrent Start</text>
+  <text x="212" y="191" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#812e29">brief STW · roots at t₀</text>
+
+  <rect x="325" y="135" width="665" height="82" fill="#e7f0fb" stroke="#356da8" stroke-width="2"/>
+  <text x="657" y="166" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#234f7c">Concurrent marking</text>
+  <text x="657" y="191" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#234f7c">trace roots + drain marking and SATB queues</text>
+
+  <rect x="990" y="135" width="190" height="82" fill="#f7d7d3" stroke="#b34a42" stroke-width="2"/>
+  <text x="1085" y="166" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#812e29">Remark</text>
+  <text x="1085" y="191" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#812e29">brief STW · finish</text>
+
+  <rect x="1180" y="135" width="200" height="82" rx="6" fill="#e4f3e6" stroke="#43804c" stroke-width="2"/>
+  <text x="1280" y="166" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#315e38">Liveness ready</text>
+  <text x="1280" y="191" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#315e38">plan reclamation</text>
+
+  <!-- Application lane -->
+  <rect x="100" y="280" width="225" height="78" rx="6" fill="#f2f2f2" stroke="#888" stroke-width="2"/>
+  <text x="212" y="313" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#555">paused</text>
+  <text x="212" y="338" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">snapshot roots</text>
+
+  <rect x="325" y="280" width="665" height="78" fill="#f4eff8" stroke="#7651a5" stroke-width="2"/>
+  <text x="657" y="313" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#56357e">application threads run</text>
+  <text x="657" y="338" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#56357e">allocations and reference writes continue</text>
+
+  <rect x="990" y="280" width="190" height="78" fill="#f2f2f2" stroke="#888" stroke-width="2"/>
+  <text x="1085" y="313" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#555">paused</text>
+  <text x="1085" y="338" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">complete marking</text>
+
+  <rect x="1180" y="280" width="200" height="78" rx="6" fill="#f4eff8" stroke="#7651a5" stroke-width="2"/>
+  <text x="1280" y="313" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#56357e">application runs</text>
+  <text x="1280" y="338" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#56357e">later GC phases follow</text>
+
+  <!-- Time arrow -->
+  <path d="M100 395H1352" fill="none" stroke="#333" stroke-width="3"/>
+  <polygon points="1374,395 1350,384 1350,406" fill="#333"/>
+  <text x="100" y="425" font-family="sans-serif" font-size="16" font-weight="bold" fill="#333">t₀</text>
+  <text x="1380" y="425" text-anchor="end" font-family="sans-serif" font-size="16" font-weight="bold" fill="#333">time</text>
+
+  <!-- Mutation events -->
+  <line x1="505" y1="255" x2="505" y2="377" stroke="#cc3c32" stroke-width="3" stroke-dasharray="7 5"/>
+  <circle cx="505" cy="395" r="7" fill="#cc3c32"/>
+  <rect x="385" y="230" width="240" height="40" rx="4" fill="white" stroke="#cc3c32" stroke-width="2"/>
+  <text x="505" y="256" text-anchor="middle" font-family="monospace" font-size="16" fill="#9d2923">A.next: B → null</text>
+
+  <line x1="765" y1="255" x2="765" y2="377" stroke="#bb7725" stroke-width="3" stroke-dasharray="7 5"/>
+  <circle cx="765" cy="395" r="7" fill="#bb7725"/>
+  <rect x="645" y="230" width="240" height="40" rx="4" fill="white" stroke="#bb7725" stroke-width="2"/>
+  <text x="765" y="256" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#79501c">barrier queues old B</text>
+
+  <!-- Liveness comparison -->
+  <text x="720" y="472" text-anchor="middle" font-family="sans-serif" font-size="23" font-weight="bold" fill="#222">Why floating garbage can survive one cycle</text>
+
+  <rect x="70" y="505" width="390" height="225" rx="8" fill="#f7faff" stroke="#356da8" stroke-width="2"/>
+  <text x="265" y="540" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#234f7c">Reachable at t₀</text>
+  <text x="265" y="568" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">the SATB promise</text>
+  <circle cx="170" cy="625" r="35" fill="#dceafa" stroke="#356da8" stroke-width="3"/>
+  <circle cx="265" cy="625" r="35" fill="#dceafa" stroke="#356da8" stroke-width="3"/>
+  <circle cx="360" cy="625" r="35" fill="#dceafa" stroke="#356da8" stroke-width="3"/>
+  <text x="170" y="632" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="bold" fill="#234f7c">A</text>
+  <text x="265" y="632" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="bold" fill="#234f7c">B</text>
+  <text x="360" y="632" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="bold" fill="#234f7c">C</text>
+  <path d="M205 625H217" fill="none" stroke="#356da8" stroke-width="3"/>
+  <polygon points="230,625 215,617 215,633" fill="#356da8"/>
+  <path d="M300 625H312" fill="none" stroke="#356da8" stroke-width="3"/>
+  <polygon points="325,625 310,617 310,633" fill="#356da8"/>
+  <text x="265" y="692" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">Starting snapshot = {A, B, C}</text>
+
+  <rect x="525" y="505" width="390" height="225" rx="8" fill="#fff9f0" stroke="#bb7725" stroke-width="2"/>
+  <text x="720" y="540" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#79501c">Current graph at Remark</text>
+  <text x="720" y="568" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">B and C became unreachable</text>
+  <circle cx="640" cy="625" r="35" fill="#e9def7" stroke="#7651a5" stroke-width="3"/>
+  <circle cx="800" cy="625" r="35" fill="#e9def7" stroke="#7651a5" stroke-width="3"/>
+  <text x="640" y="632" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="bold" fill="#56357e">A</text>
+  <text x="800" y="632" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="bold" fill="#56357e">D</text>
+  <path d="M675 625H752" fill="none" stroke="#7651a5" stroke-width="3"/>
+  <polygon points="765,625 750,617 750,633" fill="#7651a5"/>
+  <text x="720" y="692" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">Current reachability = {A, D}</text>
+
+  <rect x="980" y="505" width="390" height="225" rx="8" fill="#f4fbf5" stroke="#43804c" stroke-width="2"/>
+  <text x="1175" y="540" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#315e38">Treated as live this cycle</text>
+  <text x="1175" y="568" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">starting snapshot + safely handled new object</text>
+  <circle cx="1055" cy="625" r="31" fill="#d9f0dc" stroke="#43804c" stroke-width="3"/>
+  <circle cx="1135" cy="625" r="31" fill="#fff1d9" stroke="#bb7725" stroke-width="3"/>
+  <circle cx="1215" cy="625" r="31" fill="#fff1d9" stroke="#bb7725" stroke-width="3"/>
+  <circle cx="1295" cy="625" r="31" fill="#e9def7" stroke="#7651a5" stroke-width="3"/>
+  <text x="1055" y="632" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#315e38">A</text>
+  <text x="1135" y="632" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#79501c">B</text>
+  <text x="1215" y="632" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#79501c">C</text>
+  <text x="1295" y="632" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#56357e">D</text>
+  <text x="1175" y="678" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#79501c">B and C are floating garbage</text>
+  <text x="1175" y="704" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#333">A later cycle can reclaim them.</text>
+
+  <!-- Connect comparison boxes -->
+  <path d="M468 617H496" fill="none" stroke="#555" stroke-width="3"/>
+  <polygon points="514,617 494,608 494,626" fill="#555"/>
+  <path d="M923 617H951" fill="none" stroke="#555" stroke-width="3"/>
+  <polygon points="969,617 949,608 949,626" fill="#555"/>
+
+  <!-- Bottom takeaway -->
+  <rect x="175" y="755" width="1090" height="42" rx="5" fill="#f2f2f2" stroke="#888"/>
+  <text x="720" y="782" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">SATB may retain newly dead objects, but it never forgets objects from the logical starting snapshot.</text>
+</svg>

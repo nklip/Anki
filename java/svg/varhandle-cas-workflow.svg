@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="980" viewBox="0 0 1500 980" role="img" aria-labelledby="title description">
+  <title id="title">VarHandle compare-and-set workflow</title>
+  <desc id="description">A compare-and-set decision checks the current value against an expected value atomically, updates on success, and leaves the value unchanged on failure. A lower panel shows a typical retry loop.</desc>
+
+  <!-- Background and title -->
+  <rect width="1500" height="980" fill="white"/>
+  <text x="750" y="50" text-anchor="middle" font-family="sans-serif" font-size="34" font-weight="bold" fill="black">VarHandle compare-and-set (CAS)</text>
+  <text x="750" y="82" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#444">Compare and conditionally update one variable as a single atomic operation</text>
+
+  <!-- Invocation -->
+  <rect x="400" y="115" width="700" height="62" rx="7" fill="#eaf3fb" stroke="#2f6fad" stroke-width="2"/>
+  <text x="750" y="153" text-anchor="middle" font-family="monospace" font-size="21" font-weight="bold" fill="#1d4f82">handle.compareAndSet(target, expected, update)</text>
+
+  <!-- Read and compare -->
+  <path d="M750 179V205" fill="none" stroke="#555" stroke-width="4"/>
+  <polygon points="750,221 741,205 759,205" fill="#555"/>
+  <rect x="525" y="223" width="450" height="62" rx="7" fill="white" stroke="#777" stroke-width="2"/>
+  <text x="750" y="250" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#333">Atomically read the witness value</text>
+  <text x="750" y="274" text-anchor="middle" font-family="monospace" font-size="17" fill="#555">current = variable value</text>
+  <path d="M750 287V315" fill="none" stroke="#555" stroke-width="4"/>
+  <polygon points="750,331 741,315 759,315" fill="#555"/>
+
+  <!-- Decision diamond -->
+  <polygon points="750,333 875,408 750,483 625,408" fill="#fff9e8" stroke="#a47a20" stroke-width="3"/>
+  <text x="750" y="401" text-anchor="middle" font-family="monospace" font-size="19" font-weight="bold" fill="#6f5214">current ==</text>
+  <text x="750" y="427" text-anchor="middle" font-family="monospace" font-size="19" font-weight="bold" fill="#6f5214">expected ?</text>
+
+  <!-- Success branch -->
+  <path d="M623 408H538" fill="none" stroke="#4d8758" stroke-width="5"/>
+  <polygon points="522,408 538,399 538,417" fill="#4d8758"/>
+  <text x="574" y="390" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#35623e">yes</text>
+  <rect x="85" y="355" width="435" height="106" rx="7" fill="#edf8ef" stroke="#4d8758" stroke-width="2"/>
+  <text x="302" y="388" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="bold" fill="#35623e">Success</text>
+  <text x="302" y="419" text-anchor="middle" font-family="monospace" font-size="19" fill="#35623e">variable = update</text>
+  <text x="302" y="446" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">comparison and write are indivisible</text>
+  <path d="M302 463V493" fill="none" stroke="#4d8758" stroke-width="4"/>
+  <polygon points="302,509 293,493 311,493" fill="#4d8758"/>
+  <rect x="145" y="511" width="315" height="62" rx="7" fill="#4d8758" stroke="#4d8758" stroke-width="2"/>
+  <text x="302" y="549" text-anchor="middle" font-family="monospace" font-size="22" font-weight="bold" fill="white">return true</text>
+
+  <!-- Failure branch -->
+  <path d="M877 408H962" fill="none" stroke="#b34a42" stroke-width="5"/>
+  <polygon points="978,408 962,399 962,417" fill="#b34a42"/>
+  <text x="926" y="390" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#9b352f">no</text>
+  <rect x="980" y="355" width="435" height="106" rx="7" fill="#fff3f1" stroke="#b34a42" stroke-width="2"/>
+  <text x="1197" y="388" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="bold" fill="#9b352f">Failure</text>
+  <text x="1197" y="419" text-anchor="middle" font-family="monospace" font-size="19" fill="#9b352f">variable is unchanged</text>
+  <text x="1197" y="446" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">another value was observed</text>
+  <path d="M1197 463V493" fill="none" stroke="#b34a42" stroke-width="4"/>
+  <polygon points="1197,509 1188,493 1206,493" fill="#b34a42"/>
+  <rect x="1040" y="511" width="315" height="62" rx="7" fill="#b34a42" stroke="#b34a42" stroke-width="2"/>
+  <text x="1197" y="549" text-anchor="middle" font-family="monospace" font-size="22" font-weight="bold" fill="white">return false</text>
+
+  <!-- Equality note -->
+  <rect x="520" y="520" width="460" height="70" rx="7" fill="#fafafa" stroke="#777" stroke-width="2"/>
+  <text x="750" y="548" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#333">Comparison uses primitive value or reference identity</text>
+  <text x="750" y="574" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">For object references, CAS uses ==, not equals()</text>
+
+  <!-- Retry-loop panel -->
+  <rect x="40" y="630" width="1420" height="305" rx="8" fill="#fafafa" stroke="#777" stroke-width="2"/>
+  <text x="70" y="670" font-family="sans-serif" font-size="23" font-weight="bold" fill="#333">Typical atomic update loop</text>
+  <text x="70" y="699" font-family="sans-serif" font-size="16" fill="#555">Use a retry loop when the next value must be calculated from the current value.</text>
+
+  <rect x="80" y="745" width="250" height="72" rx="6" fill="white" stroke="#2f6fad" stroke-width="2"/>
+  <text x="205" y="775" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1d4f82">1. Read current value</text>
+  <text x="205" y="801" text-anchor="middle" font-family="monospace" font-size="17" fill="#444">old = getVolatile()</text>
+
+  <rect x="410" y="745" width="250" height="72" rx="6" fill="white" stroke="#2f6fad" stroke-width="2"/>
+  <text x="535" y="775" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1d4f82">2. Calculate update</text>
+  <text x="535" y="801" text-anchor="middle" font-family="monospace" font-size="17" fill="#444">next = old + 1</text>
+
+  <rect x="740" y="745" width="300" height="72" rx="6" fill="#eaf3fb" stroke="#2f6fad" stroke-width="2"/>
+  <text x="890" y="775" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1d4f82">3. Attempt CAS</text>
+  <text x="890" y="801" text-anchor="middle" font-family="monospace" font-size="16" fill="#444">compareAndSet(old, next)</text>
+
+  <rect x="1190" y="745" width="210" height="72" rx="6" fill="#edf8ef" stroke="#4d8758" stroke-width="2"/>
+  <text x="1295" y="775" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#35623e">true</text>
+  <text x="1295" y="801" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#444">update complete</text>
+
+  <!-- Forward arrows -->
+  <path d="M332 781H392" fill="none" stroke="#555" stroke-width="4"/>
+  <polygon points="408,781 392,772 392,790" fill="#555"/>
+  <path d="M662 781H722" fill="none" stroke="#555" stroke-width="4"/>
+  <polygon points="738,781 722,772 722,790" fill="#555"/>
+  <path d="M1042 781H1172" fill="none" stroke="#4d8758" stroke-width="4"/>
+  <polygon points="1188,781 1172,772 1172,790" fill="#4d8758"/>
+  <text x="1115" y="764" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#35623e">success</text>
+
+  <!-- Failure retry path below the boxes -->
+  <path d="M890 819V875H205V835" fill="none" stroke="#b34a42" stroke-width="4"/>
+  <polygon points="205,819 196,835 214,835" fill="#b34a42"/>
+  <text x="555" y="900" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#9b352f">failure: another thread changed the value — reread and retry</text>
+
+  <!-- API comparison note -->
+  <text x="1295" y="890" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">compareAndExchange returns</text>
+  <text x="1295" y="910" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">the witnessed current value</text>
+</svg>

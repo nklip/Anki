@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="590" viewBox="0 0 1000 590" role="img" aria-labelledby="title description">
+  <title id="title">ArrayList capacity growth</title>
+  <desc id="description">When a full backing array cannot hold another element, ArrayList allocates a larger Object array, copies existing references, appends the new reference, and replaces its elementData reference.</desc>
+
+  <!-- Background and title -->
+  <rect width="1000" height="590" fill="#ffffff"/>
+  <text x="500" y="42" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="bold" fill="#202124">ArrayList growth when capacity is full</text>
+
+  <!-- Before growth: ten used cells -->
+  <text x="120" y="91" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="bold" fill="#202124">Before: size = 10, capacity = 10</text>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6368" text-anchor="middle">
+    <text x="157.5" y="119">0</text><text x="232.5" y="119">1</text><text x="307.5" y="119">2</text>
+    <text x="382.5" y="119">3</text><text x="457.5" y="119">4</text><text x="532.5" y="119">5</text>
+    <text x="607.5" y="119">6</text><text x="682.5" y="119">7</text><text x="757.5" y="119">8</text>
+    <text x="832.5" y="119">9</text>
+  </g>
+  <g fill="#e8f0fe" stroke="#356eb3" stroke-width="2">
+    <rect x="120" y="130" width="75" height="78"/><rect x="195" y="130" width="75" height="78"/>
+    <rect x="270" y="130" width="75" height="78"/><rect x="345" y="130" width="75" height="78"/>
+    <rect x="420" y="130" width="75" height="78"/><rect x="495" y="130" width="75" height="78"/>
+    <rect x="570" y="130" width="75" height="78"/><rect x="645" y="130" width="75" height="78"/>
+    <rect x="720" y="130" width="75" height="78"/><rect x="795" y="130" width="75" height="78"/>
+  </g>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#202124" text-anchor="middle">
+    <text x="157.5" y="178">A</text><text x="232.5" y="178">B</text><text x="307.5" y="178">C</text>
+    <text x="382.5" y="178">D</text><text x="457.5" y="178">E</text><text x="532.5" y="178">F</text>
+    <text x="607.5" y="178">G</text><text x="682.5" y="178">H</text><text x="757.5" y="178">I</text>
+    <text x="832.5" y="178">J</text>
+  </g>
+
+  <!-- Downward transition arrow. Its line is covered by the arrowhead. -->
+  <line x1="500" y1="228" x2="500" y2="302" stroke="#356eb3" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="488,289 500,316 512,289" fill="#356eb3"/>
+  <text x="522" y="262" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold" fill="#356eb3">add("K")</text>
+  <text x="522" y="286" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6368">allocate, copy references, append</text>
+
+  <!-- After growth: current OpenJDK preferred growth from 10 to 15 -->
+  <text x="120" y="351" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="bold" fill="#202124">After: size = 11, capacity = 15</text>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#5f6368" text-anchor="middle">
+    <text x="145" y="379">0</text><text x="195" y="379">1</text><text x="245" y="379">2</text>
+    <text x="295" y="379">3</text><text x="345" y="379">4</text><text x="395" y="379">5</text>
+    <text x="445" y="379">6</text><text x="495" y="379">7</text><text x="545" y="379">8</text>
+    <text x="595" y="379">9</text><text x="645" y="379">10</text><text x="695" y="379">11</text>
+    <text x="745" y="379">12</text><text x="795" y="379">13</text><text x="845" y="379">14</text>
+  </g>
+  <g fill="#e8f0fe" stroke="#356eb3" stroke-width="2">
+    <rect x="120" y="390" width="50" height="72"/><rect x="170" y="390" width="50" height="72"/>
+    <rect x="220" y="390" width="50" height="72"/><rect x="270" y="390" width="50" height="72"/>
+    <rect x="320" y="390" width="50" height="72"/><rect x="370" y="390" width="50" height="72"/>
+    <rect x="420" y="390" width="50" height="72"/><rect x="470" y="390" width="50" height="72"/>
+    <rect x="520" y="390" width="50" height="72"/><rect x="570" y="390" width="50" height="72"/>
+  </g>
+  <rect x="620" y="390" width="50" height="72" fill="#fce8e6" stroke="#d93025" stroke-width="2"/>
+  <g fill="#f1f3f4" stroke="#9aa0a6" stroke-width="2">
+    <rect x="670" y="390" width="50" height="72"/><rect x="720" y="390" width="50" height="72"/>
+    <rect x="770" y="390" width="50" height="72"/><rect x="820" y="390" width="50" height="72"/>
+  </g>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#202124" text-anchor="middle">
+    <text x="145" y="434">A</text><text x="195" y="434">B</text><text x="245" y="434">C</text>
+    <text x="295" y="434">D</text><text x="345" y="434">E</text><text x="395" y="434">F</text>
+    <text x="445" y="434">G</text><text x="495" y="434">H</text><text x="545" y="434">I</text>
+    <text x="595" y="434">J</text><text x="645" y="434" font-weight="bold">K</text>
+  </g>
+  <text x="770" y="434" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#6b7280">unused capacity</text>
+
+  <!-- Implementation note -->
+  <rect x="120" y="505" width="750" height="58" rx="6" fill="#fff4ce" stroke="#b7791f" stroke-width="1.5"/>
+  <text x="495" y="529" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#202124">Current OpenJDK preferred growth: old capacity + about 50%</text>
+  <text x="495" y="552" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6368">The exact capacity is an implementation detail and can grow further to satisfy the required minimum.</text>
+</svg>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title description">
+  <title id="title">Volatile does not make increment atomic</title>
+  <desc id="description">Two threads increment the same volatile counter. Both can read zero, compute one, and write one. Every individual read and write is visible and atomic, but the compound increment loses one update.</desc>
+
+  <!-- Background and title -->
+  <rect width="1200" height="720" fill="#ffffff"/>
+  <text x="600" y="43" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="bold" fill="#202124">Why volatile count++ can lose updates</text>
+  <text x="600" y="76" text-anchor="middle" font-family="Courier New, monospace" font-size="19" fill="#5f6368">volatile int count = 0;</text>
+
+  <!-- Thread lanes -->
+  <rect x="110" y="102" width="410" height="48" rx="7" fill="#356eb3"/>
+  <text x="315" y="133" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#ffffff">Thread A: count++</text>
+  <rect x="680" y="102" width="410" height="48" rx="7" fill="#7b1fa2"/>
+  <text x="885" y="133" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#ffffff">Thread B: count++</text>
+
+  <!-- Step 1: both read the same old value -->
+  <rect x="130" y="177" width="370" height="76" rx="7" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <text x="315" y="207" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#202124">1. Volatile read</text>
+  <text x="315" y="235" text-anchor="middle" font-family="Courier New, monospace" font-size="18" fill="#202124">oldA = count; // 0</text>
+  <rect x="700" y="177" width="370" height="76" rx="7" fill="#f3e8fd" stroke="#7b1fa2" stroke-width="2"/>
+  <text x="885" y="207" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#202124">1. Volatile read</text>
+  <text x="885" y="235" text-anchor="middle" font-family="Courier New, monospace" font-size="18" fill="#202124">oldB = count; // 0</text>
+
+  <!-- Vertical arrows from read to calculation -->
+  <line x1="315" y1="253" x2="315" y2="286" stroke="#356eb3" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="304,275 315,299 326,275" fill="#356eb3"/>
+  <line x1="885" y1="253" x2="885" y2="286" stroke="#7b1fa2" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="874,275 885,299 896,275" fill="#7b1fa2"/>
+
+  <!-- Step 2: independent calculations -->
+  <rect x="130" y="299" width="370" height="76" rx="7" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <text x="315" y="329" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#202124">2. Ordinary calculation</text>
+  <text x="315" y="357" text-anchor="middle" font-family="Courier New, monospace" font-size="18" fill="#202124">nextA = oldA + 1; // 1</text>
+  <rect x="700" y="299" width="370" height="76" rx="7" fill="#f3e8fd" stroke="#7b1fa2" stroke-width="2"/>
+  <text x="885" y="329" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#202124">2. Ordinary calculation</text>
+  <text x="885" y="357" text-anchor="middle" font-family="Courier New, monospace" font-size="18" fill="#202124">nextB = oldB + 1; // 1</text>
+
+  <!-- Vertical arrows from calculation to write -->
+  <line x1="315" y1="375" x2="315" y2="408" stroke="#356eb3" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="304,397 315,421 326,397" fill="#356eb3"/>
+  <line x1="885" y1="375" x2="885" y2="408" stroke="#7b1fa2" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="874,397 885,421 896,397" fill="#7b1fa2"/>
+
+  <!-- Step 3: both publish one -->
+  <rect x="130" y="421" width="370" height="76" rx="7" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <text x="315" y="451" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#202124">3. Volatile write</text>
+  <text x="315" y="479" text-anchor="middle" font-family="Courier New, monospace" font-size="18" fill="#202124">count = nextA; // 1</text>
+  <rect x="700" y="421" width="370" height="76" rx="7" fill="#f3e8fd" stroke="#7b1fa2" stroke-width="2"/>
+  <text x="885" y="451" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#202124">3. Volatile write</text>
+  <text x="885" y="479" text-anchor="middle" font-family="Courier New, monospace" font-size="18" fill="#202124">count = nextB; // 1</text>
+
+  <!-- Lost-update result background is drawn before the arrows,
+       so the border cannot cover their arrowheads. -->
+  <rect x="320" y="565" width="560" height="92" rx="9" fill="#fce8e6" stroke="#d93025" stroke-width="2.5"/>
+
+  <!-- Both arrow tips land on the requested positions along the box's top border.
+       Each line ends beneath its arrowhead to avoid a visible seam. -->
+  <line x1="315" y1="497" x2="394" y2="554" stroke="#d93025" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="396,539 410,565 381,560" fill="#d93025"/>
+  <line x1="885" y1="497" x2="806" y2="554" stroke="#d93025" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="804,539 790,565 819,560" fill="#d93025"/>
+
+  <!-- Text inside the result box -->
+  <text x="600" y="601" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#d93025">Final count can be 1</text>
+  <text x="600" y="633" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#202124">Two increments were attempted; one update was lost.</text>
+
+  <text x="600" y="699" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6368">The individual volatile reads and writes are atomic; the read–modify–write sequence is not.</text>
+</svg>

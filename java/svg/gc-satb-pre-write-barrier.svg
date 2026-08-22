@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="860" viewBox="0 0 1440 860" role="img" aria-labelledby="title description">
+  <title id="title">How the SATB pre-write barrier preserves an overwritten reference</title>
+  <desc id="description">Three panels show an object graph at the beginning of marking, an application overwriting the reference from A to B while the barrier queues B, and the collector tracing B and C from that queue.</desc>
+
+  <!-- Background and title -->
+  <rect width="1440" height="860" fill="white"/>
+  <text x="720" y="52" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="bold" fill="#111">SATB preserves the old reference before it disappears</text>
+  <text x="720" y="87" text-anchor="middle" font-family="sans-serif" font-size="19" fill="#444">A logical snapshot of reachability — not a physical copy of the heap</text>
+
+  <!-- Panel backgrounds -->
+  <rect x="35" y="120" width="430" height="675" rx="8" fill="#f7faff" stroke="#356da8" stroke-width="2"/>
+  <rect x="505" y="120" width="430" height="675" rx="8" fill="#fff9f0" stroke="#bb7725" stroke-width="2"/>
+  <rect x="975" y="120" width="430" height="675" rx="8" fill="#f4fbf5" stroke="#43804c" stroke-width="2"/>
+
+  <!-- Panel 1: beginning graph -->
+  <rect x="35" y="120" width="430" height="62" rx="8" fill="#356da8"/>
+  <rect x="35" y="168" width="430" height="14" fill="#356da8"/>
+  <text x="250" y="160" text-anchor="middle" font-family="sans-serif" font-size="23" font-weight="bold" fill="white">1. Marking begins</text>
+  <text x="250" y="216" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#234f7c">Logical starting graph</text>
+
+  <rect x="62" y="270" width="88" height="52" rx="5" fill="white" stroke="#222" stroke-width="2"/>
+  <text x="106" y="302" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#222">GC root</text>
+
+  <circle cx="210" cy="296" r="35" fill="#dceafa" stroke="#356da8" stroke-width="3"/>
+  <circle cx="320" cy="296" r="35" fill="white" stroke="#777" stroke-width="3"/>
+  <circle cx="420" cy="296" r="35" fill="white" stroke="#777" stroke-width="3"/>
+  <text x="210" y="303" text-anchor="middle" font-family="sans-serif" font-size="23" font-weight="bold" fill="#234f7c">A</text>
+  <text x="320" y="303" text-anchor="middle" font-family="sans-serif" font-size="23" font-weight="bold" fill="#333">B</text>
+  <text x="420" y="303" text-anchor="middle" font-family="sans-serif" font-size="23" font-weight="bold" fill="#333">C</text>
+
+  <!-- Shafts stop before their arrowheads -->
+  <path d="M150 296H164" fill="none" stroke="#333" stroke-width="4"/>
+  <polygon points="175,296 162,289 162,303" fill="#333"/>
+  <path d="M245 296H274" fill="none" stroke="#333" stroke-width="4"/>
+  <polygon points="285,296 272,289 272,303" fill="#333"/>
+  <path d="M355 296H374" fill="none" stroke="#333" stroke-width="4"/>
+  <polygon points="385,296 372,289 372,303" fill="#333"/>
+
+  <text x="250" y="375" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#222">B and C belong to the starting snapshot</text>
+  <text x="250" y="408" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#444">The marker has found A, but may not</text>
+  <text x="250" y="433" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#444">have scanned A.next yet.</text>
+
+  <rect x="75" y="510" width="350" height="145" rx="6" fill="white" stroke="#9bb9d8" stroke-width="2"/>
+  <text x="95" y="544" font-family="monospace" font-size="18" fill="#222">A.next == B</text>
+  <text x="95" y="580" font-family="sans-serif" font-size="16" fill="#444">If this edge disappears before A is</text>
+  <text x="95" y="605" font-family="sans-serif" font-size="16" fill="#444">scanned, the marker still needs a path</text>
+  <text x="95" y="630" font-family="sans-serif" font-size="16" fill="#444">to B and C.</text>
+
+  <!-- Panel 2: mutation and barrier -->
+  <rect x="505" y="120" width="430" height="62" rx="8" fill="#bb7725"/>
+  <rect x="505" y="168" width="430" height="14" fill="#bb7725"/>
+  <text x="720" y="160" text-anchor="middle" font-family="sans-serif" font-size="23" font-weight="bold" fill="white">2. Application overwrites the edge</text>
+  <text x="720" y="216" text-anchor="middle" font-family="monospace" font-size="18" fill="#79501c">A.next = D</text>
+
+  <circle cx="590" cy="296" r="35" fill="#dceafa" stroke="#356da8" stroke-width="3"/>
+  <circle cx="850" cy="296" r="35" fill="#e9def7" stroke="#7651a5" stroke-width="3"/>
+  <text x="590" y="303" text-anchor="middle" font-family="sans-serif" font-size="23" font-weight="bold" fill="#234f7c">A</text>
+  <text x="850" y="303" text-anchor="middle" font-family="sans-serif" font-size="23" font-weight="bold" fill="#56357e">D</text>
+  <path d="M625 296H802" fill="none" stroke="#7651a5" stroke-width="4"/>
+  <polygon points="815,296 800,288 800,304" fill="#7651a5"/>
+  <text x="720" y="277" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#56357e">new reference</text>
+
+  <circle cx="625" cy="420" r="35" fill="white" stroke="#cc3c32" stroke-width="3"/>
+  <circle cx="790" cy="420" r="35" fill="white" stroke="#cc3c32" stroke-width="3"/>
+  <text x="625" y="427" text-anchor="middle" font-family="sans-serif" font-size="23" font-weight="bold" fill="#9d2923">B</text>
+  <text x="790" y="427" text-anchor="middle" font-family="sans-serif" font-size="23" font-weight="bold" fill="#9d2923">C</text>
+  <path d="M660 420H742" fill="none" stroke="#cc3c32" stroke-width="4"/>
+  <polygon points="755,420 740,412 740,428" fill="#cc3c32"/>
+  <path d="M604 329C607 352 612 365 616 372" fill="none" stroke="#cc3c32" stroke-width="3" stroke-dasharray="7 6"/>
+  <line x1="595" y1="349" x2="621" y2="369" stroke="#cc3c32" stroke-width="4"/>
+  <line x1="621" y1="349" x2="595" y2="369" stroke="#cc3c32" stroke-width="4"/>
+  <text x="702" y="379" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#9d2923">old edge removed</text>
+
+  <rect x="555" y="520" width="330" height="135" rx="6" fill="#fff1d9" stroke="#bb7725" stroke-width="3"/>
+  <text x="720" y="553" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#79501c">SATB buffer / mark queue</text>
+  <rect x="680" y="575" width="80" height="50" rx="4" fill="white" stroke="#cc3c32" stroke-width="2"/>
+  <text x="720" y="607" text-anchor="middle" font-family="sans-serif" font-size="23" font-weight="bold" fill="#9d2923">B</text>
+  <path d="M625 458C625 487 662 500 688 513" fill="none" stroke="#bb7725" stroke-width="4"/>
+  <polygon points="700,520 684,517 691,504" fill="#bb7725"/>
+  <text x="790" y="480" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#79501c">pre-write barrier records B</text>
+
+  <!-- Panel 3: completed trace -->
+  <rect x="975" y="120" width="430" height="62" rx="8" fill="#43804c"/>
+  <rect x="975" y="168" width="430" height="14" fill="#43804c"/>
+  <text x="1190" y="160" text-anchor="middle" font-family="sans-serif" font-size="23" font-weight="bold" fill="white">3. Collector drains the queue</text>
+  <text x="1190" y="216" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#315e38">All starting-snapshot objects are found</text>
+
+  <rect x="1004" y="270" width="88" height="52" rx="5" fill="white" stroke="#222" stroke-width="2"/>
+  <text x="1048" y="302" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#222">GC root</text>
+  <circle cx="1152" cy="296" r="35" fill="#d9f0dc" stroke="#43804c" stroke-width="3"/>
+  <circle cx="1320" cy="296" r="35" fill="#e9def7" stroke="#7651a5" stroke-width="3"/>
+  <text x="1152" y="303" text-anchor="middle" font-family="sans-serif" font-size="23" font-weight="bold" fill="#315e38">A</text>
+  <text x="1320" y="303" text-anchor="middle" font-family="sans-serif" font-size="23" font-weight="bold" fill="#56357e">D</text>
+  <path d="M1092 296H1106" fill="none" stroke="#333" stroke-width="4"/>
+  <polygon points="1117,296 1104,289 1104,303" fill="#333"/>
+  <path d="M1187 296H1272" fill="none" stroke="#7651a5" stroke-width="4"/>
+  <polygon points="1285,296 1270,288 1270,304" fill="#7651a5"/>
+
+  <rect x="1015" y="376" width="350" height="155" rx="8" fill="white" stroke="#76a77d" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="1190" y="407" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">no longer reachable from the current root graph</text>
+  <circle cx="1110" cy="460" r="35" fill="#d9f0dc" stroke="#43804c" stroke-width="3"/>
+  <circle cx="1270" cy="460" r="35" fill="#d9f0dc" stroke="#43804c" stroke-width="3"/>
+  <text x="1110" y="467" text-anchor="middle" font-family="sans-serif" font-size="23" font-weight="bold" fill="#315e38">B</text>
+  <text x="1270" y="467" text-anchor="middle" font-family="sans-serif" font-size="23" font-weight="bold" fill="#315e38">C</text>
+  <path d="M1145 460H1222" fill="none" stroke="#43804c" stroke-width="4"/>
+  <polygon points="1235,460 1220,452 1220,468" fill="#43804c"/>
+  <text x="1190" y="518" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#315e38">marked by tracing queued B</text>
+
+  <rect x="1020" y="575" width="340" height="112" rx="6" fill="#e4f3e6" stroke="#43804c" stroke-width="2"/>
+  <text x="1190" y="610" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#315e38">Current-cycle result</text>
+  <text x="1190" y="640" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">B and C remain live for this cycle.</text>
+  <text x="1190" y="665" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">They may be reclaimed by a later cycle.</text>
+
+  <!-- Legend and takeaway -->
+  <circle cx="170" cy="742" r="13" fill="#d9f0dc" stroke="#43804c" stroke-width="2"/>
+  <text x="193" y="748" font-family="sans-serif" font-size="15" fill="#333">marked / treated as live</text>
+  <circle cx="355" cy="742" r="13" fill="white" stroke="#777" stroke-width="2"/>
+  <text x="378" y="748" font-family="sans-serif" font-size="15" fill="#333">not yet traced</text>
+
+  <text x="720" y="830" text-anchor="middle" font-family="sans-serif" font-size="21" font-weight="bold" fill="#222">The barrier preserves the deleted edge's old target, so concurrent mutation cannot hide the starting snapshot.</text>
+</svg>

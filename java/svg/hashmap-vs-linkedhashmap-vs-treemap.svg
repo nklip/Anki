@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1090" viewBox="0 0 1500 1090" role="img" aria-labelledby="title description">
+  <title id="title">HashMap vs. LinkedHashMap vs. TreeMap</title>
+  <desc id="description">A table comparing ordering, performance, null handling, key rules, iteration, and common uses of three Java Map implementations.</desc>
+
+  <!-- Background and title -->
+  <rect width="1500" height="1090" fill="white"/>
+  <text x="750" y="60" text-anchor="middle" font-family="sans-serif" font-size="38" font-weight="bold" fill="black">HashMap vs. LinkedHashMap vs. TreeMap</text>
+  <text x="750" y="101" text-anchor="middle" font-family="sans-serif" font-size="21" fill="#444">Java Map implementations at a glance</text>
+
+  <!-- Column backgrounds -->
+  <rect x="30" y="145" width="250" height="870" fill="#f2f2f2"/>
+  <rect x="280" y="145" width="400" height="870" fill="#f5f9ff"/>
+  <rect x="680" y="145" width="400" height="870" fill="#f5fff7"/>
+  <rect x="1080" y="145" width="390" height="870" fill="#fff9f2"/>
+
+  <!-- Table header -->
+  <rect x="30" y="145" width="250" height="90" fill="#555"/>
+  <rect x="280" y="145" width="400" height="90" fill="#2f6fad"/>
+  <rect x="680" y="145" width="400" height="90" fill="#3c7c50"/>
+  <rect x="1080" y="145" width="390" height="90" fill="#a65f22"/>
+  <text x="50" y="199" font-family="sans-serif" font-size="25" font-weight="bold" fill="white">Criterion</text>
+  <text x="305" y="199" font-family="sans-serif" font-size="27" font-weight="bold" fill="white">HashMap</text>
+  <text x="705" y="199" font-family="sans-serif" font-size="27" font-weight="bold" fill="white">LinkedHashMap</text>
+  <text x="1105" y="199" font-family="sans-serif" font-size="27" font-weight="bold" fill="white">TreeMap</text>
+
+  <!-- Row: ordering -->
+  <text x="50" y="295" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">Ordering</text>
+  <text x="305" y="280" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="305" dy="0">No guaranteed</tspan>
+    <tspan x="305" dy="30">iteration order</tspan>
+  </text>
+  <text x="705" y="265" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="705" dy="0">Insertion order by default;</tspan>
+    <tspan x="705" dy="30">optional access order</tspan>
+    <tspan x="705" dy="30">for cache-like behavior</tspan>
+  </text>
+  <text x="1105" y="265" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="1105" dy="0">Keys remain sorted by</tspan>
+    <tspan x="1105" dy="30">natural order or a</tspan>
+    <tspan x="1105" dy="30">Comparator</tspan>
+  </text>
+
+  <!-- Row: typical operations -->
+  <text x="50" y="389" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">
+    <tspan x="50" dy="0">Typical</tspan>
+    <tspan x="50" dy="28">operations</tspan>
+  </text>
+  <text x="305" y="387" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="305" dy="0">Average O(1)</tspan>
+    <tspan x="305" dy="30">get / put / remove</tspan>
+  </text>
+  <text x="705" y="372" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="705" dy="0">Average O(1)</tspan>
+    <tspan x="705" dy="30">get / put / remove;</tspan>
+    <tspan x="705" dy="30">small linking overhead</tspan>
+  </text>
+  <text x="1105" y="387" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="1105" dy="0">O(log n)</tspan>
+    <tspan x="1105" dy="30">get / put / remove</tspan>
+  </text>
+
+  <!-- Row: null keys -->
+  <text x="50" y="510" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">Null key</text>
+  <text x="305" y="510" font-family="sans-serif" font-size="21" fill="black">One null key allowed</text>
+  <text x="705" y="510" font-family="sans-serif" font-size="21" fill="black">One null key allowed</text>
+  <text x="1105" y="480" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="1105" dy="0">Only if the Comparator</tspan>
+    <tspan x="1105" dy="30">explicitly supports null;</tspan>
+    <tspan x="1105" dy="30">natural ordering does not</tspan>
+  </text>
+
+  <!-- Row: null values -->
+  <text x="50" y="598" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">Null values</text>
+  <text x="305" y="597" font-family="sans-serif" font-size="21" fill="black">Allowed</text>
+  <text x="705" y="597" font-family="sans-serif" font-size="21" fill="black">Allowed</text>
+  <text x="1105" y="597" font-family="sans-serif" font-size="21" fill="black">Allowed</text>
+
+  <!-- Row: key handling -->
+  <text x="50" y="679" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">
+    <tspan x="50" dy="0">Key</tspan>
+    <tspan x="50" dy="28">handling</tspan>
+  </text>
+  <text x="305" y="677" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="305" dy="0">Uses hashCode() and equals();</tspan>
+    <tspan x="305" dy="30">Comparable is not required</tspan>
+  </text>
+  <text x="705" y="677" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="705" dy="0">Uses hashCode() and equals();</tspan>
+    <tspan x="705" dy="30">Comparable is not required</tspan>
+  </text>
+  <text x="1105" y="662" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="1105" dy="0">Uses compareTo() or a</tspan>
+    <tspan x="1105" dy="30">Comparator; keys must be</tspan>
+    <tspan x="1105" dy="30">mutually comparable</tspan>
+  </text>
+
+  <!-- Row: iteration -->
+  <text x="50" y="805" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">Iteration</text>
+  <text x="305" y="790" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="305" dy="0">O(size + capacity);</tspan>
+    <tspan x="305" dy="30">order is unpredictable</tspan>
+  </text>
+  <text x="705" y="790" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="705" dy="0">O(size); predictable</tspan>
+    <tspan x="705" dy="30">encounter order</tspan>
+  </text>
+  <text x="1105" y="790" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="1105" dy="0">O(n); entries visited</tspan>
+    <tspan x="1105" dy="30">in sorted-key order</tspan>
+  </text>
+
+  <!-- Row: best fit -->
+  <text x="50" y="940" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">Best fit</text>
+  <text x="305" y="910" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="305" dy="0">Fast, general-purpose</tspan>
+    <tspan x="305" dy="30">keyed lookup when order</tspan>
+    <tspan x="305" dy="30">does not matter</tspan>
+  </text>
+  <text x="705" y="910" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="705" dy="0">Predictable iteration,</tspan>
+    <tspan x="705" dy="30">LRU-style caches, or</tspan>
+    <tspan x="705" dy="30">maintaining input order</tspan>
+  </text>
+  <text x="1105" y="910" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="1105" dy="0">Sorted views, range queries,</tspan>
+    <tspan x="1105" dy="30">first / last / floor / ceiling</tspan>
+    <tspan x="1105" dy="30">key operations</tspan>
+  </text>
+
+  <!-- Table grid -->
+  <g fill="none" stroke="#777" stroke-width="2">
+    <rect x="30" y="145" width="1440" height="870"/>
+    <path d="M280 145V1015 M680 145V1015 M1080 145V1015"/>
+    <path d="M30 235H1470 M30 340H1470 M30 450H1470 M30 555H1470 M30 625H1470 M30 745H1470 M30 850H1470"/>
+  </g>
+
+  <!-- Shared behavior note -->
+  <text x="750" y="1060" text-anchor="middle" font-family="sans-serif" font-size="19" fill="#444">All three permit null values, provide fail-fast iterators on a best-effort basis, and require external synchronization for concurrent structural modification.</text>
+</svg>

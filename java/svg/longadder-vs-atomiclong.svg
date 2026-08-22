@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900" role="img" aria-labelledby="title description">
+  <title id="title">AtomicLong compared with LongAdder</title>
+  <desc id="description">AtomicLong sends all threads to one linearizable value, while LongAdder spreads updates across cells and combines them during sum. A decision guide shows when each counter is appropriate.</desc>
+
+  <!-- Background and title -->
+  <rect width="1500" height="900" fill="white"/>
+  <text x="750" y="50" text-anchor="middle" font-family="sans-serif" font-size="34" font-weight="bold" fill="black">AtomicLong vs. LongAdder</text>
+  <text x="750" y="82" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#444">Exact single value versus scalable striped sum</text>
+
+  <!-- AtomicLong panel -->
+  <rect x="40" y="115" width="690" height="500" rx="8" fill="#fff3f1" stroke="#b34a42" stroke-width="2"/>
+  <rect x="40" y="115" width="690" height="58" rx="8" fill="#b34a42"/>
+  <rect x="40" y="159" width="690" height="14" fill="#b34a42"/>
+  <text x="70" y="153" font-family="sans-serif" font-size="25" font-weight="bold" fill="white">AtomicLong: one hot value</text>
+
+  <!-- AtomicLong threads -->
+  <rect x="85" y="215" width="125" height="48" rx="5" fill="white" stroke="#b34a42"/>
+  <rect x="235" y="215" width="125" height="48" rx="5" fill="white" stroke="#b34a42"/>
+  <rect x="385" y="215" width="125" height="48" rx="5" fill="white" stroke="#b34a42"/>
+  <rect x="535" y="215" width="125" height="48" rx="5" fill="white" stroke="#b34a42"/>
+  <text x="147" y="245" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#9b352f">Thread A</text>
+  <text x="297" y="245" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#9b352f">Thread B</text>
+  <text x="447" y="245" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#9b352f">Thread C</text>
+  <text x="597" y="245" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#9b352f">Thread D</text>
+
+  <!-- Converging paths -->
+  <path d="M147 265L305 338" fill="none" stroke="#b34a42" stroke-width="3"/>
+  <path d="M297 265L345 338" fill="none" stroke="#b34a42" stroke-width="3"/>
+  <path d="M447 265L385 338" fill="none" stroke="#b34a42" stroke-width="3"/>
+  <path d="M597 265L425 338" fill="none" stroke="#b34a42" stroke-width="3"/>
+  <polygon points="365,352 352,333 377,334" fill="#b34a42"/>
+
+  <rect x="235" y="354" width="300" height="92" rx="8" fill="#b34a42" stroke="#b34a42" stroke-width="2"/>
+  <text x="385" y="389" text-anchor="middle" font-family="monospace" font-size="22" font-weight="bold" fill="white">single value = 24</text>
+  <text x="385" y="421" text-anchor="middle" font-family="sans-serif" font-size="16" fill="white">all updates contend on one CAS location</text>
+
+  <rect x="85" y="490" width="270" height="82" rx="6" fill="white" stroke="#b34a42"/>
+  <rect x="415" y="490" width="270" height="82" rx="6" fill="white" stroke="#b34a42"/>
+  <text x="220" y="520" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#9b352f">Linearizable reads</text>
+  <text x="220" y="547" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">one exact value at one instant</text>
+  <text x="550" y="520" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#9b352f">Read-modify-write result</text>
+  <text x="550" y="547" text-anchor="middle" font-family="monospace" font-size="15" fill="#555">incrementAndGet() → exact ID</text>
+
+  <!-- LongAdder panel -->
+  <rect x="770" y="115" width="690" height="500" rx="8" fill="#eef6fc" stroke="#2f6fad" stroke-width="2"/>
+  <rect x="770" y="115" width="690" height="58" rx="8" fill="#2f6fad"/>
+  <rect x="770" y="159" width="690" height="14" fill="#2f6fad"/>
+  <text x="800" y="153" font-family="sans-serif" font-size="25" font-weight="bold" fill="white">LongAdder: updates spread across stripes</text>
+
+  <!-- LongAdder threads -->
+  <rect x="815" y="215" width="125" height="48" rx="5" fill="white" stroke="#2f6fad"/>
+  <rect x="965" y="215" width="125" height="48" rx="5" fill="white" stroke="#2f6fad"/>
+  <rect x="1115" y="215" width="125" height="48" rx="5" fill="white" stroke="#2f6fad"/>
+  <rect x="1265" y="215" width="125" height="48" rx="5" fill="white" stroke="#2f6fad"/>
+  <text x="877" y="245" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#1d4f82">Thread A</text>
+  <text x="1027" y="245" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#1d4f82">Thread B</text>
+  <text x="1177" y="245" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#1d4f82">Thread C</text>
+  <text x="1327" y="245" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#1d4f82">Thread D</text>
+
+  <!-- Distributed arrows -->
+  <path d="M877 265V315" fill="none" stroke="#2f6fad" stroke-width="4"/>
+  <polygon points="877,331 868,315 886,315" fill="#2f6fad"/>
+  <path d="M1027 265V315" fill="none" stroke="#2f6fad" stroke-width="4"/>
+  <polygon points="1027,331 1018,315 1036,315" fill="#2f6fad"/>
+  <path d="M1177 265V315" fill="none" stroke="#2f6fad" stroke-width="4"/>
+  <polygon points="1177,331 1168,315 1186,315" fill="#2f6fad"/>
+  <path d="M1327 265V315" fill="none" stroke="#2f6fad" stroke-width="4"/>
+  <polygon points="1327,331 1318,315 1336,315" fill="#2f6fad"/>
+
+  <!-- Cells -->
+  <rect x="810" y="333" width="135" height="78" rx="6" fill="#dcebf8" stroke="#2f6fad" stroke-width="2"/>
+  <rect x="960" y="333" width="135" height="78" rx="6" fill="#dcebf8" stroke="#2f6fad" stroke-width="2"/>
+  <rect x="1110" y="333" width="135" height="78" rx="6" fill="#dcebf8" stroke="#2f6fad" stroke-width="2"/>
+  <rect x="1260" y="333" width="135" height="78" rx="6" fill="#dcebf8" stroke="#2f6fad" stroke-width="2"/>
+  <text x="877" y="362" text-anchor="middle" font-family="monospace" font-size="15" font-weight="bold" fill="#1d4f82">cell[0]</text>
+  <text x="877" y="391" text-anchor="middle" font-family="monospace" font-size="20" fill="#1d4f82">6</text>
+  <text x="1027" y="362" text-anchor="middle" font-family="monospace" font-size="15" font-weight="bold" fill="#1d4f82">cell[1]</text>
+  <text x="1027" y="391" text-anchor="middle" font-family="monospace" font-size="20" fill="#1d4f82">5</text>
+  <text x="1177" y="362" text-anchor="middle" font-family="monospace" font-size="15" font-weight="bold" fill="#1d4f82">cell[2]</text>
+  <text x="1177" y="391" text-anchor="middle" font-family="monospace" font-size="20" fill="#1d4f82">7</text>
+  <text x="1327" y="362" text-anchor="middle" font-family="monospace" font-size="15" font-weight="bold" fill="#1d4f82">cell[3]</text>
+  <text x="1327" y="391" text-anchor="middle" font-family="monospace" font-size="20" fill="#1d4f82">6</text>
+
+  <path d="M1102 413V444" fill="none" stroke="#4d8758" stroke-width="4"/>
+  <polygon points="1102,460 1093,444 1111,444" fill="#4d8758"/>
+  <rect x="930" y="462" width="345" height="62" rx="7" fill="#edf8ef" stroke="#4d8758" stroke-width="2"/>
+  <text x="1102" y="489" text-anchor="middle" font-family="monospace" font-size="19" font-weight="bold" fill="#35623e">sum() = base + all cells</text>
+  <text x="1102" y="513" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">higher update throughput under contention</text>
+
+  <rect x="815" y="548" width="590" height="42" rx="6" fill="#fff9e8" stroke="#a47a20"/>
+  <text x="1110" y="575" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#6f5214">sum() is not an atomic snapshot and returns no unique sequence value</text>
+
+  <!-- Decision guide -->
+  <rect x="40" y="655" width="1420" height="205" rx="8" fill="#fafafa" stroke="#777" stroke-width="2"/>
+  <text x="70" y="697" font-family="sans-serif" font-size="23" font-weight="bold" fill="#333">Practical choice</text>
+
+  <rect x="85" y="730" width="610" height="96" rx="7" fill="#fff3f1" stroke="#b34a42" stroke-width="2"/>
+  <text x="115" y="764" font-family="sans-serif" font-size="19" font-weight="bold" fill="#9b352f">Choose AtomicLong when:</text>
+  <text x="115" y="794" font-family="sans-serif" font-size="16" fill="#444">You need an exact current value, sequence number, CAS, or returned increment result.</text>
+
+  <rect x="805" y="730" width="610" height="96" rx="7" fill="#eef6fc" stroke="#2f6fad" stroke-width="2"/>
+  <text x="835" y="764" font-family="sans-serif" font-size="19" font-weight="bold" fill="#1d4f82">Choose LongAdder when:</text>
+  <text x="835" y="794" font-family="sans-serif" font-size="16" fill="#444">Many threads update statistics and occasional non-atomic totals are acceptable.</text>
+</svg>

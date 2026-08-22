@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1060" viewBox="0 0 1500 1060" role="img" aria-labelledby="title description">
+  <title id="title">Simplified ZGC concurrent collection and relocation</title>
+  <desc id="description">A two-lane timeline showing brief application pauses around concurrent marking and relocation, followed by a detailed example of live objects moving from a sparse source page while a load barrier repairs a stale application reference.</desc>
+
+  <!-- Arrowheads -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0L10 4L0 8Z" fill="#555"/>
+    </marker>
+    <marker id="blue-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0L10 4L0 8Z" fill="#2f6fad"/>
+    </marker>
+  </defs>
+
+  <!-- Background and title -->
+  <rect width="1500" height="1060" fill="white"/>
+  <text x="750" y="55" text-anchor="middle" font-family="sans-serif" font-size="38" font-weight="bold" fill="black">How ZGC collects and relocates concurrently</text>
+  <text x="750" y="91" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#444">Simplified cycle — phase widths are not to scale</text>
+
+  <!-- Timeline frame -->
+  <rect x="40" y="125" width="1420" height="430" rx="6" fill="#fafafa" stroke="#777" stroke-width="2"/>
+  <text x="65" y="160" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">Collection timeline</text>
+
+  <!-- Lane labels -->
+  <text x="70" y="236" font-family="sans-serif" font-size="22" font-weight="bold" fill="#3c7c50">Application</text>
+  <text x="70" y="263" font-family="sans-serif" font-size="17" fill="#555">mutator threads</text>
+  <text x="70" y="386" font-family="sans-serif" font-size="22" font-weight="bold" fill="#2f6fad">ZGC</text>
+  <text x="70" y="413" font-family="sans-serif" font-size="17" fill="#555">collector threads</text>
+
+  <!-- Application lane -->
+  <rect x="250" y="205" width="80" height="75" fill="#f7dddd" stroke="#a94442" stroke-width="2"/>
+  <text x="269" y="235" font-family="sans-serif" font-size="16" font-weight="bold" fill="#7a2826">brief</text>
+  <text x="263" y="257" font-family="sans-serif" font-size="16" font-weight="bold" fill="#7a2826">pause</text>
+
+  <rect x="330" y="205" width="400" height="75" fill="#e8f5ea" stroke="#3c7c50" stroke-width="2"/>
+  <text x="482" y="249" font-family="sans-serif" font-size="20" font-weight="bold" fill="#285b37">application runs</text>
+
+  <rect x="730" y="205" width="80" height="75" fill="#f7dddd" stroke="#a94442" stroke-width="2"/>
+  <text x="749" y="235" font-family="sans-serif" font-size="16" font-weight="bold" fill="#7a2826">brief</text>
+  <text x="743" y="257" font-family="sans-serif" font-size="16" font-weight="bold" fill="#7a2826">pause</text>
+
+  <rect x="810" y="205" width="620" height="75" fill="#e8f5ea" stroke="#3c7c50" stroke-width="2"/>
+  <text x="1047" y="249" font-family="sans-serif" font-size="20" font-weight="bold" fill="#285b37">application runs</text>
+
+  <!-- Collector lane -->
+  <rect x="250" y="335" width="80" height="105" fill="#f7dddd" stroke="#a94442" stroke-width="2"/>
+  <text x="266" y="371" font-family="sans-serif" font-size="15" font-weight="bold" fill="#7a2826">start</text>
+  <text x="260" y="393" font-family="sans-serif" font-size="15" fill="#7a2826">roots +</text>
+  <text x="258" y="415" font-family="sans-serif" font-size="15" fill="#7a2826">phase</text>
+
+  <rect x="330" y="335" width="400" height="105" fill="#dceafb" stroke="#2f6fad" stroke-width="2"/>
+  <text x="440" y="376" font-family="sans-serif" font-size="21" font-weight="bold" fill="#1d4f82">Concurrent marking</text>
+  <text x="410" y="408" font-family="sans-serif" font-size="17" fill="#333">trace reachable objects concurrently</text>
+
+  <rect x="730" y="335" width="80" height="105" fill="#f7dddd" stroke="#a94442" stroke-width="2"/>
+  <text x="748" y="371" font-family="sans-serif" font-size="15" font-weight="bold" fill="#7a2826">finish</text>
+  <text x="743" y="393" font-family="sans-serif" font-size="15" fill="#7a2826">mark +</text>
+  <text x="741" y="415" font-family="sans-serif" font-size="15" fill="#7a2826">select</text>
+
+  <rect x="810" y="335" width="470" height="105" fill="#dceafb" stroke="#2f6fad" stroke-width="2"/>
+  <text x="913" y="376" font-family="sans-serif" font-size="21" font-weight="bold" fill="#1d4f82">Concurrent relocation</text>
+  <text x="863" y="408" font-family="sans-serif" font-size="17" fill="#333">move live objects and compact selected pages</text>
+
+  <rect x="1280" y="335" width="150" height="105" fill="#eeeeee" stroke="#777" stroke-width="2"/>
+  <text x="1304" y="376" font-family="sans-serif" font-size="19" font-weight="bold" fill="#333">Reuse pages</text>
+  <text x="1304" y="405" font-family="sans-serif" font-size="16" fill="#555">or uncommit</text>
+
+  <!-- Phase boundaries -->
+  <g stroke="#aaa" stroke-width="1" stroke-dasharray="5 5">
+    <path d="M330 180V470"/>
+    <path d="M730 180V470"/>
+    <path d="M810 180V470"/>
+    <path d="M1280 180V470"/>
+  </g>
+
+  <!-- Barrier note -->
+  <rect x="250" y="475" width="1180" height="55" fill="white" stroke="#744b91" stroke-width="2"/>
+  <text x="275" y="498" font-family="sans-serif" font-size="17" font-weight="bold" fill="#744b91">Barriers run with application code</text>
+  <text x="275" y="520" font-family="sans-serif" font-size="16" fill="#333">Store barriers preserve marking and remembered sets; load barriers remap stale references.</text>
+
+  <!-- Relocation detail frame -->
+  <rect x="40" y="585" width="1420" height="415" rx="6" fill="white" stroke="#777" stroke-width="2"/>
+  <text x="65" y="624" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">Concurrent relocation detail</text>
+
+  <!-- Sparse source page -->
+  <text x="75" y="673" font-family="sans-serif" font-size="20" font-weight="bold" fill="black">1. Selected sparse page</text>
+  <rect x="75" y="692" width="350" height="190" rx="4" fill="#f8f8f8" stroke="#777" stroke-width="2"/>
+  <g stroke-width="1">
+    <rect x="100" y="727" width="82" height="50" fill="#66a56f" stroke="#3c7c50"/>
+    <rect x="188" y="727" width="66" height="50" fill="#d5d5d5" stroke="#999"/>
+    <rect x="260" y="727" width="57" height="50" fill="#d5d5d5" stroke="#999"/>
+    <rect x="323" y="727" width="77" height="50" fill="#66a56f" stroke="#3c7c50"/>
+    <rect x="100" y="787" width="59" height="50" fill="#d5d5d5" stroke="#999"/>
+    <rect x="165" y="787" width="92" height="50" fill="#66a56f" stroke="#3c7c50"/>
+    <rect x="263" y="787" width="137" height="50" fill="#d5d5d5" stroke="#999"/>
+  </g>
+  <text x="120" y="758" font-family="sans-serif" font-size="16" font-weight="bold" fill="white">A</text>
+  <text x="348" y="758" font-family="sans-serif" font-size="16" font-weight="bold" fill="white">B</text>
+  <text x="197" y="818" font-family="sans-serif" font-size="16" font-weight="bold" fill="white">C</text>
+  <text x="100" y="865" font-family="sans-serif" font-size="16" fill="#555">green = live; gray = dead</text>
+
+  <!-- Relocation arrow -->
+  <path d="M438 782H548" fill="none" stroke="#2f6fad" stroke-width="4" marker-end="url(#blue-arrow)"/>
+  <text x="449" y="761" font-family="sans-serif" font-size="17" font-weight="bold" fill="#2f6fad">move live</text>
+
+  <!-- Target page -->
+  <text x="565" y="673" font-family="sans-serif" font-size="20" font-weight="bold" fill="black">2. Compact into a target page</text>
+  <rect x="565" y="692" width="350" height="190" rx="4" fill="#f8f8f8" stroke="#2f6fad" stroke-width="2"/>
+  <g fill="#66a56f" stroke="#3c7c50" stroke-width="1">
+    <rect x="590" y="727" width="82" height="50"/>
+    <rect x="678" y="727" width="77" height="50"/>
+    <rect x="761" y="727" width="92" height="50"/>
+  </g>
+  <text x="610" y="758" font-family="sans-serif" font-size="16" font-weight="bold" fill="white">A′</text>
+  <text x="703" y="758" font-family="sans-serif" font-size="16" font-weight="bold" fill="white">B′</text>
+  <text x="790" y="758" font-family="sans-serif" font-size="16" font-weight="bold" fill="white">C′</text>
+  <rect x="590" y="787" width="263" height="50" fill="white" stroke="#aaa" stroke-width="1" stroke-dasharray="6 5"/>
+  <text x="674" y="818" font-family="sans-serif" font-size="16" fill="#777">free space</text>
+  <text x="590" y="865" font-family="sans-serif" font-size="16" fill="#555">source page becomes reusable</text>
+
+  <!-- Application load and barrier repair -->
+  <text x="970" y="673" font-family="sans-serif" font-size="20" font-weight="bold" fill="black">3. Repair a stale reference on load</text>
+  <rect x="970" y="692" width="430" height="62" rx="4" fill="#e8f5ea" stroke="#3c7c50" stroke-width="2"/>
+  <text x="990" y="719" font-family="sans-serif" font-size="17" font-weight="bold" fill="#285b37">Application loads a field</text>
+  <text x="1195" y="719" font-family="sans-serif" font-size="17" fill="#333">pointer says “old A”</text>
+  <text x="990" y="742" font-family="sans-serif" font-size="15" fill="#555">the object may already have moved</text>
+
+  <path d="M1185 756V787" fill="none" stroke="#555" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <rect x="970" y="795" width="430" height="62" rx="4" fill="#eee4f4" stroke="#744b91" stroke-width="2"/>
+  <text x="990" y="822" font-family="sans-serif" font-size="17" font-weight="bold" fill="#744b91">Load barrier checks pointer metadata</text>
+  <text x="990" y="845" font-family="sans-serif" font-size="15" fill="#555">uses relocation information: old A → new A′</text>
+
+  <path d="M1185 859V890" fill="none" stroke="#555" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <rect x="970" y="898" width="430" height="62" rx="4" fill="#dceafb" stroke="#2f6fad" stroke-width="2"/>
+  <text x="990" y="925" font-family="sans-serif" font-size="17" font-weight="bold" fill="#1d4f82">Application receives the current address</text>
+  <text x="990" y="948" font-family="sans-serif" font-size="15" fill="#555">later accesses usually take the barrier fast path</text>
+
+  <!-- Corrected reference points to the relocated object -->
+  <path d="M970 929C900 929 875 890 850 840C810 785 730 780 650 777" fill="none" stroke="#2f6fad" stroke-width="3" stroke-dasharray="7 5" marker-end="url(#blue-arrow)"/>
+
+  <!-- Footer note -->
+  <text x="750" y="1032" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#444">The application sees one consistent object graph even while physical object locations change.</text>
+</svg>

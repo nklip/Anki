@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="960" viewBox="0 0 1500 960" role="img" aria-labelledby="title description">
+  <title id="title">ConcurrentHashMap internal structure</title>
+  <desc id="description">Modern ConcurrentHashMap uses a power-of-two table of bins. Empty-bin insertion uses compare-and-set, reads generally do not lock, and occupied-bin updates coordinate at bin granularity. Bins may be lists or balanced trees.</desc>
+
+  <!-- Background and title -->
+  <rect width="1500" height="960" fill="white"/>
+  <text x="750" y="52" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="bold" fill="black">ConcurrentHashMap internal structure</text>
+  <text x="750" y="84" text-anchor="middle" font-family="sans-serif" font-size="19" fill="#444">Modern Java: one table of bins — not the legacy Segment[] design</text>
+
+  <!-- Main table panel -->
+  <rect x="40" y="115" width="1420" height="520" rx="7" fill="#fafafa" stroke="#777" stroke-width="2"/>
+  <text x="65" y="151" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">Power-of-two table</text>
+  <text x="1435" y="151" text-anchor="end" font-family="sans-serif" font-size="16" fill="#555">index = (table.length - 1) &amp; spread(hashCode)</text>
+
+  <!-- Table array -->
+  <rect x="90" y="180" width="220" height="70" fill="#f2f2f2" stroke="#777" stroke-width="2"/>
+  <rect x="310" y="180" width="220" height="70" fill="#e8f1fb" stroke="#777" stroke-width="2"/>
+  <rect x="530" y="180" width="220" height="70" fill="#f2f2f2" stroke="#777" stroke-width="2"/>
+  <rect x="750" y="180" width="220" height="70" fill="#f3edf8" stroke="#777" stroke-width="2"/>
+  <rect x="970" y="180" width="220" height="70" fill="#e8f1fb" stroke="#777" stroke-width="2"/>
+  <rect x="1190" y="180" width="220" height="70" fill="#f2f2f2" stroke="#777" stroke-width="2"/>
+  <text x="200" y="209" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#444">bin [0]</text>
+  <text x="200" y="233" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#666">empty</text>
+  <text x="420" y="209" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#1d4f82">bin [1]</text>
+  <text x="420" y="233" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#1d4f82">linked list</text>
+  <text x="640" y="209" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#444">bin [2]</text>
+  <text x="640" y="233" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#666">one node</text>
+  <text x="860" y="209" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#65417d">bin [3]</text>
+  <text x="860" y="233" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#65417d">TreeBin</text>
+  <text x="1080" y="209" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#1d4f82">bin [4]</text>
+  <text x="1080" y="233" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#1d4f82">linked list</text>
+  <text x="1300" y="209" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#444">bin [5]</text>
+  <text x="1300" y="233" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#666">empty</text>
+
+  <!-- Explicit vertical arrows from representative table slots -->
+  <path d="M420 256V285" fill="none" stroke="#555" stroke-width="3" stroke-linecap="butt"/>
+  <polygon points="420,302 412,284 428,284" fill="#555"/>
+  <path d="M860 256V285" fill="none" stroke="#555" stroke-width="3" stroke-linecap="butt"/>
+  <polygon points="860,302 852,284 868,284" fill="#555"/>
+
+  <!-- Linked-list bin example -->
+  <rect x="70" y="310" width="630" height="290" rx="6" fill="white" stroke="#2f6fad" stroke-width="2"/>
+  <text x="95" y="346" font-family="sans-serif" font-size="20" font-weight="bold" fill="#1d4f82">List bin</text>
+  <text x="675" y="346" text-anchor="end" font-family="sans-serif" font-size="15" fill="#555">common when hashes are well distributed</text>
+
+  <rect x="100" y="385" width="160" height="72" rx="4" fill="#e8f1fb" stroke="#2f6fad" stroke-width="2"/>
+  <rect x="305" y="385" width="160" height="72" rx="4" fill="#e8f1fb" stroke="#2f6fad" stroke-width="2"/>
+  <rect x="510" y="385" width="160" height="72" rx="4" fill="#e8f1fb" stroke="#2f6fad" stroke-width="2"/>
+  <text x="180" y="414" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#1d4f82">Node A</text>
+  <text x="180" y="438" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#444">hash · key · value · next</text>
+  <text x="385" y="414" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#1d4f82">Node B</text>
+  <text x="385" y="438" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#444">same bin index</text>
+  <text x="590" y="414" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#1d4f82">Node C</text>
+  <text x="590" y="438" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#444">same bin index</text>
+
+  <!-- List arrows: shaft ends inside a separately drawn triangle -->
+  <path d="M266 421H285" fill="none" stroke="#555" stroke-width="2" stroke-linecap="butt"/>
+  <polygon points="300,421 284,413.5 284,428.5" fill="#555"/>
+  <path d="M471 421H490" fill="none" stroke="#555" stroke-width="2" stroke-linecap="butt"/>
+  <polygon points="505,421 489,413.5 489,428.5" fill="#555"/>
+
+  <rect x="100" y="490" width="250" height="75" rx="4" fill="#fff7df" stroke="#b88b22"/>
+  <text x="225" y="518" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#6b500f">Occupied-bin update</text>
+  <text x="225" y="543" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">coordinates on the bin head</text>
+  <path d="M180 463V477" fill="none" stroke="#b88b22" stroke-width="2" stroke-linecap="butt"/>
+  <polygon points="180,487 174,476 186,476" fill="#b88b22"/>
+
+  <rect x="380" y="490" width="290" height="75" rx="4" fill="#eef8ef" stroke="#4d8758"/>
+  <text x="525" y="518" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#35623e">Readers still traverse</text>
+  <text x="525" y="543" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">without acquiring that bin monitor</text>
+
+  <!-- Tree bin example -->
+  <rect x="730" y="310" width="670" height="290" rx="6" fill="white" stroke="#744b91" stroke-width="2"/>
+  <text x="755" y="346" font-family="sans-serif" font-size="20" font-weight="bold" fill="#65417d">Tree bin</text>
+  <text x="1375" y="346" text-anchor="end" font-family="sans-serif" font-size="15" fill="#555">protects against collision-heavy list scans</text>
+
+  <rect x="765" y="385" width="145" height="64" rx="4" fill="#f3edf8" stroke="#744b91" stroke-width="2"/>
+  <text x="837" y="413" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#65417d">TreeBin</text>
+  <text x="837" y="436" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#444">bin controller</text>
+  <path d="M916 417H970" fill="none" stroke="#555" stroke-width="2" stroke-linecap="butt"/>
+  <polygon points="985,417 969,409.5 969,424.5" fill="#555"/>
+
+  <!-- Balanced-tree connections -->
+  <path d="M1080 442L1015 485M1080 442L1145 485M1015 523L975 558M1015 523L1055 558M1145 523L1105 558M1145 523L1185 558" fill="none" stroke="#777" stroke-width="2"/>
+  <circle cx="1080" cy="420" r="25" fill="#744b91"/>
+  <circle cx="1015" cy="500" r="23" fill="#d9c7e8" stroke="#744b91" stroke-width="2"/>
+  <circle cx="1145" cy="500" r="23" fill="#d9c7e8" stroke="#744b91" stroke-width="2"/>
+  <circle cx="975" cy="570" r="18" fill="#744b91"/>
+  <circle cx="1055" cy="570" r="18" fill="#744b91"/>
+  <circle cx="1105" cy="570" r="18" fill="#744b91"/>
+  <circle cx="1185" cy="570" r="18" fill="#744b91"/>
+  <text x="1080" y="426" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="white">root</text>
+  <text x="1015" y="506" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#444">node</text>
+  <text x="1145" y="506" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#444">node</text>
+  <text x="1235" y="415" font-family="sans-serif" font-size="14" font-weight="bold" fill="#444">Typical thresholds:</text>
+  <text x="1235" y="442" font-family="sans-serif" font-size="14" fill="#444">• treeify near 8</text>
+  <text x="1235" y="469" font-family="sans-serif" font-size="14" fill="#444">• capacity at least 64</text>
+  <text x="1235" y="496" font-family="sans-serif" font-size="14" fill="#444">• untreeify near 6</text>
+  <text x="1235" y="535" font-family="sans-serif" font-size="13" fill="#666">Implementation details,</text>
+  <text x="1235" y="557" font-family="sans-serif" font-size="13" fill="#666">not API guarantees.</text>
+
+  <!-- Operation summaries -->
+  <rect x="40" y="665" width="440" height="245" rx="7" fill="#eef8ef" stroke="#4d8758" stroke-width="2"/>
+  <text x="65" y="704" font-family="sans-serif" font-size="21" font-weight="bold" fill="#35623e">1. Retrieval</text>
+  <rect x="75" y="735" width="110" height="52" rx="4" fill="white" stroke="#4d8758"/>
+  <rect x="210" y="735" width="110" height="52" rx="4" fill="white" stroke="#4d8758"/>
+  <rect x="345" y="735" width="100" height="52" rx="4" fill="white" stroke="#4d8758"/>
+  <text x="130" y="767" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">get(key)</text>
+  <text x="265" y="758" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">read bin</text>
+  <text x="265" y="777" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">head</text>
+  <text x="395" y="758" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">traverse</text>
+  <text x="395" y="777" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">list/tree</text>
+  <path d="M191 761H201" fill="none" stroke="#555" stroke-width="2"/>
+  <polygon points="207,761 200,757 200,765" fill="#555"/>
+  <path d="M326 761H336" fill="none" stroke="#555" stroke-width="2"/>
+  <polygon points="342,761 335,757 335,765" fill="#555"/>
+  <text x="260" y="825" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#35623e">Generally no locking</text>
+  <text x="260" y="852" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">Can overlap put, remove, and resize</text>
+  <text x="260" y="878" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">Uses safely published and volatile node state</text>
+
+  <rect x="530" y="665" width="440" height="245" rx="7" fill="#e8f1fb" stroke="#2f6fad" stroke-width="2"/>
+  <text x="555" y="704" font-family="sans-serif" font-size="21" font-weight="bold" fill="#1d4f82">2. Empty-bin insertion</text>
+  <rect x="565" y="735" width="115" height="52" rx="4" fill="white" stroke="#2f6fad"/>
+  <rect x="710" y="735" width="120" height="52" rx="4" fill="white" stroke="#2f6fad"/>
+  <rect x="860" y="735" width="75" height="52" rx="4" fill="white" stroke="#2f6fad"/>
+  <text x="622" y="758" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">observe</text>
+  <text x="622" y="777" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">empty slot</text>
+  <text x="770" y="758" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">CAS null →</text>
+  <text x="770" y="777" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">new node</text>
+  <text x="897" y="767" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#333">retry</text>
+  <path d="M686 761H700" fill="none" stroke="#555" stroke-width="2"/>
+  <polygon points="707,761 699,756.5 699,765.5" fill="#555"/>
+  <path d="M836 761H850" fill="none" stroke="#555" stroke-width="2"/>
+  <polygon points="857,761 849,756.5 849,765.5" fill="#555"/>
+  <text x="750" y="825" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#1d4f82">CAS fast path</text>
+  <text x="750" y="852" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">Successful insertion needs no bin monitor</text>
+  <text x="750" y="878" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">A losing thread observes state and retries</text>
+
+  <rect x="1020" y="665" width="440" height="245" rx="7" fill="#fff7df" stroke="#b88b22" stroke-width="2"/>
+  <text x="1045" y="704" font-family="sans-serif" font-size="21" font-weight="bold" fill="#6b500f">3. Occupied-bin update</text>
+  <rect x="1055" y="735" width="110" height="52" rx="4" fill="white" stroke="#b88b22"/>
+  <rect x="1190" y="735" width="110" height="52" rx="4" fill="white" stroke="#b88b22"/>
+  <rect x="1325" y="735" width="100" height="52" rx="4" fill="white" stroke="#b88b22"/>
+  <text x="1110" y="758" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">coordinate</text>
+  <text x="1110" y="777" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">on bin head</text>
+  <text x="1245" y="758" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">validate</text>
+  <text x="1245" y="777" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">and update</text>
+  <text x="1375" y="758" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">publish</text>
+  <text x="1375" y="777" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">result</text>
+  <path d="M1171 761H1181" fill="none" stroke="#555" stroke-width="2"/>
+  <polygon points="1187,761 1180,757 1180,765" fill="#555"/>
+  <path d="M1306 761H1316" fill="none" stroke="#555" stroke-width="2"/>
+  <polygon points="1322,761 1315,757 1315,765" fill="#555"/>
+  <text x="1240" y="825" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#6b500f">Fine-grained coordination</text>
+  <text x="1240" y="852" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">Other updates in this bin can wait</text>
+  <text x="1240" y="878" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">Updates in unrelated bins can continue</text>
+
+  <!-- Footer -->
+  <text x="750" y="943" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#555">Simplified implementation model — exact internals are not part of the public API.</text>
+</svg>

@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="950" viewBox="0 0 1500 950" role="img" aria-labelledby="title description">
+  <title id="title">ConcurrentHashMap cooperative resizing</title>
+  <desc id="description">During a resize, several threads can claim ranges of old bins and transfer them into a table with double capacity. Transferred old bins contain forwarding nodes, and operations encountering one continue in the new table.</desc>
+
+  <!-- Background and title -->
+  <rect width="1500" height="950" fill="white"/>
+  <text x="750" y="52" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="bold" fill="black">ConcurrentHashMap cooperative resizing</text>
+  <text x="750" y="84" text-anchor="middle" font-family="sans-serif" font-size="19" fill="#444">Multiple threads transfer disjoint bin ranges; retrievals are not frozen behind one global lock</text>
+
+  <!-- Resize overview -->
+  <rect x="40" y="115" width="1420" height="440" rx="7" fill="#fafafa" stroke="#777" stroke-width="2"/>
+  <text x="65" y="152" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">During transfer</text>
+  <text x="1435" y="152" text-anchor="end" font-family="sans-serif" font-size="16" fill="#555">old capacity 8 → new capacity 16</text>
+
+  <!-- Old table: eight equally sized bins -->
+  <text x="90" y="187" font-family="sans-serif" font-size="18" font-weight="bold" fill="#444">old table</text>
+  <rect x="90" y="200" width="165" height="65" fill="#fff7df" stroke="#777" stroke-width="2"/>
+  <rect x="255" y="200" width="165" height="65" fill="#fff7df" stroke="#777" stroke-width="2"/>
+  <rect x="420" y="200" width="165" height="65" fill="#e8f1fb" stroke="#777" stroke-width="2"/>
+  <rect x="585" y="200" width="165" height="65" fill="#e8f1fb" stroke="#777" stroke-width="2"/>
+  <rect x="750" y="200" width="165" height="65" fill="#e8f1fb" stroke="#777" stroke-width="2"/>
+  <rect x="915" y="200" width="165" height="65" fill="#f3edf8" stroke="#777" stroke-width="2"/>
+  <rect x="1080" y="200" width="165" height="65" fill="#f3edf8" stroke="#777" stroke-width="2"/>
+  <rect x="1245" y="200" width="165" height="65" fill="#f3edf8" stroke="#777" stroke-width="2"/>
+  <text x="172" y="227" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#6b500f">[0] bin</text>
+  <text x="172" y="250" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">not transferred</text>
+  <text x="337" y="227" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#6b500f">[1] bin</text>
+  <text x="337" y="250" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">not transferred</text>
+  <text x="502" y="227" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#1d4f82">[2] ForwardingNode</text>
+  <text x="502" y="250" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">points to nextTable</text>
+  <text x="667" y="227" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#1d4f82">[3] ForwardingNode</text>
+  <text x="667" y="250" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">points to nextTable</text>
+  <text x="832" y="227" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#1d4f82">[4] ForwardingNode</text>
+  <text x="832" y="250" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">points to nextTable</text>
+  <text x="997" y="227" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#65417d">[5] ForwardingNode</text>
+  <text x="997" y="250" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">points to nextTable</text>
+  <text x="1162" y="227" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#65417d">[6] ForwardingNode</text>
+  <text x="1162" y="250" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">points to nextTable</text>
+  <text x="1327" y="227" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#65417d">[7] ForwardingNode</text>
+  <text x="1327" y="250" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">points to nextTable</text>
+
+  <!-- Worker range claims -->
+  <rect x="100" y="300" width="350" height="72" rx="5" fill="#fff7df" stroke="#b88b22" stroke-width="2"/>
+  <rect x="575" y="300" width="350" height="72" rx="5" fill="#e8f1fb" stroke="#2f6fad" stroke-width="2"/>
+  <rect x="1050" y="300" width="350" height="72" rx="5" fill="#f3edf8" stroke="#744b91" stroke-width="2"/>
+  <text x="275" y="329" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#6b500f">Thread C claims [1..0]</text>
+  <text x="275" y="353" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">still transferring these bins</text>
+  <text x="750" y="329" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#1d4f82">Thread B claimed [4..2]</text>
+  <text x="750" y="353" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">range has been transferred</text>
+  <text x="1225" y="329" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#65417d">Thread A claimed [7..5]</text>
+  <text x="1225" y="353" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">range has been transferred</text>
+
+  <!-- Down arrows from workers to destination table -->
+  <path d="M275 378V395" fill="none" stroke="#b88b22" stroke-width="3"/>
+  <polygon points="275,409 268,394 282,394" fill="#b88b22"/>
+  <path d="M750 378V395" fill="none" stroke="#2f6fad" stroke-width="3"/>
+  <polygon points="750,409 743,394 757,394" fill="#2f6fad"/>
+  <path d="M1225 378V395" fill="none" stroke="#744b91" stroke-width="3"/>
+  <polygon points="1225,409 1218,394 1232,394" fill="#744b91"/>
+
+  <!-- New table: sixteen bins -->
+  <text x="90" y="431" font-family="sans-serif" font-size="18" font-weight="bold" fill="#444">nextTable</text>
+  <rect x="90" y="445" width="82.5" height="65" fill="#fff7df" stroke="#777"/>
+  <rect x="172.5" y="445" width="82.5" height="65" fill="#fff7df" stroke="#777"/>
+  <rect x="255" y="445" width="82.5" height="65" fill="#e8f1fb" stroke="#777"/>
+  <rect x="337.5" y="445" width="82.5" height="65" fill="#e8f1fb" stroke="#777"/>
+  <rect x="420" y="445" width="82.5" height="65" fill="#e8f1fb" stroke="#777"/>
+  <rect x="502.5" y="445" width="82.5" height="65" fill="#f3edf8" stroke="#777"/>
+  <rect x="585" y="445" width="82.5" height="65" fill="#f3edf8" stroke="#777"/>
+  <rect x="667.5" y="445" width="82.5" height="65" fill="#f3edf8" stroke="#777"/>
+  <rect x="750" y="445" width="82.5" height="65" fill="#fff7df" stroke="#777"/>
+  <rect x="832.5" y="445" width="82.5" height="65" fill="#fff7df" stroke="#777"/>
+  <rect x="915" y="445" width="82.5" height="65" fill="#e8f1fb" stroke="#777"/>
+  <rect x="997.5" y="445" width="82.5" height="65" fill="#e8f1fb" stroke="#777"/>
+  <rect x="1080" y="445" width="82.5" height="65" fill="#e8f1fb" stroke="#777"/>
+  <rect x="1162.5" y="445" width="82.5" height="65" fill="#f3edf8" stroke="#777"/>
+  <rect x="1245" y="445" width="82.5" height="65" fill="#f3edf8" stroke="#777"/>
+  <rect x="1327.5" y="445" width="82.5" height="65" fill="#f3edf8" stroke="#777"/>
+  <text x="131" y="473" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#444">[0]</text>
+  <text x="214" y="473" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#444">[1]</text>
+  <text x="296" y="473" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#444">[2]</text>
+  <text x="379" y="473" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#444">[3]</text>
+  <text x="461" y="473" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#444">[4]</text>
+  <text x="544" y="473" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#444">[5]</text>
+  <text x="626" y="473" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#444">[6]</text>
+  <text x="709" y="473" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#444">[7]</text>
+  <text x="791" y="473" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#444">[8]</text>
+  <text x="874" y="473" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#444">[9]</text>
+  <text x="956" y="473" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#444">[10]</text>
+  <text x="1039" y="473" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#444">[11]</text>
+  <text x="1121" y="473" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#444">[12]</text>
+  <text x="1204" y="473" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#444">[13]</text>
+  <text x="1286" y="473" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#444">[14]</text>
+  <text x="1369" y="473" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#444">[15]</text>
+  <text x="131" y="496" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#666">pending</text>
+  <text x="214" y="496" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#666">pending</text>
+  <text x="296" y="496" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1d4f82">ready</text>
+  <text x="379" y="496" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1d4f82">ready</text>
+  <text x="461" y="496" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1d4f82">ready</text>
+  <text x="544" y="496" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#65417d">ready</text>
+  <text x="626" y="496" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#65417d">ready</text>
+  <text x="709" y="496" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#65417d">ready</text>
+  <text x="791" y="496" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#666">pending</text>
+  <text x="874" y="496" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#666">pending</text>
+  <text x="956" y="496" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1d4f82">ready</text>
+  <text x="1039" y="496" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1d4f82">ready</text>
+  <text x="1121" y="496" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#1d4f82">ready</text>
+  <text x="1204" y="496" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#65417d">ready</text>
+  <text x="1286" y="496" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#65417d">ready</text>
+  <text x="1369" y="496" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#65417d">ready</text>
+  <text x="750" y="537" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">Each old bin splits between the same index and that index plus oldCapacity.</text>
+
+  <!-- One-bin split example -->
+  <rect x="40" y="585" width="1420" height="185" rx="7" fill="white" stroke="#777" stroke-width="2"/>
+  <text x="65" y="622" font-family="sans-serif" font-size="21" font-weight="bold" fill="black">One transferred bin</text>
+  <text x="1435" y="622" text-anchor="end" font-family="sans-serif" font-size="15" fill="#555">oldCapacity = 8, so the second destination is 3 + 8 = 11</text>
+
+  <rect x="90" y="650" width="260" height="78" rx="5" fill="#f2f2f2" stroke="#777" stroke-width="2"/>
+  <text x="220" y="679" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#444">old bin [3]</text>
+  <text x="220" y="705" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">A → B → C → D</text>
+
+  <rect x="555" y="640" width="330" height="52" rx="4" fill="#e8f1fb" stroke="#2f6fad"/>
+  <rect x="555" y="708" width="330" height="52" rx="4" fill="#f3edf8" stroke="#744b91"/>
+  <text x="720" y="672" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#1d4f82">new bin [3]: keys whose new hash bit is 0</text>
+  <text x="720" y="740" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#65417d">new bin [11]: keys whose new hash bit is 1</text>
+
+  <!-- Split arrows branch before their separate heads. -->
+  <path d="M356 689H445L525 666H538" fill="none" stroke="#2f6fad" stroke-width="3"/>
+  <polygon points="552,666 537,659 537,673" fill="#2f6fad"/>
+  <path d="M445 689L525 734H538" fill="none" stroke="#744b91" stroke-width="3"/>
+  <polygon points="552,734 537,727 537,741" fill="#744b91"/>
+
+  <rect x="1050" y="650" width="320" height="78" rx="5" fill="#fff7df" stroke="#b88b22" stroke-width="2"/>
+  <text x="1210" y="679" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#6b500f">old bin [3] becomes ForwardingNode</text>
+  <text x="1210" y="705" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">operations follow it to nextTable</text>
+  <path d="M891 689H1032" fill="none" stroke="#b88b22" stroke-width="3"/>
+  <polygon points="1047,689 1031,681.5 1031,696.5" fill="#b88b22"/>
+
+  <!-- Consequences -->
+  <rect x="40" y="800" width="440" height="105" rx="6" fill="#eef8ef" stroke="#4d8758"/>
+  <rect x="530" y="800" width="440" height="105" rx="6" fill="#e8f1fb" stroke="#2f6fad"/>
+  <rect x="1020" y="800" width="440" height="105" rx="6" fill="#fff7df" stroke="#b88b22"/>
+  <text x="260" y="833" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#35623e">Reads continue</text>
+  <text x="260" y="859" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">Traversals can move between old and new tables.</text>
+  <text x="260" y="883" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">No whole-map read lock is required.</text>
+  <text x="750" y="833" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#1d4f82">Writers can help</text>
+  <text x="750" y="859" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">Threads claim disjoint ranges through transferIndex.</text>
+  <text x="750" y="883" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">Cooperation shortens aggregate resize time.</text>
+  <text x="1240" y="833" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#6b500f">Resizing still costs work</text>
+  <text x="1240" y="859" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">Bin transfer consumes CPU and may affect latency.</text>
+  <text x="1240" y="883" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">Use initialCapacity when size is predictable.</text>
+
+  <!-- Footer -->
+  <text x="750" y="935" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#555">Simplified implementation model — colors show claimed ranges, not permanent ownership.</text>
+</svg>

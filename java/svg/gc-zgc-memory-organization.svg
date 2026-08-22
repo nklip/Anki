@@ -1,0 +1,191 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1080" viewBox="0 0 1500 1080" role="img" aria-labelledby="title description">
+  <title id="title">ZGC memory organization in JDK 24 and later</title>
+  <desc id="description">A diagram showing the ZGC heap as dynamic young and old logical generations made from ZPages, remembered old-to-young references, relocation between pages, and the difference between reserved virtual address space, maximum usable heap capacity, and committed physical memory.</desc>
+
+  <!-- Arrowheads -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0L10 4L0 8Z" fill="#555"/>
+    </marker>
+    <marker id="purple-arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0L10 4L0 8Z" fill="#744b91"/>
+    </marker>
+  </defs>
+
+  <!-- Background and title -->
+  <rect width="1500" height="1080" fill="white"/>
+  <text x="750" y="55" text-anchor="middle" font-family="sans-serif" font-size="38" font-weight="bold" fill="black">ZGC memory organization</text>
+  <text x="750" y="91" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#444">JDK 24+: generational-only, region-based, and dynamically sized</text>
+
+  <!-- Logical ZGC heap -->
+  <rect x="40" y="120" width="1420" height="700" rx="8" fill="white" stroke="#555" stroke-width="2" stroke-dasharray="9 7"/>
+  <text x="65" y="157" font-family="sans-serif" font-size="23" font-weight="bold" fill="black">Logical ZGC heap</text>
+  <text x="265" y="157" font-family="sans-serif" font-size="18" fill="#555">Generations are sets of pages; their sizes and page locations adapt to the workload.</text>
+
+  <!-- Young generation -->
+  <rect x="70" y="180" width="780" height="600" rx="6" fill="#eef5ff" stroke="#2f6fad" stroke-width="2"/>
+  <rect x="70" y="180" width="780" height="60" rx="6" fill="#2f6fad"/>
+  <rect x="70" y="228" width="780" height="12" fill="#2f6fad"/>
+  <text x="95" y="218" font-family="sans-serif" font-size="27" font-weight="bold" fill="white">Young generation</text>
+  <text x="600" y="216" font-family="sans-serif" font-size="17" fill="white">new and surviving objects</text>
+
+  <!-- Young allocation page -->
+  <rect x="100" y="270" width="215" height="155" rx="4" fill="white" stroke="#2f6fad" stroke-width="2"/>
+  <text x="118" y="299" font-family="sans-serif" font-size="20" font-weight="bold" fill="black">Allocation page</text>
+  <g fill="#6b9dd1" stroke="#2f6fad" stroke-width="1">
+    <rect x="118" y="321" width="34" height="31"/>
+    <rect x="158" y="321" width="51" height="31"/>
+    <rect x="215" y="321" width="31" height="31"/>
+    <rect x="252" y="321" width="45" height="31"/>
+    <rect x="118" y="359" width="56" height="31"/>
+    <rect x="180" y="359" width="40" height="31"/>
+  </g>
+  <rect x="226" y="359" width="71" height="31" fill="#f2f2f2" stroke="#aaa" stroke-width="1" stroke-dasharray="5 4"/>
+  <text x="118" y="414" font-family="sans-serif" font-size="16" fill="#444">fast allocation into free space</text>
+
+  <!-- Young survivor page -->
+  <rect x="350" y="270" width="215" height="155" rx="4" fill="white" stroke="#2f6fad" stroke-width="2"/>
+  <text x="368" y="299" font-family="sans-serif" font-size="20" font-weight="bold" fill="black">Survivor page</text>
+  <g fill="#66a56f" stroke="#3c7c50" stroke-width="1">
+    <rect x="368" y="321" width="42" height="31"/>
+    <rect x="416" y="321" width="61" height="31"/>
+    <rect x="483" y="321" width="29" height="31"/>
+    <rect x="368" y="359" width="55" height="31"/>
+  </g>
+  <g fill="#d5d5d5" stroke="#999" stroke-width="1">
+    <rect x="518" y="321" width="29" height="31"/>
+    <rect x="429" y="359" width="52" height="31"/>
+    <rect x="487" y="359" width="60" height="31"/>
+  </g>
+  <text x="368" y="405" font-family="sans-serif" font-size="15" fill="#444">live objects age;</text>
+  <text x="368" y="421" font-family="sans-serif" font-size="15" fill="#444">dead space appears</text>
+
+  <!-- Dense young page -->
+  <rect x="600" y="270" width="220" height="155" rx="4" fill="white" stroke="#2f6fad" stroke-width="2"/>
+  <text x="618" y="299" font-family="sans-serif" font-size="20" font-weight="bold" fill="black">Dense page</text>
+  <g fill="#66a56f" stroke="#3c7c50" stroke-width="1">
+    <rect x="618" y="321" width="46" height="31"/>
+    <rect x="670" y="321" width="60" height="31"/>
+    <rect x="736" y="321" width="66" height="31"/>
+    <rect x="618" y="359" width="57" height="31"/>
+    <rect x="681" y="359" width="53" height="31"/>
+    <rect x="740" y="359" width="62" height="31"/>
+  </g>
+  <text x="618" y="405" font-family="sans-serif" font-size="15" fill="#444">may age in place</text>
+  <text x="618" y="421" font-family="sans-serif" font-size="15" fill="#444">or be promoted</text>
+
+  <!-- Relocation example inside the young generation -->
+  <text x="100" y="469" font-family="sans-serif" font-size="20" font-weight="bold" fill="black">Sparse selected page</text>
+  <rect x="100" y="485" width="285" height="155" rx="4" fill="white" stroke="#777" stroke-width="2"/>
+  <g stroke-width="1">
+    <rect x="120" y="515" width="53" height="38" fill="#66a56f" stroke="#3c7c50"/>
+    <rect x="179" y="515" width="58" height="38" fill="#d5d5d5" stroke="#999"/>
+    <rect x="243" y="515" width="46" height="38" fill="#d5d5d5" stroke="#999"/>
+    <rect x="295" y="515" width="70" height="38" fill="#66a56f" stroke="#3c7c50"/>
+    <rect x="120" y="562" width="67" height="38" fill="#d5d5d5" stroke="#999"/>
+    <rect x="193" y="562" width="41" height="38" fill="#66a56f" stroke="#3c7c50"/>
+    <rect x="240" y="562" width="125" height="38" fill="#d5d5d5" stroke="#999"/>
+  </g>
+  <text x="120" y="625" font-family="sans-serif" font-size="16" fill="#444">green = live; gray = reclaimable</text>
+
+  <path d="M397 561H491" fill="none" stroke="#555" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="405" y="545" font-family="sans-serif" font-size="16" fill="#444">relocate live</text>
+
+  <text x="510" y="469" font-family="sans-serif" font-size="20" font-weight="bold" fill="black">Target / reusable page</text>
+  <rect x="510" y="485" width="290" height="155" rx="4" fill="white" stroke="#777" stroke-width="2"/>
+  <g fill="#66a56f" stroke="#3c7c50" stroke-width="1">
+    <rect x="530" y="515" width="53" height="38"/>
+    <rect x="589" y="515" width="70" height="38"/>
+    <rect x="665" y="515" width="41" height="38"/>
+  </g>
+  <rect x="712" y="515" width="68" height="38" fill="#f2f2f2" stroke="#aaa" stroke-width="1" stroke-dasharray="5 4"/>
+  <rect x="530" y="562" width="250" height="38" fill="#f2f2f2" stroke="#aaa" stroke-width="1" stroke-dasharray="5 4"/>
+  <text x="530" y="616" font-family="sans-serif" font-size="15" fill="#444">evacuated source page becomes</text>
+  <text x="530" y="634" font-family="sans-serif" font-size="15" fill="#444">reusable</text>
+
+  <!-- Young-generation lifecycle -->
+  <path d="M190 682H716" fill="none" stroke="#2f6fad" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="205" y="714" font-family="sans-serif" font-size="18" fill="#2f6fad">allocate → survive → age in place, relocate, or promote</text>
+
+  <!-- Old generation -->
+  <rect x="890" y="180" width="540" height="600" rx="6" fill="#fff5eb" stroke="#a65f22" stroke-width="2"/>
+  <rect x="890" y="180" width="540" height="60" rx="6" fill="#a65f22"/>
+  <rect x="890" y="228" width="540" height="12" fill="#a65f22"/>
+  <text x="915" y="218" font-family="sans-serif" font-size="27" font-weight="bold" fill="white">Old generation</text>
+  <text x="1190" y="216" font-family="sans-serif" font-size="18" fill="white">long-lived objects</text>
+
+  <!-- Old pages -->
+  <rect x="925" y="270" width="205" height="170" rx="4" fill="white" stroke="#a65f22" stroke-width="2"/>
+  <text x="943" y="299" font-family="sans-serif" font-size="19" font-weight="bold" fill="black">Promoted page</text>
+  <g fill="#d28b49" stroke="#a65f22" stroke-width="1">
+    <rect x="943" y="322" width="43" height="34"/>
+    <rect x="992" y="322" width="55" height="34"/>
+    <rect x="1053" y="322" width="58" height="34"/>
+    <rect x="943" y="363" width="72" height="34"/>
+    <rect x="1021" y="363" width="45" height="34"/>
+  </g>
+  <rect x="1072" y="363" width="39" height="34" fill="#f2f2f2" stroke="#aaa" stroke-dasharray="5 4"/>
+  <text x="943" y="425" font-family="sans-serif" font-size="16" fill="#444">survived young GCs</text>
+
+  <rect x="1160" y="270" width="235" height="170" rx="4" fill="white" stroke="#a65f22" stroke-width="2"/>
+  <text x="1178" y="299" font-family="sans-serif" font-size="19" font-weight="bold" fill="black">Long-lived page</text>
+  <g fill="#d28b49" stroke="#a65f22" stroke-width="1">
+    <rect x="1178" y="322" width="58" height="34"/>
+    <rect x="1242" y="322" width="49" height="34"/>
+    <rect x="1297" y="322" width="80" height="34"/>
+    <rect x="1178" y="363" width="72" height="34"/>
+    <rect x="1256" y="363" width="56" height="34"/>
+    <rect x="1318" y="363" width="59" height="34"/>
+  </g>
+  <text x="1178" y="425" font-family="sans-serif" font-size="16" fill="#444">collected less frequently</text>
+
+  <!-- Cross-generation reference and remembered set -->
+  <path d="M925 550C882 550 870 515 870 470C870 420 820 390 770 370" fill="none" stroke="#744b91" stroke-width="3" marker-end="url(#purple-arrow)"/>
+  <text x="927" y="478" font-family="sans-serif" font-size="17" font-weight="bold" fill="#744b91">old → young reference</text>
+
+  <rect x="925" y="500" width="470" height="155" rx="4" fill="white" stroke="#744b91" stroke-width="2"/>
+  <text x="945" y="532" font-family="sans-serif" font-size="20" font-weight="bold" fill="#744b91">Remembered set</text>
+  <text x="945" y="562" font-family="sans-serif" font-size="17" fill="black">Precise old-field locations that may point to young objects</text>
+  <rect x="945" y="582" width="200" height="30" fill="#e8dbf0" stroke="#744b91"/>
+  <rect x="1160" y="582" width="200" height="30" fill="#f4ecf8" stroke="#744b91"/>
+  <text x="1009" y="603" font-family="sans-serif" font-size="15" fill="#4b2f5d">active bitmap</text>
+  <text x="1209" y="603" font-family="sans-serif" font-size="15" fill="#4b2f5d">GC bitmap</text>
+  <path d="M1148 597H1157" stroke="#744b91" stroke-width="2" marker-end="url(#purple-arrow)"/>
+  <text x="945" y="639" font-family="sans-serif" font-size="16" fill="#444">bitmaps swap at the start of a young collection</text>
+
+  <!-- Old-generation lifecycle -->
+  <path d="M975 700H1345" fill="none" stroke="#a65f22" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="987" y="732" font-family="sans-serif" font-size="18" fill="#a65f22">promote → retain → mark and compact concurrently</text>
+
+  <!-- Virtual reservation and physical commitment -->
+  <rect x="40" y="845" width="1420" height="170" rx="6" fill="#fafafa" stroke="#777" stroke-width="2"/>
+  <text x="65" y="882" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">Virtual reservation and physical commitment</text>
+  <text x="65" y="912" font-family="sans-serif" font-size="17" fill="#555">-Xmx bounds usable heap capacity; ZGC may reserve a larger virtual range and commits backing memory page by page.</text>
+
+  <text x="65" y="951" font-family="sans-serif" font-size="17" font-weight="bold" fill="black">Reserved virtual</text>
+  <text x="65" y="973" font-family="sans-serif" font-size="17" font-weight="bold" fill="black">address range</text>
+  <rect x="260" y="934" width="1170" height="52" fill="white" stroke="#555" stroke-width="2"/>
+  <rect x="260" y="934" width="210" height="52" fill="#bcd4ee" stroke="#555"/>
+  <rect x="470" y="934" width="145" height="52" fill="#eee" stroke="#555"/>
+  <rect x="615" y="934" width="220" height="52" fill="#efc89f" stroke="#555"/>
+  <rect x="835" y="934" width="170" height="52" fill="#eee" stroke="#555"/>
+  <rect x="1005" y="934" width="195" height="52" fill="#bcd4ee" stroke="#555"/>
+  <rect x="1200" y="934" width="230" height="52" fill="#eee" stroke="#555"/>
+  <text x="312" y="967" font-family="sans-serif" font-size="16" fill="#183c63">committed page</text>
+  <text x="487" y="967" font-family="sans-serif" font-size="16" fill="#555">uncommitted</text>
+  <text x="665" y="967" font-family="sans-serif" font-size="16" fill="#6b3510">committed page</text>
+  <text x="853" y="967" font-family="sans-serif" font-size="16" fill="#555">uncommitted</text>
+  <text x="1040" y="967" font-family="sans-serif" font-size="16" fill="#183c63">committed page</text>
+  <text x="1242" y="967" font-family="sans-serif" font-size="16" fill="#555">free reservation</text>
+
+  <!-- Legend and note -->
+  <rect x="65" y="1036" width="18" height="18" fill="#6b9dd1" stroke="#2f6fad"/>
+  <text x="92" y="1051" font-family="sans-serif" font-size="16" fill="#444">new object</text>
+  <rect x="205" y="1036" width="18" height="18" fill="#66a56f" stroke="#3c7c50"/>
+  <text x="232" y="1051" font-family="sans-serif" font-size="16" fill="#444">live young object</text>
+  <rect x="405" y="1036" width="18" height="18" fill="#d28b49" stroke="#a65f22"/>
+  <text x="432" y="1051" font-family="sans-serif" font-size="16" fill="#444">old object</text>
+  <rect x="535" y="1036" width="18" height="18" fill="#d5d5d5" stroke="#999"/>
+  <text x="562" y="1051" font-family="sans-serif" font-size="16" fill="#444">dead / reclaimable</text>
+  <text x="1450" y="1052" text-anchor="end" font-family="sans-serif" font-size="16" fill="#555">Logical model — page counts and positions are illustrative.</text>
+</svg>

@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="990" viewBox="0 0 1500 990" role="img" aria-labelledby="title description">
+  <title id="title">Timeline comparison of obstruction-free, lock-free, and wait-free algorithms</title>
+  <desc id="description">Three panels show obstruction-free operations colliding until one runs alone, lock-free operations making system progress while one thread may starve, and wait-free operations all completing within bounded steps.</desc>
+
+  <!-- Background and title -->
+  <rect width="1500" height="990" fill="white"/>
+  <text x="750" y="54" text-anchor="middle" font-family="sans-serif" font-size="38" font-weight="bold" fill="#111">Who is guaranteed to finish?</text>
+  <text x="750" y="90" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#444">A conceptual execution timeline under contention</text>
+
+  <!-- Panel 1: obstruction-free -->
+  <rect x="45" y="120" width="1410" height="250" rx="9" fill="#fff9f0" stroke="#bd7823" stroke-width="3"/>
+  <rect x="45" y="120" width="300" height="250" rx="9" fill="#bd7823"/>
+  <rect x="333" y="120" width="12" height="250" fill="#bd7823"/>
+  <text x="195" y="170" text-anchor="middle" font-family="sans-serif" font-size="27" font-weight="bold" fill="white">OBSTRUCTION-FREE</text>
+  <text x="195" y="208" text-anchor="middle" font-family="sans-serif" font-size="17" fill="white">needs an isolation window</text>
+  <text x="195" y="262" text-anchor="middle" font-family="sans-serif" font-size="16" fill="white">ongoing interference:</text>
+  <text x="195" y="289" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="white">no completion required</text>
+  <text x="195" y="330" text-anchor="middle" font-family="sans-serif" font-size="15" fill="white">weakest guarantee</text>
+
+  <text x="375" y="188" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">T1</text>
+  <text x="375" y="294" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">T2</text>
+  <path d="M420 180H1390" fill="none" stroke="#777" stroke-width="3"/>
+  <polygon points="1412,180 1388,169 1388,191" fill="#777"/>
+  <path d="M420 286H1390" fill="none" stroke="#777" stroke-width="3"/>
+  <polygon points="1412,286 1388,275 1388,297" fill="#777"/>
+
+  <!-- Repeated conflicting attempts -->
+  <rect x="470" y="156" width="110" height="48" rx="5" fill="#fde1dc" stroke="#c63d32" stroke-width="2"/>
+  <rect x="610" y="262" width="110" height="48" rx="5" fill="#fde1dc" stroke="#c63d32" stroke-width="2"/>
+  <rect x="750" y="156" width="110" height="48" rx="5" fill="#fde1dc" stroke="#c63d32" stroke-width="2"/>
+  <rect x="890" y="262" width="110" height="48" rx="5" fill="#fde1dc" stroke="#c63d32" stroke-width="2"/>
+  <text x="525" y="187" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#982b25">restart</text>
+  <text x="665" y="293" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#982b25">restart</text>
+  <text x="805" y="187" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#982b25">restart</text>
+  <text x="945" y="293" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#982b25">restart</text>
+  <line x1="580" y1="147" x2="610" y2="213" stroke="#c63d32" stroke-width="3" stroke-dasharray="6 5"/>
+  <line x1="720" y1="253" x2="750" y2="213" stroke="#c63d32" stroke-width="3" stroke-dasharray="6 5"/>
+  <line x1="860" y1="213" x2="890" y2="253" stroke="#c63d32" stroke-width="3" stroke-dasharray="6 5"/>
+  <text x="740" y="239" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#982b25">interference</text>
+
+  <!-- Isolation window and success -->
+  <rect x="1050" y="140" width="315" height="180" rx="7" fill="#edf8ef" stroke="#43804c" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="1207" y="168" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#315e38">T1 runs alone long enough</text>
+  <rect x="1115" y="196" width="185" height="58" rx="6" fill="#d4edd8" stroke="#43804c" stroke-width="3"/>
+  <text x="1207" y="232" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#315e38">T1 completes ✓</text>
+  <text x="1207" y="290" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#315e38">the guarantee now applies</text>
+
+  <!-- Panel 2: lock-free -->
+  <rect x="45" y="395" width="1410" height="265" rx="9" fill="#f3f8fd" stroke="#356da8" stroke-width="3"/>
+  <rect x="45" y="395" width="300" height="265" rx="9" fill="#356da8"/>
+  <rect x="333" y="395" width="12" height="265" fill="#356da8"/>
+  <text x="195" y="447" text-anchor="middle" font-family="sans-serif" font-size="27" font-weight="bold" fill="white">LOCK-FREE</text>
+  <text x="195" y="485" text-anchor="middle" font-family="sans-serif" font-size="17" fill="white">system-wide progress</text>
+  <text x="195" y="539" text-anchor="middle" font-family="sans-serif" font-size="16" fill="white">some operation finishes,</text>
+  <text x="195" y="566" text-anchor="middle" font-family="sans-serif" font-size="16" fill="white">but not necessarily yours</text>
+  <text x="195" y="615" text-anchor="middle" font-family="sans-serif" font-size="15" fill="white">individual starvation is possible</text>
+
+  <text x="375" y="456" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">T1</text>
+  <text x="375" y="535" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">T2</text>
+  <text x="375" y="614" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">T3</text>
+  <path d="M420 448H1390" fill="none" stroke="#777" stroke-width="3"/>
+  <polygon points="1412,448 1388,437 1388,459" fill="#777"/>
+  <path d="M420 527H1390" fill="none" stroke="#777" stroke-width="3"/>
+  <polygon points="1412,527 1388,516 1388,538" fill="#777"/>
+  <path d="M420 606H1390" fill="none" stroke="#777" stroke-width="3"/>
+  <polygon points="1412,606 1388,595 1388,617" fill="#777"/>
+
+  <!-- T1 repeatedly loses -->
+  <rect x="470" y="424" width="105" height="48" rx="5" fill="#fde1dc" stroke="#c63d32" stroke-width="2"/>
+  <rect x="720" y="424" width="105" height="48" rx="5" fill="#fde1dc" stroke="#c63d32" stroke-width="2"/>
+  <rect x="970" y="424" width="105" height="48" rx="5" fill="#fde1dc" stroke="#c63d32" stroke-width="2"/>
+  <rect x="1220" y="424" width="105" height="48" rx="5" fill="#fde1dc" stroke="#c63d32" stroke-width="2"/>
+  <text x="522" y="455" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#982b25">retry</text>
+  <text x="772" y="455" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#982b25">retry</text>
+  <text x="1022" y="455" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#982b25">retry</text>
+  <text x="1272" y="455" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#982b25">retry</text>
+
+  <!-- Other threads complete -->
+  <rect x="590" y="503" width="145" height="48" rx="5" fill="#d4edd8" stroke="#43804c" stroke-width="2"/>
+  <rect x="1090" y="503" width="145" height="48" rx="5" fill="#d4edd8" stroke="#43804c" stroke-width="2"/>
+  <rect x="840" y="582" width="145" height="48" rx="5" fill="#d4edd8" stroke="#43804c" stroke-width="2"/>
+  <rect x="1340" y="582" width="88" height="48" rx="5" fill="#d4edd8" stroke="#43804c" stroke-width="2"/>
+  <text x="662" y="534" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#315e38">complete ✓</text>
+  <text x="1162" y="534" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#315e38">complete ✓</text>
+  <text x="912" y="613" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#315e38">complete ✓</text>
+  <text x="1384" y="613" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#315e38">done ✓</text>
+
+  <!-- Panel 3: wait-free -->
+  <rect x="45" y="685" width="1410" height="260" rx="9" fill="#f3fbf4" stroke="#43804c" stroke-width="3"/>
+  <rect x="45" y="685" width="300" height="260" rx="9" fill="#43804c"/>
+  <rect x="333" y="685" width="12" height="260" fill="#43804c"/>
+  <text x="195" y="737" text-anchor="middle" font-family="sans-serif" font-size="27" font-weight="bold" fill="white">WAIT-FREE</text>
+  <text x="195" y="775" text-anchor="middle" font-family="sans-serif" font-size="17" fill="white">per-operation progress</text>
+  <text x="195" y="829" text-anchor="middle" font-family="sans-serif" font-size="16" fill="white">each active operation</text>
+  <text x="195" y="856" text-anchor="middle" font-family="sans-serif" font-size="16" fill="white">finishes within its bound</text>
+  <text x="195" y="905" text-anchor="middle" font-family="sans-serif" font-size="15" fill="white">strongest guarantee</text>
+
+  <text x="375" y="746" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">T1</text>
+  <text x="375" y="823" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">T2</text>
+  <text x="375" y="900" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">T3</text>
+  <path d="M420 738H1390" fill="none" stroke="#777" stroke-width="3"/>
+  <polygon points="1412,738 1388,727 1388,749" fill="#777"/>
+  <path d="M420 815H1390" fill="none" stroke="#777" stroke-width="3"/>
+  <polygon points="1412,815 1388,804 1388,826" fill="#777"/>
+  <path d="M420 892H1390" fill="none" stroke="#777" stroke-width="3"/>
+  <polygon points="1412,892 1388,881 1388,903" fill="#777"/>
+
+  <!-- Bounded step blocks -->
+  <rect x="480" y="714" width="360" height="48" rx="5" fill="#d4edd8" stroke="#43804c" stroke-width="2"/>
+  <rect x="590" y="791" width="430" height="48" rx="5" fill="#d4edd8" stroke="#43804c" stroke-width="2"/>
+  <rect x="745" y="868" width="500" height="48" rx="5" fill="#d4edd8" stroke="#43804c" stroke-width="2"/>
+
+  <!-- Internal step divisions -->
+  <line x1="552" y1="714" x2="552" y2="762" stroke="#79a980"/>
+  <line x1="624" y1="714" x2="624" y2="762" stroke="#79a980"/>
+  <line x1="696" y1="714" x2="696" y2="762" stroke="#79a980"/>
+  <line x1="768" y1="714" x2="768" y2="762" stroke="#79a980"/>
+  <line x1="676" y1="791" x2="676" y2="839" stroke="#79a980"/>
+  <line x1="762" y1="791" x2="762" y2="839" stroke="#79a980"/>
+  <line x1="848" y1="791" x2="848" y2="839" stroke="#79a980"/>
+  <line x1="934" y1="791" x2="934" y2="839" stroke="#79a980"/>
+  <line x1="845" y1="868" x2="845" y2="916" stroke="#79a980"/>
+  <line x1="945" y1="868" x2="945" y2="916" stroke="#79a980"/>
+  <line x1="1045" y1="868" x2="1045" y2="916" stroke="#79a980"/>
+  <line x1="1145" y1="868" x2="1145" y2="916" stroke="#79a980"/>
+
+  <text x="660" y="745" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#315e38">bounded work</text>
+  <text x="805" y="822" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#315e38">bounded work, possibly including helping</text>
+  <text x="995" y="899" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#315e38">bounded work</text>
+  <text x="865" y="746" font-family="sans-serif" font-size="21" font-weight="bold" fill="#315e38">✓</text>
+  <text x="1045" y="823" font-family="sans-serif" font-size="21" font-weight="bold" fill="#315e38">✓</text>
+  <text x="1270" y="900" font-family="sans-serif" font-size="21" font-weight="bold" fill="#315e38">✓</text>
+
+  <!-- Bound marker -->
+  <line x1="1325" y1="700" x2="1325" y2="925" stroke="#315e38" stroke-width="3" stroke-dasharray="8 6"/>
+  <text x="1325" y="933" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#315e38">operation bounds</text>
+
+  <!-- Bottom note -->
+  <text x="750" y="975" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">Progress guarantees describe completion, not speed: stronger does not automatically mean faster.</text>
+</svg>

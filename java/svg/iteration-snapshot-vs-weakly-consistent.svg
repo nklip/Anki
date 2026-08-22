@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900" role="img" aria-labelledby="title description">
+  <title id="title">Snapshot and weakly consistent iterators</title>
+  <desc id="description">A CopyOnWriteArrayList iterator retains the old immutable array while a write publishes a new array. A weakly consistent concurrent iterator traverses a live structure and may observe some overlapping updates.</desc>
+
+  <!-- Background and title -->
+  <rect width="1500" height="900" fill="white"/>
+  <text x="750" y="50" text-anchor="middle" font-family="sans-serif" font-size="34" font-weight="bold" fill="black">Two behaviors often called “fail-safe”</text>
+  <text x="750" y="82" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#444">Snapshot iteration and weakly consistent iteration are not the same</text>
+
+  <!-- Snapshot panel -->
+  <rect x="40" y="115" width="690" height="615" rx="8" fill="#eef6fc" stroke="#2f6fad" stroke-width="2"/>
+  <rect x="40" y="115" width="690" height="58" rx="8" fill="#2f6fad"/>
+  <rect x="40" y="159" width="690" height="14" fill="#2f6fad"/>
+  <text x="70" y="153" font-family="sans-serif" font-size="25" font-weight="bold" fill="white">Snapshot: CopyOnWriteArrayList</text>
+
+  <!-- Initial list -->
+  <text x="80" y="216" font-family="sans-serif" font-size="19" font-weight="bold" fill="#1d4f82">At iterator creation</text>
+  <rect x="85" y="245" width="135" height="56" rx="6" fill="white" stroke="#2f6fad" stroke-width="2"/>
+  <text x="152" y="279" text-anchor="middle" font-family="monospace" font-size="17" font-weight="bold" fill="#1d4f82">list ref</text>
+  <path d="M222 273H278" fill="none" stroke="#2f6fad" stroke-width="4"/>
+  <polygon points="294,273 278,264 278,282" fill="#2f6fad"/>
+
+  <rect x="296" y="238" width="105" height="70" rx="5" fill="#dcebf8" stroke="#2f6fad"/>
+  <rect x="401" y="238" width="105" height="70" rx="5" fill="#dcebf8" stroke="#2f6fad"/>
+  <rect x="506" y="238" width="105" height="70" rx="5" fill="#dcebf8" stroke="#2f6fad"/>
+  <text x="348" y="280" text-anchor="middle" font-family="monospace" font-size="20" fill="#1d4f82">A</text>
+  <text x="453" y="280" text-anchor="middle" font-family="monospace" font-size="20" fill="#1d4f82">B</text>
+  <text x="558" y="280" text-anchor="middle" font-family="monospace" font-size="20" fill="#1d4f82">C</text>
+  <text x="645" y="279" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">array v1</text>
+
+  <!-- Iterator snapshot reference -->
+  <rect x="85" y="342" width="205" height="58" rx="6" fill="#eaf3fb" stroke="#2f6fad" stroke-width="2"/>
+  <text x="187" y="367" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1d4f82">iterator snapshot</text>
+  <text x="187" y="389" text-anchor="middle" font-family="monospace" font-size="15" fill="#555">points to array v1</text>
+  <path d="M292 371H332V326" fill="none" stroke="#2f6fad" stroke-width="4"/>
+  <polygon points="332,310 323,326 341,326" fill="#2f6fad"/>
+
+  <!-- Write makes a new array -->
+  <text x="80" y="453" font-family="sans-serif" font-size="19" font-weight="bold" fill="#1d4f82">Another thread calls list.add("D")</text>
+  <rect x="85" y="480" width="135" height="56" rx="6" fill="white" stroke="#4d8758" stroke-width="2"/>
+  <text x="152" y="514" text-anchor="middle" font-family="monospace" font-size="17" font-weight="bold" fill="#35623e">list ref</text>
+  <path d="M222 508H278" fill="none" stroke="#4d8758" stroke-width="4"/>
+  <polygon points="294,508 278,499 278,517" fill="#4d8758"/>
+
+  <rect x="296" y="473" width="90" height="70" rx="5" fill="#edf8ef" stroke="#4d8758"/>
+  <rect x="386" y="473" width="90" height="70" rx="5" fill="#edf8ef" stroke="#4d8758"/>
+  <rect x="476" y="473" width="90" height="70" rx="5" fill="#edf8ef" stroke="#4d8758"/>
+  <rect x="566" y="473" width="90" height="70" rx="5" fill="#edf8ef" stroke="#4d8758"/>
+  <text x="341" y="515" text-anchor="middle" font-family="monospace" font-size="20" fill="#35623e">A</text>
+  <text x="431" y="515" text-anchor="middle" font-family="monospace" font-size="20" fill="#35623e">B</text>
+  <text x="521" y="515" text-anchor="middle" font-family="monospace" font-size="20" fill="#35623e">C</text>
+  <text x="611" y="515" text-anchor="middle" font-family="monospace" font-size="20" fill="#35623e">D</text>
+  <text x="675" y="515" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">v2</text>
+
+  <!-- Outcome -->
+  <rect x="85" y="585" width="570" height="105" rx="7" fill="#dcebf8" stroke="#2f6fad" stroke-width="2"/>
+  <text x="370" y="618" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#1d4f82">Iterator continues over array v1</text>
+  <text x="370" y="649" text-anchor="middle" font-family="monospace" font-size="19" fill="#1d4f82">observes A, B, C — never D</text>
+  <text x="370" y="677" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">No CME; iterator mutation methods are unsupported</text>
+
+  <!-- Weakly consistent panel -->
+  <rect x="770" y="115" width="690" height="615" rx="8" fill="#fff9ed" stroke="#a47a20" stroke-width="2"/>
+  <rect x="770" y="115" width="690" height="58" rx="8" fill="#a47a20"/>
+  <rect x="770" y="159" width="690" height="14" fill="#a47a20"/>
+  <text x="800" y="153" font-family="sans-serif" font-size="25" font-weight="bold" fill="white">Weakly consistent: concurrent collection</text>
+
+  <text x="810" y="216" font-family="sans-serif" font-size="19" font-weight="bold" fill="#6f5214">Iterator traverses the live data structure</text>
+
+  <!-- Live structure -->
+  <rect x="840" y="250" width="135" height="68" rx="6" fill="#fff3cf" stroke="#a47a20" stroke-width="2"/>
+  <rect x="1048" y="250" width="135" height="68" rx="6" fill="#fff3cf" stroke="#a47a20" stroke-width="2"/>
+  <rect x="1256" y="250" width="135" height="68" rx="6" fill="#fff3cf" stroke="#a47a20" stroke-width="2"/>
+  <text x="907" y="291" text-anchor="middle" font-family="monospace" font-size="20" fill="#6f5214">A</text>
+  <text x="1115" y="291" text-anchor="middle" font-family="monospace" font-size="20" fill="#6f5214">B</text>
+  <text x="1323" y="291" text-anchor="middle" font-family="monospace" font-size="20" fill="#6f5214">C</text>
+  <path d="M977 284H1030" fill="none" stroke="#555" stroke-width="4"/>
+  <polygon points="1046,284 1030,275 1030,293" fill="#555"/>
+  <path d="M1185 284H1238" fill="none" stroke="#555" stroke-width="4"/>
+  <polygon points="1254,284 1238,275 1238,293" fill="#555"/>
+
+  <!-- Iterator and writer -->
+  <rect x="840" y="365" width="240" height="74" rx="6" fill="white" stroke="#a47a20" stroke-width="2"/>
+  <text x="960" y="394" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#6f5214">Iterator</text>
+  <text x="960" y="421" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">moves through live nodes/bins</text>
+
+  <rect x="1150" y="365" width="240" height="74" rx="6" fill="white" stroke="#b34a42" stroke-width="2"/>
+  <text x="1270" y="394" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#9b352f">Concurrent writer</text>
+  <text x="1270" y="421" text-anchor="middle" font-family="monospace" font-size="15" fill="#555">add D / remove B</text>
+
+  <!-- Both point to live structure -->
+  <path d="M960 363V342H1055V336" fill="none" stroke="#a47a20" stroke-width="4"/>
+  <polygon points="1055,320 1046,336 1064,336" fill="#a47a20"/>
+  <path d="M1270 363V342H1175V336" fill="none" stroke="#b34a42" stroke-width="4"/>
+  <polygon points="1175,320 1166,336 1184,336" fill="#b34a42"/>
+
+  <!-- Possible observations -->
+  <rect x="825" y="490" width="580" height="200" rx="7" fill="#fff3cf" stroke="#a47a20" stroke-width="2"/>
+  <text x="1115" y="525" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#6f5214">Possible traversal result</text>
+  <rect x="860" y="555" width="135" height="54" rx="5" fill="white" stroke="#a47a20"/>
+  <rect x="1020" y="555" width="190" height="54" rx="5" fill="white" stroke="#a47a20"/>
+  <rect x="1235" y="555" width="135" height="54" rx="5" fill="white" stroke="#a47a20"/>
+  <text x="927" y="588" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#6f5214">sees A</text>
+  <text x="1115" y="588" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#6f5214">may or may not see B</text>
+  <text x="1302" y="588" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#6f5214">may see D</text>
+  <text x="1115" y="642" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#6f5214">No CME, no frozen copy, no exact snapshot</text>
+  <text x="1115" y="672" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">Exact guarantees depend on the particular concurrent collection.</text>
+
+  <!-- Bottom comparison -->
+  <rect x="40" y="770" width="1420" height="92" rx="7" fill="#fafafa" stroke="#777" stroke-width="2"/>
+  <text x="70" y="802" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">Snapshot:</text>
+  <text x="165" y="802" font-family="sans-serif" font-size="16" fill="#555">stable old view; writes copy data; traversal-heavy workloads</text>
+  <text x="760" y="802" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">Weakly consistent:</text>
+  <text x="930" y="802" font-family="sans-serif" font-size="16" fill="#555">live view; cheap concurrent writes; may reflect overlap</text>
+  <text x="750" y="840" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#6f5214">Do not call both behaviors simply “fail-safe” when the distinction matters.</text>
+</svg>

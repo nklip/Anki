@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="480" viewBox="0 0 1100 480" role="img" aria-labelledby="title description">
+  <title id="title">ArrayList memory layout</title>
+  <desc id="description">An ArrayList object points to an Object array whose length is capacity. The size field counts the used positions. Array slots store object references, and unused capacity is not part of the list.</desc>
+
+  <!-- Background and title -->
+  <rect width="1100" height="480" fill="#ffffff"/>
+  <text x="550" y="42" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="bold" fill="#202124">ArrayList: object and backing array</text>
+
+  <!-- ArrayList object -->
+  <rect x="40" y="125" width="215" height="175" rx="8" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <rect x="40" y="125" width="215" height="48" rx="8" fill="#356eb3"/>
+  <rect x="40" y="165" width="215" height="8" fill="#356eb3"/>
+  <text x="147.5" y="156" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#ffffff">ArrayList&lt;String&gt;</text>
+  <text x="60" y="210" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#202124">size = 4</text>
+  <text x="60" y="252" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#202124">elementData</text>
+  <circle cx="222" cy="246" r="5" fill="#356eb3"/>
+
+  <!-- Reference from ArrayList to Object[]; the line ends beneath the arrowhead -->
+  <line x1="227" y1="246" x2="318" y2="246" stroke="#356eb3" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="307,236 329,246 307,256" fill="#356eb3"/>
+
+  <!-- Backing Object[] with capacity 7 -->
+  <text x="672.5" y="92" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="bold" fill="#202124">Object[] elementData — capacity = 7</text>
+
+  <!-- Array indexes -->
+  <g font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6368" text-anchor="middle">
+    <text x="377.5" y="120">0</text>
+    <text x="472.5" y="120">1</text>
+    <text x="567.5" y="120">2</text>
+    <text x="662.5" y="120">3</text>
+    <text x="757.5" y="120">4</text>
+    <text x="852.5" y="120">5</text>
+    <text x="947.5" y="120">6</text>
+  </g>
+
+  <!-- Used slots: positions 0 through size - 1 -->
+  <rect x="330" y="130" width="95" height="90" fill="#e6f4ea" stroke="#34834b" stroke-width="2"/>
+  <rect x="425" y="130" width="95" height="90" fill="#e6f4ea" stroke="#34834b" stroke-width="2"/>
+  <rect x="520" y="130" width="95" height="90" fill="#fff4ce" stroke="#b7791f" stroke-width="2"/>
+  <rect x="615" y="130" width="95" height="90" fill="#e6f4ea" stroke="#34834b" stroke-width="2"/>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#202124" text-anchor="middle">
+    <text x="377.5" y="182">ref A</text>
+    <text x="472.5" y="182">ref B</text>
+    <text x="567.5" y="182">null</text>
+    <text x="662.5" y="182">ref C</text>
+  </g>
+
+  <!-- Unused capacity: positions size through capacity - 1 -->
+  <rect x="710" y="130" width="95" height="90" fill="#f1f3f4" stroke="#9aa0a6" stroke-width="2"/>
+  <rect x="805" y="130" width="95" height="90" fill="#f1f3f4" stroke="#9aa0a6" stroke-width="2"/>
+  <rect x="900" y="130" width="95" height="90" fill="#f1f3f4" stroke="#9aa0a6" stroke-width="2"/>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#6b7280" text-anchor="middle">
+    <text x="757.5" y="177">unused</text>
+    <text x="852.5" y="177">unused</text>
+    <text x="947.5" y="177">unused</text>
+  </g>
+
+  <!-- Dashed size boundary -->
+  <line x1="710" y1="105" x2="710" y2="238" stroke="#d93025" stroke-width="2" stroke-dasharray="7 6"/>
+  <text x="701" y="254" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="bold" fill="#d93025">size boundary</text>
+
+  <!-- Referenced String objects. ArrayList stores references, not inline objects. -->
+  <line x1="377.5" y1="220" x2="377.5" y2="305" stroke="#34834b" stroke-width="3"/>
+  <polygon points="369.5,294 377.5,314 385.5,294" fill="#34834b"/>
+  <line x1="472.5" y1="220" x2="472.5" y2="305" stroke="#34834b" stroke-width="3"/>
+  <polygon points="464.5,294 472.5,314 480.5,294" fill="#34834b"/>
+  <line x1="662.5" y1="220" x2="662.5" y2="305" stroke="#34834b" stroke-width="3"/>
+  <polygon points="654.5,294 662.5,314 670.5,294" fill="#34834b"/>
+
+  <rect x="337.5" y="314" width="80" height="52" rx="6" fill="#ffffff" stroke="#34834b" stroke-width="2"/>
+  <rect x="432.5" y="314" width="80" height="52" rx="6" fill="#ffffff" stroke="#34834b" stroke-width="2"/>
+  <rect x="622.5" y="314" width="80" height="52" rx="6" fill="#ffffff" stroke="#34834b" stroke-width="2"/>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#202124" text-anchor="middle">
+    <text x="377.5" y="346">"Alice"</text>
+    <text x="472.5" y="346">"Bob"</text>
+    <text x="662.5" y="346">"Carol"</text>
+  </g>
+
+  <!-- Legend -->
+  <rect x="330" y="411" width="20" height="20" fill="#e6f4ea" stroke="#34834b"/>
+  <text x="360" y="427" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#202124">position inside size</text>
+  <rect x="555" y="411" width="20" height="20" fill="#fff4ce" stroke="#b7791f"/>
+  <text x="585" y="427" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#202124">valid null element</text>
+  <rect x="770" y="411" width="20" height="20" fill="#f1f3f4" stroke="#9aa0a6"/>
+  <text x="800" y="427" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#202124">unused capacity</text>
+  <text x="550" y="462" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6368">size is the number of list elements; capacity is the backing array length</text>
+</svg>

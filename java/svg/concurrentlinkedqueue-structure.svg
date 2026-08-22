@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="820" viewBox="0 0 1500 820" role="img" aria-labelledby="title description">
+  <title id="title">ConcurrentLinkedQueue internal organization</title>
+  <desc id="description">A FIFO chain of linked nodes with volatile item and next fields. Head and tail are traversal hints and may temporarily point to consumed or non-final nodes.</desc>
+
+  <!-- Background and title -->
+  <rect width="1500" height="820" fill="white"/>
+  <text x="750" y="52" text-anchor="middle" font-family="sans-serif" font-size="34" font-weight="bold" fill="black">ConcurrentLinkedQueue organization</text>
+  <text x="750" y="84" text-anchor="middle" font-family="sans-serif" font-size="19" fill="#444">Unbounded FIFO queue built from singly linked nodes</text>
+
+  <!-- Head and tail references -->
+  <text x="190" y="136" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="bold" fill="#245b91">head</text>
+  <text x="190" y="160" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">volatile traversal hint</text>
+  <path d="M190 171V207" fill="none" stroke="#245b91" stroke-width="4"/>
+  <polygon points="190,225 181,207 199,207" fill="#245b91"/>
+
+  <text x="1190" y="136" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="bold" fill="#245b91">tail</text>
+  <text x="1190" y="160" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">volatile traversal hint</text>
+  <path d="M1190 171V207" fill="none" stroke="#245b91" stroke-width="4"/>
+  <polygon points="1190,225 1181,207 1199,207" fill="#245b91"/>
+
+  <!-- Node 0: consumed/sentinel-like node -->
+  <rect x="80" y="230" width="220" height="128" rx="7" fill="#f1f1f1" stroke="#777" stroke-width="2"/>
+  <line x1="80" y1="271" x2="300" y2="271" stroke="#777" stroke-width="2"/>
+  <line x1="240" y1="271" x2="240" y2="358" stroke="#777" stroke-width="2"/>
+  <text x="190" y="257" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#444">Node</text>
+  <text x="160" y="302" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">volatile item</text>
+  <text x="160" y="334" text-anchor="middle" font-family="monospace" font-size="19" font-weight="bold" fill="#777">null</text>
+  <text x="270" y="302" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">next</text>
+  <text x="190" y="386" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#777">consumed / skipped</text>
+
+  <!-- Node A -->
+  <rect x="400" y="230" width="220" height="128" rx="7" fill="#e8f2fb" stroke="#2f6fad" stroke-width="2"/>
+  <line x1="400" y1="271" x2="620" y2="271" stroke="#2f6fad" stroke-width="2"/>
+  <line x1="560" y1="271" x2="560" y2="358" stroke="#2f6fad" stroke-width="2"/>
+  <text x="510" y="257" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#1d4f82">Node</text>
+  <text x="480" y="302" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">volatile item</text>
+  <text x="480" y="334" text-anchor="middle" font-family="monospace" font-size="24" font-weight="bold" fill="#1d4f82">A</text>
+  <text x="590" y="302" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">next</text>
+  <text x="510" y="386" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#1d4f82">first live element</text>
+
+  <!-- Node B -->
+  <rect x="720" y="230" width="220" height="128" rx="7" fill="#e8f2fb" stroke="#2f6fad" stroke-width="2"/>
+  <line x1="720" y1="271" x2="940" y2="271" stroke="#2f6fad" stroke-width="2"/>
+  <line x1="880" y1="271" x2="880" y2="358" stroke="#2f6fad" stroke-width="2"/>
+  <text x="830" y="257" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#1d4f82">Node</text>
+  <text x="800" y="302" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">volatile item</text>
+  <text x="800" y="334" text-anchor="middle" font-family="monospace" font-size="24" font-weight="bold" fill="#1d4f82">B</text>
+  <text x="910" y="302" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">next</text>
+
+  <!-- Node C -->
+  <rect x="1040" y="230" width="220" height="128" rx="7" fill="#e8f2fb" stroke="#2f6fad" stroke-width="2"/>
+  <line x1="1040" y1="271" x2="1260" y2="271" stroke="#2f6fad" stroke-width="2"/>
+  <line x1="1200" y1="271" x2="1200" y2="358" stroke="#2f6fad" stroke-width="2"/>
+  <text x="1150" y="257" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#1d4f82">Node</text>
+  <text x="1120" y="302" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">volatile item</text>
+  <text x="1120" y="334" text-anchor="middle" font-family="monospace" font-size="24" font-weight="bold" fill="#1d4f82">C</text>
+  <text x="1230" y="302" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">next</text>
+  <text x="1150" y="386" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#1d4f82">last live element</text>
+
+  <!-- Linked-list arrows: shafts stop at the triangle bases -->
+  <path d="M300 316H382" fill="none" stroke="#555" stroke-width="4"/>
+  <polygon points="398,316 382,307 382,325" fill="#555"/>
+  <path d="M620 316H702" fill="none" stroke="#555" stroke-width="4"/>
+  <polygon points="718,316 702,307 702,325" fill="#555"/>
+  <path d="M940 316H1022" fill="none" stroke="#555" stroke-width="4"/>
+  <polygon points="1038,316 1022,307 1022,325" fill="#555"/>
+  <path d="M1260 316H1340" fill="none" stroke="#555" stroke-width="4"/>
+  <line x1="1340" y1="304" x2="1340" y2="328" stroke="#555" stroke-width="4"/>
+  <text x="1375" y="322" font-family="monospace" font-size="18" fill="#555">null</text>
+
+  <!-- FIFO direction -->
+  <text x="750" y="437" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">poll() reads from the head side · offer() appends at the tail side</text>
+
+  <!-- Why item can be null -->
+  <rect x="55" y="480" width="665" height="270" rx="8" fill="#fafafa" stroke="#888" stroke-width="2"/>
+  <text x="85" y="520" font-family="sans-serif" font-size="22" font-weight="bold" fill="#333">Logical removal</text>
+  <text x="85" y="555" font-family="sans-serif" font-size="17" fill="#444">poll() removes an element by changing that node's item to null with CAS.</text>
+  <rect x="110" y="600" width="170" height="78" rx="5" fill="#e8f2fb" stroke="#2f6fad" stroke-width="2"/>
+  <text x="195" y="632" text-anchor="middle" font-family="monospace" font-size="19" font-weight="bold" fill="#1d4f82">item = A</text>
+  <text x="195" y="660" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">live node</text>
+  <path d="M298 639H412" fill="none" stroke="#b34a42" stroke-width="4"/>
+  <polygon points="430,639 412,629 412,649" fill="#b34a42"/>
+  <text x="355" y="621" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#9b352f">CAS item</text>
+  <rect x="432" y="600" width="170" height="78" rx="5" fill="#f1f1f1" stroke="#777" stroke-width="2"/>
+  <text x="517" y="632" text-anchor="middle" font-family="monospace" font-size="19" font-weight="bold" fill="#777">item = null</text>
+  <text x="517" y="660" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">logically removed</text>
+  <text x="85" y="718" font-family="sans-serif" font-size="16" fill="#555">Traversal skips consumed nodes; physical unlinking and head movement are opportunistic.</text>
+
+  <!-- Head/tail hints -->
+  <rect x="780" y="480" width="665" height="270" rx="8" fill="#eef6fc" stroke="#2f6fad" stroke-width="2"/>
+  <text x="810" y="520" font-family="sans-serif" font-size="22" font-weight="bold" fill="#1d4f82">Why head and tail are hints</text>
+  <text x="810" y="555" font-family="sans-serif" font-size="17" fill="#444">A successful node/item CAS defines the queue operation.</text>
+  <text x="810" y="589" font-family="sans-serif" font-size="17" fill="#444">Updating head or tail is an optimization and may temporarily lag.</text>
+
+  <rect x="830" y="625" width="150" height="58" rx="5" fill="white" stroke="#2f6fad"/>
+  <rect x="1075" y="625" width="150" height="58" rx="5" fill="white" stroke="#2f6fad"/>
+  <text x="905" y="660" text-anchor="middle" font-family="monospace" font-size="18" fill="#1d4f82">Node B</text>
+  <text x="1150" y="660" text-anchor="middle" font-family="monospace" font-size="18" fill="#1d4f82">Node C</text>
+  <path d="M980 654H1057" fill="none" stroke="#555" stroke-width="4"/>
+  <polygon points="1073,654 1057,645 1057,663" fill="#555"/>
+  <text x="905" y="610" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#9b352f">tail may still point here</text>
+  <text x="1150" y="610" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#35623e">actual last node</text>
+  <text x="1110" y="718" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#555">Operations follow next links and help advance stale hints.</text>
+</svg>

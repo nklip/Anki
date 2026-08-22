@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="720" viewBox="0 0 1100 720" role="img" aria-labelledby="title description">
+  <title id="title">ArrayList insertion and removal</title>
+  <desc id="description">Inserting in the middle shifts the suffix one position to the right. Removing from the middle shifts the suffix one position to the left and clears the trailing array slot.</desc>
+
+  <!-- Background and title -->
+  <rect width="1100" height="720" fill="#ffffff"/>
+  <text x="550" y="42" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="bold" fill="#202124">ArrayList middle insertion and removal</text>
+
+  <!-- Shared index labels are repeated so each array can be read independently -->
+  <g font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#5f6368" text-anchor="middle">
+    <text x="75" y="111">0</text><text x="145" y="111">1</text><text x="215" y="111">2</text>
+    <text x="285" y="111">3</text><text x="355" y="111">4</text><text x="425" y="111">5</text>
+    <text x="685" y="111">0</text><text x="755" y="111">1</text><text x="825" y="111">2</text>
+    <text x="895" y="111">3</text><text x="965" y="111">4</text><text x="1035" y="111">5</text>
+  </g>
+
+  <!-- INSERT SECTION -->
+  <text x="40" y="82" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="bold" fill="#202124">Insert at index 2</text>
+  <text x="40" y="238" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6368">Before: size = 4, capacity = 6</text>
+
+  <g stroke-width="2">
+    <rect x="40" y="120" width="70" height="80" fill="#e8f0fe" stroke="#356eb3"/>
+    <rect x="110" y="120" width="70" height="80" fill="#e8f0fe" stroke="#356eb3"/>
+    <rect x="180" y="120" width="70" height="80" fill="#e8f0fe" stroke="#356eb3"/>
+    <rect x="250" y="120" width="70" height="80" fill="#e8f0fe" stroke="#356eb3"/>
+    <rect x="320" y="120" width="70" height="80" fill="#f1f3f4" stroke="#9aa0a6"/>
+    <rect x="390" y="120" width="70" height="80" fill="#f1f3f4" stroke="#9aa0a6"/>
+  </g>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#202124" text-anchor="middle">
+    <text x="75" y="168">A</text><text x="145" y="168">B</text><text x="215" y="168">C</text><text x="285" y="168">D</text>
+  </g>
+
+  <!-- C and D form the suffix that moves one slot right -->
+  <line x1="205" y1="216" x2="439" y2="216" stroke="#356eb3" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="427,207 449,216 427,225" fill="#356eb3"/>
+  <text x="327" y="263" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#356eb3">shift suffix right</text>
+
+  <!-- Main operation arrow; line overlaps the arrowhead so there is no visible gap -->
+  <line x1="480" y1="160" x2="624" y2="160" stroke="#5f6368" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="612,150 636,160 612,170" fill="#5f6368"/>
+  <text x="557" y="137" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#202124">add(2, X)</text>
+
+  <!-- Result of insertion -->
+  <g stroke-width="2">
+    <rect x="650" y="120" width="70" height="80" fill="#e8f0fe" stroke="#356eb3"/>
+    <rect x="720" y="120" width="70" height="80" fill="#e8f0fe" stroke="#356eb3"/>
+    <rect x="790" y="120" width="70" height="80" fill="#fce8e6" stroke="#d93025"/>
+    <rect x="860" y="120" width="70" height="80" fill="#e8f0fe" stroke="#356eb3"/>
+    <rect x="930" y="120" width="70" height="80" fill="#e8f0fe" stroke="#356eb3"/>
+    <rect x="1000" y="120" width="70" height="80" fill="#f1f3f4" stroke="#9aa0a6"/>
+  </g>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#202124" text-anchor="middle">
+    <text x="685" y="168">A</text><text x="755" y="168">B</text><text x="825" y="168" font-weight="bold">X</text>
+    <text x="895" y="168">C</text><text x="965" y="168">D</text>
+  </g>
+  <text x="650" y="238" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6368">After: size = 5, capacity = 6</text>
+
+  <!-- Divider -->
+  <line x1="40" y1="309" x2="1070" y2="309" stroke="#dadce0" stroke-width="2"/>
+
+  <!-- REMOVE SECTION -->
+  <text x="40" y="352" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="bold" fill="#202124">Remove index 1</text>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#5f6368" text-anchor="middle">
+    <text x="75" y="391">0</text><text x="145" y="391">1</text><text x="215" y="391">2</text>
+    <text x="285" y="391">3</text><text x="355" y="391">4</text><text x="425" y="391">5</text>
+    <text x="685" y="391">0</text><text x="755" y="391">1</text><text x="825" y="391">2</text>
+    <text x="895" y="391">3</text><text x="965" y="391">4</text><text x="1035" y="391">5</text>
+  </g>
+  <text x="40" y="518" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6368">Before: size = 4, capacity = 6</text>
+
+  <g stroke-width="2">
+    <rect x="40" y="400" width="70" height="80" fill="#e8f0fe" stroke="#356eb3"/>
+    <rect x="110" y="400" width="70" height="80" fill="#fce8e6" stroke="#d93025"/>
+    <rect x="180" y="400" width="70" height="80" fill="#e8f0fe" stroke="#356eb3"/>
+    <rect x="250" y="400" width="70" height="80" fill="#e8f0fe" stroke="#356eb3"/>
+    <rect x="320" y="400" width="70" height="80" fill="#f1f3f4" stroke="#9aa0a6"/>
+    <rect x="390" y="400" width="70" height="80" fill="#f1f3f4" stroke="#9aa0a6"/>
+  </g>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#202124" text-anchor="middle">
+    <text x="75" y="448">A</text><text x="145" y="448" fill="#d93025" font-weight="bold">B</text>
+    <text x="215" y="448">C</text><text x="285" y="448">D</text>
+  </g>
+  <line x1="126" y1="428" x2="164" y2="466" stroke="#d93025" stroke-width="3"/>
+  <line x1="164" y1="428" x2="126" y2="466" stroke="#d93025" stroke-width="3"/>
+
+  <!-- C and D form the suffix that moves one slot left -->
+  <line x1="296" y1="500" x2="151" y2="500" stroke="#356eb3" stroke-width="4" stroke-linecap="round"/>
+  <polygon points="163,491 141,500 163,509" fill="#356eb3"/>
+  <text x="218" y="546" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#356eb3">shift suffix left</text>
+
+  <!-- Main removal arrow -->
+  <line x1="480" y1="440" x2="624" y2="440" stroke="#5f6368" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="612,430 636,440 612,450" fill="#5f6368"/>
+  <text x="557" y="417" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#202124">remove(1)</text>
+
+  <!-- Result of removal. The former last-used slot is cleared. -->
+  <g stroke-width="2">
+    <rect x="650" y="400" width="70" height="80" fill="#e8f0fe" stroke="#356eb3"/>
+    <rect x="720" y="400" width="70" height="80" fill="#e8f0fe" stroke="#356eb3"/>
+    <rect x="790" y="400" width="70" height="80" fill="#e8f0fe" stroke="#356eb3"/>
+    <rect x="860" y="400" width="70" height="80" fill="#fff4ce" stroke="#b7791f" stroke-dasharray="6 4"/>
+    <rect x="930" y="400" width="70" height="80" fill="#f1f3f4" stroke="#9aa0a6"/>
+    <rect x="1000" y="400" width="70" height="80" fill="#f1f3f4" stroke="#9aa0a6"/>
+  </g>
+  <g font-family="Arial, Helvetica, sans-serif" font-size="19" fill="#202124" text-anchor="middle">
+    <text x="685" y="448">A</text><text x="755" y="448">C</text><text x="825" y="448">D</text>
+  </g>
+  <text x="895" y="436" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#7a5412">cleared</text>
+  <text x="895" y="457" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#7a5412">to null</text>
+  <text x="650" y="518" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6368">After: size = 3, capacity = 6</text>
+
+  <!-- Complexity summary -->
+  <rect x="150" y="598" width="800" height="84" rx="7" fill="#e6f4ea" stroke="#34834b" stroke-width="1.5"/>
+  <text x="550" y="626" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#202124">Middle insert/remove: O(n) because references must move</text>
+  <text x="550" y="651" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6368">Removal clears the now-unused trailing slot so the removed reference does not stay reachable.</text>
+  <text x="550" y="673" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6368">Capacity normally stays unchanged after removal.</text>
+</svg>

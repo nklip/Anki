@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="920" viewBox="0 0 1500 920" role="img" aria-labelledby="title description">
+  <title id="title">ConcurrentLinkedQueue offer and poll operations</title>
+  <desc id="description">Side-by-side CAS workflows. Offer links a new node through the last node's next field; poll changes the first live node's item to null. Failed CAS operations retry without a global lock.</desc>
+
+  <!-- Background and title -->
+  <rect width="1500" height="920" fill="white"/>
+  <text x="750" y="52" text-anchor="middle" font-family="sans-serif" font-size="34" font-weight="bold" fill="black">Lock-free offer() and poll()</text>
+  <text x="750" y="83" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#444">The successful CAS is the instant at which each operation logically takes effect</text>
+
+  <!-- offer panel -->
+  <rect x="40" y="110" width="690" height="575" rx="8" fill="#eef6fc" stroke="#2f6fad" stroke-width="2"/>
+  <rect x="40" y="110" width="690" height="58" rx="8" fill="#2f6fad"/>
+  <rect x="40" y="154" width="690" height="14" fill="#2f6fad"/>
+  <text x="70" y="148" font-family="sans-serif" font-size="25" font-weight="bold" fill="white">offer(C): append at the tail side</text>
+
+  <!-- offer step 1 -->
+  <circle cx="82" cy="216" r="22" fill="#2f6fad"/>
+  <text x="82" y="223" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="white">1</text>
+  <text x="120" y="222" font-family="sans-serif" font-size="19" font-weight="bold" fill="#1d4f82">Follow next links to the actual last node</text>
+
+  <rect x="120" y="252" width="180" height="68" rx="5" fill="white" stroke="#2f6fad" stroke-width="2"/>
+  <rect x="420" y="252" width="180" height="68" rx="5" fill="white" stroke="#777" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="210" y="281" text-anchor="middle" font-family="monospace" font-size="19" font-weight="bold" fill="#1d4f82">item = B</text>
+  <text x="210" y="306" text-anchor="middle" font-family="monospace" font-size="15" fill="#555">next = null</text>
+  <text x="510" y="281" text-anchor="middle" font-family="monospace" font-size="19" font-weight="bold" fill="#555">item = C</text>
+  <text x="510" y="306" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">new, not linked yet</text>
+  <text x="210" y="342" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1d4f82">last node</text>
+
+  <!-- offer step 2 -->
+  <circle cx="82" cy="394" r="22" fill="#2f6fad"/>
+  <text x="82" y="401" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="white">2</text>
+  <text x="120" y="400" font-family="sans-serif" font-size="19" font-weight="bold" fill="#1d4f82">CAS B.next: null → new Node(C)</text>
+  <path d="M300 286H402" fill="none" stroke="#2f6fad" stroke-width="5"/>
+  <polygon points="418,286 402,277 402,295" fill="#2f6fad"/>
+  <text x="360" y="272" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1d4f82">successful CAS</text>
+
+  <rect x="155" y="430" width="460" height="62" rx="6" fill="#dcefdc" stroke="#4d8758" stroke-width="2"/>
+  <text x="385" y="456" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#35623e">Linearization point</text>
+  <text x="385" y="479" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">C is now reachable from the queue's linked chain</text>
+
+  <!-- offer step 3 -->
+  <circle cx="82" cy="546" r="22" fill="#2f6fad"/>
+  <text x="82" y="553" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="white">3</text>
+  <text x="120" y="552" font-family="sans-serif" font-size="19" font-weight="bold" fill="#1d4f82">Try to advance the tail hint</text>
+  <rect x="120" y="585" width="500" height="62" rx="6" fill="white" stroke="#2f6fad" stroke-width="2"/>
+  <text x="370" y="611" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">Moving tail is best effort; failure is harmless.</text>
+  <text x="370" y="634" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">A later operation follows next and helps advance it.</text>
+
+  <!-- poll panel -->
+  <rect x="770" y="110" width="690" height="575" rx="8" fill="#fff5ee" stroke="#b35b34" stroke-width="2"/>
+  <rect x="770" y="110" width="690" height="58" rx="8" fill="#b35b34"/>
+  <rect x="770" y="154" width="690" height="14" fill="#b35b34"/>
+  <text x="800" y="148" font-family="sans-serif" font-size="25" font-weight="bold" fill="white">poll(): remove from the head side</text>
+
+  <!-- poll step 1 -->
+  <circle cx="812" cy="216" r="22" fill="#b35b34"/>
+  <text x="812" y="223" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="white">1</text>
+  <text x="850" y="222" font-family="sans-serif" font-size="19" font-weight="bold" fill="#8c3c1f">Find the first node whose item is not null</text>
+
+  <rect x="850" y="252" width="180" height="68" rx="5" fill="white" stroke="#b35b34" stroke-width="2"/>
+  <rect x="1150" y="252" width="180" height="68" rx="5" fill="white" stroke="#2f6fad" stroke-width="2"/>
+  <text x="940" y="281" text-anchor="middle" font-family="monospace" font-size="19" font-weight="bold" fill="#8c3c1f">item = A</text>
+  <text x="940" y="306" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">first live node</text>
+  <text x="1240" y="281" text-anchor="middle" font-family="monospace" font-size="19" font-weight="bold" fill="#1d4f82">item = B</text>
+  <text x="1240" y="306" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">next live node</text>
+  <path d="M1030 286H1132" fill="none" stroke="#555" stroke-width="4"/>
+  <polygon points="1148,286 1132,277 1132,295" fill="#555"/>
+
+  <!-- poll step 2 -->
+  <circle cx="812" cy="394" r="22" fill="#b35b34"/>
+  <text x="812" y="401" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="white">2</text>
+  <text x="850" y="400" font-family="sans-serif" font-size="19" font-weight="bold" fill="#8c3c1f">CAS A.item: A → null</text>
+
+  <rect x="885" y="430" width="460" height="62" rx="6" fill="#dcefdc" stroke="#4d8758" stroke-width="2"/>
+  <text x="1115" y="456" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#35623e">Linearization point</text>
+  <text x="1115" y="479" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">A is logically removed and returned to the caller</text>
+
+  <!-- poll step 3 -->
+  <circle cx="812" cy="546" r="22" fill="#b35b34"/>
+  <text x="812" y="553" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="white">3</text>
+  <text x="850" y="552" font-family="sans-serif" font-size="19" font-weight="bold" fill="#8c3c1f">Advance head and skip consumed nodes</text>
+  <rect x="850" y="585" width="500" height="62" rx="6" fill="white" stroke="#b35b34" stroke-width="2"/>
+  <text x="1100" y="611" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">The old node may remain briefly with item = null.</text>
+  <text x="1100" y="634" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">Traversal helps unlink or bypass obsolete nodes.</text>
+
+  <!-- Shared CAS behavior -->
+  <rect x="40" y="720" width="1420" height="160" rx="8" fill="#fafafa" stroke="#777" stroke-width="2"/>
+  <text x="70" y="760" font-family="sans-serif" font-size="23" font-weight="bold" fill="#333">What happens when CAS fails?</text>
+
+  <rect x="80" y="792" width="330" height="58" rx="5" fill="white" stroke="#777"/>
+  <rect x="455" y="792" width="330" height="58" rx="5" fill="white" stroke="#777"/>
+  <rect x="830" y="792" width="330" height="58" rx="5" fill="white" stroke="#777"/>
+  <rect x="1205" y="792" width="215" height="58" rx="5" fill="#e8f2fb" stroke="#2f6fad"/>
+  <text x="245" y="816" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#444">Another thread changed the state</text>
+  <text x="245" y="838" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">No global lock was held</text>
+  <text x="620" y="816" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#444">Read the current links/items again</text>
+  <text x="620" y="838" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">Help advance stale hints if useful</text>
+  <text x="995" y="816" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#444">Retry from the observed state</text>
+  <text x="995" y="838" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">Some operation made progress</text>
+  <text x="1312" y="816" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1d4f82">Lock-free</text>
+  <text x="1312" y="838" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">not wait-free</text>
+
+  <!-- Bottom arrows -->
+  <path d="M410 821H437" fill="none" stroke="#555" stroke-width="3"/>
+  <polygon points="453,821 437,812 437,830" fill="#555"/>
+  <path d="M785 821H812" fill="none" stroke="#555" stroke-width="3"/>
+  <polygon points="828,821 812,812 812,830" fill="#555"/>
+  <path d="M1160 821H1187" fill="none" stroke="#555" stroke-width="3"/>
+  <polygon points="1203,821 1187,812 1187,830" fill="#555"/>
+</svg>

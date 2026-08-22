@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="920" viewBox="0 0 1500 920" role="img" aria-labelledby="title description">
+  <title id="title">VarHandle access modes and memory ordering</title>
+  <desc id="description">Four increasingly strong VarHandle access-mode groups, followed by a release and acquire publication example between a producer and consumer.</desc>
+
+  <!-- Background and title -->
+  <rect width="1500" height="920" fill="white"/>
+  <text x="750" y="50" text-anchor="middle" font-family="sans-serif" font-size="34" font-weight="bold" fill="black">VarHandle access modes</text>
+  <text x="750" y="82" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#444">Choose the weakest ordering that is correct — stronger ordering increases from left to right</text>
+
+  <!-- Plain mode -->
+  <rect x="40" y="125" width="320" height="330" rx="8" fill="#f4f4f4" stroke="#777" stroke-width="2"/>
+  <rect x="40" y="125" width="320" height="58" rx="8" fill="#666"/>
+  <rect x="40" y="169" width="320" height="14" fill="#666"/>
+  <text x="200" y="163" text-anchor="middle" font-family="sans-serif" font-size="24" font-weight="bold" fill="white">Plain</text>
+  <text x="70" y="222" font-family="monospace" font-size="19" font-weight="bold" fill="#333">get()</text>
+  <text x="70" y="252" font-family="monospace" font-size="19" font-weight="bold" fill="#333">set()</text>
+  <line x1="70" y1="272" x2="330" y2="272" stroke="#aaa"/>
+  <text x="70" y="307" font-family="sans-serif" font-size="16" fill="#444">Ordinary field-like access.</text>
+  <text x="70" y="338" font-family="sans-serif" font-size="16" fill="#444">No cross-thread ordering.</text>
+  <text x="70" y="382" font-family="sans-serif" font-size="15" font-weight="bold" fill="#555">Typical use</text>
+  <text x="70" y="408" font-family="sans-serif" font-size="15" fill="#555">Thread-confined or externally</text>
+  <text x="70" y="428" font-family="sans-serif" font-size="15" fill="#555">synchronized state.</text>
+
+  <!-- Opaque mode -->
+  <rect x="410" y="125" width="320" height="330" rx="8" fill="#fff9e8" stroke="#a47a20" stroke-width="2"/>
+  <rect x="410" y="125" width="320" height="58" rx="8" fill="#a47a20"/>
+  <rect x="410" y="169" width="320" height="14" fill="#a47a20"/>
+  <text x="570" y="163" text-anchor="middle" font-family="sans-serif" font-size="24" font-weight="bold" fill="white">Opaque</text>
+  <text x="440" y="222" font-family="monospace" font-size="19" font-weight="bold" fill="#6f5214">getOpaque()</text>
+  <text x="440" y="252" font-family="monospace" font-size="19" font-weight="bold" fill="#6f5214">setOpaque()</text>
+  <line x1="440" y1="272" x2="700" y2="272" stroke="#c7a85e"/>
+  <text x="440" y="307" font-family="sans-serif" font-size="16" fill="#444">Atomic and coherent for the</text>
+  <text x="440" y="330" font-family="sans-serif" font-size="16" fill="#444">same variable, with minimal</text>
+  <text x="440" y="353" font-family="sans-serif" font-size="16" fill="#444">ordering guarantees.</text>
+  <text x="440" y="390" font-family="sans-serif" font-size="15" font-weight="bold" fill="#6f5214">Typical use</text>
+  <text x="440" y="416" font-family="sans-serif" font-size="15" fill="#555">Advanced polling or progress</text>
+  <text x="440" y="436" font-family="sans-serif" font-size="15" fill="#555">indicators.</text>
+
+  <!-- Acquire/release mode -->
+  <rect x="780" y="125" width="320" height="330" rx="8" fill="#eaf3fb" stroke="#2f6fad" stroke-width="2"/>
+  <rect x="780" y="125" width="320" height="58" rx="8" fill="#2f6fad"/>
+  <rect x="780" y="169" width="320" height="14" fill="#2f6fad"/>
+  <text x="940" y="163" text-anchor="middle" font-family="sans-serif" font-size="24" font-weight="bold" fill="white">Acquire / Release</text>
+  <text x="810" y="222" font-family="monospace" font-size="19" font-weight="bold" fill="#1d4f82">getAcquire()</text>
+  <text x="810" y="252" font-family="monospace" font-size="19" font-weight="bold" fill="#1d4f82">setRelease()</text>
+  <line x1="810" y1="272" x2="1070" y2="272" stroke="#78a6d2"/>
+  <text x="810" y="307" font-family="sans-serif" font-size="16" fill="#444">Prior producer accesses stay</text>
+  <text x="810" y="330" font-family="sans-serif" font-size="16" fill="#444">before release; subsequent</text>
+  <text x="810" y="353" font-family="sans-serif" font-size="16" fill="#444">consumer accesses stay after</text>
+  <text x="810" y="376" font-family="sans-serif" font-size="16" fill="#444">a matching acquire.</text>
+  <text x="810" y="410" font-family="sans-serif" font-size="15" font-weight="bold" fill="#1d4f82">Typical use: publication</text>
+
+  <!-- Volatile mode -->
+  <rect x="1150" y="125" width="310" height="330" rx="8" fill="#edf8ef" stroke="#4d8758" stroke-width="2"/>
+  <rect x="1150" y="125" width="310" height="58" rx="8" fill="#4d8758"/>
+  <rect x="1150" y="169" width="310" height="14" fill="#4d8758"/>
+  <text x="1305" y="163" text-anchor="middle" font-family="sans-serif" font-size="24" font-weight="bold" fill="white">Volatile</text>
+  <text x="1180" y="222" font-family="monospace" font-size="19" font-weight="bold" fill="#35623e">getVolatile()</text>
+  <text x="1180" y="252" font-family="monospace" font-size="19" font-weight="bold" fill="#35623e">setVolatile()</text>
+  <line x1="1180" y1="272" x2="1430" y2="272" stroke="#82ad89"/>
+  <text x="1180" y="307" font-family="sans-serif" font-size="16" fill="#444">Acquire/release ordering plus</text>
+  <text x="1180" y="330" font-family="sans-serif" font-size="16" fill="#444">a total order among volatile</text>
+  <text x="1180" y="353" font-family="sans-serif" font-size="16" fill="#444">operations.</text>
+  <text x="1180" y="390" font-family="sans-serif" font-size="15" font-weight="bold" fill="#35623e">Typical use</text>
+  <text x="1180" y="416" font-family="sans-serif" font-size="15" fill="#555">Simplest strong visibility</text>
+  <text x="1180" y="436" font-family="sans-serif" font-size="15" fill="#555">and ordering.</text>
+
+  <!-- Strength arrows between cards -->
+  <path d="M362 280H392" fill="none" stroke="#555" stroke-width="4"/>
+  <polygon points="408,280 392,271 392,289" fill="#555"/>
+  <path d="M732 280H762" fill="none" stroke="#555" stroke-width="4"/>
+  <polygon points="778,280 762,271 762,289" fill="#555"/>
+  <path d="M1102 280H1132" fill="none" stroke="#555" stroke-width="4"/>
+  <polygon points="1148,280 1132,271 1132,289" fill="#555"/>
+
+  <!-- Release/acquire publication example -->
+  <rect x="40" y="485" width="1420" height="385" rx="8" fill="#fafafa" stroke="#777" stroke-width="2"/>
+  <text x="70" y="525" font-family="sans-serif" font-size="23" font-weight="bold" fill="#333">Release/acquire publication</text>
+  <text x="70" y="554" font-family="sans-serif" font-size="16" fill="#555">The acquire must observe the value written by the matching release to establish ordering.</text>
+
+  <!-- Producer steps -->
+  <text x="280" y="595" text-anchor="middle" font-family="sans-serif" font-size="21" font-weight="bold" fill="#1d4f82">Producer thread</text>
+  <rect x="100" y="620" width="360" height="62" rx="6" fill="white" stroke="#2f6fad" stroke-width="2"/>
+  <text x="280" y="658" text-anchor="middle" font-family="monospace" font-size="19" fill="#1d4f82">payload = 42</text>
+  <path d="M280 684V704" fill="none" stroke="#2f6fad" stroke-width="4"/>
+  <polygon points="280,720 271,704 289,704" fill="#2f6fad"/>
+  <rect x="100" y="722" width="360" height="62" rx="6" fill="#eaf3fb" stroke="#2f6fad" stroke-width="2"/>
+  <text x="280" y="760" text-anchor="middle" font-family="monospace" font-size="18" font-weight="bold" fill="#1d4f82">READY.setRelease(this, 1)</text>
+
+  <!-- Consumer steps -->
+  <text x="1220" y="595" text-anchor="middle" font-family="sans-serif" font-size="21" font-weight="bold" fill="#35623e">Consumer thread</text>
+  <rect x="1040" y="722" width="360" height="62" rx="6" fill="#edf8ef" stroke="#4d8758" stroke-width="2"/>
+  <text x="1220" y="760" text-anchor="middle" font-family="monospace" font-size="18" font-weight="bold" fill="#35623e">READY.getAcquire(this) == 1</text>
+  <path d="M1220 786V806" fill="none" stroke="#4d8758" stroke-width="4"/>
+  <polygon points="1220,822 1211,806 1229,806" fill="#4d8758"/>
+  <rect x="1040" y="824" width="360" height="34" rx="6" fill="white" stroke="#4d8758" stroke-width="2"/>
+  <text x="1220" y="847" text-anchor="middle" font-family="monospace" font-size="17" fill="#35623e">read payload → 42</text>
+
+  <!-- Synchronizes-with/order arrow -->
+  <path d="M462 753H1022" fill="none" stroke="#b34a42" stroke-width="5"/>
+  <polygon points="1038,753 1022,744 1022,762" fill="#b34a42"/>
+  <text x="750" y="716" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#9b352f">matching release → acquire ordering</text>
+  <text x="750" y="742" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">earlier producer accesses become visible before later consumer accesses</text>
+</svg>

@@ -1,0 +1,190 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1080" viewBox="0 0 1500 1080" role="img" aria-labelledby="title description">
+  <title id="title">G1 collection cycle and region evacuation</title>
+  <desc id="description">A diagram showing the G1 Young-Only phase, concurrent marking transition, Space-Reclamation phase with Mixed collections, Full GC fallback, and stop-the-world evacuation from Eden, Survivor, and selected Old regions into compact destination regions.</desc>
+
+  <!-- Background and title -->
+  <rect width="1500" height="1080" fill="white"/>
+  <text x="750" y="55" text-anchor="middle" font-family="sans-serif" font-size="38" font-weight="bold" fill="black">G1 collection cycle</text>
+  <text x="750" y="91" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#444">Concurrent old-generation marking selects regions for later stop-the-world evacuation</text>
+
+  <!-- High-level cycle frame -->
+  <rect x="40" y="120" width="1420" height="430" rx="7" fill="#fafafa" stroke="#777" stroke-width="2"/>
+  <text x="65" y="157" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">High-level cycle</text>
+
+  <!-- Phase 1: Young-Only -->
+  <rect x="70" y="180" width="390" height="285" rx="6" fill="#fff3f1" stroke="#b34a42" stroke-width="2"/>
+  <rect x="70" y="180" width="390" height="58" rx="6" fill="#b34a42"/>
+  <rect x="70" y="226" width="390" height="12" fill="#b34a42"/>
+  <text x="95" y="218" font-family="sans-serif" font-size="25" font-weight="bold" fill="white">1. Young-Only phase</text>
+
+  <rect x="95" y="268" width="84" height="64" rx="3" fill="#f7d7d3" stroke="#b34a42"/>
+  <rect x="222" y="268" width="84" height="64" rx="3" fill="#f7d7d3" stroke="#b34a42"/>
+  <rect x="349" y="268" width="84" height="64" rx="3" fill="#f7d7d3" stroke="#b34a42"/>
+  <text x="137" y="294" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#7a2826">Young GC</text>
+  <text x="137" y="316" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#7a2826">STW</text>
+  <text x="264" y="294" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#7a2826">Young GC</text>
+  <text x="264" y="316" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#7a2826">STW</text>
+  <text x="391" y="294" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#7a2826">Young GC</text>
+  <text x="391" y="316" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#7a2826">STW</text>
+  <!-- Explicit shafts and triangles render consistently without marker overflow. -->
+  <path d="M186 300H200" fill="none" stroke="#555" stroke-width="2" stroke-linecap="butt"/>
+  <polygon points="215,300 199,292.5 199,307.5" fill="#555"/>
+  <path d="M313 300H327" fill="none" stroke="#555" stroke-width="2" stroke-linecap="butt"/>
+  <polygon points="342,300 326,292.5 326,307.5" fill="#555"/>
+
+  <text x="95" y="369" font-family="sans-serif" font-size="16" fill="#333">• Eden and Survivor regions are evacuated</text>
+  <text x="95" y="398" font-family="sans-serif" font-size="16" fill="#333">• Surviving objects age or promote to Old</text>
+  <text x="95" y="427" font-family="sans-serif" font-size="16" fill="#333">• Old occupancy grows toward adaptive IHOP</text>
+
+  <!-- Transition to concurrent marking -->
+  <text x="488" y="278" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">IHOP</text>
+  <text x="488" y="296" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">reached</text>
+  <path d="M468 322H495" fill="none" stroke="#555" stroke-width="3" stroke-linecap="butt"/>
+  <polygon points="510,322 494,314.5 494,329.5" fill="#555"/>
+
+  <!-- Phase 2: Concurrent marking transition -->
+  <rect x="520" y="180" width="430" height="285" rx="6" fill="#f4eff8" stroke="#744b91" stroke-width="2"/>
+  <rect x="520" y="180" width="430" height="58" rx="6" fill="#744b91"/>
+  <rect x="520" y="226" width="430" height="12" fill="#744b91"/>
+  <text x="545" y="218" font-family="sans-serif" font-size="25" font-weight="bold" fill="white">2. Marking transition</text>
+
+  <rect x="545" y="260" width="140" height="70" rx="3" fill="#f7d7d3" stroke="#b34a42"/>
+  <text x="615" y="286" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#7a2826">Concurrent Start</text>
+  <text x="615" y="308" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#7a2826">Young GC · STW</text>
+
+  <path d="M692 295H708" fill="none" stroke="#555" stroke-width="2" stroke-linecap="butt"/>
+  <polygon points="723,295 707,287.5 707,302.5" fill="#555"/>
+
+  <rect x="730" y="260" width="190" height="70" rx="3" fill="#e7f0fb" stroke="#2f6fad"/>
+  <text x="825" y="286" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1d4f82">Concurrent mark</text>
+  <text x="825" y="308" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#1d4f82">SATB · app runs</text>
+
+  <rect x="585" y="355" width="120" height="62" rx="3" fill="#f7d7d3" stroke="#b34a42"/>
+  <rect x="755" y="355" width="120" height="62" rx="3" fill="#f7d7d3" stroke="#b34a42"/>
+  <text x="645" y="381" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#7a2826">Remark</text>
+  <text x="645" y="403" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#7a2826">STW</text>
+  <text x="815" y="381" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#7a2826">Cleanup</text>
+  <text x="815" y="403" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#7a2826">STW</text>
+  <path d="M712 386H733" fill="none" stroke="#555" stroke-width="2" stroke-linecap="butt"/>
+  <polygon points="748,386 732,378.5 732,393.5" fill="#555"/>
+  <text x="735" y="445" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#444">rank old regions by expected collection efficiency</text>
+
+  <!-- Transition to mixed collections -->
+  <text x="980" y="278" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">old</text>
+  <text x="980" y="296" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">regions</text>
+  <path d="M958 322H985" fill="none" stroke="#555" stroke-width="3" stroke-linecap="butt"/>
+  <polygon points="1000,322 984,314.5 984,329.5" fill="#555"/>
+
+  <!-- Phase 3: Space-Reclamation -->
+  <rect x="1010" y="180" width="420" height="285" rx="6" fill="#eef5fc" stroke="#376792" stroke-width="2"/>
+  <rect x="1010" y="180" width="420" height="58" rx="6" fill="#376792"/>
+  <rect x="1010" y="226" width="420" height="12" fill="#376792"/>
+  <text x="1035" y="218" font-family="sans-serif" font-size="25" font-weight="bold" fill="white">3. Space-Reclamation</text>
+
+  <rect x="1035" y="268" width="90" height="64" rx="3" fill="#dceafb" stroke="#376792"/>
+  <rect x="1175" y="268" width="90" height="64" rx="3" fill="#dceafb" stroke="#376792"/>
+  <rect x="1315" y="268" width="90" height="64" rx="3" fill="#dceafb" stroke="#376792"/>
+  <text x="1080" y="294" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#1d4f82">Mixed GC</text>
+  <text x="1080" y="316" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#1d4f82">STW</text>
+  <text x="1220" y="294" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#1d4f82">Mixed GC</text>
+  <text x="1220" y="316" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#1d4f82">STW</text>
+  <text x="1360" y="294" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#1d4f82">Mixed GC</text>
+  <text x="1360" y="316" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#1d4f82">STW</text>
+  <path d="M1132 300H1153" fill="none" stroke="#555" stroke-width="2" stroke-linecap="butt"/>
+  <polygon points="1168,300 1152,292.5 1152,307.5" fill="#555"/>
+  <path d="M1272 300H1293" fill="none" stroke="#555" stroke-width="2" stroke-linecap="butt"/>
+  <polygon points="1308,300 1292,292.5 1292,307.5" fill="#555"/>
+
+  <text x="1035" y="369" font-family="sans-serif" font-size="16" fill="#333">• Collect young regions plus selected old regions</text>
+  <text x="1035" y="398" font-family="sans-serif" font-size="16" fill="#333">• Copy live objects and free evacuated regions</text>
+  <text x="1035" y="427" font-family="sans-serif" font-size="16" fill="#333">• Stop when further old evacuation is not useful</text>
+
+  <!-- Return to Young-Only -->
+  <text x="770" y="492" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#555">return to Young-Only after profitable old candidates are exhausted</text>
+  <!-- The curve stops inside a separately angled head, so its shaft cannot cross the tip. -->
+  <path d="M1240 481C1240 526 326 510 310 492.2" fill="none" stroke="#555" stroke-width="3" stroke-linecap="butt"/>
+  <polygon points="300,481 316.3,487.9 305.1,497.9" fill="#555"/>
+
+  <!-- Full GC fallback -->
+  <rect x="40" y="575" width="1420" height="55" rx="5" fill="#fff0ef" stroke="#a94442" stroke-width="2"/>
+  <text x="65" y="610" font-family="sans-serif" font-size="18" font-weight="bold" fill="#8b302d">Fallback:</text>
+  <text x="157" y="610" font-family="sans-serif" font-size="18" fill="#333">if incremental evacuation cannot reclaim enough space, G1 may perform a slow stop-the-world, in-place Full GC.</text>
+
+  <!-- Evacuation detail frame -->
+  <rect x="40" y="655" width="1420" height="365" rx="7" fill="white" stroke="#777" stroke-width="2"/>
+  <text x="65" y="693" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">One evacuation pause</text>
+  <text x="1428" y="693" text-anchor="end" font-family="sans-serif" font-size="16" fill="#555">Young GC: young regions · Mixed GC: young regions + selected old regions</text>
+
+  <!-- Source collection set -->
+  <text x="75" y="736" font-family="sans-serif" font-size="19" font-weight="bold" fill="black">Collection-set source regions</text>
+
+  <rect x="75" y="755" width="130" height="150" rx="3" fill="#fff3f1" stroke="#b34a42" stroke-width="3"/>
+  <text x="140" y="781" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#8b302d">Eden</text>
+  <rect x="93" y="800" width="40" height="34" fill="#66a56f" stroke="#3c7c50"/>
+  <rect x="139" y="800" width="48" height="34" fill="#d5d5d5" stroke="#999"/>
+  <rect x="93" y="840" width="62" height="34" fill="#d5d5d5" stroke="#999"/>
+  <rect x="161" y="840" width="26" height="34" fill="#66a56f" stroke="#3c7c50"/>
+  <text x="140" y="895" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">young</text>
+
+  <rect x="220" y="755" width="130" height="150" rx="3" fill="#fff9e7" stroke="#b88b22" stroke-width="3"/>
+  <text x="285" y="781" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#6b500f">Survivor</text>
+  <rect x="238" y="800" width="42" height="34" fill="#66a56f" stroke="#3c7c50"/>
+  <rect x="286" y="800" width="46" height="34" fill="#66a56f" stroke="#3c7c50"/>
+  <rect x="238" y="840" width="58" height="34" fill="#d5d5d5" stroke="#999"/>
+  <rect x="302" y="840" width="30" height="34" fill="#66a56f" stroke="#3c7c50"/>
+  <text x="285" y="895" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">young</text>
+
+  <rect x="365" y="755" width="145" height="150" rx="3" fill="#eef5fc" stroke="#222" stroke-width="4"/>
+  <text x="437" y="781" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#1d4f82">Sparse Old</text>
+  <rect x="383" y="800" width="38" height="34" fill="#66a56f" stroke="#3c7c50"/>
+  <rect x="427" y="800" width="65" height="34" fill="#d5d5d5" stroke="#999"/>
+  <rect x="383" y="840" width="72" height="34" fill="#d5d5d5" stroke="#999"/>
+  <rect x="461" y="840" width="31" height="34" fill="#66a56f" stroke="#3c7c50"/>
+  <text x="437" y="895" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#555">Mixed GC candidate</text>
+
+  <!-- Evacuation arrow and root note -->
+  <text x="582" y="786" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#2f6fad">parallel copy</text>
+  <text x="582" y="807" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#2f6fad">while app is stopped</text>
+  <path d="M526 830H623" fill="none" stroke="#2f6fad" stroke-width="5" stroke-linecap="butt"/>
+  <polygon points="645,830 621,820.5 621,839.5" fill="#2f6fad"/>
+  <text x="582" y="870" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#555">remembered-set roots</text>
+
+  <!-- Destination regions -->
+  <text x="665" y="736" font-family="sans-serif" font-size="19" font-weight="bold" fill="black">Destination and reclaimed regions</text>
+
+  <rect x="665" y="755" width="185" height="150" rx="3" fill="#fff9e7" stroke="#b88b22" stroke-width="3"/>
+  <text x="757" y="781" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#6b500f">New Survivor</text>
+  <rect x="685" y="800" width="58" height="38" fill="#66a56f" stroke="#3c7c50"/>
+  <rect x="749" y="800" width="80" height="38" fill="#66a56f" stroke="#3c7c50"/>
+  <rect x="685" y="846" width="144" height="34" fill="white" stroke="#aaa" stroke-dasharray="5 4"/>
+  <text x="757" y="895" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">younger survivors</text>
+
+  <rect x="870" y="755" width="185" height="150" rx="3" fill="#eef5fc" stroke="#376792" stroke-width="3"/>
+  <text x="962" y="781" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#1d4f82">Old destination</text>
+  <rect x="890" y="800" width="62" height="38" fill="#66a56f" stroke="#3c7c50"/>
+  <rect x="958" y="800" width="77" height="38" fill="#66a56f" stroke="#3c7c50"/>
+  <rect x="890" y="846" width="145" height="34" fill="white" stroke="#aaa" stroke-dasharray="5 4"/>
+  <text x="962" y="895" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#555">promoted + old survivors</text>
+
+  <rect x="1080" y="755" width="330" height="150" rx="3" fill="#f2f2f2" stroke="#777" stroke-width="3"/>
+  <text x="1245" y="781" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#444">Evacuated source regions</text>
+  <rect x="1100" y="805" width="90" height="60" fill="white" stroke="#aaa" stroke-dasharray="6 5"/>
+  <rect x="1200" y="805" width="90" height="60" fill="white" stroke="#aaa" stroke-dasharray="6 5"/>
+  <rect x="1300" y="805" width="90" height="60" fill="white" stroke="#aaa" stroke-dasharray="6 5"/>
+  <text x="1145" y="842" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#777">Free</text>
+  <text x="1245" y="842" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#777">Free</text>
+  <text x="1345" y="842" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#777">Free</text>
+  <text x="1245" y="895" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">reusable after successful evacuation</text>
+
+  <!-- Detail notes and legend -->
+  <rect x="75" y="940" width="18" height="18" fill="#66a56f" stroke="#3c7c50"/>
+  <text x="102" y="955" font-family="sans-serif" font-size="16" fill="#444">live object copied</text>
+  <rect x="265" y="940" width="18" height="18" fill="#d5d5d5" stroke="#999"/>
+  <text x="292" y="955" font-family="sans-serif" font-size="16" fill="#444">dead object ignored</text>
+  <rect x="460" y="940" width="18" height="18" fill="white" stroke="#222" stroke-width="3"/>
+  <text x="487" y="955" font-family="sans-serif" font-size="16" fill="#444">selected old candidate</text>
+  <text x="1425" y="955" text-anchor="end" font-family="sans-serif" font-size="16" fill="#555">Successful evacuation compacts live data and frees whole source regions.</text>
+
+  <!-- Footer -->
+  <text x="750" y="1055" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#444">G1 predicts collection-set cost to pursue a soft pause-time goal; it is not a real-time guarantee.</text>
+</svg>

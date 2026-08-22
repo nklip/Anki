@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1500" viewBox="0 0 1500 1500" role="img" aria-labelledby="title description">
+  <title id="title">compare() vs. compareTo() in Java</title>
+  <desc id="description">A table comparing Comparator.compare with Comparable.compareTo, including ownership, signatures, operands, ordering roles, implementation, sorting, null handling, composition, return values, and common uses.</desc>
+
+  <!-- Background and title -->
+  <rect width="1500" height="1500" fill="white"/>
+  <text x="750" y="60" text-anchor="middle" font-family="sans-serif" font-size="38" font-weight="bold" fill="black">compare() vs. compareTo()</text>
+  <text x="750" y="101" text-anchor="middle" font-family="sans-serif" font-size="21" fill="#444">Comparator and Comparable in Java</text>
+
+  <!-- Column backgrounds -->
+  <rect x="30" y="140" width="260" height="1285" fill="#f2f2f2"/>
+  <rect x="290" y="140" width="590" height="1285" fill="#f4f8ff"/>
+  <rect x="880" y="140" width="590" height="1285" fill="#f4fff6"/>
+
+  <!-- Table header -->
+  <rect x="30" y="140" width="260" height="90" fill="#555"/>
+  <rect x="290" y="140" width="590" height="90" fill="#2f6fad"/>
+  <rect x="880" y="140" width="590" height="90" fill="#3c7c50"/>
+  <text x="54" y="194" font-family="sans-serif" font-size="25" font-weight="bold" fill="white">Criterion</text>
+  <text x="314" y="194" font-family="sans-serif" font-size="27" font-weight="bold" fill="white">compare()</text>
+  <text x="904" y="194" font-family="sans-serif" font-size="27" font-weight="bold" fill="white">compareTo()</text>
+
+  <!-- Row: declared in -->
+  <text x="54" y="283" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">Declared in</text>
+  <text x="314" y="282" font-family="sans-serif" font-size="21" fill="black">Comparator&lt;T&gt; (java.util)</text>
+  <text x="904" y="282" font-family="sans-serif" font-size="21" fill="black">Comparable&lt;T&gt; (java.lang)</text>
+
+  <!-- Row: signature -->
+  <text x="54" y="380" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">Signature</text>
+  <text x="314" y="380" font-family="sans-serif" font-size="21" fill="black">int compare(T first, T second)</text>
+  <text x="904" y="380" font-family="sans-serif" font-size="21" fill="black">int compareTo(T other)</text>
+
+  <!-- Row: call and operands -->
+  <text x="54" y="474" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">
+    <tspan x="54" dy="0">Call and</tspan>
+    <tspan x="54" dy="28">operands</tspan>
+  </text>
+  <text x="314" y="473" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="314" dy="0">comparator.compare(a, b)</tspan>
+    <tspan x="314" dy="29">Compares two explicit arguments</tspan>
+  </text>
+  <text x="904" y="473" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="904" dy="0">a.compareTo(b)</tspan>
+    <tspan x="904" dy="29">Compares a (this) with b</tspan>
+  </text>
+
+  <!-- Row: ordering role -->
+  <text x="54" y="594" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">
+    <tspan x="54" dy="0">Ordering</tspan>
+    <tspan x="54" dy="28">role</tspan>
+  </text>
+  <text x="314" y="593" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="314" dy="0">Defines an external or custom ordering</tspan>
+    <tspan x="314" dy="29">Many comparators may exist for one type</tspan>
+  </text>
+  <text x="904" y="593" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="904" dy="0">Defines the type's natural ordering</tspan>
+    <tspan x="904" dy="29">Normally one natural order per type</tspan>
+  </text>
+
+  <!-- Row: implementation location -->
+  <text x="54" y="724" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">
+    <tspan x="54" dy="0">Where</tspan>
+    <tspan x="54" dy="28">implemented</tspan>
+  </text>
+  <text x="314" y="723" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="314" dy="0">Separate class, lambda, or method reference</tspan>
+    <tspan x="314" dy="29">The compared type need not be modified</tspan>
+  </text>
+  <text x="904" y="723" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="904" dy="0">Inside the compared class</tspan>
+    <tspan x="904" dy="29">The class implements Comparable&lt;T&gt;</tspan>
+  </text>
+
+  <!-- Row: sorting usage -->
+  <text x="54" y="849" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">
+    <tspan x="54" dy="0">Sorting</tspan>
+    <tspan x="54" dy="28">usage</tspan>
+  </text>
+  <text x="314" y="848" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="314" dy="0">list.sort(comparator)</tspan>
+    <tspan x="314" dy="29">An explicit comparator is supplied</tspan>
+  </text>
+  <text x="904" y="833" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="904" dy="0">Collections.sort(list) or list.sort(null)</tspan>
+    <tspan x="904" dy="29">The elements' natural ordering</tspan>
+    <tspan x="904" dy="29">is used</tspan>
+  </text>
+
+  <!-- Row: null handling -->
+  <text x="54" y="969" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">
+    <tspan x="54" dy="0">Null</tspan>
+    <tspan x="54" dy="28">handling</tspan>
+  </text>
+  <text x="314" y="968" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="314" dy="0">A Comparator may define a null policy</tspan>
+    <tspan x="314" dy="29">Use nullsFirst(...) or nullsLast(...)</tspan>
+  </text>
+  <text x="904" y="968" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="904" dy="0">compareTo(null) should throw</tspan>
+    <tspan x="904" dy="29">NullPointerException</tspan>
+  </text>
+
+  <!-- Row: composition -->
+  <text x="54" y="1094" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">
+    <tspan x="54" dy="0">Ordering</tspan>
+    <tspan x="54" dy="28">composition</tspan>
+  </text>
+  <text x="314" y="1093" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="314" dy="0">comparing(...).thenComparing(...)</tspan>
+    <tspan x="314" dy="29">reversed() creates the opposite order</tspan>
+  </text>
+  <text x="904" y="1093" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="904" dy="0">No built-in alternative natural orders</tspan>
+    <tspan x="904" dy="29">Use Comparator for other orderings</tspan>
+  </text>
+
+  <!-- Row: return value -->
+  <text x="54" y="1219" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">
+    <tspan x="54" dy="0">Return</tspan>
+    <tspan x="54" dy="28">value</tspan>
+  </text>
+  <text x="314" y="1203" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="314" dy="0">negative → first is less than second</tspan>
+    <tspan x="314" dy="29">zero → same ordering position</tspan>
+    <tspan x="314" dy="29">positive → first is greater than second</tspan>
+  </text>
+  <text x="904" y="1203" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="904" dy="0">negative → this is less than other</tspan>
+    <tspan x="904" dy="29">zero → same ordering position</tspan>
+    <tspan x="904" dy="29">positive → this is greater than other</tspan>
+  </text>
+
+  <!-- Row: best fit -->
+  <text x="54" y="1363" font-family="sans-serif" font-size="22" font-weight="bold" fill="black">Best fit</text>
+  <text x="314" y="1348" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="314" dy="0">Multiple or context-specific orderings,</tspan>
+    <tspan x="314" dy="29">or when the class cannot be modified</tspan>
+  </text>
+  <text x="904" y="1348" font-family="sans-serif" font-size="21" fill="black">
+    <tspan x="904" dy="0">The type has one obvious and stable</tspan>
+    <tspan x="904" dy="29">natural ordering</tspan>
+  </text>
+
+  <!-- Table grid -->
+  <g fill="none" stroke="#777" stroke-width="2">
+    <rect x="30" y="140" width="1440" height="1285"/>
+    <path d="M290 140V1425 M880 140V1425"/>
+    <path d="M30 230H1470 M30 320H1470 M30 425H1470 M30 535H1470 M30 665H1470 M30 795H1470 M30 915H1470 M30 1035H1470 M30 1165H1470 M30 1285H1470"/>
+  </g>
+
+  <!-- Shared contract note -->
+  <text x="750" y="1470" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#444">Both methods must define a transitive ordering; consistency with equals() is strongly recommended.</text>
+</svg>

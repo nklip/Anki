@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900" role="img" aria-labelledby="title description">
+  <title id="title">Hierarchy of non-blocking progress guarantees</title>
+  <desc id="description">Nested boxes show that wait-free algorithms are also lock-free and obstruction-free, while lock-free algorithms are also obstruction-free. Text explains the progress and starvation guarantee at each level.</desc>
+
+  <!-- Background and title -->
+  <rect width="1500" height="900" fill="white"/>
+  <text x="750" y="55" text-anchor="middle" font-family="sans-serif" font-size="38" font-weight="bold" fill="#111">Non-blocking progress guarantees</text>
+  <text x="750" y="91" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#444">The stronger guarantee includes every guarantee outside it</text>
+
+  <!-- Strength arrow: shaft stops below the triangular head -->
+  <text x="72" y="450" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#444" transform="rotate(-90 72 450)">stronger progress guarantee</text>
+  <path d="M112 770V166" fill="none" stroke="#444" stroke-width="5"/>
+  <polygon points="112,138 98,168 126,168" fill="#444"/>
+
+  <!-- Outermost guarantee -->
+  <rect x="160" y="125" width="1280" height="690" rx="12" fill="#fff8eb" stroke="#bd7823" stroke-width="4"/>
+  <text x="800" y="170" text-anchor="middle" font-family="sans-serif" font-size="31" font-weight="bold" fill="#7b4d16">OBSTRUCTION-FREE</text>
+  <text x="800" y="204" text-anchor="middle" font-family="sans-serif" font-size="19" fill="#553c22">An operation completes if it runs without interference for long enough</text>
+
+  <rect x="205" y="232" width="280" height="130" rx="7" fill="white" stroke="#bd7823" stroke-width="2"/>
+  <text x="345" y="267" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#7b4d16">Guarantee</text>
+  <text x="345" y="297" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">progress only after</text>
+  <text x="345" y="323" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">sufficient isolation</text>
+  <text x="345" y="350" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#a32e29">all threads may livelock</text>
+
+  <!-- Lock-free subset -->
+  <rect x="515" y="240" width="830" height="520" rx="12" fill="#eef5fc" stroke="#356da8" stroke-width="4"/>
+  <text x="930" y="288" text-anchor="middle" font-family="sans-serif" font-size="31" font-weight="bold" fill="#234f7c">LOCK-FREE</text>
+  <text x="930" y="322" text-anchor="middle" font-family="sans-serif" font-size="19" fill="#294b6c">The system as a whole keeps completing operations</text>
+
+  <rect x="555" y="352" width="255" height="140" rx="7" fill="white" stroke="#356da8" stroke-width="2"/>
+  <text x="682" y="387" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#234f7c">Guarantee</text>
+  <text x="682" y="417" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">some operation</text>
+  <text x="682" y="443" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">must complete</text>
+  <text x="682" y="475" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#a32e29">one thread may starve</text>
+
+  <!-- Wait-free subset -->
+  <rect x="835" y="365" width="460" height="315" rx="12" fill="#edf8ef" stroke="#43804c" stroke-width="4"/>
+  <text x="1065" y="416" text-anchor="middle" font-family="sans-serif" font-size="31" font-weight="bold" fill="#315e38">WAIT-FREE</text>
+  <text x="1065" y="451" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#315e38">Every operation completes</text>
+
+  <rect x="885" y="482" width="360" height="140" rx="7" fill="white" stroke="#43804c" stroke-width="2"/>
+  <text x="1065" y="518" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#315e38">Per-operation guarantee</text>
+  <text x="1065" y="551" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">bounded number of its own steps</text>
+  <text x="1065" y="580" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">regardless of other threads</text>
+  <text x="1065" y="607" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#315e38">no algorithmic starvation</text>
+
+  <!-- Labels for strict differences -->
+  <text x="345" y="408" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#7b4d16">Contention can prevent</text>
+  <text x="345" y="434" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">every completion.</text>
+  <text x="345" y="470" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">Backoff or a contention manager</text>
+  <text x="345" y="494" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">can improve practical behavior.</text>
+
+  <text x="682" y="538" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#234f7c">Repeated CAS failures</text>
+  <text x="682" y="564" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">can still mean that other</text>
+  <text x="682" y="590" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">operations are succeeding.</text>
+  <text x="682" y="630" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">Global progress ≠ fairness</text>
+
+  <!-- Implication statement -->
+  <rect x="250" y="835" width="1100" height="48" rx="6" fill="#f3f3f3" stroke="#777" stroke-width="2"/>
+  <text x="800" y="866" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="bold" fill="#222">wait-free  ⇒  lock-free  ⇒  obstruction-free</text>
+</svg>
