@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750" role="img" aria-labelledby="title description">
+  <title id="title">Spring bean scopes and their sharing boundaries</title>
+  <desc id="description">A beginner diagram showing that singleton lookups share one bean, prototype lookups receive separate beans, and request, session, application, and WebSocket scopes bind one bean to their respective web lifetimes.</desc>
+
+  <!-- Shared styles; colors identify scope boundaries, not Java types. -->
+  <defs>
+    <style>
+      .sans { font-family: Arial, Helvetica, sans-serif; }
+      .heading { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #202124; }
+      .body { font-family: Arial, Helvetica, sans-serif; fill: #303840; }
+      .muted { font-family: Arial, Helvetica, sans-serif; fill: #5f6872; }
+      .light-heading { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <!-- Background, title, and the one-sentence lesson. -->
+  <rect id="background" width="1200" height="750" fill="#ffffff"/>
+  <text x="600" y="44" text-anchor="middle" class="heading" font-size="30">Spring bean scopes</text>
+  <text x="600" y="75" text-anchor="middle" class="muted" font-size="18">A scope defines the sharing boundary and lifetime of a bean instance</text>
+  <rect x="30" y="95" width="1140" height="58" rx="9" fill="#f7f9fb" stroke="#64717c" stroke-width="2"/>
+  <text x="600" y="131" text-anchor="middle" class="heading" font-size="20">Same bean definition + different scope → different instance-sharing rule</text>
+
+  <!-- Standard scopes: compare two resolutions of the same bean definition. -->
+  <g id="standard-scopes">
+    <!-- Singleton panel: both connector tips stop before the shared bean boundary. -->
+    <g id="singleton-scope">
+      <rect x="30" y="175" width="560" height="215" rx="10" fill="#eef5ff" stroke="#356eb3" stroke-width="2"/>
+      <rect x="30" y="175" width="560" height="48" rx="10" fill="#356eb3"/>
+      <rect x="30" y="213" width="560" height="10" fill="#356eb3"/>
+      <text x="55" y="207" class="light-heading" font-size="22">singleton</text>
+      <text x="565" y="206" text-anchor="end" class="sans" font-size="15" fill="#ffffff">default · per bean + container</text>
+
+      <rect x="65" y="245" width="150" height="44" rx="6" fill="#ffffff" stroke="#64717c" stroke-width="2"/>
+      <rect x="65" y="311" width="150" height="44" rx="6" fill="#ffffff" stroke="#64717c" stroke-width="2"/>
+      <text x="140" y="273" text-anchor="middle" class="body" font-size="16">Lookup A</text>
+      <text x="140" y="339" text-anchor="middle" class="body" font-size="16">Lookup B</text>
+
+      <path d="M225 267H403" fill="none" stroke="#356eb3" stroke-width="4"/>
+      <polygon points="403,258 418,267 403,276" fill="#356eb3"/>
+      <path d="M225 333H403" fill="none" stroke="#356eb3" stroke-width="4"/>
+      <polygon points="403,324 418,333 403,342" fill="#356eb3"/>
+      <text x="318" y="304" text-anchor="middle" class="muted" font-size="14">both resolve to</text>
+
+      <rect x="430" y="245" width="130" height="110" rx="8" fill="#dbeafe" stroke="#356eb3" stroke-width="3"/>
+      <text x="495" y="293" text-anchor="middle" class="heading" font-size="18">Bean S</text>
+      <text x="495" y="319" text-anchor="middle" class="muted" font-size="14">same instance</text>
+      <text x="55" y="378" class="muted" font-size="14">One cached instance is returned for this bean definition.</text>
+    </g>
+
+    <!-- Prototype panel: each lookup points to a separate target bean. -->
+    <g id="prototype-scope">
+      <rect x="610" y="175" width="560" height="215" rx="10" fill="#edf8f0" stroke="#34834b" stroke-width="2"/>
+      <rect x="610" y="175" width="560" height="48" rx="10" fill="#34834b"/>
+      <rect x="610" y="213" width="560" height="10" fill="#34834b"/>
+      <text x="635" y="207" class="light-heading" font-size="22">prototype</text>
+      <text x="1145" y="206" text-anchor="end" class="sans" font-size="15" fill="#ffffff">new target per container request</text>
+
+      <rect x="645" y="245" width="150" height="44" rx="6" fill="#ffffff" stroke="#64717c" stroke-width="2"/>
+      <rect x="645" y="311" width="150" height="44" rx="6" fill="#ffffff" stroke="#64717c" stroke-width="2"/>
+      <text x="720" y="273" text-anchor="middle" class="body" font-size="16">Lookup A</text>
+      <text x="720" y="339" text-anchor="middle" class="body" font-size="16">Lookup B</text>
+
+      <path d="M805 267H973" fill="none" stroke="#34834b" stroke-width="4"/>
+      <polygon points="973,258 988,267 973,276" fill="#34834b"/>
+      <path d="M805 333H973" fill="none" stroke="#34834b" stroke-width="4"/>
+      <polygon points="973,324 988,333 973,342" fill="#34834b"/>
+      <text x="889" y="304" text-anchor="middle" class="muted" font-size="14">each creates</text>
+
+      <rect x="1000" y="245" width="130" height="44" rx="7" fill="#dcefe1" stroke="#34834b" stroke-width="3"/>
+      <rect x="1000" y="311" width="130" height="44" rx="7" fill="#dcefe1" stroke="#34834b" stroke-width="3"/>
+      <text x="1065" y="273" text-anchor="middle" class="heading" font-size="17">Bean A</text>
+      <text x="1065" y="339" text-anchor="middle" class="heading" font-size="17">Bean B</text>
+      <text x="635" y="378" class="muted" font-size="14">Spring does not run configured destruction callbacks for prototypes.</text>
+    </g>
+  </g>
+
+  <!-- Web scopes: the outer shape is the boundary that owns one bean. -->
+  <g id="web-scopes">
+    <text x="30" y="423" class="heading" font-size="19">Web-aware ApplicationContext only</text>
+    <text x="380" y="423" class="muted" font-size="15">Each boundary below owns its own bean instance.</text>
+
+    <g id="request-scope">
+      <rect x="30" y="440" width="275" height="185" rx="9" fill="#eef5ff" stroke="#356eb3" stroke-width="2"/>
+      <rect x="30" y="440" width="275" height="42" rx="9" fill="#356eb3"/>
+      <rect x="30" y="473" width="275" height="9" fill="#356eb3"/>
+      <text x="50" y="468" class="light-heading" font-size="19">request</text>
+      <rect x="55" y="500" width="225" height="42" rx="6" fill="#ffffff" stroke="#356eb3"/>
+      <rect x="55" y="552" width="225" height="42" rx="6" fill="#ffffff" stroke="#356eb3"/>
+      <text x="167" y="526" text-anchor="middle" class="body" font-size="15">Request 1 · Bean A</text>
+      <text x="167" y="578" text-anchor="middle" class="body" font-size="15">Request 2 · Bean B</text>
+      <text x="167" y="614" text-anchor="middle" class="muted" font-size="13">one per HTTP request</text>
+    </g>
+
+    <g id="session-scope">
+      <rect x="320" y="440" width="275" height="185" rx="9" fill="#edf8f0" stroke="#34834b" stroke-width="2"/>
+      <rect x="320" y="440" width="275" height="42" rx="9" fill="#34834b"/>
+      <rect x="320" y="473" width="275" height="9" fill="#34834b"/>
+      <text x="340" y="468" class="light-heading" font-size="19">session</text>
+      <rect x="345" y="500" width="225" height="94" rx="7" fill="#ffffff" stroke="#34834b" stroke-width="2"/>
+      <text x="457" y="525" text-anchor="middle" class="heading" font-size="15">HTTP Session X</text>
+      <text x="457" y="548" text-anchor="middle" class="muted" font-size="13">many requests share</text>
+      <rect x="405" y="558" width="105" height="27" rx="5" fill="#dcefe1" stroke="#34834b"/>
+      <text x="457" y="577" text-anchor="middle" class="body" font-size="14">Bean X</text>
+      <text x="457" y="614" text-anchor="middle" class="muted" font-size="13">one per HTTP session</text>
+    </g>
+
+    <g id="application-scope">
+      <rect x="610" y="440" width="275" height="185" rx="9" fill="#fff4e9" stroke="#b06020" stroke-width="2"/>
+      <rect x="610" y="440" width="275" height="42" rx="9" fill="#b06020"/>
+      <rect x="610" y="473" width="275" height="9" fill="#b06020"/>
+      <text x="630" y="468" class="light-heading" font-size="19">application</text>
+      <rect x="635" y="500" width="225" height="94" rx="7" fill="#ffffff" stroke="#b06020" stroke-width="2"/>
+      <text x="747" y="528" text-anchor="middle" class="heading" font-size="15">ServletContext</text>
+      <rect x="695" y="546" width="105" height="31" rx="5" fill="#f5ddc7" stroke="#b06020"/>
+      <text x="747" y="567" text-anchor="middle" class="body" font-size="14">Bean A</text>
+      <text x="747" y="614" text-anchor="middle" class="muted" font-size="13">one per web application</text>
+    </g>
+
+    <g id="websocket-scope">
+      <rect x="900" y="440" width="270" height="185" rx="9" fill="#f7effb" stroke="#744b91" stroke-width="2"/>
+      <rect x="900" y="440" width="270" height="42" rx="9" fill="#744b91"/>
+      <rect x="900" y="473" width="270" height="9" fill="#744b91"/>
+      <text x="920" y="468" class="light-heading" font-size="19">websocket</text>
+      <rect x="925" y="500" width="220" height="94" rx="7" fill="#ffffff" stroke="#744b91" stroke-width="2"/>
+      <text x="1035" y="528" text-anchor="middle" class="heading" font-size="15">WebSocket session</text>
+      <rect x="982" y="546" width="106" height="31" rx="5" fill="#eadcf1" stroke="#744b91"/>
+      <text x="1035" y="567" text-anchor="middle" class="body" font-size="14">Bean W</text>
+      <text x="1035" y="614" text-anchor="middle" class="muted" font-size="13">one per WebSocket</text>
+    </g>
+  </g>
+
+  <!-- Injection caveat: keep this short so the diagram ends with an actionable rule. -->
+  <g id="shorter-lived-dependency-note">
+    <rect x="30" y="650" width="1140" height="72" rx="9" fill="#faf8fc" stroke="#744b91" stroke-width="2"/>
+    <text x="55" y="680" class="heading" font-size="17" fill="#744b91">Shorter-lived dependency inside a singleton?</text>
+    <text x="55" y="706" class="body" font-size="16">Use a scoped proxy or ObjectProvider to resolve the current instance when it is needed.</text>
+  </g>
+</svg>
