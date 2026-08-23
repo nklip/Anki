@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title description">
+  <title id="title">Optional as a monad-like computation pipeline in Java</title>
+  <desc id="description">A beginner diagram showing how Optional flatMap chains a function that already returns an Optional, avoids a nested Optional, and preserves an empty value through later steps.</desc>
+
+  <!-- Shared styles. Purple marks the Optional context; green marks successful values; gray marks the empty path. -->
+  <defs>
+    <style>
+      .heading { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #202124; }
+      .body { font-family: Arial, Helvetica, sans-serif; fill: #303840; }
+      .muted { font-family: Arial, Helvetica, sans-serif; fill: #5f6872; }
+      .mono { font-family: Menlo, Consolas, "Liberation Mono", monospace; fill: #303840; }
+      .light { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <!-- Background and the one-sentence lesson. -->
+  <rect id="background" width="1200" height="720" fill="#ffffff"/>
+  <text x="600" y="42" text-anchor="middle" class="heading" font-size="30">Monads in Java: learn the pattern with Optional</text>
+  <text x="600" y="73" text-anchor="middle" class="muted" font-size="18">flatMap sequences a context-producing step without adding another Optional layer</text>
+
+  <!-- Main example: the value stays inside the Optional context through every step. -->
+  <g id="present-value-pipeline">
+    <rect x="30" y="100" width="1140" height="250" rx="11" fill="#faf8fc" stroke="#744b91" stroke-width="2"/>
+    <text x="55" y="133" class="heading" font-size="20">Present-value path</text>
+
+    <g id="input-optional">
+      <rect x="55" y="165" width="205" height="112" rx="9" fill="#f1e7f7" stroke="#744b91" stroke-width="3"/>
+      <text x="157" y="198" text-anchor="middle" class="heading" font-size="17">Optional&lt;String&gt;</text>
+      <rect x="91" y="215" width="133" height="42" rx="6" fill="#ffffff" stroke="#34834b" stroke-width="2"/>
+      <text x="157" y="242" text-anchor="middle" class="mono" font-size="18">"42"</text>
+    </g>
+
+    <!-- Arrow tip stops before the flatMap box. -->
+    <path d="M270 221H297" fill="none" stroke="#744b91" stroke-width="4"/>
+    <polygon points="297,211 314,221 297,231" fill="#744b91"/>
+
+    <g id="flatmap-step">
+      <rect x="325" y="160" width="245" height="122" rx="9" fill="#eef5ff" stroke="#356eb3" stroke-width="3"/>
+      <text x="447" y="195" text-anchor="middle" class="heading" font-size="19">flatMap(parseInt)</text>
+      <text x="447" y="226" text-anchor="middle" class="mono" font-size="14">String → Optional&lt;Integer&gt;</text>
+      <text x="447" y="255" text-anchor="middle" class="muted" font-size="14">returns a context</text>
+    </g>
+
+    <path d="M580 221H607" fill="none" stroke="#744b91" stroke-width="4"/>
+    <polygon points="607,211 624,221 607,231" fill="#744b91"/>
+
+    <g id="parsed-optional">
+      <rect x="635" y="165" width="185" height="112" rx="9" fill="#edf8f0" stroke="#34834b" stroke-width="3"/>
+      <text x="727" y="198" text-anchor="middle" class="heading" font-size="17">Optional&lt;Integer&gt;</text>
+      <rect x="678" y="215" width="99" height="42" rx="6" fill="#ffffff" stroke="#34834b" stroke-width="2"/>
+      <text x="727" y="242" text-anchor="middle" class="mono" font-size="18">42</text>
+    </g>
+
+    <path d="M830 221H857" fill="none" stroke="#34834b" stroke-width="4"/>
+    <polygon points="857,211 874,221 857,231" fill="#34834b"/>
+
+    <g id="map-step">
+      <rect x="885" y="174" width="115" height="94" rx="9" fill="#eef5ff" stroke="#356eb3" stroke-width="3"/>
+      <text x="942" y="210" text-anchor="middle" class="heading" font-size="17">map</text>
+      <text x="942" y="239" text-anchor="middle" class="mono" font-size="16">n × 2</text>
+    </g>
+
+    <path d="M1010 221H1037" fill="none" stroke="#34834b" stroke-width="4"/>
+    <polygon points="1037,211 1054,221 1037,231" fill="#34834b"/>
+
+    <g id="final-optional">
+      <rect x="1065" y="174" width="80" height="94" rx="9" fill="#dcefe1" stroke="#34834b" stroke-width="3"/>
+      <text x="1105" y="208" text-anchor="middle" class="heading" font-size="15">Optional</text>
+      <text x="1105" y="239" text-anchor="middle" class="mono" font-size="19">84</text>
+    </g>
+
+    <text x="600" y="322" text-anchor="middle" class="body" font-size="16">The context remains Optional; only the value and its type change.</text>
+  </g>
+
+  <!-- Empty branch: no connector crosses text, and skipped steps are grouped into one explicit rule. -->
+  <g id="empty-value-pipeline">
+    <rect x="30" y="372" width="1140" height="105" rx="10" fill="#f5f6f7" stroke="#64717c" stroke-width="2"/>
+    <rect x="55" y="401" width="200" height="48" rx="7" fill="#ffffff" stroke="#64717c" stroke-width="2"/>
+    <text x="155" y="431" text-anchor="middle" class="mono" font-size="16">Optional.empty()</text>
+    <path d="M265 425H335" fill="none" stroke="#64717c" stroke-width="4"/>
+    <polygon points="335,415 352,425 335,435" fill="#64717c"/>
+    <rect x="365" y="397" width="460" height="56" rx="7" fill="#ffffff" stroke="#64717c" stroke-width="2"/>
+    <text x="595" y="421" text-anchor="middle" class="heading" font-size="16">flatMap and map do not call their mappers</text>
+    <text x="595" y="443" text-anchor="middle" class="muted" font-size="14">the absence rule is preserved automatically</text>
+    <path d="M835 425H905" fill="none" stroke="#64717c" stroke-width="4"/>
+    <polygon points="905,415 922,425 905,435" fill="#64717c"/>
+    <rect x="935" y="401" width="210" height="48" rx="7" fill="#ffffff" stroke="#64717c" stroke-width="2"/>
+    <text x="1040" y="431" text-anchor="middle" class="mono" font-size="16">Optional.empty()</text>
+  </g>
+
+  <!-- Comparison panel: this is the key difference a Java learner must remember. -->
+  <g id="map-versus-flatmap">
+    <rect x="30" y="500" width="700" height="185" rx="10" fill="#fff8e6" stroke="#b7791f" stroke-width="2"/>
+    <text x="55" y="535" class="heading" font-size="20">Why use flatMap?</text>
+
+    <rect x="55" y="558" width="295" height="92" rx="8" fill="#ffffff" stroke="#b7791f" stroke-width="2"/>
+    <text x="202" y="588" text-anchor="middle" class="mono" font-size="15">map(parseInt)</text>
+    <text x="202" y="620" text-anchor="middle" class="mono" font-size="15">Optional&lt;Optional&lt;Integer&gt;&gt;</text>
+    <text x="202" y="642" text-anchor="middle" class="muted" font-size="13">nested context</text>
+
+    <rect x="380" y="558" width="325" height="92" rx="8" fill="#ffffff" stroke="#34834b" stroke-width="3"/>
+    <text x="542" y="588" text-anchor="middle" class="mono" font-size="15">flatMap(parseInt)</text>
+    <text x="542" y="620" text-anchor="middle" class="mono" font-size="16">Optional&lt;Integer&gt;</text>
+    <text x="542" y="642" text-anchor="middle" class="muted" font-size="13">one context · ready to chain</text>
+  </g>
+
+  <!-- Monad checklist: compact wording keeps the abstract definition next to the concrete example. -->
+  <g id="monad-checklist">
+    <rect x="750" y="500" width="420" height="185" rx="10" fill="#eef5ff" stroke="#356eb3" stroke-width="2"/>
+    <text x="775" y="535" class="heading" font-size="20">Monad pattern</text>
+    <text x="775" y="570" class="body" font-size="16">1. Put a value into a context M&lt;T&gt;</text>
+    <text x="775" y="602" class="body" font-size="16">2. Chain T → M&lt;U&gt; with flatMap</text>
+    <text x="775" y="634" class="body" font-size="16">3. Obey identity + associativity laws</text>
+    <text x="775" y="665" class="muted" font-size="14">Java has no standard Monad interface.</text>
+  </g>
+</svg>
