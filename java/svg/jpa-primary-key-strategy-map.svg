@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="820" viewBox="0 0 1400 820" role="img" aria-labelledby="diagram-title diagram-description">
+  <title id="diagram-title">JPA primary key generation strategies</title>
+  <desc id="diagram-description">A beginner map from Id and GeneratedValue to AUTO, IDENTITY, SEQUENCE, TABLE, and UUID. Each strategy names who creates the key, when it becomes known, and its portable Java identifier types. A separate strip explains application-assigned identifiers.</desc>
+
+  <!-- Shared visual language: blue is provider choice, orange is insert-time database work, green is pre-insert allocation, and purple is provider-side UUID creation. -->
+  <style>
+    .heading { font-family: Inter, Arial, sans-serif; font-weight: 700; fill: #17212b; }
+    .body { font-family: Inter, Arial, sans-serif; fill: #2f3a45; }
+    .muted { font-family: Inter, Arial, sans-serif; fill: #596673; }
+    .mono { font-family: "SFMono-Regular", Consolas, monospace; fill: #23303d; }
+    .light { font-family: Inter, Arial, sans-serif; font-weight: 700; fill: #ffffff; }
+  </style>
+
+  <!-- Lesson title and the annotation that starts the decision. -->
+  <rect width="1400" height="820" fill="#ffffff"/>
+  <text x="700" y="48" text-anchor="middle" class="heading" font-size="32">JPA primary keys: who creates the value, and when?</text>
+  <text x="700" y="80" text-anchor="middle" class="muted" font-size="18">@GeneratedValue applies to a simple @Id; the selected strategy controls the allocator.</text>
+
+  <g id="generated-value-root">
+    <rect x="470" y="108" width="460" height="92" rx="13" fill="#eef5ff" stroke="#356da8" stroke-width="3"/>
+    <text x="700" y="145" text-anchor="middle" class="mono" font-size="23">@Id @GeneratedValue(...)</text>
+    <text x="700" y="177" text-anchor="middle" class="body" font-size="17">The provider generates the entity identity</text>
+  </g>
+
+  <!-- Five branches share an empty routing corridor and stop before the strategy cards. -->
+  <g id="strategy-branches" fill="none" stroke="#66727d" stroke-width="4">
+    <path d="M700 200V225H156V263"/>
+    <path d="M700 200V225H428V263"/>
+    <path d="M700 200V263"/>
+    <path d="M700 200V225H972V263"/>
+    <path d="M700 200V225H1244V263"/>
+  </g>
+  <!-- Manually positioned arrowheads make every endpoint easy to repair. -->
+  <g id="strategy-arrowheads" fill="#66727d">
+    <polygon points="146,263 156,277 166,263"/>
+    <polygon points="418,263 428,277 438,263"/>
+    <polygon points="690,263 700,277 710,263"/>
+    <polygon points="962,263 972,277 982,263"/>
+    <polygon points="1234,263 1244,277 1254,263"/>
+  </g>
+
+  <!-- AUTO is a request for provider choice, not a fixed database mechanism. -->
+  <g id="auto-card">
+    <rect x="30" y="280" width="252" height="350" rx="12" fill="#eef5ff" stroke="#356da8" stroke-width="3"/>
+    <rect x="30" y="280" width="252" height="55" rx="12" fill="#356da8"/>
+    <path d="M30 320H282" stroke="#356da8" stroke-width="30"/>
+    <text x="156" y="317" text-anchor="middle" class="light" font-size="22">AUTO</text>
+    <text x="156" y="372" text-anchor="middle" class="heading" font-size="18">Provider chooses</text>
+    <line x1="55" y1="391" x2="257" y2="391" stroke="#b9d2ea" stroke-width="2"/>
+    <text x="55" y="428" class="body" font-size="16">UUID or String:</text>
+    <text x="55" y="453" class="heading" font-size="16">equivalent to UUID</text>
+    <text x="55" y="493" class="body" font-size="16">Numeric ID:</text>
+    <text x="55" y="518" class="heading" font-size="16">provider selects</text>
+    <text x="55" y="543" class="body" font-size="15">TABLE, SEQUENCE,</text>
+    <text x="55" y="566" class="body" font-size="15">or IDENTITY</text>
+    <!-- Two short footer lines preserve padding even when a wide fallback font is used. -->
+    <rect x="52" y="577" width="208" height="41" rx="6" fill="#ffffff" stroke="#8fb4d8"/>
+    <text x="156" y="594" text-anchor="middle" class="muted" font-size="12">Portable intent;</text>
+    <text x="156" y="611" text-anchor="middle" class="muted" font-size="12">physical choice varies</text>
+  </g>
+
+  <!-- IDENTITY cannot reveal the key until the row has been inserted. -->
+  <g id="identity-card">
+    <rect x="302" y="280" width="252" height="350" rx="12" fill="#fff5ea" stroke="#b56032" stroke-width="3"/>
+    <rect x="302" y="280" width="252" height="55" rx="12" fill="#b56032"/>
+    <path d="M302 320H554" stroke="#b56032" stroke-width="30"/>
+    <text x="428" y="317" text-anchor="middle" class="light" font-size="22">IDENTITY</text>
+    <text x="428" y="372" text-anchor="middle" class="heading" font-size="18">Database column</text>
+    <line x1="327" y1="391" x2="529" y2="391" stroke="#e4b99e" stroke-width="2"/>
+    <text x="327" y="428" class="body" font-size="16">Allocator:</text>
+    <text x="327" y="453" class="heading" font-size="16">identity / auto-increment</text>
+    <text x="327" y="493" class="body" font-size="16">ID becomes known:</text>
+    <text x="327" y="518" class="heading" font-size="16">after INSERT</text>
+    <text x="327" y="558" class="body" font-size="16">Portable ID types:</text>
+    <text x="327" y="583" class="mono" font-size="14">long, int, Long, Integer</text>
+  </g>
+
+  <!-- SEQUENCE obtains the value before the entity INSERT and can allocate values in pools. -->
+  <g id="sequence-card">
+    <rect x="574" y="280" width="252" height="350" rx="12" fill="#edf8f0" stroke="#43804c" stroke-width="3"/>
+    <rect x="574" y="280" width="252" height="55" rx="12" fill="#43804c"/>
+    <path d="M574 320H826" stroke="#43804c" stroke-width="30"/>
+    <text x="700" y="317" text-anchor="middle" class="light" font-size="22">SEQUENCE</text>
+    <text x="700" y="372" text-anchor="middle" class="heading" font-size="18">Database sequence</text>
+    <line x1="599" y1="391" x2="801" y2="391" stroke="#add3b5" stroke-width="2"/>
+    <text x="599" y="428" class="body" font-size="16">Allocator:</text>
+    <text x="599" y="453" class="heading" font-size="16">native sequence object</text>
+    <text x="599" y="493" class="body" font-size="16">ID becomes known:</text>
+    <text x="599" y="518" class="heading" font-size="16">before INSERT</text>
+    <text x="599" y="558" class="body" font-size="16">Portable ID types:</text>
+    <text x="599" y="583" class="mono" font-size="14">long, int, Long, Integer</text>
+  </g>
+
+  <!-- TABLE emulates an allocator with a normal database table. -->
+  <g id="table-card">
+    <rect x="846" y="280" width="252" height="350" rx="12" fill="#fff9e8" stroke="#a87916" stroke-width="3"/>
+    <rect x="846" y="280" width="252" height="55" rx="12" fill="#a87916"/>
+    <path d="M846 320H1098" stroke="#a87916" stroke-width="30"/>
+    <text x="972" y="317" text-anchor="middle" class="light" font-size="22">TABLE</text>
+    <text x="972" y="372" text-anchor="middle" class="heading" font-size="18">Generator table</text>
+    <line x1="871" y1="391" x2="1073" y2="391" stroke="#dfc77f" stroke-width="2"/>
+    <text x="871" y="428" class="body" font-size="16">Allocator:</text>
+    <text x="871" y="453" class="heading" font-size="16">row read and update</text>
+    <text x="871" y="493" class="body" font-size="16">ID becomes known:</text>
+    <text x="871" y="518" class="heading" font-size="16">before INSERT</text>
+    <text x="871" y="558" class="body" font-size="16">Portable ID types:</text>
+    <text x="871" y="583" class="mono" font-size="14">long, int, Long, Integer</text>
+  </g>
+
+  <!-- UUID is generated by the provider and the standard deliberately leaves the UUID version open. -->
+  <g id="uuid-card">
+    <rect x="1118" y="280" width="252" height="350" rx="12" fill="#f4f0fa" stroke="#7651a5" stroke-width="3"/>
+    <rect x="1118" y="280" width="252" height="55" rx="12" fill="#7651a5"/>
+    <path d="M1118 320H1370" stroke="#7651a5" stroke-width="30"/>
+    <text x="1244" y="317" text-anchor="middle" class="light" font-size="22">UUID</text>
+    <text x="1244" y="372" text-anchor="middle" class="heading" font-size="18">Provider creates it</text>
+    <line x1="1143" y1="391" x2="1345" y2="391" stroke="#cbbadd" stroke-width="2"/>
+    <text x="1143" y="428" class="body" font-size="16">Format:</text>
+    <text x="1143" y="453" class="heading" font-size="16">RFC 4122 UUID</text>
+    <text x="1143" y="493" class="body" font-size="16">ID becomes known:</text>
+    <text x="1143" y="518" class="heading" font-size="16">before INSERT</text>
+    <text x="1143" y="558" class="body" font-size="16">Portable ID types:</text>
+    <text x="1143" y="583" class="mono" font-size="14">UUID or String</text>
+    <!-- Split the portability note so it cannot collide with the card edges. -->
+    <text x="1244" y="602" text-anchor="middle" class="muted" font-size="12">JPA does not select</text>
+    <text x="1244" y="617" text-anchor="middle" class="muted" font-size="12">a UUID version</text>
+  </g>
+
+  <!-- Assigned identifiers sit outside @GeneratedValue and make the application responsible for uniqueness. -->
+  <g id="assigned-id-strip">
+    <rect x="30" y="670" width="1340" height="112" rx="13" fill="#f7f9fb" stroke="#9aa6b2" stroke-width="2"/>
+    <!-- The annotation is deliberately split across two lines for safe padding in every renderer. -->
+    <rect x="52" y="691" width="240" height="70" rx="10" fill="#ffffff" stroke="#66727d" stroke-width="2"/>
+    <text x="172" y="714" text-anchor="middle" class="heading" font-size="17">ASSIGNED ID</text>
+    <text x="172" y="737" text-anchor="middle" class="mono" font-size="12">@Id</text>
+    <text x="172" y="754" text-anchor="middle" class="mono" font-size="12">no @GeneratedValue</text>
+    <text x="330" y="715" class="heading" font-size="17">The application supplies a unique value before persist().</text>
+    <text x="330" y="744" class="body" font-size="16">Useful for an existing business key or an application-generated UUID; JPA does not coordinate uniqueness for you.</text>
+  </g>
+</svg>

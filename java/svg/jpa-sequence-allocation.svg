@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="820" viewBox="0 0 1400 820" role="img" aria-labelledby="diagram-title diagram-description">
+  <title id="diagram-title">How pooled sequence allocation reduces database calls</title>
+  <desc id="diagram-description">A Hibernate pooled-lo example with allocation size five. The mapping and database sequence both use increment five. One database sequence result reserves identifiers one through five in the provider, and the next result reserves six through ten. Notes explain round trips, configuration agreement, and expected gaps.</desc>
+
+  <!-- Green represents valid identifier pools; blue represents provider work; orange highlights configuration that must agree. -->
+  <style>
+    .heading { font-family: Inter, Arial, sans-serif; font-weight: 700; fill: #17212b; }
+    .body { font-family: Inter, Arial, sans-serif; fill: #2f3a45; }
+    .muted { font-family: Inter, Arial, sans-serif; fill: #596673; }
+    .mono { font-family: "SFMono-Regular", Consolas, monospace; fill: #23303d; }
+    .light { font-family: Inter, Arial, sans-serif; font-weight: 700; fill: #ffffff; }
+  </style>
+
+  <rect width="1400" height="820" fill="#ffffff"/>
+  <text x="700" y="48" text-anchor="middle" class="heading" font-size="32">Sequence pooling: one database value can supply several entity IDs</text>
+  <text x="700" y="80" text-anchor="middle" class="muted" font-size="18">Example: Hibernate pooled-lo behavior with allocationSize = 5</text>
+
+  <!-- The mapping and physical sequence are shown together because both numbers participate in the contract. -->
+  <g id="configuration">
+    <rect x="35" y="115" width="410" height="220" rx="13" fill="#fff7ef" stroke="#b56032" stroke-width="3"/>
+    <rect x="35" y="115" width="410" height="52" rx="13" fill="#b56032"/>
+    <path d="M35 154H445" stroke="#b56032" stroke-width="28"/>
+    <text x="60" y="149" class="light" font-size="20">CONFIGURATION AGREES</text>
+    <text x="60" y="200" class="heading" font-size="17">JPA mapping</text>
+    <text x="60" y="229" class="mono" font-size="15">@SequenceGenerator(</text>
+    <text x="80" y="255" class="mono" font-size="15">sequenceName = "book_seq",</text>
+    <text x="80" y="281" class="mono" font-size="15">allocationSize = 5)</text>
+    <text x="60" y="316" class="heading" font-size="16">Database DDL: INCREMENT BY 5</text>
+  </g>
+
+  <!-- A central provider box owns the in-memory pools between database calls. -->
+  <g id="provider">
+    <rect x="500" y="115" width="865" height="220" rx="13" fill="#eef5ff" stroke="#356da8" stroke-width="3"/>
+    <rect x="500" y="115" width="865" height="52" rx="13" fill="#356da8"/>
+    <path d="M500 154H1365" stroke="#356da8" stroke-width="28"/>
+    <text x="525" y="149" class="light" font-size="20">HIBERNATE PROVIDER · assigns IDs from the current pool</text>
+
+    <text x="535" y="203" class="heading" font-size="17">Database sequence result</text>
+    <rect x="535" y="220" width="180" height="72" rx="10" fill="#ffffff" stroke="#356da8" stroke-width="2"/>
+    <text x="625" y="250" text-anchor="middle" class="mono" font-size="18">nextval → 1</text>
+    <text x="625" y="275" text-anchor="middle" class="muted" font-size="14">one round trip</text>
+
+    <path d="M721 256H792" fill="none" stroke="#356da8" stroke-width="4"/>
+    <polygon points="792,246 806,256 792,266" fill="#356da8"/>
+    <text x="835" y="203" class="heading" font-size="17">Usable in-memory pool</text>
+
+    <!-- Five cells make the allocation size concrete rather than abstract. -->
+    <g id="first-pool">
+      <rect x="835" y="220" width="88" height="72" rx="9" fill="#edf8f0" stroke="#43804c" stroke-width="2"/>
+      <rect x="933" y="220" width="88" height="72" rx="9" fill="#edf8f0" stroke="#43804c" stroke-width="2"/>
+      <rect x="1031" y="220" width="88" height="72" rx="9" fill="#edf8f0" stroke="#43804c" stroke-width="2"/>
+      <rect x="1129" y="220" width="88" height="72" rx="9" fill="#edf8f0" stroke="#43804c" stroke-width="2"/>
+      <rect x="1227" y="220" width="88" height="72" rx="9" fill="#edf8f0" stroke="#43804c" stroke-width="2"/>
+      <text x="879" y="264" text-anchor="middle" class="heading" font-size="23">1</text>
+      <text x="977" y="264" text-anchor="middle" class="heading" font-size="23">2</text>
+      <text x="1075" y="264" text-anchor="middle" class="heading" font-size="23">3</text>
+      <text x="1173" y="264" text-anchor="middle" class="heading" font-size="23">4</text>
+      <text x="1271" y="264" text-anchor="middle" class="heading" font-size="23">5</text>
+    </g>
+  </g>
+
+  <!-- The second row repeats the same idea only after the first five values have been consumed. -->
+  <g id="second-allocation">
+    <rect x="35" y="372" width="1330" height="210" rx="13" fill="#f7f9fb" stroke="#9aa6b2" stroke-width="2"/>
+    <circle cx="87" cy="425" r="26" fill="#356da8"/>
+    <text x="87" y="433" text-anchor="middle" class="light" font-size="22">2</text>
+    <text x="130" y="413" class="heading" font-size="20">Only after IDs 1–5 are consumed</text>
+    <text x="130" y="443" class="body" font-size="16">the first in-memory pool is exhausted.</text>
+
+    <rect x="535" y="397" width="180" height="72" rx="10" fill="#ffffff" stroke="#356da8" stroke-width="2"/>
+    <text x="625" y="427" text-anchor="middle" class="mono" font-size="18">nextval → 6</text>
+    <text x="625" y="452" text-anchor="middle" class="muted" font-size="14">second round trip</text>
+    <path d="M721 433H792" fill="none" stroke="#356da8" stroke-width="4"/>
+    <polygon points="792,423 806,433 792,443" fill="#356da8"/>
+
+    <g id="second-pool">
+      <rect x="835" y="397" width="88" height="72" rx="9" fill="#edf8f0" stroke="#43804c" stroke-width="2"/>
+      <rect x="933" y="397" width="88" height="72" rx="9" fill="#edf8f0" stroke="#43804c" stroke-width="2"/>
+      <rect x="1031" y="397" width="88" height="72" rx="9" fill="#edf8f0" stroke="#43804c" stroke-width="2"/>
+      <rect x="1129" y="397" width="88" height="72" rx="9" fill="#edf8f0" stroke="#43804c" stroke-width="2"/>
+      <rect x="1227" y="397" width="88" height="72" rx="9" fill="#edf8f0" stroke="#43804c" stroke-width="2"/>
+      <text x="879" y="441" text-anchor="middle" class="heading" font-size="23">6</text>
+      <text x="977" y="441" text-anchor="middle" class="heading" font-size="23">7</text>
+      <text x="1075" y="441" text-anchor="middle" class="heading" font-size="23">8</text>
+      <text x="1173" y="441" text-anchor="middle" class="heading" font-size="23">9</text>
+      <text x="1271" y="441" text-anchor="middle" class="heading" font-size="23">10</text>
+    </g>
+
+    <text x="835" y="517" class="heading" font-size="16">Result:</text>
+    <text x="902" y="517" class="body" font-size="16">ten entity IDs from two sequence calls instead of ten calls.</text>
+    <text x="835" y="542" class="muted" font-size="15">Each entity still needs an INSERT;</text>
+    <text x="835" y="566" class="muted" font-size="15">JDBC batching may group compatible statements.</text>
+  </g>
+
+  <!-- Three operational rules use the remaining canvas and prevent the diagram from ending with unused space. -->
+  <g id="operational-rules">
+    <rect x="35" y="620" width="1330" height="162" rx="13" fill="#ffffff" stroke="#b8c2cc" stroke-width="2"/>
+
+    <rect x="57" y="643" width="405" height="116" rx="10" fill="#fff7ef" stroke="#b56032" stroke-width="2"/>
+    <text x="80" y="675" class="heading" font-size="17">1 · Keep configuration aligned</text>
+    <text x="80" y="706" class="body" font-size="15">Mapping allocation size and physical</text>
+    <text x="80" y="730" class="body" font-size="15">sequence increment must fit the optimizer.</text>
+
+    <rect x="497" y="643" width="405" height="116" rx="10" fill="#edf8f0" stroke="#43804c" stroke-width="2"/>
+    <text x="520" y="675" class="heading" font-size="17">2 · Fewer allocator round trips</text>
+    <text x="520" y="706" class="body" font-size="15">Larger pools reduce sequence calls;</text>
+    <text x="520" y="730" class="body" font-size="15">measure before changing the default.</text>
+
+    <rect x="937" y="643" width="405" height="116" rx="10" fill="#f4f0fa" stroke="#7651a5" stroke-width="2"/>
+    <text x="960" y="675" class="heading" font-size="17">3 · Gaps are normal</text>
+    <text x="960" y="706" class="body" font-size="15">Unused pooled values and rollbacks may</text>
+    <text x="960" y="730" class="body" font-size="15">leave holes; IDs are not serial numbers.</text>
+  </g>
+</svg>
