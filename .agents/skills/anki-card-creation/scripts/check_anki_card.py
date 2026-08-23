@@ -13,6 +13,10 @@ IMAGE_RE = re.compile(r"!\[([^\]]*)\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
 SOURCE_RE = re.compile(r"^- \[[^\]]+\]\(https?://[^)]+\)\s*$", re.MULTILINE)
 SECOND_LEVEL_HEADING_RE = re.compile(r"^## ([^#].*)$", re.MULTILINE)
 STEP_HEADING_RE = re.compile(r"^(#{3,6}) Step \d+\b[^\n]*$", re.MULTILINE)
+VERSION_EVENT_RE = re.compile(
+    r"\b(?:added|introduced|previewed|released|finalized|became|available)\b",
+    re.IGNORECASE,
+)
 ALLOWED_IMAGE_SUFFIXES = {".svg", ".png", ".jpg", ".jpeg", ".webp", ".gif"}
 SIMPLE_CHARACTER_LIMIT = 3000
 JAVA_HINTS = (
@@ -64,6 +68,7 @@ def validate_text(
     mode: str,
     *,
     check_image_files: bool = True,
+    require_version_lead: bool = False,
 ) -> list[str]:
     errors: list[str] = []
 
@@ -83,6 +88,30 @@ def validate_text(
         errors.append("## Sources must be the final second-level section")
     if not SOURCE_RE.search(text):
         errors.append("## Sources must contain at least one Markdown link to an HTTP(S) source")
+
+    if require_version_lead:
+        back_match = re.search(r"^## Back\s*$", text, re.MULTILINE)
+        first_back_line = ""
+        if back_match:
+            for line in text[back_match.end():].splitlines():
+                if line.startswith("## "):
+                    break
+                if line.strip():
+                    first_back_line = line.strip()
+                    break
+        if not re.fullmatch(r"\*\*\S(?:.*\S)?\*\*", first_back_line):
+            errors.append(
+                "a versioned feature card must start the Back with one standalone bold sentence"
+            )
+        else:
+            lead_text = first_back_line[2:-2]
+            if not VERSION_EVENT_RE.search(lead_text):
+                errors.append(
+                    "the version lead must state a lifecycle event such as introduced, "
+                    "previewed, or became final"
+                )
+            if not re.search(r"\d", lead_text):
+                errors.append("the version lead must state the release or version")
 
     character_count = len(text)
     if mode == "simple" and character_count > SIMPLE_CHARACTER_LIMIT:
@@ -172,6 +201,26 @@ counter.incrementAndGet();
         above_simple_limit, Path("card.md"), "simple", check_image_files=False
     ))
 
+    versioned_feature = simple.replace(
+        "An atomic update is observed as one indivisible action.",
+        "**Atomic updates were introduced in Example Platform 1.0.**\n\n"
+        "An atomic update is observed as one indivisible action.",
+    )
+    assert not validate_text(
+        versioned_feature,
+        Path("card.md"),
+        "simple",
+        check_image_files=False,
+        require_version_lead=True,
+    )
+    assert any("standalone bold sentence" in error for error in validate_text(
+        simple,
+        Path("card.md"),
+        "simple",
+        check_image_files=False,
+        require_version_lead=True,
+    ))
+
     process_card = complex_card.replace(
         "## Sources",
         "### Step 1 — Read\n\n![Read](svg/read.svg)\n\n"
@@ -200,6 +249,11 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("card", nargs="?", type=Path, help="Markdown card to validate")
     parser.add_argument("--mode", choices=("simple", "complex"), default="simple")
+    parser.add_argument(
+        "--require-version-lead",
+        action="store_true",
+        help="require a bold first Back line naming a feature lifecycle event and version",
+    )
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
 
@@ -216,7 +270,12 @@ def main() -> int:
         return 2
 
     text = args.card.read_text(encoding="utf-8")
-    errors = validate_text(text, args.card, args.mode)
+    errors = validate_text(
+        text,
+        args.card,
+        args.mode,
+        require_version_lead=args.require_version_lead,
+    )
     if errors:
         print(f"{args.card}: validation failed", file=sys.stderr)
         for error in errors:

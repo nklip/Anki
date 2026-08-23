@@ -11,7 +11,7 @@ Requirements:
 - The complete Markdown file, including links and citations, must contain **at most 3,000 Unicode characters**. Count it with the bundled validator; do not treat bytes or words as characters.
 - Include at least **one** local SVG or image. Prefer one purpose-built SVG that carries the central explanation.
 - Ask one focused question on the Front.
-- Begin the Back with a direct answer in one short paragraph.
+- Begin the Back with a direct answer in one short paragraph. For a versioned feature, its first line must follow the shared bold feature-and-release rule and pass `--require-version-lead`.
 - Include only the definitions, example, limitation, or warning needed to make that answer understandable.
 - Keep the `## Sources` list compact while still meeting the shared verification rule.
 

@@ -11,7 +11,7 @@ Requirements:
 - There is no character limit, but every section must contribute to understanding or prevent a material misconception.
 - Include at least **two** local SVGs or images with different teaching purposes, such as structure plus behavior, or before-state plus after-state.
 - If the Back teaches a step-by-step process, every numbered or named step must have its own local `.svg` diagram immediately under that step's heading. A general overview image does not replace step-specific SVGs.
-- Begin the Back with the direct answer and a short roadmap of the explanation.
+- Begin the Back with the direct answer and a short roadmap of the explanation. For a versioned feature, its first line must follow the shared bold feature-and-release rule and pass `--require-version-lead`.
 - Introduce terminology and the static model before describing state changes or edge cases.
 - Prefer this teaching order when it fits: core idea → vocabulary → structure → process → example → limitations or misconceptions → concise summary.
 

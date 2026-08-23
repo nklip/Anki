@@ -25,6 +25,23 @@ Open and read the sources rather than relying on remembered facts or search snip
 
 Put all citations in the final `## Sources` section. Do not scatter citations through the teaching content.
 
+## Lead sentence for versioned features
+
+When the card is about a feature that was added, previewed, finalized, or made generally available in a particular release, make the first nonblank line under `## Back` a standalone bold sentence that states:
+
+1. The feature's official name.
+2. The exact lifecycle event, using wording such as **introduced**, **first previewed**, **became final**, or **became generally available**.
+3. The release or version in which that event occurred.
+4. The authoritative proposal identifier, such as a JEP, when one exists and materially identifies the feature.
+
+For example:
+
+```markdown
+**Compact source files and instance `main` methods became final in JDK 25 with JEP 512.**
+```
+
+Use the lifecycle wording from the authoritative source. Do not describe a preview release as final or present a later refinement as the feature's first introduction. If the topic is not a versioned feature, do not invent a release history; start the Back with the ordinary direct answer instead.
+
 ## Output location and files
 
 - Write the `.md` file in the topic directory selected by the user. If none is specified, infer the best existing topic directory from the current repository and nearby cards.
@@ -45,7 +62,9 @@ A focused question that tells the learner what they should be able to explain.
 
 ## Back
 
-The direct answer and most important fact first.
+**For a versioned feature: official feature name + lifecycle event + release/version.**
+
+For other topics: the direct answer and most important fact first.
 
 ![Meaningful description](svg/descriptive-name.svg)
 
@@ -86,11 +105,13 @@ Run the validator from this skill directory:
 ```bash
 python3 scripts/check_anki_card.py --mode simple path/to/card.md
 python3 scripts/check_anki_card.py --mode complex path/to/card.md
+python3 scripts/check_anki_card.py --mode simple --require-version-lead path/to/versioned-feature-card.md
 ```
 
 Also verify:
 
 - The opening Back paragraph answers the Front directly.
+- A versioned feature card starts with the required bold feature-and-release sentence and passes `--require-version-lead`.
 - Every factual statement is supported by the chosen evidence path.
 - Every visual is referenced, rendered, inspected, and easy for a novice to interpret.
 - Each Java code fence uses `java`, and practical snippets compile or run as claimed.
