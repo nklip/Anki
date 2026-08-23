@@ -2,104 +2,50 @@
 
 ## Front
 
-What are flexible constructor bodies, and what may appear before `super(...)` or `this(...)` in modern Java?
+What may a Java constructor do before `super(...)` or `this(...)`, and what remains forbidden?
 
 ## Back
 
-**Flexible constructor bodies became final in JDK 25** with JEP 513.
+**Flexible constructor bodies** became final in **JDK 25** with JEP 513.
 
-| JDK | Status |
-|---|---|
-| 22 | First preview — JEP 447 |
-| 23 | Second preview — JEP 482 |
-| 24 | Third preview — JEP 492 |
-| 25 | Final — JEP 513 |
+They allow safe statements before an explicit `super(...)` or `this(...)` call. This first phase is the **prologue**; statements after the constructor invocation form the **epilogue**.
 
-Before this feature, an explicit `super(...)` or `this(...)` invocation had to be the first statement in a constructor.
-
-Modern Java allows safe statements before that invocation.
-
-## Validate arguments before `super(...)`
+![Allowed and forbidden operations in a flexible constructor body](svg/syntax-flexible-constructor-bodies.svg)
 
 ```java
 class Person {
-    Person(String name, int age) {
-    }
+    Person(String name, int age) { }
 }
 
 class Employee extends Person {
-    Employee(String name, int age) {
+    private final String badge;
+
+    Employee(String name, int age, String badge) {
         if (age < 18) {
-            throw new IllegalArgumentException("Employee must be an adult");
+            throw new IllegalArgumentException("Under 18");
         }
-
-        super(name, age);
+        String normalized = name.strip();
+        this.badge = badge;
+        super(normalized, age);
     }
 }
 ```
 
-The validation happens before the superclass constructor runs.
+The prologue can:
 
-## Compute superclass arguments first
+- validate parameters and throw an exception;
+- compute local values for constructor arguments;
+- assign fields declared by the class being constructed.
 
-```java
-class User extends Person {
-    User(String name, int age) {
-        String normalizedName = name.strip();
+However, it runs in an **early construction context**. The object is not ready for ordinary use, so the prologue cannot read its instance fields, invoke its instance methods, access inherited instance state, or pass/reference the object as `this`. Direct assignment such as `this.badge = badge` is a special permitted operation; reading `this.badge` there is not.
 
-        if (normalizedName.isEmpty()) {
-            throw new IllegalArgumentException("Name is empty");
-        }
+This enables fail-fast validation before superclass work starts and can initialize subclass fields before a superclass constructor exposes them through an overridden method. The `super(...)` or `this(...)` invocation still separates early construction from normal instance use.
 
-        super(normalizedName, age);
-    }
-}
-```
+The feature was first previewed in JDK 22 as JEP 447 and became permanent in JDK 25. Existing constructors keep their previous meaning.
 
-This avoids placing complex validation or computation inside the `super(...)` argument list.
+## Sources
 
-## Initialize fields before superclass construction
-
-```java
-class Account extends BaseAccount {
-    private final UUID auditId;
-
-    Account(String owner) {
-        this.auditId = UUID.randomUUID();
-        super(owner);
-    }
-}
-```
-
-The language permits controlled initialization of fields declared by the class before the superclass constructor is invoked.
-
-## Safety restrictions
-
-The statements before `super(...)` or `this(...)` form the constructor **prologue**. During this phase, the object is not fully initialized.
-
-The prologue cannot use the object in ways that could expose its uninitialized state. In particular, code cannot:
-
-- Invoke instance methods on `this`.
-- Access inherited instance state.
-- Pass `this` to other code.
-- Use the object before superclass construction has completed.
-
-```java
-class Child extends Parent {
-    Child() {
-        printState(); // compile-time error: unsafe use before super()
-        super();
-    }
-}
-```
-
-## Summary
-
-Flexible constructor bodies allow validation, computation, and safe field initialization before `super(...)` or `this(...)`. The compiler still prevents access that could expose a partially constructed object.
-
-## Official references
-
-- [JEP 447: Statements before `super(...)` — Preview, JDK 22](https://openjdk.org/jeps/447)
-- [JEP 482: Flexible Constructor Bodies — Second Preview, JDK 23](https://openjdk.org/jeps/482)
-- [JEP 492: Flexible Constructor Bodies — Third Preview, JDK 24](https://openjdk.org/jeps/492)
-- [JEP 513: Flexible Constructor Bodies — JDK 25](https://openjdk.org/jeps/513)
+- [Java 25 Language Guide: Flexible Constructor Bodies](https://docs.oracle.com/en/java/javase/25/language/flexible-constructor-bodies.html)
+- [JEP 513: Flexible Constructor Bodies](https://openjdk.org/jeps/513)
+- [JLS 25 §8.8.7: Constructor Body](https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.8.7)
+- [Java 25 Language Changes Summary](https://docs.oracle.com/en/java/javase/25/language/java-language-changes-summary.html)
