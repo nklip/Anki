@@ -2,109 +2,49 @@
 
 ## Front
 
-What does `var` mean in Java, where can it be used, and what are its limitations?
+What does `var` do in Java, where can it be used, and does it make a variable dynamically typed?
 
 ## Back
 
-**Local-variable type inference was added in JDK 10** by JEP 286.
+**Local-variable type inference** was introduced in **JDK 10** with JEP 286.
 
-`var` asks the compiler to infer a local variable's static type from its initializer:
+`var` tells the compiler to infer a local variable's **static type** from its initializer. Only the type spelling is omitted; Java remains statically typed, and the inferred type is fixed for that variable.
 
-```java
-var name = "Alice";                  // String
-var count = 10;                      // int
-var users = new ArrayList<User>();   // ArrayList<User>
-```
-
-`var` does **not** make Java dynamically typed. The inferred type is fixed at compile time:
+![How var becomes a fixed static type at compile time](svg/syntax-var-type.svg)
 
 ```java
-var value = "text"; // inferred as String
+import java.util.ArrayList;
 
-value = "other";    // valid
-value = 42;         // compile-time error
-```
+public class VarDemo {
+    public static void main(String[] args) {
+        var names = new ArrayList<String>(); // ArrayList<String>
+        names.add("Ada");
 
-## Where `var` can be used
+        for (var name : names) {             // name is String
+            System.out.println(name.toUpperCase());
+        }
 
-It can be used for local variables with initializers:
-
-```java
-var path = Path.of("data.txt");
-
-for (var i = 0; i < 10; i++) {
-    // i is int
-}
-
-for (var user : users) {
-    // user has the collection element type
-}
-
-try (var input = Files.newInputStream(path)) {
-    // input is InputStream
-}
-```
-
-## Where `var` cannot be used
-
-It cannot replace types for:
-
-- Fields.
-- Method or constructor parameters.
-- Method return types.
-- Variables without initializers.
-- `catch` parameters.
-
-```java
-class Example {
-    var field = 10;       // compile-time error
-
-    var calculate() {     // compile-time error
-        return 10;
-    }
-
-    void print(var text) { // compile-time error
+        var message = "hello";              // String
+        message = "goodbye";                // valid: still String
+        // message = 42;                     // error: int is not String
     }
 }
 ```
 
-The initializer must provide enough type information:
+Common legal positions are a local variable with an initializer, a basic or enhanced `for` variable, and a `try`-with-resources variable. JDK 11 added `var` for implicitly typed lambda parameters with JEP 323; either every lambda parameter uses `var`, or none does.
+
+`var` cannot be used for a field, method or constructor parameter, return type, or `catch` parameter. The compiler also needs an initializer whose type it can determine. These declarations do not compile:
 
 ```java
 var missing;          // error: no initializer
-var nothing = null;   // error: cannot infer a type
-var numbers = {1, 2}; // error: array initializer needs a target type
+var nothing = null;   // error: null supplies no type
+var task = () -> {};  // error: a lambda needs a target type
 ```
 
-Use an explicit type when it communicates intent better:
+Inference uses the initializer's type, not the abstraction you might prefer: `var names = new ArrayList<String>()` means `ArrayList<String>`, not `List<String>`. Use an explicit type when that abstraction or the initializer's meaning is important to the reader.
 
-```java
-List<User> users = new ArrayList<>();
-```
+## Sources
 
-With `var`, the inferred type is the concrete initializer type:
-
-```java
-var users = new ArrayList<User>(); // ArrayList<User>, not List<User>
-```
-
-## Lambda parameters
-
-**JDK 11** extended `var` to implicitly typed lambda parameters, mainly so annotations can be added consistently:
-
-```java
-(var left, var right) -> left.compareTo(right)
-
-(@Deprecated var value) -> value.trim()
-```
-
-If one lambda parameter uses `var`, all parameters must use it.
-
-## Summary
-
-`var` removes repeated local type declarations while preserving static typing. Use it when the inferred type is obvious; prefer an explicit type when `var` would hide important information.
-
-## Official reference
-
-- [JEP 286: Local-Variable Type Inference — JDK 10](https://openjdk.org/jeps/286)
-
+- [OpenJDK — JEP 286: Local-Variable Type Inference](https://openjdk.org/jeps/286)
+- [Java Language Specification §14.4 — Local Variable Declarations](https://docs.oracle.com/javase/specs/jls/se26/html/jls-14.html#jls-14.4)
+- [OpenJDK — JEP 323: Local-Variable Syntax for Lambda Parameters](https://openjdk.org/jeps/323)

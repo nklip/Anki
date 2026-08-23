@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title description">
+  <title id="title">var lets the compiler infer one fixed local type</title>
+  <desc id="description">A beginner diagram showing an ArrayList initializer flowing through compile-time type inference to a variable whose fixed static type is ArrayList of String, followed by common allowed positions and important restrictions.</desc>
+
+  <!-- Shared styles; blue is source code, purple is compiler work, green is the result, and orange marks restrictions. -->
+  <defs>
+    <style>
+      .heading { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #202124; }
+      .body { font-family: Arial, Helvetica, sans-serif; fill: #303840; }
+      .muted { font-family: Arial, Helvetica, sans-serif; fill: #5f6872; }
+      .mono { font-family: Menlo, Consolas, "Liberation Mono", monospace; fill: #303840; }
+      .light { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <!-- Lesson statement and permanent-release badge. -->
+  <rect id="background" width="1200" height="720" fill="#ffffff"/>
+  <text x="600" y="43" text-anchor="middle" class="heading" font-size="30">var lets the compiler write the local type for you</text>
+  <text x="600" y="75" text-anchor="middle" class="muted" font-size="18">The type is decided at compile time and stays fixed for that variable</text>
+  <rect x="1010" y="95" width="160" height="38" rx="19" fill="#dcefe1" stroke="#34834b" stroke-width="2"/>
+  <text x="1090" y="120" text-anchor="middle" class="heading" font-size="14">JDK 10 · JEP 286</text>
+
+  <!-- Step 1: the initializer already has a type that the compiler can inspect. -->
+  <g id="initializer">
+    <rect x="30" y="145" width="300" height="280" rx="11" fill="#eef5ff" stroke="#356eb3" stroke-width="2"/>
+    <rect x="30" y="145" width="300" height="50" rx="11" fill="#356eb3"/>
+    <rect x="30" y="184" width="300" height="11" fill="#356eb3"/>
+    <text x="55" y="178" class="light" font-size="20">1 · Read the initializer</text>
+    <rect x="55" y="225" width="250" height="64" rx="8" fill="#ffffff" stroke="#356eb3" stroke-width="1.5"/>
+    <text x="180" y="253" text-anchor="middle" class="mono" font-size="15">new ArrayList&lt;String&gt;()</text>
+    <text x="180" y="276" text-anchor="middle" class="muted" font-size="14">an expression</text>
+    <text x="60" y="333" class="heading" font-size="16">Expression type</text>
+    <rect x="55" y="350" width="250" height="48" rx="8" fill="#ffffff" stroke="#356eb3" stroke-width="1.5"/>
+    <text x="180" y="380" text-anchor="middle" class="mono" font-size="16">ArrayList&lt;String&gt;</text>
+  </g>
+
+  <!-- Arrow shaft ends beneath its own head; the head remains outside the compiler panel. -->
+  <path d="M340 285H386" fill="none" stroke="#744b91" stroke-width="4"/>
+  <polygon points="386,274 407,285 386,296" fill="#744b91"/>
+
+  <!-- Step 2: var requests local inference; it does not defer typing until runtime. -->
+  <g id="compiler-inference">
+    <rect x="420" y="145" width="360" height="280" rx="11" fill="#faf8fc" stroke="#744b91" stroke-width="2"/>
+    <rect x="420" y="145" width="360" height="50" rx="11" fill="#744b91"/>
+    <rect x="420" y="184" width="360" height="11" fill="#744b91"/>
+    <text x="445" y="178" class="light" font-size="20">2 · Compiler infers the type</text>
+    <rect x="450" y="220" width="300" height="62" rx="8" fill="#ffffff" stroke="#744b91" stroke-width="1.5"/>
+    <text x="600" y="258" text-anchor="middle" class="mono" font-size="16">var names = initializer;</text>
+    <text x="600" y="325" text-anchor="middle" class="heading" font-size="18">var → initializer's type</text>
+    <text x="600" y="359" text-anchor="middle" class="body" font-size="16">This happens during compilation.</text>
+    <text x="600" y="388" text-anchor="middle" class="muted" font-size="15">No type guessing occurs at runtime.</text>
+  </g>
+
+  <!-- Arrowhead stops before the result panel and does not enter the target shape. -->
+  <path d="M790 285H836" fill="none" stroke="#34834b" stroke-width="4"/>
+  <polygon points="836,274 857,285 836,296" fill="#34834b"/>
+
+  <!-- Step 3: the inferred declared type is fixed, although compatible values may later be assigned. -->
+  <g id="fixed-result">
+    <rect x="870" y="145" width="300" height="280" rx="11" fill="#edf8f0" stroke="#34834b" stroke-width="2"/>
+    <rect x="870" y="145" width="300" height="50" rx="11" fill="#34834b"/>
+    <rect x="870" y="184" width="300" height="11" fill="#34834b"/>
+    <text x="895" y="178" class="light" font-size="20">3 · Use one fixed type</text>
+    <text x="1020" y="235" text-anchor="middle" class="mono" font-size="18">names</text>
+    <rect x="900" y="253" width="240" height="54" rx="8" fill="#ffffff" stroke="#34834b" stroke-width="1.5"/>
+    <text x="1020" y="287" text-anchor="middle" class="mono" font-size="16">ArrayList&lt;String&gt;</text>
+    <text x="900" y="344" class="body" font-size="14">another ArrayList&lt;String&gt;</text>
+    <text x="1112" y="344" text-anchor="end" class="heading" font-size="17" fill="#34834b">✓</text>
+    <text x="920" y="376" class="body" font-size="15">an unrelated type</text>
+    <text x="1112" y="376" text-anchor="end" class="heading" font-size="17" fill="#b33a3a">✕</text>
+    <text x="1020" y="405" text-anchor="middle" class="muted" font-size="14">Static typing is preserved.</text>
+  </g>
+
+  <!-- Bottom panels keep everyday legal positions separate from declarations and initializers that cannot use var. -->
+  <g id="rules">
+    <g id="allowed-positions">
+      <rect x="30" y="460" width="560" height="230" rx="11" fill="#eef5ff" stroke="#356eb3" stroke-width="2"/>
+      <rect x="30" y="460" width="560" height="48" rx="11" fill="#356eb3"/>
+      <rect x="30" y="497" width="560" height="11" fill="#356eb3"/>
+      <text x="55" y="492" class="light" font-size="20">Common places where var is allowed</text>
+      <text x="60" y="548" class="mono" font-size="15">var item = expression;</text>
+      <text x="60" y="580" class="body" font-size="16">Local variables · for-loop variables</text>
+      <text x="60" y="612" class="body" font-size="16">Enhanced for variables · try resources</text>
+      <rect x="60" y="635" width="500" height="34" rx="7" fill="#ffffff" stroke="#356eb3" stroke-width="1.5"/>
+      <text x="310" y="657" text-anchor="middle" class="body" font-size="14">JDK 11: implicitly typed lambda parameters may use var</text>
+    </g>
+
+    <g id="restrictions">
+      <rect x="610" y="460" width="560" height="230" rx="11" fill="#fff8e6" stroke="#b7791f" stroke-width="2"/>
+      <rect x="610" y="460" width="560" height="48" rx="11" fill="#b7791f"/>
+      <rect x="610" y="497" width="560" height="11" fill="#b7791f"/>
+      <text x="635" y="492" class="light" font-size="20">var is not a universal type placeholder</text>
+      <text x="640" y="548" class="heading" font-size="16">Not a field, return type, catch parameter,</text>
+      <text x="640" y="576" class="heading" font-size="16">or method / constructor parameter</text>
+      <text x="640" y="618" class="mono" font-size="15">var x;        → no initializer</text>
+      <text x="640" y="649" class="mono" font-size="15">var x = null; → no type to infer</text>
+      <text x="640" y="676" class="muted" font-size="14">Use an explicit type when it communicates intent.</text>
+    </g>
+  </g>
+</svg>
