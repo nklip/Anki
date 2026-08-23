@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="800" viewBox="0 0 1400 800" role="img" aria-labelledby="diagram-title diagram-description">
+  <title id="diagram-title">Simplified ZGC collection cycle</title>
+  <desc id="diagram-description">A two-lane timeline shows application threads pausing briefly at Mark Start, Mark End, and Relocate Start while ZGC performs marking, relocation preparation, and relocation concurrently. A lower strip connects marking live objects, selecting sparse pages, and compacting their live objects.</desc>
+
+  <!-- Green means application threads run, red means a brief stop-the-world coordination pause, and blue means concurrent collector work. -->
+  <style>
+    .heading { font-family: Inter, Arial, sans-serif; font-weight: 700; fill: #17212b; }
+    .body { font-family: Inter, Arial, sans-serif; fill: #2f3a45; }
+    .muted { font-family: Inter, Arial, sans-serif; fill: #596673; }
+    .mono { font-family: "SFMono-Regular", Consolas, monospace; fill: #23303d; }
+    .light { font-family: Inter, Arial, sans-serif; font-weight: 700; fill: #ffffff; }
+  </style>
+
+  <rect width="1400" height="800" fill="#ffffff"/>
+  <text x="700" y="48" text-anchor="middle" class="heading" font-size="32">ZGC keeps the long work outside stop-the-world pauses</text>
+  <text x="700" y="80" text-anchor="middle" class="muted" font-size="18">Simplified cycle · widths explain concurrency, not measured duration</text>
+
+  <!-- Timeline frame: phase boundaries align across application and collector lanes. -->
+  <g id="collection-timeline">
+    <rect x="40" y="112" width="1320" height="395" rx="13" fill="#f7f9fb" stroke="#66727d" stroke-width="2"/>
+    <text x="70" y="150" class="heading" font-size="20">One collection cycle</text>
+    <text x="1330" y="150" text-anchor="end" class="muted" font-size="15">time flows left → right</text>
+
+    <text x="70" y="225" class="heading" font-size="18" fill="#315e38">Application</text>
+    <text x="70" y="249" class="muted" font-size="14">mutator threads</text>
+    <text x="70" y="373" class="heading" font-size="18" fill="#234f7c">ZGC</text>
+    <text x="70" y="397" class="muted" font-size="14">collector threads</text>
+
+    <!-- Application lane: narrow red boxes interrupt long green running intervals. -->
+    <rect x="205" y="190" width="115" height="85" rx="8" fill="#f8e9e7" stroke="#a94442" stroke-width="2"/>
+    <text x="262" y="221" text-anchor="middle" class="heading" font-size="15" fill="#812e29">brief pause</text>
+    <text x="262" y="247" text-anchor="middle" class="body" font-size="14">Mark Start</text>
+
+    <rect x="320" y="190" width="330" height="85" fill="#edf8f0" stroke="#43804c" stroke-width="2"/>
+    <text x="485" y="239" text-anchor="middle" class="heading" font-size="17" fill="#315e38">application runs</text>
+
+    <rect x="650" y="190" width="115" height="85" fill="#f8e9e7" stroke="#a94442" stroke-width="2"/>
+    <text x="707" y="221" text-anchor="middle" class="heading" font-size="15" fill="#812e29">brief pause</text>
+    <text x="707" y="247" text-anchor="middle" class="body" font-size="14">Mark End</text>
+
+    <rect x="765" y="190" width="275" height="85" fill="#edf8f0" stroke="#43804c" stroke-width="2"/>
+    <text x="902" y="239" text-anchor="middle" class="heading" font-size="17" fill="#315e38">application runs</text>
+
+    <rect x="1040" y="190" width="120" height="85" fill="#f8e9e7" stroke="#a94442" stroke-width="2"/>
+    <text x="1100" y="218" text-anchor="middle" class="heading" font-size="15" fill="#812e29">brief pause</text>
+    <text x="1100" y="242" text-anchor="middle" class="body" font-size="13">Relocate</text>
+    <text x="1100" y="261" text-anchor="middle" class="body" font-size="13">Start</text>
+
+    <rect x="1160" y="190" width="165" height="85" rx="8" fill="#edf8f0" stroke="#43804c" stroke-width="2"/>
+    <text x="1242" y="239" text-anchor="middle" class="heading" font-size="17" fill="#315e38">application runs</text>
+
+    <!-- Collector lane mirrors the same boundaries and names the work moved out of each pause. -->
+    <rect x="205" y="335" width="115" height="105" rx="8" fill="#f8e9e7" stroke="#a94442" stroke-width="2"/>
+    <text x="262" y="374" text-anchor="middle" class="heading" font-size="15" fill="#812e29">coordinate</text>
+    <text x="262" y="402" text-anchor="middle" class="body" font-size="14">start marking</text>
+
+    <rect x="320" y="335" width="330" height="105" fill="#eef5ff" stroke="#356da8" stroke-width="2"/>
+    <text x="485" y="378" text-anchor="middle" class="heading" font-size="18" fill="#234f7c">Concurrent marking</text>
+    <text x="485" y="410" text-anchor="middle" class="body" font-size="14">trace objects reachable from roots</text>
+
+    <rect x="650" y="335" width="115" height="105" fill="#f8e9e7" stroke="#a94442" stroke-width="2"/>
+    <text x="707" y="374" text-anchor="middle" class="heading" font-size="15" fill="#812e29">coordinate</text>
+    <text x="707" y="402" text-anchor="middle" class="body" font-size="14">finish mark</text>
+
+    <rect x="765" y="335" width="275" height="105" fill="#eef5ff" stroke="#356da8" stroke-width="2"/>
+    <text x="902" y="375" text-anchor="middle" class="heading" font-size="17" fill="#234f7c">Concurrent preparation</text>
+    <text x="902" y="405" text-anchor="middle" class="body" font-size="14">process GC metadata; choose pages</text>
+
+    <rect x="1040" y="335" width="120" height="105" fill="#f8e9e7" stroke="#a94442" stroke-width="2"/>
+    <text x="1100" y="374" text-anchor="middle" class="heading" font-size="15" fill="#812e29">coordinate</text>
+    <text x="1100" y="402" text-anchor="middle" class="body" font-size="14">start move</text>
+
+    <rect x="1160" y="335" width="165" height="105" rx="8" fill="#eef5ff" stroke="#356da8" stroke-width="2"/>
+    <text x="1242" y="375" text-anchor="middle" class="heading" font-size="17" fill="#234f7c">Concurrent</text>
+    <text x="1242" y="400" text-anchor="middle" class="heading" font-size="17" fill="#234f7c">relocation</text>
+    <text x="1242" y="424" text-anchor="middle" class="body" font-size="13">move live objects</text>
+
+    <!-- Vertical guides make pause alignment explicit without crossing any text. -->
+    <g stroke="#b4bcc4" stroke-width="1" stroke-dasharray="5 5">
+      <path d="M320 175V460"/>
+      <path d="M650 175V460"/>
+      <path d="M765 175V460"/>
+      <path d="M1040 175V460"/>
+      <path d="M1160 175V460"/>
+    </g>
+    <text x="205" y="480" class="muted" font-size="14">Red = stop-the-world coordination · blue = concurrent GC work · green = application executes</text>
+  </g>
+
+  <!-- Lower cause-and-effect strip explains why marking must precede page selection and relocation. -->
+  <g id="cycle-outcome">
+    <text x="700" y="548" text-anchor="middle" class="heading" font-size="21">What the concurrent work achieves</text>
+
+    <rect x="40" y="575" width="390" height="155" rx="12" fill="#eef5ff" stroke="#356da8" stroke-width="3"/>
+    <text x="65" y="612" class="heading" font-size="19">Mark live objects</text>
+    <text x="65" y="646" class="body" font-size="15">Find what is still reachable while the</text>
+    <text x="65" y="671" class="body" font-size="15">application continues changing references.</text>
+    <text x="65" y="705" class="muted" font-size="14">Store barriers preserve marking correctness.</text>
+
+    <!-- Short arrows occupy the gaps between cards; each head stops before its target border. -->
+    <path d="M430 652H475" fill="none" stroke="#66727d" stroke-width="4"/>
+    <polygon points="475,642 489,652 475,662" fill="#66727d"/>
+
+    <rect x="495" y="575" width="390" height="155" rx="12" fill="#fff7ef" stroke="#b56032" stroke-width="3"/>
+    <text x="520" y="612" class="heading" font-size="19">Select sparse pages</text>
+    <text x="520" y="646" class="body" font-size="15">Use liveness information to choose pages</text>
+    <text x="520" y="671" class="body" font-size="15">whose evacuation will reclaim useful space.</text>
+    <text x="520" y="705" class="muted" font-size="14">Dense young pages may instead age in place.</text>
+
+    <path d="M885 652H930" fill="none" stroke="#66727d" stroke-width="4"/>
+    <polygon points="930,642 944,652 930,662" fill="#66727d"/>
+
+    <rect x="950" y="575" width="410" height="155" rx="12" fill="#edf8f0" stroke="#43804c" stroke-width="3"/>
+    <text x="975" y="612" class="heading" font-size="19">Relocate and reuse</text>
+    <text x="975" y="646" class="body" font-size="15">Move live objects out, then reuse the</text>
+    <text x="975" y="671" class="body" font-size="15">evacuated page for allocation or relocation.</text>
+    <text x="975" y="705" class="muted" font-size="14">Load barriers repair stale references lazily.</text>
+  </g>
+
+  <!-- Final takeaway distinguishes low latency from a hard real-time promise. -->
+  <rect x="190" y="752" width="1020" height="32" rx="7" fill="#f7f9fb" stroke="#66727d"/>
+  <text x="700" y="774" text-anchor="middle" class="body" font-size="14">Short pauses are the design outcome; operating-system and resource delays can still affect observed application latency.</text>
+</svg>

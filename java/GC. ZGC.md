@@ -1,389 +1,279 @@
-# Garbage Collection: ZGC
+# GC. ZGC
 
 ## Front
 
-How does **ZGC** work in modern Java, how does it organize heap memory, why are its pauses short, and when should it be used?
+How does modern ZGC keep garbage-collection pauses short?
+
+Explain its generational heap, concurrent collection cycle, colored pointers, load/store barriers, relocation, remembered sets, configuration, monitoring, and main trade-offs.
 
 ## Back
 
-**ZGC**, the Z Garbage Collector, is HotSpot's scalable, concurrent, compacting, low-latency garbage collector.
+**The Z Garbage Collector (ZGC) became production-ready in JDK 15 with JEP 377; JDK 24 removed ZGC's legacy non-generational mode with JEP 490, so `-XX:+UseZGC` now always selects generational ZGC.**
 
-Its central goal is to perform expensive garbage-collection work while application threads continue running. Only brief coordination phases stop all application threads.
+ZGC is HotSpot's scalable, concurrent, compacting collector for applications where **very short garbage-collection pauses** matter. It keeps the expensive work—tracing objects, processing references, selecting pages, and moving live objects—mostly concurrent with application threads. Brief stop-the-world pauses coordinate those concurrent phases.
 
-```text
-Application threads:  run ── pause ───────── run ── pause ───────── run
-ZGC threads:                 mark concurrently       relocate concurrently
-```
+This card builds the model in four layers: heap organization → collection cycle → barriers that preserve correctness → production configuration and diagnosis.
 
-ZGC is designed for applications where predictable response time matters more than achieving the highest possible throughput.
+### Version map
 
-### Current status
+| JDK | ZGC milestone |
+|---:|---|
+| 15 | ZGC became production-ready, JEP 377 |
+| 21 | Generational ZGC added, JEP 439 |
+| 23 | Generational mode became the default ZGC mode, JEP 474 |
+| 24 | Non-generational implementation removed, JEP 490 |
 
-- ZGC was introduced experimentally in JDK 11.
-- It became production-ready in JDK 15.
-- Generational ZGC was introduced in JDK 21.
-- Generational mode became the default ZGC mode in JDK 23.
-- Since JDK 24, the non-generational implementation has been removed.
+**G1 is also a generational garbage collector.** Both G1 and modern ZGC divide objects into young and old generations. “Only generational ZGC remains” means that HotSpot no longer offers ZGC's earlier non-generational mode; it does **not** mean that ZGC is the only collector with generations.
 
-In modern Java, enabling ZGC is enough:
+For JDK 24 and later, enable modern generational ZGC with only:
 
 ```bash
 java -XX:+UseZGC -Xmx16g -jar application.jar
 ```
 
-Do not copy the old `-XX:+ZGenerational` advice into a new configuration. ZGC is now generational, and that option is obsolete or removed depending on the JDK version.
+ZGC is not HotSpot's general default collector; `-XX:+UseZGC` opts into it. Do not copy old examples that add `-XX:+ZGenerational`: that transition flag is obsolete/removed in modern JDKs.
 
-### Main characteristics
+### Vocabulary
 
-- **Concurrent:** marking, reference processing, relocation, and compaction are mostly performed alongside the application.
-- **Generational:** the heap is split logically into young and old generations.
-- **Region-based:** memory is managed as dynamically assigned heap pages, commonly called ZPages.
-- **Compacting:** live objects are relocated so that fragmented pages can be reclaimed.
-- **Barrier-based:** colored pointers plus load and store barriers keep references correct while objects move.
-- **Adaptive:** ZGC adjusts generation sizes, GC thread usage, and tenuring thresholds according to the workload.
-- **Low-pause:** expensive work is not proportional to the duration of stop-the-world pauses.
+- **Application or mutator thread:** a thread running application code and changing the object graph.
+- **Live object:** an object reachable from a garbage-collection root, directly or through other live objects.
+- **Live set:** all objects that must remain after a collection.
+- **Stop-the-world (STW) pause:** an interval in which application threads are stopped at a safepoint.
+- **Concurrent work:** collector work performed while application threads continue running.
+- **Relocation:** moving a live object to another address; this compacts the heap.
+- **Barrier:** small JVM-generated code executed around a reference load or store to keep concurrent GC correct.
+- **Remembered set:** old-generation field locations that may contain references to young objects.
 
-Oracle's current tuning guide describes application pauses as no longer than roughly one millisecond and independent of heap size. This is a design objective and observed collector behavior, not a hard real-time deadline: operating-system scheduling, page faults, logging, CPU starvation, and application behavior can still produce latency spikes.
+“Concurrent” does **not** mean “pause-free.” It means that long work is moved outside pauses.
 
-## Memory organization
+### Heap organization: young and old are logical page sets
 
-![ZGC memory organization](svg/gc-zgc-memory-organization.svg)
+Modern ZGC divides the heap into young and old generations because most new objects die quickly. It can collect young objects frequently without repeatedly tracing all long-lived objects.
 
-### Two logical generations
+![Modern ZGC organizes young and old objects as dynamic sets of pages and distinguishes virtual reservation from committed memory](svg/gc-zgc-memory-organization.svg)
 
-```text
-ZGC heap
-├── Young generation
-│   ├── newly allocated objects
-│   ├── objects surviving young collections
-│   └── pages waiting to be aged, relocated, or promoted
-└── Old generation
-    ├── promoted and long-lived objects
-    ├── independently marked and relocated pages
-    └── remembered sets for possible old → young references
-```
+Read the diagram from top to bottom:
 
-Most objects die shortly after allocation. ZGC therefore collects the young generation more frequently and the old generation less frequently.
+- **Young generation:** receives new objects and is collected frequently.
+- **Old generation:** holds long-lived or promoted objects and is collected less frequently.
+- **ZPages:** logical heap pages that can be used for allocation, survival, relocation, promotion, or reuse.
+- **Remembered entries:** make an old field that may point to a young object visible to a young collection.
+- **Virtual reservation versus commitment:** `-Xmx` limits usable heap capacity; physical memory is committed as required and may later be uncommitted.
 
-The generations are **logical sets of pages**, not necessarily two adjacent, fixed-size address ranges. ZGC dynamically resizes them and can reclassify pages as objects age.
-
-Do not assume that modern ZGC uses the classic fixed layout:
+The generations are not a fixed contiguous layout such as:
 
 ```text
 Eden | Survivor 0 | Survivor 1 | Old
 ```
 
-That picture is useful for some other collectors, but it is misleading for ZGC's dynamic region-based organization.
+ZGC dynamically resizes generations, adjusts tenuring thresholds, and scales collector threads. Pages can change roles as objects age.
 
-### ZPages
+#### Dense pages and large objects
 
-The heap consists of independently managed regions called **ZPages**. Current ZGC supports page categories for small, medium, and large objects.
+After marking, ZGC knows how many live bytes each page contains. Sparse pages are profitable relocation candidates. A dense young page may be too expensive to evacuate, so ZGC can age it in place, keep it as a survivor page, or promote it to old.
 
-A page can be associated with:
+Generational ZGC may also allocate large objects in young pages. A short-lived large object can die in the young generation; a long-lived large object's page can be promoted without copying the object merely to change its age.
 
-- Allocation in the young generation.
-- Surviving young objects.
-- Promoted or old objects.
-- A relocation set selected for evacuation.
-- Free space available for reuse.
+### Collection cycle: coordinate briefly, work concurrently
 
-Pages are selected for relocation according to their live-object density. ZGC can relocate live objects out of sparse pages and immediately reuse fully evacuated pages.
+The following timeline is simplified; generation-specific cycles can overlap and exact internal phase details may evolve. The essential idea is stable: pauses establish phase boundaries, while heap-scale work runs concurrently.
 
-Dense young pages do not always have to be evacuated. ZGC may age such a page in place, keep it as a survivor page, or promote the page into the old generation. This avoids copying many live objects merely to advance their age.
+![ZGC collection timeline with brief coordination pauses around concurrent marking, preparation, and relocation](svg/gc-zgc-collection-cycle.svg)
 
-Large objects may initially belong to the young generation. If they die quickly, a young collection can reclaim them; if they survive, their pages can be promoted without forcing an expensive object copy.
+A typical cycle alternates three brief coordination boundaries with longer concurrent spans. **Mark Start** establishes marking, then concurrent marking traces reachable objects while the application changes references. **Mark End** completes marking coordination. ZGC next performs generation-appropriate preparation and chooses pages whose relocation will reclaim useful space. **Relocate Start** begins relocation coordination, after which live objects move concurrently and evacuated pages become reusable.
 
-### Virtual versus physical memory
+These labels also appear in detailed ZGC logs, but the young and old collectors can have separate activity. Do not interpret every cycle as one monolithic full-heap collection.
 
-ZGC reserves a large virtual address range for the heap but commits physical memory only as needed. `-Xmx` bounds the maximum usable Java heap capacity; the implementation may reserve a larger virtual range for addressing and alignment.
+Oracle's JDK 26 guide describes ZGC pauses as at most about one millisecond and independent of the heap size in use. Treat this as the collector's low-latency design behavior, **not** a hard real-time guarantee. CPU starvation, safepoint delays, operating-system scheduling, page faults, and logging can still hurt end-to-end latency.
 
-```text
-Reserved virtual address range
+### How can an object move while the application uses it?
 
-| committed pages | uncommitted range | committed pages | free reservation |
-```
-
-Committed pages need not form one continuous physical range. By default, ZGC can uncommit heap memory that remains unused and return it to the operating system, but it does not shrink below `-Xms`.
-
-Modern generational ZGC does not use the older three-way multi-mapped heap design. Old diagrams showing the same physical heap mapped into several virtual address ranges describe non-generational ZGC and should not be used for JDK 24+.
-
-## Why ZGC can relocate objects concurrently
-
-![ZGC concurrent collection](svg/gc-zgc-concurrent-relocation.svg)
-
-Moving an object while application threads are reading references to it creates a problem:
+Assume an application field still contains the old address of object `A`, but ZGC has moved `A`:
 
 ```text
-Application reference ──▶ old address
-
-ZGC moves object: old address ──▶ new address
+field ──▶ old address of A
+                     ZGC relocates A ──▶ new address of A
 ```
 
-ZGC solves this with **colored pointers**, **load barriers**, and **store barriers**.
+ZGC uses colored pointers plus load and store barriers so the application still reaches the current object.
 
-### Colored pointers
+![ZGC uses colored heap pointers, load barriers, and store barriers to preserve correct references during concurrent marking and relocation](svg/gc-zgc-colored-pointers-and-barriers.svg)
 
-An object reference stored in a heap field contains both:
+#### Colored pointers
 
-1. Information identifying the object's address.
-2. Metadata bits describing GC state, such as whether the address is known to be correct for the current phase.
+A reference stored in a heap object field contains an object address plus ZGC metadata. The metadata can describe facts such as whether an address is known to be correct for the current phase. The “color” is JVM metadata; Java code cannot inspect it as an object property.
 
-```text
-object reference = address information + ZGC metadata
-```
+In generational ZGC, object fields store colored pointers. References in hardware stack slots and CPU registers are colorless, directly usable addresses. Barriers translate between those forms.
 
-These are called colored pointers. The color is metadata, not a Java-visible object property.
+#### Load barrier: make a loaded reference safe
 
-Generational ZGC uses colored pointers in heap object fields. References in machine registers and on Java thread stacks are exposed to the runtime as ordinary colorless references; barriers translate between the representations.
+HotSpot injects a load barrier when compiled application code loads an object reference from a heap field.
 
-### Load barrier
-
-A **load barrier** is a small piece of JVM-generated code that runs when application code loads an object reference from a field.
-
-Its fast path is cheap. If the pointer indicates that extra work is required, the slow path can:
-
-- Discover that the referenced object was relocated.
-- Translate a stale address to the object's current address.
-- Return a safe reference to the application.
-- Update metadata so later loads usually take the fast path.
+- **Fast path:** metadata says no extra work is needed; remove the metadata and continue.
+- **Slow path:** if the object moved, use relocation information to translate the stale address to the current address, then return a safe reference.
+- The pointer metadata is updated so later loads normally return to the fast path.
 
 Conceptually:
 
 ```text
-load reference
-    ↓
-is the pointer already valid for this phase?
-    ├── yes → use it directly
-    └── no  → remap/repair it, then use it
+read colored reference
+        ↓
+address valid for this phase?
+   yes ───────▶ return current colorless address
+   no  ───────▶ remap old address, then return current address
 ```
 
-This indirection lets ZGC move live objects while application threads continue to access the object graph.
+This lazy repair is why ZGC does not need to stop every application thread and eagerly rewrite every reference before allowing the application to continue.
 
-### Store barrier
+#### Store barrier: preserve marking and generational roots
 
-A **store barrier** runs when application code writes an object reference into a field.
+HotSpot injects a store barrier when application code writes a reference into an object field. Generational ZGC uses it to:
 
-In generational ZGC it helps to:
+- add the required metadata to the pointer stored in the heap;
+- support **snapshot-at-the-beginning (SATB)** concurrent marking by reporting an overwritten reference when required;
+- record an old-generation field that may now point to a young object.
 
-- Add the required metadata to the stored colored pointer.
-- Support snapshot-at-the-beginning concurrent marking.
-- Record fields in old objects that may point to young objects.
+SATB means that objects reachable from the roots when marking began must still be discovered even if the application breaks a reference while marking is in progress. The store barrier preserves the old value long enough for the collector to process it. An object that dies during the cycle may therefore survive until a later cycle as **floating garbage**; this is safe but temporarily conservative.
 
-The store barrier reports overwritten references when required so that an object reachable at the beginning of marking is not accidentally missed while the application mutates the graph.
+#### Remembered set: do not scan all old objects during young GC
 
-### Remembered sets
-
-During a young collection, ZGC should not have to scan every object in the old generation. However, an old object may be the only object keeping a young object alive:
+An old object can be the only thing keeping a young object alive:
 
 ```text
-Old object ─────────▶ Young object
+old OrderCache.customer ──▶ young Customer
 ```
 
-ZGC therefore maintains a **remembered set** containing old-generation field locations that may hold old-to-young references. These entries are additional roots for a young collection.
+A young collection cannot ignore that reference, but scanning every old object would defeat the generational benefit. ZGC therefore records the **field location** in a remembered set. During young marking, those remembered fields act as additional roots.
 
-Generational ZGC records precise potential field locations in per-region bitmaps. It uses two remembered-set buffers:
+Generational ZGC uses precise, double-buffered bitmaps per old-generation region: application barriers populate one bitmap while GC threads process and clear the other, and the roles swap at a young collection boundary.
 
-- Application threads populate the active bitmap through store barriers.
-- GC threads process and clear the previous bitmap.
-- The bitmaps are swapped when the next young collection starts.
+### Young and old collections cooperate
 
-This double buffering lets GC threads and application threads work concurrently on different remembered-set data.
+| Young collection | Old collection |
+|---|---|
+| Targets recently allocated objects | Targets promoted and long-lived objects |
+| Runs more frequently | Runs less frequently |
+| Uses old-to-young remembered fields as roots | Needs young-to-old references as roots |
+| Reclaims dead young objects | Reclaims dead old objects |
+| Relocates profitable sparse pages; may age dense pages in place | Marks and relocates old pages concurrently |
 
-## Simplified collection cycle
+The two collectors are logically independent but not isolated. For example, when old marking needs young-to-old references, ZGC coordinates with a young collection to discover them.
 
-The precise internal phase names can change, but the essential process is:
+### Why the pauses stay short
 
-### 1. Brief coordination pause
+Pause duration is not intended to contain work proportional to the whole heap:
 
-ZGC brings threads to a safepoint, establishes a consistent starting point, processes roots required by the phase, and starts the collection.
+- graph tracing is concurrent;
+- reference processing and relocation preparation are concurrent;
+- object relocation and compaction are concurrent;
+- load barriers repair stale references lazily;
+- store barriers preserve concurrent marking and cross-generation information.
 
-This pause performs coordination rather than tracing the entire heap.
+The cost moves elsewhere: barriers execute in application code, collector threads consume CPU concurrently, and the heap needs enough free headroom for allocation and relocation progress.
 
-### 2. Concurrent marking
+### Configuration: start with heap capacity
 
-GC threads trace reachable objects while application threads continue running.
-
-Generational ZGC uses a snapshot-at-the-beginning marking model. Store barriers preserve the logical starting snapshot while the application changes references.
-
-### 3. Mark completion and relocation planning
-
-ZGC completes marking information, calculates page liveness, and selects profitable pages for relocation. Brief coordination work may require another safepoint.
-
-### 4. Concurrent relocation and compaction
-
-ZGC moves live objects from selected pages into target pages while application threads run.
+The most important tuning option is `-Xmx`. It must cover:
 
 ```text
-Selected source page: [live][dead][dead][live]
-                                  │
-                                  ▼
-Target page:          [live][live][free][free]
-
-Source page becomes reusable after its live objects are evacuated.
+live set
++ allocations made while ZGC is collecting
++ relocation and operational headroom
 ```
 
-Load barriers redirect stale references to relocated objects. The application therefore sees a consistent object graph even when some stored references have not yet been repaired.
+If allocation consumes memory faster than concurrent GC reclaims it, application threads may experience an **allocation stall**. Possible remedies are more heap headroom, a lower allocation rate, or enough CPU capacity for collector threads—not an arbitrary collection of tuning flags.
 
-### 5. Reuse and uncommit
-
-Evacuated pages can immediately become allocation or relocation targets. Pages left unused for long enough may be uncommitted and returned to the operating system.
-
-## Young and old collections
-
-### Young collection
-
-- Focuses on recently allocated objects.
-- Runs frequently because most new objects are expected to die young.
-- Uses remembered-set entries as roots for old-to-young references.
-- Reclaims dead young objects.
-- Relocates sparse survivor pages when profitable.
-- Ages dense pages in place or promotes them.
-
-### Old collection
-
-- Focuses on long-lived and promoted objects.
-- Runs less frequently.
-- Performs concurrent marking and relocation for the old generation.
-- Coordinates with a young collection to find young-to-old references when necessary.
-- Performs reference processing and class unloading associated with old-generation collection work.
-
-Young and old collectors are logically independent but must cooperate where references cross generation boundaries.
-
-## Enabling and observing ZGC
-
-Basic configuration:
+A practical starting command is:
 
 ```bash
 java \
   -XX:+UseZGC \
+  -Xms4g \
   -Xmx16g \
-  -Xlog:gc*,safepoint \
+  -Xlog:gc*,safepoint:file=gc.log:time,uptime,level,tags \
   -jar application.jar
 ```
 
-Useful production tools include:
+Let ZGC adapt generation sizes, GC thread counts, and tenuring thresholds before overriding advanced options.
 
-- Unified GC logs with `-Xlog:gc*` and safepoint logging.
-- Java Flight Recorder and Java Mission Control.
-- Application latency percentiles, allocation rate, live-set size, and CPU utilization.
-- Container and operating-system memory metrics.
-
-Never evaluate a low-latency collector only by average pause time. Examine tail latency such as p99, p99.9, and maximum pauses, along with allocation stalls and application throughput.
-
-## Tuning priorities
-
-ZGC is designed to require minimal manual tuning. Start with defaults and change one measured constraint at a time.
-
-### 1. Provide enough heap headroom
-
-The most important option is `-Xmx`.
-
-The heap must contain:
-
-```text
-live set
-+ new allocations made while collection is running
-+ relocation and operational headroom
-```
-
-If the application allocates faster than concurrent GC threads reclaim memory, application threads can experience **allocation stalls**. A common first response is to provide more headroom, reduce the allocation rate, or ensure that GC threads receive enough CPU.
-
-### 2. Use a soft heap limit when appropriate
+#### Soft maximum versus hard maximum
 
 ```bash
 -Xmx16g -XX:SoftMaxHeapSize=12g
 ```
 
-`SoftMaxHeapSize` tells ZGC to try to remain around 12 GB, but it may grow up to 16 GB to avoid stalling the application. `-Xmx` remains the hard limit.
+`SoftMaxHeapSize=12g` asks ZGC heuristics to stay near 12 GB. ZGC may temporarily grow up to the hard 16 GB `-Xmx` limit to prevent an application stall. The soft maximum is therefore a preference, not a safety boundary.
 
-This is useful when lower normal memory usage is desirable but emergency headroom is available.
+#### Returning unused memory
 
-### 3. Choose the footprint versus latency policy
-
-By default, ZGC uncommits memory that has remained unused. The default uncommit delay is 300 seconds.
+By default, ZGC may uncommit unused memory and return it to the operating system. It never shrinks below `-Xms`. The default uncommit delay is 300 seconds and can be changed with:
 
 ```bash
 -XX:ZUncommitDelay=300
 ```
 
-Committing and uncommitting memory can itself affect latency. For extremely latency-sensitive, dedicated systems, a measured alternative is:
+Committing and uncommitting can affect latency. For an extremely latency-sensitive service on a dedicated, correctly sized host, a measured alternative is:
 
 ```bash
 -Xms16g -Xmx16g -XX:+AlwaysPreTouch
 ```
 
-This commits and touches heap memory during startup and prevents ZGC from shrinking below 16 GB. The trade-off is a larger fixed footprint and slower startup.
+Equal `-Xms` and `-Xmx` implicitly prevent heap uncommit; `AlwaysPreTouch` backs the heap during startup. The trade-off is slower startup and a large fixed physical-memory footprint.
 
-### 4. Let ZGC size its thread usage first
+### Observe before tuning
 
-ZGC normally chooses and scales concurrent GC thread usage automatically. Override `-XX:ConcGCThreads` only after logs and profiling demonstrate that the automatic choice is inadequate.
+Use unified logs, Java Flight Recorder (JFR), Java Mission Control, application metrics, and operating-system/container metrics together.
 
-Too few concurrent GC threads can let allocation outrun collection. Too many can steal CPU from application threads.
+Watch:
 
-### 5. Test large pages rather than assuming
+- pause percentiles and maximums, not only averages;
+- allocation rate and live-set size;
+- allocation stalls;
+- young versus old cycle frequency;
+- concurrent GC CPU usage and overall CPU saturation;
+- committed heap, process resident memory, and container limits;
+- application p99 and p99.9 latency.
 
-`-XX:+UseLargePages` can improve throughput and latency on a correctly configured system, but it requires operating-system preparation. Transparent Huge Pages may introduce latency spikes on some Linux systems, so test the exact deployment environment.
+`-Xlog:gc*,safepoint` is useful during investigation, but very verbose logging can itself add overhead. Test the chosen logging level under realistic load.
 
-## When ZGC is a good choice
+### When ZGC is a strong choice
 
-- Latency-sensitive services with strict tail-latency requirements.
-- Large heaps where long stop-the-world compaction pauses are unacceptable.
-- Applications with enough CPU and memory headroom for concurrent GC work.
-- Workloads that benefit from predictable pauses more than maximum throughput.
-- Services where occasional multi-hundred-millisecond or multi-second pauses would violate an SLO.
+- Tail-latency service-level objectives make long GC pauses unacceptable.
+- The application uses a large heap or has a large live set.
+- The system has enough CPU for concurrent collector work.
+- The heap has headroom above the live set and concurrent allocation demand.
+- Predictable short pauses matter more than maximum throughput or minimum footprint.
 
-## When ZGC may not be the best choice
+ZGC may be a poor fit for a short batch job, a CPU-saturated environment, a severely memory-constrained container, or a workload already meeting its latency target with a higher-throughput collector.
 
-- Small batch jobs where startup time or maximum throughput matters more than pause latency.
-- CPU-saturated environments that cannot spare cycles for concurrent GC threads.
-- Memory-constrained deployments with little room above the live set.
-- Workloads already meeting latency targets with a simpler or higher-throughput collector.
-- Systems requiring hard real-time guarantees; ZGC is low-latency, not a real-time collector.
+### ZGC, G1, and Parallel GC
 
-## ZGC compared with common alternatives
+| Collector | Main design goal | Where live-object movement happens | Typical trade-off |
+|---|---|---|---|
+| ZGC | Extremely low pauses | Mostly concurrent with the application | Barrier, CPU, and headroom cost |
+| G1 | Balanced server latency and throughput | Primarily in bounded STW evacuation pauses | Longer, workload-sensitive pauses |
+| Parallel GC | High throughput | Parallel work during STW collections | Potentially long pauses |
 
-| Collector | Main objective | Typical trade-off |
-|---|---|---|
-| ZGC | Extremely short, heap-size-independent pauses | Concurrent CPU/barrier overhead and extra headroom |
-| G1 | Balanced latency and throughput for general server workloads | Pauses are usually longer and more workload-sensitive |
-| Parallel GC | High throughput using stop-the-world parallel collection | Long pauses, especially with large live sets |
+This is a starting model, not a benchmark result. Choose with production-like allocation rates, live sets, traffic, CPU limits, and latency objectives.
 
-The correct choice must be based on the application's SLOs, allocation profile, live-set size, CPU budget, and measured behavior.
+### Common mistakes
 
-## Common misconceptions
+- **“Concurrent means no pauses.”** ZGC still has brief coordination pauses and safepoints.
+- **“Heap-size-independent pauses mean heap size does not matter.”** Heap size still controls headroom and the risk of allocation stalls.
+- **“Young and old are fixed adjacent address ranges.”** They are logical collections of pages that ZGC resizes dynamically.
+- **“Colored pointers replace reachability tracing.”** ZGC still traces the object graph; pointer metadata and barriers make concurrent tracing and relocation safe.
+- **“ZGC is a real-time collector.”** It targets very low pauses but provides no hard scheduling deadline.
+- **“A smaller `-Xmx` always lowers latency.”** Too little headroom can increase cycle frequency and stall allocation.
+- **“ZGC must have the highest throughput.”** Concurrent work and barriers consume resources; measure against alternatives.
 
-### “Concurrent” means “no pauses”
+### Remember
 
-False. ZGC still uses brief stop-the-world coordination phases and safepoints. It moves expensive heap-wide work out of those pauses.
+> Modern ZGC is a generational, region-based, concurrent compacting collector. Young and old objects occupy dynamic page sets; brief pauses coordinate concurrent marking and relocation; colored pointers plus load/store barriers keep references correct while objects move; and remembered sets let young GC find old-to-young roots. Its main operational requirement is enough heap and CPU headroom to reclaim memory faster than the application allocates it.
 
-### Heap size does not matter
+## Sources
 
-False. Pause duration is designed not to scale with heap size, but heap capacity still determines whether ZGC has enough headroom to keep up with allocation.
-
-### Generational ZGC has fixed contiguous Eden and Survivor spaces
-
-False. Young and old generations are dynamic logical collections of pages. Pages can be relocated, aged in place, promoted, freed, committed, or uncommitted.
-
-### ZGC always has the best throughput
-
-False. Barriers and concurrent collector threads consume CPU. Parallel GC or G1 may provide better throughput when longer pauses are acceptable.
-
-### Colored pointers eliminate the need for tracing
-
-False. ZGC still marks reachable objects. Colored pointers and barriers make concurrent marking and relocation safe.
-
-### A very small `-Xmx` reduces latency
-
-Usually false. Insufficient headroom can cause frequent cycles and allocation stalls. The heap must fit the live set plus allocations made during concurrent collection.
-
-## Interview summary
-
-> ZGC is HotSpot's generational, region-based, concurrent compacting collector for low-latency workloads. It manages young and old generations as dynamic sets of ZPages, marks and relocates objects mostly while application threads run, and uses colored pointers with load and store barriers to keep references correct. Young collections reclaim short-lived objects frequently, while remembered sets track old-to-young references. The primary tuning concern is enough `-Xmx` headroom; ZGC trades extra CPU and memory headroom for very short pauses that do not grow with heap size.
-
-## Official references
-
-- [Oracle JDK 26 Garbage Collection Tuning Guide](https://docs.oracle.com/en/java/javase/26/gctuning/hotspot-virtual-machine-garbage-collection-tuning-guide.pdf)
-- [OpenJDK ZGC documentation](https://wiki.openjdk.org/display/zgc/Main)
-- [JEP 439: Generational ZGC](https://openjdk.org/jeps/439)
-- [JEP 490: Remove the Non-Generational Mode](https://openjdk.org/jeps/490)
-- [Java 26 launcher and ZGC options](https://docs.oracle.com/en/java/javase/26/docs/specs/man/java.html)
+- [Oracle JDK 26 HotSpot Garbage Collection Tuning Guide — ZGC](https://docs.oracle.com/en/java/javase/26/gctuning/hotspot-virtual-machine-garbage-collection-tuning-guide.pdf)
+- [JEP 377 — ZGC: A Scalable Low-Latency Garbage Collector (Production)](https://openjdk.org/jeps/377)
+- [JEP 439 — Generational ZGC](https://openjdk.org/jeps/439)
+- [JEP 474 — ZGC: Generational Mode by Default](https://openjdk.org/jeps/474)
+- [JEP 490 — ZGC: Remove the Non-Generational Mode](https://openjdk.org/jeps/490)
