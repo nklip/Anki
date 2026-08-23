@@ -2,80 +2,58 @@
 
 ## Front
 
-What are unnamed variables and unnamed patterns in Java, and when should `_` be used?
+What does `_` mean in Java unnamed variables and patterns, where is it allowed, and can its value be read?
 
 ## Back
 
-**Unnamed variables and patterns became final in JDK 22** with JEP 456. They were previewed in JDK 21.
+**Unnamed variables and patterns** became final in **JDK 22** with JEP 456.
 
-The single underscore `_` means: **a value is required by the syntax, but this code does not use it**.
+`_` means: “the syntax requires this slot, but its value is intentionally unused.” It creates no usable name, so later code cannot read or assign `_`.
 
-## Unnamed variables
-
-An unnamed variable can be declared but cannot be read or assigned later:
+![How underscore ignores a required value without creating a name](svg/syntax-unnamed-variables-patterns.svg)
 
 ```java
-try {
-    process();
-} catch (IOException _) {
-    logFailure();
-}
-```
+import java.util.List;
 
-It is useful in loops and lambdas when a value is intentionally ignored:
-
-```java
-for (var _ : tasks) {
-    runNextTask();
-}
-
-users.forEach((_, user) -> save(user));
-```
-
-Multiple unnamed variables may appear in the same scope because none of them introduces a usable name:
-
-```java
-map.replaceAll((_, _) -> defaultValue);
-```
-
-## Unnamed patterns
-
-Use `_` inside a record pattern to ignore a component:
-
-```java
 record Point(int x, int y) {}
 
-if (value instanceof Point(int x, _)) {
-    System.out.println(x); // y is intentionally ignored
+public class UnnamedDemo {
+    static void inspect(List<Object> values) {
+        int count = 0;
+
+        for (Object _ : values) { // unnamed loop variable
+            count++;
+        }
+
+        for (Object value : values) {
+            if (value instanceof Point(int x, _)) {
+                System.out.println("x = " + x); // y is ignored
+            }
+        }
+
+        try {
+            Integer.parseInt("not a number");
+        } catch (NumberFormatException _) { // unnamed exception parameter
+            System.out.println("invalid number");
+        }
+
+        System.out.println("count = " + count);
+    }
+
+    public static void main(String[] args) {
+        inspect(List.of(new Point(10, 20), "text"));
+    }
 }
 ```
 
-Use an unnamed type pattern when only the matched type matters:
+- An **unnamed variable** may appear as a local, loop or resource variable, `catch` parameter, or lambda parameter. It is initialized when required but cannot be referenced.
+- An **unnamed pattern** `_` inside a record pattern matches the component without binding it. A type pattern such as `String _` still tests the type but creates no readable pattern variable.
+- Multiple `_` declarations may share a scope because none introduces a name.
 
-```java
-switch (shape) {
-    case Circle _   -> drawCircle();
-    case Rectangle _ -> drawRectangle();
-}
-```
+`_` is not allowed as a field or as a method or constructor parameter. It is also not an ordinary identifier: `int _ = 1;` declares an unusable local, while `_value` remains a normal identifier.
 
-## Important rules
+## Sources
 
-- `_` cannot be read; it does not hold an accessible value.
-- It can represent an unused local variable, loop variable, resource, `catch` parameter, lambda parameter, or pattern.
-- It cannot be used as a field, method parameter, constructor parameter, or ordinary identifier.
-- Names containing an underscore, such as `_value`, are still ordinary identifiers.
-
-```java
-int _ = 10;       // error: `_` is not an ordinary identifier
-int _value = 10;  // valid
-```
-
-## Summary
-
-`_` documents that a required value is deliberately ignored. It reduces meaningless names such as `ignored`, `unused`, or `exception` and lets the compiler prevent accidental use.
-
-## Official reference
-
-- [JEP 456: Unnamed Variables and Patterns — JDK 22](https://openjdk.org/jeps/456)
-
+- [OpenJDK — JEP 456: Unnamed Variables & Patterns](https://openjdk.org/jeps/456)
+- [Java Language Specification §6.1 — Unnamed declarations](https://docs.oracle.com/javase/specs/jls/se26/html/jls-6.html#jls-6.1)
+- [Oracle Java 26 Language Guide — Unnamed Variables and Patterns](https://docs.oracle.com/en/java/javase/26/language/unnamed-variables-patterns.html)
