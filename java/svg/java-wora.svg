@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title description">
+  <title id="title">Java Write Once, Run Anywhere execution model</title>
+  <desc id="description">Java source is compiled once into hardware- and operating-system-independent class-file bytecode. The same compatible bytecode can then run through different platform-specific JVM implementations on Windows, Linux, and macOS.</desc>
+
+  <!-- Shared styles; purple identifies the portable artifact, while platform colors identify local runtimes. -->
+  <defs>
+    <style>
+      .sans { font-family: Arial, Helvetica, sans-serif; }
+      .heading { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #202124; }
+      .body { font-family: Arial, Helvetica, sans-serif; fill: #303840; }
+      .muted { font-family: Arial, Helvetica, sans-serif; fill: #5f6872; }
+      .light-heading { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #ffffff; }
+      .mono { font-family: Menlo, Consolas, "Liberation Mono", monospace; }
+    </style>
+  </defs>
+
+  <!-- Background and lesson title. -->
+  <rect id="background" width="1200" height="700" fill="#ffffff"/>
+  <text x="600" y="44" text-anchor="middle" class="heading" font-size="30">Write Once, Run Anywhere (WORA)</text>
+  <text x="600" y="75" text-anchor="middle" class="muted" font-size="18">The class file is portable; each operating system uses its own compatible JVM</text>
+
+  <!-- Stage 1: source written once. -->
+  <g id="write-source-stage">
+    <rect x="35" y="130" width="250" height="375" rx="10" fill="#eef5ff" stroke="#356eb3" stroke-width="2"/>
+    <rect x="35" y="130" width="250" height="52" rx="10" fill="#356eb3"/>
+    <rect x="35" y="171" width="250" height="11" fill="#356eb3"/>
+    <text x="60" y="164" class="light-heading" font-size="22">1 · Write source</text>
+
+    <!-- File shape; folded corner is decorative geometry but also distinguishes source from a process box. -->
+    <path d="M75 215H207L245 253V370H75Z" fill="#ffffff" stroke="#356eb3" stroke-width="3"/>
+    <path d="M207 215V253H245" fill="#dbeafe" stroke="#356eb3" stroke-width="3"/>
+    <text x="160" y="285" text-anchor="middle" class="heading" font-size="21">Hello.java</text>
+    <text x="160" y="318" text-anchor="middle" class="body" font-size="16">Java language</text>
+    <text x="160" y="344" text-anchor="middle" class="muted" font-size="14">source code</text>
+
+    <rect x="65" y="404" width="190" height="60" rx="7" fill="#ffffff" stroke="#8aaed4" stroke-width="2"/>
+    <text x="160" y="430" text-anchor="middle" class="heading" font-size="16">Written once</text>
+    <text x="160" y="452" text-anchor="middle" class="muted" font-size="14">using Java APIs</text>
+    <text x="160" y="490" text-anchor="middle" class="muted" font-size="13">This is the human-readable input.</text>
+  </g>
+
+  <!-- Compilation arrow: its tip stops ten pixels before the bytecode panel. -->
+  <text x="317" y="278" text-anchor="middle" class="heading" font-size="15">javac</text>
+  <path d="M295 305H321" fill="none" stroke="#53606b" stroke-width="4"/>
+  <polygon points="321,295 338,305 321,315" fill="#53606b"/>
+
+  <!-- Stage 2: one portable class-file artifact. -->
+  <g id="portable-bytecode-stage">
+    <rect x="350" y="130" width="300" height="375" rx="10" fill="#f7effb" stroke="#744b91" stroke-width="2"/>
+    <rect x="350" y="130" width="300" height="52" rx="10" fill="#744b91"/>
+    <rect x="350" y="171" width="300" height="11" fill="#744b91"/>
+    <text x="375" y="164" class="light-heading" font-size="22">2 · Compile once</text>
+
+    <rect x="392" y="215" width="216" height="170" rx="8" fill="#ffffff" stroke="#744b91" stroke-width="3"/>
+    <text x="500" y="255" text-anchor="middle" class="heading" font-size="21">Hello.class</text>
+    <text x="500" y="290" text-anchor="middle" class="body" font-size="17">JVM bytecode</text>
+    <rect x="420" y="316" width="160" height="39" rx="5" fill="#eadcf1" stroke="#744b91"/>
+    <text x="500" y="341" text-anchor="middle" class="mono" font-size="15" fill="#4b2f5d">JVM instructions</text>
+
+    <text x="500" y="420" text-anchor="middle" class="heading" font-size="16">Portable artifact</text>
+    <text x="500" y="446" text-anchor="middle" class="muted" font-size="14">hardware + OS independent</text>
+    <text x="500" y="474" text-anchor="middle" class="muted" font-size="13">The format is versioned.</text>
+  </g>
+
+  <!-- Distribution trunk: three branches deliver the same class file to separate JVM implementations. -->
+  <path d="M660 305H690M690 205V465M690 205H713M690 335H713M690 465H713" fill="none" stroke="#744b91" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="713,195 730,205 713,215" fill="#744b91"/>
+  <polygon points="713,325 730,335 713,345" fill="#744b91"/>
+  <polygon points="713,455 730,465 713,475" fill="#744b91"/>
+
+  <!-- Stage 3: platform-specific JVMs execute the same portable input. -->
+  <g id="platform-jvm-stage">
+    <text x="740" y="115" class="heading" font-size="22">3 · Run with a JVM for each platform</text>
+
+    <g id="windows-runtime">
+      <rect x="740" y="140" width="425" height="110" rx="9" fill="#eef5ff" stroke="#356eb3" stroke-width="2"/>
+      <text x="765" y="174" class="heading" font-size="18">Windows</text>
+      <rect x="765" y="188" width="165" height="42" rx="6" fill="#ffffff" stroke="#356eb3" stroke-width="2"/>
+      <text x="847" y="215" text-anchor="middle" class="body" font-size="15">Windows JVM</text>
+      <!-- Inner arrow stops before the execution box. -->
+      <path d="M942 209H970" fill="none" stroke="#356eb3" stroke-width="3"/>
+      <polygon points="970,201 983,209 970,217" fill="#356eb3"/>
+      <rect x="995" y="188" width="145" height="42" rx="6" fill="#dbeafe" stroke="#356eb3" stroke-width="2"/>
+      <text x="1067" y="215" text-anchor="middle" class="body" font-size="15">local execution</text>
+    </g>
+
+    <g id="linux-runtime">
+      <rect x="740" y="270" width="425" height="110" rx="9" fill="#edf8f0" stroke="#34834b" stroke-width="2"/>
+      <text x="765" y="304" class="heading" font-size="18">Linux</text>
+      <rect x="765" y="318" width="165" height="42" rx="6" fill="#ffffff" stroke="#34834b" stroke-width="2"/>
+      <text x="847" y="345" text-anchor="middle" class="body" font-size="15">Linux JVM</text>
+      <path d="M942 339H970" fill="none" stroke="#34834b" stroke-width="3"/>
+      <polygon points="970,331 983,339 970,347" fill="#34834b"/>
+      <rect x="995" y="318" width="145" height="42" rx="6" fill="#dcefe1" stroke="#34834b" stroke-width="2"/>
+      <text x="1067" y="345" text-anchor="middle" class="body" font-size="15">local execution</text>
+    </g>
+
+    <g id="macos-runtime">
+      <rect x="740" y="400" width="425" height="110" rx="9" fill="#f5f6f7" stroke="#64717c" stroke-width="2"/>
+      <text x="765" y="434" class="heading" font-size="18">macOS</text>
+      <rect x="765" y="448" width="165" height="42" rx="6" fill="#ffffff" stroke="#64717c" stroke-width="2"/>
+      <text x="847" y="475" text-anchor="middle" class="body" font-size="15">macOS JVM</text>
+      <path d="M942 469H970" fill="none" stroke="#64717c" stroke-width="3"/>
+      <polygon points="970,461 983,469 970,477" fill="#64717c"/>
+      <rect x="995" y="448" width="145" height="42" rx="6" fill="#e7e9eb" stroke="#64717c" stroke-width="2"/>
+      <text x="1067" y="475" text-anchor="middle" class="body" font-size="15">local execution</text>
+    </g>
+  </g>
+
+  <!-- Compatibility guardrail: the diagram ends with the conditions that beginners often miss. -->
+  <g id="wora-conditions">
+    <rect x="35" y="540" width="1130" height="125" rx="10" fill="#fff8e6" stroke="#b7791f" stroke-width="2"/>
+    <text x="60" y="572" class="heading" font-size="19">WORA has conditions</text>
+    <rect x="60" y="590" width="315" height="45" rx="6" fill="#ffffff" stroke="#b7791f"/>
+    <rect x="393" y="590" width="315" height="45" rx="6" fill="#ffffff" stroke="#b7791f"/>
+    <rect x="726" y="590" width="414" height="45" rx="6" fill="#ffffff" stroke="#b7791f"/>
+    <text x="217" y="618" text-anchor="middle" class="body" font-size="14">compatible class-file version + APIs</text>
+    <text x="550" y="618" text-anchor="middle" class="body" font-size="14">dependencies and resources present</text>
+    <text x="933" y="618" text-anchor="middle" class="body" font-size="14">no unhandled native or OS-specific assumptions</text>
+    <text x="600" y="654" text-anchor="middle" class="muted" font-size="14">Portable part: class files / JAR · Platform-specific part: JVM implementation and machine code</text>
+  </g>
+</svg>
