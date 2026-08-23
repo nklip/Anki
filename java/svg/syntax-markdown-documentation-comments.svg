@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-labelledby="title description">
+  <title id="title">How Markdown documentation comments become API documentation</title>
+  <desc id="description">A beginner diagram showing adjacent triple-slash source lines, how the standard doclet interprets Markdown and JavaDoc tags, and the resulting generated API documentation. A warning explains that a blank line inside the comment must also begin with three slashes.</desc>
+
+  <!-- Shared styles; blue is source, purple is interpretation, green is generated documentation, and orange marks the continuity rule. -->
+  <defs>
+    <style>
+      .heading { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #202124; }
+      .body { font-family: Arial, Helvetica, sans-serif; fill: #303840; }
+      .muted { font-family: Arial, Helvetica, sans-serif; fill: #5f6872; }
+      .mono { font-family: Menlo, Consolas, "Liberation Mono", monospace; fill: #303840; }
+      .light { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <!-- Background and lesson statement; the badge records when the syntax became available. -->
+  <rect id="background" width="1200" height="650" fill="#ffffff"/>
+  <text x="600" y="42" text-anchor="middle" class="heading" font-size="30">Markdown documentation comments</text>
+  <text x="600" y="73" text-anchor="middle" class="muted" font-size="18">Read left to right: source lines → standard doclet → generated API documentation</text>
+  <rect x="1000" y="22" width="170" height="42" rx="21" fill="#dcefe1" stroke="#34834b" stroke-width="2"/>
+  <text x="1085" y="49" text-anchor="middle" class="heading" font-size="15">JEP 467 · JDK 23</text>
+
+  <!-- Source panel: every visible documentation line deliberately begins with exactly three slashes. -->
+  <g id="source-comment">
+    <rect x="30" y="105" width="370" height="405" rx="11" fill="#eef5ff" stroke="#356eb3" stroke-width="2"/>
+    <rect x="30" y="105" width="370" height="48" rx="11" fill="#356eb3"/>
+    <rect x="30" y="142" width="370" height="11" fill="#356eb3"/>
+    <text x="55" y="137" class="light" font-size="20">1 · Write beside the declaration</text>
+
+    <text x="55" y="190" class="mono" font-size="14">/// Finds the **larger** value.</text>
+    <text x="55" y="222" class="mono" font-size="14">///</text>
+    <text x="55" y="254" class="mono" font-size="14">/// @param left first value</text>
+    <text x="55" y="286" class="mono" font-size="14">/// @param right second value</text>
+    <text x="55" y="318" class="mono" font-size="14">/// @return the larger value</text>
+    <text x="55" y="365" class="mono" font-size="14">static int max(int left, int right) {</text>
+    <text x="75" y="397" class="mono" font-size="14">return Math.max(left, right);</text>
+    <text x="55" y="429" class="mono" font-size="14">}</text>
+
+    <rect x="55" y="458" width="320" height="30" rx="6" fill="#ffffff" stroke="#356eb3" stroke-width="1.5"/>
+    <text x="215" y="478" text-anchor="middle" class="body" font-size="14">The comment is immediately before the method</text>
+  </g>
+
+  <!-- First arrowhead stops before the interpretation panel and remains separate from both borders. -->
+  <path d="M410 307H426" fill="none" stroke="#744b91" stroke-width="4"/>
+  <polygon points="426,297 443,307 426,317" fill="#744b91"/>
+
+  <!-- Interpretation panel: define both syntaxes so color alone is never required. -->
+  <g id="doclet-interpretation">
+    <rect x="450" y="105" width="310" height="405" rx="11" fill="#faf8fc" stroke="#744b91" stroke-width="2"/>
+    <rect x="450" y="105" width="310" height="48" rx="11" fill="#744b91"/>
+    <rect x="450" y="142" width="310" height="11" fill="#744b91"/>
+    <text x="475" y="137" class="light" font-size="20">2 · Interpret the content</text>
+
+    <rect x="475" y="177" width="260" height="82" rx="8" fill="#ffffff" stroke="#744b91" stroke-width="2"/>
+    <text x="605" y="207" text-anchor="middle" class="heading" font-size="17">Comment boundary</text>
+    <text x="605" y="235" text-anchor="middle" class="body" font-size="15">adjacent /// lines = one comment</text>
+
+    <rect x="475" y="280" width="260" height="82" rx="8" fill="#ffffff" stroke="#744b91" stroke-width="2"/>
+    <text x="605" y="310" text-anchor="middle" class="heading" font-size="17">Markdown</text>
+    <text x="605" y="338" text-anchor="middle" class="mono" font-size="14">**bold** · lists · links</text>
+
+    <rect x="475" y="383" width="260" height="82" rx="8" fill="#ffffff" stroke="#744b91" stroke-width="2"/>
+    <text x="605" y="413" text-anchor="middle" class="heading" font-size="17">JavaDoc tags</text>
+    <text x="605" y="441" text-anchor="middle" class="mono" font-size="14">@param · @return · {@link}</text>
+    <text x="605" y="492" text-anchor="middle" class="muted" font-size="13">Processed by the standard doclet</text>
+  </g>
+
+  <!-- Second arrowhead stops before the output panel. -->
+  <path d="M770 307H786" fill="none" stroke="#34834b" stroke-width="4"/>
+  <polygon points="786,297 803,307 786,317" fill="#34834b"/>
+
+  <!-- Output panel: a simplified HTML documentation view shows the semantic result, not literal markup. -->
+  <g id="generated-documentation">
+    <rect x="810" y="105" width="360" height="405" rx="11" fill="#edf8f0" stroke="#34834b" stroke-width="2"/>
+    <rect x="810" y="105" width="360" height="48" rx="11" fill="#34834b"/>
+    <rect x="810" y="142" width="360" height="11" fill="#34834b"/>
+    <text x="835" y="137" class="light" font-size="20">3 · Read generated API docs</text>
+
+    <rect x="835" y="177" width="310" height="308" rx="8" fill="#ffffff" stroke="#9bbca5" stroke-width="1.5"/>
+    <text x="860" y="210" class="mono" font-size="17" font-weight="700">max(int left, int right)</text>
+    <line x1="860" y1="222" x2="1120" y2="222" stroke="#c7d8cc" stroke-width="1.5"/>
+    <text x="860" y="253" class="body" font-size="16">Finds the</text>
+    <text x="935" y="253" class="heading" font-size="16">larger</text>
+    <text x="984" y="253" class="body" font-size="16">value.</text>
+
+    <text x="860" y="298" class="heading" font-size="16">Parameters</text>
+    <text x="880" y="327" class="mono" font-size="14">left</text>
+    <text x="930" y="327" class="body" font-size="14">— first value</text>
+    <text x="880" y="355" class="mono" font-size="14">right</text>
+    <text x="930" y="355" class="body" font-size="14">— second value</text>
+
+    <text x="860" y="400" class="heading" font-size="16">Returns</text>
+    <text x="880" y="429" class="body" font-size="14">the larger value</text>
+    <text x="990" y="468" text-anchor="middle" class="muted" font-size="13">HTML generated by javadoc</text>
+  </g>
+
+  <!-- Continuity warning and compatibility note occupy the full footer so there is no meaningless empty center. -->
+  <g id="remember-rules">
+    <rect x="30" y="535" width="740" height="85" rx="10" fill="#fff8e6" stroke="#b7791f" stroke-width="2"/>
+    <text x="55" y="569" class="heading" font-size="18">Keep every line contiguous</text>
+    <text x="55" y="596" class="body" font-size="15">Need a blank line inside the comment? Write /// — a truly empty source line ends the comment.</text>
+
+    <rect x="790" y="535" width="380" height="85" rx="10" fill="#f7f9fb" stroke="#64717c" stroke-width="2"/>
+    <text x="815" y="569" class="heading" font-size="18">Existing documentation remains valid</text>
+    <text x="815" y="596" class="body" font-size="15">Traditional /** ... */ comments still work.</text>
+  </g>
+</svg>
