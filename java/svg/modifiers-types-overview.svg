@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Two practical categories of Java modifiers</title>
+  <desc id="desc">A compact comparison of access modifiers, which control who can use a declaration, and declaration-specific modifiers, which control behavior. A code-shaped example combines public, final, and a class declaration.</desc>
+
+  <!--
+    Layout map for quick repairs:
+    - Header: y=0..105
+    - Access panel: x=40..575, y=120..520
+    - Behavior panel: x=625..1160, y=120..520
+    - Combined-declaration example: x=40..1160, y=550..690
+    Keep each row on its current y-band so labels do not collide.
+  -->
+  <defs>
+    <style>
+      .canvas { fill: #f7f9fc; }
+      .panel { fill: #ffffff; stroke: #c7d0dc; stroke-width: 2; }
+      .access-border { stroke: #2f6fb2; }
+      .behavior-border { stroke: #7a2ca7; }
+      .access-fill { fill: #e9f2fb; }
+      .behavior-fill { fill: #f4eafa; }
+      .neutral-fill { fill: #eef2f6; }
+      .title { font: 700 34px Arial, Helvetica, sans-serif; fill: #18212b; }
+      .subtitle { font: 400 18px Arial, Helvetica, sans-serif; fill: #536170; }
+      .panel-title { font: 700 22px Arial, Helvetica, sans-serif; fill: #ffffff; letter-spacing: 0.5px; }
+      .token { font: 700 18px "Courier New", monospace; fill: #17212b; }
+      .row-copy { font: 400 17px Arial, Helvetica, sans-serif; fill: #334155; }
+      .row-copy-strong { font: 700 17px Arial, Helvetica, sans-serif; fill: #243142; }
+      .note { font: 400 15px Arial, Helvetica, sans-serif; fill: #536170; }
+      .example-label { font: 700 15px Arial, Helvetica, sans-serif; letter-spacing: 0.7px; }
+      .example-token { font: 700 21px "Courier New", monospace; }
+    </style>
+  </defs>
+
+  <rect class="canvas" width="1200" height="720"/>
+
+  <!-- Diagram heading: the learning model comes before the keyword lists. -->
+  <text class="title" x="600" y="52" text-anchor="middle">Modifiers answer two different questions</text>
+  <text class="subtitle" x="600" y="84" text-anchor="middle">Choose the declaration first; only some modifiers are legal for each kind.</text>
+
+  <!-- ACCESS PANEL: every row answers “Who may use the declaration?” -->
+  <g id="access-panel">
+    <rect class="panel access-border" x="40" y="120" width="535" height="400" rx="18"/>
+    <path d="M58 120 H557 A18 18 0 0 1 575 138 V190 H40 V138 A18 18 0 0 1 58 120 Z" fill="#2f6fb2"/>
+    <text class="panel-title" x="307.5" y="162" text-anchor="middle">ACCESS · Who may use it?</text>
+
+    <!-- Public row -->
+    <rect class="access-fill access-border" x="60" y="208" width="135" height="55" rx="10" stroke-width="2"/>
+    <text class="token" x="127.5" y="242" text-anchor="middle">public</text>
+    <text class="row-copy" x="215" y="232">Wherever the declaration is visible</text>
+    <text class="note" x="215" y="253">Modules may still limit exported packages.</text>
+
+    <!-- Protected row -->
+    <rect class="access-fill access-border" x="60" y="277" width="135" height="55" rx="10" stroke-width="2"/>
+    <text class="token" x="127.5" y="311" text-anchor="middle">protected</text>
+    <text class="row-copy" x="215" y="301">Same package, plus subclass access</text>
+    <text class="note" x="215" y="322">Extra rules apply outside the package.</text>
+
+    <!-- Private row -->
+    <rect class="access-fill access-border" x="60" y="346" width="135" height="55" rx="10" stroke-width="2"/>
+    <text class="token" x="127.5" y="380" text-anchor="middle">private</text>
+    <text class="row-copy" x="215" y="370">Inside the enclosing top-level</text>
+    <text class="note" x="215" y="391">class or interface only</text>
+
+    <!-- Package-access row: deliberately says “no keyword”. -->
+    <rect class="neutral-fill" x="60" y="415" width="135" height="55" rx="10" stroke="#7b8794" stroke-width="2"/>
+    <text class="token" x="127.5" y="449" text-anchor="middle">(none)</text>
+    <text class="row-copy" x="215" y="439">Same package: package access</text>
+    <text class="note" x="215" y="460">“package-private” is not a keyword.</text>
+
+    <text class="row-copy-strong" x="60" y="501">Top-level type: only public or package access</text>
+  </g>
+
+  <!-- BEHAVIOR PANEL: lists common, not exhaustive, declaration-specific sets. -->
+  <g id="behavior-panel">
+    <rect class="panel behavior-border" x="625" y="120" width="535" height="400" rx="18"/>
+    <path d="M643 120 H1142 A18 18 0 0 1 1160 138 V190 H625 V138 A18 18 0 0 1 643 120 Z" fill="#7a2ca7"/>
+    <text class="panel-title" x="892.5" y="162" text-anchor="middle">BEHAVIOR · How does it act?</text>
+
+    <!-- Type row -->
+    <rect class="behavior-fill behavior-border" x="645" y="208" width="128" height="58" rx="10" stroke-width="2"/>
+    <text class="row-copy-strong" x="709" y="243" text-anchor="middle">Class / type</text>
+    <text class="token" x="795" y="231">abstract · final · sealed</text>
+    <text class="note" x="795" y="254">non-sealed · static (nested/local)</text>
+
+    <!-- Field row -->
+    <rect class="behavior-fill behavior-border" x="645" y="278" width="128" height="58" rx="10" stroke-width="2"/>
+    <text class="row-copy-strong" x="709" y="313" text-anchor="middle">Field</text>
+    <text class="token" x="795" y="301">static · final</text>
+    <text class="note" x="795" y="324">transient · volatile</text>
+
+    <!-- Method row -->
+    <rect class="behavior-fill behavior-border" x="645" y="348" width="128" height="58" rx="10" stroke-width="2"/>
+    <text class="row-copy-strong" x="709" y="383" text-anchor="middle">Method</text>
+    <text class="token" x="795" y="371">abstract · static · final</text>
+    <text class="note" x="795" y="394">synchronized · native</text>
+
+    <!-- Local-variable and parameter row -->
+    <rect class="behavior-fill behavior-border" x="645" y="418" width="128" height="58" rx="10" stroke-width="2"/>
+    <text class="row-copy-strong" x="709" y="443" text-anchor="middle">Local /</text>
+    <text class="row-copy-strong" x="709" y="465" text-anchor="middle">parameter</text>
+    <text class="token" x="795" y="452">final</text>
+
+    <text class="row-copy-strong" x="645" y="501">Compiler rejects invalid or conflicting combinations.</text>
+  </g>
+
+  <!-- COMBINED EXAMPLE: chips separate access, behavior, and declaration. -->
+  <g id="combined-example">
+    <rect class="panel" x="40" y="550" width="1120" height="140" rx="18"/>
+    <text class="example-label" x="70" y="578" fill="#536170">ONE DECLARATION CAN COMBINE BOTH ANSWERS</text>
+
+    <rect class="access-fill access-border" x="70" y="595" width="130" height="52" rx="10" stroke-width="2"/>
+    <text class="example-token" x="135" y="628" text-anchor="middle" fill="#225b95">public</text>
+    <text class="note" x="135" y="674" text-anchor="middle">access</text>
+
+    <rect class="behavior-fill behavior-border" x="220" y="595" width="120" height="52" rx="10" stroke-width="2"/>
+    <text class="example-token" x="280" y="628" text-anchor="middle" fill="#69218f">final</text>
+    <text class="note" x="280" y="674" text-anchor="middle">behavior</text>
+
+    <rect class="neutral-fill" x="360" y="595" width="190" height="52" rx="10" stroke="#7b8794" stroke-width="2"/>
+    <text class="example-token" x="455" y="628" text-anchor="middle" fill="#243142">class Task</text>
+    <text class="note" x="455" y="674" text-anchor="middle">declaration</text>
+
+    <text class="row-copy-strong" x="610" y="621">Read it as:</text>
+    <text class="row-copy" x="610" y="650">public answers “who?” · final answers “how?”</text>
+    <text class="note" x="610" y="675">The declaration kind determines which modifiers are allowed.</text>
+  </g>
+</svg>
