@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title description">
+  <title id="title">Share immutable time values, isolate mutable formatters</title>
+  <desc id="description">A beginner comparison showing two threads safely using one immutable DateTimeFormatter, two threads unsafely sharing one mutable SimpleDateFormat, and a bottom rule explaining immutable values, legacy protection, and the single-threaded DateTimeFormatterBuilder exception.</desc>
+
+  <!-- Shared styles; green denotes documented thread safety, orange warns about mutable shared state, and blue carries the decision rules. -->
+  <defs>
+    <style>
+      .heading { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #202124; }
+      .body { font-family: Arial, Helvetica, sans-serif; fill: #303840; }
+      .muted { font-family: Arial, Helvetica, sans-serif; fill: #5f6872; }
+      .mono { font-family: Menlo, Consolas, "Liberation Mono", monospace; fill: #303840; }
+      .light { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <!-- Lesson statement and release badge; the subtitle defines the decision test. -->
+  <rect id="background" width="1200" height="720" fill="#ffffff"/>
+  <text x="600" y="43" text-anchor="middle" class="heading" font-size="30">Share immutable time values; isolate mutable helpers</text>
+  <text x="600" y="75" text-anchor="middle" class="muted" font-size="18">Read the contract: immutable + thread-safe means one instance can serve many threads</text>
+  <rect x="1010" y="95" width="160" height="38" rx="19" fill="#dcefe1" stroke="#34834b" stroke-width="2"/>
+  <text x="1090" y="120" text-anchor="middle" class="heading" font-size="14">JDK 8 · JSR 310</text>
+
+  <!-- Safe side: two callers point to one formatter; arrowheads stop before its border. -->
+  <g id="safe-sharing">
+    <rect x="30" y="145" width="560" height="370" rx="11" fill="#edf8f0" stroke="#34834b" stroke-width="2"/>
+    <rect x="30" y="145" width="560" height="50" rx="11" fill="#34834b"/>
+    <rect x="30" y="184" width="560" height="11" fill="#34834b"/>
+    <text x="55" y="178" class="light" font-size="20">SAFE TO SHARE</text>
+    <text x="310" y="225" text-anchor="middle" class="heading" font-size="17">One immutable object, no changing internal state</text>
+
+    <rect x="60" y="255" width="150" height="54" rx="8" fill="#ffffff" stroke="#356eb3" stroke-width="1.5"/>
+    <rect x="60" y="335" width="150" height="54" rx="8" fill="#ffffff" stroke="#356eb3" stroke-width="1.5"/>
+    <text x="135" y="288" text-anchor="middle" class="heading" font-size="16">Thread A</text>
+    <text x="135" y="368" text-anchor="middle" class="heading" font-size="16">Thread B</text>
+
+    <!-- Both shafts join their own heads cleanly and stay clear of all labels. -->
+    <path d="M220 282H284" fill="none" stroke="#34834b" stroke-width="4"/>
+    <polygon points="284,271 305,282 284,293" fill="#34834b"/>
+    <path d="M220 362H284" fill="none" stroke="#34834b" stroke-width="4"/>
+    <polygon points="284,351 305,362 284,373" fill="#34834b"/>
+
+    <rect x="320" y="245" width="240" height="155" rx="10" fill="#ffffff" stroke="#34834b" stroke-width="2"/>
+    <text x="440" y="283" text-anchor="middle" class="mono" font-size="16">DateTimeFormatter</text>
+    <text x="440" y="318" text-anchor="middle" class="heading" font-size="16">immutable</text>
+    <text x="440" y="347" text-anchor="middle" class="heading" font-size="16">thread-safe</text>
+    <text x="440" y="380" text-anchor="middle" class="muted" font-size="14">reuse as static final</text>
+
+    <rect x="60" y="430" width="500" height="58" rx="8" fill="#ffffff" stroke="#34834b" stroke-width="1.5"/>
+    <text x="310" y="455" text-anchor="middle" class="body" font-size="15">Also: Instant · LocalDate · ZonedDateTime</text>
+    <text x="310" y="477" text-anchor="middle" class="muted" font-size="14">operations return new values</text>
+  </g>
+
+  <!-- Legacy side: the shared object contains mutable parsing state, so callers need isolation or synchronization. -->
+  <g id="unsafe-sharing">
+    <rect x="610" y="145" width="560" height="370" rx="11" fill="#fff8e6" stroke="#b7791f" stroke-width="2"/>
+    <rect x="610" y="145" width="560" height="50" rx="11" fill="#b7791f"/>
+    <rect x="610" y="184" width="560" height="11" fill="#b7791f"/>
+    <text x="635" y="178" class="light" font-size="20">PROTECT OR ISOLATE</text>
+    <text x="890" y="225" text-anchor="middle" class="heading" font-size="17">Shared mutable state can be changed concurrently</text>
+
+    <rect x="640" y="255" width="150" height="54" rx="8" fill="#ffffff" stroke="#356eb3" stroke-width="1.5"/>
+    <rect x="640" y="335" width="150" height="54" rx="8" fill="#ffffff" stroke="#356eb3" stroke-width="1.5"/>
+    <text x="715" y="288" text-anchor="middle" class="heading" font-size="16">Thread A</text>
+    <text x="715" y="368" text-anchor="middle" class="heading" font-size="16">Thread B</text>
+
+    <!-- Orange heads remain outside the mutable formatter; concurrent routes never cross text. -->
+    <path d="M800 282H864" fill="none" stroke="#b7791f" stroke-width="4"/>
+    <polygon points="864,271 885,282 864,293" fill="#b7791f"/>
+    <path d="M800 362H864" fill="none" stroke="#b7791f" stroke-width="4"/>
+    <polygon points="864,351 885,362 864,373" fill="#b7791f"/>
+
+    <rect x="900" y="245" width="240" height="155" rx="10" fill="#ffffff" stroke="#b7791f" stroke-width="2"/>
+    <text x="1020" y="283" text-anchor="middle" class="mono" font-size="16">SimpleDateFormat</text>
+    <text x="1020" y="318" text-anchor="middle" class="heading" font-size="16">mutable</text>
+    <text x="1020" y="347" text-anchor="middle" class="heading" font-size="16">not synchronized</text>
+    <text x="1020" y="380" text-anchor="middle" class="muted" font-size="14">races without protection</text>
+
+    <rect x="640" y="430" width="500" height="58" rx="8" fill="#ffffff" stroke="#b7791f" stroke-width="1.5"/>
+    <text x="890" y="455" text-anchor="middle" class="body" font-size="15">Legacy: Date · Calendar · DateFormat</text>
+    <text x="890" y="477" text-anchor="middle" class="muted" font-size="14">one per thread, or synchronize access</text>
+  </g>
+
+  <!-- Bottom rules prevent two common overgeneralizations: immutability creates copies, while builders remain mutable. -->
+  <g id="decision-rules">
+    <rect x="30" y="545" width="560" height="145" rx="11" fill="#eef5ff" stroke="#356eb3" stroke-width="2"/>
+    <text x="55" y="578" class="heading" font-size="18">Why immutable values are safe</text>
+    <text x="55" y="616" class="mono" font-size="16">next = date.plusDays(1)</text>
+    <text x="55" y="651" class="body" font-size="15">A new value is returned; date is unchanged.</text>
+    <text x="55" y="678" class="muted" font-size="14">Threads cannot race to modify the same value.</text>
+
+    <rect x="610" y="545" width="560" height="145" rx="11" fill="#faf8fc" stroke="#744b91" stroke-width="2"/>
+    <text x="635" y="578" class="heading" font-size="18">Important java.time exception</text>
+    <text x="635" y="616" class="mono" font-size="16">DateTimeFormatterBuilder</text>
+    <text x="635" y="651" class="body" font-size="15">Mutable and intended for one thread while building.</text>
+    <text x="635" y="678" class="muted" font-size="14">Share the finished DateTimeFormatter instead.</text>
+  </g>
+</svg>

@@ -2,74 +2,49 @@
 
 ## Front
 
-Which Java date and time classes are thread-safe, and which ones should not be shared between threads?
+Which Java date-and-time objects can be shared between threads, and which ones need protection?
 
 ## Back
 
-## Practical rule
+Anything in `java.time` is safe to share as a constant; anything in `java.util` or `java.text` with a date in its name is not.
 
-> Anything in `java.time` is safe to share as a constant; anything in `java.util` or `java.text` with a date in its name is not.
+`DateTimeFormatter` is also thread-safe, so the same instance may be shared. Legacy mutable objects such as `SimpleDateFormat` must not be used concurrently without protection.
 
-Treat this as a practical safety rule for choosing between modern and legacy date/time APIs.
+![Which Java time objects can be shared between threads](svg/thread-safe-time-classes.svg)
 
-## Modern API: `java.time`
-
-Classes from `java.time` are immutable and thread-safe. They can safely be shared between threads and stored in constants:
+**Immutable** means an object's state cannot change after creation. Methods such as `plusDays` return a new value instead of changing the original, so threads cannot race to update that state.
 
 ```java
-private static final DateTimeFormatter FORMATTER =
-        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
-private static final ZoneId UTC = ZoneId.of("UTC");
+public class ThreadSafeTime {
+    private static final DateTimeFormatter DATE =
+            DateTimeFormatter.ofPattern("uuuu-MM-dd");
+
+    static String tomorrow(String text) {
+        LocalDate today = LocalDate.parse(text, DATE);
+        LocalDate next = today.plusDays(1); // today is unchanged
+        return DATE.format(next);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(tomorrow("2026-08-23")); // 2026-08-24
+    }
+}
 ```
 
-Common thread-safe classes include:
+Safe shared examples include `Instant`, `LocalDate`, `LocalDateTime`, `ZonedDateTime`, `Duration`, `Period`, `ZoneId`, and `DateTimeFormatter`.
 
-- `Instant`
-- `LocalDate`
-- `LocalTime`
-- `LocalDateTime`
-- `ZonedDateTime`
-- `Duration`
-- `Period`
-- `ZoneId`
-- `DateTimeFormatter`
+Do not apply the rule to every class under every `java.time` subpackage: `DateTimeFormatterBuilder` is mutable and intended for one thread. Finish building, then share the resulting `DateTimeFormatter`.
 
-Operations return new values instead of modifying existing objects:
+`Date`, `Calendar`, `DateFormat`, and `SimpleDateFormat` are legacy mutable types. Prefer `java.time`. If a legacy formatter is unavoidable, create one per thread or synchronize every shared access externally.
 
-```java
-LocalDate today = LocalDate.now();
-LocalDate tomorrow = today.plusDays(1);
+## Sources
 
-// today was not changed
-```
-
-## Legacy APIs: do not share mutable instances
-
-Legacy date and formatting classes are mutable or not thread-safe:
-
-```java
-// Unsafe when shared by multiple threads
-private static final SimpleDateFormat FORMATTER =
-        new SimpleDateFormat("yyyy-MM-dd");
-```
-
-Important legacy examples:
-
-- `java.util.Date` — mutable.
-- `java.util.Calendar` — mutable and not thread-safe.
-- `java.text.DateFormat` — not thread-safe.
-- `java.text.SimpleDateFormat` — not thread-safe.
-
-Prefer this:
-
-```java
-private static final DateTimeFormatter FORMATTER =
-        DateTimeFormatter.ofPattern("yyyy-MM-dd");
-```
-
-If a legacy formatter must be used, create it locally or protect access with synchronization. Prefer migrating to `java.time` whenever possible.
-
-## Summary
-
-Use `java.time` for new code. Its immutable objects and thread-safe formatters can be shared safely. Do not share mutable legacy `Date`, `Calendar`, `DateFormat`, or `SimpleDateFormat` instances without synchronization.
+- [Oracle — Java Date-Time APIs introduced in JDK 8](https://docs.oracle.com/javase/8/docs/technotes/guides/datetime/index.html)
+- [Java SE 26 API — `java.time` package](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/time/package-summary.html)
+- [Java SE 26 API — `DateTimeFormatter`](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/time/format/DateTimeFormatter.html)
+- [Java SE 26 API — `DateTimeFormatterBuilder`](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/time/format/DateTimeFormatterBuilder.html)
+- [Java SE 26 API — `SimpleDateFormat` synchronization](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/text/SimpleDateFormat.html)
+- [Oracle tutorial — Legacy date-time code](https://docs.oracle.com/javase/tutorial/datetime/iso/legacy.html)
