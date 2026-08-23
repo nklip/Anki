@@ -2,102 +2,60 @@
 
 ## Front
 
-What is the difference between **Dependency Injection (DI)** and **Inversion of Control (IoC)**?
+What is the difference between **Inversion of Control (IoC)** and **Dependency Injection (DI)**?
 
 ## Back
 
-**Inversion of Control is the general principle. Dependency Injection is one technique for applying it.**
+**IoC is a broad design principle.**
 
-### Inversion of Control (IoC)
+**DI is a specific way to apply it to object dependencies.**
 
-IoC means that control is transferred from application code to an external component, framework, or runtime.
+![IoC as the broad principle and DI as external dependency wiring](svg/dependency-injection-vs-ioc.svg)
 
-The external component may control:
+| Concept | Meaning | Memory question |
+|---|---|---|
+| **IoC** | Control that used to belong to application code moves to a framework, container, or external assembler. This may include object creation, wiring, lifecycle, or when code is called. | **Who controls?** |
+| **DI** | An object declares the collaborators it needs; something outside supplies them instead of the object constructing or locating them. | **How do dependencies arrive?** |
 
-- Object creation and lifecycle.
-- Which implementation is used.
-- When application code is called.
-- How components are connected.
 
-Examples include dependency injection, framework callbacks, event handlers, and template methods.
+DI is therefore **one form of IoC**, not a synonym for every kind of IoC. A framework calling your event handler is IoC even when no dependency is injected. DI can also be performed manually; a container is optional.
 
-### Dependency Injection (DI)
-
-DI means that an object receives its dependencies from the outside instead of constructing or locating them itself.
-
-DI can be performed manually; an IoC container is not required.
-
-### Without dependency injection
+### Constructor injection in Java
 
 ```java
-final class OrderService {
-    private final PaymentGateway gateway =
-            new StripePaymentGateway();
+interface Notifier {
+    void send(String message);
+}
 
-    void placeOrder(Order order) {
-        gateway.charge(order.total());
+final class OrderService {
+    private final Notifier notifier;
+
+    OrderService(Notifier notifier) {
+        this.notifier = notifier;
+    }
+
+    void placeOrder() {
+        notifier.send("Order placed");
+    }
+}
+
+final class App {
+    static OrderService createService() {
+        Notifier consoleNotifier = System.out::println;
+        return new OrderService(consoleNotifier);
     }
 }
 ```
 
-`OrderService` creates its own dependency and is tightly coupled to `StripePaymentGateway`.
+`OrderService` declares a required dependency through its constructor. `App.createService()` is the external **composition root**: it chooses an implementation and injects it. This keeps the service unaware of the concrete notifier and makes another implementation easy to supply.
 
-### With constructor injection
+### Spring connection
 
-```java
-final class OrderService {
-    private final PaymentGateway gateway;
+Spring’s IoC container demonstrates both ideas: it controls bean creation and assembly (**IoC**) and supplies bean dependencies through constructors, factory-method arguments, or properties (**DI**).
 
-    OrderService(PaymentGateway gateway) {
-        this.gateway = gateway;
-    }
+> **Remember:** IoC says *control comes from outside*; DI says *dependencies come from outside*.
 
-    void placeOrder(Order order) {
-        gateway.charge(order.total());
-    }
-}
-```
+## Sources
 
-The dependency is supplied at the composition root:
-
-```java
-PaymentGateway gateway = new StripePaymentGateway();
-OrderService service = new OrderService(gateway);
-```
-
-For a test, it can be replaced easily:
-
-```java
-PaymentGateway gateway = new FakePaymentGateway();
-OrderService service = new OrderService(gateway);
-```
-
-### Comparison
-
-| Inversion of Control | Dependency Injection |
-|---|---|
-| Broad design principle | Specific implementation technique |
-| Answers: **Who controls creation, lifecycle, or execution?** | Answers: **How does an object obtain its dependencies?** |
-| Control moves outside the component | Dependencies are supplied from outside the object |
-| Includes DI, callbacks, events, and template methods | Commonly uses constructor, setter, or field injection |
-| Often implemented by a framework or container | Can be performed manually or by a container |
-
-### Injection styles
-
-1. **Constructor injection** — preferred for required dependencies; supports immutability and makes dependencies explicit.
-2. **Setter injection** — useful for optional or replaceable dependencies.
-3. **Field injection** — usually discouraged because dependencies are hidden, mutation is easier, and isolated testing is harder.
-
-### Important distinction
-
-A DI container demonstrates both concepts:
-
-- It applies **IoC** by controlling object creation, wiring, and lifecycle.
-- It performs **DI** by passing dependencies into those objects.
-
-### Key idea
-
-> **IoC is the principle: “control comes from outside.”**  
-> **DI is the mechanism: “dependencies come from outside.”**
-
-DI is a form of IoC, but IoC is broader than DI.
+- [Spring Framework — Introduction to the IoC Container and Beans](https://docs.spring.io/spring-framework/reference/core/beans/introduction.html)
+- [Martin Fowler — Inversion of Control Containers and the Dependency Injection pattern](https://martinfowler.com/articles/injection.html)
