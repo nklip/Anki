@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720"
+     role="img" aria-labelledby="title description">
+  <title id="title">Default access differs for an interface and its members</title>
+  <desc id="description">A top-level interface without public has package access. Inside it, fields, methods, and member types without access modifiers are public. A timeline shows that Java 9 added explicit private instance and private static helper methods and that current Java keeps this rule.</desc>
+
+  <!--
+    Quick-repair layout:
+    - Heading: y=0..95
+    - Top-level interface panel: x=30..390, y=120..550
+    - Interface members panel: x=420..1170, y=120..550
+    - Java 8 → Java 9 → current timeline: y=585..690
+    Keep member labels inside their 330px cards and timeline arrows inside the 60px gaps.
+  -->
+  <defs>
+    <style>
+      .heading { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #202124; }
+      .body { font-family: Arial, Helvetica, sans-serif; fill: #303840; }
+      .muted { font-family: Arial, Helvetica, sans-serif; fill: #5f6872; }
+      .mono { font-family: Menlo, Consolas, "Liberation Mono", monospace; fill: #26323e; }
+      .light { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #ffffff; }
+      .small-label { font-family: Arial, Helvetica, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.7px; }
+    </style>
+  </defs>
+
+  <rect id="background" width="1200" height="720" fill="#f7f9fc"/>
+
+  <!-- Title states the trap: the outer declaration and inner members use different defaults. -->
+  <text x="600" y="43" text-anchor="middle" class="heading" font-size="30">No keyword does not always mean package access</text>
+  <text x="600" y="76" text-anchor="middle" class="muted" font-size="18">First ask: is this the top-level interface, or a member inside it?</text>
+
+  <!-- LEFT: access of the top-level interface declaration itself. -->
+  <g id="top-level-interface">
+    <rect x="30" y="120" width="360" height="430" rx="14" fill="#eef5ff" stroke="#356eb3" stroke-width="2"/>
+    <rect x="30" y="120" width="360" height="64" rx="14" fill="#356eb3"/>
+    <rect x="30" y="170" width="360" height="14" fill="#356eb3"/>
+    <text x="210" y="160" text-anchor="middle" class="light" font-size="20">TOP-LEVEL INTERFACE</text>
+
+    <text x="210" y="222" text-anchor="middle" class="heading" font-size="18">Declaration in a source file</text>
+    <rect x="55" y="250" width="310" height="95" rx="10" fill="#ffffff" stroke="#356eb3" stroke-width="1.5"/>
+    <text x="210" y="287" text-anchor="middle" class="mono" font-size="19">interface Greeting</text>
+    <text x="210" y="320" text-anchor="middle" class="muted" font-size="14">no access keyword</text>
+
+    <rect x="55" y="375" width="310" height="95" rx="10" fill="#fff8e6" stroke="#b7791f" stroke-width="2"/>
+    <text x="210" y="411" text-anchor="middle" class="heading" font-size="20" fill="#8d570e">PACKAGE ACCESS</text>
+    <text x="210" y="443" text-anchor="middle" class="body" font-size="15">usable only from its package</text>
+
+    <text x="210" y="505" text-anchor="middle" class="heading" font-size="16">Add public for wider access</text>
+    <text x="210" y="529" text-anchor="middle" class="muted" font-size="14">module exports may still limit visibility</text>
+  </g>
+
+  <!-- RIGHT: implicit modifiers for declarations inside an interface. -->
+  <g id="interface-members">
+    <rect x="420" y="120" width="750" height="430" rx="14" fill="#edf8f0" stroke="#34834b" stroke-width="2"/>
+    <rect x="420" y="120" width="750" height="64" rx="14" fill="#34834b"/>
+    <rect x="420" y="170" width="750" height="14" fill="#34834b"/>
+    <text x="795" y="160" text-anchor="middle" class="light" font-size="20">MEMBERS INSIDE THE INTERFACE</text>
+
+    <!-- Row 1: constants and ordinary abstract methods. -->
+    <rect x="445" y="205" width="335" height="92" rx="10" fill="#ffffff" stroke="#34834b" stroke-width="1.5"/>
+    <text x="465" y="238" class="mono" font-size="16">int LIMIT = 3;</text>
+    <text x="465" y="272" class="body" font-size="15">public static final</text>
+    <text x="755" y="272" text-anchor="end" class="small-label" fill="#28723c">FIELD</text>
+
+    <rect x="810" y="205" width="335" height="92" rx="10" fill="#ffffff" stroke="#34834b" stroke-width="1.5"/>
+    <text x="830" y="238" class="mono" font-size="16">void greet();</text>
+    <text x="830" y="272" class="body" font-size="15">public abstract</text>
+    <text x="1120" y="272" text-anchor="end" class="small-label" fill="#28723c">METHOD</text>
+
+    <!-- Row 2: default is behavioral, while static methods are also public when access is omitted. -->
+    <rect x="445" y="317" width="335" height="92" rx="10" fill="#ffffff" stroke="#34834b" stroke-width="1.5"/>
+    <text x="465" y="350" class="mono" font-size="16">default method</text>
+    <text x="465" y="384" class="body" font-size="15">public · default ≠ access</text>
+    <text x="755" y="384" text-anchor="end" class="small-label" fill="#28723c">INSTANCE</text>
+
+    <rect x="810" y="317" width="335" height="92" rx="10" fill="#ffffff" stroke="#34834b" stroke-width="1.5"/>
+    <text x="830" y="350" class="mono" font-size="16">static method</text>
+    <text x="830" y="384" class="body" font-size="15">public</text>
+    <text x="1120" y="384" text-anchor="end" class="small-label" fill="#28723c">STATIC</text>
+
+    <!-- Java 9 exception: private must be explicit and never becomes package access. -->
+    <rect x="445" y="429" width="700" height="78" rx="10" fill="#faf8fc" stroke="#744b91" stroke-width="2"/>
+    <text x="465" y="460" class="mono" font-size="16">private String format() { ... }</text>
+    <text x="465" y="488" class="body" font-size="15">explicit private helper · instance or static · Java 9+</text>
+    <text x="1120" y="488" text-anchor="end" class="small-label" fill="#744b91">NOT INHERITED</text>
+
+    <text x="795" y="535" text-anchor="middle" class="heading" font-size="15">Member types are public static · no protected or package-access methods</text>
+  </g>
+
+  <!-- Timeline: arrows are confined to empty gaps and each head stops at the next card border. -->
+  <g id="version-timeline">
+    <rect x="30" y="585" width="340" height="105" rx="12" fill="#eef2f6" stroke="#7b8794" stroke-width="2"/>
+    <text x="55" y="614" class="small-label" fill="#596674">JAVA 8</text>
+    <text x="200" y="646" text-anchor="middle" class="heading" font-size="17">Private methods not allowed</text>
+    <text x="200" y="673" text-anchor="middle" class="muted" font-size="14">omitted method access → public</text>
+
+    <!-- Shaft joins its own triangular head; the tip meets the Java 9 card at x=430. -->
+    <path d="M370 638 H402" fill="none" stroke="#536170" stroke-width="4"/>
+    <polygon points="402,627 430,638 402,649" fill="#536170"/>
+
+    <rect x="430" y="585" width="340" height="105" rx="12" fill="#faf8fc" stroke="#744b91" stroke-width="2"/>
+    <text x="455" y="614" class="small-label" fill="#744b91">JAVA 9 · JEP 213</text>
+    <text x="600" y="646" text-anchor="middle" class="heading" font-size="17">Private helpers introduced</text>
+    <text x="600" y="673" text-anchor="middle" class="muted" font-size="14">private and private static</text>
+
+    <!-- Second timeline head stops at the current-Java card border at x=830. -->
+    <path d="M770 638 H802" fill="none" stroke="#536170" stroke-width="4"/>
+    <polygon points="802,627 830,638 802,649" fill="#536170"/>
+
+    <rect x="830" y="585" width="340" height="105" rx="12" fill="#edf8f0" stroke="#34834b" stroke-width="2"/>
+    <text x="855" y="614" class="small-label" fill="#28723c">CURRENT JAVA · SE 26</text>
+    <text x="1000" y="646" text-anchor="middle" class="heading" font-size="17">Same access rule</text>
+    <text x="1000" y="673" text-anchor="middle" class="muted" font-size="14">omitted → public · private explicit</text>
+  </g>
+</svg>
