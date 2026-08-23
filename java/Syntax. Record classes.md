@@ -2,104 +2,54 @@
 
 ## Front
 
-What is a Java record class, when was it added, and what does the compiler generate?
+What is a Java record class, what does its header generate, and why is a record only shallowly immutable?
 
 ## Back
 
-**Record classes became final in JDK 16** through JEP 395. They were preview features in JDK 14 and JDK 15.
+**Record classes** became final in **JDK 16** with JEP 395.
 
-A record is a concise class for transparent data carriers:
+A record is a restricted class for representing a fixed set of values with little boilerplate. Its header is both the complete state description and the basis of its public API.
+
+![How a record header becomes fields, accessors, and value-oriented methods](svg/syntax-record-classes.svg)
 
 ```java
 record Point(int x, int y) {}
+
+class Demo {
+    public static void main(String[] args) {
+        Point point = new Point(10, 20);
+        System.out.println(point.x()); // 10 — x(), not getX()
+        System.out.println(point);     // Point[x=10, y=20]
+    }
+}
 ```
 
-The record header declares the complete state of the record.
+For each component, such as `x`, the record has a `private final` field and a public accessor named `x()`. It also has:
 
-For each component, the compiler provides:
+- A **canonical constructor** whose parameters match the header.
+- `equals()` and `hashCode()` based on the component values.
+- A `toString()` that displays the record name, component names, and values.
 
-- A private final field.
-- A public accessor with the component's name.
-- A canonical constructor.
-- Value-based `equals()` and `hashCode()`.
-- A readable `toString()`.
-
-```java
-Point point = new Point(10, 20);
-
-int x = point.x(); // accessor is x(), not getX()
-int y = point.y();
-
-System.out.println(point); // Point[x=10, y=20]
-```
-
-## Compact constructor
-
-Use a compact canonical constructor for validation and normalization:
+A record is implicitly `final`, extends `java.lang.Record`, and cannot declare extra instance fields. It may still declare methods, static members, implement interfaces, and validate or normalize arguments in a compact canonical constructor:
 
 ```java
 record User(String name, int age) {
     User {
-        Objects.requireNonNull(name);
-
-        if (age < 0) {
-            throw new IllegalArgumentException("age must be non-negative");
-        }
-
         name = name.trim();
+        if (age < 0) throw new IllegalArgumentException("negative age");
     }
 }
 ```
 
-The compiler assigns the final component fields after the compact constructor body.
-
-## Records can contain behavior
-
-```java
-record Rectangle(double width, double height) {
-    double area() {
-        return width * height;
-    }
-
-    static Rectangle square(double side) {
-        return new Rectangle(side, side);
-    }
-}
-```
-
-Records can:
-
-- Implement interfaces.
-- Declare methods and static members.
-- Override generated accessors when necessary.
-- Be generic.
-
-```java
-record Pair<L, R>(L left, R right) {}
-```
-
-Records cannot:
-
-- Extend another class; they implicitly extend `java.lang.Record`.
-- Declare additional instance fields outside their components.
-- Be extended; record classes are implicitly final.
+After the compact constructor body, the normalized parameters are assigned to the component fields automatically.
 
 ## Shallow immutability
 
-The component references are final, but referenced objects may still be mutable:
+`final` prevents replacing a component field; it does not freeze a mutable object stored in that field. Make a defensive copy when the record must protect a collection:
 
 ```java
-record Team(List<String> members) {}
+import java.util.List;
 
-var names = new ArrayList<>(List.of("Alice"));
-var team = new Team(names);
-
-names.add("Bob"); // team.members() now also contains Bob
-```
-
-Make defensive copies when true immutability is required:
-
-```java
 record Team(List<String> members) {
     Team {
         members = List.copyOf(members);
@@ -107,11 +57,8 @@ record Team(List<String> members) {
 }
 ```
 
-## Summary
+## Sources
 
-Records remove boilerplate for data-focused classes, but they do not automatically make mutable component objects immutable.
-
-## Official reference
-
-- [JEP 395: Records — JDK 16](https://openjdk.org/jeps/395)
-
+- [OpenJDK — JEP 395: Records](https://openjdk.org/jeps/395)
+- [Java Language Specification §8.10 — Record Classes](https://docs.oracle.com/javase/specs/jls/se26/html/jls-8.html#jls-8.10)
+- [Oracle Java 26 Language Guide — Record Classes](https://docs.oracle.com/en/java/javase/26/language/records.html)

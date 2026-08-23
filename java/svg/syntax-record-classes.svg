@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title description">
+  <title id="title">A Java record header defines both state and API</title>
+  <desc id="description">A beginner diagram showing how the Point record header supplies component fields, accessors, a canonical constructor, and value-oriented methods, followed by the warning that final references do not make mutable component objects immutable.</desc>
+
+  <!-- Shared styles; blue identifies source syntax, purple generated structure, green everyday use, and orange the mutability warning. -->
+  <defs>
+    <style>
+      .heading { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #202124; }
+      .body { font-family: Arial, Helvetica, sans-serif; fill: #303840; }
+      .muted { font-family: Arial, Helvetica, sans-serif; fill: #5f6872; }
+      .mono { font-family: Menlo, Consolas, "Liberation Mono", monospace; fill: #303840; }
+      .light { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <!-- Background and lesson statement; keep the release badge clear of the subtitle. -->
+  <rect id="background" width="1200" height="720" fill="#ffffff"/>
+  <text x="600" y="43" text-anchor="middle" class="heading" font-size="30">A record header defines the state — and the API follows</text>
+  <text x="600" y="75" text-anchor="middle" class="muted" font-size="18">Start with the components, then read what Java provides from them</text>
+  <rect x="1010" y="95" width="160" height="38" rx="19" fill="#dcefe1" stroke="#34834b" stroke-width="2"/>
+  <text x="1090" y="120" text-anchor="middle" class="heading" font-size="14">FINAL · JDK 16</text>
+
+  <!-- Step 1: the record header is the complete state description. Keep the code line at 16px so it retains visible padding from the white box. -->
+  <g id="record-header">
+    <rect x="30" y="150" width="350" height="270" rx="11" fill="#eef5ff" stroke="#356eb3" stroke-width="2"/>
+    <rect x="30" y="150" width="350" height="50" rx="11" fill="#356eb3"/>
+    <rect x="30" y="189" width="350" height="11" fill="#356eb3"/>
+    <text x="55" y="183" class="light" font-size="20">1 · Declare the components</text>
+    <rect x="43" y="226" width="324" height="68" rx="8" fill="#ffffff" stroke="#356eb3" stroke-width="2"/>
+    <text x="205" y="266" text-anchor="middle" class="mono" font-size="16">record Point(int x, int y) {}</text>
+    <text x="58" y="331" class="heading" font-size="17">Header = complete instance state</text>
+    <text x="58" y="365" class="body" font-size="16">Components: x and y</text>
+    <text x="58" y="394" class="body" font-size="16">Both have type int</text>
+  </g>
+
+  <!-- Main connector: shaft ends beneath its own head; the head stops before the generated-API panel. -->
+  <path d="M390 285H442" fill="none" stroke="#744b91" stroke-width="4"/>
+  <polygon points="442,274 461,285 442,296" fill="#744b91"/>
+
+  <!-- Step 2: parallel rows make the mechanically derived members easy to scan. -->
+  <g id="generated-api">
+    <rect x="470" y="150" width="700" height="270" rx="11" fill="#faf8fc" stroke="#744b91" stroke-width="2"/>
+    <rect x="470" y="150" width="700" height="50" rx="11" fill="#744b91"/>
+    <rect x="470" y="189" width="700" height="11" fill="#744b91"/>
+    <text x="495" y="183" class="light" font-size="20">2 · Java provides an API that matches the state</text>
+
+    <rect x="500" y="225" width="310" height="72" rx="8" fill="#ffffff" stroke="#744b91" stroke-width="1.5"/>
+    <text x="520" y="252" class="heading" font-size="16">Component storage</text>
+    <text x="520" y="279" class="mono" font-size="15">private final int x, y</text>
+
+    <rect x="830" y="225" width="310" height="72" rx="8" fill="#ffffff" stroke="#744b91" stroke-width="1.5"/>
+    <text x="850" y="252" class="heading" font-size="16">Public accessors</text>
+    <text x="850" y="279" class="mono" font-size="15">x() and y()</text>
+
+    <rect x="500" y="316" width="310" height="72" rx="8" fill="#ffffff" stroke="#744b91" stroke-width="1.5"/>
+    <text x="520" y="343" class="heading" font-size="16">Canonical constructor</text>
+    <text x="520" y="370" class="mono" font-size="15">new Point(10, 20)</text>
+
+    <rect x="830" y="316" width="310" height="72" rx="8" fill="#ffffff" stroke="#744b91" stroke-width="1.5"/>
+    <text x="850" y="343" class="heading" font-size="16">Whole-value methods</text>
+    <text x="850" y="370" class="mono" font-size="14">equals · hashCode · toString</text>
+  </g>
+
+  <!-- Bottom panels contrast the useful concise API with the important shallow-immutability limit. -->
+  <g id="use-and-warning">
+    <rect x="30" y="455" width="550" height="225" rx="11" fill="#edf8f0" stroke="#34834b" stroke-width="2"/>
+    <rect x="30" y="455" width="550" height="48" rx="11" fill="#34834b"/>
+    <rect x="30" y="492" width="550" height="11" fill="#34834b"/>
+    <text x="55" y="487" class="light" font-size="20">Use it like a normal value</text>
+    <text x="60" y="545" class="mono" font-size="17">Point p = new Point(10, 20);</text>
+    <text x="60" y="584" class="mono" font-size="17">p.x()  →  10</text>
+    <text x="60" y="623" class="mono" font-size="17">p       →  Point[x=10, y=20]</text>
+    <text x="60" y="658" class="muted" font-size="15">The accessor name is x(), not getX().</text>
+
+    <rect x="610" y="455" width="560" height="225" rx="11" fill="#fff8e6" stroke="#b7791f" stroke-width="2"/>
+    <rect x="610" y="455" width="560" height="48" rx="11" fill="#b7791f"/>
+    <rect x="610" y="492" width="560" height="11" fill="#b7791f"/>
+    <text x="635" y="487" class="light" font-size="20">Important: only shallowly immutable</text>
+    <text x="640" y="543" class="mono" font-size="16">record Team(List&lt;String&gt; members) {}</text>
+    <text x="640" y="584" class="body" font-size="16">final keeps the same List reference;</text>
+    <text x="640" y="612" class="body" font-size="16">the List itself may still be changed.</text>
+    <rect x="640" y="632" width="500" height="31" rx="6" fill="#ffffff" stroke="#b7791f" stroke-width="1.5"/>
+    <text x="890" y="653" text-anchor="middle" class="mono" font-size="15">Protect it with List.copyOf(members)</text>
+  </g>
+</svg>
