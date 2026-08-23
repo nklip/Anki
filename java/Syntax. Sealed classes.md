@@ -2,106 +2,99 @@
 
 ## Front
 
-What are sealed classes and interfaces, when were they added, and how do `sealed`, `final`, and `non-sealed` work together?
+How does a sealed hierarchy control inheritance, and what do `final`, `sealed`, and `non-sealed` mean for each permitted branch?
 
 ## Back
 
-**Sealed classes became final in JDK 17** through JEP 409. They were preview features in JDK 15 and JDK 16.
+**Sealed classes** became final in **JDK 17** with JEP 409.
 
-A sealed class or interface explicitly restricts which types may directly extend or implement it.
+A `sealed` class or interface names the types allowed to **directly** extend or implement it. This is useful when a domain has a controlled set of alternatives.
+
+![How final, sealed, and non-sealed continue a sealed hierarchy](svg/syntax-sealed-classes.svg)
+
+### `Shape.java`
 
 ```java
-sealed interface Shape
+public sealed interface Shape
         permits Circle, Rectangle, Polygon {
+    double area();
 }
+```
 
-final class Circle implements Shape {
+### `Circle.java`
+
+```java
+public final class Circle implements Shape {
+    private final double radius;
+
+    public Circle(double radius) {
+        this.radius = radius;
+    }
+
+    @Override
+    public double area() {
+        return Math.PI * radius * radius;
+    }
 }
+```
 
-sealed class Rectangle implements Shape
+### `Rectangle.java`
+
+```java
+public sealed class Rectangle implements Shape
         permits FilledRectangle {
+    private final double width;
+    private final double height;
+
+    public Rectangle(double width, double height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    @Override
+    public double area() {
+        return width * height;
+    }
 }
 
 final class FilledRectangle extends Rectangle {
-}
-
-non-sealed class Polygon implements Shape {
+    FilledRectangle(double width, double height) {
+        super(width, height);
+    }
 }
 ```
 
-Every permitted **direct subtype** must choose one of three modifiers:
-
-| Modifier | Meaning |
-|---|---|
-| `final` | The hierarchy stops at this subtype |
-| `sealed` | The subtype continues the restricted hierarchy and declares its permitted subtypes |
-| `non-sealed` | The subtype reopens this branch for unrestricted extension |
-
-## Meaning of each branch
+### `Polygon.java`
 
 ```java
-final class Circle implements Shape {
+public non-sealed class Polygon implements Shape {
+    private final double area;
+
+    public Polygon(double area) {
+        this.area = area;
+    }
+
+    @Override
+    public double area() {
+        return area;
+    }
 }
 ```
 
-No class can extend `Circle`.
+Every permitted direct subtype must choose how its branch continues:
 
-```java
-sealed class Rectangle implements Shape
-        permits FilledRectangle {
-}
-```
+- `final` — **closes** the branch; no subtype may extend it.
+- `sealed` — **continues the restriction** with its own permitted direct subtypes.
+- `non-sealed` — **reopens** that branch for ordinary extension.
 
-Only `FilledRectangle` may directly extend `Rectangle`.
+`FilledRectangle` is absent from `Shape`'s `permits` list because it is an indirect subtype: its direct parent is `Rectangle`.
 
-```java
-non-sealed class Polygon implements Shape {
-}
-```
+Knowing the permitted branches can make a pattern `switch` exhaustive: a `Rectangle` case also covers `FilledRectangle`, while a `Polygon` case covers subtypes in its reopened branch.
 
-Any permitted class may extend `Polygon` because this branch is open again.
+Permitted direct subtypes must be in the same named module as the sealed parent, or in the same package when using the unnamed module.
 
-## `permits` can sometimes be inferred
+## Sources
 
-When all direct subtypes are declared in the same source file, the compiler can infer the permitted list:
-
-```java
-sealed interface Result {}
-
-record Success(String value) implements Result {}
-record Failure(String message) implements Result {}
-```
-
-Records are implicitly final, so they satisfy the permitted-subtype requirement.
-
-## Exhaustive pattern matching
-
-A sealed hierarchy gives the compiler a known set of alternatives. This works especially well with pattern matching for `switch` from JDK 21:
-
-```java
-static double area(Shape shape) {
-    return switch (shape) {
-        case Circle circle -> calculateCircle(circle);
-        case Rectangle rectangle -> calculateRectangle(rectangle);
-        case Polygon polygon -> calculatePolygon(polygon);
-    };
-}
-```
-
-No `default` is required when the compiler can prove that all permitted alternatives are covered.
-
-## Placement rule
-
-Permitted direct subtypes must be accessible to the sealed parent and must be located:
-
-- In the same named module, or
-- In the same package when using the unnamed module.
-
-## Summary
-
-Use sealed hierarchies when the domain has a controlled set of variants. `final` closes a branch, `sealed` continues the restriction, and `non-sealed` deliberately reopens a branch.
-
-## Official reference
-
-- [JEP 409: Sealed Classes — JDK 17](https://openjdk.org/jeps/409)
-
+- [OpenJDK — JEP 409: Sealed Classes](https://openjdk.org/jeps/409)
+- [Java Language Specification §§8.1.1.2 and 8.1.6](https://docs.oracle.com/javase/specs/jls/se26/html/jls-8.html#jls-8.1.1.2)
+- [Oracle Java 26 Language Guide — Sealed Classes](https://docs.oracle.com/en/java/javase/26/language/sealed-classes-interfaces.html)

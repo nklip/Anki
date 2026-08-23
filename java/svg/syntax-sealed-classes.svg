@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title description">
+  <title id="title">A sealed hierarchy controls each direct subtype branch</title>
+  <desc id="description">A beginner diagram showing the sealed Shape parent and its three permitted direct subtype choices: final Circle closes a branch, sealed Rectangle continues a controlled branch, and non-sealed Polygon reopens a branch.</desc>
+
+  <!-- Shared styles; blue is the sealed parent, red closes a branch, purple continues sealing, green reopens a branch, and orange highlights the compiler benefit. -->
+  <defs>
+    <style>
+      .heading { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #202124; }
+      .body { font-family: Arial, Helvetica, sans-serif; fill: #303840; }
+      .muted { font-family: Arial, Helvetica, sans-serif; fill: #5f6872; }
+      .mono { font-family: Menlo, Consolas, "Liberation Mono", monospace; fill: #303840; }
+      .light { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <!-- Background and lesson statement; the badge records the final-release milestone. -->
+  <rect id="background" width="1200" height="720" fill="#ffffff"/>
+  <text x="600" y="42" text-anchor="middle" class="heading" font-size="30">A sealed parent controls its direct subtype branches</text>
+  <text x="600" y="73" text-anchor="middle" class="muted" font-size="18">Each permitted subtype must close, continue, or reopen its own branch</text>
+  <rect x="1010" y="93" width="160" height="40" rx="20" fill="#dcefe1" stroke="#34834b" stroke-width="2"/>
+  <text x="1090" y="119" text-anchor="middle" class="heading" font-size="14">FINAL · JDK 17</text>
+
+  <!-- Sealed parent: the permits list contains only the three direct subtypes shown below. -->
+  <g id="sealed-parent">
+    <rect x="320" y="110" width="560" height="110" rx="11" fill="#eef5ff" stroke="#356eb3" stroke-width="2"/>
+    <rect x="320" y="110" width="560" height="47" rx="11" fill="#356eb3"/>
+    <rect x="320" y="146" width="560" height="11" fill="#356eb3"/>
+    <text x="600" y="141" text-anchor="middle" class="light" font-size="20">SEALED PARENT · Shape</text>
+    <rect x="355" y="171" width="490" height="34" rx="6" fill="#ffffff" stroke="#356eb3" stroke-width="1.5"/>
+    <text x="600" y="193" text-anchor="middle" class="mono" font-size="14">permits Circle, Rectangle, Polygon</text>
+  </g>
+
+  <!-- Branch connector geometry stays in the empty routing band; heads stop above the subtype panels. -->
+  <path d="M600 220V258M200 258H1000M200 258V296M600 258V296M1000 258V296" fill="none" stroke="#356eb3" stroke-width="4"/>
+  <polygon points="190,294 200,313 210,294" fill="#b33a3a"/>
+  <polygon points="590,294 600,313 610,294" fill="#744b91"/>
+  <polygon points="990,294 1000,313 1010,294" fill="#34834b"/>
+
+  <!-- The three parallel subtype panels make the modifier choices directly comparable. -->
+  <g id="subtype-branches">
+    <g id="final-branch">
+      <rect x="30" y="320" width="340" height="240" rx="11" fill="#fceeed" stroke="#b33a3a" stroke-width="2"/>
+      <rect x="30" y="320" width="340" height="48" rx="11" fill="#b33a3a"/>
+      <rect x="30" y="357" width="340" height="11" fill="#b33a3a"/>
+      <text x="55" y="352" class="light" font-size="20">final · Circle</text>
+      <rect x="55" y="393" width="290" height="48" rx="7" fill="#ffffff" stroke="#b33a3a" stroke-width="1.5"/>
+      <text x="200" y="423" text-anchor="middle" class="mono" font-size="15">final class Circle</text>
+      <text x="200" y="480" text-anchor="middle" class="heading" font-size="18">CLOSES this branch</text>
+      <text x="200" y="515" text-anchor="middle" class="body" font-size="16">Nothing may extend Circle.</text>
+      <text x="200" y="542" text-anchor="middle" class="muted" font-size="14">The hierarchy stops here.</text>
+    </g>
+
+    <g id="sealed-branch">
+      <rect x="430" y="320" width="340" height="240" rx="11" fill="#faf8fc" stroke="#744b91" stroke-width="2"/>
+      <rect x="430" y="320" width="340" height="48" rx="11" fill="#744b91"/>
+      <rect x="430" y="357" width="340" height="11" fill="#744b91"/>
+      <text x="455" y="352" class="light" font-size="20">sealed · Rectangle</text>
+      <rect x="455" y="393" width="290" height="48" rx="7" fill="#ffffff" stroke="#744b91" stroke-width="1.5"/>
+      <text x="600" y="423" text-anchor="middle" class="mono" font-size="14">sealed class Rectangle</text>
+      <text x="600" y="472" text-anchor="middle" class="heading" font-size="18">CONTINUES control</text>
+      <rect x="470" y="491" width="260" height="49" rx="7" fill="#ffffff" stroke="#744b91" stroke-width="1.5"/>
+      <text x="600" y="511" text-anchor="middle" class="mono" font-size="14">permits FilledRectangle</text>
+      <text x="600" y="531" text-anchor="middle" class="muted" font-size="13">the next direct subtype</text>
+    </g>
+
+    <g id="non-sealed-branch">
+      <rect x="830" y="320" width="340" height="240" rx="11" fill="#edf8f0" stroke="#34834b" stroke-width="2"/>
+      <rect x="830" y="320" width="340" height="48" rx="11" fill="#34834b"/>
+      <rect x="830" y="357" width="340" height="11" fill="#34834b"/>
+      <text x="855" y="352" class="light" font-size="20">non-sealed · Polygon</text>
+      <rect x="855" y="393" width="290" height="48" rx="7" fill="#ffffff" stroke="#34834b" stroke-width="1.5"/>
+      <text x="1000" y="423" text-anchor="middle" class="mono" font-size="14">non-sealed class Polygon</text>
+      <text x="1000" y="480" text-anchor="middle" class="heading" font-size="18">REOPENS this branch</text>
+      <text x="1000" y="515" text-anchor="middle" class="body" font-size="16">Other classes may extend it.</text>
+      <text x="1000" y="542" text-anchor="middle" class="muted" font-size="14">Shape does not approve each one.</text>
+    </g>
+  </g>
+
+  <!-- Footer reinforces directness and the exhaustive-switch benefit without introducing another flow. -->
+  <g id="why-it-matters">
+    <rect x="30" y="590" width="1140" height="100" rx="10" fill="#fff8e6" stroke="#b7791f" stroke-width="2"/>
+    <text x="55" y="625" class="heading" font-size="18">Why it helps: known branches</text>
+    <text x="55" y="657" class="body" font-size="16">A pattern switch can omit default when its cases cover the entire hierarchy.</text>
+    <line x1="610" y1="608" x2="610" y2="672" stroke="#d9b467" stroke-width="2"/>
+    <text x="640" y="625" class="heading" font-size="18">Direct means one step</text>
+    <text x="640" y="657" class="body" font-size="16">FilledRectangle is permitted by Rectangle, not directly by Shape.</text>
+  </g>
+</svg>
