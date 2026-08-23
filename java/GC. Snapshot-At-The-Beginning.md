@@ -2,233 +2,203 @@
 
 ## Front
 
-What is **Snapshot-At-The-Beginning (SATB)** marking, and how does a pre-write barrier keep concurrent garbage collection correct while application threads modify the object graph?
+What is **Snapshot-At-The-Beginning (SATB)** marking, and how does its pre-write barrier let a garbage collector mark objects while application threads keep changing references?
 
 ## Back
 
-**Snapshot-At-The-Beginning (SATB)** is a concurrent garbage-collection marking strategy.
+**Snapshot-At-The-Beginning (SATB)** is a concurrent GC marking strategy that preserves one rule:
 
-Its central rule is:
+> Every object reachable from a GC root at the logical beginning of marking is treated as live for that marking cycle.
 
-> Every object reachable from the GC roots at the logical beginning of marking must be treated as live for that marking cycle.
+The “snapshot” is **not a copy of the heap**. It is a logical view of reachability. While GC threads trace that view, application threads may keep allocating objects and replacing references. A **pre-write barrier** records an old reference before a write can hide it from the marker.
 
-The collector does **not** copy the entire heap. It creates a **logical snapshot of reachability** and preserves that view while application threads continue changing references.
+G1 uses SATB for concurrent marking. Generational ZGC also uses SATB, although its barrier implementation is different.
 
-G1 uses SATB for concurrent old-generation marking. Generational ZGC also uses SATB marking with store barriers.
+This card first follows one overwritten reference, then places that event in the full marking timeline, and finally explains floating garbage, new allocations, and how SATB differs from remembered-set barriers.
 
-![SATB pre-write barrier preserves an overwritten reference](svg/gc-satb-pre-write-barrier.svg)
+### Essential vocabulary
 
-## Why concurrent marking needs a barrier
+| Term | Simple meaning |
+|---|---|
+| **GC root** | A starting reference the collector trusts, such as one from a thread stack or a static field |
+| **Reachable** | Can be found by following references from a GC root |
+| **Mutator** | An application thread that changes the object graph |
+| **Concurrent marking** | GC threads trace objects while application threads are also running |
+| **Barrier** | Small JVM-inserted code that runs around a reference access or write |
+| **SATB buffer** | A usually thread-local buffer that temporarily holds old references for the marker |
 
-Suppose the object graph initially contains:
+### Why an overwritten reference matters
+
+Assume marking begins with this graph:
 
 ```text
 GC root → A → B → C
 ```
 
-The collector discovers `A` but has not yet scanned `A.next`.
-
-At the same time, an application thread executes:
+The collector has found `A`, but has not yet scanned `A.next`. The application then executes:
 
 ```java
 A.next = D;
 ```
 
-The old edge `A → B` disappears:
+The current graph becomes:
 
 ```text
-Current graph:
-
 GC root → A → D
 
-B → C       // disconnected from the current graph
+B → C        // no longer reachable in the current graph
 ```
 
-Without additional coordination, the collector could miss `B` and `C`, even though both were reachable at the beginning of marking.
+`B` and `C` were reachable at the beginning, so SATB must still account for them. Otherwise, the marker could lose part of the graph that its logical snapshot promised to preserve.
 
-Reclaiming them during this cycle would violate the SATB invariant and could be unsafe if the collector had not yet accounted for the application transition.
+![A SATB pre-write barrier saves B before A.next is changed to D](svg/gc-satb-pre-write-barrier.svg)
 
-## The SATB pre-write barrier
-
-Before a reference field is overwritten, the barrier observes its **old value**:
+Conceptually, the write behaves like this:
 
 ```text
-old = A.next;              // B
-satbPreWriteBarrier(old);  // record B when required
-A.next = D;                // perform the application write
+old = A.next                 // old is B
+if (SATB marking needs old):
+    enqueue old              // preserve B for tracing
+A.next = D                   // perform the requested write
 ```
 
-This is conceptual pseudocode. Application developers do not call the barrier themselves; HotSpot inserts the required barrier code into compiled application code.
+The exact fast-path checks are collector-specific, but the important order is stable: **observe the old value before overwriting the field**. The collector later removes `B` from the queue and follows `B → C`.
 
-The old reference is placed in a thread-local SATB buffer or marking queue:
+Application code does not call this barrier. HotSpot inserts the required machine code when it compiles reference writes.
 
-```text
-SATB queue: [B]
-```
+### The complete marking timeline
 
-The collector later drains the queue and traces:
+![SATB timeline from the starting snapshot through concurrent marking and Remark](svg/gc-satb-marking-timeline.svg)
 
-```text
-B → C
-```
+For G1, a **Concurrent Start** stop-the-world pause establishes the logical starting point. GC threads then trace concurrently with the application. Reference overwrites can add old values to SATB buffers while this work is active.
 
-Therefore, `B` and `C` remain marked for the current cycle even though the application removed their path from `A`.
+Near the end, G1 performs a stop-the-world **Remark** pause. It completes the remaining marking work, including outstanding SATB information needed before liveness is finalized. The completed mark information can then guide later region selection and evacuation. SATB determines which objects are treated as live; it does not itself move objects or return their storage.
 
-### Why record the old value?
+### Why SATB is called an old-value or deletion barrier
 
-SATB preserves the graph as it existed at the beginning.
-
-When a field is overwritten, the important information is the edge that is being **deleted**, so the barrier records the previous reference:
+SATB preserves paths that existed at the beginning. A reference write destroys an old edge and creates a new one:
 
 ```text
 before: owner.field → oldObject
 after:  owner.field → newObject
-
-SATB barrier records oldObject
 ```
 
-This is why SATB is commonly described as using a **pre-write**, **deletion**, or **old-value** barrier.
+The disappearing edge is the threat to the starting view, so the SATB barrier is commonly described as:
 
-## Marking cycle
+- a **pre-write barrier**, because it runs before the store;
+- an **old-value barrier**, because it observes `oldObject`;
+- a **deletion barrier**, because it reacts to an edge being removed.
 
-![SATB concurrent marking timeline](svg/gc-satb-marking-timeline.svg)
+This does not mean that every non-null old value always enters a queue. Implementations use marking state, mark bits, filters, and buffered fast paths to avoid unnecessary work.
 
-A simplified cycle is:
+### Tri-colour mental model
 
-### 1. Establish the starting point
+The following colours are a reasoning model, not fields stored in Java objects:
 
-During a brief stop-the-world coordination pause, the collector establishes the root snapshot and starts a new marking cycle.
-
-For G1, this happens as part of the **Concurrent Start** pause.
-
-### 2. Mark concurrently
-
-GC threads trace the object graph while application threads continue running.
-
-Application reference writes execute barriers. When a write might hide an object belonging to the logical starting snapshot, the old reference is buffered for later marking.
-
-### 3. Remark
-
-During the stop-the-world **Remark** pause, the collector completes marking and drains remaining SATB work that must be processed before the mark bitmap is finalized.
-
-### 4. Use the liveness information
-
-The collector uses the completed marking information to decide which regions or pages contain reclaimable space.
-
-SATB marking itself identifies liveness. The collector's later evacuation or relocation phases perform the actual space reclamation.
-
-## Tri-colour interpretation
-
-Concurrent tracing is often explained with three conceptual colours:
-
-| Colour | Meaning |
+| Colour | Meaning during tracing |
 |---|---|
-| White | Not yet discovered |
-| Grey | Discovered, but its outgoing references have not all been scanned |
-| Black | Discovered and scanned |
+| **White** | Not yet discovered by the marker |
+| **Grey** | Discovered, but its outgoing references still need scanning |
+| **Black** | Discovered and scanned |
 
-The dangerous transition is an application write that removes the last visible path to a white object before the collector reaches it.
+The risky mutation removes the last known path from a discovered object to a white object. Recording the old referent makes that white object available to the marker even after the application removes the original edge.
 
-```text
-black/grey A ──old edge──▶ white B
-```
+HotSpot represents this work with collector-specific mark metadata, queues, and buffers rather than literal colour values.
 
-The SATB barrier preserves the old reference to `B`, making it available to the marking process even after the edge is overwritten.
+### Floating garbage: safe but temporarily retained
 
-The colours are a reasoning model. HotSpot implements marking with bitmaps, queues, buffers, and collector-specific metadata rather than Java-level colour fields.
-
-## Floating garbage
-
-SATB deliberately favours safety over reclaiming every newly dead object immediately.
-
-If an object was reachable at the beginning but becomes unreachable during marking, it can remain marked for this cycle:
+SATB deliberately answers a historical question: “What was reachable when marking began?” It does not promise to identify every object that becomes unreachable during the cycle.
 
 ```text
-At marking start:       root → A → B
-During marking:         root → A
-Current SATB result:    A and B are treated as live
-Next marking cycle:     B can be discovered as unreachable
+At marking start:        root → A → B
+Later in the cycle:      root → A
+SATB result this cycle:  A and B are treated as live
+Later marking cycle:     B can be found unreachable
 ```
 
-`B` is called **floating garbage**: it is currently unreachable, but it survives because it belonged to the logical starting snapshot.
+`B` is **floating garbage**: unreachable now, but retained because it belonged to the starting snapshot. Oracle's G1 documentation describes this conservative retention and states that such objects can be reclaimed during the next marking cycle.
 
-It is normally reclaimable in a later collection cycle.
+Floating garbage is not a memory leak by itself. It is a bounded consequence of using an older logical view. However, a high allocation or mutation rate can increase temporary heap pressure, so the collector needs enough headroom to finish marking.
 
-### New allocations
+### What about objects allocated after marking starts?
 
-Objects allocated after the snapshot also need safe treatment. Collectors use implementation-specific rules so that a newly allocated object cannot be incorrectly reclaimed while the application is using it.
+New objects were not part of the starting graph, but the JVM must still prevent them from being reclaimed while the application uses them. The handling is collector-specific.
 
-For G1, objects allocated in the portion of a region after the marking snapshot are treated as live for that cycle rather than requiring the concurrent marker to rediscover them through the old snapshot.
+In G1, each region has a **top-at-mark-start (TAMS)** boundary. Objects allocated above that boundary after the snapshot are treated as implicitly live for the current marking cycle; the concurrent marker does not need to rediscover each one through the old graph. This rule complements SATB's preservation of pre-existing reachability.
 
-## SATB barrier vs. remembered-set barrier
+Do not generalize G1's TAMS mechanism to every SATB collector. SATB defines the marking invariant; each collector chooses metadata and barriers that maintain it.
 
-These barriers solve different problems.
+### SATB barrier vs remembered-set/card barrier
 
-| Barrier purpose | Value normally observed | Why it exists |
+The two mechanisms are both triggered by reference writes, but they answer different questions:
+
+| Mechanism | Usually observes | Question it answers |
 |---|---|---|
-| SATB concurrent marking | Old reference before overwrite | Preserves objects reachable in the logical starting snapshot |
-| Remembered set / card marking | Information about the new reference or written field | Tracks references across regions or generations |
+| **SATB marking barrier** | The old reference before overwrite | “Did this write hide an object that belonged to the starting snapshot?” |
+| **Remembered-set/card barrier** | The written field and/or new reference | “Did this write create a cross-region or cross-generation reference that a partial collection must remember?” |
 
-G1 needs both concepts:
+G1 therefore needs both responsibilities:
 
-- its SATB pre-write barrier supports concurrent marking;
-- its post-write/card barrier helps maintain remembered sets for regional collection.
+- its SATB pre-write path preserves concurrent-marking reachability;
+- its post-write/card path maintains information used when collecting only selected regions.
 
-Generational ZGC can combine several checks in its store-barrier machinery, but the logical responsibilities remain distinct.
+Generational ZGC also uses SATB, but its store-barrier machinery can combine marking and remembered-set work. The responsibilities remain conceptually distinct even when one optimized barrier handles several checks.
 
-## SATB vs. incremental-update marking
+### SATB vs incremental-update marking
 
-Both strategies make concurrent marking safe, but they preserve different invariants.
+Both approaches repair the collector's view while the object graph changes, but they preserve different views:
 
 | SATB | Incremental update |
 |---|---|
-| Preserves reachability from the beginning of marking | Repairs the marker's view toward the changing current graph |
-| Primarily reacts to deleted/overwritten old references | Primarily reacts to newly inserted references |
-| Commonly uses a pre-write old-value barrier | Commonly uses a post-write new-value barrier |
-| Can retain floating garbage until a later cycle | May require more rescanning of modified objects or regions |
+| Preserves reachability from the beginning of marking | Moves the marker's knowledge toward the changing current graph |
+| Focuses on an overwritten old reference | Focuses on a newly installed reference or modified object |
+| Commonly uses a pre-write/deletion barrier | Commonly uses a post-write/insertion barrier or rescanning |
+| Naturally permits floating garbage from the starting view | May require more rescanning of objects changed after they were scanned |
 
-The exact barrier protocol is collector-specific; the table describes the high-level marking models, not a universal implementation recipe.
+This is a conceptual comparison. Real collectors may combine techniques and aggressively optimize their barriers.
 
-## Performance characteristics
+### Costs and benefits
 
-SATB allows most tracing to happen concurrently, which reduces long marking pauses, but it is not free:
+**Benefits:**
+
+- Much of the graph can be marked while application threads run.
+- The logical invariant is simple: preserve objects live at the start.
+- G1 uses SATB to limit work that must be completed in its Remark pause.
+
+**Costs:**
 
 - Reference writes execute a barrier fast path.
-- Old references may be appended to per-thread SATB buffers.
-- GC threads must drain and trace buffered references.
-- A high mutation rate can create more concurrent marking work.
-- Remaining buffered work contributes to the Remark phase.
-- Floating garbage can temporarily increase retained heap occupancy.
+- Old references may fill per-thread buffers that GC threads must drain.
+- Heavy reference mutation can create additional marking work.
+- Remaining buffered work can add to Remark time.
+- Floating garbage and implicitly live new allocations can temporarily retain more heap.
 
-Buffers and fast-path checks keep most writes inexpensive. Collector implementations heavily optimize these paths because they run in application code.
+### Common misconceptions
 
-## What SATB does not mean
+- **“Snapshot” means a heap copy.** No: it is a logical reachability guarantee.
+- **The heap is frozen.** No: application threads continue changing references during concurrent marking.
+- **SATB immediately reclaims everything that dies.** No: objects that die after the snapshot may survive this cycle.
+- **The barrier is Java code in the application.** No: it is inserted and managed by the JVM.
+- **SATB is the remembered set.** No: they solve different correctness problems.
+- **SATB alone reclaims memory.** No: it produces liveness information; collector-specific evacuation or relocation reclaims space.
 
-- It is **not** a physical copy of the Java heap.
-- It is **not** an immutable application-visible snapshot.
-- It does not stop application threads for the entire marking phase.
-- It does not mean that objects that die during marking are reclaimed immediately.
-- It is unrelated to snapshot iterators such as `CopyOnWriteArrayList.iterator()`.
-- It is unrelated to database MVCC transaction snapshots.
-- It is an internal GC mechanism; ordinary Java code does not invoke it directly.
-
-## Practical mental model
+### Remember
 
 ```text
-1. Remember which objects were reachable when marking began.
-2. Trace concurrently while the application changes references.
-3. Before an old reference disappears, preserve it in an SATB queue.
-4. Finish queued work during marking/Remark.
-5. Treat the completed logical snapshot as live for this cycle.
-6. Collect newly floating garbage during a later cycle.
+SATB preserves the beginning-of-marking reachability view.
+
+Before a reference disappears:
+    save the old referent when required
+    let the marker trace it
+
+Result:
+    concurrent marking stays conservative and correct
+    some newly dead objects may wait for a later cycle
 ```
 
-## Summary
+## Sources
 
-> SATB is a concurrent marking model that preserves the object graph as it logically existed at the start of marking. A pre-write barrier captures an overwritten old reference before the application replaces it, allowing the collector to finish tracing objects that otherwise might disappear from the current graph. The result is safe concurrent marking with short coordination pauses, at the cost of write-barrier work and possible floating garbage that survives until a later collection.
-
-## Official references
-
-- [Oracle Java 26 GC Tuning Guide — G1 marking](https://docs.oracle.com/en/java/javase/26/gctuning/garbage-first-g1-garbage-collector1.html)
-- [JEP 439: Generational ZGC — SATB marking barriers](https://openjdk.org/jeps/439)
-- [OpenJDK G1 barrier implementation](https://github.com/openjdk/jdk/tree/master/src/hotspot/share/gc/g1)
+- [Oracle Java 26 GC Tuning Guide — G1 marking and SATB](https://docs.oracle.com/en/java/javase/26/gctuning/garbage-first-g1-garbage-collector1.html)
+- [JEP 439: Generational ZGC — SATB marking and store barriers](https://openjdk.org/jeps/439)
+- [OpenJDK — G1 pre-write barrier implementation](https://github.com/openjdk/jdk/blob/master/src/hotspot/share/gc/g1/g1BarrierSet.hpp)
+- [OpenJDK — G1 TAMS/SATB allocation handling](https://github.com/openjdk/jdk/blob/master/src/hotspot/share/gc/g1/g1YoungCollector.cpp)
