@@ -2,92 +2,57 @@
 
 ## Front
 
-How can primitive types be used in patterns and `switch`, and is this syntax final?
+How do primitive patterns prevent lossy conversions, how do they expand `switch`, and are they final in JDK 26?
 
 ## Back
 
-**Primitive types in patterns are still a preview feature.**
+**Primitive Types in Patterns**, `instanceof`, and `switch` was previewed for a fourth time in **JDK 26** with JEP 530.
 
-| JDK | Status |
-|---|---|
-| 23 | First preview — JEP 455 |
-| 24 | Second preview — JEP 488 |
-| 25 | Third preview — JEP 507 |
-| 26 | Fourth preview — JEP 530 |
+It allows primitive types in pattern contexts, extends `instanceof` to test primitive conversions, and lets `switch` use every primitive selector type. It is **not final**.
 
-Preview features require `--enable-preview` and may change before becoming final.
+![Exact and inexact primitive pattern conversions](svg/syntax-primitive-types-in-patterns.svg)
 
-## Primitive patterns with `instanceof`
+## Exact conversion decides the match
 
-A primitive pattern tests whether a value can be converted exactly to the target primitive type:
+A primitive pattern matches only when converting the actual value to the pattern type loses no information. On success, Java binds the converted value:
 
 ```java
-int value = 100;
-
-if (value instanceof byte small) {
-    System.out.println(small); // 100 fits exactly in byte
+static String asByte(int value) {
+    if (value instanceof byte small) {
+        return "byte: " + small;
+    }
+    return "not exactly representable as byte";
 }
 ```
 
-If the value cannot be represented exactly, the pattern does not match:
+- `asByte(100)` matches because `100` remains exactly `100` as a `byte`.
+- `asByte(1_000)` does not match because narrowing it would lose information; no truncated value is exposed.
+
+## Primitive `switch`
 
 ```java
-int value = 1_000;
-
-if (value instanceof byte small) {
-    // not entered: 1,000 does not fit in byte
+static String status(long code) {
+    return switch (code) {
+        case 0L -> "stopped";
+        case 1L -> "running";
+        case long other -> "unknown: " + other;
+    };
 }
 ```
 
-## More primitive `switch` selectors
+The selector may now be `boolean`, `long`, `float`, or `double`, in addition to previously supported types. Constants use the selector’s type—`0L`, not `0`, for `long`. The unconditional `case long other` binds every remaining value and makes this expression exhaustive.
 
-The preview extends `switch` so that selectors can use primitive types such as `long`, `float`, `double`, and `boolean`:
+## Preview requirement
 
-```java
-long status = 1L;
-
-String text = switch (status) {
-    case 0L -> "stopped";
-    case 1L -> "running";
-    case long other -> "unknown: " + other;
-};
-```
-
-A `boolean` switch can express an exhaustive choice:
-
-```java
-String answer = switch (ready) {
-    case true  -> "ready";
-    case false -> "not ready";
-};
-```
-
-## Compiling preview code
-
-For JDK 26:
-
-```text
+```bash
 javac --release 26 --enable-preview Main.java
 java --enable-preview Main
 ```
 
-Use the corresponding release number when compiling with JDK 23, 24, or 25.
+Preview features are disabled by default and may change or disappear. The feature began as JEP 455 in JDK 23 and was re-previewed in JDK 24, 25, and 26.
 
-## Important rules
+## Sources
 
-- A primitive pattern matches only when the conversion is exact.
-- The feature expands pattern matching and the primitive types accepted by `switch`.
-- Code that uses it is tied to the preview version with which it was compiled.
-- Do not treat preview syntax as a permanent Java language guarantee.
-
-## Summary
-
-Primitive patterns make numeric range and exact-conversion checks concise, while expanded `switch` selectors reduce manual `if` chains. As of JDK 26, the feature is **not final**.
-
-## Official references
-
-- [JEP 455: Primitive Types in Patterns, `instanceof`, and `switch` — JDK 23](https://openjdk.org/jeps/455)
-- [JEP 488: Primitive Types in Patterns, `instanceof`, and `switch` — Second Preview, JDK 24](https://openjdk.org/jeps/488)
-- [JEP 507: Primitive Types in Patterns, `instanceof`, and `switch` — Third Preview, JDK 25](https://openjdk.org/jeps/507)
-- [JEP 530: Primitive Types in Patterns, `instanceof`, and `switch` — Fourth Preview, JDK 26](https://openjdk.org/jeps/530)
-
+- [OpenJDK — JEP 530: Primitive Types in Patterns, `instanceof`, and `switch` (Fourth Preview)](https://openjdk.org/jeps/530)
+- [Oracle Java 26 Language Guide — Primitive Types in Patterns, `instanceof`, and `switch`](https://docs.oracle.com/en/java/javase/26/language/primitive-types-patterns-instanceof-switch.html)
+- [Java SE 26 Preview Specification — Exactness of Testing Conversions](https://docs.oracle.com/en/java/javase/26/docs/specs/primitive-types-in-patterns-instanceof-switch-jls.html#jls-5.7.1)
