@@ -14,7 +14,7 @@ SOURCE_RE = re.compile(r"^- \[[^\]]+\]\(https?://[^)]+\)\s*$", re.MULTILINE)
 SECOND_LEVEL_HEADING_RE = re.compile(r"^## ([^#].*)$", re.MULTILINE)
 STEP_HEADING_RE = re.compile(r"^(#{3,6}) Step \d+\b[^\n]*$", re.MULTILINE)
 ALLOWED_IMAGE_SUFFIXES = {".svg", ".png", ".jpg", ".jpeg", ".webp", ".gif"}
-SIMPLE_CHARACTER_LIMIT = 2500
+SIMPLE_CHARACTER_LIMIT = 3000
 JAVA_HINTS = (
     "public class ",
     "static void main",
@@ -168,7 +168,7 @@ counter.incrementAndGet();
         at_simple_limit, Path("card.md"), "simple", check_image_files=False
     )
     above_simple_limit = at_simple_limit + "x"
-    assert any("allows at most 2500" in error for error in validate_text(
+    assert any("allows at most 3000" in error for error in validate_text(
         above_simple_limit, Path("card.md"), "simple", check_image_files=False
     ))
 

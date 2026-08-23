@@ -12,7 +12,7 @@ Create a self-contained Markdown card that teaches someone who does not already 
 - Use **simple mode** by default. Read [references/simple-mode.md](references/simple-mode.md).
 - Use **complex mode** when the user requests it or explicitly asks for comprehensive, multi-stage, or step-by-step treatment. Read [references/complex-mode.md](references/complex-mode.md).
 
-Do not silently relax simple mode's 2,500-character limit. Narrow the card to its core lesson or use complex mode only when the user's request selects it.
+Do not silently relax simple mode's 3,000-character limit. Narrow the card to its core lesson or use complex mode only when the user's request selects it.
 
 ## Research before drafting
 
