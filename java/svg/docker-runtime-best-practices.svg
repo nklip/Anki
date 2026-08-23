@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="980" viewBox="0 0 1500 980" role="img" aria-labelledby="title description">
+  <title id="title">A hardened and replaceable Java container runtime</title>
+  <desc id="description">Runtime configuration, secrets, limits, and narrow writable mounts enter a least-privilege container. The Java process runs as non-root PID 1, receives termination signals, emits logs and health state, and keeps durable data outside. A memory bar shows that the Java heap is only part of the container limit.</desc>
+
+  <!-- Background and teaching title. -->
+  <rect width="1500" height="980" fill="#ffffff"/>
+  <text x="750" y="52" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="bold" fill="#172b3a">Harden and operate the running container</text>
+  <text x="750" y="86" text-anchor="middle" font-family="sans-serif" font-size="19" fill="#425466">Least privilege inside; configuration, observability, lifecycle, and durable state outside</text>
+
+  <!-- Left panel: deployment-time inputs, never image-baked secrets. -->
+  <rect id="deployment-inputs" x="40" y="125" width="330" height="650" rx="10" fill="#f6f8fa" stroke="#5f6b76" stroke-width="2"/>
+  <rect x="40" y="125" width="330" height="62" rx="10" fill="#445d6e"/>
+  <rect x="40" y="174" width="330" height="13" fill="#445d6e"/>
+  <text x="205" y="164" text-anchor="middle" font-family="sans-serif" font-size="24" font-weight="bold" fill="#ffffff">Deployment supplies</text>
+
+  <rect x="70" y="220" width="270" height="70" rx="7" fill="#e9f5ff" stroke="#2475a8" stroke-width="2"/>
+  <text x="205" y="249" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#15527a">Immutable image</text>
+  <text x="205" y="274" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#425466">versioned and scanned</text>
+
+  <rect x="70" y="310" width="270" height="70" rx="7" fill="#eef5fb" stroke="#6d9fc3" stroke-width="2"/>
+  <text x="205" y="339" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#15527a">Runtime configuration</text>
+  <text x="205" y="364" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#425466">environment or mounted files</text>
+
+  <rect x="70" y="400" width="270" height="70" rx="7" fill="#fff8e9" stroke="#b7771c" stroke-width="2"/>
+  <text x="205" y="429" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#8a5b12">Runtime secrets</text>
+  <text x="205" y="454" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#425466">platform secret mechanism</text>
+
+  <rect x="70" y="490" width="270" height="70" rx="7" fill="#eef8ef" stroke="#4a8b55" stroke-width="2"/>
+  <text x="205" y="519" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#32623b">Resource limits</text>
+  <text x="205" y="544" text-anchor="middle" font-family="monospace" font-size="14" fill="#425466">memory • CPU • PIDs</text>
+
+  <rect x="70" y="580" width="270" height="82" rx="7" fill="#ffffff" stroke="#8c98a4" stroke-width="2"/>
+  <text x="205" y="610" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#263847">Narrow writable mounts</text>
+  <text x="205" y="635" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#425466">for /tmp, dumps, uploads</text>
+  <text x="205" y="655" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#425466">only when required</text>
+
+  <rect x="70" y="690" width="270" height="54" rx="7" fill="#fff1f0" stroke="#b54a45" stroke-width="2"/>
+  <text x="205" y="723" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#8c302c">Never mount the Docker socket</text>
+
+  <!-- Input arrow enters the container boundary but its head stays clear of the first inner object. -->
+  <text x="417" y="323" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#15527a">runtime inputs</text>
+  <path d="M380 345H431" fill="none" stroke="#2475a8" stroke-width="4"/>
+  <polygon points="455,345 430,334 430,356" fill="#2475a8"/>
+
+  <!-- Center panel: resource boundary and least-privilege process. -->
+  <rect id="container-boundary" x="465" y="125" width="600" height="650" rx="12" fill="#f2f8fc" stroke="#2475a8" stroke-width="4"/>
+  <rect x="465" y="125" width="600" height="62" rx="10" fill="#2475a8"/>
+  <rect x="465" y="174" width="600" height="13" fill="#2475a8"/>
+  <text x="765" y="164" text-anchor="middle" font-family="sans-serif" font-size="25" font-weight="bold" fill="#ffffff">Container resource and security boundary</text>
+
+  <text x="495" y="222" font-family="sans-serif" font-size="18" font-weight="bold" fill="#15527a">Least-privilege runtime</text>
+  <rect x="495" y="240" width="165" height="58" rx="6" fill="#ffffff" stroke="#4a8b55" stroke-width="2"/>
+  <text x="577" y="266" text-anchor="middle" font-family="monospace" font-size="15" font-weight="bold" fill="#32623b">USER 10001</text>
+  <text x="577" y="287" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#425466">non-root</text>
+  <rect x="680" y="240" width="165" height="58" rx="6" fill="#ffffff" stroke="#4a8b55" stroke-width="2"/>
+  <text x="762" y="266" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#32623b">Read-only root FS</text>
+  <text x="762" y="287" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#425466">write only to mounts</text>
+  <rect x="865" y="240" width="170" height="58" rx="6" fill="#ffffff" stroke="#4a8b55" stroke-width="2"/>
+  <text x="950" y="266" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#32623b">Drop capabilities</text>
+  <text x="950" y="287" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#425466">no new privileges</text>
+
+  <rect id="java-process" x="610" y="340" width="310" height="155" rx="10" fill="#e8f6ea" stroke="#4a8b55" stroke-width="3"/>
+  <text x="765" y="381" text-anchor="middle" font-family="sans-serif" font-size="24" font-weight="bold" fill="#32623b">Java service</text>
+  <text x="765" y="414" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#263847">PID 1 via exec-form entrypoint</text>
+  <text x="765" y="446" text-anchor="middle" font-family="monospace" font-size="14" fill="#425466">java -jar /app/app.jar</text>
+  <text x="765" y="476" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#32623b">SIGTERM → graceful shutdown</text>
+
+  <text x="495" y="545" font-family="sans-serif" font-size="18" font-weight="bold" fill="#15527a">Enforced runtime limits</text>
+  <rect x="495" y="565" width="540" height="82" rx="7" fill="#ffffff" stroke="#6d9fc3" stroke-width="2"/>
+  <text x="585" y="596" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#15527a">Memory</text>
+  <text x="585" y="625" text-anchor="middle" font-family="monospace" font-size="14" fill="#425466">--memory</text>
+  <line x1="675" y1="580" x2="675" y2="632" stroke="#c1c9d0" stroke-width="2"/>
+  <text x="765" y="596" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#15527a">CPU</text>
+  <text x="765" y="625" text-anchor="middle" font-family="monospace" font-size="14" fill="#425466">--cpus</text>
+  <line x1="855" y1="580" x2="855" y2="632" stroke="#c1c9d0" stroke-width="2"/>
+  <text x="945" y="596" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#15527a">Processes</text>
+  <text x="945" y="625" text-anchor="middle" font-family="monospace" font-size="14" fill="#425466">--pids-limit</text>
+
+  <rect x="495" y="675" width="540" height="62" rx="7" fill="#fff8e9" stroke="#b7771c" stroke-width="2"/>
+  <text x="765" y="701" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#8a5b12">Container filesystem is disposable</text>
+  <text x="765" y="724" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#425466">replace the container; do not patch binaries in place</text>
+
+  <!-- Right panel: platform interaction and external durability. -->
+  <rect id="platform-panel" x="1140" y="125" width="320" height="650" rx="10" fill="#f6f8fa" stroke="#5f6b76" stroke-width="2"/>
+  <rect x="1140" y="125" width="320" height="62" rx="10" fill="#445d6e"/>
+  <rect x="1140" y="174" width="320" height="13" fill="#445d6e"/>
+  <text x="1300" y="164" text-anchor="middle" font-family="sans-serif" font-size="24" font-weight="bold" fill="#ffffff">Platform manages</text>
+
+  <rect x="1170" y="220" width="260" height="76" rx="7" fill="#e9f5ff" stroke="#2475a8" stroke-width="2"/>
+  <text x="1300" y="250" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#15527a">Logs</text>
+  <text x="1300" y="276" text-anchor="middle" font-family="monospace" font-size="14" fill="#425466">stdout • stderr</text>
+
+  <rect x="1170" y="320" width="260" height="76" rx="7" fill="#eef8ef" stroke="#4a8b55" stroke-width="2"/>
+  <text x="1300" y="350" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#32623b">Lifecycle</text>
+  <text x="1300" y="376" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#425466">stop • restart • replace</text>
+
+  <rect x="1170" y="420" width="260" height="86" rx="7" fill="#eef5fb" stroke="#6d9fc3" stroke-width="2"/>
+  <text x="1300" y="450" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#15527a">Health state</text>
+  <text x="1300" y="476" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#425466">startup • readiness</text>
+  <text x="1300" y="497" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#425466">liveness</text>
+
+  <rect x="1170" y="530" width="260" height="102" rx="7" fill="#fff8e9" stroke="#b7771c" stroke-width="2"/>
+  <text x="1300" y="561" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#8a5b12">Durable data</text>
+  <text x="1300" y="587" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#425466">database • object storage</text>
+  <text x="1300" y="610" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#425466">or managed volume</text>
+
+  <rect x="1170" y="660" width="260" height="72" rx="7" fill="#fff1f0" stroke="#b54a45" stroke-width="2"/>
+  <text x="1300" y="689" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#8c302c">Avoid privileged mode</text>
+  <text x="1300" y="714" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#612824">expose only required ports</text>
+
+  <!-- Output arrows stop before the platform panel. -->
+  <text x="1102" y="237" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#15527a">logs</text>
+  <path d="M1075 258H1102" fill="none" stroke="#2475a8" stroke-width="3"/>
+  <polygon points="1130,258 1101,246 1101,270" fill="#2475a8"/>
+
+  <text x="1102" y="525" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#15527a">health</text>
+  <path d="M1075 546H1102" fill="none" stroke="#2475a8" stroke-width="3"/>
+  <polygon points="1130,546 1101,534 1101,558" fill="#2475a8"/>
+
+  <!-- SIGTERM path intentionally crosses the container boundary; the head only meets the Java-process border. -->
+  <text x="1015" y="385" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#8c302c">SIGTERM</text>
+  <path d="M1160 410H950" fill="none" stroke="#b54a45" stroke-width="4"/>
+  <polygon points="930,410 952,398 952,422" fill="#b54a45"/>
+
+  <!-- Bottom memory budget: no universal percentages, only the required categories. -->
+  <rect id="memory-budget" x="40" y="805" width="1420" height="130" rx="10" fill="#fbfcfd" stroke="#8c98a4" stroke-width="2"/>
+  <text x="70" y="842" font-family="sans-serif" font-size="21" font-weight="bold" fill="#172b3a">Container memory limit</text>
+  <text x="70" y="870" font-family="sans-serif" font-size="15" fill="#425466">The heap is only one consumer.</text>
+  <text x="70" y="893" font-family="sans-serif" font-size="15" fill="#425466">Measure before choosing Xmx.</text>
+
+  <rect x="330" y="838" width="470" height="62" fill="#69a96f" stroke="#3f7c49" stroke-width="2"/>
+  <text x="565" y="864" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#ffffff">Java heap</text>
+  <text x="565" y="887" text-anchor="middle" font-family="monospace" font-size="14" fill="#ffffff">-Xmx or MaxRAMPercentage</text>
+
+  <rect x="800" y="838" width="330" height="62" fill="#6d9fc3" stroke="#3c6f94" stroke-width="2"/>
+  <text x="965" y="864" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ffffff">Non-heap and native</text>
+  <text x="965" y="887" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#ffffff">stacks • metaspace • direct buffers</text>
+
+  <rect x="1130" y="838" width="260" height="62" fill="#f0c25a" stroke="#b3831e" stroke-width="2"/>
+  <text x="1260" y="864" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#5d4308">Measured headroom</text>
+  <text x="1260" y="887" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#5d4308">traffic spikes and safety</text>
+
+  <text x="750" y="960" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#263847">A production container should be constrained, observable, replaceable, and unable to modify more than it needs.</text>
+</svg>

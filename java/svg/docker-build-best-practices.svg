@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="930" viewBox="0 0 1500 930" role="img" aria-labelledby="title description">
+  <title id="title">A cache-efficient and secure Docker image build</title>
+  <desc id="description">The build context is filtered by dockerignore, a tool-rich build stage uses temporary cache and secret mounts, and only the tested application artifact enters a small non-root runtime image. A lower sequence shows stable inputs copied before frequently changing source files.</desc>
+
+  <!-- Shared palette and background. -->
+  <rect width="1500" height="930" fill="#ffffff"/>
+  <text x="750" y="52" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="bold" fill="#172b3a">Build a small, reproducible Docker image</text>
+  <text x="750" y="86" text-anchor="middle" font-family="sans-serif" font-size="19" fill="#425466">Filter the context, preserve useful cache, mount secrets temporarily, and copy only the runtime artifact</text>
+
+  <!-- Panel 1: filtered build context. -->
+  <rect id="context-panel" x="40" y="125" width="380" height="485" rx="10" fill="#f6f8fa" stroke="#5f6b76" stroke-width="2"/>
+  <rect x="40" y="125" width="380" height="62" rx="10" fill="#445d6e"/>
+  <rect x="40" y="174" width="380" height="13" fill="#445d6e"/>
+  <text x="230" y="164" text-anchor="middle" font-family="sans-serif" font-size="25" font-weight="bold" fill="#ffffff">1. Filter build context</text>
+  <text x="230" y="220" text-anchor="middle" font-family="monospace" font-size="18" font-weight="bold" fill="#263847">.dockerignore</text>
+
+  <rect x="65" y="245" width="155" height="245" rx="7" fill="#e9f5ff" stroke="#2475a8" stroke-width="2"/>
+  <text x="142" y="280" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#15527a">Send</text>
+  <text x="142" y="322" text-anchor="middle" font-family="monospace" font-size="17" fill="#263847">pom.xml</text>
+  <text x="142" y="358" text-anchor="middle" font-family="monospace" font-size="17" fill="#263847">mvnw + .mvn</text>
+  <text x="142" y="394" text-anchor="middle" font-family="monospace" font-size="17" fill="#263847">src/</text>
+  <text x="142" y="454" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#425466">only required</text>
+  <text x="142" y="476" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#425466">inputs</text>
+
+  <rect x="240" y="245" width="155" height="245" rx="7" fill="#fff1f0" stroke="#b54a45" stroke-width="2"/>
+  <text x="317" y="280" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#8c302c">Exclude</text>
+  <text x="317" y="322" text-anchor="middle" font-family="monospace" font-size="17" fill="#612824">.git/</text>
+  <text x="317" y="358" text-anchor="middle" font-family="monospace" font-size="17" fill="#612824">target/</text>
+  <text x="317" y="394" text-anchor="middle" font-family="monospace" font-size="17" fill="#612824">.env</text>
+  <text x="317" y="430" text-anchor="middle" font-family="monospace" font-size="17" fill="#612824">IDE files</text>
+  <text x="317" y="467" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#612824">never send</text>
+
+  <text x="230" y="532" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#263847">Smaller input • fewer accidental files</text>
+  <text x="230" y="564" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#425466">Prefer explicit COPY paths.</text>
+
+  <!-- Context-to-build arrow; head stops before the build-stage border. -->
+  <text x="487" y="326" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#15527a">small context</text>
+  <path d="M438 350H511" fill="none" stroke="#2475a8" stroke-width="4"/>
+  <polygon points="545,350 510,335 510,365" fill="#2475a8"/>
+
+  <!-- Panel 2: tool-rich build stage and temporary mounts. -->
+  <rect id="build-panel" x="555" y="125" width="440" height="485" rx="10" fill="#f3f8fc" stroke="#2475a8" stroke-width="2"/>
+  <rect x="555" y="125" width="440" height="62" rx="10" fill="#2475a8"/>
+  <rect x="555" y="174" width="440" height="13" fill="#2475a8"/>
+  <text x="775" y="164" text-anchor="middle" font-family="sans-serif" font-size="25" font-weight="bold" fill="#ffffff">2. Build and verify</text>
+
+  <rect x="585" y="210" width="380" height="62" rx="6" fill="#ffffff" stroke="#6d9fc3" stroke-width="2"/>
+  <text x="775" y="238" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#15527a">JDK + Maven wrapper</text>
+  <text x="775" y="260" text-anchor="middle" font-family="monospace" font-size="14" fill="#425466">COPY pom.xml, mvnw, .mvn/</text>
+
+  <!-- Vertical shafts finish inside their own heads; heads keep a gap before the next box. -->
+  <path d="M775 272V284" stroke="#5f6b76" stroke-width="3"/>
+  <polygon points="775,298 766,283 784,283" fill="#5f6b76"/>
+
+  <rect x="585" y="305" width="380" height="92" rx="6" fill="#eef8ef" stroke="#4a8b55" stroke-width="2"/>
+  <text x="775" y="332" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#32623b">Resolve dependencies</text>
+  <text x="775" y="356" text-anchor="middle" font-family="monospace" font-size="14" fill="#263847">mvn dependency:go-offline</text>
+  <text x="667" y="383" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#32623b">cache mount</text>
+  <text x="878" y="383" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#8a5b12">secret mount</text>
+  <rect x="610" y="365" width="116" height="24" rx="4" fill="none" stroke="#4a8b55" stroke-width="2" stroke-dasharray="6 4"/>
+  <rect x="819" y="365" width="118" height="24" rx="4" fill="none" stroke="#b7771c" stroke-width="2" stroke-dasharray="6 4"/>
+
+  <path d="M775 397V409" stroke="#5f6b76" stroke-width="3"/>
+  <polygon points="775,423 766,408 784,408" fill="#5f6b76"/>
+
+  <rect x="585" y="430" width="380" height="72" rx="6" fill="#ffffff" stroke="#6d9fc3" stroke-width="2"/>
+  <text x="775" y="458" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#15527a">Copy source, test, and package</text>
+  <text x="775" y="483" text-anchor="middle" font-family="monospace" font-size="14" fill="#263847">COPY src/ • ./mvnw verify</text>
+
+  <path d="M775 502V514" stroke="#5f6b76" stroke-width="3"/>
+  <polygon points="775,528 766,513 784,513" fill="#5f6b76"/>
+  <rect x="685" y="535" width="180" height="50" rx="6" fill="#dceefe" stroke="#2475a8" stroke-width="2"/>
+  <text x="775" y="566" text-anchor="middle" font-family="monospace" font-size="18" font-weight="bold" fill="#15527a">app.jar</text>
+
+  <!-- Build-to-runtime arrow; only the tested artifact crosses stages. -->
+  <text x="1062" y="326" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#32623b">COPY --from=build</text>
+  <path d="M1013 350H1084" fill="none" stroke="#4a8b55" stroke-width="4"/>
+  <polygon points="1120,350 1083,335 1083,365" fill="#4a8b55"/>
+
+  <!-- Panel 3: minimal runtime stage. -->
+  <rect id="runtime-panel" x="1130" y="125" width="330" height="485" rx="10" fill="#f1f9f2" stroke="#4a8b55" stroke-width="2"/>
+  <rect x="1130" y="125" width="330" height="62" rx="10" fill="#4a8b55"/>
+  <rect x="1130" y="174" width="330" height="13" fill="#4a8b55"/>
+  <text x="1295" y="164" text-anchor="middle" font-family="sans-serif" font-size="25" font-weight="bold" fill="#ffffff">3. Runtime image</text>
+
+  <rect x="1160" y="215" width="270" height="66" rx="6" fill="#ffffff" stroke="#7bb185" stroke-width="2"/>
+  <text x="1295" y="244" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#32623b">Maintained Java runtime</text>
+  <text x="1295" y="267" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#425466">intentional version / digest</text>
+
+  <rect x="1160" y="300" width="270" height="58" rx="6" fill="#dceefe" stroke="#2475a8" stroke-width="2"/>
+  <text x="1295" y="336" text-anchor="middle" font-family="monospace" font-size="18" font-weight="bold" fill="#15527a">/app/app.jar</text>
+
+  <rect x="1160" y="377" width="270" height="58" rx="6" fill="#ffffff" stroke="#7bb185" stroke-width="2"/>
+  <text x="1295" y="413" text-anchor="middle" font-family="monospace" font-size="17" font-weight="bold" fill="#32623b">USER 10001:10001</text>
+
+  <rect x="1160" y="454" width="270" height="62" rx="6" fill="#ffffff" stroke="#7bb185" stroke-width="2"/>
+  <text x="1295" y="480" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#32623b">Exec-form entrypoint</text>
+  <text x="1295" y="503" text-anchor="middle" font-family="monospace" font-size="13" fill="#425466">["java", "-jar", "app.jar"]</text>
+
+  <rect x="1160" y="535" width="270" height="48" rx="6" fill="#fff1f0" stroke="#b54a45" stroke-width="2"/>
+  <text x="1295" y="565" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#8c302c">No source • JDK • cache • secret</text>
+
+  <!-- Bottom lesson: cache invalidation order. -->
+  <rect id="cache-order-panel" x="40" y="640" width="1420" height="245" rx="10" fill="#fbfcfd" stroke="#8c98a4" stroke-width="2"/>
+  <text x="70" y="681" font-family="sans-serif" font-size="22" font-weight="bold" fill="#172b3a">Cache order: copy stable inputs before frequently changing inputs</text>
+  <text x="1430" y="681" text-anchor="end" font-family="sans-serif" font-size="16" fill="#425466">A source edit should not force dependency downloads to restart.</text>
+
+  <rect x="70" y="720" width="270" height="112" rx="7" fill="#eef5fb" stroke="#6d9fc3" stroke-width="2"/>
+  <text x="205" y="754" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#15527a">Stable descriptors</text>
+  <text x="205" y="785" text-anchor="middle" font-family="monospace" font-size="15" fill="#263847">pom.xml • mvnw • .mvn/</text>
+  <text x="205" y="813" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#425466">change rarely</text>
+
+  <path d="M350 776H374" stroke="#5f6b76" stroke-width="3"/>
+  <polygon points="398,776 373,765 373,787" fill="#5f6b76"/>
+
+  <rect x="408" y="720" width="270" height="112" rx="7" fill="#eef8ef" stroke="#4a8b55" stroke-width="2"/>
+  <text x="543" y="754" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#32623b">Dependency layer</text>
+  <text x="543" y="785" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#263847">download once, reuse cache</text>
+  <text x="543" y="813" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#425466">temporary cache mount</text>
+
+  <path d="M688 776H712" stroke="#5f6b76" stroke-width="3"/>
+  <polygon points="736,776 711,765 711,787" fill="#5f6b76"/>
+
+  <rect x="746" y="720" width="270" height="112" rx="7" fill="#fff8e9" stroke="#b7771c" stroke-width="2"/>
+  <text x="881" y="754" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#8a5b12">Application source</text>
+  <text x="881" y="785" text-anchor="middle" font-family="monospace" font-size="16" fill="#263847">COPY src/</text>
+  <text x="881" y="813" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#425466">changes often</text>
+
+  <path d="M1026 776H1050" stroke="#5f6b76" stroke-width="3"/>
+  <polygon points="1074,776 1049,765 1049,787" fill="#5f6b76"/>
+
+  <rect x="1084" y="720" width="306" height="112" rx="7" fill="#e9f5ff" stroke="#2475a8" stroke-width="2"/>
+  <text x="1237" y="754" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#15527a">Tested artifact</text>
+  <text x="1237" y="785" text-anchor="middle" font-family="monospace" font-size="16" fill="#263847">./mvnw verify → app.jar</text>
+  <text x="1237" y="813" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#425466">only artifact enters runtime</text>
+
+  <text x="750" y="909" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#263847">Build tools and temporary mounts improve the build; they must not become runtime contents.</text>
+</svg>

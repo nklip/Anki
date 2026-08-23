@@ -2,45 +2,51 @@
 
 ## Front
 
-What are the most important Docker best practices for building and running a production Java application?
+What practices make a Dockerized Java service secure, reproducible, fast to rebuild, correctly resource-sized, and safe to replace in production?
 
 ## Back
 
-A good Java container image should be:
+A production Java container should be **built from trusted, intentionally versioned inputs; contain only runtime necessities; run with least privilege and explicit limits; receive signals directly; keep secrets and durable state outside the image; and be rebuilt, tested, scanned, observed, and replaced rather than patched in place**.
 
-- Reproducible and quick to rebuild.
-- Small enough to reduce unnecessary packages and attack surface.
-- Built without embedded credentials.
-- Run as a non-root user.
-- Correctly limited and sized for CPU and memory.
-- Able to receive shutdown signals directly.
-- Observable, disposable, and independent of local container storage.
+The mental model has two contracts:
 
-### Production-oriented Maven example
+- **Build contract:** controlled inputs become an immutable, auditable image without leaking tools, caches, or secrets.
+- **Runtime contract:** the platform supplies configuration and limits to a disposable process with the minimum required privileges.
+
+Everything else in this card supports one of those contracts.
+
+## Build a clean, repeatable image
+
+The build should progressively narrow what enters the final image. A `.dockerignore` filters the input; a tool-rich build stage compiles and tests; a smaller runtime stage receives only the tested artifact.
+
+![Docker build context, cache order, temporary mounts, and multi-stage runtime output](svg/docker-build-best-practices.svg)
+
+Read the upper flow from left to right. The lower row explains cache order: stable dependency descriptors come before frequently changing source code, so editing one class does not force every dependency to download again.
+
+### A production-oriented Maven Dockerfile
 
 ```dockerfile
 # syntax=docker/dockerfile:1
 
-# Build stage: contains the JDK, Maven wrapper, sources, and build cache.
+# Build stage: JDK, Maven wrapper, source, tests, and temporary cache.
 FROM eclipse-temurin:25-jdk AS build
 WORKDIR /workspace
 
-# Copy stable dependency descriptors before frequently changing sources.
+# Stable inputs first, so source edits can reuse the dependency layer.
 COPY --chmod=0755 mvnw ./mvnw
 COPY .mvn/ ./.mvn/
 COPY pom.xml ./pom.xml
 
-# Cache downloaded Maven artifacts between BuildKit builds.
 RUN --mount=type=cache,target=/root/.m2 \
     ./mvnw -B -DskipTests dependency:go-offline
 
 COPY src/ ./src/
 
-# Use verify so tests act as a build gate.
+# Tests are part of the image-build gate.
 RUN --mount=type=cache,target=/root/.m2 \
     ./mvnw -B verify
 
-# Runtime stage: contains only a Java runtime and the application artifact.
+# Runtime stage: only the runtime and tested application artifact.
 FROM eclipse-temurin:25-jre AS runtime
 
 RUN groupadd --system --gid 10001 javaapp \
@@ -54,84 +60,58 @@ COPY --from=build --chown=10001:10001 \
 
 USER 10001:10001
 
-# Documentation only; publishing the port is a runtime decision.
+# Documents the listening port; it does not publish the port.
 EXPOSE 8080
 
-# Exec form: the JVM is PID 1 and receives container signals directly.
+# Exec form makes the JVM the container's main process.
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 ```
 
-Use an image version supported by the application. Java 25 is shown because it is the current LTS line; replace it deliberately when the application's support policy differs.
+`app.jar` is an example artifact name. Make the real build produce a predictable name rather than relying on a wildcard that might copy the wrong file.
 
-For production, choose a specific maintained OS variant and consider pinning the approved image to a digest. Automate digest updates so reproducibility does not prevent security patches.
+Java 25 is used as a current long-term-support example. Select the Java major version and operating-system variant from the application's explicit support policy. Do not change base family, libc, or architecture merely because another tag is smaller.
 
-### 1. Use multi-stage builds
+### Why multi-stage builds matter
 
-The build image needs a JDK, build tool, source code, and caches. The runtime image normally needs only:
+The build stage legitimately needs a JDK, wrapper, source, tests, dependency cache, and perhaps private-repository credentials. The runtime stage normally needs only:
 
-- A Java runtime.
-- The application artifact.
-- Required certificates, time-zone data, or native libraries.
-
-Multi-stage builds keep compilers, Maven or Gradle caches, source files, tests, and temporary artifacts out of the production image.
+- a Java runtime;
+- the application artifact;
+- required certificates, time-zone data, fonts, or native libraries.
 
 ```text
-JDK build stage ──copies JAR/runtime──▶ minimal runtime stage
+tool-rich build stage ── copies tested artifact ──▶ minimal runtime stage
 ```
 
-Do not install Maven or Gradle in the final stage merely to launch a JAR.
+The final image should not contain Maven or Gradle, source files, test reports, downloaded build caches, private settings, or a compiler unless runtime behavior genuinely needs them.
 
-### 2. Choose a trusted, maintained runtime image
+### Choose a trusted and maintained base
 
-- Prefer a maintained Docker Official Image or another approved, traceable distribution.
-- Use an explicit Java major version; avoid `latest`.
-- Select a compatible OS family deliberately.
-- Rebuild frequently to receive patched JDK and OS layers.
-- Scan both application dependencies and the resulting image.
+- Prefer Docker Official Images, Verified Publisher images, or another approved source with traceable maintenance.
+- Choose an explicit Java major and compatible OS variant; avoid `latest`.
+- Rebuild regularly because an image is a snapshot of its base and packages at build time.
+- Use `docker build --pull ...` when CI must check for a newer base image behind the selected tag.
+- Scan the **final image**, not only application dependencies.
 
-A smaller image can reduce unnecessary software, but size alone does not prove security. A maintained image with clear provenance is more important than chasing the smallest possible byte count.
+A smaller image often downloads faster and may contain fewer unnecessary packages, but size alone is not a security property. Provenance, timely maintenance, compatibility, and the packages actually present matter more.
 
-Alpine-based Java images use `musl` instead of `glibc`. Test native libraries, DNS behavior, fonts, locale handling, and performance before changing OS families merely to reduce image size.
+### Tags, digests, and updates
 
-### JRE image versus `jlink`
-
-Options for the runtime stage include:
-
-1. A maintained JRE image — simple and broadly compatible.
-2. A custom runtime made with `jlink` — potentially smaller, but module discovery, service providers, TLS, monitoring, and framework features must be tested carefully.
-
-Do not remove modules blindly. A small image that fails during an unusual production code path is not an improvement.
-
-### 3. Optimize layer caching
-
-Copy files from least frequently changed to most frequently changed:
-
-```text
-wrapper and build descriptors
-        ↓
-download dependencies
-        ↓
-application source
-        ↓
-compile and package
-```
-
-If source code is copied before dependency resolution, every source edit can invalidate the expensive dependency layer.
-
-BuildKit cache mounts accelerate downloads without copying the cache into the final image:
+Image tags are mutable. A build using the same tag months later can receive a different base image.
 
 ```dockerfile
-RUN --mount=type=cache,target=/root/.m2 \
-    ./mvnw -B verify
+FROM eclipse-temurin:25-jre@sha256:<approved-digest>
 ```
 
-For Gradle, use the wrapper, a BuildKit cache mount for the Gradle user home, and normally `--no-daemon` during image builds.
+Digest pinning makes that input exact and auditable, but also freezes it. Pair pinning with automated update proposals, security scanning, and regular rebuilds. Otherwise, “reproducible” silently becomes “permanently vulnerable.”
 
-### 4. Keep the build context small
+### Keep the build context small
+
+The **build context** is the set of files available to Docker's build. Filter it before the Dockerfile executes.
 
 Example `.dockerignore`:
 
-```dockerignore
+```text
 .git
 .idea
 .vscode
@@ -141,18 +121,38 @@ build
 *.log
 .env
 compose*.yml
-README*
 ```
 
-Do not send credentials, local build output, IDE metadata, or the complete Git history to the build daemon when they are unnecessary.
+Do not send local artifacts, Git history, IDE files, or credentials when the build does not need them. Prefer explicit `COPY` instructions. `COPY . .` can make accidental inclusion and cache invalidation harder to see even when `.dockerignore` exists.
 
-Use explicit `COPY` instructions. Avoid `COPY . .` when only a few known directories are required.
+### Design layers for cache reuse
 
-### 5. Never bake secrets into an image
+Docker can reuse an instruction only while the instruction and the inputs it depends on still match. Put inexpensive or frequently invalidated work later:
 
-Do not use `ARG`, `ENV`, copied files, or command-line text to embed repository passwords, API keys, private certificates, or tokens. Image history and layers can retain them even if a later layer deletes the file.
+```text
+wrapper + pom.xml
+        ↓
+resolve dependencies
+        ↓
+copy source
+        ↓
+test and package
+```
 
-Use a BuildKit secret mount for a private Maven settings file:
+BuildKit cache mounts persist downloaded artifacts between builds without copying that cache into the resulting image layer:
+
+```dockerfile
+RUN --mount=type=cache,target=/root/.m2 \
+    ./mvnw -B verify
+```
+
+The cache is a performance optimization. The build must remain correct when the cache is empty.
+
+### Never bake build secrets into layers
+
+Build arguments and environment variables are inappropriate for passwords, tokens, private keys, or private Maven settings because image metadata, history, logs, or intermediate layers can expose them.
+
+Use a BuildKit secret mount:
 
 ```dockerfile
 RUN --mount=type=secret,id=maven_settings,\
@@ -161,71 +161,86 @@ target=/root/.m2/settings.xml,required=true \
     ./mvnw -B verify
 ```
 
-```text
+```bash
 docker build \
   --secret id=maven_settings,src=/secure/path/settings.xml \
   -t example/orders:1.4.2 .
 ```
 
-Provide runtime secrets through the deployment platform's secret mechanism. Prefer short-lived credentials and mounted secret files when possible.
+The secret is available to that build instruction but is not copied into the final layer. Avoid commands that print it. Runtime secrets are a separate concern and should come from the deployment platform when a container starts.
 
-### 6. Run as a non-root user
+## Run with a narrow, observable contract
 
-Use a dedicated user with a stable numeric UID and GID:
+The image supplies application code. The deployment supplies configuration, secrets, writable mounts, resource limits, networking, and lifecycle. The container emits logs and health state, while durable data lives outside its disposable filesystem.
+
+![Docker runtime inputs, least-privilege boundary, signals, health, logs, durable state, and Java memory budget](svg/docker-runtime-best-practices.svg)
+
+The centre box is the security and resource boundary. Connector arrows show what crosses it deliberately. The lower bar prevents a common Java mistake: the heap is only one part of total container memory.
+
+### Run as a dedicated non-root user
+
+Use a stable numeric user and group, and own only the required paths:
 
 ```dockerfile
 USER 10001:10001
 ```
 
-Create and assign ownership only to directories the application must write. Do not make the entire filesystem world-writable.
+Do not make the whole filesystem world-writable to avoid a permissions problem. Give write access only to directories used for temporary files, uploads, heap dumps, Java Flight Recorder data, or generated output.
 
-At runtime, add defense in depth where supported:
+Where the environment supports it, add defense in depth:
 
-```text
+```bash
 --read-only
 --tmpfs /tmp:rw,noexec,nosuid,size=64m
 --cap-drop=ALL
 --security-opt=no-new-privileges:true
 ```
 
-If the application writes heap dumps, JFR recordings, uploads, or generated files, mount narrowly scoped writable paths. Test read-only operation before production.
+Test this configuration: frameworks, certificate handling, font caches, crash logs, and native libraries may expect writable paths. Add a narrow mount or `tmpfs` for a demonstrated need rather than restoring broad write access.
 
-### 7. Use exec-form `ENTRYPOINT`
+Never use `--privileged` for a normal application service, and never mount the Docker daemon socket into it. Control of the socket is effectively control of the Docker host.
 
-Correct:
+### Make the JVM receive lifecycle signals
+
+Use exec-form `ENTRYPOINT` or `CMD`:
 
 ```dockerfile
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 ```
 
-Risky shell form:
+Shell form introduces a shell as the main process and can interfere with signal delivery:
 
 ```dockerfile
+# Avoid for the main service process
 ENTRYPOINT java -jar /app/app.jar
 ```
 
-The shell form normally makes `/bin/sh` PID 1. Signals may not reach the JVM as expected. With exec form, the JVM receives `SIGTERM` directly when Docker stops the container.
-
-If a startup script is necessary, end it with `exec`:
+If a startup script is necessary, replace the script process with Java:
 
 ```sh
 exec java -jar /app/app.jar
 ```
 
-Implement graceful shutdown and configure a stop timeout long enough for the application to:
+Then Docker's stop signal can reach the JVM directly. The application still needs graceful-shutdown behavior: stop taking new work, handle in-flight work, close consumers and pools, and flush telemetry before the platform's stop timeout expires.
 
-- Stop accepting new work.
-- Finish or cancel in-flight requests.
-- Close consumers, executors, and connection pools.
-- Flush telemetry.
+If the service creates child processes, consider `docker run --init` or a suitable init process to reap orphaned children and zombies. “One concern per container” is a useful design rule; “exactly one operating-system process” is not an absolute requirement.
 
-If the Java process creates child processes, consider Docker's `--init` option so orphaned children and zombies are handled correctly.
+### Supply configuration and secrets at runtime
 
-### 8. Set runtime resource limits
+Use the same image in every environment. Change deployment configuration rather than rebuilding different binaries for development, test, and production.
 
-Containers have no CPU or memory limit by default. Configure limits in Docker, Compose, Kubernetes, or the production scheduler:
+- Non-sensitive configuration can come from environment variables or mounted configuration files.
+- Secrets should come from the platform's secret mechanism, preferably as short-lived credentials or mounted files where appropriate.
+- Do not place secrets in the Dockerfile, image labels, command history, `JAVA_TOOL_OPTIONS`, or committed `.env` files.
+- Do not log resolved secrets, authorization headers, or tokens.
 
-```text
+An environment variable is convenient but not magically secret. Choose the mechanism according to the deployment platform and threat model.
+
+### Set and test resource limits
+
+Docker containers have no CPU or memory constraints by default. Configure limits in Docker, Compose, Kubernetes, or the production scheduler:
+
+```bash
 docker run --rm \
   --memory=768m \
   --cpus=1.5 \
@@ -233,189 +248,172 @@ docker run --rm \
   example/orders:1.4.2
 ```
 
-Choose limits from load tests and production measurements. An unrealistically low PID limit can prevent the JVM from creating required native threads.
+Choose values from load tests and production measurements. A low PID limit can prevent Java from creating required native threads. A CPU quota affects the processor count HotSpot uses for GC and common thread-pool ergonomics, so test under the same constraints used in production.
 
-CPU limits affect more than application threads. They also influence:
+On Linux, current HotSpot container detection is enabled by default. Inspect what the JVM sees:
 
-- Garbage-collector worker counts.
-- JIT compilation.
-- `ForkJoinPool` parallelism.
-- Parallel streams.
-
-Test the application under the same limits used in production, not only on an unrestricted developer machine.
-
-### 9. Size the JVM for total container memory
-
-On Linux, modern HotSpot enables container detection by default and uses available container memory and processor information for JVM ergonomics.
-
-Inspect what the JVM detects:
-
-```text
+```bash
 java -XshowSettings:system -XshowSettings:vm -version
 ```
 
-For detailed container detection diagnostics:
+For detailed container detection:
 
-```text
--Xlog:os+container=trace
+```bash
+java -Xlog:os+container=trace -version
 ```
 
-The Java heap is only part of the container's memory use:
+Use `-XX:ActiveProcessorCount` only for an intentional override. Prefer correcting inaccurate deployment limits rather than hiding them with a JVM flag.
+
+### Leave memory outside the Java heap
+
+The container limit must cover more than `-Xmx`:
 
 ```text
 container memory
 ├── Java heap
-├── metaspace
-├── code cache
-├── thread stacks
+├── metaspace and class metadata
+├── JIT code cache
+├── Java and native thread stacks
 ├── direct and mapped buffers
-├── GC and JVM native structures
-└── native libraries and agents
+├── GC/JVM native structures
+├── native libraries and agents
+└── measured safety headroom
 ```
 
-Therefore, do not set `-Xmx` equal to the container memory limit. Leave measured headroom for non-heap memory and traffic spikes.
+Therefore, do not set `-Xmx` equal to the container memory limit. Choose an explicit heap size or a percentage only after measuring non-heap and native usage:
 
-Possible approaches:
-
-```text
+```bash
 -Xmx512m
 ```
 
 or:
 
-```text
+```bash
 -XX:MaxRAMPercentage=65
 ```
 
-The percentage is an example, not a universal recommendation. Select it from measurements of heap and non-heap usage. Avoid copying a fixed percentage into every service.
+`65` is an example, not a universal best value. Traffic, thread counts, direct buffers, agents, garbage collector, and framework behavior change the required headroom.
 
-Supply environment-specific JVM options at deployment time when appropriate:
+### Keep logs, health, and durable state outside
 
-```text
-JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=65
+Write normal logs to `stdout` and errors to `stderr`. Docker logging drivers or the deployment platform can collect, rotate, retain, and forward them. Avoid unbounded application log files in the writable container layer.
+
+Dockerfile `HEALTHCHECK` provides one container health status. Some orchestration platforms distinguish:
+
+- **startup** — initialization is still legitimately in progress;
+- **readiness** — the instance can receive traffic;
+- **liveness** — the process is stuck and should be restarted.
+
+Keep probes fast and bounded by timeouts. Liveness should not restart a healthy process merely because one downstream dependency is temporarily unavailable. Avoid installing a large shell or HTTP client only to probe an otherwise minimal image; an external platform probe may be a better fit.
+
+Treat the container filesystem as temporary:
+
+- store durable data in a database, object storage, or a managed volume;
+- externalize session state when instances must be replaceable;
+- mount only the paths that genuinely need persistence;
+- replace the container to deploy or roll back; never download replacement application binaries into a running container.
+
+`EXPOSE 8080` only documents the port. Publishing it is a runtime decision such as `-p 8080:8080`, and production exposure should be limited to required interfaces and networks.
+
+## Java runtime image choices
+
+### Maintained JRE image
+
+A maintained JRE image is simple and broadly compatible. Choose a supported OS variant intentionally and rebuild it regularly.
+
+### Custom `jlink` runtime
+
+`jlink` can create a smaller runtime containing selected modules. It adds verification work: service providers, TLS, management, monitoring, reflection-heavy frameworks, unusual code paths, and optional features may need modules not obvious from a basic test.
+
+Use it when size or attack-surface measurements justify the maintenance cost, not as a ritual.
+
+### Alpine and native compatibility
+
+Alpine-based Java images use `musl` rather than `glibc`. Test JNI/JNA libraries, DNS, fonts, locale handling, certificates, agents, performance, and diagnostic tooling before changing OS families for size alone.
+
+For multi-platform images, run tests on every supported architecture. A successful ARM64 build does not prove that every embedded native library supports ARM64.
+
+## Make the image auditable in CI
+
+A production pipeline should:
+
+- build and test the image on source changes;
+- test the **final container image**, not only the JAR outside it;
+- scan application dependencies, base packages, and the final image;
+- attach or retain a Software Bill of Materials (SBOM) and provenance;
+- identify the source revision with standard image metadata;
+- publish immutable image digests;
+- automate base-image and dependency update proposals;
+- exercise replacement, rollback, signal handling, health behavior, and resource limits.
+
+BuildKit can attach provenance and SBOM attestations to an image:
+
+```bash
+docker buildx build \
+  --provenance=mode=max \
+  --sbom=true \
+  --push \
+  -t registry.example.com/orders:1.4.2 .
 ```
 
-Do not place secrets in `JAVA_TOOL_OPTIONS`; the JVM reports applied options at startup.
+Attestation support depends on the BuildKit driver and image store. Verify that the chosen registry and build pipeline preserve the attached metadata.
 
-Use `-XX:ActiveProcessorCount` only when intentional override is necessary. Prefer accurate container CPU configuration instead of hiding a deployment error with JVM flags.
-
-### 10. Keep the container disposable
-
-- Store durable data in databases, object storage, or mounted volumes.
-- Treat the container filesystem as temporary.
-- Inject configuration at runtime rather than rebuilding for every environment.
-- Do not persist session state only inside one container instance.
-- Make startup, shutdown, and replacement routine operations.
-
-An image should represent the application version. A running container should not modify its own binaries or download replacement application code.
-
-### 11. Write logs to standard output and error
-
-Write application logs to `stdout` and diagnostic/error output to `stderr`. Let the container platform collect, rotate, retain, and forward them.
-
-Avoid writing unbounded log files inside the container. Local files consume writable-layer space and disappear when the container is replaced.
-
-Never log secrets, session tokens, authorization headers, or sensitive personal data.
-
-### 12. Add meaningful health signals
-
-Expose a lightweight health endpoint that distinguishes, where the platform supports it:
-
-- **Liveness** — should the process be restarted?
-- **Readiness** — can it receive new traffic?
-- **Startup** — is initialization still legitimately in progress?
-
-Do not install a large shell or HTTP client only for a health check in an otherwise minimal image. The deployment platform can often probe the application endpoint from outside the container.
-
-A health check should be fast, bounded by a timeout, and should not overload dependencies. Liveness should not fail merely because one downstream service is temporarily unavailable.
-
-### 13. Make builds reproducible and auditable
-
-- Use Maven or Gradle wrappers.
-- Pin application dependencies through the build definition and lock mechanisms where available.
-- Use explicit base-image versions; optionally pin approved digests.
-- Record source revision and build metadata using OCI labels or provenance.
-- Generate an SBOM and retain it with the image.
-- Scan for known vulnerabilities in CI and after base-image updates.
-- Rebuild instead of patching a running container.
-- Test the final image, not only the JAR outside Docker.
-
-Pinning a digest improves reproducibility but also freezes security fixes. Pair digest pinning with automated update pull requests and regular rebuilds.
-
-### 14. Minimize installed software and privileges
-
-- Do not include compilers, package managers, SSH servers, editors, or debugging agents unless production genuinely requires them.
-- Prefer `COPY` for local files; use `ADD` only when its additional behavior is intentional.
-- Avoid unnecessary OS packages.
-- Do not expose remote-debugging or management ports publicly.
-- Do not mount the Docker socket into an application container.
-- Do not use `--privileged` for a normal Java service.
-
-When a temporary debugging tool is necessary, prefer an ephemeral diagnostic container or a separately controlled debug image rather than permanently expanding the production image.
-
-### 15. Test architecture and native compatibility
-
-For multi-platform images, test every supported architecture, especially when using:
-
-- JNI or JNA.
-- Native compression, TLS, database, or image libraries.
-- Fonts or headless rendering.
-- Architecture-specific agents.
-- A custom `jlink` runtime.
-
-Building an ARM64 image successfully does not prove that all included native libraries support ARM64 correctly.
-
-### Common anti-patterns
+## Common anti-patterns
 
 | Anti-pattern | Better approach |
 |---|---|
-| `FROM ...:latest` | Use an intentional version and update policy |
-| Build and run in one JDK image | Use separate build and runtime stages |
-| `COPY . .` before dependency download | Copy build descriptors first and use cache mounts |
-| Secrets in `ARG`, `ENV`, or copied settings | Use BuildKit secret mounts and runtime secrets |
-| Running as root | Use a dedicated numeric UID/GID |
-| Shell-form Java entrypoint | Use JSON exec form or `exec` in the wrapper |
-| `-Xmx` equal to container memory | Leave measured non-heap/native headroom |
-| No CPU or memory limits | Configure and test realistic resource limits |
-| Blocking only on `sleep` for readiness | Use bounded health and readiness checks |
-| Logs only in container files | Write to `stdout` and `stderr` |
-| Mutable local production state | Use external durable storage |
-| Installing tools “just in case” | Keep production runtime minimal |
-| Never rebuilding a pinned image | Automate updates, scanning, and rebuilds |
+| `FROM ...:latest` | Intentional version/variant, optionally pinned digest, with update automation |
+| Build and run in one JDK image | Separate build and runtime stages |
+| Send the complete repository | `.dockerignore` plus explicit `COPY` inputs |
+| Copy source before dependency resolution | Stable descriptors first, source later |
+| Secrets in `ARG`, `ENV`, or copied settings | BuildKit secret mounts and runtime secret mechanisms |
+| Run as root | Dedicated numeric UID/GID |
+| World-writable filesystem | Read-only root with narrow writable mounts |
+| Shell-form Java entrypoint | JSON exec form or `exec` in a wrapper |
+| No resource limits | Measured memory, CPU, and PID limits |
+| `-Xmx` equals container memory | Leave measured non-heap/native headroom |
+| Logs only in local files | `stdout`/`stderr` plus platform collection |
+| Durable state only in writable layer | External durable storage or managed volumes |
+| Install tools “just in case” | Minimal production image; separate diagnostic workflow |
+| Mount `/var/run/docker.sock` | Keep Docker control outside the application container |
+| Pin forever without rebuilding | Automated update, scan, rebuild, and redeploy cycle |
 
-### Review checklist
+## Review checklist
 
 ```text
-[ ] Multi-stage build
-[ ] Maintained and intentionally versioned base image
-[ ] Small .dockerignore and explicit COPY instructions
-[ ] Dependency cache optimized
-[ ] Tests executed in CI/build pipeline
-[ ] No secrets in image layers or history
+[ ] Trusted, intentionally versioned base images
+[ ] Multi-stage build with only runtime necessities in the final stage
+[ ] .dockerignore and explicit COPY paths
+[ ] Stable dependency inputs copied before source
+[ ] Tests gate the produced artifact
+[ ] Cache mounts improve speed but are not required for correctness
+[ ] No build or runtime secrets in image layers, metadata, or logs
 [ ] Non-root numeric UID/GID
-[ ] Exec-form Java entrypoint
-[ ] Graceful SIGTERM handling
-[ ] CPU, memory, and PID limits tested
-[ ] Heap leaves room for native/non-heap memory
-[ ] Read-only filesystem tested where practical
-[ ] Logs go to stdout/stderr
-[ ] Readiness and liveness behavior defined
-[ ] Image and Java dependencies scanned
-[ ] SBOM/provenance retained
-[ ] Replacement and rollback tested
+[ ] Read-only filesystem and dropped capabilities tested where practical
+[ ] Exec-form entrypoint and graceful SIGTERM handling
+[ ] CPU, memory, and PID limits tested under load
+[ ] Heap leaves measured non-heap/native headroom
+[ ] Logs use stdout/stderr
+[ ] Health behavior is fast, bounded, and semantically correct
+[ ] Durable state lives outside the disposable container layer
+[ ] Final image scanned; SBOM/provenance retained
+[ ] Base updates, replacement, and rollback are automated and tested
 ```
 
-### Key idea
+## Remember
 
-> Build the application in a disposable JDK stage, run only the required artifact in a maintained minimal runtime, execute as a non-root PID 1, provide secrets and configuration externally, and size the JVM within measured container limits.
+> **Build with more tools than you ship; ship fewer privileges than Docker can grant; inject environment-specific data only when the container starts; and treat every running container as constrained, observable, and replaceable.**
 
-### Official references
+## Sources
 
-- [Docker build best practices](https://docs.docker.com/build/building/best-practices/)
-- [Docker multi-stage builds](https://docs.docker.com/build/building/multi-stage/)
-- [Docker build secrets](https://docs.docker.com/build/building/secrets/)
-- [Docker build-cache optimization](https://docs.docker.com/build/cache/optimize/)
-- [Docker resource constraints](https://docs.docker.com/engine/containers/resource_constraints/)
-- [Dockerfile reference](https://docs.docker.com/reference/dockerfile/)
-- [Java launcher and container options](https://docs.oracle.com/en/java/javase/26/docs/specs/man/java.html)
+- [Docker Docs — Building best practices](https://docs.docker.com/build/building/best-practices/)
+- [Docker Docs — Multi-stage builds](https://docs.docker.com/build/building/multi-stage/)
+- [Docker Docs — Build secrets](https://docs.docker.com/build/building/secrets/)
+- [Docker Docs — Optimize cache usage](https://docs.docker.com/build/cache/optimize/)
+- [Docker Docs — Dockerfile reference](https://docs.docker.com/reference/dockerfile/)
+- [Docker Docs — Resource constraints](https://docs.docker.com/engine/containers/resource_constraints/)
+- [Docker Docs — Docker Engine security](https://docs.docker.com/engine/security/)
+- [Docker Docs — Container logs](https://docs.docker.com/engine/logging/)
+- [Docker Docs — Build attestations](https://docs.docker.com/build/metadata/attestations/)
+- [Oracle JDK 26 — `java` launcher and container options](https://docs.oracle.com/en/java/javase/26/docs/specs/man/java.html)
 - [Eclipse Temurin Docker Official Image](https://hub.docker.com/_/eclipse-temurin)
