@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="800" viewBox="0 0 1400 800" role="img" aria-labelledby="diagram-title diagram-description">
+  <title id="diagram-title">JPA single table inheritance mapping</title>
+  <desc id="diagram-description">Payment, CardPayment, and WirePayment entities share one payment table. The payment kind discriminator identifies the concrete entity type. A polymorphic query reads this one table, while subtype-specific columns are empty for other types.</desc>
+
+  <!-- Blue is inherited state, green is CardPayment, purple is WirePayment, and orange marks the discriminator that reconnects a row to its entity type. -->
+  <style>
+    .heading { font-family: Inter, Arial, sans-serif; font-weight: 700; fill: #17212b; }
+    .body { font-family: Inter, Arial, sans-serif; fill: #2f3a45; }
+    .muted { font-family: Inter, Arial, sans-serif; fill: #596673; }
+    .mono { font-family: "SFMono-Regular", Consolas, monospace; fill: #23303d; }
+    .light { font-family: Inter, Arial, sans-serif; font-weight: 700; fill: #ffffff; }
+  </style>
+
+  <!-- The class hierarchy is kept close to the table so the learner can trace each subtype without crossing text. -->
+  <rect width="1400" height="800" fill="#ffffff"/>
+  <text x="700" y="48" text-anchor="middle" class="heading" font-size="32">SINGLE_TABLE · one hierarchy, one table</text>
+  <text x="700" y="80" text-anchor="middle" class="muted" font-size="18">Every entity instance occupies one row; a discriminator tells JPA which subclass to create.</text>
+
+  <g id="entity-hierarchy">
+    <rect x="520" y="110" width="360" height="90" rx="12" fill="#eef5ff" stroke="#356da8" stroke-width="3"/>
+    <text x="700" y="146" text-anchor="middle" class="heading" font-size="21">Payment</text>
+    <text x="700" y="176" text-anchor="middle" class="mono" font-size="15">id · amount</text>
+
+    <!-- Inheritance arrows point upward toward the base class and stay inside the empty center corridor. -->
+    <path d="M405 250V226H700V214" fill="none" stroke="#66727d" stroke-width="4"/>
+    <path d="M995 250V226H700V214" fill="none" stroke="#66727d" stroke-width="4"/>
+    <polygon points="689,214 700,200 711,214" fill="#66727d"/>
+
+    <rect x="185" y="250" width="440" height="105" rx="12" fill="#edf8f0" stroke="#43804c" stroke-width="3"/>
+    <text x="405" y="290" text-anchor="middle" class="heading" font-size="20">CardPayment</text>
+    <text x="405" y="322" text-anchor="middle" class="mono" font-size="15">cardLast4</text>
+
+    <rect x="775" y="250" width="440" height="105" rx="12" fill="#f4f0fa" stroke="#7651a5" stroke-width="3"/>
+    <text x="995" y="290" text-anchor="middle" class="heading" font-size="20">WirePayment</text>
+    <text x="995" y="322" text-anchor="middle" class="mono" font-size="15">bankCode</text>
+  </g>
+
+  <!-- One mapping arrow uses the gap between subtype cards; its separate triangle can be moved during repair. -->
+  <path d="M700 355V397" fill="none" stroke="#b56032" stroke-width="5"/>
+  <polygon points="688,397 700,414 712,397" fill="#b56032"/>
+
+  <!-- The two example rows make nullability and discriminator behavior concrete. -->
+  <g id="payment-table">
+    <rect x="120" y="420" width="1160" height="222" rx="13" fill="#f7f9fb" stroke="#66727d" stroke-width="3"/>
+    <rect x="120" y="420" width="1160" height="54" rx="13" fill="#66727d"/>
+    <path d="M120 458H1280" stroke="#66727d" stroke-width="30"/>
+    <text x="150" y="456" class="light" font-size="21">payment table</text>
+    <text x="1250" y="456" text-anchor="end" class="light" font-size="15">one row = one entity</text>
+
+    <rect x="145" y="490" width="1110" height="45" rx="7" fill="#eef2f5"/>
+    <text x="190" y="519" text-anchor="middle" class="heading" font-size="15">id</text>
+    <text x="355" y="519" text-anchor="middle" class="heading" font-size="15">amount</text>
+    <text x="590" y="519" text-anchor="middle" class="heading" font-size="15" fill="#8a5016">payment_kind</text>
+    <text x="850" y="519" text-anchor="middle" class="heading" font-size="15">card_last4</text>
+    <text x="1090" y="519" text-anchor="middle" class="heading" font-size="15">bank_code</text>
+
+    <line x1="270" y1="490" x2="270" y2="625" stroke="#c4ccd3"/>
+    <line x1="450" y1="490" x2="450" y2="625" stroke="#c4ccd3"/>
+    <line x1="730" y1="490" x2="730" y2="625" stroke="#c4ccd3"/>
+    <line x1="970" y1="490" x2="970" y2="625" stroke="#c4ccd3"/>
+    <line x1="145" y1="535" x2="1255" y2="535" stroke="#c4ccd3"/>
+    <line x1="145" y1="580" x2="1255" y2="580" stroke="#c4ccd3"/>
+
+    <rect x="145" y="536" width="1110" height="43" fill="#f4fbf6"/>
+    <text x="190" y="563" text-anchor="middle" class="mono" font-size="14">41</text>
+    <text x="355" y="563" text-anchor="middle" class="mono" font-size="14">25.00</text>
+    <text x="590" y="563" text-anchor="middle" class="mono" font-size="14">CARD</text>
+    <text x="850" y="563" text-anchor="middle" class="mono" font-size="14">4242</text>
+    <text x="1090" y="563" text-anchor="middle" class="muted" font-size="14">NULL</text>
+
+    <rect x="145" y="581" width="1110" height="43" fill="#faf7fd"/>
+    <text x="190" y="608" text-anchor="middle" class="mono" font-size="14">42</text>
+    <text x="355" y="608" text-anchor="middle" class="mono" font-size="14">80.00</text>
+    <text x="590" y="608" text-anchor="middle" class="mono" font-size="14">WIRE</text>
+    <text x="850" y="608" text-anchor="middle" class="muted" font-size="14">NULL</text>
+    <text x="1090" y="608" text-anchor="middle" class="mono" font-size="14">BOFAUS3N</text>
+  </g>
+
+  <!-- The final strip states the read benefit and schema cost in one glance. -->
+  <g id="query-summary">
+    <rect x="120" y="675" width="1160" height="90" rx="12" fill="#fff7ef" stroke="#b56032" stroke-width="2"/>
+    <text x="150" y="708" class="mono" font-size="16">select p from Payment p</text>
+    <text x="150" y="739" class="body" font-size="16">Hibernate can scan one table. Cost: subtype-only columns are unused for other types and must be nullable.</text>
+  </g>
+</svg>

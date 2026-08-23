@@ -1,244 +1,286 @@
-# Hibernate: Inheritance Mapping
+# JPA. Inheritance mapping
 
 ## Front
 
-How does Hibernate map a Java inheritance hierarchy, and when should each inheritance strategy be used?
+How does JPA store an entity inheritance hierarchy?
+
+Explain `SINGLE_TABLE`, `JOINED`, and `TABLE_PER_CLASS`: their tables, annotations, polymorphic queries, trade-offs, and the difference between an entity hierarchy and `@MappedSuperclass`.
 
 ## Back
 
-Relational databases do not support class inheritance directly. Hibernate maps an entity hierarchy using one of three Jakarta Persistence strategies:
+JPA maps one entity hierarchy with `@Inheritance` on its **root entity**:
+- `SINGLE_TABLE` uses one table and a discriminator
+- `JOINED` splits one object across related tables
+- `TABLE_PER_CLASS` gives every concrete entity a complete table.
 
-```java
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@Inheritance(strategy = InheritanceType.JOINED)
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-```
+A query of the root entity is polymorphic—it also returns its entity subtypes.
 
-`@MappedSuperclass` is another way to reuse persistent fields, but it does **not** create a polymorphic entity hierarchy.
+Start with the domain model, then choose the database shape that best matches the important queries and constraints.
 
-### Example hierarchy
+### Vocabulary first
+
+- **Root entity:** the first `@Entity` in the hierarchy; it declares `@Inheritance` and owns the identifier mapping.
+- **Concrete entity:** a non-abstract entity that can be instantiated and stored.
+- **Discriminator:** a column value such as `CARD` that identifies which subtype a row represents.
+- **Polymorphic query:** a query of a base entity type that includes instances of its entity subclasses.
+
+The examples use one abstract root and two concrete payment types:
+
+Each `public` class below belongs in its own `.java` file; they are grouped only to show the hierarchy together.
 
 ```java
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-abstract class Payment {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE) // change per strategy
+public abstract class Payment {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Column(nullable = false)
     private BigDecimal amount;
+
+    protected Payment() {
+    }
+
+    protected Payment(BigDecimal amount) {
+        this.amount = amount;
+    }
 }
 
 @Entity
-class CardPayment extends Payment {
-    private String cardLastFourDigits;
+public class CardPayment extends Payment {
+    private String cardLast4;
+
+    protected CardPayment() {
+    }
+
+    public CardPayment(BigDecimal amount, String cardLast4) {
+        super(amount);
+        this.cardLast4 = cardLast4;
+    }
 }
 
 @Entity
-class BankTransfer extends Payment {
-    private String iban;
+public class WirePayment extends Payment {
+    private String bankCode;
+
+    protected WirePayment() {
+    }
+
+    public WirePayment(BigDecimal amount, String bankCode) {
+        super(amount);
+        this.bankCode = bankCode;
+    }
 }
 ```
 
-The strategy is declared on the root entity and applies to its entity subclasses.
+The root owns `id`; entity subclasses inherit it. Put `@Inheritance` on `Payment`, not on every subtype. If the annotation or its `strategy` is omitted, JPA defaults to `SINGLE_TABLE`.
 
-### 1. `SINGLE_TABLE`
+### `SINGLE_TABLE`: one table plus a type marker
 
-All classes in the hierarchy are stored in one table. A discriminator identifies the concrete Java type.
+All root and subtype fields become columns of one table. Each object uses exactly one row. The discriminator tells JPA whether that row is a `CardPayment` or `WirePayment`.
+
+![Single-table inheritance stores every subtype in one table and distinguishes rows with a discriminator](svg/jpa-inheritance-single-table.svg)
 
 ```java
 @Entity
+@Table(name = "payment")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "payment_type")
-abstract class Payment { }
+@DiscriminatorColumn(name = "payment_kind")
+public abstract class Payment {
+    // id and amount
+}
 
 @Entity
 @DiscriminatorValue("CARD")
-class CardPayment extends Payment { }
+public class CardPayment extends Payment {
+    // cardLast4
+}
 
 @Entity
-@DiscriminatorValue("BANK")
-class BankTransfer extends Payment { }
+@DiscriminatorValue("WIRE")
+public class WirePayment extends Payment {
+    // bankCode
+}
 ```
 
-Simplified schema:
+If a required discriminator column is not configured, its portable defaults are name `DTYPE` and type `STRING`. For a string discriminator, the default value is the entity name, but explicit stable values avoid coupling stored data to a renamed entity.
 
-```text
-payment
-------------------------------------------------------------
-id | amount | payment_type | card_last_four_digits | iban
-```
+Why choose it:
 
-#### Advantages
+- A root query normally reads one table; Hibernate does not need subtype joins.
+- Inserts and subtype loads touch one table.
+- It is required for every compliant JPA provider and is the default strategy.
 
-- Usually the fastest polymorphic reads because only one table is scanned.
-- No joins are required to load a subclass.
-- Simple schema and queries.
+Costs:
 
-#### Disadvantages
+- Subtype-only columns are unused for other types, so they must be nullable at the column level.
+- A large hierarchy can create a wide, sparse table.
+- Subtype-specific invariants often need database `CHECK` constraints, triggers, or application validation instead of a simple `NOT NULL`.
 
-- Subclass-specific columns must normally be nullable.
-- The table can become wide and sparse with many subclasses.
-- Database constraints for subtype-specific fields are harder to express.
+### `JOINED`: normalized tables connected by the same ID
 
-If `@Inheritance` is omitted from an entity hierarchy, `SINGLE_TABLE` is the Jakarta Persistence default. Hibernate normally uses a `DTYPE` discriminator column when none is specified.
+The root table stores inherited fields. Each subtype table stores its own fields, and its primary key is also a foreign key to the corresponding root row. A `CardPayment` therefore occupies one `payment` row **and** one `card_payment` row.
 
-### 2. `JOINED`
-
-The root class and every subclass have separate tables. A subclass table's primary key is also a foreign key to the parent table.
+![Joined inheritance stores one object across a root row and a subtype row linked by the same identifier](svg/jpa-inheritance-joined.svg)
 
 ```java
 @Entity
+@Table(name = "payment")
 @Inheritance(strategy = InheritanceType.JOINED)
-abstract class Payment { }
+public abstract class Payment {
+    // id and amount
+}
 
 @Entity
+@Table(name = "card_payment")
 @PrimaryKeyJoinColumn(name = "payment_id")
-class CardPayment extends Payment { }
+public class CardPayment extends Payment {
+    // cardLast4
+}
+
+@Entity
+@Table(name = "wire_payment")
+@PrimaryKeyJoinColumn(name = "payment_id")
+public class WirePayment extends Payment {
+    // bankCode
+}
 ```
 
-Simplified schema:
+`@PrimaryKeyJoinColumn` customizes the subtype join column; it is not required when the default column mapping is suitable. A discriminator is not required for `JOINED`, because matching subtype rows can reveal the concrete type.
 
-```text
-payment
-------------------
-id | amount
+Why choose it:
 
-card_payment
-------------------------------------
-payment_id (PK, FK) | card_last_four_digits
+- Shared columns exist once, and the schema mirrors the class hierarchy.
+- Subtype columns can use subtype-specific `NOT NULL`, unique, and check constraints.
+- It is required for every compliant JPA provider.
 
-bank_transfer
----------------------------
-payment_id (PK, FK) | iban
-```
+Costs:
 
-#### Advantages
+- Loading a subtype requires at least one join with its parent table.
+- Inserting or deleting one subtype touches multiple tables.
+- In Hibernate, a root query commonly left-joins the subtype tables; deep or wide hierarchies can produce expensive SQL.
 
-- Normalized schema with no unused subclass columns.
-- Subclass-specific columns can use `NOT NULL` and other constraints.
-- Shared fields exist in one place.
+### `TABLE_PER_CLASS`: one complete table per concrete entity
 
-#### Disadvantages
+Every concrete subtype has its own table containing both inherited and subtype-specific columns. With an abstract `Payment`, there is no `payment` row shared by the two concrete types.
 
-- Loading a subclass requires joining its table with parent tables.
-- A polymorphic query may join every subclass table.
-- Inserts, updates, and deletes may touch multiple tables.
-
-Use it when data integrity and normalization matter more than minimizing joins.
-
-### 3. `TABLE_PER_CLASS`
-
-Every concrete entity has its own table containing both inherited and subclass-specific fields.
+![Table-per-class inheritance duplicates inherited columns and combines concrete tables for a polymorphic query](svg/jpa-inheritance-table-per-class.svg)
 
 ```java
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-abstract class Payment { }
-
-@Entity
-class CardPayment extends Payment { }
-
-@Entity
-class BankTransfer extends Payment { }
-```
-
-Simplified schema:
-
-```text
-card_payment
---------------------------------------------
-id | amount | card_last_four_digits
-
-bank_transfer
-------------------
-id | amount | iban
-```
-
-#### Advantages
-
-- A concrete subtype can be read from one table without joins.
-- Each table can enforce constraints for its concrete type.
-- No nullable columns belonging to unrelated subclasses.
-
-#### Disadvantages
-
-- Inherited columns are duplicated across tables.
-- Schema changes to a base field affect every subclass table.
-- Polymorphic queries require `UNION`/`UNION ALL` across the hierarchy and can be expensive.
-- Associations to the base type are difficult to enforce with a normal database foreign key.
-
-Use it sparingly, usually only for small hierarchies where queries target concrete types rather than the root type.
-
-### 4. `@MappedSuperclass`
-
-A mapped superclass contributes persistent fields to its subclasses, but it is not an entity and has no table of its own.
-
-```java
-@MappedSuperclass
-abstract class BaseEntity {
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    private Instant createdAt;
+public abstract class Payment {
+    // id and amount
 }
 
 @Entity
-class Customer extends BaseEntity { }
+@Table(name = "card_payment")
+public class CardPayment extends Payment {
+    // inherited id and amount, plus cardLast4
+}
 
 @Entity
-class Product extends BaseEntity { }
+@Table(name = "wire_payment")
+public class WirePayment extends Payment {
+    // inherited id and amount, plus bankCode
+}
 ```
 
-`Customer` and `Product` are independent entity types. This query is invalid because `BaseEntity` is not an entity:
+Why choose it:
 
-```java
-// Invalid JPQL/HQL
-select b from BaseEntity b
-```
+- Reading one known concrete type needs only its table.
+- Each concrete table can enforce constraints appropriate to that type.
+- No irrelevant subtype columns and no parent-row join are needed.
 
-Use `@MappedSuperclass` for mapping reuse when polymorphic queries and associations to the base type are not needed.
+Costs:
 
-### Polymorphic queries
+- Inherited columns and indexes are duplicated; changing a base mapping can require changes to every concrete table.
+- A foreign key to the abstract root is difficult to represent as one ordinary database foreign key.
+- Hibernate implements a root query with a `UNION`-style derived table, which gets more expensive as the hierarchy grows.
+- **Portability warning:** Jakarta Persistence 3.2 makes provider support for this strategy optional.
 
-When the root is an entity, a query against it returns instances of the root and its entity subclasses:
+Use it only after checking provider support and query plans; it fits small hierarchies queried mainly by concrete type.
+
+### One JPQL query, three SQL shapes
+
+The JPQL stays the same because `Payment` is an entity:
 
 ```java
 List<Payment> payments = entityManager.createQuery(
-        "select p from Payment p",
+        "select p from Payment p order by p.id",
         Payment.class
 ).getResultList();
 ```
 
-The generated SQL depends on the mapping:
+It can return both `CardPayment` and `WirePayment`. The provider translates that semantic query to the chosen mapping:
 
-- `SINGLE_TABLE` → scan one table and inspect the discriminator.
-- `JOINED` → join the root and subclass tables.
-- `TABLE_PER_CLASS` → union the tables in the hierarchy.
-- `@MappedSuperclass` → no polymorphic query is possible.
+| Strategy | Rows that represent one subtype object | Typical Hibernate root-query shape |
+|---|---:|---|
+| `SINGLE_TABLE` | One row in one hierarchy table | One table scan; inspect discriminator |
+| `JOINED` | Root row + subtype row | Root table with joins to subtype tables |
+| `TABLE_PER_CLASS` | One row in its concrete table | Union of concrete tables |
 
-### Comparison
+SQL shape is provider- and database-dependent; use generated SQL and real execution plans for performance decisions.
 
-| Mapping | Database shape | Polymorphic query | Main trade-off |
-|---|---|---|---|
-| `SINGLE_TABLE` | One table for the hierarchy | One table scan | Fast, but wide and nullable |
-| `JOINED` | Root table plus one table per subclass | Multiple joins | Normalized, but join-heavy |
-| `TABLE_PER_CLASS` | One complete table per concrete class | Multiple unions | Independent tables, but duplicated data |
-| `@MappedSuperclass` | One table per concrete entity | Not supported | Reuses mappings without entity polymorphism |
+### `@MappedSuperclass` is reuse, not entity polymorphism
 
-### Practical choice
+A mapped superclass contributes mappings to its entity subclasses but is **not** an entity, has no separate table, and cannot be queried or passed to `EntityManager` operations as an entity type.
 
-1. Start with `SINGLE_TABLE` for a small, stable hierarchy and frequent polymorphic queries.
-2. Choose `JOINED` when subtype constraints and a normalized schema are more important.
-3. Consider `TABLE_PER_CLASS` only when concrete-type queries dominate and the hierarchy is small.
-4. Use `@MappedSuperclass` when only fields and mappings need to be inherited.
-5. Prefer composition or associations when the relationship is not truly an **is-a** relationship.
+```java
+@MappedSuperclass
+public abstract class AuditedEntity {
+    @Id
+    @GeneratedValue
+    private Long id;
 
-### Key idea
+    @Column(nullable = false, updatable = false)
+    private Instant createdAt;
+}
 
-> `SINGLE_TABLE` avoids joins, `JOINED` preserves normalization, `TABLE_PER_CLASS` duplicates inherited columns, and `@MappedSuperclass` provides reuse without polymorphism.
+@Entity
+public class Customer extends AuditedEntity {
+}
 
-### Official reference
+@Entity
+public class Product extends AuditedEntity {
+}
+```
 
-- [Hibernate ORM User Guide: Inheritance](https://docs.hibernate.org/orm/current/userguide/html_single/#entity-inheritance)
+`Customer` and `Product` are independent entity roots. This JPQL is invalid because `AuditedEntity` is not an entity:
+
+```java
+// Invalid JPQL
+select a from AuditedEntity a
+```
+
+Use an **abstract entity root** when you need root queries or associations such as `@ManyToOne Payment payment`. Use `@MappedSuperclass` when you only want inherited fields/mappings. A subclass may override an inherited mapping with `@AttributeOverride` or `@AssociationOverride`.
+
+### Selection guide
+
+| Need | Usually start with |
+|---|---|
+| Frequent polymorphic reads; small, stable hierarchy | `SINGLE_TABLE` |
+| Strong subtype constraints; normalized schema | `JOINED` |
+| Mostly concrete-type reads; small hierarchy; verified provider support | `TABLE_PER_CLASS` |
+| Field/mapping reuse without root queries or root associations | `@MappedSuperclass` |
+
+Before choosing:
+
+1. Confirm the relationship is truly **is-a**; otherwise prefer composition or associations.
+2. List the important queries: root-polymorphic or concrete-type?
+3. Decide where subtype constraints must be enforced.
+4. Inspect generated DDL and SQL against the production database.
+5. Do not mix strategies inside one hierarchy in portable code; support for that combination is not required.
+
+### Remember
+
+> `SINGLE_TABLE` trades nullable columns for simple reads; `JOINED` trades joins for normalization; `TABLE_PER_CLASS` trades duplicated schema and unions for independent concrete tables; `@MappedSuperclass` provides mapping reuse without an entity hierarchy.
+
+## Sources
+
+- [Jakarta Persistence 3.2 specification — inheritance and mapping strategies](https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2#inheritance)
+- [Jakarta Persistence 3.2 API — `InheritanceType`](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/inheritancetype)
+- [Jakarta Persistence 3.2 API — `DiscriminatorColumn`](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/discriminatorcolumn)
+- [Jakarta Persistence 3.2 API — `MappedSuperclass`](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/mappedsuperclass)
+- [Hibernate ORM 7.2 User Guide — inheritance](https://docs.hibernate.org/orm/7.2/userguide/html_single/#entity-inheritance)
