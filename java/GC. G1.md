@@ -1,372 +1,276 @@
-# Garbage Collection: G1
+# GC. Garbage-First (G1)
 
 ## Front
 
-How does the **Garbage-First (G1) collector** work, how does it organize heap memory, and how do young, concurrent-marking, and mixed collections reclaim space?
+How does the **Garbage-First (G1) garbage collector** organize the heap, reclaim young and old objects, and pursue a pause-time goal?
 
 ## Back
 
-**G1**, or Garbage-First, is HotSpot's region-based, generational, incremental, parallel, mostly concurrent, evacuating garbage collector.
+**Garbage-First (G1)** is HotSpot's region-based, **generational**, incremental, parallel, mostly concurrent, stop-the-world, evacuating collector. It divides the heap into equal-sized regions and reclaims selected regions by copying their live objects elsewhere. Regions with much garbage and relatively little live data are attractive old-generation candidates—hence “garbage first.”
 
-G1 aims to balance throughput with predictable pauses. It tries to meet a configurable pause-time goal by choosing how many heap regions to collect during each stop-the-world pause.
+G1 is designed to balance throughput and pause latency. It predicts the cost of a collection set and tries to keep each evacuation pause near a configurable **soft goal**. It is not a real-time collector and cannot guarantee a maximum pause.
 
-G1 is the default collector on server-class HotSpot configurations in Java 25 and Java 26.
+In current HotSpot, G1 is normally the default collector. This card first explains the region layout, then evacuation and remembered sets, and finally the Young-Only → marking → Mixed collection cycle.
 
 ```bash
-# Usually selected automatically on a server-class machine
+# Usually selected ergonomically
 java -jar application.jar
 
-# Select it explicitly
+# Select G1 explicitly
 java -XX:+UseG1GC -jar application.jar
 ```
 
-### Main characteristics
+### Core vocabulary
 
-- **Generational:** objects are grouped logically into young and old generations.
-- **Region-based:** the heap is divided into equally sized regions.
-- **Non-contiguous generations:** Eden, survivor, and old regions may be scattered throughout the heap.
-- **Evacuating and compacting:** live objects are copied out of selected regions, compacting them in destination regions.
-- **Incremental:** G1 reclaims selected regions rather than compacting the whole heap in every collection.
-- **Parallel:** multiple GC threads perform work during collection pauses.
-- **Mostly concurrent:** old-generation liveness marking runs mostly alongside the application.
-- **Adaptive:** G1 changes young-generation size and collection-set size based on measured pause costs.
+| Term | Meaning |
+|---|---|
+| **Region** | One equal-sized, contiguous heap segment; the basic allocation and reclamation unit |
+| **Young generation** | The current Eden and Survivor regions |
+| **Old generation** | Old regions plus humongous-object regions |
+| **Collection set** | Source regions G1 attempts to reclaim in one stop-the-world pause |
+| **Evacuation** | Copying live objects out of collection-set regions into destination regions |
+| **Remembered set** | Locations outside the collection set that may point into it |
+| **Concurrent marking** | Finding old-generation liveness while application threads mostly continue running |
+| **Mixed collection** | A pause that evacuates young regions plus selected old regions |
 
-> G1 is not fully concurrent. Its normal space-reclamation mechanism—evacuating live objects from selected regions—occurs during stop-the-world pauses.
+> **G1 is generational.** “Region-based” changes the physical layout; it does not remove the young/old generations.
 
-## Memory organization
+## Heap organization
 
-![G1 memory organization](svg/gc-g1-memory-organization.svg)
+G1 splits the Java heap into many equal-sized regions. A region's role can change after collection, so Eden, Survivor, and Old are **logical sets of regions**, not three permanently contiguous memory areas.
 
-### Equal-sized heap regions
+![G1 heap regions, remembered-set tracking, and humongous allocation](svg/gc-g1-memory-organization.svg)
 
-G1 partitions the Java heap into many equally sized regions. Each region is a contiguous range of virtual memory and is the basic unit of allocation and reclamation.
+Read the top grid as physical heap order. Its scattered colours show that regions belonging to the same generation need not be adjacent. The lower-left panel shows how a card records a cross-region reference; the lower-right panel shows why a humongous object needs contiguous regions.
+
+### Region roles
+
+At a particular moment, a region can be:
+
+- **Free** — available for a new role.
+- **Eden** — receives most new objects.
+- **Survivor** — holds young objects that survived an evacuation.
+- **Old** — holds promoted or long-lived objects.
+- **Humongous start/continuation** — holds one unusually large object across contiguous regions.
+
+Most objects are allocated in Eden, commonly through a thread-local allocation buffer. After a young collection, a live young object is copied to Survivor or promoted to Old. Dead objects are not copied.
 
 ```text
-Java heap
-
-| region | region | region | region | ... | region |
+Free → Eden → Survivor → Old
+          │         │       │
+          └─────────┴───────┴── selected and evacuated → Free
 ```
 
-At a particular moment, a region may be:
+That path is a mental model, not a mandatory journey. An object can be promoted directly to Old when it is old enough or Survivor space is insufficient.
 
-- **Free** — available for assignment.
-- **Eden** — receives most new object allocations.
-- **Survivor** — contains young objects that survived a young collection.
-- **Old** — contains promoted or long-lived objects.
-- **Humongous start/continuation** — stores an unusually large object across contiguous regions.
+### Region size
 
-The JVM chooses region size ergonomically from the maximum heap size, targeting roughly 2,048 regions. In Java 26 the automatic size is capped at 32 MB, while an explicitly configured region size must be a power of two from 1 MB through 512 MB:
+G1 normally chooses region size from the maximum heap size, targeting roughly 2,048 regions. In JDK 26, the ergonomic size is capped at 32 MB. An explicit `G1HeapRegionSize` must be a power of two from 1 MB through 512 MB:
 
 ```bash
--XX:G1HeapRegionSize=8m
+java -XX:+UseG1GC -XX:G1HeapRegionSize=8m -jar application.jar
 ```
 
-Region size should normally be left to G1. Changing it affects remembered-set cost, evacuation granularity, and which objects are classified as humongous.
+Leave this ergonomic unless measurements show a specific problem. Region size changes evacuation granularity, metadata trade-offs, and the threshold for humongous objects.
 
-### Generations are logical sets of regions
+## Evacuation: how G1 reclaims space
 
-The young and old generations do not have to occupy two continuous areas:
+A normal young or Mixed collection is a **stop-the-world, parallel evacuation pause**. Application threads stop while GC workers:
+
+- find roots entering the collection set;
+- copy live objects to Survivor or Old destination regions;
+- update references to the copied objects;
+- leave dead objects behind;
+- turn completely evacuated source regions into Free regions.
 
 ```text
-Physical region order:
+Before:  source region = [live][dead][live][dead]
+                              │          │
+Pause:                        └── copy ──┘
 
-| Eden | Old | Free | Survivor | Old | Eden | Old | Free |
-
-Logical young generation = Eden + Survivor regions
-Logical old generation   = Old + Humongous regions
+After:   destination = [live][live][free space]
+         source region = Free
 ```
 
-G1 can reassign a free region to the role currently required. This lets the young generation grow or shrink without moving a fixed boundary between contiguous young and old spaces.
+Copying packs live objects together, so evacuation compacts the collected portion of the heap. G1 does **not** normally relocate these objects while application threads run; this is an important difference from ZGC.
 
-### Eden allocation
+### Where surviving objects go
 
-Normal objects are allocated into Eden regions, commonly through thread-local allocation buffers inside Eden:
+| Source object | Normal destination |
+|---|---|
+| Young and still below the aging threshold | Survivor region |
+| Young and ready for promotion | Old region |
+| Object from a selected Old region | Another Old region |
+| Dead object | Not copied |
+
+The pause cost grows with the live bytes to copy, roots and cards to scan, references to update, reference-processing work, and available parallel GC workers. A region full of garbage is cheap to evacuate; a region full of live, highly connected objects is expensive.
+
+## Remembered sets and card barriers
+
+Suppose an Old object points into an Eden region selected for evacuation:
 
 ```text
-Application allocation
-        ↓
-thread-local allocation buffer
-        ↓
-Eden region
+Old object ─────────▶ young object in collection set
 ```
 
-When G1 reaches its chosen young-generation size, it performs a young evacuation pause.
+G1 must update that Old reference if the young object moves, but scanning the complete old generation during every young collection would be too expensive.
 
-Humongous objects are an important exception: they are allocated directly into contiguous regions treated as part of the old generation.
+G1 divides the heap logically into small **cards**—512 bytes by default. A post-write barrier marks the card containing a potentially relevant reference write. Concurrent refinement processes dirty-card information and helps build remembered-set data.
 
-### Region lifecycle
+At collection time, remembered-set entries identify approximate locations outside the collection set that may contain incoming references. G1 scans those locations as heap roots instead of scanning the whole heap.
 
 ```text
-Free
-  ↓ assign for allocation
-Eden
-  ↓ survives a young collection
-Survivor
-  ↓ survives enough collections
-Old
-  ↓ selected and successfully evacuated
-Free
+external roots + code roots + remembered-set heap roots
+                              ↓
+                  trace the collection set
+                              ↓
+                    copy reachable objects
 ```
 
-The exact path is adaptive. A young object may be promoted directly to old if it has reached the tenuring threshold or if survivor capacity is insufficient.
+Remembered sets save scanning work but consume CPU and metadata. Many cross-region writes can increase refinement work and the `Merge Heap Roots` or `Scan Heap Roots` parts of a pause.
 
-## Young evacuation collection
+### Two write-barrier responsibilities
 
-A normal young collection is a **stop-the-world, parallel evacuation pause**.
+| Barrier responsibility | Observes | Purpose |
+|---|---|---|
+| **SATB pre-write marking barrier** | Old reference before overwrite | Preserves the beginning-of-marking reachability view |
+| **Card/remembered-set post-write barrier** | Written location and new relationship | Records possible cross-region references for partial collection |
 
-The collection set contains the young-generation regions selected for collection—normally the complete current young generation.
+G1 needs both. They may both run around a reference update, but they solve different correctness problems.
 
-```text
-Before:
+## The G1 collection cycle
 
-Eden:     [live][dead][dead][live]
-Survivor: [live][dead][live]
+At the highest level, G1 alternates between a **Young-Only phase** and a **Space-Reclamation phase**. Concurrent marking forms the transition by discovering which Old regions contain reclaimable space.
 
-During the pause:
+![G1 Young-Only, concurrent-marking, Mixed collection, and evacuation cycle](svg/gc-g1-collection-cycle.svg)
 
-young live objects ──copy──▶ Survivor or Old
+The upper half is the time sequence. The lower half zooms into one evacuation pause: green live objects move to compact destinations, dead objects remain behind, and successfully evacuated source regions become Free.
 
-After:
+### Young-Only phase
 
-old Eden and Survivor source regions ──▶ Free
-```
-
-The destination depends on object age:
-
-- A sufficiently young surviving object is copied to a survivor region.
-- An older surviving object is promoted to an old region.
-- Dead objects are not copied.
-
-Because live objects are packed into destination regions, evacuation also compacts the collected portion of the heap.
-
-### Why evacuation needs a pause
-
-Unlike ZGC, ordinary G1 does not relocate objects while application threads continue using them. G1 stops application threads, copies objects, updates references, and then resumes the application.
-
-The pause duration therefore depends on work such as:
-
-- Number of regions in the collection set.
-- Amount of live data that must be copied.
-- Number of references that must be scanned and updated.
-- Remembered-set and card-processing work.
-- Number of available parallel GC threads.
-- Reference processing and operating-system effects.
-
-G1 predicts these costs from previous collections and adjusts young-generation and collection-set sizes to try to meet its pause target.
-
-## Remembered sets and cards
-
-G1 must find references entering a collection set without scanning every object outside it.
-
-For example, an old object may point to a young object:
-
-```text
-Old object ─────────▶ object in an Eden region
-```
-
-If that Eden region is evacuated, G1 must find and update this reference.
-
-### Card table
-
-G1 divides the heap logically into small **cards**. The default card size is 512 bytes.
-
-When application code writes an object reference, a post-write barrier records that the corresponding card may contain a relevant cross-region reference:
-
-```text
-object.field = youngObject;
-        ↓
-post-write barrier dirties the containing card
-```
-
-### Remembered set
-
-A remembered set describes approximate locations outside a collection set that may contain references into it. Entries point to cards rather than recording every individual reference, reducing metadata size.
-
-Concurrent refinement threads process dirty-card information and update remembered-set data while the application runs. Work not completed concurrently may spill into the next collection pause.
-
-At collection time, G1 merges and trims remembered-set information for the selected regions. These incoming-reference locations become heap roots for evacuation.
-
-```text
-GC roots
-+ code roots
-+ remembered-set heap roots
-        ↓
-trace and evacuate objects in the collection set
-```
-
-Remembered sets avoid a complete old-generation scan during every young collection, but they consume memory and CPU and can lengthen pauses when cross-region connectivity is high.
-
-## G1 collection cycle
-
-![G1 collection cycle](svg/gc-g1-collection-cycle.svg)
-
-At a high level, G1 alternates between two phases:
-
-```text
-Young-Only phase
-        ↓ old occupancy reaches IHOP
-Concurrent marking transition
-        ↓ identifies profitable old regions
-Space-Reclamation phase with Mixed collections
-        ↓ no more worthwhile old candidates
-Young-Only phase
-```
-
-### 1. Young-Only phase
-
-G1 performs normal young evacuation pauses:
+G1 performs Normal young collections. A normal young collection typically evacuates the entire current young generation:
 
 ```text
 Normal Young GC → Normal Young GC → Normal Young GC → ...
 ```
 
-Surviving objects are copied into survivor or old regions. As promotions accumulate, old-generation occupancy grows.
+Survivors age or promote, so Old occupancy gradually grows. These pauses are stop-the-world even though they use several GC worker threads in parallel.
 
-### 2. Initiating Heap Occupancy threshold
+### Adaptive IHOP and Concurrent Start
 
-When old-generation occupancy reaches the **Initiating Heap Occupancy Percent**, G1 schedules a **Concurrent Start** collection.
+**Initiating Heap Occupancy Percent (IHOP)** is the Old occupancy threshold used to trigger the marking transition. Adaptive IHOP is enabled by default. G1 predicts when marking must begin from observed marking duration and the amount of Old allocation expected while marking runs.
 
-G1 uses Adaptive IHOP by default. It predicts when marking must start from:
+The initial `InitiatingHeapOccupancyPercent` is 45% until G1 has enough observations for a better prediction. This is a starting input, not a fixed “collect Old at 45%” rule when Adaptive IHOP is active.
 
-- Previous concurrent-marking duration.
-- Allocation and promotion rate during marking.
-- Available old-generation reserve.
+When the threshold is reached, G1 schedules a **Concurrent Start** young collection. This is still a stop-the-world young evacuation, but it also establishes the logical starting snapshot for marking. If G1 discovers that marking is unnecessary, it can perform a short Concurrent Mark Undo and remain in the Young-Only phase.
 
-The default initial IHOP value is 45%, but after enough observations the adaptive prediction is more important than that initial number.
+### Concurrent marking with SATB
 
-### 3. Concurrent Start pause
+After Concurrent Start, GC threads mark while application threads run. Normal young collections can still occur during this interval.
 
-Concurrent Start is still a young evacuation pause, but it also establishes the snapshot used for old-generation marking.
+G1 uses **Snapshot-At-The-Beginning (SATB)** marking. Objects reachable at the logical start are treated as live for this marking cycle. A pre-write barrier preserves overwritten old references when necessary, preventing concurrent mutations from hiding part of that starting graph.
 
-After the pause, concurrent marking proceeds while application threads run. Normal young collections may still occur during marking.
+An object that becomes unreachable after the snapshot can remain conservatively live until the next marking cycle. This is **floating garbage**, not necessarily a memory leak.
 
-### 4. Concurrent marking
+### Remark, Cleanup, and Prepare Mixed
 
-G1 marks reachable objects in the old generation using **Snapshot-At-The-Beginning (SATB)**.
+Marking ends with two special stop-the-world pauses:
 
-SATB treats objects reachable at the beginning of marking as live for the current cycle. A pre-write barrier records overwritten references when needed so that concurrent application mutations do not make the collector miss an object from that logical snapshot.
+- **Remark** completes marking, processes reference objects, performs class unloading when enabled, reclaims completely empty regions, and cleans marking structures.
+- Between Remark and Cleanup, G1 calculates liveness and region connectivity used for candidate selection.
+- **Cleanup** finalizes whether a Space-Reclamation phase should follow.
 
-An object that becomes unreachable after the snapshot may remain conservatively considered live until a later cycle.
+If reclaiming Old space is worthwhile, one **Prepare Mixed** young collection finishes the Young-Only phase and prepares G1 for Mixed collections.
 
-### 5. Remark pause
+### Space-Reclamation phase and Mixed collections
 
-The stop-the-world Remark pause:
-
-- Completes marking information.
-- Processes reference objects.
-- Performs class unloading.
-- Reclaims completely empty regions when possible.
-- Cleans internal marking data.
-
-G1 calculates liveness and collection efficiency for old regions after marking.
-
-### 6. Cleanup and Prepare Mixed
-
-The Cleanup pause finalizes whether old-generation space reclamation is worthwhile and identifies candidate regions.
-
-If it is worthwhile, G1 performs a Prepare Mixed young collection and enters the Space-Reclamation phase.
-
-### 7. Space-Reclamation phase
-
-G1 performs a sequence of **Mixed collections**:
+Each Mixed collection is a stop-the-world evacuation whose collection set contains:
 
 ```text
-Mixed GC collection set
-= all selected young regions
-+ selected old candidate regions
+current young regions
++ selected Old candidate regions
+= Mixed collection set
 ```
 
-Each Mixed collection is a stop-the-world evacuation pause. It reclaims the young generation and a pause-sized subset of old regions.
+G1 prefers Old candidates with high expected **collection efficiency**: much reclaimable space, little live data to copy, lower connectivity, and a predicted cost that fits the pause budget.
 
-G1 prefers old regions with:
+Candidate selection includes mandatory regions for progress, additional candidates when predicted time remains, and optional candidates that can be attempted if the pause still has room. Successful pauses incrementally reclaim Old space without compacting the whole heap at once.
 
-- Much reclaimable space.
-- Relatively little live data to copy.
-- Favorable connectivity and predicted collection cost.
+The Space-Reclamation phase ends after useful marking candidates are exhausted. G1 then returns to Young-Only collections.
 
-This is the “garbage-first” idea: collect regions expected to return the most space for the pause-time cost.
+## What is concurrent and what stops the application?
 
-The phase ends when no remaining old candidate is profitable enough to collect. G1 then returns to the Young-Only phase.
+| Activity | Application threads |
+|---|---|
+| Normal Young GC | **Stopped** |
+| Concurrent Start young collection | **Stopped** |
+| Concurrent marking | Usually **running** alongside GC threads |
+| Remark and Cleanup | **Stopped** |
+| Prepare Mixed | **Stopped** |
+| Mixed GC | **Stopped** |
+| Full GC fallback | **Stopped** |
 
-## Collection set
+“Mostly concurrent” describes global marking. G1's normal space reclamation—copying live objects and updating their references—occurs in stop-the-world pauses.
 
-The **collection set** is the set of source regions G1 will attempt to reclaim in one pause.
+## Why the name “Garbage-First”?
 
-Young collection:
+Concurrent marking estimates live bytes and connectivity for Old regions. G1 uses that information plus its pause-cost model to choose regions expected to return useful free space efficiently.
 
-```text
-Collection set = young regions
-```
-
-Mixed collection:
-
-```text
-Collection set = young regions + selected old regions
-```
-
-G1 sizes the set using a cost model and the pause-time goal. Mandatory candidate regions ensure progress; extra old regions may be added if predicted time remains, and optional candidates can be attempted if the pause still has room.
-
-Successful evacuation transforms every completely evacuated source region into a free region.
+It does **not** simply choose the region with the greatest number of dead bytes. A sparse but highly connected region may cost more to collect than another candidate. G1 also must include young regions and mandatory Old candidates, so the final collection set is constrained by correctness and progress as well as profitability.
 
 ## Humongous objects
 
-An object is **humongous** when its size is at least half of one G1 region.
+An object is **humongous** when its size is at least half of one G1 region:
 
 ```text
 region size = 8 MB
 humongous threshold = 4 MB
 ```
 
-Humongous allocation differs from normal allocation:
+Humongous objects:
 
-- It goes directly into the old generation rather than Eden.
-- It occupies one or more contiguous regions.
-- The object begins at the start of the first region.
-- Unused space at the end of the final region cannot be used until the complete object is reclaimed.
-- G1 normally avoids moving it.
+- are allocated directly into a contiguous sequence of Old-generation regions;
+- begin at the start of the first region;
+- leave the unused tail of the final region unavailable until the object is reclaimed;
+- can trigger an early Concurrent Start check;
+- are normally reclaimed after liveness analysis or opportunistically during a pause;
+- are moved only in a very slow last-resort effort.
 
-```text
-| Humongous start | Humongous continuation | final region + unusable tail |
-```
-
-Humongous objects can cause:
-
-- Internal fragmentation in the final region.
-- Premature marking cycles.
-- Difficulty finding enough contiguous free regions.
-- Full GC or `OutOfMemoryError` even when total free bytes appear sufficient.
-
-G1 can reclaim unreachable humongous objects after whole-heap liveness information is available and may opportunistically reclaim some during ordinary pauses. Moving a humongous object is a very slow last-resort operation.
-
-If humongous allocation is a measured problem, investigate the allocation pattern first. Increasing `G1HeapRegionSize` can raise the humongous threshold, but it also makes evacuation coarser and changes remembered-set behavior.
+Frequent humongous allocation can increase fragmentation and heap pressure. Increasing region size raises the humongous threshold, but also makes each evacuation unit coarser. Change it only after confirming humongous objects are the actual problem.
 
 ## Pause-time goal
 
-The Java 26 ergonomic default is:
+In JDK 26, the ergonomic G1 default is:
 
 ```bash
 -XX:MaxGCPauseMillis=200
 ```
 
-This is a **soft goal**, not a limit or guarantee. G1 uses it to choose young-generation and collection-set sizes.
+This is a **goal**, not a deadline. G1 uses measured costs to choose young-generation size and collection-set work.
 
-A lower goal generally causes:
+| Lower pause goal | Higher pause goal |
+|---|---|
+| Usually smaller young generation | Usually larger young generation |
+| More frequent pauses | Less frequent pauses |
+| Less work permitted per pause | More work permitted per pause |
+| Can reduce throughput | Can improve throughput but permit longer pauses |
 
-- Smaller young generations.
-- More frequent collections.
-- Less work per pause.
-- Potentially lower throughput.
+G1 can miss the goal when mandatory work does not fit—for example, when much live data must be copied, remembered-set processing is large, objects are pinned, or the operating system does not schedule enough CPU time.
 
-A higher goal generally allows:
+## Evacuation failure and Full GC
 
-- Larger young generations.
-- Less frequent collections.
-- More work per pause.
-- Potentially higher throughput.
+An **evacuation failure** means G1 could not move every required object from a selected region:
 
-G1 may miss the target when the mandatory work does not fit—for example, because too much live data must be copied, remembered-set processing is large, or the system does not schedule enough CPU time.
+- **Allocation failure:** destination space was insufficient.
+- **Pinned failure:** an object could not move safely, for example while native code uses a critical JNI array access.
 
-## Enabling and observing G1
+The failed source region cannot immediately become Free. G1 makes failed regions high-priority candidates for later evacuation.
+
+If incremental collections cannot free space, G1 can fall back to a stop-the-world **Full GC** that compacts the entire heap in place. Full GC is a slow recovery path to investigate, not a normal phase of the G1 cycle.
+
+## Observe before tuning
+
+A useful starting command is:
 
 ```bash
 java \
@@ -376,154 +280,55 @@ java \
   -jar application.jar
 ```
 
-For detailed phase timing:
+For phase detail:
 
 ```bash
 -Xlog:gc+phases=debug
 ```
 
-Useful signals include:
+Watch for:
 
-- Young and Mixed pause durations.
-- Eden, Survivor, Old, and Humongous region counts.
-- Live bytes copied during evacuation.
-- Promotion rate and old-generation occupancy.
-- Concurrent marking duration.
-- `Merge Heap Roots`, `Scan Heap Roots`, and `Object Copy` time.
-- Evacuation failures.
-- Full GC occurrences.
-- Application latency percentiles and throughput.
+- Young and Mixed pause duration;
+- Eden, Survivor, Old, and Humongous region counts;
+- `Merge Heap Roots`, `Scan Heap Roots`, and `Object Copy` time;
+- promotion rate and Old occupancy;
+- concurrent-marking duration;
+- evacuation failures and Full GC;
+- application latency percentiles and throughput.
 
-Java Flight Recorder and Java Mission Control can correlate GC behavior with allocation hot spots and application latency.
-
-## Practical tuning order
-
-G1 is designed to work well with ergonomic defaults. Tune from evidence rather than copying a long option list.
-
-### 1. Set a realistic maximum heap
-
-```bash
--Xmx8g
-```
-
-The heap needs room for the live set, allocation bursts, promotion during concurrent marking, and evacuation destination regions.
-
-Too little reserve can produce evacuation failure or Full GC. Too much heap can increase footprint and delay problem detection.
-
-### 2. Adjust the pause goal only if necessary
-
-```bash
--XX:MaxGCPauseMillis=150
-```
-
-Measure whether the lower target improves application tail latency without causing excessive GC frequency or throughput loss.
-
-### 3. Avoid fixing young-generation size initially
-
-Explicitly fixing `-Xmn`, `NewSize`, or `MaxNewSize` can prevent G1 from resizing the young generation to meet the pause goal.
-
-Let G1 adapt young size unless measurements prove that a constraint is necessary.
-
-### 4. Investigate Full GC rather than accepting it
-
-Common causes include:
-
-- Concurrent marking starts too late.
-- Promotion or allocation outpaces reclamation.
-- Too little evacuation reserve.
-- Humongous-object fragmentation.
-- Pinned objects or insufficient destination space cause evacuation failure.
-
-Possible responses depend on evidence: reduce allocation, increase heap headroom, let marking start earlier, provide more concurrent-marking CPU, or address humongous allocation patterns.
-
-### 5. Change region size only for a demonstrated reason
-
-Larger regions may:
-
-- Reduce the number of cross-region references.
-- Reduce the number of objects classified as humongous.
-- Increase the amount of live data tied to one evacuation unit.
-
-Smaller regions provide finer-grained collection choices but create more region and remembered-set metadata.
-
-## Evacuation failure and Full GC
-
-An **evacuation failure** means G1 could not move every object from a selected region.
-
-Typical reasons are:
-
-- No sufficient destination space is available.
-- An object is pinned and cannot move safely.
-
-The affected region cannot immediately become free. G1 schedules failed regions as high-priority collection candidates for later attempts.
-
-If G1 cannot reclaim enough space, it can fall back to a stop-the-world **Full GC** that performs in-place compaction of the entire heap. This may be very slow and is normally a condition to investigate rather than routine G1 behavior.
-
-## When G1 is a good choice
-
-- General server applications needing a balance of latency and throughput.
-- Heaps from moderate sizes to tens of gigabytes or more.
-- Workloads with changing allocation and promotion rates.
-- Applications that can tolerate pauses around tens or hundreds of milliseconds.
-- Systems where a long whole-heap pause from a throughput collector is undesirable.
-- Applications that benefit from a mature adaptive default collector.
-
-## When another collector may be better
-
-- Use **ZGC** when extremely short tail latency is the primary objective and additional concurrent overhead is acceptable.
-- Use **Parallel GC** for batch workloads where maximum throughput matters and long pauses are acceptable.
-- Use **Serial GC** for very small heaps or constrained environments where collector simplicity matters.
-
-## G1 versus ZGC
-
-| Property | G1 | ZGC |
-|---|---|---|
-| Default on server-class HotSpot | Yes | No |
-| Memory organization | Equal-sized regions | Dynamic ZPages / regions |
-| Generational | Yes | Yes |
-| Global marking | Mostly concurrent | Concurrent |
-| Normal object relocation | Stop-the-world | Concurrent |
-| Typical objective | Balance latency and throughput | Extremely low pauses |
-| Pause sensitivity | Depends on evacuation work | Designed not to scale with heap size |
-| Throughput cost | Moderate | Usually higher for the lowest latency |
+Start with G1's ergonomic defaults. Set a realistic maximum heap and change the pause goal only when measurements justify it. Avoid fixing the young-generation size with options such as `-Xmn`: G1 uses young sizing as a primary pause-control mechanism, so a fixed young size can effectively disable that adaptation.
 
 ## Common misconceptions
 
-### “Concurrent G1” means collections do not stop the application
+- **“G1 is not generational because regions are mixed.”** False. Eden and Survivor regions form the young generation; Old and humongous regions form the old generation.
+- **“Concurrent means pause-free.”** False. Marking is mostly concurrent, but evacuation is stop-the-world.
+- **“One collection processes one region.”** False. A collection set normally contains many regions.
+- **“Mixed GC means Full GC.”** False. Mixed GC selects young regions and only some Old regions; Full GC compacts the whole heap.
+- **“`MaxGCPauseMillis` is a hard maximum.”** False. It is an input to a predictive policy.
+- **“A 4 MB object is always humongous.”** False. The threshold is relative to the configured region size.
+- **“Dead objects are copied and then deleted.”** False. Evacuation copies live objects; the remaining source region is reclaimed as a unit.
 
-False. Concurrent marking runs alongside the application, but young and Mixed evacuation collections are stop-the-world.
+## Remember
 
-### Young and old generations are contiguous
+```text
+Equal-sized regions with changing roles
+        ↓
+Young evacuation copies live objects during STW pauses
+        ↓
+Remembered sets reveal incoming cross-region references
+        ↓
+Adaptive IHOP triggers concurrent SATB marking
+        ↓
+Mixed pauses evacuate young + garbage-rich Old regions
+        ↓
+The cost model pursues a soft pause-time goal
+```
 
-False. They are logical collections of equal-sized regions scattered through the heap.
+## Sources
 
-### G1 collects one region at a time
-
-False. One pause processes a collection set containing multiple regions. A normal young pause generally collects the entire current young generation.
-
-### `MaxGCPauseMillis` is a hard maximum
-
-False. It is an input to G1's predictive policy, not a real-time guarantee.
-
-### Mixed GC means a Full GC
-
-False. A Mixed GC evacuates young regions plus a selected subset of old regions. Full GC processes and compacts the entire heap as a fallback.
-
-### Every large object is humongous
-
-The classification is relative to region size: an object is humongous at **at least half a region**.
-
-### G1 always has shorter pauses than ZGC
-
-False. ZGC is specifically designed for much shorter pauses because it relocates concurrently. G1 normally offers a different throughput/latency balance.
-
-## Interview summary
-
-> G1 divides the heap into equal-sized regions whose roles—Eden, Survivor, Old, Humongous, or Free—can change dynamically. Normal young collections stop application threads and copy live objects from all young regions into survivor or old regions. Card-based remembered sets find incoming references without scanning the whole heap. When old occupancy reaches an adaptive threshold, G1 concurrently marks the old generation, then performs Mixed evacuation pauses that collect all young regions plus selected garbage-rich old regions. G1 uses a predictive cost model to size each collection set around a soft pause-time goal; Full GC is a slow fallback when incremental evacuation cannot reclaim enough space.
-
-## Official references
-
-- [Oracle JDK 26: Garbage-First Garbage Collector](https://docs.oracle.com/en/java/javase/26/gctuning/garbage-first-g1-garbage-collector1.html)
-- [Oracle JDK 26: G1 Garbage Collector Tuning](https://docs.oracle.com/en/java/javase/26/gctuning/garbage-first-garbage-collector-tuning.html)
-- [Oracle JDK 26: Garbage Collection Ergonomics](https://docs.oracle.com/en/java/javase/26/gctuning/ergonomics.html)
-- [Java 26 launcher and G1 options](https://docs.oracle.com/en/java/javase/26/docs/specs/man/java.html)
+- [Oracle JDK 26 — Garbage-First (G1) Garbage Collector](https://docs.oracle.com/en/java/javase/26/gctuning/garbage-first-g1-garbage-collector1.html)
+- [Oracle JDK 26 — Garbage-First Garbage Collector Tuning](https://docs.oracle.com/en/java/javase/26/gctuning/garbage-first-garbage-collector-tuning.html)
+- [Oracle JDK 26 — Garbage Collection Ergonomics](https://docs.oracle.com/en/java/javase/26/gctuning/ergonomics.html)
+- [Oracle JDK 26 — `java` launcher and G1 options](https://docs.oracle.com/en/java/javase/26/docs/specs/man/java.html)
+- [OpenJDK — G1 barrier-set source](https://github.com/openjdk/jdk/blob/master/src/hotspot/share/gc/g1/g1BarrierSet.hpp)
+- [JEP 423: Region Pinning for G1](https://openjdk.org/jeps/423)
