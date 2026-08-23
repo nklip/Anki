@@ -2,53 +2,33 @@
 
 ## Front
 
-What are compact source files and instance `main` methods in modern Java?
+What changed with compact source files and instance `main` methods in Java 25?
 
 ## Back
 
-**Compact source files and instance `main` methods became final in JDK 25** with JEP 512.
+**Compact source files and instance `main` methods** became final in **JDK 25** with JEP 512.
 
-| JDK | Status |
-|---|---|
-| 21 | First preview — JEP 445 |
-| 22 | Second preview — JEP 463 |
-| 23 | Third preview — JEP 477 |
-| 24 | Fourth preview — JEP 495 |
-| 25 | Final — JEP 512 |
+**Java 25 lets a small program omit an explicit class declaration and use `void main()` as its entry point.** The compiler still creates a class, and the launcher creates an object before calling an instance `main` method. This feature is final in Java 25, not preview.
 
-## Compact source file
+![How a compact source file becomes an implicitly declared class and starts](svg/syntax-compact-source-files-instance-main.svg)
 
-A small program no longer needs an explicit class declaration or the traditional `public static void main(String[] args)` ceremony:
+`HelloWorld.java` can contain fields and methods directly, without a wrapper:
 
 ```java
+String greeting(String name) {
+    return "Hello, " + name;
+}
+
 void main() {
-    System.out.println("Hello, World!");
+    System.out.println(greeting("Ada"));
 }
 ```
 
-The compiler supplies an implicit class for the source file, and the launcher invokes its instance `main` method.
+Run it directly with `java HelloWorld.java`, or compile and then run it with `javac HelloWorld.java` followed by `java HelloWorld`.
 
-## Fields and helper methods
+The compiler treats these declarations as members of an **implicitly declared final class** in the unnamed package. Its name cannot be used in source code. The file may contain fields, methods, and nested classes or interfaces, but not an explicit constructor.
 
-A compact source file may also contain fields and methods:
-
-```java
-String greeting = "Hello";
-
-void main() {
-    printGreeting("Alice");
-}
-
-void printGreeting(String name) {
-    System.out.println(greeting + ", " + name);
-}
-```
-
-This is still a class-based Java program; the class declaration is implicit.
-
-## Instance `main` in an ordinary class
-
-An explicitly declared class can also have an instance `main` method:
+The relaxed launch protocol also works in an ordinary class:
 
 ```java
 class Application {
@@ -58,45 +38,12 @@ class Application {
 }
 ```
 
-The traditional entry point remains valid:
+A launchable `main` must return `void` and accept either no parameters or one `String[]`/`String...` parameter. It may be `static` or an instance method and may have `public`, `protected`, or package access—not `private`. For an instance method, the launcher constructs the initial class with a no-argument constructor, then invokes `main`.
 
-```java
-public class Application {
-    public static void main(String[] args) {
-        System.out.println("Started");
-    }
-}
-```
+Compact source files also automatically import public top-level types from packages exported by `java.base`. The traditional `public static void main(String[] args)` remains valid.
 
-## Automatic imports
+## Sources
 
-Compact source files automatically have access to public top-level types exported by `java.base`, as if the file contained:
-
-```java
-import module java.base;
-```
-
-This makes common types such as `List`, `Map`, and `Path` easier to use in small programs.
-
-## When to use it
-
-Compact source files are well suited to:
-
-- Learning and teaching Java.
-- Small utilities and experiments.
-- Programs that do not yet need an explicit class structure.
-
-Use ordinary named classes when the class itself is part of a reusable API or when explicit structure improves the design.
-
-## Summary
-
-Modern Java can start with `void main()` and no explicit class. The familiar class declaration and static `main` method are still supported, so a small program can grow into a conventional application gradually.
-
-## Official references
-
-- [JEP 445: Unnamed Classes and Instance Main Methods — Preview, JDK 21](https://openjdk.org/jeps/445)
-- [JEP 463: Implicitly Declared Classes and Instance Main Methods — Second Preview, JDK 22](https://openjdk.org/jeps/463)
-- [JEP 477: Implicitly Declared Classes and Instance Main Methods — Third Preview, JDK 23](https://openjdk.org/jeps/477)
-- [JEP 495: Simple Source Files and Instance Main Methods — Fourth Preview, JDK 24](https://openjdk.org/jeps/495)
-- [JEP 512: Compact Source Files and Instance Main Methods — JDK 25](https://openjdk.org/jeps/512)
-
+- [Java 25 Language Guide: Compact Source Files and Instance main Methods](https://docs.oracle.com/en/java/javase/25/language/compact-source-files-instance-main-methods.html)
+- [JLS 25 §7.3: Compilation Units](https://docs.oracle.com/javase/specs/jls/se25/html/jls-7.html#jls-7.3)
+- [JLS 25 §12.1.4: Invoke a main Method](https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html#jls-12.1.4)
