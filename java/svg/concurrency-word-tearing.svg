@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title description">
+  <title id="title">Java forbids word tearing between distinct variables</title>
+  <desc id="description">One array object contains distinct indexed element variables. Two threads write adjacent byte elements that may share a hardware word, but Java requires both updates to remain independent. A whole-word update that overwrites the neighboring element is forbidden. This differs from splitting one non-volatile long or double into two halves.</desc>
+
+  <!-- Shared styles match nearby concurrency diagrams and keep repairs local. -->
+  <defs>
+    <style>
+      .title { font: 700 27px Arial, Helvetica, sans-serif; fill: #202124; }
+      .section { font: 700 21px Arial, Helvetica, sans-serif; fill: #202124; }
+      .label { font: 700 17px Arial, Helvetica, sans-serif; fill: #202124; }
+      .body { font: 400 16px Arial, Helvetica, sans-serif; fill: #3c4043; }
+      .code { font: 700 18px "Courier New", monospace; fill: #202124; }
+      .small { font: 600 15px Arial, Helvetica, sans-serif; fill: #5f6368; }
+    </style>
+  </defs>
+
+  <!-- Background and lesson statement. -->
+  <rect width="1200" height="700" fill="#ffffff"/>
+  <text class="title" x="600" y="42" text-anchor="middle">Word tearing: one variable must not damage its neighbor</text>
+  <text class="body" x="600" y="72" text-anchor="middle">Adjacent elements may share hardware storage, but Java still treats them as distinct variables.</text>
+
+  <!-- Input panel: each thread targets a different byte in the same possible machine word. -->
+  <rect x="45" y="98" width="1110" height="270" rx="12" fill="#f8f9fa" stroke="#9aa0a6" stroke-width="2"/>
+  <text class="section" x="75" y="136">Two threads update different array elements</text>
+  <rect x="285" y="158" width="180" height="58" rx="8" fill="#356eb3"/>
+  <text x="375" y="183" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">Thread A</text>
+  <text x="375" y="204" text-anchor="middle" font-family="Courier New, monospace" font-size="15" fill="#ffffff">values[0] = 1</text>
+  <rect x="465" y="158" width="180" height="58" rx="8" fill="#7b1fa2"/>
+  <text x="555" y="183" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#ffffff">Thread B</text>
+  <text x="555" y="204" text-anchor="middle" font-family="Courier New, monospace" font-size="15" fill="#ffffff">values[1] = 2</text>
+  <!-- Arrow shafts stop beneath separate heads; tips remain above the target cells. -->
+  <line x1="375" y1="216" x2="375" y2="246" stroke="#356eb3" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="364,244 375,264 386,244" fill="#356eb3"/>
+  <line x1="555" y1="216" x2="555" y2="246" stroke="#7b1fa2" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="544,244 555,264 566,244" fill="#7b1fa2"/>
+
+  <!-- Four adjacent byte cells are enclosed by one hardware-word outline. -->
+  <rect x="285" y="274" width="720" height="70" rx="8" fill="#ffffff" stroke="#5f6368" stroke-width="3"/>
+  <rect x="285" y="274" width="180" height="70" rx="8" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <rect x="465" y="274" width="180" height="70" fill="#f3e8fd" stroke="#7b1fa2" stroke-width="2"/>
+  <line x1="645" y1="274" x2="645" y2="344" stroke="#9aa0a6" stroke-width="2"/>
+  <line x1="825" y1="274" x2="825" y2="344" stroke="#9aa0a6" stroke-width="2"/>
+  <text class="code" x="375" y="305" text-anchor="middle">values[0]</text>
+  <text class="label" x="375" y="330" text-anchor="middle">0 → 1</text>
+  <text class="code" x="555" y="305" text-anchor="middle">values[1]</text>
+  <text class="label" x="555" y="330" text-anchor="middle">0 → 2</text>
+  <text class="small" x="735" y="315" text-anchor="middle">neighbor</text>
+  <text class="small" x="915" y="315" text-anchor="middle">neighbor</text>
+  <rect x="820" y="137" width="290" height="112" rx="9" fill="#fff4ce" stroke="#b7791f" stroke-width="2"/>
+  <text class="label" x="965" y="168" text-anchor="middle">One array object</text>
+  <text class="body" x="965" y="198" text-anchor="middle">Four indexed element variables</text>
+  <text class="small" x="965" y="225" text-anchor="middle">Possibly one machine word</text>
+
+  <!-- Contrast panels: the illegal corruption and the required independent result. -->
+  <rect x="45" y="392" width="535" height="205" rx="12" fill="#fce8e6" stroke="#d93025" stroke-width="2.5"/>
+  <text class="section" x="312" y="431" text-anchor="middle">Forbidden: whole-word overwrite</text>
+  <rect x="95" y="465" width="100" height="64" rx="6" fill="#ffffff" stroke="#d93025" stroke-width="2"/>
+  <rect x="195" y="465" width="100" height="64" rx="6" fill="#f3e8fd" stroke="#7b1fa2" stroke-width="2"/>
+  <text class="code" x="145" y="505" text-anchor="middle">0</text>
+  <text class="code" x="245" y="505" text-anchor="middle">2</text>
+  <text x="145" y="554" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#d93025">A's 1 was lost</text>
+  <text class="body" x="430" y="483" text-anchor="middle">One write accidentally restored</text>
+  <text class="body" x="430" y="511" text-anchor="middle">the neighboring byte.</text>
+  <text x="430" y="552" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold" fill="#d93025">Java forbids this.</text>
+
+  <rect x="620" y="392" width="535" height="205" rx="12" fill="#e6f4ea" stroke="#34834b" stroke-width="2.5"/>
+  <text class="section" x="887" y="431" text-anchor="middle">Required: independent elements</text>
+  <rect x="685" y="465" width="100" height="64" rx="6" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <rect x="785" y="465" width="100" height="64" rx="6" fill="#f3e8fd" stroke="#7b1fa2" stroke-width="2"/>
+  <text class="code" x="735" y="505" text-anchor="middle">1</text>
+  <text class="code" x="835" y="505" text-anchor="middle">2</text>
+  <text class="body" x="1010" y="483" text-anchor="middle">Thread A changes only element 0.</text>
+  <text class="body" x="1010" y="511" text-anchor="middle">Thread B changes only element 1.</text>
+  <text x="920" y="554" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold" fill="#34834b">Both updates remain.</text>
+
+  <!-- Bottom warning separates JLS 17.6 from the different same-variable rule in 17.7. -->
+  <rect x="45" y="622" width="1110" height="55" rx="9" fill="#eef3f8" stroke="#5f6368" stroke-width="2"/>
+  <text class="label" x="600" y="646" text-anchor="middle">Different concept: one non-volatile long or double may be split into two 32-bit halves.</text>
+  <text class="small" x="600" y="667" text-anchor="middle">That is a torn access to one variable, not word tearing between neighboring variables.</text>
+</svg>

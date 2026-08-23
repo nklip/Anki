@@ -2,89 +2,45 @@
 
 ## Front
 
-What is word tearing, and can it happen in Java?
+What is **word tearing**, and why are adjacent Java array elements protected from it?
 
 ## Back
 
-**Word tearing** happens when multiple logical variables share one machine word and updating one variable accidentally changes another part of that word.
+**Word tearing means that writing one variable accidentally changes a different, nearby variable; Java forbids it.** Every field and every array element is distinct, even when adjacent values share one hardware machine word.
 
-For example, a processor might update one byte by:
+![Java preserves independent writes to adjacent array elements](svg/concurrency-word-tearing.svg)
 
-1. Reading the entire machine word.
-2. Changing one byte inside it.
-3. Writing the entire word back.
+### Why the array matters
 
-If two threads do this concurrently for different bytes, one whole-word write could overwrite the other thread's update.
+`byte[] values = new byte[2]` creates one array object, while `values` holds a reference to it. Inside that object, `values[0]` and `values[1]` are separate **array-component variables** selected by their indexes. They are not two pieces of one Java variable. The JVM may represent adjacent bytes inside the same hardware word, but that cannot change their independence in the language.
 
-## Java forbids word tearing between distinct variables
+Some processors cannot update a single byte directly. A naive implementation might read a whole word, modify one byte, then write the whole word back. With two concurrent writers, that could restore an old value in a neighboring byte. A Java Virtual Machine (JVM) must use another strategy so this interference cannot happen.
 
-The Java Memory Model treats every field and every array element as distinct.
+### Example
 
 ```java
 byte[] values = new byte[2];
 
-// Thread A
+// Thread A writes one variable
 values[0] = 1;
 
-// Thread B
+// Thread B writes a different variable
 values[1] = 2;
 ```
 
-The write to `values[0]` must not overwrite or corrupt `values[1]`, even if both bytes occupy the same machine word.
+Assuming both threads share this array reference, the writes can run concurrently. They are not conflicting accesses to the same variable because each index selects a different component. `values[0] = 1` must not overwrite `values[1]`, or vice versa.
 
-The JVM must provide this guarantee even on hardware that cannot update a single byte directly.
+This is only **isolation between distinct variables**. It does not make concurrent operations on the same element safe: `values[0]++`, for example, is still a non-atomic read–modify–write operation.
 
-## This does not make shared data automatically thread-safe
+### Do not confuse two kinds of tearing
 
-The guarantee only prevents one field or element from corrupting a different field or element.
+JLS §17.7 separately permits an implementation to treat a non-`volatile` `long` or `double` write as two 32-bit writes. A racing read may then combine halves from different writes. That concerns **one 64-bit variable**, not neighboring variables. Reads and writes of `volatile long` and `volatile double` are always atomic, but `value++` is still compound and requires synchronization or an atomic class when threads share it.
 
-Two threads modifying the **same** variable can still have:
+> **Memory aid:** word tearing damages a neighbor; a torn 64-bit access mixes halves of the same value.
 
-- Lost updates.
-- Visibility problems.
-- Race conditions.
-- Incorrect ordering.
-
-```java
-int counter = 0;
-
-// Not atomic: read, add, write
-counter++;
-```
-
-An `int` read or write is atomic, but `counter++` is a compound operation and is not atomic.
-
-## Special rule for `long` and `double`
-
-The Java Language Specification separately permits a non-`volatile` `long` or `double` read or write to be performed as two 32-bit operations.
-
-A racing read could theoretically observe a mixture of two different writes:
-
-```java
-long value; // the specification permits a torn read or write
-```
-
-Declare the field `volatile` when independent shared reads and writes require atomicity and visibility:
-
-```java
-volatile long value;
-```
-
-Use `AtomicLong` when compound atomic operations are required:
-
-```java
-AtomicLong counter = new AtomicLong();
-counter.incrementAndGet();
-```
-
-## Summary
-
-- Java forbids word tearing between distinct fields and array elements.
-- This guarantee does not prevent races on the same variable.
-- Non-`volatile` `long` and `double` have a separate specification-level tearing exception.
-- Use `volatile`, synchronization, locks, or atomic classes according to the required operation.
-
-## Official reference
+## Sources
 
 - [JLS 17.6: Word Tearing](https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.6)
 - [JLS 17.7: Non-Atomic Treatment of `double` and `long`](https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.7)
+- [JLS 4.12.3: Kinds of Variables](https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.12.3)
+- [JLS 17.4.1: Shared Variables](https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4.1)
