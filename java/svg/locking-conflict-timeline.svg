@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title description">
+  <title id="title">Two transactions collide at different moments under optimistic and pessimistic locking</title>
+  <desc id="description">A paired event timeline showing two transactions reading stock eight and version five: optimistic locking lets both start but rejects the stale second update, while pessimistic locking makes the second transaction wait and reread current state.</desc>
+
+  <!-- Shared styles; blue is optimistic work, orange is pessimistic reservation, green is a valid current-state result, and red is a rejected stale update. -->
+  <defs>
+    <style>
+      .heading { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #202124; }
+      .body { font-family: Arial, Helvetica, sans-serif; fill: #303840; }
+      .muted { font-family: Arial, Helvetica, sans-serif; fill: #5f6872; }
+      .mono { font-family: Menlo, Consolas, "Liberation Mono", monospace; fill: #303840; }
+      .light { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <!-- The shared scenario makes the timing difference comparable without outside prose. -->
+  <rect id="background" width="1200" height="720" fill="#ffffff"/>
+  <text x="600" y="42" text-anchor="middle" class="heading" font-size="30">Two transactions try to update the same stock</text>
+  <text x="600" y="74" text-anchor="middle" class="muted" font-size="18">Initial database state: stock = 8, version = 5 · Read each timeline from top to bottom</text>
+
+  <!-- Optimistic timeline: both transactions begin; T2 discovers its stale version only at conditional update. -->
+  <g id="optimistic-timeline">
+    <rect x="30" y="110" width="555" height="580" rx="11" fill="#eef5ff" stroke="#356eb3" stroke-width="2"/>
+    <rect x="30" y="110" width="555" height="52" rx="11" fill="#356eb3"/>
+    <rect x="30" y="151" width="555" height="11" fill="#356eb3"/>
+    <text x="55" y="144" class="light" font-size="21">OPTIMISTIC · conflict detected late</text>
+
+    <rect x="60" y="185" width="495" height="80" rx="9" fill="#ffffff" stroke="#356eb3" stroke-width="1.5"/>
+    <circle cx="95" cy="225" r="19" fill="#356eb3"/>
+    <text x="95" y="231" text-anchor="middle" class="light" font-size="15">1</text>
+    <text x="130" y="218" class="heading" font-size="16">T1 and T2 both read the same revision</text>
+    <text x="130" y="244" class="mono" font-size="15">stock = 8 · version = 5</text>
+
+    <!-- Every vertical connector ends before the next event box. -->
+    <path d="M307 271V283" fill="none" stroke="#356eb3" stroke-width="4"/>
+    <polygon points="296,283 307,297 318,283" fill="#356eb3"/>
+
+    <rect x="60" y="305" width="495" height="80" rx="9" fill="#edf8f0" stroke="#34834b" stroke-width="1.5"/>
+    <circle cx="95" cy="345" r="19" fill="#34834b"/>
+    <text x="95" y="351" text-anchor="middle" class="light" font-size="15">2</text>
+    <text x="130" y="338" class="heading" font-size="16">T1 conditionally updates version 5</text>
+    <text x="130" y="364" class="mono" font-size="15">success → stock = 6 · version = 6</text>
+
+    <path d="M307 391V403" fill="none" stroke="#356eb3" stroke-width="4"/>
+    <polygon points="296,403 307,417 318,403" fill="#356eb3"/>
+
+    <rect x="60" y="425" width="495" height="80" rx="9" fill="#ffffff" stroke="#356eb3" stroke-width="1.5"/>
+    <circle cx="95" cy="465" r="19" fill="#356eb3"/>
+    <text x="95" y="471" text-anchor="middle" class="light" font-size="15">3</text>
+    <text x="130" y="458" class="heading" font-size="16">T2 submits its stale expected version</text>
+    <text x="130" y="484" class="mono" font-size="15">expected 5 · database now has 6</text>
+
+    <path d="M307 511V523" fill="none" stroke="#b33a3a" stroke-width="4"/>
+    <polygon points="296,523 307,537 318,523" fill="#b33a3a"/>
+
+    <rect x="60" y="545" width="495" height="115" rx="9" fill="#fff0f0" stroke="#b33a3a" stroke-width="2"/>
+    <circle cx="95" cy="602" r="19" fill="#b33a3a"/>
+    <text x="95" y="608" text-anchor="middle" class="light" font-size="15">4</text>
+    <text x="130" y="576" class="heading" font-size="16">T2's conditional update matches zero rows</text>
+    <text x="130" y="604" class="mono" font-size="15">OptimisticLockException</text>
+    <text x="130" y="632" class="body" font-size="14">Reload, merge, retry in a new transaction, or abort.</text>
+  </g>
+
+  <!-- Pessimistic timeline: T2 cannot perform conflicting work until T1 finishes and releases the lock. -->
+  <g id="pessimistic-timeline">
+    <rect x="615" y="110" width="555" height="580" rx="11" fill="#fff8e6" stroke="#b7791f" stroke-width="2"/>
+    <rect x="615" y="110" width="555" height="52" rx="11" fill="#b7791f"/>
+    <rect x="615" y="151" width="555" height="11" fill="#b7791f"/>
+    <text x="640" y="144" class="light" font-size="21">PESSIMISTIC · contender stopped early</text>
+
+    <rect x="645" y="185" width="495" height="80" rx="9" fill="#ffffff" stroke="#b7791f" stroke-width="1.5"/>
+    <circle cx="680" cy="225" r="19" fill="#b7791f"/>
+    <text x="680" y="231" text-anchor="middle" class="light" font-size="15">1</text>
+    <text x="715" y="218" class="heading" font-size="16">T1 obtains the write lock first</text>
+    <text x="715" y="244" class="mono" font-size="15">reads stock = 8 under protection</text>
+
+    <!-- Orange connectors use separate shafts and heads for reliable downward alignment. -->
+    <path d="M892 271V283" fill="none" stroke="#b7791f" stroke-width="4"/>
+    <polygon points="881,283 892,297 903,283" fill="#b7791f"/>
+
+    <rect x="645" y="305" width="495" height="80" rx="9" fill="#ffffff" stroke="#b7791f" stroke-width="1.5"/>
+    <circle cx="680" cy="345" r="19" fill="#b7791f"/>
+    <text x="680" y="351" text-anchor="middle" class="light" font-size="15">2</text>
+    <text x="715" y="338" class="heading" font-size="16">T2 requests an incompatible lock</text>
+    <text x="715" y="364" class="body" font-size="15">It waits, times out, or fails; it does not update.</text>
+
+    <path d="M892 391V403" fill="none" stroke="#b7791f" stroke-width="4"/>
+    <polygon points="881,403 892,417 903,403" fill="#b7791f"/>
+
+    <rect x="645" y="425" width="495" height="80" rx="9" fill="#ffffff" stroke="#b7791f" stroke-width="1.5"/>
+    <circle cx="680" cy="465" r="19" fill="#b7791f"/>
+    <text x="680" y="471" text-anchor="middle" class="light" font-size="15">3</text>
+    <text x="715" y="458" class="heading" font-size="16">T1 writes stock = 6 and commits</text>
+    <text x="715" y="484" class="body" font-size="15">The transaction ends and releases the lock.</text>
+
+    <path d="M892 511V523" fill="none" stroke="#34834b" stroke-width="4"/>
+    <polygon points="881,523 892,537 903,523" fill="#34834b"/>
+
+    <rect x="645" y="545" width="495" height="115" rx="9" fill="#edf8f0" stroke="#34834b" stroke-width="2"/>
+    <circle cx="680" cy="602" r="19" fill="#34834b"/>
+    <text x="680" y="608" text-anchor="middle" class="light" font-size="15">4</text>
+    <text x="715" y="576" class="heading" font-size="16">T2 may now acquire the lock</text>
+    <text x="715" y="604" class="mono" font-size="15">rereads current stock = 6</text>
+    <text x="715" y="632" class="body" font-size="14">Its decision starts from current protected state.</text>
+  </g>
+</svg>

@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title description">
+  <title id="title">Optimistic and pessimistic locking coordinate at different times</title>
+  <desc id="description">A beginner comparison showing optimistic locking reading and working before atomic validation, while pessimistic locking acquires protection before reading and changing state, followed by the central cost trade-off.</desc>
+
+  <!-- Shared styles; blue identifies optimistic validation, orange identifies pessimistic reservation, and green marks successful publication. -->
+  <defs>
+    <style>
+      .heading { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #202124; }
+      .body { font-family: Arial, Helvetica, sans-serif; fill: #303840; }
+      .muted { font-family: Arial, Helvetica, sans-serif; fill: #5f6872; }
+      .mono { font-family: Menlo, Consolas, "Liberation Mono", monospace; fill: #303840; }
+      .light { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <!-- Title states the one distinction that organizes the complete card. -->
+  <rect id="background" width="1200" height="720" fill="#ffffff"/>
+  <text x="600" y="42" text-anchor="middle" class="heading" font-size="30">Same goal, different time to coordinate</text>
+  <text x="600" y="74" text-anchor="middle" class="muted" font-size="18">Both prevent conflicting updates; one validates late, the other reserves early</text>
+
+  <!-- Optimistic flow: all arrows stop before the next step and never cross labels. -->
+  <g id="optimistic-flow">
+    <rect x="30" y="115" width="555" height="430" rx="11" fill="#eef5ff" stroke="#356eb3" stroke-width="2"/>
+    <rect x="30" y="115" width="555" height="52" rx="11" fill="#356eb3"/>
+    <rect x="30" y="156" width="555" height="11" fill="#356eb3"/>
+    <text x="55" y="149" class="light" font-size="21">OPTIMISTIC · validate before publishing</text>
+    <text x="307" y="198" text-anchor="middle" class="heading" font-size="17">Assumption: another participant probably will not conflict</text>
+
+    <rect x="95" y="220" width="425" height="58" rx="9" fill="#ffffff" stroke="#356eb3" stroke-width="1.5"/>
+    <circle cx="125" cy="249" r="17" fill="#356eb3"/>
+    <text x="125" y="255" text-anchor="middle" class="light" font-size="15">1</text>
+    <text x="155" y="245" class="heading" font-size="16">Read a snapshot</text>
+    <text x="155" y="267" class="muted" font-size="14">value, reference, or version</text>
+
+    <!-- Vertical shaft joins its triangular head; the tip remains above step 2. -->
+    <path d="M307 284V296" fill="none" stroke="#356eb3" stroke-width="4"/>
+    <polygon points="296,296 307,308 318,296" fill="#356eb3"/>
+
+    <rect x="95" y="315" width="425" height="58" rx="9" fill="#ffffff" stroke="#356eb3" stroke-width="1.5"/>
+    <circle cx="125" cy="344" r="17" fill="#356eb3"/>
+    <text x="125" y="350" text-anchor="middle" class="light" font-size="15">2</text>
+    <text x="155" y="340" class="heading" font-size="16">Compute a candidate</text>
+    <text x="155" y="362" class="muted" font-size="14">no exclusive reservation is held</text>
+
+    <path d="M307 379V391" fill="none" stroke="#356eb3" stroke-width="4"/>
+    <polygon points="296,391 307,403 318,391" fill="#356eb3"/>
+
+    <rect x="95" y="410" width="425" height="62" rx="9" fill="#ffffff" stroke="#356eb3" stroke-width="1.5"/>
+    <circle cx="125" cy="441" r="17" fill="#356eb3"/>
+    <text x="125" y="447" text-anchor="middle" class="light" font-size="15">3</text>
+    <text x="155" y="437" class="heading" font-size="16">Validate and publish atomically</text>
+    <text x="155" y="459" class="muted" font-size="14">still current → success; changed → conflict</text>
+
+    <rect x="95" y="492" width="425" height="34" rx="7" fill="#ffffff" stroke="#744b91" stroke-width="1.5"/>
+    <text x="307" y="514" text-anchor="middle" class="body" font-size="14">Loser reloads, retries, merges, or aborts</text>
+  </g>
+
+  <!-- Pessimistic flow mirrors the same work while moving coordination to the beginning. -->
+  <g id="pessimistic-flow">
+    <rect x="615" y="115" width="555" height="430" rx="11" fill="#fff8e6" stroke="#b7791f" stroke-width="2"/>
+    <rect x="615" y="115" width="555" height="52" rx="11" fill="#b7791f"/>
+    <rect x="615" y="156" width="555" height="11" fill="#b7791f"/>
+    <text x="640" y="149" class="light" font-size="21">PESSIMISTIC · reserve before working</text>
+    <text x="892" y="198" text-anchor="middle" class="heading" font-size="17">Assumption: a conflict is likely or too costly to discover late</text>
+
+    <rect x="680" y="220" width="425" height="58" rx="9" fill="#ffffff" stroke="#b7791f" stroke-width="1.5"/>
+    <circle cx="710" cy="249" r="17" fill="#b7791f"/>
+    <text x="710" y="255" text-anchor="middle" class="light" font-size="15">1</text>
+    <text x="740" y="245" class="heading" font-size="16">Acquire protection</text>
+    <text x="740" y="267" class="muted" font-size="14">monitor, Lock, or database lock</text>
+
+    <!-- Orange arrows have a controlled shaft/head join and clear space before every target. -->
+    <path d="M892 284V296" fill="none" stroke="#b7791f" stroke-width="4"/>
+    <polygon points="881,296 892,308 903,296" fill="#b7791f"/>
+
+    <rect x="680" y="315" width="425" height="58" rx="9" fill="#ffffff" stroke="#b7791f" stroke-width="1.5"/>
+    <circle cx="710" cy="344" r="17" fill="#b7791f"/>
+    <text x="710" y="350" text-anchor="middle" class="light" font-size="15">2</text>
+    <text x="740" y="340" class="heading" font-size="16">Read and change protected state</text>
+    <text x="740" y="362" class="muted" font-size="14">incompatible contenders cannot proceed</text>
+
+    <path d="M892 379V391" fill="none" stroke="#b7791f" stroke-width="4"/>
+    <polygon points="881,391 892,403 903,391" fill="#b7791f"/>
+
+    <rect x="680" y="410" width="425" height="62" rx="9" fill="#ffffff" stroke="#b7791f" stroke-width="1.5"/>
+    <circle cx="710" cy="441" r="17" fill="#b7791f"/>
+    <text x="710" y="447" text-anchor="middle" class="light" font-size="15">3</text>
+    <text x="740" y="437" class="heading" font-size="16">Finish, then release protection</text>
+    <text x="740" y="459" class="muted" font-size="14">unlock, commit, or roll back</text>
+
+    <rect x="680" y="492" width="425" height="34" rx="7" fill="#ffffff" stroke="#744b91" stroke-width="1.5"/>
+    <text x="892" y="514" text-anchor="middle" class="body" font-size="14">Contender waits, times out, or fails</text>
+  </g>
+
+  <!-- Compact decision strip fills the lower canvas with the costs that determine the choice. -->
+  <g id="decision-strip">
+    <rect x="30" y="575" width="1140" height="115" rx="11" fill="#faf8fc" stroke="#744b91" stroke-width="2"/>
+    <text x="600" y="606" text-anchor="middle" class="heading" font-size="19">Choose by the cost of the losing path</text>
+    <rect x="55" y="625" width="350" height="44" rx="8" fill="#eef5ff" stroke="#356eb3" stroke-width="1.5"/>
+    <text x="230" y="652" text-anchor="middle" class="body" font-size="15">Optimistic cost: discarded work + retry</text>
+    <rect x="425" y="625" width="350" height="44" rx="8" fill="#fff8e6" stroke="#b7791f" stroke-width="1.5"/>
+    <text x="600" y="652" text-anchor="middle" class="body" font-size="15">Pessimistic cost: waiting + deadlock risk</text>
+    <rect x="795" y="625" width="350" height="44" rx="8" fill="#edf8f0" stroke="#34834b" stroke-width="1.5"/>
+    <text x="970" y="652" text-anchor="middle" class="body" font-size="15">Measure contention, latency, and side effects</text>
+  </g>
+</svg>
