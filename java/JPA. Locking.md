@@ -1,210 +1,237 @@
-# Locking in Jakarta Persistence and Hibernate
+# JPA. Locking
 
-*Updated for Jakarta Persistence 3.2 (Jakarta EE 11) and Hibernate ORM 6.x/7.x.*
+## Front
 
-**Jakarta Persistence supports optimistic and pessimistic locking.** Pessimistic locking was introduced in JPA 2.0; the API around it was substantially modernised in Jakarta Persistence 3.2.
+How do optimistic and pessimistic locking work in JPA, what does each `LockModeType` mean, and when should each strategy be used?
 
-Hibernate applies **no explicit lock unless you ask for one** — with one important exception: if an entity declares a `@Version` attribute, Hibernate applies implicit optimistic locking on every flush automatically. Otherwise it relies entirely on the database's transaction isolation level.
+## Back
 
-**Optimistic locking** is Hibernate's invention layered on a version column;  
-**Pessimistic locking** is the database's own row-locking, and Hibernate is just a syntax generator for it.
+**JPA locking prevents conflicting transactions from silently corrupting entity state in two different ways: `@Version` detects a stale write later, while a pessimistic lock reserves database state immediately and holds it until the transaction ends.** Database transaction isolation still applies underneath both strategies.
 
-## Optimistic vs. pessimistic vs. isolation
+This card builds the mental model first, then covers version checks, explicit lock modes, timeouts, lock scope, exceptions, and selection rules.
 
-These are three separate mechanisms and conflating them is the most common source of confusion.
+![Mental model for JPA optimistic and pessimistic locking](svg/jpa-locking-mental-model.svg)
 
-| | Enforced by | Detects conflict | Blocks other transactions |
-|---|---|---|---|
-| Transaction isolation | Database | Depends on level | Depends on level |
-| Optimistic locking | JPA provider (version column) | At flush | Never |
-| Pessimistic locking | Database (`SELECT … FOR UPDATE`) | At lock acquisition | Yes |
+### Vocabulary
 
-Optimistic locking is completely orthogonal to isolation level (i.e. optimistic locking is a separate mechanism from transaction isolation). It does not affect the isolation of concurrent transactions, and the locks the database uses internally to implement isolation continue to work regardless of whether JPA locking is enabled.
+- A **transaction** is a database unit of work that commits completely or rolls back.
+- A **managed entity** is an object currently tracked by an `EntityManager`.
+- A **version** identifies the revision of an entity’s persisted state.
+- A **lock mode** asks the persistence provider for additional concurrency guarantees on selected entities.
 
-Its real purpose is covering the gap that isolation cannot cover: a conversation that spans multiple transactions — load an entity in one transaction, present it to a user, save it in another. No isolation level protects that window, because the transactions don't overlap.
+JPA does not replace the database’s isolation level. Isolation controls visibility and concurrency for the transaction as a whole. JPA locking adds rules for particular entity instances.
 
-## Optimistic locking
+### Optimistic locking with `@Version`
 
-### Declaring a version attribute (explicitly, you need to create a version column for your table)
+Optimistic locking assumes conflicts are uncommon. Transactions may work concurrently. When an entity is written, the provider verifies that the version read earlier is still current.
 
 ```java
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Version;
+
 @Entity
 public class Product {
-    @Id @GeneratedValue private Long id;
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    private int stock;
 
     @Version
-    private long version;     // recommended
+    private long version;
+
+    protected Product() {
+    }
 }
 ```
 
-Permitted types per Jakarta Persistence 3.2:
+For portable JPA, a version attribute may use:
 
-`int`, `Integer`, `short`, `Short`, `long`, `Long`, `java.sql.Timestamp`, `java.time.Instant`, `java.time.LocalDateTime`
+- `int`, `Integer`, `short`, `Short`, `long`, or `Long`;
+- `java.sql.Timestamp`;
+- `java.time.Instant` or `java.time.LocalDateTime`.
 
-`Instant` and `LocalDateTime` are new in 3.2. In the same release the legacy `java.util.Date` / `Calendar` / `java.sql.*` types were deprecated, so `java.sql.Timestamp` is now the type to avoid.
+An entity should have at most one version attribute. It should be declared by the root entity class or a mapped superclass and mapped to the primary table. Application code must not manually change the version; the provider owns it.
 
-Prefer a numeric version over a timestamp. Timestamp resolution can be coarser than the interval between two updates, letting a genuine conflict slip through undetected. Use `long`; use `Instant` only when the column must be human-readable.
+### How a version conflict is detected
 
-**Rules:** at most one `@Version` per entity, declared by the root entity of a hierarchy or a mapped superclass, and mapped to the entity's primary table. Never modify it in application code.
-
-### How and when the check happens
-
-On flush, Hibernate emits:
+The provider automatically applies optimistic locking whenever it writes a versioned entity. A Hibernate-style update might look like this:
 
 ```sql
-UPDATE product SET name = ?, version = 6 WHERE id = ? AND version = 5
+UPDATE product
+SET stock = 6, version = 6
+WHERE id = 42 AND version = 5;
 ```
 
-If the update affects zero rows, another transaction has already modified the row and `OptimisticLockException` is thrown.
+The exact SQL is not specified by JPA. The important rule is the conditional version check.
 
-> **Correction to a common claim:** the check happens at **flush**, not strictly at commit. Flush usually occurs at commit, but an explicit `em.flush()` or a query-triggered auto-flush will surface the failure earlier. This determines where you can actually catch the exception.
+![Two transactions and a rejected stale version](svg/jpa-optimistic-version-conflict.svg)
 
-### Exceptions you'll see
+If another transaction already changed version `5` to `6`, the stale update cannot match the current row. The provider throws `OptimisticLockException` and marks the transaction for rollback.
 
-| Layer | Exception |
-|---|---|
-| Jakarta Persistence | `OptimisticLockException` |
-| Hibernate (native) | `StaleObjectStateException` / `StaleStateException` |
-| Spring Data JPA | `ObjectOptimisticLockingFailureException` |
+The check often happens during flush, but the exact timing can vary:
 
-### Optimistic locking is useless without a retry
+- a normal update may be checked when SQL is flushed or during commit;
+- a stale detached entity passed to `merge()` may be checked during `merge()`, flush, or commit.
 
-Detection is only half the pattern. An unhandled `OptimisticLockException` is a failed user request.
-
-```java
-@Retryable(retryFor = ObjectOptimisticLockingFailureException.class,
-           maxAttempts = 3, backoff = @Backoff(delay = 50, multiplier = 2))
-@Transactional
-public void adjustStock(Long id, int delta) { … }
-```
-
-The retry must re-read the entity inside a new transaction — retrying with the same stale instance fails identically. Add jitter under contention.
+Call `em.flush()` when application code must detect a conflict before leaving a specific block. After `OptimisticLockException`, do not keep using the same transaction. Start a new transaction, reload current state, reapply or merge the intended change, and retry only when that operation is safe.
 
 ### Explicit optimistic lock modes
 
-Two `LockModeType` values are optimistic, and both are missing from most summaries:
+Automatic `@Version` checking protects updates and deletes. Explicit optimistic modes are useful when an entity is only read but must remain unchanged until transaction completion.
 
-- **`OPTIMISTIC`** — verifies at commit that an entity you merely read has not changed. Protects against non-repeatable reads without blocking anyone.
-- **`OPTIMISTIC_FORCE_INCREMENT`** — bumps the version even if the entity itself wasn't modified. The standard tool for aggregate roots: modifying a child (an `OrderLine`) can force a version increment on the parent (`Order`), so concurrent edits to different children still conflict.
-
-```java
-em.find(Order.class, id, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-```
-
-(`LockModeType.READ` and `WRITE` are deprecated aliases for these two. Don't use them.)
-
-### Hibernate: versionless optimistic locking
-
-For legacy schemas that cannot add a version column:
-
-```java
-@Entity
-@OptimisticLocking(type = OptimisticLockType.DIRTY)   // or ALL
-@DynamicUpdate                                        // required
-public class LegacyProduct { … }
-```
-
-`DIRTY` adds only the modified columns to the `WHERE` clause; `ALL` adds every column. Both are weaker and slower than a version column, and neither works for detached entities. Use only when you have no choice.
-
-## Pessimistic locking
-
-Use when a conflict is likely enough that **detecting it late is too expensive**, or when you must read-then-write atomically (inventory decrements, ledger balances, job queues).
-
-### The three pessimistic modes
-
-- **`PESSIMISTIC_READ`** — shared lock. Others may read, but not update or delete. Maps to `SELECT … FOR SHARE` (PostgreSQL) or `LOCK IN SHARE MODE` (MySQL). Where a dialect has no shared-lock syntax, Hibernate silently escalates to `FOR UPDATE`.
-- **`PESSIMISTIC_WRITE`** — exclusive lock, the one you'll normally want. Maps to `SELECT … FOR UPDATE`.
-
-> ⚠️ **The spec says this prevents other transactions from reading the data. On real databases it does not.** PostgreSQL, MySQL/InnoDB, Oracle, and SQL Server with RCSI all implement MVCC and serve non-locking snapshot reads from an existing row version. `FOR UPDATE` blocks other *locking reads* (`FOR UPDATE` / `FOR SHARE`) and writes — not a plain `SELECT`. This is the normal case, not an Oracle quirk.
-
-- **`PESSIMISTIC_FORCE_INCREMENT`** — as `PESSIMISTIC_WRITE`, plus a version increment, so detached readers holding an older version also detect the change. Requires a versioned entity; on an unversioned one the provider may throw `PersistenceException`.
-
-### Acquiring a lock
-
-```java
-// at load time — one statement, no race
-Product p = em.find(Product.class, id, LockModeType.PESSIMISTIC_WRITE);
-
-// on an already-managed entity — emits a second statement
-em.lock(p, LockModeType.PESSIMISTIC_WRITE);
-
-// in a query
-em.createQuery("from Product p where p.sku = :sku", Product.class)
-  .setParameter("sku", sku)
-  .setLockMode(LockModeType.PESSIMISTIC_WRITE)
-  .getSingleResult();
-```
-
-```java
-// Spring Data JPA
-public interface ProductRepository extends JpaRepository<Product, Long> {
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    Optional<Product> findBySku(String sku);
-}
-```
-
-Prefer locking at `find()` time. Locking afterwards leaves a window in which another transaction can modify the row.
-
-### Timeouts — Jakarta Persistence 3.2's type-safe options
-
-Without a timeout a blocked lock waits indefinitely (or until the database's own deadlock detector fires). 3.2 **replaced** the string-hint API with type-safe `FindOption` / `LockOption` / `RefreshOption`:
-
-```java
-// Jakarta Persistence 3.2 and later
-var p = em.find(Product.class, id,
-                LockModeType.PESSIMISTIC_WRITE,
-                Timeout.seconds(5));
-
-// legacy string-hint form
-em.find(Product.class, id, LockModeType.PESSIMISTIC_WRITE,
-        Map.of("jakarta.persistence.lock.timeout", 5000));
-```
-
-Note the javadoc caveat: `Timeout` is **always a hint and may be ignored by the provider** — behaviour depends on dialect support.
-
-Two special values matter in practice:
-
-- **`NOWAIT` (timeout 0)** — fail immediately rather than queue. Good for interactive requests where a spinner beats a hung thread.
-- **`SKIP LOCKED`** — skip rows another transaction holds. The idiomatic way to build a job queue on a relational database:
-
-```java
-em.createQuery("from Job j where j.status = 'PENDING' order by j.createdAt", Job.class)
-  .setMaxResults(10)
-  .setLockMode(LockModeType.PESSIMISTIC_WRITE)
-  .setHint(AvailableHints.HINT_SPEC_LOCK_TIMEOUT, "-2")   // Hibernate: SKIP_LOCKED
-  .getResultList();
-```
-
-### Lock scope
-
-`PessimisticLockScope.NORMAL` (default) locks the entity's own table rows. `PessimisticLockScope.EXTENDED` additionally locks rows in join tables and collection tables. Note that the database may escalate row locks to page or table locks under load — "one lock per object" is a JPA-level abstraction, not a physical guarantee.
-
-### Exceptions
-
-| Situation | Exception |
+| Mode | Meaning |
 |---|---|
-| Lock could not be obtained; transaction marked for rollback | `PessimisticLockException` |
-| Lock timed out; transaction still usable | `LockTimeoutException` |
+| `OPTIMISTIC` | Ensures the versioned entity is not successfully changed by another transaction before this transaction completes. |
+| `OPTIMISTIC_FORCE_INCREMENT` | Provides optimistic protection and forces a version increment, even if this entity was not otherwise changed. |
+| `READ` | Synonym for `OPTIMISTIC`; `OPTIMISTIC` is preferred in new code. |
+| `WRITE` | Synonym for `OPTIMISTIC_FORCE_INCREMENT`; it is **not** a pessimistic write lock. |
 
-Distinguishing them matters: only `LockTimeoutException` is safely retryable within the same transaction.
+```java
+Product product =
+    em.find(Product.class, id, LockModeType.OPTIMISTIC);
 
-### Deadlocks
+em.lock(product, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+```
 
-Pessimistic locking trades conflict-detection cost for deadlock risk. Two mitigations:
+Explicit optimistic modes are portable for versioned entities. A provider is not required to support them for an unversioned entity. Also, “optimistic” does not guarantee that the provider never obtains a database lock: the specification permits different implementations as long as the required result is preserved.
 
-1. Acquire locks in a consistent global order across all code paths (e.g. always ascending by primary key).
-2. Keep locked sections short. Never hold a pessimistic lock across a network call, a user interaction, or a message-broker publish.
+`OPTIMISTIC_FORCE_INCREMENT` is useful for an aggregate root. For example, changing an `OrderLine` can force the parent `Order` version to advance so another workflow holding an older parent revision detects the aggregate change.
 
-## Choosing
+### Pessimistic locking
 
-| Situation | Use |
+Pessimistic locking assumes that discovering a conflict late would be too costly. The provider must obtain a long-term database lock immediately and retain it until the transaction commits or rolls back.
+
+| Mode | Meaning |
 |---|---|
-| Conversation spanning transactions (edit form, detached entity) | `@Version` + retry |
-| Low-contention CRUD | `@Version` |
-| Read-modify-write on a hot row (stock, balance) | `PESSIMISTIC_WRITE` |
-| Job queue / work claiming | `PESSIMISTIC_WRITE` + `SKIP LOCKED` |
-| Child edit must conflict with concurrent parent edit | `OPTIMISTIC_FORCE_INCREMENT` |
-| Read must stay valid until commit, without blocking | `OPTIMISTIC` |
-| Legacy schema, no version column possible | `@OptimisticLocking(type = DIRTY)` |
+| `PESSIMISTIC_READ` | Provides pessimistic repeatable-read behavior while allowing compatible reads. A provider may promote it to `PESSIMISTIC_WRITE`. |
+| `PESSIMISTIC_WRITE` | Serializes transactions attempting conflicting updates of the entity data. |
+| `PESSIMISTIC_FORCE_INCREMENT` | Pessimistic write protection plus a forced version increment. Portable use requires a versioned entity. |
 
-**Default to optimistic.** Reach for pessimistic locking when you have measured contention, not in anticipation of it — and always with a timeout.
+`PESSIMISTIC_READ` and `PESSIMISTIC_WRITE` must work for both versioned and unversioned entities. The force-increment mode is not portable for an unversioned entity.
+
+Hibernate uses the database’s locking mechanism rather than an in-memory Java lock. The actual SQL might use `FOR UPDATE`, a lock hint, or another database-specific mechanism. JPA deliberately does not standardize that SQL, and the provider or database may lock more rows than the application selected.
+
+### Acquiring a pessimistic lock
+
+The following calls must run in an active transaction.
+
+```java
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.Timeout;
+
+Product product = em.find(
+    Product.class,
+    id,
+    LockModeType.PESSIMISTIC_WRITE,
+    Timeout.seconds(2)
+);
+```
+
+Jakarta Persistence 3.2 introduced the type-safe `Timeout` option. It did not remove the older property form:
+
+```java
+Product product = em.find(
+    Product.class,
+    id,
+    LockModeType.PESSIMISTIC_WRITE,
+    Map.of("jakarta.persistence.lock.timeout", 2_000)
+);
+```
+
+For a query:
+
+```java
+Product product = em.createQuery(
+        "select p from Product p where p.sku = :sku",
+        Product.class
+    )
+    .setParameter("sku", sku)
+    .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+    .getSingleResult();
+```
+
+`em.lock(entity, mode)` requires an already-managed entity. Prefer requesting a pessimistic mode during `find()` or the query when the read itself must be protected; loading first and locking later leaves a concurrency window between those operations.
+
+![Lifecycle and outcomes of a pessimistic write lock](svg/jpa-pessimistic-lock-lifecycle.svg)
+
+### Timeouts and lock exceptions
+
+`Timeout.seconds(2)` and the `jakarta.persistence.lock.timeout` value are **hints**. The provider or database may ignore them. A timeout of `0` requests no-wait locking, but portable code must still handle a provider that cannot honor the request.
+
+| Result | JPA exception | Transaction state |
+|---|---|---|
+| Optimistic version verification fails | `OptimisticLockException` | Marked for rollback |
+| Database lock failure causes statement-level rollback | `LockTimeoutException` | JPA must not mark the transaction for rollback |
+| Database lock failure causes transaction-level rollback | `PessimisticLockException` | Marked for rollback |
+
+The exception class describes the database failure scope. It does not make retrying an arbitrary business operation automatically safe.
+
+### Pessimistic lock scope
+
+`PessimisticLockScope.NORMAL` is the default. It covers database rows that store the entity’s non-collection state, including required secondary or joined-inheritance rows. A relationship whose foreign key is stored in those rows is covered as a row value, but the referenced entity’s own state is not automatically locked.
+
+`PessimisticLockScope.EXTENDED` additionally covers rows for owned element collections and owned relationships stored in join tables. It still does **not** lock the state of the referenced entities.
+
+```java
+import jakarta.persistence.PessimisticLockScope;
+
+Order order = em.find(
+    Order.class,
+    id,
+    LockModeType.PESSIMISTIC_WRITE,
+    PessimisticLockScope.EXTENDED,
+    Timeout.seconds(2)
+);
+```
+
+The provider must observe the requested scope, but it may lock more rows than requested. Lock collection members explicitly when their entity state must also be protected.
+
+### Transaction isolation versus JPA locking
+
+These mechanisms cooperate but answer different questions:
+
+| Mechanism | Main question |
+|---|---|
+| Database isolation | Which changes may this transaction see, and how do concurrent database operations interact? |
+| Automatic `@Version` locking | Is the revision I am about to update or delete still current? |
+| Explicit optimistic mode | Did a selected versioned entity remain unchanged until my transaction completed? |
+| Pessimistic mode | Can I reserve selected database state before performing conflicting work? |
+
+An isolation level alone cannot detect that a detached object became stale while no transaction was open—for example, while a user edited a form. A version column survives that gap and is checked when the object is later merged or updated.
+
+### Choosing a strategy
+
+| Situation | Good starting point |
+|---|---|
+| Ordinary CRUD with low or moderate contention | `@Version` |
+| User edits data across separate transactions | `@Version`, then report or safely retry conflicts |
+| Reading a hot row before an immediate update | `PESSIMISTIC_WRITE` with a timeout |
+| Need repeatable-read behavior for selected entity data | `OPTIMISTIC` or `PESSIMISTIC_READ`, depending on whether late failure is acceptable |
+| A child change must invalidate readers of the aggregate root | `OPTIMISTIC_FORCE_INCREMENT` on the root |
+| Pessimistic writer must also invalidate older optimistic readers | `PESSIMISTIC_FORCE_INCREMENT` |
+
+Start with `@Version` for concurrently edited entities. Choose pessimistic locking when contention or the cost of a late failure justifies waiting and deadlock risk. Keep pessimistic transactions short and acquire multiple locks in one consistent order.
+
+### Common mistakes
+
+- Assuming `LockModeType.WRITE` means `PESSIMISTIC_WRITE`; it is an optimistic alias.
+- Retrying after `OptimisticLockException` inside the already-doomed transaction.
+- Assuming every optimistic check occurs only at commit.
+- Assuming `PESSIMISTIC_WRITE` always produces the same SQL on every database.
+- Treating a lock timeout as guaranteed instead of a provider/database hint.
+- Believing `PessimisticLockScope.EXTENDED` locks every referenced entity.
+- Holding a pessimistic lock while waiting for user input, a remote service, or message delivery.
+- Assuming an entity without `@Version` receives portable automatic optimistic protection.
+
+## Sources
+
+- [Jakarta Persistence 3.2 specification — Locking and Concurrency](https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2#locking-and-concurrency)
+- [Jakarta Persistence 3.2 API — `Version`](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/version)
+- [Jakarta Persistence 3.2 API — `LockModeType`](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/lockmodetype)
+- [Jakarta Persistence 3.2 API — `EntityManager`](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/entitymanager)
+- [Jakarta Persistence 3.2 API — `Timeout`](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/timeout)
+- [Jakarta Persistence 3.2 API — `PessimisticLockScope`](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/pessimisticlockscope)
+- [Hibernate ORM 7.2 User Guide — Locking](https://docs.hibernate.org/orm/7.2/userguide/html_single/#locking)

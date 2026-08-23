@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="880" viewBox="0 0 1400 880" role="img" aria-labelledby="diagram-title diagram-description">
+  <title id="diagram-title">How a JPA version column rejects a stale update</title>
+  <desc id="diagram-description">Two transactions read stock eight with version five. Transaction one updates with a version predicate, so the database advances to stock six and version six. Transaction two later submits its stale version five predicate, matches zero rows, and receives OptimisticLockException. The transaction is marked for rollback.</desc>
+
+  <!-- Blue is ordinary optimistic work, green is a successful current revision, and red is a rejected stale revision. -->
+  <style>
+    .heading { font-family: Inter, Arial, sans-serif; font-weight: 700; fill: #17212b; }
+    .body { font-family: Inter, Arial, sans-serif; fill: #2f3a45; }
+    .muted { font-family: Inter, Arial, sans-serif; fill: #596673; }
+    .mono { font-family: "SFMono-Regular", Consolas, monospace; fill: #23303d; }
+    .light { font-family: Inter, Arial, sans-serif; font-weight: 700; fill: #ffffff; }
+  </style>
+
+  <rect width="1400" height="880" fill="#ffffff"/>
+  <text x="700" y="48" text-anchor="middle" class="heading" font-size="32">@Version turns a write into “update only if my revision is current”</text>
+  <text x="700" y="80" text-anchor="middle" class="muted" font-size="18">The SQL is illustrative Hibernate-style output; JPA specifies the version check, not the exact statement text.</text>
+
+  <!-- Swimlane headers make actor and reading direction explicit. -->
+  <g id="swimlane-headers">
+    <rect x="40" y="108" width="370" height="54" rx="10" fill="#356da8"/>
+    <rect x="515" y="108" width="370" height="54" rx="10" fill="#66727d"/>
+    <rect x="990" y="108" width="370" height="54" rx="10" fill="#7651a5"/>
+    <text x="225" y="142" text-anchor="middle" class="light" font-size="19">TRANSACTION T1</text>
+    <text x="700" y="142" text-anchor="middle" class="light" font-size="19">DATABASE ROW</text>
+    <text x="1175" y="142" text-anchor="middle" class="light" font-size="19">TRANSACTION T2</text>
+  </g>
+
+  <!-- Both transactions receive the same initial revision from the database. -->
+  <g id="initial-read">
+    <rect x="40" y="188" width="370" height="82" rx="10" fill="#eef5ff" stroke="#356da8" stroke-width="2"/>
+    <text x="225" y="220" text-anchor="middle" class="heading" font-size="17">Reads Product #42</text>
+    <text x="225" y="249" text-anchor="middle" class="mono" font-size="16">stock = 8 · version = 5</text>
+
+    <rect x="515" y="188" width="370" height="82" rx="10" fill="#f2f4f6" stroke="#66727d" stroke-width="2"/>
+    <text x="700" y="220" text-anchor="middle" class="heading" font-size="17">Initial persisted revision</text>
+    <text x="700" y="249" text-anchor="middle" class="mono" font-size="16">stock = 8 · version = 5</text>
+
+    <rect x="990" y="188" width="370" height="82" rx="10" fill="#f4f0fa" stroke="#7651a5" stroke-width="2"/>
+    <text x="1175" y="220" text-anchor="middle" class="heading" font-size="17">Reads Product #42</text>
+    <text x="1175" y="249" text-anchor="middle" class="mono" font-size="16">stock = 8 · version = 5</text>
+
+    <!-- Read arrows point outward and stop exactly at each transaction box boundary. -->
+    <path d="M509 229H430" fill="none" stroke="#66727d" stroke-width="4"/>
+    <polygon points="430,219 410,229 430,239" fill="#66727d"/>
+    <path d="M891 229H970" fill="none" stroke="#66727d" stroke-width="4"/>
+    <polygon points="970,219 990,229 970,239" fill="#66727d"/>
+  </g>
+
+  <!-- T1 wins because its expected version still matches the database. -->
+  <g id="t1-success">
+    <rect x="40" y="310" width="370" height="108" rx="10" fill="#eef5ff" stroke="#356da8" stroke-width="2"/>
+    <text x="65" y="342" class="heading" font-size="17">T1 changes the stock to 6</text>
+    <text x="65" y="373" class="mono" font-size="14">UPDATE product SET stock=6,</text>
+    <text x="65" y="397" class="mono" font-size="14">version=6 WHERE id=42 AND version=5</text>
+
+    <rect x="515" y="310" width="370" height="108" rx="10" fill="#edf8f0" stroke="#43804c" stroke-width="2"/>
+    <text x="700" y="343" text-anchor="middle" class="heading" font-size="17">The predicate matches one row</text>
+    <text x="700" y="373" text-anchor="middle" class="mono" font-size="15">affected rows = 1</text>
+    <text x="700" y="398" text-anchor="middle" class="body" font-size="15">Write succeeds and version advances.</text>
+
+    <rect x="990" y="310" width="370" height="108" rx="10" fill="#f4f0fa" stroke="#7651a5" stroke-width="2"/>
+    <text x="1175" y="349" text-anchor="middle" class="heading" font-size="17">T2 is still computing</text>
+    <text x="1175" y="380" text-anchor="middle" class="body" font-size="15">Its managed state still contains</text>
+    <text x="1175" y="404" text-anchor="middle" class="mono" font-size="15">version = 5</text>
+
+    <!-- T1 write arrow stays in the gap between boxes and its tip meets the database boundary. -->
+    <path d="M416 364H495" fill="none" stroke="#356da8" stroke-width="4"/>
+    <polygon points="495,354 515,364 495,374" fill="#356da8"/>
+  </g>
+
+  <!-- Shared state strip makes the causal handoff from T1 to T2 visible. -->
+  <g id="current-database-state">
+    <rect x="515" y="452" width="370" height="82" rx="10" fill="#e4f3e7" stroke="#43804c" stroke-width="3"/>
+    <text x="700" y="484" text-anchor="middle" class="heading" font-size="18">Database now holds the next revision</text>
+    <text x="700" y="514" text-anchor="middle" class="mono" font-size="17">stock = 6 · version = 6</text>
+    <text x="225" y="486" text-anchor="middle" class="body" font-size="16">T1 may commit successfully.</text>
+    <text x="1175" y="486" text-anchor="middle" class="body" font-size="16">T2 has not automatically refreshed.</text>
+  </g>
+
+  <!-- T2's stale predicate cannot overwrite the newer revision. -->
+  <g id="t2-stale-write">
+    <rect x="40" y="574" width="370" height="108" rx="10" fill="#f7f9fb" stroke="#9aa6b2" stroke-width="2"/>
+    <text x="225" y="610" text-anchor="middle" class="heading" font-size="17">Why the check matters</text>
+    <text x="225" y="640" text-anchor="middle" class="body" font-size="15">Without the version predicate,</text>
+    <text x="225" y="664" text-anchor="middle" class="body" font-size="15">T2 could silently overwrite T1.</text>
+
+    <rect x="515" y="574" width="370" height="108" rx="10" fill="#fff0f0" stroke="#b33a3a" stroke-width="2"/>
+    <text x="700" y="607" text-anchor="middle" class="heading" font-size="17">Database has version 6, not 5</text>
+    <text x="700" y="638" text-anchor="middle" class="mono" font-size="15">affected rows = 0</text>
+    <text x="700" y="663" text-anchor="middle" class="body" font-size="15">The stale write is rejected.</text>
+
+    <rect x="990" y="574" width="370" height="108" rx="10" fill="#f4f0fa" stroke="#7651a5" stroke-width="2"/>
+    <text x="1015" y="606" class="heading" font-size="17">T2 submits its old expectation</text>
+    <text x="1015" y="637" class="mono" font-size="14">UPDATE ... WHERE id=42</text>
+    <text x="1015" y="661" class="mono" font-size="14">AND version=5</text>
+
+    <!-- Stale write arrow points left into the database without touching either SQL label. -->
+    <path d="M984 628H905" fill="none" stroke="#b33a3a" stroke-width="4"/>
+    <polygon points="905,618 885,628 905,638" fill="#b33a3a"/>
+  </g>
+
+  <!-- Failure outcome includes both required JPA effects and the safe recovery boundary. -->
+  <g id="optimistic-failure-outcome">
+    <rect x="515" y="716" width="845" height="112" rx="12" fill="#fff0f0" stroke="#b33a3a" stroke-width="3"/>
+    <text x="545" y="750" class="heading" font-size="19">T2 receives OptimisticLockException</text>
+    <text x="545" y="782" class="body" font-size="16">The current transaction is marked for rollback.</text>
+    <text x="545" y="810" class="body" font-size="16">Recovery: start a new transaction, reload current state, then merge, retry, or report the conflict.</text>
+
+    <!-- Database result arrow enters the outcome box at an empty left margin. -->
+    <path d="M700 688V702" fill="none" stroke="#b33a3a" stroke-width="4"/>
+    <polygon points="689,702 700,716 711,702" fill="#b33a3a"/>
+  </g>
+
+  <!-- The @Version mapping is kept as a small persistent reminder in the otherwise unused lower-left area. -->
+  <g id="version-mapping-reminder">
+    <rect x="40" y="716" width="370" height="112" rx="12" fill="#eef5ff" stroke="#356da8" stroke-width="2"/>
+    <text x="65" y="750" class="heading" font-size="18">Entity mapping</text>
+    <text x="65" y="782" class="mono" font-size="16">@Version</text>
+    <text x="65" y="808" class="mono" font-size="16">private long version;</text>
+  </g>
+</svg>
