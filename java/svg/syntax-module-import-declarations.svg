@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title description">
+  <title id="title">How module import declarations work in Java 25</title>
+  <desc id="description">A beginner diagram showing how import module java.base makes public top-level types from exported packages available by simple name in one source file, followed by a comparison with requires in module-info.java.</desc>
+
+  <!-- Shared typography and semantic colors: blue is source syntax, purple is the module API, green is usable type names, and orange marks the readability rule. -->
+  <defs>
+    <style>
+      .heading { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #202124; }
+      .body { font-family: Arial, Helvetica, sans-serif; fill: #303840; }
+      .muted { font-family: Arial, Helvetica, sans-serif; fill: #5f6872; }
+      .mono { font-family: Menlo, Consolas, "Liberation Mono", monospace; fill: #303840; }
+      .light { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <!-- Background and lesson statement; the badge records finalization without interrupting the flow. -->
+  <rect id="background" width="1200" height="720" fill="#ffffff"/>
+  <text x="600" y="42" text-anchor="middle" class="heading" font-size="30">One module import can expose many API packages</text>
+  <text x="600" y="73" text-anchor="middle" class="muted" font-size="18">Read left to right: declaration → exported packages → simple type names in one source file</text>
+  <rect x="1000" y="22" width="170" height="42" rx="21" fill="#dcefe1" stroke="#34834b" stroke-width="2"/>
+  <text x="1085" y="49" text-anchor="middle" class="heading" font-size="15">FINAL · JDK 25</text>
+
+  <!-- Source panel: the code intentionally uses types from three different java.base packages. -->
+  <g id="source-declaration">
+    <rect x="30" y="105" width="330" height="305" rx="11" fill="#eef5ff" stroke="#356eb3" stroke-width="2"/>
+    <rect x="30" y="105" width="330" height="48" rx="11" fill="#356eb3"/>
+    <rect x="30" y="142" width="330" height="11" fill="#356eb3"/>
+    <text x="55" y="137" class="light" font-size="20">1 · Import the module API</text>
+
+    <rect x="55" y="177" width="280" height="50" rx="7" fill="#ffffff" stroke="#356eb3" stroke-width="2"/>
+    <text x="195" y="208" text-anchor="middle" class="mono" font-size="16">import module java.base;</text>
+
+    <text x="60" y="270" class="mono" font-size="15">List&lt;String&gt; names;</text>
+    <text x="60" y="306" class="mono" font-size="15">Path file;</text>
+    <text x="60" y="342" class="mono" font-size="15">LocalDate today;</text>
+    <text x="195" y="386" text-anchor="middle" class="muted" font-size="14">One ordinary .java source file</text>
+  </g>
+
+  <!-- First connector: the head stops before the module panel and never enters its border. -->
+  <path d="M370 257H416" fill="none" stroke="#744b91" stroke-width="4"/>
+  <polygon points="416,247 433,257 416,267" fill="#744b91"/>
+
+  <!-- Module API panel: rows pair exported packages with example public top-level types. -->
+  <g id="exported-module-api">
+    <rect x="440" y="105" width="330" height="305" rx="11" fill="#faf8fc" stroke="#744b91" stroke-width="2"/>
+    <rect x="440" y="105" width="330" height="48" rx="11" fill="#744b91"/>
+    <rect x="440" y="142" width="330" height="11" fill="#744b91"/>
+    <text x="465" y="137" class="light" font-size="20">2 · Follow exported packages</text>
+
+    <text x="605" y="187" text-anchor="middle" class="heading" font-size="18">module java.base</text>
+    <rect x="465" y="207" width="280" height="45" rx="7" fill="#ffffff" stroke="#744b91" stroke-width="1.5"/>
+    <text x="485" y="235" class="mono" font-size="14">java.util</text>
+    <text x="625" y="235" class="body" font-size="14">List · Map</text>
+
+    <rect x="465" y="265" width="280" height="45" rx="7" fill="#ffffff" stroke="#744b91" stroke-width="1.5"/>
+    <text x="485" y="293" class="mono" font-size="14">java.nio.file</text>
+    <text x="625" y="293" class="body" font-size="14">Path · Files</text>
+
+    <rect x="465" y="323" width="280" height="45" rx="7" fill="#ffffff" stroke="#744b91" stroke-width="1.5"/>
+    <text x="485" y="351" class="mono" font-size="14">java.time</text>
+    <text x="625" y="351" class="body" font-size="14">LocalDate</text>
+    <text x="605" y="393" text-anchor="middle" class="muted" font-size="13">public top-level types only</text>
+  </g>
+
+  <!-- Second connector: the arrowhead remains clear of the destination border. -->
+  <path d="M780 257H826" fill="none" stroke="#34834b" stroke-width="4"/>
+  <polygon points="826,247 843,257 826,267" fill="#34834b"/>
+
+  <!-- Outcome panel: the same names from the source panel are now explained as simple names. -->
+  <g id="simple-name-outcome">
+    <rect x="850" y="105" width="320" height="305" rx="11" fill="#edf8f0" stroke="#34834b" stroke-width="2"/>
+    <rect x="850" y="105" width="320" height="48" rx="11" fill="#34834b"/>
+    <rect x="850" y="142" width="320" height="11" fill="#34834b"/>
+    <text x="875" y="137" class="light" font-size="20">3 · Use simple type names</text>
+
+    <rect x="875" y="179" width="270" height="57" rx="8" fill="#ffffff" stroke="#34834b" stroke-width="2"/>
+    <text x="1010" y="214" text-anchor="middle" class="mono" font-size="17">List · Path · LocalDate</text>
+    <text x="1010" y="270" text-anchor="middle" class="body" font-size="15">No package qualifier is needed</text>
+    <text x="1010" y="296" text-anchor="middle" class="body" font-size="15">in this compilation unit.</text>
+
+    <rect x="875" y="325" width="270" height="61" rx="8" fill="#fff8e6" stroke="#b7791f" stroke-width="1.5"/>
+    <text x="1010" y="349" text-anchor="middle" class="heading" font-size="14">Not imported</text>
+    <text x="1010" y="371" text-anchor="middle" class="body" font-size="13">static members · hidden packages</text>
+  </g>
+
+  <!-- Side-by-side comparison prevents the common mistake of treating source imports and module dependencies as interchangeable. -->
+  <g id="import-versus-requires">
+    <g id="module-import-scope">
+      <rect x="30" y="440" width="555" height="180" rx="11" fill="#eef5ff" stroke="#356eb3" stroke-width="2"/>
+      <rect x="30" y="440" width="555" height="46" rx="11" fill="#356eb3"/>
+      <rect x="30" y="475" width="555" height="11" fill="#356eb3"/>
+      <text x="55" y="471" class="light" font-size="20">import module java.sql;</text>
+      <text x="60" y="524" class="heading" font-size="16">Where?</text>
+      <text x="145" y="524" class="body" font-size="16">A Java source file</text>
+      <text x="60" y="557" class="heading" font-size="16">Effect</text>
+      <text x="145" y="557" class="body" font-size="16">Makes eligible type names available</text>
+      <text x="60" y="590" class="heading" font-size="16">Scope</text>
+      <text x="145" y="590" class="body" font-size="16">That compilation unit only</text>
+    </g>
+
+    <g id="requires-scope">
+      <rect x="615" y="440" width="555" height="180" rx="11" fill="#f1e7f7" stroke="#744b91" stroke-width="2"/>
+      <rect x="615" y="440" width="555" height="46" rx="11" fill="#744b91"/>
+      <rect x="615" y="475" width="555" height="11" fill="#744b91"/>
+      <text x="640" y="471" class="light" font-size="20">requires java.sql;</text>
+      <text x="645" y="524" class="heading" font-size="16">Where?</text>
+      <text x="730" y="524" class="body" font-size="16">module-info.java</text>
+      <text x="645" y="557" class="heading" font-size="16">Effect</text>
+      <text x="730" y="557" class="body" font-size="16">Declares a module dependency</text>
+      <text x="645" y="590" class="heading" font-size="16">Result</text>
+      <text x="730" y="590" class="body" font-size="16">The current module reads java.sql</text>
+    </g>
+  </g>
+
+  <!-- Readability rule; keep this footer clear when comparison wording changes. -->
+  <g id="readability-warning">
+    <rect x="30" y="645" width="1140" height="47" rx="9" fill="#fff8e6" stroke="#b7791f" stroke-width="2"/>
+    <text x="600" y="675" text-anchor="middle" class="heading" font-size="16">import module does not create readability: a named module still needs the appropriate requires relationship</text>
+  </g>
+</svg>

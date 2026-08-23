@@ -6,85 +6,56 @@ What does `import module` do in Java, and how is it different from an ordinary i
 
 ## Back
 
-**Module import declarations became final in JDK 25** with JEP 511.
+**Module import declarations** became final in **JDK 25** with JEP 511.
 
-| JDK | Status |
-|---|---|
-| 23 | First preview — JEP 476 |
-| 24 | Second preview — JEP 494 |
-| 25 | Final — JEP 511 |
+A module import makes the accessible API of a named module available by simple type names in one compilation unit—a source file being compiled.
 
-A module import makes the public top-level types in packages exported by a module available to one compilation unit:
+![How a module import exposes exported API types and differs from requires](svg/syntax-module-import-declarations.svg)
 
 ```java
 import module java.base;
 
-void printNames(List<String> names) {
-    names.stream()
-         .map(String::trim)
-         .forEach(System.out::println);
+public final class Names {
+    public static void main(String[] args) {
+        List<String> names = List.of(" Ada ", " Linus ");
+        names.stream()
+             .map(String::strip)
+             .forEach(System.out::println);
+    }
 }
 ```
 
-Without the module import, this file would need individual package imports such as `java.util.List`.
+`java.base` exports packages such as `java.util` and `java.util.stream`, so `List` and `Stream` are available without separate package imports.
 
-## Transitive exports
+`import module M;` imports on demand:
 
-The import also covers exported packages from modules read through transitive dependencies:
+- public top-level classes and interfaces in packages that `M` exports to the current module;
+- the same kinds of types from exported packages reached through `M`'s transitive module dependencies.
 
-```java
-import module java.sql;
+It does **not** import static members, non-public top-level types, or types from packages that are not exported to the current module.
 
-Connection open(DataSource source) throws SQLException {
-    return source.getConnection();
-}
-```
+## Import versus dependency
 
-`java.sql` exports JDBC types and transitively requires `java.transaction.xa` and `java.xml`.
+- `import java.util.List;` selects one type; `import java.util.*;` selects one package; `import module java.base;` spans the module's exported API packages.
+- `requires java.sql;` belongs in `module-info.java` and declares a dependency that makes `java.sql` readable.
+- `import module java.sql;` only brings eligible type names into scope. It does not replace `requires`; the current module must already read `java.sql`. The syntax can also be used by non-modular source code.
 
-## Resolving name conflicts
-
-Importing many packages can expose types with the same simple name. Add a more specific import to resolve the ambiguity:
+Broad imports can expose duplicate simple names. A more specific import resolves the ambiguity:
 
 ```java
 import module java.base;
 import module java.sql;
 import java.sql.Date;
 
-Date createdOn;
+final class Report {
+    Date createdOn;
+}
 ```
 
-The single-type import selects `java.sql.Date` instead of `java.util.Date`.
+The feature was first previewed in JDK 23 with JEP 476 and previewed again in JDK 24 with JEP 494.
 
-## `import module` is not `requires`
+## Sources
 
-```java
-// In a source file: makes exported type names available in this file
-import module java.sql;
-```
-
-```java
-// In module-info.java: declares a dependency between named modules
-requires java.sql;
-```
-
-A module import does not replace a dependency declaration in `module-info.java`.
-
-## Important rules
-
-- It imports accessible public top-level types from exported packages.
-- It does not expose types from non-exported packages.
-- It does not import static members.
-- It can be used in modular and non-modular source code.
-- A normal single-type import can resolve a simple-name collision.
-
-## Summary
-
-`import module` is a concise way to import the API exported by an entire module into one source file. It is especially useful for small programs and broad APIs, but ordinary imports can communicate dependencies more precisely.
-
-## Official references
-
-- [JEP 476: Module Import Declarations — Preview, JDK 23](https://openjdk.org/jeps/476)
-- [JEP 494: Module Import Declarations — Second Preview, JDK 24](https://openjdk.org/jeps/494)
-- [JEP 511: Module Import Declarations — JDK 25](https://openjdk.org/jeps/511)
-
+- [OpenJDK — JEP 511: Module Import Declarations](https://openjdk.org/jeps/511)
+- [Oracle Java 25 Language Guide — Module Import Declarations](https://docs.oracle.com/en/java/javase/25/language/module-import-declarations.html)
+- [Java Language Specification 25 — §7.5.5 Single-Module-Import Declarations](https://docs.oracle.com/javase/specs/jls/se25/html/jls-7.html#jls-7.5.5)
