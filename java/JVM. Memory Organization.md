@@ -1,592 +1,301 @@
-# JVM Memory Organization: Heap, Stack, Metaspace, and GC
+# JVM Memory Organization: Heap, Stacks, Metaspace, and Native Memory
 
 ## Front
 
-How is memory organized in a modern JVM?
-
-Explain:
-
-- The Java heap.
-- Per-thread stacks and stack frames.
-- HotSpot Metaspace.
-- The JVM method area.
-- Code cache and off-heap/native memory.
-- How garbage collection interacts with these areas.
-- The important virtual-thread exception.
+How does a modern HotSpot JVM organize memory, and how are stack variables, heap objects, G1 or ZGC heap layouts, Metaspace, code cache, garbage collection, and common memory failures connected?
 
 ## Back
 
-JVM memory is not one single pool.
+A JVM process does **not** use one memory pool. The Java Virtual Machine Specification (JVMS) defines logical runtime areas, while HotSpot and its selected garbage collector decide many physical implementation details. The central rule is: **objects and arrays live in the shared Java heap; each thread has private execution state; class metadata, compiled code, and JVM bookkeeping also consume memory outside the heap.**
 
-A useful first distinction is:
+Read this card from the overall map to stack-to-heap references, stack frames, collector-specific heap layouts, garbage-collection reachability, and finally diagnosis.
 
-```text
-shared memory                         per-thread execution state
-──────────────────────────────────    ──────────────────────────
-Java heap                             JVM stack / frames
-method-area data                      pc register
-HotSpot Metaspace                     native stack, if used
-code cache
-JVM and application native memory
-```
-
-The **JVM specification** defines logical runtime data areas. **HotSpot** chooses concrete implementations such as Metaspace and the code cache.
-
-![Overall HotSpot and JVM memory organization](svg/jvm-memory-organization.svg)
+![Modern HotSpot JVM memory organization](svg/jvm-memory-organization.svg)
 
 ## Specification model vs. HotSpot implementation
 
-The JVM specification defines:
+The JVMS defines the behavior a conforming JVM must provide. It does not require one exact physical layout.
 
-- `pc` register for each JVM thread.
-- JVM stack for each JVM thread.
-- Shared heap.
-- Shared method area.
-- Per-class runtime constant pools within the method area.
-- Native method stacks when required by the implementation.
+| JVMS concept | Who can use it? | Typical HotSpot realization |
+|---|---|---|
+| Heap | All threads | Garbage-collected Java heap |
+| Method area | All threads | Mostly class metadata in native Metaspace, with related data elsewhere |
+| Runtime constant pool | All threads through its class | Part of the method-area model; HotSpot metadata is mainly in Metaspace |
+| JVM stack and `pc` register | One thread | Frames and execution state for that thread |
+| Native method stack | Usually one thread | Native stack support for JVM and native calls |
 
-The specification deliberately does not prescribe exact addresses, physical layout, collector design, or whether every logical area occupies one contiguous block.
+This distinction prevents a common mistake: **the JVMS method area and HotSpot Metaspace are related, but they are not interchangeable definitions.** The specification describes required semantics; Metaspace is one implementation mechanism.
 
-HotSpot commonly implements the process using areas including:
+## How stack variables reach heap objects
 
-- Java heap.
-- Metaspace and optional compressed class space.
-- Code cache.
-- Platform-thread native stacks.
-- GC data structures.
-- Direct and mapped memory.
-- JVM, JNI, native-library, and allocator memory.
+A local variable can contain a primitive value such as `int`, or a reference value that identifies an object. The reference is in the frame; the object is in the heap. Two frames—even frames owned by different threads—can contain references to the same object.
 
-Therefore:
+![Stack variables referring to shared heap objects](svg/jvm-stack-to-heap-references.svg)
 
-> The JVM method area is a specification concept. HotSpot Metaspace implements much of its class-metadata role, but the two terms are not universally interchangeable.
+In the diagram:
+
+- `count` contains the primitive value `2` directly in Thread A's frame.
+- `customer` and `selected` are separate locals, but both contain a reference to the same `Customer` object.
+- The `Customer` object contains another reference in its `name` field, which reaches a separate `String` object.
+- A Java reference should not be treated as a guaranteed raw machine address. Its representation is a JVM implementation detail.
+
+The phrase “a local object” usually means “an object reachable through a local variable.” It does **not** mean that the object is stored inside the stack frame. A JVM may optimize allocation when behavior remains equivalent, but source-level scope alone does not define physical placement.
 
 ## Java heap
 
-The **heap** is shared by all threads and is the primary memory area managed by the garbage collector.
+The heap is created when the JVM starts and is shared by all JVM threads. It supplies storage for **all class instances and arrays**. Garbage collection (GC) reclaims heap storage automatically; Java code does not explicitly free an object.
 
-Conceptually, it contains:
+Important controls are:
 
-- Ordinary class instances.
-- Arrays, including primitive arrays.
-- `Class` mirror objects.
-- Interned strings and ordinary `String` objects.
-- Collection nodes and backing arrays.
-- Virtual-thread stack-chunk objects.
+- `-Xms<size>`: initial/minimum Java heap size used by normal HotSpot sizing behavior.
+- `-Xmx<size>`: maximum Java heap size.
 
-```java
-Customer customer = new Customer("Ana");
-```
+`-Xmx` is **not** a limit for the whole process. Thread stacks, Metaspace, code cache, garbage-collector structures, direct buffers, native libraries, and other native allocations can make the process much larger.
 
-Conceptually:
+Two size words matter in diagnostics:
 
-```text
-thread stack                          heap
-────────────                          ────
-local customer ─────────────────────▶ Customer object
-                                      └── name ─────▶ String "Ana"
-```
+- **Reserved** memory is address space kept available for possible future use.
+- **Committed** memory has backing storage made available to the process and is the more immediate footprint concern.
 
-The local variable contains a **reference**. The referenced object is normally represented in the heap.
+## JVM stack area and frames
 
-HotSpot may eliminate an allocation or replace an object with scalar values through escape analysis. That is an implementation optimization, not a Java-level guarantee that ordinary objects live in stack memory.
+Every JVM thread has a private JVM stack. A new **frame** is created for each method invocation. The current method's frame is active; calling another method creates a new current frame, and completing a method removes its frame.
 
-### Heap sizing
+![JVM stack area and the contents of stack frames](svg/jvm-thread-stack-frames.svg)
 
-Common HotSpot options:
+Each frame has at least these logical parts:
 
-```text
--Xms<size>   initial/minimum heap sizing target
--Xmx<size>   maximum Java heap size
-```
+- **Local-variable array:** parameters, `this` for an instance method, primitive values, and reference values.
+- **Operand stack:** temporary values used by bytecode instructions. It is separate from the thread's stack of frames.
+- **Linkage information:** includes access to the current class's runtime constant pool and information needed to return to the caller.
 
-Examples:
+Frame sizes for the local-variable array and operand stack are described by the method's class-file data. A frame belongs only to its creating thread and cannot be referenced by another thread.
 
-```text
--Xms512m
--Xmx2g
-```
+### Frame lifetime and failure
 
-`-Xmx` limits the Java heap, not the JVM process's total resident memory.
+Returning normally or leaving because of an uncaught exception discards the current frame. This is deterministic stack cleanup; GC does not “collect” finished frames.
 
-### Heap layout depends on the collector
+If a computation needs more stack than the JVM permits, it throws `StackOverflowError`. Deep or infinite recursion is the usual cause. If the JVM cannot create or expand a stack because memory is unavailable, an `OutOfMemoryError` can occur instead.
 
-Do not assume that every collector uses one fixed contiguous diagram of Eden, Survivor, and Old spaces.
+Platform-thread stack sizing is commonly influenced by `-Xss`. A smaller stack may allow more platform threads but reduces safe call depth; a larger stack does the opposite.
 
-- Serial and Parallel collectors have traditional generational layouts.
-- G1 divides the heap into equal-sized regions whose roles can change.
-- Modern ZGC is generational but organizes memory in collector-specific pages and metadata.
+### Platform threads and virtual threads
 
-The public mental model is **objects in a GC-managed shared heap**. The physical organization is collector-dependent.
+A platform thread is backed by an operating-system thread while it runs and normally consumes per-thread native resources. A virtual thread is scheduled by the JDK onto carrier platform threads and does not permanently own one carrier.
 
-### Heap exhaustion
+In HotSpot, virtual-thread stacks are stored in the Java heap as garbage-collected **stack-chunk objects** that grow and shrink. This is why a very large number of virtual threads does not imply the same number of large native stacks. It also means virtual-thread stack storage contributes to heap occupancy and GC work.
 
-If the JVM cannot satisfy an object or array allocation after attempting the permitted collection and expansion work, it can throw:
+The JVMS deliberately permits frames to be heap allocated, so “stack” describes execution semantics—not necessarily one fixed physical block. Also note an important HotSpot detail: virtual-thread stacks themselves are not treated as GC roots in the same way as platform-thread stacks; the collector handles their heap representation through its normal concurrent mechanisms.
 
-```text
-java.lang.OutOfMemoryError: Java heap space
-```
+## Heap organization depends on the collector
 
-This can mean:
+The JVMS does not prescribe generations, regions, pages, compaction, or a particular GC algorithm. Those are collector choices. Therefore, do not apply a classic contiguous “Eden → Survivor → Old” picture to every modern collector.
 
-- The live data genuinely requires more heap.
-- A memory leak retains objects unintentionally.
-- Allocation rate is too high for the configured collector and heap.
-- Heap sizing is inappropriate for the workload.
+### G1 heap organization
 
-## JVM stacks
+Garbage-First (G1) is a generational, region-based collector. It divides the heap into many **equal-sized regions**. A region can be free or assigned a role such as Eden, Survivor, Old, or Humongous; young and old regions are usually non-contiguous.
 
-Each executing thread has its own logical JVM stack. A method invocation creates a **frame**.
+![G1 heap divided into regions](svg/gc-g1-memory-organization.svg)
 
-A frame contains data such as:
+Key points:
 
-- Local variables.
-- Primitive values and object references.
-- Operand stack used by bytecode instructions.
-- Information needed for dynamic linking.
-- Method return and exception-handling state.
+- Normal allocation goes into young-generation Eden regions; sufficiently large humongous objects are allocated directly in contiguous old-generation regions.
+- A region is a unit of allocation and reclamation. Its role can change after collection.
+- G1 usually reclaims selected regions by **evacuating** live objects to other regions. Copying compacts the survivors and leaves the source regions reusable.
+- Remembered-set and card information tracks relevant cross-region references, so G1 need not scan the entire heap during every young collection.
+- G1 performs evacuation during stop-the-world pauses, while expensive work such as global marking is largely concurrent. Its pause-time target is a goal, not a real-time guarantee.
 
-Example:
+### ZGC heap organization
 
-```java
-static int total(Order order, int tax) {
-    int subtotal = order.subtotal();
-    return subtotal + tax;
-}
-```
+In current HotSpot releases, ZGC is a **generational low-latency collector**. JDK 24 removed its non-generational mode. It separates young and old objects logically, uses internal heap pages (`ZPage` objects), and performs expensive work concurrently so application pauses stay very short.
 
-Conceptually, the active frame contains:
+![Generational ZGC memory organization](svg/gc-zgc-memory-organization.svg)
 
-```text
-Frame: total(Order, int)
-├── local 0: order reference ─────────▶ Order object in heap
-├── local 1: tax primitive value
-├── local 2: subtotal primitive value
-├── operand stack
-└── return/linkage information
-```
+Key points:
 
-### Frame lifetime
+- Recently allocated objects enter the young generation; survivors may remain young or be promoted to old.
+- Young and old generations are collected independently and resized as the workload changes.
+- ZGC can relocate live objects concurrently. Load barriers and collector metadata let application threads continue using references while relocation is in progress.
+- Remembered-set metadata records relevant old-to-young reference locations so a young collection can find those paths.
+- `-Xmx` is the main sizing control. A concurrent collector needs headroom for new allocations while collection is running.
+- ZGC may uncommit unused heap memory and return it to the operating system, subject to its sizing options.
 
-```text
-method called  → frame pushed
-method returns → frame popped
-thread exits   → its remaining execution state disappears
-```
+### G1 and ZGC: do not confuse their maps
 
-GC does not sweep obsolete stack frames. Stack space is reused automatically as frames are popped.
+| Question | G1 | ZGC |
+|---|---|---|
+| Main heap unit shown here | Equal-sized G1 region | Internal ZGC page |
+| Young/old model | Generational | Generational in current JDKs |
+| Moving live objects | Primarily evacuation in stop-the-world collection pauses | Primarily concurrent relocation |
+| Main design emphasis | Balance throughput with predictable pause goals | Very low pause times, with some throughput cost |
+| Diagram shape mandated by JVMS? | No | No |
 
-References in active platform-thread frames are important **GC roots**. Their reachable heap objects must remain alive.
+## Method area, Metaspace, and class mirrors
 
-### Stack overflow
+The JVMS method area is shared and stores per-class structures such as runtime constant pools, field and method data, and method code. It is a logical specification area and is described as logically part of the heap, but the JVMS does not mandate its location or collection policy.
 
-Deep or infinite recursion can exhaust the permitted stack depth:
+HotSpot stores most internal class metadata in **Metaspace**, a native-memory manager outside the Java heap. Typical metadata includes internal descriptions of classes, methods, fields, and constant-pool structures.
 
-```java
-static void recurse() {
-    recurse();
-}
-```
+Keep three related things separate:
 
-Result:
+1. `Customer.class` evaluates to a `Class<Customer>` mirror object in the Java heap.
+2. HotSpot's internal metadata describing `Customer` is mainly in Metaspace.
+3. JIT-compiled machine code for hot `Customer` methods is in the code cache.
 
-```text
-java.lang.StackOverflowError
-```
+Metaspace allocation is organized around class loaders. When a class loader and all of its loaded classes become unloadable, HotSpot can release that loader's metadata arena. Dropping ordinary object references is not enough to unload a class while its defining loader is still reachable.
 
-For platform threads, HotSpot stack sizing is commonly controlled with:
+Useful options include `-XX:MetaspaceSize` as an initial threshold that influences metadata-GC behavior and `-XX:MaxMetaspaceSize` as an optional cap. They are not the equivalents of `-Xms` and `-Xmx` for one fixed contiguous heap.
 
-```text
--Xss<size>
-```
+## Code cache and other native memory
 
-Increasing it permits deeper stacks but raises the native-memory cost of each platform thread and can reduce the number of threads the process can create.
-
-### Platform threads vs. virtual threads
-
-A platform thread is backed by an operating-system thread and normally has a native thread stack.
-
-A virtual thread is different:
-
-- It is not permanently tied to one OS thread.
-- It mounts on a platform **carrier thread** while running.
-- Its stack is stored in the Java heap as stack-chunk objects.
-- Its stack grows and shrinks rather than reserving one large native stack per virtual thread.
-
-Therefore, millions of virtual threads do not imply millions of large native thread stacks. Their stack chunks do, however, contribute to heap occupancy and GC work.
-
-## Method area
-
-The JVM specification defines one shared **method area** containing per-class structures such as:
-
-- Runtime constant pool.
-- Field and method information.
-- Method and constructor code representation.
-- Class and interface initialization information.
-
-The specification does not require the method area to be located in the Java heap, nor does it require a particular garbage-collection or compaction policy for it.
-
-## HotSpot Metaspace
-
-**Metaspace** is HotSpot's native-memory allocator for class metadata.
-
-Since JDK 8, HotSpot stores class metadata in native memory rather than the old permanent generation, or **PermGen**.
-
-Metaspace contains VM metadata describing loaded classes, for example:
-
-- Internal class structures.
-- Method metadata and bytecode-related metadata.
-- Runtime constant-pool metadata.
-- Field, annotation, and class-loader-associated metadata.
-
-It does **not** mean “all non-heap memory.”
-
-The following are separate:
-
-- JIT-compiled native code in the code cache.
-- Platform-thread stacks.
-- Direct-buffer backing memory.
-- Native libraries and application native allocations.
-- GC bookkeeping structures.
-
-### Class mirror vs. class metadata
-
-For a loaded class such as `Customer`:
-
-```text
-heap                              Metaspace
-────                              ─────────
-java.lang.Class<Customer>  ─────▶ HotSpot class metadata
-Customer instances               methods, fields, constant-pool metadata
-```
-
-The `Class` mirror is a normal heap object. HotSpot's internal class metadata is in Metaspace.
-
-### Per-class-loader allocation
-
-Metaspace uses arenas associated with class loaders. A class loader allocates metadata from its chunks.
-
-Classes are normally unloaded as a group when their defining class loader and its classes become unreachable and the collector performs class unloading.
-
-This explains a common leak pattern:
-
-```text
-unexpected strong reference to old ClassLoader
-        ↓
-old classes remain loaded
-        ↓
-their Metaspace remains retained
-```
-
-### Metaspace sizing
-
-Important options:
-
-```text
--XX:MaxMetaspaceSize=<size>
--XX:MetaspaceSize=<size>
-```
-
-`MaxMetaspaceSize` is an optional upper bound on class-metadata memory.
-
-`MetaspaceSize` is primarily the initial high-water mark that influences when metadata pressure induces a GC. It is not simply “the initial amount of Metaspace allocated.”
-
-With compressed class pointers enabled, HotSpot also uses a logically separate compressed class space:
-
-```text
--XX:CompressedClassSpaceSize=<size>
-```
-
-### Metaspace exhaustion
-
-If class metadata cannot be allocated, HotSpot can report:
-
-```text
-java.lang.OutOfMemoryError: Metaspace
-```
-
-Common causes include:
-
-- Loading an unbounded number of generated classes.
-- Retaining class loaders after redeployment.
-- A configured `MaxMetaspaceSize` that is too small.
-- Native-address-space or commit exhaustion.
-
-Raising the limit may hide a class-loader leak, so inspect class-loader retention before treating the limit as the only problem.
-
-## Code cache
-
-HotSpot stores JIT-compiled native machine code in the **code cache**.
-
-```text
-bytecode + runtime profiles
-            ↓ JIT
-compiled native methods in code cache
-```
-
-The code cache is not the Java heap and is not Metaspace.
-
-It also contains supporting generated code such as runtime stubs and adapters.
-
-Code-cache pressure can cause compiled methods to be reclaimed or compilation behavior to change. It is observed and tuned separately from ordinary heap occupancy.
-
-## Native and off-heap memory
+HotSpot's JIT compilers translate frequently executed methods into native machine code. That generated code, plus runtime stubs and adapters, occupies the **code cache**, which is native executable memory. Modern HotSpot can segment it into code heaps for non-method code, profiled methods, and non-profiled methods.
 
 Other process memory can include:
 
-- Platform-thread stacks.
-- Direct `ByteBuffer` backing memory.
-- Memory-mapped files.
-- Foreign Function and Memory API segments.
-- JNI and native-library allocations.
-- GC remembered sets, mark bitmaps, forwarding metadata, and worker structures.
-- JIT/compiler data structures.
-- Shared libraries and executable mappings.
+- platform-thread stacks and native method support;
+- garbage-collector remembered sets, marking bitmaps, queues, and worker structures;
+- direct or mapped buffers and memory used through the Foreign Function and Memory API;
+- JNI libraries and third-party native allocations;
+- symbols, compiler structures, class-data-sharing mappings, and operating-system bookkeeping.
 
-This is why:
+This is why increasing `-Xmx` can worsen a process-level memory problem: a larger heap leaves less address-space or physical-memory headroom for everything outside it.
 
-```text
-process RSS > -Xmx
-```
+## How garbage collection decides what survives
 
-is normal.
-
-An application can suffer native-memory exhaustion even while the Java heap has free space.
-
-## How GC interacts with memory
+GC starts from known **roots** and follows reference paths. An object reachable through a strong path is live. An unreachable object is eligible for reclamation; “eligible” does not promise immediate collection.
 
 ![GC roots, heap reachability, and class unloading](svg/jvm-gc-roots-and-reclamation.svg)
 
-At a high level, tracing collectors perform these logical steps:
+Typical root sources include active platform-thread execution state, static references associated with loaded classes, JNI handles, and JVM or collector runtime structures. References inside ordinary heap objects extend the reachable graph.
 
-```text
-GC roots
-   ↓
-trace reachable heap objects
-   ↓
-mark live objects
-   ↓
-reclaim unreachable memory
-   ↓
-optionally move/compact live objects and repair references
-```
+The diagram also separates three cleanup rules:
 
-Exact phases and concurrency differ by collector.
+- **Stack frame:** removed when its method finishes.
+- **Heap object:** reclaimed only after it is unreachable under the active reference rules and the collector processes it.
+- **Metaspace allocation:** reclaimed in groups when the defining class loader and its classes can be unloaded.
 
-### Typical GC roots
+GC can affect more than heap occupancy. It may process roots from execution state and generated code, maintain native metadata, unload classes, and enable Metaspace chunks to be returned or reused.
 
-Roots can include:
-
-- References in active platform-thread stack frames and registers.
-- Static/class-associated references kept through JVM class structures.
-- JNI global and local handles.
-- JVM-internal handles.
-- Active monitors and synchronization structures.
-- Collector-specific roots such as remembered-set entries or code roots.
-
-Virtual-thread stacks are heap objects and are integrated with collector-specific scanning rather than behaving like one traditional native stack root each.
-
-### Heap reclamation
-
-A heap object is eligible for collection when it is no longer reachable through the collector's root and reference-processing rules.
+## Complete example: where the data goes
 
 ```java
-Customer customer = new Customer();
-customer = null;
-```
+final class MemoryExample {
+    private static Customer featured;
 
-Setting the local to `null` does not immediately free the object. It only removes one reference. The object becomes collectible only if no relevant path can still reach it, and memory is reclaimed when the collector performs the necessary work.
+    static final class Customer {
+        private final String name;
 
-Different collectors may:
+        Customer(String name) {
+            this.name = name;
+        }
+    }
 
-- Copy or evacuate live objects.
-- Compact in place.
-- Reclaim whole regions or pages.
-- Perform marking and relocation concurrently.
-- Use brief or long stop-the-world phases.
+    static int adjustedNameLength(Customer customer) {
+        int adjustment = 1;
+        String localName = customer.name;
+        return localName.length() + adjustment;
+    }
 
-### Stack reclamation
-
-Stacks are not normally garbage-collected like the Java heap:
-
-- Returning from a method pops its frame.
-- Ending a platform thread releases its thread-stack resources.
-- Virtual-thread stack chunks are heap objects and therefore participate in heap management.
-
-### Metaspace reclamation
-
-GC can indirectly reclaim Metaspace through **class unloading**:
-
-```text
-class loader becomes unreachable
-        ↓
-its classes become unloadable
-        ↓
-GC performs class unloading
-        ↓
-loader's metadata chunks are recycled or returned to the OS
-```
-
-Metaspace pressure can itself induce a collection when the metadata high-water mark is reached.
-
-Class unloading is not the same as collecting an ordinary instance of a class. Millions of dead `Customer` instances can be reclaimed while the `Customer` class remains loaded.
-
-## Example: where the values go
-
-```java
-final class OrderService {
-    private static final TaxRules RULES = new TaxRules();
-
-    Receipt place(Order order) {
-        int attempts = 1;
-        Receipt receipt = new Receipt(order, RULES);
-        return receipt;
+    public static void main(String[] args) {
+        Customer customer = new Customer("Ana");
+        featured = customer;
+        System.out.println(adjustedNameLength(customer));
     }
 }
 ```
 
 Conceptually:
 
-| Value | Typical logical location |
-|---|---|
-| `attempts` primitive local | Current stack frame |
-| `order` local reference | Current stack frame |
-| `Order` instance | Heap |
-| `receipt` local reference | Current stack frame |
-| `Receipt` instance | Heap |
-| `RULES` referenced `TaxRules` object | Heap |
-| `OrderService` class metadata | Metaspace in HotSpot |
-| `OrderService.class` mirror | Heap |
-| JIT-compiled `place()` machine code | Code cache |
+- The `Customer`, its `String`, the `String[] args`, and the `Class` mirror objects are in the heap.
+- `customer`, `localName`, and `args` are reference values in active frames; `adjustment` is a primitive local.
+- The static field `featured` stores a reference associated with the loaded class and keeps the `Customer` reachable after `main`'s local would otherwise disappear.
+- Class metadata for `MemoryExample` and `Customer` is mainly in Metaspace.
+- Interpreted execution uses bytecode metadata; if the methods become hot and are compiled, their native code is placed in the code cache.
 
-This table is a conceptual model. JIT optimizations may remove, split, inline, or keep values in CPU registers while preserving Java semantics.
+Exact optimization details can differ. A JIT compiler may eliminate or scalar-replace an allocation when observable behavior is unchanged, so a diagnostic snapshot need not look exactly like the conceptual source-level model.
 
-## Failure symptoms by area
+## Failure symptoms by memory area
 
-| Symptom | Likely area or resource |
-|---|---|
-| `StackOverflowError` | One thread's stack depth |
-| `OutOfMemoryError: Java heap space` | Java heap |
-| `OutOfMemoryError: Metaspace` | Class metadata / native memory |
-| `OutOfMemoryError: Compressed class space` | Compressed class metadata area |
-| `OutOfMemoryError: unable to create native thread` | Native thread or process resources |
-| Direct-buffer allocation failure | Direct/off-heap memory or configured direct-memory limit |
-| Process killed by container or OS | Total process memory, not necessarily heap alone |
+| Symptom | First area to investigate | Typical cause |
+|---|---|---|
+| `StackOverflowError` | One thread's call stack | Deep or infinite recursion; insufficient permitted stack depth |
+| `OutOfMemoryError: Java heap space` | Java heap | Live set or allocation pressure cannot fit within the available heap |
+| `OutOfMemoryError: Metaspace` | Class metadata | Too many live loaded classes/loaders or an overly small metadata cap |
+| `OutOfMemoryError: Compressed class space` | Compressed class metadata space | Class-pointer space is exhausted |
+| `OutOfMemoryError: unable to create native thread` | Native/process thread resources | Too many platform threads or insufficient native resources |
+| Direct-buffer allocation failure | Direct/native memory | Direct buffers remain live or native headroom is too small |
+| Code-cache-full warnings and reduced compilation | Code cache | Generated code cannot fit; compilation or code sweeping becomes constrained |
 
-Always diagnose the exact message and memory category before changing JVM limits.
+A heap dump is excellent for heap objects but cannot explain every native allocation. Likewise, a low heap occupancy does not prove the process has enough native memory.
 
-## Useful diagnostics
+## Practical diagnosis
+
+Start with the area named by the error or the evidence—not by immediately increasing a limit.
 
 ### Heap and GC
 
-```text
+```bash
 jcmd <pid> GC.heap_info
 jcmd <pid> GC.class_histogram
-jcmd <pid> GC.heap_dump filename=heap.hprof
+jcmd <pid> GC.heap_dump /path/to/heap.hprof
 ```
 
-GC logging:
+Use GC logs such as `-Xlog:gc*` to see collection timing, heap transitions, promotion, and allocation failures. Use Java Flight Recorder (JFR) for allocation, GC, thread, and runtime events over time.
 
-```text
--Xlog:gc*
+### Threads and stacks
+
+```bash
+jcmd <pid> Thread.print
 ```
+
+Look for recursive call patterns and an unexpectedly large number of platform threads. Remember that virtual-thread diagnostics have dedicated commands and formats in newer JDKs.
 
 ### Native memory
 
-Start with Native Memory Tracking when needed:
+Native Memory Tracking (NMT) must be enabled when the JVM starts:
 
-```text
--XX:NativeMemoryTracking=summary
-```
-
-Inspect it:
-
-```text
+```bash
+java -XX:NativeMemoryTracking=summary MemoryExample
 jcmd <pid> VM.native_memory summary
+jcmd <pid> VM.native_memory baseline
+jcmd <pid> VM.native_memory summary.diff
 ```
 
-Native Memory Tracking observes HotSpot-managed categories but does not account for every third-party native allocation.
-
-### Class loading
-
-```text
-jcmd <pid> VM.classloader_stats
-jcmd <pid> GC.class_histogram
--Xlog:class+load=info,class+unload=info
-```
+NMT groups HotSpot-managed usage into categories such as Java Heap, Class, Thread, Code, GC, and Compiler. It distinguishes reserved from committed memory. It does **not** track all memory allocated by third-party native code, so operating-system tools may still be necessary. Enabling NMT also has overhead.
 
 ## Common misconceptions
 
-### “Local objects are stored on the stack”
-
-Usually false. The local variable may be a stack reference to a heap object. Escape analysis can optimize representation, but code must not depend on it.
-
-### “Metaspace is part of the Java heap”
-
-False for HotSpot. Class metadata is allocated in native memory.
-
-### “Everything outside the heap is Metaspace”
-
-False. Thread stacks, code cache, direct memory, GC structures, native libraries, and other native allocations are separate consumers.
-
-### “The method area and Metaspace are identical JVM concepts”
-
-False. Method area is specified by the JVM specification; Metaspace is a HotSpot implementation mechanism for class metadata.
-
-### “GC cleans the stack”
-
-Ordinary platform-thread frames are pushed and popped automatically. GC traces references from active frames but does not sweep frames like heap objects.
-
-### “GC only affects the heap”
-
-Ordinary object reclamation is a heap function, but GC can also unload classes and release their Metaspace metadata. GC also consumes native metadata and worker memory itself.
-
-### “`-Xmx` is the process memory limit”
-
-False. It limits the Java heap. A container or OS limit must also accommodate Metaspace, code cache, stacks, direct buffers, GC structures, and native code.
-
-### “Calling `System.gc()` immediately frees everything unreachable”
-
-False. It is a request, and collector policy or JVM options may ignore or handle it differently. Reference processing, class unloading, native cleaners, and OS memory return have separate rules.
+- **“Local objects live on the stack.”** Local variables live in frames; ordinary objects and arrays are allocated from the heap.
+- **“GC clears the stack.”** Frames are popped by method completion. GC uses execution references to determine heap reachability.
+- **“Metaspace is the whole off-heap area.”** It is primarily HotSpot class-metadata memory; code cache, stacks, GC structures, buffers, and libraries are separate concerns.
+- **“The method area is exactly Metaspace.”** The method area is a JVMS concept; Metaspace is a HotSpot implementation component.
+- **“G1 has one contiguous young block and one contiguous old block.”** G1 assigns roles to non-contiguous equal-sized regions.
+- **“All collectors organize the heap like G1.”** ZGC uses different page and metadata structures even though both collectors are generational.
+- **“Unreachable means immediately freed.”** It means eligible for reclamation when the collector processes it.
+- **“`-Xmx` caps JVM process memory.”** It caps the Java heap, not the process.
+- **“A large reserved value is already fully used.”** Reserved address space and committed memory are different measurements.
 
 ## Summary
 
-```text
-Java heap
-    shared, GC-managed objects and arrays
-    bounded mainly by -Xms / -Xmx
+1. The **heap** is shared and stores objects and arrays.
+2. A **JVM stack** is private to a thread and stores frames; frames contain locals, an operand stack, and linkage state.
+3. A local reference points to a heap object; multiple frames or threads can reach the same object.
+4. **G1** uses equal-sized, dynamically assigned regions; **ZGC** uses its own page-based, generational organization and mostly concurrent relocation.
+5. The JVMS **method area** is a logical contract; HotSpot stores most class metadata in native **Metaspace**.
+6. JIT-compiled native code lives in the **code cache**, while stacks, collector data, buffers, and libraries add more native memory.
+7. GC keeps strongly reachable objects, reclaims unreachable heap storage, and can enable class unloading. Finished frames are popped independently.
+8. Diagnose the named area with heap tools, thread data, GC logs/JFR, or NMT. `-Xmx` alone never describes the whole process.
 
-Platform-thread stack
-    private frames, locals, operand stacks, references
-    native resource; commonly influenced by -Xss
+## Sources
 
-Virtual-thread stack
-    represented by heap stack-chunk objects
-    mounted on a carrier while executing
-
-Method area
-    JVM-spec logical per-class storage
-
-HotSpot Metaspace
-    native class-metadata storage
-    reclaimed mainly through class unloading
-
-Code cache
-    JIT-compiled native machine code
-
-GC
-    traces from roots, retains reachable heap objects,
-    reclaims unreachable heap memory, and may unload classes
-
--Xmx is not total process memory.
-JVM memory organization is not the Java Memory Model.
-```
-
-## Official references
-
-- [JVM Specification 25 — Runtime Data Areas](https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-2.html#jvms-2.5)
-- [Oracle Java 26 GC Tuning Guide — Class Metadata](https://docs.oracle.com/en/java/javase/26/gctuning/other-considerations.html)
-- [JEP 387: Elastic Metaspace](https://openjdk.org/jeps/387)
-- [JEP 444: Virtual Threads — Memory and GC](https://openjdk.org/jeps/444)
-- [Oracle Java 25 — Native Memory Tracking](https://docs.oracle.com/en/java/javase/25/vm/native-memory-tracking.html)
-- [Oracle Java 25 — Troubleshooting Memory Leaks and OOME](https://docs.oracle.com/en/java/javase/25/troubleshoot/troubleshooting-memory-leaks.html)
+- [Java SE 26 JVMS §2 — Runtime data areas and frames](https://docs.oracle.com/en/java/javase/26/docs/specs/jvms/jvms-2.html)
+- [Oracle Java SE 26 — Garbage-First (G1) Garbage Collector](https://docs.oracle.com/en/java/javase/26/gctuning/garbage-first-g1-garbage-collector1.html)
+- [Oracle Java SE 26 — HotSpot VM Garbage Collection Tuning Guide](https://docs.oracle.com/en/java/javase/26/gctuning/hotspot-virtual-machine-garbage-collection-tuning-guide.pdf)
+- [OpenJDK JEP 439 — Generational ZGC](https://openjdk.org/jeps/439)
+- [OpenJDK JEP 490 — ZGC: Remove the Non-Generational Mode](https://openjdk.org/jeps/490)
+- [OpenJDK source — Current `ZPage` implementation](https://github.com/openjdk/jdk/blob/master/src/hotspot/share/gc/z/zPage.hpp)
+- [OpenJDK JEP 444 — Virtual Threads](https://openjdk.org/jeps/444)
+- [OpenJDK JEP 387 — Elastic Metaspace](https://openjdk.org/jeps/387)
+- [OpenJDK Wiki — Current HotSpot Metaspace design](https://wiki.openjdk.org/display/HotSpot/Metaspace)
+- [OpenJDK JEP 197 — Segmented Code Cache](https://openjdk.org/jeps/197)
+- [Oracle Java SE 26 Troubleshooting Guide — Diagnostic tools and Native Memory Tracking](https://docs.oracle.com/en/java/javase/26/troubleshoot/diagnostic-tools.html)

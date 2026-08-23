@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="860" viewBox="0 0 1400 860" role="img" aria-labelledby="diagram-title diagram-description">
+  <title id="diagram-title">How stack variables refer to objects in the Java heap</title>
+  <desc id="diagram-description">Two private thread stacks contain local reference values that point to one shared Customer object in the Java heap. The Customer object refers to a String object. A primitive local contains its value directly and has no heap arrow.</desc>
+
+  <style>
+    .sans { font-family: Inter, Arial, sans-serif; }
+    .mono { font-family: "SFMono-Regular", Consolas, monospace; }
+    .heading { font-family: Inter, Arial, sans-serif; font-weight: 700; fill: #17212b; }
+    .body { font-family: Inter, Arial, sans-serif; fill: #2f3a45; }
+    .muted { font-family: Inter, Arial, sans-serif; fill: #596673; }
+  </style>
+
+  <!-- Background and lesson title. -->
+  <rect width="1400" height="860" fill="#ffffff"/>
+  <text id="diagram-title-text" x="700" y="49" text-anchor="middle" class="heading" font-size="34">Stack variables hold values; reference values can point into the heap</text>
+  <text x="700" y="81" text-anchor="middle" class="muted" font-size="18">The object is not stored inside the local variable, and several threads may reach the same object.</text>
+
+  <!-- Thread A owns this stack and its frames. -->
+  <g id="thread-a-stack">
+    <rect x="40" y="120" width="430" height="270" rx="14" fill="#fff7ef" stroke="#b56032" stroke-width="3"/>
+    <rect x="40" y="120" width="430" height="54" rx="14" fill="#b56032"/>
+    <path d="M40 160H470" stroke="#b56032" stroke-width="28"/>
+    <text x="65" y="155" class="sans" font-size="21" font-weight="700" fill="#ffffff">THREAD A · private JVM stack</text>
+
+    <rect x="70" y="198" width="370" height="155" rx="10" fill="#ffffff" stroke="#d79a77" stroke-width="2"/>
+    <text x="90" y="229" class="heading" font-size="19">process(Customer customer)</text>
+    <line x1="90" y1="242" x2="420" y2="242" stroke="#e6c4b1" stroke-width="2"/>
+
+    <!-- The reference local holds an address-like JVM value, not the object. -->
+    <text x="90" y="273" class="mono" font-size="17" fill="#8a3f20">local 0 · customer</text>
+    <rect x="300" y="252" width="118" height="31" rx="6" fill="#f8ded0" stroke="#b56032" stroke-width="2"/>
+    <text x="359" y="273" text-anchor="middle" class="mono" font-size="16" fill="#6f2f16">ref #101</text>
+
+    <!-- The primitive local contains its number directly. -->
+    <text x="90" y="320" class="mono" font-size="17" fill="#315e38">local 1 · count</text>
+    <rect x="300" y="299" width="118" height="31" rx="6" fill="#e2f0e5" stroke="#43804c" stroke-width="2"/>
+    <text x="359" y="320" text-anchor="middle" class="mono" font-size="16" fill="#315e38">2</text>
+    <text x="70" y="376" class="muted" font-size="15">The primitive has no arrow: its value is already in the frame.</text>
+  </g>
+
+  <!-- Thread B has a different private stack but can hold the same reference value. -->
+  <g id="thread-b-stack">
+    <rect x="40" y="430" width="430" height="235" rx="14" fill="#f4f0fa" stroke="#7651a5" stroke-width="3"/>
+    <rect x="40" y="430" width="430" height="54" rx="14" fill="#7651a5"/>
+    <path d="M40 470H470" stroke="#7651a5" stroke-width="28"/>
+    <text x="65" y="465" class="sans" font-size="21" font-weight="700" fill="#ffffff">THREAD B · private JVM stack</text>
+
+    <rect x="70" y="508" width="370" height="119" rx="10" fill="#ffffff" stroke="#b8a2d0" stroke-width="2"/>
+    <text x="90" y="539" class="heading" font-size="19">audit(Customer selected)</text>
+    <line x1="90" y1="552" x2="420" y2="552" stroke="#d8cce5" stroke-width="2"/>
+    <text x="90" y="589" class="mono" font-size="17" fill="#56357e">local 0 · selected</text>
+    <rect x="300" y="568" width="118" height="31" rx="6" fill="#e9def4" stroke="#7651a5" stroke-width="2"/>
+    <text x="359" y="589" text-anchor="middle" class="mono" font-size="16" fill="#56357e">ref #101</text>
+    <text x="70" y="649" class="muted" font-size="15">Private stack; shared heap object.</text>
+  </g>
+
+  <!-- Shared heap contains the actual objects. -->
+  <g id="shared-heap">
+    <rect x="740" y="120" width="620" height="545" rx="14" fill="#eef6fc" stroke="#356da8" stroke-width="3"/>
+    <rect x="740" y="120" width="620" height="54" rx="14" fill="#356da8"/>
+    <path d="M740 160H1360" stroke="#356da8" stroke-width="28"/>
+    <text x="765" y="155" class="sans" font-size="21" font-weight="700" fill="#ffffff">JAVA HEAP · shared by all threads</text>
+
+    <!-- Customer #101 is the target of both stack references. -->
+    <g id="customer-object">
+      <rect x="800" y="215" width="285" height="190" rx="12" fill="#e3f1e6" stroke="#43804c" stroke-width="3"/>
+      <rect x="800" y="215" width="285" height="54" rx="12" fill="#43804c"/>
+      <path d="M800 255H1085" stroke="#43804c" stroke-width="28"/>
+      <text x="825" y="250" class="sans" font-size="21" font-weight="700" fill="#ffffff">Customer object · #101</text>
+      <text x="825" y="307" class="mono" font-size="17" fill="#315e38">name</text>
+      <rect x="940" y="285" width="118" height="31" rx="6" fill="#ffffff" stroke="#6ea278" stroke-width="2"/>
+      <text x="999" y="306" text-anchor="middle" class="mono" font-size="16" fill="#315e38">ref #202</text>
+      <text x="825" y="356" class="mono" font-size="17" fill="#315e38">age</text>
+      <rect x="940" y="334" width="118" height="31" rx="6" fill="#ffffff" stroke="#6ea278" stroke-width="2"/>
+      <text x="999" y="355" text-anchor="middle" class="mono" font-size="16" fill="#315e38">42</text>
+      <text x="825" y="389" class="muted" font-size="14">Fields are stored with the object.</text>
+    </g>
+
+    <!-- String #202 is a separate heap object reached through Customer.name. -->
+    <g id="string-object">
+      <rect x="1115" y="465" width="195" height="125" rx="12" fill="#f4f0fa" stroke="#7651a5" stroke-width="3"/>
+      <text x="1212" y="505" text-anchor="middle" class="heading" font-size="20">String · #202</text>
+      <line x1="1138" y1="520" x2="1287" y2="520" stroke="#cbbadb" stroke-width="2"/>
+      <text x="1212" y="559" text-anchor="middle" class="mono" font-size="22" fill="#56357e">"Ana"</text>
+    </g>
+
+    <text x="1050" y="636" text-anchor="middle" class="muted" font-size="16">Objects remain only while reachable according to the collector's rules.</text>
+  </g>
+
+  <!-- Relationship arrows use separate shafts and heads so repair coordinates remain obvious. -->
+  <g id="reference-arrows">
+    <!-- Thread A customer -> Customer #101. -->
+    <path d="M418 267H690V288H778" fill="none" stroke="#b56032" stroke-width="4"/>
+    <polygon points="778,278 792,288 778,298" fill="#b56032"/>
+    <text x="585" y="250" text-anchor="middle" class="sans" font-size="15" font-weight="700" fill="#8a3f20">reference #101</text>
+
+    <!-- Thread B selected -> the same Customer #101. -->
+    <path d="M418 583H650V370H778" fill="none" stroke="#7651a5" stroke-width="4"/>
+    <polygon points="778,360 792,370 778,380" fill="#7651a5"/>
+    <text x="562" y="609" text-anchor="middle" class="sans" font-size="15" font-weight="700" fill="#56357e">same reference #101</text>
+
+    <!-- Customer.name -> String #202. -->
+    <path d="M1058 300H1095V527H1097" fill="none" stroke="#43804c" stroke-width="4"/>
+    <polygon points="1097,517 1111,527 1097,537" fill="#43804c"/>
+    <text x="1210" y="427" text-anchor="middle" class="sans" font-size="15" font-weight="700" fill="#315e38">name → #202</text>
+  </g>
+
+  <!-- Three takeaways fill the lower band so the composition has no meaningless central void. -->
+  <g id="takeaways">
+    <rect x="40" y="710" width="1320" height="112" rx="14" fill="#f7f9fb" stroke="#b9c3cd" stroke-width="2"/>
+    <circle cx="87" cy="761" r="21" fill="#b56032"/>
+    <text x="87" y="768" text-anchor="middle" class="sans" font-size="20" font-weight="700" fill="#ffffff">1</text>
+    <text x="122" y="751" class="heading" font-size="17">A local reference is a value</text>
+    <text x="122" y="777" class="body" font-size="15">It identifies an object;</text>
+    <text x="122" y="800" class="body" font-size="15">it does not contain the object.</text>
+
+    <circle cx="525" cy="761" r="21" fill="#7651a5"/>
+    <text x="525" y="768" text-anchor="middle" class="sans" font-size="20" font-weight="700" fill="#ffffff">2</text>
+    <text x="560" y="751" class="heading" font-size="17">Heap objects can be shared</text>
+    <text x="560" y="777" class="body" font-size="15">Different frames and threads</text>
+    <text x="560" y="800" class="body" font-size="15">may hold the same reference.</text>
+
+    <circle cx="984" cy="761" r="21" fill="#43804c"/>
+    <text x="984" y="768" text-anchor="middle" class="sans" font-size="20" font-weight="700" fill="#ffffff">3</text>
+    <text x="1019" y="751" class="heading" font-size="17">Reachability keeps objects alive</text>
+    <text x="1019" y="777" class="body" font-size="15">Active stack references are among</text>
+    <text x="1019" y="800" class="body" font-size="15">the paths GC follows.</text>
+  </g>
+</svg>
