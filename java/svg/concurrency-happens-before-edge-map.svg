@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900" role="img" aria-labelledby="title description">
+  <title id="title">Core happens-before bridges between Java threads</title>
+  <desc id="description">Four Java Memory Model rules connect a release in one thread to an acquire in another: monitor unlock to a later lock, volatile write to a later read, thread start to actions in the new thread, and a thread's actions to a successful join. A second panel shows higher-level Executor, Future, concurrent collection, and synchronizer guarantees.</desc>
+
+  <!-- Shared typography and semantic colors keep later repairs local. -->
+  <defs>
+    <style>
+      .title { font: 700 36px sans-serif; fill: #111827; }
+      .subtitle { font: 20px sans-serif; fill: #4b5563; }
+      .section { font: 700 24px sans-serif; fill: #273444; }
+      .cardTitle { font: 700 20px sans-serif; }
+      .body { font: 18px sans-serif; fill: #273444; }
+      .small { font: 16px sans-serif; fill: #4b5563; }
+      .code { font: 700 18px monospace; fill: #1f2937; }
+      .codeSmall { font: 700 16px monospace; fill: #1f2937; }
+    </style>
+  </defs>
+
+  <!-- Background and explicit reading instruction. -->
+  <rect width="1500" height="900" fill="#ffffff"/>
+  <text x="750" y="52" text-anchor="middle" class="title">Happens-before needs a complete path between threads</text>
+  <text x="750" y="86" text-anchor="middle" class="subtitle">Read each card top to bottom: release action → matching acquire action</text>
+
+  <!-- Language-level synchronizes-with rules from the Java Memory Model. -->
+  <rect x="40" y="120" width="1420" height="390" rx="18" fill="#f8fafc" stroke="#c1cad5" stroke-width="3"/>
+  <text x="70" y="160" class="section">Java Memory Model: core cross-thread bridges</text>
+
+  <!-- Monitor card; same monitor identity is essential. -->
+  <rect x="70" y="185" width="315" height="280" rx="15" fill="#eef5fc" stroke="#356da8" stroke-width="3"/>
+  <text x="228" y="223" text-anchor="middle" class="cardTitle" fill="#234f7c">MONITOR</text>
+  <rect x="100" y="248" width="255" height="58" rx="10" fill="#ffffff" stroke="#6d9dce" stroke-width="2"/>
+  <text x="228" y="284" text-anchor="middle" class="code">unlock(m)</text>
+  <!-- Shaft ends under its separate head; the tip meets the acquire box. -->
+  <path d="M228 306 V331" fill="none" stroke="#356da8" stroke-width="5"/>
+  <polygon points="228,347 217,331 239,331" fill="#356da8"/>
+  <rect x="100" y="347" width="255" height="58" rx="10" fill="#ffffff" stroke="#6d9dce" stroke-width="2"/>
+  <text x="228" y="383" text-anchor="middle" class="code">later lock(m)</text>
+  <text x="228" y="440" text-anchor="middle" class="small">same monitor m</text>
+
+  <!-- Volatile card; using a different field would not form this edge. -->
+  <rect x="415" y="185" width="315" height="280" rx="15" fill="#f5f0fc" stroke="#7645a8" stroke-width="3"/>
+  <text x="573" y="223" text-anchor="middle" class="cardTitle" fill="#563080">VOLATILE FIELD</text>
+  <rect x="445" y="248" width="255" height="58" rx="10" fill="#ffffff" stroke="#9c78c3" stroke-width="2"/>
+  <text x="573" y="284" text-anchor="middle" class="codeSmall">volatile write(v)</text>
+  <path d="M573 306 V331" fill="none" stroke="#7645a8" stroke-width="5"/>
+  <polygon points="573,347 562,331 584,331" fill="#7645a8"/>
+  <rect x="445" y="347" width="255" height="58" rx="10" fill="#ffffff" stroke="#9c78c3" stroke-width="2"/>
+  <text x="573" y="383" text-anchor="middle" class="codeSmall">later read(v)</text>
+  <text x="573" y="440" text-anchor="middle" class="small">same volatile field v</text>
+
+  <!-- Thread-start card; the derived happens-before edge reaches every action in the new thread. -->
+  <rect x="760" y="185" width="315" height="280" rx="15" fill="#fff8eb" stroke="#bd7823" stroke-width="3"/>
+  <text x="918" y="223" text-anchor="middle" class="cardTitle" fill="#7b4d16">THREAD START</text>
+  <rect x="790" y="248" width="255" height="58" rx="10" fill="#ffffff" stroke="#d8a45e" stroke-width="2"/>
+  <text x="918" y="284" text-anchor="middle" class="code">t.start()</text>
+  <path d="M918 306 V331" fill="none" stroke="#bd7823" stroke-width="5"/>
+  <polygon points="918,347 907,331 929,331" fill="#bd7823"/>
+  <rect x="790" y="347" width="255" height="58" rx="10" fill="#ffffff" stroke="#d8a45e" stroke-width="2"/>
+  <text x="918" y="383" text-anchor="middle" class="codeSmall">actions inside t</text>
+  <text x="918" y="440" text-anchor="middle" class="small">publication into new thread</text>
+
+  <!-- Thread-termination card; join must return successfully. -->
+  <rect x="1105" y="185" width="315" height="280" rx="15" fill="#edf8ef" stroke="#43804c" stroke-width="3"/>
+  <text x="1263" y="223" text-anchor="middle" class="cardTitle" fill="#315e38">THREAD TERMINATION</text>
+  <rect x="1135" y="248" width="255" height="58" rx="10" fill="#ffffff" stroke="#79a982" stroke-width="2"/>
+  <text x="1263" y="284" text-anchor="middle" class="codeSmall">all actions in t</text>
+  <path d="M1263 306 V331" fill="none" stroke="#43804c" stroke-width="5"/>
+  <polygon points="1263,347 1252,331 1274,331" fill="#43804c"/>
+  <rect x="1135" y="347" width="255" height="58" rx="10" fill="#ffffff" stroke="#79a982" stroke-width="2"/>
+  <text x="1263" y="383" text-anchor="middle" class="codeSmall">successful t.join()</text>
+  <text x="1263" y="440" text-anchor="middle" class="small">publication back to joiner</text>
+
+  <!-- Higher-level API contracts use the same before/after idea without exposing low-level edges. -->
+  <rect x="40" y="540" width="1420" height="275" rx="18" fill="#f8fafc" stroke="#c1cad5" stroke-width="3"/>
+  <text x="70" y="580" class="section">java.util.concurrent: higher-level bridges</text>
+
+  <rect x="75" y="610" width="420" height="160" rx="14" fill="#eef5fc" stroke="#356da8" stroke-width="3"/>
+  <text x="285" y="643" text-anchor="middle" class="cardTitle" fill="#234f7c">TASK HANDOFF</text>
+  <rect x="100" y="660" width="130" height="50" rx="9" fill="#ffffff" stroke="#6d9dce" stroke-width="2"/>
+  <text x="165" y="691" text-anchor="middle" class="codeSmall">submit()</text>
+  <path d="M230 685 H320" fill="none" stroke="#356da8" stroke-width="5"/>
+  <polygon points="340,685 320,674 320,696" fill="#356da8"/>
+  <rect x="340" y="660" width="130" height="50" rx="9" fill="#ffffff" stroke="#6d9dce" stroke-width="2"/>
+  <text x="405" y="691" text-anchor="middle" class="codeSmall">task runs</text>
+  <text x="285" y="746" text-anchor="middle" class="small">actions before submission become visible</text>
+
+  <rect x="540" y="610" width="420" height="160" rx="14" fill="#f5f0fc" stroke="#7645a8" stroke-width="3"/>
+  <text x="750" y="643" text-anchor="middle" class="cardTitle" fill="#563080">RESULT HANDOFF</text>
+  <rect x="565" y="660" width="145" height="50" rx="9" fill="#ffffff" stroke="#9c78c3" stroke-width="2"/>
+  <text x="638" y="691" text-anchor="middle" class="codeSmall">task actions</text>
+  <path d="M710 685 H785" fill="none" stroke="#7645a8" stroke-width="5"/>
+  <polygon points="805,685 785,674 785,696" fill="#7645a8"/>
+  <rect x="805" y="660" width="130" height="50" rx="9" fill="#ffffff" stroke="#9c78c3" stroke-width="2"/>
+  <text x="870" y="691" text-anchor="middle" class="codeSmall">get()</text>
+  <text x="750" y="746" text-anchor="middle" class="small">successful Future result retrieval</text>
+
+  <rect x="1005" y="610" width="420" height="160" rx="14" fill="#edf8ef" stroke="#43804c" stroke-width="3"/>
+  <text x="1215" y="643" text-anchor="middle" class="cardTitle" fill="#315e38">SYNCHRONIZER</text>
+  <rect x="1030" y="660" width="150" height="50" rx="9" fill="#ffffff" stroke="#79a982" stroke-width="2"/>
+  <text x="1105" y="691" text-anchor="middle" class="codeSmall">countDown()</text>
+  <path d="M1180 685 H1250" fill="none" stroke="#43804c" stroke-width="5"/>
+  <polygon points="1270,685 1250,674 1250,696" fill="#43804c"/>
+  <rect x="1270" y="660" width="130" height="50" rx="9" fill="#ffffff" stroke="#79a982" stroke-width="2"/>
+  <text x="1335" y="691" text-anchor="middle" class="codeSmall">await()</text>
+  <text x="1215" y="746" text-anchor="middle" class="small">same latch; await returns successfully</text>
+
+  <!-- Summary is isolated from every connector route. -->
+  <rect x="170" y="842" width="1160" height="45" rx="11" fill="#fff8eb" stroke="#bd7823" stroke-width="2"/>
+  <text x="750" y="872" text-anchor="middle" class="body">program order before + matching bridge + program order after = transitive happens-before path</text>
+</svg>

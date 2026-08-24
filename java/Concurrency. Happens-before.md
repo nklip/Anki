@@ -1,301 +1,263 @@
-# Happens-Before in Java
+# Concurrency. Happens-before
 
 ## Front
 
-What does **happens-before** mean in the Java Memory Model, which operations create happens-before relationships, and why are they necessary for correct concurrent code?
+What does *happens-before* mean in the Java Memory Model, how is a cross-thread path created, and why does it guarantee visibility without automatically guaranteeing atomicity?
 
 ## Back
 
-The **happens-before** relation defines when the effects of one action are guaranteed to be visible to another action.
+**Happens-before is a partial order between actions: if A happens-before B, A's effects are visible to and ordered before B.**
 
-If action **A happens-before B**:
+To reason about code, build a complete path from the writer's action to the reader's action using program order, a matching cross-thread synchronization edge, and transitivity. Then separately ask whether the overall operation must also be atomic.
 
-- Memory effects produced by A are visible to B.
-- A is ordered before B from the program's observable perspective.
-- The compiler, JVM, and CPU may still optimize or physically reorder instructions, but they must preserve behavior allowed by this relationship.
+Happens-before is not wall-clock time and not one global order shared by every thread.
 
-Happens-before is a **partial order**, not a global timeline. Two actions may be unrelated by happens-before and therefore be concurrent or involved in a data race.
+## Vocabulary
 
-### How a happens-before chain is formed
+- An **action** is an operation relevant to the memory model, such as reading or writing a shared field, locking, unlocking, or accessing a volatile field.
+- **Program order** orders actions within one thread according to that thread's single-threaded semantics.
+- **Synchronization actions** include monitor locks/unlocks, volatile accesses, and thread lifecycle actions.
+- A **synchronizes-with** edge is a specified bridge from a synchronization action in one thread to a matching action in another.
+- The source of such an edge is a **release**; the destination is an **acquire**.
+- **Transitivity** means that if A happens-before B and B happens-before C, then A happens-before C.
 
-Happens-before is built from three rules:
-
-1. **Program order** — actions earlier in one thread happen-before actions later in that same thread.
-2. **Synchronizes-with edges** — certain synchronization actions connect different threads.
-3. **Transitivity** — if A happens-before B and B happens-before C, then A happens-before C.
-
-```text
-A --program order--> B --synchronizes-with--> C --program order--> D
-
-Therefore: A happens-before D
-```
-
-Transitivity is what allows a synchronization operation to publish ordinary, non-volatile data written before it.
-
-### Broken publication: no happens-before edge
-
-```java
-final class Example {
-    private int data;
-    private boolean ready;
-
-    void writer() {
-        data = 42;
-        ready = true;
-    }
-
-    void reader() {
-        if (ready) {
-            System.out.println(data);
-        }
-    }
-}
-```
-
-If `writer()` and `reader()` run in different threads, there is no inter-thread happens-before edge.
-
-The Java Memory Model does not guarantee that the reader will observe either write correctly. It may observe:
-
-- `ready == false` after the writer assigned `true`.
-- `ready == true` but still observe an old value of `data`.
-- Other behavior allowed by compiler, JVM, or CPU reorderings.
-
-Merely executing one thread first in wall-clock time does not establish happens-before.
-
-### Volatile publication
-
-```java
-final class Example {
-    private int data;
-    private volatile boolean ready;
-
-    void writer() {
-        data = 42;       // 1
-        ready = true;    // 2: volatile write
-    }
-
-    void reader() {
-        while (!ready) { // 3: volatile read
-            Thread.onSpinWait();
-        }
-
-        System.out.println(data); // 4: guaranteed to see 42
-    }
-}
-```
-
-The complete chain is:
+The core construction is:
 
 ```text
-write data = 42
-    happens-before        by program order
-volatile write ready = true
-    happens-before        volatile write → subsequent read
-volatile read ready == true
-    happens-before        by program order
-read data
+program order + synchronizes-with edges + transitivity
+                         ↓
+                 happens-before path
 ```
 
-Therefore the ordinary write `data = 42` is visible to the reader after it observes `ready == true`.
+The diagram maps the most common language-level and library-level bridges:
 
-`volatile` provides visibility and ordering, but it does not provide mutual exclusion or make compound operations atomic:
+![Core Java and java.util.concurrent operations that create happens-before bridges](svg/concurrency-happens-before-edge-map.svg)
 
-```java
-volatile int count;
+## Core Java Memory Model rules
 
-count++; // read + modify + write; not atomic
-```
-
-### Monitor locking with `synchronized`
-
-An unlock of a monitor happens-before every subsequent lock of the **same monitor**.
-
-```java
-private final Object lock = new Object();
-private int data;
-
-void writer() {
-    synchronized (lock) {
-        data = 42;
-    } // unlock: release
-}
-
-void reader() {
-    synchronized (lock) { // lock: acquire
-        System.out.println(data);
-    }
-}
-```
-
-Everything performed by the writer before releasing `lock` becomes visible to a reader after it acquires that same `lock`.
-
-Synchronizing on different objects does not create this relationship. Synchronizing only the writer or only the reader is also insufficient.
-
-### Core Java happens-before rules
-
-| Action A | Happens-before action B |
+| Release or earlier action | Acquire or later action |
 |---|---|
 | An action in a thread | Every later action in that thread's program order |
-| Unlocking monitor `m` | A subsequent lock of the same monitor `m` |
-| Writing volatile field `v` | A subsequent read of the same volatile field `v` |
-| Calling `thread.start()` | Every action performed by the started thread |
-| Every action in thread `T` | Another thread successfully returning from `T.join()` or otherwise detecting its termination |
-| Calling `T.interrupt()` | Another thread detecting that `T` was interrupted |
-| Default initialization to `0`, `false`, or `null` | The first actions of every thread |
+| Unlock monitor `m` | Every subsequent lock of the same monitor `m` |
+| Write volatile field `v` | Every subsequent read of the same volatile field `v` |
+| Action that starts thread `t` | The first action in `t`; therefore `start()` happens-before all actions in `t` |
+| Final action in thread `t` | An action in another thread that detects `t`'s termination; a successful `join()` is the usual case |
+| `t.interrupt()` | Another thread detecting that `t` was interrupted |
+| Default write of `0`, `false`, or `null` | The first action of every thread |
 
-The source of a synchronization edge is often called a **release**, and its destination is called an **acquire**.
+The same identity matters. Unlocking one monitor does not publish to a lock on another monitor, and writing one volatile field does not create the volatile edge through a different field.
 
-### `Thread.start()` publication
+## Worked example: volatile publication
 
-Actions before `start()` are visible to the new thread:
+Here the volatile `ready` flag publishes an earlier ordinary write to `answer`:
 
-```java
-int[] holder = {0};
-holder[0] = 42;
-
-Thread thread = new Thread(() ->
-        System.out.println(holder[0]));
-
-thread.start(); // the new thread is guaranteed to see 42
-```
-
-The edge goes from the call to `start()` into the started thread. It does not provide a reverse edge from the worker back to the caller.
-
-### `Thread.join()` publication
-
-All actions performed by a thread happen-before another thread successfully returns from `join()` on it:
+![Ordinary writes connected to a reader through a volatile happens-before chain](svg/concurrency-volatile-happens-before.svg)
 
 ```java
-int[] result = {0};
+final class PublishedData {
+    private int answer;
+    private volatile boolean ready;
 
-Thread worker = new Thread(() -> result[0] = 42);
-worker.start();
-worker.join();
+    void publish() {            // Thread A
+        answer = 42;            // 1. ordinary write
+        ready = true;           // 2. volatile write (release)
+    }
 
-System.out.println(result[0]); // guaranteed to see 42
+    int readIfReady() {         // Thread B
+        if (!ready) {           // 3. volatile read (acquire)
+            return -1;
+        }
+        return answer;          // 4. guaranteed to observe 42
+    }
+}
 ```
 
-Without `join()` or another synchronization mechanism, merely observing that enough time has passed provides no visibility guarantee.
+The path is:
 
-### Higher-level `java.util.concurrent` rules
+1. `answer = 42` happens-before `ready = true` by Thread A's program order.
+2. The volatile write to `ready` happens-before a subsequent volatile read of the same field.
+3. The volatile read happens-before the read of `answer` by Thread B's program order.
+4. By transitivity, the write of `answer` happens-before its read.
 
-The concurrency library extends happens-before to higher-level operations:
+The implementation may optimize or physically reorder instructions if every observable result still respects this relation. Happens-before constrains legal observations; it is not a demand for literal hardware execution order.
 
-| Before | After |
+### Without the volatile edge
+
+If `ready` is an ordinary field, the conflicting accesses are not connected across threads. The reader is not guaranteed to observe the writes as intended: it may still see `ready == false`, or may see `ready == true` without the required publication of `answer`.
+
+Running the writer “first,” sleeping, or observing log timestamps does not create a memory-model edge.
+
+## Monitor locking
+
+Exiting a `synchronized` block unlocks its monitor. That unlock happens-before a subsequent lock of the **same monitor**:
+
+```java
+final class LockedBox {
+    private final Object monitor = new Object();
+    private int value;
+
+    void set(int newValue) {
+        synchronized (monitor) {
+            value = newValue;
+        } // release monitor
+    }
+
+    int get() {
+        synchronized (monitor) { // acquire same monitor
+            return value;
+        }
+    }
+}
+```
+
+The monitor provides both a visibility/order edge and **mutual exclusion**: only one thread at a time executes a region guarded by that monitor.
+
+Synchronizing only the writer, only the reader, or using different monitor objects does not form the required pair.
+
+## Thread lifecycle edges
+
+`Thread.start()` publishes state into a new thread. All actions before the call happen-before actions that the started thread performs.
+
+`Thread.join()` publishes results back. All actions in a worker happen-before another thread successfully returns from `join()` on that worker.
+
+```java
+final class JoinExample {
+    static int calculate() throws InterruptedException {
+        int[] result = {0};
+
+        Thread worker = new Thread(() -> result[0] = 42);
+        worker.start();
+        worker.join();
+
+        return result[0]; // guaranteed to be 42
+    }
+}
+```
+
+The array itself is not thread-safe. This particular handoff is safe because the worker writes before termination and the caller reads only after `join()` returns successfully.
+
+`start()` is one-directional into the worker; it does not publish the worker's later results back. `join()` provides the reverse handoff.
+
+## Higher-level `java.util.concurrent` edges
+
+Library contracts build happens-before relationships into common handoffs:
+
+| Actions before… | Happen-before actions after… |
 |---|---|
-| Actions before submitting a `Runnable` or `Callable` | The task begins execution in an `Executor` |
-| Actions in an asynchronous computation | Another thread successfully returns from `Future.get()` |
-| Placing an element in a concurrent collection | Another thread accesses or removes that element |
+| Placing an object into a concurrent collection | Another thread accesses or removes that element |
+| Submitting a `Runnable` or `Callable` | The task begins execution |
+| An asynchronous computation represented by `Future` | Another thread retrieves its result with `Future.get()` |
 | `Lock.unlock()` | A successful later `Lock.lock()` on the same lock |
 | `Semaphore.release()` | A successful later `Semaphore.acquire()` on the same semaphore |
-| `CountDownLatch.countDown()` | A successful return from `await()` on that latch |
-| Actions before exchanging an object | Actions after the matching `Exchanger.exchange()` in the other thread |
-| Actions before a barrier arrival | Actions after successful passage through the corresponding barrier phase |
+| `CountDownLatch.countDown()` | A successful corresponding return from `await()` after the count reaches zero |
+| One thread's successful `Exchanger.exchange()` | Actions after the matching exchange in the other thread |
+| Arrival at `CyclicBarrier` or `Phaser` | Actions after successful passage through the corresponding phase, via the documented barrier chain |
 
-### Executor and `Future` example
+These are API guarantees, not accidental properties of a particular implementation. The pairing and successful acquire matter: for example, a timed `await()` that returns because of timeout does not claim the successful latch handoff.
+
+### Executor and Future form two handoffs
 
 ```java
 int[] state = {0};
 state[0] = 42;
 
 Future<Integer> future = executor.submit(() -> state[0]);
-
-int result = future.get(); // guaranteed to be 42
+int result = future.get();
 ```
 
-There are two useful edges:
+Conceptually:
 
-1. Actions before `submit()` happen-before execution of the submitted task.
-2. Actions in the task happen-before actions after a successful `Future.get()`.
+- actions before `submit()` happen-before the task begins;
+- task actions happen-before actions after successful `get()`.
 
-### `CountDownLatch` example
+The snippet assumes a declared `ExecutorService executor` and the usual checked-exception handling.
+
+## What does not publish data
+
+These operations do not create a happens-before handoff by themselves:
+
+- `Thread.sleep()` or `Thread.yield()`;
+- waiting for an amount of wall-clock time;
+- logging, printing, or observing that one message appeared first;
+- reading and writing an ordinary shared flag;
+- locking a different monitor or `Lock` object;
+- a failed `tryLock()` or an acquire operation that did not succeed.
+
+`notify()` is also not the whole publication mechanism. A notifying thread must eventually unlock the object's monitor, and a waiting thread reacquires that same monitor before `wait()` returns. The unlock/lock pair carries visibility. The condition must still be tested in a loop because wakeups may be spurious.
+
+## Happens-before and data races
+
+Two accesses **conflict** when they access the same variable and at least one is a write. If conflicting accesses are not ordered by happens-before, the program has a **data race**.
+
+```text
+same variable + at least one write + no happens-before ordering
+                              ↓
+                           data race
+```
+
+A program is **correctly synchronized** when its sequentially consistent executions contain no data races. The Java Memory Model then guarantees that all its executions appear sequentially consistent: as if actions from all threads were interleaved in one order that respects each thread's program order.
+
+This data-race-free guarantee makes properly synchronized programs understandable without modeling every compiler and CPU reordering.
+
+It does not remove higher-level logic errors. A program can have no low-level data race yet still have the wrong check-then-act behavior.
+
+## Visibility, ordering, and atomicity are different
+
+| Property | Question it answers |
+|---|---|
+| **Visibility** | Are earlier effects guaranteed to be observable here? |
+| **Ordering** | Which observations must be treated as occurring before others? |
+| **Atomicity** | Can another thread observe or intervene inside this operation? |
+| **Mutual exclusion** | Can more than one thread enter this protected region? |
+
+A volatile write/read pair gives ordering and visibility, not mutual exclusion. Therefore:
 
 ```java
-int[] result = {0};
-CountDownLatch finished = new CountDownLatch(1);
-
-executor.execute(() -> {
-    result[0] = 42;
-    finished.countDown();
-});
-
-finished.await();
-System.out.println(result[0]); // guaranteed to see 42
+volatile int count;
+count++; // read + add + write: not one atomic operation
 ```
 
-The write to `result` occurs before `countDown()`. A successful return from `await()` acquires the effects released by `countDown()`.
-
-### Operations that do not create happens-before
-
-The following do not publish ordinary shared data by themselves:
-
-- `Thread.sleep()`.
-- `Thread.yield()`.
-- Waiting for an arbitrary amount of wall-clock time.
-- Logging or printing.
-- Reading and writing an ordinary non-volatile flag.
-- Locking a different monitor or `Lock` object.
-- Calling `notify()` without accounting for the monitor unlock and reacquisition.
-
-`Object.wait()` releases the object's monitor while waiting and reacquires it before returning. Visibility comes from the monitor unlock/lock relationship, not from elapsed time or notification alone. Conditions must still be tested in a loop because wakeups may be spurious.
-
-### Happens-before and data races
-
-Two accesses conflict when they access the same variable and at least one is a write.
-
-```text
-conflicting accesses + no happens-before ordering = data race
-```
-
-A program whose sequentially consistent executions contain no data races is **correctly synchronized**. The Java Memory Model guarantees that executions of correctly synchronized programs appear sequentially consistent.
-
-This is often called the **data-race-free guarantee**:
-
-```text
-DRF → sequentially consistent behavior
-```
-
-This does not mean that every group of thread-safe operations is collectively atomic. Higher-level race conditions, such as check-then-act, can still exist.
-
-### Happens-before is not the same as atomicity
+Likewise, two individually thread-safe calls do not automatically form one atomic transaction:
 
 ```java
 if (!map.containsKey(key)) {
-    map.put(key, value);
+    map.put(key, value); // another thread can act between the calls
 }
 ```
 
-Even with a thread-safe map, another thread can act between these two calls. Individual visibility guarantees do not make the compound operation atomic. Use an atomic operation such as `putIfAbsent()` or `computeIfAbsent()` when appropriate.
+Use a compound API such as `putIfAbsent()` or `computeIfAbsent()` when its semantics match the invariant, or guard the whole operation with a lock.
 
-### Safe publication patterns
+## Important limits
 
-An object can be safely published through:
+- Happens-before is a **partial** order; unrelated actions may have no edge.
+- A path to Thread B does not automatically order observations in Thread C.
+- The relation makes earlier effects visible, but an intervening later write can affect which value a read returns.
+- A volatile edge requires the same field; a monitor or explicit-lock edge requires the same synchronization object.
+- Publication makes an object's earlier state visible; it does not make later unsynchronized mutation safe.
+- `final` fields have additional initialization-safety rules, but those rules do not make the entire object immutable or all later writes safe.
 
-- A volatile reference.
-- A correctly locked field.
-- Static initialization.
-- A concurrent collection.
-- An executor submission.
-- A completed `Future` followed by `get()`.
-- Another documented release/acquire mechanism.
+## One-sentence mental model
 
-The object's construction must finish before publication. Do not allow `this` to escape from its constructor. Java also gives `final` fields special initialization guarantees, but those rules are separate from the ordinary happens-before rules and do not make later mutation safe.
+> To publish a write from Thread A to Thread B, trace an unbroken path: writer program order → matching release/acquire bridge → reader program order; then use transitivity to prove the write happens-before the read.
 
-### Important nuances
+## Sources
 
-- Happens-before is a guarantee about **observable behavior**, not a demand that hardware execute instructions literally in that order.
-- It provides visibility only along a complete chain reaching the reading thread.
-- A volatile edge requires the same volatile variable.
-- A monitor edge requires the same monitor.
-- A lock or synchronizer edge requires the corresponding successful acquire operation.
-- If later writes intervene, happens-before does not mean a read must return one particular historical value.
-- Synchronization must protect or publish all state that participates in the invariant.
+- [Java Language Specification §17.4 — Memory Model](https://docs.oracle.com/javase/specs/jls/se26/html/jls-17.html#jls-17.4)
 
-### Key idea
+  Defines actions, program order, synchronization order, legal executions, conflicting accesses, and the data-race-free guarantee.
 
-> To make a write in Thread A reliably visible to Thread B, construct a complete happens-before path from the write to the read using program order, a release/acquire synchronization edge, and transitivity.
+- [Java Language Specification §17.4.5 — Happens-before Order](https://docs.oracle.com/javase/specs/jls/se26/html/jls-17.html#jls-17.4.5)
 
-### Official references
+  Defines happens-before, transitivity, and the derived monitor, volatile, `start()`, and `join()` rules.
 
-- [Java Language Specification §17.4.5: Happens-before Order](https://docs.oracle.com/javase/specs/jls/se26/html/jls-17.html#jls-17.4.5)
-- [`java.util.concurrent`: Memory Consistency Properties](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/package-summary.html#MemoryVisibility)
+- [Java SE 26 `java.util.concurrent` memory-consistency properties](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/package-summary.html#MemoryVisibility)
+
+  Specifies handoffs for concurrent collections, executors, futures, synchronizers, exchangers, barriers, and phasers.
+
+- [Java SE 26 `Lock` API — memory synchronization](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/locks/Lock.html#MemorySync)
+
+  Specifies monitor-equivalent memory effects for successful explicit lock and unlock operations.
+
+- [Java SE 26 `CountDownLatch` API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/CountDownLatch.html)
+
+  Specifies the `countDown()` to successful `await()` memory-consistency effect.
