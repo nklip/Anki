@@ -69,6 +69,7 @@
   </g>
   <text x="40" y="518" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6368">Before: size = 4, capacity = 6</text>
 
+  <!-- The red cell identifies the value selected for removal; keep its label unobstructed. -->
   <g stroke-width="2">
     <rect x="40" y="400" width="70" height="80" fill="#e8f0fe" stroke="#356eb3"/>
     <rect x="110" y="400" width="70" height="80" fill="#fce8e6" stroke="#d93025"/>
@@ -81,8 +82,6 @@
     <text x="75" y="448">A</text><text x="145" y="448" fill="#d93025" font-weight="bold">B</text>
     <text x="215" y="448">C</text><text x="285" y="448">D</text>
   </g>
-  <line x1="126" y1="428" x2="164" y2="466" stroke="#d93025" stroke-width="3"/>
-  <line x1="164" y1="428" x2="126" y2="466" stroke="#d93025" stroke-width="3"/>
 
   <!-- C and D form the suffix that moves one slot left -->
   <line x1="296" y1="500" x2="151" y2="500" stroke="#356eb3" stroke-width="4" stroke-linecap="round"/>
@@ -113,6 +112,6 @@
   <!-- Complexity summary -->
   <rect x="150" y="598" width="800" height="84" rx="7" fill="#e6f4ea" stroke="#34834b" stroke-width="1.5"/>
   <text x="550" y="626" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#202124">Middle insert/remove: O(n) because references must move</text>
-  <text x="550" y="651" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6368">Removal clears the now-unused trailing slot so the removed reference does not stay reachable.</text>
+  <text x="550" y="651" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6368">Removal clears the now-unused trailing slot so an obsolete duplicate reference is not retained.</text>
   <text x="550" y="673" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6368">Capacity normally stays unchanged after removal.</text>
 </svg>
