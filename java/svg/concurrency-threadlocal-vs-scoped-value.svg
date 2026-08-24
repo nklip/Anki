@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="960" viewBox="0 0 1500 960" role="img" aria-labelledby="title description">
+  <title id="title">ThreadLocal versus ScopedValue lifecycle</title>
+  <desc id="description">Two vertical flows compare mutable ThreadLocal context that remains until remove with an immutable ScopedValue binding that automatically reverts when its bounded operation returns or throws.</desc>
+
+  <!-- Shared typography and colors for the lifecycle comparison. -->
+  <defs>
+    <style>
+      .title { font: 700 36px sans-serif; fill: #111827; }
+      .subtitle { font: 20px sans-serif; fill: #4b5563; }
+      .panelTitle { font: 700 27px sans-serif; fill: #ffffff; }
+      .nodeTitle { font: 700 20px sans-serif; fill: #273444; }
+      .body { font: 17px sans-serif; fill: #374151; }
+      .code { font: 18px monospace; fill: #1f2937; }
+    </style>
+  </defs>
+
+  <!-- Background and decision question. -->
+  <rect width="1500" height="960" fill="#ffffff"/>
+  <text x="750" y="52" text-anchor="middle" class="title">Choose by mutability and lifetime</text>
+  <text x="750" y="87" text-anchor="middle" class="subtitle">ThreadLocal is mutable and manually cleared; ScopedValue is a bounded, one-way binding</text>
+
+  <!-- ThreadLocal lifecycle. -->
+  <rect x="40" y="125" width="690" height="680" rx="18" fill="#eef5fc" stroke="#356da8" stroke-width="4"/>
+  <rect x="40" y="125" width="690" height="74" rx="18" fill="#356da8"/>
+  <rect x="40" y="178" width="690" height="21" fill="#356da8"/>
+  <text x="385" y="172" text-anchor="middle" class="panelTitle">THREADLOCAL — mutable mapping</text>
+
+  <rect x="150" y="230" width="470" height="100" rx="12" fill="#ffffff" stroke="#6f9dcc" stroke-width="3"/>
+  <text x="385" y="266" text-anchor="middle" class="nodeTitle">Install or replace the current value</text>
+  <text x="385" y="303" text-anchor="middle" class="code">CONTEXT.set(value)</text>
+
+  <rect x="150" y="370" width="470" height="115" rx="12" fill="#fff8eb" stroke="#bd7823" stroke-width="3"/>
+  <text x="385" y="406" text-anchor="middle" class="nodeTitle">Any callee with the key can</text>
+  <text x="385" y="440" text-anchor="middle" class="body">read the value or replace it with set()</text>
+  <text x="385" y="469" text-anchor="middle" class="body">the mapping is mutable</text>
+
+  <rect x="150" y="525" width="470" height="100" rx="12" fill="#fde1dc" stroke="#c63d32" stroke-width="3"/>
+  <text x="385" y="561" text-anchor="middle" class="nodeTitle">The method or task returns</text>
+  <text x="385" y="598" text-anchor="middle" class="body">the mapping still exists</text>
+
+  <rect x="150" y="665" width="470" height="100" rx="12" fill="#dff1e2" stroke="#43804c" stroke-width="3"/>
+  <text x="385" y="701" text-anchor="middle" class="nodeTitle">Caller must clean up explicitly</text>
+  <text x="385" y="738" text-anchor="middle" class="code" fill="#315e38">CONTEXT.remove()</text>
+
+  <!-- ScopedValue lifecycle. -->
+  <rect x="770" y="125" width="690" height="680" rx="18" fill="#f1faf3" stroke="#43804c" stroke-width="4"/>
+  <rect x="770" y="125" width="690" height="74" rx="18" fill="#43804c"/>
+  <rect x="770" y="178" width="690" height="21" fill="#43804c"/>
+  <text x="1115" y="172" text-anchor="middle" class="panelTitle">SCOPEDVALUE — bounded binding</text>
+
+  <rect x="880" y="230" width="470" height="100" rx="12" fill="#ffffff" stroke="#79a980" stroke-width="3"/>
+  <text x="1115" y="266" text-anchor="middle" class="nodeTitle">Bind only for one operation</text>
+  <text x="1115" y="303" text-anchor="middle" class="code">where(KEY, value).run(...)</text>
+
+  <rect x="880" y="370" width="470" height="115" rx="12" fill="#edf8ef" stroke="#43804c" stroke-width="3"/>
+  <text x="1115" y="406" text-anchor="middle" class="nodeTitle">Callees can read this binding</text>
+  <text x="1115" y="440" text-anchor="middle" class="body">they cannot change the existing binding</text>
+  <text x="1115" y="469" text-anchor="middle" class="body">nested code may create a bounded rebinding</text>
+
+  <rect x="880" y="525" width="470" height="100" rx="12" fill="#dff1e2" stroke="#43804c" stroke-width="3"/>
+  <text x="1115" y="561" text-anchor="middle" class="nodeTitle">The operation returns or throws</text>
+  <text x="1115" y="598" text-anchor="middle" class="body">the dynamic scope ends</text>
+
+  <rect x="880" y="665" width="470" height="100" rx="12" fill="#dff1e2" stroke="#43804c" stroke-width="3"/>
+  <text x="1115" y="701" text-anchor="middle" class="nodeTitle">Binding reverts automatically</text>
+  <text x="1115" y="738" text-anchor="middle" class="code" fill="#315e38">KEY → unbound / previous value</text>
+
+  <!-- Sequence connectors; shafts stop at each head base and heads meet node borders. -->
+  <g fill="#356da8" stroke="#356da8" stroke-width="5">
+    <line x1="385" y1="330" x2="385" y2="350"/>
+    <polygon points="385,370 373,350 397,350" stroke="none"/>
+    <line x1="385" y1="485" x2="385" y2="505"/>
+    <polygon points="385,525 373,505 397,505" stroke="none"/>
+    <line x1="385" y1="625" x2="385" y2="645"/>
+    <polygon points="385,665 373,645 397,645" stroke="none"/>
+  </g>
+  <g fill="#43804c" stroke="#43804c" stroke-width="5">
+    <line x1="1115" y1="330" x2="1115" y2="350"/>
+    <polygon points="1115,370 1103,350 1127,350" stroke="none"/>
+    <line x1="1115" y1="485" x2="1115" y2="505"/>
+    <polygon points="1115,525 1103,505 1127,505" stroke="none"/>
+    <line x1="1115" y1="625" x2="1115" y2="645"/>
+    <polygon points="1115,665 1103,645 1127,645" stroke="none"/>
+  </g>
+
+  <!-- Virtual-thread qualification and object-mutability warning. -->
+  <rect x="70" y="840" width="1360" height="84" rx="14" fill="#f5f0fc" stroke="#7645a8" stroke-width="3"/>
+  <text x="750" y="874" text-anchor="middle" font-family="sans-serif" font-size="19" font-weight="bold" fill="#563080">Virtual threads support both models, but can be extremely numerous: do not store one costly pooled resource per virtual thread.</text>
+  <text x="750" y="905" text-anchor="middle" font-family="sans-serif" font-size="17" fill="#4b3a5e">ScopedValue freezes the binding, not the object; share an immutable value or synchronize access to a mutable one.</text>
+</svg>

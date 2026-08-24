@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900" role="img" aria-labelledby="title description">
+  <title id="title">One ThreadLocal key gives each thread an independent value</title>
+  <desc id="description">A shared REQUEST_ID ThreadLocal key is used by Thread A and Thread B. Each thread has a separate mapping, so get returns A-17 in Thread A and B-42 in Thread B.</desc>
+
+  <!-- Shared palette and reusable text styles. -->
+  <defs>
+    <style>
+      .title { font: 700 36px sans-serif; fill: #111827; }
+      .subtitle { font: 20px sans-serif; fill: #4b5563; }
+      .section { font: 700 24px sans-serif; }
+      .body { font: 18px sans-serif; fill: #273444; }
+      .small { font: 16px sans-serif; fill: #4b5563; }
+      .code { font: 18px monospace; fill: #1f2937; }
+      .codeStrong { font: 700 19px monospace; }
+    </style>
+  </defs>
+
+  <!-- Background and explicit reading direction. -->
+  <rect width="1500" height="900" fill="#ffffff"/>
+  <text id="diagram-title" x="750" y="54" text-anchor="middle" class="title">One key, separate value in each thread</text>
+  <text x="750" y="88" text-anchor="middle" class="subtitle">Read left to right: shared key → current thread's mapping → that thread's result</text>
+
+  <!-- Shared ThreadLocal key; the object is common, but it is not the value container. -->
+  <rect x="50" y="250" width="360" height="390" rx="16" fill="#eef5fc" stroke="#356da8" stroke-width="4"/>
+  <rect x="50" y="250" width="360" height="72" rx="16" fill="#356da8"/>
+  <rect x="50" y="300" width="360" height="22" fill="#356da8"/>
+  <text x="230" y="296" text-anchor="middle" class="section" fill="#ffffff">SHARED KEY OBJECT</text>
+  <text x="230" y="374" text-anchor="middle" class="codeStrong" fill="#234f7c">REQUEST_ID</text>
+  <text x="230" y="414" text-anchor="middle" class="code">ThreadLocal&lt;String&gt;</text>
+  <line x1="92" y1="447" x2="368" y2="447" stroke="#9bbbdc" stroke-width="2"/>
+  <text x="230" y="492" text-anchor="middle" class="body">Usually one private static field</text>
+  <text x="230" y="527" text-anchor="middle" class="body">is reachable by many methods.</text>
+  <text x="230" y="579" text-anchor="middle" class="small">It identifies the variable;</text>
+  <text x="230" y="608" text-anchor="middle" class="small">it does not hold one global value.</text>
+
+  <!-- Thread A mapping and result. -->
+  <rect x="500" y="180" width="540" height="250" rx="16" fill="#f5f0fc" stroke="#7645a8" stroke-width="4"/>
+  <rect x="500" y="180" width="540" height="64" rx="16" fill="#7645a8"/>
+  <rect x="500" y="226" width="540" height="18" fill="#7645a8"/>
+  <text x="770" y="222" text-anchor="middle" class="section" fill="#ffffff">THREAD A — its own mapping</text>
+  <text x="770" y="292" text-anchor="middle" class="code">REQUEST_ID.set("A-17")</text>
+  <rect x="590" y="326" width="360" height="68" rx="10" fill="#ffffff" stroke="#9c78c3" stroke-width="2"/>
+  <text x="770" y="369" text-anchor="middle" class="codeStrong" fill="#563080">REQUEST_ID → "A-17"</text>
+
+  <rect x="1160" y="225" width="290" height="160" rx="16" fill="#edf8ef" stroke="#43804c" stroke-width="4"/>
+  <text x="1305" y="272" text-anchor="middle" class="section" fill="#315e38">A calls get()</text>
+  <text x="1305" y="323" text-anchor="middle" class="codeStrong" fill="#315e38">returns "A-17"</text>
+  <text x="1305" y="355" text-anchor="middle" class="small">only A's copy is read</text>
+
+  <!-- Thread B mapping and result. -->
+  <rect x="500" y="500" width="540" height="250" rx="16" fill="#fff8eb" stroke="#bd7823" stroke-width="4"/>
+  <rect x="500" y="500" width="540" height="64" rx="16" fill="#bd7823"/>
+  <rect x="500" y="546" width="540" height="18" fill="#bd7823"/>
+  <text x="770" y="542" text-anchor="middle" class="section" fill="#ffffff">THREAD B — its own mapping</text>
+  <text x="770" y="612" text-anchor="middle" class="code">REQUEST_ID.set("B-42")</text>
+  <rect x="590" y="646" width="360" height="68" rx="10" fill="#ffffff" stroke="#d8a45e" stroke-width="2"/>
+  <text x="770" y="689" text-anchor="middle" class="codeStrong" fill="#7b4d16">REQUEST_ID → "B-42"</text>
+
+  <rect x="1160" y="545" width="290" height="160" rx="16" fill="#edf8ef" stroke="#43804c" stroke-width="4"/>
+  <text x="1305" y="592" text-anchor="middle" class="section" fill="#315e38">B calls get()</text>
+  <text x="1305" y="643" text-anchor="middle" class="codeStrong" fill="#315e38">returns "B-42"</text>
+  <text x="1305" y="675" text-anchor="middle" class="small">only B's copy is read</text>
+
+  <!-- Relation arrows use separate shafts and heads; tips meet target borders without entering them. -->
+  <path d="M410 375 C450 375 454 305 480 305" fill="none" stroke="#667085" stroke-width="5"/>
+  <polygon points="500,305 480,294 480,316" fill="#667085"/>
+  <path d="M410 515 C450 515 454 625 480 625" fill="none" stroke="#667085" stroke-width="5"/>
+  <polygon points="500,625 480,614 480,636" fill="#667085"/>
+
+  <path d="M1040 305 H1140" fill="none" stroke="#43804c" stroke-width="5"/>
+  <polygon points="1160,305 1140,294 1140,316" fill="#43804c"/>
+  <path d="M1040 625 H1140" fill="none" stroke="#43804c" stroke-width="5"/>
+  <polygon points="1160,625 1140,614 1140,636" fill="#43804c"/>
+
+  <!-- Bottom lesson; keep clear of the relation paths above. -->
+  <rect x="150" y="805" width="1200" height="60" rx="12" fill="#f3f4f6" stroke="#9ca3af" stroke-width="2"/>
+  <text x="750" y="843" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#273444">ThreadLocal isolates the mapping, not the object: sharing the same mutable value elsewhere still needs synchronization.</text>
+</svg>

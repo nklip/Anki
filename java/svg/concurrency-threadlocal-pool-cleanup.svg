@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="950" viewBox="0 0 1500 950" role="img" aria-labelledby="title description">
+  <title id="title">ThreadLocal cleanup on a reusable pool thread</title>
+  <desc id="description">Two vertical timelines compare an unsafe task that forgets remove and leaks tenant A into task B with a safe task that removes the mapping in a finally block before the worker is reused.</desc>
+
+  <!-- Shared styles keep both timelines visually comparable. -->
+  <defs>
+    <style>
+      .title { font: 700 36px sans-serif; fill: #111827; }
+      .subtitle { font: 20px sans-serif; fill: #4b5563; }
+      .panelTitle { font: 700 27px sans-serif; fill: #ffffff; }
+      .nodeTitle { font: 700 20px sans-serif; fill: #273444; }
+      .body { font: 17px sans-serif; fill: #374151; }
+      .code { font: 18px monospace; fill: #1f2937; }
+    </style>
+  </defs>
+
+  <!-- Background, title, and premise. -->
+  <rect width="1500" height="950" fill="#ffffff"/>
+  <text x="750" y="52" text-anchor="middle" class="title">One pool worker, two unrelated tasks</text>
+  <text x="750" y="87" text-anchor="middle" class="subtitle">A ThreadLocal value follows the reusable worker thread unless the task removes it</text>
+
+  <!-- Unsafe timeline panel. -->
+  <rect x="40" y="125" width="690" height="720" rx="18" fill="#fff5f3" stroke="#c63d32" stroke-width="4"/>
+  <rect x="40" y="125" width="690" height="74" rx="18" fill="#c63d32"/>
+  <rect x="40" y="178" width="690" height="21" fill="#c63d32"/>
+  <text x="385" y="172" text-anchor="middle" class="panelTitle">UNSAFE — mapping survives Task A</text>
+
+  <rect x="150" y="230" width="470" height="105" rx="12" fill="#ffffff" stroke="#d76d65" stroke-width="3"/>
+  <text x="385" y="266" text-anchor="middle" class="nodeTitle">Task A runs on worker-1</text>
+  <text x="385" y="306" text-anchor="middle" class="code">TENANT.set("tenant-A")</text>
+
+  <rect x="150" y="375" width="470" height="105" rx="12" fill="#fde1dc" stroke="#c63d32" stroke-width="3"/>
+  <text x="385" y="411" text-anchor="middle" class="nodeTitle">Task A returns</text>
+  <text x="385" y="451" text-anchor="middle" class="code" fill="#982b25">no remove()</text>
+
+  <rect x="150" y="520" width="470" height="105" rx="12" fill="#fff0cf" stroke="#bd7823" stroke-width="3"/>
+  <text x="385" y="556" text-anchor="middle" class="nodeTitle">worker-1 is idle, but still holds</text>
+  <text x="385" y="596" text-anchor="middle" class="code" fill="#7b4d16">TENANT → "tenant-A"</text>
+
+  <rect x="150" y="665" width="470" height="125" rx="12" fill="#fde1dc" stroke="#c63d32" stroke-width="4"/>
+  <text x="385" y="701" text-anchor="middle" class="nodeTitle">Task B later reuses worker-1</text>
+  <text x="385" y="741" text-anchor="middle" class="code" fill="#982b25">TENANT.get() → "tenant-A"</text>
+  <text x="385" y="772" text-anchor="middle" class="body" fill="#982b25">stale context from the wrong task</text>
+
+  <!-- Safe timeline panel. -->
+  <rect x="770" y="125" width="690" height="720" rx="18" fill="#f1faf3" stroke="#43804c" stroke-width="4"/>
+  <rect x="770" y="125" width="690" height="74" rx="18" fill="#43804c"/>
+  <rect x="770" y="178" width="690" height="21" fill="#43804c"/>
+  <text x="1115" y="172" text-anchor="middle" class="panelTitle">SAFE — cleanup at the task boundary</text>
+
+  <rect x="880" y="230" width="470" height="105" rx="12" fill="#ffffff" stroke="#79a980" stroke-width="3"/>
+  <text x="1115" y="266" text-anchor="middle" class="nodeTitle">Task A runs on worker-1</text>
+  <text x="1115" y="306" text-anchor="middle" class="code">TENANT.set("tenant-A")</text>
+
+  <rect x="880" y="375" width="470" height="105" rx="12" fill="#dff1e2" stroke="#43804c" stroke-width="3"/>
+  <text x="1115" y="411" text-anchor="middle" class="nodeTitle">Task A exits through finally</text>
+  <text x="1115" y="451" text-anchor="middle" class="code" fill="#315e38">TENANT.remove()</text>
+
+  <rect x="880" y="520" width="470" height="105" rx="12" fill="#edf8ef" stroke="#43804c" stroke-width="3"/>
+  <text x="1115" y="556" text-anchor="middle" class="nodeTitle">worker-1 has no TENANT mapping</text>
+  <text x="1115" y="596" text-anchor="middle" class="code" fill="#315e38">TENANT → absent</text>
+
+  <rect x="880" y="665" width="470" height="125" rx="12" fill="#dff1e2" stroke="#43804c" stroke-width="4"/>
+  <text x="1115" y="701" text-anchor="middle" class="nodeTitle">Task B later reuses worker-1</text>
+  <text x="1115" y="741" text-anchor="middle" class="code" fill="#315e38">cannot read Task A's value</text>
+  <text x="1115" y="772" text-anchor="middle" class="body" fill="#315e38">no cross-task context contamination</text>
+
+  <!-- Vertical sequence arrows; each tip meets the next node's border and remains outside it. -->
+  <g fill="#7f1d1d" stroke="#7f1d1d" stroke-width="5">
+    <line x1="385" y1="335" x2="385" y2="355"/>
+    <polygon points="385,375 373,355 397,355" stroke="none"/>
+    <line x1="385" y1="480" x2="385" y2="500"/>
+    <polygon points="385,520 373,500 397,500" stroke="none"/>
+    <line x1="385" y1="625" x2="385" y2="645"/>
+    <polygon points="385,665 373,645 397,645" stroke="none"/>
+  </g>
+  <g fill="#315e38" stroke="#315e38" stroke-width="5">
+    <line x1="1115" y1="335" x2="1115" y2="355"/>
+    <polygon points="1115,375 1103,355 1127,355" stroke="none"/>
+    <line x1="1115" y1="480" x2="1115" y2="500"/>
+    <polygon points="1115,520 1103,500 1127,500" stroke="none"/>
+    <line x1="1115" y1="625" x2="1115" y2="645"/>
+    <polygon points="1115,665 1103,645 1127,645" stroke="none"/>
+  </g>
+
+  <!-- Final rule is outside both panels so it applies to both timelines. -->
+  <rect x="170" y="875" width="1160" height="52" rx="12" fill="#f3f4f6" stroke="#9ca3af" stroke-width="2"/>
+  <text x="750" y="908" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#273444">For temporary context on a reusable thread: set → use → remove in finally.</text>
+</svg>
