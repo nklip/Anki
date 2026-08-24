@@ -1,295 +1,212 @@
-# LongAdder in Modern Java
+# Concurrency. LongAdder
 
 ## Front
 
-How does `LongAdder` work, why can it outperform `AtomicLong`, and when should it be used?
+How does `LongAdder` reduce counter contention, why is `sum()` not an atomic snapshot, and when should `AtomicLong` or a higher-level synchronizer be used instead?
 
 ## Back
 
-**`LongAdder` was added in JDK 8.**
+**LongAdder** was introduced in **Java 8.**
 
-`LongAdder` is a thread-safe counter optimized for frequent updates from many competing threads.
+`LongAdder` is a thread-safe, scalable **sum** for workloads where many threads update one statistic. Under contention it spreads updates across several internal values and later adds them together.
 
-```java
-import java.util.concurrent.atomic.LongAdder;
+The central trade-off is:
 
-LongAdder requests = new LongAdder();
+> **Faster expected updates under heavy contention, in exchange for more memory and no atomic snapshot from `sum()`.**
 
-requests.increment();
-requests.add(5);
-requests.decrement();
+Use it for request counts, event totals, or statistics. Use `AtomicLong` when one authoritative value, compare-and-set (CAS), or the exact value returned by an increment is part of correctness.
 
-long total = requests.sum();
-```
+## Public API mental model
 
-Its key trade-off is:
-
-```text
-higher update throughput under contention
-                in exchange for
-more memory and a sum that is not an atomic snapshot
-```
-
-It is designed for statistics and measurements, not for sequence numbers or synchronization decisions.
-
-## Main operations
+The API describes “one or more variables” that maintain an initially zero sum:
 
 | Method | Meaning |
 |---|---|
-| `increment()` | Equivalent to `add(1)` |
-| `decrement()` | Equivalent to `add(-1)` |
-| `add(long x)` | Adds an arbitrary value |
-| `sum()` | Calculates `base + all cells` |
-| `longValue()` | Equivalent to `sum()` |
-| `reset()` | Resets maintained values to zero |
-| `sumThenReset()` | Collects the maintained values and resets them |
+| `increment()` | Adds `1`; returns `void` |
+| `decrement()` | Adds `-1`; returns `void` |
+| `add(x)` | Adds any `long`; returns `void` |
+| `sum()` / `longValue()` | Reads and combines the maintained values |
+| `reset()` | Sets the maintained values to zero |
+| `sumThenReset()` | Collects the values and resets them |
 
-`LongAdder` does not provide operations such as:
+There is deliberately no `getAndIncrement()`, `incrementAndGet()`, `set()`, or `compareAndSet()`. Such methods need one indivisible value and do not fit a striped sum.
 
-- `compareAndSet()`
-- `getAndIncrement()`
-- `incrementAndGet()`
-- An atomic `set()` followed by exact concurrent reads
+## Current OpenJDK structure
 
-Those operations require one authoritative value, which would defeat the striped design.
+The public behavior does not require a particular layout. Current OpenJDK implements `LongAdder` on the package-private `Striped64` class with:
 
-## Internal organization
+- a `base` value for the low-contention path;
+- a lazily created power-of-two `Cell[]` for contended updates;
+- padded `Cell` objects whose values can be updated independently;
+- a small `cellsBusy` CAS guard used only while creating or resizing the array and installing cells.
 
-![LongAdder striped cells](svg/longadder-striped-cells.svg)
+![LongAdder moving from one base value to striped cells and combining them in sum](svg/longadder-striped-cells.svg)
 
-The current OpenJDK implementation inherits its mechanics from an internal class named `Striped64`.
-
-Conceptually, a `LongAdder` contains:
+Conceptually, the total is:
 
 ```text
-base
-cells[0]
-cells[1]
-cells[2]
-...
+base + cell[0] + cell[1] + ... + cell[n]
 ```
 
-The visible total is calculated as:
+`base`, `Cell`, the array size, and the collision policy are implementation details. Code must use only the public methods.
 
-```text
-sum = base + cells[0] + cells[1] + ...
-```
+## How an update is distributed
 
-These fields and exact expansion rules are implementation details, not public API contracts.
+**Compare-and-set (CAS)** changes a value only if it still equals the expected old value. A failed CAS means another updater won the race.
 
-## Low-contention path
+Current OpenJDK follows this broad path:
 
-The cells array is created lazily. When contention is low, an update first tries to change `base` with CAS:
+1. If no cells exist, `add(x)` first attempts `CAS(base, base + x)`.
+2. A failed base CAS reveals contention and sends the update to the accumulation logic.
+3. The implementation lazily creates two cell slots and selects a slot using a probe associated with the current carrier thread.
+4. It attempts CAS on that cell rather than on the shared base.
+5. On collisions, it may change the probe, fill an empty slot, retry, use `base` as a fallback, or double the cells array.
 
-```text
-read base
-    ↓
-CAS(base, base + delta)
-    ↓
-success → update complete
-```
+The array expands in powers of two up to a CPU-based bound in the current implementation. There can be more cells than active updaters, empty slots, and cells that later become unused. None of this changes the public sum.
 
-This keeps the common uncontended case small and efficient.
+### Why stripes help
 
-## What happens under contention?
+With `AtomicLong`, every update targets one memory location. Under heavy write contention, CAS failures and cache-line ownership transfers concentrate on that location.
 
-If several threads repeatedly fail to update the same `base`, the implementation creates a striped array of `Cell` objects.
+With `LongAdder`, different workers can update different cells. This reduces the chance that unrelated increments fight over the same cache line. OpenJDK marks each `Cell` with `@Contended` padding to reduce **false sharing**—independent values accidentally occupying the same cache line.
 
-Each updating thread uses a per-thread probe to select a cell:
+The padding and extra cells consume more memory. Under low contention, the API documentation says `LongAdder` and `AtomicLong` have similar characteristics; striping is valuable only when contention exists.
 
-```text
-index = probe & (cells.length - 1)
-```
+## What `sum()` guarantees
 
-The thread then updates that cell's value using CAS:
+`sum()` reads `base`, traverses the cells, and adds the values it observes.
 
-```text
-Thread A → cell[0]
-Thread B → cell[3]
-Thread C → cell[1]
-Thread D → cell[2]
-```
+- With **no concurrent updates**, the result is accurate.
+- With concurrent updates, an update that occurs while traversal is in progress might not be included.
+- The result is not corrupted; it is simply not a snapshot of all cells at one common instant.
+- After writers become quiescent, a later `sum()` returns the complete maintained total.
 
-Instead of every thread contending for one cache location, updates are distributed across multiple locations.
+Imagine `sum()` reading `cell[0]`, another thread incrementing it, and then `sum()` reading `cell[1]`. The returned combination mixes observations from different moments. That is acceptable for monitoring; it is not an atomic decision point.
 
-## Collision handling
-
-Two threads can still select the same cell. If a cell CAS fails, the implementation may:
-
-1. Retry with a changed probe.
-2. Create a cell in an empty slot.
-3. Expand the cells array when contention persists.
-4. Temporarily fall back to updating `base`.
-
-The current implementation starts the cells array lazily and expands it in powers of two, up to an implementation-defined CPU-based limit.
-
-A small CAS-controlled internal guard is used only while creating or resizing the array and installing cells. Normal counter updates do not acquire one global counter lock.
-
-## Avoiding false sharing
-
-Cells in an array would normally be placed close together in memory. Independent threads updating adjacent cells could then invalidate the same CPU cache line, causing **false sharing**.
-
-OpenJDK pads its internal cells so that frequently updated values are less likely to share a cache line:
-
-```text
-without padding:
-[cell 0][cell 1][cell 2]  → may share one cache line
-
-with padding:
-[cell 0 + space] [cell 1 + space] [cell 2 + space]
-```
-
-This improves high-contention throughput but increases memory consumption.
-
-## How `sum()` works
-
-`sum()` reads `base` and then traverses the current cells:
+Broken hard-limit logic:
 
 ```java
-long result = adder.sum();
+if (inUse.sum() < limit) {
+    inUse.increment(); // check and increment are not one atomic action
+}
 ```
 
-Conceptually:
+Several threads can pass the check together. Use a `Semaphore`, lock, bounded queue, or another mechanism that enforces the invariant atomically.
+
+## `AtomicLong` versus `LongAdder`
+
+![AtomicLong single-value updates compared with LongAdder striped updates](svg/longadder-vs-atomiclong.svg)
+
+| Requirement | Better fit | Reason |
+|---|---|---|
+| Highly contended request or event count | `LongAdder` | Updates can spread across cells |
+| Statistics read occasionally | `LongAdder` | A non-atomic concurrent observation is acceptable |
+| Unique sequence number | `AtomicLong` | `getAndIncrement()` returns one exact distinct value |
+| CAS state transition | `AtomicLong` | One value supports atomic conditional replacement |
+| Exact check-and-update rule | Higher-level synchronizer | Multiple actions must form one invariant-preserving operation |
+| Very low contention and frequent reads | Measure; often `AtomicLong` | Striping may provide no benefit and `sum()` must scan cells |
+
+“Atomic snapshot” does not mean `AtomicLong` freezes every variable in the program. It means an operation on its **single contained value** has the documented atomic semantics. Neither class makes a multi-variable business rule atomic by itself.
+
+## Scalable metrics example
+
+The API documentation recommends combining `ConcurrentHashMap` and `LongAdder` for a scalable frequency map. This complete Java 8-compatible class keeps a total and a counter per route:
 
 ```java
-long result = base;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.LongAdder;
 
-for (Cell cell : cells) {
-    if (cell != null) {
-        result += cell.value;
+public final class RequestMetrics {
+    private final LongAdder total = new LongAdder();
+    private final ConcurrentHashMap<String, LongAdder> byRoute =
+            new ConcurrentHashMap<>();
+
+    public void record(String route) {
+        total.increment();
+        byRoute.computeIfAbsent(route, key -> new LongAdder())
+                .increment();
+    }
+
+    public long total() {
+        return total.sum();
+    }
+
+    public long countFor(String route) {
+        LongAdder count = byRoute.get(route);
+        return count == null ? 0L : count.sum();
     }
 }
 ```
 
-The pseudocode explains the current implementation; `Cell` is not part of the public API.
+`computeIfAbsent()` safely installs one adder for a missing key. The adder for a hot key can then stripe internally. Reads remain monitoring observations, not transactional snapshots across all keys.
 
-When there are no concurrent updates, `sum()` returns the accurate total.
-
-## `sum()` is not an atomic snapshot
-
-While `sum()` traverses the stripes, other threads can continue updating them:
-
-```text
-read base
-read cell[0]
-Thread B updates cell[1]
-read cell[1]
-Thread C updates cell[0]
-return combined result
-```
-
-The values can therefore be observed at different moments. A concurrent update may or may not be included.
-
-This is correct for metrics such as request counts, where a temporarily approximate observation is acceptable. It is incorrect when the value controls a business invariant.
-
-Do not write synchronization logic like this:
+For a sequence number, use one atomic value instead:
 
 ```java
-if (inUse.sum() < limit) {
-    inUse.increment(); // not an atomic check-and-increment
-}
+AtomicLong nextId = new AtomicLong();
+long id = nextId.getAndIncrement();
 ```
 
-Use a `Semaphore`, lock, bounded queue, or another atomic coordination mechanism for a hard limit.
+## Resetting requires a quiet boundary
 
-## AtomicLong compared with LongAdder
+`reset()` is intrinsically racy and is effective only when no threads update concurrently.
 
-![AtomicLong compared with LongAdder](svg/longadder-vs-atomiclong.svg)
+`sumThenReset()` is equivalent in effect to `sum()` followed by `reset()`. Current OpenJDK atomically exchanges each maintained component with zero, but the **whole traversal is not one atomic operation**. With concurrent writers, its result is not guaranteed to be the final value that occurred before reset.
 
-### `AtomicLong`
+Use these operations at a **quiescent point** between computations. For continuously written interval metrics, prefer a design or metrics library that explicitly owns window rotation.
 
-`AtomicLong` stores one authoritative value:
+## Performance checklist
 
-```java
-AtomicLong sequence = new AtomicLong();
-long id = sequence.incrementAndGet();
-```
+`LongAdder` is promising when:
 
-It supports linearizable reads, CAS, and atomic read-modify-write operations that return an exact previous or updated value.
+- many threads frequently update the same logical sum;
+- updates are much more frequent than reads;
+- a concurrent total may omit in-flight updates;
+- extra cells and padding are affordable.
 
-Under heavy write contention, all threads repeatedly modify the same memory location.
+It is a poor default when:
 
-### `LongAdder`
+- input is lightly contended;
+- code reads the value far more often than it updates it;
+- every update must return its exact previous or new total;
+- the count controls a limit, state transition, or transaction.
 
-`LongAdder` spreads updates across several values:
+The API promises **higher expected throughput under high contention**, not that `LongAdder` is faster in every application. Measure representative workloads: thread count, core count, update/read ratio, key distribution, and surrounding work all matter.
 
-```java
-LongAdder completedRequests = new LongAdder();
-completedRequests.increment();
-```
+## API contract versus implementation detail
 
-It reduces contention, but `increment()` returns `void` and `sum()` is not a linearizable read of one variable.
-
-## Practical choice
-
-| Requirement | Prefer |
+| Safe to rely on | Current OpenJDK detail |
 |---|---|
-| Request, event, or error statistics | `LongAdder` |
-| Many threads frequently update one metric | `LongAdder` |
-| Occasional approximate observation is acceptable | `LongAdder` |
-| Unique sequence numbers | `AtomicLong` |
-| Exact `getAndIncrement()` result | `AtomicLong` |
-| CAS or synchronization state | `AtomicLong` |
-| Hard capacity or multi-step invariant | Semaphore, lock, or another higher-level mechanism |
+| One or more values maintain a sum | `Striped64`, `base`, and `Cell[]` |
+| High-contention throughput/space trade-off | Two initial slots and power-of-two expansion |
+| `sum()` is not an atomic snapshot | Probe-based cell selection and collision retries |
+| `reset()` requires no concurrent writers | `cellsBusy` structural guard |
+| No value-based `equals()`, `hashCode()`, or `compareTo()` | `@Contended` cell padding |
 
-Under low contention, `AtomicLong` and `LongAdder` often have similar characteristics. Under high contention, `LongAdder` generally provides higher expected update throughput at the cost of additional space and more expensive reads.
+Because instances are mutable and do not define value equality, do not use a `LongAdder` as a collection key whose meaning depends on its count. If the required operation is an associative function other than addition, consider `LongAccumulator`.
 
-## Frequency map with ConcurrentHashMap
+## One-sentence summary
 
-The Java API documentation recommends this pattern for a scalable histogram or frequency map:
+> `LongAdder` turns one contended counter into a striped sum: updates scale better, but reading or resetting every stripe cannot provide one atomic snapshot.
 
-```java
-ConcurrentHashMap<String, LongAdder> frequencies =
-        new ConcurrentHashMap<>();
+## Sources
 
-frequencies
-        .computeIfAbsent(word, ignored -> new LongAdder())
-        .increment();
-```
+- [Java SE 25 `LongAdder` API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/atomic/LongAdder.html)
 
-Each key has its own `LongAdder`, and each adder can stripe further when updates to that particular key become contended.
+  Defines the public operations, Java 8 introduction, contention trade-off, frequency-map pattern, and non-atomic `sum()`, `reset()`, and `sumThenReset()` behavior.
 
-Read the current count with:
+- [Java SE 25 `AtomicLong` API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/atomic/AtomicLong.html)
 
-```java
-LongAdder count = frequencies.get(word);
-long value = count == null ? 0 : count.sum();
-```
+  Defines atomic single-value reads, updates, CAS operations, and returned increment values.
 
-## `reset()` and `sumThenReset()`
+- [Java SE 25 `java.util.concurrent.atomic` package specification](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/atomic/package-summary.html)
 
-`reset()` is intrinsically racy when updates occur concurrently:
+  Explains the single-variable atomic toolkit and sequence-number use case.
 
-```java
-adder.reset();
-```
+- [OpenJDK `LongAdder` source](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/concurrent/atomic/LongAdder.java)
 
-Use it only when no threads are updating the adder.
+  Shows the current base/cell update path and the traversal used by `sum()`, `reset()`, and `sumThenReset()`.
 
-`sumThenReset()` is approximately equivalent to reading the sum and resetting the maintained values:
+- [OpenJDK `Striped64` source](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/concurrent/atomic/Striped64.java)
 
-```java
-long intervalTotal = adder.sumThenReset();
-```
-
-It is useful at a **quiescent point** between computations. With concurrent updates, it is not guaranteed to return every update that occurred before the reset, and an update can fall into an unexpected measurement interval.
-
-For reliable interval metrics with continuous writers, use a design that rotates counters safely or delegates interval handling to a metrics library.
-
-## Additional details
-
-- `LongAdder` extends `Number`; `intValue()`, `floatValue()`, and `doubleValue()` convert the calculated sum.
-- It intentionally does not define value-based `equals()`, `hashCode()`, or `compareTo()`.
-- It should not be used as a map key whose identity depends on the changing count.
-- Like ordinary `long` arithmetic, the sum can overflow and wrap around.
-- Serialization records a current calculated sum, not the internal stripe layout.
-
-## Summary
-
-`LongAdder` maintains a sum across a `base` value and dynamically created padded cells. Uncontended updates normally CAS the base; contended threads spread across cells to reduce cache and CAS contention. `sum()` combines all maintained values but is not an atomic snapshot. Use `LongAdder` for highly contended statistics, and use `AtomicLong` or a higher-level synchronization mechanism when an exact linearizable value is required.
-
-## Official references
-
-- [Java 25 API: LongAdder](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/atomic/LongAdder.html)
-- [OpenJDK source: LongAdder.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/concurrent/atomic/LongAdder.java)
-- [OpenJDK source: Striped64.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/concurrent/atomic/Striped64.java)
+  Shows current cell padding, probe selection, initialization, collision retries, structural guard, and expansion policy.
