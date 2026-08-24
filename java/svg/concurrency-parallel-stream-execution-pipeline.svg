@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900" role="img" aria-labelledby="title description">
+  <title id="title">Parallel stream execution from lazy recipe to combined result</title>
+  <desc id="description">The upper row shows a source and lazy pipeline waiting for a terminal operation. The lower row shows the Spliterator producing chunks, fork join leaf tasks applying the fused pipeline, partial sums, and a tree-shaped combination into one result.</desc>
+
+  <!-- Shared palette and repair-friendly text styles. -->
+  <defs>
+    <style>
+      .title { font: 700 36px sans-serif; fill: #111827; }
+      .subtitle { font: 20px sans-serif; fill: #4b5563; }
+      .section { font: 700 23px sans-serif; }
+      .body { font: 18px sans-serif; fill: #273444; }
+      .small { font: 16px sans-serif; fill: #4b5563; }
+      .code { font: 17px monospace; fill: #1f2937; }
+      .codeStrong { font: 700 18px monospace; }
+    </style>
+  </defs>
+
+  <!-- Background and reading direction. -->
+  <rect width="1500" height="900" fill="#ffffff"/>
+  <text x="750" y="52" text-anchor="middle" class="title">Parallel stream: one pipeline, many chunks</text>
+  <text x="750" y="86" text-anchor="middle" class="subtitle">Read top, then bottom: record the recipe → terminal starts work → split → process → combine</text>
+
+  <!-- Phase 1: pipeline construction is lazy. -->
+  <rect x="45" y="125" width="1410" height="190" rx="18" fill="#f8fafc" stroke="#c1cad5" stroke-width="3"/>
+  <text x="75" y="162" class="section" fill="#4b5563">1  BUILD A LAZY RECIPE</text>
+
+  <rect x="75" y="190" width="255" height="90" rx="14" fill="#eef5fc" stroke="#356da8" stroke-width="3"/>
+  <text x="202" y="226" text-anchor="middle" class="section" fill="#234f7c">SOURCE</text>
+  <text x="202" y="258" text-anchor="middle" class="code">orders</text>
+
+  <rect x="390" y="190" width="415" height="90" rx="14" fill="#f5f0fc" stroke="#7645a8" stroke-width="3"/>
+  <text x="598" y="226" text-anchor="middle" class="section" fill="#563080">INTERMEDIATE STAGES</text>
+  <text x="598" y="258" text-anchor="middle" class="code">filter → mapToLong</text>
+
+  <rect x="865" y="190" width="255" height="90" rx="14" fill="#fff8eb" stroke="#bd7823" stroke-width="3"/>
+  <text x="992" y="226" text-anchor="middle" class="section" fill="#7b4d16">TERMINAL</text>
+  <text x="992" y="258" text-anchor="middle" class="codeStrong" fill="#7b4d16">sum()</text>
+
+  <rect x="1180" y="190" width="245" height="90" rx="14" fill="#edf8ef" stroke="#43804c" stroke-width="3"/>
+  <text x="1302" y="226" text-anchor="middle" class="section" fill="#315e38">EVALUATION</text>
+  <text x="1302" y="258" text-anchor="middle" class="body">starts now</text>
+
+  <!-- Top-row arrows end at box borders; arrowheads are separate polygons. -->
+  <path d="M330 235 H370" fill="none" stroke="#667085" stroke-width="5"/>
+  <polygon points="390,235 370,224 370,246" fill="#667085"/>
+  <path d="M805 235 H845" fill="none" stroke="#667085" stroke-width="5"/>
+  <polygon points="865,235 845,224 845,246" fill="#667085"/>
+  <path d="M1120 235 H1160" fill="none" stroke="#43804c" stroke-width="5"/>
+  <polygon points="1180,235 1160,224 1160,246" fill="#43804c"/>
+
+  <!-- Phase 2: source partitions flow through leaf-local fused work. -->
+  <rect x="45" y="350" width="1410" height="500" rx="18" fill="#f8fafc" stroke="#c1cad5" stroke-width="3"/>
+  <text x="75" y="389" class="section" fill="#4b5563">2  EVALUATE IN PARALLEL</text>
+
+  <!-- Spliterator column. -->
+  <rect x="75" y="430" width="225" height="330" rx="16" fill="#eef5fc" stroke="#356da8" stroke-width="4"/>
+  <rect x="75" y="430" width="225" height="64" rx="16" fill="#356da8"/>
+  <rect x="75" y="476" width="225" height="18" fill="#356da8"/>
+  <text x="188" y="471" text-anchor="middle" class="section" fill="#ffffff">SPLITERATOR</text>
+  <text x="188" y="545" text-anchor="middle" class="codeStrong" fill="#234f7c">trySplit()</text>
+  <text x="188" y="582" text-anchor="middle" class="body">recursively divides</text>
+  <text x="188" y="612" text-anchor="middle" class="body">remaining elements</text>
+  <line x1="105" y1="650" x2="270" y2="650" stroke="#9bbbdc" stroke-width="2"/>
+  <text x="188" y="690" text-anchor="middle" class="small">No element gets</text>
+  <text x="188" y="718" text-anchor="middle" class="small">its own thread.</text>
+
+  <!-- Chunks stay aligned with their corresponding leaf tasks and partial results. -->
+  <rect x="365" y="430" width="190" height="330" rx="16" fill="#ffffff" stroke="#7b8794" stroke-width="3"/>
+  <text x="460" y="472" text-anchor="middle" class="section" fill="#4b5563">CHUNKS</text>
+  <rect x="390" y="505" width="140" height="46" rx="9" fill="#eaf2fb" stroke="#6d9dce" stroke-width="2"/>
+  <text x="460" y="535" text-anchor="middle" class="codeStrong" fill="#234f7c">A: elements</text>
+  <rect x="390" y="565" width="140" height="46" rx="9" fill="#f2ecfa" stroke="#9c78c3" stroke-width="2"/>
+  <text x="460" y="595" text-anchor="middle" class="codeStrong" fill="#563080">B: elements</text>
+  <rect x="390" y="625" width="140" height="46" rx="9" fill="#fff5e3" stroke="#d8a45e" stroke-width="2"/>
+  <text x="460" y="655" text-anchor="middle" class="codeStrong" fill="#7b4d16">C: elements</text>
+  <rect x="390" y="685" width="140" height="46" rx="9" fill="#eaf6ec" stroke="#79a982" stroke-width="2"/>
+  <text x="460" y="715" text-anchor="middle" class="codeStrong" fill="#315e38">D: elements</text>
+
+  <!-- Leaf tasks execute the complete stateless chain on one chunk. -->
+  <rect x="620" y="430" width="360" height="330" rx="16" fill="#f5f0fc" stroke="#7645a8" stroke-width="4"/>
+  <text x="800" y="472" text-anchor="middle" class="section" fill="#563080">FORK/JOIN LEAF TASKS</text>
+  <rect x="650" y="505" width="300" height="46" rx="9" fill="#ffffff" stroke="#9c78c3" stroke-width="2"/>
+  <text x="800" y="535" text-anchor="middle" class="code">filter → map → local sum</text>
+  <rect x="650" y="565" width="300" height="46" rx="9" fill="#ffffff" stroke="#9c78c3" stroke-width="2"/>
+  <text x="800" y="595" text-anchor="middle" class="code">filter → map → local sum</text>
+  <rect x="650" y="625" width="300" height="46" rx="9" fill="#ffffff" stroke="#9c78c3" stroke-width="2"/>
+  <text x="800" y="655" text-anchor="middle" class="code">filter → map → local sum</text>
+  <rect x="650" y="685" width="300" height="46" rx="9" fill="#ffffff" stroke="#9c78c3" stroke-width="2"/>
+  <text x="800" y="715" text-anchor="middle" class="code">filter → map → local sum</text>
+
+  <!-- Partial values are isolated until the reduction combines them. -->
+  <rect x="1045" y="430" width="145" height="330" rx="16" fill="#fff8eb" stroke="#bd7823" stroke-width="3"/>
+  <text x="1118" y="472" text-anchor="middle" class="section" fill="#7b4d16">LOCAL</text>
+  <text x="1118" y="536" text-anchor="middle" class="codeStrong" fill="#7b4d16">10</text>
+  <text x="1118" y="596" text-anchor="middle" class="codeStrong" fill="#7b4d16">15</text>
+  <text x="1118" y="656" text-anchor="middle" class="codeStrong" fill="#7b4d16">20</text>
+  <text x="1118" y="716" text-anchor="middle" class="codeStrong" fill="#7b4d16">5</text>
+
+  <!-- Tree-shaped combination, shown without implying a fixed scheduling order. -->
+  <rect x="1255" y="430" width="170" height="330" rx="16" fill="#edf8ef" stroke="#43804c" stroke-width="4"/>
+  <text x="1340" y="472" text-anchor="middle" class="section" fill="#315e38">COMBINE</text>
+  <rect x="1282" y="520" width="116" height="54" rx="9" fill="#ffffff" stroke="#79a982" stroke-width="2"/>
+  <text x="1340" y="554" text-anchor="middle" class="codeStrong" fill="#315e38">10 + 15</text>
+  <rect x="1282" y="610" width="116" height="54" rx="9" fill="#ffffff" stroke="#79a982" stroke-width="2"/>
+  <text x="1340" y="644" text-anchor="middle" class="codeStrong" fill="#315e38">20 + 5</text>
+  <text x="1340" y="704" text-anchor="middle" class="codeStrong" fill="#315e38">25 + 25</text>
+  <text x="1340" y="737" text-anchor="middle" class="section" fill="#315e38">= 50</text>
+
+  <!-- Phase-2 arrows stay in the gutters between columns. -->
+  <path d="M300 595 H345" fill="none" stroke="#356da8" stroke-width="5"/>
+  <polygon points="365,595 345,584 345,606" fill="#356da8"/>
+  <path d="M555 595 H600" fill="none" stroke="#7645a8" stroke-width="5"/>
+  <polygon points="620,595 600,584 600,606" fill="#7645a8"/>
+  <path d="M980 595 H1025" fill="none" stroke="#bd7823" stroke-width="5"/>
+  <polygon points="1045,595 1025,584 1025,606" fill="#bd7823"/>
+  <path d="M1190 595 H1235" fill="none" stroke="#43804c" stroke-width="5"/>
+  <polygon points="1255,595 1235,584 1235,606" fill="#43804c"/>
+
+  <!-- Final takeaway is outside all arrow paths. -->
+  <text x="750" y="882" text-anchor="middle" class="small">Workers execute chunks; the terminal operation—not thread scheduling—defines the observable result.</text>
+</svg>

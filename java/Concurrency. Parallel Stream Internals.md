@@ -1,30 +1,29 @@
-# How Does a Parallel Stream Work Internally?
+# Concurrency. Parallel Stream Internals
 
 ## Front
 
-How does a Java parallel stream internally split work, execute a pipeline, and combine results? What determines its correctness and performance?
+How does a parallel stream split a source, run one pipeline on several workers, and combine the results? Which rules make the result correct—and when is parallel execution actually faster?
 
 ## Back
 
-A parallel stream does **not** create one thread per element. It builds a lazy pipeline, partitions its source with a `Spliterator`, processes chunks using fork/join tasks, and combines partial results into the terminal result.
+**The Stream API, including parallel streams, was added in Java 8.**
 
-```text
-source
-  ↓
-Spliterator
-  ↓ trySplit()
-tree of partitions
-  ↓
-fork/join leaf tasks
-  ↓
-fused pipeline execution on each chunk
-  ↓
-partial results
-  ↓ tree-shaped combination
-final result
-```
+A parallel stream is a **lazy pipeline evaluated as a divide-and-combine computation**. A `Spliterator` divides the source into chunks; fork/join tasks process those chunks; the terminal operation either combines partial results or publishes effects according to its contract.
 
-### Example
+It does **not** create one thread per element, and `parallel()` is not a promise that execution will be faster.
+
+![From a lazy stream pipeline to split leaf tasks and a combined terminal result](svg/concurrency-parallel-stream-execution-pipeline.svg)
+
+## The four parts to remember
+
+| Part | Job |
+|---|---|
+| **Source** | Supplies elements, for example an array, `ArrayList`, range, or generated stream |
+| **Pipeline** | Records intermediate operations such as `filter()` and `map()`; it is lazy |
+| **Spliterator** | Traverses the source and, when possible, partitions it with `trySplit()` |
+| **Terminal operation** | Starts evaluation and defines the result: reduction, collection, search, or side effect |
+
+For example:
 
 ```java
 long total = orders.parallelStream()
@@ -33,171 +32,72 @@ long total = orders.parallelStream()
         .sum();
 ```
 
-Conceptually, Java performs these steps:
+Before `sum()` is called, Java has only built a recipe. The terminal call starts traversal. Conceptually, the recipe becomes:
 
-1. Create a parallel pipeline around the source's `Spliterator`.
-2. Record `filter` and `mapToLong` as lazy pipeline stages.
-3. Start evaluation when `sum()` is invoked.
-4. Recursively split the source into chunks.
-5. Process chunks concurrently.
-6. Compute a partial sum for each chunk.
-7. Combine the partial sums into the final result.
-
-### 1. Pipeline construction is lazy
-
-`Collection.parallelStream()` is conceptually equivalent to:
-
-```java
-StreamSupport.stream(collection.spliterator(), true);
+```text
+source → split into chunks → filter + map + local sum
+                               ↓
+                         combine local sums
+                               ↓
+                            one total
 ```
 
-The `true` value marks the pipeline as parallel. Intermediate operations do not immediately traverse the data:
+The most recent `parallel()` or `sequential()` setting applies to the **whole pipeline** when its terminal operation runs:
 
 ```java
-Stream<Order> stream = orders.parallelStream()
-        .filter(Order::isCompleted)
-        .map(Order::validated);
-
-// No orders have been processed yet.
+stream.parallel().map(transform).sequential().reduce(identity, combine);
+// The whole pipeline is evaluated sequentially.
 ```
 
-Each intermediate operation adds a stage to an internal pipeline. The source is consumed only when a terminal operation such as `sum()`, `reduce()`, `collect()`, `toList()`, or `forEach()` begins.
+## How splitting works
 
-The most recent call to `parallel()` or `sequential()` determines the mode of the **entire pipeline**, not only the operations after that call:
+`Spliterator` is the bridge between a data source and parallel traversal:
 
-```java
-stream.parallel().map(...).sequential().reduce(...);
-// The complete pipeline is evaluated sequentially.
-```
-
-In OpenJDK, `AbstractPipeline.evaluate()` chooses between the terminal operation's sequential and parallel implementations.
-
-### 2. The `Spliterator` partitions the source
-
-A `Spliterator` combines traversal with optional partitioning:
-
-- `tryAdvance()` processes one element.
-- `forEachRemaining()` processes the remaining elements.
-- `trySplit()` attempts to divide the remaining source into two parts.
-- `estimateSize()` reports the approximate remaining size.
-- `characteristics()` describes useful source properties.
-
-The internal task repeatedly calls `trySplit()` while a partition is large enough and can still be divided.
-
-Conceptually:
-
-```java
-Result compute(Spliterator<T> part) {
-    if (partIsSmallEnough(part)) {
-        return processLeaf(part);
-    }
-
-    Spliterator<T> left = part.trySplit();
-    if (left == null) {
-        return processLeaf(part);
-    }
-
-    fork(left);
-    Result rightResult = compute(part);
-    Result leftResult = join(left);
-    return combine(leftResult, rightResult);
-}
-```
-
-The exact splitting threshold is an implementation detail. Current OpenJDK deliberately creates more leaf tasks than worker threads—roughly four target leaf tasks per pool-parallelism unit—to improve load balancing.
-
-### Spliterator quality matters
-
-Good parallel sources provide:
-
-- Cheap, balanced splitting.
-- Accurate size estimates.
-- The `SIZED` and preferably `SUBSIZED` characteristics.
-- Efficient, low-overhead element traversal.
-
-Typical source behavior:
-
-| Source | Parallel splitting |
-|---|---|
-| Array | Excellent: indexed, sized, balanced |
-| `ArrayList` | Excellent: indexed and cheaply split |
-| `IntStream.range()` | Excellent: known range and balanced splits |
-| `HashSet` / `HashMap` views | Usually reasonable, but distribution can vary |
-| `LinkedList` | More expensive to partition and traverse |
-| Iterator or unknown-size source | Often poor: little sizing information and weaker splitting |
-| I/O-backed source | Usually a poor fit for CPU-oriented parallel streams |
+- `trySplit()` returns a new spliterator for part of the remaining elements, or `null` when it cannot or should not split.
+- `estimateSize()` estimates how many elements remain.
+- `tryAdvance()` and `forEachRemaining()` traverse elements.
+- Characteristics describe useful facts about the source.
 
 Important characteristics include:
 
-- `ORDERED` — the source has an encounter order.
-- `SIZED` — the estimated size is exact before traversal.
-- `SUBSIZED` — child spliterators are also sized.
-- `SORTED` and `DISTINCT` — may let stages avoid redundant work.
-- `IMMUTABLE` or `CONCURRENT` — describes how source interference can be handled.
+| Characteristic | Meaning useful to parallel evaluation |
+|---|---|
+| `ORDERED` | Elements have an encounter order that some operations must preserve |
+| `SIZED` | The pre-traversal size estimate is exact |
+| `SUBSIZED` | Every child produced by splitting is also `SIZED` and `SUBSIZED` |
+| `DISTINCT` / `SORTED` | The source already guarantees uniqueness or order |
+| `IMMUTABLE` / `CONCURRENT` | Describes how structural modification can be handled |
 
-### 3. Fork/join tasks execute the partitions
+Current OpenJDK stream tasks repeatedly split while a partition is larger than a target leaf size and `trySplit()` succeeds. Its default heuristic aims for **more leaf tasks than workers**—currently about four target leaves per pool-parallelism unit—so work stealing has spare tasks to rebalance. This number is an **implementation detail**, not a Stream API guarantee.
 
-OpenJDK represents parallel stream work with `ForkJoinTask`-based internal tasks.
+![Balanced and imbalanced Spliterator partition trees](svg/concurrency-parallel-stream-splitting-quality.svg)
 
-By default, a parallel stream started by an ordinary external thread uses `ForkJoinPool.commonPool()`. The calling thread can also participate while waiting for the root task to complete.
+A source is a good parallel input when `trySplit()` is cheap and produces similarly sized children. Arrays, `ArrayList`, and numeric ranges normally split well. An unknown-size iterator, a source with expensive traversal, or a badly designed spliterator may create an imbalanced tree and leave workers idle.
 
-The pool uses **work stealing**:
+`SIZED` alone does not promise balanced splitting. `SUBSIZED` says child sizes are known; it still does not promise that the split is cheap or exactly half-and-half.
 
-1. A worker processes tasks from its local queue.
-2. Splitting produces more tasks.
-3. An idle worker steals available work from another worker.
-4. Workers continue until the root computation completes.
+## What current OpenJDK executes
 
-```text
-                     root partition
-                    /              \
-               partition A     partition B
-               /        \       /        \
-             A1          A2    B1          B2
-              ↓           ↓     ↓           ↓
-            worker      worker worker      caller/worker
-```
+The public Stream API specifies results and behavioral rules, but it does not expose an `Executor` parameter. In current OpenJDK:
 
-The number of partitions is not the same as the number of threads. A worker normally processes many chunks over the lifetime of a computation.
+- many parallel terminal operations use internal `CountedCompleter` / `ForkJoinTask` trees;
+- an ordinary call from outside a fork/join computation uses fork/join task mechanics associated with `ForkJoinPool.commonPool()`;
+- a caller may perform work while the root computation is running;
+- workers use **work stealing** to pick up available leaf tasks;
+- when invoked from a worker in another `ForkJoinPool`, forked subtasks normally stay in that current pool.
 
-Parallel streams use fork/join worker threads, not one new platform thread per element and not one virtual thread per element.
+That last behavior is useful to understand, but **pool selection is not a contract of `Stream`**. Do not rely on `customPool.submit(() -> stream.parallel()...)` when strict executor ownership, isolation, quotas, or cancellation policy is required. Use a concurrency API that explicitly accepts or owns an executor.
 
-### Which pool is used?
+The number of chunks is not the number of threads. One worker can process many chunks, and one chunk normally contains many elements.
 
-The public Stream API does not accept an `Executor` or `ForkJoinPool` parameter.
+## A leaf runs the fused pipeline
 
-In the current OpenJDK implementation, invoking a parallel stream from inside a custom `ForkJoinPool` task normally causes its forked stream tasks to use that current pool:
+For stateless stages such as `filter()` and `map()`, a leaf task usually pushes each element through a chain of internal pipeline stages. It does not normally build a new collection after every intermediate operation.
 
-```java
-try (ForkJoinPool pool = new ForkJoinPool(4)) {
-    long total = pool.submit(() ->
-            orders.parallelStream()
-                    .mapToLong(Order::amountInCents)
-                    .sum()
-    ).join();
-}
-```
-
-However, pool selection through this technique is an implementation behavior rather than a guarantee of the Stream API. If strict executor ownership or isolation is required, use an API that accepts an executor explicitly.
-
-### 4. Stateless stages are fused inside each leaf
-
-For stateless operations such as `map`, `filter`, and `peek`, OpenJDK builds a chain of internal `Sink` objects.
-
-Instead of creating an intermediate collection after every operation, each leaf task pushes an element through the complete stage chain:
-
-```text
-element
-  → filter predicate
-  → mapping function
-  → terminal accumulator
-```
-
-The earlier example behaves approximately like this inside each chunk:
+The earlier pipeline behaves roughly like this inside one chunk:
 
 ```java
 long localSum = 0;
-
 for (Order order : chunk) {
     if (order.isCompleted()) {
         localSum += order.amountInCents();
@@ -205,11 +105,19 @@ for (Order order : chunk) {
 }
 ```
 
-This fusion avoids materializing separate filtered and mapped collections.
+This is **operation fusion**: traversal, filtering, mapping, and local accumulation happen together. The same recorded pipeline runs over every leaf partition.
 
-### 5. Reductions combine partial results
+Stateful intermediate operations need coordination across elements:
 
-For a reduction, each leaf task creates its own partial result. Parent tasks combine their children's results as the task tree completes.
+- `sorted()` must arrange the data;
+- `distinct()` must remember values already seen;
+- ordered `limit()`, `skip()`, `takeWhile()`, and `dropWhile()` may need buffering or prefix coordination.
+
+In a parallel pipeline, such an operation may act as a barrier between segments, require extra passes, or materialize intermediate data. That can reduce or erase the benefit of parallelism.
+
+## How results are combined
+
+For `sum()`, `reduce()`, and most non-concurrent collectors, each partition builds a local result. Parent tasks combine child results up the task tree:
 
 ```text
 chunk A → 10 ─┐
@@ -221,105 +129,65 @@ chunk C → 20 ─┐      │
 chunk D →  5 ─┘
 ```
 
-OpenJDK's parallel reduction task computes a leaf accumulator and then combines the left and right child results during task completion.
+The grouping can change, so a reduction must obey its algebraic contract:
 
-This is why a reduction function must be **associative**:
-
-```text
-(a op b) op c == a op (b op c)
-```
+- the operation must be **associative**: `(a op b) op c == a op (b op c)`;
+- the identity must be neutral: `identity op x == x`;
+- in three-argument `reduce()`, the combiner must also be compatible with the accumulator.
 
 Correct:
 
 ```java
-int sum = numbers.parallelStream()
-        .reduce(0, Integer::sum);
+int sum = numbers.parallelStream().reduce(0, Integer::sum);
 ```
 
-Incorrect because subtraction is not associative:
+Broken because `5` is not the identity for addition:
 
 ```java
-int value = numbers.parallelStream()
-        .reduce(0, (left, right) -> left - right);
+int sumPlusFive = numbers.parallelStream().reduce(5, Integer::sum);
+// A parallel evaluation may add 5 to multiple partial results.
 ```
 
-Different valid partition trees can produce different results for a non-associative operation. Floating-point arithmetic is also not exactly associative, so low-order rounding differences may occur between sequential and parallel reductions.
+Subtraction is also unsuitable because it is not associative. Floating-point addition is mathematically associative but not exactly associative under finite IEEE 754 rounding, so sequential and parallel groupings can differ slightly in low-order bits.
 
-### How `collect()` remains safe
+### Why ordinary `collect()` can use mutable containers safely
 
-A normal parallel collector typically creates a separate mutable container for each partition:
+A non-concurrent collector normally creates a separate container for each partition, confines that container while accumulating, and merges containers only after their local accumulation is finished. Thus `Collectors.toList()` does not require several workers to mutate one shared `ArrayList`.
 
-```text
-chunk A → List A ─┐
-                  ├→ combined list
-chunk B → List B ─┘
-```
+A collector marked `CONCURRENT` permits accumulation into the same result container from multiple threads. Stream collection uses concurrent reduction only when:
 
-The containers are combined only after their leaf work completes. Therefore, a normal collector does not require every partial `ArrayList` to be concurrently mutated.
+- the stream is parallel;
+- the collector is `CONCURRENT`; and
+- the stream is unordered **or** the collector is `UNORDERED`.
 
-For a collector marked `CONCURRENT`, the implementation may accumulate into one shared concurrent result when:
+`CONCURRENT` describes how the collector may accumulate; it does not make arbitrary state touched by the lambdas safe.
 
-- The stream is parallel.
-- The collector has `Collector.Characteristics.CONCURRENT`.
-- The stream is unordered, or the collector is also marked `UNORDERED`.
+## Encounter order and short-circuiting
 
-### 6. Stateful operations create coordination points
-
-Stateless operations process each element independently. Stateful operations need information about other elements:
-
-- `sorted()` must observe and arrange the input.
-- `distinct()` must track previously encountered values.
-- Ordered `limit()`, `skip()`, `takeWhile()`, and `dropWhile()` may need coordination or buffering.
-
-In OpenJDK, a stateful operation can end one parallel pipeline segment. That segment is evaluated, and its result becomes the input to the next segment.
-
-```text
-source → parallel filter/map → [stateful sorted barrier]
-       → parallel map/reduce → result
-```
-
-Stateful stages can require extra memory, multiple passes, merging, or global coordination. They often reduce the benefit of parallelism.
-
-### 7. Short-circuiting uses cooperative cancellation
-
-Operations such as these may stop before visiting the complete source:
-
-- `anyMatch()`
-- `allMatch()`
-- `noneMatch()`
-- `findAny()`
-- `findFirst()`
-- `limit()`
-
-Tasks communicate that a result or cancellation has been found. However, other leaf tasks may already be running, so some additional elements can still be processed before cancellation propagates.
-
-`findAny()` can return a result from whichever partition completes suitably. `findFirst()` must respect encounter order and therefore usually requires more coordination.
-
-Do not rely on a mapping or `peek()` function being called for every element when the terminal result does not require it.
-
-### 8. Encounter order constrains execution
-
-An ordered source such as a `List` has an encounter order. Parallel processing may execute elements in any thread and in a different scheduling order, but an order-sensitive result must still match the required encounter order.
+An ordered source such as a `List` has encounter order. Parallel scheduling may process later elements before earlier ones, while an order-sensitive terminal result must still meet its contract.
 
 ```java
-list.parallelStream().forEach(System.out::println);
-// Output order is not guaranteed.
+values.parallelStream().forEach(System.out::println);
+// Action order is unspecified.
 
-list.parallelStream().forEachOrdered(System.out::println);
-// Encounter order is preserved.
+values.parallelStream().forEachOrdered(System.out::println);
+// Actions follow encounter order.
 ```
 
-`forEachOrdered()` can reduce throughput because publication of effects must be ordered. It does not mean every upstream computation necessarily runs on one thread.
+`forEachOrdered()` preserves action order; it does not imply that every upstream calculation ran on one thread. Its ordering constraint can limit throughput.
 
-If order does not matter, `unordered()` can remove constraints and help operations such as `distinct()`, `limit()`, or concurrent collection:
+Short-circuiting operations such as `anyMatch()` and `findAny()` use cooperative cancellation. When one task finds enough information, other tasks may already be running, so some extra elements can still be processed. `findFirst()` must respect encounter order; `findAny()` has more freedom in parallel execution.
 
-```java
-Set<String> values = stream.parallel()
-        .unordered()
-        .collect(Collectors.toSet());
-```
+Do not use `peek()` or another intermediate side effect as if it were guaranteed to run once for every source element. The implementation may avoid processing elements or even elide stages when that cannot change the terminal result.
 
-### 9. Lambdas must be non-interfering and usually stateless
+## Correctness rules for lambdas
+
+Stream behavioral parameters must be **non-interfering** and, in most cases, **stateless**:
+
+- do not modify a non-concurrent source while its pipeline is executing;
+- do not make a result depend on mutable state that changes during the pipeline;
+- do not mutate an unsynchronized shared result from `forEach()`;
+- prefer a reduction or collector that owns partial results.
 
 Broken shared mutation:
 
@@ -328,101 +196,145 @@ List<Integer> output = new ArrayList<>();
 
 numbers.parallelStream()
         .map(n -> n * 2)
-        .forEach(output::add); // data race and possible corruption
+        .forEach(output::add); // data race; ArrayList may be corrupted
 ```
 
-Correct reduction:
+Correct collection:
 
 ```java
 List<Integer> output = numbers.parallelStream()
         .map(n -> n * 2)
-        .toList();
+        .collect(Collectors.toList());
 ```
 
-Synchronizing the shared list might prevent corruption, but contention can remove the performance benefit. An atomic counter may be thread-safe yet still become a hot shared bottleneck.
+Making the shared list synchronized can prevent corruption, but contention and nondeterministic action order can still make it a poor design. Thread-safe does not automatically mean deterministic or fast.
 
-Do not modify a non-concurrent stream source while its pipeline is executing. Results may be incorrect, fail-fast, or otherwise nonconforming.
+![Correctness, ordering, and performance checks for a parallel stream](svg/concurrency-parallel-stream-decision-checklist.svg)
 
-### 10. Parallel does not automatically mean faster
+## Complete Java example
 
-Parallel execution adds costs:
-
-- Source partitioning.
-- Task creation and scheduling.
-- Work stealing and coordination.
-- Partial-result allocation and combination.
-- Ordered-result reconstruction.
-- Stateful-operation buffering.
-- Contention for the shared common pool.
-
-Parallel streams are most promising when:
-
-- The source is large and splits efficiently.
-- Per-element work is CPU-intensive enough to amortize overhead.
-- Operations are stateless and independent.
-- Reduction is associative and cheap to combine.
-- Encounter-order constraints are limited.
-- Multiple CPU cores are available.
-
-Sequential streams are often better when:
-
-- The input is small.
-- Each operation is very cheap.
-- The source splits poorly.
-- The pipeline contains expensive ordered or stateful stages.
-- Work updates shared mutable state.
-- The environment already has heavy common-pool usage.
-
-Always benchmark realistic workloads; pipeline shape, source type, collector, machine, and surrounding load all matter.
-
-### Blocking operations are a poor default fit
-
-The fork/join pool is primarily designed for compute-oriented tasks. Blocking on network, file, database, or unmanaged synchronization can occupy workers and delay unrelated common-pool work. The pool does not guarantee compensation for arbitrary blocked I/O.
+This Java 8-compatible example uses stateless functions and library reductions:
 
 ```java
-urls.parallelStream()
-        .map(httpClient::blockingRequest) // usually a poor design
-        .toList();
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public final class ParallelStreamExample {
+    private ParallelStreamExample() {
+    }
+
+    static long completedTotal(List<Order> orders) {
+        return orders.parallelStream()
+                .filter(Order::isCompleted)
+                .mapToLong(Order::amountInCents)
+                .sum();
+    }
+
+    static Map<String, Long> completedTotalsByRegion(List<Order> orders) {
+        return orders.parallelStream()
+                .filter(Order::isCompleted)
+                .collect(Collectors.groupingBy(
+                        Order::region,
+                        Collectors.summingLong(Order::amountInCents)));
+    }
+
+    static final class Order {
+        private final String region;
+        private final long amountInCents;
+        private final boolean completed;
+
+        Order(String region, long amountInCents, boolean completed) {
+            this.region = region;
+            this.amountInCents = amountInCents;
+            this.completed = completed;
+        }
+
+        String region() {
+            return region;
+        }
+
+        long amountInCents() {
+            return amountInCents;
+        }
+
+        boolean isCompleted() {
+            return completed;
+        }
+    }
+}
 ```
 
-For blocking I/O, prefer an explicit concurrency design with controlled resource limits, cancellation, timeouts, and—where appropriate—virtual threads. Parallel streams themselves do not execute one virtual thread per element.
+Each leaf calculates independently. `sum()` combines primitive partial sums, while `groupingBy()` creates isolated partial maps and merges them according to the collector contract.
 
-### Common misconceptions
+## When parallel execution is likely to help
 
-| Misconception | Reality |
+Parallelism adds splitting, scheduling, stealing, buffering, and combining overhead. A rough question is whether useful per-element work is large enough to amortize those costs.
+
+| Better candidate | Poor candidate |
 |---|---|
-| One element gets one thread | A task processes a chunk containing many elements |
-| Parallel operations run in source order | Scheduling is free to differ; only required result order is preserved |
-| `forEach()` preserves list order | Only `forEachOrdered()` promises encounter order |
-| A thread-safe collection makes a stateful lambda a good idea | It may be safe but nondeterministic or contention-heavy |
-| `parallelStream()` always uses all processors | Available parallelism, source splitting, workload, pool contention, and ordering all matter |
-| Parallel streams use virtual threads | Current implementation uses fork/join tasks and pool workers |
-| Parallel is always faster | Overhead can dominate small or cheap computations |
+| Large, finite source | Small source |
+| Array, `ArrayList`, or balanced range | Expensive or imbalanced splitting |
+| CPU-heavy independent work | Tiny operations such as one cheap field read |
+| Stateless stages | Shared mutable state or a contended lock |
+| Associative, cheap combination | Expensive merge or invalid reduction |
+| Little ordering pressure | Ordered/stateful barriers dominate |
+| Spare CPU capacity | Shared pool is already busy |
 
-### Complete mental model
+Blocking network, file, or database calls are a poor default fit. Fork/join can compensate for some recognized blocking, but it does not guarantee enough workers for arbitrary blocked I/O or unmanaged synchronization. For blocking tasks, prefer an explicit design with bounded resource use, timeouts, cancellation, and—when appropriate—virtual threads.
 
-```text
-1. Build a lazy pipeline and mark it parallel.
-2. Invoke a terminal operation.
-3. Obtain the source Spliterator.
-4. Split it recursively into target-sized partitions.
-5. Schedule internal fork/join tasks.
-6. Let workers steal tasks for load balancing.
-7. Run fused stateless stages inside each leaf task.
-8. Coordinate or buffer at stateful stages when required.
-9. Combine partial results up the task tree.
-10. Return from the terminal operation after the root task completes.
-```
+Nested parallel streams do not create unlimited extra processors. They add tasks and coordination to the fork/join environment already in use, which may increase contention rather than speed.
 
-### Key idea
+Benchmark the real pipeline on representative data and hardware, with warm-up and realistic surrounding load. Compare `.stream()` and `.parallelStream()`; do not infer performance from core count alone.
 
-> A parallel stream is a lazy data pipeline evaluated as a fork/join tree: the `Spliterator` determines how well the source divides, leaf tasks determine how efficiently elements are processed, and the terminal operation determines how results are combined.
+## API guarantee vs. implementation detail
 
-### Official references
+| Safe to rely on | Do not treat as a permanent Stream API promise |
+|---|---|
+| Parallel/sequential mode and terminal-operation semantics | Exact task classes or split threshold |
+| Non-interference and statelessness requirements | Exactly four leaves per worker |
+| Associativity and identity requirements | A fixed worker count |
+| Encounter-order contracts | A caller always running a particular amount of work |
+| Collector characteristics | Selecting a custom pool by invoking the stream inside it |
 
-- [`java.util.stream` package documentation](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/stream/package-summary.html)
-- [`Spliterator` API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/Spliterator.html)
-- [`ForkJoinPool` API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/ForkJoinPool.html)
-- [OpenJDK `AbstractPipeline`](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/stream/AbstractPipeline.java)
-- [OpenJDK `AbstractTask`](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/stream/AbstractTask.java)
-- [OpenJDK `ReduceOps`](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/stream/ReduceOps.java)
+## One-sentence mental model
+
+> A parallel stream is one lazy pipeline applied to many `Spliterator` partitions, with fork/join scheduling between them and a terminal-operation contract that decides how their work becomes one observable result.
+
+## Sources
+
+- [Java SE 25 `java.util.stream` package specification](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/package-summary.html)
+
+  Defines laziness, parallel mode, stateless and stateful operations, non-interference, reduction, side effects, ordering, and low-level construction from a `Spliterator`.
+
+- [Java SE 25 `Stream` API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Stream.html)
+
+  Specifies reduction contracts, `forEach`, `forEachOrdered`, short-circuiting behavior, and order-sensitive operations.
+
+- [Java SE 25 `Spliterator` API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Spliterator.html)
+
+  Defines `trySplit()`, size estimates, characteristics, thread confinement, and the performance effect of balanced splitting.
+
+- [Java SE 25 `Collector` API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Collector.html)
+
+  Defines isolated partial containers, associativity and identity constraints, and the conditions for concurrent reduction.
+
+- [Java SE 25 `ForkJoinPool` API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ForkJoinPool.html)
+
+  Documents work stealing, the common pool, target parallelism, and limits around blocked I/O and unmanaged synchronization.
+
+- [OpenJDK `AbstractTask` source](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/stream/AbstractTask.java)
+
+  Shows the current `CountedCompleter` task tree, alternating forks, leaf-size heuristic, and recursive `Spliterator.trySplit()` loop.
+
+- [OpenJDK `AbstractPipeline` source](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/stream/AbstractPipeline.java)
+
+  Shows lazy pipeline representation and the selection of sequential or parallel terminal evaluation.
+
+- [OpenJDK `ReduceOps` source](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/stream/ReduceOps.java)
+
+  Shows leaf accumulation and tree-shaped combination for parallel reductions.
+
+- [JSR 335 final specification page](https://www.jcp.org/en/jsr/detail?id=335)
+
+  Records the Java 8-era language and library work that enabled lambda-oriented, multicore-ready APIs.

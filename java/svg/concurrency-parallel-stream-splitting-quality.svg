@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900" role="img" aria-labelledby="title description">
+  <title id="title">Balanced splitting keeps parallel stream workers useful</title>
+  <desc id="description">The upper panel shows a balanced Spliterator repeatedly dividing sixteen elements into four similarly sized chunks that workers can process together. The lower panel shows one-plus-remainder splits that leave a long serial tail and idle workers.</desc>
+
+  <!-- Shared styles make future label or color fixes local. -->
+  <defs>
+    <style>
+      .title { font: 700 36px sans-serif; fill: #111827; }
+      .subtitle { font: 20px sans-serif; fill: #4b5563; }
+      .section { font: 700 24px sans-serif; }
+      .body { font: 18px sans-serif; fill: #273444; }
+      .small { font: 16px sans-serif; fill: #4b5563; }
+      .code { font: 700 18px monospace; }
+    </style>
+  </defs>
+
+  <rect width="1500" height="900" fill="#ffffff"/>
+  <text x="750" y="52" text-anchor="middle" class="title">Splitting quality controls available parallelism</text>
+  <text x="750" y="86" text-anchor="middle" class="subtitle">Known size helps planning; cheap, similarly sized children keep workers busy</text>
+
+  <!-- Good case: each split exposes another useful chunk of similar size. -->
+  <rect x="45" y="125" width="1410" height="325" rx="18" fill="#f2f9f3" stroke="#79a982" stroke-width="3"/>
+  <rect x="45" y="125" width="280" height="58" rx="18" fill="#43804c"/>
+  <rect x="45" y="165" width="280" height="18" fill="#43804c"/>
+  <text x="185" y="164" text-anchor="middle" class="section" fill="#ffffff">BALANCED SPLITS</text>
+  <text x="360" y="164" class="body">Example: an indexed, sized source</text>
+
+  <rect x="90" y="235" width="175" height="90" rx="14" fill="#eef5fc" stroke="#356da8" stroke-width="3"/>
+  <text x="178" y="270" text-anchor="middle" class="body">remaining source</text>
+  <text x="178" y="303" text-anchor="middle" class="code" fill="#234f7c">16 elements</text>
+
+  <rect x="350" y="205" width="150" height="64" rx="12" fill="#f5f0fc" stroke="#7645a8" stroke-width="3"/>
+  <text x="425" y="245" text-anchor="middle" class="code" fill="#563080">8</text>
+  <rect x="350" y="300" width="150" height="64" rx="12" fill="#f5f0fc" stroke="#7645a8" stroke-width="3"/>
+  <text x="425" y="340" text-anchor="middle" class="code" fill="#563080">8</text>
+
+  <rect x="610" y="185" width="130" height="54" rx="11" fill="#fff8eb" stroke="#bd7823" stroke-width="3"/>
+  <text x="675" y="219" text-anchor="middle" class="code" fill="#7b4d16">chunk 4</text>
+  <rect x="610" y="255" width="130" height="54" rx="11" fill="#fff8eb" stroke="#bd7823" stroke-width="3"/>
+  <text x="675" y="289" text-anchor="middle" class="code" fill="#7b4d16">chunk 4</text>
+  <rect x="610" y="325" width="130" height="54" rx="11" fill="#fff8eb" stroke="#bd7823" stroke-width="3"/>
+  <text x="675" y="359" text-anchor="middle" class="code" fill="#7b4d16">chunk 4</text>
+  <rect x="610" y="395" width="130" height="36" rx="9" fill="#fff8eb" stroke="#bd7823" stroke-width="3"/>
+  <text x="675" y="420" text-anchor="middle" class="code" fill="#7b4d16">4</text>
+
+  <!-- Worker lanes are aligned with the four leaf chunks. -->
+  <rect x="950" y="175" width="420" height="250" rx="16" fill="#ffffff" stroke="#43804c" stroke-width="3"/>
+  <text x="1160" y="212" text-anchor="middle" class="section" fill="#315e38">WORKERS HAVE COMPARABLE CHUNKS</text>
+  <rect x="990" y="242" width="160" height="62" rx="11" fill="#eaf6ec" stroke="#79a982" stroke-width="2"/>
+  <text x="1070" y="281" text-anchor="middle" class="code" fill="#315e38">worker A: 4</text>
+  <rect x="1170" y="242" width="160" height="62" rx="11" fill="#eaf6ec" stroke="#79a982" stroke-width="2"/>
+  <text x="1250" y="281" text-anchor="middle" class="code" fill="#315e38">worker B: 4</text>
+  <rect x="990" y="326" width="160" height="62" rx="11" fill="#eaf6ec" stroke="#79a982" stroke-width="2"/>
+  <text x="1070" y="365" text-anchor="middle" class="code" fill="#315e38">worker C: 4</text>
+  <rect x="1170" y="326" width="160" height="62" rx="11" fill="#eaf6ec" stroke="#79a982" stroke-width="2"/>
+  <text x="1250" y="365" text-anchor="middle" class="code" fill="#315e38">worker D: 4</text>
+
+  <!-- Balanced split arrows are routed through empty gutters. -->
+  <path d="M265 280 C305 280 305 237 330 237" fill="none" stroke="#667085" stroke-width="4"/>
+  <polygon points="350,237 330,226 330,248" fill="#667085"/>
+  <path d="M265 280 C305 280 305 332 330 332" fill="none" stroke="#667085" stroke-width="4"/>
+  <polygon points="350,332 330,321 330,343" fill="#667085"/>
+  <path d="M500 237 C550 237 550 212 590 212" fill="none" stroke="#667085" stroke-width="4"/>
+  <polygon points="610,212 590,201 590,223" fill="#667085"/>
+  <path d="M500 237 C550 237 550 282 590 282" fill="none" stroke="#667085" stroke-width="4"/>
+  <polygon points="610,282 590,271 590,293" fill="#667085"/>
+  <path d="M500 332 C550 332 550 352 590 352" fill="none" stroke="#667085" stroke-width="4"/>
+  <polygon points="610,352 590,341 590,363" fill="#667085"/>
+  <path d="M500 332 C550 332 550 413 590 413" fill="none" stroke="#667085" stroke-width="4"/>
+  <polygon points="610,413 590,402 590,424" fill="#667085"/>
+  <path d="M740 300 H930" fill="none" stroke="#43804c" stroke-width="5"/>
+  <polygon points="950,300 930,289 930,311" fill="#43804c"/>
+
+  <!-- Poor case: repeated tiny split-offs expose little useful parallel work. -->
+  <rect x="45" y="485" width="1410" height="340" rx="18" fill="#fff5f3" stroke="#c96a5b" stroke-width="3"/>
+  <rect x="45" y="485" width="300" height="58" rx="18" fill="#a94d41"/>
+  <rect x="45" y="525" width="300" height="18" fill="#a94d41"/>
+  <text x="195" y="524" text-anchor="middle" class="section" fill="#ffffff">IMBALANCED SPLITS</text>
+  <text x="380" y="524" class="body">Example: repeatedly split off one element</text>
+
+  <rect x="85" y="620" width="150" height="82" rx="13" fill="#eef5fc" stroke="#356da8" stroke-width="3"/>
+  <text x="160" y="652" text-anchor="middle" class="body">source</text>
+  <text x="160" y="681" text-anchor="middle" class="code" fill="#234f7c">16</text>
+
+  <rect x="320" y="575" width="150" height="62" rx="11" fill="#fff8eb" stroke="#bd7823" stroke-width="3"/>
+  <text x="395" y="614" text-anchor="middle" class="code" fill="#7b4d16">leaf 1</text>
+  <rect x="320" y="685" width="150" height="62" rx="11" fill="#f5f0fc" stroke="#7645a8" stroke-width="3"/>
+  <text x="395" y="724" text-anchor="middle" class="code" fill="#563080">remainder 15</text>
+
+  <rect x="565" y="575" width="150" height="62" rx="11" fill="#fff8eb" stroke="#bd7823" stroke-width="3"/>
+  <text x="640" y="614" text-anchor="middle" class="code" fill="#7b4d16">leaf 1</text>
+  <rect x="565" y="685" width="150" height="62" rx="11" fill="#f5f0fc" stroke="#7645a8" stroke-width="3"/>
+  <text x="640" y="724" text-anchor="middle" class="code" fill="#563080">remainder 14</text>
+
+  <rect x="810" y="575" width="150" height="62" rx="11" fill="#fff8eb" stroke="#bd7823" stroke-width="3"/>
+  <text x="885" y="614" text-anchor="middle" class="code" fill="#7b4d16">leaf 1</text>
+  <rect x="810" y="685" width="150" height="62" rx="11" fill="#f5f0fc" stroke="#7645a8" stroke-width="3"/>
+  <text x="885" y="724" text-anchor="middle" class="code" fill="#563080">remainder 13</text>
+
+  <rect x="1055" y="570" width="330" height="185" rx="16" fill="#ffffff" stroke="#a94d41" stroke-width="3"/>
+  <text x="1220" y="611" text-anchor="middle" class="section" fill="#873c33">LONG SERIAL TAIL</text>
+  <text x="1220" y="651" text-anchor="middle" class="body">tiny leaves finish quickly;</text>
+  <text x="1220" y="683" text-anchor="middle" class="body">one large remainder persists</text>
+  <text x="1220" y="724" text-anchor="middle" class="code" fill="#873c33">workers → idle / waiting</text>
+
+  <!-- Imbalanced chain arrows avoid every label rectangle. -->
+  <path d="M235 661 H280 V606 H300" fill="none" stroke="#667085" stroke-width="4"/>
+  <polygon points="320,606 300,595 300,617" fill="#667085"/>
+  <path d="M235 661 H280 V716 H300" fill="none" stroke="#667085" stroke-width="4"/>
+  <polygon points="320,716 300,705 300,727" fill="#667085"/>
+  <path d="M470 716 H525 V606 H545" fill="none" stroke="#667085" stroke-width="4"/>
+  <polygon points="565,606 545,595 545,617" fill="#667085"/>
+  <path d="M470 716 H545" fill="none" stroke="#667085" stroke-width="4"/>
+  <polygon points="565,716 545,705 545,727" fill="#667085"/>
+  <path d="M715 716 H770 V606 H790" fill="none" stroke="#667085" stroke-width="4"/>
+  <polygon points="810,606 790,595 790,617" fill="#667085"/>
+  <path d="M715 716 H790" fill="none" stroke="#667085" stroke-width="4"/>
+  <polygon points="810,716 790,705 790,727" fill="#667085"/>
+  <path d="M960 661 H1035" fill="none" stroke="#a94d41" stroke-width="5"/>
+  <polygon points="1055,661 1035,650 1035,672" fill="#a94d41"/>
+
+  <!-- Bottom lesson is intentionally isolated from the panels. -->
+  <text x="750" y="875" text-anchor="middle" class="small">Parallelism can only use work that the source exposes as useful partitions.</text>
+</svg>
