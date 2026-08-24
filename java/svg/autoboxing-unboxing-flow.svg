@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="620" viewBox="0 0 1100 620" role="img" aria-labelledby="title description">
+  <title id="title">Autoboxing and unboxing conversion flow</title>
+  <desc id="description">Autoboxing converts an int primitive to an Integer wrapper reference. Unboxing converts a non-null Integer reference to an int. Unboxing null throws NullPointerException.</desc>
+
+  <!-- Background and lesson heading; keep the canvas compact around the three flows. -->
+  <rect width="1100" height="620" fill="#ffffff"/>
+  <text x="550" y="42" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="bold" fill="#202124">Autoboxing and unboxing</text>
+  <text x="550" y="74" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#5f6368">The value is converted automatically; the primitive and wrapper remain different types</text>
+
+  <!-- Boxing lane: the arrowhead touches, but does not enter, the wrapper box. -->
+  <g id="boxing-lane">
+    <rect x="35" y="100" width="1030" height="145" rx="10" fill="#f8fbff" stroke="#b8c7da" stroke-width="1.5"/>
+    <text x="55" y="126" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold" fill="#356eb3">BOXING</text>
+
+    <rect x="70" y="140" width="260" height="80" rx="8" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+    <text x="200" y="173" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="bold" fill="#202124">primitive int</text>
+    <text x="200" y="201" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="18" fill="#356eb3">42</text>
+
+    <text x="550" y="153" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold" fill="#8a5a12">autoboxing</text>
+    <text x="550" y="177" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6368">primitive → wrapper reference</text>
+    <line x1="350" y1="198" x2="750" y2="198" stroke="#b7791f" stroke-width="5" stroke-linecap="round"/>
+    <polygon points="746,187 770,198 746,209" fill="#b7791f"/>
+
+    <rect x="770" y="140" width="260" height="80" rx="8" fill="#e6f4ea" stroke="#34834b" stroke-width="2"/>
+    <text x="900" y="173" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="bold" fill="#202124">Integer reference</text>
+    <text x="900" y="201" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="18" fill="#34834b">value = 42</text>
+  </g>
+
+  <!-- Normal unboxing lane: only a non-null wrapper reaches the primitive result. -->
+  <g id="unboxing-lane">
+    <rect x="35" y="265" width="1030" height="145" rx="10" fill="#fbfdf9" stroke="#b8c7b9" stroke-width="1.5"/>
+    <text x="55" y="291" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold" fill="#34834b">UNBOXING</text>
+
+    <rect x="70" y="305" width="260" height="80" rx="8" fill="#e6f4ea" stroke="#34834b" stroke-width="2"/>
+    <text x="200" y="338" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="bold" fill="#202124">non-null Integer</text>
+    <text x="200" y="366" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="18" fill="#34834b">value = 42</text>
+
+    <text x="550" y="318" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold" fill="#8a5a12">unboxing</text>
+    <text x="550" y="342" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6368">wrapper reference → primitive</text>
+    <line x1="350" y1="363" x2="750" y2="363" stroke="#b7791f" stroke-width="5" stroke-linecap="round"/>
+    <polygon points="746,352 770,363 746,374" fill="#b7791f"/>
+
+    <rect x="770" y="305" width="260" height="80" rx="8" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+    <text x="900" y="338" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="bold" fill="#202124">primitive int</text>
+    <text x="900" y="366" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="18" fill="#356eb3">42</text>
+  </g>
+
+  <!-- Null failure lane; red is reserved for the failed conversion. -->
+  <g id="null-warning">
+    <rect x="35" y="430" width="1030" height="125" rx="10" fill="#fff8f7" stroke="#e0b4b0" stroke-width="1.5"/>
+    <rect x="70" y="458" width="260" height="72" rx="8" fill="#fce8e6" stroke="#d93025" stroke-width="2"/>
+    <text x="200" y="488" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold" fill="#202124">Integer reference</text>
+    <text x="200" y="514" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="17" fill="#b3261e">null</text>
+
+    <text x="550" y="466" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#b3261e">attempt to unbox</text>
+    <text x="550" y="489" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6368">no primitive value exists</text>
+    <line x1="350" y1="510" x2="750" y2="510" stroke="#d93025" stroke-width="5" stroke-linecap="round"/>
+    <polygon points="746,499 770,510 746,521" fill="#d93025"/>
+
+    <rect x="770" y="458" width="260" height="72" rx="8" fill="#fce8e6" stroke="#d93025" stroke-width="2"/>
+    <text x="900" y="489" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold" fill="#b3261e">NullPointerException</text>
+    <text x="900" y="514" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6368">conversion fails at run time</text>
+  </g>
+
+  <!-- Closing rule; keep it separate from the conversion arrows. -->
+  <text x="550" y="592" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#202124">Wrapper-to-wrapper == compares references; use equals() for values.</text>
+</svg>
