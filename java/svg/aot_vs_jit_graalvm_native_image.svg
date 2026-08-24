@@ -1,55 +1,77 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 220">
-  <style>
-    text {
-      font-family: Arial, sans-serif;
-      fill: currentColor;
-    }
-    .box {
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2;
-      rx: 10;
-    }
-    .arrow {
-      stroke: currentColor;
-      stroke-width: 2;
-      fill: none;
-    }
-    .title {
-      font-size: 22px;
-      font-weight: bold;
-    }
-    .label {
-      font-size: 18px;
-    }
-    .small {
-      font-size: 14px;
-    }
-  </style>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title description">
+  <title id="title">GraalVM Native Image build and profile-guided optimization</title>
+  <desc id="description">Native Image analyzes reachable code under a closed-world assumption, compiles and links a native executable, and can optionally use a profile recorded from a representative workload to guide an optimized rebuild.</desc>
 
-  <text x="600" y="32" text-anchor="middle" class="title">
-    GraalVM Native Image AOT Flow
-  </text>
+  <!-- Shared heading; green means full native AOT and amber means optional training data. -->
+  <rect width="1200" height="700" fill="#ffffff"/>
+  <text x="600" y="44" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="bold" fill="#172033">GraalVM Native Image: build the executable before deployment</text>
+  <text x="600" y="76" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#5f6878">Static reachability decides what enters the image; optional PGO adds observed workload behavior</text>
 
-  <rect class="box" x="20" y="90" width="170" height="60"/>
-  <text x="105" y="126" text-anchor="middle" class="label">Java bytecode</text>
+  <!-- Main native-image build flow. -->
+  <g id="native-build-flow">
+    <rect x="35" y="125" width="245" height="150" rx="10" fill="#e6f4ea" stroke="#34834b" stroke-width="2"/>
+    <text x="157.5" y="166" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#172033">Build inputs</text>
+    <text x="157.5" y="201" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">application bytecode</text>
+    <text x="157.5" y="226" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">libraries + metadata</text>
+    <text x="157.5" y="251" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">optional PGO profile</text>
 
-  <line class="arrow" x1="190" y1="120" x2="245" y2="120"/>
-  <path class="arrow" d="M235 113 L245 120 L235 127"/>
+    <line x1="280" y1="200" x2="326" y2="200" stroke="#2f855a" stroke-width="5" stroke-linecap="round"/>
+    <polygon points="322,189 346,200 322,211" fill="#2f855a"/>
 
-  <rect class="box" x="245" y="90" width="230" height="60"/>
-  <text x="360" y="126" text-anchor="middle" class="label">GraalVM Native Image</text>
+    <rect x="346" y="125" width="245" height="150" rx="10" fill="#e6f4ea" stroke="#34834b" stroke-width="2"/>
+    <text x="468.5" y="166" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#172033">Static analysis</text>
+    <text x="468.5" y="201" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">find reachable methods,</text>
+    <text x="468.5" y="226" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">fields, and types under a</text>
+    <text x="468.5" y="251" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#2f855a">closed-world assumption</text>
 
-  <line class="arrow" x1="475" y1="120" x2="585" y2="120"/>
-  <path class="arrow" d="M575 113 L585 120 L575 127"/>
-  <text x="530" y="100" text-anchor="middle" class="small">AOT compilation</text>
+    <line x1="591" y1="200" x2="637" y2="200" stroke="#2f855a" stroke-width="5" stroke-linecap="round"/>
+    <polygon points="633,189 657,200 633,211" fill="#2f855a"/>
 
-  <rect class="box" x="585" y="90" width="190" height="60"/>
-  <text x="680" y="126" text-anchor="middle" class="label">Native executable</text>
+    <rect x="657" y="125" width="245" height="150" rx="10" fill="#e6f4ea" stroke="#34834b" stroke-width="2"/>
+    <text x="779.5" y="166" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#172033">AOT compile + link</text>
+    <text x="779.5" y="201" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">machine code + required</text>
+    <text x="779.5" y="226" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">runtime pieces such as GC</text>
+    <text x="779.5" y="251" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">become one image</text>
 
-  <line class="arrow" x1="775" y1="120" x2="860" y2="120"/>
-  <path class="arrow" d="M850 113 L860 120 L850 127"/>
+    <line x1="902" y1="200" x2="948" y2="200" stroke="#2f855a" stroke-width="5" stroke-linecap="round"/>
+    <polygon points="944,189 968,200 944,211" fill="#2f855a"/>
 
-  <rect class="box" x="860" y="90" width="170" height="60"/>
-  <text x="945" y="126" text-anchor="middle" class="label">Runs directly</text>
+    <rect x="968" y="125" width="197" height="150" rx="10" fill="#dff1e5" stroke="#2f855a" stroke-width="2"/>
+    <text x="1066.5" y="166" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#172033">Native executable</text>
+    <text x="1066.5" y="201" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">platform-specific</text>
+    <text x="1066.5" y="226" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">starts without an</text>
+    <text x="1066.5" y="251" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">ordinary HotSpot process</text>
+  </g>
+
+  <!-- Optional PGO loop is separate so the base build remains easy to understand. -->
+  <rect x="55" y="330" width="1090" height="230" rx="12" fill="#fffaf0" stroke="#d8b36a" stroke-width="2"/>
+  <text x="600" y="368" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="bold" fill="#684713">Optional profile-guided optimization (PGO)</text>
+  <text x="600" y="395" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">Move representative runtime observations into a later AOT build</text>
+
+  <rect x="90" y="425" width="245" height="86" rx="8" fill="#fff4ce" stroke="#b7791f" stroke-width="2"/>
+  <text x="212.5" y="458" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#172033">1. Instrumented image</text>
+  <text x="212.5" y="485" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6878">records execution behavior</text>
+  <line x1="335" y1="468" x2="391" y2="468" stroke="#b7791f" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="387,457 411,468 387,479" fill="#b7791f"/>
+
+  <rect x="411" y="425" width="245" height="86" rx="8" fill="#fff4ce" stroke="#b7791f" stroke-width="2"/>
+  <text x="533.5" y="458" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#172033">2. Training workload</text>
+  <text x="533.5" y="485" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6878">must represent production use</text>
+  <line x1="656" y1="468" x2="712" y2="468" stroke="#b7791f" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="708,457 732,468 708,479" fill="#b7791f"/>
+
+  <rect x="732" y="425" width="175" height="86" rx="8" fill="#fff4ce" stroke="#b7791f" stroke-width="2"/>
+  <text x="819.5" y="458" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#172033">3. Profile</text>
+  <text x="819.5" y="485" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6878">saved to a file</text>
+  <line x1="907" y1="468" x2="963" y2="468" stroke="#b7791f" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="959,457 983,468 959,479" fill="#b7791f"/>
+
+  <rect x="983" y="425" width="127" height="86" rx="8" fill="#fff4ce" stroke="#b7791f" stroke-width="2"/>
+  <text x="1046.5" y="458" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#172033">4. Rebuild</text>
+  <text x="1046.5" y="485" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6878">use profile</text>
+
+  <rect x="135" y="600" width="930" height="70" rx="8" fill="#fff4ce" stroke="#b7791f" stroke-width="1.5"/>
+  <text x="600" y="629" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold" fill="#684713">PGO gives AOT a recorded view of one workload—it does not make the image a continuously adapting JIT.</text>
+  <text x="600" y="654" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#684713">Dynamic features not discovered by static analysis may need reachability metadata.</text>
 </svg>

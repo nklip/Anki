@@ -1,57 +1,57 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1450 220">
-  <style>
-    text {
-      font-family: Arial, sans-serif;
-      fill: currentColor;
-    }
-    .box {
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2;
-      rx: 10;
-    }
-    .arrow {
-      stroke: currentColor;
-      stroke-width: 2;
-      fill: none;
-    }
-    .title {
-      font-size: 22px;
-      font-weight: bold;
-    }
-    .label {
-      font-size: 18px;
-    }
-  </style>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title description">
+  <title id="title">HotSpot startup with and without cached method profiles</title>
+  <desc id="description">Traditional HotSpot must collect useful method profiles after startup before optimized compilation. With an AOT cache from a training run, profiles are available at startup so the JIT can compile sooner while continuing to profile online.</desc>
 
-  <text x="725" y="32" text-anchor="middle" class="title">
-    Profile-Guided JVM Startup
-  </text>
+  <!-- Shared heading and mirrored comparison geometry. -->
+  <rect width="1200" height="600" fill="#ffffff"/>
+  <text x="600" y="44" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="bold" fill="#172033">Cached method profiles let HotSpot’s JIT start with a head start</text>
+  <text x="600" y="76" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#5f6878">JDK 25 reuses profiles from a training run; it does not replace runtime JIT compilation</text>
 
-  <rect class="box" x="20" y="90" width="180" height="60"/>
-  <text x="110" y="126" text-anchor="middle" class="label">Previous run</text>
+  <!-- Traditional startup lane. -->
+  <rect x="40" y="115" width="1120" height="175" rx="12" fill="#f6f9fd" stroke="#9db7d1" stroke-width="2"/>
+  <rect x="40" y="115" width="225" height="175" rx="12" fill="#1f4e79"/>
+  <rect x="245" y="115" width="20" height="175" fill="#1f4e79"/>
+  <text x="145" y="165" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="bold" fill="#ffffff">Traditional start</text>
+  <text x="145" y="197" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#ffffff">no saved profile</text>
+  <text x="145" y="236" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#dce9f7">learn during this run</text>
 
-  <line class="arrow" x1="200" y1="120" x2="290" y2="120"/>
-  <path class="arrow" d="M280 113 L290 120 L280 127"/>
+  <rect x="310" y="157" width="220" height="88" rx="9" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <text x="420" y="190" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#172033">1. Begin executing</text>
+  <text x="420" y="217" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6878">collect method profiles</text>
+  <line x1="530" y1="201" x2="596" y2="201" stroke="#1f4e79" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="592,190 616,201 592,212" fill="#1f4e79"/>
+  <rect x="616" y="157" width="220" height="88" rx="9" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <text x="726" y="190" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#172033">2. Profiles mature</text>
+  <text x="726" y="217" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6878">hot behavior becomes clear</text>
+  <line x1="836" y1="201" x2="902" y2="201" stroke="#1f4e79" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="898,190 922,201 898,212" fill="#1f4e79"/>
+  <rect x="922" y="157" width="200" height="88" rx="9" fill="#dce9f7" stroke="#1f4e79" stroke-width="2"/>
+  <text x="1022" y="190" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#172033">3. Optimize later</text>
+  <text x="1022" y="217" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6878">JIT uses current-run data</text>
 
-  <rect class="box" x="290" y="90" width="180" height="60"/>
-  <text x="380" y="126" text-anchor="middle" class="label">Saved profile</text>
+  <!-- AOT-profile-assisted lane: the first arrow comes from a profile already available. -->
+  <rect x="40" y="325" width="1120" height="175" rx="12" fill="#fffaf0" stroke="#d8b36a" stroke-width="2"/>
+  <rect x="40" y="325" width="225" height="175" rx="12" fill="#b7791f"/>
+  <rect x="245" y="325" width="20" height="175" fill="#b7791f"/>
+  <text x="145" y="375" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="bold" fill="#ffffff">AOT-profile start</text>
+  <text x="145" y="407" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#ffffff">training data cached</text>
+  <text x="145" y="446" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#fff4ce">reuse, then keep learning</text>
 
-  <line class="arrow" x1="470" y1="120" x2="560" y2="120"/>
-  <path class="arrow" d="M550 113 L560 120 L550 127"/>
+  <rect x="310" y="367" width="220" height="88" rx="9" fill="#fff4ce" stroke="#b7791f" stroke-width="2"/>
+  <text x="420" y="400" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#172033">1. Profiles available</text>
+  <text x="420" y="427" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6878">at JVM startup</text>
+  <line x1="530" y1="411" x2="596" y2="411" stroke="#b7791f" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="592,400 616,411 592,422" fill="#b7791f"/>
+  <rect x="616" y="367" width="220" height="88" rx="9" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <text x="726" y="400" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#172033">2. JIT compiles sooner</text>
+  <text x="726" y="427" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6878">using cached evidence</text>
+  <line x1="836" y1="411" x2="902" y2="411" stroke="#1f4e79" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="898,400 922,411 898,422" fill="#1f4e79"/>
+  <rect x="922" y="367" width="200" height="88" rx="9" fill="#dce9f7" stroke="#1f4e79" stroke-width="2"/>
+  <text x="1022" y="400" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#172033">3. Adapt online</text>
+  <text x="1022" y="427" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6878">new behavior still matters</text>
 
-  <rect class="box" x="560" y="90" width="190" height="60"/>
-  <text x="655" y="126" text-anchor="middle" class="label">New JVM starts</text>
-
-  <line class="arrow" x1="750" y1="120" x2="840" y2="120"/>
-  <path class="arrow" d="M830 113 L840 120 L830 127"/>
-
-  <rect class="box" x="840" y="90" width="340" height="60"/>
-  <text x="1010" y="126" text-anchor="middle" class="label">JIT already has profiling information</text>
-
-  <line class="arrow" x1="1180" y1="120" x2="1270" y2="120"/>
-  <path class="arrow" d="M1260 113 L1270 120 L1260 127"/>
-
-  <rect class="box" x="1270" y="90" width="160" height="60"/>
-  <text x="1350" y="126" text-anchor="middle" class="label">Optimize sooner</text>
+  <rect x="145" y="535" width="910" height="44" rx="8" fill="#fff4ce" stroke="#b7791f" stroke-width="1.5"/>
+  <text x="600" y="563" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#684713">Cached profiles shorten the learning delay; the production JVM remains adaptive.</text>
 </svg>

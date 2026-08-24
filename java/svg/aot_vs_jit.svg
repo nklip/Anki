@@ -1,46 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1179" viewBox="0 0 1920 1179"
-  role="img" aria-labelledby="title desc">
-  <title id="title">AOT versus JIT radar chart</title>
-  <desc id="desc">Comparison of ahead-of-time and just-in-time compilation characteristics.</desc>
-  <rect x="0" y="0" width="1920" height="1179" fill="#ffffff" />
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title description">
+  <title id="title">JIT and full native AOT compared</title>
+  <desc id="description">JIT compilation produces native code during a JVM run using runtime profiles. Full native AOT compilation produces a platform-specific executable before deployment.</desc>
 
-  <!-- Semi-transparent comparison areas -->
-  <polygon points="550,174 1136,310 1268,580 950,990 455,680"
-    fill="#8fbe98" fill-opacity="0.55" stroke="#319b43" stroke-width="7" />
-  <polygon points="850,420 1315,140 1455,630 950,730 727,585"
-    fill="#ffc481" fill-opacity="0.62" stroke="#ff8500" stroke-width="7" />
+  <!-- Shared background and heading for the complete AOT/JIT visual set. -->
+  <rect width="1200" height="680" fill="#ffffff"/>
+  <text x="600" y="44" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="bold" fill="#172033">JIT vs. full native AOT: when is machine code produced?</text>
+  <text x="600" y="76" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#5f6878">Both start from Java bytecode; the compilation time and runtime model differ</text>
 
-  <!-- Five radar axes -->
-  <g fill="none" stroke="#0784a3" stroke-width="6" stroke-linecap="square">
-    <line x1="950" y1="505" x2="507" y2="138" />
-    <line x1="950" y1="505" x2="1338" y2="111" />
-    <line x1="950" y1="505" x2="1550" y2="650" />
-    <line x1="950" y1="505" x2="950" y2="1051" />
-    <line x1="950" y1="505" x2="420" y2="692" />
+  <!-- JIT panel: arrows touch node boundaries without entering the nodes. -->
+  <g id="jit-panel">
+    <rect x="40" y="105" width="540" height="470" rx="12" fill="#f6f9fd" stroke="#9db7d1" stroke-width="2"/>
+    <rect x="40" y="105" width="540" height="62" rx="12" fill="#1f4e79"/>
+    <rect x="40" y="153" width="540" height="14" fill="#1f4e79"/>
+    <text x="310" y="145" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="bold" fill="#ffffff">JIT — during each JVM run</text>
+
+    <rect x="105" y="195" width="410" height="76" rx="8" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+    <text x="310" y="226" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="bold" fill="#172033">Portable .class bytecode</text>
+    <text x="310" y="251" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">input to HotSpot</text>
+
+    <line x1="310" y1="271" x2="310" y2="307" stroke="#1f4e79" stroke-width="5" stroke-linecap="round"/>
+    <polygon points="299,303 310,327 321,303" fill="#1f4e79"/>
+
+    <rect x="105" y="327" width="410" height="76" rx="8" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+    <text x="310" y="358" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="bold" fill="#172033">Execute and collect profiles</text>
+    <text x="310" y="383" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">methods, branches, encountered types</text>
+
+    <line x1="310" y1="403" x2="310" y2="439" stroke="#1f4e79" stroke-width="5" stroke-linecap="round"/>
+    <polygon points="299,435 310,459 321,435" fill="#1f4e79"/>
+
+    <rect x="105" y="459" width="410" height="76" rx="8" fill="#dce9f7" stroke="#1f4e79" stroke-width="2"/>
+    <text x="310" y="490" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="bold" fill="#172033">Optimized native code for hot methods</text>
+    <text x="310" y="515" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">JVM remains active and adaptive</text>
   </g>
 
-  <!-- Axis arrowheads -->
-  <g fill="#0784a3">
-    <polygon points="484,117 519,126 497,154" />
-    <polygon points="1361,87 1349,122 1327,100" />
-    <polygon points="1588,663 1548,673 1556,638" />
-    <polygon points="950,1095 932,1050 968,1050" />
-    <polygon points="386,710 420,678 431,714" />
+  <!-- Native AOT panel uses the same geometry and green build-time semantics. -->
+  <g id="aot-panel">
+    <rect x="620" y="105" width="540" height="470" rx="12" fill="#f7fbf8" stroke="#9fc4ad" stroke-width="2"/>
+    <rect x="620" y="105" width="540" height="62" rx="12" fill="#2f855a"/>
+    <rect x="620" y="153" width="540" height="14" fill="#2f855a"/>
+    <text x="890" y="145" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="bold" fill="#ffffff">Native AOT — before deployment</text>
+
+    <rect x="685" y="195" width="410" height="76" rx="8" fill="#e6f4ea" stroke="#34834b" stroke-width="2"/>
+    <text x="890" y="226" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="bold" fill="#172033">Bytecode + reachable metadata</text>
+    <text x="890" y="251" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">application and libraries</text>
+
+    <line x1="890" y1="271" x2="890" y2="307" stroke="#2f855a" stroke-width="5" stroke-linecap="round"/>
+    <polygon points="879,303 890,327 901,303" fill="#2f855a"/>
+
+    <rect x="685" y="327" width="410" height="76" rx="8" fill="#e6f4ea" stroke="#34834b" stroke-width="2"/>
+    <text x="890" y="358" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="bold" fill="#172033">Static analysis + AOT compilation</text>
+    <text x="890" y="383" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">performed by Native Image at build time</text>
+
+    <line x1="890" y1="403" x2="890" y2="439" stroke="#2f855a" stroke-width="5" stroke-linecap="round"/>
+    <polygon points="879,435 890,459 901,435" fill="#2f855a"/>
+
+    <rect x="685" y="459" width="410" height="76" rx="8" fill="#dff1e5" stroke="#2f855a" stroke-width="2"/>
+    <text x="890" y="490" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="bold" fill="#172033">Platform-specific native executable</text>
+    <text x="890" y="515" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">no ordinary HotSpot JVM process at run time</text>
   </g>
 
-  <!-- Axis labels -->
-  <g fill="#535353" text-anchor="middle" font-family="Arial, sans-serif" font-size="60">
-    <text x="485" y="88">Startup Speed</text>
-    <text x="1375" y="62">Peak Throughput</text>
-    <text x="205" y="690"><tspan x="205">Low Memory</tspan><tspan x="205" dy="84">Footprint</tspan></text>
-    <text x="1720" y="675"><tspan x="1720">Reduced</tspan><tspan x="1720" dy="82">Max Latency</tspan></text>
-    <text x="950" y="1153">Small Packaging</text>
-  </g>
-
-  <!-- Compiler labels -->
-  <text x="320" y="420" font-size="116" fill="#319b43" text-anchor="middle"
-    font-family="Arial, sans-serif">AOT</text>
-  <text x="1535" y="417" font-size="116" fill="#ff8500" text-anchor="middle"
-    font-family="Arial, sans-serif">JIT</text>
+  <!-- Final memory aid; same amber footer is reused throughout the visual set. -->
+  <rect x="155" y="606" width="890" height="50" rx="8" fill="#fff4ce" stroke="#b7791f" stroke-width="1.5"/>
+  <text x="600" y="637" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold" fill="#684713">JIT learns during the run; full native AOT commits before the run.</text>
 </svg>

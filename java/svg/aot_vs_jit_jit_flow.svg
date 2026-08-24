@@ -1,50 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="220" viewBox="0 0 1500 220"
-  role="img" aria-labelledby="title desc">
-  <title id="title">Java Execution Flow with JIT</title>
-  <desc id="desc">Java source is compiled to bytecode and processed by the JVM, interpreter, and JIT compiler.</desc>
-  <rect x="0" y="0" width="1500" height="220" fill="#ffffff" />
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="570" viewBox="0 0 1200 570" role="img" aria-labelledby="title description">
+  <title id="title">HotSpot JIT compilation flow</title>
+  <desc id="description">HotSpot starts with bytecode, executes through the interpreter and lower compilation tiers, collects profiles, and compiles hot methods into optimized native code while retaining the ability to adapt.</desc>
 
-  <!-- Diagram title -->
-  <text x="750" y="32" font-size="22" fill="#000000" text-anchor="middle"
-    font-family="Arial, sans-serif" font-weight="700">Java Execution Flow with JIT</text>
+  <!-- Heading matches every diagram in the AOT/JIT visual family. -->
+  <rect width="1200" height="570" fill="#ffffff"/>
+  <text x="600" y="44" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="bold" fill="#172033">HotSpot JIT: execute → observe → optimize → adapt</text>
+  <text x="600" y="76" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#5f6878">Tiered compilation improves early execution while profiles are still being collected</text>
 
-  <!-- Processing boxes -->
-  <g fill="none" stroke="#000000" stroke-width="2">
-    <rect x="115" y="90" width="140" height="60" rx="10" />
-    <rect x="295" y="90" width="180" height="60" rx="10" />
-    <rect x="515" y="90" width="120" height="60" rx="10" />
-    <rect x="675" y="90" width="170" height="60" rx="10" />
-    <rect x="885" y="90" width="240" height="60" rx="10" />
-    <rect x="1165" y="90" width="200" height="60" rx="10" />
+  <!-- Four left-to-right nodes; the node wording already explains every arrow. -->
+  <g id="jit-flow">
+    <rect x="35" y="160" width="245" height="145" rx="10" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+    <text x="157.5" y="205" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="bold" fill="#172033">Bytecode</text>
+    <text x="157.5" y="238" text-anchor="middle" font-family="Consolas, Menlo, monospace" font-size="17" fill="#356eb3">.class methods</text>
+    <text x="157.5" y="270" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6878">portable input</text>
+
+    <line x1="280" y1="232" x2="323" y2="232" stroke="#1f4e79" stroke-width="5" stroke-linecap="round"/>
+    <polygon points="319,221 343,232 319,243" fill="#1f4e79"/>
+
+    <rect x="343" y="160" width="245" height="145" rx="10" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+    <text x="465.5" y="200" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#172033">Interpreter +</text>
+    <text x="465.5" y="227" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#172033">lower JIT tiers</text>
+    <text x="465.5" y="260" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6878">run code and add counters</text>
+    <text x="465.5" y="282" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6878">faster than interpreting forever</text>
+
+    <line x1="588" y1="232" x2="631" y2="232" stroke="#1f4e79" stroke-width="5" stroke-linecap="round"/>
+    <polygon points="627,221 651,232 627,243" fill="#1f4e79"/>
+
+    <rect x="651" y="160" width="245" height="145" rx="10" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+    <text x="773.5" y="202" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#172033">Runtime profiles</text>
+    <text x="773.5" y="235" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#356eb3">hot methods</text>
+    <text x="773.5" y="259" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#356eb3">branch frequencies</text>
+    <text x="773.5" y="283" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#356eb3">encountered types</text>
+
+    <line x1="896" y1="232" x2="939" y2="232" stroke="#1f4e79" stroke-width="5" stroke-linecap="round"/>
+    <polygon points="935,221 959,232 935,243" fill="#1f4e79"/>
+
+    <rect x="959" y="160" width="206" height="145" rx="10" fill="#dce9f7" stroke="#1f4e79" stroke-width="2"/>
+    <text x="1062" y="202" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#172033">Optimized</text>
+    <text x="1062" y="229" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#172033">native code</text>
+    <text x="1062" y="263" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6878">stored in the JVM</text>
+    <text x="1062" y="285" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6878">code cache</text>
   </g>
 
-  <!-- Box labels -->
-  <g fill="#000000" text-anchor="middle" font-family="Arial, sans-serif" font-size="18">
-    <text x="185" y="126">.java</text>
-    <text x="385" y="126">.class bytecode</text>
-    <text x="575" y="126">JVM</text>
-    <text x="760" y="126">Interpreter</text>
-    <text x="1005" y="126">JIT detects hot code</text>
-    <text x="1265" y="116">Native</text>
-    <text x="1265" y="138">Machine Code</text>
-  </g>
+  <!-- Adaptation explanation stays below the flow, leaving a clear center. -->
+  <rect x="125" y="355" width="950" height="105" rx="10" fill="#f6f9fd" stroke="#9db7d1" stroke-width="2"/>
+  <text x="600" y="390" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#1f4e79">The JVM keeps observing after compilation</text>
+  <text x="600" y="421" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#5f6878">If a speculative assumption stops matching reality, HotSpot can deoptimize and later recompile.</text>
+  <text x="600" y="445" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">That adaptation is a central JIT advantage for dynamic, long-running applications.</text>
 
-  <!-- Short connectors between neighboring boxes -->
-  <g fill="none" stroke="#000000" stroke-width="2">
-    <line x1="255" y1="120" x2="295" y2="120" />
-    <polyline points="285,113 295,120 285,127" />
-    <line x1="475" y1="120" x2="515" y2="120" />
-    <polyline points="505,113 515,120 505,127" />
-    <line x1="635" y1="120" x2="675" y2="120" />
-    <polyline points="665,113 675,120 665,127" />
-    <line x1="845" y1="120" x2="885" y2="120" />
-    <polyline points="875,113 885,120 875,127" />
-    <line x1="1125" y1="120" x2="1165" y2="120" />
-    <polyline points="1155,113 1165,120 1155,127" />
-  </g>
-
-  <!-- Compiler name above the first connector -->
-  <text x="275" y="100" font-size="14" fill="#000000" text-anchor="middle"
-    font-family="Arial, sans-serif">javac</text>
+  <rect x="235" y="495" width="730" height="48" rx="8" fill="#fff4ce" stroke="#b7791f" stroke-width="1.5"/>
+  <text x="600" y="525" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#684713">“Hot” means worth compiling based on observed execution—not merely present in the program.</text>
 </svg>

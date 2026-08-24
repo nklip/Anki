@@ -1,73 +1,67 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520">
-  <style>
-    text {
-      font-family: Arial, sans-serif;
-      fill: currentColor;
-    }
-    .box {
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2;
-      rx: 10;
-    }
-    .line {
-      stroke: currentColor;
-      stroke-width: 2;
-      fill: none;
-    }
-    .title {
-      font-size: 24px;
-      font-weight: bold;
-    }
-    .label {
-      font-size: 18px;
-    }
-  </style>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="660" viewBox="0 0 1200 660" role="img" aria-labelledby="title description">
+  <title id="title">Three modern Java execution paths</title>
+  <desc id="description">The same Java bytecode can run with standard HotSpot JIT, become a full native executable through GraalVM Native Image, or run on HotSpot with a Project Leyden AOT cache and continued JIT compilation.</desc>
 
-  <text x="500" y="35" text-anchor="middle" class="title">
-    Modern Java Execution Paths
-  </text>
+  <!-- Shared heading and neutral bytecode input. -->
+  <rect width="1200" height="660" fill="#ffffff"/>
+  <text x="600" y="44" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="bold" fill="#172033">“AOT Java” can mean two very different execution models</text>
+  <text x="600" y="76" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#5f6878">First ask whether the result runs as a native executable or as an accelerated HotSpot JVM</text>
 
-  <!-- Root -->
-  <rect class="box" x="420" y="60" width="160" height="55"/>
-  <text x="500" y="95" text-anchor="middle" class="label">Java</text>
+  <rect x="420" y="105" width="360" height="76" rx="10" fill="#f1f3f6" stroke="#7d8796" stroke-width="2"/>
+  <text x="600" y="136" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#172033">Application .class bytecode</text>
+  <text x="600" y="162" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">the common portable input</text>
 
-  <!-- Split -->
-  <line class="line" x1="500" y1="115" x2="500" y2="155"/>
-  <line class="line" x1="250" y1="155" x2="750" y2="155"/>
-  <line class="line" x1="250" y1="155" x2="250" y2="185"/>
-  <line class="line" x1="750" y1="155" x2="750" y2="185"/>
+  <!-- Three independent branches; each arrow ends before its panel border. -->
+  <path d="M 520 181 L 520 211 L 220 211 L 220 245" fill="none" stroke="#1f4e79" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="209,241 220,265 231,241" fill="#1f4e79"/>
+  <line x1="600" y1="181" x2="600" y2="245" stroke="#2f855a" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="589,241 600,265 611,241" fill="#2f855a"/>
+  <path d="M 680 181 L 680 211 L 980 211 L 980 245" fill="none" stroke="#b7791f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <polygon points="969,241 980,265 991,241" fill="#b7791f"/>
 
-  <!-- Path labels -->
-  <rect class="box" x="155" y="185" width="190" height="55"/>
-  <text x="250" y="220" text-anchor="middle" class="label">JVM path</text>
+  <!-- Standard HotSpot branch. -->
+  <g id="hotspot-path">
+    <rect x="35" y="265" width="370" height="300" rx="12" fill="#f6f9fd" stroke="#9db7d1" stroke-width="2"/>
+    <rect x="35" y="265" width="370" height="56" rx="12" fill="#1f4e79"/>
+    <rect x="35" y="309" width="370" height="12" fill="#1f4e79"/>
+    <text x="220" y="301" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="bold" fill="#ffffff">Standard HotSpot</text>
+    <text x="220" y="357" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold" fill="#172033">JVM executes and profiles</text>
+    <text x="220" y="388" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">JIT produces native code</text>
+    <text x="220" y="413" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">during this run</text>
+    <rect x="75" y="449" width="290" height="76" rx="8" fill="#dce9f7" stroke="#1f4e79" stroke-width="2"/>
+    <text x="220" y="480" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#172033">Result: running JVM</text>
+    <text x="220" y="506" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6878">adaptive JIT remains active</text>
+  </g>
 
-  <rect class="box" x="655" y="185" width="190" height="55"/>
-  <text x="750" y="220" text-anchor="middle" class="label">Native path</text>
+  <!-- Full native AOT branch. -->
+  <g id="native-image-path">
+    <rect x="415" y="265" width="370" height="300" rx="12" fill="#f7fbf8" stroke="#9fc4ad" stroke-width="2"/>
+    <rect x="415" y="265" width="370" height="56" rx="12" fill="#2f855a"/>
+    <rect x="415" y="309" width="370" height="12" fill="#2f855a"/>
+    <text x="600" y="301" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="bold" fill="#ffffff">GraalVM Native Image</text>
+    <text x="600" y="357" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold" fill="#172033">Analyze and compile at build time</text>
+    <text x="600" y="388" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">reachable code becomes</text>
+    <text x="600" y="413" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">platform-specific machine code</text>
+    <rect x="455" y="449" width="290" height="76" rx="8" fill="#dff1e5" stroke="#2f855a" stroke-width="2"/>
+    <text x="600" y="480" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#172033">Result: native executable</text>
+    <text x="600" y="506" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6878">no ordinary HotSpot process</text>
+  </g>
 
-  <!-- Left branch -->
-  <line class="line" x1="250" y1="240" x2="250" y2="270"/>
-  <rect class="box" x="155" y="270" width="190" height="55"/>
-  <text x="250" y="305" text-anchor="middle" class="label">HotSpot</text>
+  <!-- Leyden branch: amber distinguishes cached training knowledge from native code. -->
+  <g id="leyden-path">
+    <rect x="795" y="265" width="370" height="300" rx="12" fill="#fffaf0" stroke="#d8b36a" stroke-width="2"/>
+    <rect x="795" y="265" width="370" height="56" rx="12" fill="#b7791f"/>
+    <rect x="795" y="309" width="370" height="12" fill="#b7791f"/>
+    <text x="980" y="301" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="bold" fill="#ffffff">Leyden AOT-assisted HotSpot</text>
+    <text x="980" y="357" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold" fill="#172033">Reuse cached training knowledge</text>
+    <text x="980" y="388" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">classes, objects, and profiles</text>
+    <text x="980" y="413" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6878">can be available earlier</text>
+    <rect x="835" y="449" width="290" height="76" rx="8" fill="#fff4ce" stroke="#b7791f" stroke-width="2"/>
+    <text x="980" y="480" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#172033">Result: accelerated JVM</text>
+    <text x="980" y="506" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6878">HotSpot and JIT remain active</text>
+  </g>
 
-  <line class="line" x1="250" y1="325" x2="250" y2="355"/>
-  <rect class="box" x="105" y="355" width="290" height="55"/>
-  <text x="250" y="390" text-anchor="middle" class="label">AOT caches + JIT</text>
-
-  <line class="line" x1="250" y1="410" x2="250" y2="440"/>
-  <rect class="box" x="155" y="440" width="190" height="55"/>
-  <text x="250" y="475" text-anchor="middle" class="label">Native code</text>
-
-  <!-- Right branch -->
-  <line class="line" x1="750" y1="240" x2="750" y2="270"/>
-  <rect class="box" x="655" y="270" width="190" height="55"/>
-  <text x="750" y="305" text-anchor="middle" class="label">GraalVM</text>
-
-  <line class="line" x1="750" y1="325" x2="750" y2="355"/>
-  <rect class="box" x="630" y="355" width="240" height="55"/>
-  <text x="750" y="390" text-anchor="middle" class="label">Native Image</text>
-
-  <line class="line" x1="750" y1="410" x2="750" y2="440"/>
-  <rect class="box" x="655" y="440" width="190" height="55"/>
-  <text x="750" y="475" text-anchor="middle" class="label">Native binary</text>
+  <rect x="155" y="594" width="890" height="44" rx="8" fill="#fff4ce" stroke="#b7791f" stroke-width="1.5"/>
+  <text x="600" y="622" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#684713">Native Image removes the ordinary JVM run; Leyden prepares and accelerates one.</text>
 </svg>
