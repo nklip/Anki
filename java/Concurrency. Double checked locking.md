@@ -1,33 +1,66 @@
-# Double-Checked Locking in Modern Java
+# Concurrency. Double-checked locking
 
 ## Front
 
-What is the **double-checked locking** pattern in Java?
+What is **double-checked locking** in Java?
 
-Why was its historical implementation broken, how does the correct modern version use `volatile`, why are two null checks required, and which alternatives are usually preferable?
+Explain why it needs two null checks, why the shared reference must be `volatile`, what each synchronization mechanism guarantees, and which simpler alternatives are usually preferable.
 
 ## Back
 
-**Double-checked locking (DCL)** lazily initializes a shared object while avoiding synchronization after initialization has completed.
+**Double-checked locking (DCL) is a lazy-initialization pattern that avoids acquiring a lock after a shared object has been initialized.**
 
-The correct modern Java form is:
+A correct Java implementation needs all of these parts:
+
+```text
+shared reference declared VOLATILE
+        +
+stable shared lock
+        +
+check before locking
+        +
+check again while holding the lock
+        +
+construct completely before publishing
+```
+
+The first diagram shows the control flow. The second visual later explains why the `volatile` publication makes the constructed state visible to other threads.
+
+![Fast and initialization paths through double-checked locking](svg/concurrency-double-checked-locking-flow.svg)
+
+## Correct implementation
+
+This is a complete, compilable static-lazy example:
 
 ```java
+final class Service {
+    private final String endpoint;
+
+    Service(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    String endpoint() {
+        return endpoint;
+    }
+}
+
 final class ServiceProvider {
     private static volatile Service instance;
 
-    private ServiceProvider() {}
+    private ServiceProvider() {
+    }
 
     static Service instance() {
-        Service result = instance; // volatile read
+        Service result = instance;       // volatile read
 
-        if (result == null) {       // first check: fast path
+        if (result == null) {            // first check: fast path
             synchronized (ServiceProvider.class) {
-                result = instance;  // second volatile read
+                result = instance;       // second volatile read
 
-                if (result == null) { // second check: initialization path
-                    result = new Service();
-                    instance = result; // volatile write: publish
+                if (result == null) {    // second check: one initializer
+                    result = new Service("https://api.example");
+                    instance = result;   // volatile write: publish
                 }
             }
         }
@@ -37,108 +70,101 @@ final class ServiceProvider {
 }
 ```
 
-The essential requirements are:
+The field is initially `null`. The intended lifecycle is one-way:
 
 ```text
-volatile reference
-        +
-stable shared lock
-        +
-check outside the lock
-        +
-check again inside the lock
-        +
-fully construct before publishing
+uninitialized: instance == null
+              ↓ one successful initialization
+initialized:   instance refers to one safely published Service
 ```
 
-Since the Java 5 memory-model revision, this pattern is correct when implemented carefully with a volatile field.
+## Vocabulary
 
-## What problem does DCL solve?
+- **Lazy initialization** creates a value only when code first asks for it.
+- **Publication** makes a reference available to another thread.
+- **Safe publication** also guarantees that the receiving thread can observe the state written before publication.
+- The **fast path** is the common path after initialization: read the reference and return it without locking.
+- A Java `synchronized` block acquires and later releases a monitor. Only one thread at a time can hold that monitor.
 
-A simple synchronized lazy accessor is correct:
+## What the two execution paths do
+
+On the initialized fast path, the method performs a volatile read into `result`. When that local value is non-null, the method returns immediately and never enters the `synchronized` block.
+
+When the first read produces `null`, the caller acquires the class monitor. It then reads `instance` again because another thread may have initialized it while this caller waited for the lock. Only a thread that still observes `null` constructs and publishes the service.
+
+## Why the first check exists
 
 ```java
-final class ServiceProvider {
-    private static Service instance;
+Service result = instance;
 
-    static synchronized Service instance() {
+if (result == null) {
+    synchronized (ServiceProvider.class) {
+        // uncommon initialization path
+    }
+}
+```
+
+The outer check is the optimization. Once initialization has finished, callers pay for a volatile read but do not acquire the initialization monitor.
+
+Removing the outer check can still produce correct lazy initialization:
+
+```java
+static Service instance() {
+    synchronized (ServiceProvider.class) {
         if (instance == null) {
-            instance = new Service();
+            instance = new Service("https://api.example");
         }
-
         return instance;
     }
 }
 ```
 
-However, every call acquires the class monitor, including calls made long after initialization.
+However, that is an **always-synchronized accessor**, not double-checked locking. Every call acquires the monitor.
 
-DCL moves the common initialized path outside the synchronized block:
+## Why the second check exists
+
+Several callers may pass the first check before any one of them acquires the lock:
 
 ```text
-instance already exists?
-        │
-        ├─ yes → return after a volatile read; no lock
-        │
-        └─ no  → acquire the lock and initialize if still necessary
+Thread A                         Thread B
+reads null                      reads null
+acquires lock                   waits
+constructs and publishes
+releases lock
+                                acquires lock
+                                reads again → now non-null
 ```
 
-The optimization matters only when:
+The lock prevents concurrent construction, but waiting for a lock does not erase Thread B's earlier observation. Thread B must check the field again after acquiring the lock.
 
-- Initialization must be lazy.
-- The accessor is called frequently.
-- Avoiding the post-initialization lock is measurably useful.
-- A simpler mechanism does not fit.
+Without the inner check, every thread that previously observed `null` could construct another service after it eventually enters the monitor. The second check is therefore the **exactly-one-initializer check**.
 
-Modern JVMs optimize uncontended synchronization well. DCL should not be introduced automatically merely because a value is lazy.
+## Why non-volatile DCL is broken
 
-## The historically broken implementation
-
-This version is incorrect:
+This version has a data race:
 
 ```java
 final class BrokenProvider {
     private static Service instance; // not volatile
 
     static Service instance() {
-        if (instance == null) {
+        if (instance == null) {      // unsynchronized read
             synchronized (BrokenProvider.class) {
                 if (instance == null) {
-                    instance = new Service();
+                    instance = new Service("https://api.example");
                 }
             }
         }
-
         return instance;
     }
 }
 ```
 
-The outer read is not synchronized and the field is not volatile. One thread writes `instance` while another thread reads it without a happens-before relationship. This is a **data race**.
+The initializing thread writes `instance`, while a fast-path thread reads it without using either a volatile access or the same monitor. Those conflicting accesses are not ordered by a **happens-before** relationship, so they form a data race.
 
-The reader on the fast path does not acquire the monitor, so it does not receive the visibility guarantee created by the writer's monitor release.
+It is tempting to say only that “assignment may be reordered before construction.” That is useful intuition, but the precise problem is broader: the Java Memory Model gives the unsynchronized reader no safe-publication guarantee. A reader may observe a non-null reference without being guaranteed to observe all ordinary writes that established the object's state.
 
-### Unsafe publication
-
-Conceptually, creating and publishing the object involves:
-
-```text
-allocate memory
-initialize object state in the constructor
-publish the reference into instance
-```
-
-Without safe publication, another thread may observe the non-null reference without being guaranteed to observe all constructor writes correctly. Fields may appear to retain default or stale values.
-
-The problem should be described in Java Memory Model terms:
-
-```text
-constructor writes
-        ✕ no happens-before path
-unsynchronized reader
-```
-
-It is common to illustrate the bug as publication appearing before initialization. That is useful intuition, but the fundamental issue is not a required literal source-code reordering. The fundamental issue is the data race and the absence of a visibility/order guarantee.
+The writer's monitor release does not help a fast-path reader that skips the monitor. Monitor ordering connects an unlock only to a later lock of the **same** monitor.
 
 ## Why `volatile` fixes publication
 
@@ -146,362 +172,139 @@ It is common to illustrate the bug as publication appearing before initializatio
 private static volatile Service instance;
 ```
 
-The Java Memory Model guarantees:
-
-> A write to a volatile field happens-before every subsequent read of that same field.
-
-The successful initialization path is:
-
-```java
-result = new Service(); // constructor completes
-instance = result;      // volatile write: release
-```
-
-The initialized fast path starts with:
-
-```java
-Service result = instance; // volatile read: acquire
-```
-
-The complete happens-before chain is:
+The Java Memory Model states that a write to a volatile field happens-before every subsequent read of that same field. In DCL, that rule joins the constructor's ordinary writes to the reader's later use:
 
 ```text
-writes performed by Service construction
-        │
-        │ program order
-        ▼
-volatile write: instance = result
-        │
-        │ synchronizes-with
-        ▼
-volatile read: result = instance
-        │
-        │ program order
-        ▼
-reader uses result
+constructor writes Service fields
+        ↓ program order
+release write: instance = result
+        ↓ synchronizes-with
+subsequent acquire read: result = instance
+        ↓ program order
+reader uses the Service
 ```
 
-By transitivity, the thread that reads the published reference is guaranteed to see state written before the volatile publication.
+Happens-before is transitive. Therefore, a thread that obtains the published reference through the volatile read is guaranteed to observe state written before the volatile publication.
 
-The volatile field provides both:
+![How a volatile reference safely publishes earlier object state](svg/concurrency-volatile-reference-publication.svg)
 
-- **Visibility** of the reference and prior construction effects.
-- **Ordering** sufficient for safe publication.
+Read the visual from left to right. Construction finishes before the release write. A subsequent acquire read of the same volatile reference receives the earlier state.
 
-It does not lock other threads or make later mutable operations inside `Service` thread-safe.
+This does **not** mean every read must return the latest value by wall-clock time. The guarantee applies when the volatile read observes the volatile publication being discussed, or a later write in the volatile synchronization order.
 
-## Why the first check exists
+## What each mechanism contributes
 
-```java
-if (result == null) {
-    synchronized (ServiceProvider.class) {
-        // initialization path
-    }
-}
-```
+| Mechanism | Job in DCL | What it does not provide alone |
+|---|---|---|
+| First check | Avoids locking on the initialized fast path | Does not stop two callers from observing `null` |
+| Stable monitor | Allows only one initialization attempt inside the critical section at a time | Does not publish to a reader that skips the monitor |
+| Second check | Detects that a waiting thread lost the initialization race | Does not safely publish to the lock-free fast path |
+| `volatile` reference | Connects construction writes to subsequent fast-path reads | Does not make check-then-act an atomic operation |
+| Local variable | Keeps one acquired reference and avoids repeated volatile reads | Is not a synchronization mechanism by itself |
 
-The first check is the optimization.
+The lock and `volatile` solve different problems:
 
-After initialization, calls perform approximately:
+- The lock provides **mutual exclusion** during initialization.
+- The volatile write/read pair provides **safe publication** to callers that do not lock.
 
-```text
-volatile read → non-null → return
-```
-
-They do not acquire the initialization monitor.
-
-Without the first check, the code becomes ordinary synchronized lazy initialization rather than double-checked locking.
-
-## Why the second check exists
-
-The first check occurs before acquiring the lock. Several threads can observe null before any one of them initializes the object.
-
-Suppose Thread A and Thread B execute:
-
-```text
-Thread A                       Thread B
---------                       --------
-reads null                     reads null
-acquires lock                  waits for lock
-creates Service
-publishes instance
-releases lock
-                               acquires lock
-                               must check again
-```
-
-If Thread B does not check again, it creates a second `Service` even though Thread A already initialized the field.
-
-Correct code:
-
-```java
-synchronized (ServiceProvider.class) {
-    result = instance;
-
-    if (result == null) {
-        result = new Service();
-        instance = result;
-    }
-}
-```
-
-The second check is the correctness check that prevents queued threads from repeating initialization.
-
-## Why the local variable is used
-
-```java
-Service result = instance;
-```
-
-The local variable:
-
-- Gives the method a stable value to return.
-- Avoids unnecessary repeated volatile reads on the initialized path.
-- Makes the volatile acquisition point explicit.
-- Prevents a concurrently reset field from producing inconsistent repeated reads, although resettable DCL is usually a bad design.
-
-A shorter correct form exists:
-
-```java
-static Service instance() {
-    if (instance == null) {
-        synchronized (ServiceProvider.class) {
-            if (instance == null) {
-                instance = new Service();
-            }
-        }
-    }
-
-    return instance;
-}
-```
-
-It still requires `instance` to be volatile. The local-variable form is the conventional optimized version because it reduces volatile reads and keeps one acquired reference for the return.
-
-## Volatile alone is not sufficient for single initialization
-
-This is safely visible but not atomically initialized:
+## Why `volatile` alone is insufficient
 
 ```java
 private static volatile Service instance;
 
 static Service instance() {
     if (instance == null) {
-        instance = new Service();
+        instance = new Service("https://api.example");
     }
-
     return instance;
 }
 ```
 
-Two threads can both observe null and both construct a service:
+This publishes each assigned reference safely, but the compound action “check null, then create, then assign” is not atomic:
 
 ```text
 Thread A reads null
 Thread B reads null
-Thread A constructs and writes Service A
-Thread B constructs and writes Service B
+Thread A constructs Service A
+Thread B constructs Service B
+Thread A publishes A
+Thread B publishes B
 ```
 
-The volatile writes are visible and individually atomic, but the complete check-then-act operation is not atomic.
+The synchronized block is required when construction must occur at most once successfully. Visibility is not the same as atomicity.
 
-The synchronized block is still necessary when exactly one successful initialization must occur.
-
-## Locking alone is insufficient for the unsynchronized fast path
-
-The broken DCL form does use a synchronized block during initialization, but readers that observe non-null outside that block do not acquire the same monitor.
-
-Monitor semantics guarantee:
-
-```text
-unlock of monitor M
-        happens-before
-subsequent lock of the same monitor M
-```
-
-They do not automatically publish to a thread that skips the lock and performs an ordinary field read.
-
-The volatile reference connects the initialization effects to the lock-free fast path.
-
-## Use a stable lock
-
-The locking object must remain the same for every initializer:
+## Why use a local variable?
 
 ```java
-synchronized (ServiceProvider.class) {
-}
+Service result = instance;
 ```
 
-For an instance-level lazy field:
+The local variable has three practical benefits:
+
+- It performs one volatile read on the initialized path.
+- It returns the exact reference acquired by that read.
+- It makes the publication/acquisition point visible in the code.
+
+A shorter two-check form is also correct when `instance` is volatile:
 
 ```java
-final class Component {
-    private volatile Helper helper;
-
-    Helper helper() {
-        Helper result = helper;
-
-        if (result == null) {
-            synchronized (this) {
-                result = helper;
-
-                if (result == null) {
-                    result = new Helper();
-                    helper = result;
-                }
+static Service instance() {
+    if (instance == null) {
+        synchronized (ServiceProvider.class) {
+            if (instance == null) {
+                instance = new Service("https://api.example");
             }
         }
-
-        return result;
     }
+    return instance;
 }
 ```
 
-This is correct only if the `Component` object itself is also safely published.
+The local-variable form simply avoids repeated volatile reads and is easier to reason about if future edits add another field access.
 
-Do not synchronize on:
+## Construction and later mutation are separate problems
 
-- A field that can be reassigned.
-- A boxed primitive.
-- A string literal.
-- A publicly accessible object that unrelated code may lock.
-
-Prefer a private stable lock when locking on `this` or the class object would expose unwanted contention:
+The volatile assignment must occur only after construction completes:
 
 ```java
-private final Object initializationLock = new Object();
+Service created = new Service("https://api.example");
+instance = created; // publish only after the constructor returned
 ```
 
-## Construction must finish before publication
+Do not let `this` escape from the constructor through a callback, registry, started thread, or other shared location. A later volatile assignment cannot repair a separate premature publication that already exposed the object.
 
-Correct order:
-
-```java
-Service created = new Service();
-instance = created;
-```
-
-Do not publish `this` from the constructor:
-
-```java
-final class Service {
-    Service() {
-        Registry.register(this); // premature escape
-    }
-}
-```
-
-The volatile assignment in `ServiceProvider` cannot undo a separate premature publication that occurred during construction.
-
-Avoid starting threads, registering callbacks, or exposing `this` from constructors unless the design provides another complete synchronization protocol.
-
-## Safe publication does not make the service immutable
+DCL safely publishes the object's **initial state**. It does not automatically make later mutations thread-safe:
 
 ```java
 final class Service {
     private int requestCount;
 
     void recordRequest() {
-        requestCount++; // still not thread-safe
+        requestCount++; // still a non-atomic shared update
     }
 }
 ```
 
-DCL safely publishes the initial state. Every later mutable operation still needs its own thread-safety design:
+The returned object still needs its own policy: immutability, synchronization, atomic fields, thread confinement, or suitable concurrent data structures.
 
-- Immutable state.
-- Internal synchronization.
-- Atomic fields.
-- Thread confinement.
-- Concurrent collections.
+## Initialization failure and reset
 
-The singleton accessor being thread-safe does not imply that the returned singleton is thread-safe.
+If `new Service(...)` throws before `instance = result`, the field remains `null`. A later call can try again. That may repeat constructor side effects, so failed construction needs an explicit cleanup and retry policy.
 
-## `final` fields do not replace volatile publication
+DCL is easiest to reason about as a one-way transition from `null` to one non-null value. Adding `instance = null` as a reset creates a lifecycle race: existing callers may still use the old object while another caller constructs or closes a replacement. Use an explicit lifecycle abstraction when replacement is required.
 
-The Java Memory Model gives correctly constructed final fields special visibility guarantees, but this does not make broken DCL correct.
+## Prefer simpler initialization when it fits
 
-Without a volatile reference or another safe-publication mechanism:
-
-- The reference field still has a data race.
-- Non-final fields are not safely published.
-- The complete object invariant may not be visible.
-- Later mutations remain unsynchronized.
-
-Use the correct publication mechanism even when the constructed class is mostly or entirely final.
-
-## What if initialization throws?
+For a static lazy value, the initialization-on-demand holder idiom is usually clearer:
 
 ```java
-result = new Service();
-instance = result;
-```
-
-If construction throws before the volatile assignment:
-
-- `instance` remains null.
-- The exception propagates to the caller.
-- A later call can attempt initialization again.
-
-This retry behavior may or may not be desirable.
-
-Constructor or factory side effects can occur more than once across failed attempts:
-
-```text
-open external connection
-write external record
-register callback
-constructor later throws
-```
-
-Initialization code should either be free of irreversible partial side effects or include explicit cleanup and failure policy.
-
-## Null cannot represent both “uninitialized” and a valid result
-
-DCL normally uses null as the sentinel:
-
-```text
-null     = not initialized
-non-null = initialized
-```
-
-If the initializer may validly return null, the field cannot distinguish:
-
-- Not initialized yet.
-- Initialized successfully with a null result.
-
-Use an explicit state object, sentinel instance, `Optional`, future, or another initialization abstraction when null is a valid computed value.
-
-## Avoid resettable double-checked locking
-
-DCL is easiest to reason about as a one-way transition:
-
-```text
-null → one safely published non-null instance
-```
-
-Adding reset or replacement creates lifecycle questions:
-
-```java
-static void reset() {
-    instance = null;
-}
-```
-
-Another thread may still be using the old service while a new one is created. Closing the old resource can race with current users.
-
-Use an explicit lifecycle manager, immutable versioned snapshots, reference counting, locking around the lifecycle, or dependency-injection scope rather than casually resetting a DCL singleton.
-
-## Initialization-on-demand holder idiom
-
-For a static lazy singleton, this is usually simpler:
-
-```java
-final class ServiceProvider {
-    private ServiceProvider() {}
+final class HolderBasedProvider {
+    private HolderBasedProvider() {
+    }
 
     private static final class Holder {
-        private static final Service INSTANCE = new Service();
+        private static final Service INSTANCE =
+                new Service("https://api.example");
     }
 
     static Service instance() {
@@ -510,294 +313,50 @@ final class ServiceProvider {
 }
 ```
 
-The nested `Holder` class is initialized when it is first actively used. JVM class-initialization rules provide synchronization and safe publication.
+`Holder` is initialized on its first active use. Java's class-initialization procedure coordinates concurrent callers and preserves the required happens-before orderings. No handwritten DCL is needed.
 
-Advantages:
+Its failure behavior differs from DCL: if class initialization fails, the class is marked erroneous rather than treating the value as an ordinary `null` field that later calls retry.
 
-- Lazy initialization.
-- No explicit volatile field.
-- No handwritten locking.
-- No volatile read on each initialized access.
-- Small and easy to review.
+Other choices:
 
-Important failure difference:
+| Need | Usually simplest choice |
+|---|---|
+| Laziness is unnecessary | `private static final Service INSTANCE = ...;` |
+| Static lazy initialization | Initialization-on-demand holder |
+| Lazy initialization where locking cost is acceptable | Synchronized accessor |
+| Lifecycle, configuration, and test substitution | Dependency-injection container |
+| Specialized, frequently called lazy field with measured need | Correct DCL |
 
-- DCL normally retries after a constructor exception because the field remains null.
-- Failed class initialization normally results in `ExceptionInInitializerError`; later active use observes that the class could not be initialized, commonly through `NoClassDefFoundError`, rather than retrying construction.
+Choose DCL for its exact requirement—lazy publication with a lock-free initialized path—not merely because it is a well-known pattern.
 
-Choose the failure behavior intentionally.
+## Common misconceptions
 
-## Eager static initialization
+- **“The first check makes it thread-safe.”** No. It only selects the fast path.
+- **“The lock makes non-volatile DCL safe.”** No. Fast-path readers do not acquire that lock.
+- **“Volatile means only one object is constructed.”** No. The inner locked check provides that property.
+- **“The second check is redundant.”** No. A thread can wait after already observing `null`.
+- **“A safely published singleton is automatically thread-safe.”** No. Later mutable state needs separate synchronization.
+- **“A missing outer check is broken.”** No. It becomes ordinary synchronized lazy initialization.
 
-When laziness is unnecessary:
-
-```java
-final class ServiceProvider {
-    private static final Service INSTANCE = new Service();
-
-    static Service instance() {
-        return INSTANCE;
-    }
-}
-```
-
-This is initialized when `ServiceProvider` is initialized, not necessarily when the JVM process starts.
-
-It is usually the clearest option when construction is cheap and failure during class initialization is acceptable.
-
-## Enum singleton
-
-```java
-enum ServiceSingleton {
-    INSTANCE;
-
-    private final Service service = new Service();
-
-    Service service() {
-        return service;
-    }
-}
-```
-
-Enum initialization is thread-safe and enum serialization preserves the enum-constant identity. It is useful when an enum-shaped globally accessible singleton is appropriate.
-
-It is less suitable when:
-
-- The singleton must extend another class.
-- Creation requires runtime arguments.
-- Dependency injection should control the lifecycle.
-- Retryable lazy failure behavior is required.
-
-## Always-synchronized accessor
-
-```java
-private static Service instance;
-
-static synchronized Service instance() {
-    if (instance == null) {
-        instance = new Service();
-    }
-
-    return instance;
-}
-```
-
-This is simple, correct, and often fast enough. Prefer it over DCL unless the post-initialization synchronization is a measured concern.
-
-## Dependency injection
-
-In an application framework, let the dependency-injection container construct and scope the service:
-
-```java
-final class Controller {
-    private final Service service;
-
-    Controller(Service service) {
-        this.service = service;
-    }
-}
-```
-
-Advantages include:
-
-- Explicit dependencies.
-- Easier testing.
-- Configurable scopes.
-- Centralized lifecycle and cleanup.
-- No global service locator.
-
-DCL solves thread-safe lazy publication; it does not solve architectural dependency management.
-
-## Per-key lazy initialization
-
-Do not implement one DCL field for every key. Use a concurrent map when the requirement is memoization or per-key initialization:
-
-```java
-private final ConcurrentHashMap<String, Service> services =
-        new ConcurrentHashMap<>();
-
-Service serviceFor(String tenant) {
-    return services.computeIfAbsent(
-            tenant,
-            this::createService
-    );
-}
-```
-
-`ConcurrentHashMap.computeIfAbsent()` atomically establishes a mapping when absent. Keep the mapping function short and avoid recursively modifying the same map from it.
-
-If entries can be removed, a value may be recomputed after removal. “Once per current mapping” is not the same as “once for the lifetime of the process.”
-
-## AtomicReference alternative and its trap
-
-A CAS can atomically select one published instance:
-
-```java
-private static final AtomicReference<Service> INSTANCE =
-        new AtomicReference<>();
-
-static Service instance() {
-    Service result = INSTANCE.get();
-
-    if (result != null) {
-        return result;
-    }
-
-    Service created = new Service();
-
-    if (INSTANCE.compareAndSet(null, created)) {
-        return created;
-    }
-
-    return INSTANCE.get();
-}
-```
-
-This can construct several candidate services concurrently; only one wins publication. Losing candidates are discarded.
-
-That is unacceptable when construction:
-
-- Is expensive.
-- Has side effects.
-- Acquires resources requiring cleanup.
-- Must happen exactly once.
-
-CAS provides atomic publication, not automatically exactly-once construction. Use locking or a future-based initialization abstraction when duplicate construction is not acceptable.
-
-## Singleton scope is per class loader
-
-A static field belongs to a class as defined by a particular class loader.
-
-If the same class is loaded by different class loaders, each loaded class can have its own static `instance`:
+## Review rule
 
 ```text
-ClassLoader A → ServiceProvider class A → instance A
-ClassLoader B → ServiceProvider class B → instance B
+first check  → performance: skip the lock after initialization
+lock         → mutual exclusion: one initializer at a time
+second check → correctness: do not repeat a winner's initialization
+publication  → safe visibility: constructor state reaches fast-path readers
 ```
 
-DCL guarantees one published instance through that accessor within that class-loading scope. It does not guarantee one object across every class loader, process, machine, or service instance.
+If any one of those meanings is unclear in a code review, prefer a holder, a static field, a synchronized accessor, or a managed dependency instead.
 
-Reflection, cloning, custom serialization, or direct constructor access may also create additional objects unless the type is designed to prevent or control them.
+## Sources
 
-## Virtual threads do not change DCL semantics
+- [Java Language Specification §17.4.4 — Synchronization Order](https://docs.oracle.com/javase/specs/jls/se26/html/jls-17.html#jls-17.4.4)
 
-Platform threads and virtual threads follow the same Java Memory Model.
+- [Java Language Specification §17.4.5 — Happens-before Order](https://docs.oracle.com/javase/specs/jls/se26/html/jls-17.html#jls-17.4.5)
 
-The requirements remain:
+- [Java Language Specification §8.3.1.4 — `volatile` Fields](https://docs.oracle.com/javase/specs/jls/se26/html/jls-8.html#jls-8.3.1.4)
 
-- Volatile publication.
-- Correct locking.
-- Both checks.
-- No premature escape.
-- A thread-safe returned object when shared.
+- [Java Language Specification §12.4.1 — When Class Initialization Occurs](https://docs.oracle.com/javase/specs/jls/se26/html/jls-12.html#jls-12.4.1)
 
-Virtual threads do not make a racy non-volatile DCL implementation correct.
-
-## Choosing an initialization technique
-
-| Technique | Lazy? | Fast initialized path | Retry after failure? | Complexity | Typical choice |
-|---|---:|---:|---:|---:|---|
-| `static final` field | At provider class initialization | Yes | No normal retry | Very low | Default when extra laziness is unnecessary |
-| Initialization-on-demand holder | Yes | Yes | Normally no | Low | Preferred static lazy singleton |
-| `enum` singleton | At enum initialization | Yes | Normally no | Low | Serialization-safe enum-shaped singleton |
-| Synchronized accessor | Yes | Acquires monitor | Yes if field remains null | Low | Prefer when performance is adequate |
-| Correct DCL | Yes | Volatile read; no lock | Yes if publication never occurs | Medium/high | Specialized hot lazy accessor |
-| Naive `AtomicReference` CAS | Yes | Atomic read | Yes | Medium | Only if duplicate construction is acceptable |
-| Dependency injection | Container-defined | Container-defined | Container-defined | Architectural | Preferred in managed applications |
-
-“Retry after failure” depends on where the exception occurs and whether the implementation records a permanent failure state.
-
-## Common mistakes
-
-### Missing `volatile`
-
-```java
-private static Service instance; // broken DCL
-```
-
-The lock-free read races with publication and does not safely acquire constructor effects.
-
-### Missing the inner check
-
-```java
-if (instance == null) {
-    synchronized (LOCK) {
-        instance = new Service(); // several waiting threads may repeat this
-    }
-}
-```
-
-Every thread that observed null before waiting can construct another object.
-
-### Missing the outer check
-
-```java
-synchronized (LOCK) {
-    if (instance == null) {
-        instance = new Service();
-    }
-}
-```
-
-This is correct ordinary synchronized lazy initialization, but it is no longer double-checked locking and every call acquires the lock.
-
-### Using different locks
-
-```java
-synchronized (new Object()) {
-    // Every call locks a different object: no mutual exclusion.
-}
-```
-
-All initialization attempts must coordinate through the same stable monitor.
-
-### Publishing before construction finishes
-
-```java
-this escapes to another component during construction;
-```
-
-Later volatile assignment cannot repair an earlier unsafe escape.
-
-### Assuming the singleton is automatically thread-safe
-
-Safe construction and publication do not protect future mutations.
-
-### Resetting the field without a lifecycle protocol
-
-Readers can retain and use the old instance while another thread replaces or closes it.
-
-### Using DCL when class initialization already solves the problem
-
-The holder idiom or a static final field is normally shorter and harder to get wrong.
-
-## Interview explanation
-
-A strong short explanation is:
-
-> The first check avoids locking after initialization. The synchronized block allows only one initializer at a time. The second check prevents threads that previously observed null and then waited for the lock from constructing another instance. The field must be volatile because the fast-path reader does not acquire the initialization monitor: the volatile write safely publishes constructor effects, and the later volatile read acquires them. Without volatile, the outer read races with publication and may observe an incompletely published object. For a static lazy singleton, the initialization-on-demand holder is usually simpler.
-
-## Key review checklist
-
-```text
-Is the shared reference volatile?
-Is the lock stable and shared by every initializer?
-Is there a check before locking?
-Is there another check after locking?
-Does construction finish before volatile publication?
-Can the constructor leak this?
-Is a null result possible?
-Can initialization fail, and should it retry?
-Is reset/replacement supported safely?
-Is the returned object's later mutable state thread-safe?
-Would a holder, static field, synchronized accessor, or DI be simpler?
-```
-
-## Official references
-
-- [JLS §17.4.5 — Happens-before Order](https://docs.oracle.com/javase/specs/jls/se26/html/jls-17.html#jls-17.4.5)
-- [JLS §8.3.1.4 — Volatile Fields](https://docs.oracle.com/javase/specs/jls/se26/html/jls-8.html#jls-8.3.1.4)
-- [JLS §12.4 — Initialization of Classes and Interfaces](https://docs.oracle.com/javase/specs/jls/se26/html/jls-12.html#jls-12.4)
-- [JLS §12.4.2 — Detailed Initialization Procedure](https://docs.oracle.com/javase/specs/jls/se26/html/jls-12.html#jls-12.4.2)
-- [Java SE 26 `ConcurrentHashMap.computeIfAbsent()`](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html#computeIfAbsent(K,java.util.function.Function))
-- [Java SE 26 `AtomicReference` API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/atomic/AtomicReference.html)
+- [Java Language Specification §12.4.2 — Detailed Class Initialization Procedure](https://docs.oracle.com/javase/specs/jls/se26/html/jls-12.html#jls-12.4.2)
