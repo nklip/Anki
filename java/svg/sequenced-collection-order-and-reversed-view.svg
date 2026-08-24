@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="800" viewBox="0 0 1500 800" role="img" aria-labelledby="title description">
+  <title id="title">SequencedCollection has two ends and a reversed view</title>
+  <desc id="description">An original collection with encounter order A, B, C is shown beside its reverse-ordered view C, B, A. First and last are inverted. Common methods access both ends, while modification operations may be unsupported.</desc>
+
+  <!-- Background and lesson statement -->
+  <rect width="1500" height="800" fill="white"/>
+  <text x="750" y="52" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="bold" fill="#111">SequencedCollection: one order, accessible from either end</text>
+  <text x="750" y="88" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#444">Encounter order defines first → last; reversed() exposes the same collection in the opposite direction</text>
+
+  <!-- Original encounter-order panel -->
+  <g id="original-order">
+    <rect x="55" y="130" width="625" height="445" rx="10" fill="#edf5fd" stroke="#2f6fad" stroke-width="3"/>
+    <path d="M55 198H680" stroke="#2f6fad" stroke-width="3"/>
+    <text x="367" y="174" text-anchor="middle" font-family="sans-serif" font-size="27" font-weight="bold" fill="#1d4f82">Original encounter order</text>
+
+    <text x="125" y="250" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#1d4f82">FIRST</text>
+    <text x="610" y="250" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#1d4f82">LAST</text>
+
+    <rect x="90" y="280" width="150" height="100" rx="8" fill="white" stroke="#2f6fad" stroke-width="2"/>
+    <text x="165" y="342" text-anchor="middle" font-family="monospace" font-size="34" font-weight="bold" fill="#1d4f82">A</text>
+    <rect x="292" y="280" width="150" height="100" rx="8" fill="white" stroke="#2f6fad" stroke-width="2"/>
+    <text x="367" y="342" text-anchor="middle" font-family="monospace" font-size="34" font-weight="bold" fill="#1d4f82">B</text>
+    <rect x="494" y="280" width="150" height="100" rx="8" fill="white" stroke="#2f6fad" stroke-width="2"/>
+    <text x="569" y="342" text-anchor="middle" font-family="monospace" font-size="34" font-weight="bold" fill="#1d4f82">C</text>
+
+    <!-- Order arrows occupy only the gaps; heads stop before destination boxes. -->
+    <path d="M242 330H259" stroke="#2f6fad" stroke-width="4"/>
+    <polygon points="290,330 259,319 259,341" fill="#2f6fad"/>
+    <path d="M444 330H461" stroke="#2f6fad" stroke-width="4"/>
+    <polygon points="492,330 461,319 461,341" fill="#2f6fad"/>
+
+    <rect x="105" y="425" width="525" height="100" rx="8" fill="#dceafb" stroke="#2f6fad" stroke-width="2"/>
+    <text x="367" y="465" text-anchor="middle" font-family="monospace" font-size="21" font-weight="bold" fill="#1d4f82">getFirst() = A</text>
+    <text x="367" y="500" text-anchor="middle" font-family="monospace" font-size="21" font-weight="bold" fill="#1d4f82">getLast()  = C</text>
+  </g>
+
+  <!-- reversed() relation; arrowheads remain clear of both panel borders. -->
+  <g id="reversed-relation">
+    <text x="750" y="275" text-anchor="middle" font-family="monospace" font-size="20" font-weight="bold" fill="#6a3e94">reversed()</text>
+    <path d="M695 305H785" stroke="#7b4ba3" stroke-width="5"/>
+    <polygon points="805,305 785,294 785,316" fill="#7b4ba3"/>
+    <path d="M805 365H715" stroke="#7b4ba3" stroke-width="5"/>
+    <polygon points="695,365 715,354 715,376" fill="#7b4ba3"/>
+    <text x="750" y="410" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#6a3e94">view</text>
+    <text x="750" y="434" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#555">not a copy</text>
+  </g>
+
+  <!-- Reverse-ordered view panel -->
+  <g id="reversed-order">
+    <rect x="820" y="130" width="625" height="445" rx="10" fill="#f4edfb" stroke="#7b4ba3" stroke-width="3"/>
+    <path d="M820 198H1445" stroke="#7b4ba3" stroke-width="3"/>
+    <text x="1132" y="174" text-anchor="middle" font-family="sans-serif" font-size="27" font-weight="bold" fill="#6a3e94">Reverse-ordered view</text>
+
+    <text x="890" y="250" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#6a3e94">FIRST</text>
+    <text x="1375" y="250" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#6a3e94">LAST</text>
+
+    <rect x="855" y="280" width="150" height="100" rx="8" fill="white" stroke="#7b4ba3" stroke-width="2"/>
+    <text x="930" y="342" text-anchor="middle" font-family="monospace" font-size="34" font-weight="bold" fill="#6a3e94">C</text>
+    <rect x="1057" y="280" width="150" height="100" rx="8" fill="white" stroke="#7b4ba3" stroke-width="2"/>
+    <text x="1132" y="342" text-anchor="middle" font-family="monospace" font-size="34" font-weight="bold" fill="#6a3e94">B</text>
+    <rect x="1259" y="280" width="150" height="100" rx="8" fill="white" stroke="#7b4ba3" stroke-width="2"/>
+    <text x="1334" y="342" text-anchor="middle" font-family="monospace" font-size="34" font-weight="bold" fill="#6a3e94">A</text>
+
+    <!-- Reversed order arrows occupy only the gaps. -->
+    <path d="M1007 330H1024" stroke="#7b4ba3" stroke-width="4"/>
+    <polygon points="1055,330 1024,319 1024,341" fill="#7b4ba3"/>
+    <path d="M1209 330H1226" stroke="#7b4ba3" stroke-width="4"/>
+    <polygon points="1257,330 1226,319 1226,341" fill="#7b4ba3"/>
+
+    <rect x="870" y="425" width="525" height="100" rx="8" fill="#eadcf7" stroke="#7b4ba3" stroke-width="2"/>
+    <text x="1132" y="465" text-anchor="middle" font-family="monospace" font-size="21" font-weight="bold" fill="#6a3e94">view.getFirst() = C</text>
+    <text x="1132" y="500" text-anchor="middle" font-family="monospace" font-size="21" font-weight="bold" fill="#6a3e94">view.getLast()  = A</text>
+  </g>
+
+  <!-- Uniform end operations and their mutability qualification -->
+  <g id="end-operations">
+    <rect x="120" y="615" width="1260" height="115" rx="9" fill="#fafafa" stroke="#777" stroke-width="2"/>
+    <text x="750" y="650" text-anchor="middle" font-family="sans-serif" font-size="23" font-weight="bold" fill="#333">Uniform operations at both ends</text>
+    <rect x="185" y="672" width="400" height="38" rx="6" fill="#dceafb"/>
+    <text x="385" y="698" text-anchor="middle" font-family="monospace" font-size="18" font-weight="bold" fill="#1d4f82">getFirst()  getLast()</text>
+    <rect x="625" y="672" width="690" height="38" rx="6" fill="#fff3df"/>
+    <text x="970" y="698" text-anchor="middle" font-family="monospace" font-size="17" font-weight="bold" fill="#76520e">addFirst/Last  removeFirst/Last  — optional modifications</text>
+  </g>
+
+  <!-- Final behavior note -->
+  <text x="750" y="773" text-anchor="middle" font-family="sans-serif" font-size="17" fill="#555">If modification through the reversed view is supported, it writes through to the underlying collection.</text>
+</svg>
