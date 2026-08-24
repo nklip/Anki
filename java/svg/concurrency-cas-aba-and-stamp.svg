@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="820" viewBox="0 0 1500 820" role="img" aria-labelledby="title description">
+  <title id="title">The ABA problem and stamped-reference protection</title>
+  <desc id="description">A plain reference changes from A to B and back to A, so a compare-and-set expecting A succeeds without detecting the history. A stamped reference changes from A stamp zero to B stamp one to A stamp two, so a compare-and-set expecting A stamp zero fails and detects the intervening changes.</desc>
+
+  <!-- Background and lesson statement -->
+  <rect width="1500" height="820" fill="white"/>
+  <text x="750" y="52" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="bold" fill="#111">ABA: the value looks unchanged, but its history changed</text>
+  <text x="750" y="86" text-anchor="middle" font-family="sans-serif" font-size="19" fill="#444">CAS compares the current state, not every state that existed since it was read</text>
+
+  <!-- Plain reference panel -->
+  <g id="plain-reference-aba">
+    <rect x="40" y="120" width="690" height="570" rx="8" fill="#fff5f3" stroke="#b34a42" stroke-width="2"/>
+    <rect x="40" y="120" width="690" height="58" rx="8" fill="#b34a42"/>
+    <rect x="40" y="164" width="690" height="14" fill="#b34a42"/>
+    <text x="70" y="158" font-family="sans-serif" font-size="25" font-weight="bold" fill="white">Plain reference CAS can miss ABA</text>
+
+    <rect x="150" y="205" width="470" height="64" rx="6" fill="white" stroke="#b34a42" stroke-width="2"/>
+    <text x="385" y="232" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#8b302d">Thread A reads reference A</text>
+    <text x="385" y="255" text-anchor="middle" font-family="monospace" font-size="16" fill="#444">expected = A</text>
+
+    <!-- Thread B's state history reads left to right. -->
+    <text x="70" y="310" font-family="sans-serif" font-size="17" font-weight="bold" fill="#8b302d">Meanwhile, Thread B changes:</text>
+    <rect x="90" y="335" width="160" height="72" rx="6" fill="white" stroke="#777" stroke-width="2"/>
+    <rect x="305" y="335" width="160" height="72" rx="6" fill="#fff7df" stroke="#b88b22" stroke-width="2"/>
+    <rect x="520" y="335" width="160" height="72" rx="6" fill="white" stroke="#777" stroke-width="2"/>
+    <text x="170" y="367" text-anchor="middle" font-family="monospace" font-size="24" font-weight="bold" fill="#333">A</text>
+    <text x="170" y="391" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">original state</text>
+    <text x="385" y="367" text-anchor="middle" font-family="monospace" font-size="24" font-weight="bold" fill="#6b500f">B</text>
+    <text x="385" y="391" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">changed state</text>
+    <text x="600" y="367" text-anchor="middle" font-family="monospace" font-size="24" font-weight="bold" fill="#333">A</text>
+    <text x="600" y="391" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">same value again</text>
+
+    <!-- Timeline heads stop before destination boxes. -->
+    <path d="M252 371H287" fill="none" stroke="#555" stroke-width="4"/>
+    <polygon points="295,371 279,362 279,380" fill="#555"/>
+    <path d="M467 371H502" fill="none" stroke="#555" stroke-width="4"/>
+    <polygon points="510,371 494,362 494,380" fill="#555"/>
+
+    <rect x="105" y="455" width="560" height="105" rx="7" fill="white" stroke="#b34a42" stroke-width="2"/>
+    <text x="385" y="486" text-anchor="middle" font-family="monospace" font-size="18" font-weight="bold" fill="#8b302d">compareAndSet(A, C) → true</text>
+    <text x="385" y="518" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#444">Current reference is A, so the comparison matches.</text>
+    <text x="385" y="544" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#444">The temporary A → B → A history is invisible.</text>
+
+    <rect x="135" y="595" width="500" height="62" rx="6" fill="#b34a42"/>
+    <text x="385" y="621" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="white">Risk: the intermediate change mattered</text>
+    <text x="385" y="644" text-anchor="middle" font-family="sans-serif" font-size="15" fill="white">Example: a removed node was reused or reinserted.</text>
+  </g>
+
+  <!-- Stamped reference panel -->
+  <g id="stamped-reference-protection">
+    <rect x="770" y="120" width="690" height="570" rx="8" fill="#eef8ef" stroke="#4d8758" stroke-width="2"/>
+    <rect x="770" y="120" width="690" height="58" rx="8" fill="#4d8758"/>
+    <rect x="770" y="164" width="690" height="14" fill="#4d8758"/>
+    <text x="800" y="158" font-family="sans-serif" font-size="25" font-weight="bold" fill="white">Reference + version stamp detects it</text>
+
+    <rect x="880" y="205" width="470" height="64" rx="6" fill="white" stroke="#4d8758" stroke-width="2"/>
+    <text x="1115" y="232" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#35623e">Thread A reads reference A, stamp 0</text>
+    <text x="1115" y="255" text-anchor="middle" font-family="monospace" font-size="16" fill="#444">expected = (A, 0)</text>
+
+    <text x="800" y="310" font-family="sans-serif" font-size="17" font-weight="bold" fill="#35623e">Thread B advances the stamp on every change:</text>
+    <rect x="820" y="335" width="160" height="72" rx="6" fill="white" stroke="#4d8758" stroke-width="2"/>
+    <rect x="1035" y="335" width="160" height="72" rx="6" fill="#fff7df" stroke="#b88b22" stroke-width="2"/>
+    <rect x="1250" y="335" width="160" height="72" rx="6" fill="white" stroke="#4d8758" stroke-width="2"/>
+    <text x="900" y="367" text-anchor="middle" font-family="monospace" font-size="22" font-weight="bold" fill="#35623e">(A, 0)</text>
+    <text x="900" y="391" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">original pair</text>
+    <text x="1115" y="367" text-anchor="middle" font-family="monospace" font-size="22" font-weight="bold" fill="#6b500f">(B, 1)</text>
+    <text x="1115" y="391" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">first change</text>
+    <text x="1330" y="367" text-anchor="middle" font-family="monospace" font-size="22" font-weight="bold" fill="#35623e">(A, 2)</text>
+    <text x="1330" y="391" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">reference returned</text>
+
+    <!-- Timeline heads stop before destination boxes. -->
+    <path d="M982 371H1017" fill="none" stroke="#555" stroke-width="4"/>
+    <polygon points="1025,371 1009,362 1009,380" fill="#555"/>
+    <path d="M1197 371H1232" fill="none" stroke="#555" stroke-width="4"/>
+    <polygon points="1240,371 1224,362 1224,380" fill="#555"/>
+
+    <rect x="835" y="455" width="560" height="105" rx="7" fill="white" stroke="#4d8758" stroke-width="2"/>
+    <text x="1115" y="486" text-anchor="middle" font-family="monospace" font-size="18" font-weight="bold" fill="#35623e">compareAndSet(A, C, 0, 1) → false</text>
+    <text x="1115" y="518" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#444">The reference matches A, but stamp 2 does not match 0.</text>
+    <text x="1115" y="544" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#444">Thread A detects that an intervening change occurred.</text>
+
+    <rect x="865" y="595" width="500" height="62" rx="6" fill="#4d8758"/>
+    <text x="1115" y="621" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="white">Protection: compare one atomic pair</text>
+    <text x="1115" y="644" text-anchor="middle" font-family="sans-serif" font-size="15" fill="white">AtomicStampedReference stores reference + int stamp.</text>
+  </g>
+
+  <!-- Footer clarifies that stamping is a design technique, not automatic magic. -->
+  <rect x="180" y="725" width="1140" height="62" rx="7" fill="#fafafa" stroke="#777" stroke-width="2"/>
+  <text x="750" y="751" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#333">A stamp works only when the algorithm advances and interprets it correctly.</text>
+  <text x="750" y="775" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">A boolean mark can encode logical deletion; an integer stamp can encode a broader version history.</text>
+</svg>

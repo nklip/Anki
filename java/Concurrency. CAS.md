@@ -1,4 +1,4 @@
-# Compare-And-Set (CAS) in Java
+# Compare-and-set (CAS) in Java
 
 ## Front
 
@@ -6,7 +6,13 @@ What is **Compare-And-Set (CAS)** in Java, how does a CAS retry loop work, what 
 
 ## Back
 
-**Compare-And-Set (CAS)** is an atomic conditional update:
+**Compare-and-set (CAS) atomically replaces one value only when its current value still matches an expected value.**
+
+It is the primitive behind many Java atomic updates. A failed CAS tells an optimistic retry loop that its earlier observation is stale. The first diagram explains success, failure, and retry; the second shows why an unchanged-looking value can still hide the ABA problem.
+
+![Compare-and-set success, failure, and retry](svg/concurrency-cas-success-failure-retry.svg)
+
+The operation can be modeled as:
 
 ```text
 CAS(memory, expected, update):
@@ -19,29 +25,29 @@ CAS(memory, expected, update):
 
 The comparison and possible write happen as one indivisible operation. No other thread can change that value between the comparison and the write performed by the CAS operation.
 
-CAS is also called **Compare-And-Swap**. Java APIs normally use the name `compareAndSet`.
+CAS is also called **compare-and-swap**. Java APIs normally use the name `compareAndSet`.
 
 ### Basic Java example
 
 ```java
-AtomicInteger value = new AtomicInteger(10);
+import java.util.concurrent.atomic.AtomicInteger;
 
-boolean updated = value.compareAndSet(10, 11);
+public final class CasBasics {
+    public static void main(String[] args) {
+        AtomicInteger value = new AtomicInteger(10);
 
-System.out.println(updated);   // true
-System.out.println(value.get()); // 11
+        boolean updated = value.compareAndSet(10, 11);
+        System.out.println(updated);     // true
+        System.out.println(value.get()); // 11
+
+        boolean updatedAgain = value.compareAndSet(10, 12);
+        System.out.println(updatedAgain); // false
+        System.out.println(value.get());  // still 11
+    }
+}
 ```
 
-The update succeeds only if the current value is still `10` when the atomic comparison occurs.
-
-```java
-boolean updatedAgain = value.compareAndSet(10, 12);
-
-System.out.println(updatedAgain); // false
-System.out.println(value.get());  // still 11
-```
-
-A failed CAS does not modify the value.
+The first update succeeds because the current value is still `10`. The second fails because the current value is now `11`; a failed strong CAS does not modify the value.
 
 ### Why CAS prevents a lost update
 
@@ -61,21 +67,35 @@ Without CAS, both threads could write `11`, losing one increment. CAS detects th
 ### The CAS retry-loop pattern
 
 ```java
-AtomicInteger balance = new AtomicInteger(100);
+import java.util.concurrent.atomic.AtomicInteger;
 
-void withdraw(int amount) {
-    int current;
-    int next;
+public final class AtomicAccount {
+    private final AtomicInteger balance = new AtomicInteger(100);
 
-    do {
-        current = balance.get();
+    public void withdraw(int amount) {
+        int current;
+        int next;
 
-        if (current < amount) {
-            throw new IllegalStateException("Insufficient funds");
-        }
+        do {
+            current = balance.get();
 
-        next = current - amount;
-    } while (!balance.compareAndSet(current, next));
+            if (current < amount) {
+                throw new IllegalStateException("Insufficient funds");
+            }
+
+            next = current - amount;
+        } while (!balance.compareAndSet(current, next));
+    }
+
+    public int balance() {
+        return balance.get();
+    }
+
+    public static void main(String[] args) {
+        AtomicAccount account = new AtomicAccount();
+        account.withdraw(30);
+        System.out.println(account.balance()); // 70
+    }
 }
 ```
 
@@ -94,6 +114,7 @@ This is an **optimistic** strategy: proceed assuming no conflict, then detect an
 Manual loop:
 
 ```java
+// Conceptual fragment: counter is an AtomicInteger.
 int current;
 int next;
 
@@ -106,12 +127,14 @@ do {
 Prefer:
 
 ```java
+// Conceptual fragment.
 counter.incrementAndGet();
 ```
 
 For a custom transformation:
 
 ```java
+// Conceptual fragment.
 int updated = counter.updateAndGet(current -> current * 2);
 ```
 
@@ -120,6 +143,7 @@ The function passed to `updateAndGet()`, `getAndUpdate()`, `accumulateAndGet()`,
 Bad:
 
 ```java
+// Conceptual fragment: this side effect can run more than once.
 counter.updateAndGet(current -> {
     sendNotification(); // may execute multiple times
     return current + 1;
@@ -141,6 +165,7 @@ Calculate the atomic state first, then perform non-idempotent effects separately
 For `AtomicReference`, comparison uses reference identity, equivalent to `==`, not `equals()`:
 
 ```java
+// Conceptual fragment demonstrating identity comparison.
 AtomicReference<String> ref =
         new AtomicReference<>(new String("A"));
 
@@ -153,9 +178,11 @@ The expected argument must be the same object reference currently stored in `ref
 
 ### Updating several related fields
 
-CAS directly updates one atomic variable. To preserve an invariant spanning several fields, place them in one immutable state object and CAS the reference:
+CAS directly updates one atomic variable. To preserve an invariant spanning several fields, place them in one immutable state object and CAS the reference. This complete example requires Java 16 or later because it uses a record:
 
 ```java
+import java.util.concurrent.atomic.AtomicReference;
+
 record AccountState(long balance, long version) {}
 
 final class Account {
@@ -178,6 +205,7 @@ Publishing the new reference makes the complete immutable state transition atomi
 Separate atomics do **not** make a multi-variable invariant atomic:
 
 ```java
+// Conceptual fragment.
 AtomicInteger debit = new AtomicInteger();
 AtomicInteger credit = new AtomicInteger();
 
@@ -189,25 +217,28 @@ Another thread may observe the state between the two operations. Use one immutab
 
 ### Memory-ordering guarantee
 
-Standard `compareAndSet()` has volatile read-and-write memory effects:
+Standard `compareAndSet()` has volatile access effects:
 
-- It reads the current value with volatile-read semantics.
-- On success, it writes the new value with volatile-write semantics.
+- It reads the current value with `getVolatile` semantics, whether the comparison succeeds or fails.
+- On success, it writes the new value with `setVolatile` semantics.
+- On failure, it performs no write.
 - The comparison and conditional update are atomic.
 
-Therefore, a successful CAS can safely publish preceding writes, and a thread that subsequently observes that update with the corresponding volatile semantics sees the published state.
+Therefore, a successful CAS can publish writes that precede it. A later volatile read of the same atomic variable is ordered after that publication and sees the earlier state through the Java Memory Model's happens-before rules.
 
 CAS is not only an atomicity mechanism; its standard Java form also provides visibility and ordering guarantees.
 
 ### `compareAndSet()` versus `compareAndExchange()`
 
 ```java
+// Conceptual fragment.
 boolean success = value.compareAndSet(expected, update);
 ```
 
 `compareAndSet()` returns only success or failure.
 
 ```java
+// Conceptual fragment.
 int witness = value.compareAndExchange(expected, update);
 ```
 
@@ -217,6 +248,8 @@ int witness = value.compareAndExchange(expected, update);
 - Otherwise, `witness` is the value that prevented the update.
 
 This can be useful in algorithms that can reuse the observed value instead of performing a separate read after failure.
+
+For reference-valued atomics, both APIs use reference identity (`==`) rather than `equals()`.
 
 ### Strong versus weak CAS
 
@@ -234,6 +267,8 @@ The unsuffixed `weakCompareAndSet(...)` method on atomic classes is deprecated b
 Use the standard `compareAndSet()` unless lower-level code has a measured reason to select a weaker operation and its memory semantics are fully understood.
 
 ### The ABA problem
+
+![The ABA problem compared with stamped-reference protection](svg/concurrency-cas-aba-and-stamp.svg)
 
 CAS checks only whether the current value equals the expected value at comparison time. It cannot detect that the value changed and later returned to the same value:
 
@@ -253,6 +288,7 @@ ABA matters when the intermediate changes carry meaning—for example, when node
 One solution is to compare both the reference and a version stamp:
 
 ```java
+// Conceptual fragment: Node is an application data-structure node.
 AtomicStampedReference<Node> head =
         new AtomicStampedReference<>(initialNode, 0);
 
@@ -269,6 +305,8 @@ boolean changed = head.compareAndSet(
 ```
 
 The reference may return to the same object, but a changed stamp reveals that an intervening update occurred.
+
+The stamp is an `int`, so stamping is not automatic proof against every possible reuse. The algorithm must advance and interpret the stamp correctly and account for eventual wraparound when that is realistic.
 
 Related tools:
 
@@ -291,7 +329,7 @@ A CAS retry loop may repeatedly lose under contention, so it is not automaticall
 
 - Avoids blocking and lock ownership for simple state transitions.
 - Prevents lost updates on a single atomic variable.
-- A failed attempt does not suspend the thread.
+- The CAS operation itself does not park the thread; retry code may spin.
 - Often performs well under low or moderate contention.
 - Forms the basis of many concurrent data structures and atomic APIs.
 
@@ -332,9 +370,12 @@ Use a lock when the operation spans complex mutable state, requires fairness, mu
 
 > CAS atomically changes a value only if it still equals an expected value. A failed CAS tells a retry loop that its observation became stale, preventing lost updates without mutual exclusion. Java exposes CAS through atomic classes and `VarHandle`; ordinary `compareAndSet()` has volatile memory effects. CAS works best for small state transitions but can suffer from retries, starvation, cache contention, and ABA, and it does not make multi-variable invariants atomic by itself.
 
-### Official references
+## Sources
 
-- [AtomicInteger API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/atomic/AtomicInteger.html)
-- [java.util.concurrent.atomic package](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/atomic/package-summary.html)
-- [VarHandle API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/invoke/VarHandle.html)
-- [AtomicStampedReference API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/atomic/AtomicStampedReference.html)
+- [Java SE 26 `AtomicInteger` API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/atomic/AtomicInteger.html)
+- [Java SE 26 `AtomicReference` API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/atomic/AtomicReference.html)
+- [Java SE 26 `java.util.concurrent.atomic` package summary](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/atomic/package-summary.html)
+- [Java SE 26 `VarHandle` API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/invoke/VarHandle.html)
+- [Java SE 26 `AtomicStampedReference` API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/atomic/AtomicStampedReference.html)
+- [Java SE 26 `AtomicMarkableReference` API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/atomic/AtomicMarkableReference.html)
+- [Java Language Specification §17.4.5 — happens-before order](https://docs.oracle.com/javase/specs/jls/se26/html/jls-17.html#jls-17.4.5)
