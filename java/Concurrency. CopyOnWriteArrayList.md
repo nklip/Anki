@@ -1,54 +1,68 @@
-# CopyOnWriteArrayList
+# Concurrency. CopyOnWriteArrayList
 
 ## Front
 
-How does `CopyOnWriteArrayList` work, what guarantees does it provide, and when should it be used instead of another concurrent collection?
+How does `CopyOnWriteArrayList` work?
+
+Explain its copy-on-write storage, snapshot iterators, read/write costs, memory guarantees, compound-operation traps, and the workloads for which it is appropriate.
 
 ## Back
 
-`CopyOnWriteArrayList<E>` is a thread-safe `List` optimized for workloads where **reads and traversals vastly outnumber mutations**.
+**CopyOnWriteArrayList** was introduced in **Java 5** as a thread-safe list in `java.util.concurrent`.
 
-Every successful mutation creates and publishes a new backing array:
+`CopyOnWriteArrayList<E>` is designed for **read-mostly** workloads: reads and traversals are cheap because they use a stable backing array, while a mutation normally allocates, copies, changes, and publishes a replacement array.
+
+The trade-off is deliberate:
+
+- Readers avoid the mutation lock and never observe a partially changed backing array.
+- Writers pay for serialization, allocation, and copying.
+- Iterators keep the array version that existed when they were created, so they can be stale.
+
+The first diagram explains a write. A later diagram contrasts a frozen snapshot iterator with a weakly consistent iterator.
+
+![A writer copies, changes, and publishes a replacement backing array](svg/concurrency-copy-on-write-array-replacement.svg)
+
+## Core mental model
+
+Imagine the list as one reference to one immutable-for-readers array version:
 
 ```text
-Readers ───────────────▶ current array A
-
-Writer:
-array A → copy to array B → modify B → publish B
-
-New readers ───────────▶ array B
-Existing iterators ────▶ array A
+current list → array v1 [A, B, C]
 ```
 
-Reads are cheap and do not take the mutation lock. Writes are expensive because they copy the array.
+A writer does not insert `D` into `v1`. It builds `v2` separately and then publishes the new reference:
 
-### Basic example
-
-```java
-CopyOnWriteArrayList<String> names =
-        new CopyOnWriteArrayList<>();
-
-names.add("Alice");
-names.add("Bob");
-
-String first = names.getFirst();
-
-for (String name : names) {
-    System.out.println(name);
-}
+```text
+array v1 [A, B, C]       remains readable
+array v2 [A, B, C, D]    built privately
+current list → v2         published when complete
 ```
 
-It preserves list encounter order, implements `RandomAccess`, permits duplicate elements, and permits `null`.
+The arrays hold **references** to elements. Copying the backing array does not clone `A`, `B`, `C`, or their mutable state.
 
-### Simplified internal design
+## Public guarantees versus implementation details
 
-The current OpenJDK implementation is conceptually similar to:
+The Java API guarantees a thread-safe `List` whose mutative operations use copy-on-write storage. It also specifies snapshot iterators, encounter order, support for duplicate values and `null`, and the concurrent-collection memory-consistency guarantee.
+
+The current OpenJDK implementation realizes that model with:
+
+- A private array reference declared `volatile`.
+- A stable internal object used to serialize mutations.
+- Reads that obtain the current array without taking the mutation lock.
+- Mutations that publish a complete replacement array.
+
+Those field and lock choices are implementation details, not members that application code can access.
+
+This simplified class shows the mechanism. It is an explanatory approximation, not a replacement for the JDK class:
 
 ```java
+import java.util.Arrays;
+
 final class SimplifiedCopyOnWriteList<E> {
     private final Object lock = new Object();
     private volatile Object[] array = new Object[0];
 
+    @SuppressWarnings("unchecked")
     E get(int index) {
         Object[] snapshot = array;
         return (E) snapshot[index];
@@ -63,34 +77,64 @@ final class SimplifiedCopyOnWriteList<E> {
             );
 
             newArray[oldArray.length] = element;
-            array = newArray; // volatile publication
+            array = newArray;
         }
     }
 }
 ```
 
-This is an explanatory model, not public API. Important ideas are:
+The writer lock prevents two writers from losing one another's updates. Publishing the complete array reference allows readers to switch from one complete version to another.
 
-1. The backing-array reference is published with volatile semantics.
-2. Readers obtain a stable array reference.
-3. Mutations are serialized by an internal lock.
-4. Writers never modify the array currently used by readers.
-5. A completed mutation atomically replaces the visible array reference.
+## Read and write costs
 
-### Snapshot iterators
+Typical costs for a list of `n` elements are:
 
-An iterator captures the backing array that existed when the iterator was created:
+| Operation | Typical cost | Reason |
+|---|---:|---|
+| `get(index)` | O(1) | Array lookup in the current version |
+| `size()` | O(1) | Length of the current array |
+| `contains(value)` | O(n) | Linear equality search |
+| Full iteration | O(n) | Traverse one fixed array |
+| `add(value)` | O(n) | Allocate and copy, then append |
+| `set(index, value)` | Usually O(n) | Publish an array version containing the replacement |
+| `remove(...)` | O(n) | Search when needed and copy retained references |
+| `addIfAbsent(value)` | O(n) | Search; copy only if an element is added |
+
+The exact implementation may optimize special cases, so the table is a workload model rather than a public timing guarantee.
+
+Every copied array temporarily adds allocation pressure. An old array can remain reachable while an iterator, spliterator, or other internal snapshot still refers to it. Therefore, list size, mutation frequency, and snapshot lifetime all matter.
+
+## Snapshot iterator semantics
+
+`iterator()` captures the list's state **when the iterator is created**. Later list changes do not alter that iterator's view.
+
+![Snapshot iteration compared with weakly consistent iteration](svg/iteration-snapshot-vs-weakly-consistent.svg)
+
+The left panel is `CopyOnWriteArrayList`: its iterator stays on the old array. The right panel represents a different family of concurrent iterators that traverse a live structure and may observe some overlapping changes. “Snapshot” and “weakly consistent” are not synonyms.
+
+This complete example prints the old snapshot and then the current list:
 
 ```java
-CopyOnWriteArrayList<String> list =
-        new CopyOnWriteArrayList<>(List.of("A", "B"));
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-Iterator<String> iterator = list.iterator();
+public final class SnapshotDemo {
+    public static void main(String[] args) {
+        CopyOnWriteArrayList<String> names =
+                new CopyOnWriteArrayList<>(
+                        Arrays.asList("A", "B")
+                );
 
-list.add("C");
-list.remove("A");
+        Iterator<String> snapshot = names.iterator();
 
-iterator.forEachRemaining(System.out::println);
+        names.remove("A");
+        names.add("C");
+
+        snapshot.forEachRemaining(System.out::println);
+        System.out.println(names);
+    }
+}
 ```
 
 Output:
@@ -98,37 +142,40 @@ Output:
 ```text
 A
 B
+[B, C]
 ```
 
-The iterator does not see `C`, and it still sees `A`. It traverses the old immutable snapshot even though the current list is now `[B, C]`.
+The iterator still sees removed `A` and does not see added `C`. It does not throw `ConcurrentModificationException` because later list mutations cannot change its captured array.
 
-Snapshot iterators:
+Iterator and list-iterator mutation methods are unsupported:
 
-- Never throw `ConcurrentModificationException` because of later list changes.
-- Need no external synchronization during traversal.
-- Do not reflect additions, removals, or replacements made after creation.
-- Do not support `remove()`, `set()`, or `add()`; those operations throw `UnsupportedOperationException`.
+- `Iterator.remove()`
+- `ListIterator.remove()`
+- `ListIterator.set(...)`
+- `ListIterator.add(...)`
 
-The spliterator is also snapshot-based and reports `IMMUTABLE`, `ORDERED`, `SIZED`, and `SUBSIZED`.
+They throw `UnsupportedOperationException`. The spliterator is also snapshot-based and reports `IMMUTABLE`, `ORDERED`, `SIZED`, and `SUBSIZED`.
 
-### Reads versus writes
+## Snapshot does not mean “latest”
 
-| Operation | Typical cost | Important detail |
-|---|---:|---|
-| `get(index)` | O(1) | Reads the current array snapshot |
-| `size()` | O(1) | Reads the current array length |
-| `contains(value)` | O(n) | Linear scan |
-| Iteration | O(n) | No mutation lock; stable snapshot |
-| `add(value)` | O(n) | Allocates and copies an array |
-| `set(index, value)` | O(n) | Normally copies before publication |
-| `remove(...)` | O(n) | Searches when needed, then copies |
-| `addIfAbsent(value)` | O(n) | Atomic presence check; copies only when added |
+Snapshot traversal provides **consistency within one traversal**, not freshness.
 
-A write also temporarily requires memory for both the old and new arrays. Old arrays remain reachable while iterators or spliterators still reference them.
+For a listener registry:
 
-### Excellent use case: listener registry
+- A listener added during a publication is absent from the current iterator and participates in a later publication.
+- A listener removed during a publication can still receive the current event because the iterator retains the old reference.
+
+That behavior is often desirable: concurrent registration changes do not disturb an event already being delivered.
+
+## Good use case: listener registry
 
 ```java
+import java.util.concurrent.CopyOnWriteArrayList;
+
+interface EventListener {
+    void onEvent(String event);
+}
+
 final class EventBus {
     private final CopyOnWriteArrayList<EventListener> listeners =
             new CopyOnWriteArrayList<>();
@@ -141,7 +188,7 @@ final class EventBus {
         listeners.remove(listener);
     }
 
-    void publish(Event event) {
+    void publish(String event) {
         for (EventListener listener : listeners) {
             listener.onEvent(event);
         }
@@ -149,13 +196,15 @@ final class EventBus {
 }
 ```
 
-This design works well when events are published frequently but listeners are registered or removed rarely.
+This fits when `publish` is frequent, registration changes are rare, and each publication should traverse one stable listener snapshot.
 
-If a listener is added during `publish()`, it will participate in a later traversal, not the current snapshot. A listener removed during the traversal may still receive the current event if it exists in that snapshot.
+The callbacks themselves are outside the collection's protection. A slow callback delays the publishing thread, and a callback must provide its own thread safety when invoked concurrently.
 
-### `addIfAbsent()` versus check-then-add
+## Atomic method versus compound sequence
 
-Broken compound operation:
+Thread safety of individual calls does not make an arbitrary sequence atomic.
+
+Inside a registry, this conceptual check-then-act fragment can add a duplicate:
 
 ```java
 if (!listeners.contains(listener)) {
@@ -163,102 +212,108 @@ if (!listeners.contains(listener)) {
 }
 ```
 
-Two threads can both observe that the element is absent and both add it.
-
-Use the atomic method:
+Two threads can both observe absence before either call to `add`. Use the operation that expresses one atomic intent:
 
 ```java
 listeners.addIfAbsent(listener);
 ```
 
-For multiple elements:
+For several candidates, `addAllAbsent(collection)` adds only values not already represented. These methods still use equality checks and can be expensive on a large list.
 
-```java
-int added = listeners.addAllAbsent(newListeners);
-```
+Do not assume that two individually thread-safe calls form one transaction. If an invariant spans multiple operations, use a higher-level lock or redesign the state transition as one operation.
 
-Thread safety of individual methods does not automatically make an arbitrary sequence of methods atomic.
+## Memory-consistency guarantee
 
-### Memory-consistency guarantee
-
-Actions performed by one thread before placing an object into the list happen-before another thread subsequently accesses or removes that element through the list.
-
-```java
-message.prepare();
-messages.add(message); // safely publishes preceding state
-```
-
-```java
-Message message = messages.get(0);
-message.consume();     // sees state published before add()
-```
-
-This safely publishes the element reference and its preceding state. It does **not** make later unsynchronized mutations inside the element thread-safe.
-
-```java
-CopyOnWriteArrayList<MutableCounter> counters = ...;
-
-counters.get(0).increment();
-// The counter still needs its own thread-safety policy.
-```
-
-The list copies references, not the referenced objects.
-
-### Best use cases
-
-- Event-listener and observer registries.
-- Routing or handler lists that change rarely.
-- Small configuration snapshots read frequently.
-- Allow-lists or rule lists with rare administrative updates.
-- Traversals that must not be blocked by concurrent registration changes.
-
-It is most suitable when all of these are true:
+Like other concurrent collections, `CopyOnWriteArrayList` provides a happens-before handoff:
 
 ```text
-reads ≫ writes
-list is relatively small
-snapshot iteration is acceptable
-write latency and allocation are acceptable
+producer actions before placing element in list
+        ↓ concurrent-collection handoff
+consumer actions after accessing or removing that element
 ```
 
-### Poor use cases
-
-- Large lists with frequent additions, removals, or replacements.
-- Producer-consumer queues.
-- High-frequency counters or mutable shared state.
-- Workloads requiring an iterator to observe the newest change immediately.
-- Algorithms performing repeated indexed mutations.
-- Situations where old snapshots retaining elements would be costly.
-
-Bad pattern:
+Conceptual two-thread fragments:
 
 ```java
-CopyOnWriteArrayList<Integer> list =
+// Producer thread
+message.prepare();
+messages.add(message);
+```
+
+```java
+// Consumer thread, after it obtains the placed element
+Message received = messages.get(0);
+received.consume();
+```
+
+The consumer can observe state established before the producer placed that element in the list.
+
+This does not protect mutations performed **after** placement. The list safely stores and publishes element references; it does not recursively make the referenced objects immutable, volatile, or atomic.
+
+## Thread-safe list, possibly unsafe elements
+
+```java
+final class MutableCounter {
+    private int value;
+
+    void increment() {
+        value++; // not made atomic by being stored in the list
+    }
+}
+```
+
+Usage fragment:
+
+```java
+CopyOnWriteArrayList<MutableCounter> counters =
+        new CopyOnWriteArrayList<>();
+
+counters.add(new MutableCounter());
+counters.get(0).increment();
+```
+
+The preceding usage fragment stores and retrieves the counter safely, but concurrent calls to `MutableCounter.increment()` are not safe. Use immutable elements or give each mutable element its own synchronization policy.
+
+## Common traps
+
+### Repeated writes
+
+This method-body fragment repeatedly copies a growing array:
+
+```java
+CopyOnWriteArrayList<Integer> values =
         new CopyOnWriteArrayList<>();
 
 for (int i = 0; i < 100_000; i++) {
-    list.add(i); // repeatedly copies a growing array
+    values.add(i);
 }
 ```
 
-Build the data before constructing the copy-on-write list:
+When possible, build ordinary private data first and construct the concurrent list once:
 
 ```java
-List<Integer> initial = new ArrayList<>();
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-for (int i = 0; i < 100_000; i++) {
-    initial.add(i);
+final class BulkInitializationDemo {
+    static CopyOnWriteArrayList<Integer> createValues() {
+        List<Integer> initial = new ArrayList<>();
+
+        for (int i = 0; i < 100_000; i++) {
+            initial.add(i);
+        }
+
+        return new CopyOnWriteArrayList<>(initial);
+    }
 }
-
-CopyOnWriteArrayList<Integer> list =
-        new CopyOnWriteArrayList<>(initial);
 ```
 
-Prefer bulk methods such as `addAll()` or `removeIf()` over many separate mutations when they express the required operation.
+Bulk mutations such as `addAll` or `removeIf` can also avoid a long series of separately published array versions.
 
-### Compound indexed traversal can still be inconsistent
+### Indexed multi-call traversal
 
-Each call is thread-safe, but separate calls may observe different snapshots:
+Each method call is safe, but separate calls may use different array versions. Conceptual anti-pattern:
 
 ```java
 for (int i = 0; i < list.size(); i++) {
@@ -266,7 +321,7 @@ for (int i = 0; i < list.size(); i++) {
 }
 ```
 
-A concurrent removal can occur between `size()` and `get()`, potentially invalidating the index. Prefer snapshot iteration:
+A concurrent removal can occur after `size()` but before `get(i)`, so `get` can use a shorter array and reject the index. Conceptual preferred traversal:
 
 ```java
 for (Element element : list) {
@@ -274,53 +329,75 @@ for (Element element : list) {
 }
 ```
 
-### Be careful with `subList()`
+### Long-lived snapshots
 
-`subList()` returns a view backed by the original list. Its semantics become undefined if the backing list is modified by any route other than the returned view.
+An iterator can retain an old array and references to elements already removed from the current list. Do not keep iterators or spliterators longer than the traversal requires when retained objects are large or sensitive.
 
-Do not retain a sublist while unrelated threads directly modify the parent list. If a stable range snapshot is needed, first copy the whole list and then select the range:
+### Backed views
+
+`subList(from, to)` is a backed view, not a detached snapshot. Its API semantics become undefined if the backing list is modified by any route other than that view.
+
+If a detached range is required, first make an ordinary copy. Conceptual range-copy fragment:
 
 ```java
-List<Element> fullSnapshot = List.copyOf(list);
-List<Element> rangeSnapshot = List.copyOf(
-        fullSnapshot.subList(from, to)
+List<Element> detached = new ArrayList<>(
+        list.subList(from, to)
 );
 ```
 
-### Comparison with alternatives
+Coordinate the range selection with concurrent parent changes when an exact parent version matters.
 
-| Collection | Reads | Writes | Iteration behavior | Good for |
-|---|---|---|---|---|
-| `CopyOnWriteArrayList` | Very cheap | O(n) copy | Stable snapshot | Read-mostly lists |
-| `Collections.synchronizedList(...)` | Locked | Locked | Caller must synchronize traversal | Mixed operations with one lock |
-| `ConcurrentLinkedQueue` | Concurrent | Concurrent | Weakly consistent | Frequent queue insertion/removal |
-| `ConcurrentHashMap` | Concurrent key lookup | Concurrent updates | Weakly consistent | Keyed shared state |
-| Immutable `List` | Very cheap | No mutation | Stable | State replaced as a whole elsewhere |
+## When to choose it
 
-If element uniqueness is the main requirement and ordering rules fit, consider `CopyOnWriteArraySet`, which is backed by copy-on-write storage.
+Good signals:
 
-### Advantages
+- Traversals vastly outnumber mutations.
+- The list is small or moderate enough that full copying is acceptable.
+- Stable-but-possibly-stale traversal is correct.
+- Readers should not coordinate with a traversal lock.
+- Registration, routing, policy, or configuration entries change rarely.
 
-- Simple, thread-safe traversal without explicit locking.
-- Readers do not block writers through the mutation lock.
-- Stable and deterministic snapshot for each iterator.
-- No iterator interference or fail-fast exception from later mutations.
-- Safe publication through the concurrent collection.
+Poor signals:
 
-### Disadvantages
+- Frequent appends, removals, replacements, sorting, or filtering.
+- A large list whose repeated full copies would be expensive.
+- Queue semantics such as producer-consumer handoff.
+- Iterators that must reflect the newest concurrent changes.
+- Many long-lived iterators retaining old element references.
 
-- O(n) copying and allocation on mutation.
-- Mutations are serialized.
-- Temporary memory pressure from multiple arrays.
-- Iterators intentionally return stale snapshots.
-- Long-lived iterators can retain removed elements through an old array.
-- Does not protect the mutable state of contained objects.
+## Comparison with alternatives
 
-### Key idea
+| Requirement | Better starting point |
+|---|---|
+| Read-mostly ordered list with frozen traversals | `CopyOnWriteArrayList` |
+| One lock around mixed list operations | `Collections.synchronizedList(...)` |
+| Frequent concurrent queue insertion/removal | `ConcurrentLinkedQueue` |
+| Keyed shared state with concurrent updates | `ConcurrentHashMap` |
+| Data never changes after construction | Immutable `List` |
+| Whole configuration replaced occasionally | Immutable list published through a safe shared reference |
 
-> `CopyOnWriteArrayList` makes reads and snapshot traversal cheap by making every mutation expensive. Use it when the collection is small, reads vastly outnumber writes, and observing a stable but potentially stale snapshot is exactly the desired behavior.
+A synchronized-list wrapper requires callers to synchronize on the returned list while traversing it. A `ConcurrentLinkedQueue` iterator is weakly consistent rather than a frozen snapshot. Those are different semantics, not interchangeable implementations of the same behavior.
 
-### Official references
+## Review rule
 
-- [`CopyOnWriteArrayList` API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/CopyOnWriteArrayList.html)
-- [OpenJDK `CopyOnWriteArrayList` implementation](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/concurrent/CopyOnWriteArrayList.java)
+```text
+many reads + rare writes + acceptable stale snapshots
+                         → CopyOnWriteArrayList may fit
+
+frequent writes or large arrays
+                         → copying usually dominates
+```
+
+The name describes the bargain: **copy on every content-changing write so readers can traverse stable array versions without a mutation lock.**
+
+## Sources
+
+- [Java SE 26 `CopyOnWriteArrayList` API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/CopyOnWriteArrayList.html)
+
+- [OpenJDK `CopyOnWriteArrayList` source](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/concurrent/CopyOnWriteArrayList.java)
+
+- [Java SE 26 `java.util.concurrent` memory-consistency properties](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/package-summary.html#MemoryVisibility)
+
+- [Java SE 26 `Collections.synchronizedList` API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/Collections.html#synchronizedList(java.util.List))
+
+- [Java SE 26 `ConcurrentLinkedQueue` API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/ConcurrentLinkedQueue.html)

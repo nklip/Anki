@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900" role="img" aria-labelledby="title description">
+  <title id="title">Adding an element to CopyOnWriteArrayList builds and publishes a replacement array</title>
+  <desc id="description">A writer serializes an add operation, copies the current array, changes only the private copy, and publishes the new array reference. Readers continue using the complete old array during the copy. After publication, new reads use the complete new array; no reader observes a partially modified array.</desc>
+
+  <!-- Shared styles and semantic colors make wording and spacing repairs local. -->
+  <defs>
+    <style>
+      .title { font: 700 36px Arial, Helvetica, sans-serif; fill: #17212f; }
+      .subtitle { font: 20px Arial, Helvetica, sans-serif; fill: #536171; }
+      .panelTitle { font: 700 25px Arial, Helvetica, sans-serif; }
+      .nodeTitle { font: 700 20px Arial, Helvetica, sans-serif; fill: #17212f; }
+      .body { font: 17px Arial, Helvetica, sans-serif; fill: #364152; }
+      .small { font: 15px Arial, Helvetica, sans-serif; fill: #536171; }
+      .code { font: 700 18px "Courier New", monospace; fill: #17212f; }
+      .slot { font: 700 22px "Courier New", monospace; fill: #17212f; }
+      .number { font: 700 18px Arial, Helvetica, sans-serif; fill: #ffffff; }
+      .footer { font: 700 19px Arial, Helvetica, sans-serif; fill: #17212f; }
+    </style>
+  </defs>
+
+  <!-- Background and reading instruction. -->
+  <rect width="1500" height="900" fill="#ffffff"/>
+  <text x="750" y="50" text-anchor="middle" class="title">Adding one element builds a new array; readers never see a partial change</text>
+  <text x="750" y="84" text-anchor="middle" class="subtitle">Read left to right: serialize writer → copy references → modify private copy → publish one new array reference</text>
+
+  <!-- Writer pipeline; each head meets only the next box border. -->
+  <rect x="40" y="115" width="1420" height="300" rx="18" fill="#fff8ec" stroke="#d5a25a" stroke-width="3"/>
+  <text x="70" y="157" class="panelTitle" fill="#8d5715">WRITER PATH — mutation cost is paid here</text>
+
+  <circle cx="116" cy="250" r="22" fill="#b9731d"/>
+  <text x="116" y="257" text-anchor="middle" class="number">1</text>
+  <rect x="150" y="190" width="230" height="125" rx="14" fill="#fff2db" stroke="#b9731d" stroke-width="3"/>
+  <text x="265" y="231" text-anchor="middle" class="nodeTitle">Serialize mutation</text>
+  <text x="265" y="270" text-anchor="middle" class="code">lock writer</text>
+  <text x="265" y="298" text-anchor="middle" class="body">Other writers wait</text>
+
+  <path d="M380 252 H424" fill="none" stroke="#b9731d" stroke-width="6"/>
+  <polygon points="440,252 422,241 422,263" fill="#b9731d"/>
+
+  <circle cx="466" cy="250" r="22" fill="#4774b3"/>
+  <text x="466" y="257" text-anchor="middle" class="number">2</text>
+  <rect x="500" y="180" width="275" height="145" rx="14" fill="#edf3ff" stroke="#4774b3" stroke-width="3"/>
+  <text x="638" y="221" text-anchor="middle" class="nodeTitle">Copy current array</text>
+  <text x="638" y="258" text-anchor="middle" class="code">A, B, C</text>
+  <text x="638" y="290" text-anchor="middle" class="body">References are copied</text>
+  <text x="638" y="313" text-anchor="middle" class="small">elements themselves are not cloned</text>
+
+  <path d="M775 252 H819" fill="none" stroke="#4774b3" stroke-width="6"/>
+  <polygon points="835,252 817,241 817,263" fill="#4774b3"/>
+
+  <circle cx="861" cy="250" r="22" fill="#4774b3"/>
+  <text x="861" y="257" text-anchor="middle" class="number">3</text>
+  <rect x="895" y="180" width="245" height="145" rx="14" fill="#edf3ff" stroke="#4774b3" stroke-width="3"/>
+  <text x="1018" y="221" text-anchor="middle" class="nodeTitle">Change private copy</text>
+  <text x="1018" y="258" text-anchor="middle" class="code">A, B, C, D</text>
+  <text x="1018" y="290" text-anchor="middle" class="body">Not visible yet</text>
+
+  <path d="M1140 252 H1184" fill="none" stroke="#7354a3" stroke-width="6"/>
+  <polygon points="1200,252 1182,241 1182,263" fill="#7354a3"/>
+
+  <circle cx="1226" cy="250" r="22" fill="#7354a3"/>
+  <text x="1226" y="257" text-anchor="middle" class="number">4</text>
+  <rect x="1260" y="180" width="165" height="145" rx="14" fill="#f4edfc" stroke="#7354a3" stroke-width="3"/>
+  <text x="1343" y="221" text-anchor="middle" class="nodeTitle">Publish</text>
+  <text x="1343" y="258" text-anchor="middle" class="code">array = v2</text>
+  <text x="1343" y="290" text-anchor="middle" class="body">One ref swap</text>
+
+  <rect x="185" y="350" width="1130" height="42" rx="10" fill="#fffdf8" stroke="#d5a25a" stroke-width="2"/>
+  <text x="750" y="377" text-anchor="middle" class="body">A typical add, remove, or replacement copies in proportion to list size; the writer also waits for other writers.</text>
+
+  <!-- Reader view during the private-copy phase. -->
+  <rect x="40" y="445" width="690" height="350" rx="18" fill="#eef6fc" stroke="#5d8dbb" stroke-width="3"/>
+  <text x="70" y="487" class="panelTitle" fill="#315f8a">DURING THE COPY</text>
+  <text x="70" y="518" class="body">The current reference still points to complete array v1.</text>
+
+  <rect x="78" y="560" width="155" height="74" rx="12" fill="#ffffff" stroke="#4774b3" stroke-width="3"/>
+  <text x="156" y="592" text-anchor="middle" class="nodeTitle">Current list</text>
+  <text x="156" y="618" text-anchor="middle" class="code">array ref</text>
+
+  <path d="M233 597 H277" fill="none" stroke="#4774b3" stroke-width="6"/>
+  <polygon points="293,597 275,586 275,608" fill="#4774b3"/>
+
+  <!-- Array v1 slots remain immutable for readers. -->
+  <rect x="293" y="552" width="105" height="90" fill="#dfeafa" stroke="#4774b3" stroke-width="2"/>
+  <rect x="398" y="552" width="105" height="90" fill="#dfeafa" stroke="#4774b3" stroke-width="2"/>
+  <rect x="503" y="552" width="105" height="90" fill="#dfeafa" stroke="#4774b3" stroke-width="2"/>
+  <text x="346" y="606" text-anchor="middle" class="slot">A</text>
+  <text x="451" y="606" text-anchor="middle" class="slot">B</text>
+  <text x="556" y="606" text-anchor="middle" class="slot">C</text>
+  <text x="646" y="604" text-anchor="middle" class="body">v1</text>
+
+  <rect x="98" y="681" width="570" height="78" rx="12" fill="#ffffff" stroke="#5d8dbb" stroke-width="2"/>
+  <text x="383" y="714" text-anchor="middle" class="nodeTitle">Readers continue without seeing the private copy</text>
+  <text x="383" y="744" text-anchor="middle" class="body">They observe A, B, C — never a half-built A, B, C, D.</text>
+
+  <!-- Reader view after publication; v2 becomes the current complete array. -->
+  <rect x="770" y="445" width="690" height="350" rx="18" fill="#eef8f0" stroke="#579060" stroke-width="3"/>
+  <text x="800" y="487" class="panelTitle" fill="#326c3d">AFTER PUBLICATION</text>
+  <text x="800" y="518" class="body">New operations obtain complete array v2.</text>
+
+  <rect x="808" y="560" width="155" height="74" rx="12" fill="#ffffff" stroke="#4f8a5b" stroke-width="3"/>
+  <text x="886" y="592" text-anchor="middle" class="nodeTitle">Current list</text>
+  <text x="886" y="618" text-anchor="middle" class="code">array ref</text>
+
+  <path d="M963 597 H1007" fill="none" stroke="#4f8a5b" stroke-width="6"/>
+  <polygon points="1023,597 1005,586 1005,608" fill="#4f8a5b"/>
+
+  <rect x="1023" y="552" width="90" height="90" fill="#e0f1e4" stroke="#4f8a5b" stroke-width="2"/>
+  <rect x="1113" y="552" width="90" height="90" fill="#e0f1e4" stroke="#4f8a5b" stroke-width="2"/>
+  <rect x="1203" y="552" width="90" height="90" fill="#e0f1e4" stroke="#4f8a5b" stroke-width="2"/>
+  <rect x="1293" y="552" width="90" height="90" fill="#e0f1e4" stroke="#4f8a5b" stroke-width="2"/>
+  <text x="1068" y="606" text-anchor="middle" class="slot">A</text>
+  <text x="1158" y="606" text-anchor="middle" class="slot">B</text>
+  <text x="1248" y="606" text-anchor="middle" class="slot">C</text>
+  <text x="1338" y="606" text-anchor="middle" class="slot">D</text>
+  <text x="1415" y="604" text-anchor="middle" class="body">v2</text>
+
+  <rect x="828" y="681" width="570" height="78" rx="12" fill="#ffffff" stroke="#579060" stroke-width="2"/>
+  <text x="1113" y="714" text-anchor="middle" class="nodeTitle">Reference publication is the visibility boundary</text>
+  <text x="1113" y="744" text-anchor="middle" class="body">New readers observe A, B, C, D as one complete array version.</text>
+
+  <!-- Final takeaway is kept below all connector routes. -->
+  <rect x="165" y="827" width="1170" height="50" rx="12" fill="#f4f6f8" stroke="#aeb8c3" stroke-width="2"/>
+  <text x="750" y="859" text-anchor="middle" class="footer">Copy-on-write shifts synchronization, allocation, and copying cost from readers to writers.</text>
+</svg>
