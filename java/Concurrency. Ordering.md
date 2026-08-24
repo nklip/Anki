@@ -1,61 +1,54 @@
-# Ordering
+# Concurrency. Ordering
 
 ## Front
 
-What does **ordering** mean in Java concurrency?
+What does ordering mean in Java concurrency, and how does *happens-before* make cross-thread observations predictable?
 
 ## Back
 
-Ordering describes the sequence in which memory operations are observed.
+**Ordering means constraints on which actions must be observable before other actions; it does not mean that all threads share one global timeline.**
 
-The compiler, JIT compiler, and CPU may reorder operations when the reordering does not change the result of a single-threaded program. Another thread, however, may observe those operations in an unexpected order when no happens-before relationship exists.
+The Java Memory Model uses three related ideas:
 
-### Ordering problem
+- **Program order:** each thread must behave as if its actions follow that thread's source-level semantics. The compiler or CPU may still rearrange work when the difference cannot be observed legally.
+- **Synchronization order:** one total order over synchronization actions, such as volatile accesses and monitor lock/unlock actions.
+- **Happens-before:** a partial order built from program order, cross-thread *synchronizes-with* edges, and transitivity. If action A happens-before B, A's effects are visible to and ordered before B.
 
-```java
-int data = 0;
-boolean ready = false;
-```
+The diagram shows how one volatile flag safely publishes earlier ordinary writes:
 
-**Thread A**
-
-```java
-data = 42;
-ready = true;
-```
-
-**Thread B**
+![Program-order and volatile edges forming a happens-before chain](svg/concurrency-volatile-happens-before.svg)
 
 ```java
-if (ready) {
-    System.out.println(data);
+final class Publication {
+    private int data;
+    private volatile boolean ready;
+
+    void publish() {       // Thread A
+        data = 42;
+        ready = true;      // volatile write (release)
+    }
+
+    void consume() {       // Thread B
+        if (ready) {       // subsequent volatile read (acquire)
+            System.out.println(data); // guaranteed to print 42
+        }
+    }
 }
 ```
 
-Without synchronization, Thread B is not guaranteed to observe the writes in the intended order. It may observe `ready == true` without reliably observing `data == 42`.
+The chain is: `data = 42` → **program order** → volatile write of `ready` → **synchronizes-with** → subsequent volatile read of `ready` → **program order** → read of `data == 42`.
 
-### Ordering solution
+Without `volatile` or another synchronization edge, the conflicting ordinary accesses form a **data race**. Thread B is then not guaranteed to observe the two writes as intended.
 
-```java
-int data = 0;
-volatile boolean ready = false;
-```
+Other common happens-before edges include:
 
-When Thread B reads `ready == true`, the write to `data` that occurred before the volatile write is also visible:
+- leaving a `synchronized` block → later entering one guarded by the same monitor;
+- `thread.start()` → actions in the started thread;
+- all actions in a thread → another thread successfully returning from `join()`.
 
-```java
-// Thread A
-data = 42;
-ready = true;
+Ordering can provide visibility, but it does not make a compound action atomic: `volatile count++` can still lose updates.
 
-// Thread B
-if (ready) {
-    System.out.println(data); // 42
-}
-```
+## Sources
 
-The same ordering guarantee can be created with `synchronized`, locks, and other happens-before relationships.
-
-### Key idea
-
-**Ordering controls which sequence of memory operations another thread is allowed to observe.**
+- [Java Language Specification §17.4 — Memory Model](https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4)
+- [`java.util.concurrent` memory-consistency properties](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/package-summary.html#MemoryVisibility)
