@@ -2,221 +2,155 @@
 
 ## Front
 
-What are virtual threads in modern Java, how do they work, and when should they be used?
+What are virtual threads, how do mounting and pinning work, and when should they be used?
 
 ## Back
 
-**Virtual threads became a final feature in JDK 21** with JEP 444. They were previews in JDK 19 and JDK 20.
+**Virtual threads** became final in **JDK 21** with JEP 444.
 
-A virtual thread is a lightweight `java.lang.Thread` managed primarily by the JVM instead of being permanently mapped to one operating-system thread.
+A virtual thread is a lightweight `java.lang.Thread` scheduled primarily by the Java runtime rather than permanently tied to one operating-system thread. Virtual threads let applications keep straightforward thread-per-task code while supporting many tasks that spend most of their time waiting. They improve **throughput under high blocking concurrency**, not the speed or latency of one task.
 
-Virtual threads make the familiar **thread-per-task** programming style scalable for applications with many blocking tasks.
+The diagrams build the practical model: how virtual threads borrow carriers, how to limit scarce resources without pooling virtual threads, and what pinning means since JDK 24.
 
-## Platform thread vs. Virtual thread
+### Virtual threads, carriers, and operating-system threads
 
-### Platform thread
+The upper half shows the M:N structure; the lower half follows one virtual thread as it blocks and later resumes.
 
-```text
-Java platform thread ─── OS thread
-```
+![Many virtual threads mount on a smaller carrier set, and one virtual thread unmounts during blocking before resuming](svg/concurrency-virtual-thread-mounting.svg)
 
-A platform thread normally occupies its OS thread for its entire lifetime. OS threads are relatively expensive, so applications usually keep a limited number in pools.
+| Term | Meaning |
+|---|---|
+| **Virtual thread** | The task's `Thread` identity, call stack, local variables, interruption state, and thread-local state |
+| **Carrier** | A platform thread temporarily executing a mounted virtual thread |
+| **Platform thread** | A Java thread backed by an operating-system thread |
+| **Mounted** | The virtual thread is currently using a carrier to execute code |
+| **Unmounted** | The virtual thread is suspended without occupying its previous carrier |
+| **Pinned** | The virtual thread is blocked but cannot unmount, so its carrier is blocked too |
 
-### Virtual thread
+A carrier is not the virtual thread's parent or identity. `Thread.currentThread()` returns the virtual `Thread`, not its current carrier. A virtual thread can unmount from one carrier and later resume on another while preserving the same stack and state.
 
-```text
-Virtual thread A ─┐
-Virtual thread B ─┼── JVM scheduler ── small set of carrier platform threads
-Virtual thread C ─┘
-```
+Virtual-thread stacks are represented by resizable stack chunks in the Java heap rather than by one large, permanently reserved native stack. This is one reason many virtual threads can coexist.
 
-Many virtual threads share a smaller number of platform threads. A platform thread currently executing a virtual thread is called its **carrier thread**.
+### Mount, block, and resume
 
-## What exactly is a carrier thread?
+When a virtual thread is runnable, the JVM scheduler mounts it on a carrier. The operating system then schedules that carrier normally.
 
-A carrier thread is an ordinary JVM platform thread, backed by an operating-system thread, that temporarily provides CPU execution for a virtual thread.
+When the virtual thread invokes a supported blocking operation, such as blocking socket I/O or `BlockingQueue.take()`:
 
-```text
-Virtual thread = task, stack, local variables, and Thread identity
-Carrier thread = temporary platform thread on which that task executes
-```
+1. the virtual thread suspends and normally unmounts;
+2. its carrier becomes available for another virtual thread;
+3. when the operation can continue, the virtual thread becomes runnable again;
+4. the scheduler mounts it, possibly on a different carrier.
 
-The carrier does not own the virtual thread and is not its parent. It is only the temporary execution vehicle selected by the JVM scheduler.
+Mounting and unmounting are transparent to ordinary application code. A carrier executes only one virtual thread at an instant, but it can execute many different virtual threads over time.
 
-```text
-Time 1: carrier-1 executes virtual-thread-A
-Time 2: virtual-thread-A blocks and unmounts
-Time 3: carrier-1 executes virtual-thread-B
-Time 4: virtual-thread-A resumes on carrier-2
-```
+### Creating virtual threads
 
-There is **no permanent one-to-one relationship** between them:
-
-- One carrier executes only one virtual thread at a particular instant.
-- The same carrier executes many virtual threads over time.
-- A virtual thread can use different carriers during its lifetime.
-- Far fewer carrier threads than virtual threads are normally required.
-
-The carrier is intentionally hidden from application code:
+Start and join one directly, or submit tasks to an executor that creates a new virtual thread for each task:
 
 ```java
-Thread thread = Thread.currentThread();
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
-// This is the virtual thread, not its current carrier.
-System.out.println(thread.isVirtual()); // true
-```
+final class VirtualThreadDemo {
+    public static void main(String[] args) throws Exception {
+        Thread one = Thread.startVirtualThread(() ->
+                System.out.println(Thread.currentThread().isVirtual()));
+        one.join();
 
-The two threads also keep separate identities and state:
+        try (ExecutorService executor =
+                     Executors.newVirtualThreadPerTaskExecutor()) {
+            Future<String> result =
+                    executor.submit(VirtualThreadDemo::loadData);
+            System.out.println(result.get());
+        }
+    }
 
-- Their stack traces are separate.
-- Their `ThreadLocal` values are separate.
-- An exception in a virtual thread does not include the carrier's stack frames.
-- Moving to another carrier does not change the virtual thread's identity or local state.
-
-Carrier threads are implementation resources managed by the JVM. Application code should create and manage **virtual threads as tasks**, rather than trying to select or interact with their carriers directly.
-
-## Mounting and unmounting
-
-To run code, the JVM **mounts** a virtual thread on a carrier:
-
-```text
-virtual thread → mounted on carrier → executes Java code
-```
-
-When the virtual thread performs a supported blocking operation, such as socket I/O or `BlockingQueue.take()`, the JVM can:
-
-1. Suspend the virtual thread.
-2. Save its execution state.
-3. Unmount it from the carrier.
-4. Use the free carrier to run another virtual thread.
-5. Remount the original virtual thread when its operation can continue.
-
-```text
-VT-A runs → VT-A blocks → carrier runs VT-B → VT-A becomes ready → VT-A resumes
-```
-
-The virtual thread may resume on a different carrier. Application code still sees the same virtual `Thread`:
-
-```java
-Thread current = Thread.currentThread();
-System.out.println(current.isVirtual()); // true
-```
-
-The virtual thread's stack is stored in resizable chunks in the Java heap, so it does not reserve a large fixed native stack like a platform thread normally does.
-
-## Creating virtual threads
-
-Start one virtual thread directly:
-
-```java
-Thread thread = Thread.startVirtualThread(() -> {
-    System.out.println("Running in " + Thread.currentThread());
-});
-
-thread.join();
-```
-
-Use a builder when configuration such as naming is needed:
-
-```java
-Thread thread = Thread.ofVirtual()
-        .name("order-processor")
-        .start(this::processOrder);
-```
-
-## One virtual thread per task
-
-For multiple independent tasks, use a virtual-thread-per-task executor:
-
-```java
-try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
-    Future<String> user = executor.submit(this::loadUser);
-    Future<String> orders = executor.submit(this::loadOrders);
-
-    System.out.println(user.get());
-    System.out.println(orders.get());
-}
-```
-
-This executor creates a new virtual thread for every submitted task. It does **not** reuse a fixed pool of virtual threads.
-
-## Best use cases
-
-Virtual threads work best when an application has many tasks that spend substantial time waiting:
-
-- HTTP request handling.
-- Database calls.
-- Network services.
-- File or socket I/O.
-- Blocking queues and other blocking concurrency utilities.
-
-They improve **throughput and scalability**, not the speed of an individual task.
-
-## CPU-bound work
-
-Virtual threads do not create more CPU cores:
-
-```java
-// A million CPU-intensive virtual threads do not make the CPU faster
-Thread.startVirtualThread(this::calculateForSeveralMinutes);
-```
-
-For long-running CPU-bound work, use a bounded executor sized according to available processors. Virtual threads are most valuable when tasks frequently block.
-
-## Do not pool virtual threads
-
-Virtual threads are cheap and should represent tasks directly:
-
-```text
-one task = one virtual thread
-```
-
-Do not create a small pool of reusable virtual threads. If access to a limited resource must be controlled, use a resource pool or a `Semaphore`:
-
-```java
-private final Semaphore databaseLimit = new Semaphore(20);
-
-String queryDatabase() throws InterruptedException {
-    databaseLimit.acquire();
-    try {
-        return runQuery();
-    } finally {
-        databaseLimit.release();
+    private static String loadData() throws InterruptedException {
+        Thread.sleep(50); // represents a blocking call
+        return "loaded";
     }
 }
 ```
 
-This limits database concurrency without limiting the total number of virtual threads.
+`newVirtualThreadPerTaskExecutor()` does not maintain a small reusable virtual-thread pool. Every submitted task gets a new virtual thread. Closing the executor waits for its submitted tasks to terminate.
 
-## Pinning
+Use `Thread.ofVirtual().name("request-", 0).start(task)` when you need builder configuration such as useful thread names.
 
-A virtual thread is **pinned** when it cannot unmount from its carrier during a blocking operation. The carrier is then blocked as well, which can reduce scalability.
+### Do not pool virtual threads
 
-Originally, blocking inside a `synchronized` block could cause pinning. **JDK 24 delivered JEP 491**, which removed nearly all pinning caused by `synchronized` methods, monitor acquisition, and `Object.wait()`.
+Virtual threads are meant to represent tasks. If a database, remote service, or other dependency has limited capacity, restrict access to **that resource**, not the total number of virtual threads.
 
-Interactions with native or foreign code can still cause pinning. Short or infrequent pinning is normally harmless; frequent long blocking while pinned is the concern.
+![Many task-specific virtual threads pass through a semaphore that limits calls to a capacity-three service](svg/concurrency-virtual-thread-resource-limit.svg)
 
-## Thread-local variables
+```java
+import java.util.concurrent.Semaphore;
 
-Virtual threads support `ThreadLocal`, but creating a large cached object for every virtual thread can consume significant memory when there are thousands or millions of threads.
+final class LimitedServiceClient {
+    private final Semaphore permits = new Semaphore(20);
 
-Use thread-local variables for genuine per-task context, not as a cache of expensive reusable objects. Consider `ScopedValue` for immutable context that follows a task.
+    String call() throws InterruptedException {
+        permits.acquire();
+        try {
+            return callRemoteService();
+        } finally {
+            permits.release();
+        }
+    }
 
-## Important properties
+    private String callRemoteService() {
+        return "ok";
+    }
+}
+```
 
-- A virtual thread is still a real `Thread` from the application's perspective.
-- Existing blocking code can often use virtual threads without being rewritten as callbacks.
-- Virtual threads support interruption, stack traces, exceptions, and thread-local variables.
-- Virtual threads are daemon threads and do not keep the JVM alive by themselves.
-- Their priority is fixed and should not be used for scheduling decisions.
-- Shared mutable state still requires synchronization; virtual threads do not remove data races.
+Here, any number of independent tasks can exist, but at most 20 can be inside `callRemoteService()` simultaneously. Waiting for a semaphore permit can suspend a virtual thread without consuming a carrier.
 
-## Summary
+### Where virtual threads help
 
-Virtual threads let Java applications create one lightweight thread per blocking task. The JVM mounts runnable virtual threads on carrier platform threads and normally unmounts them while they wait, allowing a small number of OS threads to support very high concurrency. Use them for blocking, I/O-heavy workloads; do not pool them or expect them to accelerate CPU-bound computation.
+| Workload | Fit | Reason |
+|---|---|---|
+| Many concurrent HTTP, database, socket, or queue waits | **Strong** | Carriers can run other tasks while virtual threads wait |
+| Synchronous thread-per-request server code | **Strong** | Keeps readable blocking code while increasing concurrency |
+| A few short tasks | **Small benefit** | Platform-thread scarcity was probably not the bottleneck |
+| Long CPU-intensive tasks | **Usually little benefit** | Virtual threads do not add processor cores or make computation faster |
+| Data-parallel computation | **Use a parallel algorithm or bounded CPU executor** | The problem is CPU parallelism, not cheap blocking |
 
-## Official references
+Virtual threads improve scale when the application has enough waiting work to overlap. They do not automatically improve every application, and they do not turn asynchronous callback pipelines into faster code.
 
-- [JEP 444: Virtual Threads — JDK 21](https://openjdk.org/jeps/444)
-- [JEP 491: Synchronize Virtual Threads without Pinning — JDK 24](https://openjdk.org/jeps/491)
-- [Oracle Java 25 Guide: Virtual Threads](https://docs.oracle.com/en/java/javase/25/core/virtual-threads.html)
+### Pinning since JDK 24
+
+**JEP 491 changed the JVM in JDK 24 so virtual threads can unmount while holding, entering, or waiting on `synchronized` monitors.** Therefore, `synchronized` is no longer a routine reason to replace monitor-based code merely for virtual-thread scalability.
+
+![JDK 24 synchronized blocking releases a carrier, while native or foreign execution can still pin it](svg/concurrency-virtual-thread-pinning-jdk24.svg)
+
+Pinning is a **scalability** concern, not a correctness failure. Short or rare pinning is usually unimportant; frequent long blocking while pinned can occupy many carriers and reduce throughput.
+
+Remaining pinning can occur notably when a native method or foreign function is on the virtual thread's stack and the thread blocks. JDK Flight Recorder exposes the `jdk.VirtualThreadPinned` event for consequential cases. Diagnose measured pinning before rewriting synchronization.
+
+### Important limits and misconceptions
+
+- A virtual thread is still a real `Thread`: interruption, exceptions, stack traces, `ThreadLocal`, and ordinary synchronization rules still apply.
+- Virtual threads do not remove data races. Shared mutable state still needs `volatile`, atomics, locks, confinement, or immutability as appropriate.
+- Virtual threads support `ThreadLocal`, but per-thread caches can multiply memory use when there are thousands or millions of threads. Use thread-local state only when it is genuinely per task.
+- Virtual threads are daemon threads and do not keep the JVM alive. Wait with `join()`, futures, or an executor lifecycle when completion matters.
+- Do not depend on carrier identity or affinity. A virtual thread may resume on a different carrier.
+- A virtual-thread-per-task executor creates threads for tasks; it does not express the capacity of a database or remote service. Use an explicit resource limit.
+
+### Memory aid
+
+**One task = one virtual thread.**
+
+**A carrier is borrowed only while code runs.**
+
+**Limit scarce resources explicitly; investigate long pinning; keep normal concurrency safety rules.**
+
+## Sources
+
+- [JEP 444 — Virtual Threads](https://openjdk.org/jeps/444)
+- [Oracle Java SE 26 Guide — Virtual Threads](https://docs.oracle.com/en/java/javase/26/core/virtual-threads.html)
+- [JEP 491 — Synchronize Virtual Threads without Pinning](https://openjdk.org/jeps/491)
+- [Java SE 26 API — `Thread`](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/Thread.html)
+- [Java SE 26 API — `Executors.newVirtualThreadPerTaskExecutor()`](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/Executors.html#newVirtualThreadPerTaskExecutor())
+- [Java SE 26 API — `Semaphore`](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/Semaphore.html)

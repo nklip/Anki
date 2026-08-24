@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title description">
+  <title id="title">Limit a scarce resource, not the number of virtual threads</title>
+  <desc id="description">Many independent tasks each receive a virtual thread. A semaphore with three permits lets only three virtual threads call a capacity-three external service at once. A comparison explains why a fixed pool of virtual threads is the wrong boundary.</desc>
+
+  <!-- Shared styles keep this diagram coherent with other Java concurrency visuals. -->
+  <defs>
+    <style>
+      .title { font: 700 28px Arial, Helvetica, sans-serif; fill: #202124; }
+      .subtitle { font: 400 17px Arial, Helvetica, sans-serif; fill: #5f6368; }
+      .section { font: 700 21px Arial, Helvetica, sans-serif; fill: #202124; }
+      .label { font: 700 17px Arial, Helvetica, sans-serif; fill: #202124; }
+      .body { font: 400 16px Arial, Helvetica, sans-serif; fill: #3c4043; }
+      .small { font: 600 14px Arial, Helvetica, sans-serif; fill: #5f6368; }
+      .code { font: 700 16px "Courier New", monospace; fill: #202124; }
+    </style>
+  </defs>
+
+  <!-- Background and central rule. -->
+  <rect width="1200" height="680" fill="#ffffff"/>
+  <text class="title" x="600" y="42" text-anchor="middle">Do not pool virtual threads; limit the scarce resource</text>
+  <text class="subtitle" x="600" y="71" text-anchor="middle">Every task keeps its own virtual thread; a semaphore controls only the constrained operation.</text>
+
+  <!-- Main flow: six tasks approach a three-permit gate before the service. -->
+  <rect x="45" y="98" width="1110" height="350" rx="12" fill="#f8f9fa" stroke="#9aa0a6" stroke-width="2"/>
+  <text class="section" x="75" y="135">Many tasks, one explicit capacity boundary</text>
+
+  <text class="label" x="230" y="172" text-anchor="middle">One virtual thread per task</text>
+  <rect x="80" y="194" width="135" height="52" rx="8" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <text class="code" x="147" y="226" text-anchor="middle">task / VT 1</text>
+  <rect x="235" y="194" width="135" height="52" rx="8" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <text class="code" x="302" y="226" text-anchor="middle">task / VT 2</text>
+  <rect x="80" y="264" width="135" height="52" rx="8" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <text class="code" x="147" y="296" text-anchor="middle">task / VT 3</text>
+  <rect x="235" y="264" width="135" height="52" rx="8" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <text class="code" x="302" y="296" text-anchor="middle">task / VT 4</text>
+  <rect x="80" y="334" width="135" height="52" rx="8" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <text class="code" x="147" y="366" text-anchor="middle">task / VT 5</text>
+  <rect x="235" y="334" width="135" height="52" rx="8" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <text class="code" x="302" y="366" text-anchor="middle">task / VT 6</text>
+  <text class="small" x="225" y="410" text-anchor="middle">Waiting virtual threads are cheap;</text>
+  <text class="small" x="225" y="430" text-anchor="middle">they are not reused as a pool.</text>
+
+  <!-- Task lines merge into the semaphore gate; the single head stops at its border. -->
+  <line x1="370" y1="220" x2="405" y2="220" stroke="#356eb3" stroke-width="3"/>
+  <line x1="370" y1="290" x2="405" y2="290" stroke="#356eb3" stroke-width="3"/>
+  <line x1="370" y1="360" x2="405" y2="360" stroke="#356eb3" stroke-width="3"/>
+  <line x1="405" y1="220" x2="405" y2="360" stroke="#356eb3" stroke-width="3"/>
+  <line x1="405" y1="290" x2="454" y2="290" stroke="#356eb3" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="453,279 470,290 453,301" fill="#356eb3"/>
+
+  <rect x="470" y="166" width="260" height="248" rx="12" fill="#fff4ce" stroke="#b7791f" stroke-width="2.5"/>
+  <text x="600" y="203" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#8a5a12">Semaphore(3)</text>
+  <text class="body" x="600" y="232" text-anchor="middle">Three permits = service capacity</text>
+  <circle cx="535" cy="280" r="27" fill="#d7f0df" stroke="#34834b" stroke-width="2"/>
+  <text class="label" x="535" y="286" text-anchor="middle">1</text>
+  <circle cx="600" cy="280" r="27" fill="#d7f0df" stroke="#34834b" stroke-width="2"/>
+  <text class="label" x="600" y="286" text-anchor="middle">2</text>
+  <circle cx="665" cy="280" r="27" fill="#d7f0df" stroke="#34834b" stroke-width="2"/>
+  <text class="label" x="665" y="286" text-anchor="middle">3</text>
+  <text class="code" x="600" y="337" text-anchor="middle">acquire() → call</text>
+  <text class="code" x="600" y="366" text-anchor="middle">finally → release()</text>
+  <text class="small" x="600" y="397" text-anchor="middle">extra callers wait at this gate</text>
+
+  <!-- Admission arrow meets the external-service boundary; its label sits above the shaft. -->
+  <text x="780" y="253" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="bold" fill="#34834b">≤ 3 calls</text>
+  <line x1="730" y1="290" x2="814" y2="290" stroke="#34834b" stroke-width="6" stroke-linecap="round"/>
+  <polygon points="813,278 830,290 813,302" fill="#34834b"/>
+
+  <rect x="830" y="166" width="280" height="248" rx="12" fill="#e6f4ea" stroke="#34834b" stroke-width="2.5"/>
+  <text x="970" y="203" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#34834b">External service</text>
+  <text class="body" x="970" y="232" text-anchor="middle">Capacity: 3 concurrent calls</text>
+  <rect x="875" y="260" width="190" height="38" rx="7" fill="#ffffff" stroke="#34834b" stroke-width="2"/>
+  <text class="code" x="970" y="285" text-anchor="middle">active call 1</text>
+  <rect x="875" y="311" width="190" height="38" rx="7" fill="#ffffff" stroke="#34834b" stroke-width="2"/>
+  <text class="code" x="970" y="336" text-anchor="middle">active call 2</text>
+  <rect x="875" y="362" width="190" height="38" rx="7" fill="#ffffff" stroke="#34834b" stroke-width="2"/>
+  <text class="code" x="970" y="387" text-anchor="middle">active call 3</text>
+
+  <!-- Bottom comparison makes the scope of each limit explicit. -->
+  <rect x="45" y="474" width="535" height="158" rx="12" fill="#fce8e6" stroke="#d93025" stroke-width="2.5"/>
+  <text x="312" y="511" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#d93025">Avoid: fixed pool of virtual threads</text>
+  <text class="code" x="312" y="546" text-anchor="middle">newFixedThreadPool(3, virtualFactory)</text>
+  <text class="body" x="312" y="579" text-anchor="middle">The pool limits every task, even work unrelated</text>
+  <text class="body" x="312" y="603" text-anchor="middle">to the capacity-three service.</text>
+
+  <rect x="620" y="474" width="535" height="158" rx="12" fill="#e6f4ea" stroke="#34834b" stroke-width="2.5"/>
+  <text x="887" y="511" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#34834b">Prefer: task-per-thread + explicit permits</text>
+  <text class="code" x="887" y="546" text-anchor="middle">newVirtualThreadPerTaskExecutor()</text>
+  <text class="body" x="887" y="579" text-anchor="middle">All tasks remain independently represented;</text>
+  <text class="body" x="887" y="603" text-anchor="middle">only the scarce operation is throttled.</text>
+
+  <text class="small" x="600" y="662" text-anchor="middle">The semaphore expresses resource capacity; the virtual-thread count expresses concurrent tasks.</text>
+</svg>

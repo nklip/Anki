@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title description">
+  <title id="title">Virtual threads temporarily mount on carrier platform threads</title>
+  <desc id="description">The upper panel shows many virtual threads scheduled onto a smaller set of carrier platform threads and operating system threads. The lower panel follows one virtual thread as it runs, blocks and unmounts, lets its carrier run another virtual thread, then resumes on a possibly different carrier.</desc>
+
+  <!-- Shared styles match the established concurrency-diagram palette. -->
+  <defs>
+    <style>
+      .title { font: 700 28px Arial, Helvetica, sans-serif; fill: #202124; }
+      .subtitle { font: 400 17px Arial, Helvetica, sans-serif; fill: #5f6368; }
+      .section { font: 700 21px Arial, Helvetica, sans-serif; fill: #202124; }
+      .label { font: 700 17px Arial, Helvetica, sans-serif; fill: #202124; }
+      .body { font: 400 15px Arial, Helvetica, sans-serif; fill: #3c4043; }
+      .small { font: 600 14px Arial, Helvetica, sans-serif; fill: #5f6368; }
+      .code { font: 700 16px "Courier New", monospace; fill: #202124; }
+    </style>
+  </defs>
+
+  <!-- Background and reading instruction. -->
+  <rect width="1200" height="760" fill="#ffffff"/>
+  <text class="title" x="600" y="41" text-anchor="middle">Virtual threads temporarily borrow carrier threads</text>
+  <text class="subtitle" x="600" y="70" text-anchor="middle">First read the M:N structure, then follow virtual thread A across blocking and resumption.</text>
+
+  <!-- Static M:N structure: task identities remain separate from carriers and OS threads. -->
+  <rect x="45" y="92" width="1110" height="270" rx="12" fill="#f8f9fa" stroke="#9aa0a6" stroke-width="2"/>
+  <text class="section" x="75" y="129">Structure: many virtual threads share a smaller carrier set</text>
+
+  <rect x="80" y="151" width="260" height="48" rx="8" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <text class="label" x="210" y="181" text-anchor="middle">Virtual thread A — request</text>
+  <rect x="80" y="215" width="260" height="48" rx="8" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <text class="label" x="210" y="245" text-anchor="middle">Virtual thread B — request</text>
+  <rect x="80" y="279" width="260" height="48" rx="8" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <text class="label" x="210" y="309" text-anchor="middle">Virtual thread C — request</text>
+
+  <!-- Three task lines merge into one scheduler arrow; no arrowhead touches the scheduler box. -->
+  <line x1="340" y1="175" x2="380" y2="175" stroke="#356eb3" stroke-width="4"/>
+  <line x1="340" y1="239" x2="380" y2="239" stroke="#356eb3" stroke-width="4"/>
+  <line x1="340" y1="303" x2="380" y2="303" stroke="#356eb3" stroke-width="4"/>
+  <line x1="380" y1="175" x2="380" y2="303" stroke="#356eb3" stroke-width="4"/>
+  <line x1="380" y1="239" x2="405" y2="239" stroke="#356eb3" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="404,228 420,239 404,250" fill="#356eb3"/>
+
+  <rect x="420" y="174" width="260" height="130" rx="10" fill="#f3e8fd" stroke="#7b1fa2" stroke-width="2.5"/>
+  <text x="550" y="210" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="bold" fill="#7b1fa2">JVM scheduler</text>
+  <text class="body" x="550" y="240" text-anchor="middle">Chooses a runnable virtual thread</text>
+  <text class="body" x="550" y="265" text-anchor="middle">and mounts it for execution</text>
+  <text class="small" x="550" y="291" text-anchor="middle">M virtual threads → N carriers</text>
+
+  <!-- Scheduler arrows terminate at the carrier boundaries. -->
+  <line x1="680" y1="195" x2="744" y2="195" stroke="#7b1fa2" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="743,184 760,195 743,206" fill="#7b1fa2"/>
+  <line x1="680" y1="283" x2="744" y2="283" stroke="#7b1fa2" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="743,272 760,283 743,294" fill="#7b1fa2"/>
+
+  <rect x="760" y="153" width="170" height="84" rx="9" fill="#e6f4ea" stroke="#34834b" stroke-width="2.5"/>
+  <text class="label" x="845" y="184" text-anchor="middle">Carrier 1</text>
+  <text class="body" x="845" y="210" text-anchor="middle">platform thread</text>
+  <rect x="760" y="241" width="170" height="84" rx="9" fill="#e6f4ea" stroke="#34834b" stroke-width="2.5"/>
+  <text class="label" x="845" y="272" text-anchor="middle">Carrier 2</text>
+  <text class="body" x="845" y="298" text-anchor="middle">platform thread</text>
+
+  <!-- Each carrier is backed by its own OS thread for the carrier's lifetime. -->
+  <line x1="930" y1="195" x2="974" y2="195" stroke="#34834b" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="973,184 990,195 973,206" fill="#34834b"/>
+  <line x1="930" y1="283" x2="974" y2="283" stroke="#34834b" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="973,272 990,283 973,294" fill="#34834b"/>
+  <rect x="990" y="153" width="125" height="84" rx="9" fill="#eef3f8" stroke="#5f6368" stroke-width="2"/>
+  <text class="label" x="1052" y="184" text-anchor="middle">OS thread</text>
+  <text class="small" x="1052" y="210" text-anchor="middle">scheduled by OS</text>
+  <rect x="990" y="241" width="125" height="84" rx="9" fill="#eef3f8" stroke="#5f6368" stroke-width="2"/>
+  <text class="label" x="1052" y="272" text-anchor="middle">OS thread</text>
+  <text class="small" x="1052" y="298" text-anchor="middle">scheduled by OS</text>
+
+  <!-- Lifecycle panel: four compact states show that identity survives unmounting. -->
+  <rect x="45" y="385" width="1110" height="330" rx="12" fill="#f1f8f3" stroke="#34834b" stroke-width="2"/>
+  <text class="section" x="75" y="423">Lifecycle: blocking can release the carrier without ending the virtual thread</text>
+
+  <rect x="75" y="456" width="235" height="168" rx="10" fill="#e8f0fe" stroke="#356eb3" stroke-width="2.5"/>
+  <text x="192" y="489" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#356eb3">1. Running</text>
+  <text class="code" x="192" y="522" text-anchor="middle">VT-A on carrier-1</text>
+  <text class="body" x="192" y="552" text-anchor="middle">The carrier executes</text>
+  <text class="body" x="192" y="575" text-anchor="middle">VT-A's Java code.</text>
+  <text class="small" x="192" y="606" text-anchor="middle">mounted</text>
+
+  <line x1="310" y1="540" x2="334" y2="540" stroke="#356eb3" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="333,529 350,540 333,551" fill="#356eb3"/>
+
+  <rect x="350" y="456" width="235" height="168" rx="10" fill="#fff4ce" stroke="#b7791f" stroke-width="2.5"/>
+  <text x="467" y="489" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#8a5a12">2. Blocking I/O</text>
+  <text class="code" x="467" y="522" text-anchor="middle">socket.read()</text>
+  <text class="body" x="467" y="552" text-anchor="middle">VT-A suspends and</text>
+  <text class="body" x="467" y="575" text-anchor="middle">unmounts while waiting.</text>
+  <text class="small" x="467" y="606" text-anchor="middle">carrier-1 becomes free</text>
+
+  <line x1="585" y1="540" x2="609" y2="540" stroke="#b7791f" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="608,529 625,540 608,551" fill="#b7791f"/>
+
+  <rect x="625" y="456" width="235" height="168" rx="10" fill="#f3e8fd" stroke="#7b1fa2" stroke-width="2.5"/>
+  <text x="742" y="489" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#7b1fa2">3. Carrier reused</text>
+  <text class="code" x="742" y="522" text-anchor="middle">VT-B on carrier-1</text>
+  <text class="body" x="742" y="552" text-anchor="middle">The scheduler runs</text>
+  <text class="body" x="742" y="575" text-anchor="middle">another ready task.</text>
+  <text class="small" x="742" y="606" text-anchor="middle">VT-A still exists</text>
+
+  <line x1="860" y1="540" x2="884" y2="540" stroke="#7b1fa2" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="883,529 900,540 883,551" fill="#7b1fa2"/>
+
+  <rect x="900" y="456" width="235" height="168" rx="10" fill="#d7f0df" stroke="#34834b" stroke-width="2.5"/>
+  <text x="1017" y="489" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#34834b">4. Resumed</text>
+  <text class="code" x="1017" y="522" text-anchor="middle">VT-A on carrier-2</text>
+  <text class="body" x="1017" y="552" text-anchor="middle">Data is ready; VT-A</text>
+  <text class="body" x="1017" y="575" text-anchor="middle">continues the same stack.</text>
+  <text class="small" x="1017" y="606" text-anchor="middle">same Thread identity</text>
+
+  <text class="label" x="600" y="666" text-anchor="middle">A carrier is a temporary execution vehicle, not the virtual thread's identity or parent.</text>
+  <text class="small" x="600" y="693" text-anchor="middle">Thread.currentThread() returns the virtual thread, even when it moves to another carrier.</text>
+</svg>
