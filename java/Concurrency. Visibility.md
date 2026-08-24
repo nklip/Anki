@@ -1,52 +1,56 @@
-# Visibility
+# Concurrency. Visibility
 
 ## Front
 
-What does **visibility** mean in Java concurrency?
+What does **visibility** mean in Java concurrency, and how is it guaranteed between threads?
 
 ## Back
 
-Visibility means that a value written by one thread becomes observable by another thread.
+**Visibility means that a write performed by one thread is guaranteed to be observable by another thread when the two actions are connected by a happens-before relationship.**
 
-Without synchronization, the Java Memory Model does not guarantee when—or whether—another thread will observe a write.
+![Unsynchronized access compared with publishing state through a volatile happens-before edge](svg/concurrency-visibility-happens-before.svg)
 
-### Visibility problem
+Read the diagram from left to right. In the upper case, wall-clock order is not enough: Thread B has no synchronization edge telling the Java Memory Model that it must observe Thread A's ordinary write. In the lower case, the volatile write and read form that edge.
 
-```java
-boolean ready = false;
-```
-
-**Thread A**
+### Safe publication example
 
 ```java
-ready = true;
-```
+final class Result {
+    private int answer;
+    private volatile boolean ready;
 
-**Thread B**
+    void publish() {
+        answer = 42;   // ordinary write
+        ready = true;  // volatile release write
+    }
 
-```java
-while (!ready) {
+    int readIfReady() {
+        if (!ready) {  // volatile acquire read
+            return -1;
+        }
+        return answer;
+    }
 }
 ```
 
-Thread B is not guaranteed to observe `true`. The compiler, JVM, CPU, and CPU caches may reuse or reorder values when no happens-before relationship exists.
+If `readIfReady()` observes `ready == true`, it must also observe the earlier `answer = 42`. This follows from one transitive path:
 
-### Visibility solution
+1. `answer = 42` happens-before `ready = true` through Thread A's program order.
+2. The volatile write to `ready` happens-before the subsequent volatile read of the **same field**.
+3. That read happens-before `return answer` through Thread B's program order.
 
-```java
-volatile boolean ready = false;
-```
+Without such ordering, conflicting reads and writes form a **data race**. A reader may observe an older value; in a plain `while (!ready) {}` loop, it is not guaranteed to observe the update and terminate.
 
-A write to a `volatile` variable **happens-before** every subsequent read of that same variable.
+Common happens-before edges include:
 
-Visibility can also be established by:
+- unlocking and then locking the same monitor;
+- writing and then subsequently reading the same volatile field;
+- calling `Thread.start()` before actions in the started thread;
+- a thread's actions before another thread successfully returns from `join()` on it.
 
-- Entering and leaving the same `synchronized` lock.
-- Locking and unlocking the same `Lock`.
-- Starting a thread with `Thread.start()`.
-- Waiting for a thread with `Thread.join()`.
-- Using concurrent classes such as `AtomicInteger`.
+> Visibility is not atomicity. Making `count` volatile makes individual reads and writes visible, but `count++` is still a non-atomic read-modify-write sequence.
 
-### Key idea
+## Sources
 
-**Visibility determines whether one thread can observe another thread's latest writes.**
+- [Java Language Specification, §17.4 — Memory Model](https://docs.oracle.com/javase/specs/jls/se26/html/jls-17.html#jls-17.4)
+- [Java Language Specification, §17.4.4–§17.4.5 — Synchronization and Happens-before Order](https://docs.oracle.com/javase/specs/jls/se26/html/jls-17.html#jls-17.4.4)

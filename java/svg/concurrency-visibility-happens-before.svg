@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title description">
+  <title id="title">Visibility requires a happens-before path</title>
+  <desc id="description">The upper comparison has no happens-before edge, so a reader is not guaranteed to observe an ordinary write. The lower sequence publishes answer 42 through a volatile ready flag, so a reader that observes ready true is guaranteed to see answer 42.</desc>
+
+  <!-- Shared styles keep typography and semantic colors consistent with nearby concurrency diagrams. -->
+  <defs>
+    <style>
+      .title { font: 700 28px Arial, Helvetica, sans-serif; fill: #202124; }
+      .subtitle { font: 400 17px Arial, Helvetica, sans-serif; fill: #5f6368; }
+      .section { font: 700 21px Arial, Helvetica, sans-serif; fill: #202124; }
+      .label { font: 700 17px Arial, Helvetica, sans-serif; fill: #202124; }
+      .body { font: 400 16px Arial, Helvetica, sans-serif; fill: #3c4043; }
+      .small { font: 600 14px Arial, Helvetica, sans-serif; fill: #5f6368; }
+      .code { font: 700 18px "Courier New", monospace; fill: #202124; }
+    </style>
+  </defs>
+
+  <!-- Background and lesson statement. -->
+  <rect width="1200" height="700" fill="#ffffff"/>
+  <text class="title" x="600" y="42" text-anchor="middle">Visibility: a happens-before path carries earlier writes</text>
+  <text class="subtitle" x="600" y="72" text-anchor="middle">Read left to right; compare an unsynchronized read with a correctly published read.</text>
+
+  <!-- Unsynchronized comparison: the crossed relation is intentionally not an arrow. -->
+  <rect x="45" y="100" width="1110" height="215" rx="12" fill="#fdf3f2" stroke="#d93025" stroke-width="2"/>
+  <text class="section" x="75" y="137">Without synchronization: no visibility guarantee</text>
+
+  <rect x="85" y="162" width="330" height="105" rx="9" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <text class="label" x="250" y="194" text-anchor="middle">Thread A — writer</text>
+  <text class="code" x="250" y="229" text-anchor="middle">answer = 42;</text>
+  <text class="small" x="250" y="253" text-anchor="middle">ordinary write</text>
+
+  <text x="600" y="199" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#d93025">no happens-before edge</text>
+  <line x1="535" y1="229" x2="665" y2="229" stroke="#d93025" stroke-width="4" stroke-dasharray="9 8"/>
+  <line x1="585" y1="214" x2="615" y2="244" stroke="#d93025" stroke-width="5" stroke-linecap="round"/>
+  <line x1="615" y1="214" x2="585" y2="244" stroke="#d93025" stroke-width="5" stroke-linecap="round"/>
+
+  <rect x="785" y="162" width="330" height="105" rx="9" fill="#fff4ce" stroke="#b7791f" stroke-width="2"/>
+  <text class="label" x="950" y="194" text-anchor="middle">Thread B — reader</text>
+  <text class="code" x="950" y="229" text-anchor="middle">print(answer);</text>
+  <text class="small" x="950" y="253" text-anchor="middle">may observe 0 or 42</text>
+  <text class="body" x="600" y="296" text-anchor="middle">Wall-clock timing alone does not make Thread A's write visible to Thread B.</text>
+
+  <!-- Correct publication sequence; every arrowhead stops at the next box boundary. -->
+  <rect x="45" y="340" width="1110" height="315" rx="12" fill="#f1f8f3" stroke="#34834b" stroke-width="2"/>
+  <text class="section" x="75" y="377">With a volatile edge: earlier writes become visible</text>
+
+  <rect x="70" y="410" width="230" height="92" rx="9" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <text class="label" x="185" y="439" text-anchor="middle">1. Ordinary write</text>
+  <text class="code" x="185" y="472" text-anchor="middle">answer = 42;</text>
+  <text class="small" x="185" y="493" text-anchor="middle">Thread A</text>
+
+  <!-- First shaft ends beneath its separate head; the tip meets the release box. -->
+  <line x1="300" y1="456" x2="334" y2="456" stroke="#356eb3" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="333,445 350,456 333,467" fill="#356eb3"/>
+
+  <rect x="350" y="410" width="235" height="92" rx="9" fill="#fce8e6" stroke="#d93025" stroke-width="2.5"/>
+  <text x="467" y="439" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#d93025">2. Release</text>
+  <text class="code" x="467" y="472" text-anchor="middle">ready = true;</text>
+  <text class="small" x="467" y="493" text-anchor="middle">volatile write</text>
+
+  <!-- Purple connector is the cross-thread synchronizes-with edge; labels stay below its shaft. -->
+  <line x1="585" y1="456" x2="634" y2="456" stroke="#7b1fa2" stroke-width="6" stroke-linecap="round"/>
+  <polygon points="633,444 650,456 633,468" fill="#7b1fa2"/>
+  <text x="618" y="526" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="bold" fill="#7b1fa2">same volatile field = happens-before</text>
+
+  <rect x="650" y="410" width="235" height="92" rx="9" fill="#e6f4ea" stroke="#34834b" stroke-width="2.5"/>
+  <text x="767" y="439" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#34834b">3. Acquire</text>
+  <text class="code" x="767" y="472" text-anchor="middle">read ready == true</text>
+  <text class="small" x="767" y="493" text-anchor="middle">Thread B volatile read</text>
+
+  <!-- Final shaft ends beneath its head; the tip meets the guaranteed-result box. -->
+  <line x1="885" y1="456" x2="904" y2="456" stroke="#34834b" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="903,445 920,456 903,467" fill="#34834b"/>
+
+  <rect x="920" y="410" width="205" height="92" rx="9" fill="#d7f0df" stroke="#34834b" stroke-width="2.5"/>
+  <text class="label" x="1022" y="439" text-anchor="middle">4. Guaranteed</text>
+  <text class="code" x="1022" y="472" text-anchor="middle">answer == 42</text>
+  <text class="small" x="1022" y="493" text-anchor="middle">earlier write is visible</text>
+
+  <!-- Summary explains why the volatile flag publishes the ordinary answer field. -->
+  <rect x="170" y="555" width="860" height="70" rx="10" fill="#ffffff" stroke="#34834b" stroke-width="2"/>
+  <text class="label" x="600" y="584" text-anchor="middle">Program order + volatile edge + program order = one happens-before path</text>
+  <text class="body" x="600" y="609" text-anchor="middle">When Thread B observes ready == true, Thread A's earlier answer = 42 is visible.</text>
+
+  <text class="small" x="600" y="682" text-anchor="middle">Visibility orders observations; it does not make compound actions such as count++ atomic.</text>
+</svg>
