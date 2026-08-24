@@ -122,16 +122,18 @@
   <text x="555" y="704" font-family="sans-serif" font-size="21" font-weight="bold" fill="#1d4f82">2. Empty-bin insertion</text>
   <rect x="565" y="735" width="115" height="52" rx="4" fill="white" stroke="#2f6fad"/>
   <rect x="710" y="735" width="120" height="52" rx="4" fill="white" stroke="#2f6fad"/>
-  <rect x="860" y="735" width="75" height="52" rx="4" fill="white" stroke="#2f6fad"/>
+  <!-- Outcome box covers both CAS branches; retry occurs only after failure. -->
+  <rect id="empty-bin-cas-outcome" x="845" y="735" width="100" height="52" rx="4" fill="white" stroke="#2f6fad"/>
   <text x="622" y="758" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">observe</text>
   <text x="622" y="777" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">empty slot</text>
   <text x="770" y="758" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">CAS null →</text>
   <text x="770" y="777" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">new node</text>
-  <text x="897" y="767" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#333">retry</text>
+  <text x="895" y="758" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">success</text>
+  <text x="895" y="777" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#333">or retry</text>
   <path d="M686 761H700" fill="none" stroke="#555" stroke-width="2"/>
   <polygon points="707,761 699,756.5 699,765.5" fill="#555"/>
-  <path d="M836 761H850" fill="none" stroke="#555" stroke-width="2"/>
-  <polygon points="857,761 849,756.5 849,765.5" fill="#555"/>
+  <path d="M836 761H837" fill="none" stroke="#555" stroke-width="2"/>
+  <polygon points="844,761 836,756.5 836,765.5" fill="#555"/>
   <text x="750" y="825" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#1d4f82">CAS fast path</text>
   <text x="750" y="852" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">Successful insertion needs no bin monitor</text>
   <text x="750" y="878" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">A losing thread observes state and retries</text>

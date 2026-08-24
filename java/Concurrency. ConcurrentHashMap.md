@@ -1,4 +1,4 @@
-# ConcurrentHashMap in Modern Java
+# ConcurrentHashMap
 
 ## Front
 
@@ -6,22 +6,36 @@ How does `ConcurrentHashMap` work in modern Java, which operations are atomic, w
 
 ## Back
 
-`ConcurrentHashMap<K,V>` is a thread-safe hash table that supports:
+**ConcurrentHashMap** was introduced in **Java 5 (JDK 1.5)** as a thread-safe hash table for concurrent retrievals and updates.
+
+`ConcurrentHashMap<K,V>` is usually the right general-purpose map when many threads share key-value state. Retrievals such as `get()` generally do not block; updates combine atomic compare-and-set (CAS) operations with fine-grained coordination. Atomic methods such as `putIfAbsent`, `compute`, and `merge` protect one mapping operation, but they do not create a transaction across the whole map.
+
+The first diagram explains bins and update coordination. The second contrasts a broken compound update with an atomic per-key update. The third shows how threads cooperate during resizing.
+
+It supports:
 
 - Full concurrency for retrievals such as `get()`.
 - High expected concurrency for updates.
 - Atomic conditional and per-key compound operations.
 - Traversal while other threads update the map.
 
-It is normally the default map for shared, concurrently accessed key-value state when sorted ordering is not required.
+It provides no sorted order and no atomic whole-map snapshot.
 
 ```java
-ConcurrentHashMap<String, User> users =
-        new ConcurrentHashMap<>();
+import java.util.concurrent.ConcurrentHashMap;
 
-users.put("alice", new User("Alice"));
+public final class ConcurrentHashMapBasics {
+    public static void main(String[] args) {
+        ConcurrentHashMap<String, Integer> counts =
+                new ConcurrentHashMap<>();
 
-User user = users.get("alice");
+        counts.put("apple", 1);
+        counts.merge("apple", 1, Integer::sum);
+
+        System.out.println(counts.get("apple")); // 2
+        System.out.println(counts.get("pear"));  // null
+    }
+}
 ```
 
 Important properties:
@@ -41,7 +55,7 @@ Important properties:
 
 ![ConcurrentHashMap internal structure](svg/concurrenthashmap-internal-structure.svg)
 
-Modern `ConcurrentHashMap` does **not** use the fixed `Segment[]` design from Java 7 and earlier.
+The JDK 7 implementation used a fixed `Segment[]` array. Since Java 8, OpenJDK uses one table of bins instead; the old segment-shaped serialized fields remain only for compatibility.
 
 Conceptually, it contains a power-of-two array of bins:
 
@@ -56,6 +70,7 @@ table[3] → TreeBin containing tree nodes
 A mapping is stored in a node containing approximately:
 
 ```java
+// Conceptual fragment based on the current OpenJDK Node class.
 final int hash;
 final K key;
 volatile V value;
@@ -95,6 +110,8 @@ Return current value or null
 ```
 
 The implementation uses volatile/acquire reads and safely published nodes. A reader can overlap writers and resizing activity.
+
+`get(key)` must reflect an update for that key that completed before the retrieval began. When a retrieval overlaps an update, it may legally observe the mapping before or after that update, according to their concurrent timing.
 
 `get()` is therefore **non-blocking in the ordinary map-locking sense**, but that statement does not make it formally lock-free under every JVM or application condition. For example, user-defined `hashCode()` or `equals()` can execute arbitrary code.
 
@@ -139,6 +156,7 @@ Different keys can still contend when their hashes place them in the same bin. A
 This constructor still exists for compatibility:
 
 ```java
+// Constructor shape; concurrencyLevel is not a segment count.
 new ConcurrentHashMap<>(
         initialCapacity,
         loadFactor,
@@ -182,6 +200,7 @@ Thread safety of individual methods does not make an arbitrary sequence of calls
 ### Broken check-then-act
 
 ```java
+// Conceptual fragment: Value and createValue() are application code.
 if (!map.containsKey(key)) {
     map.put(key, createValue());
 }
@@ -192,12 +211,14 @@ Two threads can both observe that the key is absent, create two values, and over
 Use:
 
 ```java
+// Conceptual fragment.
 Value existing = map.putIfAbsent(key, candidate);
 ```
 
 If value creation should happen only when the key is absent:
 
 ```java
+// Conceptual fragment.
 Value value = map.computeIfAbsent(
         key,
         ignored -> createValue()
@@ -209,6 +230,7 @@ Value value = map.computeIfAbsent(
 Broken counter:
 
 ```java
+// Conceptual fragment.
 Integer current = counts.get(word);
 counts.put(word, current + 1);
 ```
@@ -218,12 +240,14 @@ Two threads can read the same value and both publish the same incremented value.
 Atomic alternative:
 
 ```java
+// Conceptual fragment.
 counts.merge(word, 1, Integer::sum);
 ```
 
 or:
 
 ```java
+// Conceptual fragment.
 counts.compute(word, (key, current) ->
         current == null ? 1 : current + 1
 );
@@ -246,6 +270,7 @@ Returning `null` from `compute`, `computeIfPresent`, or the `merge` remapping fu
 ### Atomic per key does not mean one transaction across keys
 
 ```java
+// Conceptual fragment: each call is atomic only for its own mapping.
 map.compute("debit",  (k, v) -> v - 100);
 map.compute("credit", (k, v) -> v + 100);
 ```
@@ -261,12 +286,14 @@ Methods such as `computeIfAbsent`, `compute`, and `merge` may prevent some compe
 Good:
 
 ```java
+// Conceptual fragment.
 cache.computeIfAbsent(key, this::loadQuickly);
 ```
 
 Potentially dangerous:
 
 ```java
+// Conceptual fragment: do not block or update other mappings here.
 cache.computeIfAbsent(key, ignored -> {
     callSlowRemoteService();
     waitForAnotherThread();
@@ -275,23 +302,42 @@ cache.computeIfAbsent(key, ignored -> {
 });
 ```
 
-The API requires mapping functions not to modify the map during the computation. Detectable recursive updates that would never complete can produce `IllegalStateException`.
+The remapping-function contracts require the computation to be short and simple. `compute` forbids modifying this map from its remapping function; the other remapping methods likewise forbid attempts to update other mappings from inside the function. A detectable recursive update that would never complete can throw `IllegalStateException`.
 
 A function passed to `computeIfAbsent` is invoked at most once **for that method invocation** when the key is absent. If it throws or returns `null`, a later invocation may execute it again.
 
-Do not place non-idempotent external side effects inside a remapping function unless the surrounding design explicitly tolerates retries, failures, and contention.
+Do not place non-idempotent external side effects inside a remapping function unless the surrounding design tolerates exceptions, later calls, and contention.
 
 ## Scalable frequency map
 
-For a highly contended histogram, store `LongAdder` values:
+For a highly contended histogram, store `LongAdder` values. This complete example follows the pattern recommended by the API:
 
 ```java
-ConcurrentHashMap<String, LongAdder> frequencies =
-        new ConcurrentHashMap<>();
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.LongAdder;
 
-frequencies
-        .computeIfAbsent(word, ignored -> new LongAdder())
-        .increment();
+public final class FrequencyCounter {
+    private final ConcurrentHashMap<String, LongAdder> frequencies =
+            new ConcurrentHashMap<>();
+
+    public void record(String word) {
+        frequencies
+                .computeIfAbsent(word, ignored -> new LongAdder())
+                .increment();
+    }
+
+    public long count(String word) {
+        LongAdder counter = frequencies.get(word);
+        return counter == null ? 0L : counter.sum();
+    }
+
+    public static void main(String[] args) {
+        FrequencyCounter counter = new FrequencyCounter();
+        counter.record("java");
+        counter.record("java");
+        System.out.println(counter.count("java")); // 2
+    }
+}
 ```
 
 Why not repeatedly replace an `Integer`?
@@ -315,6 +361,7 @@ The value object still has its own concurrency semantics. `ConcurrentHashMap` ma
 For a particular key, an update happens-before a subsequent non-null retrieval that reports the updated value.
 
 ```java
+// Conceptual producer fragment.
 Payload payload = new Payload();
 payload.initialize();
 
@@ -324,6 +371,7 @@ map.put("job", payload);
 Another thread:
 
 ```java
+// Conceptual consumer fragment.
 Payload payload = map.get("job");
 
 if (payload != null) {
@@ -348,6 +396,7 @@ consume initialized state
 This safely publishes the state that existed before insertion. It does not make later unsynchronized mutations of `Payload` safe:
 
 ```java
+// Conceptual fragment: the value object needs its own safety policy.
 map.get("job").mutableField++;
 ```
 
@@ -356,6 +405,7 @@ The mutable object needs its own synchronization, immutability, atomic fields, o
 ## Iteration is weakly consistent
 
 ```java
+// Conceptual fragment: concurrent updates may overlap this loop.
 for (Map.Entry<String, User> entry : users.entrySet()) {
     process(entry);
 }
@@ -394,6 +444,7 @@ If a stable snapshot is required, copy the map using an application-level synchr
 During concurrent updates, methods such as:
 
 ```java
+// Conceptual examples of transient aggregate observations.
 map.size();
 map.isEmpty();
 map.containsValue(value);
@@ -405,6 +456,7 @@ may reflect transient state. They are useful for monitoring and estimation but s
 Broken assumption:
 
 ```java
+// Conceptual fragment: another thread can insert after size().
 if (map.size() < limit) {
     map.put(key, value);
 }
@@ -425,6 +477,7 @@ Another thread can insert between the check and update. The map does not make th
 Example:
 
 ```java
+// Conceptual fragment: counts contains LongAdder values.
 long total = counts.reduceValuesToLong(
         10_000,
         LongAdder::sum,
@@ -449,14 +502,7 @@ For small maps or cheap functions, parallel overhead may be greater than the sav
 
 The table is normally resized when its occupancy crosses an internal threshold corresponding roughly to a 0.75 load factor.
 
-Modern resizing is cooperative:
-
-1. A replacement table, normally twice as large, is allocated.
-2. Threads claim ranges of old-bin indexes.
-3. Each claimed bin is split and transferred.
-4. The old slot is replaced with a `ForwardingNode`.
-5. Operations encountering that node follow it to the new table.
-6. Other threads may join and help complete the transfer.
+Modern resizing is cooperative. A replacement table, normally twice as large, is allocated. Threads claim disjoint ranges of old bins, split and transfer them, and replace transferred old slots with `ForwardingNode` markers. An operation that encounters one continues in the new table, and additional updater threads can help finish the transfer.
 
 ```text
 old table bin i
@@ -471,6 +517,7 @@ Resizing does not require freezing all retrievals behind one global table lock. 
 When a reliable size estimate is available, provide `initialCapacity`:
 
 ```java
+// Conceptual sizing example.
 ConcurrentHashMap<String, User> users =
         new ConcurrentHashMap<>(expectedUsers);
 ```
@@ -480,6 +527,7 @@ The constructor interprets this as the expected number of mappings to accommodat
 ## Why `null` is forbidden
 
 ```java
+// Conceptual examples; both calls throw NullPointerException.
 map.put(null, value); // NullPointerException
 map.put(key, null);   // NullPointerException
 ```
@@ -487,6 +535,7 @@ map.put(key, null);   // NullPointerException
 With concurrent access, `get(key) == null` must unambiguously mean that no mapping was observed:
 
 ```java
+// Conceptual fragment.
 Value value = map.get(key);
 
 if (value == null) {
@@ -503,6 +552,7 @@ Use `Optional`, a sentinel object, or a domain-specific representation when “p
 Create a concurrent set backed by a `ConcurrentHashMap`:
 
 ```java
+// Conceptual key-set example.
 Set<String> onlineUsers =
         ConcurrentHashMap.newKeySet();
 
@@ -513,6 +563,7 @@ onlineUsers.remove("bob");
 You can also obtain a key-set view whose additions map every key to a common value:
 
 ```java
+// Conceptual key-set view example.
 ConcurrentHashMap<String, Boolean> map =
         new ConcurrentHashMap<>();
 
@@ -540,13 +591,12 @@ keys.add("alice");
 
 ## Comparison
 
-| Map | Concurrent access | Nulls | Ordering | Iteration during updates | Main coordination |
-|---|---|---|---|---|---|
-| `HashMap` | No | Yes | None | Fail-fast best effort | External if shared |
-| `Hashtable` | Yes | No | None | Coarse synchronized methods | One object monitor |
-| `Collections.synchronizedMap` | Yes with its protocol | Depends on delegate | Depends on delegate | Traversal requires external synchronization | One wrapper monitor |
-| `ConcurrentHashMap` | Yes | No | None | Weakly consistent | CAS plus per-bin coordination |
-| `ConcurrentSkipListMap` | Yes | No | Sorted | Weakly consistent | Concurrent skip-list algorithm |
+| Map | Shared mutation | Nulls | Ordering | Traversal during updates |
+|---|---|---|---|---|
+| `HashMap` | Requires external coordination | Yes | None | Do not traverse while unsafely mutating |
+| `Collections.synchronizedMap` | Yes, using the wrapper's protocol | Depends on delegate | Depends on delegate | Manually synchronize on the wrapper while traversing |
+| `ConcurrentHashMap` | Yes | No | None | Weakly consistent |
+| `ConcurrentSkipListMap` | Yes | No | Sorted | Weakly consistent |
 
 ## Common misconceptions
 
@@ -567,6 +617,7 @@ False for modern Java. The old segment design was replaced in Java 8. The `concu
 False:
 
 ```java
+// Conceptual broken check-then-act sequence.
 if (map.get(key) == null) {
     map.put(key, value);
 }
@@ -586,8 +637,11 @@ False. The map safely coordinates and publishes mappings; mutable values require
 
 > Modern `ConcurrentHashMap` is a power-of-two table of bins, not a segmented map. Reads generally use volatile/acquire access and do not lock. An insertion into an empty bin usually uses CAS; updates to an occupied bin coordinate at bin granularity, allowing unrelated bins to update concurrently. Collision-heavy bins can become balanced trees. Atomic methods such as `putIfAbsent`, `compute`, and `merge` prevent per-key check-then-act races, but they do not create transactions across keys. Iterators are weakly consistent, aggregate counts may be transient during mutation, and successful per-key publication establishes the required visibility for a retrieval that observes the value. Resizing is cooperative: threads transfer bin ranges and leave forwarding nodes that redirect operations to the new table.
 
-## Official references
+## Sources
 
-- [Java 26 API: ConcurrentHashMap](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html)
-- [Java 26 API: ConcurrentMap](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/ConcurrentMap.html)
-- [Current OpenJDK ConcurrentHashMap source](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/concurrent/ConcurrentHashMap.java)
+- [Java SE 26 `ConcurrentHashMap` API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html)
+- [Java SE 26 `ConcurrentMap` API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/ConcurrentMap.html)
+- [Java SE 26 `java.util.concurrent` package summary — memory consistency](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/package-summary.html#MemoryVisibility)
+- [Current OpenJDK `ConcurrentHashMap.java` source](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/concurrent/ConcurrentHashMap.java)
+- [OpenJDK 7 `ConcurrentHashMap.java` — legacy segmented implementation](https://github.com/openjdk/jdk7u/blob/master/jdk/src/share/classes/java/util/concurrent/ConcurrentHashMap.java)
+- [OpenJDK 8 `ConcurrentHashMap.java` — bin-based redesign](https://github.com/openjdk/jdk8u/blob/master/jdk/src/share/classes/java/util/concurrent/ConcurrentHashMap.java)
