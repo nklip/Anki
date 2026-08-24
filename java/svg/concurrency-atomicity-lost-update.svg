@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="820" viewBox="0 0 1500 820" role="img" aria-labelledby="title description">
+  <title id="title">Atomicity prevents lost updates</title>
+  <desc id="description">Two threads increment a counter. When count plus plus is split into reads and writes, both threads can read zero and the final value is one. With atomic increments, one complete update follows the other and the final value is two.</desc>
+
+  <!-- Background and lesson statement -->
+  <rect width="1500" height="820" fill="white"/>
+  <text x="750" y="52" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="bold" fill="#111">Atomicity prevents lost updates</text>
+  <text x="750" y="88" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#444">Two threads increment the same counter once: the whole read–modify–write must be indivisible</text>
+
+  <!-- Non-atomic panel: four separately interleaved actions -->
+  <g id="non-atomic-path">
+    <rect x="40" y="125" width="690" height="565" rx="10" fill="#fff4f2" stroke="#b94a43" stroke-width="3"/>
+    <path d="M40 190H730" stroke="#b94a43" stroke-width="3"/>
+    <text x="385" y="168" text-anchor="middle" font-family="sans-serif" font-size="27" font-weight="bold" fill="#98372f">Non-atomic: count++ is split</text>
+
+    <rect x="190" y="218" width="390" height="62" rx="7" fill="white" stroke="#777" stroke-width="2"/>
+    <text x="385" y="257" text-anchor="middle" font-family="monospace" font-size="22" font-weight="bold" fill="#333">shared count = 0</text>
+    <text x="385" y="312" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#98372f">Possible interleaving, read left → right</text>
+
+    <rect x="65" y="335" width="140" height="105" rx="7" fill="white" stroke="#b94a43" stroke-width="2"/>
+    <text x="135" y="374" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">1. A reads</text>
+    <text x="135" y="414" text-anchor="middle" font-family="monospace" font-size="29" font-weight="bold" fill="#98372f">0</text>
+
+    <rect x="225" y="335" width="140" height="105" rx="7" fill="white" stroke="#b94a43" stroke-width="2"/>
+    <text x="295" y="374" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">2. B reads</text>
+    <text x="295" y="414" text-anchor="middle" font-family="monospace" font-size="29" font-weight="bold" fill="#98372f">0</text>
+
+    <rect x="385" y="335" width="140" height="105" rx="7" fill="white" stroke="#b94a43" stroke-width="2"/>
+    <text x="455" y="374" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">3. A writes</text>
+    <text x="455" y="414" text-anchor="middle" font-family="monospace" font-size="29" font-weight="bold" fill="#98372f">1</text>
+
+    <rect x="545" y="335" width="140" height="105" rx="7" fill="white" stroke="#b94a43" stroke-width="2"/>
+    <text x="615" y="374" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">4. B writes</text>
+    <text x="615" y="414" text-anchor="middle" font-family="monospace" font-size="29" font-weight="bold" fill="#98372f">1</text>
+
+    <!-- Short shafts stay in the gutters; each separate head stops before its target. -->
+    <path d="M207 387H210" stroke="#666" stroke-width="4"/>
+    <polygon points="223,387 210,379 210,395" fill="#666"/>
+    <path d="M367 387H370" stroke="#666" stroke-width="4"/>
+    <polygon points="383,387 370,379 370,395" fill="#666"/>
+    <path d="M527 387H530" stroke="#666" stroke-width="4"/>
+    <polygon points="543,387 530,379 530,395" fill="#666"/>
+
+    <rect x="120" y="485" width="530" height="105" rx="8" fill="#b94a43"/>
+    <text x="385" y="526" text-anchor="middle" font-family="sans-serif" font-size="23" font-weight="bold" fill="white">Final count = 1, but two increments ran</text>
+    <text x="385" y="562" text-anchor="middle" font-family="sans-serif" font-size="18" fill="white">B overwrites A’s result: one update is lost.</text>
+    <text x="385" y="637" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#555">An individual read or write does not protect the whole sequence.</text>
+  </g>
+
+  <!-- Atomic panel: complete increments form one-at-a-time state transitions -->
+  <g id="atomic-path">
+    <rect x="770" y="125" width="690" height="565" rx="10" fill="#eff8f0" stroke="#4d8758" stroke-width="3"/>
+    <path d="M770 190H1460" stroke="#4d8758" stroke-width="3"/>
+    <text x="1115" y="168" text-anchor="middle" font-family="sans-serif" font-size="27" font-weight="bold" fill="#35623e">Atomic: each increment is one action</text>
+
+    <rect x="920" y="218" width="390" height="62" rx="7" fill="white" stroke="#777" stroke-width="2"/>
+    <text x="1115" y="257" text-anchor="middle" font-family="monospace" font-size="22" font-weight="bold" fill="#333">AtomicInteger count = 0</text>
+    <text x="1115" y="312" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#35623e">Complete state changes, read left → right</text>
+
+    <rect x="795" y="335" width="140" height="105" rx="7" fill="white" stroke="#4d8758" stroke-width="2"/>
+    <text x="865" y="374" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">Start</text>
+    <text x="865" y="414" text-anchor="middle" font-family="monospace" font-size="29" font-weight="bold" fill="#35623e">0</text>
+
+    <rect x="955" y="335" width="140" height="105" rx="7" fill="white" stroke="#4d8758" stroke-width="2"/>
+    <text x="1025" y="374" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">A increments</text>
+    <text x="1025" y="414" text-anchor="middle" font-family="monospace" font-size="24" font-weight="bold" fill="#35623e">0 → 1</text>
+
+    <rect x="1115" y="335" width="140" height="105" rx="7" fill="white" stroke="#4d8758" stroke-width="2"/>
+    <text x="1185" y="374" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#333">B increments</text>
+    <text x="1185" y="414" text-anchor="middle" font-family="monospace" font-size="24" font-weight="bold" fill="#35623e">1 → 2</text>
+
+    <rect x="1275" y="335" width="140" height="105" rx="7" fill="#4d8758" stroke="#4d8758" stroke-width="2"/>
+    <text x="1345" y="374" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="white">Final</text>
+    <text x="1345" y="414" text-anchor="middle" font-family="monospace" font-size="29" font-weight="bold" fill="white">2</text>
+
+    <!-- Short shafts stay in the gutters; arrowheads do not enter destination boxes. -->
+    <path d="M937 387H940" stroke="#4d8758" stroke-width="4"/>
+    <polygon points="953,387 940,379 940,395" fill="#4d8758"/>
+    <path d="M1097 387H1100" stroke="#4d8758" stroke-width="4"/>
+    <polygon points="1113,387 1100,379 1100,395" fill="#4d8758"/>
+    <path d="M1257 387H1260" stroke="#4d8758" stroke-width="4"/>
+    <polygon points="1273,387 1260,379 1260,395" fill="#4d8758"/>
+
+    <rect x="850" y="485" width="530" height="105" rx="8" fill="#4d8758"/>
+    <text x="1115" y="526" text-anchor="middle" font-family="sans-serif" font-size="23" font-weight="bold" fill="white">Final count = 2: no update is lost</text>
+    <text x="1115" y="562" text-anchor="middle" font-family="sans-serif" font-size="18" fill="white">No thread can interrupt a single atomic increment.</text>
+    <text x="1115" y="637" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#555">The execution order may vary; each whole increment remains indivisible.</text>
+  </g>
+
+  <!-- Bottom takeaway; keep centered inside the safe area. -->
+  <rect x="190" y="720" width="1120" height="70" rx="8" fill="#f7f7f7" stroke="#777" stroke-width="2"/>
+  <text x="750" y="750" text-anchor="middle" font-family="sans-serif" font-size="21" font-weight="bold" fill="#333">Atomicity belongs to the complete operation, not its source-code line or variable name.</text>
+  <text x="750" y="777" text-anchor="middle" font-family="sans-serif" font-size="17" fill="#555">Visibility can expose each read and write without combining read + add + write into one action.</text>
+</svg>
