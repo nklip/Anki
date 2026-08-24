@@ -1,4 +1,4 @@
-# ConcurrentLinkedQueue in Modern Java
+# ConcurrentLinkedQueue
 
 ## Front
 
@@ -6,283 +6,249 @@ How does `ConcurrentLinkedQueue` work, what guarantees does it provide, and when
 
 ## Back
 
-`ConcurrentLinkedQueue<E>` is a thread-safe, unbounded, non-blocking FIFO queue based on linked nodes.
+**ConcurrentLinkedQueue** was introduced in **Java 5 (JDK 1.5)** as an unbounded, thread-safe, non-blocking FIFO queue.
+
+Use it when many threads must add and remove elements concurrently and an empty consumer should return immediately. It does **not** wait for elements, enforce a capacity, or provide backpressure. The first diagram explains its linked-node model; the second shows where `offer()` and `poll()` logically take effect.
+
+## Mental model
+
+`ConcurrentLinkedQueue<E>` is a shared line:
+
+- `offer(e)` appends `e` at the **tail**.
+- `poll()` removes and returns the **head**, or returns `null` when empty.
+- `peek()` returns the head without removing it, or returns `null` when empty.
+- Producers and consumers coordinate without one lock around the whole queue.
+
+| Property | Meaning |
+|---|---|
+| Order | FIFO: the longest-waiting element is removed first |
+| Capacity | Unbounded; producers can outrun consumers |
+| Empty retrieval | `poll()` returns `null` immediately |
+| `null` elements | Forbidden, so `null` unambiguously means “empty” |
+| Progress | Non-blocking/lock-free algorithm; not wait-free |
+| Iterator | Weakly consistent, not a frozen snapshot |
+| `size()` | O(n) traversal and possibly inaccurate during changes |
+
+This complete example uses the basic API:
 
 ```java
-Queue<String> queue = new ConcurrentLinkedQueue<>();
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-queue.offer("A");
-queue.offer("B");
+public final class ConcurrentLinkedQueueBasics {
+    public static void main(String[] args) {
+        ConcurrentLinkedQueue<String> queue =
+                new ConcurrentLinkedQueue<>();
 
-String first = queue.poll(); // A
-String next = queue.peek();  // B remains in the queue
+        queue.offer("A");
+        queue.offer("B");
+
+        System.out.println(queue.peek()); // A; A remains queued
+        System.out.println(queue.poll()); // A
+        System.out.println(queue.poll()); // B
+        System.out.println(queue.poll()); // null; no waiting
+    }
+}
 ```
 
-It is designed for many producers and consumers that need to exchange elements without a global queue lock.
+Because the queue is unbounded, `offer(e)` returns `true`; `offer(null)` throws `NullPointerException`.
 
-## Main properties
+## Linked-node organization
 
-| Property | Behavior |
-|---|---|
-| Ordering | FIFO |
-| Capacity | Unbounded |
-| Thread safety | Concurrent producers and consumers are supported |
-| Coordination | Lock-free algorithm using CAS |
-| `null` elements | Not allowed |
-| `offer(e)` | Appends and normally returns `true` |
-| `poll()` | Removes the head, or returns `null` when empty |
-| `peek()` | Reads the head without removing it |
-| Blocking operations | None — no `put()` or `take()` |
-| Iterator | Weakly consistent |
-| `size()` | O(n), and may be inaccurate during concurrent changes |
+![ConcurrentLinkedQueue linked-node organization](svg/concurrentlinkedqueue-structure.svg)
 
-Because `null` elements are forbidden, `poll()` can use `null` unambiguously to mean that no element was available.
-
-## Internal organization
-
-![ConcurrentLinkedQueue internal organization](svg/concurrentlinkedqueue-structure.svg)
-
-Conceptually, the queue is a singly linked chain:
+Conceptually, live elements occupy a singly linked chain:
 
 ```text
-head → Node → Node → Node → null
-                          ↑
-                         tail
+head side → A → B → C → null ← tail side
+             poll()      offer()
 ```
 
-In the current OpenJDK implementation, a node contains approximately:
+In the current OpenJDK implementation, a node is approximately:
 
 ```java
-class Node<E> {
+// Conceptual fragment based on the OpenJDK implementation.
+final class Node<E> {
     volatile E item;
     volatile Node<E> next;
 }
 ```
 
-The queue also maintains volatile `head` and `tail` references.
+The queue also has volatile `head` and `tail` references. These references are **traversal hints**:
 
-These details explain the implementation; they are not public API contracts that application code should depend on.
+- `head` may point to a node whose element has already been removed.
+- `tail` may lag behind the actual final node.
+- Operations follow `next` links and can help advance stale hints.
+- A live element remains reachable even while hints are being updated.
 
-## Why `head` and `tail` are only hints
+Allowing a hint to lag avoids an extra contested update on every operation. These details explain the current OpenJDK implementation; they are not public fields or application-level API promises.
 
-`head` and `tail` do not always point to the first and last physical nodes at every instant.
+## Compare-and-set (CAS)
 
-- `head` may temporarily point to a node whose `item` is already `null`.
-- `tail` may temporarily lag behind the actual last linked node.
-- Operations follow `next` links to find the required live node.
-- Threads may help advance stale `head` or `tail` references.
-
-Correctness depends on the node and item CAS operations, not on immediately updating the hints.
-
-Allowing these references to lag reduces contention: every operation does not need to win another CAS merely to update an optimization pointer.
-
-## Compare-and-set
-
-CAS means **compare-and-set**:
+CAS is one atomic conditional update:
 
 ```text
 if current value == expected value:
-    replace it with the new value atomically
+    replace it with the new value and succeed
 else:
-    report failure
+    leave it unchanged and fail
 ```
 
-A failed CAS means that another thread changed the observed state first. The operation reads the new state and retries.
+A failed CAS means the observed state changed before this thread could update it. The operation rereads the structure and retries. It does not mean that the queue is corrupted.
 
-## How `offer()` works
+## How `offer()` and `poll()` take effect
 
-![ConcurrentLinkedQueue offer and poll workflow](svg/concurrentlinkedqueue-offer-poll.svg)
+![ConcurrentLinkedQueue offer and poll CAS workflows](svg/concurrentlinkedqueue-offer-poll.svg)
 
-Conceptually, `offer(element)`:
+In the current OpenJDK implementation, `offer(element)`:
 
-1. Rejects `null`.
-2. Creates a new node containing the element.
-3. Starts from the `tail` hint and follows `next` links to the actual last node.
-4. Atomically changes that last node's `next` from `null` to the new node using CAS.
-5. Tries to advance the `tail` hint.
+1. Rejects `null` and creates a node.
+2. Follows links from the `tail` hint to the actual last node.
+3. CASes that node's `next` from `null` to the new node.
+4. May then try to move the `tail` hint.
+
+The successful `next` CAS is the **linearization point**: the single logical instant when the element joins the queue. A later failure to move `tail` does not undo the insertion.
+
+`poll()`:
+
+1. Starts near `head` and skips nodes whose `item` is already `null`.
+2. Finds the first live item.
+3. CASes that `item` from the element to `null`.
+4. Returns the removed element and may advance `head` or bypass obsolete nodes.
+
+The successful `item` CAS is the removal's linearization point. Setting `item` to `null` is **logical removal**; physical cleanup may happen later. If no live item exists, `poll()` returns `null` immediately.
+
+## FIFO during concurrent offers
+
+FIFO applies to the queue's established insertion order, not to which method call happened to start first.
 
 ```text
-Before:
-A → B → null       new C
+Producer A starts offer(A)
+Producer B starts offer(B)
 
-CAS B.next: null → C
-
-After:
-A → B → C → null
+If B successfully links first, the queue order is B, then A.
+poll() still removes them in that established FIFO order.
 ```
 
-The successful CAS of `last.next` is the **linearization point**: the precise logical instant when the offered element becomes part of the queue.
+Concurrent operations appear to take effect at their linearization points. Overlapping calls may be ordered either way when both results are legal.
 
-Moving `tail` afterward is best effort. If that CAS fails, the element is still correctly linked and another operation can help advance `tail`.
+## What “lock-free” does—and does not—mean
 
-## How `poll()` works
-
-Conceptually, `poll()`:
-
-1. Starts from the `head` hint.
-2. Skips nodes whose `item` is already `null`.
-3. Finds the first live node.
-4. Atomically changes its `item` from the element to `null` using CAS.
-5. Returns the removed element.
-6. May advance `head` and help unlink obsolete nodes.
-
-```text
-Before:
-[item=A] → [item=B] → [item=C]
-
-CAS first.item: A → null
-
-After logical removal:
-[item=null] → [item=B] → [item=C]
-```
-
-The successful CAS that changes `item` to `null` is the removal's **linearization point**.
-
-Changing the item to `null` is logical removal. Physical cleanup can happen later, allowing other threads to continue without waiting for a global lock.
-
-If no live element is found, `poll()` returns `null` immediately. It does not wait for a producer.
-
-## Why the algorithm is lock-free
-
-The queue does not use one lock around all operations. Competing threads use CAS and retry when their expected state has changed.
-
-```text
-Thread A and Thread B attempt the same CAS
-                ↓
-one succeeds; the other observes failure
-                ↓
-the losing thread rereads and retries
-```
-
-This provides **lock-free progress**: under contention, the system as a whole continues to make progress because a failed CAS normally means some competing operation succeeded.
+`ConcurrentLinkedQueue` is based on the Michael–Scott non-blocking queue algorithm. Under contention, one thread can lose a CAS because another operation changed the state. The loser retries, while the successful change demonstrates system-wide progress.
 
 Lock-free does **not** mean:
 
-- Every individual operation completes in a fixed number of steps.
-- A thread can never be delayed or starved.
-- Operations cannot pause because of scheduling, allocation, or garbage collection.
-- The queue provides blocking `take()` semantics.
+- every individual thread finishes within a fixed number of steps;
+- retries or starvation are impossible;
+- allocation, scheduling, or garbage collection cannot pause a thread;
+- `poll()` waits until an element appears.
 
-`ConcurrentLinkedQueue` is lock-free, but not wait-free.
+It is lock-free, but not wait-free. “Non-blocking algorithm” is a progress property, not a promise that every call has zero latency.
 
-## FIFO under concurrency
+## Empty means “nothing available now”
 
-Elements are removed in the FIFO order established by successful insertions.
-
-When two producers call `offer()` concurrently, source-code timing alone does not determine which insertion wins. The order of their successful link CAS operations determines their FIFO order.
-
-```text
-Thread A starts offer(A)
-Thread B starts offer(B)
-
-If B links first: B is before A in the queue.
-```
-
-## Iteration
-
-Its iterator is **weakly consistent**:
+This check-then-act code is racy:
 
 ```java
+// Conceptual fragment: another consumer can win after isEmpty().
+if (!queue.isEmpty()) {
+    return queue.poll(); // can still return null
+}
+```
+
+Use the atomic queue operation directly and handle its result:
+
+```java
+// Conceptual fragment.
+var task = queue.poll();
+if (task != null) {
+    process(task);
+}
+```
+
+The same rule applies to `peek()` followed by `poll()`: another consumer can remove the observed head between the calls.
+
+## Weakly consistent iteration
+
+An iterator can run while the queue changes. It:
+
+- does not throw `ConcurrentModificationException` merely because of concurrent modification;
+- returns elements in queue order among the elements it observes;
+- returns exactly once each element that remained in the queue from iterator creation onward;
+- may also reflect some later insertions or removals;
+- is not a frozen snapshot of one instant.
+
+```java
+// Conceptual fragment: concurrent offer/poll calls may overlap this loop.
 for (String value : queue) {
     process(value);
 }
 ```
 
-The iterator:
+Use separate synchronization or copy to a stable representation when a precise point-in-time view is required.
 
-- Does not throw `ConcurrentModificationException` merely because the queue changes.
-- Can run while producers and consumers modify the queue.
-- Preserves FIFO order among the elements it observes.
-- Is not a frozen snapshot.
-- May reflect some concurrent changes and not others.
+## `size()` is not coordination
 
-Use an external snapshot or other coordination when an exact, stable view is required.
+`size()` traverses the linked nodes, so it is O(n). If the queue changes during traversal, the result can be inaccurate and can become stale immediately.
 
-## `size()` is not a coordination mechanism
-
-Calculating the size requires traversing the linked nodes:
+Do not use it to implement a capacity limit:
 
 ```java
-int count = queue.size(); // O(n)
-```
-
-Other threads may add or remove elements during traversal, so the returned number can already be stale or may not represent one atomic instant.
-
-Do not write check-then-act logic like this:
-
-```java
+// Wrong: several producers can all observe the same old size.
 if (queue.size() < limit) {
-    queue.offer(task); // another producer may have changed the queue
+    queue.offer(task);
 }
 ```
 
-Use a bounded queue, semaphore, or another explicit capacity-control mechanism when a hard limit is required.
+Use a bounded `BlockingQueue` or another explicit admission-control mechanism when capacity matters. Even `isEmpty()` is only an observation; use `poll()` for “try to remove now.”
 
-## Memory visibility
+## Safe handoff and memory visibility
 
-`ConcurrentLinkedQueue` provides the standard concurrent-collection happens-before guarantee:
+The concurrent-collection memory guarantee is:
 
 ```text
-Producer initializes object
-        ↓
-Producer places object in queue
-        ↓ happens-before
-Consumer accesses or removes that object
-        ↓
-Consumer sees the initialization performed before publication
+producer actions before queue.offer(message)
+                    happen-before
+consumer actions after accessing/removing that message
 ```
 
-```java
-Message message = new Message();
-message.setText("ready");
-queue.offer(message);
+Therefore, fields initialized before publication through the queue are visible to a consumer that receives that same element.
 
-// Another thread
-Message received = queue.poll();
-if (received != null) {
-    System.out.println(received.getText()); // safely published as "ready"
-}
-```
+The queue safely transfers the **reference**. It does not make later unsynchronized mutation of the referenced object safe. Prefer immutable messages or synchronize later shared changes separately.
 
-This does not make later unsynchronized mutations of the element automatically safe. The queue safely transfers the reference; the element's subsequent thread safety is a separate concern.
+## Bulk and search operations
 
-## Bulk operations are not one atomic transaction
+`addAll`, `removeIf`, `forEach`, and similar multi-element operations are not guaranteed to be one atomic transaction. A concurrent traversal can observe only part of a bulk change.
 
-Operations such as `addAll`, `removeIf`, `retainAll`, `clear`, and `forEach` may overlap concurrent modifications. Do not assume the whole bulk operation happens as one indivisible queue update.
+Operations such as `contains`, `remove(Object)`, and `size` traverse nodes. They are useful occasionally, but frequent arbitrary search/removal is not the queue's strength; its core use is tail insertion plus head removal.
 
-## When to use it
+## When to choose it
 
-Use `ConcurrentLinkedQueue` when:
+Choose `ConcurrentLinkedQueue` when:
 
-- Many threads concurrently add and remove elements.
-- FIFO ordering is required.
-- Consumers should return immediately when the queue is empty.
-- An unbounded, lock-free queue is appropriate.
+- many threads share a FIFO queue;
+- producers and consumers should not wait inside the queue;
+- `poll()` returning `null` is a useful “nothing available now” result;
+- unbounded growth is acceptable and controlled elsewhere.
 
-Avoid it when:
+Choose something else when:
 
-- Consumers must wait for work — use a `BlockingQueue`.
-- Capacity must be bounded for backpressure.
-- Constant-time or exact `size()` is required.
-- A stable snapshot iteration is required.
-- Elements must be added or removed from both ends — consider `ConcurrentLinkedDeque`.
-
-## Choosing a queue
-
-| Requirement | Typical choice |
+| Requirement | Better fit |
 |---|---|
-| Unbounded, non-blocking FIFO | `ConcurrentLinkedQueue` |
-| Optionally bounded linked blocking queue | `LinkedBlockingQueue` |
-| Bounded array-backed blocking queue | `ArrayBlockingQueue` |
+| Consumer should wait for work | `BlockingQueue`, using `take()` or timed `poll()` |
+| Bounded capacity/backpressure | `ArrayBlockingQueue` or bounded `LinkedBlockingQueue` |
 | Non-blocking access at both ends | `ConcurrentLinkedDeque` |
+| Frozen traversal view | Make and coordinate an explicit snapshot |
 
-An unbounded queue can grow until memory is exhausted if producers consistently outpace consumers. Thread safety does not provide backpressure.
+An unbounded thread-safe queue can still exhaust memory if producers continually outpace consumers. Thread safety is not backpressure.
 
-## Summary
+## Quick recall
 
-`ConcurrentLinkedQueue` is an unbounded FIFO queue that uses linked nodes, volatile state, and CAS instead of a global lock. `offer()` linearizes when it links a new node; `poll()` linearizes when it changes the first live node's item to `null`. Head and tail may lag because they are traversal hints. Iteration is weakly consistent, `size()` is O(n), and empty consumers return immediately rather than block.
+> `ConcurrentLinkedQueue` is an unbounded concurrent FIFO queue. `offer()` links at the tail; `poll()` removes from the head or immediately returns `null`. Current OpenJDK uses linked nodes and retrying CAS, with `head` and `tail` allowed to lag as hints. Iteration is weakly consistent, `size()` is O(n) and unsuitable for coordination, and publication through the queue provides a happens-before handoff. Use a `BlockingQueue` instead when consumers must wait or capacity must be bounded.
 
-## Official references
+## Sources
 
-- [Java 25 API: ConcurrentLinkedQueue](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ConcurrentLinkedQueue.html)
-- [OpenJDK source: ConcurrentLinkedQueue.java](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/concurrent/ConcurrentLinkedQueue.java)
+- [Java SE 26 `ConcurrentLinkedQueue` API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/ConcurrentLinkedQueue.html)
+- [OpenJDK `ConcurrentLinkedQueue.java` source](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/concurrent/ConcurrentLinkedQueue.java)
+- [Java SE 26 `java.util.concurrent` package summary — memory consistency](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/package-summary.html#MemoryVisibility)
+- [Java SE 26 `BlockingQueue` API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/BlockingQueue.html)
+- [Michael and Scott — non-blocking concurrent queue algorithm](https://www.cs.rochester.edu/research/synchronization/pseudocode/queues.html)

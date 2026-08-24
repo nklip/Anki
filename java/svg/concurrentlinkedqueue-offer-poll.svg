@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1500" height="920" viewBox="0 0 1500 920" role="img" aria-labelledby="title description">
   <title id="title">ConcurrentLinkedQueue offer and poll operations</title>
-  <desc id="description">Side-by-side CAS workflows. Offer links a new node through the last node's next field; poll changes the first live node's item to null. Failed CAS operations retry without a global lock.</desc>
+  <desc id="description">Side-by-side CAS workflows. Offer first prepares a candidate link, then atomically links a new node through the last node's next field. Poll changes the first live node's item to null. Failed CAS operations retry without a global lock.</desc>
 
   <!-- Background and title -->
   <rect width="1500" height="920" fill="white"/>
@@ -30,9 +30,10 @@
   <circle cx="82" cy="394" r="22" fill="#2f6fad"/>
   <text x="82" y="401" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="white">2</text>
   <text x="120" y="400" font-family="sans-serif" font-size="19" font-weight="bold" fill="#1d4f82">CAS B.next: null → new Node(C)</text>
-  <path d="M300 286H402" fill="none" stroke="#2f6fad" stroke-width="5"/>
-  <polygon points="418,286 402,277 402,295" fill="#2f6fad"/>
-  <text x="360" y="272" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#1d4f82">successful CAS</text>
+  <!-- Dashed candidate link belongs to discovery; the CAS in item 2 makes it real. -->
+  <path d="M300 286H402" fill="none" stroke="#6b7f91" stroke-width="4" stroke-dasharray="8 6"/>
+  <polygon points="418,286 402,277 402,295" fill="#6b7f91"/>
+  <text x="360" y="272" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#536779">candidate link</text>
 
   <rect x="155" y="430" width="460" height="62" rx="6" fill="#dcefdc" stroke="#4d8758" stroke-width="2"/>
   <text x="385" y="456" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#35623e">Linearization point</text>
