@@ -1,254 +1,228 @@
-# Collections. Fail-Fast vs. Fail-Safe Iteration
+# Collections. Fail-Fast vs. “Fail-Safe” Iteration
 
 ## Front
 
-What is the difference between fail-fast and “fail-safe” iterators in Java, and how should collections be modified during iteration?
+What is the difference between **fail-fast**, **snapshot**, and **weakly consistent** iteration in Java? How can a collection be modified safely during traversal?
 
 ## Back
 
-In Java collection discussions:
+A **fail-fast** iterator reports unexpected structural interference with `ConcurrentModificationException` on a best-effort basis;
 
-- A **fail-fast iterator** detects an unexpected structural modification and normally throws `ConcurrentModificationException`.
-- **Fail-safe iterator** is common informal terminology, but it is **not an official Java iterator category**.
-- Java documentation uses more precise terms such as **snapshot iterator** and **weakly consistent iterator**.
+A **fail-safe** iterator is informal terminology, so use the documented behavior instead: snapshot or weakly consistent.
 
-```text
-fail-fast
-    → detect unexpected interference on a best-effort basis
+This card first compares the three behaviors, then explains safe modification and how to choose a collection.
 
-snapshot
-    → traverse a stable copy or immutable version
+## The three behaviors
 
-weakly consistent
-    → safely traverse a live concurrent structure
-```
-
-## Comparison
-
-| Behavior | Typical examples | Concurrent changes |
-|---|---|---|
-| Fail-fast | `ArrayList`, `HashMap`, `HashSet` | Normally throws `ConcurrentModificationException` when detected |
-| Snapshot | `CopyOnWriteArrayList`, `CopyOnWriteArraySet` | Iterator sees the state captured at creation |
-| Weakly consistent | `ConcurrentHashMap`, `ConcurrentLinkedQueue` | Traversal continues and may reflect some changes |
-
-## How fail-fast iteration works
-
-![Fail-fast compared with weakly consistent iteration](svg/iteration-fail-fast-vs-weakly-consistent.svg)
-
-Many ordinary collection implementations maintain a structural modification counter, commonly called `modCount`.
-
-When an iterator is created, it remembers the current value:
+| Behavior | Typical examples | What the iterator observes | Concurrent modification |
+|---|---|---|---|
+| **Fail-fast** | `ArrayList`, `HashMap`, `HashSet` | The ordinary live collection | Unexpected structural interference is normally detected with `ConcurrentModificationException` (**CME**) |
+| **Snapshot** | `CopyOnWriteArrayList` | A fixed array version captured when the iterator was created | Later changes are never visible to that iterator; they do not cause CME |
+| **Weakly consistent** | `ConcurrentHashMap`, `ConcurrentLinkedQueue` | A live concurrent structure | Traversal continues without CME and may reflect later changes |
 
 ```text
-collection.modCount = 3
-iterator.expectedModCount = 3
+fail-fast          = best-effort interference detection
+snapshot           = stable old view
+weakly consistent  = changing concurrent view
 ```
 
-A structural modification made directly through the collection changes `modCount`:
+“Fail-safe” hides the important distinction between the last two behaviors and is not a category defined by the Java Collections API.
+
+## Fail-fast: expose incorrect interference
+
+![How fail-fast and weakly consistent iteration react to a modification](svg/iteration-fail-fast-vs-weakly-consistent.svg)
+
+An ordinary collection iterator expects the collection's traversal structure to remain compatible with it. Implementations such as `ArrayList` maintain a structural-modification count, commonly named `modCount`. The iterator remembers the expected value:
 
 ```text
-collection.add(element)
-collection.modCount = 4
+iterator created:  expectedModCount = modCount
+collection changes directly:        modCount increases
+later iterator check: expectedModCount != modCount → CME
 ```
 
-On a later iterator operation, the implementation compares the values:
+This is an explanatory implementation model, not a synchronization protocol or a public API that application code should access.
 
-```text
-expectedModCount != modCount
-        ↓
-throw ConcurrentModificationException
-```
-
-`modCount` and the exact checking locations are implementation details, but they explain the common behavior of general-purpose collections.
-
-## Broken modification during enhanced `for`
-
-An enhanced `for` loop normally uses an iterator internally:
+### A controlled fail-fast example
 
 ```java
-List<String> names = new ArrayList<>(
-        List.of("Alice", "Bob", "Carol")
-);
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.List;
 
-for (String name : names) {
-    if (name.startsWith("B")) {
-        names.remove(name); // invalid interference with the iterator
+public final class FailFastDemo {
+    public static void main(String[] args) {
+        List<String> names = new ArrayList<>(
+                List.of("Alice", "Bob", "Carol")
+        );
+
+        Iterator<String> iterator = names.iterator();
+        names.add("Dana"); // structural change outside the iterator
+
+        try {
+            iterator.next();
+        } catch (ConcurrentModificationException exception) {
+            System.out.println("Unexpected interference detected");
+        }
     }
 }
 ```
 
-The direct `names.remove()` structurally modifies the list without informing the active iterator. A fail-fast iterator will normally detect this and throw `ConcurrentModificationException`.
+`ArrayList`'s iterator normally detects this misuse on `next()`. The example catches CME only to demonstrate it—production correctness must not depend on the exception.
 
-The bug can occur in a **single thread**. Despite its name, `ConcurrentModificationException` does not prove that multiple threads were involved.
+The bug is entirely possible in **one thread**. The word “concurrent” in the exception name does not prove that several threads were involved.
 
-## Safe removal with the iterator
+> Avoid examples that remove an element directly inside an enhanced `for` loop and claim that they must throw. Some iteration positions can let the loop finish before another check occurs, which is exactly why fail-fast behavior is documented as best-effort.
 
-Use the iterator's own supported mutation operation:
+## Modify through the iterator—or outside traversal
+
+When an iterator supports removal, call its own `remove()` after `next()`:
 
 ```java
-Iterator<String> iterator = names.iterator();
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-while (iterator.hasNext()) {
-    String name = iterator.next();
+public final class SafeRemovalDemo {
+    public static void main(String[] args) {
+        List<String> names = new ArrayList<>(
+                List.of("Alice", "Bob", "Carol")
+        );
 
-    if (name.startsWith("B")) {
-        iterator.remove();
+        Iterator<String> iterator = names.iterator();
+
+        while (iterator.hasNext()) {
+            String name = iterator.next();
+            if (name.startsWith("B")) {
+                iterator.remove();
+            }
+        }
+
+        System.out.println(names); // [Alice, Carol]
     }
 }
 ```
 
-The iterator updates its expected structural version together with the collection.
+The iterator performs the change and updates its own expected state. `Iterator.remove()` is optional, however; unsupported iterators throw `UnsupportedOperationException`.
 
-A `ListIterator` may additionally support `add()` and `set()` according to its contract.
-
-## Prefer collection operations when possible
-
-For simple filtering, `removeIf()` is clearer:
+For a simple filter on an ordinary list, a collection operation is clearer:
 
 ```java
 names.removeIf(name -> name.startsWith("B"));
 ```
 
-Another option is to collect changes and apply them after traversal:
+Another safe same-thread pattern is to collect the requested changes and apply them after iteration. These patterns do **not** make a non-concurrent collection safe for unsynchronized access by multiple threads.
 
-```java
-List<String> toRemove = new ArrayList<>();
+### What counts as structural?
 
-for (String name : names) {
-    if (name.startsWith("B")) {
-        toRemove.add(name);
-    }
-}
+For `ArrayList`, a structural modification adds or deletes elements, or explicitly resizes the backing array. Replacing an existing element with `set(index, value)` is not structural.
 
-names.removeAll(toRemove);
-```
+The definition is collection-specific: think about whether the operation changes the collection's size or the structure/order traversed by an iterator, then check that collection's API contract.
 
-These techniques solve same-thread iteration logic. They do not by themselves make a non-concurrent collection safe for access from several threads.
+## CME is a bug signal, not a safety guarantee
 
-## What is a structural modification?
-
-A structural modification changes the collection's size or internal traversal structure.
-
-For `ArrayList`:
-
-- `add()` is structural.
-- `remove()` is structural.
-- Explicitly resizing the backing structure is structural.
-- Replacing an element with `set(index, value)` is not normally structural.
-
-```java
-ListIterator<String> iterator = names.listIterator();
-
-while (iterator.hasNext()) {
-    if (iterator.next().equals("Alice")) {
-        iterator.set("Alicia"); // supported replacement
-    }
-}
-```
-
-The precise meaning depends on the collection. For example, access-ordered `LinkedHashMap` can structurally change its encounter order when `get()` is called.
-
-## Fail-fast is best-effort only
-
-Fail-fast detection is not guaranteed in the presence of unsynchronized concurrent modification.
+Fail-fast checking cannot be guaranteed under unsynchronized concurrent modification, so it happens on a **best-effort basis**.
 
 ```text
-ConcurrentModificationException = useful bug signal
-ConcurrentModificationException ≠ synchronization mechanism
+CME  = useful evidence of invalid interference
+CME ≠ lock, memory-visibility guarantee, or recovery strategy
 ```
 
-Never write correctness logic that depends on the exception being thrown:
+This is incorrect:
 
 ```java
 try {
     iterate(sharedList);
 } catch (ConcurrentModificationException ignored) {
-    // Incorrect: the exception is not guaranteed
+    // Incorrect: absence or presence of CME cannot establish correctness.
 }
 ```
 
-If several threads use an `ArrayList` and at least one modifies it structurally, coordinate access with synchronization or choose an appropriate concurrent collection.
+If several threads access a collection and at least one thread modifies it, use the collection's documented synchronization policy, explicit coordination, or an appropriate concurrent collection.
 
-## Snapshot iterators
+## Snapshot: a stable old version
 
-![Snapshot compared with weakly consistent iteration](svg/iteration-snapshot-vs-weakly-consistent.svg)
+![Snapshot iteration compared with weakly consistent live iteration](svg/iteration-snapshot-vs-weakly-consistent.svg)
 
-`CopyOnWriteArrayList` creates a fresh array for every mutation. Its iterator retains a reference to the array that existed when the iterator was created:
-
-```java
-CopyOnWriteArrayList<String> names =
-        new CopyOnWriteArrayList<>(List.of("A", "B", "C"));
-
-Iterator<String> iterator = names.iterator();
-
-names.add("D");
-
-iterator.forEachRemaining(System.out::println);
-// A, B, C — never D
-```
-
-The iterator's array never changes, so:
-
-- It cannot observe later additions, removals, or replacements.
-- It does not throw `ConcurrentModificationException` because of later writes.
-- Traversal needs no external synchronization.
-- Iterator mutation methods such as `remove()`, `set()`, and `add()` are unsupported.
-
-Snapshot iteration is excellent when reads and traversals greatly outnumber writes. Copying the entire array for every mutation is expensive for write-heavy workloads.
-
-## Weakly consistent iterators
-
-Concurrent collections such as `ConcurrentHashMap` and `ConcurrentLinkedQueue` provide weakly consistent traversal:
+`CopyOnWriteArrayList` creates a fresh array for every mutation. An iterator retains the array version that existed when it was created:
 
 ```java
-ConcurrentHashMap<String, Integer> scores =
-        new ConcurrentHashMap<>();
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-scores.put("Alice", 10);
-scores.put("Bob", 20);
+public final class SnapshotDemo {
+    public static void main(String[] args) {
+        CopyOnWriteArrayList<String> names =
+                new CopyOnWriteArrayList<>(List.of("A", "B", "C"));
 
-for (var entry : scores.entrySet()) {
-    // Other threads may update scores concurrently.
+        Iterator<String> snapshot = names.iterator();
+        names.add("D");
+
+        snapshot.forEachRemaining(System.out::println); // A, B, C
+        System.out.println(names);                       // [A, B, C, D]
+    }
 }
 ```
 
-A weakly consistent iterator:
+For this iterator:
 
-- Does not throw `ConcurrentModificationException` merely because concurrent updates occur.
-- Can proceed while the collection is modified.
-- Does not normally copy the whole collection.
-- Is not a frozen snapshot.
-- May reflect some concurrent additions, removals, or replacements and not others.
+- later additions, removals, and replacements are never visible;
+- later writes do not cause CME;
+- iterator mutation methods are unsupported;
+- reads are cheap, but every write copies the underlying array.
 
-Exact visibility and duplication guarantees depend on the specific collection. Read that class's API contract rather than relying only on the phrase “weakly consistent.”
+Choose copy-on-write collections when traversals greatly outnumber mutations and a stable view is useful—not for write-heavy workloads.
 
-An iterator object is also normally intended to be used by one thread at a time, even when it comes from a concurrent collection.
+## Weakly consistent: safe traversal of live data
+
+Most concurrent collection iterators are documented as **weakly consistent**. Their package-level contract says that they:
+
+- can proceed concurrently with other operations;
+- never throw CME because of concurrent modification;
+- traverse elements that existed when the iterator was created exactly once;
+- may, but need not, reflect modifications made after creation.
+
+```java
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+public final class WeaklyConsistentDemo {
+    public static void main(String[] args) {
+        ConcurrentHashMap<String, Integer> scores =
+                new ConcurrentHashMap<>(Map.of("Alice", 10, "Bob", 20));
+
+        Iterator<String> iterator = scores.keySet().iterator();
+        scores.put("Carol", 30); // legal while traversal is in progress
+
+        iterator.forEachRemaining(System.out::println);
+        // Alice and Bob are traversed; Carol may or may not be observed.
+    }
+}
+```
+
+This is **not a frozen snapshot** and does not give one atomic view of several related values. If the application requires an exact cross-entry snapshot or a compound invariant, add explicit coordination or build a snapshot using the collection's documented facilities.
+
+Even when the collection supports concurrent operations, use a particular iterator object from one thread at a time unless its documentation explicitly promises otherwise.
 
 ## Snapshot vs. weakly consistent
 
-| Question | Snapshot iterator | Weakly consistent iterator |
+| Question | Snapshot | Weakly consistent |
 |---|---|---|
-| Stable view? | Yes | No |
-| Sees later writes? | No | Possibly |
-| Copies data for mutation? | Typically yes | Typically no full copy |
-| Throws CME for concurrent writes? | No | No |
-| Best workload | Many traversals, few writes | Frequent concurrent reads and writes |
+| Is the iterator's view frozen? | Yes | No |
+| Can it observe later writes? | Never | Possibly |
+| Does traversal throw CME because of later writes? | No | No |
+| Typical write cost | Copies the array | No full-copy requirement |
+| Best fit | Many traversals, few writes | Frequent concurrent access and updates |
 
-Both behaviors are often called “fail-safe,” but that label hides an important difference.
+## Synchronized wrappers require external locking during traversal
 
-## Synchronized wrappers still require care
-
-Wrapping an `ArrayList` does not turn its iterator into a weakly consistent or snapshot iterator:
+`Collections.synchronizedList(...)` serializes individual operations, but its iterator is neither snapshot nor weakly consistent. Synchronize on the returned wrapper for the **entire traversal**:
 
 ```java
-List<String> names = Collections.synchronizedList(
-        new ArrayList<>()
-);
-```
+List<String> names = Collections.synchronizedList(new ArrayList<>());
 
-The collection must be manually synchronized during the entire traversal:
-
-```java
 synchronized (names) {
     for (String name : names) {
         process(name);
@@ -256,51 +230,38 @@ synchronized (names) {
 }
 ```
 
-All access to the backing collection must go through the synchronized wrapper for the guarantee to hold.
-
-For a synchronized map, synchronize on the map wrapper itself while iterating over its key, value, or entry views.
+All access to the backing collection must go through the wrapper. For a synchronized map, synchronize on the map wrapper—not one of its collection views—while traversing keys, values, or entries.
 
 ## Choosing the right behavior
 
-| Requirement | Typical choice |
+| Need | Typical choice |
 |---|---|
-| Detect accidental same-thread structural modification | Ordinary fail-fast collection |
-| Stable iteration while writes continue | `CopyOnWriteArrayList` |
+| Detect accidental same-thread interference during ordinary iteration | Fail-fast ordinary collection |
+| Remove the current element while iterating | Supported `Iterator.remove()` |
+| Filter an ordinary collection | `removeIf(...)` or update after traversal |
+| Stable traversal while rare writes continue | `CopyOnWriteArrayList` |
 | Frequent concurrent map updates and traversal | `ConcurrentHashMap` |
 | Frequent concurrent FIFO updates and traversal | `ConcurrentLinkedQueue` |
-| One exact snapshot of a concurrent structure | Copy under coordination or use an application-specific snapshot |
-| Compound invariant across traversal and updates | Lock or another explicit coordination mechanism |
+| One exact snapshot or compound invariant | Explicit coordination or an application-specific snapshot |
 
-## Common interview traps
+## Common traps
 
-### Does `ConcurrentModificationException` require multiple threads?
-
-No. Directly modifying a collection during its own iteration can trigger it in one thread.
-
-### Does fail-fast mean thread-safe?
-
-No. It means unexpected modification may be detected quickly on a best-effort basis.
-
-### Does “fail-safe” mean the iterator sees all new elements?
-
-No. A snapshot iterator sees none of the later changes; a weakly consistent iterator may see some.
-
-### Can application correctness depend on CME?
-
-No. The exception is a bug detector, not a guaranteed concurrency signal.
-
-### Can `iterator.remove()` always be used?
-
-No. It is optional. Snapshot iterators from `CopyOnWriteArrayList` do not support it.
+- **“CME means two threads raced.”** No; one thread can cause it.
+- **“Fail-fast means thread-safe.”** No; it is best-effort bug detection.
+- **“Fail-safe sees all new elements.”** No; snapshot sees none, while weakly consistent iteration may see later changes.
+- **“A concurrent collection gives an atomic snapshot.”** Usually no; safe traversal and a frozen view are different guarantees.
+- **“`iterator.remove()` always works.”** No; it is an optional operation and snapshot iterators do not support it.
 
 ## Summary
 
-Fail-fast iterators from ordinary collections detect unexpected structural interference and throw `ConcurrentModificationException` on a best-effort basis. “Fail-safe” is an informal umbrella term that should be replaced with the precise behavior: snapshot iterators traverse a fixed old view, while weakly consistent iterators traverse a changing concurrent structure. Choose the collection based on the consistency, write cost, and coordination guarantees the application actually needs.
+Use **fail-fast** to describe best-effort detection by ordinary collection iterators, **snapshot** for a fixed old version, and **weakly consistent** for concurrent traversal of live data. Do not use CME as control flow, and do not use “fail-safe” when the actual visibility guarantee matters.
 
-## Official references
+## Sources
 
-- [Java 25 API: ConcurrentModificationException](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ConcurrentModificationException.html)
-- [Java 25 API: ArrayList](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayList.html)
-- [Java 25 API: CopyOnWriteArrayList](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/CopyOnWriteArrayList.html)
-- [Java 25 API: ConcurrentHashMap](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html)
-- [Java 25 API: Collections synchronized wrappers](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collections.html)
+- [Java SE 26 API: `ConcurrentModificationException`](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/ConcurrentModificationException.html)
+- [Java SE 26 API: `ArrayList`](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/ArrayList.html)
+- [Java SE 26 API: `Iterator`](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/Iterator.html)
+- [Java SE 26 API: `CopyOnWriteArrayList`](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/CopyOnWriteArrayList.html)
+- [Java SE 26 API: `ConcurrentHashMap`](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html)
+- [Java SE 26 API: `java.util.concurrent` package summary](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/package-summary.html)
+- [Java SE 26 API: `Collections` synchronized wrappers](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/Collections.html)
