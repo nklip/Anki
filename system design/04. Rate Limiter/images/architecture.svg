@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1470" height="1106" viewBox="0 0 1470 1106" role="img" aria-labelledby="title desc">
+  <title id="title">Rate limiter system architecture</title>
+  <desc id="desc">A client sends requests through rate limiter middleware. Successful requests reach API servers, cached rules and Redis support decisions, workers refresh rules, and limited requests are returned, dropped, or queued.</desc>
+
+  <!-- Shared arrowheads and infrastructure icons mirror the PNG vocabulary. -->
+  <defs>
+    <marker id="blue-arrow" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="0" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L13 7L0 13Z" fill="#167db3"/></marker>
+    <marker id="red-arrow" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="0" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L13 7L0 13Z" fill="#ff2e3a"/></marker>
+    <symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
+    <symbol id="phone" viewBox="0 0 54 96"><rect x="5" y="2" width="44" height="90" rx="7" fill="white" stroke="#333" stroke-width="5"/><path d="M19 11H35M23 82H31" stroke="#333" stroke-width="3"/></symbol>
+    <symbol id="server" viewBox="0 0 58 94"><rect x="2" y="2" width="54" height="90" rx="5" fill="#58bd2b"/><path d="M13 18H45M13 69H45M13 82H45" stroke="white" stroke-width="5"/></symbol>
+    <symbol id="envelope" viewBox="0 0 58 40"><rect x="2" y="2" width="54" height="36" fill="white" stroke="#087bb5" stroke-width="4"/><path d="M3 4L29 25L55 4" fill="none" stroke="#087bb5" stroke-width="4"/></symbol>
+  </defs>
+  <rect width="1470" height="1106" fill="white"/>
+
+  <!-- Client request enters the middleware from the left. -->
+  <rect x="34" y="441" width="236" height="116" rx="18" fill="white" stroke="#08b7d1" stroke-width="4"/>
+  <text x="41" y="479" font-family="Arial, sans-serif" font-size="31">Client</text>
+  <use href="#laptop" x="111" y="478" width="75" height="48"/><use href="#phone" x="199" y="465" width="43" height="77"/>
+  <path id="client-request" d="M270 499H486" fill="none" stroke="#167db3" stroke-width="4" marker-end="url(#blue-arrow)"/>
+  <path d="M500 426H658L713 499L658 570H500L445 499Z" fill="white" stroke="#08b7d1" stroke-width="4"/>
+  <text x="579" y="489" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">Rate limiter</text>
+  <text x="579" y="523" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">middleware</text>
+
+  <!-- The three blue branches reproduce the PNG: cached rules, API success, and Redis. -->
+  <path id="cache-branch" d="M713 493L996 282" fill="none" stroke="#167db3" stroke-width="4" marker-end="url(#blue-arrow)"/>
+  <path id="api-branch" d="M713 499H969" fill="none" stroke="#167db3" stroke-width="4" marker-end="url(#blue-arrow)"/>
+  <path id="redis-branch" d="M713 505L995 682" fill="none" stroke="#167db3" stroke-width="4" marker-end="url(#blue-arrow)"/>
+  <text x="850" y="471" text-anchor="middle" font-family="Arial, sans-serif" font-size="27" fill="#00a000">success</text>
+
+  <!-- Cached rules and workers. -->
+  <rect x="1009" y="226" width="109" height="112" rx="19" fill="#0b78b5" stroke="#086a9f" stroke-width="4"/>
+  <text x="1064" y="268" text-anchor="middle" font-family="Arial, sans-serif" font-size="27" fill="white">CACHE</text>
+  <text x="1064" y="382" text-anchor="middle" font-family="Arial, sans-serif" font-size="28">Cached rules</text>
+  <rect x="1249" y="211" width="132" height="145" rx="22" fill="white" stroke="#08b7d1" stroke-width="4" stroke-dasharray="10 8"/>
+  <use href="#server" x="1264" y="241" width="43" height="70"/><use href="#server" x="1292" y="223" width="43" height="70"/><use href="#server" x="1320" y="241" width="43" height="70"/>
+  <text x="1315" y="339" text-anchor="middle" font-family="Arial, sans-serif" font-size="24">Workers</text>
+  <path id="workers-to-cache" d="M1249 281H1131" fill="none" stroke="#167db3" stroke-width="4" marker-end="url(#blue-arrow)"/>
+  <rect x="1221" y="15" width="186" height="90" rx="15" fill="white" stroke="#08b7d1" stroke-width="4"/>
+  <text x="1314" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">Rules</text>
+  <path id="workers-to-rules" d="M1315 211V118" fill="none" stroke="#167db3" stroke-width="4" marker-end="url(#blue-arrow)"/>
+
+  <!-- Successful API destination. -->
+  <rect x="983" y="426" width="164" height="145" rx="22" fill="white" stroke="#08b7d1" stroke-width="4" stroke-dasharray="10 8"/>
+  <use href="#server" x="1000" y="455" width="48" height="78"/><use href="#server" x="1032" y="437" width="48" height="78"/><use href="#server" x="1064" y="455" width="48" height="78"/>
+  <text x="1065" y="554" text-anchor="middle" font-family="Arial, sans-serif" font-size="27">API Servers</text>
+
+  <!-- Redis is drawn as the stacked red database from the PNG. -->
+  <g aria-label="Redis">
+    <path d="M1008 654L1063 635L1118 654L1063 673Z" fill="#e60012"/><path d="M1008 669L1063 650L1118 669L1063 688Z" fill="#d10010"/>
+    <path d="M1008 684L1063 665L1118 684L1063 703Z" fill="#bd000e"/><path d="M1008 699L1063 680L1118 699L1063 718Z" fill="#a9000c"/>
+    <ellipse cx="1043" cy="654" rx="12" ry="6" fill="white"/><path d="M1062 646L1067 654L1077 654L1069 660L1072 669L1062 664L1053 669L1056 660L1048 654L1058 654Z" fill="white"/>
+  </g>
+  <text x="1063" y="759" text-anchor="middle" font-family="Arial, sans-serif" font-size="28">Redis</text>
+
+  <!-- Rate-limited traffic returns 429 or follows either dashed fallback option. -->
+  <path id="rate-limited-down" d="M604 570V838" fill="none" stroke="#ff2e3a" stroke-width="4"/>
+  <text x="617" y="706" font-family="Arial, sans-serif" font-size="26" fill="#ff2e3a">rate limited</text>
+  <path id="response-429" d="M604 838H138V573" fill="none" stroke="#ff2e3a" stroke-width="4" marker-end="url(#red-arrow)"/>
+  <text x="221" y="883" font-family="Arial, sans-serif" font-size="25" fill="#ff2e3a">429: too many requests</text>
+
+  <path id="drop-option" d="M604 838H1014" fill="none" stroke="#ff2e3a" stroke-width="4" stroke-dasharray="11 9" marker-end="url(#red-arrow)"/>
+  <text x="841" y="818" text-anchor="middle" font-family="Arial, sans-serif" font-size="24">option 1</text>
+  <path d="M1063 784C1084 807 1098 827 1098 843A35 35 0 0 1 1028 843C1028 827 1042 807 1063 784Z" fill="white" stroke="#111" stroke-width="3"/>
+  <text x="1063" y="914" text-anchor="middle" font-family="Arial, sans-serif" font-size="26">Request dropped</text>
+
+  <path id="queue-option" d="M604 846L947 1026" fill="none" stroke="#ff2e3a" stroke-width="4" stroke-dasharray="11 9" marker-end="url(#red-arrow)"/>
+  <text x="782" y="925" font-family="Arial, sans-serif" font-size="24" transform="rotate(28 782 925)">option 2</text>
+  <path d="M965 1000H1160L1182 1033L1160 1066H965Z" fill="white" stroke="#087bb5" stroke-width="4"/>
+  <use href="#envelope" x="977" y="1013" width="55" height="38"/><use href="#envelope" x="1037" y="1013" width="55" height="38"/><use href="#envelope" x="1097" y="1013" width="55" height="38"/>
+  <text x="1068" y="1096" text-anchor="middle" font-family="Arial, sans-serif" font-size="25">Message queue</text>
+</svg>

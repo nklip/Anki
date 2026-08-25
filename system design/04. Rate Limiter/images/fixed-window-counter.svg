@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1436" height="780" viewBox="0 0 1436 780" role="img" aria-labelledby="title desc">
+  <title id="title">Fixed-window request counter</title>
+  <desc id="desc">Requests are counted in one-second windows. Up to three requests succeed in each window, while requests above the limit are rejected.</desc>
+
+  <!-- Axis arrowheads and request colors. -->
+  <defs>
+    <marker id="axis-arrow" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="0" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L13 7L0 13Z" fill="#111"/></marker>
+  </defs>
+  <rect width="1436" height="780" fill="white"/>
+
+  <!-- Axes; shafts end at the bases of their arrowheads. -->
+  <path id="y-axis" d="M82 704V42" fill="none" stroke="#111" stroke-width="3" marker-end="url(#axis-arrow)"/>
+  <path id="x-axis" d="M82 704H1360" fill="none" stroke="#111" stroke-width="3" marker-end="url(#axis-arrow)"/>
+  <text x="116" y="758" font-family="Arial, sans-serif" font-size="34">Time</text>
+  <text x="53" y="430" text-anchor="middle" transform="rotate(-90 53 430)" font-family="Arial, sans-serif" font-size="32">Number of requests</text>
+
+  <!-- Five one-second windows. Green requests pass; gray requests exceed the per-window limit. -->
+  <g id="request-windows">
+    <g fill="#00ad00"><rect x="125" y="579" width="66" height="45"/><rect x="125" y="506" width="66" height="45"/><rect x="125" y="433" width="66" height="45"/></g>
+    <g fill="#00ad00"><rect x="300" y="579" width="66" height="45"/><rect x="300" y="506" width="66" height="45"/><rect x="300" y="433" width="66" height="45"/></g>
+    <g fill="#b9b9b9"><rect x="300" y="360" width="66" height="45"/><rect x="300" y="287" width="66" height="45"/><rect x="300" y="214" width="66" height="45"/></g>
+    <g fill="#00ad00"><rect x="486" y="579" width="66" height="45"/><rect x="486" y="506" width="66" height="45"/><rect x="486" y="433" width="66" height="45"/></g>
+    <rect x="486" y="360" width="66" height="45" fill="#b9b9b9"/>
+    <g fill="#00ad00"><rect x="660" y="579" width="66" height="45"/><rect x="660" y="506" width="66" height="45"/></g>
+    <g fill="#00ad00"><rect x="834" y="579" width="66" height="45"/><rect x="834" y="506" width="66" height="45"/><rect x="834" y="433" width="66" height="45"/></g>
+    <g fill="#b9b9b9"><rect x="834" y="360" width="66" height="45"/><rect x="834" y="287" width="66" height="45"/></g>
+  </g>
+  <g text-anchor="middle" font-family="Arial, sans-serif" font-size="31">
+    <text x="158" y="674">1:00:00</text><text x="333" y="674">1:00:01</text><text x="519" y="674">1:00:02</text><text x="693" y="674">1:00:03</text><text x="867" y="674">1:00:04</text>
+  </g>
+
+  <!-- Legend. -->
+  <rect x="932" y="55" width="66" height="45" fill="#b9b9b9"/><text x="1017" y="89" font-family="Arial, sans-serif" font-size="29">rate limited request</text>
+  <rect x="932" y="143" width="66" height="45" fill="#00ad00"/><text x="1017" y="177" font-family="Arial, sans-serif" font-size="29">successful request</text>
+</svg>

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1276" height="898" viewBox="0 0 1276 898" role="img" aria-labelledby="title desc">
+  <title id="title">Sliding-window log steps</title>
+  <desc id="desc">Four request timestamps demonstrate admission, rejection at the limit, expiry of old entries, and admission of a later request.</desc>
+
+  <defs>
+    <marker id="arrow" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="0" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L13 7L0 13Z" fill="#111"/></marker>
+    <symbol id="check" viewBox="0 0 74 62"><path d="M8 31L27 50L66 8" fill="none" stroke="#4bc600" stroke-width="13" stroke-linecap="square" stroke-linejoin="miter"/></symbol>
+    <symbol id="cross" viewBox="0 0 66 66"><path d="M12 12L54 54M54 12L12 54" stroke="#ff2e2e" stroke-width="15" stroke-linecap="square"/></symbol>
+  </defs>
+  <rect width="1276" height="898" fill="white"/>
+
+  <!-- Step 1: first timestamp is accepted. -->
+  <path id="step-1-input" d="M114 179H283" fill="none" stroke="#111" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="198" y="163" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">1:00:01</text>
+  <rect x="299" y="75" width="160" height="273" rx="22" fill="white" stroke="#111" stroke-width="3"/>
+  <text x="379" y="126" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">1:00:01</text>
+  <path id="step-1-output" d="M459 179H606" fill="none" stroke="#111" stroke-width="3" marker-end="url(#arrow)"/>
+  <use href="#check" x="494" y="111" width="74" height="62"/>
+  <circle cx="367" cy="416" r="23" fill="white" stroke="#111" stroke-width="3"/><text x="367" y="426" text-anchor="middle" font-family="Arial, sans-serif" font-size="28">1</text>
+
+  <!-- Step 2: second timestamp is accepted. -->
+  <path id="step-2-input" d="M680 181H847" fill="none" stroke="#111" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="764" y="165" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">1:00:30</text>
+  <rect x="863" y="78" width="160" height="274" rx="22" fill="white" stroke="#111" stroke-width="3"/>
+  <text x="943" y="129" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">1:00:01</text>
+  <text x="943" y="193" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">1:00:30</text>
+  <path id="step-2-output" d="M1023 181H1170" fill="none" stroke="#111" stroke-width="3" marker-end="url(#arrow)"/>
+  <use href="#check" x="1072" y="113" width="74" height="62"/>
+  <circle cx="943" cy="416" r="23" fill="white" stroke="#111" stroke-width="3"/><text x="943" y="426" text-anchor="middle" font-family="Arial, sans-serif" font-size="28">2</text>
+
+  <!-- Step 3: third timestamp reaches the limit and is rejected. -->
+  <path id="step-3-input" d="M92 613H259" fill="none" stroke="#111" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="176" y="597" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">1:00:50</text>
+  <rect x="275" y="508" width="160" height="274" rx="22" fill="white" stroke="#111" stroke-width="3"/>
+  <text x="355" y="559" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">1:00:01</text>
+  <text x="355" y="623" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">1:00:30</text>
+  <text x="355" y="687" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">1:00:50</text>
+  <path id="step-3-output" d="M435 613H582" fill="none" stroke="#111" stroke-width="3" marker-end="url(#arrow)"/>
+  <use href="#cross" x="477" y="536" width="66" height="66"/>
+  <circle cx="355" cy="846" r="23" fill="white" stroke="#111" stroke-width="3"/><text x="355" y="856" text-anchor="middle" font-family="Arial, sans-serif" font-size="28">3</text>
+
+  <!-- Step 4: expired entries are struck out; 1:00:50 remains and 1:01:40 is accepted. -->
+  <path id="step-4-input" d="M664 613H831" fill="none" stroke="#111" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="748" y="597" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">1:01:40</text>
+  <rect x="847" y="508" width="160" height="274" rx="22" fill="white" stroke="#111" stroke-width="3"/>
+  <text x="927" y="559" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">1:00:01</text>
+  <text x="927" y="623" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">1:00:30</text>
+  <text x="927" y="687" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">1:00:50</text>
+  <text x="927" y="751" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">1:01:40</text>
+  <path d="M866 548H988M866 612H988" stroke="#f12525" stroke-width="4"/>
+  <path id="step-4-output" d="M1007 613H1154" fill="none" stroke="#111" stroke-width="3" marker-end="url(#arrow)"/>
+  <use href="#check" x="1054" y="545" width="74" height="62"/>
+  <circle cx="927" cy="846" r="23" fill="white" stroke="#111" stroke-width="3"/><text x="927" y="856" text-anchor="middle" font-family="Arial, sans-serif" font-size="28">4</text>
+</svg>

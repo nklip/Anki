@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1344" height="1112" viewBox="0 0 1344 1112" role="img" aria-labelledby="title desc">
+  <title id="title">Token bucket rate-limiting algorithm</title>
+  <desc id="desc">A refiller adds tokens to a bucket. Each incoming request consumes a token; requests are forwarded when tokens remain and dropped when the bucket is empty.</desc>
+
+  <!-- Reusable connectors and request/token symbols. -->
+  <defs>
+    <marker id="arrow" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="0" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L13 7L0 13Z" fill="#111"/></marker>
+    <symbol id="token" viewBox="0 0 50 32"><ellipse cx="25" cy="16" rx="22" ry="13" fill="#ffc85a" stroke="#e59d22" stroke-width="3"/><ellipse cx="25" cy="14" rx="15" ry="8" fill="none" stroke="#ffe092" stroke-width="2"/><text x="25" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#d78b16">T</text></symbol>
+    <symbol id="request" viewBox="0 0 62 42"><rect x="3" y="4" width="56" height="34" rx="4" fill="#99bee8"/></symbol>
+  </defs>
+
+  <rect width="1344" height="1112" fill="white"/>
+
+  <!-- Token refiller feeds the bucket from above. -->
+  <path d="M607 42H675V258H702L641 314L580 258H607Z" fill="white" stroke="#111" stroke-width="4"/>
+  <use href="#token" x="616" y="76" width="50" height="32"/><use href="#token" x="616" y="136" width="50" height="32"/><use href="#token" x="616" y="196" width="50" height="32"/>
+  <text x="702" y="171" font-family="Arial, sans-serif" font-size="29">refiller</text>
+
+  <!-- Central token bucket and admission decision. -->
+  <rect x="470" y="305" width="340" height="518" rx="49" fill="#fbfbfb" stroke="#111" stroke-width="2" stroke-dasharray="8 7"/>
+  <g id="bucket" fill="white" stroke="#078a05" stroke-width="9">
+    <ellipse cx="640" cy="370" rx="106" ry="35"/>
+    <path d="M534 370L554 543Q640 580 726 543L746 370" fill="white"/>
+    <path d="M640 432L746 473" fill="none"/><circle cx="640" cy="432" r="8" fill="#078a05"/>
+  </g>
+  <path d="M640 590L775 700L640 810L505 700Z" fill="white" stroke="#111" stroke-width="3"/>
+  <text x="640" y="710" text-anchor="middle" font-family="Arial, sans-serif" font-size="28">enough tokens?</text>
+
+  <!-- Incoming requests. -->
+  <rect x="48" y="595" width="230" height="198" rx="30" fill="#fbfbfb" stroke="#111" stroke-width="2" stroke-dasharray="8 7"/>
+  <use href="#request" x="78" y="646" width="62" height="42"/><use href="#request" x="158" y="620" width="62" height="42"/><use href="#request" x="158" y="674" width="62" height="42"/><use href="#request" x="78" y="708" width="62" height="42"/><use href="#request" x="158" y="728" width="62" height="42"/>
+  <text x="163" y="850" text-anchor="middle" font-family="Arial, sans-serif" font-size="28">requests</text>
+  <path id="incoming" d="M278 693H456" fill="none" stroke="#111" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <!-- Admission and rejection branches use separate text corridors. -->
+  <path id="forward" d="M810 700H1110" fill="none" stroke="#111" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="956" y="646" text-anchor="middle" font-family="Arial, sans-serif" font-size="27">yes,</text>
+  <text x="956" y="680" text-anchor="middle" font-family="Arial, sans-serif" font-size="27">forward requests</text>
+  <rect x="1125" y="554" width="112" height="310" rx="26" fill="#fbfbfb" stroke="#111" stroke-width="2" stroke-dasharray="8 7"/>
+  <use href="#token" x="1156" y="579" width="50" height="32"/><use href="#request" x="1150" y="624" width="62" height="42"/><use href="#token" x="1156" y="675" width="50" height="32"/><use href="#request" x="1150" y="720" width="62" height="42"/><use href="#token" x="1156" y="771" width="50" height="32"/><use href="#request" x="1150" y="816" width="62" height="42"/>
+  <path id="drop" d="M640 823V1002" fill="none" stroke="#111" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="730" y="908" font-family="Arial, sans-serif" font-size="27">no,</text>
+  <text x="680" y="942" font-family="Arial, sans-serif" font-size="27">drop requests</text>
+  <rect x="540" y="1017" width="200" height="72" rx="20" fill="#fbfbfb" stroke="#111" stroke-width="2" stroke-dasharray="8 7"/>
+  <rect x="560" y="1035" width="65" height="36" fill="#c7c7c7"/><rect x="655" y="1035" width="65" height="36" fill="#c7c7c7"/>
+</svg>

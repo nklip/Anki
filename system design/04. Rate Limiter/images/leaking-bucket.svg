@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1458" height="458" viewBox="0 0 1458 458" role="img" aria-labelledby="title desc">
+  <title id="title">Leaking bucket rate-limiting algorithm</title>
+  <desc id="desc">Incoming requests enter a bounded FIFO queue. A full queue drops new requests, while queued requests leave at a fixed processing rate.</desc>
+
+  <!-- Reusable arrowhead and request tile. -->
+  <defs>
+    <marker id="arrow" markerWidth="13" markerHeight="13" viewBox="0 0 13 13" refX="0" refY="6.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L12 6.5L0 12Z" fill="#111"/></marker>
+    <symbol id="request" viewBox="0 0 58 38"><rect x="2" y="3" width="54" height="32" rx="3" fill="#99bee8"/></symbol>
+  </defs>
+  <rect width="1458" height="458" fill="white"/>
+
+  <!-- Incoming burst. -->
+  <rect x="42" y="15" width="212" height="176" rx="29" fill="#fbfbfb" stroke="#111" stroke-width="2" stroke-dasharray="8 7"/>
+  <use href="#request" x="74" y="65" width="58" height="38"/><use href="#request" x="145" y="34" width="58" height="38"/><use href="#request" x="145" y="86" width="58" height="38"/><use href="#request" x="74" y="117" width="58" height="38"/><use href="#request" x="145" y="138" width="58" height="38"/>
+  <text x="148" y="242" text-anchor="middle" font-family="Arial, sans-serif" font-size="27">requests</text>
+  <path id="incoming" d="M254 100H378" fill="none" stroke="#111" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <!-- Capacity decision. -->
+  <path d="M500 7L626 100L500 193L374 100Z" fill="white" stroke="#111" stroke-width="3"/>
+  <text x="500" y="111" text-anchor="middle" font-family="Arial, sans-serif" font-size="27">bucket full?</text>
+  <path id="queue-branch" d="M626 100H741" fill="none" stroke="#111" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="682" y="79" text-anchor="middle" font-family="Arial, sans-serif" font-size="24">no</text>
+
+  <!-- FIFO queue and fixed-rate outflow. -->
+  <g id="queue" stroke="#111" stroke-width="2">
+    <rect x="754" y="39" width="210" height="123" fill="white"/>
+    <path d="M796 39V162M838 39V162M880 39V162M922 39V162"/>
+    <rect x="839" y="41" width="39" height="119" fill="#99bee8" stroke="none"/><rect x="881" y="41" width="39" height="119" fill="#99bee8" stroke="none"/><rect x="923" y="41" width="39" height="119" fill="#99bee8" stroke="none"/>
+  </g>
+  <text x="859" y="194" text-anchor="middle" font-family="Arial, sans-serif" font-size="26">queue</text>
+  <path id="fixed-rate" d="M964 100H1260" fill="none" stroke="#111" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="1112" y="77" text-anchor="middle" font-family="Arial, sans-serif" font-size="24">processed at fixed rate</text>
+  <rect x="1274" y="7" width="90" height="190" rx="23" fill="#fbfbfb" stroke="#111" stroke-width="2" stroke-dasharray="8 7"/>
+  <use href="#request" x="1290" y="23" width="58" height="38"/><use href="#request" x="1290" y="77" width="58" height="38"/><use href="#request" x="1290" y="131" width="58" height="38"/>
+  <text x="1319" y="242" text-anchor="middle" font-family="Arial, sans-serif" font-size="24">requests go</text>
+  <text x="1319" y="273" text-anchor="middle" font-family="Arial, sans-serif" font-size="24">through</text>
+
+  <!-- Full queues reject new work downward. -->
+  <path id="drop" d="M500 193V357" fill="none" stroke="#111" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="575" y="267" font-family="Arial, sans-serif" font-size="24">yes,</text>
+  <text x="575" y="298" font-family="Arial, sans-serif" font-size="24">drop requests</text>
+  <rect x="434" y="372" width="132" height="65" rx="18" fill="#fbfbfb" stroke="#111" stroke-width="2" stroke-dasharray="8 7"/>
+  <rect x="449" y="388" width="47" height="34" fill="#c7c7c7"/><rect x="505" y="388" width="47" height="34" fill="#c7c7c7"/>
+</svg>
