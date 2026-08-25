@@ -1,14 +1,14 @@
 
 # [System Design Interview - An Insider's Guide (Vol 1 and 2)](https://bytebytego.com/courses/system-design-interview)
-These notes are based on the System Design Interview books - [Vol 1 and Vol 2 2nd Ed](https://www.goodreads.com/book/show/54109255-system-design-interview-an-insider-s-guide) 
+These notes are based on the System Design Interview books - [Vol 1 and Vol 2 2nd Ed](https://www.goodreads.com/book/show/54109255-system-design-interview-an-insider-s-guide)
 
 Check the notes here: https://pagefy.io/system-design/system-design-interview-by-alex-xu
 
-**Note:** These notes are a work in progress. 
+**Note:** These notes are a work in progress.
 
-
+## Content
  * [Chapter 1 - Scale From Zero To Millions Of Users](./01.%20Scaling/Scaling.md)
- * [Chapter 2 - Back-of-the-envelope Estimation](./02.%20Back%20Of%20the%20Envelope%20Estimation/)
+ * [Chapter 2 - Back-of-the-envelope Estimation](./02.%20Back%20of%20the%20Envelope%20Estimation/Back%20of%20the%20Envelope%20Estimation.md)
  * [Chapter 3 - A Framework For System Design Interviews](./03.%20System%20Design%20Framework/)
  * [Chapter 4 - Design A Rate Limiter](./04.%20Rate%20Limiter//)
  * [Chapter 5 - Design Consistent Hashing](./05.%20Consistent%20Hashing/)

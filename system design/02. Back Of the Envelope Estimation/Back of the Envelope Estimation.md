@@ -1,4 +1,5 @@
 # Chapter 2: Back-of-the-Envelope Estimation
+<sub>[Back to System Design](../README.md#content)</sub>
 
 ## Introduction
 Back-of-the-envelope estimation is a crucial skill in system design interviews. It involves making quick, rough calculations to assess system capacity or performance. According to Jeff Dean, Google Senior Fellow, these estimates help evaluate whether designs meet requirements through thought experiments and common performance benchmarks.
@@ -12,7 +13,7 @@ This chapter covers key concepts, methodologies, and examples to build proficien
 ### Power of Two
 Understanding data volume in terms of powers of two is fundamental:
 
-<img src="./images/power-of-two.png" alt="power-of-two" width="500" />
+<img src="./images/power-of-two.svg" alt="power-of-two" width="500" />
 
 This knowledge helps in performing accurate storage and bandwidth calculations.
 
