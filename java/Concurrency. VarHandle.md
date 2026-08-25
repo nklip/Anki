@@ -8,6 +8,15 @@ What is a `VarHandle`, how do its memory-ordering modes differ, and how does it 
 
 **The VarHandle API** was introduced in **JDK 9** by JEP 193.
 
+`VarHandle` should be used when you need **low-level, fine-grained control over memory access and atomic operations.**
+
+It is mainly for:
+* concurrent data structures
+* lock-free algorithms
+* high-performance libraries
+* frameworks/runtime code
+* places where volatile, AtomicInteger, or synchronized are too limited or too expensive
+
 A `VarHandle` is an immutable, strongly typed handle to a variable—or a family of variables such as array elements. The handle identifies **what can be accessed**; each operation selects **how it is accessed**: plain, opaque, acquire/release, volatile, or atomic read-modify-write.
 
 The two diagrams build the model: first choose the required ordering strength, then follow an atomic compare-and-set (CAS) decision and retry loop.

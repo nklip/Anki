@@ -2,6 +2,13 @@
   <title id="title">AtomicLong compared with LongAdder</title>
   <desc id="description">AtomicLong sends all threads to one linearizable value, while LongAdder spreads updates across cells and combines them during sum. A decision guide shows when each counter is appropriate.</desc>
 
+  <!-- AtomicLong heads match the blue heads' 16-by-18 footprint and rotate with each shaft. -->
+  <defs>
+    <marker id="atomic-update-head" markerWidth="16" markerHeight="18" viewBox="0 0 16 18" refX="16" refY="9" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0L16 9L0 18Z" fill="#b34a42"/>
+    </marker>
+  </defs>
+
   <!-- Background and title -->
   <rect width="1500" height="900" fill="white"/>
   <text x="750" y="50" text-anchor="middle" font-family="sans-serif" font-size="34" font-weight="bold" fill="black">AtomicLong vs. LongAdder</text>
@@ -23,17 +30,13 @@
   <text x="447" y="245" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#9b352f">Thread C</text>
   <text x="597" y="245" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#9b352f">Thread D</text>
 
-  <!-- Each thread gets its own arrowhead; every tip meets the single-value box without entering it. -->
-  <path d="M147 265L280 338" fill="none" stroke="#b34a42" stroke-width="3"/>
-  <polygon points="280,354 269,337 291,337" fill="#b34a42"/>
-  <path d="M297 265L350 338" fill="none" stroke="#b34a42" stroke-width="3"/>
-  <polygon points="350,354 339,337 361,337" fill="#b34a42"/>
-  <path d="M447 265L420 338" fill="none" stroke="#b34a42" stroke-width="3"/>
-  <polygon points="420,354 409,337 431,337" fill="#b34a42"/>
-  <path d="M597 265L490 338" fill="none" stroke="#b34a42" stroke-width="3"/>
-  <polygon points="490,354 479,337 501,337" fill="#b34a42"/>
+  <!-- Each shaft reaches the box boundary; the marker covers its final segment and rotates with it. -->
+  <path d="M147 265L280 354" fill="none" stroke="#b34a42" stroke-width="3" marker-end="url(#atomic-update-head)"/>
+  <path d="M297 265L350 354" fill="none" stroke="#b34a42" stroke-width="3" marker-end="url(#atomic-update-head)"/>
+  <path d="M447 265L420 354" fill="none" stroke="#b34a42" stroke-width="3" marker-end="url(#atomic-update-head)"/>
+  <path d="M597 265L490 354" fill="none" stroke="#b34a42" stroke-width="3" marker-end="url(#atomic-update-head)"/>
 
-  <rect x="235" y="354" width="300" height="92" rx="8" fill="#b34a42" stroke="#b34a42" stroke-width="2"/>
+  <rect x="215" y="354" width="340" height="92" rx="8" fill="#b34a42" stroke="#b34a42" stroke-width="2"/>
   <text x="385" y="389" text-anchor="middle" font-family="monospace" font-size="22" font-weight="bold" fill="white">single value = 24</text>
   <text x="385" y="421" text-anchor="middle" font-family="sans-serif" font-size="16" fill="white">all updates contend on one CAS location</text>
 
@@ -97,11 +100,18 @@
   <rect x="40" y="655" width="1420" height="205" rx="8" fill="#fafafa" stroke="#777" stroke-width="2"/>
   <text x="70" y="697" font-family="sans-serif" font-size="23" font-weight="bold" fill="#333">Practical choice</text>
 
-  <rect x="85" y="730" width="610" height="96" rx="7" fill="#fff3f1" stroke="#b34a42" stroke-width="2"/>
-  <text x="115" y="764" font-family="sans-serif" font-size="19" font-weight="bold" fill="#9b352f">Choose AtomicLong when:</text>
-  <text x="115" y="794" font-family="sans-serif" font-size="16" fill="#444">You need an exact current value, sequence number, CAS, or returned increment result.</text>
+  <!-- Recommendation cards use explicit line breaks to preserve inner padding with fallback fonts. -->
+  <rect x="85" y="724" width="610" height="118" rx="7" fill="#fff3f1" stroke="#b34a42" stroke-width="2"/>
+  <text x="115" y="758" font-family="sans-serif" font-size="19" font-weight="bold" fill="#9b352f">Choose AtomicLong when:</text>
+  <text x="115" y="789" font-family="sans-serif" font-size="16" fill="#444">
+    <tspan x="115">You need an exact current value, sequence number, CAS,</tspan>
+    <tspan x="115" dy="25">or a returned increment result.</tspan>
+  </text>
 
-  <rect x="805" y="730" width="610" height="96" rx="7" fill="#eef6fc" stroke="#2f6fad" stroke-width="2"/>
-  <text x="835" y="764" font-family="sans-serif" font-size="19" font-weight="bold" fill="#1d4f82">Choose LongAdder when:</text>
-  <text x="835" y="794" font-family="sans-serif" font-size="16" fill="#444">Many threads update statistics and occasional non-atomic totals are acceptable.</text>
+  <rect x="805" y="724" width="610" height="118" rx="7" fill="#eef6fc" stroke="#2f6fad" stroke-width="2"/>
+  <text x="835" y="758" font-family="sans-serif" font-size="19" font-weight="bold" fill="#1d4f82">Choose LongAdder when:</text>
+  <text x="835" y="789" font-family="sans-serif" font-size="16" fill="#444">
+    <tspan x="835">Many threads update statistics and occasional</tspan>
+    <tspan x="835" dy="25">non-atomic totals are acceptable.</tspan>
+  </text>
 </svg>
