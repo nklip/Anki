@@ -1,5 +1,5 @@
 # Chapter 1: Scale from Zero to Millions of Users
-<sub>[Back to System Design](../README.md)</sub>
+<sub>[Back to System Design](../README.md#content)</sub>
 
 ## Introduction
 Scaling a system to support millions of users is a complex, iterative journey requiring refinement and optimization. This chapter outlines how to begin with a single server setup and scale the architecture step by step to handle millions of users.

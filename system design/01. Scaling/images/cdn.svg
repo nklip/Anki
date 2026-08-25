@@ -28,19 +28,19 @@
   <use href="#server" x="1060" y="92" width="70" height="122"/>
   <text x="1095" y="274" text-anchor="middle" font-family="Arial, sans-serif" font-size="25">Server</text>
 
-  <!-- User A causes the cache fill. Labels remain in clear corridors beside their shafts. -->
-  <path d="M147 73L437.35 148.24" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
-  <text x="275" y="47" text-anchor="middle" font-family="Arial, sans-serif" font-size="18">1. get image.png</text>
-  <path d="M607 139H1047" fill="none" stroke="#0b78b5" stroke-width="4" stroke-dasharray="10 8" marker-end="url(#arrow)"/>
+  <!-- User A request and response form a parallel corridor with a 32 px separation. -->
+  <path id="user-a-request" d="M147 73L425.36 146.2" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="300" y="100" text-anchor="middle" transform="rotate(14.73 300 100)" font-family="Arial, sans-serif" font-size="17">1. get image.png</text>
+  <path id="origin-fetch" d="M607 139H1047" fill="none" stroke="#0b78b5" stroke-width="4" stroke-dasharray="10 8" marker-end="url(#arrow)"/>
   <text x="833" y="116" text-anchor="middle" font-family="Arial, sans-serif" font-size="18">2. Cache miss: fetch from origin</text>
-  <path d="M1058 207H619" fill="none" stroke="#0b78b5" stroke-width="4" stroke-dasharray="10 8" marker-end="url(#arrow)"/>
+  <path id="origin-return" d="M1058 207H619" fill="none" stroke="#0b78b5" stroke-width="4" stroke-dasharray="10 8" marker-end="url(#arrow)"/>
   <text x="833" y="188" text-anchor="middle" font-family="Arial, sans-serif" font-size="18">3. Store image.png in CDN</text>
-  <path d="M447 184L157.61 104.9" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
-  <text x="281" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="18">4. return image.png</text>
+  <path id="user-a-return" d="M435 181L157.64 108.06" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="300" y="170" text-anchor="middle" transform="rotate(14.0 300 170)" font-family="Arial, sans-serif" font-size="17">4. return image.png</text>
 
-  <!-- User B is served from the warm CDN cache. -->
-  <path d="M147 292L437.43 208.05" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
-  <text x="287" y="232" text-anchor="middle" font-family="Arial, sans-serif" font-size="18">5. get image.png</text>
-  <path d="M447 218L157.37 320.34" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
-  <text x="291" y="342" text-anchor="middle" font-family="Arial, sans-serif" font-size="18">6. return image.png</text>
+  <!-- User B request and response stay parallel while clearing both labels and devices. -->
+  <path id="user-b-request" d="M147 292L435.51 201.3" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="280" y="240" text-anchor="middle" transform="rotate(-17.45 280 240)" font-family="Arial, sans-serif" font-size="17">5. get image.png</text>
+  <path id="user-b-return" d="M447 217L157.49 308.02" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="300" y="290" text-anchor="middle" transform="rotate(-17.45 300 290)" font-family="Arial, sans-serif" font-size="17">6. return image.png</text>
 </svg>
