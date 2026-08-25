@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1176" height="720" viewBox="0 0 1176 720" role="img" aria-labelledby="title desc">
+  <title id="title">Clockwise lookup on a consistent hash ring</title>
+  <desc id="desc">Each key is stored on the first server encountered clockwise: k0 maps to s0, k1 to s1, k2 to s2, and k3 to s3.</desc>
+
+  <defs>
+    <marker id="arrow" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="0" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L13 7L0 13Z" fill="#111"/></marker>
+  </defs>
+  <rect width="1176" height="720" fill="white"/>
+
+  <!-- Compact server legend. -->
+  <text x="57" y="171" font-family="Georgia,serif" font-size="28">Servers</text>
+  <g font-family="Arial,sans-serif" font-size="20">
+    <rect x="55" y="203" width="94" height="93" rx="16" fill="#c3a4ce"/><text x="102" y="258" text-anchor="middle">server 0</text>
+    <rect x="55" y="319" width="94" height="93" rx="16" fill="#08b5d3"/><text x="102" y="374" text-anchor="middle">server 1</text>
+    <rect x="55" y="443" width="94" height="93" rx="16" fill="#f13cf1"/><text x="102" y="498" text-anchor="middle">server 2</text>
+    <rect x="55" y="555" width="94" height="93" rx="16" fill="#ffad55"/><text x="102" y="610" text-anchor="middle">server 3</text>
+  </g>
+
+  <!-- Hash ring, server nodes, and key positions. -->
+  <circle cx="586" cy="386" r="296" fill="none" stroke="#6f6f6f" stroke-width="7"/>
+  <g font-family="Georgia,serif" font-size="24" text-anchor="middle">
+    <circle cx="796" cy="183" r="25" fill="#c3a4ce"/><text x="796" y="192">s0</text>
+    <circle cx="796" cy="603" r="25" fill="#08b5d3"/><text x="796" y="612">s1</text>
+    <circle cx="367" cy="603" r="25" fill="#f13cf1"/><text x="367" y="612">s2</text>
+    <circle cx="374" cy="183" r="25" fill="#ffad55"/><text x="374" y="192">s3</text>
+  </g>
+  <g font-family="Georgia,serif" font-size="22" text-anchor="middle">
+    <circle cx="530" cy="99" r="21" fill="white" stroke="#111" stroke-width="5"/><text x="530" y="107">k0</text>
+    <circle cx="866" cy="489" r="21" fill="white" stroke="#111" stroke-width="5"/><text x="866" y="497">k1</text>
+    <circle cx="512" cy="679" r="21" fill="white" stroke="#111" stroke-width="5"/><text x="512" y="687">k2</text>
+    <circle cx="289" cy="451" r="21" fill="white" stroke="#111" stroke-width="5"/><text x="289" y="459">k3</text>
+  </g>
+
+  <!-- Clockwise lookup arrows stop at the destination server boundaries. -->
+  <path id="lookup-k0" d="M530 75C550 26 775 25 796 144" fill="none" stroke="#111" stroke-width="3" marker-end="url(#arrow)"/>
+  <path id="lookup-k1" d="M890 489C930 505 916 580 834 594" fill="none" stroke="#111" stroke-width="3" marker-end="url(#arrow)"/>
+  <path id="lookup-k2" d="M491 690C430 704 373 684 367 642" fill="none" stroke="#111" stroke-width="3" marker-end="url(#arrow)"/>
+  <path id="lookup-k3" d="M268 441C228 420 229 222 337 185" fill="none" stroke="#111" stroke-width="3" marker-end="url(#arrow)"/>
+
+  <!-- Symbol definitions. -->
+  <g font-family="Arial,sans-serif" font-size="24">
+    <text x="982" y="236">s0 = server 0</text><text x="982" y="266">s1 = server 1</text><text x="982" y="296">s2 = server 2</text><text x="982" y="326">s3 = server 3</text>
+    <text x="982" y="386">k0 = key0</text><text x="982" y="416">k1 = key1</text><text x="982" y="446">k2 = key2</text><text x="982" y="476">k3 = key3</text>
+  </g>
+</svg>

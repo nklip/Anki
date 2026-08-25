@@ -11,7 +11,7 @@ Check the notes here: https://pagefy.io/system-design/system-design-interview-by
  * [Chapter 2 - Back-of-the-envelope Estimation](./02.%20Back%20of%20the%20Envelope%20Estimation/Back%20of%20the%20Envelope%20Estimation.md)
  * [Chapter 3 - A Framework For System Design Interviews](./03.%20System%20Design%20Framework/System%20Design%20Framework.md)
  * [Chapter 4 - Design A Rate Limiter](./04.%20Rate%20Limiter/Rate%20Limiter.md)
- * [Chapter 5 - Design Consistent Hashing](./05.%20Consistent%20Hashing/)
+ * [Chapter 5 - Design Consistent Hashing](./05.%20Consistent%20Hashing/Consistent%20Hashing.md)
  * [Chapter 6 - Design A Key-Value Store](./06.%20Key-Value%20Store/)
  * [Chapter 7 - Design A Unique ID Generator In Distributed Systems](./07.%20Unique-Id%20Generator/)
  * [Chapter 8 - Design A URL Shortener](./08.%20URL%20Shortener/)

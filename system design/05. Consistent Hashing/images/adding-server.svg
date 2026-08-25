@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1452" height="1018" viewBox="0 0 1452 1018" role="img" aria-labelledby="title desc">
+  <title id="title">Adding a server to a consistent hash ring</title>
+  <desc id="desc">New server s4 is inserted between key k0 and server s0. Key0 now maps to s4, while the former dashed route to s0 is invalidated.</desc>
+
+  <defs>
+    <marker id="arrow" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="0" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L13 7L0 13Z" fill="#111"/></marker>
+  </defs>
+  <rect width="1452" height="1018" fill="white"/>
+
+  <!-- Five-server legend after insertion. -->
+  <text x="16" y="236" font-family="Georgia,serif" font-size="34">Servers</text>
+  <g font-family="Arial,sans-serif" font-size="27">
+    <rect x="12" y="277" width="120" height="120" rx="19" fill="#c3a4ce"/><text x="72" y="348" text-anchor="middle">server 0</text>
+    <rect x="12" y="425" width="120" height="120" rx="19" fill="#08b5d3"/><text x="72" y="496" text-anchor="middle">server 1</text>
+    <rect x="12" y="583" width="120" height="120" rx="19" fill="#f13cf1"/><text x="72" y="654" text-anchor="middle">server 2</text>
+    <rect x="12" y="724" width="120" height="120" rx="19" fill="#ffad55"/><text x="72" y="795" text-anchor="middle">server 3</text>
+    <rect x="12" y="876" width="120" height="120" rx="19" fill="#00a74f"/><text x="72" y="947" text-anchor="middle">server 4</text>
+  </g>
+
+  <!-- Ring, original servers, and key positions. -->
+  <circle cx="690" cy="522" r="377" fill="none" stroke="#6f6f6f" stroke-width="7"/>
+  <g font-family="Georgia,serif" font-size="31" text-anchor="middle">
+    <circle cx="951" cy="251" r="30" fill="#c3a4ce"/><text x="951" y="262">s0</text>
+    <circle cx="951" cy="783" r="30" fill="#08b5d3"/><text x="951" y="794">s1</text>
+    <circle cx="406" cy="783" r="30" fill="#f13cf1"/><text x="406" y="794">s2</text>
+    <circle cx="414" cy="251" r="30" fill="#ffad55"/><text x="414" y="262">s3</text>
+    <circle cx="803" cy="169" r="30" fill="#00a74f"/><text x="803" y="180">s4</text>
+  </g>
+  <g font-family="Georgia,serif" font-size="28" text-anchor="middle">
+    <circle cx="614" cy="147" r="25" fill="white" stroke="#111" stroke-width="6"/><text x="614" y="157">k0</text>
+    <circle cx="1037" cy="642" r="25" fill="white" stroke="#111" stroke-width="6"/><text x="1037" y="652">k1</text>
+    <circle cx="590" cy="882" r="25" fill="white" stroke="#111" stroke-width="6"/><text x="590" y="892">k2</text>
+    <circle cx="309" cy="594" r="25" fill="white" stroke="#111" stroke-width="6"/><text x="309" y="604">k3</text>
+  </g>
+  <text x="500" y="111" font-family="Georgia,serif" font-size="31">key0</text><text x="591" y="949" font-family="Georgia,serif" font-size="31">key2</text>
+
+  <!-- New key0 route goes to s4; the former s0 route is dashed and crossed out. -->
+  <path id="key0-to-s4" d="M614 109C640 34 796 35 803 125" fill="none" stroke="#111" stroke-width="4" marker-end="url(#arrow)"/>
+  <path id="old-key0-route" d="M630 177C655 205 639 291 709 311C785 333 813 264 907 253" fill="none" stroke="#111" stroke-width="4" stroke-dasharray="13 10" marker-end="url(#arrow)"/>
+  <path d="M696 284L744 332M744 284L696 332" stroke="#ed1c24" stroke-width="14"/>
+
+  <!-- Symbol definitions remain the original four-server notation. -->
+  <g font-family="Arial,sans-serif" font-size="29">
+    <text x="1187" y="324">s0 = server 0</text><text x="1187" y="362">s1 = server 1</text><text x="1187" y="400">s2 = server 2</text><text x="1187" y="438">s3 = server 3</text>
+    <text x="1187" y="514">k0 = key0</text><text x="1187" y="552">k1 = key1</text><text x="1187" y="590">k2 = key2</text><text x="1187" y="628">k3 = key3</text>
+  </g>
+</svg>
