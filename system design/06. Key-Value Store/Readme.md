@@ -1,4 +1,5 @@
 # Chapter 6: Design a Key-Value Store
+<sub>[Back to System Design](../README.md#content)</sub>
 
 ## Introduction
 A **key-value store** is a type of non-relational database where data is stored as key-value pairs. Each key is unique, and values are accessed using these keys. This chapter details how to design a scalable, high-availability distributed key-value store that supports operations like:
@@ -36,7 +37,7 @@ A **distributed key-value store** partitions data across multiple servers and mu
 **Trade-off:** According to CAP theorem only two of the three guarantees can be achieved.
 
 <p align="center">
-  <img src="./images/cap.png" alt="CAP" width="400">
+  <img src="./images/cap.svg" alt="CAP" width="400">
 </p>
 
 #### System Types:
@@ -46,13 +47,13 @@ A **distributed key-value store** partitions data across multiple servers and mu
 
     **Since network failure is unavoidable, a distributed system must tolerate network partition. Thus, a CA system cannot exist in real-world applications.**
 
-    In a distributed system, partitions are inevitable. When a partition occurs, we must choose between consistency and availability. For example, if node n3 goes down, 
+    In a distributed system, partitions are inevitable. When a partition occurs, we must choose between consistency and availability. For example, if node n3 goes down,
     any data written to nodes n1 or n2 cannot be propagated to n3. Conversely, if data is written to n3 but not yet propagated to n1 and n2, nodes n1 and n2 will have stale data.
 
     <p align="center">
-    <img src="./images/server-down.png"  alt="Server down" width="400">
+    <img src="./images/server-down.svg"  alt="Server down" width="400">
     </p>
-    
+
 - If we choose CP system, we must block all write operations to n1 and n2 to avoid data inconsistency.
 - If we choose AP system, the system keeps accepting reads, even though it might return stale data. 
 For writes, n1 and n2 keep accepting writes,
@@ -72,7 +73,7 @@ and data will be synced to n3 when the network partition is resolved.
 - The N servers are chosen by walking clockwise from the server position and choose the first N servers on the ring to store data copies.Place replicas in distinct data centers to improve reliability in case of virtual nodes.
 
     <p align="center">
-    <img src="./images/data-replication.png" alt="Data replication" width="300">
+    <img src="./images/data-replication.svg" alt="Data replication" width="300">
     </p>
 
 ### 3. Consistency
@@ -85,9 +86,9 @@ Since data is replicated at multiple nodes, it must be synchronized across repli
   - The configuration of W, R and N is a typical tradeoff between latency and consistency. 
 
     <p align="center">
-    <img src="./images/quorum-consensus.png"   alt="Quorum consensus" width="400">
+    <img src="./images/quorum-consensus.svg"   alt="Quorum consensus" width="400">
     </p>
-    
+
     - If R = 1 and W = N, the system is optimized for a fast read.
     - If W = 1 and R = N, the system is optimized for fast write.
     - If W + R > N, strong consistency is guaranteed (Usually N = 3, W = R = 2).
@@ -98,20 +99,18 @@ Since data is replicated at multiple nodes, it must be synchronized across repli
   - **Weak Consistency:** Subsequent read operations may not see the most updated value.
   - **Eventual Consistency:** Given enough time, all updates are propagated, and all replicas are consisten
 
-
 ### 4. Inconsistency Resolution
 Replication gives high availability but causes inconsistencies among replicas. Versioning and
 vector locks are used to solve inconsistency problems.
-- **Versioning:** 
+- **Versioning:**
     - Use **vector clocks** to track data versions and resolve conflicts.
     - Versioning means treating each data modification as a new immutable version of data.
         <div>
-        <img src="./images/consistent-server.png"   alt="Consisten hashing" width="400">
-        <img src="./images/inconsistent-server.png"   alt="Inconsistent server" height="230">
+        <img src="./images/consistent-server.svg"   alt="Consisten hashing" width="400">
+        <img src="./images/inconsistent-server.svg"   alt="Inconsistent server" height="230">
         </div>
-    
-    - Server 1 changes the name , and server 2 also changes the name. These two changes are performed simultaneously. Now, we have conflicting values, called versions v1 and v2.
 
+    - Server 1 changes the name , and server 2 also changes the name. These two changes are performed simultaneously. Now, we have conflicting values, called versions v1 and v2.
 
 - **Vector Clock**
     1. **Setup**: A vector clock is a [server, version] pair associated with a data item. It can be used to check
@@ -131,13 +130,12 @@ vector locks are used to solve inconsistency problems.
     4. **Conflict Resolution:** When conflicts are detected (sibling versions), the system relies on application-specific logic or client intervention to   reconcile the data.
 
         <p align="center">
-        <img src="./images/vector-clock.png"  alt="Server hashing" width="500">
+        <img src="./images/vector-clock.svg"  alt="Server hashing" width="500">
         </p>
 
 - **Challenges:**
   - Increased complexity for clients.
   - Vector clock size may grow with many updates, requiring trimming strategies to limit its size.
-
 
 ### 5. Handling Failures
 
@@ -145,7 +143,7 @@ vector locks are used to solve inconsistency problems.
 It is insufficient to believe that a server is down because another server says so.Usually, it requires at least two independent sources of information to mark a server down.
 - **Gossip Protocol:**
     <div style="margin-left:3rem">
-        <img src="./images/gossip-protocol.png"  alt="Gossip protocol" width="600">
+        <img src="./images/gossip-protocol.svg"  alt="Gossip protocol" width="600">
     </div>
 
     - Each node maintains member IDs and heartbeat counters.
@@ -154,17 +152,15 @@ It is insufficient to believe that a server is down because another server says 
     - If the heartbeat has not increased for more than predefined periods, the member is
     considered as offline
 
-
-
 #### b. Temporary Failures
 - **Sloppy Quorum:** Use healthy nodes to maintain operations temporarily.
         <p align="center">
-        <img src="./images/sloppy-quorum.png"   alt="Sloppy Quorum" width="400">
+        <img src="./images/sloppy-quorum.svg"   alt="Sloppy Quorum" width="400">
         </p>
 
     - After detecting failures, the system needs to deploy certain mechanisms to ensure availability
     - Instead of enforcing the quorum requirement, the system chooses the first W healthy servers for writes and first R
-    healthy servers for reads on the hash ring. 
+    healthy servers for reads on the hash ring.
     - Offline servers are ignored. If a server is unavailable, another server will process requests temporarily
 
 
@@ -173,7 +169,7 @@ It is insufficient to believe that a server is down because another server says 
 
 #### c. Permanent Failures
 - Use **Merkle Trees** for efficient synchronization between replicas.
-    A **Merkle Tree** (or hash tree) is a data structure to efficiently detect and resolve inconsistencies between replicas during permanent failures. 
+    A **Merkle Tree** (or hash tree) is a data structure to efficiently detect and resolve inconsistencies between replicas during permanent failures.
 
 - Working
     1. **Structure:**
@@ -183,22 +179,20 @@ It is insufficient to believe that a server is down because another server says 
 
     2. **Building a Merkle Tree:**
         - **Step 1:** Divide the key space into buckets.
-            
-            <img src="./images/key-bucket.png"   alt="Key Bucket" width="500">
+
+            <img src="./images/key-bucket.svg"   alt="Key Bucket" width="500">
 
         - **Step 2:** Hash each key in a bucket using uniform hashing.
 
-            <img src="./images/hash-key-bucket.png"   alt="Hash Key Bucket" width="500">
+            <img src="./images/hash-key-bucket.svg"   alt="Hash Key Bucket" width="500">
 
         - **Step 3:** Create a single hash for each bucket.
-        
-            <img src="./images/hash-bucket.png"   alt="Hash Bucket" width="500">
+
+            <img src="./images/hash-bucket.svg"   alt="Hash Bucket" width="500">
 
         - **Step 4:** Combine hashes of buckets to compute higher-level hashes, culminating in the root hash.
 
-            <img src="./images/merkel-tree.png"   alt="Merkel Tree" width="500">
-
-
+            <img src="./images/merkel-tree.svg"   alt="Merkel Tree" width="500">
 
     3. **Synchronization:**
         - To synchronize two replicas:
@@ -212,7 +206,6 @@ It is insufficient to believe that a server is down because another server says 
     - **Scalability:** Effective for large datasets with minimal synchronization overhead.
     - **Reliability:** Ensures data consistency across replicas.
 
-
 ### 6. Handling Data Center Outages
 - Replicate data across multiple data centers to ensure availability during outages.
 
@@ -222,34 +215,30 @@ It is insufficient to believe that a server is down because another server says 
 ### 1. Write Path (Based on Cassandra architecture)
 
 <div style="margin-left:3rem">
-    <img src="./images/write-path.png"   alt="Hash Bucket" width="500">
+    <img src="./images/write-path.svg"   alt="Hash Bucket" width="500">
 </div>
 
 - Persist the write in a **commit log**.
 - Save data to a **memory cache**.
 - Flush data to **SSTable** (Sorted String Table) on disk when cache is full.
 
-   
-
 ### 2. Read Path
 <div style="margin-left:3rem">
-    <img src="./images/read-path.png"   alt="Hash Bucket" width="500">
-    <img src="./images/read-path-without-cache.png"   alt="Hash Bucket" width="500">
+    <img src="./images/read-path.svg"   alt="Hash Bucket" width="500">
+    <img src="./images/read-path-without-cache.svg"   alt="Hash Bucket" width="500">
 </div>
 
 - Check **memory cache** for the data.
 - If absent, use a **Bloom Filter** to locate the data in SSTables.
 - Retrieve and return the data.
 
-
 ---
 
 ## Final Architecture
 
 <p align="center">
-<img src="./images/final-architecture.png"   alt="Hash Bucket" width="500">
+<img src="./images/final-architecture.svg"   alt="Hash Bucket" width="500">
 </p>
-
 
 -  Clients communicate with the key-value store through simple APIs: get(key) and put(key,
 value).

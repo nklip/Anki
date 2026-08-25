@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1298" height="674" viewBox="0 0 1298 674" role="img" aria-labelledby="title desc">
+  <title id="title">Merkle trees isolate a mismatched bucket</title>
+  <desc id="desc">Two replica Merkle trees share the left branch but differ along the right branch down to the bucket containing key 8.</desc>
+
+  <!-- Merkle node and bucket styles. -->
+  <defs>
+    <style>
+      .server-label { font: 24px Georgia, serif; fill: #111; text-anchor: middle; }
+      .panel { fill: #fff; stroke: #111; stroke-width: 2; }
+      .hash { fill: #fff; stroke: #555; stroke-width: 2.5; }
+      .hash-red { fill: #ff0e2a; stroke: #555; stroke-width: 2.5; }
+      .edge { stroke: #333; stroke-width: 2; fill: none; }
+      .cell { fill: #fff; stroke: #555; stroke-width: 2; }
+      .text { font: 17px Arial, sans-serif; fill: #222; text-anchor: middle; dominant-baseline: middle; }
+    </style>
+  </defs>
+
+  <!-- Replica containers and labels. -->
+  <rect width="1298" height="674" fill="#fff"/>
+  <text class="server-label" x="318" y="48">server 1</text><text class="server-label" x="974" y="48">server 2</text>
+  <rect class="panel" x="7" y="66" width="620" height="590" rx="64"/><rect class="panel" x="641" y="66" width="650" height="590" rx="64"/>
+
+  <!-- Tree edges are behind node boxes. -->
+  <g aria-label="server 1 Merkle edges">
+    <path class="edge" d="M318 142 160 250M318 142 465 250M160 280 95 397M160 280 228 397M465 280 390 397M465 280 540 397M95 427V500M228 427V500M390 427V500M540 427V500"/>
+  </g>
+  <g aria-label="server 2 Merkle edges">
+    <path class="edge" d="M974 142 785 250M974 142 1098 250M785 280 720 397M785 280 852 397M1098 280 1025 397M1098 280 1172 397M720 427V500M852 427V500M1025 427V500M1172 427V500"/>
+  </g>
+
+  <!-- Server 1 hashes. Red nodes mark the path containing key 8. -->
+  <rect class="hash-red" x="268" y="112" width="100" height="48"/><text class="text" x="318" y="136">5357</text>
+  <rect class="hash" x="110" y="242" width="100" height="48"/><text class="text" x="160" y="266">3545</text>
+  <rect class="hash-red" x="415" y="242" width="100" height="48"/><text class="text" x="465" y="266">4603</text>
+  <rect class="hash" x="45" y="389" width="100" height="48"/><text class="text" x="95" y="413">6901</text>
+  <rect class="hash" x="178" y="389" width="100" height="48"/><text class="text" x="228" y="413">6773</text>
+  <rect class="hash-red" x="340" y="389" width="100" height="48"/><text class="text" x="390" y="413">8601</text>
+  <rect class="hash" x="490" y="389" width="100" height="48"/><text class="text" x="540" y="413">7812</text>
+
+  <!-- Server 2 hashes show a different root, branch, and leaf hash. -->
+  <rect class="hash-red" x="924" y="112" width="100" height="48"/><text class="text" x="974" y="136">9213</text>
+  <rect class="hash" x="735" y="242" width="100" height="48"/><text class="text" x="785" y="266">3545</text>
+  <rect class="hash-red" x="1048" y="242" width="100" height="48"/><text class="text" x="1098" y="266">2960</text>
+  <rect class="hash" x="670" y="389" width="100" height="48"/><text class="text" x="720" y="413">6901</text>
+  <rect class="hash" x="802" y="389" width="100" height="48"/><text class="text" x="852" y="413">6773</text>
+  <rect class="hash-red" x="975" y="389" width="100" height="48"/><text class="text" x="1025" y="413">7975</text>
+  <rect class="hash" x="1122" y="389" width="100" height="48"/><text class="text" x="1172" y="413">7812</text>
+
+  <!-- Leaf bucket contents make the mismatch concrete. -->
+  <g aria-label="server 1 leaf buckets">
+    <path class="cell" d="M35 500h120v45H35zM35 545h120v45H35zM35 590h120v45H35z"/><text class="text" x="95" y="523">1 -&gt; 2343</text><text class="text" x="95" y="568">2 -&gt; 1456</text><text class="text" x="95" y="613">3 -&gt; 9865</text>
+    <path class="cell" d="M168 500h120v45H168zM168 545h120v45H168zM168 590h120v45H168z"/><text class="text" x="228" y="568">5 -&gt; 2145</text><text class="text" x="228" y="613">6 -&gt; 7456</text>
+    <path class="cell" d="M330 500h120v45H330zM330 545h120v45H330zM330 590h120v45H330z"/><rect x="333" y="548" width="114" height="39" fill="#ff0e2a"/><text class="text" x="390" y="523">7 -&gt; 9654</text><text class="text" x="390" y="568">8 -&gt; 1356</text><text class="text" x="390" y="613">9 -&gt; 4358</text>
+    <path class="cell" d="M480 500h120v45H480zM480 545h120v45H480zM480 590h120v45H480z"/><text class="text" x="540" y="523">10 -&gt; 3542</text><text class="text" x="540" y="568">11 -&gt; 8705</text><text class="text" x="540" y="613">12 -&gt; 3697</text>
+  </g>
+  <g aria-label="server 2 leaf buckets">
+    <path class="cell" d="M660 500h120v45H660zM660 545h120v45H660zM660 590h120v45H660z"/><text class="text" x="720" y="523">1 -&gt; 2343</text><text class="text" x="720" y="568">2 -&gt; 1456</text><text class="text" x="720" y="613">3 -&gt; 9865</text>
+    <path class="cell" d="M792 500h120v45H792zM792 545h120v45H792zM792 590h120v45H792z"/><text class="text" x="852" y="568">5 -&gt; 2145</text><text class="text" x="852" y="613">6 -&gt; 7456</text>
+    <path class="cell" d="M965 500h120v45H965zM965 545h120v45H965zM965 590h120v45H965z"/><rect x="968" y="548" width="114" height="39" fill="#ff0e2a"/><text class="text" x="1025" y="523">7 -&gt; 9654</text><text class="text" x="1025" y="613">9 -&gt; 4358</text>
+    <path class="cell" d="M1112 500h120v45H1112zM1112 545h120v45H1112zM1112 590h120v45H1112z"/><text class="text" x="1172" y="523">10 -&gt; 3542</text><text class="text" x="1172" y="568">11 -&gt; 8705</text><text class="text" x="1172" y="613">12 -&gt; 3697</text>
+  </g>
+</svg>

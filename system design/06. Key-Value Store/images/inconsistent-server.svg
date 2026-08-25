@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1128" height="520" viewBox="0 0 1128 520" role="img" aria-labelledby="title desc">
+  <title id="title">Conflicting writes create inconsistent replicas</title>
+  <desc id="desc">Server 1 writes John San Francisco to n1 while server 2 writes John New York to n2, producing different values.</desc>
+
+  <!-- Request arrow and shared text styles. -->
+  <defs>
+    <marker id="blue-arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" viewBox="0 0 12 12" orient="auto" markerUnits="strokeWidth">
+      <path d="M1 1 11 6 1 11Z" fill="#0b7dbb"/>
+    </marker>
+    <style>
+      .line { stroke: #0b7dbb; stroke-width: 4; fill: none; marker-end: url(#blue-arrow); }
+      .label { font: 27px Arial, sans-serif; fill: #111; }
+      .value { font: 26px Arial, sans-serif; fill: #e31919; }
+      .node-label { font: 31px Arial, sans-serif; text-anchor: middle; fill: #111; }
+    </style>
+  </defs>
+
+  <!-- Writers. -->
+  <rect width="1128" height="520" fill="#fff"/>
+  <g aria-label="server 1">
+    <rect x="60" y="14" width="66" height="126" rx="5" fill="#63c516" stroke="#b5e18f" stroke-width="3"/>
+    <path d="M74 40h38M74 100h38M74 116h38" stroke="#fff" stroke-width="6"/>
+    <text class="node-label" x="93" y="170">server 1</text>
+  </g>
+  <g aria-label="server 2">
+    <rect x="60" y="340" width="66" height="126" rx="5" fill="#63c516" stroke="#b5e18f" stroke-width="3"/>
+    <path d="M74 366h38M74 426h38M74 442h38" stroke="#fff" stroke-width="6"/>
+    <text class="node-label" x="93" y="500">server 2</text>
+  </g>
+
+  <!-- Replicas hold conflicting values. -->
+  <g aria-label="replica n1">
+    <path d="M668 30v82c0 14 20 24 44 24s44-10 44-24V30Z" fill="#0b7dbb" stroke="#08679a" stroke-width="3"/>
+    <ellipse cx="712" cy="30" rx="44" ry="15" fill="#0b7dbb" stroke="#e8f6fd" stroke-width="4"/>
+    <text class="node-label" x="712" y="168">n1</text>
+    <text class="value" x="770" y="88">name: johnSanFrancisco</text>
+  </g>
+  <g aria-label="replica n2">
+    <path d="M668 356v82c0 14 20 24 44 24s44-10 44-24V356Z" fill="#0b7dbb" stroke="#08679a" stroke-width="3"/>
+    <ellipse cx="712" cy="356" rx="44" ry="15" fill="#0b7dbb" stroke="#e8f6fd" stroke-width="4"/>
+    <text class="node-label" x="712" y="494">n2</text>
+    <text class="value" x="770" y="414">name: johnNewYork</text>
+  </g>
+
+  <!-- Independent writes reach different replicas. -->
+  <path class="line" d="M132 78H654"/>
+  <text class="label" x="220" y="58">put(&quot;name&quot;, &quot;johnSanFrancisco&quot;)</text>
+  <path class="line" d="M132 404H654"/>
+  <text class="label" x="220" y="384">put(&quot;name&quot;, &quot;johnNewYork&quot;)</text>
+  <path d="M712 176V338" stroke="#0b7dbb" stroke-width="4"/>
+</svg>

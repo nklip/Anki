@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1422" height="710" viewBox="0 0 1422 710" role="img" aria-labelledby="title desc">
+  <title id="title">Write path through commit log and memory cache</title>
+  <desc id="desc">A client write is appended to the commit log and added to memory. The memory cache later flushes immutable data to SSTables.</desc>
+
+  <!-- Write arrows and shared component typography. -->
+  <defs>
+    <marker id="black-arrow" markerWidth="11" markerHeight="11" refX="9" refY="5.5" viewBox="0 0 11 11" orient="auto" markerUnits="strokeWidth"><path d="M1 1 10 5.5 1 10Z" fill="#111"/></marker>
+    <style>
+      .flow { stroke: #111; stroke-width: 3; fill: none; marker-end: url(#black-arrow); }
+      .label { font: 27px Arial, sans-serif; fill: #111; }
+      .box-label { font: 28px Arial, sans-serif; fill: #111; text-anchor: middle; dominant-baseline: middle; }
+      .step { fill: #fff; stroke: #08b5d0; stroke-width: 3; }
+    </style>
+  </defs>
+
+  <!-- Client and server memory/disk regions. -->
+  <rect width="1422" height="710" fill="#fff"/>
+  <rect x="360" y="15" width="1026" height="676" fill="#f1f1f1" stroke="#111" stroke-width="2"/>
+  <rect x="360" y="387" width="1026" height="304" fill="#fff4b8" stroke="#111" stroke-width="2"/>
+  <text x="873" y="76" font-family="Arial, sans-serif" font-size="42" text-anchor="middle">Server</text>
+  <text class="label" x="380" y="378">MEMORY</text><text class="label" x="380" y="424">DISK</text>
+  <rect x="8" y="140" width="187" height="75" rx="10" fill="#fff" stroke="#08b5d0" stroke-width="3"/>
+  <text class="box-label" x="101" y="178">Client</text>
+
+  <!-- Steps 1 and 2 happen in parallel: durable log append and in-memory update. -->
+  <path class="flow" d="M195 176H1000"/>
+  <text class="label" x="260" y="158">Write</text>
+  <path class="flow" d="M705 178V462"/>
+  <circle class="step" cx="674" cy="294" r="20"/><text class="box-label" x="674" y="294" font-size="22">1</text>
+  <circle class="step" cx="868" cy="143" r="20"/><text class="box-label" x="868" y="143" font-size="22">2</text>
+  <rect x="1012" y="124" width="228" height="100" rx="16" fill="#00a500"/>
+  <text x="1126" y="175" font-family="Arial, sans-serif" font-size="27" fill="#fff" text-anchor="middle">Memory cache</text>
+
+  <!-- Commit log receives the durable append. -->
+  <g aria-label="commit log">
+    <path d="M655 480v96c0 18 23 30 50 30s50-12 50-30V480Z" fill="#0b7dbb" stroke="#08679a" stroke-width="3"/>
+    <ellipse cx="705" cy="480" rx="50" ry="17" fill="#0b7dbb" stroke="#e8f6fd" stroke-width="4"/>
+    <text class="box-label" x="705" y="635">Commit log</text>
+  </g>
+
+  <!-- Step 3 flushes the memory cache into immutable SSTables. -->
+  <path class="flow" d="M1126 224V421"/>
+  <circle class="step" cx="1094" cy="294" r="20"/><text class="box-label" x="1094" y="294" font-size="22">3</text>
+  <text class="label" x="1140" y="305">Flush</text>
+  <rect x="968" y="432" width="320" height="176" rx="24" fill="#fff9d7" stroke="#08b5d0" stroke-width="3"/>
+  <g fill="#70a6df"><rect x="991" y="445" width="67" height="66"/><rect x="1094" y="445" width="67" height="66"/><rect x="1197" y="445" width="67" height="66"/><rect x="991" y="528" width="67" height="66"/><rect x="1094" y="528" width="67" height="66"/><rect x="1197" y="528" width="67" height="66"/></g>
+  <text class="box-label" x="1128" y="642">SSTables</text>
+</svg>

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1072" height="1014" viewBox="0 0 1072 1014" role="img" aria-labelledby="title desc">
+  <title id="title">Sloppy quorum skips an unavailable replica</title>
+  <desc id="desc">A coordinator writes to s0 and s1. The intended request to unavailable s2 is rejected, while s3 remains an available fallback on the ring.</desc>
+
+  <!-- Arrow and failure styles. -->
+  <defs>
+    <marker id="black-arrow" markerWidth="14" markerHeight="14" refX="12" refY="7" viewBox="0 0 14 14" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1 13 7 1 13Z" fill="#111"/></marker>
+    <style>
+      .write { stroke: #111; stroke-width: 3; fill: none; marker-end: url(#black-arrow); }
+      .ack { stroke: #111; stroke-width: 3; fill: none; marker-end: url(#black-arrow); }
+      .failed { stroke: #111; stroke-width: 3; stroke-dasharray: 9 9; fill: none; marker-end: url(#black-arrow); }
+      .label { font: 29px Georgia, serif; fill: #111; text-anchor: middle; }
+      .node-text { font: 34px Georgia, serif; fill: #111; text-anchor: middle; dominant-baseline: middle; }
+    </style>
+  </defs>
+
+  <!-- Replica ring and request coordinator. -->
+  <rect width="1072" height="1014" fill="#fff"/>
+  <circle cx="550" cy="510" r="445" fill="none" stroke="#707070" stroke-width="8"/>
+  <rect x="0" y="442" width="230" height="72" fill="#fff" stroke="#111" stroke-width="3"/>
+  <text class="label" x="108" y="489" font-size="32">coordinator</text>
+  <circle cx="550" cy="65" r="38" fill="#10afd2"/><text class="node-text" x="550" y="65">s0</text>
+  <circle cx="995" cy="510" r="38" fill="#10afd2"/><text class="node-text" x="995" y="510">s1</text>
+  <circle cx="550" cy="955" r="38" fill="#10afd2"/><text class="node-text" x="550" y="955">s2</text>
+  <circle cx="145" cy="695" r="38" fill="#10afd2"/><text class="node-text" x="145" y="695">s3</text>
+
+  <!-- Successful quorum traffic uses separated, straight outbound and acknowledgement lanes. -->
+  <path class="write" d="M230 450 521 91"/>
+  <path class="ack" d="M534 100 230 462"/>
+  <text class="label" x="346" y="247" transform="rotate(-51 346 247)">put(key1, val1)</text>
+  <text class="label" x="412" y="305" transform="rotate(-51 412 305)">ACK</text>
+  <path class="write" d="M230 478 957 500"/>
+  <path class="ack" d="M957 518 230 494"/>
+  <text class="label" x="675" y="455">put(key1, val1)</text>
+  <text class="label" x="675" y="568">ACK</text>
+
+  <!-- Failed s2 request is dashed and stopped by a red cross before the target. -->
+  <path class="failed" d="M230 508 529 924"/>
+  <text class="label" x="420" y="660" transform="rotate(54 420 660)">put(key1, val1)</text>
+  <path d="M450 815 492 857M492 815 450 857" stroke="#ff2f64" stroke-width="12"/>
+</svg>

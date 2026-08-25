@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1094" height="1148" viewBox="0 0 1094 1148" role="img" aria-labelledby="title desc">
+  <title id="title">Vector clocks track concurrent versions</title>
+  <desc id="desc">Two writes at Sx advance a version, concurrent writes at Sy and Sz branch it, and Sx reconciles both branches into a merged vector clock.</desc>
+
+  <!-- Version-flow arrows and step annotation styles. -->
+  <defs>
+    <marker id="blue-arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" viewBox="0 0 12 12" orient="auto" markerUnits="strokeWidth"><path d="M1 1 11 6 1 11Z" fill="#0b7dbb"/></marker>
+    <style>
+      .flow { stroke: #0b7dbb; stroke-width: 4; fill: none; marker-end: url(#blue-arrow); }
+      .version { fill: #fff; stroke: #0b7dbb; stroke-width: 3; rx: 14; }
+      .version-text { font: 31px Arial, sans-serif; fill: #111; text-anchor: middle; dominant-baseline: middle; }
+      .step-text { font: 29px Arial, sans-serif; fill: #111; }
+      .step { fill: #fff; stroke: #111; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <!-- Sequential writes at Sx. -->
+  <rect width="1094" height="1148" fill="#fff"/>
+  <path class="flow" d="M547 15V120"/>
+  <rect class="version" x="380" y="130" width="334" height="72"/>
+  <text class="version-text" x="547" y="166">D1([Sx, 1])</text>
+
+  <circle class="step" cx="612" cy="40" r="20"/>
+  <text class="step-text" x="605" y="50">1</text>
+  <text class="step-text" x="645" y="50">write handled by Sx</text>
+
+  <path class="flow" d="M547 202V350"/>
+  <rect class="version" x="380" y="360" width="334" height="72"/>
+  <text class="version-text" x="547" y="396">D2([Sx, 2])</text>
+
+  <circle class="step" cx="612" cy="270" r="20"/>
+  <text class="step-text" x="605" y="280">2</text>
+  <text class="step-text" x="645" y="280">write handled by Sx</text>
+
+  <!-- Concurrent writes branch to Sy and Sz. -->
+  <path class="flow" d="M500 432 270 710"/>
+  <path class="flow" d="M594 432 824 710"/>
+  <circle class="step" cx="56" cy="586" r="20"/>
+  <text class="step-text" x="49" y="596">3</text><text class="step-text" x="88" y="596">write handled by Sy</text>
+  <circle class="step" cx="770" cy="586" r="20"/>
+  <text class="step-text" x="763" y="596">4</text><text class="step-text" x="804" y="596">write handled by Sz</text>
+
+  <rect class="version" x="70" y="720" width="400" height="72"/>
+  <text class="version-text" x="270" y="756">D3([Sx, 2], [Sy, 1])</text>
+  <rect class="version" x="624" y="720" width="400" height="72"/>
+  <text class="version-text" x="824" y="756">D4([Sx, 2], [Sz, 1])</text>
+
+  <!-- Reconciliation merges both branches and increments Sx. -->
+  <path class="flow" d="M270 792 485 1038"/>
+  <path class="flow" d="M824 792 609 1038"/>
+  <circle class="step" cx="785" cy="915" r="20"/>
+  <text class="step-text" x="778" y="925">5</text>
+  <text class="step-text" x="822" y="908" font-size="23">reconciled and</text>
+  <text class="step-text" x="822" y="940" font-size="23">written by Sx</text>
+  <rect class="version" x="260" y="1048" width="574" height="76"/>
+  <text class="version-text" x="547" y="1086">D5([Sx, 3], [Sy, 1], [Sz, 1])</text>
+</svg>

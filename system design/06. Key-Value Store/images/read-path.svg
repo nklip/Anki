@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1422" height="682" viewBox="0 0 1422 682" role="img" aria-labelledby="title desc">
+  <title id="title">Read path when the memory cache contains the result</title>
+  <desc id="desc">A client sends a read request to the memory cache and receives the result directly, so the disk structures are not used.</desc>
+
+  <!-- Request and return arrows plus server component styles. -->
+  <defs>
+    <marker id="black-arrow" markerWidth="11" markerHeight="11" refX="9" refY="5.5" viewBox="0 0 11 11" orient="auto" markerUnits="strokeWidth"><path d="M1 1 10 5.5 1 10Z" fill="#111"/></marker>
+    <style>
+      .flow { stroke: #111; stroke-width: 3; fill: none; marker-end: url(#black-arrow); }
+      .return { stroke: #111; stroke-width: 3; stroke-dasharray: 9 9; fill: none; marker-end: url(#black-arrow); }
+      .label { font: 27px Arial, sans-serif; fill: #111; }
+      .box-label { font: 28px Arial, sans-serif; fill: #111; text-anchor: middle; dominant-baseline: middle; }
+    </style>
+  </defs>
+
+  <!-- Client and server memory/disk boundary. -->
+  <rect width="1422" height="682" fill="#fff"/>
+  <rect x="410" y="14" width="984" height="648" fill="#f1f1f1" stroke="#111" stroke-width="2"/>
+  <rect x="410" y="371" width="984" height="291" fill="#fff4b8" stroke="#111" stroke-width="2"/>
+  <text x="902" y="72" font-family="Arial, sans-serif" font-size="42" text-anchor="middle">Server</text>
+  <text class="label" x="430" y="360">MEMORY</text><text class="label" x="430" y="407">DISK</text>
+  <rect x="16" y="132" width="179" height="76" rx="10" fill="#fff" stroke="#08b5d0" stroke-width="3"/>
+  <text class="box-label" x="105" y="170">Client</text>
+
+  <!-- Cache-hit request and direct response. -->
+  <path class="flow" d="M195 148H1108"/>
+  <text class="label" x="230" y="128">Read request</text>
+  <path class="return" d="M1108 192H199"/>
+  <text class="label" x="230" y="229">Return result</text>
+  <circle cx="778" cy="120" r="20" fill="#fff" stroke="#08b5d0" stroke-width="3"/><text class="box-label" x="778" y="120" font-size="22">1</text>
+  <rect x="1120" y="120" width="218" height="97" rx="16" fill="#00a500"/>
+  <text x="1229" y="170" font-family="Arial, sans-serif" font-size="27" fill="#fff" text-anchor="middle">Memory cache</text>
+
+  <!-- Disk structures are shown for context but are not traversed on this cache hit. -->
+  <rect x="458" y="468" width="196" height="98" rx="15" fill="#fff9d7" stroke="#08b5d0" stroke-width="3"/>
+  <text class="box-label" x="556" y="517">Result data</text>
+  <rect x="732" y="434" width="307" height="170" rx="24" fill="#fff9d7" stroke="#08b5d0" stroke-width="3"/>
+  <g fill="#70a6df"><rect x="758" y="446" width="62" height="64"/><rect x="852" y="446" width="62" height="64"/><rect x="946" y="446" width="62" height="64"/><rect x="758" y="527" width="62" height="64"/><rect x="852" y="527" width="62" height="64"/><rect x="946" y="527" width="62" height="64"/></g>
+  <text class="box-label" x="885" y="635">SSTables</text>
+  <rect x="1132" y="471" width="195" height="97" rx="15" fill="#fff9d7" stroke="#08b5d0" stroke-width="3"/>
+  <text class="box-label" x="1229" y="520">Bloom filter</text>
+</svg>

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1090" height="638" viewBox="0 0 1090 638" role="img" aria-labelledby="title desc">
+  <title id="title">Consistent reads from two replicas</title>
+  <desc id="desc">Server 1 and server 2 both read the name John from replicas n1 and n2, which hold the same value.</desc>
+
+  <!-- Reusable arrow marker and diagram typography. -->
+  <defs>
+    <marker id="blue-arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" viewBox="0 0 12 12" orient="auto" markerUnits="strokeWidth">
+      <path d="M1 1 11 6 1 11Z" fill="#0b7dbb"/>
+    </marker>
+    <style>
+      .line { stroke: #0b7dbb; stroke-width: 4; fill: none; marker-end: url(#blue-arrow); }
+      .label { font: 30px Arial, sans-serif; fill: #111; }
+      .node-label { font: 34px Arial, sans-serif; fill: #111; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <!-- Server icons at the request origin. -->
+  <rect width="1090" height="638" fill="#fff"/>
+  <g aria-label="server 1">
+    <rect x="40" y="30" width="76" height="150" rx="6" fill="#63c516" stroke="#b5e18f" stroke-width="3"/>
+    <path d="M56 58h44M56 132h44M56 150h44" stroke="#fff" stroke-width="6"/>
+    <text class="node-label" x="78" y="214">server 1</text>
+  </g>
+  <g aria-label="server 2">
+    <rect x="40" y="430" width="76" height="150" rx="6" fill="#63c516" stroke="#b5e18f" stroke-width="3"/>
+    <path d="M56 458h44M56 532h44M56 550h44" stroke="#fff" stroke-width="6"/>
+    <text class="node-label" x="78" y="618">server 2</text>
+  </g>
+
+  <!-- Replica cylinders with equal values. -->
+  <g aria-label="replica n1">
+    <path d="M758 60v105c0 16 24 28 52 28s52-12 52-28V60Z" fill="#0b7dbb" stroke="#08679a" stroke-width="3"/>
+    <ellipse cx="810" cy="60" rx="52" ry="18" fill="#0b7dbb" stroke="#e8f6fd" stroke-width="5"/>
+    <text class="node-label" x="810" y="230">n1</text>
+    <text class="label" x="880" y="125">name: john</text>
+  </g>
+  <g aria-label="replica n2">
+    <path d="M758 460v105c0 16 24 28 52 28s52-12 52-28V460Z" fill="#0b7dbb" stroke="#08679a" stroke-width="3"/>
+    <ellipse cx="810" cy="460" rx="52" ry="18" fill="#0b7dbb" stroke="#e8f6fd" stroke-width="5"/>
+    <text class="node-label" x="810" y="628">n2</text>
+    <text class="label" x="880" y="525">name: john</text>
+  </g>
+
+  <!-- Requests and matching responses; labels sit in the corridor between lines. -->
+  <path class="line" d="M122 62H744"/>
+  <text class="label" x="365" y="44">get(&quot;name&quot;)</text>
+  <path class="line" d="M754 166H125"/>
+  <text class="label" x="360" y="148">return &quot;john&quot;</text>
+  <path class="line" d="M122 462H744"/>
+  <text class="label" x="365" y="444">get(&quot;name&quot;)</text>
+  <path class="line" d="M754 566H125"/>
+  <text class="label" x="360" y="548">return &quot;john&quot;</text>
+
+  <!-- Replica link denotes synchronized copies. -->
+  <path d="M810 236V438" stroke="#0b7dbb" stroke-width="4"/>
+</svg>

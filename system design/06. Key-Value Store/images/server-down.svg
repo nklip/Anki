@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1256" height="1014" viewBox="0 0 1256 1014" role="img" aria-labelledby="title desc">
+  <title id="title">One replica is unavailable</title>
+  <desc id="desc">Three database replicas form a triangle. Replica n3 is marked unavailable with a red cross.</desc>
+
+  <!-- Database and failure styles. -->
+  <defs>
+    <style>
+      .link { stroke: #0b7dbb; stroke-width: 6; fill: none; }
+      .node { fill: #0b7dbb; stroke: #08679a; stroke-width: 4; }
+      .node-label { font: 54px Arial, sans-serif; fill: #111; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <!-- Replica links are painted first so node bodies cover their endpoints. -->
+  <rect width="1256" height="1014" fill="#fff"/>
+  <path class="link" d="M626 160 160 785H1096Z"/>
+
+  <!-- Healthy replicas n1 and n2. -->
+  <g aria-label="replica n1">
+    <path class="node" d="M535 116v154c0 26 40 44 91 44s91-18 91-44V116Z"/>
+    <ellipse cx="626" cy="116" rx="91" ry="27" fill="#0b7dbb" stroke="#e8f6fd" stroke-width="7"/>
+    <text class="node-label" x="626" y="374">n1</text>
+  </g>
+  <g aria-label="replica n2">
+    <path class="node" d="M69 742v154c0 26 40 44 91 44s91-18 91-44V742Z"/>
+    <ellipse cx="160" cy="742" rx="91" ry="27" fill="#0b7dbb" stroke="#e8f6fd" stroke-width="7"/>
+    <text class="node-label" x="160" y="992">n2</text>
+  </g>
+
+  <!-- Failed replica n3; the red cross is deliberately above the database body. -->
+  <g aria-label="replica n3 unavailable">
+    <path class="node" d="M1005 742v154c0 26 40 44 91 44s91-18 91-44V742Z"/>
+    <ellipse cx="1096" cy="742" rx="91" ry="27" fill="#0b7dbb" stroke="#e8f6fd" stroke-width="7"/>
+    <path d="M1054 795 1138 879M1138 795 1054 879" stroke="#ff2f64" stroke-width="18" stroke-linecap="square"/>
+    <text class="node-label" x="1096" y="992">n3</text>
+  </g>
+</svg>

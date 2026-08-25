@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1330" height="522" viewBox="0 0 1330 522" role="img" aria-labelledby="title desc">
+  <title id="title">Gossip protocol detects a failed member</title>
+  <desc id="desc">Server s0's membership list shows an old heartbeat for s2, while gossip messages circulate among healthy servers and s2 is marked down.</desc>
+
+  <!-- Gossip arrows and table typography. -->
+  <defs>
+    <marker id="gossip-arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" viewBox="0 0 12 12" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1 11 6 1 11Z" fill="#0b7dbb"/></marker>
+    <style>
+      .table-text { font: 22px Arial, sans-serif; fill: #222; text-anchor: middle; dominant-baseline: middle; }
+      .heading { font: 700 25px Arial, sans-serif; fill: #111; text-anchor: middle; }
+      .node-text { font: 20px Georgia, serif; fill: #111; text-anchor: middle; dominant-baseline: middle; }
+      .gossip { stroke: #0b7dbb; stroke-width: 3; fill: none; marker-end: url(#gossip-arrow); }
+    </style>
+  </defs>
+
+  <!-- s0 membership table. -->
+  <rect width="1330" height="522" fill="#fff"/>
+  <text class="heading" x="350" y="72">s0&apos;s membership list</text>
+  <rect x="42" y="92" width="620" height="270" fill="#fff" stroke="#555" stroke-width="2"/>
+  <path d="M42 137H662M42 182H662M42 227H662M42 272H662M42 317H662M222 92V362M512 92V362" stroke="#777" stroke-width="1.5"/>
+  <text class="table-text" x="132" y="115">Member ID</text><text class="table-text" x="367" y="115">Heartbeat counter</text><text class="table-text" x="587" y="115">Time</text>
+  <text class="table-text" x="132" y="160">0</text><text class="table-text" x="367" y="160">10232</text><text class="table-text" x="587" y="160">12:00:01</text>
+  <text class="table-text" x="132" y="205">1</text><text class="table-text" x="367" y="205">10224</text><text class="table-text" x="587" y="205">12:00:10</text>
+  <text class="table-text" x="132" y="250">2</text><text class="table-text" x="367" y="250" fill="#e31937" font-weight="700">9908</text><text class="table-text" x="587" y="250" fill="#e31937" font-weight="700">11:58:02</text>
+  <text class="table-text" x="132" y="295">3</text><text class="table-text" x="367" y="295">10237</text><text class="table-text" x="587" y="295">12:00:20</text>
+  <text class="table-text" x="132" y="340">4</text><text class="table-text" x="367" y="340">10234</text><text class="table-text" x="587" y="340">12:00:34</text>
+
+  <!-- Membership ring and healthy gossip exchanges. -->
+  <circle cx="1050" cy="270" r="220" fill="none" stroke="#707070" stroke-width="6"/>
+  <path d="M662 92 1019 48" stroke="#0b7dbb" stroke-width="3" stroke-dasharray="8 8"/>
+  <circle cx="1050" cy="48" r="31" fill="#fff" stroke="#111" stroke-width="3"/><text class="node-text" x="1050" y="48">s0</text>
+  <circle cx="1260" cy="185" r="31" fill="#fff" stroke="#111" stroke-width="3"/><text class="node-text" x="1260" y="185">s1</text>
+  <circle cx="1260" cy="365" r="31" fill="#fff" stroke="#111" stroke-width="3"/><text class="node-text" x="1260" y="365">s5</text>
+  <circle cx="1150" cy="475" r="31" fill="#fff" stroke="#111" stroke-width="3"/><text class="node-text" x="1150" y="475">s3</text>
+  <circle cx="965" cy="489" r="30" fill="#fff" stroke="#111" stroke-width="3"/><text class="node-text" x="965" y="489">s4</text>
+  <circle cx="830" cy="272" r="31" fill="#fff" stroke="#111" stroke-width="3"/>
+  <path d="M814 256 846 288M846 256 814 288" stroke="#ff2f64" stroke-width="8"/>
+  <text class="node-text" x="785" y="272">s2</text>
+  <text x="1100" y="38" font-family="Arial, sans-serif" font-size="21" fill="#111">detected s2 is down</text>
+  <!-- Gossip exchanges follow the PNG's interior chords, not the gray ring perimeter. -->
+  <path class="gossip" d="M1076 65 1234 168"/>
+  <path class="gossip" d="M1058 78 1143 445"/>
+  <path class="gossip" d="M1124 458 990 472"/>
+  <path class="gossip" d="M1167 450 1232 375"/>
+</svg>

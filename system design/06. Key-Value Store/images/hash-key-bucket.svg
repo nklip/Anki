@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1296" height="262" viewBox="0 0 1296 262" role="img" aria-labelledby="title desc">
+  <title id="title">Key-value buckets differ between replicas</title>
+  <desc id="desc">Server 1 stores key 8 mapped to 1356 while the corresponding row on server 2 is missing.</desc>
+
+  <!-- Compact key-value table styles. -->
+  <defs>
+    <style>
+      .server-label { font: 27px Georgia, serif; fill: #111; text-anchor: middle; }
+      .panel { fill: #fff; stroke: #111; stroke-width: 2; }
+      .cell { fill: #fff; stroke: #555; stroke-width: 2.5; }
+      .cell-text { font: 19px Arial, sans-serif; fill: #222; text-anchor: middle; dominant-baseline: middle; }
+      .caption { font: 21px Arial, sans-serif; fill: #111; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <!-- Side-by-side replica panels. -->
+  <rect width="1296" height="262" fill="#fff"/>
+  <text class="server-label" x="328" y="35">server 1</text><text class="server-label" x="968" y="35">server 2</text>
+  <rect class="panel" x="18" y="55" width="620" height="180" rx="30"/><rect class="panel" x="658" y="55" width="620" height="180" rx="30"/>
+
+  <!-- Server 1 buckets. -->
+  <g aria-label="server 1 key value buckets">
+    <path class="cell" d="M44 80h110v43H44zM44 123h110v43H44zM44 166h110v43H44z"/><text class="cell-text" x="99" y="102">1 -&gt; 2343</text><text class="cell-text" x="99" y="145">2 -&gt; 1456</text><text class="cell-text" x="99" y="188">3 -&gt; 9865</text>
+    <path class="cell" d="M180 80h110v43H180zM180 123h110v43H180zM180 166h110v43H180z"/><text class="cell-text" x="235" y="145">5 -&gt; 2145</text><text class="cell-text" x="235" y="188">6 -&gt; 7456</text>
+    <path class="cell" d="M344 80h110v43H344zM344 123h110v43H344zM344 166h110v43H344z"/><rect x="347" y="126" width="104" height="37" fill="#ff0e2a"/><text class="cell-text" x="399" y="102">7 -&gt; 9654</text><text class="cell-text" x="399" y="145">8 -&gt; 1356</text><text class="cell-text" x="399" y="188">9 -&gt; 4358</text>
+    <path class="cell" d="M480 80h110v43H480zM480 123h110v43H480zM480 166h110v43H480z"/><text class="cell-text" x="535" y="102">10 -&gt; 3542</text><text class="cell-text" x="535" y="145">11 -&gt; 8705</text><text class="cell-text" x="535" y="188">12 -&gt; 3697</text>
+  </g>
+
+  <!-- Server 2 has an empty highlighted row for key 8. -->
+  <g aria-label="server 2 key value buckets">
+    <path class="cell" d="M684 80h110v43H684zM684 123h110v43H684zM684 166h110v43H684z"/><text class="cell-text" x="739" y="102">1 -&gt; 2343</text><text class="cell-text" x="739" y="145">2 -&gt; 1456</text><text class="cell-text" x="739" y="188">3 -&gt; 9865</text>
+    <path class="cell" d="M820 80h110v43H820zM820 123h110v43H820zM820 166h110v43H820z"/><text class="cell-text" x="875" y="145">5 -&gt; 2145</text><text class="cell-text" x="875" y="188">6 -&gt; 7456</text>
+    <path class="cell" d="M984 80h110v43H984zM984 123h110v43H984zM984 166h110v43H984z"/><rect x="987" y="126" width="104" height="37" fill="#ff0e2a"/><text class="cell-text" x="1039" y="102">7 -&gt; 9654</text><text class="cell-text" x="1039" y="188">9 -&gt; 4358</text>
+    <path class="cell" d="M1120 80h110v43H1120zM1120 123h110v43H1120zM1120 166h110v43H1120z"/><text class="cell-text" x="1175" y="102">10 -&gt; 3542</text><text class="cell-text" x="1175" y="145">11 -&gt; 8705</text><text class="cell-text" x="1175" y="188">12 -&gt; 3697</text>
+  </g>
+  <text class="caption" x="648" y="257">Figure 6-14</text>
+</svg>

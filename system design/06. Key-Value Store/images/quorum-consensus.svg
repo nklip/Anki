@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1114" height="950" viewBox="0 0 1114 950" role="img" aria-labelledby="title desc">
+  <title id="title">Quorum write reaches three replicas</title>
+  <desc id="desc">A coordinator sends put key1 val1 to s0, s1, and s2 and receives acknowledgement messages from each replica.</desc>
+
+  <!-- Solid writes and dashed acknowledgements use the same compact head geometry. -->
+  <defs>
+    <marker id="black-arrow" markerWidth="14" markerHeight="14" refX="12" refY="7" viewBox="0 0 14 14" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1 13 7 1 13Z" fill="#111"/></marker>
+    <style>
+      .write { stroke: #111; stroke-width: 3; fill: none; marker-end: url(#black-arrow); }
+      .ack { stroke: #111; stroke-width: 3; stroke-dasharray: 8 8; fill: none; marker-end: url(#black-arrow); }
+      .label { font: 29px Georgia, serif; fill: #111; text-anchor: middle; }
+      .node-text { font: 34px Georgia, serif; fill: #111; text-anchor: middle; dominant-baseline: middle; }
+    </style>
+  </defs>
+
+  <!-- Replica ring and coordinator. -->
+  <rect width="1114" height="950" fill="#fff"/>
+  <circle cx="570" cy="475" r="410" fill="none" stroke="#707070" stroke-width="8"/>
+  <rect x="58" y="410" width="220" height="74" fill="#fff" stroke="#111" stroke-width="3"/>
+  <text class="label" x="154" y="458" font-size="32">coordinator</text>
+  <circle cx="570" cy="65" r="38" fill="#10afd2"/><text class="node-text" x="570" y="65">s0</text>
+  <circle cx="980" cy="475" r="38" fill="#10afd2"/><text class="node-text" x="980" y="475">s1</text>
+  <circle cx="570" cy="885" r="38" fill="#10afd2"/><text class="node-text" x="570" y="885">s2</text>
+
+  <!-- Each write and acknowledgement pair uses separate straight lanes. -->
+  <path class="write" d="M278 414 541 90"/>
+  <path class="ack" d="M551 99 278 426"/>
+  <text class="label" x="380" y="228" transform="rotate(-51 380 228)">put(key1, val1)</text>
+  <text class="label" x="444" y="286" transform="rotate(-51 444 286)">ACK</text>
+
+  <path class="write" d="M278 440 942 465"/>
+  <path class="ack" d="M942 483 278 460"/>
+  <text class="label" x="665" y="424">put(key1, val1)</text>
+  <text class="label" x="665" y="535">ACK</text>
+
+  <path class="write" d="M278 474 555 849"/>
+  <path class="ack" d="M542 858 278 482"/>
+  <text class="label" x="449" y="638" transform="rotate(54 449 638)">put(key1, val1)</text>
+  <text class="label" x="378" y="694" transform="rotate(54 378 694)">ACK</text>
+</svg>

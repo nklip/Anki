@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1304" height="384" viewBox="0 0 1304 384" role="img" aria-labelledby="title desc">
+  <title id="title">Bucket hashes reveal a replica mismatch</title>
+  <desc id="desc">Each key-value bucket has a hash. The third bucket differs between server 1 and server 2 because key 8 is missing.</desc>
+
+  <!-- Hash and bucket styles. -->
+  <defs>
+    <style>
+      .server-label { font: 23px Georgia, serif; fill: #111; text-anchor: middle; }
+      .panel { fill: #fff; stroke: #111; stroke-width: 2; }
+      .hash { fill: #fff; stroke: #555; stroke-width: 2.5; }
+      .bucket { fill: #fff; stroke: #555; stroke-width: 2; }
+      .group { fill: none; stroke: #555; stroke-width: 2; stroke-dasharray: 5 5; }
+      .text { font: 16px Arial, sans-serif; fill: #222; text-anchor: middle; dominant-baseline: middle; }
+      .caption { font: 20px Arial, sans-serif; fill: #111; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <!-- Replica containers. -->
+  <rect width="1304" height="384" fill="#fff"/>
+  <text class="server-label" x="321" y="32">server 1</text><text class="server-label" x="978" y="32">server 2</text>
+  <rect class="panel" x="15" y="52" width="615" height="295" rx="45"/><rect class="panel" x="674" y="52" width="615" height="295" rx="45"/>
+
+  <!-- Server 1 bucket hashes and contents. -->
+  <g aria-label="server 1 hashes and buckets">
+    <rect class="hash" x="48" y="73" width="88" height="40"/><text class="text" x="92" y="93">6901</text><path d="M92 113V190" stroke="#555" stroke-width="2"/>
+    <rect class="group" x="29" y="188" width="126" height="137" rx="18"/><path class="bucket" d="M42 205h100v36H42zM42 241h100v36H42zM42 277h100v36H42z"/><text class="text" x="92" y="223">1 -&gt; 2343</text><text class="text" x="92" y="259">2 -&gt; 1456</text><text class="text" x="92" y="295">3 -&gt; 9865</text>
+    <rect class="hash" x="190" y="73" width="88" height="40"/><text class="text" x="234" y="93">6773</text><path d="M234 113V190" stroke="#555" stroke-width="2"/>
+    <rect class="group" x="171" y="188" width="126" height="137" rx="18"/><path class="bucket" d="M184 205h100v36H184zM184 241h100v36H184zM184 277h100v36H184z"/><text class="text" x="234" y="259">5 -&gt; 2145</text><text class="text" x="234" y="295">6 -&gt; 7456</text>
+    <rect x="337" y="73" width="88" height="40" fill="#ff0e2a" stroke="#555" stroke-width="2.5"/><text class="text" x="381" y="93">8601</text><path d="M381 113V190" stroke="#555" stroke-width="2"/>
+    <rect class="group" x="318" y="188" width="126" height="137" rx="18"/><path class="bucket" d="M331 205h100v36H331zM331 241h100v36H331zM331 277h100v36H331z"/><rect x="334" y="244" width="94" height="30" fill="#ff0e2a"/><text class="text" x="381" y="223">7 -&gt; 9654</text><text class="text" x="381" y="259">8 -&gt; 1356</text><text class="text" x="381" y="295">9 -&gt; 4358</text>
+    <rect class="hash" x="508" y="73" width="88" height="40"/><text class="text" x="552" y="93">7812</text><path d="M552 113V190" stroke="#555" stroke-width="2"/>
+    <rect class="group" x="489" y="188" width="126" height="137" rx="18"/><path class="bucket" d="M502 205h100v36H502zM502 241h100v36H502zM502 277h100v36H502z"/><text class="text" x="552" y="223">10 -&gt; 3542</text><text class="text" x="552" y="259">11 -&gt; 8705</text><text class="text" x="552" y="295">12 -&gt; 3697</text>
+  </g>
+
+  <!-- Server 2 mirrors all buckets except the highlighted third one. -->
+  <g aria-label="server 2 hashes and buckets">
+    <rect class="hash" x="707" y="73" width="88" height="40"/><text class="text" x="751" y="93">6901</text><path d="M751 113V190" stroke="#555" stroke-width="2"/>
+    <rect class="group" x="688" y="188" width="126" height="137" rx="18"/><path class="bucket" d="M701 205h100v36H701zM701 241h100v36H701zM701 277h100v36H701z"/><text class="text" x="751" y="223">1 -&gt; 2343</text><text class="text" x="751" y="259">2 -&gt; 1456</text><text class="text" x="751" y="295">3 -&gt; 9865</text>
+    <rect class="hash" x="849" y="73" width="88" height="40"/><text class="text" x="893" y="93">6773</text><path d="M893 113V190" stroke="#555" stroke-width="2"/>
+    <rect class="group" x="830" y="188" width="126" height="137" rx="18"/><path class="bucket" d="M843 205h100v36H843zM843 241h100v36H843zM843 277h100v36H843z"/><text class="text" x="893" y="259">5 -&gt; 2145</text><text class="text" x="893" y="295">6 -&gt; 7456</text>
+    <rect x="996" y="73" width="88" height="40" fill="#ff0e2a" stroke="#555" stroke-width="2.5"/><text class="text" x="1040" y="93">7975</text><path d="M1040 113V190" stroke="#555" stroke-width="2"/>
+    <rect class="group" x="977" y="188" width="126" height="137" rx="18"/><path class="bucket" d="M990 205h100v36H990zM990 241h100v36H990zM990 277h100v36H990z"/><rect x="993" y="244" width="94" height="30" fill="#ff0e2a"/><text class="text" x="1040" y="223">7 -&gt; 9654</text><text class="text" x="1040" y="295">9 -&gt; 4358</text>
+    <rect class="hash" x="1167" y="73" width="88" height="40"/><text class="text" x="1211" y="93">7812</text><path d="M1211 113V190" stroke="#555" stroke-width="2"/>
+    <rect class="group" x="1148" y="188" width="126" height="137" rx="18"/><path class="bucket" d="M1161 205h100v36H1161zM1161 241h100v36H1161zM1161 277h100v36H1161z"/><text class="text" x="1211" y="223">10 -&gt; 3542</text><text class="text" x="1211" y="259">11 -&gt; 8705</text><text class="text" x="1211" y="295">12 -&gt; 3697</text>
+  </g>
+  <text class="caption" x="652" y="378">Figure 6-15</text>
+</svg>
