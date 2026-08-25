@@ -19,6 +19,7 @@ Create maintainable SVG source and verify the rendered image, not only the XML.
 - Use a self-contained `<svg>` with a matching `viewBox`, `<title>`, `<desc>`, `role="img"`, and `aria-labelledby` unless the target system imposes a different contract.
 - Add concise XML comments before `<defs>` and every logical section. Comments should identify the section or explain non-obvious geometry, layer order, arrow endpoint, or repair constraint. Do not narrate every primitive.
 - Give reusable definitions and important repair targets stable, descriptive IDs. Keep styles and shared definitions near the top.
+- Give every `<use>` that instantiates a `<symbol>` explicit positive `width` and `height`; renderer defaults can otherwise expand the symbol across the viewport.
 - Choose paint order deliberately. Keep text above all crossing geometry. Place each arrow shaft above or below non-text shapes according to the relationship it must show, then keep its arrowhead unobscured and separate from surrounding objects.
 - Keep text as real `<text>`. SVG does not wrap text automatically: use explicit `<tspan x="..." dy="...">` lines, consistent line height, and adequate box padding. Avoid `foreignObject` for diagrams that need portable rendering.
 - Escape XML-sensitive text and keep every final label inside the `viewBox`.
@@ -61,4 +62,4 @@ Create maintainable SVG source and verify the rendered image, not only the XML.
    - comments make the section or fragile geometry easy to locate for a quick fix.
 4. After any correction, rerun the structural check and render again. Do not deliver based on source inspection alone.
 
-Treat the checker's text geometry as a heuristic. Resolve its warnings, but use the rendered image as the authority for visual layout.
+The checker applies element and ancestor transforms to single-line text and compares those bounds with marker-ended connector paths. Treat `possible text/connector overlap` warnings as actionable. Multi-line `<tspan>` layout and exact font metrics still require rendered inspection, so use the rendered image as the final authority.
