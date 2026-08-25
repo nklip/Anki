@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1366" height="418" viewBox="0 0 1366 418" role="img" aria-labelledby="title desc">
+  <title id="title">URL redirecting architecture flow</title>
+  <desc id="desc">A user requests a short URL through a load balancer and web servers; the service reads cache or database data and returns the long URL.</desc>
+
+  <!-- Shared palette, typography, and connector rules. -->
+  <defs>
+    <style>
+      .cyan-box { fill: #fff; stroke: #04b3d2; stroke-width: 3; }
+      .flow { fill: none; stroke: #247ba5; stroke-width: 2; }
+      .label { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+      .step { fill: #fff; stroke: #111; stroke-width: 1.5; }
+      .step-text { font-family: Arial, Helvetica, sans-serif; font-size: 18px; fill: #111; text-anchor: middle; dominant-baseline: middle; }
+    </style>
+  </defs>
+
+  <!-- User client with laptop and phone icons. -->
+  <g id="user-client">
+    <rect class="cyan-box" x="18" y="23" width="200" height="106" rx="15"/>
+    <text class="label" x="31" y="66" font-size="20">User</text>
+    <g fill="none" stroke="#111" stroke-width="3">
+      <rect x="80" y="71" width="49" height="32" rx="3"/>
+      <path d="M75 108 H134 M90 103 H120"/>
+      <rect x="146" y="61" width="35" height="52" rx="5"/>
+      <path d="M149 69 H178 M149 103 H178"/>
+    </g>
+  </g>
+
+  <!-- Request and redirect response around the load balancer. -->
+  <path class="flow" d="M218 49 H803"/>
+  <path d="M822 49 L803 39 V59 Z" fill="#247ba5"/>
+  <circle class="step" cx="331" cy="26" r="15"/>
+  <text class="step-text" x="331" y="27">1</text>
+  <text class="label" x="354" y="33" font-size="21">GET https://tinyurl.com/zn9edcu</text>
+
+  <path class="flow" d="M818 107 H237"/>
+  <path d="M218 107 L237 97 V117 Z" fill="#247ba5"/>
+  <text class="label" x="535" y="133" font-size="21" text-anchor="middle">Return long URL:</text>
+  <circle class="step" cx="240" cy="154" r="15"/>
+  <text class="step-text" x="240" y="155">5</text>
+  <text class="label" x="263" y="160" font-size="20">https://en.wikipedia.org/wiki/Systems_design</text>
+
+  <!-- Load balancer and web-server pool. -->
+  <g id="load-balancer">
+    <path d="M827 49 H884 L891 109 H818 Z" fill="#087bbb"/>
+    <path d="M856 57 V99 M844 78 H868 M844 78 L850 71 M844 78 L850 85 M868 78 L862 71 M868 78 L862 85" fill="none" stroke="#fff" stroke-width="2.5"/>
+    <text class="label" x="855" y="153" font-size="21" text-anchor="middle">Load balancer</text>
+  </g>
+
+  <path class="flow" d="M891 78 H989"/>
+  <path d="M1008 78 L989 68 V88 Z" fill="#247ba5"/>
+  <circle class="step" cx="939" cy="56" r="15"/>
+  <text class="step-text" x="939" y="57">2</text>
+
+  <g id="web-server-pool">
+    <rect x="1007" y="17" width="144" height="123" rx="22" fill="#fff" stroke="#04b3d2" stroke-width="3" stroke-dasharray="9 8"/>
+    <g fill="#78c42a">
+      <rect x="1047" y="30" width="31" height="18" rx="2"/>
+      <rect x="1082" y="30" width="31" height="18" rx="2"/>
+      <rect x="1028" y="50" width="34" height="51" rx="2"/>
+      <rect x="1064" y="50" width="34" height="51" rx="2"/>
+      <rect x="1100" y="50" width="34" height="51" rx="2"/>
+    </g>
+    <g stroke="#fff" stroke-width="3">
+      <path d="M1052 39 H1073 M1087 39 H1108"/>
+      <path d="M1034 88 H1056 M1070 88 H1092 M1106 88 H1128"/>
+    </g>
+    <text class="label" x="1079" y="129" font-size="19" text-anchor="middle">Web servers</text>
+  </g>
+
+  <!-- Backend lookups; arrow tips stop at their container borders. -->
+  <path class="flow" d="M1067 140 L1020 246"/>
+  <path d="M1009 265 L1010 243 L1029 252 Z" fill="#247ba5"/>
+  <circle class="step" cx="1021" cy="200" r="15"/>
+  <text class="step-text" x="1021" y="201">3</text>
+
+  <path class="flow" d="M1091 140 L1149 245"/>
+  <path d="M1160 264 L1140 252 L1159 242 Z" fill="#247ba5"/>
+  <circle class="step" cx="1143" cy="200" r="15"/>
+  <text class="step-text" x="1143" y="201">4</text>
+
+  <!-- Cache and database services. -->
+  <g id="cache-service">
+    <rect class="cyan-box" x="870" y="265" width="138" height="140" rx="20"/>
+    <g fill="#087bbb" stroke="#056ba0" stroke-width="1.5">
+      <rect x="892" y="286" width="46" height="49" rx="5"/>
+      <rect x="920" y="305" width="48" height="49" rx="5"/>
+      <rect x="950" y="324" width="48" height="49" rx="5"/>
+    </g>
+    <g class="label" font-size="11" fill="#fff" text-anchor="middle">
+      <text x="915" y="304">CACHE</text>
+      <text x="944" y="323">CACHE</text>
+      <text x="974" y="342">CACHE</text>
+    </g>
+    <text class="label" x="939" y="393" font-size="21" text-anchor="middle">Cache</text>
+  </g>
+
+  <g id="database-service">
+    <rect class="cyan-box" x="1160" y="263" width="140" height="141" rx="20"/>
+    <g fill="#087bbb">
+      <ellipse cx="1204" cy="289" rx="22" ry="7"/>
+      <path d="M1182 289 V332 Q1204 342 1226 332 V289 Q1204 299 1182 289 Z"/>
+      <ellipse cx="1230" cy="301" rx="22" ry="7"/>
+      <path d="M1208 301 V344 Q1230 354 1252 344 V301 Q1230 311 1208 301 Z"/>
+      <ellipse cx="1257" cy="313" rx="22" ry="7"/>
+      <path d="M1235 313 V356 Q1257 366 1279 356 V313 Q1257 323 1235 313 Z"/>
+    </g>
+    <text class="label" x="1230" y="392" font-size="21" text-anchor="middle">Database</text>
+  </g>
+</svg>

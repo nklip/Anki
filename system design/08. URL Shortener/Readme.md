@@ -15,17 +15,17 @@ This chapter discusses the design of a URL shortening service like TinyURL. The 
 ## Step 1: High-Level Design
 
 ### API Endpoints
-1. **URL Shortening:**  
-   - Endpoint: `POST api/v1/data/shorten`  
-   - Parameters: `{longUrl: longURLString}`  
+1. **URL Shortening:**
+   - Endpoint: `POST api/v1/data/shorten`
+   - Parameters: `{longUrl: longURLString}`
    - Returns: `shortURL`
 
-2. **URL Redirecting:**  
-   - Endpoint: `GET api/v1/shortUrl`  
+2. **URL Redirecting:**
+   - Endpoint: `GET api/v1/shortUrl`
    - Returns: `longURL` for redirection.
 
     <p align="center">
-    <img src="./images/url-redirection.png" alt="URL Redirection" width="600">
+    <img src="./images/url-redirection.svg" alt="URL Redirection" width="600">
     </p>
 
 ### URL Redirection
@@ -35,14 +35,13 @@ subsequent requests for the same URL will not be sent to the URL shortening serv
 
 ### URL Shortening
 <p align="center">
-    <img src="./images/url-shortening.png" alt="URL Shortening" width="400">
+    <img src="./images/url-shortening.svg" alt="URL Shortening" width="400">
 </p>
 
 - Use a **hash function** to generate a short URL, mapping long URLs to unique shortened versions.
 - The hash function must satisfy the following requirements:
     - Each longURL must be hashed to one hashValue.
     - Each hashValue can be mapped back to the longURL.
-    
 
 ---
 
@@ -54,7 +53,7 @@ Store `<shortURL, longURL>` mappings in a relational database to optimize memory
 - `shortURL`,
 - `longURL`.
 
-    <img src="./images/table-schema.png" alt="Table Schema" width="300">
+    <img src="./images/table-schema.svg" alt="Table Schema" width="300">
 
 ### Hash Function
 #### 1. Base 62 Conversion:
@@ -63,21 +62,21 @@ Store `<shortURL, longURL>` mappings in a relational database to optimize memory
 - A unique id can be assigned to the short url and ID can be base 62 converted to get the short URL.
 - A 7-character hash supports up to **3.5 trillion unique URLs**, enough for 365 billion URLs.
 
-**Example:**  
+**Example:**
 Convert ID `2009215674938` to Base 62:
 - `2009215674938` → `zn9edcu`.
 
 #### 2. Hash + Collision Resolution:
 - Use hash functions like CRC32, MD5, or SHA-1.
 
-    <img src="./images/hash-function.png" alt="Hash Function" width="500">
+    <img src="./images/hash-function.svg" alt="Hash Function" width="500">
 
 - One approach is to collect the first 7 characters of a hash value; however, this method can lead to hash collisions.
 - To resolve collisions,recursively append a new predefined string until no more collision but this can be expensive.
 - Resolve collisions with **Bloom Filters** for efficient lookup.
 
     <p align="center">
-    <img src="./images/url-lookup.png" alt="URL Lookup" width="500">
+    <img src="./images/url-lookup.svg" alt="URL Lookup" width="500">
     </p>
 
 ### Comparison
@@ -94,13 +93,12 @@ Convert ID `2009215674938` to Base 62:
     - Collision is not possbile
     - Easy to find the next short URL if ID increments by 1 (Can be a security concern)
 
-
 ---
 
 ### URL Shortening Flow
 
 <p align="center">
-    <img src="./images/url-shortening-flow.png" alt="URL Shortening" width="500">
+    <img src="./images/url-shortening-flow.svg" alt="URL Shortening" width="500">
 </p>
 
 1. Check if `longURL` exists in the database.
@@ -110,13 +108,11 @@ Convert ID `2009215674938` to Base 62:
    - Convert the ID to `shortURL` using Base 62.
    - Store the `<id, shortURL, longURL>` mapping in the database.
 
-
-
 ---
 
 ### URL Redirecting Flow
 <p align="center">
-    <img src="./images/url-redirecting-flow.png" alt="URL Shortening" width="600">
+    <img src="./images/url-redirecting-flow.svg" alt="URL Shortening" width="600">
 </p>
 
 1. User clicks a `shortURL`.
@@ -124,7 +120,6 @@ Convert ID `2009215674938` to Base 62:
    - Check the **cache** first for faster access.
    - If not in the cache, query the database.
 3. Redirect the user to `longURL`.
-
 
 ---
 

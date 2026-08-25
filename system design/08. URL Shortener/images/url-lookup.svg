@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1358" height="804" viewBox="0 0 1358 804" role="img" aria-labelledby="title desc">
+  <title id="title">Resolve hash collisions while creating a short URL</title>
+  <desc id="desc">Hash a long URL, check whether the short URL exists, save it if unique, or append a predefined string and retry after a collision.</desc>
+
+  <!-- Flowchart styles; arrowheads are separate so each tip stops at a node boundary. -->
+  <defs>
+    <style>
+      .node { fill: #fff; stroke: #05b4d3; stroke-width: 3; }
+      .terminal { fill: #fff; stroke: #00c51a; stroke-width: 3; }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 25px; fill: #111; text-anchor: middle; dominant-baseline: middle; }
+      .branch { font-family: Arial, Helvetica, sans-serif; font-size: 23px; fill: #111; text-anchor: middle; }
+      .shaft { fill: none; stroke: #247ba5; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <!-- Primary path: input, hash, collision check, save, and finish. -->
+  <circle class="terminal" cx="63" cy="75" r="62"/>
+  <text class="label" x="63" y="77">start</text>
+  <path class="shaft" d="M125 75 H264"/>
+  <path d="M283 75 L264 65 V85 Z" fill="#247ba5"/>
+
+  <rect class="node" x="283" y="39" width="213" height="72" rx="3"/>
+  <text class="label" x="389.5" y="77">input: longURL</text>
+  <path class="shaft" d="M496 75 H652"/>
+  <path d="M671 75 L652 65 V85 Z" fill="#247ba5"/>
+
+  <rect class="node" x="671" y="39" width="213" height="72" rx="3"/>
+  <text class="label" x="777.5" y="77">hash function</text>
+  <path class="shaft" d="M884 75 H1058"/>
+  <path d="M1077 75 L1058 65 V85 Z" fill="#247ba5"/>
+
+  <rect class="node" x="1077" y="39" width="213" height="72" rx="3"/>
+  <text class="label" x="1183.5" y="77">shortURL</text>
+  <path class="shaft" d="M1184 111 V213"/>
+  <path d="M1184 232 L1174 213 H1194 Z" fill="#247ba5"/>
+
+  <path class="node" d="M1184 232 L1290 304 L1184 375 L1077 304 Z"/>
+  <text class="label" x="1184" y="306">exist in DB?</text>
+
+  <!-- No-collision branch. -->
+  <!-- The no-branch shaft pauses around its label before continuing to the arrowhead. -->
+  <path class="shaft" d="M1184 375 V404 M1184 444 V462"/>
+  <path d="M1184 481 L1174 462 H1194 Z" fill="#247ba5"/>
+  <text class="branch" x="1184" y="430">no</text>
+  <rect class="node" x="1077" y="481" width="213" height="70" rx="3"/>
+  <text class="label" x="1183.5" y="518">save to DB</text>
+  <path class="shaft" d="M1184 551 V637"/>
+  <path d="M1184 656 L1174 637 H1194 Z" fill="#247ba5"/>
+  <circle class="terminal" cx="1184" cy="719" r="63"/>
+  <text class="label" x="1184" y="721">end</text>
+
+  <!-- Collision branch and retry loop. -->
+  <path class="shaft" d="M1077 304 H903"/>
+  <path d="M884 304 L903 294 V314 Z" fill="#247ba5"/>
+  <text class="branch" x="990" y="291">yes</text>
+  <text class="branch" x="990" y="338">has collision</text>
+  <rect class="node" x="671" y="269" width="213" height="72" rx="3"/>
+  <text class="label" x="777.5" y="294">longURL +</text>
+  <text class="label" x="777.5" y="322">predefined string</text>
+  <path class="shaft" d="M671 304 H390 V130"/>
+  <path d="M390 111 L380 130 H400 Z" fill="#247ba5"/>
+</svg>

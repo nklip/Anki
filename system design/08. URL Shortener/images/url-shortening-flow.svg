@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1168" height="874" viewBox="0 0 1168 874" role="img" aria-labelledby="title desc">
+  <title id="title">URL shortening flow</title>
+  <desc id="desc">Check whether a long URL already exists; return its short URL when found, otherwise generate an ID, convert it, and save the mapping.</desc>
+
+  <!-- Diagram styles and precise arrow geometry. -->
+  <defs>
+    <style>
+      .node { fill: #fff; stroke: #06b3d2; stroke-width: 4; }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 30px; fill: #111; text-anchor: middle; dominant-baseline: middle; }
+      .branch { font-family: Arial, Helvetica, sans-serif; font-size: 27px; fill: #111; text-anchor: middle; }
+      .shaft { fill: none; stroke: #247ba5; stroke-width: 2.5; }
+    </style>
+  </defs>
+
+  <!-- Initial lookup and the existing-URL branch. -->
+  <rect class="node" x="15" y="70" width="251" height="84" rx="4"/>
+  <text class="label" x="140.5" y="114">1. input: longURL</text>
+  <path class="shaft" d="M266 112 H390"/>
+  <path d="M409 112 L390 102 V122 Z" fill="#247ba5"/>
+  <path class="node" d="M556 14 L703 112 L556 210 L409 112 Z"/>
+  <text class="label" x="556" y="114">2. longURL in DB?</text>
+  <path class="shaft" d="M703 112 H811"/>
+  <path d="M830 112 L811 102 V122 Z" fill="#247ba5"/>
+  <text class="branch" x="755" y="102">yes</text>
+  <rect class="node" x="830" y="60" width="285" height="104" rx="7"/>
+  <text class="label" x="972.5" y="114">3. return shortURL</text>
+
+  <!-- New-URL branch; each vertical shaft stops at its separate triangular head. -->
+  <!-- The shaft is split around the branch label so it never crosses the word “no”. -->
+  <path class="shaft" d="M556 210 V248 M556 290 V315"/>
+  <path d="M556 334 L546 315 H566 Z" fill="#247ba5"/>
+  <text class="branch" x="556" y="276">no</text>
+  <rect class="node" x="435" y="334" width="242" height="104" rx="7"/>
+  <text class="label" x="556" y="375">4. Generate a</text>
+  <text class="label" x="556" y="410">new ID</text>
+
+  <path class="shaft" d="M556 438 V521"/>
+  <path d="M556 540 L546 521 H566 Z" fill="#247ba5"/>
+  <rect class="node" x="435" y="540" width="242" height="105" rx="7"/>
+  <text class="label" x="556" y="579">5. Convert ID to</text>
+  <text class="label" x="556" y="614">shortURL</text>
+
+  <path class="shaft" d="M556 645 V712"/>
+  <path d="M556 731 L546 712 H566 Z" fill="#247ba5"/>
+  <rect class="node" x="435" y="731" width="242" height="117" rx="7"/>
+  <text class="label" x="556" y="764">6. Save ID,</text>
+  <text class="label" x="556" y="797">shortURL,</text>
+  <text class="label" x="556" y="830">longURL in DB</text>
+</svg>
