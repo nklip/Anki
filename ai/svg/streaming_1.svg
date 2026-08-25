@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <style>
+    text { font-family: Georgia, 'Times New Roman', serif; fill: #111; }
+    .node   { font-size: 48px; }
+    .msg    { font-size: 33px; }
+    .callout{ font-size: 48px; }
+    .hint   { font-size: 27.5px; font-style: italic; }
+    .who    { font-size: 36px; font-weight: 700; }
+    .body   { font-size: 34px; }
+    .btn    { font-size: 26px; font-weight: 700; }
+    .brand  { font-family: Arial, Helvetica, sans-serif; font-size: 24px; font-weight: 700;
+              letter-spacing: 2px; fill: #6d7068; }
+    .chrome { fill: #ebe8e5; stroke: #000; stroke-width: 3; }
+    .screen { fill: #f5f7f3; stroke: #000; stroke-width: 2.5; }
+    .bubble { fill: #ebe8e5; stroke: #000; stroke-width: 2.5; }
+    .lane   { fill: #ebe8e5; stroke: #7c7f77; stroke-width: 3.5; }
+    .life   { stroke: #7c7f77; stroke-width: 2; stroke-dasharray: 8 6; fill: none; }
+    .flow   { stroke: #000; stroke-width: 5; fill: none; }
+    .head   { fill: #000; }
+  </style>
+
+  <rect fill="#f5f7f3" width="1920" height="1080"/>
+
+  <!-- chat client -->
+  <rect class="chrome" x="278" y="235" width="447" height="674" rx="22"/>
+  <rect class="screen" x="302" y="263" width="399" height="525"/>
+
+  <path class="bubble" d="M359 461 H671 V548 L691 567.5 L671 587 V610 H359 Z"/>
+  <text class="who"  x="379" y="506">You</text>
+  <text class="body" x="379" y="547">What is quantum</text>
+  <text class="body" x="379" y="584">computing?</text>
+
+  <path class="bubble" d="M327 640 H641 V748 H327 V736 L309 718 L327 700 Z"/>
+  <text class="who"  x="348" y="685">AI</text>
+  <text class="body" x="348" y="729">…</text>
+
+  <rect class="screen" x="302" y="811" width="293" height="71"/>
+  <rect x="602" y="811" width="99" height="71" fill="#e2d3ae" stroke="#000" stroke-width="2.5"/>
+  <text class="btn" x="651" y="856" text-anchor="middle">Send</text>
+
+  <!-- lanes -->
+  <rect class="lane" x="943" y="112" width="291" height="65" rx="10"/>
+  <text class="node" x="1088" y="160" text-anchor="middle">Our Server</text>
+  <line class="life" x1="1088.5" y1="177" x2="1088.5" y2="928"/>
+
+  <rect class="lane" x="1439" y="112" width="291" height="65" rx="10"/>
+  <text class="node" x="1584" y="160" text-anchor="middle">Claude</text>
+  <line class="life" x1="1584.5" y1="177" x2="1584.5" y2="928"/>
+
+  <!-- request -->
+  <text class="hint" x="894" y="322" text-anchor="middle">What is quantum</text>
+  <text class="hint" x="894" y="346" text-anchor="middle">computing?</text>
+  <line class="flow" x1="725" y1="362" x2="1072" y2="362"/>
+  <polygon class="head" points="1088,362 1070,353 1070,371"/>
+  <text class="msg" x="1326" y="347" text-anchor="middle">User Message</text>
+  <line class="flow" x1="1092" y1="362" x2="1568" y2="362"/>
+  <polygon class="head" points="1584,362 1566,353 1566,371"/>
+
+  <!-- latency callout -->
+  <rect x="1194" y="434" width="336" height="264" rx="16" fill="#cc946f"/>
+  <text class="callout" x="1362" y="504" text-anchor="middle">Can take</text>
+  <text class="callout" x="1362" y="556" text-anchor="middle">10-30s to</text>
+  <text class="callout" x="1362" y="608" text-anchor="middle">generate a full</text>
+  <text class="callout" x="1362" y="660" text-anchor="middle">response!</text>
+
+  <!-- generation time on Claude's lane -->
+  <line x1="1533" y1="362" x2="1533" y2="752" stroke="#000" stroke-width="8"/>
+  <polygon class="head" points="1533,786 1519,748 1547,748"/>
+
+  <!-- response -->
+  <text class="msg" x="1326" y="767" text-anchor="middle">Assistant Message</text>
+  <line class="flow" x1="1584" y1="781.5" x2="1108" y2="781.5"/>
+  <polygon class="head" points="1092,781.5 1110,772.5 1110,790.5"/>
+  <text class="hint" x="906" y="767" text-anchor="middle">Quantum computing is…</text>
+  <line class="flow" x1="1085" y1="781.5" x2="743" y2="781.5"/>
+  <polygon class="head" points="727,781.5 745,772.5 745,790.5"/>
+
+  <text class="brand" x="97" y="1006">ANTHROP\C</text>
+</svg>

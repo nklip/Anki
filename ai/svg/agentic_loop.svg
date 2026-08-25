@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1648 928">
+  <defs>
+    <marker id="arrow-gray" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10" fill="none" stroke="#77766f" stroke-width="1.5"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10" fill="none" stroke="#b9d7f3" stroke-width="1.5"/>
+    </marker>
+    <style>
+      .bg { fill: #faf8f3; }
+      .outline { fill: none; stroke: #77766f; stroke-width: 2.2; }
+      .soft { fill: #f0efe6; stroke: #77766f; stroke-width: 2.2; }
+      .blue { fill: #b9d7f3; stroke: #77766f; stroke-width: 2.2; }
+      .green { fill: #cce5a5; stroke: #77766f; stroke-width: 2.2; }
+      .yellow { fill: #f9ddb0; stroke: #77766f; stroke-width: 2.2; }
+      .line { fill: none; stroke: #77766f; stroke-width: 2; }
+      .loop { fill: none; stroke: #b9d7f3; stroke-width: 2.2; }
+      .text {
+        font-family: Arial, Helvetica, sans-serif;
+        fill: #6f6e67;
+        font-size: 23px;
+      }
+      .small { font-size: 20px; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect class="bg" width="1648" height="928"/>
+
+  <!-- Prompt -->
+  <rect class="soft" x="42" y="430" width="255" height="69" rx="10"/>
+  <text class="text" x="169.5" y="471" text-anchor="middle">Your prompt</text>
+
+  <line class="line" x1="297" y1="465" x2="399" y2="465" marker-end="url(#arrow-gray)"/>
+
+  <!-- Agentic loop outer frame -->
+  <rect class="outline" x="433" y="298" width="783" height="304" rx="13"/>
+  <rect class="soft" x="433" y="298" width="783" height="68" rx="13"/>
+  <!-- cover lower rounding of header -->
+  <rect fill="#f0efe6" x="433" y="347" width="783" height="19"/>
+  <line class="line" x1="433" y1="366" x2="1216" y2="366"/>
+  <text class="text" x="824.5" y="342" text-anchor="middle">Agentic Loop</text>
+
+  <!-- Gather context -->
+  <rect class="blue" x="488" y="430" width="175" height="69" rx="9"/>
+  <text class="text" x="575.5" y="472" text-anchor="middle">Gather context</text>
+
+  <line class="line" x1="663" y1="465" x2="720" y2="465" marker-end="url(#arrow-gray)"/>
+
+  <!-- Take action -->
+  <rect class="blue" x="737" y="430" width="175" height="69" rx="9"/>
+  <text class="text" x="824.5" y="472" text-anchor="middle">Take action</text>
+
+  <line class="line" x1="912" y1="465" x2="969" y2="465" marker-end="url(#arrow-gray)"/>
+
+  <!-- Verify results -->
+  <rect class="blue" x="985" y="430" width="176" height="69" rx="9"/>
+  <text class="text" x="1073" y="472" text-anchor="middle">Verify results</text>
+
+  <!-- feedback loop -->
+  <path class="loop" d="M1077 517 V560 H580 V517" marker-end="url(#arrow-blue)"/>
+
+  <!-- Done -->
+  <line class="line" x1="1216" y1="465" x2="1288" y2="465" marker-end="url(#arrow-gray)"/>
+
+  <rect class="green" x="1324" y="430" width="255" height="69" rx="10"/>
+  <text class="text" x="1451.5" y="472" text-anchor="middle">Done</text>
+
+  <!-- User interruption box -->
+  <rect class="yellow" x="672" y="787" width="305" height="68" rx="9"/>
+  <text class="text small" x="690" y="817">You interrupt, steer or add</text>
+  <text class="text small" x="690" y="844">context</text>
+
+  <line class="line" x1="829.5" y1="787" x2="829.5" y2="651" marker-end="url(#arrow-gray)"/>
+</svg>

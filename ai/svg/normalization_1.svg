@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <style>
+    text {
+      font-family: Arial, sans-serif;
+      fill: currentColor;
+    }
+    .box {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      rx: 10;
+    }
+    .arrow {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+    }
+    .axis {
+      stroke: currentColor;
+      stroke-width: 1.5;
+    }
+    .vector {
+      stroke: currentColor;
+      stroke-width: 3;
+      fill: none;
+    }
+    .title {
+      font-size: 21px;
+      font-weight: bold;
+    }
+    .normal {
+      font-size: 17px;
+    }
+    .small {
+      font-size: 14px;
+    }
+  </style>
+
+  <text x="400" y="32" text-anchor="middle" class="title">
+    Normalization = make vector length 1
+  </text>
+
+  <!-- pipeline -->
+  <rect class="box" x="40" y="65" width="160" height="65"></rect>
+  <text x="120" y="92" text-anchor="middle" class="normal">[3, 4]</text>
+  <text x="120" y="115" text-anchor="middle" class="small">length = 5</text>
+
+  <path class="arrow" d="M200 97 H285"></path>
+  <path class="arrow" d="M275 90 L285 97 L275 104"></path>
+
+  <rect class="box" x="290" y="65" width="190" height="65"></rect>
+  <text x="385" y="103" text-anchor="middle" class="normal">
+    Normalize
+  </text>
+
+  <path class="arrow" d="M480 97 H565"></path>
+  <path class="arrow" d="M555 90 L565 97 L555 104"></path>
+
+  <rect class="box" x="570" y="65" width="190" height="65"></rect>
+  <text x="665" y="92" text-anchor="middle" class="normal">[0.6, 0.8]</text>
+  <text x="665" y="115" text-anchor="middle" class="small">length = 1</text>
+
+  <!-- visualization -->
+  <text x="400" y="180" text-anchor="middle" class="title">
+    Same direction, different length
+  </text>
+
+  <!-- axes -->
+  <line class="axis" x1="150" y1="330" x2="650" y2="330"></line>
+  <line class="axis" x1="200" y1="350" x2="200" y2="210"></line>
+
+  <!-- long vector -->
+  <line class="vector" x1="200" y1="330" x2="530" y2="220"></line>
+  <path class="vector" d="M515 218 L530 220 L520 232"></path>
+
+  <!-- short normalized vector -->
+  <line class="vector" x1="200" y1="330" x2="350" y2="280"></line>
+  <path class="vector" d="M337 277 L350 280 L341 290"></path>
+
+  <text x="540" y="215" class="normal">original</text>
+  <text x="352" y="303" class="normal">normalized</text>
+
+  <text x="400" y="385" text-anchor="middle" class="title">
+    Direction stays the same → length becomes 1
+  </text>
+</svg>

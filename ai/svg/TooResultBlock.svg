@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+    .step  { font-size: 30.5px; font-weight: 700; }
+    .title { font-size: 59px; font-weight: 700; }
+    .bul   { font-family: Georgia, 'Times New Roman', serif; font-size: 40px; }
+    .code  { font-family: 'Courier New', monospace; font-size: 32.4px; fill: #c4c4c4; }
+    .str   { fill: #d3987e; }
+    .pun   { fill: #c4c4c4; }
+    .bool  { fill: #5399d4; }
+    .brand { font-size: 24px; font-weight: 700; letter-spacing: 2px; fill: #6d7068; }
+  </style>
+
+  <rect fill="#f5f7f3" width="1920" height="1080"/>
+
+  <polygon points="74,18 426,18 458,61.5 426,105 74,105" fill="#e2d3b0"/>
+  <text class="step" x="266" y="72" text-anchor="middle" fill="#111">Write a tool function</text>
+  <polygon points="426,18 774,18 806,61.5 774,105 426,105 458,61.5" fill="#cc946f"/>
+  <text class="step" x="616" y="54" text-anchor="middle" fill="#111">Write a JSON</text>
+  <text class="step" x="616" y="90" text-anchor="middle" fill="#111">Schema</text>
+  <polygon points="775,18 1126,18 1158,61.5 1126,105 775,105 807,61.5" fill="#c06d50"/>
+  <text class="step" x="966.5" y="54" text-anchor="middle" fill="#111">Call Claude with</text>
+  <text class="step" x="966.5" y="90" text-anchor="middle" fill="#111">JSON Schema</text>
+  <polygon points="1127,18 1478,18 1510,61.5 1478,105 1127,105 1159,61.5" fill="#e2d3b0"/>
+  <text class="step" x="1318.5" y="72" text-anchor="middle" fill="#111">Run Tool</text>
+  <polygon points="1478,18 1816,18 1848,61.5 1816,105 1478,105 1510,61.5" fill="#babaaf"/>
+  <text class="step" x="1663" y="54" text-anchor="middle" fill="#8e9086">Add Tool Result and</text>
+  <text class="step" x="1663" y="90" text-anchor="middle" fill="#8e9086">call Claude again</text>
+
+  <text class="title" x="75" y="326">Tool Result Block</text>
+
+  <circle cx="114" cy="432" r="11" fill="#111"/>
+  <text class="bul" x="170" y="443">Placed in the ‘content’ list of a user message</text>
+  <circle cx="114" cy="480" r="11" fill="#111"/>
+  <text class="bul" x="170" y="491">Communicates the results of running a tool</text>
+  <text class="bul" x="170" y="539">function back to Claude</text>
+  <circle cx="114" cy="576" r="11" fill="#111"/>
+  <text class="bul" x="170" y="587"><tspan font-weight="700">“tool_use_id”</tspan> - Must match the id of the</text>
+  <text class="bul" x="170" y="635">ToolUse block that this ToolResult</text>
+  <text class="bul" x="170" y="683">corresponds to</text>
+  <circle cx="114" cy="720" r="11" fill="#111"/>
+  <text class="bul" x="170" y="731"><tspan font-weight="700">“content”</tspan> - Output from running your tool,</text>
+  <text class="bul" x="170" y="779">serialized as a string</text>
+  <circle cx="114" cy="816" r="11" fill="#111"/>
+  <text class="bul" x="170" y="827"><tspan font-weight="700">“is_error”</tspan> - True if an error occurred</text>
+
+  <rect x="962" y="296" width="801" height="540" rx="22" fill="#121212"/>
+  <text class="code" x="991" y="420"><tspan class="pun">{</tspan></text>
+  <text class="code" x="1012" y="480"><tspan class="str">"tool_use_id"</tspan><tspan class="pun">: </tspan><tspan class="str">"toolu_01BEbi7q7qz"</tspan><tspan class="pun">,</tspan></text>
+  <text class="code" x="1012" y="540"><tspan class="str">"type"</tspan><tspan class="pun">: </tspan><tspan class="str">"tool_result"</tspan><tspan class="pun">,</tspan></text>
+  <text class="code" x="1012" y="600"><tspan class="str">"content"</tspan><tspan class="pun">: </tspan><tspan class="str">"12:47:13"</tspan><tspan class="pun">,</tspan></text>
+  <text class="code" x="1012" y="660"><tspan class="str">"is_error"</tspan><tspan class="pun">: </tspan><tspan class="bool">False</tspan></text>
+  <text class="code" x="991" y="720"><tspan class="pun">}</tspan></text>
+
+  <text class="brand" x="97" y="1006">ANTHROP\C</text>
+</svg>

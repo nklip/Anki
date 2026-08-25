@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 470">
+  <style>
+    text {
+      font-family: Arial, sans-serif;
+      fill: currentColor;
+    }
+    .box {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      rx: 10;
+    }
+    .arrow {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+    }
+    .title {
+      font-size: 21px;
+      font-weight: bold;
+    }
+    .normal {
+      font-size: 17px;
+    }
+    .small {
+      font-size: 14px;
+    }
+    .selected {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 3;
+      rx: 8;
+    }
+  </style>
+
+  <text x="400" y="30" text-anchor="middle" class="title">
+    Top K = take the K highest-ranked results
+  </text>
+
+  <!-- Query -->
+  <rect class="box" x="35" y="80" width="150" height="60"></rect>
+  <text x="110" y="105" text-anchor="middle" class="normal">
+    User query
+  </text>
+  <text x="110" y="127" text-anchor="middle" class="small">
+    embedding
+  </text>
+
+  <path class="arrow" d="M185 110 H250"></path>
+  <path class="arrow" d="M240 103 L250 110 L240 117"></path>
+
+  <!-- Search -->
+  <rect class="box" x="255" y="80" width="170" height="60"></rect>
+  <text x="340" y="105" text-anchor="middle" class="normal">
+    Similarity search
+  </text>
+  <text x="340" y="127" text-anchor="middle" class="small">
+    rank all chunks
+  </text>
+
+  <path class="arrow" d="M425 110 H490"></path>
+  <path class="arrow" d="M480 103 L490 110 L480 117"></path>
+
+  <!-- Results -->
+  <text x="620" y="70" text-anchor="middle" class="normal">
+    Ranked results
+  </text>
+
+  <rect class="selected" x="510" y="85" width="220" height="42"></rect>
+  <text x="530" y="111" class="normal">1. Chunk A</text>
+  <text x="700" y="111" text-anchor="end" class="normal">0.94</text>
+
+  <rect class="selected" x="510" y="135" width="220" height="42"></rect>
+  <text x="530" y="161" class="normal">2. Chunk B</text>
+  <text x="700" y="161" text-anchor="end" class="normal">0.89</text>
+
+  <rect class="selected" x="510" y="185" width="220" height="42"></rect>
+  <text x="530" y="211" class="normal">3. Chunk C</text>
+  <text x="700" y="211" text-anchor="end" class="normal">0.81</text>
+
+  <rect class="box" x="510" y="235" width="220" height="42"></rect>
+  <text x="530" y="261" class="normal">4. Chunk D</text>
+  <text x="700" y="261" text-anchor="end" class="normal">0.52</text>
+
+  <rect class="box" x="510" y="285" width="220" height="42"></rect>
+  <text x="530" y="311" class="normal">5. Chunk E</text>
+  <text x="700" y="311" text-anchor="end" class="normal">0.20</text>
+
+  <!-- K -->
+  <text x="400" y="205" text-anchor="middle" class="title">
+    K = 3
+  </text>
+
+  <path class="arrow" d="M455 205 H495"></path>
+  <path class="arrow" d="M485 198 L495 205 L485 212"></path>
+
+  <!-- Result -->
+  <path class="arrow" d="M620 327 V370"></path>
+  <path class="arrow" d="M613 360 L620 370 L627 360"></path>
+
+  <rect class="box" x="490" y="375" width="260" height="65"></rect>
+  <text x="620" y="402" text-anchor="middle" class="normal">
+    Send Top 3 chunks
+  </text>
+  <text x="620" y="425" text-anchor="middle" class="small">
+    to the LLM as context
+  </text>
+
+  <text x="220" y="405" text-anchor="middle" class="title">
+    Top K
+  </text>
+  <text x="220" y="432" text-anchor="middle" class="normal">
+    = number of results kept
+  </text>
+</svg>

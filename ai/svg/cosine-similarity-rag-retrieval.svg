@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title desc">
+  <title id="title">Where cosine similarity is used in a RAG pipeline</title>
+  <desc id="desc">Documents are chunked, embedded, and stored in a vector index. At query time, cosine similarity compares the query embedding with indexed chunk embeddings, ranks them, and passes the top chunks to the language model as context. Cosine similarity is a retrieval choice, not a requirement of RAG.</desc>
+
+  <!-- Shared visual language: neutral pipeline cards, blue data flow, and a green retrieval highlight. -->
+  <defs>
+    <style>
+      .title { font-family: Arial, Helvetica, sans-serif; font-size: 30px; font-weight: 700; fill: #0f172a; }
+      .subtitle { font-family: Arial, Helvetica, sans-serif; font-size: 17px; fill: #475569; }
+      .lane { font-family: Arial, Helvetica, sans-serif; font-size: 15px; font-weight: 700; fill: #475569; letter-spacing: 1px; }
+      .heading { font-family: Arial, Helvetica, sans-serif; font-size: 19px; font-weight: 700; fill: #0f172a; }
+      .body { font-family: Arial, Helvetica, sans-serif; font-size: 16px; fill: #334155; }
+      .small { font-family: Arial, Helvetica, sans-serif; font-size: 14px; fill: #475569; }
+      .score { font-family: Arial, Helvetica, sans-serif; font-size: 16px; font-weight: 700; fill: #166534; }
+      .card { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 2; }
+      .index-card { fill: #eff6ff; stroke: #1677b8; stroke-width: 2; }
+      .score-card { fill: #ecfdf5; stroke: #22a06b; stroke-width: 3; }
+      .flow { fill: none; stroke: #1677b8; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+      .index-flow { fill: none; stroke: #64748b; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+  </defs>
+
+  <!-- Overall title and scope. -->
+  <text class="title" x="600" y="40" text-anchor="middle">Cosine similarity sits inside the RAG retriever</text>
+  <text class="subtitle" x="600" y="68" text-anchor="middle">It ranks stored chunks before the language model generates an answer.</text>
+
+  <!-- Offline indexing lane. -->
+  <rect x="28" y="106" width="118" height="32" rx="16" fill="#e2e8f0"/>
+  <text class="lane" x="87" y="127" text-anchor="middle">INDEX ONCE</text>
+
+  <g id="indexing-pipeline">
+    <rect class="card" x="175" y="92" width="170" height="104" rx="16"/>
+    <text class="heading" x="260" y="128" text-anchor="middle">Documents</text>
+    <text class="body" x="260" y="157" text-anchor="middle">source knowledge</text>
+    <text class="small" x="260" y="180" text-anchor="middle">pages, files, records</text>
+
+    <path class="flow" d="M345 144 H376"/>
+    <path d="M386 144 L376 137 L376 151 Z" fill="#1677b8"/>
+
+    <rect class="card" x="390" y="92" width="170" height="104" rx="16"/>
+    <text class="heading" x="475" y="128" text-anchor="middle">Chunk text</text>
+    <text class="body" x="475" y="157" text-anchor="middle">smaller passages</text>
+    <text class="small" x="475" y="180" text-anchor="middle">retain source metadata</text>
+
+    <path class="flow" d="M560 144 H591"/>
+    <path d="M601 144 L591 137 L591 151 Z" fill="#1677b8"/>
+
+    <rect class="card" x="605" y="92" width="170" height="104" rx="16"/>
+    <text class="heading" x="690" y="128" text-anchor="middle">Embed chunks</text>
+    <text class="body" x="690" y="157" text-anchor="middle">text → vectors</text>
+    <text class="small" x="690" y="180" text-anchor="middle">same embedding space</text>
+
+    <path class="flow" d="M775 144 H806"/>
+    <path d="M816 144 L806 137 L806 151 Z" fill="#1677b8"/>
+
+    <rect class="index-card" x="820" y="92" width="350" height="104" rx="16"/>
+    <text class="heading" x="995" y="125" text-anchor="middle">Vector index</text>
+    <text class="body" x="995" y="153" text-anchor="middle">chunk vectors + original text</text>
+    <text class="small" x="995" y="178" text-anchor="middle">searched efficiently at query time</text>
+  </g>
+
+  <!-- Query-time lane. -->
+  <rect x="28" y="282" width="118" height="32" rx="16" fill="#dbeafe"/>
+  <text class="lane" x="87" y="303" text-anchor="middle">QUERY TIME</text>
+
+  <g id="query-pipeline">
+    <rect class="card" x="50" y="338" width="170" height="112" rx="16"/>
+    <text class="heading" x="135" y="375" text-anchor="middle">User question</text>
+    <text class="body" x="135" y="407" text-anchor="middle">“How does RAG</text>
+    <text class="body" x="135" y="431" text-anchor="middle">retrieve context?”</text>
+
+    <path class="flow" d="M220 394 H251"/>
+    <path d="M261 394 L251 387 L251 401 Z" fill="#1677b8"/>
+
+    <rect class="card" x="265" y="338" width="180" height="112" rx="16"/>
+    <text class="heading" x="355" y="375" text-anchor="middle">Embed query</text>
+    <text class="body" x="355" y="407" text-anchor="middle">question → q</text>
+    <text class="small" x="355" y="431" text-anchor="middle">compatible vector space</text>
+
+    <path class="flow" d="M445 394 H476"/>
+    <path d="M486 394 L476 387 L476 401 Z" fill="#1677b8"/>
+
+    <rect class="score-card" x="490" y="292" width="280" height="260" rx="18"/>
+    <text class="heading" x="630" y="327" text-anchor="middle">Cosine retrieval score</text>
+    <text class="body" x="630" y="359" text-anchor="middle">cos(q, d) = (q · d) / (||q||₂ × ||d||₂)</text>
+    <line x1="514" y1="377" x2="746" y2="377" stroke="#86efac" stroke-width="2"/>
+    <text class="small" x="514" y="405">Software chunk</text>
+    <text class="score" x="746" y="405" text-anchor="end">0.983</text>
+    <text class="small" x="514" y="438">Medical chunk</text>
+    <text class="score" x="746" y="438" text-anchor="end">0.435</text>
+    <text class="small" x="514" y="471">…compare every candidate</text>
+    <text class="body" x="630" y="513" text-anchor="middle">rank highest score first</text>
+    <text class="small" x="630" y="537" text-anchor="middle">the similarity stage is here</text>
+
+    <path class="flow" d="M770 394 H801"/>
+    <path d="M811 394 L801 387 L801 401 Z" fill="#1677b8"/>
+
+    <rect class="card" x="815" y="338" width="150" height="112" rx="16"/>
+    <text class="heading" x="890" y="375" text-anchor="middle">Top-k chunks</text>
+    <text class="body" x="890" y="407" text-anchor="middle">selected text</text>
+    <text class="small" x="890" y="431" text-anchor="middle">retrieved context</text>
+
+    <path class="flow" d="M965 394 H996"/>
+    <path d="M1006 394 L996 387 L996 401 Z" fill="#1677b8"/>
+
+    <rect class="card" x="1010" y="338" width="160" height="112" rx="16"/>
+    <text class="heading" x="1090" y="375" text-anchor="middle">Language model</text>
+    <text class="body" x="1090" y="407" text-anchor="middle">question + context</text>
+    <text class="small" x="1090" y="431" text-anchor="middle">generate answer</text>
+  </g>
+
+  <!-- The vector index feeds candidate embeddings into the query-time scorer. -->
+  <path class="index-flow" d="M995 196 V224 H700 V279"/>
+  <path d="M700 289 L693 279 L707 279 Z" fill="#64748b"/>
+  <text class="small" x="845" y="218" text-anchor="middle">candidate chunk vectors</text>
+
+  <!-- Boundary notes distinguish a common cosine setup from the definition of RAG itself. -->
+  <rect x="50" y="584" width="1120" height="50" rx="15" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+  <text class="heading" x="600" y="615" text-anchor="middle">Cosine ranks retrieval candidates; it does not create embeddings or generate the answer.</text>
+
+  <rect x="50" y="650" width="1120" height="44" rx="14" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
+  <text class="body" x="600" y="678" text-anchor="middle">RAG does not require cosine: use the metric expected by the embedding model and index (for example, dot product / MIPS).</text>
+</svg>

@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <style>
+    text { font-family: Georgia, 'Times New Roman', serif; fill: #111; }
+    .title  { font-size: 48px; font-weight: 700; }
+    .node   { font-size: 48px; }
+    .msg    { font-size: 33px; }
+    .msgb   { font-size: 33px; font-weight: 700; }
+    .chunk  { font-size: 41px; font-weight: 700; font-style: italic; }
+    .evt    { font-size: 30.5px; font-style: italic; }
+    .hint   { font-size: 27.5px; font-style: italic; }
+    .note   { font-size: 34px; }
+    .who    { font-size: 36px; font-weight: 700; }
+    .body   { font-size: 34px; }
+    .btn    { font-size: 26px; font-weight: 700; }
+    .brand  { font-family: Arial, Helvetica, sans-serif; font-size: 24px; font-weight: 700;
+              letter-spacing: 2px; fill: #6d7068; }
+    .chrome { fill: #ebe8e5; stroke: #000; stroke-width: 3; }
+    .screen { fill: #f5f7f3; stroke: #000; stroke-width: 2.5; }
+    .bubble { fill: #ebe8e5; stroke: #000; stroke-width: 2.5; }
+    .lane   { fill: #ebe8e5; stroke: #7c7f77; stroke-width: 3.5; }
+    .life   { stroke: #7c7f77; stroke-width: 2; stroke-dasharray: 8 6; fill: none; }
+    .flow   { stroke: #000; stroke-width: 3; fill: none; }
+    .head   { fill: #000; }
+  </style>
+
+  <rect fill="#f5f7f3" width="1920" height="1080"/>
+
+  <text class="title" x="960" y="103" text-anchor="middle">With streaming enabled</text>
+
+  <!-- chat client -->
+  <rect class="chrome" x="238" y="219" width="446" height="674" rx="22"/>
+  <rect class="screen" x="261" y="247" width="399" height="525"/>
+
+  <path class="bubble" d="M318 445 H630 V531 L648.5 550 L630 569 V596 H318 Z"/>
+  <text class="who"  x="338" y="490">You</text>
+  <text class="body" x="338" y="531">What is quantum</text>
+  <text class="body" x="338" y="567">computing?</text>
+
+  <path class="bubble" d="M288 624 H598 V735 H288 V720 L270.5 702 L288 684 Z"/>
+  <text class="who"  x="307" y="669">AI</text>
+  <text class="body" x="307" y="713">…</text>
+
+  <rect class="screen" x="261" y="795" width="293" height="71"/>
+  <rect x="561" y="795" width="99" height="71" fill="#e2d3ae" stroke="#000" stroke-width="2.5"/>
+  <text class="btn" x="610" y="840" text-anchor="middle">Send</text>
+
+  <!-- lanes -->
+  <rect class="lane" x="905.5" y="163" width="290" height="71" rx="10"/>
+  <text class="node" x="1050.5" y="214" text-anchor="middle">Our Server</text>
+  <line class="life" x1="1050.5" y1="234" x2="1050.5" y2="930"/>
+
+  <rect class="lane" x="1426.5" y="163" width="290" height="71" rx="10"/>
+  <text class="node" x="1571.5" y="214" text-anchor="middle">Claude</text>
+  <line class="life" x1="1571.5" y1="234" x2="1571.5" y2="930"/>
+
+  <!-- request -->
+  <text class="hint" x="864" y="307" text-anchor="middle">What is quantum</text>
+  <text class="hint" x="864" y="331" text-anchor="middle">computing?</text>
+  <line class="flow" x1="684" y1="344.5" x2="1036" y2="344.5"/>
+  <polygon class="head" points="1050.5,344.5 1036,338 1036,351"/>
+  <text class="msgb" x="1320" y="332" text-anchor="middle">User Message</text>
+  <line class="flow" x1="1054" y1="344.5" x2="1557" y2="344.5"/>
+  <polygon class="head" points="1571.5,344.5 1557,338 1557,351"/>
+
+  <!-- initial response -->
+  <line class="flow" x1="1571.5" y1="433" x2="1065" y2="433"/>
+  <polygon class="head" points="1050.5,433 1065,426.5 1065,439.5"/>
+  <rect x="1160" y="391" width="302" height="44" rx="8" fill="#e2d3ae" stroke="#7c7f77" stroke-width="2"/>
+  <text class="msg" x="1311" y="425" text-anchor="middle">Initial Response</text>
+
+  <!-- streamed chunks -->
+  <text class="chunk" x="1320" y="526" text-anchor="middle">Quantum</text>
+  <text class="evt"   x="1529" y="532" text-anchor="middle">event</text>
+  <line class="flow" x1="1571.5" y1="538.5" x2="1065" y2="538.5"/>
+  <polygon class="head" points="1050.5,538.5 1065,532 1065,545"/>
+  <line class="flow" x1="1047" y1="538.5" x2="698" y2="538.5"/>
+  <polygon class="head" points="684,538.5 698,532 698,545"/>
+
+  <text class="chunk" x="1320" y="658" text-anchor="middle">computing</text>
+  <text class="evt"   x="1529" y="665" text-anchor="middle">event</text>
+  <line class="flow" x1="1571.5" y1="672.5" x2="1065" y2="672.5"/>
+  <polygon class="head" points="1050.5,672.5 1065,666 1065,679"/>
+  <line class="flow" x1="1047" y1="672.5" x2="698" y2="672.5"/>
+  <polygon class="head" points="684,672.5 698,666 698,679"/>
+
+  <text class="chunk" x="1320" y="791" text-anchor="middle">is…</text>
+  <text class="evt"   x="1529" y="798" text-anchor="middle">event</text>
+  <line class="flow" x1="1571.5" y1="805.5" x2="1065" y2="805.5"/>
+  <polygon class="head" points="1050.5,805.5 1065,799 1065,812"/>
+  <line class="flow" x1="1047" y1="805.5" x2="698" y2="805.5"/>
+  <polygon class="head" points="684,805.5 698,799 698,812"/>
+
+  <text class="note" x="1320" y="962" text-anchor="middle">All of these events are</text>
+  <text class="note" x="1320" y="997" text-anchor="middle">parts of a single request</text>
+
+  <text class="brand" x="97" y="1006">ANTHROP\C</text>
+</svg>

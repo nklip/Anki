@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="560" viewBox="0 0 1000 560" role="img" aria-labelledby="title desc">
+  <title id="title">Worked cosine similarity calculation</title>
+  <desc id="desc">Vectors A equals one comma two and B equals two comma one produce dot product four, lengths square root five, and cosine similarity zero point eight.</desc>
+
+  <!-- Shared styles for the vector plot and calculation cards. -->
+  <defs>
+    <style>
+      .axis { stroke: #94a3b8; stroke-width: 2; }
+      .grid { stroke: #e2e8f0; stroke-width: 1; stroke-dasharray: 5 5; }
+      .blue { fill: none; stroke: #1677b8; stroke-width: 5; }
+      .orange { fill: none; stroke: #e8792e; stroke-width: 5; }
+      .card { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 2; }
+      .heading { font-family: Arial, Helvetica, sans-serif; font-size: 22px; font-weight: 700; fill: #0f172a; }
+      .body { font-family: Arial, Helvetica, sans-serif; font-size: 21px; fill: #334155; }
+      .small { font-family: Arial, Helvetica, sans-serif; font-size: 17px; fill: #475569; }
+      .step { fill: #1677b8; }
+      .step-number { font-family: Arial, Helvetica, sans-serif; font-size: 19px; font-weight: 700; fill: #fff; text-anchor: middle; dominant-baseline: middle; }
+    </style>
+  </defs>
+
+  <!-- Title. -->
+  <text x="500" y="40" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700" fill="#0f172a" text-anchor="middle">Worked example: A = (1, 2), B = (2, 1)</text>
+
+  <!-- Two-dimensional vector plot with shared origin. -->
+  <g id="vector-plot">
+    <rect class="card" x="30" y="72" width="400" height="450" rx="18"/>
+    <text class="heading" x="230" y="110" text-anchor="middle">Plot the two vectors</text>
+    <path class="grid" d="M100 410 H390 M100 310 H390 M100 210 H390 M200 150 V450 M300 150 V450"/>
+    <path class="axis" d="M75 410 H400 M100 445 V135"/>
+    <text class="small" x="198" y="435" text-anchor="middle">1</text>
+    <text class="small" x="298" y="435" text-anchor="middle">2</text>
+    <text class="small" x="84" y="315" text-anchor="middle">1</text>
+    <text class="small" x="84" y="215" text-anchor="middle">2</text>
+    <text class="small" x="397" y="433">x</text>
+    <text class="small" x="84" y="145">y</text>
+
+    <path class="blue" d="M100 410 L191 228"/>
+    <path d="M200 210 L200 232 L182 223 Z" fill="#1677b8"/>
+    <text class="heading" x="220" y="204" fill="#1677b8">A = (1, 2)</text>
+
+    <path class="orange" d="M100 410 L282 319"/>
+    <path d="M300 310 L284 329 L276 312 Z" fill="#e8792e"/>
+    <text class="heading" x="288" y="292" fill="#e8792e">B = (2, 1)</text>
+    <circle cx="100" cy="410" r="5" fill="#0f172a"/>
+    <text class="small" x="230" y="490" text-anchor="middle">The angle is acute, so the score is between 0 and 1.</text>
+  </g>
+
+  <!-- Calculation sequence. -->
+  <g id="calculation">
+    <rect class="card" x="465" y="72" width="505" height="105" rx="16"/>
+    <circle class="step" cx="500" cy="106" r="20"/>
+    <text class="step-number" x="500" y="106">1</text>
+    <text class="heading" x="535" y="105">Dot product</text>
+    <text class="body" x="500" y="145">A · B = (1 × 2) + (2 × 1) = 4</text>
+
+    <rect class="card" x="465" y="195" width="505" height="135" rx="16"/>
+    <circle class="step" cx="500" cy="229" r="20"/>
+    <text class="step-number" x="500" y="229">2</text>
+    <text class="heading" x="535" y="228">Euclidean lengths</text>
+    <text class="body" x="500" y="270">||A||₂ = √(1² + 2²) = √5</text>
+    <text class="body" x="500" y="305">||B||₂ = √(2² + 1²) = √5</text>
+
+    <rect class="card" x="465" y="348" width="505" height="125" rx="16"/>
+    <circle class="step" cx="500" cy="382" r="20"/>
+    <text class="step-number" x="500" y="382">3</text>
+    <text class="heading" x="535" y="381">Normalize the dot product</text>
+    <text class="body" x="500" y="425">4 / (√5 × √5) = 4 / 5 = 0.8</text>
+
+    <rect x="465" y="491" width="505" height="50" rx="15" fill="#ecfdf5" stroke="#22a06b" stroke-width="2"/>
+    <text x="717.5" y="522" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#166534" text-anchor="middle">0.8 → similar directions, but not identical</text>
+  </g>
+</svg>
