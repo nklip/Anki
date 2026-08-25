@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="952" height="472" viewBox="0 0 952 472" role="img" aria-labelledby="title desc">
+  <title id="title">Multi-master ID generation</title>
+  <desc id="desc">Two MySQL masters generate alternating odd and even identifiers for a shared group of web servers.</desc>
+
+  <!-- Shared visual definitions; arrowheads are separate so their tips stop at the server boundary. -->
+  <defs>
+    <style>
+      .label { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+      .mysql { font-family: Arial, Helvetica, sans-serif; font-size: 30px; font-weight: 700; fill: #fff; }
+      .sequence { font-family: Arial, Helvetica, sans-serif; font-size: 31px; fill: #111; }
+    </style>
+  </defs>
+
+  <!-- Dashed system boundary. -->
+  <rect x="18" y="12" width="914" height="444" rx="62" fill="#fff" stroke="#3db6cc" stroke-width="5" stroke-dasharray="15 13"/>
+
+  <!-- MySQL masters; the darker lower offset reproduces the original raised-tile effect. -->
+  <g id="odd-id-master">
+    <rect x="63" y="64" width="133" height="133" rx="24" fill="#21679a"/>
+    <rect x="63" y="56" width="133" height="133" rx="24" fill="#3986bf"/>
+    <text class="mysql" x="129.5" y="95" text-anchor="middle">My SQL</text>
+  </g>
+  <g id="even-id-master">
+    <rect x="63" y="295" width="133" height="133" rx="24" fill="#21679a"/>
+    <rect x="63" y="287" width="133" height="133" rx="24" fill="#3986bf"/>
+    <text class="mysql" x="129.5" y="326" text-anchor="middle">My SQL</text>
+  </g>
+
+  <!-- ID streams; each shaft ends under its own triangular head. -->
+  <g id="id-streams" fill="none" stroke="#2d76a8" stroke-width="4">
+    <path d="M196 126 L605 149"/>
+    <path d="M196 357 L604 305"/>
+  </g>
+  <g fill="#2d76a8">
+    <path d="M628 150 L603 137 L605 162 Z"/>
+    <path d="M628 302 L601 291 L605 316 Z"/>
+  </g>
+  <text class="sequence" x="368" y="120" text-anchor="middle">1, 3, 5 ...</text>
+  <text class="sequence" x="363" y="322" text-anchor="middle">2, 4, 6 ...</text>
+
+  <!-- Shared web-server pool. -->
+  <g id="web-server-pool">
+    <rect x="628" y="78" width="268" height="290" rx="41" fill="#fff" stroke="#3db6cc" stroke-width="5"/>
+    <g fill="#88c441">
+      <rect x="714" y="122" width="44" height="39" rx="6"/>
+      <rect x="765" y="122" width="44" height="39" rx="6"/>
+      <rect x="688" y="163" width="46" height="104" rx="4"/>
+      <rect x="740" y="163" width="46" height="104" rx="4"/>
+      <rect x="791" y="163" width="46" height="104" rx="4"/>
+    </g>
+    <g stroke="#fff" stroke-width="5">
+      <path d="M723 139 H749 M774 139 H800"/>
+      <path d="M697 240 H725 M697 253 H725"/>
+      <path d="M749 240 H777 M749 253 H777"/>
+      <path d="M800 240 H828 M800 253 H828"/>
+    </g>
+    <text class="label" x="762" y="326" font-size="36" text-anchor="middle">Web servers</text>
+  </g>
+</svg>

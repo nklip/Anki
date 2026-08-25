@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1252" height="970" viewBox="0 0 1252 970" role="img" aria-labelledby="title desc">
+  <title id="title">Decode the timestamp in a Twitter Snowflake ID</title>
+  <desc id="desc">The 41 timestamp bits are converted to decimal, added to the Twitter epoch, and converted from milliseconds to UTC time.</desc>
+
+  <!-- Shared styles and precise downward arrowheads. -->
+  <defs>
+    <style>
+      .bits { font-family: Menlo, Consolas, monospace; font-size: 29px; font-weight: 700; }
+      .step { font-family: Arial, Helvetica, sans-serif; font-size: 31px; fill: #111; }
+      .value { font-family: Arial, Helvetica, sans-serif; font-size: 31px; fill: #111; }
+      .guide { fill: none; stroke: #2d7ba9; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <!-- Snowflake bit groups: sign, timestamp, datacenter, machine, and sequence. -->
+  <g id="snowflake-bits" class="bits">
+    <text x="7" y="53" fill="#111">0-</text>
+    <text x="42" y="53" fill="#65b435">00100010101001011010011011000101101011000</text>
+    <text x="759" y="53" fill="#111">-</text>
+    <text x="777" y="53" fill="#ef3263">01010</text>
+    <text x="867" y="53" fill="#111">-</text>
+    <text x="885" y="53" fill="#c8b600">01100</text>
+    <text x="975" y="53" fill="#111">-</text>
+    <text x="993" y="53" fill="#003cba">000000000000</text>
+  </g>
+
+  <!-- Bracket selects the 41 timestamp bits without touching the bit text. -->
+  <path class="guide" d="M27 58 V106 H748 V58"/>
+
+  <!-- Step 1: binary timestamp to decimal. -->
+  <path class="guide" d="M365 107 V320"/>
+  <path d="M365 340 L355 320 H375 Z" fill="#2d7ba9"/>
+  <text class="step" x="408" y="224">to decimal</text>
+  <text class="value" x="270" y="370">297616116568</text>
+
+  <!-- Step 2: add the fixed Twitter epoch. -->
+  <path class="guide" d="M365 389 V600"/>
+  <path d="M365 620 L355 600 H375 Z" fill="#2d7ba9"/>
+  <text class="step" x="401" y="497">+ Twitter epoch 1288834974657</text>
+  <text class="value" x="260" y="655">1586451091225</text>
+
+  <!-- Step 3: interpret the resulting milliseconds as UTC time. -->
+  <path class="guide" d="M365 676 V884"/>
+  <path d="M365 904 L355 884 H375 Z" fill="#2d7ba9"/>
+  <text class="step" x="397" y="792">convert milliseconds to UTC time</text>
+  <text class="value" x="190" y="940">Apr 09 2020 16:51:31UTC</text>
+</svg>

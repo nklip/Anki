@@ -23,7 +23,7 @@ This chapter addresses the challenge of designing a **unique ID generator** for 
 - **Approach:** Use database `auto_increment` with step increments (e.g., `+k` for k servers).
 
     <p align="left">
-    <img src="./images/multi-master.png"  alt="Multi Master" width="400">
+    <img src="./images/multi-master.svg"  alt="Multi Master" width="400">
     </p>
 
 - **Drawbacks:**
@@ -37,7 +37,7 @@ This chapter addresses the challenge of designing a **unique ID generator** for 
     - UUIDs can be generated independently without coordination between servers
 
         <p align="left">
-        <img src="./images/uuid.png"  alt="UUID generator" width="600">
+        <img src="./images/uuid.svg"  alt="UUID generator" width="600">
         </p>
 
 - **Advantages:**
@@ -52,7 +52,7 @@ This chapter addresses the challenge of designing a **unique ID generator** for 
 - **Approach:** Use a centralized database server to increment and assign IDs.
 
     <p align="left">
-    <img src="./images/ticket-server.png"  alt="UUID generator" width="500">
+    <img src="./images/ticket-server.svg"  alt="UUID generator" width="500">
     </p>
 
 - **Advantages:**
@@ -66,10 +66,10 @@ This chapter addresses the challenge of designing a **unique ID generator** for 
 - **Approach:** 
 
     <div style="margin-left:3rem">
-      <img src="./images/twitter-snowflake.png"  alt="Snowflake approach" width="500">
+      <img src="./images/twitter-snowflake.svg"  alt="Snowflake approach" width="500">
     </div>
     <div style="margin-left:3rem">
-      <img src="./images/snowflake-id-breakdown.png"  alt="Snowflake ID breakdow" width="500">
+      <img src="./images/snowflake-id-breakdown.svg"  alt="Snowflake ID breakdow" width="500">
     </div>
 
     - Divide IDs into sections to ensure uniqueness and scalability.
