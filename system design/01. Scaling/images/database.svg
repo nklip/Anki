@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1204" height="700" viewBox="0 0 1204 700" role="img" aria-labelledby="title desc">
+  <title id="title">Web server with a database</title>
+  <desc id="desc">Browser and mobile clients resolve the site through DNS, send requests to a web server, and the server reads and writes data in a database.</desc>
+
+  <!-- Reusable arrowheads and infrastructure icons. -->
+  <defs>
+    <marker id="arrow" markerWidth="13" markerHeight="13" viewBox="0 0 13 13" refX="0" refY="6.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L12 6.5L0 12Z" fill="#222"/></marker>
+    <symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
+    <symbol id="phone" viewBox="0 0 54 96"><rect x="5" y="2" width="44" height="90" rx="7" fill="white" stroke="#333" stroke-width="5"/><path d="M19 11H35M23 82H31" stroke="#333" stroke-width="3"/></symbol>
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+    <!-- Centered DNS globe shared by every scaling diagram. -->
+    <symbol id="dns-globe" viewBox="0 0 120 120">
+      <circle cx="60" cy="60" r="54" fill="white" stroke="#555" stroke-width="7"/>
+      <path d="M60 6C36 24 36 96 60 114M60 6C84 24 84 96 60 114" fill="none" stroke="#555" stroke-width="5"/>
+      <path d="M14 38Q60 20 106 38M14 82Q60 100 106 82" fill="none" stroke="#555" stroke-width="5"/>
+      <rect x="15" y="42" width="90" height="36" rx="9" fill="white"/>
+      <text x="60" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#0b78b5">DNS</text>
+    </symbol>
+  </defs>
+
+  <rect width="1204" height="700" fill="white"/>
+
+  <!-- User devices and DNS. -->
+  <rect x="90" y="14" width="570" height="245" rx="36" fill="white" stroke="#222" stroke-width="2"/>
+  <text x="119" y="59" font-family="Arial, sans-serif" font-size="29">User</text>
+  <use href="#laptop" x="214" y="77" width="110" height="70"/><text x="269" y="184" text-anchor="middle" font-family="Arial, sans-serif" font-size="27">Web browser</text>
+  <use href="#phone" x="449" y="59" width="54" height="96"/><text x="476" y="184" text-anchor="middle" font-family="Arial, sans-serif" font-size="27">Mobile app</text>
+
+  <use href="#dns-globe" x="972" y="46" width="132" height="132"/>
+  <path d="M667 101H960" fill="none" stroke="#222" stroke-width="3" marker-end="url(#arrow)"/><text x="817" y="77" text-anchor="middle" font-family="Arial, sans-serif" font-size="27">www.mysite.com</text>
+  <path d="M972 151H679" fill="none" stroke="#222" stroke-width="3" marker-end="url(#arrow)"/><text x="817" y="190" text-anchor="middle" font-family="Arial, sans-serif" font-size="26">IP address</text>
+
+  <!-- Client requests enter the web tier. -->
+  <path d="M269 259V421" fill="none" stroke="#222" stroke-width="3" marker-end="url(#arrow)"/><text x="31" y="337" font-family="Arial, sans-serif" font-size="26">www.mysite.com</text>
+  <path d="M476 259V421" fill="none" stroke="#222" stroke-width="3" marker-end="url(#arrow)"/><text x="492" y="337" font-family="Arial, sans-serif" font-size="26">api.mysite.com</text>
+
+  <!-- Web server and database tiers. -->
+  <rect x="220" y="435" width="310" height="232" rx="40" fill="#fbfbfb" stroke="#222" stroke-width="2" stroke-dasharray="8 7"/>
+  <use href="#server" x="340" y="475" width="70" height="128"/><text x="375" y="644" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">Web server</text>
+
+  <rect x="860" y="435" width="310" height="232" rx="40" fill="#fbfbfb" stroke="#222" stroke-width="2" stroke-dasharray="8 7"/>
+  <path d="M970 482C970 470 992 462 1018 462S1066 470 1066 482V575C1066 587 1044 595 1018 595S970 587 970 575Z" fill="#0b78b5"/><ellipse cx="1018" cy="482" rx="48" ry="15" fill="white" stroke="#0b78b5" stroke-width="6"/><text x="1018" y="555" text-anchor="middle" font-family="Arial, sans-serif" font-size="48" fill="white">DB</text><text x="1018" y="644" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">Database</text>
+
+  <!-- Request and response lines use separate corridors. -->
+  <path d="M532 500H846" fill="none" stroke="#222" stroke-width="3" marker-end="url(#arrow)"/><text x="695" y="482" text-anchor="middle" font-family="Arial, sans-serif" font-size="25">read / write / update</text>
+  <path d="M858 612H544" fill="none" stroke="#222" stroke-width="3" marker-end="url(#arrow)"/><text x="695" y="594" text-anchor="middle" font-family="Arial, sans-serif" font-size="25">return data</text>
+</svg>

@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="902" height="884" viewBox="0 0 902 884" role="img" aria-labelledby="title desc">
+  <title id="title">Two data centers with geo-routing</title>
+  <desc id="desc">Users reach a CDN and a load balancer. Traffic is geo-routed to web servers in US-East or US-West, where each data center has databases and caches. Both centers can also use shared NoSQL storage.</desc>
+
+  <!-- Reusable arrows and infrastructure icons. -->
+  <defs>
+    <marker id="blue-arrow" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="0" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L11 6L0 11Z" fill="#0b78b5"/></marker>
+    <marker id="green-arrow" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="0" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L11 6L0 11Z" fill="#148c28"/></marker>
+    <marker id="purple-arrow" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="0" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L11 6L0 11Z" fill="#6a0dad"/></marker>
+    <symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
+    <symbol id="phone" viewBox="0 0 54 96"><rect x="5" y="2" width="44" height="90" rx="7" fill="white" stroke="#333" stroke-width="5"/><path d="M19 11H35M23 82H31" stroke="#333" stroke-width="3"/></symbol>
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+    <!-- Centered DNS globe shared by every scaling diagram. -->
+    <symbol id="dns-globe" viewBox="0 0 120 120">
+      <circle cx="60" cy="60" r="54" fill="white" stroke="#555" stroke-width="7"/>
+      <path d="M60 6C36 24 36 96 60 114M60 6C84 24 84 96 60 114" fill="none" stroke="#555" stroke-width="5"/>
+      <path d="M14 38Q60 20 106 38M14 82Q60 100 106 82" fill="none" stroke="#555" stroke-width="5"/>
+      <rect x="15" y="42" width="90" height="36" rx="9" fill="white"/>
+      <text x="60" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#0b78b5">DNS</text>
+    </symbol>
+  </defs>
+
+  <rect width="902" height="884" fill="white"/>
+
+  <!-- User edge, DNS, and CDN. -->
+  <rect x="190" y="28" width="358" height="155" rx="25" fill="white" stroke="#08b7d1" stroke-width="3"/>
+  <text x="208" y="59" font-family="Arial, sans-serif" font-size="20">User</text>
+  <use href="#laptop" x="257" y="69" width="82" height="53"/><text x="298" y="151" text-anchor="middle" font-family="Arial, sans-serif" font-size="16">Web browser</text>
+  <use href="#phone" x="407" y="59" width="43" height="76"/><text x="429" y="151" text-anchor="middle" font-family="Arial, sans-serif" font-size="16">Mobile app</text>
+  <use href="#dns-globe" x="37" y="64" width="86" height="86"/>
+  <path d="M190 106H132" fill="none" stroke="#0b78b5" stroke-width="3" marker-end="url(#blue-arrow)"/>
+  <g id="cdn" fill="#4dd0ec"><circle cx="700" cy="94" r="27"/><circle cx="733" cy="82" r="37"/><circle cx="770" cy="98" r="28"/><rect x="682" y="95" width="112" height="35" rx="18"/><path d="M747 56L727 93H748L736 121L778 79H755L767 56Z" fill="white"/></g><text x="739" y="156" text-anchor="middle" font-family="Arial, sans-serif" font-size="19">CDN</text>
+  <path d="M549 106H668" fill="none" stroke="#0b78b5" stroke-width="3" marker-end="url(#blue-arrow)"/>
+
+  <!-- Client routes converge at the geo-aware load balancer. -->
+  <path d="M298 160L348.09 238.72" fill="none" stroke="#0b78b5" stroke-width="3" marker-end="url(#blue-arrow)"/><text x="162" y="221" font-family="Arial, sans-serif" font-size="16">www.mysite.com</text>
+  <path d="M429 160L379.83 238.67" fill="none" stroke="#0b78b5" stroke-width="3" marker-end="url(#blue-arrow)"/><text x="480" y="221" text-anchor="middle" font-family="Arial, sans-serif" font-size="16">api.mysite.com</text>
+  <g id="load-balancer"><path d="M334 250H390L401 308H323Z" fill="#0b78b5"/><circle cx="362" cy="266" r="5" fill="white"/><path d="M362 272V296M362 282L349 292M362 282L375 292M349 292V302M375 292V302" stroke="white" stroke-width="3" fill="none"/><text x="410" y="286" font-family="Arial, sans-serif" font-size="18">Load balancer</text></g>
+
+  <!-- Geo-routed traffic enters either data center. -->
+  <path d="M344 309V332L191.73 366.57" fill="none" stroke="#0b78b5" stroke-width="3" marker-end="url(#blue-arrow)"/><text x="251" y="327" text-anchor="middle" font-family="Arial, sans-serif" font-size="14">Geo-routed</text>
+  <path d="M380 309V332L564.19 366.95" fill="none" stroke="#0b78b5" stroke-width="3" marker-end="url(#blue-arrow)"/><text x="486" y="327" text-anchor="middle" font-family="Arial, sans-serif" font-size="14">Geo-routed</text>
+
+  <!-- US-East data center. -->
+  <rect x="12" y="371" width="333" height="498" rx="49" fill="#f2f2f2" stroke="#08b7d1" stroke-width="3" stroke-dasharray="9 7"/>
+  <text x="39" y="417" font-family="Arial, sans-serif" font-size="16">DC1</text><text x="39" y="438" font-family="Arial, sans-serif" font-size="16">US-East</text>
+  <rect x="113" y="390" width="140" height="160" rx="24" fill="#f8f8f8" stroke="#08b7d1" stroke-width="2" stroke-dasharray="7 6"/>
+  <use href="#server" x="132" y="426" width="45" height="82"/><use href="#server" x="172" y="406" width="45" height="82"/><use href="#server" x="212" y="426" width="45" height="82"/><text x="183" y="535" text-anchor="middle" font-family="Arial, sans-serif" font-size="17">Web servers</text>
+  <rect x="29" y="664" width="126" height="158" rx="20" fill="#f8f8f8" stroke="#08b7d1" stroke-width="2"/><path d="M50 698C50 688 66 682 84 682S118 688 118 698V756C118 766 102 772 84 772S50 766 50 756Z" fill="#0b78b5"/><ellipse cx="84" cy="698" rx="34" ry="10" fill="white" stroke="#0b78b5" stroke-width="4"/><text x="92" y="804" text-anchor="middle" font-family="Arial, sans-serif" font-size="17">Databases</text>
+  <rect x="194" y="664" width="130" height="158" rx="20" fill="#f8f8f8" stroke="#08b7d1" stroke-width="2"/><rect x="212" y="688" width="70" height="48" rx="8" fill="#0b78b5"/><rect x="229" y="711" width="70" height="48" rx="8" fill="#0b78b5"/><text x="247" y="717" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="white">CACHE</text><text x="259" y="804" text-anchor="middle" font-family="Arial, sans-serif" font-size="17">Caches</text>
+  <path d="M165 551L97.1 652.85" fill="none" stroke="#0b78b5" stroke-width="3" marker-end="url(#blue-arrow)"/><path d="M195 551L252.57 652.43" fill="none" stroke="#148c28" stroke-width="3" marker-end="url(#green-arrow)"/>
+
+  <!-- US-West data center. -->
+  <rect x="405" y="371" width="333" height="498" rx="49" fill="#f2f2f2" stroke="#08b7d1" stroke-width="3" stroke-dasharray="9 7"/>
+  <text x="432" y="417" font-family="Arial, sans-serif" font-size="16">DC2</text><text x="432" y="438" font-family="Arial, sans-serif" font-size="16">US-West</text>
+  <rect x="506" y="390" width="140" height="160" rx="24" fill="#f8f8f8" stroke="#08b7d1" stroke-width="2" stroke-dasharray="7 6"/>
+  <use href="#server" x="525" y="426" width="45" height="82"/><use href="#server" x="565" y="406" width="45" height="82"/><use href="#server" x="605" y="426" width="45" height="82"/><text x="576" y="535" text-anchor="middle" font-family="Arial, sans-serif" font-size="17">Web servers</text>
+  <rect x="422" y="664" width="126" height="158" rx="20" fill="#f8f8f8" stroke="#08b7d1" stroke-width="2"/><path d="M443 698C443 688 459 682 477 682S511 688 511 698V756C511 766 495 772 477 772S443 766 443 756Z" fill="#0b78b5"/><ellipse cx="477" cy="698" rx="34" ry="10" fill="white" stroke="#0b78b5" stroke-width="4"/><text x="485" y="804" text-anchor="middle" font-family="Arial, sans-serif" font-size="17">Databases</text>
+  <rect x="587" y="664" width="130" height="158" rx="20" fill="#f8f8f8" stroke="#08b7d1" stroke-width="2"/><rect x="605" y="688" width="70" height="48" rx="8" fill="#0b78b5"/><rect x="622" y="711" width="70" height="48" rx="8" fill="#0b78b5"/><text x="640" y="717" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="white">CACHE</text><text x="652" y="804" text-anchor="middle" font-family="Arial, sans-serif" font-size="17">Caches</text>
+  <path d="M558 551L490.1 652.85" fill="none" stroke="#0b78b5" stroke-width="3" marker-end="url(#blue-arrow)"/><path d="M588 551L645.57 652.43" fill="none" stroke="#148c28" stroke-width="3" marker-end="url(#green-arrow)"/>
+
+  <!-- Shared NoSQL service outside both regional boundaries. -->
+  <path d="M253 523C472 566 679 612 810.4 685.62" fill="none" stroke="#6a0dad" stroke-width="3" marker-end="url(#purple-arrow)"/>
+  <path d="M646 523C735 572 791 620 833.75 681.95" fill="none" stroke="#6a0dad" stroke-width="3" marker-end="url(#purple-arrow)"/>
+  <path d="M813 704C813 694 829 688 847 688S881 694 881 704V762C881 772 865 778 847 778S813 772 813 762Z" fill="#0b78b5"/><ellipse cx="847" cy="704" rx="34" ry="10" fill="white" stroke="#0b78b5" stroke-width="4"/><text x="847" y="749" text-anchor="middle" font-family="Arial, sans-serif" font-size="27" font-weight="bold" fill="white">{ }</text><text x="847" y="809" text-anchor="middle" font-family="Arial, sans-serif" font-size="17">NoSQL</text>
+</svg>

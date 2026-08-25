@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="372" viewBox="0 0 1160 372" role="img" aria-labelledby="title desc">
+  <title id="title">Content delivery network flow</title>
+  <desc id="desc">User A requests an image that the CDN fetches from the origin server and stores. User B later receives the cached image directly from the CDN.</desc>
+
+  <!-- Reusable arrowhead and device icons. -->
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="0" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L11 6L0 11Z" fill="#0b78b5"/></marker>
+    <symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+  </defs>
+
+  <rect width="1160" height="372" fill="white"/>
+
+  <!-- Users. -->
+  <use href="#laptop" x="36" y="28" width="110" height="70"/>
+  <text x="91" y="129" text-anchor="middle" font-family="Arial, sans-serif" font-size="25">User A</text>
+  <use href="#laptop" x="36" y="258" width="110" height="70"/>
+  <text x="91" y="359" text-anchor="middle" font-family="Arial, sans-serif" font-size="25">User B</text>
+
+  <!-- CDN cloud. -->
+  <g id="cdn-cloud" fill="#4dd0ec">
+    <circle cx="474" cy="167" r="42"/><circle cx="523" cy="146" r="55"/><circle cx="574" cy="172" r="43"/><rect x="447" y="165" width="160" height="52" rx="26"/>
+    <path d="M542 112L513 170H543L526 210L585 145H553L571 112Z" fill="white"/>
+  </g>
+  <text x="525" y="255" text-anchor="middle" font-family="Arial, sans-serif" font-size="26">CDN</text>
+
+  <!-- Origin server. -->
+  <use href="#server" x="1060" y="92" width="70" height="122"/>
+  <text x="1095" y="274" text-anchor="middle" font-family="Arial, sans-serif" font-size="25">Server</text>
+
+  <!-- User A causes the cache fill. Labels remain in clear corridors beside their shafts. -->
+  <path d="M147 73L437.35 148.24" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="275" y="47" text-anchor="middle" font-family="Arial, sans-serif" font-size="18">1. get image.png</text>
+  <path d="M607 139H1047" fill="none" stroke="#0b78b5" stroke-width="4" stroke-dasharray="10 8" marker-end="url(#arrow)"/>
+  <text x="833" y="116" text-anchor="middle" font-family="Arial, sans-serif" font-size="18">2. Cache miss: fetch from origin</text>
+  <path d="M1058 207H619" fill="none" stroke="#0b78b5" stroke-width="4" stroke-dasharray="10 8" marker-end="url(#arrow)"/>
+  <text x="833" y="188" text-anchor="middle" font-family="Arial, sans-serif" font-size="18">3. Store image.png in CDN</text>
+  <path d="M447 184L157.61 104.9" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="281" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="18">4. return image.png</text>
+
+  <!-- User B is served from the warm CDN cache. -->
+  <path d="M147 292L437.43 208.05" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="287" y="232" text-anchor="middle" font-family="Arial, sans-serif" font-size="18">5. get image.png</text>
+  <path d="M447 218L157.37 320.34" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="291" y="342" text-anchor="middle" font-family="Arial, sans-serif" font-size="18">6. return image.png</text>
+</svg>

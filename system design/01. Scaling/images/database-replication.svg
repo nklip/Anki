@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1202" height="1282" viewBox="0 0 1202 1282" role="img" aria-labelledby="title desc">
+  <title id="title">Database replication architecture</title>
+  <desc id="desc">Users reach a load-balanced two-server web tier. Writes go to the master database, reads go to the slave database, and the master replicates data to the slave.</desc>
+
+  <!-- Reusable arrows and infrastructure icons. -->
+  <defs>
+    <marker id="arrow" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="0" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L13 7L0 13Z" fill="#0b78b5"/></marker>
+    <marker id="arrow-start" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="1" refY="7" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 1L13 7L0 13Z" fill="#0b78b5"/></marker>
+    <symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
+    <symbol id="phone" viewBox="0 0 54 96"><rect x="5" y="2" width="44" height="90" rx="7" fill="white" stroke="#333" stroke-width="5"/><path d="M19 11H35M23 82H31" stroke="#333" stroke-width="3"/></symbol>
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+    <!-- Centered DNS globe shared by every scaling diagram. -->
+    <symbol id="dns-globe" viewBox="0 0 120 120">
+      <circle cx="60" cy="60" r="54" fill="white" stroke="#555" stroke-width="7"/>
+      <path d="M60 6C36 24 36 96 60 114M60 6C84 24 84 96 60 114" fill="none" stroke="#555" stroke-width="5"/>
+      <path d="M14 38Q60 20 106 38M14 82Q60 100 106 82" fill="none" stroke="#555" stroke-width="5"/>
+      <rect x="15" y="42" width="90" height="36" rx="9" fill="white"/>
+      <text x="60" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#0b78b5">DNS</text>
+    </symbol>
+  </defs>
+
+  <rect width="1202" height="1282" fill="white"/>
+
+  <!-- User devices and DNS. -->
+  <rect x="101" y="15" width="642" height="210" rx="39" fill="white" stroke="#08b7d1" stroke-width="4"/>
+  <text x="123" y="63" font-family="Arial, sans-serif" font-size="31">User</text>
+  <use href="#laptop" x="222" y="68" width="100" height="64"/><text x="272" y="169" text-anchor="middle" font-family="Arial, sans-serif" font-size="26">Web browser</text>
+  <use href="#phone" x="488" y="49" width="54" height="96"/><text x="515" y="169" text-anchor="middle" font-family="Arial, sans-serif" font-size="26">Mobile app</text>
+  <use href="#dns-globe" x="1070" y="45" width="116" height="116"/>
+  <path d="M748 89H1058" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/><text x="910" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="26">www.mysite.com</text>
+  <path d="M1071 129H761" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/><text x="910" y="166" text-anchor="middle" font-family="Arial, sans-serif" font-size="26">IP address</text>
+
+  <!-- Client routes converge at the load balancer. -->
+  <path d="M282 226L362.27 389.33" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/><text x="220" y="349" text-anchor="middle" font-family="Arial, sans-serif" font-size="25">www.mysite.com</text>
+  <path d="M518 226L449.06 389.03" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/><text x="510" y="349" font-family="Arial, sans-serif" font-size="25">api.mysite.com</text>
+  <g id="load-balancer"><path d="M367 404H449L464 481H352Z" fill="#0b78b5"/><circle cx="408" cy="422" r="6" fill="white"/><path d="M408 429V462M408 442L390 456M408 442L426 456M390 456V468M426 456V468" stroke="white" stroke-width="4" fill="none"/><text x="506" y="454" font-family="Arial, sans-serif" font-size="28">Load balancer</text></g>
+
+  <!-- Two-server web tier. -->
+  <path d="M388 483L280.22 614.93" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/><path d="M428 483L543.45 615.21" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
+  <rect x="130" y="627" width="560" height="185" rx="37" fill="#fbfbfb" stroke="#08b7d1" stroke-width="4" stroke-dasharray="10 8"/>
+  <use href="#server" x="238" y="645" width="66" height="115"/><text x="271" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="25">Server 1</text>
+  <use href="#server" x="518" y="645" width="66" height="115"/><text x="551" y="798" text-anchor="middle" font-family="Arial, sans-serif" font-size="25">Server 2</text>
+  <text x="714" y="721" font-family="Arial, sans-serif" font-size="28">Web tier</text>
+
+  <!-- Writes target the master; reads target the replica. -->
+  <path d="M271 814L145.26 1042.61" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/><text x="133" y="947" font-family="Arial, sans-serif" font-size="25">Write</text>
+  <path d="M551 814L646 1042" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/><text x="621" y="947" font-family="Arial, sans-serif" font-size="25">Read</text>
+
+  <!-- Data tier with one-way replication from master to slave. -->
+  <rect x="10" y="1057" width="790" height="200" rx="37" fill="#fbfbfb" stroke="#08b7d1" stroke-width="4" stroke-dasharray="10 8"/>
+  <g id="master-db"><path d="M75 1094C75 1082 97 1074 123 1074S171 1082 171 1094V1174C171 1186 149 1194 123 1194S75 1186 75 1174Z" fill="#0b78b5"/><ellipse cx="123" cy="1094" rx="48" ry="15" fill="white" stroke="#0b78b5" stroke-width="6"/><text x="123" y="1158" text-anchor="middle" font-family="Arial, sans-serif" font-size="45" fill="white">DB</text><text x="123" y="1238" text-anchor="middle" font-family="Arial, sans-serif" font-size="27">Master DB</text></g>
+  <g id="slave-db"><path d="M606 1094C606 1082 628 1074 654 1074S702 1082 702 1094V1174C702 1186 680 1194 654 1194S606 1186 606 1174Z" fill="#0b78b5"/><ellipse cx="654" cy="1094" rx="48" ry="15" fill="white" stroke="#0b78b5" stroke-width="6"/><text x="654" y="1158" text-anchor="middle" font-family="Arial, sans-serif" font-size="45" fill="white">DB</text><text x="654" y="1238" text-anchor="middle" font-family="Arial, sans-serif" font-size="27">Slave DB</text></g>
+  <path d="M177 1147H587" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="389" y="1127" text-anchor="middle" font-family="Arial, sans-serif" font-size="25">Replicate</text>
+  <text x="824" y="1168" font-family="Arial, sans-serif" font-size="28">Data tier</text>
+</svg>

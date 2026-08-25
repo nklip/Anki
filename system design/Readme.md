@@ -7,7 +7,7 @@ Check the notes here: https://pagefy.io/system-design/system-design-interview-by
 **Note:** These notes are a work in progress. 
 
 
- * [Chapter 1 - Scale From Zero To Millions Of Users](./01.%20Scaling/)
+ * [Chapter 1 - Scale From Zero To Millions Of Users](./01.%20Scaling/Scaling.md)
  * [Chapter 2 - Back-of-the-envelope Estimation](./02.%20Back%20Of%20the%20Envelope%20Estimation/)
  * [Chapter 3 - A Framework For System Design Interviews](./03.%20System%20Design%20Framework/)
  * [Chapter 4 - Design A Rate Limiter](./04.%20Rate%20Limiter//)

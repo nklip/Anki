@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1192" height="1004" viewBox="0 0 1192 1004" role="img" aria-labelledby="title desc">
+  <title id="title">Load-balanced web tier</title>
+  <desc id="desc">DNS maps the public domain to a load balancer. The load balancer accepts traffic at one public IP address and distributes requests to two private web servers.</desc>
+
+  <!-- Reusable arrowhead and device/server icons. -->
+  <defs>
+    <marker id="arrow" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="0" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L13 7L0 13Z" fill="#0b78b5"/></marker>
+    <symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
+    <symbol id="phone" viewBox="0 0 54 96"><rect x="5" y="2" width="44" height="90" rx="7" fill="white" stroke="#333" stroke-width="5"/><path d="M19 11H35M23 82H31" stroke="#333" stroke-width="3"/></symbol>
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+    <!-- Centered DNS globe shared by every scaling diagram. -->
+    <symbol id="dns-globe" viewBox="0 0 120 120">
+      <circle cx="60" cy="60" r="54" fill="white" stroke="#555" stroke-width="7"/>
+      <path d="M60 6C36 24 36 96 60 114M60 6C84 24 84 96 60 114" fill="none" stroke="#555" stroke-width="5"/>
+      <path d="M14 38Q60 20 106 38M14 82Q60 100 106 82" fill="none" stroke="#555" stroke-width="5"/>
+      <rect x="15" y="42" width="90" height="36" rx="9" fill="white"/>
+      <text x="60" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#0b78b5">DNS</text>
+    </symbol>
+  </defs>
+
+  <rect width="1192" height="1004" fill="white"/>
+
+  <!-- User devices. -->
+  <rect x="530" y="20" width="635" height="276" rx="44" fill="white" stroke="#08b7d1" stroke-width="4"/>
+  <text x="562" y="77" font-family="Arial, sans-serif" font-size="31">User</text>
+  <use href="#laptop" x="673" y="95" width="110" height="70"/><text x="728" y="211" text-anchor="middle" font-family="Arial, sans-serif" font-size="27">Web browser</text>
+  <use href="#phone" x="932" y="77" width="54" height="96"/><text x="959" y="211" text-anchor="middle" font-family="Arial, sans-serif" font-size="27">Mobile app</text>
+
+  <!-- DNS and its visible lookup table. -->
+  <use href="#dns-globe" x="158" y="94" width="136" height="136"/>
+  <path d="M530 157H308" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M226 230V337" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
+  <rect x="25" y="352" width="370" height="210" fill="#fbfbfb" stroke="#333" stroke-width="3"/>
+  <path d="M25 452H395M231 352V562" stroke="#333" stroke-width="2"/>
+  <text x="38" y="412" font-family="Arial, sans-serif" font-size="24" font-weight="bold">Domain</text><text x="241" y="412" font-family="Arial, sans-serif" font-size="24" font-weight="bold">IP address</text>
+  <text x="38" y="514" font-family="Arial, sans-serif" font-size="22">mywebsite.com</text><text x="241" y="514" font-family="Arial, sans-serif" font-size="22">88.88.88.1</text>
+
+  <!-- Public traffic enters one load-balancer address. -->
+  <path d="M847 298L849.79 469" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="850" y="386" text-anchor="middle" font-family="Arial, sans-serif" font-size="24">Public IP: 88.88.88.1</text>
+  <g id="load-balancer">
+    <path d="M806 485H894L910 583H790Z" fill="#0b78b5"/>
+    <circle cx="850" cy="505" r="7" fill="white"/><path d="M850 513V557M850 530L827 548M850 530L873 548M827 548V561M873 548V561" stroke="white" stroke-width="5" fill="none"/>
+    <text x="930" y="547" font-family="Arial, sans-serif" font-size="28">Load balancer</text>
+  </g>
+
+  <!-- Private routes terminate at the server-pool boundary. -->
+  <path d="M828 585L729.34 729.27" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
+  <path d="M872 585L988.84 729.88" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="645" y="690" text-anchor="middle" font-family="Arial, sans-serif" font-size="22">Private IP: 10.0.0.1</text>
+  <text x="1080" y="690" text-anchor="middle" font-family="Arial, sans-serif" font-size="22">Private IP: 10.0.0.2</text>
+  <rect x="580" y="742" width="550" height="238" rx="42" fill="#fbfbfb" stroke="#08b7d1" stroke-width="4" stroke-dasharray="11 9"/>
+  <use href="#server" x="685" y="767" width="76" height="140"/><text x="723" y="949" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">Server 1</text>
+  <use href="#server" x="950" y="767" width="76" height="140"/><text x="988" y="949" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">Server 2</text>
+</svg>
