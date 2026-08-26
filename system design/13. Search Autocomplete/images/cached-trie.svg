@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1374" height="712" viewBox="0 0 1374 712" role="img" aria-labelledby="title desc">
+  <title id="title">Trie with cached top suggestions</title>
+  <desc id="desc">Trie prefix nodes cache their highest-frequency completions. The b branch stores best, bet, bee, be, and buy, while the w branch stores win.</desc>
+  <!-- Shared node, cache boundary, and arrow styles. -->
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L12 6 L0 12 Z" fill="#111"/></marker>
+    <style>.node{fill:#fff;stroke:#111;stroke-width:1.7}.terminal{fill:#fff;stroke:#55afa4;stroke-width:1.7}.cache{fill:#fff;stroke:#55afa4;stroke-width:3;stroke-dasharray:10 9}.edge{fill:none;stroke:#111;stroke-width:1.7;marker-end:url(#arrow)}.t{font-family:Arial,Helvetica,sans-serif;fill:#111;font-size:22px;text-anchor:middle}.list{font-family:Arial,Helvetica,sans-serif;fill:#111;font-size:21px;font-weight:700;text-anchor:middle}</style>
+  </defs>
+  <rect width="1374" height="712" fill="#fff"/>
+  <!-- Root and annotation. -->
+  <rect class="node" x="842" y="50" width="129" height="64" rx="10"/><path class="edge" d="M1068 82 H971"/><text class="t" x="1080" y="90" text-anchor="start">root</text>
+  <!-- Cached first-level prefixes. -->
+  <rect class="cache" x="312" y="184" width="454" height="84" rx="16"/><text class="list" x="465" y="222">[best: 35, bet: 29, bee: 20,</text><text class="list" x="465" y="248">be: 15, buy: 14]</text>
+  <rect class="cache" x="1019" y="184" width="274" height="84" rx="16"/><text class="list" x="1230" y="234">[win: 11]</text>
+  <path class="edge" d="M906 114 L682 193"/><path class="edge" d="M906 114 L1099 193"/>
+  <rect class="node" x="618" y="193" width="129" height="65" rx="10"/><text class="t" x="682.5" y="234">b</text>
+  <rect class="node" x="1035" y="193" width="129" height="65" rx="10"/><text class="t" x="1099.5" y="234">w</text>
+  <!-- Cached second-level prefixes. -->
+  <rect class="cache" x="219" y="312" width="428" height="84" rx="16"/><text class="list" x="353" y="348">[best: 35, bet: 29, bee:</text><text class="list" x="353" y="375">20, be: 15, beer: 10]</text>
+  <rect class="cache" x="731" y="312" width="274" height="84" rx="16"/><text class="list" x="793" y="364">[buy: 14]</text>
+  <rect class="cache" x="1019" y="312" width="274" height="84" rx="16"/><text class="list" x="1230" y="364">[win: 11]</text>
+  <path class="edge" d="M682 258 L565 321"/><path class="edge" d="M682 258 L914 321"/><path class="edge" d="M1099 258 V321"/>
+  <rect class="node" x="501" y="321" width="129" height="65" rx="10"/><text class="t" x="565.5" y="362">be: 15</text>
+  <rect class="node" x="850" y="321" width="129" height="65" rx="10"/><text class="t" x="914.5" y="362">bu</text>
+  <rect class="node" x="1035" y="321" width="129" height="65" rx="10"/><text class="t" x="1099.5" y="362">wi</text>
+  <!-- Third level exposes cached leaves and one more prefix. -->
+  <rect class="cache" x="21" y="488" width="340" height="84" rx="16"/><text class="list" x="126" y="538">[bee: 20, beer, 10]</text>
+  <rect class="cache" x="394" y="488" width="257" height="84" rx="16"/><text class="list" x="440" y="538">[best: 35]</text>
+  <path class="edge" d="M565 386 L296 498"/><path class="edge" d="M565 386 V498"/><path class="edge" d="M565 386 L763 498"/><path class="edge" d="M914 386 V498"/><path class="edge" d="M1099 386 V498"/>
+  <rect class="terminal" x="232" y="498" width="129" height="65" rx="10"/><text class="t" x="296.5" y="539">bee: 20</text>
+  <rect class="node" x="501" y="498" width="129" height="65" rx="10"/><text class="t" x="565.5" y="539">bes</text>
+  <rect class="terminal" x="699" y="498" width="129" height="65" rx="10"/><text class="t" x="763.5" y="539">bet: 29</text>
+  <rect class="node" x="850" y="498" width="129" height="65" rx="10"/><text class="t" x="914.5" y="539">buy: 14</text>
+  <rect class="node" x="1035" y="498" width="129" height="65" rx="10"/><text class="t" x="1099.5" y="539">win: 11</text>
+  <!-- Final completions. -->
+  <path class="edge" d="M296 563 V627"/><path class="edge" d="M565 563 V627"/>
+  <rect class="terminal" x="232" y="627" width="129" height="65" rx="10"/><text class="t" x="296.5" y="668">beer: 10</text>
+  <rect class="terminal" x="501" y="627" width="129" height="65" rx="10"/><text class="t" x="565.5" y="668">best: 35</text>
+</svg>

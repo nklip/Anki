@@ -25,7 +25,7 @@ Autocomplete, also known as typeahead or incremental search, provides real-time 
 
 ## Step 2: High-Level Design
 At the high-level, the system is broken down into two services:
-1. **Data Gathering Service:** 
+1. **Data Gathering Service:**
     - Collects user queries and aggregates them for frequency analysis in real-time.
     - Real-time processing is not practical for large data sets; however, it is a good starting point
 
@@ -36,19 +36,16 @@ At the high-level, the system is broken down into two services:
 
 ### Data Gathering Service
 <div style="margin-left:3rem">
-    <img src="./images/data-gathering.png" alt="Data Gathering" width="600">
+    <img src="./images/data-gathering.svg" alt="Data Gathering" width="600">
 </div>
 
 - Aggregates query data from analytics logs and updates the frequency table.
 - Processes historical data weekly to build a **trie** (prefix tree).
 
-
-
-
 ### Query Service
 <div style="margin-left:3rem">
-    <img src="./images/frequency-table.png" alt="Frequency Table" width="400">
-    <img src="./images/basic-search-suggestions.png" alt="Search Suggestions" width="360">
+    <img src="./images/frequency-table.svg" alt="Frequency Table" width="400">
+    <img src="./images/basic-search-suggestions.svg" alt="Search Suggestions" width="360">
 </div>
 
 - Uses the frequency table from data gathering service.
@@ -70,7 +67,7 @@ The **trie** is a tree-like data structure used to store and retrieve query stri
 
 4. **Steps to get top k most searched queries**
    <div style="margin-left:3rem">
-      <img src="./images/trie-structure.png" alt="Trie Structure" width="500">
+      <img src="./images/trie-structure.svg" alt="Trie Structure" width="500">
    </div>
 
     - Find the prefix
@@ -81,24 +78,24 @@ The **trie** is a tree-like data structure used to store and retrieve query stri
 3. **Optimizations:**
    - Cache top-k queries at each node to speed up retrieval and avoid traversing the whole trie.
 
-        <img src="./images/cached-trie.png" alt="Cached Trie" width="600">
+        <img src="./images/cached-trie.svg" alt="Cached Trie" width="600">
 
    - Limit prefix length to reduce search space as users rarely type a loong search query (say 50).
 
 #### Trie Operations
-1. **Create:** 
+1. **Create:**
     - Built weekly using aggregated query data.
     - The source of data is from Analytics Log/DB.
 2. **Update:** Rarely updated in real-time; weekly updates replace old data.
-3. **Delete:** 
+3. **Delete:**
       <div style="margin-left:3rem">
-         <img src="./images/delete-kv.png" alt="Delete KV" width="500">
+         <img src="./images/delete-kv.svg" alt="Delete KV" width="500">
       </div>
 
     - Filters remove unwanted or harmful suggestions (e.g., hate speech).
     - Having a filter layer gives us the flexibility of removing results based on different filter rules.
     - Unwanted suggestions are removed physically from the database asynchronically.
-    
+
 
 ---
 
@@ -134,7 +131,7 @@ In the high-level design, whenever a user types a search query, data is updated 
 #### Updated Design
 
 <div style="margin-left:3rem">
-   <img src="./images/data-gathering-flow.png" alt="Updated Data Gathering Flow" width="600">
+   <img src="./images/data-gathering-flow.svg" alt="Updated Data Gathering Flow" width="600">
 </div>
 
 1. **Analytics Logs:**
@@ -148,14 +145,14 @@ In the high-level design, whenever a user types a search query, data is updated 
    - Asynchronous servers rebuild the trie and store it in persistent storage.
 4. **Storage Options:**
     - **Trie Cache**: Trie Cache is a distributed cache system that keeps trie in memory for fast read.
-    - **Trie DB** 
+    - **Trie DB**
         1. **Document Store (e.g., MongoDB)**: Since a new trie is built weekly, we can periodically take a snapshot of it, serialize it, and store the serialized data in the database like MongoDB
-        2. **Key-Value Store:** 
+        2. **Key-Value Store:**
             - Maps prefixes to node data for fast access.
             - Every prefix in the trie is mapped to a key in a hash table.
             - Data on each trie node is mapped to a value in a hash table.
 
-                <img src="./images/trie-db.png" alt="Trie DB" width="600">
+                <img src="./images/trie-db.svg" alt="Trie DB" width="600">
 ---
 
 ### Scalability
@@ -164,11 +161,10 @@ In the high-level design, whenever a user types a search query, data is updated 
    - Further shard within prefixes to balance uneven distributions (e.g., `aa-ag`, `ah-an`).
 2. **Load Balancing:**
    <div style="margin-left:3rem">
-      <img src="./images/sharding.png" alt="Sharding" width="400">
+      <img src="./images/sharding.svg" alt="Sharding" width="400">
    </div>
 
    - Use a shard map manager to route requests to the appropriate server.
-
 
 ---
 

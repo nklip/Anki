@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1318" height="512" viewBox="0 0 1318 512" role="img" aria-labelledby="title desc">
+  <title id="title">Autocomplete data gathering flow</title>
+  <desc id="desc">Analytics logs are aggregated into storage, processed weekly by workers into a trie database, and copied as a weekly snapshot into the trie cache.</desc>
+  <!-- Reusable infrastructure icons and blue data-flow arrows. -->
+  <defs>
+    <marker id="blue-arrow" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L12 6 L0 12 Z" fill="#1677b8"/></marker>
+    <symbol id="servers" viewBox="0 0 130 90"><rect x="33" y="3" width="34" height="19" rx="2" fill="#65c515"/><rect x="72" y="3" width="34" height="19" rx="2" fill="#65c515"/><g fill="#65c515"><rect x="6" y="23" width="38" height="62"/><rect x="46" y="23" width="38" height="62"/><rect x="86" y="23" width="38" height="62"/></g><path d="M12 34 H38 M12 71 H38 M52 34 H78 M52 71 H78 M92 34 H118 M92 71 H118 M39 11 H61 M78 11 H100" stroke="#fff" stroke-width="3"/></symbol>
+    <symbol id="db" viewBox="0 0 120 100"><g fill="#1677b8" stroke="#fff" stroke-width="1.5"><path d="M8 18 A25 8 0 0 1 58 18 V68 A25 8 0 0 1 8 68 Z"/><ellipse cx="33" cy="18" rx="25" ry="8"/><path d="M35 29 A25 8 0 0 1 85 29 V79 A25 8 0 0 1 35 79 Z"/><ellipse cx="60" cy="29" rx="25" ry="8"/><path d="M62 40 A25 8 0 0 1 112 40 V90 A25 8 0 0 1 62 90 Z"/><ellipse cx="87" cy="40" rx="25" ry="8"/></g></symbol>
+    <symbol id="cache" viewBox="0 0 130 100"><g fill="#087ab9" stroke="#075a88" stroke-width="2"><rect x="10" y="8" width="72" height="55" rx="7"/><rect x="36" y="27" width="72" height="55" rx="7"/><rect x="62" y="46" width="62" height="49" rx="7"/></g><g fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="14"><text x="19" y="30">CACHE</text><text x="49" y="50">CACHE</text><text x="69" y="70">CACHE</text></g></symbol>
+    <style>.box{fill:#fff;stroke:#08b4cf;stroke-width:3}.group{fill:#fff;stroke:#08b4cf;stroke-width:3;stroke-dasharray:10 8}.flow{fill:none;stroke:#1677b8;stroke-width:2.2;marker-end:url(#blue-arrow)}.t{font-family:Arial,Helvetica,sans-serif;fill:#111;font-size:21px;text-anchor:middle}</style>
+  </defs>
+  <rect width="1318" height="512" fill="#fff"/>
+  <!-- Bottom pipeline: logs to weekly trie generation. -->
+  <rect class="box" x="25" y="328" width="151" height="163" rx="20"/><path d="M63 352 H121 L137 368 V427 H63 Z" fill="#fff" stroke="#111" stroke-width="3"/><path d="M121 352 V369 H137" fill="none" stroke="#111" stroke-width="3"/><rect x="51" y="396" width="84" height="20" rx="4" fill="#111"/><text x="93" y="412" font-family="Arial,Helvetica,sans-serif" font-size="14" fill="#fff" text-anchor="middle">LOG</text><text class="t" x="100.5" y="476">Analytics Logs</text>
+  <rect class="group" x="255" y="328" width="143" height="163" rx="20"/><use href="#servers" x="263" y="343" width="127" height="88"/><text class="t" x="326.5" y="476">Aggregators</text>
+  <rect class="box" x="458" y="328" width="163" height="163" rx="20"/><use href="#db" x="479" y="343" width="120" height="100"/><text class="t" x="539.5" y="476">Aggregated Data</text>
+  <rect class="group" x="690" y="328" width="143" height="163" rx="20"/><use href="#servers" x="698" y="343" width="127" height="88"/><text class="t" x="761.5" y="476">Workers</text>
+  <rect class="box" x="1017" y="333" width="145" height="151" rx="20"/><use href="#db" x="1030" y="344" width="120" height="100"/><text class="t" x="1089.5" y="469">Trie DB</text>
+  <path class="flow" d="M176 408 H255"/><path class="flow" d="M398 408 H458"/><path class="flow" d="M621 408 H690"/><path class="flow" d="M833 408 H1017"/><rect x="851" y="375" width="148" height="27" fill="#fff"/><text class="t" x="925" y="397">Update weekly</text>
+  <!-- Weekly database snapshot populates the read cache above. -->
+  <rect class="box" x="1014" y="63" width="150" height="157" rx="20"/><use href="#cache" x="1025" y="68" width="130" height="100"/><text class="t" x="1089" y="208">Trie Cache</text>
+  <path class="flow" d="M1089 333 V220"/><text x="1100" y="295" font-family="Arial,Helvetica,sans-serif" font-size="18" fill="#111">Weekly snapshot of DB</text>
+</svg>

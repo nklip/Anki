@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1112" height="754" viewBox="0 0 1112 754" role="img" aria-labelledby="title desc">
+  <title id="title">Autocomplete database sharding flow</title>
+  <desc id="desc">Web servers first ask a shard map manager which shard owns a query, then retrieve autocomplete data from the selected database shard.</desc>
+  <!-- Reusable server and database symbols. -->
+  <defs>
+    <symbol id="servers" viewBox="0 0 130 90"><rect x="33" y="3" width="34" height="19" rx="2" fill="#65c515"/><rect x="72" y="3" width="34" height="19" rx="2" fill="#65c515"/><g fill="#65c515"><rect x="6" y="23" width="38" height="62"/><rect x="46" y="23" width="38" height="62"/><rect x="86" y="23" width="38" height="62"/></g><path d="M12 34 H38 M12 71 H38 M52 34 H78 M52 71 H78 M92 34 H118 M92 71 H118 M39 11 H61 M78 11 H100" stroke="#fff" stroke-width="3"/></symbol>
+    <symbol id="cylinder" viewBox="0 0 100 130"><path d="M5 20 A45 17 0 0 1 95 20 V105 A45 17 0 0 1 5 105 Z" fill="#087aba"/><ellipse cx="50" cy="20" rx="45" ry="17" fill="#087aba"/><ellipse cx="50" cy="20" rx="31" ry="10" fill="#fff"/></symbol>
+    <style>.box{fill:#fff;stroke:#08b4cf;stroke-width:3}.group{fill:#fff;stroke:#08b4cf;stroke-width:3;stroke-dasharray:10 8}.shaft{fill:none;stroke:#1677b8;stroke-width:3}.t{font-family:Arial,Helvetica,sans-serif;fill:#111;font-size:29px;text-anchor:middle}</style>
+  </defs>
+  <rect width="1112" height="754" fill="#fff"/>
+  <!-- Request source. -->
+  <rect class="group" x="25" y="259" width="207" height="178" rx="28"/><use href="#servers" x="62" y="276" width="130" height="95"/><text class="t" x="128.5" y="423">Web servers</text>
+  <!-- Step 1: resolve the owning shard. The shaft stops beneath its separate head. -->
+  <path class="shaft" d="M232 347 L719 142"/><path d="M721 147 L730 137 L717 136 Z" fill="#1677b8"/>
+  <g transform="rotate(-23 480 208)"><rect x="347" y="181" width="266" height="42" fill="#fff"/><text class="t" x="480" y="213">① What shard is it?</text></g>
+  <rect class="box" x="730" y="19" width="311" height="206" rx="31"/><use href="#cylinder" x="832" y="36" width="100" height="130"/><text class="t" x="885.5" y="199">Shard map manager</text>
+  <!-- Step 2: retrieve the result from the selected shard. -->
+  <path class="shaft" d="M232 347 L684 597"/><path d="M682 603 L695 603 L687 592 Z" fill="#1677b8"/>
+  <g transform="rotate(29 480 445)"><rect x="313" y="418" width="334" height="42" fill="#fff"/><text class="t" x="480" y="450">② Retrieve data from shard</text></g>
+  <rect class="box" x="695" y="466" width="379" height="275" rx="36"/>
+  <use href="#cylinder" x="726" y="509" width="100" height="130"/><use href="#cylinder" x="846" y="509" width="100" height="130"/><use href="#cylinder" x="966" y="509" width="100" height="130"/>
+  <g font-family="Arial,Helvetica,sans-serif" font-size="23" fill="#fff" text-anchor="middle"><text x="776" y="587">Shard 1</text><text x="896" y="587">Shard 2</text><text x="1016" y="587">Shard ...</text></g>
+  <text class="t" x="884.5" y="711">Databases</text>
+</svg>
