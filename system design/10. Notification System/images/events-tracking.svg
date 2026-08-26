@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1268" height="664" viewBox="0 0 1268 664" role="img" aria-labelledby="title desc">
+  <title id="title">Notification event state tracking</title>
+  <desc id="desc">A notification moves from start to pending, sent, and delivered. Pending or sent notifications may enter an error state. Delivered notifications can result in a click or an unsubscribe event.</desc>
+
+  <!-- Thin black state transitions and a red error state match the PNG. -->
+  <defs>
+    <marker id="arrow-black" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="13" refY="7" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L14 7 L0 14 Z" fill="#111"/>
+    </marker>
+    <style>
+      .state { fill: #fff; stroke: #111; stroke-width: 2; }
+      .error-state { fill: #fff; stroke: #f00; stroke-width: 2; }
+      .flow { fill: none; stroke: #111; stroke-width: 2.3; stroke-linecap: round; marker-end: url(#arrow-black); }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 32px; fill: #111; text-anchor: middle; dominant-baseline: middle; }
+      .small { font-family: Arial, Helvetica, sans-serif; font-size: 27px; fill: #111; text-anchor: middle; dominant-baseline: middle; }
+    </style>
+  </defs>
+
+  <rect width="1268" height="664" fill="#fff"/>
+
+  <!-- Main delivery state sequence. -->
+  <g id="delivery-states">
+    <circle class="state" cx="90" cy="261" r="78"/>
+    <text class="label" x="90" y="261">start</text>
+
+    <path class="flow" d="M168 261 H254"/>
+    <circle class="state" cx="332" cy="261" r="78"/>
+    <text class="label" x="332" y="261">pending</text>
+
+    <path class="flow" d="M410 261 H516"/>
+    <circle class="state" cx="594" cy="261" r="78"/>
+    <text class="label" x="594" y="261">sent</text>
+
+    <path class="flow" d="M672 261 H778"/>
+    <circle class="state" cx="856" cy="261" r="78"/>
+    <text class="label" x="856" y="261">deliver</text>
+  </g>
+
+  <!-- Delivery outcomes branch upward and downward. -->
+  <g id="delivery-outcomes">
+    <path class="flow" d="M912 206 L1090 140"/>
+    <circle class="state" cx="1144" cy="85" r="77"/>
+    <text class="label" x="1144" y="85">click</text>
+
+    <path class="flow" d="M912 316 L1090 403"/>
+    <circle class="state" cx="1144" cy="458" r="77"/>
+    <text class="small" x="1144" y="458">unsubscribe</text>
+  </g>
+
+  <!-- Failure paths terminate at separated points on the red error circle. -->
+  <g id="error-outcome">
+    <path class="flow" d="M332 339 L440 494"/>
+    <path class="flow" d="M594 339 L488 494"/>
+    <circle class="error-state" cx="464" cy="568" r="78"/>
+    <text x="464" y="568" font-family="Arial, Helvetica, sans-serif" font-size="32" fill="#f00" text-anchor="middle" dominant-baseline="middle">error</text>
+  </g>
+</svg>

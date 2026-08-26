@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1454" height="1050" viewBox="0 0 1454 1050" role="img" aria-labelledby="title desc">
+  <title id="title">High-level notification system design</title>
+  <desc id="desc">Multiple services call a notification system. It routes messages through Apple Push Notification service, Firebase Cloud Messaging, an SMS service, or an email service, which deliver to iOS, Android, SMS, and email clients.</desc>
+
+  <!-- Monochrome provider and client icons follow the PNG reference. -->
+  <defs>
+    <marker id="arrow-black" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="13" refY="7" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L14 7 L0 14 Z" fill="#111"/>
+    </marker>
+    <symbol id="phone" viewBox="0 0 60 100">
+      <rect x="10" y="3" width="40" height="94" rx="5" fill="none" stroke="#333" stroke-width="4"/>
+      <path d="M10 17 H50 M10 82 H50" stroke="#333" stroke-width="3"/>
+      <path d="M25 10 H35 M27 90 H33" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="laptop" viewBox="0 0 90 70">
+      <rect x="17" y="5" width="56" height="45" rx="4" fill="none" stroke="#111" stroke-width="4"/>
+      <path d="M9 58 H81 L87 65 H3 Z" fill="#111"/>
+      <path d="M38 60 H52" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+    <!-- Cloud geometry stays inside its viewBox so the APNs outline cannot be clipped. -->
+    <symbol id="apns-cloud" viewBox="0 0 120 82">
+      <path d="M24 72 C13 72 5 64 5 53 C5 43 11 35 21 32 C20 23 27 17 36 17 C41 7 51 3 61 3 C74 3 84 12 86 25 C90 23 94 22 99 23 C109 25 116 34 116 45 C116 48 116 51 114 54 C112 64 103 72 92 72 Z" fill="#fff" stroke="#333" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="60" y="55" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#111" text-anchor="middle">APNs</text>
+    </symbol>
+    <!-- Three separated facets reproduce the Firebase Cloud Messaging mark. -->
+    <symbol id="fcm" viewBox="0 0 100 110">
+      <path d="M12 77 L26 7 L43 29 Z" fill="#000" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M12 77 L47 24 L59 39 Z" fill="#000" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M12 78 L69 32 L86 82 L51 103 Z" fill="#000" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="sms-provider" viewBox="0 0 110 110">
+      <rect x="3" y="3" width="104" height="104" fill="#222"/>
+      <rect x="22" y="29" width="66" height="43" rx="7" fill="#fff"/>
+      <path d="M37 72 L31 84 L49 72" fill="#fff"/>
+      <circle cx="40" cy="52" r="3" fill="#222"/>
+      <circle cx="72" cy="52" r="3" fill="#222"/>
+      <path d="M52 60 Q56 64 60 60" fill="none" stroke="#222" stroke-width="2.5" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="email-provider" viewBox="0 0 120 105">
+      <g fill="#fff" stroke="#111" stroke-width="3">
+        <rect x="5" y="5" width="40" height="15"/><rect x="75" y="5" width="40" height="15"/>
+        <rect x="5" y="85" width="40" height="15"/><rect x="75" y="85" width="40" height="15"/>
+        <rect x="38" y="33" width="44" height="40"/>
+      </g>
+      <path d="M38 34 L60 54 L82 34 M25 21 V38 M95 21 V38 M25 67 V84 M95 67 V84 M20 32 L25 38 L30 32 M90 32 L95 38 L100 32 M20 73 L25 67 L30 73 M90 73 L95 67 L100 73" fill="none" stroke="#111" stroke-width="3"/>
+    </symbol>
+    <style>
+      .node { fill: #fff; stroke: #111; stroke-width: 2; }
+      .provider-panel { fill: #fff; stroke: #111; stroke-width: 2; stroke-dasharray: 6 5; }
+      .flow { fill: none; stroke: #111; stroke-width: 2.2; stroke-linecap: round; marker-end: url(#arrow-black); }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 26px; fill: #111; text-anchor: middle; dominant-baseline: middle; }
+      .provider-label { font-family: Arial, Helvetica, sans-serif; font-size: 26px; fill: #111; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect width="1454" height="1050" fill="#fff"/>
+
+  <!-- Calling services on the left. -->
+  <g id="calling-services">
+    <rect class="node" x="21" y="212" width="207" height="103" rx="14"/>
+    <text class="label" x="124.5" y="263.5">Service 1</text>
+    <rect class="node" x="21" y="430" width="207" height="103" rx="14"/>
+    <text class="label" x="124.5" y="481.5">Service 2</text>
+    <text x="142" y="579" font-family="Arial, Helvetica, sans-serif" font-size="35" fill="#111" text-anchor="middle">·</text>
+    <text x="142" y="623" font-family="Arial, Helvetica, sans-serif" font-size="35" fill="#111" text-anchor="middle">·</text>
+    <text x="142" y="667" font-family="Arial, Helvetica, sans-serif" font-size="35" fill="#111" text-anchor="middle">·</text>
+    <rect class="node" x="21" y="695" width="207" height="103" rx="14"/>
+    <text class="label" x="124.5" y="746.5">Service N</text>
+  </g>
+
+  <!-- Central notification system receives every service request. -->
+  <g id="notification-system">
+    <path class="flow" d="M228 263.5 L452 430"/>
+    <path class="flow" d="M228 481.5 H452"/>
+    <path class="flow" d="M228 746.5 L452 510"/>
+    <rect class="node" x="452" y="418" width="257" height="104" rx="14"/>
+    <text class="label" x="580.5" y="470">Notification System</text>
+  </g>
+
+  <!-- Third-party provider column. -->
+  <rect class="provider-panel" x="879" y="7" width="208" height="1026" rx="32"/>
+  <g id="providers">
+    <path class="flow" d="M709 455 L879 135"/>
+    <use href="#apns-cloud" x="910" y="62" width="150" height="105"/>
+
+    <path class="flow" d="M709 468 L879 322"/>
+    <use href="#fcm" x="929" y="243" width="110" height="130"/>
+    <text class="provider-label" x="984" y="394">FCM</text>
+
+    <path class="flow" d="M709 483 L879 558"/>
+    <use href="#sms-provider" x="929" y="482" width="110" height="110"/>
+    <text class="provider-label" x="984" y="620">SMS</text>
+    <text class="provider-label" x="984" y="650">Service</text>
+
+    <path class="flow" d="M709 498 L879 778"/>
+    <use href="#email-provider" x="924" y="715" width="120" height="105"/>
+    <text class="provider-label" x="984" y="852">Email</text>
+    <text class="provider-label" x="984" y="882">Service</text>
+
+    <text class="provider-label" x="983" y="979">Third Party</text>
+    <text class="provider-label" x="983" y="1009">Services</text>
+  </g>
+
+  <!-- Provider outputs and destination devices. -->
+  <g id="clients">
+    <path class="flow" d="M1087 112 H1320"/>
+    <use href="#phone" x="1326" y="68" width="70" height="100"/>
+    <text class="provider-label" x="1361" y="187">iOS</text>
+
+    <path class="flow" d="M1087 328 H1320"/>
+    <use href="#phone" x="1326" y="276" width="70" height="100"/>
+    <text class="provider-label" x="1361" y="397">Android</text>
+
+    <path class="flow" d="M1087 534 H1320"/>
+    <use href="#phone" x="1326" y="482" width="70" height="100"/>
+    <text class="provider-label" x="1361" y="603">SMS</text>
+
+    <path class="flow" d="M1087 772 H1318"/>
+    <use href="#laptop" x="1318" y="733" width="90" height="70"/>
+    <text class="provider-label" x="1363" y="825">Email</text>
+  </g>
+</svg>

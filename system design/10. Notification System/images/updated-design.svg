@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1318" height="826" viewBox="0 0 1318 826" role="img" aria-labelledby="title desc">
+  <title id="title">Updated iOS notification design</title>
+  <desc id="desc">A service calls authenticated, rate-limited notification servers. They write pending analytics, use cache and user settings, and enqueue iOS notifications. Workers retry failures, load templates, write logs, send through APNs, and report sent and click events to analytics.</desc>
+
+  <!-- Shared source-native symbols for the focused iOS notification path. -->
+  <defs>
+    <marker id="arrow-blue" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L12 6 L0 12 Z" fill="#1677b8"/></marker>
+    <marker id="arrow-black" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L12 6 L0 12 Z" fill="#111"/></marker>
+    <symbol id="green-server" viewBox="0 0 30 60"><rect x="8" y="1" width="14" height="9" rx="1" fill="#65c515"/><path d="M11 5 H19" stroke="#fff" stroke-width="1.5"/><rect x="3" y="12" width="24" height="46" rx="1.5" fill="#65c515"/><path d="M7 19 H23 M7 40 H23 M7 48 H23" stroke="#fff" stroke-width="2"/></symbol>
+    <symbol id="channel-queue" viewBox="0 0 180 58">
+      <path d="M2 2 H163 L178 29 L163 56 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="4"/>
+      <g fill="none" stroke="#1677b8" stroke-width="4"><rect x="10" y="12" width="42" height="33"/><path d="M10 13 L31 29 L52 13"/><rect x="62" y="12" width="42" height="33"/><path d="M62 13 L83 29 L104 13"/><rect x="114" y="12" width="42" height="33"/><path d="M114 13 L135 29 L156 13"/></g>
+    </symbol>
+    <symbol id="db-cylinder" viewBox="0 0 58 82"><rect x="3" y="12" width="52" height="58" fill="#1677b8"/><ellipse cx="29" cy="12" rx="26" ry="10" fill="#1677b8" stroke="#fff" stroke-width="2"/><path d="M3 70 A26 10 0 0 0 55 70" fill="#1677b8"/></symbol>
+    <symbol id="phone" viewBox="0 0 60 100"><rect x="10" y="3" width="40" height="94" rx="5" fill="none" stroke="#333" stroke-width="4"/><path d="M10 17 H50 M10 82 H50 M25 10 H35 M27 90 H33" fill="none" stroke="#333" stroke-width="3"/></symbol>
+    <!-- Cloud geometry stays inside its viewBox so the APNs outline cannot be clipped. -->
+    <symbol id="apns-cloud" viewBox="0 0 120 82"><path d="M24 72 C13 72 5 64 5 53 C5 43 11 35 21 32 C20 23 27 17 36 17 C41 7 51 3 61 3 C74 3 84 12 86 25 C90 23 94 22 99 23 C109 25 116 34 116 45 C116 48 116 51 114 54 C112 64 103 72 92 72 Z" fill="#fff" stroke="#333" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><text x="60" y="55" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#111" text-anchor="middle">APNs</text></symbol>
+    <style>
+      .node { fill: #fff; stroke: #111; stroke-width: 1.7; }
+      .cyan-box { fill: #fff; stroke: #08b4cf; stroke-width: 2.7; }
+      .dashed-box { fill: #fff; stroke: #08b4cf; stroke-width: 2.7; stroke-dasharray: 9 8; }
+      .blue-flow { fill: none; stroke: #1677b8; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-blue); }
+      .black-flow { fill: none; stroke: #111; stroke-width: 1.8; marker-end: url(#arrow-black); }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 20px; fill: #111; text-anchor: middle; }
+      .small { font-family: Arial, Helvetica, sans-serif; font-size: 17px; fill: #111; text-anchor: middle; }
+      .annotation { font-family: Arial, Helvetica, sans-serif; font-size: 19px; fill: #111; }
+    </style>
+  </defs>
+
+  <rect width="1318" height="826" fill="#fff"/>
+
+  <!-- Calling service and notification-server boundary. -->
+  <g id="notification-entry">
+    <rect class="node" x="35" y="307" width="149" height="72" rx="11"/><text class="label" x="109.5" y="351">Service N</text>
+    <path class="blue-flow" d="M184 343 H286"/>
+    <rect class="dashed-box" x="286" y="282" width="288" height="120" rx="22"/>
+    <use href="#green-server" x="300" y="290" width="27" height="69"/><use href="#green-server" x="329" y="290" width="27" height="69"/><use href="#green-server" x="358" y="290" width="27" height="69"/>
+    <text class="small" x="342" y="378">Notification</text><text class="small" x="342" y="397">servers</text>
+    <rect class="node" x="392" y="291" width="164" height="98" rx="12"/>
+    <path d="M392 342 H556" stroke="#111" stroke-width="1.5"/>
+    <text class="label" x="474" y="332">Authentication</text><text class="label" x="474" y="374">Rate limit</text>
+  </g>
+
+  <!-- Analytics service and event-reporting routes. -->
+  <g id="analytics">
+    <rect class="node" x="690" y="46" width="151" height="75" rx="11"/>
+    <text class="label" x="765.5" y="78">Analytics</text><text class="label" x="765.5" y="103">service</text>
+    <path class="blue-flow" d="M428 282 V83 H690"/>
+    <rect x="463" y="47" width="132" height="27" fill="#fff"/>
+    <text class="annotation" x="465" y="67">send pending</text>
+  </g>
+
+  <!-- iOS queue and workers. -->
+  <g id="queue-and-workers">
+    <path class="blue-flow" d="M574 342 H660"/>
+    <use href="#channel-queue" x="660" y="315" width="180" height="58"/>
+    <text class="label" x="750" y="393">iOS PN</text>
+    <path class="blue-flow" d="M840 344 H925"/>
+    <rect class="dashed-box" x="925" y="282" width="109" height="120" rx="20"/>
+    <use href="#green-server" x="939" y="290" width="27" height="69"/><use href="#green-server" x="970" y="290" width="27" height="69"/><use href="#green-server" x="1001" y="290" width="27" height="69"/>
+    <text class="small" x="979.5" y="388">Workers</text>
+    <path class="blue-flow" d="M979 282 V223 H713 V315"/>
+    <text class="annotation" x="780" y="205">retry on error</text>
+  </g>
+
+  <!-- APNs delivery to the iOS device. -->
+  <g id="delivery">
+    <path class="black-flow" d="M1034 344 H1089"/>
+    <use href="#apns-cloud" x="1089" y="296" width="105" height="80"/>
+    <path class="black-flow" d="M1194 338 H1247"/>
+    <use href="#phone" x="1247" y="301" width="48" height="78"/>
+    <text class="label" x="1271" y="398">iOS</text>
+  </g>
+
+  <!-- Sent and click events return to analytics without crossing labels. -->
+  <g id="analytics-feedback">
+    <path class="blue-flow" d="M1030 282 V97 H841"/>
+    <rect x="973" y="155" width="50" height="26" fill="#fff"/><text class="annotation" x="977" y="175">sent</text>
+    <path class="blue-flow" d="M1271 301 V83 H841"/>
+    <rect x="1030" y="47" width="128" height="27" fill="#fff"/><text class="annotation" x="1035" y="67">click tracking</text>
+  </g>
+
+  <!-- Cache and database with device settings and user information. -->
+  <g id="user-data">
+    <path class="blue-flow" d="M429 402 V493"/>
+    <rect class="cyan-box" x="369" y="493" width="121" height="119" rx="17"/>
+    <rect x="373" y="502" width="59" height="54" rx="7" fill="#1677b8"/><text x="402.5" y="526" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#fff" text-anchor="middle">CACHE</text>
+    <rect x="397" y="523" width="59" height="54" rx="7" fill="#1677b8"/><text x="426.5" y="547" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#fff" text-anchor="middle">CACHE</text>
+    <rect x="421" y="544" width="65" height="59" rx="7" fill="#1677b8"/><text x="453.5" y="570" font-family="Arial, Helvetica, sans-serif" font-size="12" fill="#fff" text-anchor="middle">CACHE</text>
+
+    <path class="blue-flow" d="M430 612 V685"/>
+    <rect class="cyan-box" x="309" y="685" width="242" height="119" rx="18"/>
+    <use href="#db-cylinder" x="325" y="696" width="45" height="55"/><use href="#db-cylinder" x="350" y="708" width="45" height="55"/><use href="#db-cylinder" x="375" y="720" width="40" height="50"/>
+    <text class="label" x="366" y="793">DB</text>
+    <rect class="node" x="416" y="706" width="112" height="82" rx="11"/>
+    <text class="label" x="472" y="731">device</text><text class="label" x="472" y="756">setting</text><text class="label" x="472" y="781">user info</text>
+  </g>
+
+  <!-- Worker-side template lookup and notification logging. -->
+  <g id="worker-data">
+    <path class="blue-flow" d="M968 402 L886 494"/>
+    <path class="blue-flow" d="M990 402 L1091 492"/>
+    <rect class="cyan-box" x="807" y="494" width="159" height="116" rx="17"/>
+    <text class="label" x="886.5" y="547">Notification</text><text class="label" x="886.5" y="574">template</text>
+    <rect class="cyan-box" x="1020" y="492" width="142" height="118" rx="17"/>
+    <use href="#db-cylinder" x="1039" y="504" width="42" height="60"/><use href="#db-cylinder" x="1066" y="514" width="42" height="60"/><use href="#db-cylinder" x="1093" y="524" width="40" height="55"/>
+    <text class="small" x="1091" y="604">Notification log</text>
+  </g>
+</svg>

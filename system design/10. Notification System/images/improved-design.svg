@@ -1,0 +1,166 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1210" height="812" viewBox="0 0 1210 812" role="img" aria-labelledby="title desc">
+  <title id="title">Improved notification system design</title>
+  <desc id="desc">Services call notification servers, which use cache and database storage and route notifications into channel-specific queues. Workers consume each queue, retry errors, and send through APNs, FCM, SMS, or email providers to client devices.</desc>
+
+  <!-- Shared channel, worker, storage, provider, and client symbols. -->
+  <defs>
+    <marker id="arrow-blue" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L12 6 L0 12 Z" fill="#1677b8"/>
+    </marker>
+    <marker id="arrow-black" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L12 6 L0 12 Z" fill="#111"/>
+    </marker>
+    <symbol id="green-server" viewBox="0 0 30 60">
+      <rect x="8" y="1" width="14" height="9" rx="1" fill="#65c515"/>
+      <path d="M11 5 H19" stroke="#fff" stroke-width="1.5"/>
+      <rect x="3" y="12" width="24" height="46" rx="1.5" fill="#65c515"/>
+      <path d="M7 19 H23 M7 40 H23 M7 48 H23" stroke="#fff" stroke-width="2"/>
+    </symbol>
+    <symbol id="channel-queue" viewBox="0 0 150 58">
+      <path d="M2 2 H135 L148 29 L135 56 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="4"/>
+      <g fill="none" stroke="#1677b8" stroke-width="4">
+        <rect x="10" y="12" width="36" height="33"/><path d="M10 13 L28 29 L46 13"/>
+        <rect x="54" y="12" width="36" height="33"/><path d="M54 13 L72 29 L90 13"/>
+        <rect x="98" y="12" width="36" height="33"/><path d="M98 13 L116 29 L134 13"/>
+      </g>
+    </symbol>
+    <symbol id="db-cylinder" viewBox="0 0 58 82">
+      <rect x="3" y="12" width="52" height="58" fill="#1677b8"/>
+      <ellipse cx="29" cy="12" rx="26" ry="10" fill="#1677b8" stroke="#fff" stroke-width="2"/>
+      <path d="M3 70 A26 10 0 0 0 55 70" fill="#1677b8"/>
+    </symbol>
+    <symbol id="phone" viewBox="0 0 60 100">
+      <rect x="10" y="3" width="40" height="94" rx="5" fill="none" stroke="#333" stroke-width="4"/>
+      <path d="M10 17 H50 M10 82 H50 M25 10 H35 M27 90 H33" fill="none" stroke="#333" stroke-width="3"/>
+    </symbol>
+    <symbol id="laptop" viewBox="0 0 90 70">
+      <rect x="17" y="5" width="56" height="45" rx="4" fill="none" stroke="#111" stroke-width="4"/>
+      <path d="M9 58 H81 L87 65 H3 Z" fill="#111"/>
+    </symbol>
+    <!-- Cloud geometry stays inside its viewBox so the APNs outline cannot be clipped. -->
+    <symbol id="apns-cloud" viewBox="0 0 120 82">
+      <path d="M24 72 C13 72 5 64 5 53 C5 43 11 35 21 32 C20 23 27 17 36 17 C41 7 51 3 61 3 C74 3 84 12 86 25 C90 23 94 22 99 23 C109 25 116 34 116 45 C116 48 116 51 114 54 C112 64 103 72 92 72 Z" fill="#fff" stroke="#333" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="60" y="55" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#111" text-anchor="middle">APNs</text>
+    </symbol>
+    <!-- Three separated facets reproduce the Firebase Cloud Messaging mark. -->
+    <symbol id="fcm" viewBox="0 0 100 110">
+      <path d="M12 77 L26 7 L43 29 Z" fill="#000" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M12 77 L47 24 L59 39 Z" fill="#000" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M12 78 L69 32 L86 82 L51 103 Z" fill="#000" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="sms-provider" viewBox="0 0 80 80">
+      <rect x="2" y="2" width="76" height="76" fill="#222"/>
+      <rect x="16" y="22" width="49" height="31" rx="5" fill="#fff"/>
+      <path d="M27 53 L23 62 L36 53" fill="#fff"/>
+      <circle cx="29" cy="39" r="2.5" fill="#222"/><circle cx="53" cy="39" r="2.5" fill="#222"/>
+      <path d="M37 45 Q41 49 45 45" fill="none" stroke="#222" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="email-provider" viewBox="0 0 90 80">
+      <g fill="#fff" stroke="#111" stroke-width="2">
+        <rect x="3" y="3" width="30" height="11"/><rect x="57" y="3" width="30" height="11"/>
+        <rect x="3" y="66" width="30" height="11"/><rect x="57" y="66" width="30" height="11"/>
+        <rect x="28" y="25" width="34" height="30"/>
+      </g>
+      <path d="M28 26 L45 41 L62 26 M18 15 V27 M72 15 V27 M18 53 V65 M72 53 V65 M15 23 L18 27 L21 23 M69 23 L72 27 L75 23 M15 57 L18 53 L21 57 M69 57 L72 53 L75 57" fill="none" stroke="#111" stroke-width="2"/>
+    </symbol>
+    <style>
+      .service { fill: #fff; stroke: #111; stroke-width: 1.5; }
+      .cyan-box { fill: #fff; stroke: #08b4cf; stroke-width: 2.5; }
+      .dashed-box { fill: #fff; stroke: #08b4cf; stroke-width: 2.5; stroke-dasharray: 8 7; }
+      .provider-panel { fill: #fff; stroke: #111; stroke-width: 1.5; stroke-dasharray: 5 4; }
+      .blue-flow { fill: none; stroke: #1677b8; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-blue); }
+      .black-flow { fill: none; stroke: #111; stroke-width: 1.7; marker-end: url(#arrow-black); }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 17px; fill: #111; text-anchor: middle; }
+      .small { font-family: Arial, Helvetica, sans-serif; font-size: 15px; fill: #111; text-anchor: middle; }
+      .number { fill: #fff; stroke: #111; stroke-width: 1.2; }
+    </style>
+  </defs>
+
+  <rect width="1210" height="812" fill="#fff"/>
+
+  <!-- Calling services and shared notification-server tier. -->
+  <g id="services-and-notification-servers">
+    <rect class="service" x="10" y="225" width="126" height="61" rx="10"/>
+    <text class="label" x="73" y="262">Service 1</text>
+    <rect class="service" x="10" y="336" width="126" height="61" rx="10"/>
+    <text class="label" x="73" y="373">Service 2</text>
+    <text class="label" x="73" y="424">·</text><text class="label" x="73" y="458">·</text><text class="label" x="73" y="492">·</text>
+    <rect class="service" x="10" y="522" width="126" height="61" rx="10"/>
+    <text class="label" x="73" y="559">Service N</text>
+
+    <path class="blue-flow" d="M136 255 L280 388"/>
+    <path class="blue-flow" d="M136 366 L280 405"/>
+    <path class="blue-flow" d="M136 552 L280 412"/>
+    <rect class="dashed-box" x="280" y="357" width="90" height="99" rx="16"/>
+    <use href="#green-server" x="291" y="364" width="22" height="55"/>
+    <use href="#green-server" x="313" y="364" width="22" height="55"/>
+    <use href="#green-server" x="335" y="364" width="22" height="55"/>
+    <text class="small" x="325" y="432" style="font-size: 13px;">Notification</text>
+    <text class="small" x="325" y="448" style="font-size: 13px;">servers</text>
+  </g>
+
+  <!-- Cache and database below the notification-server tier. -->
+  <g id="shared-storage">
+    <path class="blue-flow" d="M325 456 V518"/>
+    <rect class="cyan-box" x="274" y="518" width="99" height="98" rx="15"/>
+    <rect x="278" y="526" width="51" height="46" rx="7" fill="#1677b8"/><text x="303.5" y="548" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#fff" text-anchor="middle">CACHE</text>
+    <rect x="300" y="545" width="51" height="46" rx="7" fill="#1677b8"/><text x="325.5" y="567" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#fff" text-anchor="middle">CACHE</text>
+    <rect x="322" y="564" width="47" height="44" rx="7" fill="#1677b8"/><text x="345.5" y="586" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#fff" text-anchor="middle">CACHE</text>
+    <path class="blue-flow" d="M324 616 V678"/>
+    <rect class="cyan-box" x="278" y="678" width="91" height="98" rx="14"/>
+    <use href="#db-cylinder" x="288" y="684" width="36" height="45"/><use href="#db-cylinder" x="310" y="694" width="36" height="45"/><use href="#db-cylinder" x="332" y="704" width="34" height="40"/>
+    <text class="label" x="323.5" y="768">DB</text>
+  </g>
+
+  <!-- Channel queues receive independent copies of each request. -->
+  <g id="channel-queues">
+    <path class="blue-flow" d="M370 397 L538 176"/>
+    <path class="blue-flow" d="M370 405 L538 335"/>
+    <path class="blue-flow" d="M370 414 L538 483"/>
+    <path class="blue-flow" d="M370 409 L538 641"/>
+
+    <use href="#channel-queue" x="538" y="153" width="150" height="46"/><text class="label" x="613" y="218">iOS PN</text>
+    <use href="#channel-queue" x="538" y="312" width="150" height="46"/><text class="label" x="613" y="376">Android PN</text>
+    <use href="#channel-queue" x="538" y="460" width="150" height="46"/><text class="label" x="613" y="524">SMS queue</text>
+    <use href="#channel-queue" x="538" y="618" width="150" height="46"/><text class="label" x="613" y="682">Email queue</text>
+  </g>
+
+  <!-- Dedicated workers consume each queue. -->
+  <g id="workers">
+    <path class="blue-flow" d="M688 176 H757"/><path class="blue-flow" d="M688 335 H757"/><path class="blue-flow" d="M688 483 H757"/><path class="blue-flow" d="M688 641 H757"/>
+    <g id="worker-ios"><rect class="dashed-box" x="757" y="126" width="90" height="99" rx="16"/><use href="#green-server" x="769" y="135" width="22" height="61"/><use href="#green-server" x="791" y="135" width="22" height="61"/><use href="#green-server" x="813" y="135" width="22" height="61"/><text class="small" x="802" y="214">Workers</text></g>
+    <g id="worker-android"><rect class="dashed-box" x="757" y="285" width="90" height="99" rx="16"/><use href="#green-server" x="769" y="294" width="22" height="61"/><use href="#green-server" x="791" y="294" width="22" height="61"/><use href="#green-server" x="813" y="294" width="22" height="61"/><text class="small" x="802" y="373">Workers</text></g>
+    <g id="worker-sms"><rect class="dashed-box" x="757" y="434" width="90" height="99" rx="16"/><use href="#green-server" x="769" y="443" width="22" height="61"/><use href="#green-server" x="791" y="443" width="22" height="61"/><use href="#green-server" x="813" y="443" width="22" height="61"/><text class="small" x="802" y="522">Workers</text></g>
+    <g id="worker-email"><rect class="dashed-box" x="757" y="590" width="90" height="99" rx="16"/><use href="#green-server" x="769" y="599" width="22" height="61"/><use href="#green-server" x="791" y="599" width="22" height="61"/><use href="#green-server" x="813" y="599" width="22" height="61"/><text class="small" x="802" y="678">Workers</text></g>
+
+    <path class="blue-flow" d="M802 126 V78 H580 V154"/>
+    <text class="label" x="690" y="65">retry on error</text>
+  </g>
+
+  <!-- Third-party providers and destination devices. -->
+  <rect class="provider-panel" x="915" y="105" width="105" height="672" rx="22"/>
+  <g id="providers-and-clients">
+    <path class="blue-flow" d="M847 175 H915"/><use href="#apns-cloud" x="928" y="126" width="80" height="62"/>
+    <path class="black-flow" d="M1020 175 H1135"/><use href="#phone" x="1135" y="145" width="45" height="75"/><text class="label" x="1157" y="247">iOS</text>
+
+    <path class="blue-flow" d="M847 334 H915"/><use href="#fcm" x="935" y="280" width="65" height="80"/><text class="label" x="968" y="381">FCM</text>
+    <path class="black-flow" d="M1020 334 H1135"/><use href="#phone" x="1135" y="302" width="45" height="75"/><text class="label" x="1157" y="404">Android</text>
+
+    <path class="blue-flow" d="M847 483 H915"/><use href="#sms-provider" x="934" y="445" width="70" height="70"/><text class="label" x="968" y="539">SMS</text><text class="label" x="968" y="559">Service</text>
+    <path class="black-flow" d="M1020 483 H1135"/><use href="#phone" x="1135" y="452" width="45" height="75"/><text class="label" x="1157" y="554">SMS</text>
+
+    <path class="blue-flow" d="M847 639 H915"/><use href="#email-provider" x="924" y="598" width="88" height="78"/><text class="label" x="968" y="698">Email</text><text class="label" x="968" y="718">Service</text>
+    <path class="black-flow" d="M1020 639 H1135"/><use href="#laptop" x="1130" y="615" width="70" height="54"/><text class="label" x="1165" y="700">Email</text>
+    <text class="small" x="968" y="750">Third Party</text><text class="small" x="968" y="768">Services</text>
+  </g>
+
+  <!-- Numbered annotations preserved from the reference. -->
+  <g id="step-numbers" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#111" text-anchor="middle" dominant-baseline="middle">
+    <circle class="number" cx="219" cy="299" r="13"/><text x="219" y="299">1</text>
+    <circle class="number" cx="340" cy="494" r="13"/><text x="340" y="494">2</text>
+    <circle class="number" cx="438" cy="273" r="13"/><text x="438" y="273">3</text>
+    <circle class="number" cx="720" cy="151" r="13"/><text x="720" y="151">4</text>
+    <circle class="number" cx="879" cy="151" r="13"/><text x="879" y="151">5</text>
+    <circle class="number" cx="1075" cy="151" r="13"/><text x="1075" y="151">6</text>
+  </g>
+</svg>

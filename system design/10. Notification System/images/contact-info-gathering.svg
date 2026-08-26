@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1346" height="350" viewBox="0 0 1346 350" role="img" aria-labelledby="title desc">
+  <title id="title">Contact information gathering flow</title>
+  <desc id="desc">When a user installs the application or signs up, contact information passes through a load balancer to API servers and is stored in a database.</desc>
+
+  <!-- Reusable chapter icons and blue flow marker. -->
+  <defs>
+    <marker id="arrow-blue" markerWidth="15" markerHeight="15" viewBox="0 0 15 15" refX="14" refY="7.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L15 7.5 L0 15 Z" fill="#1677b8"/>
+    </marker>
+    <symbol id="green-server" viewBox="0 0 50 90">
+      <rect x="3" y="2" width="44" height="86" rx="3" fill="#65c515"/>
+      <path d="M12 17 H38 M12 68 H38 M12 78 H38" stroke="#fff" stroke-width="4"/>
+    </symbol>
+    <symbol id="db-cylinder" viewBox="0 0 58 82">
+      <rect x="3" y="12" width="52" height="58" fill="#1677b8"/>
+      <ellipse cx="29" cy="12" rx="26" ry="10" fill="#1677b8" stroke="#fff" stroke-width="2"/>
+      <path d="M3 70 A26 10 0 0 0 55 70" fill="#1677b8"/>
+    </symbol>
+    <style>
+      .cyan-box { fill: #fff; stroke: #08b4cf; stroke-width: 4; }
+      .dashed-box { fill: #fff; stroke: #08b4cf; stroke-width: 4; stroke-dasharray: 12 11; }
+      .flow { fill: none; stroke: #1677b8; stroke-width: 4; marker-end: url(#arrow-blue); }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 30px; fill: #111; text-anchor: middle; }
+      .small { font-family: Arial, Helvetica, sans-serif; font-size: 27px; fill: #111; text-anchor: middle; }
+      .device { fill: none; stroke: #333; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+  </defs>
+
+  <rect width="1346" height="350" fill="#fff"/>
+
+  <!-- User devices match the tall panel on the left of the PNG. -->
+  <g id="user-devices">
+    <rect class="cyan-box" x="4" y="13" width="124" height="307" rx="20"/>
+    <text x="66" y="63" font-family="Arial, Helvetica, sans-serif" font-size="31" fill="#111" text-anchor="middle">User</text>
+
+    <path class="device" d="M37 106 H94 V143 H37 Z M31 149 H100 M45 145 H86"/>
+    <rect class="device" x="41" y="198" width="50" height="63" rx="6"/>
+    <path class="device" d="M41 211 H91 M47 254 H85"/>
+    <circle cx="66" cy="204" r="2" fill="#333"/>
+  </g>
+
+  <!-- Registration event flows to the load balancer. -->
+  <path class="flow" d="M128 166 H352"/>
+  <text class="small" x="237" y="123">on app install</text>
+  <text class="small" x="237" y="155">or sign up</text>
+
+  <!-- Blue load-balancer appliance and its branching symbol. -->
+  <g id="load-balancer">
+    <path d="M364 116 H449 L462 210 H351 Z" fill="#1677b8"/>
+    <path d="M406 137 V192 M406 158 L387 177 M406 158 L425 177 M387 177 V190 M425 177 V190" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="406" cy="135" r="7" fill="#fff"/>
+    <path d="M400 185 L406 194 L412 185" fill="none" stroke="#fff" stroke-width="4"/>
+    <text class="label" x="406" y="264">Load balancer</text>
+  </g>
+
+  <path class="flow" d="M462 166 H670"/>
+
+  <!-- API server cluster. -->
+  <g id="api-servers">
+    <rect class="dashed-box" x="670" y="58" width="225" height="215" rx="28"/>
+    <use href="#green-server" x="704" y="111" width="55" height="100"/>
+    <use href="#green-server" x="758" y="111" width="55" height="100"/>
+    <use href="#green-server" x="812" y="111" width="55" height="100"/>
+    <use href="#green-server" x="732" y="77" width="50" height="43"/>
+    <use href="#green-server" x="787" y="77" width="50" height="43"/>
+    <text class="label" x="782.5" y="258">API servers</text>
+  </g>
+
+  <!-- Contact information is stored in the database. -->
+  <path class="flow" d="M895 166 H1106"/>
+  <text class="small" x="1001" y="123">store contact</text>
+  <text class="small" x="1001" y="155">info</text>
+
+  <g id="database">
+    <rect class="cyan-box" x="1106" y="64" width="208" height="207" rx="26"/>
+    <use href="#db-cylinder" x="1142" y="88" width="60" height="84"/>
+    <use href="#db-cylinder" x="1182" y="105" width="60" height="84"/>
+    <use href="#db-cylinder" x="1222" y="122" width="60" height="84"/>
+    <text class="label" x="1210" y="241">DB</text>
+  </g>
+</svg>
