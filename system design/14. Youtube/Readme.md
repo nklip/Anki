@@ -41,7 +41,7 @@ YouTube is a massive video streaming platform supporting video uploads, playback
 ### Components
 
 <div style="margin-left:3rem">
-    <img src="./images/high-level-design.png" alt="High Level Design" width="400">
+    <img src="./images/high-level-design.svg" alt="High Level Design" width="400">
 </div>
 
 1. **Client:** Devices like smartphones, computers, and TVs.
@@ -51,7 +51,6 @@ YouTube is a massive video streaming platform supporting video uploads, playback
 5. **Original Storage:** Blob storage for uploaded videos.
 6. **Transcoding Servers:** Convert videos into multiple resolutions and formats.
 7. **Transcoded Storage:** Blob storage for transcoded videos.
-
 
 ---
 
@@ -64,41 +63,36 @@ YouTube is a massive video streaming platform supporting video uploads, playback
 - **Video Upload (Steps):**
 
     <div style="margin-left:3rem">
-        <img src="./images/video-uploading-flow.png" alt="Video Upload Flow" width="500">
+        <img src="./images/video-uploading-flow.svg" alt="Video Upload Flow" width="500">
     </div>
 
-    - [1] Videos are uploaded to blob storage. 
+    - [1] Videos are uploaded to blob storage.
     - [2] Transcoding servers convert videos to multiple formats.
     - [3] One trasncoding is complete, following two steps are exectued in parallel.
         - [3a] Transcoded videos are sent to transcoded storage.
-        - [3b] Transcoding completion events are queued in the completion queue. 
-    - [3a.1] Videos are distributed to the CDN. 
-    - [3b.1] Completion handlers update metadata and inform users. 
-
-
+        - [3b] Transcoding completion events are queued in the completion queue.
+    - [3a.1] Videos are distributed to the CDN.
+    - [3b.1] Completion handlers update metadata and inform users.
 
 - **Metadata Upload (Steps):**
 
     <div style="margin-left:3rem">
-        <img src="./images/metadata-upload.png" alt="Metadata Upload" height="500">
+        <img src="./images/metadata-upload.svg" alt="Metadata Upload" height="500">
     </div>
 
-    - The client in parallel sends a request to update the video metadata 
+    - The client in parallel sends a request to update the video metadata
     - The request contains video metadata, including file name, size, format, etc.
-    
-       
 
 
 #### 2. Video Streaming Flow
 
 <div style="margin-left: 3em;">
-  <img src="./images/video-streaming-flow.png" alt="Video Streaming Flow" height="400">
+  <img src="./images/video-streaming-flow.svg" alt="Video Streaming Flow" height="400">
 </div>
 
 - Videos are streamed directly from the CDN using edge servers to minimize latency.
 - Some of te popular streaming protocols are MPEG_DASH, Apple HLS, Adobe HDS.
 -  *Different streaming protocols support different video encodings and playback players.*
-
 
 ---
 
@@ -116,7 +110,7 @@ YouTube is a massive video streaming platform supporting video uploads, playback
 
 #### Directed Acyclic Graph (DAG) Model
 <div style="margin-left: 3em;">
-    <img src="./images/dag-video-transcoding.png" alt="DAG Video Transcoding" width="600">
+    <img src="./images/dag-video-transcoding.svg" alt="DAG Video Transcoding" width="600">
 </div>
 
 - Transcoding a video is computationally expensive and time-consuming.
@@ -134,13 +128,13 @@ YouTube is a massive video streaming platform supporting video uploads, playback
 ### Video Transcoding Architecture
 
 <div style="margin-left: 3em;">
-<img src="./images/video-transcoding-architecture.png" alt="Video Transcoding" width="600">
+<img src="./images/video-transcoding-architecture.svg" alt="Video Transcoding" width="600">
 </div>
 
 1. **Preprocessor:** Splits videos into smaller chunks (GOP alignment). It has 4 responsibilities.
 
     <div style="margin-left: 3em;">
-        <img src="./images/dag-config.png" alt="DAG Config" width="500">
+        <img src="./images/dag-config.svg" alt="DAG Config" width="500">
     </div>
 
     - Video splitting: Video stream is split or further split into smaller Group of Pictures (GOP) alignment.
@@ -151,7 +145,7 @@ YouTube is a massive video streaming platform supporting video uploads, playback
 
 2. **DAG Scheduler:** Organizes tasks into sequential or parallel stages.
     <div style="margin-left: 3em;">
-        <img src="./images/dag-scheduler.png" alt="DAG Scheduler" width="500">
+        <img src="./images/dag-scheduler.svg" alt="DAG Scheduler" width="500">
     </div>
 
     - It splits a DAG graph into stages of tasks and puts them in the task queue in the resource manager. 
@@ -162,7 +156,7 @@ YouTube is a massive video streaming platform supporting video uploads, playback
 3. **Resource Manager:** Responsible for managing the efficiency of resource allocation.It
 contains 3 queues and a task scheduler.
     <div style="margin-left: 3em;">
-        <img src="./images/resource-manager.png" alt="Resource Manager" width="700">
+        <img src="./images/resource-manager.svg" alt="Resource Manager" width="700">
     </div>
 
     - Task queue: priority queue that contains tasks to be executed.
@@ -173,16 +167,14 @@ contains 3 queues and a task scheduler.
 
 4. **Task Workers:** Perform transcoding and other operations.
     <div style="margin-left: 3em;">
-        <img src="./images/task-worker.png" alt="Task Worker" width="250">
+        <img src="./images/task-worker.svg" alt="Task Worker" width="250">
    </div>
 
-    - Different task workers may run different tasks 
-
+    - Different task workers may run different tasks
 
 5. **Temporary Storage:** Stores intermediate data for retries.
-    - The choice of storage system depends on factors like data type, data size, access frequency, data life span, etc. 
+    - The choice of storage system depends on factors like data type, data size, access frequency, data life span, etc.
 6. **Output:** Transcoded videos ready for distribution.
-
 
 ---
 
@@ -191,18 +183,18 @@ contains 3 queues and a task scheduler.
 ### Speed Optimizations
 1. **Parallel Video Uploads:** Split videos into smaller chunks for faster, resumable uploads.
 
-    <img src="./images/video-split.png" alt="Video Split" width="600">
+    <img src="./images/video-split.svg" alt="Video Split" width="600">
 
 2. **Distributed Upload Centers:** Use CDNs as upload hubs close to users.
 3. **Parallel Processing:** Decouple modules using message queues for high parallelism.
 
-    <img src="./images/message-queue1.png" alt="Message Queue" width="600">
-    <img src="./images/message-queue2.png" alt="Message Queue" height="170" width="500">
+    <img src="./images/message-queue1.svg" alt="Message Queue" width="600">
+    <img src="./images/message-queue2.svg" alt="Message Queue" height="170" width="500">
 
 ### Safety Optimizations
 1. **Pre-Signed URLs:** Restrict video uploads to authorized users.
 
-    <img src="./images/pres-signed-urls.png" alt="Pre Signed" width="500">
+    <img src="./images/pres-signed-urls.svg" alt="Pre Signed" width="500">
 
 2. **Protect Videos:**
    - **DRM Systems** (e.g., Apple FairPlay, Google Widevine).

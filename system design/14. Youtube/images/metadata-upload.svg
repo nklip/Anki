@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="586" height="934" viewBox="0 0 586 934" role="img" aria-labelledby="title desc">
+  <title id="title">Metadata update flow</title>
+  <desc id="desc">A user updates video metadata through a load balancer and API servers, which use a metadata cache and metadata database.</desc>
+  <!-- Device and infrastructure symbols. -->
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L12 6L0 12Z" fill="#2e7ca8"/></marker>
+    <symbol id="devices" viewBox="0 0 300 90"><g fill="#fff" stroke="#111" stroke-width="4"><path d="M8 12Q13 5 22 5H70Q79 5 84 12L88 62Q88 75 75 82H17Q4 75 4 62Z"/><path d="M8 60Q46 67 84 60"/><path d="M113 19Q113 12 120 12H187Q194 12 194 19V68H113Z"/><path d="M107 72H200L193 80H114Z" fill="#111"/><rect x="234" y="4" width="43" height="79" rx="5"/><path d="M234 17H277M234 70H277"/></g><text x="46" y="49" font-family="Arial,Helvetica,sans-serif" font-size="29" text-anchor="middle">TV</text></symbol>
+    <symbol id="servers" viewBox="0 0 130 90"><rect x="33" y="3" width="34" height="19" rx="2" fill="#80c342"/><rect x="72" y="3" width="34" height="19" rx="2" fill="#80c342"/><g fill="#80c342"><rect x="6" y="23" width="38" height="62"/><rect x="46" y="23" width="38" height="62"/><rect x="86" y="23" width="38" height="62"/></g><path d="M12 34H38M12 71H38M52 34H78M52 71H78M92 34H118M92 71H118M39 11H61M78 11H100" fill="none" stroke="#fff" stroke-width="3"/></symbol>
+    <symbol id="cache" viewBox="0 0 130 100"><g fill="#2e7fb8" stroke="#1d6596" stroke-width="2"><rect x="8" y="8" width="72" height="55" rx="7"/><rect x="34" y="27" width="72" height="55" rx="7"/><rect x="60" y="46" width="64" height="49" rx="7"/></g><g fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="14"><text x="16" y="29">CACHE</text><text x="47" y="50">CACHE</text><text x="67" y="70">CACHE</text></g></symbol>
+    <symbol id="db" viewBox="0 0 120 100"><g fill="#3787bd" stroke="#fff" stroke-width="1.5"><path d="M8 18A25 8 0 0 1 58 18V68A25 8 0 0 1 8 68Z"/><ellipse cx="33" cy="18" rx="25" ry="8"/><path d="M35 29A25 8 0 0 1 85 29V79A25 8 0 0 1 35 79Z"/><ellipse cx="60" cy="29" rx="25" ry="8"/><path d="M62 40A25 8 0 0 1 112 40V90A25 8 0 0 1 62 90Z"/><ellipse cx="87" cy="40" rx="25" ry="8"/></g></symbol>
+    <style>.box{fill:#fff;stroke:#42bbd2;stroke-width:3.5}.flow{fill:none;stroke:#2e7ca8;stroke-width:2;marker-end:url(#arrow)}.label{font:27px Arial,Helvetica,sans-serif;fill:#111;text-anchor:middle}.store-label{font:23px Arial,Helvetica,sans-serif;fill:#111;text-anchor:middle}</style>
+  </defs>
+  <rect width="586" height="934" fill="#fff"/>
+  <!-- User devices. -->
+  <rect class="box" x="139" y="7" width="341" height="132" rx="22"/><text x="162" y="42" font-family="Arial,Helvetica,sans-serif" font-size="27">User</text><use href="#devices" x="202" y="45" width="252" height="76"/>
+  <!-- Metadata request through the load balancer. -->
+  <path class="flow" d="M309 139V305"/><text x="333" y="223" font-family="Arial,Helvetica,sans-serif" font-size="27">Update metadata</text>
+  <path d="M277 306H341L352 378H266Z" fill="#3487c4"/><circle cx="309" cy="321" r="5" fill="#fff"/><path d="M309 326V356M309 342L296 353M309 342L322 353M296 353V344M322 353V344" fill="none" stroke="#fff" stroke-width="3"/><text x="378" y="353" font-family="Arial,Helvetica,sans-serif" font-size="27">Load balancer</text>
+  <path class="flow" d="M309 378V472"/>
+  <!-- API servers and backing metadata stores. -->
+  <rect x="216" y="472" width="187" height="170" rx="25" fill="#fff" stroke="#42bbd2" stroke-width="3.5" stroke-dasharray="11 8"/><use href="#servers" x="244" y="487" width="130" height="90"/><text class="label" x="309" y="623">API servers</text>
+  <path class="flow" d="M295 642L155 752"/><path class="flow" d="M323 642L458 752"/>
+  <rect class="box" x="61" y="752" width="189" height="168" rx="24"/><use href="#cache" x="91" y="766" width="130" height="100"/><text class="store-label" x="155" y="904">Metadata Cache</text>
+  <rect class="box" x="366" y="752" width="189" height="168" rx="24"/><use href="#db" x="401" y="766" width="120" height="100"/><text class="store-label" x="460" y="904">Metadata DB</text>
+</svg>

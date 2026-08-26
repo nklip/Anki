@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1376" height="444" viewBox="0 0 1376 444" role="img" aria-labelledby="title desc">
+  <title id="title">Resource manager and task workers</title>
+  <desc id="desc">A task scheduler reads the highest-priority task, chooses an optimal worker, records running work, and dispatches the task to a specialized worker.</desc>
+  <!-- Queue and server-rack symbols shared by the scheduler and worker group. -->
+  <defs>
+    <marker id="arrow" markerWidth="11" markerHeight="11" viewBox="0 0 11 11" refX="10" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L11 5.5L0 11Z" fill="#2e7ca8"/></marker>
+    <symbol id="queue" viewBox="0 0 190 60"><path d="M3 3H173L187 30L173 57H3Z" fill="#fff" stroke="#3183b5" stroke-width="5"/><g fill="none" stroke="#3183b5" stroke-width="5"><rect x="12" y="13" width="45" height="33"/><path d="M13 14L34.5 33L56 14"/><rect x="64" y="13" width="45" height="33"/><path d="M65 14L86.5 33L108 14"/><rect x="116" y="13" width="45" height="33"/><path d="M117 14L138.5 33L160 14"/></g></symbol>
+    <symbol id="servers" viewBox="0 0 130 90"><rect x="33" y="3" width="34" height="19" rx="2" fill="#80c342"/><rect x="72" y="3" width="34" height="19" rx="2" fill="#80c342"/><g fill="#80c342"><rect x="6" y="23" width="38" height="62"/><rect x="46" y="23" width="38" height="62"/><rect x="86" y="23" width="38" height="62"/></g><path d="M12 34H38M12 71H38M52 34H78M52 71H78M92 34H118M92 71H118M39 11H61M78 11H100" fill="none" stroke="#fff" stroke-width="3"/></symbol>
+    <style>.flow{fill:none;stroke:#2e7ca8;stroke-width:1.8;marker-end:url(#arrow)}.queue-label,.query{font-family:Arial,Helvetica,sans-serif;fill:#111;text-anchor:middle}.queue-label{font-size:21px}.query{font-size:21px}.worker{fill:#fff;stroke:#42bbd2;stroke-width:2}.small{font:18px Arial,Helvetica,sans-serif;fill:#111;text-anchor:middle}</style>
+  </defs>
+  <rect width="1376" height="444" fill="#fff"/>
+  <!-- Resource manager boundary and queues. -->
+  <rect x="23" y="8" width="884" height="420" rx="62" fill="#fff" stroke="#42bbd2" stroke-width="3"/>
+  <text x="465" y="59" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" text-anchor="middle">Resource manager</text>
+  <use href="#queue" x="39" y="104" width="181" height="57"/><text class="queue-label" x="129" y="190">Task queue</text>
+  <use href="#queue" x="35" y="207" width="181" height="57"/><text class="queue-label" x="125" y="291">Worker queue</text>
+  <use href="#queue" x="44" y="323" width="181" height="57"/><text class="queue-label" x="134" y="409">Running queue</text>
+  <rect x="674" y="168" width="153" height="137" rx="24" fill="#fff" stroke="#42bbd2" stroke-width="3" stroke-dasharray="10 8"/><use href="#servers" x="686" y="178" width="130" height="90"/><text class="small" x="750" y="282">Task scheduler</text>
+  <!-- Scheduler queries; captions follow each line angle while remaining visibly offset from the shaft. -->
+  <path class="flow" d="M674 199L219 133"/><text class="query" x="0" y="3" transform="translate(408 137) rotate(8)">get the highest priority task</text>
+  <path class="flow" d="M674 236H216"/><text class="query" x="385" y="264">get the optimal worker</text>
+  <path class="flow" d="M674 274L225 351"/><text class="query" x="0" y="3" transform="translate(405 347) rotate(-10)">put task/worker info in queue</text>
+  <!-- Worker dispatch. -->
+  <path class="flow" d="M907 217H1071"/><text x="988" y="200" font-family="Arial,Helvetica,sans-serif" font-size="21" text-anchor="middle">run task</text>
+  <rect x="1071" y="63" width="285" height="309" rx="48" fill="#fff" stroke="#42bbd2" stroke-width="3" stroke-dasharray="11 8"/><text x="1213" y="95" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="700" text-anchor="middle">Task workers</text>
+  <rect class="worker" x="1083" y="122" width="98" height="94" rx="16"/><use href="#servers" x="1095" y="130" width="74" height="51"/><text class="small" x="1132" y="207">Watermark</text>
+  <rect class="worker" x="1244" y="122" width="98" height="94" rx="16"/><use href="#servers" x="1256" y="130" width="74" height="51"/><text class="small" x="1293" y="207">Encoder</text>
+  <text x="1213" y="244" font-family="Arial,Helvetica,sans-serif" font-size="34" font-weight="700" text-anchor="middle">…</text>
+  <rect class="worker" x="1083" y="245" width="98" height="94" rx="16"/><use href="#servers" x="1095" y="253" width="74" height="51"/><text class="small" x="1132" y="330">Thumbnail</text>
+  <rect class="worker" x="1244" y="245" width="98" height="94" rx="16"/><use href="#servers" x="1256" y="253" width="74" height="51"/><text class="small" x="1293" y="330">Merger</text>
+</svg>

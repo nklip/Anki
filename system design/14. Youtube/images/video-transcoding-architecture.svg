@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1356" height="484" viewBox="0 0 1356 484" role="img" aria-labelledby="title desc">
+  <title id="title">Video transcoding architecture</title>
+  <desc id="desc">A preprocessor submits a DAG and stages input in temporary storage; the DAG scheduler and resource manager dispatch task workers, which produce encoded video.</desc>
+  <!-- Consistent pipeline boxes and blue directional arrows. -->
+  <defs>
+    <marker id="arrow" markerWidth="13" markerHeight="13" viewBox="0 0 13 13" refX="12" refY="6.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L13 6.5L0 13Z" fill="#2e7ca8"/></marker>
+    <style>.box{fill:#fff;stroke:#42bbd2;stroke-width:3.5}.flow{fill:none;stroke:#2e7ca8;stroke-width:2;marker-end:url(#arrow)}.label{font:26px Arial,Helvetica,sans-serif;fill:#111;text-anchor:middle}</style>
+  </defs>
+  <rect width="1356" height="484" fill="#fff"/>
+  <!-- Temporary storage and its two input paths. -->
+  <rect class="box" x="862" y="22" width="180" height="88" rx="14"/><text class="label" x="952" y="60">Temporary</text><text class="label" x="952" y="92">storage</text>
+  <path class="flow" d="M107 373V64H862"/><path class="flow" d="M954 372V110"/>
+  <!-- Main transcoding pipeline. -->
+  <rect class="box" x="20" y="373" width="175" height="88" rx="14"/><text class="label" x="107.5" y="427">Preprocessor</text>
+  <rect class="box" x="315" y="371" width="175" height="92" rx="14"/><text class="label" x="402.5" y="411">DAG</text><text class="label" x="402.5" y="443">scheduler</text>
+  <rect class="box" x="592" y="371" width="175" height="92" rx="14"/><text class="label" x="679.5" y="411">Resource</text><text class="label" x="679.5" y="443">manager</text>
+  <rect class="box" x="869" y="371" width="175" height="92" rx="14"/><text class="label" x="956.5" y="427">Task workers</text>
+  <rect class="box" x="1147" y="371" width="174" height="88" rx="14"/><text class="label" x="1234" y="410">Encoded</text><text class="label" x="1234" y="442">video</text>
+  <path class="flow" d="M195 417H315"/><path class="flow" d="M490 417H592"/><path class="flow" d="M767 417H869"/><path class="flow" d="M1044 417H1147"/>
+</svg>

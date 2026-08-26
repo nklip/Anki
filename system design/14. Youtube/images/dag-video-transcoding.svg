@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1304" height="944" viewBox="0 0 1304 944" role="img" aria-labelledby="title desc">
+  <title id="title">Video transcoding DAG</title>
+  <desc id="desc">An original video branches into video, audio, and metadata; video runs a task chain, audio is encoded, and processed video and audio are assembled.</desc>
+  <!-- Rounded task boxes and orthogonal DAG connectors. -->
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L12 6L0 12Z" fill="#2e7ca8"/></marker>
+    <style>.task{fill:#fff;stroke:#42bbd2;stroke-width:4}.flow,.join{fill:none;stroke:#2e7ca8;stroke-width:2}.flow{marker-end:url(#arrow)}.t{font:25px Arial,Helvetica,sans-serif;fill:#111;text-anchor:middle}</style>
+  </defs>
+  <rect width="1304" height="944" fill="#fff"/>
+  <!-- Input branches. -->
+  <rect class="task" x="29" y="683" width="170" height="78" rx="13"/><text class="t" x="114" y="731">Original video</text>
+  <rect class="task" x="388" y="328" width="170" height="79" rx="13"/><text class="t" x="473" y="377">Video</text>
+  <rect class="task" x="376" y="682" width="170" height="79" rx="13"/><text class="t" x="461" y="731">Audio</text>
+  <rect class="task" x="376" y="841" width="170" height="79" rx="13"/><text class="t" x="461" y="890">Metadata</text>
+  <path class="flow" d="M199 722H376"/><path class="flow" d="M254 722V367H388"/><path class="flow" d="M254 722V881H376"/>
+  <!-- Ordered task group for the video branch. -->
+  <rect x="648" y="54" width="207" height="549" rx="31" fill="#fff" stroke="#42bbd2" stroke-width="4" stroke-dasharray="12 9"/>
+  <text x="751.5" y="99" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" text-anchor="middle">Tasks</text>
+  <rect class="task" x="668" y="122" width="168" height="80" rx="13"/><text class="t" x="752" y="171">Inspection</text>
+  <rect class="task" x="668" y="225" width="168" height="80" rx="13"/><text class="t" x="752" y="256">Video</text><text class="t" x="752" y="287">transcoding</text>
+  <rect class="task" x="668" y="328" width="168" height="79" rx="13"/><text class="t" x="752" y="377">Thumbnail</text>
+  <text x="752" y="462" font-family="Arial,Helvetica,sans-serif" font-size="38" font-weight="700" text-anchor="middle">…</text>
+  <rect class="task" x="668" y="499" width="168" height="80" rx="13"/><text class="t" x="752" y="548">Watermark</text>
+  <path class="flow" d="M558 367H648"/>
+  <!-- Audio encoding and final assembly. -->
+  <rect class="task" x="668" y="682" width="169" height="80" rx="13"/><text class="t" x="752.5" y="713">Audio</text><text class="t" x="752.5" y="744">encoding</text>
+  <rect class="task" x="1106" y="682" width="169" height="80" rx="13"/><text class="t" x="1190.5" y="731">Assemble</text>
+  <!-- Every audio-row connector shares y=722 so its shaft and arrowhead remain perfectly horizontal. -->
+  <path class="flow" d="M546 722H668"/>
+  <!-- The video route joins the audio route at x=1001; only the shared final segment owns an arrowhead. -->
+  <path class="join" d="M836 265H1001V722"/>
+  <path class="flow" d="M837 722H1106"/>
+</svg>

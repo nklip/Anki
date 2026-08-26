@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1224" height="350" viewBox="0 0 1224 350" role="img" aria-labelledby="title desc">
+  <title id="title">Message queues in the transcoding pipeline</title>
+  <desc id="desc">Original storage feeds a message queue, a download module, a second message queue, an encoding module, and a final message queue.</desc>
+  <!-- Queue, storage, and server symbols repeated across the pipeline. -->
+  <defs>
+    <marker id="arrow" markerWidth="11" markerHeight="11" viewBox="0 0 11 11" refX="10" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L11 5.5L0 11Z" fill="#2e7ca8"/></marker>
+    <symbol id="queue" viewBox="0 0 200 65"><path d="M3 3H181L197 32.5L181 62H3Z" fill="#fff" stroke="#3183b5" stroke-width="5" stroke-linejoin="round"/><g fill="none" stroke="#3183b5" stroke-width="5" stroke-linejoin="round"><rect x="13" y="14" width="48" height="35"/><path d="M14 15L37 35L60 15"/><rect x="69" y="14" width="48" height="35"/><path d="M70 15L93 35L116 15"/><rect x="125" y="14" width="48" height="35"/><path d="M126 15L149 35L172 15"/></g></symbol>
+    <symbol id="servers" viewBox="0 0 130 90"><rect x="33" y="3" width="34" height="19" rx="2" fill="currentColor"/><rect x="72" y="3" width="34" height="19" rx="2" fill="currentColor"/><g fill="currentColor"><rect x="6" y="23" width="38" height="62"/><rect x="46" y="23" width="38" height="62"/><rect x="86" y="23" width="38" height="62"/></g><path d="M12 34H38M12 71H38M52 34H78M52 71H78M92 34H118M92 71H118M39 11H61M78 11H100" fill="none" stroke="#fff" stroke-width="3"/></symbol>
+    <symbol id="bucket" viewBox="0 0 120 95"><path d="M25 19Q60 5 95 19L88 74Q60 91 32 74Z" fill="#fff" stroke="#2f8a24" stroke-width="4"/><ellipse cx="60" cy="19" rx="35" ry="12" fill="#fff" stroke="#2f8a24" stroke-width="4"/><path d="M42 40L33 57H51ZM60 45A8 8 0 1 0 60 61A8 8 0 1 0 60 45ZM44 63V78H58V63ZM73 35L99 48M78 30L92 44" fill="none" stroke="#2f8a24" stroke-width="3" stroke-linejoin="round"/></symbol>
+    <style>.flow{fill:none;stroke:#2e7ca8;stroke-width:1.8;marker-end:url(#arrow)}.group{fill:#fff;stroke:#42bbd2;stroke-width:3.5;stroke-dasharray:11 8}.t{font:22px Arial,Helvetica,sans-serif;fill:#111;text-anchor:middle}</style>
+  </defs>
+  <rect width="1224" height="350" fill="#fff"/>
+  <!-- Storage and processing modules. -->
+  <rect x="18" y="170" width="180" height="166" rx="24" fill="#fff" stroke="#42bbd2" stroke-width="3.5"/><use href="#bucket" x="46" y="180" width="120" height="95"/><text class="t" x="108" y="309">Original storage</text>
+  <rect class="group" x="416" y="171" width="161" height="163" rx="24"/><use href="#servers" x="432" y="183" width="130" height="90" style="color:#80c342"/><text class="t" x="496" y="294">Download</text><text class="t" x="496" y="319">module</text>
+  <rect class="group" x="809" y="171" width="161" height="163" rx="24"/><use href="#servers" x="825" y="183" width="130" height="90" style="color:#8fb3df"/><text class="t" x="889" y="294">Encoding</text><text class="t" x="889" y="319">module</text>
+  <!-- Three queue stages. -->
+  <use href="#queue" x="218" y="11" width="195" height="63"/><text class="t" x="315" y="104">Message queue</text>
+  <use href="#queue" x="581" y="11" width="195" height="63"/><text class="t" x="678" y="104">Message queue</text>
+  <use href="#queue" x="999" y="11" width="195" height="63"/><text class="t" x="1096" y="104">Message queue</text>
+  <!-- Orthogonal queue hand-offs. -->
+  <path class="flow" d="M90 170V43H218"/><path class="flow" d="M306 114V253H416"/>
+  <path class="flow" d="M496 171V43H581"/><path class="flow" d="M679 114V253H809"/>
+  <path class="flow" d="M889 171V43H999"/><path class="flow" d="M1079 114V253H1188"/>
+</svg>

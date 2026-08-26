@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="662" viewBox="0 0 1040 662" role="img" aria-labelledby="title desc">
+  <title id="title">High-level YouTube architecture</title>
+  <desc id="desc">Clients stream video from a CDN and send all other requests to API servers.</desc>
+  <!-- Device, CDN, and API-server symbols used in the high-level design. -->
+  <defs>
+    <marker id="arrow" markerWidth="13" markerHeight="13" viewBox="0 0 13 13" refX="12" refY="6.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L13 6.5L0 13Z" fill="#287ead"/></marker>
+    <symbol id="devices" viewBox="0 0 330 95"><g fill="#fff" stroke="#111" stroke-width="5" stroke-linejoin="round"><path d="M8 17Q8 8 17 8H92Q101 8 101 17V68H8Z"/><path d="M2 72H107L99 82H10Z" fill="#111"/><path d="M42 74H67" stroke="#fff" stroke-width="3"/><rect x="135" y="3" width="52" height="82" rx="6"/><path d="M135 17H187M135 72H187"/><circle cx="161" cy="78" r="2" fill="#111" stroke="none"/><path d="M232 10Q239 3 250 3H293Q304 3 311 10L316 63Q316 78 301 85H242Q227 78 227 63Z"/><path d="M232 62Q272 70 312 62"/></g><text x="271" y="48" font-family="Arial,Helvetica,sans-serif" font-size="34" text-anchor="middle">TV</text></symbol>
+    <symbol id="cdn" viewBox="0 0 230 155"><path d="M45 132C18 132 4 113 7 93C9 75 23 63 42 62C45 38 63 26 84 30C97 9 121 7 137 22C153 9 178 17 184 38C205 39 222 56 222 78C222 108 201 132 173 132Z" fill="#75d6ef"/><path d="M113 22L88 78H119L101 130L157 63H129L148 22Z" fill="#fff"/></symbol>
+    <symbol id="servers" viewBox="0 0 130 90"><rect x="33" y="3" width="34" height="19" rx="2" fill="#65c515"/><rect x="72" y="3" width="34" height="19" rx="2" fill="#65c515"/><g fill="#65c515"><rect x="6" y="23" width="38" height="62"/><rect x="46" y="23" width="38" height="62"/><rect x="86" y="23" width="38" height="62"/></g><path d="M12 34H38M12 71H38M52 34H78M52 71H78M92 34H118M92 71H118M39 11H61M78 11H100" fill="none" stroke="#fff" stroke-width="3"/></symbol>
+    <style>.group{fill:#fff;stroke:#42bbd2;stroke-width:5;stroke-dasharray:16 12}.label{font:36px Arial,Helvetica,sans-serif;fill:#111;text-anchor:middle}</style>
+  </defs>
+  <rect width="1040" height="662" fill="#fff"/>
+  <!-- Client tier. -->
+  <rect x="295" y="29" width="451" height="157" rx="28" fill="#fff" stroke="#42bbd2" stroke-width="5"/>
+  <text x="311" y="78" font-family="Arial,Helvetica,sans-serif" font-size="36">Client</text><use href="#devices" x="357" y="79" width="330" height="95"/>
+  <!-- Two symmetric request paths begin at the client's centre. -->
+  <path d="M520 187L180 431" fill="none" stroke="#287ead" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <path d="M520 187L862 431" fill="none" stroke="#287ead" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <!-- Labels follow the paths but stay above them, without opaque masks. -->
+  <g transform="translate(330 280) rotate(-35.7)"><text x="0" y="4" font-family="Arial,Helvetica,sans-serif" font-size="32" text-anchor="middle">streaming video</text></g>
+  <g transform="translate(710 280) rotate(35.5)"><text x="0" y="4" font-family="Arial,Helvetica,sans-serif" font-size="32" text-anchor="middle">everything else</text></g>
+  <!-- CDN and application tiers. -->
+  <rect class="group" x="54" y="431" width="247" height="206" rx="34"/><use href="#cdn" x="66" y="445" width="223" height="150"/><text class="label" x="177.5" y="623">CDN</text>
+  <rect class="group" x="745" y="431" width="246" height="206" rx="34"/><use href="#servers" x="802" y="454" width="132" height="92"/><text class="label" x="868" y="612">API servers</text>
+</svg>

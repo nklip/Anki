@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1198" height="444" viewBox="0 0 1198 444" role="img" aria-labelledby="title desc">
+  <title id="title">DAG configuration example</title>
+  <desc id="desc">Two code panels define a download-input task followed by a transcode task.</desc>
+  <!-- Dark editor panels and syntax-highlighting colors. -->
+  <defs>
+    <style>.code{font:19px Menlo,Consolas,monospace;fill:#e7e9ee}.kw{fill:#e154a2}.name{fill:#58d5db}.prop{fill:#a9db72}.muted{fill:#d4d6dc}</style>
+  </defs>
+  <rect width="1198" height="444" fill="#fff"/>
+  <!-- Download task editor. -->
+  <rect x="27" y="13" width="536" height="415" rx="8" fill="#2c2e3b"/>
+  <circle cx="51" cy="34" r="7" fill="#ff5f56"/><circle cx="73" cy="34" r="7" fill="#ffbd2e"/><circle cx="95" cy="34" r="7" fill="#27c93f"/>
+  <g class="code">
+    <text class="kw" x="55" y="68">task</text><text x="112" y="68">{</text>
+    <text class="name" x="78" y="91">name</text><text class="prop" x="135" y="91">‘download-input’</text>
+    <text class="name" x="78" y="114">type</text><text class="prop" x="135" y="114">‘Download’</text>
+    <text class="kw" x="78" y="145">input</text><text x="146" y="145">{</text>
+    <text class="name" x="102" y="168">url</text><text x="148" y="168">config.url</text>
+    <text x="78" y="191">}</text>
+    <text class="kw" x="78" y="222">output</text><text x="158" y="222">{ it-&gt;</text>
+    <text x="102" y="245">context.inputVideo = it.file</text>
+    <text x="78" y="268">}</text>
+    <text class="kw" x="78" y="299">next</text><text class="prop" x="135" y="299">‘transcode’</text>
+    <text x="55" y="322">}</text>
+  </g>
+  <!-- Transcode task editor. -->
+  <rect x="635" y="13" width="548" height="415" rx="8" fill="#2c2e3b"/>
+  <circle cx="659" cy="34" r="7" fill="#ff5f56"/><circle cx="681" cy="34" r="7" fill="#ffbd2e"/><circle cx="703" cy="34" r="7" fill="#27c93f"/>
+  <g class="code">
+    <text class="kw" x="663" y="68">task</text><text x="720" y="68">{</text>
+    <text class="name" x="686" y="91">name</text><text class="prop" x="743" y="91">‘transcode’</text>
+    <text class="name" x="686" y="114">type</text><text class="prop" x="743" y="114">‘Transcode’</text>
+    <text class="kw" x="686" y="145">input</text><text x="754" y="145">{</text>
+    <text class="name" x="710" y="168">input</text><text x="778" y="168">context.inputVideo</text>
+    <text class="name" x="710" y="191">config</text><text x="790" y="191">config.transConfig</text>
+    <text x="686" y="214">}</text>
+    <text class="kw" x="686" y="245">output</text><text x="766" y="245">{ it-&gt;</text>
+    <text x="710" y="268">context.file = it.outputVideo</text>
+    <text x="686" y="291">}</text>
+    <text x="663" y="322">}</text>
+  </g>
+</svg>

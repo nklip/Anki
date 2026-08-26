@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1262" height="1530" viewBox="0 0 1262 1530" role="img" aria-labelledby="title desc">
+  <title id="title">Video uploading and transcoding flow</title>
+  <desc id="desc">A user uploads an original video to storage. Transcoding servers create encoded files for storage and the CDN, then publish completion events so metadata caches and databases can be updated through API servers.</desc>
+  <!-- Shared symbols for devices, servers, queues, storage, cache, database, and CDN. -->
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L12 6L0 12Z" fill="#2e7ca8"/></marker>
+    <symbol id="devices" viewBox="0 0 300 90"><g fill="#fff" stroke="#111" stroke-width="4"><path d="M8 12Q13 5 22 5H70Q79 5 84 12L88 62Q88 75 75 82H17Q4 75 4 62Z"/><path d="M8 60Q46 67 84 60"/><path d="M113 19Q113 12 120 12H187Q194 12 194 19V68H113Z"/><path d="M107 72H200L193 80H114Z" fill="#111"/><rect x="234" y="4" width="43" height="79" rx="5"/><path d="M234 17H277M234 70H277"/></g><text x="46" y="49" font-family="Arial,Helvetica,sans-serif" font-size="29" text-anchor="middle">TV</text></symbol>
+    <symbol id="servers" viewBox="0 0 130 90"><rect x="33" y="3" width="34" height="19" rx="2" fill="#80c342"/><rect x="72" y="3" width="34" height="19" rx="2" fill="#80c342"/><g fill="#80c342"><rect x="6" y="23" width="38" height="62"/><rect x="46" y="23" width="38" height="62"/><rect x="86" y="23" width="38" height="62"/></g><path d="M12 34H38M12 71H38M52 34H78M52 71H78M92 34H118M92 71H118M39 11H61M78 11H100" fill="none" stroke="#fff" stroke-width="3"/></symbol>
+    <symbol id="bucket" viewBox="0 0 120 95"><path d="M25 19Q60 5 95 19L88 74Q60 91 32 74Z" fill="#fff" stroke="#2f8a24" stroke-width="4"/><ellipse cx="60" cy="19" rx="35" ry="12" fill="#fff" stroke="#2f8a24" stroke-width="4"/><path d="M42 40L33 57H51ZM60 45A8 8 0 1 0 60 61A8 8 0 1 0 60 45ZM44 63V78H58V63ZM73 35L99 48M78 30L92 44" fill="none" stroke="#2f8a24" stroke-width="3" stroke-linejoin="round"/></symbol>
+    <symbol id="queue" viewBox="0 0 240 72"><path d="M3 3H217L237 36L217 69H3Z" fill="#fff" stroke="#3183b5" stroke-width="5"/><g fill="none" stroke="#3183b5" stroke-width="5"><rect x="14" y="15" width="58" height="40"/><path d="M15 16L43 38L71 16"/><rect x="80" y="15" width="58" height="40"/><path d="M81 16L109 38L137 16"/><rect x="146" y="15" width="58" height="40"/><path d="M147 16L175 38L203 16"/></g></symbol>
+    <symbol id="cache" viewBox="0 0 130 100"><g fill="#2e7fb8" stroke="#1d6596" stroke-width="2"><rect x="8" y="8" width="72" height="55" rx="7"/><rect x="34" y="27" width="72" height="55" rx="7"/><rect x="60" y="46" width="64" height="49" rx="7"/></g><g fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="14"><text x="16" y="29">CACHE</text><text x="47" y="50">CACHE</text><text x="67" y="70">CACHE</text></g></symbol>
+    <symbol id="db" viewBox="0 0 120 100"><g fill="#3787bd" stroke="#fff" stroke-width="1.5"><path d="M8 18A25 8 0 0 1 58 18V68A25 8 0 0 1 8 68Z"/><ellipse cx="33" cy="18" rx="25" ry="8"/><path d="M35 29A25 8 0 0 1 85 29V79A25 8 0 0 1 35 79Z"/><ellipse cx="60" cy="29" rx="25" ry="8"/><path d="M62 40A25 8 0 0 1 112 40V90A25 8 0 0 1 62 90Z"/><ellipse cx="87" cy="40" rx="25" ry="8"/></g></symbol>
+    <symbol id="cdn" viewBox="0 0 160 110"><path d="M31 92C12 92 3 79 5 65C6 52 16 44 29 43C31 27 44 18 59 21C68 6 85 5 96 15C107 6 124 12 128 27C143 27 155 39 155 55C155 76 140 92 121 92Z" fill="#75d6ef"/><path d="M79 15L62 54H83L70 91L109 45H90L103 15Z" fill="#fff"/></symbol>
+    <style>.box{fill:#fff;stroke:#42bbd2;stroke-width:3.5}.group{fill:#fff;stroke:#42bbd2;stroke-width:3.5;stroke-dasharray:11 8}.flow{fill:none;stroke:#2e7ca8;stroke-width:2;marker-end:url(#arrow)}.label{font:28px Arial,Helvetica,sans-serif;fill:#111;text-anchor:middle}.store-label{font:23px Arial,Helvetica,sans-serif;fill:#111;text-anchor:middle}.step{font:26px Arial,Helvetica,sans-serif;fill:#111}</style>
+  </defs>
+  <rect width="1262" height="1530" fill="#fff"/>
+  <!-- User and original upload storage. -->
+  <rect class="box" x="45" y="24" width="217" height="198" rx="28"/><use href="#bucket" x="94" y="38" width="120" height="95"/><text class="label" x="153.5" y="194">Original storage</text>
+  <rect class="box" x="532" y="54" width="356" height="138" rx="24"/><text x="556" y="91" font-family="Arial,Helvetica,sans-serif" font-size="27">User</text><use href="#devices" x="590" y="92" width="270" height="81"/>
+  <path class="flow" d="M532 123H262"/><text class="step" x="380" y="109">1</text>
+  <!-- API metadata path through the load balancer. -->
+  <path class="flow" d="M710 461V365"/><path class="flow" d="M710 288V192"/>
+  <path d="M676 289H744L755 365H665Z" fill="#3487c4"/><circle cx="710" cy="305" r="5" fill="#fff"/><path d="M710 310V342M710 326L696 338M710 326L724 338M696 338V329M724 338V329" fill="none" stroke="#fff" stroke-width="3"/><text x="782" y="338" font-family="Arial,Helvetica,sans-serif" font-size="27">Load balancer</text><text class="step" x="737" y="427">4</text>
+  <rect class="group" x="619" y="461" width="184" height="157" rx="24"/><use href="#servers" x="646" y="474" width="130" height="90"/><text class="label" x="711" y="603">API servers</text>
+  <!-- Metadata cache and database. -->
+  <path class="flow" d="M697 618L569 716"/><path class="flow" d="M725 618L840 716"/>
+  <rect class="box" x="470" y="716" width="198" height="174" rx="24"/><use href="#cache" x="504" y="730" width="130" height="100"/><text class="store-label" x="569" y="875">Metadata Cache</text>
+  <rect class="box" x="750" y="716" width="181" height="174" rx="24"/><use href="#db" x="780" y="730" width="120" height="100"/><text class="store-label" x="840.5" y="875">Metadata DB</text>
+  <!-- Original video is handed to the transcoding fleet. -->
+  <path class="flow" d="M153 222V1007"/><text class="step" x="181" y="559">2</text>
+  <rect class="group" x="54" y="1007" width="198" height="194" rx="27"/><use href="#servers" x="88" y="1021" width="130" height="90"/><text class="label" x="153" y="1152">Transcoding</text><text class="label" x="153" y="1184">servers</text>
+  <!-- Completion event path. -->
+  <path class="flow" d="M252 1105H597"/><text class="step" x="410" y="1095" text-anchor="middle">transcoding complete</text><text class="step" x="336" y="1140">3b</text>
+  <use href="#queue" x="597" y="1068" width="240" height="72"/><text class="label" x="717" y="1180">Completion queue</text>
+  <path class="flow" d="M837 1104H1007"/><text class="step" x="891" y="1140">3b.1</text>
+  <rect class="group" x="1007" y="1009" width="221" height="191" rx="28"/><use href="#servers" x="1053" y="1024" width="130" height="90"/><text class="label" x="1117.5" y="1150">Completion</text><text class="label" x="1117.5" y="1182">handler</text>
+  <!-- Completion handler updates both metadata stores. -->
+  <path class="flow" d="M1117 1009V803H931"/><text class="step" x="1124" y="881">3b.1.a</text>
+  <path class="flow" d="M1117 1009V968H569V890"/><text class="step" x="931" y="948">3b.1.b</text>
+  <!-- Transcoded files are stored and distributed. -->
+  <path class="flow" d="M153 1201V1317"/><text class="step" x="175" y="1278">3a</text>
+  <rect class="box" x="45" y="1317" width="218" height="199" rx="29"/><use href="#bucket" x="94" y="1333" width="120" height="95"/><text class="label" x="154" y="1470">Transcoded</text><text class="label" x="154" y="1502">storage</text>
+  <path class="flow" d="M263 1416H436"/><text class="step" x="323" y="1398">3a.1</text>
+  <rect class="group" x="436" y="1338" width="187" height="156" rx="24"/><use href="#cdn" x="450" y="1351" width="160" height="110"/><text class="label" x="529.5" y="1482">CDN</text>
+</svg>
