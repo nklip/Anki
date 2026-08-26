@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1322" height="668" viewBox="0 0 1322 668" role="img" aria-labelledby="title desc">
+  <title id="title">File download sequence</title>
+  <desc id="desc">A notification prompts Client 2 to request changes from API servers, then download the corresponding blocks from block servers and cloud storage.</desc>
+  <!-- UML sequence-diagram styles. -->
+  <defs>
+    <style>.participant{fill:#fff;stroke:#111;stroke-width:1.5}.life{stroke:#111;stroke-width:1.5;stroke-dasharray:5 5}.activation{fill:#fff;stroke:#111;stroke-width:1.4}.shaft{stroke:#111;stroke-width:1.5}.return{stroke:#111;stroke-width:1.5;stroke-dasharray:5 5}.head{fill:#111}.return-head{fill:none;stroke:#111;stroke-width:1.5;stroke-linecap:square;stroke-linejoin:miter}.label{font-family:Arial,Helvetica,sans-serif;fill:#111}.name{font-size:23px;text-anchor:middle}.message{font-size:21px;text-anchor:middle}</style>
+  </defs>
+  <rect width="1322" height="668" fill="#fff"/>
+  <!-- Participants and lifelines. -->
+  <g>
+    <rect class="participant" x="12" y="15" width="159" height="64" rx="9"/><text class="label name" x="91.5" y="57">:Client 2</text>
+    <rect class="participant" x="234" y="15" width="159" height="64" rx="9"/><text class="label name" x="313.5" y="57">:Block servers</text>
+    <rect class="participant" x="487" y="15" width="159" height="64" rx="9"/><text class="label name" x="566.5" y="57">:Cloud storage</text>
+    <rect class="participant" x="708" y="15" width="159" height="64" rx="9"/><text class="label name" x="787.5" y="57">:API Servers</text>
+    <rect class="participant" x="946" y="15" width="159" height="64" rx="9"/><text class="label name" x="1025.5" y="57">:Metadata DB</text>
+    <rect class="participant" x="1151" y="15" width="159" height="64" rx="9"/><text class="label name" x="1230.5" y="43"><tspan x="1230.5">:Notification</tspan><tspan x="1230.5" dy="24">service</tspan></text>
+    <g class="life"><path d="M91 79V648M313 79V648M566 79V617M787 79V598M1026 79V617M1230 79V617"/></g>
+  </g>
+  <!-- Activation bars. Cloud storage and Metadata DB start exactly at their first incoming request. -->
+  <g><rect class="activation" x="83" y="142" width="16" height="475"/><rect class="activation" x="305" y="450" width="16" height="198"/><rect class="activation" x="558" y="507" width="16" height="62"/><rect class="activation" x="779" y="220" width="16" height="127"/><rect class="activation" x="1018" y="284" width="16" height="95"/><rect class="activation" x="1223" y="152" width="16" height="32"/></g>
+  <!-- 1–5: discover which files changed. -->
+  <g>
+    <path class="return" d="M1223 152H116"/><path class="return-head" d="M116 146L104 152L116 158"/><text class="label message" x="438" y="140">1. notify changes</text>
+    <path class="shaft" d="M99 222H767"/><path class="head" d="M779 222L767 216V228Z"/><text class="label message" x="438" y="210">2. get changes</text>
+    <path class="shaft" d="M795 284H1006"/><path class="head" d="M1018 284L1006 278V290Z"/><text class="label message" x="897" y="272">3. get changes</text>
+    <path class="return" d="M1018 333H819"/><path class="return-head" d="M819 327L807 333L819 339"/><text class="label message" x="906" y="324">4. return changes</text>
+    <path class="return" d="M779 348H116"/><path class="return-head" d="M116 342L104 348L116 354"/><text class="label message" x="444" y="339">5. return changes</text>
+  </g>
+  <!-- 6–9: fetch the changed data blocks. -->
+  <g>
+    <path class="shaft" d="M99 456H293"/><path class="head" d="M305 456L293 450V462Z"/><text class="label message" x="196" y="444">6. download blocks</text>
+    <path class="shaft" d="M321 507H546"/><path class="head" d="M558 507L546 501V513Z"/><text class="label message" x="439" y="495">7. download blocks</text>
+    <path class="return" d="M558 570H333"/><path class="return-head" d="M333 564L321 570L333 576"/><text class="label message" x="439" y="558">8. blocks</text>
+    <path class="return" d="M305 618H116"/><path class="return-head" d="M116 612L104 618L116 624"/><text class="label message" x="198" y="606">9. blocks</text>
+  </g>
+</svg>

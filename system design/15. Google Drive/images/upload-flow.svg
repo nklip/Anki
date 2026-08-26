@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1326" height="782" viewBox="0 0 1326 782" role="img" aria-labelledby="title desc">
+  <title id="title">File upload sequence</title>
+  <desc id="desc">Client 1 creates file metadata, uploads blocks through block servers to cloud storage, updates metadata, and notifies Client 2 through the notification service.</desc>
+  <!-- UML sequence-diagram styles. -->
+  <defs>
+    <style>.participant{fill:#fff;stroke:#111;stroke-width:1.5}.life{stroke:#111;stroke-width:1.5;stroke-dasharray:5 5}.activation{fill:#fff;stroke:#111;stroke-width:1.4}.shaft{stroke:#111;stroke-width:1.5}.return{stroke:#111;stroke-width:1.5;stroke-dasharray:5 5}.head{fill:#111}.return-head{fill:none;stroke:#111;stroke-width:1.5;stroke-linecap:square;stroke-linejoin:miter}.label{font-family:Arial,Helvetica,sans-serif;fill:#111}.name{font-size:20px;text-anchor:middle}.message{font-size:19px;text-anchor:middle}</style>
+  </defs>
+  <rect width="1326" height="782" fill="#fff"/>
+  <!-- Participants and lifelines. -->
+  <g>
+    <rect class="participant" x="15" y="27" width="130" height="52" rx="8"/><text class="label name" x="80" y="60">:Client 1</text>
+    <rect class="participant" x="171" y="27" width="130" height="52" rx="8"/><text class="label name" x="236" y="60">:Client 2</text>
+    <rect class="participant" x="399" y="27" width="130" height="52" rx="8"/><text class="label name" x="464" y="60">:Block servers</text>
+    <rect class="participant" x="606" y="27" width="130" height="52" rx="8"/><text class="label name" x="671" y="60">:Cloud storage</text>
+    <rect class="participant" x="823" y="27" width="130" height="52" rx="8"/><text class="label name" x="888" y="60">:API Servers</text>
+    <rect class="participant" x="1003" y="27" width="130" height="52" rx="8"/><text class="label name" x="1068" y="60">:Metadata DB</text>
+    <rect class="participant" x="1185" y="27" width="130" height="52" rx="8"/><text class="label name" x="1250" y="49"><tspan x="1250">:Notification</tspan><tspan x="1250" dy="20">service</tspan></text>
+    <g class="life"><path d="M80 79V765M236 79V765M464 79V765M671 79V765M888 79V765M1068 79V765M1250 79V765"/></g>
+  </g>
+  <!-- Long-lived and nested activations. Notification work occurs in two separate intervals. -->
+  <g><rect class="activation" x="73" y="156" width="14" height="569"/><rect class="activation" x="229" y="156" width="14" height="569"/><rect class="activation" x="457" y="439" width="14" height="299"/><rect class="activation" x="664" y="463" width="14" height="77"/><rect class="activation" x="881" y="156" width="14" height="477"/><rect class="activation" x="1061" y="195" width="14" height="78"/><rect class="activation" x="1061" y="592" width="14" height="66"/><rect class="activation" x="1243" y="259" width="14" height="104"/><rect class="activation" x="1243" y="631" width="14" height="107"/></g>
+  <!-- Initial metadata creation and notification. -->
+  <g>
+    <path class="shaft" d="M87 160H869"/><path class="head" d="M881 160L869 154V166Z"/><text class="label message" x="306" y="132"><tspan x="306">1. add file</tspan><tspan x="306" dy="21">metadata</tspan></text>
+    <path class="shaft" d="M895 195H1049"/><path class="head" d="M1061 195L1049 189V201Z"/><text class="label message" x="978" y="166"><tspan x="978">2. upload status:</tspan><tspan x="978" dy="21">pending</tspan></text>
+    <path class="shaft" d="M1075 259H1231"/><path class="head" d="M1243 259L1231 253V265Z"/><text class="label message" x="1162" y="251">3. notify change</text>
+    <path class="return" d="M1243 358H259"/><path class="return-head" d="M259 352L247 358L259 364"/><text class="label message" x="786" y="349">4. notify changes</text>
+  </g>
+  <!-- Upload the file blocks and finalize metadata. -->
+  <g>
+    <path class="shaft" d="M87 437H445"/><path class="head" d="M457 437L445 431V443Z"/><text class="label message" x="315" y="430">2.1 upload file</text>
+    <path class="shaft" d="M471 473H652"/><path class="head" d="M664 473L652 467V479Z"/><text class="label message" x="568" y="465">2.2 upload file</text>
+    <path class="shaft" d="M678 537H869"/><path class="head" d="M881 537L869 531V543Z"/><text class="label message" x="780" y="510"><tspan x="780">2.3 update file</tspan><tspan x="780" dy="21">metadata</tspan></text>
+    <path class="shaft" d="M895 592H1049"/><path class="head" d="M1061 592L1049 586V598Z"/><text class="label message" x="978" y="565"><tspan x="978">2.4 upload status:</tspan><tspan x="978" dy="21">uploaded</tspan></text>
+    <path class="shaft" d="M1075 631H1231"/><path class="head" d="M1243 631L1231 625V637Z"/><text class="label message" x="1161" y="623">2.5 notify change</text>
+    <path class="return" d="M1243 718H259"/><path class="return-head" d="M259 712L247 718L259 724"/><text class="label message" x="797" y="709">2.6 notify changes</text>
+  </g>
+</svg>

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1230" height="958" viewBox="0 0 1230 958" role="img" aria-labelledby="title desc">
+  <title id="title">High-level Google Drive architecture</title>
+  <desc id="desc">Users interact with block storage and API servers through a load balancer. Metadata, cold storage, notifications, long polling, and an offline queue support synchronization.</desc>
+  <!-- Shared infrastructure symbols and connector marker. -->
+  <defs>
+    <marker id="arrow-blue" markerWidth="13" markerHeight="13" viewBox="0 0 13 13" refX="12" refY="6.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L13 6.5L0 13Z" fill="#147eae"/></marker>
+    <symbol id="devices" viewBox="0 0 135 66"><g fill="#fff" stroke="#111" stroke-width="3" stroke-linejoin="round"><path d="M4 12Q4 7 9 7H58Q63 7 63 12V48H4Z"/><path d="M1 51H66L60 58H7Z" fill="#111"/><path d="M27 53H41" stroke="#fff" stroke-width="2"/><rect x="88" y="2" width="34" height="58" rx="4"/><path d="M88 12H122M88 49H122"/><circle cx="105" cy="55" r="1.5" fill="#111" stroke="none"/></g></symbol>
+    <symbol id="servers" viewBox="0 0 130 90"><rect x="33" y="3" width="34" height="19" rx="2" fill="#65c515"/><rect x="72" y="3" width="34" height="19" rx="2" fill="#65c515"/><g fill="#65c515"><rect x="6" y="23" width="38" height="62"/><rect x="46" y="23" width="38" height="62"/><rect x="86" y="23" width="38" height="62"/></g><path d="M12 34H38M12 71H38M52 34H78M52 71H78M92 34H118M92 71H118M39 11H61M78 11H100" fill="none" stroke="#fff" stroke-width="3"/></symbol>
+    <symbol id="bucket" viewBox="0 0 110 100"><g fill="#fff" stroke="#078a0d" stroke-width="4" stroke-linejoin="round"><ellipse cx="49" cy="18" rx="34" ry="11"/><path d="M15 18L23 79Q49 91 76 79L83 18"/><path d="M52 37L102 56" fill="none" stroke-linecap="round"/><circle cx="49" cy="35" r="4" fill="#078a0d" stroke="none"/><path d="M34 43L26 59H42Z M46 63H61V78H46Z M68 50A9 9 0 1 0 68 68A9 9 0 1 0 68 50Z" fill="none"/></g></symbol>
+    <symbol id="database" viewBox="0 0 130 90"><g fill="#0c7eb8"><ellipse cx="31" cy="14" rx="24" ry="8"/><path d="M7 14V60Q31 72 55 60V14Q31 25 7 14Z"/><ellipse cx="64" cy="25" rx="24" ry="8"/><path d="M40 25V70Q64 82 88 70V25Q64 36 40 25Z"/><ellipse cx="97" cy="36" rx="24" ry="8"/><path d="M73 36V79Q97 89 121 79V36Q97 47 73 36Z"/></g></symbol>
+    <symbol id="cache" viewBox="0 0 130 95"><g fill="#087db8" stroke="#076a9c" stroke-width="1"><rect x="9" y="4" width="78" height="51" rx="6"/><rect x="38" y="24" width="78" height="51" rx="6"/><rect x="67" y="43" width="58" height="48" rx="6"/></g><g fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="13" text-anchor="middle"><text x="48" y="28">CACHE</text><text x="77" y="49">CACHE</text><text x="96" y="67">CACHE</text></g></symbol>
+    <symbol id="bell" viewBox="0 0 70 75"><path d="M15 51Q23 43 23 30Q23 13 35 11Q47 13 47 30Q47 43 55 51L47 59H23Z" fill="#fff" stroke="#111" stroke-width="2"/><path d="M30 61Q35 68 40 61" fill="none" stroke="#111" stroke-width="2"/></symbol>
+    <symbol id="queue" viewBox="0 0 190 72"><path d="M2 8H170L187 36L170 64H2Z" fill="#fff" stroke="#0c7eb8" stroke-width="4"/><g fill="none" stroke="#0c7eb8" stroke-width="4"><rect x="13" y="18" width="46" height="36"/><rect x="67" y="18" width="46" height="36"/><rect x="121" y="18" width="46" height="36"/><path d="M14 20L36 39L58 20M68 20L90 39L112 20M122 20L144 39L166 20"/></g></symbol>
+    <style>.node{fill:#fff;stroke:#08b4d3;stroke-width:3}.group{fill:#fff;stroke:#08b4d3;stroke-width:3;stroke-dasharray:10 9}.flow{fill:none;stroke:#147eae;stroke-width:2}.label{font-family:Arial,Helvetica,sans-serif;fill:#111}.caption{font-size:22px;text-anchor:middle}.small-caption{font-size:20px}</style>
+  </defs>
+  <rect width="1230" height="958" fill="#fff"/>
+  <!-- Connector layer; nodes are painted afterward so paths terminate cleanly at borders. -->
+  <g class="flow" marker-end="url(#arrow-blue)" stroke-linejoin="round">
+    <path d="M330 91H88V231"/>
+    <path d="M432 147V295"/>
+    <path d="M536 91H850V504"/>
+    <path d="M88 363V515"/>
+    <path d="M84 667V779"/>
+    <path d="M160 594H261V332H390"/>
+    <path d="M432 365V515"/>
+    <path d="M508 584H773"/>
+    <path d="M373 647L336 782"/>
+    <path d="M497 647L521 782"/>
+    <path d="M922 583H1003"/>
+  </g>
+  <text class="label" x="866" y="340" font-size="23">long polling</text>
+  <!-- User entry point. -->
+  <rect class="node" x="330" y="36" width="206" height="111" rx="16"/><text class="label" x="343" y="78" font-size="24">User</text><use href="#devices" x="386" y="76" width="135" height="66"/>
+  <!-- File-data path. -->
+  <rect class="group" x="14" y="237" width="150" height="126" rx="22"/><use href="#servers" x="24" y="246" width="130" height="90"/><text class="label caption" x="89" y="355">Block servers</text>
+  <rect class="node" x="16" y="522" width="144" height="145" rx="20"/><use href="#bucket" x="35" y="531" width="110" height="100"/><text class="label caption" x="88" y="640">Cloud storage</text>
+  <rect class="node" x="14" y="786" width="142" height="146" rx="20"/>
+  <g transform="translate(84 843)" stroke="#70cef1" stroke-width="7" stroke-linecap="round"><path d="M0-32V32M-28-16L28 16M-28 16L28-16M0-32L-8-23M0-32L8-23M0 32L-8 23M0 32L8 23M-28-16L-17-17M-28-16L-23-6M28 16L17 17M28 16L23 6M-28 16L-17 17M-28 16L-23 6M28-16L17-17M28-16L23-6"/></g>
+  <text class="label caption" x="85" y="907">Cold storage</text>
+  <!-- Request-processing path. -->
+  <g transform="translate(397 302)"><path d="M8 0H62L70 61H0Z" fill="#0c7eb8"/><path d="M35 11V49M35 30L19 43M35 30L51 43M35 49L27 41M35 49L43 41M19 43L19 34M51 43L51 34" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <text class="label" x="486" y="341" font-size="24">Load balancer</text>
+  <rect class="group" x="361" y="522" width="147" height="125" rx="22"/><use href="#servers" x="370" y="526" width="130" height="76"/><text class="label caption" x="434.5" y="629">API servers</text>
+  <!-- Metadata services. -->
+  <rect class="node" x="215" y="789" width="159" height="143" rx="20"/><use href="#cache" x="229" y="799" width="130" height="95"/><text class="label caption small-caption" x="294.5" y="918">Metadata Cache</text>
+  <rect class="node" x="486" y="789" width="160" height="143" rx="20"/><use href="#database" x="501" y="802" width="130" height="90"/><text class="label caption" x="566" y="918">Metadata DB</text>
+  <!-- Notification and offline-delivery path. -->
+  <rect class="node" x="780" y="511" width="142" height="146" rx="20"/><use href="#bell" x="816" y="526" width="70" height="75"/><text class="label caption" x="851" y="625"><tspan x="851">Notification</tspan><tspan x="851" dy="24">Service</tspan></text>
+  <use href="#queue" x="1007" y="548" width="190" height="72"/><text class="label caption" x="1102" y="651">Offline backup Queue</text>
+</svg>

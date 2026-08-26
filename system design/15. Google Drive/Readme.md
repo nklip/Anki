@@ -44,23 +44,21 @@ A basic setup includes:
 2. **Metadata Database:**  to keep track of metadata like user data, login info, files info/
 3. **Storage Directory:** Holds files organized by namespaces.
 
-
 <div style="margin-left:3rem">
-    <img src="./images/namespaces.png" alt="Namespaces" width="400" />
+    <img src="./images/namespaces.svg" alt="Namespaces" width="400" />
 </div>
 
-- A web server and a directory called drive/ is set up as the root directory to store uploaded files. 
-- Under drive/ directory, there is a list of directories called namespaces. 
-- Each namespace contains all the uploaded files for that user. 
+- A web server and a directory called drive/ is set up as the root directory to store uploaded files.
+- Under drive/ directory, there is a list of directories called namespaces.
+- Each namespace contains all the uploaded files for that user.
 - Each file or folder can be uniquely identified by joining the namespace and the relative path.
-
 
 This design serves as a starting point but is inadequate for scaling.
 
 #### APIs
 1. **Upload a file to Google Drive:** Two types of uploads are supported
     - Simple upload: Used when file size is small.
-    - Resumable upload: 
+    - Resumable upload:
         - Endpoint: https://api.example.com/files/upload?uploadType=resumable
         - Send the initial request to retrieve the resumable URL.
         - Upload the data and monitor upload state
@@ -76,18 +74,17 @@ This design serves as a starting point but is inadequate for scaling.
 1. **Sharding:** Split storage across servers based on `user_id`.
 2. **Amazon S3:** Use S3 for scalable and redundant file storage with cross-region replication.
 
-    <img src="./images/replication.png" alt="Replication" width="600" />
-     
+    <img src="./images/replication.svg" alt="Replication" width="600" />
+
 3. **Load Balancer:** Distribute traffic across multiple web servers.
 4. **Metadata Database Replication:** Ensure availability through database sharding and replication.
-
 
 #### Sync Conflicts:
 For a large storage system like Google Drive, sync conflicts happen from time to time.
 When two users modify the same file or folder at the same time, a conflict happens.
 
 <div style="margin-left:5rem">
-<img src="./images/sync-conflicts.png" alt="Sync Conflicts" width="600" />
+<img src="./images/sync-conflicts.svg" alt="Sync Conflicts" width="600" />
 </div>
 
 - In the example user 1 and user 2 tries to update the same file at the same time, but user 1’s file is processed by our system first.
@@ -97,7 +94,7 @@ When two users modify the same file or folder at the same time, a conflict happe
 
 ### Improved design
 <div style="margin-left:5rem">
-<img src="./images/high-level-design.png" alt="High Level Design" width="500" />
+<img src="./images/high-level-design.svg" alt="High Level Design" width="500" />
 </div>
 
 1. **User Interaction:**: Users access the application via browser or mobile app.
@@ -140,7 +137,7 @@ A highly simplified is shown below version as it only includes the most importan
 - **File Version Table:** Stores file revision history.
 
 <div style="margin-left:5rem">
-<img src="./images/metadata-database.png" alt="Metadata Database " width="500" />
+<img src="./images/metadata-database.svg" alt="Metadata Database " width="500" />
 </div>
 
 ---
@@ -157,11 +154,9 @@ A highly simplified is shown below version as it only includes the most importan
    - S3 triggers a callback to update the file status to `uploaded`.
    - Notification service informs relevant users.
 
-
 <div style="margin-left:5rem">
-<img src="./images/upload-flow.png" alt="Upload Flow " width="500" />
+<img src="./images/upload-flow.svg" alt="Upload Flow " width="500" />
 </div>
-
 
 ---
 
@@ -169,7 +164,7 @@ A highly simplified is shown below version as it only includes the most importan
 1. **Delta Sync:** Transfer only modified blocks instead of the entire file.
 
     <div style="margin-left:2rem">
-    <img src="./images/delta-sync.png" alt="Delta Sync" width="400" />
+    <img src="./images/delta-sync.svg" alt="Delta Sync" width="400" />
     </div>
 
 2. **Compression:** Blocks are compressed using compression algorithms depending on file types. 
@@ -178,7 +173,7 @@ A highly simplified is shown below version as it only includes the most importan
    - Conflicting versions are saved separately for user resolution.
 
 <div style="margin-left:5rem">
-<img src="./images/file-sync.png" alt="File Synce " width="400" />
+<img src="./images/file-sync.svg" alt="File Synce " width="400" />
 </div>
 
 ---
@@ -197,9 +192,8 @@ downloads blocks to construct the file.
 
 
 <div style="margin-left:3rem">
-<img src="./images/download-flow.png" alt="Upload Flow " width="600" />
+<img src="./images/download-flow.svg" alt="Upload Flow " width="600" />
 </div>
-
 
 ---
 
@@ -207,7 +201,6 @@ downloads blocks to construct the file.
 1. **Purpose:** Keeps clients updated about file changes.
 2. **Mechanism:** Implements **long polling** for asynchronous notifications.
 3. **Example:** When a file is added, edited, or deleted, notifications are pushed to all relevant clients.
-
 
 ---
 

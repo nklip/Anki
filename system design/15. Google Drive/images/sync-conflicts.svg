@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1324" height="336" viewBox="0 0 1324 336" role="img" aria-labelledby="title desc">
+  <title id="title">File synchronization and conflicts</title>
+  <desc id="desc">Three snapshots show two users uploading files, one successful synchronization, and a later synchronization conflict.</desc>
+  <!-- Reusable people, documents, system nodes, and directional markers. -->
+  <defs>
+    <marker id="arrow-black" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L12 6L0 12Z" fill="#111"/></marker>
+    <marker id="arrow-green" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L12 6L0 12Z" fill="#08a72a"/></marker>
+    <symbol id="person" viewBox="0 0 54 96"><circle cx="27" cy="14" r="11" fill="#fff" stroke="#111" stroke-width="1.7"/><path d="M27 25V58M6 38H48M27 58L5 91M27 58L50 91" fill="none" stroke="#111" stroke-width="1.7"/></symbol>
+    <symbol id="file" viewBox="0 0 36 54"><path d="M2 1H26L34 9V53H2Z" fill="#fff" stroke="#111" stroke-width="1.7"/><path d="M26 1V9H34" fill="none" stroke="#111" stroke-width="1.7"/></symbol>
+    <style>.system{fill:#fff;stroke:#08b4d3;stroke-width:3}.label{font-family:Arial,Helvetica,sans-serif;fill:#111}.user{font-size:20px}.system-label{font-size:21px;text-anchor:middle}.status{font-size:20px;font-style:italic;text-anchor:middle}</style>
+  </defs>
+  <rect width="1324" height="336" fill="#fff"/>
+  <!-- Snapshot 1: both users send their local file to the system. -->
+  <use href="#person" x="7" y="29" width="54" height="96"/><use href="#file" x="69" y="60" width="36" height="54"/>
+  <text class="label user" x="4" y="149">User 1</text>
+  <use href="#person" x="7" y="191" width="54" height="96"/><use href="#file" x="69" y="222" width="36" height="54"/>
+  <text class="label user" x="4" y="313">User 2</text>
+  <path d="M105 87L246 142" fill="none" stroke="#111" stroke-width="1.8" marker-end="url(#arrow-black)"/><path d="M105 249L246 188" fill="none" stroke="#111" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+  <rect class="system" x="248" y="119" width="166" height="91" rx="14"/><text class="label system-label" x="331" y="173">Our system</text>
+  <!-- Snapshot 2: User 1 receives the synchronized version. -->
+  <use href="#person" x="453" y="29" width="54" height="96"/><use href="#file" x="515" y="60" width="36" height="54"/><text class="label user" x="450" y="149">User 1</text>
+  <use href="#person" x="453" y="191" width="54" height="96"/><use href="#file" x="515" y="222" width="36" height="54"/><text class="label user" x="450" y="313">User 2</text>
+  <path d="M551 87L692 142" fill="none" stroke="#111" stroke-width="1.8" marker-end="url(#arrow-black)"/><path d="M551 249L692 188" fill="none" stroke="#111" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+  <!-- Green returns stay parallel to their black requests; heads stop outside the document outlines. -->
+  <path d="M692 160L551 105" fill="none" stroke="#08a72a" stroke-width="2" marker-end="url(#arrow-green)"/><text class="status" x="605" y="151" fill="#08a72a" transform="rotate(22 605 151)">synced</text>
+  <rect class="system" x="694" y="119" width="166" height="91" rx="14"/><text class="label system-label" x="777" y="173">Our system</text>
+  <!-- Snapshot 3: one synchronized result and one conflicting result. -->
+  <use href="#person" x="898" y="29" width="54" height="96"/><use href="#file" x="960" y="60" width="36" height="54"/><text class="label user" x="895" y="149">User 1</text>
+  <use href="#person" x="898" y="191" width="54" height="96"/><use href="#file" x="960" y="222" width="36" height="54"/><text class="label user" x="895" y="313">User 2</text>
+  <path d="M996 87L1137 142" fill="none" stroke="#111" stroke-width="1.8" marker-end="url(#arrow-black)"/><path d="M996 249L1137 188" fill="none" stroke="#111" stroke-width="1.8" marker-end="url(#arrow-black)"/>
+  <path d="M1137 160L996 105" fill="none" stroke="#08a72a" stroke-width="2" marker-end="url(#arrow-green)"/><text class="status" x="1050" y="151" fill="#08a72a" transform="rotate(22 1050 151)">synced</text>
+  <path d="M1137 202L996 263" fill="none" stroke="#08a72a" stroke-width="2" marker-end="url(#arrow-green)"/><text class="status" x="1097" y="250" fill="#d21e24" transform="rotate(-25 1097 250)">Conflict</text>
+  <rect class="system" x="1139" y="119" width="166" height="91" rx="14"/><text class="label system-label" x="1222" y="173">Our system</text>
+</svg>

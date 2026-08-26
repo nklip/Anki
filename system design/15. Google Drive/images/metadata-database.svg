@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1368" height="896" viewBox="0 0 1368 896" role="img" aria-labelledby="title desc">
+  <title id="title">Google Drive metadata database schema</title>
+  <desc id="desc">Entity relationship diagram for users, workspaces, files, file versions, blocks, and devices, including one-to-many relationships.</desc>
+  <!-- Table palette and text hierarchy. -->
+  <defs>
+    <style>.relation{fill:none;stroke:#5da5d0;stroke-width:5;stroke-linecap:round;stroke-linejoin:round}.head{fill:#2b70a0}.row{fill:#fbfbfb}.keyrow{fill:#dceef5}.header{font:700 25px Arial,Helvetica,sans-serif;fill:#fff}.field{font:22px Arial,Helvetica,sans-serif;fill:#777}.key{font-weight:700;fill:#111}.type{text-anchor:end}.mult{font:18px Arial,Helvetica,sans-serif;fill:#111}</style>
+  </defs>
+  <rect width="1368" height="896" fill="#fff"/>
+  <!-- Relationship layer; table panels cover the intentional line entries. -->
+  <g class="relation">
+    <path d="M393 241H439Q450 241 450 229V177Q450 166 461 166H496"/>
+    <path d="M393 241H470Q484 241 484 255V793Q484 806 471 806H456"/>
+    <path d="M847 117H857Q868 117 868 129V391Q868 403 880 403H886"/>
+    <path d="M1266 103H1282Q1294 103 1294 116V683Q1294 696 1281 696H1060"/>
+    <path d="M366 558H505Q518 558 518 571V635Q518 647 531 647H682"/>
+    <path d="M456 756H553Q566 756 566 747H682"/>
+  </g>
+  <!-- Cardinalities remain outside table fills and away from connector bends. -->
+  <g class="mult"><text x="404" y="264">1</text><text x="476" y="156">*</text><text x="466" y="824">*</text><text x="466" y="782">1</text><text x="851" y="108">1</text><text x="866" y="423">*</text><text x="1277" y="94">1</text><text x="1069" y="719">*</text><text x="375" y="548">*</text><text x="663" y="671">1</text><text x="466" y="747">1</text><text x="663" y="738">1</text></g>
+  <!-- User table. -->
+  <g>
+    <rect class="row" x="43" y="161" width="350" height="206"/><rect class="head" x="43" y="161" width="350" height="55"/>
+    <rect class="keyrow" x="43" y="216" width="350" height="50"/>
+    <text class="header" x="65" y="197">user</text>
+    <text class="field" x="65" y="249">user_id</text><text class="field type" x="372" y="249">bigint</text>
+    <text class="field" x="65" y="300">user_name</text><text class="field type" x="372" y="300">varchar</text>
+    <text class="field" x="65" y="350">created_at</text><text class="field type" x="372" y="350">timestamp</text>
+  </g>
+  <!-- Workspace table. -->
+  <g>
+    <rect class="row" x="496" y="37" width="351" height="255"/><rect class="head" x="496" y="37" width="351" height="55"/><rect class="keyrow" x="496" y="92" width="351" height="50"/>
+    <text class="header" x="519" y="74">workspace</text>
+    <text class="field key" x="519" y="125">id</text><text class="field type" x="826" y="125">bigint</text>
+    <text class="field" x="519" y="175">owner_id</text><text class="field type" x="826" y="175">bigint</text>
+    <text class="field" x="519" y="225">is_shared</text><text class="field type" x="826" y="225">boolean</text>
+    <text class="field" x="519" y="275">created_at</text><text class="field type" x="826" y="275">timestamp</text>
+  </g>
+  <!-- File table. -->
+  <g>
+    <rect class="row" x="886" y="23" width="380" height="504"/><rect class="head" x="886" y="23" width="380" height="55"/><rect class="keyrow" x="886" y="78" width="380" height="50"/><rect class="keyrow" x="886" y="377" width="380" height="50"/>
+    <text class="header" x="909" y="60">file</text>
+    <text class="field key" x="909" y="112">id</text><text class="field type" x="1244" y="112">bigint</text>
+    <text class="field" x="909" y="162">file_name</text><text class="field type" x="1244" y="162">varchar</text>
+    <text class="field" x="909" y="212">relative_path</text><text class="field type" x="1244" y="212">varchar</text>
+    <text class="field" x="909" y="262">is_directory</text><text class="field type" x="1244" y="262">boolean</text>
+    <text class="field" x="909" y="312">latest_version</text><text class="field type" x="1244" y="312">bigint</text>
+    <text class="field" x="909" y="362">checksum</text><text class="field type" x="1244" y="362">bigint</text>
+    <text class="field" x="909" y="412">workspace_id</text><text class="field type" x="1244" y="412">bigint</text>
+    <text class="field" x="909" y="462">created_at</text><text class="field type" x="1244" y="462">timestamp</text>
+    <text class="field" x="909" y="512">last_modified</text><text class="field type" x="1244" y="512">timestamp</text>
+  </g>
+  <!-- Block table. -->
+  <g>
+    <rect class="row" x="30" y="429" width="336" height="205"/><rect class="head" x="30" y="429" width="336" height="55"/><rect class="keyrow" x="30" y="484" width="336" height="50"/><rect class="keyrow" x="30" y="534" width="336" height="50"/>
+    <text class="header" x="52" y="466">block</text>
+    <text class="field key" x="52" y="517">block_id</text><text class="field type" x="344" y="517">bigint</text>
+    <text class="field" x="52" y="567">file_version_id</text><text class="field type" x="344" y="567">bigint</text>
+    <text class="field" x="52" y="617">block_order</text><text class="field type" x="344" y="617">int</text>
+  </g>
+  <!-- Device table. -->
+  <g>
+    <rect class="row" x="43" y="677" width="413" height="202"/><rect class="head" x="43" y="677" width="413" height="55"/><rect class="keyrow" x="43" y="732" width="413" height="50"/><rect class="keyrow" x="43" y="782" width="413" height="50"/>
+    <text class="header" x="65" y="714">device</text>
+    <text class="field key" x="65" y="765">device_id</text><text class="field type" x="434" y="765">uuid</text>
+    <text class="field" x="65" y="815">user_id</text><text class="field type" x="434" y="815">bigint</text>
+    <text class="field" x="65" y="865">last_logged_in_at</text><text class="field type" x="434" y="865">timestamp</text>
+  </g>
+  <!-- File-version table. -->
+  <g>
+    <rect class="row" x="682" y="566" width="378" height="303"/><rect class="head" x="682" y="566" width="378" height="55"/><rect class="keyrow" x="682" y="621" width="378" height="50"/><rect class="keyrow" x="682" y="721" width="378" height="50"/>
+    <text class="header" x="704" y="603">file_version</text>
+    <text class="field key" x="704" y="654">id</text><text class="field type" x="1038" y="654">bigint</text>
+    <text class="field" x="704" y="704">file_id</text><text class="field type" x="1038" y="704">bigint</text>
+    <text class="field" x="704" y="754">device_id</text><text class="field type" x="1038" y="754">uuid</text>
+    <text class="field" x="704" y="804">version_number</text><text class="field type" x="1038" y="804">bigint</text>
+    <text class="field" x="704" y="854">last_modified</text><text class="field type" x="1038" y="854">timestamp</text>
+  </g>
+</svg>

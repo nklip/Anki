@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1300" height="506" viewBox="0 0 1300 506" role="img" aria-labelledby="title desc">
+  <title id="title">Cloud-storage replication</title>
+  <desc id="desc">A bucket can replicate to three copies within one region or across from Region A to Region B.</desc>
+  <!-- Reusable bucket and replication-arrow symbols. -->
+  <defs>
+    <marker id="arrow-blue" markerWidth="13" markerHeight="13" viewBox="0 0 13 13" refX="12" refY="6.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L13 6.5L0 13Z" fill="#117fb5"/></marker>
+    <symbol id="bucket" viewBox="0 0 82 88"><g fill="#fff" stroke="#087fb6" stroke-width="3.5" stroke-linejoin="round"><ellipse cx="38" cy="17" rx="33" ry="12"/><path d="M5 17L13 72Q38 84 64 72L71 17"/><path d="M41 34L78 50" fill="none" stroke-linecap="round"/><circle cx="38" cy="32" r="3" fill="#087fb6" stroke="none"/></g></symbol>
+    <style>.region{fill:#fff;stroke:#0ab1d0;stroke-width:3.5;stroke-dasharray:10 9}.label{font-family:Arial,Helvetica,sans-serif;fill:#111}.rep{font-size:21px;text-anchor:middle}.region-name{font-size:28px;text-anchor:middle}.caption{font-size:27px;text-anchor:middle}</style>
+  </defs>
+  <rect width="1300" height="506" fill="#fff"/>
+  <!-- Same-region replication: one source and three destination copies. -->
+  <rect class="region" x="9" y="34" width="574" height="401" rx="58"/>
+  <use href="#bucket" x="98" y="173" width="82" height="88"/><text class="label" x="139" y="288" font-size="24" text-anchor="middle">Bucket</text>
+  <path d="M181 237H257V119H425" fill="none" stroke="#117fb5" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+  <path d="M181 237H425" fill="none" stroke="#117fb5" stroke-width="3" marker-end="url(#arrow-blue)"/>
+  <path d="M181 237H257V334H425" fill="none" stroke="#117fb5" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+  <text class="label rep" x="351" y="101">replication</text><text class="label rep" x="351" y="219">replication</text><text class="label rep" x="351" y="316">replication</text>
+  <use href="#bucket" x="468" y="77" width="82" height="88"/><use href="#bucket" x="468" y="185" width="82" height="88"/><use href="#bucket" x="468" y="282" width="82" height="88"/>
+  <text class="label region-name" x="296" y="414">Region A</text><text class="label caption" x="296" y="490">Same-region replication</text>
+  <!-- Cross-region replication: arrows terminate at the Region B boundary. -->
+  <rect class="region" x="687" y="34" width="171" height="401" rx="28"/>
+  <use href="#bucket" x="731" y="173" width="82" height="88"/><text class="label" x="772" y="288" font-size="24" text-anchor="middle">Bucket</text>
+  <text class="label region-name" x="772" y="414">Region A</text>
+  <rect class="region" x="1104" y="34" width="172" height="401" rx="28"/>
+  <path d="M858 237H938V119H1097" fill="none" stroke="#117fb5" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+  <path d="M858 237H1097" fill="none" stroke="#117fb5" stroke-width="3" marker-end="url(#arrow-blue)"/>
+  <path d="M858 237H938V334H1097" fill="none" stroke="#117fb5" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
+  <text class="label rep" x="1018" y="101">replication</text><text class="label rep" x="1018" y="219">replication</text><text class="label rep" x="1018" y="316">replication</text>
+  <use href="#bucket" x="1148" y="77" width="82" height="88"/><use href="#bucket" x="1148" y="185" width="82" height="88"/><use href="#bucket" x="1148" y="282" width="82" height="88"/>
+  <text class="label region-name" x="1190" y="414">Region B</text><text class="label caption" x="980" y="490">Cross-region replication</text>
+</svg>

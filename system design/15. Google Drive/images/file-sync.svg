@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1312" height="720" viewBox="0 0 1312 720" role="img" aria-labelledby="title desc">
+  <title id="title">File splitting, compression, encryption, and storage</title>
+  <desc id="desc">A file is split into blocks. Each block is compressed and encrypted independently before being sent to cloud storage.</desc>
+  <!-- Reusable processing and storage symbols. -->
+  <defs>
+    <symbol id="document" viewBox="0 0 90 96"><path d="M7 2H65L84 21V88Q84 94 76 94H8Q2 94 2 86V10Q2 2 7 2Z" fill="#fff" stroke="#08b4d3" stroke-width="8" stroke-linejoin="round"/><path d="M65 2V22H84" fill="none" stroke="#08b4d3" stroke-width="8"/><path d="M22 37H66M22 53H66M22 69H66" stroke="#08b4d3" stroke-width="7"/></symbol>
+    <symbol id="compressor" viewBox="0 0 98 108"><rect x="2" y="2" width="94" height="104" fill="#fff" stroke="#111" stroke-width="4"/><path d="M17 14H68L82 28V94H17Z" fill="#f8fbfc" stroke="#d3dadd" stroke-width="2"/><path d="M68 14V28H82" fill="none" stroke="#d3dadd" stroke-width="2"/><path d="M48 15V84" stroke="#555" stroke-width="5"/><path d="M44 20H52M44 28H52M44 36H52M44 44H52M44 52H52M44 60H52M44 68H52" stroke="#aaa" stroke-width="2"/><rect x="42" y="76" width="12" height="14" rx="2" fill="#888"/></symbol>
+    <symbol id="lock" viewBox="0 0 92 104"><rect x="2" y="2" width="88" height="100" fill="#fff" stroke="#111" stroke-width="4"/><path d="M31 43V30A15 15 0 0 1 61 30V43" fill="none" stroke="#111" stroke-width="5"/><rect x="24" y="42" width="44" height="39" rx="3" fill="#050505"/><circle cx="46" cy="58" r="4" fill="#fff"/><path d="M46 60V70" stroke="#fff" stroke-width="3"/></symbol>
+    <symbol id="bucket" viewBox="0 0 150 130"><g fill="#fff" stroke="#078a0d" stroke-width="5" stroke-linejoin="round"><ellipse cx="68" cy="28" rx="50" ry="17"/><path d="M18 28L28 107Q68 124 108 107L118 28"/><path d="M74 55L139 81" fill="none" stroke-linecap="round"/><circle cx="68" cy="52" r="5" fill="#078a0d" stroke="none"/><path d="M45 58L34 80H56Z M60 86H82V107H60Z M91 70A13 13 0 1 0 91 96A13 13 0 1 0 91 70Z" fill="none"/></g></symbol>
+    <style>.frame{fill:#fff;stroke:#08afd0;stroke-width:4}.block{fill:#fff;stroke:#111;stroke-width:4}.label{font-family:Arial,Helvetica,sans-serif;fill:#111}.step{font-size:27px;text-anchor:middle}.block-text{font-size:29px;text-anchor:middle}.caption{font-size:31px;text-anchor:middle}.flow{fill:none;stroke:#147eae;stroke-width:2.5}.head{fill:#147eae}</style>
+  </defs>
+  <rect width="1312" height="720" fill="#fff"/>
+  <!-- Block-server boundary. -->
+  <rect class="frame" x="4" y="10" width="907" height="691" rx="104"/>
+  <!-- Connector layer; each triangular head stops at its target boundary. -->
+  <g class="flow" stroke-linejoin="round">
+    <path d="M78 245V123H216"/><path d="M120 290H216"/><path d="M78 335V553H216"/>
+    <path d="M378 123H532"/><path d="M378 290H532"/><path d="M378 553H532"/>
+    <path d="M639 123H774"/><path d="M639 297H774"/><path d="M639 550H774"/>
+    <path d="M875 123H1073"/><path d="M875 297H1073"/><path d="M875 550H1073"/>
+  </g>
+  <g class="head">
+    <path d="M227 123L216 117V129Z M227 290L216 284V296Z M227 553L216 547V559Z"/>
+    <path d="M543 123L532 117V129Z M543 290L532 284V296Z M543 553L532 547V559Z"/>
+    <path d="M785 123L774 117V129Z M785 297L774 291V303Z M785 550L774 544V556Z"/>
+    <path d="M1084 123L1073 117V129Z M1084 297L1073 291V303Z M1084 550L1073 544V556Z"/>
+  </g>
+  <!-- Source file and the three representative block rows. -->
+  <use href="#document" x="34" y="243" width="90" height="96"/>
+  <g class="block-text label">
+    <rect class="block" x="227" y="84" width="151" height="77"/><text x="302.5" y="133">Block 1</text>
+    <rect class="block" x="227" y="251" width="151" height="77"/><text x="302.5" y="300">Block 2</text>
+    <rect class="block" x="227" y="514" width="151" height="77"/><text x="302.5" y="563">Block N</text>
+  </g>
+  <text class="label step" x="166" y="114">split</text><text class="label step" x="166" y="281">split</text><text class="label step" x="166" y="544">split</text>
+  <!-- Compression and encryption are repeated independently per block. -->
+  <use href="#compressor" x="542" y="69" width="98" height="108"/><use href="#compressor" x="542" y="243" width="98" height="108"/><use href="#compressor" x="542" y="496" width="98" height="108"/>
+  <text class="label step" x="462" y="114">compress</text><text class="label step" x="462" y="281">compress</text><text class="label step" x="462" y="544">compress</text>
+  <use href="#lock" x="784" y="72" width="92" height="104"/><use href="#lock" x="784" y="246" width="92" height="104"/><use href="#lock" x="784" y="499" width="92" height="104"/>
+  <text class="label step" x="708" y="113">encrypt</text><text class="label step" x="708" y="287">encrypt</text><text class="label step" x="708" y="540">encrypt</text>
+  <text class="label" x="292" y="405" font-size="50" text-anchor="middle">⋮</text>
+  <text class="label caption" x="456" y="676">Block servers</text>
+  <!-- Cloud-storage destination. -->
+  <rect class="frame" x="1084" y="9" width="207" height="687" rx="40"/>
+  <use href="#bucket" x="1125" y="225" width="150" height="130"/>
+  <text class="label caption" x="1187.5" y="399">Cloud storage</text>
+</svg>
