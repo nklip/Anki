@@ -33,7 +33,7 @@ The system targets **50 million daily active users (DAU)** and stores chat histo
 1. **Sender Side:** HTTP for sending messages, leveraging persistent connections for efficiency.
 
       <div style="margin-left:2rem">
-      <img src="./images/basic-design.png" alt="Basic Design" width="500">    
+      <img src="./images/basic-design.svg" alt="Basic Design" width="500">
       <div>
 
 2. **Receiver Side:**
@@ -41,27 +41,27 @@ The system targets **50 million daily active users (DAU)** and stores chat histo
       - Client periodically asks the server if there are messages available.
       - Inefficient due to frequent, redundant requests.
 
-         <img src="./images/polling.png" alt="Polling" width="400">    
+         <img src="./images/polling.svg" alt="Polling" width="400">
 
-   - **Long Polling:** 
-      - Keeps the connection open until messages arrive. 
+   - **Long Polling:**
+      - Keeps the connection open until messages arrive.
       - Inefficient for inactive users.
 
-         <img src="./images/long-polling.png" alt="Long Polling" width="400">
+         <img src="./images/long-polling.svg" alt="Long Polling" width="400">
 
-   - **WebSocket:** 
+   - **WebSocket:**
       - A bi-directional, persistent connection for real-time communication, chosen for both sending and receiving messages.
       - Uses WebSockets (ws) protocol for sending and recieving messages.
 
-         <img src="./images/websocket.png" alt="Websocket"  width="400" >    
-   
+         <img src="./images/websocket.svg" alt="Websocket"  width="400" >
+
 ---
 
 ### Components
 
 <div style="margin-left:5rem">
-   <img src="./images/high-level-stateless-arch.png" alt="High Level Architecture" height="350">    
-   <img src="./images/high-level-statefull-arch.png" alt="High Level Architecture" height="350" width="550">
+   <img src="./images/high-level-stateless-arch.svg" alt="High Level Architecture" height="350">
+   <img src="./images/high-level-statefull-arch.svg" alt="High Level Architecture" height="350" width="550">
 </div>
 
 1. **Stateless Services:**
@@ -74,14 +74,13 @@ The system targets **50 million daily active users (DAU)** and stores chat histo
    - Push notification services notify users about new messages.
    - Refer Notification System chapter for notifications implementation.
 
-
 ---
 ### Design
 
 The client maintains a persistent WebSocket connection to a chat server for real-time messaging.
 
 <div style="margin-left:3rem">
-      <img src="./images/high-level-design.png" alt="High Level Design" width="450"> 
+      <img src="./images/high-level-design.svg" alt="High Level Design" width="450"> 
 </div>
 
 - Chat servers facilitate message sending/receiving.
@@ -99,13 +98,13 @@ The client maintains a persistent WebSocket connection to a chat server for real
 
 Following are the data models for one-to-one chat and group chat.
    - The primary key is message id, which helps to decide message sequence.
-   - For the group chat the composite primary key is (channel_id, message_id). 
+   - For the group chat the composite primary key is (channel_id, message_id).
       - IDs can be generated using a global 64-bit sequence number generator like Snowflake.
       - A better approach is to use local sequence number generator. Local means IDs are only unique within a group.
       - The reason why local IDs work is that maintaining message sequence within one-on-one channel or a group channel is sufficient. 
-      
-      <img src="./images/one-to-one-chat.png" alt="One to one chat design" width="300">   
-      <img src="./images/group-chat.png" alt="Group chat design" width="300">   
+
+      <img src="./images/one-to-one-chat.svg" alt="One to one chat design" width="300">
+      <img src="./images/group-chat.svg" alt="Group chat design" width="300">
 
 
 ## Step 3: Design Deep Dive
@@ -113,11 +112,11 @@ Following are the data models for one-to-one chat and group chat.
 ### Service Discovery
 
 <div style="margin-left:3rem">
-   <img src="./images/zookeeper.png" alt="Zookeeper" width="400">   
+   <img src="./images/zookeeper.svg" alt="Zookeeper" width="400">
 </div>
 
 - The primary role of service discovery is to recommend the best chat server for a client based
-on the criteria like geographical location, server capacity. 
+on the criteria like geographical location, server capacity.
 - Uses **Apache Zookeeper** to allocate chat servers based on criteria like geographic location and server capacity.
 - Ensures efficient load distribution and minimizes latency.
 
@@ -136,7 +135,7 @@ on the criteria like geographical location, server capacity.
 #### Group Chat
 
 <div style="margin-left:3rem">
-   <img src="./images/group-chat-flow.png" alt="Group Chat Flow" width="400">  
+   <img src="./images/group-chat-flow.svg" alt="Group Chat Flow" width="400">
 </div>
 
 - Messages are copied to individual inboxes for each recipient in the group.
@@ -154,7 +153,7 @@ message ID on the device. Messages that satisfy the following two conditions are
 as news messages:
 
 <div style="margin-left:3rem">
-   <img src="./images/message-synchronization.png" alt="Message Synchronization"  width="400">  
+   <img src="./images/message-synchronization.svg" alt="Message Synchronization"  width="400">
 </div>
 
 - The recipient ID is equal to the currently logged-in user ID.
@@ -165,25 +164,23 @@ as news messages:
 ### Online Presence
 1. **Heartbeat Mechanism:** 
    <div style="margin-left:3rem">
-      <img src="./images/heartbeat-mechanism.png" alt="Heartbeat Mechanism" width="400"> 
+      <img src="./images/heartbeat-mechanism.svg" alt="Heartbeat Mechanism" width="400">
    </div>
-   
-   - Clients send periodic heartbeats to presence servers to indicate they are online. 
+
+   - Clients send periodic heartbeats to presence servers to indicate they are online.
    - If no heartbeat is received within a threshold (for eg x = 30), the user is marked offline.
 
-     
 
-2. **Fanout Model:** 
+2. **Fanout Model:**
 
    <div style="margin-left:3rem">
-      <img src="./images/fanout-presence.png" alt="Fanout Presence" width="400"> 
+      <img src="./images/fanout-presence.svg" alt="Fanout Presence" width="400">
    </div>
 
    - Presence updates are pushed to friends using a publish-subscribe model in which each friend pair maintains a channel.
    - When User A’s online status changes, it publishes the event to three channels, channel A-B, A-C, and A-D. 
    - Those three channels are subscribed by User B, C, and D, respectively which get the online status updates.
    - The above design is effective for a small user groups.
-
 
 ---
 

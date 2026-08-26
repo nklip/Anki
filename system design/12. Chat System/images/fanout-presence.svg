@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1238" height="584" viewBox="0 0 1238 584" role="img" aria-labelledby="title desc">
+  <title id="title">Presence fanout channels</title>
+  <desc id="desc">User A publishes presence changes into pair-specific channels. Users B, C, and D subscribe to the channel they share with User A.</desc>
+  <defs>
+    <marker id="arrow-blue" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L12 6 L0 12 Z" fill="#1677b8"/></marker>
+    <symbol id="phone" viewBox="0 0 60 100"><rect x="10" y="3" width="40" height="94" rx="5" fill="none" stroke="#333" stroke-width="4"/><path d="M10 17 H50 M10 82 H50 M25 10 H35 M27 90 H33" fill="none" stroke="#333" stroke-width="3"/></symbol>
+    <symbol id="laptop" viewBox="0 0 90 70"><rect x="17" y="5" width="56" height="45" rx="4" fill="none" stroke="#111" stroke-width="4"/><path d="M9 58 H81 L87 65 H3 Z" fill="#111"/></symbol>
+    <symbol id="queue" viewBox="0 0 194 54"><path d="M2 2 H177 L192 27 L177 52 H2 Z" fill="#fff" stroke="#08b4cf" stroke-width="4"/><g fill="none" stroke="#08b4cf" stroke-width="4"><rect x="10" y="10" width="48" height="34"/><path d="M10 11 L34 29 L58 11"/><rect x="66" y="10" width="48" height="34"/><path d="M66 11 L90 29 L114 11"/><rect x="122" y="10" width="48" height="34"/><path d="M122 11 L146 29 L170 11"/></g></symbol>
+    <style>.box{fill:#fff;stroke:#08b4cf;stroke-width:3}.group{fill:#fff;stroke:#08b4cf;stroke-width:3;stroke-dasharray:10 9}.shaft{fill:none;stroke:#1677b8;stroke-width:2.2}.flow{fill:none;stroke:#1677b8;stroke-width:2.2;marker-end:url(#arrow-blue)}.t{font-family:Arial,Helvetica,sans-serif;fill:#111;font-size:25px;text-anchor:middle}</style>
+  </defs>
+  <rect width="1238" height="584" fill="#fff"/>
+  <!-- Publisher and subscribers. -->
+  <rect class="box" x="16" y="229" width="133" height="125" rx="19"/><use href="#phone" x="53" y="241" width="58" height="75"/><text class="t" x="82.5" y="338">User A</text>
+  <rect class="box" x="1068" y="64" width="133" height="125" rx="19"/><use href="#phone" x="1105" y="76" width="58" height="75"/><text class="t" x="1134.5" y="173">User B</text>
+  <rect class="box" x="1068" y="235" width="133" height="125" rx="19"/><use href="#phone" x="1105" y="247" width="58" height="75"/><text class="t" x="1134.5" y="344">User C</text>
+  <rect class="box" x="1068" y="399" width="133" height="125" rx="19"/><use href="#laptop" x="1095" y="420" width="80" height="62"/><text class="t" x="1134.5" y="509">User D</text>
+  <!-- Presence server group and one channel per relationship. -->
+  <rect class="group" x="320" y="10" width="323" height="556" rx="48"/><text x="481.5" y="75" font-family="Arial,Helvetica,sans-serif" font-size="27" font-weight="700" fill="#111" text-anchor="middle">Presence servers</text>
+  <use href="#queue" x="428" y="102" width="194" height="54"/><text class="t" x="525" y="186">Channel A-B</text><use href="#queue" x="428" y="267" width="194" height="54"/><text class="t" x="525" y="351">Channel A-C</text><use href="#queue" x="428" y="438" width="194" height="54"/><text class="t" x="525" y="522">Channel A-D</text>
+  <!-- User A fans out, while subscribers consume from the right. -->
+  <path d="M149 292 H320" stroke="#1677b8" stroke-width="2.2" fill="none"/><path class="flow" d="M320 292 L428 129"/><path class="flow" d="M320 292 H428"/><path class="flow" d="M320 292 L428 465"/>
+  <path class="shaft" d="M1068 127 H919"/><path class="flow" d="M797 127 H658"/><path class="shaft" d="M1068 298 H919"/><path class="flow" d="M797 298 H658"/><path class="shaft" d="M1068 462 H919"/><path class="flow" d="M797 462 H658"/><text class="t" x="863" y="136">subscribe</text><text class="t" x="863" y="307">subscribe</text><text class="t" x="863" y="471">subscribe</text>
+</svg>

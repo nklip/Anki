@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1178" height="1290" viewBox="0 0 1178 1290" role="img" aria-labelledby="title desc">
+  <title id="title">High-level chat system design</title>
+  <desc id="desc">Users send HTTP requests through a load balancer to API and notification servers, while WebSocket traffic goes to real-time chat and presence servers. All tiers use partitioned key-value storage.</desc>
+  <!-- Reusable user, load-balancer, server-cluster, and storage symbols. -->
+  <defs>
+    <marker id="arrow-blue" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L12 6 L0 12 Z" fill="#1677b8"/></marker>
+    <symbol id="phone" viewBox="0 0 60 100"><rect x="10" y="3" width="40" height="94" rx="5" fill="none" stroke="#333" stroke-width="4"/><path d="M10 17 H50 M10 82 H50 M25 10 H35 M27 90 H33" fill="none" stroke="#333" stroke-width="3"/></symbol>
+    <symbol id="laptop" viewBox="0 0 90 70"><rect x="17" y="5" width="56" height="45" rx="4" fill="none" stroke="#111" stroke-width="4"/><path d="M9 58 H81 L87 65 H3 Z" fill="#111"/></symbol>
+    <symbol id="lb" viewBox="0 0 90 85"><path d="M12 3 H78 L87 81 H3 Z" fill="#1677b8"/><g fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"><path d="M45 16 V66 M45 29 L30 46 V60 M45 29 L60 46 V60"/><path d="M39 22 L45 16 L51 22 M24 54 L30 60 L36 54 M54 54 L60 60 L66 54 M39 60 L45 66 L51 60"/></g><circle cx="45" cy="13" r="5" fill="#fff"/></symbol>
+    <symbol id="green-cluster" viewBox="0 0 130 90"><rect x="33" y="3" width="34" height="19" rx="2" fill="#65c515"/><rect x="72" y="3" width="34" height="19" rx="2" fill="#65c515"/><g fill="#65c515"><rect x="6" y="23" width="38" height="62"/><rect x="46" y="23" width="38" height="62"/><rect x="86" y="23" width="38" height="62"/></g><path d="M12 34 H38 M12 71 H38 M52 34 H78 M52 71 H78 M92 34 H118 M92 71 H118 M39 11 H61 M78 11 H100" stroke="#fff" stroke-width="3"/></symbol>
+    <symbol id="purple-cluster" viewBox="0 0 130 90"><rect x="33" y="3" width="34" height="19" rx="2" fill="#7100d8"/><rect x="72" y="3" width="34" height="19" rx="2" fill="#7100d8"/><g fill="#7100d8"><rect x="6" y="23" width="38" height="62"/><rect x="46" y="23" width="38" height="62"/><rect x="86" y="23" width="38" height="62"/></g><path d="M12 34 H38 M12 71 H38 M52 34 H78 M52 71 H78 M92 34 H118 M92 71 H118 M39 11 H61 M78 11 H100" stroke="#fff" stroke-width="3"/></symbol>
+    <symbol id="db" viewBox="0 0 120 100"><g fill="#1677b8" stroke="#fff" stroke-width="1.5"><path d="M8 18 A25 8 0 0 1 58 18 V68 A25 8 0 0 1 8 68 Z"/><ellipse cx="33" cy="18" rx="25" ry="8"/><path d="M35 29 A25 8 0 0 1 85 29 V79 A25 8 0 0 1 35 79 Z"/><ellipse cx="60" cy="29" rx="25" ry="8"/><path d="M62 40 A25 8 0 0 1 112 40 V90 A25 8 0 0 1 62 90 Z"/><ellipse cx="87" cy="40" rx="25" ry="8"/></g></symbol>
+    <style>.box{fill:#fff;stroke:#08b4cf;stroke-width:3}.group{fill:#fff;stroke:#08b4cf;stroke-width:3;stroke-dasharray:10 9}.flow{fill:none;stroke:#1677b8;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#arrow-blue)}.t{font-family:Arial,Helvetica,sans-serif;fill:#111;font-size:23px;text-anchor:middle}</style>
+  </defs>
+  <rect width="1178" height="1290" fill="#fff"/>
+  <!-- User entry separates HTTP from WebSocket traffic. -->
+  <rect class="box" x="522" y="54" width="196" height="111" rx="18"/><text x="536" y="99" font-family="Arial,Helvetica,sans-serif" font-size="23" fill="#111">User</text><use href="#laptop" x="570" y="90" width="72" height="56"/><use href="#phone" x="644" y="79" width="45" height="75"/>
+  <path class="flow" d="M620 165 L398 290"/><g transform="rotate(-29 484 222)"><rect x="453" y="204" width="62" height="34" fill="#fff"/><text class="t" x="484" y="230">http</text></g><use href="#lb" x="353" y="290" width="90" height="80"/><text x="203" y="340" font-family="Arial,Helvetica,sans-serif" font-size="23" fill="#111">Load balancer</text>
+  <path class="flow" d="M626 165 L884 290"/><g transform="rotate(27 772 195)"><rect x="746" y="177" width="52" height="34" fill="#fff"/><text class="t" x="772" y="203">ws</text></g>
+  <!-- Stateful real-time services. -->
+  <rect class="group" x="666" y="290" width="438" height="267" rx="47"/><text x="885" y="340" font-family="Arial,Helvetica,sans-serif" font-size="25" fill="#111" text-anchor="middle">Real time service</text>
+  <rect class="box" x="696" y="368" width="149" height="158" rx="22"/><use href="#purple-cluster" x="707" y="385" width="127" height="88"/><text class="t" x="770.5" y="506">Chat servers</text><rect class="box" x="925" y="368" width="149" height="158" rx="22"/><use href="#purple-cluster" x="936" y="385" width="127" height="88"/><text class="t" x="999.5" y="486">Presence</text><text class="t" x="999.5" y="511">servers</text>
+  <!-- Stateless HTTP service tier. -->
+  <path class="flow" d="M398 370 V791"/><rect class="box" x="324" y="791" width="147" height="158" rx="22"/><use href="#green-cluster" x="334" y="806" width="127" height="88"/><text class="t" x="397.5" y="927">API servers</text><path class="flow" d="M324 870 H196"/><rect class="box" x="49" y="791" width="147" height="158" rx="22"/><use href="#green-cluster" x="59" y="806" width="127" height="88"/><text class="t" x="122.5" y="907">Notification</text><text class="t" x="122.5" y="934">servers</text>
+  <!-- API servers exchange metadata with both real-time services. -->
+  <path class="flow" d="M471 831 H777 V557"/><path class="flow" d="M471 870 H1030 V557"/>
+  <!-- Partitioned key-value storage. -->
+  <path class="flow" d="M122 949 V1055"/><path class="flow" d="M398 949 V1055"/><path class="flow" d="M809 557 V1055"/><path class="flow" d="M1073 557 V1055"/>
+  <rect class="group" x="24" y="1055" width="1115" height="220" rx="45"/>
+  <rect class="box" x="116" y="1094" width="148" height="143" rx="21"/><use href="#db" x="130" y="1103" width="120" height="90"/><text class="t" x="190" y="1220">KV store</text><rect class="box" x="508" y="1094" width="148" height="143" rx="21"/><use href="#db" x="522" y="1103" width="120" height="90"/><text class="t" x="582" y="1220">KV store</text><rect class="box" x="916" y="1094" width="148" height="143" rx="21"/><use href="#db" x="930" y="1103" width="120" height="90"/><text class="t" x="990" y="1220">KV store</text>
+</svg>

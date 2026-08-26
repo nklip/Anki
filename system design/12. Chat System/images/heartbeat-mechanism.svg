@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1152" height="926" viewBox="0 0 1152 926" role="img" aria-labelledby="title desc">
+  <title id="title">Heartbeat presence mechanism</title>
+  <desc id="desc">A client sends a heartbeat every five seconds. Each received heartbeat keeps the user online; after thirty seconds without one, the server marks the user offline.</desc>
+  <defs><marker id="arrow-black" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L12 6 L0 12 Z" fill="#111"/></marker><style>.box{fill:#fff;stroke:#08b4cf;stroke-width:3}.life{stroke:#1677b8;stroke-width:3}.msg{stroke:#111;stroke-width:2.7;marker-end:url(#arrow-black)}.wait{stroke:#111;stroke-width:1.5;stroke-dasharray:5 5;marker-end:url(#arrow-black)}.t{font-family:Arial,Helvetica,sans-serif;fill:#111;font-size:21px}.center{text-anchor:middle}</style></defs>
+  <rect width="1152" height="926" fill="#fff"/><rect class="box" x="75" y="42" width="130" height="57" rx="9"/><text class="t center" x="140" y="79">Client</text><rect class="box" x="572" y="42" width="130" height="57" rx="9"/><text class="t center" x="637" y="79">Server</text><path class="life" d="M140 99 V901 M637 99 V901" fill="none"/>
+  <!-- Three healthy heartbeat cycles. -->
+  <g fill="none"><path class="msg" d="M149 153 H629"/><path class="msg" d="M149 291 H629"/><path class="msg" d="M149 429 H629"/><path class="wait" d="M75 291 V153 H131"/><path class="wait" d="M75 429 V291 H131"/><path class="wait" d="M75 803 V429 H131"/></g>
+  <g class="t center"><text x="390" y="139">heartbeat</text><text x="390" y="277">heartbeat</text><text x="390" y="415">heartbeat</text></g><text class="t" x="30" y="230">5s</text><text class="t" x="30" y="368">5s</text><text class="t" x="1" y="646" font-size="19">x = 30s</text>
+  <!-- Healthy confirmations stop after the timeout interval. -->
+  <circle cx="697" cy="153" r="14" fill="#00f018"/><text class="t" x="727" y="161">Heartbeat received. Status is online</text><circle cx="697" cy="291" r="14" fill="#00f018"/><text class="t" x="727" y="299">Heartbeat received. Status is online</text><circle cx="697" cy="429" r="14" fill="#00f018"/><text class="t" x="727" y="437">Heartbeat received. Status is online</text>
+  <circle cx="697" cy="803" r="14" fill="#ff1730"/><text class="t" x="727" y="800">No heartbeat after 30 seconds.</text><text class="t" x="727" y="824">Change status to offline</text>
+</svg>

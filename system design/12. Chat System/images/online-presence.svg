@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="298" viewBox="0 0 1080 298" role="img" aria-labelledby="title desc">
+  <title id="title">Online presence state</title>
+  <desc id="desc">User A holds a WebSocket connection to presence servers. The servers write the online status and last-active timestamp to a key-value store.</desc>
+  <defs>
+    <marker id="arrow-blue" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse"><path d="M0 0 L12 6 L0 12 Z" fill="#1677b8"/></marker>
+    <symbol id="phone" viewBox="0 0 60 100"><rect x="10" y="3" width="40" height="94" rx="5" fill="none" stroke="#333" stroke-width="4"/><path d="M10 17 H50 M10 82 H50 M25 10 H35 M27 90 H33" fill="none" stroke="#333" stroke-width="3"/></symbol>
+    <symbol id="db" viewBox="0 0 120 100"><g fill="#1677b8" stroke="#fff" stroke-width="1.5"><path d="M8 18 A25 8 0 0 1 58 18 V68 A25 8 0 0 1 8 68 Z"/><ellipse cx="33" cy="18" rx="25" ry="8"/><path d="M35 29 A25 8 0 0 1 85 29 V79 A25 8 0 0 1 35 79 Z"/><ellipse cx="60" cy="29" rx="25" ry="8"/><path d="M62 40 A25 8 0 0 1 112 40 V90 A25 8 0 0 1 62 90 Z"/><ellipse cx="87" cy="40" rx="25" ry="8"/></g></symbol>
+    <style>.box{fill:#fff;stroke:#08b4cf;stroke-width:3}.flow{fill:none;stroke:#1677b8;stroke-width:2.4;marker-end:url(#arrow-blue)}.both{fill:none;stroke:#1677b8;stroke-width:2.4;marker-start:url(#arrow-blue);marker-end:url(#arrow-blue)}.t{font-family:Arial,Helvetica,sans-serif;fill:#111;font-size:27px;text-anchor:middle}</style>
+  </defs>
+  <rect width="1080" height="298" fill="#fff"/>
+  <!-- User A maintains a two-way WebSocket connection. -->
+  <rect class="box" x="4" y="28" width="149" height="140" rx="22"/><use href="#phone" x="47" y="39" width="60" height="83"/><text class="t" x="78.5" y="148">User A</text>
+  <path class="both" d="M153 98 H403"/><rect x="185" y="63" width="173" height="38" fill="#fff"/><text class="t" x="271.5" y="82">ws connection</text>
+  <rect class="box" x="403" y="44" width="241" height="109" rx="17"/><text class="t" x="523.5" y="109">Presence servers</text>
+  <!-- Presence servers persist status and last activity. -->
+  <path class="flow" d="M644 98 H800"/>
+  <rect class="box" x="800" y="8" width="185" height="180" rx="25"/><use href="#db" x="833" y="24" width="120" height="100"/><text class="t" x="892.5" y="169">KV store</text>
+  <text class="t" x="894" y="239">User A: {status: online,</text><text class="t" x="894" y="277">last_active_at: timestamp}</text>
+</svg>

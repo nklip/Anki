@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1446" height="952" viewBox="0 0 1446 952" role="img"
+  aria-labelledby="title desc">
+  <title id="title">WebSocket connection sequence</title>
+  <desc id="desc">The client opens a WebSocket endpoint with an HTTP handshake, the server acknowledges it, and both
+    sides then exchange messages bidirectionally over the persistent connection.</desc>
+  <defs>
+    <marker id="black" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="10" refY="7"
+      orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L14 7 L0 14 Z" fill="#111" />
+    </marker>
+    <marker id="green" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="10" refY="7" orient="auto"
+      markerUnits="userSpaceOnUse">
+      <path d="M0 0 L14 7 L0 14 Z" fill="#00a51a" />
+    </marker>
+    <style>
+      .box {
+        fill: #fff;
+        stroke: #08b4cf;
+        stroke-width: 5
+      }
+
+      .life {
+        stroke: #1677b8;
+        stroke-width: 5
+      }
+
+      .black {
+        stroke: #111;
+        stroke-width: 5;
+        marker-end: url(#black)
+      }
+
+      .green {
+        stroke: #00a51a;
+        stroke-width: 5;
+        marker-end: url(#green)
+      }
+
+      .both {
+        stroke: #111;
+        stroke-width: 5;
+        stroke-dasharray: 16 15;
+        marker-start: url(#black);
+        marker-end: url(#black)
+      }
+
+      .t {
+        font-family: Arial, Helvetica, sans-serif;
+        fill: #111
+      }
+
+      .center {
+        text-anchor: middle
+      }
+    </style>
+  </defs>
+  <!-- Client and server lifelines frame the persistent connection. -->
+  <rect width="1446" height="952" fill="#fff" />
+  <rect class="box" x="161" y="93" width="260" height="113" rx="17" /><text class="t center" x="291" y="166"
+    font-size="45">Client</text>
+  <rect class="box" x="1147" y="93" width="259" height="113" rx="17" /><text class="t center" x="1276.5" y="166"
+    font-size="45">Server</text>
+  <path class="life" d="M290 206 V915 M1277 206 V915" fill="none" />
+  <!-- HTTP upgrade and acknowledgement establish WebSocket messaging. -->
+  <rect x="26" y="264" width="192" height="82" rx="14" fill="#fff" stroke="#111" stroke-width="3" /><text
+    class="t center" x="122" y="322" font-size="40">GET /ws</text>
+  <path class="black" d="M301 313 L1263 391" fill="none" />
+  <g transform="rotate(5 756 315)">
+    <rect x="589" y="277" width="334" height="52" fill="#fff" /><text class="t center" x="756" y="318"
+      font-size="39">HTTP Handshake</text>
+  </g>
+  <path class="green" d="M1260 423 L302 646" fill="none" />
+  <g transform="rotate(-13 765 500)">
+    <rect x="603" y="460" width="324" height="52" fill="#fff" /><text class="t center" x="765" y="502"
+      font-size="39">Acknowledgment</text>
+  </g>
+  <path class="both" d="M304 818 H1263" fill="none" />
+  <rect x="594" y="745" width="357" height="55" fill="#fff" /><text class="t center" x="772.5" y="788"
+    font-size="39">Bidirectional messages</text>
+</svg>

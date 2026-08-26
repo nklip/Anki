@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1436" height="1544" viewBox="0 0 1436 1544" role="img" aria-labelledby="title desc">
+  <title id="title">Short polling sequence</title>
+  <desc id="desc">The client repeatedly opens a request asking for new messages. Each response closes the connection, whether no messages or new messages are returned.</desc>
+  <!-- Sequence arrows use independent colors for request, empty response, and successful response. -->
+  <defs>
+    <marker id="arrow-black" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="13" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L14 7 L0 14 Z" fill="#111"/></marker>
+    <marker id="arrow-red" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="13" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L14 7 L0 14 Z" fill="#f11"/></marker>
+    <marker id="arrow-green" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="13" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L14 7 L0 14 Z" fill="#00a51a"/></marker>
+    <style>.box{fill:#fff;stroke:#08b4cf;stroke-width:4}.life{stroke:#1677b8;stroke-width:4}.req{stroke:#111;stroke-width:4;marker-end:url(#arrow-black)}.no{stroke:#f11;stroke-width:4;marker-end:url(#arrow-red)}.yes{stroke:#00a51a;stroke-width:4;marker-end:url(#arrow-green)}.close{stroke:#111;stroke-width:2.2;stroke-dasharray:7 7}.t{font-family:Arial,Helvetica,sans-serif;fill:#111;font-size:35px}.center{text-anchor:middle}</style>
+  </defs>
+  <rect width="1436" height="1544" fill="#fff"/>
+  <rect class="box" x="201" y="42" width="225" height="96" rx="16"/><text class="t center" x="313.5" y="104" font-size="39">Client</text><rect class="box" x="1056" y="42" width="225" height="96" rx="16"/><text class="t center" x="1168.5" y="104" font-size="39">Server</text>
+  <path class="life" d="M314 138 V1515 M1168 138 V1515" fill="none"/>
+  <!-- Repeated polling cycles. -->
+  <g id="cycles" fill="none">
+    <path class="req" d="M322 231 H1156"/><path class="no" d="M1152 301 H322"/><path class="close" d="M322 375 H1152"/>
+    <path class="req" d="M322 529 H1156"/><path class="no" d="M1152 600 H322"/><path class="close" d="M322 671 H1152"/>
+    <path class="req" d="M322 813 H1156"/><path class="yes" d="M1152 884 H322"/><path class="close" d="M322 957 H1152"/>
+    <path class="req" d="M322 1122 H1156"/><path class="no" d="M1152 1193 H322"/><path class="close" d="M322 1265 H1152"/>
+  </g>
+  <!-- Labels remain outside all arrow shafts. -->
+  <g class="t"><text x="31" y="244">New messages?</text><text x="31" y="542">New messages?</text><text x="31" y="826">New messages?</text><text x="31" y="1135">New messages?</text><text x="1203" y="309">NO</text><text x="1203" y="608">NO</text><text x="1203" y="877">Yes. Return</text><text x="1203" y="915">new messages</text><text x="1203" y="1201">NO</text></g>
+  <g class="t center" font-size="30"><rect x="604" y="349" width="270" height="48" fill="#fff"/><text x="739" y="385">connection closed</text><rect x="604" y="645" width="270" height="48" fill="#fff"/><text x="739" y="681">connection closed</text><rect x="604" y="931" width="270" height="48" fill="#fff"/><text x="739" y="967">connection closed</text><rect x="604" y="1239" width="270" height="48" fill="#fff"/><text x="739" y="1275">connection closed</text></g>
+  <text class="t center" x="724" y="1358">·</text><text class="t center" x="724" y="1435">·</text><text class="t center" x="724" y="1512">·</text>
+</svg>

@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1428" height="1350" viewBox="0 0 1428 1350" role="img"
+  aria-labelledby="title desc">
+  <title id="title">Long polling sequence</title>
+  <desc id="desc">The server holds a client request until messages arrive or the request times out, then closes the
+    connection and the client starts another request.</desc>
+  <defs>
+    <marker id="arrow-black" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="13" refY="7" orient="auto"
+      markerUnits="userSpaceOnUse">
+      <path d="M0 0 L14 7 L0 14 Z" fill="#111" />
+    </marker>
+    <marker id="arrow-red" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="13" refY="7" orient="auto"
+      markerUnits="userSpaceOnUse">
+      <path d="M0 0 L14 7 L0 14 Z" fill="#f11" />
+    </marker>
+    <marker id="arrow-green" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="13" refY="7" orient="auto"
+      markerUnits="userSpaceOnUse">
+      <path d="M0 0 L14 7 L0 14 Z" fill="#00a51a" />
+    </marker>
+    <style>
+      .box {
+        fill: #fff;
+        stroke: #08b4cf;
+        stroke-width: 4
+      }
+
+      .life {
+        stroke: #1677b8;
+        stroke-width: 4
+      }
+
+      .req {
+        stroke: #111;
+        stroke-width: 4;
+        marker-end: url(#arrow-black)
+      }
+
+      .timeout {
+        stroke: #f11;
+        stroke-width: 4;
+        marker-end: url(#arrow-red)
+      }
+
+      .yes {
+        stroke: #00a51a;
+        stroke-width: 4;
+        marker-end: url(#arrow-green)
+      }
+
+      .close {
+        stroke: #111;
+        stroke-width: 2.2;
+        stroke-dasharray: 7 7
+      }
+
+      .t {
+        font-family: Arial, Helvetica, sans-serif;
+        fill: #111;
+        font-size: 34px
+      }
+
+      .center {
+        text-anchor: middle
+      }
+    </style>
+  </defs>
+  <!-- Client and server lifelines frame the sequence. -->
+  <rect width="1428" height="1350" fill="#fff" />
+  <rect class="box" x="186" y="69" width="189" height="81" rx="14" /><text class="t center" x="280.5" y="121"
+    font-size="37">Client</text>
+  <rect class="box" x="909" y="69" width="189" height="81" rx="14" /><text class="t center" x="1003.5" y="121"
+    font-size="37">Server</text>
+  <path class="life" d="M281 150 V1311 M1004 150 V1311" fill="none" />
+  <!-- A successful hold is followed by a timeout cycle. -->
+  <g fill="none">
+    <path class="req" d="M288 230 H992" />
+    <path class="yes" d="M990 474 H289" />
+    <path class="close" d="M289 535 H990" />
+    <path class="req" d="M289 600 H992" />
+    <path class="timeout" d="M990 995 H289" />
+    <path class="close" d="M289 1055 H990" />
+    <path class="req" d="M289 1121 H992" />
+  </g>
+  <g class="t"><text x="35" y="242" font-size="30">New messages?</text><text x="35" y="612" font-size="30">New
+      messages?</text><text x="35" y="1133" font-size="30">New messages?</text><text x="1052" y="349">Wait for new
+      messages</text><text x="1052" y="486" font-size="28">Yes. Return new messages</text><text x="1052"
+      y="1007">Timeout</text></g>
+  <g class="t center" font-size="29">
+    <rect x="530" y="509" width="290" height="48" fill="#fff" />
+    <text x="677" y="545">connection closed</text>
+    <rect x="530" y="1029" width="290" height="48" fill="#fff" />
+    <text x="677" y="1065">connection closed</text>
+  </g><text class="t center" x="646" y="1185">·</text><text class="t center" x="646" y="1250">·</text><text
+    class="t center" x="646" y="1315">·</text>
+</svg>
