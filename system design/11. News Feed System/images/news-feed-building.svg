@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="668" height="1034" viewBox="0 0 668 1034" role="img" aria-labelledby="title desc">
+  <title id="title">News feed building flow</title>
+  <desc id="desc">A user requests a feed through DNS and a load balancer. Web servers call the news feed service, which reads the precomputed result from the news feed cache.</desc>
+
+  <!-- Entry, server, and cache symbols mirror the publishing diagram. -->
+  <defs>
+    <marker id="arrow-blue" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L12 6 L0 12 Z" fill="#1677b8"/></marker>
+    <symbol id="dns-globe" viewBox="0 0 100 100"><circle cx="50" cy="50" r="43" fill="#fff" stroke="#555" stroke-width="5"/><path d="M8 50 H92 M16 25 Q50 39 84 25 M16 75 Q50 61 84 75 M50 7 C28 25 28 75 50 93 M50 7 C72 25 72 75 50 93" fill="none" stroke="#555" stroke-width="4"/><text x="50" y="60" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" fill="#555" stroke="#fff" stroke-width="5" paint-order="stroke" text-anchor="middle">DNS</text></symbol>
+    <symbol id="laptop" viewBox="0 0 90 70"><rect x="17" y="5" width="56" height="45" rx="4" fill="none" stroke="#333" stroke-width="4"/><path d="M9 58 H81 L87 65 H3 Z" fill="#111"/><path d="M38 60 H52" stroke="#fff" stroke-width="3" stroke-linecap="round"/></symbol>
+    <symbol id="phone" viewBox="0 0 60 100"><rect x="10" y="3" width="40" height="94" rx="5" fill="none" stroke="#333" stroke-width="4"/><path d="M10 17 H50 M10 82 H50 M25 10 H35 M27 90 H33" fill="none" stroke="#333" stroke-width="3"/></symbol>
+    <symbol id="load-balancer" viewBox="0 0 90 85"><path d="M12 3 H78 L87 81 H3 Z" fill="#1677b8"/><g fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M45 16 V66 M45 29 L30 46 V60 M45 29 L60 46 V60"/><path d="M39 22 L45 16 L51 22 M24 54 L30 60 L36 54 M54 54 L60 60 L66 54 M39 60 L45 66 L51 60"/></g><circle cx="45" cy="13" r="5" fill="#fff"/></symbol>
+    <symbol id="server-rack" viewBox="0 0 30 50"><rect x="2" y="1" width="26" height="48" rx="1.5" fill="#65c515"/><path d="M6 9 H24 M6 37 H24 M6 44 H24" stroke="#fff" stroke-width="2"/></symbol>
+    <symbol id="server-back" viewBox="0 0 30 18"><rect x="2" y="1" width="26" height="16" rx="1.5" fill="#65c515"/><path d="M6 7 H24" stroke="#fff" stroke-width="2"/></symbol>
+    <symbol id="cache-card" viewBox="0 0 120 110"><rect x="3" y="4" width="58" height="59" rx="8" fill="#1677b8"/><text x="32" y="27" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#fff" text-anchor="middle">CACHE</text><rect x="31" y="25" width="58" height="59" rx="8" fill="#1677b8"/><text x="60" y="48" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#fff" text-anchor="middle">CACHE</text><rect x="59" y="46" width="58" height="59" rx="8" fill="#1677b8"/><text x="88" y="69" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#fff" text-anchor="middle">CACHE</text></symbol>
+    <style>
+      .node { fill: #fff; stroke: #111; stroke-width: 1.8; }
+      .cyan-node { fill: #fff; stroke: #08b4cf; stroke-width: 3; }
+      .dashed-node { fill: #fff; stroke: #08b4cf; stroke-width: 3; stroke-dasharray: 10 9; }
+      .flow { fill: none; stroke: #1677b8; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-blue); }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 23px; fill: #111; text-anchor: middle; }
+      .service-label { font-family: Georgia, 'Times New Roman', serif; font-size: 23px; fill: #111; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect width="668" height="1034" fill="#fff"/>
+
+  <!-- User request path. -->
+  <g id="request-entry">
+    <use href="#dns-globe" x="11" y="55" width="96" height="96"/>
+    <path class="flow" d="M236 104 H107"/>
+    <rect class="cyan-node" x="236" y="34" width="398" height="148" rx="22"/>
+    <text x="255" y="73" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#111">User</text>
+    <use href="#laptop" x="330" y="68" width="72" height="56"/>
+    <text class="label" x="366" y="151">Web browser</text>
+    <use href="#phone" x="490" y="57" width="45" height="75"/>
+    <text class="label" x="512.5" y="151">Mobile app</text>
+    <path class="flow" d="M435 182 V255"/>
+    <text x="443" y="218" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#111">v1/me/feed</text>
+    <use href="#load-balancer" x="390" y="255" width="92" height="85"/>
+    <text x="489" y="302" font-family="Arial, Helvetica, sans-serif" font-size="26" fill="#111">Load balancer</text>
+    <path class="flow" d="M436 340 V389"/>
+  </g>
+
+  <!-- Web servers call the read-side news feed service. -->
+  <g id="read-service">
+    <rect class="dashed-node" x="344" y="389" width="187" height="180" rx="26"/>
+    <use href="#server-back" x="389" y="406" width="42" height="25"/>
+    <use href="#server-back" x="433" y="406" width="42" height="25"/>
+    <use href="#server-rack" x="368" y="428" width="40" height="77"/>
+    <use href="#server-rack" x="408" y="428" width="40" height="77"/>
+    <use href="#server-rack" x="448" y="428" width="40" height="77"/>
+    <text class="label" x="437.5" y="548" style="font-size:27px;">Web servers</text>
+    <path class="flow" d="M436 569 V647"/>
+    <rect class="node" x="335" y="647" width="201" height="101" rx="14"/>
+    <text class="service-label" x="435.5" y="707">News Feed Service</text>
+    <path class="flow" d="M436 748 V844"/>
+  </g>
+
+  <!-- Read-side cache returns the precomputed feed. -->
+  <g id="news-feed-cache">
+    <rect class="cyan-node" x="348" y="844" width="177" height="176" rx="26"/>
+    <use href="#cache-card" x="376" y="855" width="120" height="110"/>
+    <text class="label" x="436.5" y="986">News Feed</text>
+    <text class="label" x="436.5" y="1012">Cache</text>
+  </g>
+</svg>

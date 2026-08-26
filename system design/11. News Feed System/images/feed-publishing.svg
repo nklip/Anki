@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="830" height="1328" viewBox="0 0 830 1328" role="img" aria-labelledby="title desc">
+  <title id="title">News feed publishing architecture</title>
+  <desc id="desc">A browser or mobile client reaches web servers through DNS and a load balancer. The web tier calls post, fanout, and notification services; post data is stored in cache and database while fanout results are stored in the news feed cache.</desc>
+
+  <!-- Shared source-native infrastructure symbols. -->
+  <defs>
+    <marker id="arrow-blue" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L12 6 L0 12 Z" fill="#1677b8"/></marker>
+    <symbol id="dns-globe" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="43" fill="#fff" stroke="#555" stroke-width="5"/>
+      <path d="M8 50 H92 M16 25 Q50 39 84 25 M16 75 Q50 61 84 75 M50 7 C28 25 28 75 50 93 M50 7 C72 25 72 75 50 93" fill="none" stroke="#555" stroke-width="4"/>
+      <text x="50" y="60" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" fill="#555" stroke="#fff" stroke-width="5" paint-order="stroke" text-anchor="middle">DNS</text>
+    </symbol>
+    <symbol id="laptop" viewBox="0 0 90 70"><rect x="17" y="5" width="56" height="45" rx="4" fill="none" stroke="#333" stroke-width="4"/><path d="M9 58 H81 L87 65 H3 Z" fill="#111"/><path d="M38 60 H52" stroke="#fff" stroke-width="3" stroke-linecap="round"/></symbol>
+    <symbol id="phone" viewBox="0 0 60 100"><rect x="10" y="3" width="40" height="94" rx="5" fill="none" stroke="#333" stroke-width="4"/><path d="M10 17 H50 M10 82 H50 M25 10 H35 M27 90 H33" fill="none" stroke="#333" stroke-width="3"/></symbol>
+    <symbol id="load-balancer" viewBox="0 0 90 85">
+      <path d="M12 3 H78 L87 81 H3 Z" fill="#1677b8"/>
+      <g fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M45 16 V66 M45 29 L30 46 V60 M45 29 L60 46 V60"/>
+        <path d="M39 22 L45 16 L51 22 M24 54 L30 60 L36 54 M54 54 L60 60 L66 54 M39 60 L45 66 L51 60"/>
+      </g><circle cx="45" cy="13" r="5" fill="#fff"/>
+    </symbol>
+    <symbol id="server-rack" viewBox="0 0 30 50"><rect x="2" y="1" width="26" height="48" rx="1.5" fill="#65c515"/><path d="M6 9 H24 M6 37 H24 M6 44 H24" stroke="#fff" stroke-width="2"/></symbol>
+    <symbol id="server-back" viewBox="0 0 30 18"><rect x="2" y="1" width="26" height="16" rx="1.5" fill="#65c515"/><path d="M6 7 H24" stroke="#fff" stroke-width="2"/></symbol>
+    <symbol id="cache-card" viewBox="0 0 120 110">
+      <rect x="3" y="4" width="58" height="59" rx="8" fill="#1677b8"/><text x="32" y="27" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#fff" text-anchor="middle">CACHE</text>
+      <rect x="31" y="25" width="58" height="59" rx="8" fill="#1677b8"/><text x="60" y="48" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#fff" text-anchor="middle">CACHE</text>
+      <rect x="59" y="46" width="58" height="59" rx="8" fill="#1677b8"/><text x="88" y="69" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#fff" text-anchor="middle">CACHE</text>
+    </symbol>
+    <symbol id="db-cluster" viewBox="0 0 120 100"><g fill="#1677b8" stroke="#fff" stroke-width="1.5"><path d="M8 18 A25 8 0 0 1 58 18 V68 A25 8 0 0 1 8 68 Z"/><ellipse cx="33" cy="18" rx="25" ry="8"/><path d="M35 29 A25 8 0 0 1 85 29 V79 A25 8 0 0 1 35 79 Z"/><ellipse cx="60" cy="29" rx="25" ry="8"/><path d="M62 40 A25 8 0 0 1 112 40 V90 A25 8 0 0 1 62 90 Z"/><ellipse cx="87" cy="40" rx="25" ry="8"/></g></symbol>
+    <style>
+      .node { fill: #fff; stroke: #111; stroke-width: 1.8; }
+      .cyan-node { fill: #fff; stroke: #08b4cf; stroke-width: 3; }
+      .dashed-node { fill: #fff; stroke: #08b4cf; stroke-width: 3; stroke-dasharray: 10 9; }
+      .flow { fill: none; stroke: #1677b8; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-blue); }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 23px; fill: #111; text-anchor: middle; }
+      .service-label { font-family: Georgia, 'Times New Roman', serif; font-size: 23px; fill: #111; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect width="830" height="1328" fill="#fff"/>
+
+  <!-- User entry through DNS and the load balancer. -->
+  <g id="entry">
+    <use href="#dns-globe" x="3" y="64" width="96" height="96"/>
+    <path class="flow" d="M214 113 H99"/>
+
+    <rect class="cyan-node" x="213" y="43" width="393" height="144" rx="21"/>
+    <text x="234" y="80" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#111">User</text>
+    <use href="#laptop" x="293" y="76" width="72" height="56"/>
+    <text class="label" x="329" y="153">Web browser</text>
+    <use href="#phone" x="472" y="66" width="45" height="75"/>
+    <text class="label" x="494.5" y="153">Mobile app</text>
+
+    <path class="flow" d="M408 187 V312"/>
+    <text x="417" y="216" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#111">v1/me/feed?</text>
+    <text x="417" y="241" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#111">content=Hello&amp;</text>
+    <text x="417" y="266" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#111">auth_token={auth_token}</text>
+    <use href="#load-balancer" x="365" y="312" width="90" height="82"/>
+    <text x="463" y="360" font-family="Arial, Helvetica, sans-serif" font-size="26" fill="#111">Load balancer</text>
+    <path class="flow" d="M410 394 V443"/>
+  </g>
+
+  <!-- Web server tier fans the request out to three services. -->
+  <g id="web-and-services">
+    <rect class="dashed-node" x="318" y="443" width="181" height="180" rx="25"/>
+    <use href="#server-back" x="362" y="460" width="42" height="25"/>
+    <use href="#server-back" x="405" y="460" width="42" height="25"/>
+    <use href="#server-rack" x="342" y="482" width="40" height="76"/>
+    <use href="#server-rack" x="382" y="482" width="40" height="76"/>
+    <use href="#server-rack" x="422" y="482" width="40" height="76"/>
+    <text class="label" x="408.5" y="602" style="font-size:27px;">Web servers</text>
+
+    <path class="flow" d="M408 623 L139 696"/>
+    <path class="flow" d="M408 623 V696"/>
+    <path class="flow" d="M408 623 L698 696"/>
+
+    <rect class="node" x="40" y="696" width="198" height="99" rx="14"/>
+    <text class="service-label" x="139" y="755">Post Service</text>
+    <rect class="node" x="307" y="696" width="198" height="99" rx="14"/>
+    <text class="service-label" x="406" y="755">Fanout Service</text>
+    <rect class="node" x="599" y="696" width="197" height="99" rx="14"/>
+    <text class="service-label" x="697.5" y="744">Notification</text>
+    <text class="service-label" x="697.5" y="772">Service</text>
+  </g>
+
+  <!-- Post storage and precomputed news-feed cache. -->
+  <g id="storage">
+    <path class="flow" d="M139 795 V869"/>
+    <rect class="cyan-node" x="51" y="869" width="175" height="174" rx="25"/>
+    <use href="#cache-card" x="78" y="879" width="120" height="110"/>
+    <text class="label" x="138.5" y="1021">Post Cache</text>
+    <path class="flow" d="M139 1043 V1143"/>
+    <rect class="cyan-node" x="51" y="1143" width="174" height="173" rx="25"/>
+    <use href="#db-cluster" x="78" y="1164" width="120" height="100"/>
+    <text class="label" x="138" y="1294">Post DB</text>
+
+    <path class="flow" d="M406 795 V869"/>
+    <rect class="cyan-node" x="318" y="869" width="173" height="173" rx="25"/>
+    <use href="#cache-card" x="344" y="879" width="120" height="110"/>
+    <text class="label" x="404.5" y="1007">News Feed</text>
+    <text class="label" x="404.5" y="1033">Cache</text>
+  </g>
+</svg>

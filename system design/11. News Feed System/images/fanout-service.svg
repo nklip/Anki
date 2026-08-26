@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="984" height="892" viewBox="0 0 984 892" role="img" aria-labelledby="title desc">
+  <title id="title">Fanout service data flow</title>
+  <desc id="desc">A fanout service reads friend identifiers from a graph database, reads friend data from a user cache backed by a user database, publishes jobs to a message queue, and workers write the resulting feeds to the news feed cache.</desc>
+
+  <!-- Reusable arrows, queue, storage, and server symbols. -->
+  <defs>
+    <marker id="arrow-blue" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L12 6 L0 12 Z" fill="#1677b8"/>
+    </marker>
+    <symbol id="cache-card" viewBox="0 0 120 110">
+      <rect x="3" y="4" width="58" height="59" rx="8" fill="#1677b8"/><text x="32" y="27" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#fff" text-anchor="middle">CACHE</text>
+      <rect x="31" y="25" width="58" height="59" rx="8" fill="#1677b8"/><text x="60" y="48" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#fff" text-anchor="middle">CACHE</text>
+      <rect x="59" y="46" width="58" height="59" rx="8" fill="#1677b8"/><text x="88" y="69" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#fff" text-anchor="middle">CACHE</text>
+    </symbol>
+    <symbol id="db-cluster" viewBox="0 0 120 100">
+      <g fill="#1677b8" stroke="#fff" stroke-width="1.5">
+        <path d="M8 18 A25 8 0 0 1 58 18 V68 A25 8 0 0 1 8 68 Z"/><ellipse cx="33" cy="18" rx="25" ry="8"/>
+        <path d="M35 29 A25 8 0 0 1 85 29 V79 A25 8 0 0 1 35 79 Z"/><ellipse cx="60" cy="29" rx="25" ry="8"/>
+        <path d="M62 40 A25 8 0 0 1 112 40 V90 A25 8 0 0 1 62 90 Z"/><ellipse cx="87" cy="40" rx="25" ry="8"/>
+      </g>
+    </symbol>
+    <symbol id="server-rack" viewBox="0 0 30 50"><rect x="2" y="1" width="26" height="48" rx="1.5" fill="#65c515"/><path d="M6 9 H24 M6 37 H24 M6 44 H24" stroke="#fff" stroke-width="2"/></symbol>
+    <symbol id="server-back" viewBox="0 0 30 18"><rect x="2" y="1" width="26" height="16" rx="1.5" fill="#65c515"/><path d="M6 7 H24" stroke="#fff" stroke-width="2"/></symbol>
+    <symbol id="message-queue" viewBox="0 0 276 82">
+      <path d="M2 2 H252 L274 41 L252 80 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="5" stroke-linejoin="round"/>
+      <g fill="none" stroke="#1677b8" stroke-width="5">
+        <rect x="16" y="15" width="68" height="48"/><path d="M16 16 L50 43 L84 16"/>
+        <rect x="94" y="15" width="68" height="48"/><path d="M94 16 L128 43 L162 16"/>
+        <rect x="172" y="15" width="68" height="48"/><path d="M172 16 L206 43 L240 16"/>
+      </g>
+    </symbol>
+    <style>
+      .node { fill: #fff; stroke: #111; stroke-width: 1.8; }
+      .cyan-node { fill: #fff; stroke: #08b4cf; stroke-width: 3; }
+      .dashed-node { fill: #fff; stroke: #08b4cf; stroke-width: 3; stroke-dasharray: 10 9; }
+      .flow { fill: none; stroke: #1677b8; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-blue); }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 22px; fill: #111; text-anchor: middle; }
+      .service-label { font-family: Georgia, 'Times New Roman', serif; font-size: 25px; fill: #111; text-anchor: middle; }
+      .step { fill: #fff; stroke: #111; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <rect width="984" height="892" fill="#fff"/>
+
+  <!-- Fanout service and data reads. -->
+  <g id="fanout-data-reads">
+    <rect class="node" x="46" y="59" width="200" height="100" rx="15"/>
+    <text class="service-label" x="146" y="119">Fanout Service</text>
+
+    <path class="flow" d="M246 109 H531"/>
+    <circle class="step" cx="298" cy="82" r="15"/>
+    <text class="label" x="298" y="90" style="font-size:19px;">1</text>
+    <text class="service-label" x="385" y="90" style="font-size:22px;">get friend ids</text>
+
+    <path class="flow" d="M246 110 L470 374"/>
+    <circle class="step" cx="298" cy="207" r="15"/><text class="label" x="298" y="215" style="font-size:19px;">2</text>
+    <!-- Keep the diagonal lookup label parallel to, but visibly clear of, its route. -->
+    <g transform="rotate(48 364 294)">
+      <rect x="272" y="278" width="184" height="31" fill="#fff"/>
+      <text class="service-label" x="355" y="290" style="font-size:21px;">get friends data</text>
+    </g>
+  </g>
+
+  <!-- Graph database, user cache, and backing user database. -->
+  <g id="user-data">
+    <rect class="cyan-node" x="531" y="23" width="177" height="176" rx="25"/>
+    <path d="M576 55 A45 22 0 0 1 666 55 V119 A45 22 0 0 1 576 119 Z" fill="#fff" stroke="#555" stroke-width="2"/>
+    <ellipse cx="621" cy="55" rx="45" ry="22" fill="#fff" stroke="#555" stroke-width="2"/>
+    <g fill="#f3f3f3" stroke="#666" stroke-width="1.2">
+      <circle cx="612" cy="87" r="9"/><circle cx="633" cy="99" r="12"/><circle cx="616" cy="121" r="10"/><circle cx="641" cy="80" r="6"/>
+    </g>
+    <path d="M612 87 L633 99 L616 121 M612 87 L641 80 L633 99" fill="none" stroke="#777" stroke-width="1.2" stroke-dasharray="2 2"/>
+    <text class="label" x="619.5" y="176">Graph DB</text>
+
+    <rect class="cyan-node" x="470" y="283" width="177" height="178" rx="24"/>
+    <use href="#cache-card" x="489" y="292" width="120" height="110"/>
+    <text class="label" x="558.5" y="438">User Cache</text>
+    <path class="flow" d="M647 371 H765"/>
+
+    <rect class="cyan-node" x="765" y="283" width="177" height="178" rx="24"/>
+    <use href="#db-cluster" x="793" y="302" width="120" height="100"/>
+    <text class="label" x="853.5" y="438">User DB</text>
+  </g>
+
+  <!-- Queue and worker pipeline writes one feed per friend. -->
+  <g id="fanout-pipeline">
+    <path class="flow" d="M146 159 V251"/>
+    <circle class="step" cx="116" cy="207" r="15"/><text class="label" x="116" y="215" style="font-size:19px;">3</text>
+    <use href="#message-queue" x="12" y="250" width="276" height="82"/>
+    <text class="label" x="150" y="364">Message Queue</text>
+
+    <path class="flow" d="M142 380 V454"/>
+    <circle class="step" cx="112" cy="410" r="15"/><text class="label" x="112" y="418" style="font-size:19px;">4</text>
+    <rect class="dashed-node" x="44" y="454" width="198" height="164" rx="23"/>
+    <use href="#server-back" x="94" y="468" width="42" height="25"/>
+    <use href="#server-back" x="143" y="468" width="42" height="25"/>
+    <use href="#server-rack" x="70" y="492" width="42" height="76"/>
+    <use href="#server-rack" x="113" y="492" width="42" height="76"/>
+    <use href="#server-rack" x="156" y="492" width="42" height="76"/>
+    <text class="label" x="143" y="605">Fanout Workers</text>
+
+    <path class="flow" d="M140 618 V698"/>
+    <circle class="step" cx="112" cy="655" r="15"/><text class="label" x="112" y="663" style="font-size:19px;">5</text>
+    <rect class="cyan-node" x="50" y="698" width="174" height="176" rx="25"/>
+    <use href="#cache-card" x="75" y="707" width="120" height="110"/>
+    <text class="label" x="137" y="840">News Feed</text>
+    <text class="label" x="137" y="866">Cache</text>
+  </g>
+</svg>
