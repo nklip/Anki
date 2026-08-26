@@ -114,6 +114,20 @@ Pessimistic locking assumes that discovering a conflict late would be too costly
 
 Hibernate uses the database’s locking mechanism rather than an in-memory Java lock. The actual SQL might use `FOR UPDATE`, a lock hint, or another database-specific mechanism. JPA deliberately does not standardize that SQL, and the provider or database may lock more rows than the application selected.
 
+### Database support for each distinct lock behavior
+
+Database “support” has two layers. JPA defines the guarantee, while the provider translates it to SQL for a particular database. The table below covers the physical capabilities of common current engines; it is not a provider certification list. A provider may use a stronger lock when the database lacks an exact shared-lock equivalent.
+
+| Distinct behavior | Databases with the required native or equivalent capability | Databases without the exact native behavior |
+|---|---|---|
+| Automatic `@Version` check and `OPTIMISTIC` | PostgreSQL, MySQL, MariaDB, Oracle, SQL Server, H2, and SQLite: the provider uses a version predicate or verification query, not a long-term row lock. | None of these engines lacks the basic SQL capability. Explicit `OPTIMISTIC` still requires a versioned entity for portable JPA. |
+| `OPTIMISTIC_FORCE_INCREMENT` | All engines above can execute the provider’s version-column `UPDATE`. | There is no special database lock mode to support. Portable use requires a versioned entity and a provider that supports that database. |
+| `PESSIMISTIC_READ` | PostgreSQL (`FOR SHARE`), MySQL 8.4 with InnoDB (`FOR SHARE`), MariaDB with InnoDB (`LOCK IN SHARE MODE`), and SQL Server (transaction-held shared locks via lock hints). | Oracle and H2 have no selected-row shared-lock form equivalent to `FOR SHARE`; Hibernate can promote the request to the stronger `FOR UPDATE`. SQLite has no row-level locks, so it cannot provide the exact guarantee. |
+| `PESSIMISTIC_WRITE` | PostgreSQL, MySQL/InnoDB, MariaDB/InnoDB, Oracle, and H2 use `FOR UPDATE`; SQL Server provides equivalent update/exclusive lock hints. | SQLite serializes writers with database-file locking instead of locking the selected rows, so exact row-level behavior is unavailable. |
+| `PESSIMISTIC_FORCE_INCREMENT` | On a versioned entity, a provider composes an immediate version `UPDATE` with pessimistic write protection. Therefore PostgreSQL, MySQL/InnoDB, MariaDB/InnoDB, Oracle, SQL Server, and H2 have the needed capabilities. | No listed database exposes this as one native lock type; it is provider-created behavior. SQLite still lacks the required exact row-level pessimistic lock. |
+
+`READ` has the same database support as `OPTIMISTIC`, and `WRITE` has the same support as `OPTIMISTIC_FORCE_INCREMENT`, because they are aliases rather than distinct behaviors. `NONE` requests no lock, so database support does not apply.
+
 ### Acquiring a pessimistic lock
 
 The following calls must run in an active transaction.
@@ -235,3 +249,10 @@ Start with `@Version` for concurrently edited entities. Choose pessimistic locki
 - [Jakarta Persistence 3.2 API — `Timeout`](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/timeout)
 - [Jakarta Persistence 3.2 API — `PessimisticLockScope`](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/pessimisticlockscope)
 - [Hibernate ORM 7.2 User Guide — Locking](https://docs.hibernate.org/orm/7.2/userguide/html_single/#locking)
+- [PostgreSQL 18 documentation — Explicit row-level locking](https://www.postgresql.org/docs/18/explicit-locking.html#LOCKING-ROWS)
+- [MySQL 8.4 Reference Manual — InnoDB locking reads](https://dev.mysql.com/doc/refman/8.4/en/innodb-locking-reads.html)
+- [MariaDB documentation — `LOCK IN SHARE MODE`](https://mariadb.com/docs/server/reference/sql-statements/data-manipulation/selecting-data/lock-in-share-mode)
+- [Oracle AI Database 26 documentation — Data concurrency and locking](https://docs.oracle.com/en/database/oracle/oracle-database/26/cncpt/data-concurrency-and-consistency.html)
+- [Microsoft SQL Server documentation — Table lock hints](https://learn.microsoft.com/en-us/sql/t-sql/queries/hints-transact-sql-table)
+- [H2 documentation — `SELECT ... FOR UPDATE`](https://h2database.github.io/html/commands.html#select)
+- [SQLite documentation — Isolation and database-file write serialization](https://www.sqlite.org/isolation.html)
