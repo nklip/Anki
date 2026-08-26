@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1510" height="1094" viewBox="0 0 1510 1094" role="img" aria-labelledby="title desc">
+  <title id="title">Web crawler architecture</title>
+  <desc id="desc">Seed URLs move through the URL frontier, downloader, parser, duplicate-content check, link extractor, URL filter, and duplicate-URL check. DNS, content storage, and URL storage support the crawler, and unseen URLs return to the frontier.</desc>
+
+  <!-- The source uses thin black connectors and unfilled rounded process boxes. -->
+  <defs>
+    <marker id="arrow-black" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="13" refY="7" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L14 7 L0 14 Z" fill="#111"/>
+    </marker>
+    <style>
+      .node { fill: #fff; stroke: #111; stroke-width: 2; }
+      .storage { fill: #fff; stroke: #111; stroke-width: 3; }
+      .flow { fill: none; stroke: #111; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-black); }
+      .two-way { fill: none; stroke: #111; stroke-width: 2.2; marker-start: url(#arrow-black); marker-end: url(#arrow-black); }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 24px; fill: #111; text-anchor: middle; dominant-baseline: middle; }
+      .storage-label { font-family: Arial, Helvetica, sans-serif; font-size: 22px; fill: #111; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect width="1510" height="1094" fill="#fff"/>
+
+  <!-- Primary left-to-right crawl stages at the same height as the PNG. -->
+  <g id="primary-flow">
+    <rect class="node" x="14" y="248" width="233" height="97" rx="14"/>
+    <text class="label" x="130.5" y="296.5">seed URLs</text>
+    <path class="flow" d="M247 296.5 H304"/>
+
+    <rect class="node" x="304" y="248" width="232" height="97" rx="14"/>
+    <text class="label" x="420" y="296.5">URL Frontier</text>
+    <path class="flow" d="M536 296.5 H594"/>
+
+    <rect class="node" x="594" y="248" width="233" height="97" rx="14"/>
+    <text class="label" x="710.5" y="296.5">HTML Downloader</text>
+    <path class="flow" d="M827 296.5 H903"/>
+
+    <rect class="node" x="903" y="248" width="232" height="97" rx="14"/>
+    <text class="label" x="1019" y="296.5">Content Parser</text>
+    <path class="flow" d="M1135 296.5 H1251"/>
+
+    <rect class="node" x="1251" y="248" width="212" height="97" rx="14"/>
+    <text class="label" x="1357" y="296.5">Content Seen?</text>
+  </g>
+
+  <!-- DNS resolver above the downloader. -->
+  <g id="dns-resolver">
+    <rect class="node" x="594" y="40" width="233" height="105" rx="14"/>
+    <text class="label" x="710.5" y="92.5">DNS Resolver</text>
+    <path class="flow" d="M710.5 248 V145"/>
+  </g>
+
+  <!-- Content storage exchanges fingerprints with the duplicate-content check. -->
+  <g id="content-storage">
+    <rect class="storage" x="1297" y="50" width="122" height="83"/>
+    <ellipse class="storage" cx="1358" cy="50" rx="61" ry="18"/>
+    <path class="storage" d="M1297 133 A61 18 0 0 0 1419 133"/>
+    <text class="storage-label" x="1358" y="94">Content</text>
+    <text class="storage-label" x="1358" y="120">Storage</text>
+    <path class="two-way" d="M1357 151 V248"/>
+  </g>
+
+  <!-- Extracted links descend through filtering and URL deduplication. -->
+  <g id="link-processing">
+    <path class="flow" d="M1357 345 V402"/>
+    <rect class="node" x="1251" y="402" width="212" height="96" rx="14"/>
+    <text class="label" x="1357" y="450">Link Extractor</text>
+
+    <path class="flow" d="M1357 498 V575"/>
+    <rect class="node" x="1240" y="575" width="233" height="97" rx="14"/>
+    <text class="label" x="1356.5" y="623.5">URL Filter</text>
+
+    <path class="flow" d="M1357 672 V771"/>
+    <rect class="node" x="1246" y="771" width="224" height="96" rx="14"/>
+    <text class="label" x="1358" y="819">URL Seen?</text>
+  </g>
+
+  <!-- URL storage lookup and update use the original single bidirectional connector. -->
+  <g id="url-storage">
+    <path class="two-way" d="M1358 867 V964"/>
+    <rect class="storage" x="1297" y="982" width="122" height="76"/>
+    <ellipse class="storage" cx="1358" cy="982" rx="61" ry="18"/>
+    <path class="storage" d="M1297 1058 A61 18 0 0 0 1419 1058"/>
+    <text class="storage-label" x="1358" y="1022">URL</text>
+    <text class="storage-label" x="1358" y="1048">Storage</text>
+  </g>
+
+  <!-- Feedback route mirrors the PNG: left from URL Seen, then up into the frontier. -->
+  <path id="frontier-feedback" class="flow" d="M1246 819 H420 V345"/>
+</svg>

@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1256" height="1244" viewBox="0 0 1256 1244" role="img" aria-labelledby="title desc">
+  <title id="title">Polite crawler back queues</title>
+  <desc id="desc">A queue router uses a mapping table to assign URLs to back queues b1 through bn. A queue selector releases eligible URLs to worker threads while preserving per-host politeness.</desc>
+
+  <!-- Match the source's cyan routing boxes, blue arrows, black queues, and green workers. -->
+  <defs>
+    <marker id="arrow-blue" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="13" refY="7" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L14 7 L0 14 Z" fill="#1677b8"/>
+    </marker>
+    <style>
+      .router { fill: #fff; stroke: #08b4cf; stroke-width: 4; }
+      .queue { fill: #fff; stroke: #111; stroke-width: 3.5; }
+      .queue-rule { stroke: #111; stroke-width: 3; }
+      .flow { fill: none; stroke: #1677b8; stroke-width: 2.7; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-blue); }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 30px; fill: #111; text-anchor: middle; dominant-baseline: middle; }
+      .worker-label { font-family: Arial, Helvetica, sans-serif; font-size: 25px; fill: #111; text-anchor: middle; }
+      .queue-name { font-family: Arial, Helvetica, sans-serif; font-size: 27px; fill: #111; }
+      .ellipsis { font-family: Arial, Helvetica, sans-serif; font-size: 42px; font-weight: 700; fill: #111; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect width="1256" height="1244" fill="#fff"/>
+
+  <!-- Router and mapping table occupy the same upper positions as the PNG. -->
+  <g id="queue-router">
+    <rect class="router" x="419" y="52" width="326" height="132" rx="20"/>
+    <text class="label" x="582" y="118">Queue router</text>
+
+    <path class="flow" d="M745 118 H998"/>
+    <rect class="router" x="998" y="20" width="234" height="198" rx="27"/>
+    <rect x="1075" y="53" width="80" height="88" rx="8" fill="#1677b8"/>
+    <ellipse cx="1115" cy="53" rx="40" ry="13" fill="#1677b8" stroke="#fff" stroke-width="3"/>
+    <path d="M1075 141 A40 13 0 0 0 1155 141" fill="#1677b8" stroke="#1677b8" stroke-width="2"/>
+    <text class="label" x="1115" y="181">Mapping Table</text>
+  </g>
+
+  <!-- Router fan-out into back queues b1, b2, and bn. -->
+  <g id="back-queues">
+    <path class="flow" d="M582 184 L143 335"/>
+    <path class="flow" d="M582 184 V335"/>
+    <path class="flow" d="M582 184 L1020 335"/>
+
+    <text class="queue-name" x="20" y="369">b1</text>
+    <rect class="queue" x="77" y="335" width="132" height="275"/>
+    <path class="queue-rule" d="M77 389 H209 M77 434 H209 M77 478 H209 M77 522 H209 M77 566 H209"/>
+
+    <text class="queue-name" x="461" y="369">b2</text>
+    <rect class="queue" x="516" y="335" width="132" height="275"/>
+    <path class="queue-rule" d="M516 389 H648 M516 434 H648 M516 478 H648 M516 522 H648 M516 566 H648"/>
+
+    <text class="ellipsis" x="801" y="544">…</text>
+
+    <text class="queue-name" x="886" y="369">bn</text>
+    <rect class="queue" x="954" y="335" width="132" height="275"/>
+    <path class="queue-rule" d="M954 389 H1086 M954 434 H1086 M954 478 H1086 M954 522 H1086 M954 566 H1086"/>
+  </g>
+
+  <!-- Back queues converge on the selector. -->
+  <g id="queue-selector">
+    <path class="flow" d="M143 610 L469 750"/>
+    <path class="flow" d="M582 610 V750"/>
+    <path class="flow" d="M1020 610 L695 750"/>
+
+    <rect class="router" x="419" y="750" width="326" height="132" rx="20"/>
+    <text class="label" x="582" y="816">Queue selector</text>
+  </g>
+
+  <!-- Selector fan-out to worker threads mirrors the original spacing and labels. -->
+  <g id="workers">
+    <path class="flow" d="M582 882 L148 1013"/>
+    <path class="flow" d="M582 882 V1013"/>
+    <path class="flow" d="M582 882 L1021 1013"/>
+
+    <rect class="router" x="48" y="1013" width="199" height="196" rx="26"/>
+    <rect x="113" y="1021" width="70" height="116" rx="5" fill="#65c515"/>
+    <path d="M128 1040 H168 M128 1100 H168 M128 1116 H168" stroke="#fff" stroke-width="5"/>
+    <text class="worker-label" x="147.5" y="1173">Worker thread 1</text>
+
+    <rect class="router" x="482" y="1013" width="199" height="196" rx="26"/>
+    <rect x="547" y="1021" width="70" height="116" rx="5" fill="#65c515"/>
+    <path d="M562 1040 H602 M562 1100 H602 M562 1116 H602" stroke="#fff" stroke-width="5"/>
+    <text class="worker-label" x="581.5" y="1173">Worker thread 2</text>
+
+    <text class="ellipsis" x="798" y="1153">…</text>
+
+    <rect class="router" x="922" y="1013" width="199" height="196" rx="26"/>
+    <rect x="987" y="1021" width="70" height="116" rx="5" fill="#65c515"/>
+    <path d="M1002 1040 H1042 M1002 1100 H1042 M1002 1116 H1042" stroke="#fff" stroke-width="5"/>
+    <text class="worker-label" x="1021.5" y="1173">Worker thread N</text>
+  </g>
+</svg>

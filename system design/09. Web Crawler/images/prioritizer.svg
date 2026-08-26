@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="826" height="1328" viewBox="0 0 826 1328" role="img" aria-labelledby="title desc">
+  <title id="title">URL frontier prioritizer</title>
+  <desc id="desc">Input URLs are routed by priority into front queues. A front selector sends URLs to a back router, which consults a mapping table and assigns hosts to back queues. A back selector feeds worker threads.</desc>
+
+  <!-- Geometry, colors, and type sizes follow the tall PNG reference. -->
+  <defs>
+    <marker id="arrow-blue" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L12 6 L0 12 Z" fill="#1677b8"/>
+    </marker>
+    <style>
+      .router { fill: #fff; stroke: #08b4cf; stroke-width: 2.5; }
+      .queue { fill: #fff; stroke: #111; stroke-width: 2.8; }
+      .queue-rule { stroke: #111; stroke-width: 2.2; }
+      .flow { fill: none; stroke: #1677b8; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-blue); }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 20px; fill: #111; text-anchor: middle; dominant-baseline: middle; }
+      .small { font-family: Arial, Helvetica, sans-serif; font-size: 16px; fill: #111; text-anchor: middle; }
+      .annotation { font-family: Arial, Helvetica, sans-serif; font-size: 17px; fill: #111; }
+      .queue-name { font-family: Arial, Helvetica, sans-serif; font-size: 17px; fill: #111; }
+      .ellipsis { font-family: Arial, Helvetica, sans-serif; font-size: 29px; font-weight: 700; fill: #111; text-anchor: middle; }
+      .worker-label { font-family: Arial, Helvetica, sans-serif; font-size: 14px; fill: #111; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect width="826" height="1328" fill="#fff"/>
+
+  <!-- Input and prioritizer. The label stays to the right of the vertical arrow. -->
+  <g id="prioritizer">
+    <path class="flow" d="M378 45 V126"/>
+    <text class="annotation" x="396" y="89">input URLs</text>
+    <rect class="router" x="286" y="126" width="185" height="75" rx="12"/>
+    <text class="label" x="378.5" y="163.5">Prioritizer</text>
+  </g>
+
+  <!-- Priority fan-out into front queues f1, f2, and fn. -->
+  <g id="front-queues">
+    <path class="flow" d="M329 201 L128 264"/>
+    <path class="flow" d="M378.5 201 V264"/>
+    <path class="flow" d="M428 201 L626 264"/>
+
+    <text class="queue-name" x="66" y="283">f1</text>
+    <rect class="queue" x="90" y="264" width="76" height="157"/>
+    <path class="queue-rule" d="M90 294 H166 M90 320 H166 M90 345 H166 M90 370 H166 M90 395 H166"/>
+
+    <text class="queue-name" x="316" y="283">f2</text>
+    <rect class="queue" x="341" y="264" width="76" height="157"/>
+    <path class="queue-rule" d="M341 294 H417 M341 320 H417 M341 345 H417 M341 370 H417 M341 395 H417"/>
+
+    <text class="ellipsis" x="505" y="363">…</text>
+
+    <text class="queue-name" x="563" y="283">fn</text>
+    <rect class="queue" x="588" y="264" width="76" height="157"/>
+    <path class="queue-rule" d="M588 294 H664 M588 320 H664 M588 345 H664 M588 370 H664 M588 395 H664"/>
+  </g>
+
+  <!-- Front selector converges the priority queues. -->
+  <g id="front-selector">
+    <path class="flow" d="M128 421 L326 486"/>
+    <path class="flow" d="M379 421 V486"/>
+    <path class="flow" d="M626 421 L431 486"/>
+    <rect class="router" x="286" y="486" width="185" height="76" rx="12"/>
+    <text class="label" x="378.5" y="524" style="font-size: 18px;">Front queue selector</text>
+
+    <path class="flow" d="M378.5 562 V640"/>
+    <text class="annotation" x="390" y="607">output URLs</text>
+  </g>
+
+  <!-- Back router and mapping table reproduce the middle section of the source. -->
+  <g id="back-router">
+    <rect class="router" x="291" y="640" width="184" height="76" rx="12"/>
+    <text class="label" x="383" y="678" style="font-size: 18px;">Back queue router</text>
+
+    <path class="flow" d="M475 678 H619"/>
+    <rect class="router" x="619" y="623" width="134" height="111" rx="16"/>
+    <rect x="663" y="643" width="46" height="52" rx="5" fill="#1677b8"/>
+    <ellipse cx="686" cy="643" rx="23" ry="8" fill="#1677b8" stroke="#fff" stroke-width="2"/>
+    <path d="M663 695 A23 8 0 0 0 709 695" fill="#1677b8" stroke="#1677b8" stroke-width="2"/>
+    <text class="small" x="686" y="720">Mapping Table</text>
+  </g>
+
+  <!-- Host-aware back queues b1 through bn. -->
+  <g id="back-queues">
+    <path class="flow" d="M329 716 L133 801"/>
+    <path class="flow" d="M383 716 L382 801"/>
+    <path class="flow" d="M437 716 L632 801"/>
+
+    <text class="queue-name" x="70" y="820">b1</text>
+    <rect class="queue" x="95" y="801" width="76" height="155"/>
+    <path class="queue-rule" d="M95 831 H171 M95 856 H171 M95 881 H171 M95 906 H171 M95 931 H171"/>
+
+    <text class="queue-name" x="319" y="820">b2</text>
+    <rect class="queue" x="344" y="801" width="76" height="155"/>
+    <path class="queue-rule" d="M344 831 H420 M344 856 H420 M344 881 H420 M344 906 H420 M344 931 H420"/>
+
+    <text class="ellipsis" x="505" y="918">…</text>
+
+    <text class="queue-name" x="569" y="820">bn</text>
+    <rect class="queue" x="594" y="801" width="76" height="155"/>
+    <path class="queue-rule" d="M594 831 H670 M594 856 H670 M594 881 H670 M594 906 H670 M594 931 H670"/>
+  </g>
+
+  <!-- Back selector releases URLs to workers at the bottom. -->
+  <g id="back-selector">
+    <path class="flow" d="M133 956 L331 1037"/>
+    <path class="flow" d="M382 956 V1037"/>
+    <path class="flow" d="M632 956 L435 1037"/>
+    <rect class="router" x="291" y="1037" width="184" height="75" rx="12"/>
+    <text class="label" x="383" y="1074.5" style="font-size: 18px;">Back queue selector</text>
+
+    <path class="flow" d="M344 1112 L145 1195"/>
+    <path class="flow" d="M383 1112 V1195"/>
+    <path class="flow" d="M422 1112 L604 1195"/>
+  </g>
+
+  <!-- Worker cards retain the compact source proportions. -->
+  <g id="workers">
+    <rect class="router" x="82" y="1195" width="126" height="112" rx="16"/>
+    <rect x="130" y="1204" width="34" height="64" rx="3" fill="#65c515"/>
+    <path d="M138 1218 H156 M138 1248 H156 M138 1258 H156" stroke="#fff" stroke-width="3"/>
+    <text class="worker-label" x="145" y="1290">Worker thread 1</text>
+
+    <rect class="router" x="319" y="1195" width="126" height="112" rx="16"/>
+    <rect x="367" y="1204" width="34" height="64" rx="3" fill="#65c515"/>
+    <path d="M375 1218 H393 M375 1248 H393 M375 1258 H393" stroke="#fff" stroke-width="3"/>
+    <text class="worker-label" x="382" y="1290">Worker thread 2</text>
+
+    <text class="ellipsis" x="505" y="1266">…</text>
+
+    <rect class="router" x="541" y="1195" width="126" height="112" rx="16"/>
+    <rect x="589" y="1204" width="34" height="64" rx="3" fill="#65c515"/>
+    <path d="M597 1218 H615 M597 1248 H615 M597 1258 H615" stroke="#fff" stroke-width="3"/>
+    <text class="worker-label" x="604" y="1290">Worker thread 3</text>
+  </g>
+</svg>
