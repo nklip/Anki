@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1866" height="714" viewBox="0 0 1866 714" role="img" aria-labelledby="title desc">
+  <title id="title">Queueing mechanism in metrics monitoring</title>
+  <desc id="desc">The highlighted Kafka and consumer stage decouples metrics collection from time-series storage before querying and alerting.</desc>
+  <!-- Shared flow styles -->
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth" orient="auto"><path d="M0 0 10 5 0 10Z"/></marker><style>text{font-family:Arial,Helvetica,sans-serif}.box{fill:#fff;stroke:#000;stroke-width:2}.flow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrow)}.dash{fill:none;stroke:#000;stroke-width:2;stroke-dasharray:8 6}.t{font-size:23px;text-anchor:middle}</style></defs>
+  <rect width="1866" height="714" fill="#fff"/>
+  <!-- Ingestion row and queue boundary aligned to the PNG etalon. -->
+  <rect class="box" x="64" y="392" width="212" height="76"/><text class="t" x="170" y="439">Metrics Source</text>
+  <rect class="box" x="358" y="392" width="213" height="76"/><text class="t" x="464" y="439">Metrics Collector</text><path class="flow" d="M278 430H356"/>
+  <rect class="dash" x="602" y="307" width="601" height="246"/>
+  <path class="box" d="M646 392H761C782 392 782 468 761 468H646C625 468 625 392 646 392Z"/><ellipse class="box" cx="761" cy="430" rx="17" ry="38"/><text class="t" x="696" y="439">Kafka</text>
+  <rect class="box" x="837" y="392" width="157" height="76"/><text class="t" x="915" y="439">Consumers</text>
+  <path class="box" d="M1071 401V458C1071 473 1151 473 1151 458V401Z"/><ellipse class="box" cx="1111" cy="401" rx="40" ry="9"/><text class="t" x="1111" y="501">Time series DB</text>
+  <!-- Independent arrows terminate just outside each target boundary. -->
+  <path class="flow" d="M573 430H623"/><path class="flow" d="M780 430H835"/><path class="flow" d="M996 430H1069"/>
+  <!-- Query and visualization column; labels sit in wide, visible connector gaps. -->
+  <rect class="box" x="1228" y="392" width="213" height="76"/><text class="t" x="1334" y="439">Query Service</text><path class="flow" d="M1226 430H1153"/>
+  <rect class="box" x="1228" y="601" width="213" height="76"/><text class="t" x="1334" y="629"><tspan x="1334">Visualization</tspan><tspan x="1334" dy="27">System</tspan></text>
+  <path d="M1334 599V535" fill="none" stroke="#000" stroke-width="2"/><path class="flow" d="M1334 492V470"/><text class="t" x="1334" y="520">Send Queries</text>
+  <!-- Alerting and notification channels. -->
+  <rect class="box" x="1228" y="184" width="213" height="76"/><text class="t" x="1334" y="231">Alerting System</text>
+  <path d="M1334 262V289" fill="none" stroke="#000" stroke-width="2"/><path class="flow" d="M1334 330V390"/><text class="t" x="1334" y="319">Send Queries</text>
+  <g class="t"><rect class="box" x="1598" y="21" width="214" height="76"/><text x="1705" y="68">Email</text><rect class="box" x="1598" y="130" width="214" height="76"/><text x="1705" y="177">Text Message</text><rect class="box" x="1598" y="238" width="214" height="76"/><text x="1705" y="285">PageDuty</text><rect class="box" x="1598" y="346" width="214" height="76"/><text x="1705" y="393">HTTPS Endpoints</text></g>
+  <!-- Independent notification routes preserve all four destination heads. -->
+  <path class="flow" d="M1386 183Q1490 90 1596 59"/>
+  <path class="flow" d="M1441 202Q1520 155 1596 168"/>
+  <path class="flow" d="M1441 244Q1520 260 1596 276"/>
+  <path class="flow" d="M1386 260Q1490 345 1596 384"/>
+</svg>

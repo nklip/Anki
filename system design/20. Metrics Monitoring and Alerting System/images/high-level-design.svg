@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="798" viewBox="0 0 1700 798" role="img" aria-labelledby="title desc">
+  <title id="title">High-level metrics monitoring design</title>
+  <desc id="desc">Metrics flow from a source through a collector into a time-series database; query, visualization, and alerting services read the data.</desc>
+  <!-- Shared system-diagram styles -->
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth" orient="auto"><path d="M0 0 10 5 0 10Z"/></marker><style>text{font-family:Arial,Helvetica,sans-serif;fill:#000}.box{fill:#fff;stroke:#000;stroke-width:2}.flow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrow)}.t{font-size:29px;text-anchor:middle}</style></defs>
+  <rect width="1700" height="798" fill="#fff"/>
+  <!-- Data collection and storage -->
+  <rect class="box" x="24" y="456" width="245" height="86"/><text class="t" x="146" y="510">Metrics Source</text>
+  <rect class="box" x="399" y="456" width="245" height="86"/><text class="t" x="521" y="510">Metrics Collector</text>
+  <path class="box" d="M774 464V535C774 552 861 552 861 535V464Z"/><ellipse class="box" cx="817.5" cy="464" rx="43.5" ry="10"/><text class="t" x="818" y="573">Time series DB</text>
+  <path d="M269 499H383M644 499H758" fill="none" stroke="#000" stroke-width="2"/><path d="M397 499L383 491V507Z"/><path d="M772 499L758 491V507Z"/>
+  <!-- Query and visualization -->
+  <rect class="box" x="1005" y="456" width="245" height="86"/><text class="t" x="1127" y="510">Query Service</text>
+  <rect class="box" x="1005" y="695" width="245" height="86"/><text class="t" x="1127" y="728"><tspan x="1127">Visualization</tspan><tspan x="1127" dy="31">System</tspan></text>
+  <path class="flow" d="M1003 499H863"/><path d="M1127 693V650" fill="none" stroke="#000" stroke-width="2"/><path class="flow" d="M1127 590V546"/><text class="t" x="1127" y="625">Send Queries</text>
+  <!-- Alerting outputs -->
+  <rect class="box" x="1005" y="217" width="245" height="86"/><text class="t" x="1127" y="271">Alerting System</text>
+  <path d="M1127 305V345" fill="none" stroke="#000" stroke-width="2"/><path class="flow" d="M1127 415V454"/><text class="t" x="1127" y="385">Send Queries</text>
+  <g class="t"><rect class="box" x="1429" y="30" width="245" height="86"/><text x="1551" y="84">Email</text><rect class="box" x="1429" y="155" width="245" height="86"/><text x="1551" y="209">Text Message</text><rect class="box" x="1429" y="280" width="245" height="86"/><text x="1551" y="334">PageDuty</text><rect class="box" x="1429" y="405" width="245" height="86"/><text x="1551" y="459">HTTPS Endpoints</text></g>
+  <!-- Keep notification routes independent so all four destination heads render. -->
+  <path class="flow" d="M1185 216Q1330 120 1427 73"/>
+  <path class="flow" d="M1250 228Q1350 198 1427 198"/>
+  <path class="flow" d="M1250 270Q1350 310 1427 323"/>
+  <path class="flow" d="M1185 303Q1330 415 1427 448"/>
+</svg>

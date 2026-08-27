@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1414" height="544" viewBox="0 0 1414 544" role="img" aria-labelledby="title desc">
+  <title id="title">Pull-based metrics collection flow</title>
+  <desc id="desc">A metrics collector discovers targets through service discovery and then requests each web server metrics endpoint.</desc>
+  <!-- Shared flow styles -->
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth" orient="auto"><path d="M0 0 10 5 0 10Z"/></marker><style>text{font-family:Arial,Helvetica,sans-serif;fill:#000}.box{fill:#fff;stroke:#000;stroke-width:2}.flow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrow)}.t{font-size:36px;text-anchor:middle}</style></defs>
+  <rect width="1414" height="544" fill="#fff"/>
+  <!-- Service discovery backends -->
+  <rect class="box" x="847" y="39" width="509" height="144"/><text class="t" x="1101" y="84">Service Discovery</text><rect class="box" x="875" y="111" width="219" height="45"/><text class="t" x="984" y="146">etcd</text><rect class="box" x="1112" y="111" width="218" height="45"/><text class="t" x="1221" y="146">Zookeeper</text>
+  <!-- Collector discovers then pulls from the metrics endpoint. -->
+  <rect class="box" x="942" y="360" width="320" height="114"/><text class="t" x="1102" y="429">Metrics Collector</text>
+  <rect class="box" x="60" y="360" width="320" height="114"/><text class="t" x="220" y="429">Web Servers</text><text class="t" x="220" y="510">/metrics endpoint</text>
+  <path d="M1102 359V310" fill="none" stroke="#000" stroke-width="2"/><path class="flow" d="M1102 245V186"/><text class="t" x="1102" y="291">①Discover Targets</text>
+  <path d="M940 417H824" fill="none" stroke="#000" stroke-width="2"/><path class="flow" d="M500 417H382"/><text class="t" x="660" y="429">②HTTP Requests</text>
+</svg>

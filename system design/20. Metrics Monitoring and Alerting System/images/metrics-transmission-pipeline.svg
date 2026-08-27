@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1614" height="722" viewBox="0 0 1614 722" role="img" aria-labelledby="title desc">
+  <title id="title">Metrics transmission pipeline</title>
+  <desc id="desc">The highlighted transmission and storage path links a metrics collector to a time-series database before querying, visualization, and alerting.</desc>
+  <!-- Shared flow styles -->
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth" orient="auto"><path d="M0 0 10 5 0 10Z"/></marker><style>text{font-family:Arial,Helvetica,sans-serif}.box{fill:#fff;stroke:#000;stroke-width:2}.flow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrow)}.dash{fill:none;stroke:#000;stroke-width:2;stroke-dasharray:8 6}.t{font-size:23px;text-anchor:middle}</style></defs>
+  <rect width="1614" height="722" fill="#fff"/>
+  <!-- Source and highlighted transmission/storage boundary -->
+  <rect class="box" x="42" y="501" width="211" height="76"/><text class="t" x="147" y="548">Metrics Source</text>
+  <rect class="dash" x="318" y="439" width="490" height="194"/>
+  <rect class="box" x="353" y="501" width="211" height="76"/><text class="t" x="458" y="548">Metrics Collector</text><path class="flow" d="M253 539H351"/>
+  <path class="box" d="M676 510V567C676 582 754 582 754 567V510Z"/><ellipse class="box" cx="715" cy="510" rx="39" ry="9"/><text class="t" x="715" y="608">Time series DB</text><path class="flow" d="M564 539H674"/>
+  <!-- Query and visualization -->
+  <rect class="box" x="860" y="501" width="211" height="76"/><text class="t" x="965" y="548">Query Service</text><path class="flow" d="M858 539H756"/>
+  <rect class="box" x="860" y="636" width="211" height="76"/><text class="t" x="965" y="664"><tspan x="965">Visualization</tspan><tspan x="965" dy="27">System</tspan></text>
+  <!-- Separate shaft and upward head keep this short labeled connector visible. -->
+  <path d="M965 634V622M965 593V589" fill="none" stroke="#000" stroke-width="2"/><path d="M965 579L958 590H972Z"/><text class="t" x="965" y="616">Send Queries</text>
+  <!-- Alerting fan-out -->
+  <rect class="box" x="860" y="365" width="211" height="76"/><text class="t" x="965" y="412">Alerting System</text>
+  <!-- Separate shaft and downward head avoid covering the nearby label. -->
+  <path d="M965 443V457M965 487V489" fill="none" stroke="#000" stroke-width="2"/><path d="M965 499L958 488H972Z"/><text class="t" x="965" y="480">Send Queries</text>
+  <g class="t"><rect class="box" x="1331" y="185" width="211" height="76"/><text x="1436" y="232">Email</text><rect class="box" x="1331" y="289" width="211" height="76"/><text x="1436" y="336">Text Message</text><rect class="box" x="1331" y="393" width="211" height="76"/><text x="1436" y="440">PageDuty</text><rect class="box" x="1331" y="497" width="211" height="76"/><text x="1436" y="544">HTTPS Endpoints</text></g>
+  <!-- Keep notification routes independent so all four destination heads render. -->
+  <path class="flow" d="M1018 364Q1190 250 1329 223"/>
+  <path class="flow" d="M1071 383Q1210 320 1329 327"/>
+  <path class="flow" d="M1071 425Q1210 435 1329 431"/>
+  <path class="flow" d="M1018 441Q1190 520 1329 535"/>
+</svg>

@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1980" height="860" viewBox="0 0 1980 860" role="img"
+  aria-labelledby="title desc">
+  <title id="title">Final metrics monitoring architecture</title>
+  <desc id="desc">Metrics pass through collection, Kafka, consumers, and time-series storage; query, cache,
+    visualization, and alerting services serve users.</desc>
+  <!-- Shared system-diagram styles -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth"
+      orient="auto">
+      <path d="M0 0 10 5 0 10Z" />
+    </marker>
+    <style>
+      text {
+        font-family: Arial, Helvetica, sans-serif;
+        fill: #000
+      }
+
+      .box {
+        fill: #fff;
+        stroke: #000;
+        stroke-width: 2
+      }
+
+      .flow {
+        fill: none;
+        stroke: #000;
+        stroke-width: 2;
+        marker-end: url(#arrow)
+      }
+
+      .t {
+        font-size: 28px;
+        text-anchor: middle
+      }
+    </style>
+  </defs>
+  <rect width="1980" height="860" fill="#fff" />
+  <!-- Collection pipeline -->
+  <rect class="box" x="59" y="557" width="229" height="81" /><text class="t" x="173" y="608">Metrics Source</text>
+  <rect class="box" x="374" y="557" width="229" height="81" /><text class="t" x="488" y="608">Metrics Collector</text>
+  <path class="box" d="M684 557H792C813 557 813 638 792 638H684C663 638 663 557 684 557Z" />
+  <ellipse class="box" cx="792" cy="597.5" rx="17" ry="40.5" /><text class="t" x="728" y="608"
+    font-size="26">Kafka</text>
+  <rect class="box" x="886" y="557" width="168" height="81" /><text class="t" x="970" y="608">Consumers</text>
+  <path class="box" d="M1138 565V626C1138 642 1220 642 1220 626V565Z" />
+  <ellipse class="box" cx="1179" cy="565" rx="41" ry="9" /><text class="t" x="1179" y="667">Time series DB</text>
+  <path d="M288 598H358M603 598H648" fill="none" stroke="#000" stroke-width="2" />
+  <path d="M372 598L358 590V606Z" />
+  <path d="M662 598L648 590V606Z" />
+  <path class="flow" d="M813 598H884" />
+  <path class="flow" d="M1054 598H1136" />
+  <!-- Query, visualization, and cache -->
+  <rect class="box" x="1304" y="557" width="229" height="81" /><text class="t" x="1418" y="608">Query Service</text>
+  <path class="flow" d="M1302 598H1222" />
+  <rect class="box" x="1304" y="758" width="229" height="81" /><text class="t" x="1418" y="809">Cache</text>
+  <path class="flow" d="M1418 640V756" />
+  <rect class="box" x="1701" y="557" width="229" height="81" /><text class="t" x="1815" y="590">
+    <tspan x="1815">Visualization</tspan>
+    <tspan x="1815" dy="31">System</tspan>
+  </text>
+  <!-- Leave a clear text corridor around the horizontal Send Queries label. -->
+  <path d="M1699 598H1682" fill="none" stroke="#000" stroke-width="2" />
+  <path class="flow" d="M1555 598H1535" /><text class="t" x="1617" y="595">
+    <tspan x="1617">Send</tspan>
+    <tspan x="1617" dy="31">Queries</tspan>
+  </text>
+  <!-- Alerting and notification channels -->
+  <rect class="box" x="1304" y="209" width="229" height="81" /><text class="t" x="1418" y="260">Alerting System</text>
+  <path d="M1418 292V380" fill="none" stroke="#000" stroke-width="2" />
+  <path class="flow" d="M1418 450V555" /><text class="t" x="1418" y="418">Send Queries</text>
+  <g class="t">
+    <rect class="box" x="1701" y="34" width="229" height="81" /><text x="1815" y="85">Email</text>
+    <rect class="box" x="1701" y="151" width="229" height="81" /><text x="1815" y="202">Text Message</text>
+    <rect class="box" x="1701" y="268" width="229" height="81" /><text x="1815" y="319">PageDuty</text>
+    <rect class="box" x="1701" y="385" width="229" height="81" /><text x="1815" y="436">HTTPS Endpoints</text>
+  </g>
+  <!-- Keep notification routes independent so all four destination heads render. -->
+  <path class="flow" d="M1472 208Q1610 110 1699 75" />
+  <path class="flow" d="M1533 226Q1630 190 1699 192" />
+  <path class="flow" d="M1533 270Q1630 305 1699 309" />
+  <path class="flow" d="M1472 291Q1610 410 1699 426" />
+</svg>

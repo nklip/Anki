@@ -328,8 +328,8 @@ Here's what happens when a consumer leaves the group:
 </div>
 
  * Consumer A and B are in the same group
- * Consumer B asks to leave the group
- * When coordinator receives A's heartbeat, it informs them that it's time to rebalance.
+ * Consumer A asks to leave the group
+ * When coordinator receives B's heartbeat, it informs them that it's time to rebalance.
  * The rest of the steps are the same.
 
 The process is similar when a consumer doesn't send a heartbeat for a long time:

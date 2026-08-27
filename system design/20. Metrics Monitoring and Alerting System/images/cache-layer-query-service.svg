@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1942" height="904" viewBox="0 0 1942 904" role="img"
+  aria-labelledby="title desc">
+  <title id="title">Cache layer around the query service</title>
+  <desc id="desc">A cache sits below the query service, which reads a time-series database and serves visualization and
+    alerting queries.</desc>
+  <!-- Shared architecture styles -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth"
+      orient="auto">
+      <path d="M0 0 10 5 0 10Z" />
+    </marker>
+    <style>
+      text {
+        font-family: Arial, Helvetica, sans-serif;
+        fill: #000
+      }
+
+      .box {
+        fill: #fff;
+        stroke: #000;
+        stroke-width: 2
+      }
+
+      .flow {
+        fill: none;
+        stroke: #000;
+        stroke-width: 2;
+        marker-end: url(#arrow)
+      }
+
+      .t {
+        font-size: 28px;
+        text-anchor: middle
+      }
+
+      .dash {
+        fill: none;
+        stroke: #000;
+        stroke-width: 2;
+        stroke-dasharray: 8 6
+      }
+    </style>
+  </defs>
+  <rect width="1942" height="904" fill="#fff" />
+  <!-- Metrics ingestion pipeline -->
+  <rect class="box" x="35" y="565" width="229" height="81" /><text class="t" x="149" y="616">Metrics Source</text>
+  <rect class="box" x="350" y="565" width="229" height="81" /><text class="t" x="464" y="616">Metrics Collector</text>
+  <path class="box" d="M660 565H768C789 565 789 646 768 646H660C639 646 639 565 660 565Z" />
+  <ellipse class="box" cx="768" cy="605.5" rx="17" ry="40.5" /><text class="t" x="704" y="616"
+    font-size="26">Kafka</text>
+  <rect class="box" x="864" y="565" width="168" height="81" /><text class="t" x="948" y="616">Consumers</text>
+  <path class="box" d="M1117 573V634C1117 650 1199 650 1199 634V573Z" />
+  <ellipse class="box" cx="1158" cy="573" rx="41" ry="9" /><text class="t" x="1158" y="675">Time series DB</text>
+  <path d="M264 606H334M579 606H624" fill="none" stroke="#000" stroke-width="2" />
+  <path d="M348 606L334 598V614Z" />
+  <path d="M638 606L624 598V614Z" />
+  <path class="flow" d="M789 606H862" />
+  <path class="flow" d="M1032 606H1115" />
+  <!-- Dashed boundary identifies the query-service cache layer. -->
+  <rect class="dash" x="1255" y="530" width="288" height="348" />
+  <rect class="box" x="1283" y="565" width="229" height="81" /><text class="t" x="1397" y="616">Query Service</text>
+  <path class="flow" d="M1281 606H1201" />
+  <rect class="box" x="1283" y="767" width="229" height="81" /><text class="t" x="1397" y="818">Cache</text>
+  <path class="flow" d="M1397 648V765" />
+  <rect class="box" x="1680" y="565" width="229" height="81" /><text class="t" x="1794" y="598">
+    <tspan x="1794">Visualization</tspan>
+    <tspan x="1794" dy="31">System</tspan>
+  </text>
+  <!-- Leave a clear text corridor around the horizontal Send Queries label. -->
+  <path d="M1678 606H1662" fill="none" stroke="#000" stroke-width="2" />
+  <path class="flow" d="M1533 606H1514" /><text class="t" x="1597" y="605">
+    <tspan x="1597">Send</tspan>
+    <tspan x="1597" dy="31">Queries</tspan>
+  </text>
+  <!-- Alerting outputs -->
+  <rect class="box" x="1283" y="215" width="229" height="81" /><text class="t" x="1397" y="266">Alerting System</text>
+  <path d="M1397 298V385" fill="none" stroke="#000" stroke-width="2" />
+  <path class="flow" d="M1397 455V563" /><text class="t" x="1397" y="423">Send Queries</text>
+  <g class="t">
+    <rect class="box" x="1680" y="41" width="229" height="81" /><text x="1794" y="92">Email</text>
+    <rect class="box" x="1680" y="157" width="229" height="81" /><text x="1794" y="208">Text Message</text>
+    <rect class="box" x="1680" y="273" width="229" height="81" /><text x="1794" y="324">PageDuty</text>
+    <rect class="box" x="1680" y="389" width="229" height="81" /><text x="1794" y="440">HTTPS Endpoints</text>
+  </g>
+  <!-- Keep notification routes independent so all four destination heads render. -->
+  <path class="flow" d="M1451 214Q1590 115 1678 82" />
+  <path class="flow" d="M1512 232Q1610 195 1678 198" />
+  <path class="flow" d="M1512 276Q1610 312 1678 314" />
+  <path class="flow" d="M1451 297Q1590 415 1678 430" />
+</svg>
