@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1422" height="1290" viewBox="0 0 1422 1290" role="img" aria-labelledby="title desc">
+  <title id="title">High-level design of a proximity service</title>
+  <desc id="desc">A user reaches a load balancer. Nearby searches go to the location-based service, business lookups go to the business service, and both services use a replicated database cluster.</desc>
+  <!-- Reusable arrow, user, and database shapes. -->
+  <defs>
+    <marker id="arrow" markerWidth="11" markerHeight="11" viewBox="0 0 11 11" refX="10" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L11 5.5L0 11Z" fill="#111"/></marker>
+    <symbol id="user" viewBox="0 0 74 74"><circle cx="37" cy="17" r="16" fill="#000"/><path d="M4 67V55C4 39 70 39 70 55V67Z" fill="#000"/></symbol>
+    <symbol id="db" viewBox="0 0 134 132"><path d="M1 17C1 7 133 7 133 17V116C133 127 1 127 1 116Z" fill="currentColor" stroke="#111" stroke-width="2"/><ellipse cx="67" cy="17" rx="66" ry="14" fill="currentColor" stroke="#111" stroke-width="2"/></symbol>
+    <style>.box{fill:#fff;stroke:#111;stroke-width:2}.flow{fill:none;stroke:#111;stroke-width:2.2;marker-end:url(#arrow)}.plain{fill:none;stroke:#111;stroke-width:2.2}.t{font-family:Arial,Helvetica,sans-serif;fill:#111;text-anchor:middle}.node{font-size:33px}.label{font-size:30px}.db-label{font-size:29px}.cluster{font-size:34px}</style>
+  </defs>
+  <rect width="1422" height="1290" fill="#fff"/>
+  <!-- User and routing tier. -->
+  <use href="#user" x="674" y="14" width="74" height="74"/><path class="flow" d="M711 88V230"/>
+  <rect class="box" x="562" y="231" width="292" height="106"/><text class="t node" x="708" y="296">Load balancer</text>
+  <!-- Route labels sit in dedicated gaps between connector segments. -->
+  <path class="plain" d="M622 337L536 389"/><path class="flow" d="M436 451L323 520"/><text class="t label" x="430" y="429">/search/nearby</text>
+  <path class="plain" d="M792 337L883 396"/><path class="flow" d="M978 456L1095 534"/><text class="t label" x="986" y="438">/businesses/{:id}</text>
+  <rect class="box" x="85" y="520" width="293" height="105"/><text class="t node" x="232" y="584">LBS</text>
+  <rect class="box" x="1031" y="534" width="293" height="105"/><text class="t node" x="1178" y="579">Business</text><text class="t node" x="1178" y="615">Service</text>
+  <!-- Database cluster boundary. -->
+  <rect class="box" x="85" y="805" width="1246" height="459"/>
+  <!-- Read paths fan out without crossing their labels. -->
+  <path class="plain" d="M232 625V698"/><path class="flow" d="M232 758V920"/><text class="t label" x="232" y="741">Read</text>
+  <path class="plain" d="M273 625L346 699"/><path class="flow" d="M384 758L495 920"/><text class="t label" x="350" y="741">Read</text>
+  <path class="plain" d="M314 625L426 698"/><path class="flow" d="M516 756L811 920"/><text class="t label" x="474" y="741">Read</text>
+  <!-- Business writes to the primary. -->
+  <path class="plain" d="M1178 639V696"/><path class="flow" d="M1178 754V920"/><text class="t label" x="1178" y="731">Write</text>
+  <!-- Database nodes and labels. -->
+  <use href="#db" x="165" y="920" width="134" height="132" color="#fff"/><use href="#db" x="481" y="920" width="134" height="132" color="#fff"/><use href="#db" x="797" y="920" width="134" height="132" color="#fff"/><use href="#db" x="1111" y="920" width="134" height="132" color="#f2a7f1"/>
+  <g class="t db-label"><text x="232" y="1087">Replica</text><text x="548" y="1087">Replica</text><text x="864" y="1087">Replica</text><text x="1178" y="1087">Primary</text></g>
+  <!-- Replication paths terminate at database borders, leaving the labels unobstructed. -->
+  <!-- Match the original arc: a compact break surrounds the label without flattening the curve. -->
+  <path class="plain" d="M1111 936C1035 887 975 870 931 868"/><path class="flow" d="M792 868C731 876 669 906 615 936"/><text class="t label" x="865" y="876">Replicate</text>
+  <path class="flow" d="M1111 986H932"/><text class="t label" x="1018" y="972">Replicate</text>
+  <path class="plain" d="M1111 1037C978 1139 864 1183 780 1190"/><path class="flow" d="M640 1190C524 1173 404 1122 299 1037"/><text class="t label" x="710" y="1172">Replicate</text>
+  <text class="t cluster" x="708" y="1235">Database Cluster</text>
+</svg>

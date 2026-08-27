@@ -4,7 +4,6 @@
 ## Introduction
 A **proximity service** is designed to find nearby locations, such as restaurants, hotels, gas stations, and other businesses. This functionality is used in applications like **Google Maps** and **Yelp** to help users discover places within a defined radius.
 
-
 ## Step 1: Understanding the Problem and Establishing Scope
 
 ### **Functional Requirements**
@@ -59,10 +58,10 @@ GET /v1/search/nearby
 The system comprises of two parts: Location based service (LBS) and business related service.
 
 <div style="margin-left:3rem">
-    <img src="./images/high-level-design.png" alt="HLD" width="400" />
+    <img src="./images/high-level-design.svg" alt="HLD" width="400" />
 </div>
 
-- **Location-Based Service (LBS)**: 
+- **Location-Based Service (LBS)**:
   - Processes location-based search queries.
   - Read-heavy service with no write requests.
   - QPS is high especially during peak hours in dense areas and the system is stateless.
@@ -70,11 +69,10 @@ The system comprises of two parts: Location based service (LBS) and business rel
   - Business owners create, update or delete businesses.
   - Customers view detailed information about a business.
 - **Load Balancer**: Routes traffic to LBS and Business service.
-- **Database Cluster**: 
+- **Database Cluster**:
   - Uses **primary-replica architecture** for read-heavy workloads.
   - There might be some discrepancy between data read b/w data read by LBS and data written by by primary database.
   - This incosistency is not an issue beacuase the business information is not updated in real-time.
-
 
 ---
 
@@ -108,7 +106,7 @@ A potiential improvement is to build index on logitude and latitude columns, alh
   - Tree: Quadtree, Google S2, RTree
 
   <div style="margin-left:3rem">
-    <img src="./images/geospatial-index-types.png" alt="2D" width="500" />
+    <img src="./images/geospatial-index-types.svg" alt="2D" width="500" />
   </div>
 
 
@@ -136,7 +134,7 @@ A potiential improvement is to build index on logitude and latitude columns, alh
 - **Hierarchical grid structure** allows for efficient searching.
 - The right precision is chosen by using the minimal geohash length according to the table.
   <div style="margin-left:3rem">
-    <img src="./images/geohash-radius-mapping.png" alt="Geohash Radius" width="400" />
+    <img src="./images/geohash-radius-mapping.svg" alt="Geohash Radius" width="400" />
   </div>
 - Geohash guarantees that the longer a shared prefix is between two geohashes, the closer they are.
 
@@ -157,13 +155,13 @@ A potiential improvement is to build index on logitude and latitude columns, alh
   - The quadtree is an in-memory data structure and it runs on each LBS server and built on server startup time.
 
   <div style="margin-left:3rem">
-    <img src="./images/quadtree.png" alt="Quadtree" width="500" />
+    <img src="./images/quadtree.svg" alt="Quadtree" width="500" />
   </div>
 
   - The root node is recursively broken down into 4 quadrants until no nodes are left with more than x number of businesses (100 in this case).
 
   <div style="margin-left:3rem">
-    <img src="./images/building-quadtree.png" alt="Building Quadtree" width="500" />
+    <img src="./images/building-quadtree.svg" alt="Building Quadtree" width="500" />
   </div>
 
 - The quadtree index doen't take too much memory (typically in GBs) and can easily fit in one server.
@@ -185,7 +183,7 @@ It maps a sphere to a !D index based on Hilbert curve.Two points that are close 
 
 
   <div style="margin-left:3rem">
-    <img src="./images/hilbert-curve.png" alt="Hilbert curve" width="300" />
+    <img src="./images/hilbert-curve.svg" alt="Hilbert curve" width="300" />
     <img src="./images/geofence.png" alt="Geofence" width="355" />
   </div>
 
@@ -195,7 +193,7 @@ It maps a sphere to a !D index based on Hilbert curve.Two points that are close 
 - Aother advantage if instead of having a fixed level of precision, we can specify min,max level and max cells in S2.
 
 
-## Tradeoff Comparison 
+## Tradeoff Comparison
 
 #### Geohash
 - Easy to use and implement- No need to build/rebuild a tree
@@ -227,8 +225,6 @@ It maps a sphere to a !D index based on Hilbert curve.Two points that are close 
 - Might not be a good fit for the geohash table. In this case everything can fit in a single server so there's no tehcnical reason for sharding.
 - A better approach is to have read-replicas to help with read loads.
 
-
-
 ---
 
 ### **Cache Strategy**
@@ -254,46 +250,45 @@ The most obvious cache key choice is the location coordinate, however it has a f
 
 ### **Final System Architecture**
 
-
   <div style="margin-left:3rem">
-    <img src="./images/final-design.png" alt="Final Design" width="500" />
+    <img src="./images/final-design.svg" alt="Final Design" width="500" />
   </div>
 
 
 This final algorithm looks like this:
 
 ## Steps to Retrieve Nearby Businesses
-1. **User Request:**  
-   - A user searches for restaurants within **500 meters**.  
+1. **User Request:**
+   - A user searches for restaurants within **500 meters**.
    - The client sends **latitude (37.776720), longitude (-122.416730), and radius (500m)** to the **load balancer**.
 
-2. **Request Forwarding:**  
+2. **Request Forwarding:**
    - The **load balancer (LB)** forwards the request to the **Location-Based Service (LBS)**.
 
-3. **Geohash Calculation:**  
-   - LBS determines the **geohash length** matching the radius.  
+3. **Geohash Calculation:**
+   - LBS determines the **geohash length** matching the radius.
    - Using a reference table, **500m corresponds to geohash length = 6**.
 
-4. **Fetching Neighboring Geohashes:**  
-   - LBS calculates **neighboring geohashes** to include nearby areas.  
-   - The result is a list:  
+4. **Fetching Neighboring Geohashes:**
+   - LBS calculates **neighboring geohashes** to include nearby areas.
+   - The result is a list:
      ```
      [my_geohash, neighbor1_geohash, neighbor2_geohash, ..., neighbor8_geohash]
      ```
 
-5. **Fetching Business IDs from Redis:**  
-   - For each geohash in the list, LBS queries the **Geohash Redis server** to fetch **business IDs**.  
+5. **Fetching Business IDs from Redis:**
+   - For each geohash in the list, LBS queries the **Geohash Redis server** to fetch **business IDs**.
    - Parallel queries are used to minimize latency.
 
-6. **Retrieving & Ranking Businesses:**  
-   - LBS fetches **full business details** from the **Business Info Redis server**.  
-   - Businesses are **sorted by distance** from the user’s location.  
+6. **Retrieving & Ranking Businesses:**
+   - LBS fetches **full business details** from the **Business Info Redis server**.
+   - Businesses are **sorted by distance** from the user’s location.
    - The **ranked results** are sent back to the client.
 
 ## Key Optimizations
-- **Parallel Redis Calls**: Reduces response time.  
-- **Geohash Indexing**: Ensures efficient spatial queries.  
-- **Caching**: Speeds up lookup and retrieval of business data.  
+- **Parallel Redis Calls**: Reduces response time.
+- **Geohash Indexing**: Ensures efficient spatial queries.
+- **Caching**: Speeds up lookup and retrieval of business data.
 
 This method ensures **low-latency, scalable** retrieval of businesses near a user’s location.
 

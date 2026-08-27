@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1172" height="812" viewBox="0 0 1172 812" role="img" aria-labelledby="title desc">
+  <title id="title">Final design of a proximity service</title>
+  <desc id="desc">A user reaches a load balancer. Nearby searches use the location-based service and a Redis cluster; business lookups use the business service and primary database. Data is replicated and synchronized.</desc>
+  <!-- Shared icons and flow styling. -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" viewBox="0 0 10 10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="#111"/></marker>
+    <symbol id="user" viewBox="0 0 54 54"><circle cx="27" cy="12" r="11"/><path d="M3 49V41C3 29 51 29 51 41V49Z"/></symbol>
+    <symbol id="db" viewBox="0 0 86 92"><path d="M1 13C1 4 85 4 85 13V78C85 87 1 87 1 78Z" fill="currentColor" stroke="#111" stroke-width="1.6"/><ellipse cx="43" cy="13" rx="42" ry="10" fill="currentColor" stroke="#111" stroke-width="1.6"/></symbol>
+    <symbol id="redis" viewBox="0 0 62 55"><path d="M4 13L31 2L58 13L31 24Z" fill="#e60012"/><path d="M4 24L31 13L58 24L31 35Z" fill="#d80010"/><path d="M4 35L31 24L58 35L31 46Z" fill="#c9000f"/><path d="M23 10L31 6L39 10L31 14Z" fill="#fff"/><circle cx="44" cy="12" r="2.8" fill="#fff"/></symbol>
+    <style>.box{fill:#fff;stroke:#111;stroke-width:1.6}.flow{fill:none;stroke:#111;stroke-width:1.6;marker-end:url(#arrow)}.plain{fill:none;stroke:#111;stroke-width:1.6}.t{font-family:Arial,Helvetica,sans-serif;fill:#111;text-anchor:middle}.node{font-size:24px}.label{font-size:22px}.small{font-size:18px}.cluster{font-size:23px}</style>
+  </defs>
+  <rect width="1172" height="812" fill="#fff"/>
+  <!-- Entry point and services. -->
+  <use href="#user" x="500" y="37" width="54" height="54"/><path class="plain" d="M527 91V118"/><path class="flow" d="M527 145V186"/><circle cx="527" cy="129" r="10" fill="#fff" stroke="#111"/><text class="t small" x="527" y="136">1</text>
+  <rect class="box" x="431" y="187" width="191" height="68"/><text class="t node" x="527" y="230">Load balancer</text>
+  <path class="plain" d="M467 255L421 281"/><path class="flow" d="M301 350L266 370"/><text class="t label" x="361" y="317">② /search/nearby</text>
+  <path class="plain" d="M578 255L610 277"/><path class="flow" d="M713 347L747 370"/><text class="t label" x="662" y="317">/businesses/{:id}</text>
+  <rect class="box" x="109" y="370" width="191" height="68"/><text class="t node" x="205" y="413">LBS</text><text class="t label" x="61" y="413">③ ④</text>
+  <rect class="box" x="703" y="370" width="191" height="68"/><text class="t node" x="799" y="394">Business</text><text class="t node" x="799" y="425">Service</text>
+  <!-- Redis reads and database access. -->
+  <!-- Steps 5 and 6 flank the shared Read label, matching the original bidirectional flow. -->
+  <path class="plain" d="M205 449V495M205 548V583"/><path d="M199 450L205 438L211 450ZM199 582L205 594L211 582Z" fill="#111"/><text class="t label" x="161" y="509">⑤</text><text class="t label" x="161" y="544">⑥</text><text class="t label" x="205" y="524">Read</text>
+  <path class="plain" d="M744 438L640 483"/><path class="flow" d="M529 530L375 596"/><text class="t label" x="586" y="510">Read</text>
+  <path class="plain" d="M830 438L850 465"/><path class="flow" d="M890 518L970 624"/><text class="t label" x="869" y="500">Write</text>
+  <!-- Redis cluster. -->
+  <rect class="box" x="35" y="596" width="339" height="166"/><use href="#redis" x="86" y="621" width="62" height="55"/><use href="#redis" x="261" y="621" width="62" height="55"/><g class="t label"><text x="117" y="707">Business Info</text><text x="292" y="707">Geohash</text><text class="cluster" x="205" y="746">Redis Cluster</text></g>
+  <!-- Database cluster and replication. -->
+  <rect class="box" x="497" y="565" width="601" height="229"/><use href="#db" x="549" y="624" width="86" height="92" color="#fff"/><use href="#db" x="754" y="624" width="86" height="92" color="#fff"/><use href="#db" x="960" y="624" width="86" height="92" color="#f2a7f1"/>
+  <g class="t label"><text x="592" y="739">Replica</text><text x="797" y="739">Replica</text><text x="1003" y="739">Primary</text></g>
+  <!-- The replication arc has only a text-sized break, as in the PNG original. -->
+  <path class="plain" d="M960 640C907 605 873 596 840 595"/><path class="flow" d="M748 595C707 601 670 616 635 640"/><text class="t small" x="798" y="601">Replicate</text><path class="flow" d="M960 670H840"/><text class="t small" x="900" y="660">Replicate</text>
+  <!-- Cache data is synchronized from the database replicas. -->
+  <path class="flow" d="M497 679H374"/><text class="t label" x="435" y="667">Sync</text><text class="t cluster" x="797" y="778">Database Cluster</text>
+</svg>
