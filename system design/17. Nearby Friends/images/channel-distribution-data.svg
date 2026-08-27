@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1192 1282" role="img" aria-labelledby="title desc">
+  <title id="title">Channel distribution on a consistent-hash ring</title>
+  <desc id="desc">Redis Pub/Sub server one owns the highlighted ring range. Two channel hashes map clockwise to p_1.</desc>
+  <!-- Original ring, server, and hash styles. -->
+  <defs>
+    <style>.heading{font:400 32px 'DejaVu Sans',Arial,sans-serif;fill:#000}.text{font:400 31px 'DejaVu Sans',Arial,sans-serif;fill:#000}.small{font:400 26px 'DejaVu Sans',Arial,sans-serif;fill:#000}.ring{fill:none;stroke:#000;stroke-width:2}.range{fill:none;stroke:#c8c8c8;stroke-width:84}.node{fill:#fff;stroke:#000;stroke-width:1.8}.active{fill:#d4d4d4;stroke:#000;stroke-width:1.8}.flow{fill:none;stroke:#000;stroke-width:2}</style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto" markerUnits="strokeWidth"><path d="M0 0 10 5 0 10Z" fill="#000"/></marker>
+  </defs>
+  <rect width="1192" height="1282" fill="#fff"/>
+  <!-- Ownership annotation and ring. -->
+  <text x="562" y="46" text-anchor="middle" class="heading">Redis Pub/Sub server 1 is responsible</text><text x="562" y="81" text-anchor="middle" class="heading">for hash values in this range</text><path class="flow" marker-end="url(#arrow)" d="M562 91V187"/>
+  <path d="M238 356Q559 103 884 356" class="range"/><circle cx="562" cy="684" r="455" class="ring"/>
+  <!-- Four Redis servers. -->
+  <circle cx="239" cy="357" r="75" class="node"/><text x="239" y="369" text-anchor="middle" class="text">p_4</text><circle cx="883" cy="357" r="75" class="active"/><text x="883" y="369" text-anchor="middle" class="text">p_1</text><circle cx="887" cy="974" r="75" class="node"/><text x="887" y="986" text-anchor="middle" class="text">p_2</text><circle cx="229" cy="974" r="75" class="node"/><text x="229" y="986" text-anchor="middle" class="text">p_3</text>
+  <!-- Channel hash points and clockwise assignment. -->
+  <circle cx="455" cy="242" r="35" class="node"/><circle cx="658" cy="241" r="35" class="node"/><circle cx="996" cy="536" r="35" class="node"/><circle cx="1015" cy="742" r="35" class="node"/><circle cx="562" cy="1140" r="35" class="node"/><circle cx="103" cy="655" r="35" class="node"/>
+  <path class="flow" marker-end="url(#arrow)" d="M356 532L444 278"/><text x="199" y="561" class="text">hash(channel_name1)</text>
+  <path class="flow" marker-end="url(#arrow)" d="M641 456L656 278"/><text x="485" y="486" class="text">hash(channel_name2)</text>
+  <path class="flow" stroke-dasharray="8 7" marker-end="url(#arrow)" d="M478 257Q674 397 811 373"/><path class="flow" stroke-dasharray="8 7" marker-end="url(#arrow)" d="M683 255Q778 349 811 357"/>
+  <!-- Legend. -->
+  <rect x="722" y="1176" width="430" height="84" class="node"/><text x="936" y="1229" text-anchor="middle" class="text">p_x: Redis Pub/Sub server X</text>
+</svg>

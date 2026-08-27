@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1598 726" role="img" aria-labelledby="title desc">
+  <title id="title">Redis Pub/Sub usage</title>
+  <desc id="desc">Publishers send location updates to per-user Redis channels, which forward messages to subscribed friends.</desc>
+  <!-- Source-matching monochrome styles and reusable channel. -->
+  <defs>
+    <style>.heading{font:400 33.2px Helvetica,Arial,'Liberation Sans',sans-serif;fill:#000}.text{font:400 33px Helvetica,Arial,'Liberation Sans',sans-serif;fill:#000}.panel{fill:none;stroke:#000;stroke-width:2;stroke-dasharray:10 7}.box{fill:#fff;stroke:#000;stroke-width:1.8}.flow{fill:none;stroke:#000;stroke-width:1.8}</style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto" markerUnits="strokeWidth"><path d="M0 0 10 5 0 10Z" fill="#000"/></marker>
+    <!-- Flat channel body and narrow end cap reproduce the source cylinder contour. -->
+    <symbol id="channel" viewBox="0 0 350 112"><path d="M35 0H313V110H35C16.2 110 1 85.4 1 55S16.2 0 35 0Z" class="box"/><ellipse cx="313" cy="55" rx="34" ry="55" class="box"/></symbol>
+  </defs>
+  <rect width="1598" height="726" fill="#fff"/>
+  <!-- The three dashed regions and their original headings. -->
+  <text x="27" y="53" class="heading">Users publish location update</text><text x="678" y="53" class="heading">Redis Pub/Sub</text><text x="1296" y="53" class="heading">Friends</text>
+  <rect x="47" y="70" width="396" height="627" class="panel"/><rect x="576" y="70" width="428" height="627" class="panel"/><rect x="1137" y="70" width="427" height="627" class="panel"/>
+  <!-- Connector layer follows the original publisher-to-subscriber topology. -->
+  <path class="flow" marker-end="url(#arrow)" d="M382 193H616"/><path class="flow" marker-end="url(#arrow)" d="M962 193H1212"/><path class="flow" marker-end="url(#arrow)" d="M382 477H616"/><path class="flow" marker-end="url(#arrow)" d="M962 449L1211 406"/><path class="flow" marker-end="url(#arrow)" d="M962 507L1211 551"/>
+  <!-- Publishers. -->
+  <rect x="107" y="137" width="275" height="112" class="box"/><text x="244" y="205" text-anchor="middle" class="text">Publisher 1</text><rect x="107" y="421" width="275" height="112" class="box"/><text x="244" y="489" text-anchor="middle" class="text">Publisher 2</text>
+  <!-- Redis channels. -->
+  <use href="#channel" x="616" y="138" width="350" height="112"/><text x="760" y="205" text-anchor="middle" class="text">User 1’s channel</text><use href="#channel" x="616" y="422" width="350" height="112"/><text x="760" y="489" text-anchor="middle" class="text">User 2’s channel</text>
+  <!-- Subscribers. -->
+  <rect x="1212" y="137" width="276" height="112" class="box"/><text x="1350" y="205" text-anchor="middle" class="text">Subscriber 1</text><rect x="1212" y="329" width="276" height="112" class="box"/><text x="1350" y="397" text-anchor="middle" class="text">Subscriber 2</text><rect x="1212" y="521" width="276" height="112" class="box"/><text x="1350" y="589" text-anchor="middle" class="text">Subscriber 3</text>
+</svg>
