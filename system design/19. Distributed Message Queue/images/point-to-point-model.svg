@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1640" height="592" viewBox="0 0 1640 592" role="img" aria-labelledby="title desc">
+  <title id="title">Point-to-point messaging model</title>
+  <desc id="desc">One message from the queue is delivered to one of the competing consumers.</desc>
+  <!-- Shared diagram definitions -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z"/></marker>
+    <style>text{font-family:Arial,Helvetica,sans-serif;fill:#000}.box{fill:#fff;stroke:#888;stroke-width:2}.line{fill:none;stroke:#000;stroke-width:2}.arrow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrow)}.dash{stroke-dasharray:10 8}.msg{fill:#fff;stroke:#888;stroke-width:2}.persist{fill:#bdf7bd;stroke:#888;stroke-width:2}.new{fill:#fffdb5;stroke:#888;stroke-width:2}</style>
+    
+  </defs>
+  <rect id="background" width="1640" height="592" fill="#fff"/>
+  <!-- Producer and shared queue -->
+  <rect id="producer" class="box" x="37" y="249" width="311" height="105"/><text x="192" y="315" font-size="35" text-anchor="middle">Producer</text>
+  <path class="arrow" d="M348 302H629"/><text x="483" y="201" font-size="35" text-anchor="middle">Message A</text><rect class="msg" x="475" y="211" width="17" height="76"/>
+  <rect id="queue" class="box" x="631" y="228" width="338" height="149"/><text x="800" y="264" font-size="35" text-anchor="middle">Message Queue</text><g><rect class="msg" x="668" y="285" width="17" height="77"/><rect class="msg" x="695" y="285" width="17" height="77"/><rect class="msg" x="722" y="285" width="17" height="77"/><rect class="msg" x="749" y="285" width="17" height="77"/><rect class="msg" x="776" y="285" width="17" height="77"/><rect class="msg" x="803" y="285" width="17" height="77"/><rect class="msg" x="830" y="285" width="17" height="77"/><rect class="msg" x="857" y="285" width="17" height="77"/><rect class="msg" x="884" y="285" width="17" height="77"/><rect class="msg" x="911" y="285" width="17" height="77"/></g>
+  <!-- Competing consumers; only the upper path carries Message A -->
+  <path class="arrow" d="M969 278 1287 137"/><path class="arrow" d="M969 322 1287 454"/>
+  <text x="1118" y="108" font-size="35" text-anchor="middle">Message A</text><rect class="msg" x="1110" y="117" width="17" height="77"/>
+  <rect id="consumer-1" class="box" x="1289" y="33" width="311" height="104"/><text x="1444" y="99" font-size="35" text-anchor="middle">Consumer 1</text>
+  <rect id="consumer-2" class="box" x="1289" y="455" width="311" height="104"/><text x="1444" y="521" font-size="35" text-anchor="middle">Consumer 2</text>
+</svg>

@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1204" height="838" viewBox="0 0 1204 838" role="img" aria-labelledby="title desc">
+  <title id="title">Producer-side routing layer</title>
+  <desc id="desc">The producer buffers messages, routes them, and interacts with a leader replica and its follower.</desc>
+  <!-- Shared diagram definitions -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth" orient="auto-start-reverse">
+      <path d="M0 0 10 5 0 10z"/>
+    </marker>
+    <style>text{font-family:Arial,Helvetica,sans-serif;fill:#000}.box{fill:#fff;stroke:#888;stroke-width:2}.line{fill:none;stroke:#000;stroke-width:2}.arrow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrow)}.dash{stroke-dasharray:10 8}.msg{fill:#fff;stroke:#888;stroke-width:2}.persist{fill:#bdf7bd;stroke:#888;stroke-width:2}.new{fill:#fffdb5;stroke:#888;stroke-width:2}.note{fill:#fffdb5;stroke:#888;stroke-width:2;stroke-dasharray:10 8}</style>
+  </defs>
+  <rect id="background" width="1204" height="838" fill="#fff"/>
+  <!-- Producer internals -->
+  <rect id="producer" class="box" x="369" y="30" width="491" height="399"/>
+  <text x="614" y="80" font-size="39" text-anchor="middle">Producer</text>
+  <rect x="435" y="133" width="359" height="91" fill="#fff" stroke="#888" stroke-width="2" stroke-dasharray="10 8"/>
+  <text x="614" y="192" font-size="39" text-anchor="middle">Buffer</text>
+  <rect x="435" y="301" width="359" height="91" fill="#fff" stroke="#888" stroke-width="2" stroke-dasharray="10 8"/>
+  <text x="614" y="360" font-size="39" text-anchor="middle">Routing</text>
+  <path class="arrow" d="M614 224V299"/>
+  <!-- Broker replicas -->
+  <rect id="broker-1" class="box" x="67" y="572" width="504" height="242"/>
+  <text x="211" y="654" font-size="39" text-anchor="middle">
+    <tspan x="211">Topic-A</tspan>
+    <tspan x="211" dy="46">Partition-1</tspan>
+  </text>
+  <rect x="318" y="610" width="215" height="104" fill="#bdf7bd" stroke="#888" stroke-width="2"/>
+  <rect class="msg" x="327" y="621" width="20" height="82"/>
+  <rect class="msg" x="356" y="621" width="20" height="82"/>
+  <rect class="msg" x="385" y="621" width="20" height="82"/>
+  <rect class="msg" x="414" y="621" width="20" height="82"/>
+  <rect class="msg" x="443" y="621" width="20" height="82"/>
+  <rect class="msg" x="472" y="621" width="20" height="82"/>
+  <rect class="msg" x="501" y="621" width="20" height="82"/>
+  <text x="319" y="790" font-size="39" text-anchor="middle">Broker-1</text>
+  <rect id="broker-2" class="box" x="658" y="572" width="505" height="242"/>
+  <text x="804" y="654" font-size="39" text-anchor="middle">
+    <tspan x="804">Topic-A</tspan>
+    <tspan x="804" dy="46">Partition-1</tspan>
+  </text>
+  <rect class="box" x="892" y="610" width="214" height="104"/>
+  <rect class="msg" x="901" y="621" width="20" height="82"/>
+  <rect class="msg" x="930" y="621" width="20" height="82"/>
+  <rect class="msg" x="959" y="621" width="20" height="82"/>
+  <rect class="msg" x="988" y="621" width="20" height="82"/>
+  <rect class="msg" x="1017" y="621" width="20" height="82"/>
+  <rect class="msg" x="1046" y="621" width="20" height="82"/>
+  <rect class="msg" x="1075" y="621" width="20" height="82"/>
+  <text x="910" y="790" font-size="39" text-anchor="middle">Broker-2</text>
+  <!-- Routing and replication paths -->
+  <!-- Routing sends to the leader; dashed paths return toward their source. -->
+  <path class="arrow" d="M559 392C480 472 429 508 422 610"/>
+  <path class="arrow dash" d="M445 610C473 541 510 500 579 392"/>
+  <path class="arrow" d="M484 610C650 454 834 474 946 610"/>
+  <path class="arrow dash" d="M920 610C810 529 661 514 505 610"/>
+</svg>

@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1726" height="216" viewBox="0 0 1726 216" role="img" aria-labelledby="title desc">
+  <title id="title">Message queue components</title>
+  <desc id="desc">A producer publishes messages, a consumer subscribes, and the consumer fetches messages from the queue.</desc>
+  <!-- Shared diagram definitions -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth" orient="auto-start-reverse">
+      <path d="M0 0 10 5 0 10z"/>
+    </marker>
+    <style>text{font-family:Arial,Helvetica,sans-serif;fill:#000}.box{fill:#fff;stroke:#888;stroke-width:2}.line{fill:none;stroke:#000;stroke-width:2}.arrow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrow)}.dash{stroke-dasharray:10 8}.msg{fill:#fff;stroke:#888;stroke-width:2}.persist{fill:#bdf7bd;stroke:#888;stroke-width:2}.new{fill:#fffdb5;stroke:#888;stroke-width:2}</style>
+  </defs>
+  <rect id="background" width="1726" height="216" fill="#fff"/>
+  <!-- Main components -->
+  <rect id="producer" class="box" x="33" y="28" width="340" height="160" rx="11"/>
+  <text x="203" y="120" font-size="35" text-anchor="middle">Producer</text>
+  <rect id="queue" class="box" x="687" y="28" width="341" height="160" rx="11"/>
+  <text x="858" y="69" font-size="35" text-anchor="middle">Message queue</text>
+  <g id="queued-messages">
+    <rect class="msg" x="740" y="97" width="25" height="69"/>
+    <rect class="msg" x="775" y="97" width="25" height="69"/>
+    <rect class="msg" x="810" y="97" width="25" height="69"/>
+    <rect class="msg" x="845" y="97" width="25" height="69"/>
+    <rect class="msg" x="880" y="97" width="25" height="69"/>
+    <rect class="msg" x="915" y="97" width="25" height="69"/>
+    <rect class="msg" x="950" y="97" width="25" height="69"/>
+  </g>
+  <rect id="consumer" class="box" x="1341" y="28" width="340" height="160" rx="11"/>
+  <text x="1511" y="120" font-size="35" text-anchor="middle">Consumer</text>
+  <!-- Produce, subscribe, and consume interactions -->
+  <path class="line" d="M373 108H430"/>
+  <path class="arrow" d="M625 108H685"/>
+  <text x="527" y="120" font-size="34" text-anchor="middle">a. produce</text>
+  <path class="line dash" d="M1341 65 1297 68"/>
+  <path class="arrow dash" d="M1077 81 1030 84"/>
+  <text x="1186" y="76" font-size="34" text-anchor="middle">b1. subscribe</text>
+  <path class="line" d="M1028 134 1078 137"/>
+  <path class="arrow" d="M1302 152 1339 155"/>
+  <text x="1189" y="147" font-size="34" text-anchor="middle">b2. consume</text>
+</svg>

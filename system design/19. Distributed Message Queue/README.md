@@ -66,7 +66,7 @@ Traditional message queues typically don't support data retention and don't prov
 Key components of a message queue:
 
 <div style="margin-left:3rem">
-    <img src="./images/message-queue-components.png" alt="message-queue-components" width="500" />
+    <img src="./images/message-queue-components.svg" alt="message-queue-components" width="500" />
 </div>
 
  * Producer sends messages to a queue
@@ -79,7 +79,7 @@ Key components of a message queue:
 The first type of messaging model is point-to-point and it's commonly found in traditional message queues:
 
 <div style="margin-left:3rem">
-    <img src="./images/point-to-point-model.png" alt="point-to-point-model" width="500" />
+    <img src="./images/point-to-point-model.svg" alt="point-to-point-model" width="500" />
 </div>
 
  * A message is sent to a queue and it's consumed by exactly one consumer.
@@ -90,7 +90,7 @@ The first type of messaging model is point-to-point and it's commonly found in t
 On the other hand, the publish-subscribe model is more common for event streaming platforms:
 
 <div style="margin-left:3rem">
-    <img src="./images/publish-subscribe-model.png" alt="publish-subscribe-model" width="500" />
+    <img src="./images/publish-subscribe-model.svg" alt="publish-subscribe-model" width="500" />
 </div>
 
  * In this model, messages are associated to a topic.
@@ -101,7 +101,7 @@ On the other hand, the publish-subscribe model is more common for event streamin
 What if the data volume for a topic is too large? One way to scale is by splitting a topic into partitions (aka sharding):
 
 <div style="margin-left:3rem">
-    <img src="./images/partitions.png" alt="partitions" width="500" />
+    <img src="./images/partitions.svg" alt="partitions" width="500" />
 </div>
 
  * Messages sent to a topic are evenly distributed across partitions
@@ -117,7 +117,7 @@ What if the data volume for a topic is too large? One way to scale is by splitti
 Consumer groups are a set of consumers working together to consume messages from a topic:
 
 <div style="margin-left:3rem">
-    <img src="./images/consumer-groups.png" alt="consumer-groups" width="500" />
+    <img src="./images/consumer-groups.svg" alt="consumer-groups" width="500" />
 </div>
 
  * Messages are replicated per consumer group (not per consumer).
@@ -129,7 +129,7 @@ Consumer groups are a set of consumers working together to consume messages from
 ### **High-level architecture**
 
 <div style="margin-left:3rem">
-    <img src="./images/high-level-architecture.png" alt="high-level-architecture" width="500" />
+    <img src="./images/high-level-architecture.svg" alt="high-level-architecture" width="500" />
 </div>
 
 - **Clients**: producer and consumer. Producer pushes messages to a designated topic. Consumer group subscribes to messages from a topic.
@@ -157,15 +157,15 @@ In order to find the best data store for messages, we must examine a message's p
 
 What are our options:
 - **Database**: not ideal as typical databases don't support well both write and read heavy systems.
-- **Write-ahead log (WAL)**: a plain text file which only supports appending to it and is very HDD-friendly. 
+- **Write-ahead log (WAL)**: a plain text file which only supports appending to it and is very HDD-friendly.
   * We split partitions into segments to avoid maintaining a very large file.
   * Old segments are read-only. Writes are accepted by latest segment only.
 
 <div style="margin-left:3rem">
-    <img src="./images/wal-example.png" alt="wal-example" width="500" />
+    <img src="./images/wal-example.svg" alt="wal-example" width="500" />
 </div>
 
-WAL files are extremely efficient when used with traditional HDDs. 
+WAL files are extremely efficient when used with traditional HDDs.
 
 There is a misconception that HDD acces is slow, but that hugely depends on the access pattern.
 When the access pattern is sequential (as in our case), HDDs can achieve several MB/s write/read speed which is sufficient for our needs.
@@ -178,7 +178,7 @@ It is important that the message schema is compliant between producer, queue and
 Example message structure:
 
 <div style="margin-left:3rem">
-    <img src="./images/message-structure.png" alt="message-structure" width="500" />
+    <img src="./images/message-structure.svg" alt="message-structure" width="500" />
 </div>
 
 The key of the message specifies which partition a message belongs to. An example mapping is `hash(key) % numPartitions`.
@@ -207,7 +207,7 @@ It is critical because:
  * Messages are written to the WAL in groups sequentially, which leads to a lot of sequential writes and disk caching.
 
 There is a trade-off between latency and throughput:
- * High batching leads to high throughput and higher latency. 
+ * High batching leads to high throughput and higher latency.
  * Less batching leads to lower throughput and lower latency.
 
 If we need to support lower latency since the system is deployed as a traditional message queue, the system could be tuned to use a smaller batch size.
@@ -221,7 +221,7 @@ If a producer wants to send a message to a partition, which broker should it con
 One option is to introduce a routing layer, which route messages to the correct broker. If replication is enabled, the correct broker is the leader replica:
 
 <div style="margin-left:3rem">
-    <img src="./images/routing-layer.png" alt="routing-layer" width="500" />
+    <img src="./images/routing-layer.svg" alt="routing-layer" width="500" />
 </div>
 
  * Routing layer reads the replication plan from the metadata store and caches it locally.
@@ -238,7 +238,7 @@ This approach works but has some drawbacks:
 To mitigate these issues, we can embed the routing layer into the producer:
 
 <div style="margin-left:3rem">
-    <img src="./images/routing-layer-producer.png" alt="routing-layer-producer" width="500" />
+    <img src="./images/routing-layer-producer.svg" alt="routing-layer-producer" width="500" />
 </div>
 
  * Fewer network hops lead to lower latency
@@ -248,7 +248,7 @@ To mitigate these issues, we can embed the routing layer into the producer:
 The batch size choice is a classical trade-off between throughput and latency. 
 
 <div style="margin-left:3rem">
-    <img src="./images/batch-size-throughput-vs-latency.png" alt="batch-size-throughput-vs-latency" width="500" />
+    <img src="./images/batch-size-throughput-vs-latency.svg" alt="batch-size-throughput-vs-latency" width="500" />
 </div>
 
  * Larger batch size leads to longer wait time before batch is committed. 
@@ -259,23 +259,23 @@ The batch size choice is a classical trade-off between throughput and latency.
 The consumer specifies its offset in a partition and receives a chunk of messages, beginning from that offset:
 
 <div style="margin-left:3rem">
-    <img src="./images/consumer-example.png" alt="consumer-example" width="500" />
+    <img src="./images/consumer-example.svg" alt="consumer-example" width="500" />
 </div>
 
 One important consideration when designing the consumer is whether to use a push or a pull model:
 - **Push model**: leads to lower latency as broker pushes messages to consumer as it receives them.
   * However, if rate of consumption falls behind the rate of production, the consumer can be overwhelmed.
   * It is challenging to deal with consumers with varying processing power as the broker controls the rate of consumption.
-- **Pull model**: leads to the consumer controlling the consumption rate. 
+- **Pull model**: leads to the consumer controlling the consumption rate.
   * If rate of consumption is slow, consumer will not be overwhelmed and we can scale it to catch up.
-  * The pull model is more suitable for batch processing, because with the push model, the broker can't know how many messages a consumer can handle. 
+  * The pull model is more suitable for batch processing, because with the push model, the broker can't know how many messages a consumer can handle.
   * With the pull model, on the other hand, consumers can aggressively fetch large message batches.
   * The down side is the higher latency and extra network calls when there are no new messages. Latter issue can be mitigated using long polling.
 
 Hence, most message queues (and us) choose the pull model.
 
 <div style="margin-left:3rem">
-    <img src="./images/consumer-flow.png" alt="consumer-flow" width="500" />
+    <img src="./images/consumer-flow.svg" alt="consumer-flow" width="500" />
 </div>
 
  * A new consumer subscribes to topic A and joins group 1.
@@ -295,7 +295,7 @@ This process occurs when a consumer joins/leaves or a partition is added/removed
 The broker, acting as a coordinator plays a huge role in orchestrating the rebalancing workflow.
 
 <div style="margin-left:3rem">
-    <img src="./images/consumer-rebalancing.png" alt="consumer-rebalancing" width="500" />
+    <img src="./images/consumer-rebalancing.svg" alt="consumer-rebalancing" width="500" />
 </div>
 
  * All consumers from the same group are connected to the same coordinator. The coordinator is found by hashing the group name.
@@ -305,13 +305,13 @@ The broker, acting as a coordinator plays a huge role in orchestrating the rebal
 When the coordinator stops receiving heartbeats from the consumers in a group, a rebalancing is triggered:
 
 <div style="margin-left:3rem">
-    <img src="./images/consumer-rebalance-example.png" alt="consumer-rebalance-example" width="500" />
+    <img src="./images/consumer-rebalance-example.svg" alt="consumer-rebalance-example" width="500" />
 </div>
 
 Let's explore what happens when a consumer joins a group:
 
 <div style="margin-left:3rem">
-    <img src="./images/consumer-join-group-usecase.png" alt="consumer-join-group-usecase" width="500" />
+    <img src="./images/consumer-join-group-usecase.svg" alt="consumer-join-group-usecase" width="500" />
 </div>
 
  * Initially, only consumer A is in the group and it consumes all partitions.
@@ -324,7 +324,7 @@ Let's explore what happens when a consumer joins a group:
 Here's what happens when a consumer leaves the group:
 
 <div style="margin-left:3rem">
-    <img src="./images/consumer-leaves-group-usecase.png" alt="consumer-leaves-group-usecase" width="500" />
+    <img src="./images/consumer-leaves-group-usecase.svg" alt="consumer-leaves-group-usecase" width="500" />
 </div>
 
  * Consumer A and B are in the same group
@@ -335,7 +335,7 @@ Here's what happens when a consumer leaves the group:
 The process is similar when a consumer doesn't send a heartbeat for a long time:
 
 <div style="margin-left:3rem">
-    <img src="./images/consumer-no-heartbeat-usecase.png" alt="consumer-no-heartbeat-usecase" width="500" />
+    <img src="./images/consumer-no-heartbeat-usecase.svg" alt="consumer-no-heartbeat-usecase" width="500" />
 </div>
 
 ### **State storage**
@@ -343,11 +343,11 @@ The process is similar when a consumer doesn't send a heartbeat for a long time:
 The state storage stores mapping between partitions and consumers, as well as the last consumed offsets for a partition.
 
 <div style="margin-left:3rem">
-    <img src="./images/state-storage.png" alt="state-storage" width="500" />
+    <img src="./images/state-storage.svg" alt="state-storage" width="500" />
 </div>
 
 Group 1's offset is at 6, meaning all previous messages are consumed. If a consumer crashes, the new consumer will continue from that message on wards.
- 
+
 Data access patterns for consumer states:
  * Frequent read/write operations, but low volume
  * Data is updated frequently, but rarely deleted
@@ -370,7 +370,7 @@ Zookeeper is essential for building distributed message queues.
 It is a hierarchical key-value store, commonly used for a distributed configuration, synchronization service and naming registry (ie service discovery).
 
 <div style="margin-left:3rem">
-    <img src="./images/zookeeper.png" alt="zookeeper" width="500" />
+    <img src="./images/zookeeper.svg" alt="zookeeper" width="500" />
 </div>
 
 With this change, the broker only needs to maintain data for the messages. Metadata and state storage is in Zookeeper.
@@ -382,7 +382,7 @@ Zookeeper also helps with leader election of the broker replicas.
 In distributed systems, hardware issues are inevitable. We can tackle this via replication to achieve high availability.
 
 <div style="margin-left:3rem">
-    <img src="./images/replication-example.png" alt="replication-example" width="500" />
+    <img src="./images/replication-example.svg" alt="replication-example" width="500" />
 </div>
 
  * Each partition is replicated across multiple brokers, but there is only one leader replica.
@@ -401,7 +401,7 @@ In-sync replicas (ISR) are replicas for a partition that stay in-sync with the l
 The `replica.lag.max.messages` defines how many messages can a replica be lagging behind the leader to be considered in-sync.
 
 <div style="margin-left:3rem">
-    <img src="./images/in-sync-replicas-example.png" alt="in-sync-replicas-example" width="500" />
+    <img src="./images/in-sync-replicas-example.svg" alt="in-sync-replicas-example" width="500" />
 </div>
 
  * Committed offset is 13
@@ -419,19 +419,19 @@ Acknowledgment handling is configurable.
 `ACK=all` means that all replicas in ISR have to sync a message. Message sending is slow, but message durability is highest.
 
 <div style="margin-left:3rem">
-    <img src="./images/ack-all.png" alt="ack-all" width="500" />
+    <img src="./images/ack-all.svg" alt="ack-all" width="500" />
 </div>
 
 `ACK=1` means that producer receives acknowledgment once leader receives the message. Message sending is fast, but message durability is low.
 
 <div style="margin-left:3rem">
-    <img src="./images/ack-1.png" alt="ack-1" width="500" />
+    <img src="./images/ack-1.svg" alt="ack-1" width="500" />
 </div>
 
 `ACK=0` means that producer sends messages without waiting for any acknowledgment from leader. Message sending is fastest, message durability is lowest.
 
 <div style="margin-left:3rem">
-    <img src="./images/ack-0.png" alt="ack-0" width="500" />
+    <img src="./images/ack-0.svg" alt="ack-0" width="500" />
 </div>
 
 On the consumer side, we can connect all consumers to the leader for a partition and let them read messages from it:
@@ -464,7 +464,7 @@ Consumer groups are rebalancing help us achieve scalability and fault tolerance.
 How do brokers handle failure?
 
 <div style="margin-left:3rem">
-    <img src="./images/broker-failure-recovery.png" alt="broker-failure-recovery" width="500" />
+    <img src="./images/broker-failure-recovery.svg" alt="broker-failure-recovery" width="500" />
 </div>
 
  * Once a broker fails, there are still enough replicas to avoid partition data loss
@@ -479,7 +479,7 @@ Additional considerations to make the broker fault-tolerant:
 How do we handle redistribution of replicas when a new broker is added?
 
 <div style="margin-left:3rem">
-    <img src="./images/broker-replica-redistribution.png" alt="broker-replica-redistribution" width="500" />
+    <img src="./images/broker-replica-redistribution.svg" alt="broker-replica-redistribution" width="500" />
 </div>
 
  * We can temporarily allow more replicas than configured, until new broker catches up
@@ -492,13 +492,13 @@ Whenever a new partition is added, the producer is notified and consumer rebalan
 In terms of data storage, we can only store new messages to the new partition vs. trying to copy all old ones:
 
 <div style="margin-left:3rem">
-    <img src="./images/partition-exmaple.png" alt="partition-example" width="500" />
+    <img src="./images/partition-example.svg" alt="partition-example" width="500" />
 </div>
 
 Decreasing the number of partitions is more involved:
 
 <div style="margin-left:3rem">
-    <img src="./images/partition-decrease.png" alt="partition-decrease" width="500" />
+    <img src="./images/partition-decrease.svg" alt="partition-decrease" width="500" />
 </div>
 
  * Once a partition is decommissioned, new messages are only received by remaining partitions
@@ -516,7 +516,7 @@ Let's discuss different delivery semantics.
 With this guarantee, messages are delivered not more than once and could not be delivered at all.
 
 <div style="margin-left:3rem">
-    <img src="./images/at-most-once.png" alt="at-most-once" width="500" />
+    <img src="./images/at-most-once.svg" alt="at-most-once" width="500" />
 </div>
 
  * Producer sends a message asynchronously to a topic. If message delivery fails, there is no retry.
@@ -527,7 +527,7 @@ With this guarantee, messages are delivered not more than once and could not be 
 A message can be sent more than once and no message should be left unprocessed.
 
 <div style="margin-left:3rem">
-    <img src="./images/at-least-once.png" alt="at-least-once" width="500" />
+    <img src="./images/at-least-once.svg" alt="at-least-once" width="500" />
 </div>
 
  * Producer sends message with `ack=1` or `ack=all`. If there is any issue, it will keep retrying.
@@ -540,7 +540,7 @@ A message can be sent more than once and no message should be left unprocessed.
 Extremely costly to implement for the system, albeit it's the friendliest guarantee to users:
 
 <div style="margin-left:3rem">
-    <img src="./images/exactly-once.png" alt="exactly-once" width="500" />
+    <img src="./images/exactly-once.svg" alt="exactly-once" width="500" />
 </div>
 
 ### **Advanced features**
@@ -562,7 +562,7 @@ We can resolve this using message filtering.
  * For more complex mathematical formulaes, the broker could implement a grammar parser or script executor, but that can be heavyweight for the message queue
 
 <div style="margin-left:3rem">
-    <img src="./images/message-filtering.png" alt="message-filtering" width="500" />
+    <img src="./images/message-filtering.svg" alt="message-filtering" width="500" />
 </div>
 
 #### Delayed messages & scheduled messages
@@ -573,7 +573,7 @@ For example, we might submit a payment verification check for 30m from now, whic
 This can be achieved by sending messages to temporary storage in the broker and moving the message to the partition at the right time:
 
 <div style="margin-left:3rem">
-    <img src="./images/delayed-message-implementation.png" alt="delayed-message-implementation" width="500" />
+    <img src="./images/delayed-message-implementation.svg" alt="delayed-message-implementation" width="500" />
 </div>
 
  * The temporary storage can be one or more special message topics

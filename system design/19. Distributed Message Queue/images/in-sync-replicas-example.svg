@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1196" height="890" viewBox="0 0 1196 890" role="img" aria-labelledby="title desc">
+  <title id="title">In-sync replica example</title>
+  <desc id="desc">The leader has offsets 10 through 15, two followers are caught up through offset 13 or 14, and a fourth follower is outside the in-sync replica set.</desc>
+  <!-- Shared diagram definitions -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth" orient="auto-start-reverse">
+      <path d="M0 0 10 5 0 10z"/>
+    </marker>
+    <style>text{font-family:Arial,Helvetica,sans-serif;fill:#000}.box{fill:#fff;stroke:#888;stroke-width:2}.line{fill:none;stroke:#000;stroke-width:2}.arrow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrow)}.dash{stroke-dasharray:10 8}.msg{fill:#fff;stroke:#888;stroke-width:2}.persist{fill:#bdf7bd;stroke:#888;stroke-width:2}.new{fill:#fffdb5;stroke:#888;stroke-width:2}</style>
+  </defs>
+  <rect id="background" width="1196" height="890" fill="#fff"/>
+  <!-- Leader log and committed offset -->
+  <text x="69" y="369" font-size="35">replica-1 (leader)</text>
+  <g id="leader-log">
+    <rect class="msg" x="58" y="389" width="63" height="167"/>
+    <text x="89" y="434" font-size="34" text-anchor="middle">10</text>
+    <rect class="msg" x="121" y="389" width="63" height="167"/>
+    <text x="152" y="434" font-size="34" text-anchor="middle">11</text>
+    <rect class="msg" x="184" y="389" width="63" height="167"/>
+    <text x="215" y="434" font-size="34" text-anchor="middle">12</text>
+    <rect class="msg" x="247" y="389" width="63" height="167"/>
+    <text x="278" y="434" font-size="34" text-anchor="middle">13</text>
+    <rect class="new dash" x="310" y="389" width="63" height="167"/>
+    <text x="341" y="434" font-size="34" text-anchor="middle">14</text>
+    <rect class="new dash" x="373" y="389" width="63" height="167"/>
+    <text x="404" y="434" font-size="34" text-anchor="middle">15</text>
+  </g>
+  <path class="arrow" d="M278 652V558"/>
+  <text x="98" y="696" font-size="35">committed offset = 13</text>
+  <!-- Followers -->
+  <text x="850" y="72" font-size="35">replica-2 (follower)</text>
+  <g>
+    <rect class="msg" x="840" y="93" width="63" height="167"/>
+    <text x="871" y="138" font-size="34" text-anchor="middle">10</text>
+    <rect class="msg" x="903" y="93" width="63" height="167"/>
+    <text x="934" y="138" font-size="34" text-anchor="middle">11</text>
+    <rect class="msg" x="966" y="93" width="63" height="167"/>
+    <text x="997" y="138" font-size="34" text-anchor="middle">12</text>
+    <rect class="msg" x="1029" y="93" width="63" height="167"/>
+    <text x="1060" y="138" font-size="34" text-anchor="middle">13</text>
+    <rect class="new dash" x="1092" y="93" width="63" height="167"/>
+    <text x="1123" y="138" font-size="34" text-anchor="middle">14</text>
+  </g>
+  <text x="850" y="369" font-size="35">replica-3 (follower)</text>
+  <g>
+    <rect class="msg" x="840" y="392" width="63" height="167"/>
+    <text x="871" y="437" font-size="34" text-anchor="middle">10</text>
+    <rect class="msg" x="903" y="392" width="63" height="167"/>
+    <text x="934" y="437" font-size="34" text-anchor="middle">11</text>
+    <rect class="msg" x="966" y="392" width="63" height="167"/>
+    <text x="997" y="437" font-size="34" text-anchor="middle">12</text>
+    <rect class="msg" x="1029" y="392" width="63" height="167"/>
+    <text x="1060" y="437" font-size="34" text-anchor="middle">13</text>
+  </g>
+  <text x="850" y="670" font-size="35">replica-4 (follower)</text>
+  <g>
+    <rect class="msg" x="840" y="691" width="63" height="167"/>
+    <text x="871" y="736" font-size="34" text-anchor="middle">10</text>
+    <rect class="msg" x="903" y="691" width="63" height="167"/>
+    <text x="934" y="736" font-size="34" text-anchor="middle">11</text>
+  </g>
+  <!-- Fetch relationships -->
+  <path class="line" d="M434 453 585 357"/>
+  <path class="arrow" d="M690 290 838 197"/>
+  <path class="line" d="M434 472H584"/>
+  <path class="arrow" d="M688 472H838"/>
+  <path class="line dash" d="M434 492 590 593"/>
+  <path class="arrow dash" d="M695 662 838 754"/>
+  <text x="594" y="334" font-size="35">fetch</text>
+  <text x="594" y="485" font-size="35">fetch</text>
+  <text x="530" y="638" font-size="35">not caught up</text>
+  <text x="70" y="835" font-size="35">ISR: {replica-1, replica-2, replica-3}</text>
+</svg>

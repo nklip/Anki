@@ -1,0 +1,355 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1256" height="1146" viewBox="0 0 1256 1146" role="img" aria-labelledby="title desc">
+  <title id="title">Broker failure recovery</title>
+  <desc id="desc">After Broker 3 fails, missing replicas are redistributed across the remaining brokers and newly copied messages are highlighted.</desc>
+  <!-- Shared diagram definitions -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth" orient="auto-start-reverse">
+      <path d="M0 0 10 5 0 10z"/>
+    </marker>
+    <style>text{font-family:Arial,Helvetica,sans-serif;fill:#000}.box{fill:#fff;stroke:#808080;stroke-width:2}.line{fill:none;stroke:#000;stroke-width:2}.arrow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrow)}.dash{stroke-dasharray:6 4.5}.msg{fill:#fff;stroke:#808080;stroke-width:2}.persist{fill:#cdfdc5;stroke:#808080;stroke-width:2}.new{fill:#fffec4;stroke:#808080;stroke-width:2}.note{fill:#fffec4;stroke:#808080;stroke-width:2;stroke-dasharray:10 8}</style>
+  </defs>
+  <rect id="background" width="1256" height="1146" fill="#fff"/>
+  <!-- Initial replica placement before Broker 3 fails -->
+  <rect x="30.2" y="25" width="271.8" height="286.5" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <text x="167.1" y="301" font-size="21" text-anchor="middle">Broker-1</text>
+  <text x="159" y="69" font-size="21" text-anchor="end">
+    <tspan x="159">Topic-A</tspan>
+    <tspan x="159" dy="25">Partition-1</tspan>
+  </text>
+  <rect class="persist" x="166" y="45" width="116" height="56.5"/>
+  <rect class="msg" x="171" y="51" width="11" height="44.5"/>
+  <rect class="msg" x="186" y="51" width="12" height="44.5"/>
+  <rect class="msg" x="202" y="51" width="12" height="44.5"/>
+  <rect class="msg" x="218" y="51" width="11.8" height="44.5"/>
+  <rect class="msg" x="250" y="51" width="11" height="44.5"/>
+  <rect class="msg" x="265" y="51" width="12" height="44.5"/>
+  <rect class="msg" x="234" y="51" width="11" height="44.5"/>
+  <text x="159" y="227.5" font-size="21" text-anchor="end">
+    <tspan x="159">Topic-B</tspan>
+    <tspan x="159" dy="25">Partition-1</tspan>
+  </text>
+  <rect x="166" y="203.5" width="116" height="56.5" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <rect class="msg" x="171" y="209" width="11" height="45"/>
+  <rect class="msg" x="186.5" y="209" width="11.5" height="45"/>
+  <rect class="msg" x="218" y="209" width="12" height="45"/>
+  <rect class="msg" x="234" y="209" width="11" height="45"/>
+  <rect class="msg" x="250" y="209" width="11" height="45"/>
+  <rect class="msg" x="265.5" y="209" width="11.5" height="45"/>
+  <rect class="msg" x="202" y="209" width="12" height="45"/>
+  <rect x="349.2" y="25" width="271.8" height="286.5" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <text x="486.1" y="301" font-size="21" text-anchor="middle">Broker-2</text>
+  <text x="467" y="69" font-size="21" text-anchor="end">
+    <tspan x="467">Topic-A</tspan>
+    <tspan x="467" dy="25">Partition-1</tspan>
+  </text>
+  <rect x="475" y="45" width="116" height="56.5" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <rect class="msg" x="479.5" y="51" width="11.5" height="44.5"/>
+  <rect class="msg" x="495" y="51" width="12" height="44.5"/>
+  <rect class="msg" x="511" y="51" width="12" height="44.5"/>
+  <rect class="msg" x="527" y="51" width="11.8" height="44.5"/>
+  <rect class="msg" x="558.5" y="51" width="11.5" height="44.5"/>
+  <rect class="msg" x="543" y="51" width="11" height="44.5"/>
+  <rect class="msg" x="574" y="51" width="12" height="44.5"/>
+  <text x="467" y="148" font-size="21" text-anchor="end">
+    <tspan x="467">Topic-A</tspan>
+    <tspan x="467" dy="25">Partition-2</tspan>
+  </text>
+  <rect class="persist" x="475" y="124" width="116" height="56.5"/>
+  <rect class="msg" x="479.5" y="130" width="11.5" height="45"/>
+  <rect class="msg" x="495" y="130" width="12" height="45"/>
+  <rect class="msg" x="511" y="130" width="12" height="45"/>
+  <rect class="msg" x="527" y="130" width="11.5" height="45"/>
+  <rect class="msg" x="558.5" y="130" width="11.5" height="45"/>
+  <rect class="msg" x="543" y="130" width="11" height="45"/>
+  <rect class="msg" x="574" y="130" width="12" height="45"/>
+  <rect x="653" y="25" width="272" height="286" fill="#fff" stroke="#808080" stroke-width="2" stroke-dasharray="6 4.5"/>
+  <text x="790" y="301" font-size="21.5" text-anchor="middle" fill="#000">Broker-3</text>
+  <text x="776" y="69" font-size="21" text-anchor="end" fill="#000">
+    <tspan x="776">Topic-A</tspan>
+    <tspan x="776" dy="25">Partition-1</tspan>
+  </text>
+  <rect x="784" y="45" width="115.5" height="57" fill="#fff" stroke="#808080" stroke-width="2" stroke-dasharray="6 4.5"/>
+  <rect class="msg" x="788" y="51" width="12" height="44.5"/>
+  <rect class="msg" x="804" y="51" width="12" height="44.5"/>
+  <rect class="msg" x="820" y="51" width="11.8" height="44.5"/>
+  <rect class="msg" x="836" y="51" width="11.8" height="44.5"/>
+  <rect class="msg" x="867" y="51" width="12" height="44.5"/>
+  <rect class="msg" x="883" y="51" width="12" height="44.5"/>
+  <rect class="msg" x="852" y="51" width="11" height="44.5"/>
+  <text x="776" y="148" font-size="21" text-anchor="end" fill="#000">
+    <tspan x="776">Topic-A</tspan>
+    <tspan x="776" dy="25">Partition-2</tspan>
+  </text>
+  <rect x="784" y="124" width="115.5" height="57" fill="#fff" stroke="#808080" stroke-width="2" stroke-dasharray="6 4.5"/>
+  <rect class="msg" x="788.5" y="130" width="11.5" height="45"/>
+  <rect class="msg" x="804" y="130" width="12" height="45"/>
+  <rect class="msg" x="820" y="130" width="11.5" height="45"/>
+  <rect class="msg" x="836" y="130" width="11.5" height="45"/>
+  <rect class="msg" x="867.5" y="130" width="11.5" height="45"/>
+  <rect class="msg" x="883" y="130" width="12" height="45"/>
+  <rect class="msg" x="852" y="130" width="11" height="45"/>
+  <text x="777" y="228" font-size="22" text-anchor="end" fill="#000">
+    <tspan x="777">Topic-B</tspan>
+    <tspan x="777" dy="25">Partition-1</tspan>
+  </text>
+  <rect class="persist dash" x="784" y="203" width="115.5" height="57"/>
+  <rect class="msg" x="788.5" y="209" width="11.5" height="45"/>
+  <rect class="msg" x="804" y="209" width="12" height="45"/>
+  <rect class="msg" x="820" y="209" width="12" height="45"/>
+  <rect class="msg" x="836" y="209" width="11.5" height="45"/>
+  <rect class="msg" x="867.5" y="209" width="11.5" height="45"/>
+  <rect class="msg" x="883" y="209" width="12" height="45"/>
+  <rect class="msg" x="852" y="209" width="11" height="45"/>
+  <rect x="957" y="25" width="271.8" height="286.5" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <text x="1093.9" y="301" font-size="21" text-anchor="middle">Broker-4</text>
+  <text x="1085.2" y="148" font-size="21" text-anchor="end">
+    <tspan x="1085.2">Topic-A</tspan>
+    <tspan x="1085.2" dy="25">Partition-2</tspan>
+  </text>
+  <rect x="1092.2" y="124" width="116.8" height="56.5" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <rect class="msg" x="1097" y="130" width="12" height="45"/>
+  <rect class="msg" x="1113" y="130" width="12" height="45"/>
+  <rect class="msg" x="1129" y="130" width="11.5" height="45"/>
+  <rect class="msg" x="1145" y="130" width="11" height="45"/>
+  <rect class="msg" x="1176" y="130" width="12" height="45"/>
+  <rect class="msg" x="1192" y="130" width="12" height="45"/>
+  <rect class="msg" x="1129" y="209" width="11.5" height="45"/>
+  <text x="1085.5" y="227.5" font-size="21" text-anchor="end">
+    <tspan x="1085.5">Topic-B</tspan>
+    <tspan x="1085.5" dy="25">Partition-1</tspan>
+  </text>
+  <rect x="1092.5" y="203.5" width="116.2" height="56.5" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <rect class="msg" x="1097.5" y="209" width="11.5" height="45"/>
+  <rect class="msg" x="1113" y="209" width="12" height="45"/>
+  <rect class="msg" x="1145" y="209" width="11" height="45"/>
+  <rect class="msg" x="1161" y="209" width="11" height="45"/>
+  <rect class="msg" x="1176.5" y="209" width="11.5" height="45"/>
+  <rect class="msg" x="1192" y="209" width="12" height="45"/>
+  <rect class="msg" x="1161" y="130" width="11" height="45"/>
+  <!-- Broker 3 failure state; failed replicas remain faded for context. -->
+  <path d="M614 358V396H592L637 429L682 396H660V358Z" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <rect x="30.2" y="434" width="271.8" height="286.5" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <text x="167.1" y="710" font-size="21" text-anchor="middle">Broker-1</text>
+  <text x="159" y="477" font-size="21" text-anchor="end">
+    <tspan x="159">Topic-A</tspan>
+    <tspan x="159" dy="25">Partition-1</tspan>
+  </text>
+  <rect class="persist" x="166" y="454" width="116" height="56.5"/>
+  <rect class="msg" x="171" y="460" width="11" height="44.5"/>
+  <rect class="msg" x="186.2" y="460" width="11.8" height="44.5"/>
+  <rect class="msg" x="202" y="460" width="12" height="44.5"/>
+  <rect class="msg" x="218" y="459.5" width="11.5" height="45"/>
+  <rect class="msg" x="250" y="460" width="11" height="44.5"/>
+  <rect class="msg" x="265.2" y="460" width="11.8" height="44.5"/>
+  <rect class="msg" x="234" y="459.5" width="11" height="45"/>
+  <text x="159" y="636" font-size="21" text-anchor="end">
+    <tspan x="159">Topic-B</tspan>
+    <tspan x="159" dy="25">Partition-1</tspan>
+  </text>
+  <rect x="166" y="612" width="116" height="56.5" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <rect class="msg" x="171" y="618" width="11" height="45"/>
+  <rect class="msg" x="186.5" y="618" width="11.5" height="45"/>
+  <rect class="msg" x="218" y="618" width="11.5" height="45"/>
+  <rect class="msg" x="234" y="618" width="11" height="45"/>
+  <rect class="msg" x="250" y="618" width="11" height="45"/>
+  <rect class="msg" x="265.5" y="618" width="11.5" height="45"/>
+  <rect class="msg" x="202" y="618" width="12" height="45"/>
+  <rect x="349.2" y="434" width="271.8" height="286.5" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <text x="486.1" y="710" font-size="21" text-anchor="middle">Broker-2</text>
+  <text x="468" y="478" font-size="22" text-anchor="end">
+    <tspan x="468">Topic-A</tspan>
+    <tspan x="468" dy="25">Partition-1</tspan>
+  </text>
+  <rect x="475" y="454" width="115.8" height="56.5" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <rect class="msg" x="479.8" y="460" width="11.2" height="44.5"/>
+  <rect class="msg" x="495.2" y="460" width="11.8" height="44.5"/>
+  <rect class="msg" x="511" y="459.5" width="11.8" height="45"/>
+  <rect class="msg" x="527" y="459.5" width="11.5" height="45"/>
+  <rect class="msg" x="558.8" y="460" width="11.2" height="44.5"/>
+  <rect class="msg" x="543" y="460" width="11" height="44.5"/>
+  <rect class="msg" x="574.2" y="460" width="11.8" height="44.5"/>
+  <text x="467" y="557" font-size="21" text-anchor="end">
+    <tspan x="467">Topic-A</tspan>
+    <tspan x="467" dy="25">Partition-2</tspan>
+  </text>
+  <rect class="persist" x="475" y="533" width="116" height="56.5"/>
+  <rect class="msg" x="479.5" y="539" width="11.5" height="44.5"/>
+  <rect class="msg" x="495" y="539" width="12" height="44.5"/>
+  <rect class="msg" x="511" y="539" width="12" height="44.5"/>
+  <rect class="msg" x="527" y="539" width="11.8" height="44.5"/>
+  <rect class="msg" x="558.5" y="539" width="11.5" height="44.5"/>
+  <rect class="msg" x="543" y="539" width="11" height="44.5"/>
+  <rect class="msg" x="574" y="539" width="12" height="44.5"/>
+  <rect x="653" y="434" width="272" height="286.5" fill="#fff" stroke="#808080" stroke-width="2" stroke-dasharray="6 4.5"/>
+  <text x="790" y="710" font-size="21.5" text-anchor="middle" fill="#000">Broker-3</text>
+  <text x="778" y="477" font-size="23" text-anchor="end" fill="#000" opacity="0.29">
+    <tspan x="778">Topic-A</tspan>
+    <tspan x="778" dy="25">Partition-1</tspan>
+  </text>
+  <rect x="784" y="454" width="115.5" height="56.5" fill="#fff" stroke="#808080" stroke-width="2" opacity="0.29" stroke-dasharray="6 4.5"/>
+  <rect class="msg" x="788" y="460" width="12" height="44.5" opacity="0.29"/>
+  <rect class="msg" x="804" y="460" width="12" height="44.5" opacity="0.29"/>
+  <rect class="msg" x="820" y="460" width="11.8" height="44.5" opacity="0.29"/>
+  <rect class="msg" x="836" y="460" width="11.8" height="44.5" opacity="0.29"/>
+  <rect class="msg" x="852" y="460" width="11" height="44.5" opacity="0.29"/>
+  <rect class="msg" x="867" y="460" width="12" height="44.5" opacity="0.29"/>
+  <rect class="msg" x="883" y="460" width="12" height="44.5" opacity="0.29"/>
+  <text x="778" y="556" font-size="23" text-anchor="end" fill="#000" opacity="0.29">
+    <tspan x="778">Topic-A</tspan>
+    <tspan x="778" dy="25">Partition-2</tspan>
+  </text>
+  <rect x="784" y="533" width="115.5" height="57" fill="#fff" stroke="#808080" stroke-width="2" opacity="0.29" stroke-dasharray="6 4.5"/>
+  <rect class="msg" x="788.5" y="539" width="11.5" height="45" opacity="0.29"/>
+  <rect class="msg" x="804" y="539" width="12" height="45" opacity="0.29"/>
+  <rect class="msg" x="820" y="539" width="11.5" height="45" opacity="0.29"/>
+  <rect class="msg" x="836" y="539" width="11.5" height="45" opacity="0.29"/>
+  <rect class="msg" x="852" y="539" width="11" height="45" opacity="0.29"/>
+  <rect class="msg" x="867.5" y="539" width="11.5" height="45" opacity="0.29"/>
+  <rect class="msg" x="883" y="539" width="12" height="45" opacity="0.29"/>
+  <text x="778" y="635" font-size="23" text-anchor="end" fill="#000" opacity="0.29">
+    <tspan x="778">Topic-B</tspan>
+    <tspan x="778" dy="25">Partition-1</tspan>
+  </text>
+  <rect class="persist dash" x="784" y="612" width="115.5" height="57" opacity="0.29"/>
+  <rect class="msg" x="788.5" y="618" width="11.5" height="45" opacity="0.29"/>
+  <rect class="msg" x="804" y="618" width="12" height="45" opacity="0.29"/>
+  <rect class="msg" x="820" y="618" width="12" height="45" opacity="0.29"/>
+  <rect class="msg" x="836" y="618" width="11.5" height="45" opacity="0.29"/>
+  <rect class="msg" x="852" y="618" width="11" height="45" opacity="0.29"/>
+  <rect class="msg" x="867.5" y="618" width="11.5" height="45" opacity="0.29"/>
+  <rect class="msg" x="883" y="618" width="12" height="45" opacity="0.29"/>
+  <rect x="957" y="434" width="271.8" height="286.5" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <text x="1093.9" y="710" font-size="21" text-anchor="middle">Broker-4</text>
+  <text x="1085.2" y="557" font-size="21" text-anchor="end">
+    <tspan x="1085.2">Topic-A</tspan>
+    <tspan x="1085.2" dy="25">Partition-2</tspan>
+  </text>
+  <rect x="1092.2" y="533" width="116.8" height="56.5" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <rect class="msg" x="1097" y="539" width="12" height="44.5"/>
+  <rect class="msg" x="1113" y="539" width="12" height="44.5"/>
+  <rect class="msg" x="1129" y="539" width="11.8" height="44.5"/>
+  <rect class="msg" x="1145" y="539" width="11" height="44.5"/>
+  <rect class="msg" x="1176" y="539" width="12" height="44.5"/>
+  <rect class="msg" x="1192" y="539" width="12" height="44.5"/>
+  <rect class="msg" x="1129" y="618" width="11.8" height="45"/>
+  <text x="1085.2" y="636" font-size="21" text-anchor="end">
+    <tspan x="1085.2">Topic-B</tspan>
+    <tspan x="1085.2" dy="25">Partition-1</tspan>
+  </text>
+  <rect x="1092.2" y="612" width="116.8" height="56.5" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <rect class="msg" x="1097" y="618" width="12" height="45"/>
+  <rect class="msg" x="1113" y="618" width="12" height="45"/>
+  <rect class="msg" x="1145" y="618" width="11" height="45"/>
+  <rect class="msg" x="1161" y="618" width="11" height="45"/>
+  <rect class="msg" x="1176" y="618" width="12" height="45"/>
+  <rect class="msg" x="1192" y="618" width="12" height="45"/>
+  <rect class="msg" x="1161" y="539" width="11" height="44.5"/>
+  <path d="M667 659L680 659L692 674.6L704 659L717 659L698.5 683L717 707L704 707L692 691.4L680 707L667 707L685.5 683Z" fill="#ea3323" stroke="#922016" stroke-width="2"/>
+  <!-- Recovered layout with copied replicas highlighted in yellow. -->
+  <path d="M614 759V797H592L637 830L682 797H660V759Z" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <rect x="30.2" y="838.5" width="271.8" height="286.5" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <text x="167.1" y="1113.5" font-size="21" text-anchor="middle">Broker-1</text>
+  <text x="159" y="882.5" font-size="21" text-anchor="end">
+    <tspan x="159">Topic-A</tspan>
+    <tspan x="159" dy="25">Partition-1</tspan>
+  </text>
+  <rect class="persist" x="166" y="858.5" width="116" height="56.5"/>
+  <rect class="msg" x="171" y="864.5" width="11" height="44.5"/>
+  <rect class="msg" x="186.2" y="864.5" width="11.8" height="44.5"/>
+  <rect class="msg" x="202" y="864.5" width="12" height="44.5"/>
+  <rect class="msg" x="218" y="864.5" width="12" height="44.5"/>
+  <rect class="msg" x="250" y="864.5" width="11" height="44.5"/>
+  <rect class="msg" x="265.2" y="864.5" width="11.8" height="44.5"/>
+  <rect class="msg" x="234" y="864.5" width="11" height="44.5"/>
+  <text x="159.2" y="961.5" font-size="21" text-anchor="end">
+    <tspan x="159.2">Topic-A</tspan>
+    <tspan x="159.2" dy="25">Partition-2</tspan>
+  </text>
+  <rect x="166.2" y="937.5" width="116.5" height="56.5" fill="#fffec4" stroke="#808080" stroke-width="2"/>
+  <rect class="msg" x="171.2" y="943.5" width="11.8" height="45"/>
+  <rect class="msg" x="187" y="943.5" width="12" height="44.5"/>
+  <rect class="msg" x="203" y="943.5" width="11.8" height="44.5"/>
+  <rect class="msg" x="219" y="943.5" width="11" height="44.5"/>
+  <text x="158.2" y="1040.5" font-size="21" text-anchor="end">
+    <tspan x="158.2">Topic-B</tspan>
+    <tspan x="158.2" dy="25">Partition-1</tspan>
+  </text>
+  <rect x="166.2" y="1016.5" width="115.5" height="57" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <rect class="msg" x="171" y="1022.5" width="11" height="45"/>
+  <rect class="msg" x="186.2" y="1023" width="11.8" height="44.5"/>
+  <rect class="msg" x="202.2" y="1022.5" width="11.5" height="45"/>
+  <rect class="msg" x="218" y="1022.5" width="11.8" height="44.5"/>
+  <rect class="msg" x="250" y="1022.5" width="11" height="45"/>
+  <rect class="msg" x="265.2" y="1023" width="11.8" height="44.5"/>
+  <rect class="msg" x="234" y="1022.5" width="11" height="45"/>
+  <rect x="349.2" y="838.5" width="271.8" height="286.5" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <text x="486.1" y="1113.5" font-size="21" text-anchor="middle">Broker-2</text>
+  <text x="467" y="882.5" font-size="21" text-anchor="end">
+    <tspan x="467">Topic-A</tspan>
+    <tspan x="467" dy="25">Partition-1</tspan>
+  </text>
+  <rect x="475" y="858.5" width="116" height="56.5" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <rect class="msg" x="479.2" y="864.5" width="11.8" height="44.5"/>
+  <rect class="msg" x="495.2" y="864.5" width="11.8" height="44.5"/>
+  <rect class="msg" x="511" y="864.5" width="12" height="44.5"/>
+  <rect class="msg" x="527" y="864.5" width="11.5" height="44.5"/>
+  <rect class="msg" x="558.2" y="864.5" width="11.8" height="44.5"/>
+  <rect class="msg" x="543" y="864.5" width="11" height="44.5"/>
+  <rect class="msg" x="574.2" y="864.5" width="11.8" height="44.5"/>
+  <text x="467" y="961.5" font-size="21" text-anchor="end">
+    <tspan x="467">Topic-A</tspan>
+    <tspan x="467" dy="25">Partition-2</tspan>
+  </text>
+  <rect class="persist" x="475" y="937.5" width="116" height="56.5"/>
+  <rect class="msg" x="479.5" y="943.5" width="11.5" height="45"/>
+  <rect class="msg" x="495.5" y="943.5" width="11.5" height="45"/>
+  <rect class="msg" x="511" y="943.5" width="12" height="44.5"/>
+  <rect class="msg" x="527" y="943.5" width="11.8" height="44.5"/>
+  <rect class="msg" x="558.2" y="943.5" width="11.8" height="44.5"/>
+  <rect class="msg" x="543" y="943.5" width="11" height="44.5"/>
+  <rect class="msg" x="574.5" y="943.5" width="11.5" height="45"/>
+  <text x="470.2" y="1040.5" font-size="21" text-anchor="end">
+    <tspan x="470.2">Topic-B</tspan>
+    <tspan x="470.2" dy="25">Partition-1</tspan>
+  </text>
+  <rect x="477.2" y="1016.5" width="115.5" height="57" fill="#fffec4" stroke="#808080" stroke-width="2"/>
+  <rect class="msg" x="482" y="1022.5" width="11.8" height="44.5"/>
+  <rect class="msg" x="498" y="1022.5" width="11" height="45"/>
+  <rect class="msg" x="513.5" y="1022.5" width="11.5" height="45"/>
+  <rect class="msg" x="529.2" y="1023" width="11.8" height="44.5"/>
+  <rect class="msg" x="545" y="1022.5" width="11.8" height="44.5"/>
+  <rect x="957" y="838.5" width="271.8" height="286.5" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <text x="1093.9" y="1113.5" font-size="21" text-anchor="middle">Broker-4</text>
+  <text x="1085.8" y="882.5" font-size="21" text-anchor="end">
+    <tspan x="1085.8">Topic-A</tspan>
+    <tspan x="1085.8" dy="25">Partition-1</tspan>
+  </text>
+  <rect x="1092.8" y="858.5" width="116" height="56.5" fill="#fffec4" stroke="#808080" stroke-width="2"/>
+  <rect class="msg" x="1097.2" y="864.5" width="11.8" height="44.5"/>
+  <rect class="msg" x="1113" y="864.5" width="12" height="44.5"/>
+  <text x="1085.2" y="961.5" font-size="21" text-anchor="end">
+    <tspan x="1085.2">Topic-A</tspan>
+    <tspan x="1085.2" dy="25">Partition-2</tspan>
+  </text>
+  <rect x="1092.2" y="937.5" width="116.5" height="56.5" fill="#fff" stroke="#808080" stroke-width="2"/>
+  <rect class="msg" x="1097.5" y="943.5" width="11.5" height="45"/>
+  <rect class="msg" x="1113" y="943.5" width="12" height="44.5"/>
+  <rect class="msg" x="1129" y="943.5" width="11.8" height="44.5"/>
+  <rect class="msg" x="1145" y="943.5" width="11" height="44.5"/>
+  <rect class="msg" x="1161" y="943.5" width="11" height="44.5"/>
+  <rect class="msg" x="1192" y="943.5" width="12" height="44.5"/>
+  <rect class="msg" x="1176.5" y="943.5" width="11.5" height="45"/>
+  <text x="1085.5" y="1040.5" font-size="21" text-anchor="end">
+    <tspan x="1085.5">Topic-B</tspan>
+    <tspan x="1085.5" dy="25">Partition-1</tspan>
+  </text>
+  <rect class="persist" x="1092.5" y="1016.5" width="116" height="57"/>
+  <rect class="msg" x="1097.2" y="1023" width="11.8" height="44.5"/>
+  <rect class="msg" x="1113" y="1022.5" width="11.8" height="44.5"/>
+  <rect class="msg" x="1129" y="1022.5" width="11.8" height="44.5"/>
+  <rect class="msg" x="1145" y="1022.5" width="11" height="45"/>
+  <rect class="msg" x="1176.2" y="1023" width="11.8" height="44.5"/>
+  <rect class="msg" x="1192" y="1022.5" width="11.8" height="44.5"/>
+  <rect class="msg" x="1161" y="1022.5" width="11" height="45"/>
+</svg>

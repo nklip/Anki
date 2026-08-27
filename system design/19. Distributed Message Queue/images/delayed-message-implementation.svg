@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1032" height="736" viewBox="0 0 1032 736" role="img" aria-labelledby="title desc">
+  <title id="title">Delayed message implementation</title>
+  <desc id="desc">Delayed messages wait in temporary storage until their delivery time, while instant messages go directly to the queue.</desc>
+  <!-- Shared diagram definitions -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth" orient="auto-start-reverse">
+      <path d="M0 0 10 5 0 10z"/>
+    </marker>
+    <marker id="arrow-gray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth" orient="auto">
+      <path d="M0 0 10 5 0 10z" fill="#aaa"/>
+    </marker>
+    <style>text{font-family:Arial,Helvetica,sans-serif;fill:#000}.box{fill:#fff;stroke:#888;stroke-width:2}.line{fill:none;stroke:#000;stroke-width:2}.arrow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrow)}.dash{stroke-dasharray:10 8}.msg{fill:#fff;stroke:#888;stroke-width:2}.persist{fill:#bdf7bd;stroke:#888;stroke-width:2}.new{fill:#fffdb5;stroke:#888;stroke-width:2}.note{fill:#fffdb5;stroke:#888;stroke-width:2;stroke-dasharray:10 8}</style>
+  </defs>
+  <rect id="background" width="1032" height="736" fill="#fff"/>
+  <!-- Producer paths -->
+  <rect id="producer" class="box" x="351" y="31" width="320" height="154"/>
+  <text x="511" y="127" font-size="36" text-anchor="middle">Producer</text>
+  <path class="line" d="M413 185 350 276"/>
+  <text x="299" y="302" font-size="35" text-anchor="middle">delayed messages</text>
+  <path d="M619 185C650 214 673 235 690 253" fill="none" stroke="#aaa" stroke-width="2"/>
+  <text x="722" y="302" font-size="35" text-anchor="middle" fill="#aaa">instant messages</text>
+  <!-- Broker delay path -->
+  <rect id="broker" class="box" x="45" y="371" width="942" height="334"/>
+  <rect class="note" x="100" y="410" width="289" height="219"/>
+  <text x="246" y="512" font-size="35" text-anchor="middle">
+    <tspan x="246">Temporary</tspan>
+    <tspan x="246" dy="40">storage</tspan>
+  </text>
+  <path class="line" d="M392 520H423"/>
+  <path class="arrow" d="M680 520H733"/>
+  <rect x="433" y="476" width="237" height="89" fill="#fff"/>
+  <text x="552" y="514" font-size="35" text-anchor="middle">
+    <tspan x="552">deliver when</tspan>
+    <tspan x="552" dy="40">time&#x2019;s up</tspan>
+  </text>
+  <rect x="733" y="472" width="196" height="96" fill="#bdf7bd" stroke="#888" stroke-width="2"/>
+  <rect class="msg" x="743" y="482" width="19" height="76"/>
+  <rect class="msg" x="770" y="482" width="19" height="76"/>
+  <rect class="msg" x="797" y="482" width="19" height="76"/>
+  <rect class="msg" x="824" y="482" width="19" height="76"/>
+  <rect class="msg" x="851" y="482" width="19" height="76"/>
+  <!-- Final path segments are painted above their targets so both arrowheads remain visible. -->
+  <path class="arrow" d="M300 326 258 410"/>
+  <path d="M744 326C777 372 800 424 815 472" fill="none" stroke="#aaa" stroke-width="2" marker-end="url(#arrow-gray)"/>
+  <text x="516" y="680" font-size="35" text-anchor="middle">Broker</text>
+</svg>

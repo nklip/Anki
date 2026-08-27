@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1432" height="798" viewBox="0 0 1432 798" role="img" aria-labelledby="title desc">
+  <title id="title">Producer acknowledgement mode one</title>
+  <desc id="desc">The producer acknowledgement mode is shown with a leader, an in-sync follower, and a follower that is not caught up.</desc>
+  <!-- Shared diagram definitions -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth" orient="auto-start-reverse">
+      <path d="M0 0 10 5 0 10z" />
+    </marker>
+    <style>text{font-family:Arial,Helvetica,sans-serif;fill:#000}.box{fill:#fff;stroke:#808080;stroke-width:2}.line{fill:none;stroke:#000;stroke-width:2}.arrow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrow)}.dash{stroke-dasharray:10 8}.msg{fill:#fff;stroke:#808080;stroke-width:2}.persist{fill:#cdfdc5;stroke:#808080;stroke-width:2}.new{fill:#fffec4;stroke:#808080;stroke-width:2}</style>
+  </defs>
+  <rect id="background" width="1432" height="798" fill="#fff" />
+
+  <!-- Producer request and acknowledgement sequence -->
+  <rect id="producer" class="box" x="572.2" y="35.5" width="285.2" height="138" />
+  <text x="716" y="116" font-size="31.5" text-anchor="middle">Producer</text>
+  <path class="line" d="M704 172C700 222 699 253 700 268" />
+  <text x="700" y="304" font-size="32" text-anchor="middle">1. produce</text>
+
+  <!-- Replicas and their current log contents -->
+  <g id="broker-1">
+    <rect class="box" x="36" y="482" width="405.8" height="192.5" />
+    <text x="229" y="547" font-size="32" text-anchor="end">
+      <tspan x="229">replica-1</tspan>
+      <tspan x="229" dy="37">follower</tspan>
+    </text>
+    <rect class="box" x="238" y="511.5" width="173.8" height="84.5" />
+    <rect class="msg" x="245.2" y="520.5" width="17.8" height="67" />
+    <rect class="msg" x="269.2" y="520.5" width="17.5" height="67" />
+    <rect class="msg" x="292.5" y="520.5" width="17.5" height="67" />
+    <rect class="msg" x="316.2" y="520.5" width="17.5" height="67" />
+    <rect class="msg" x="340" y="520.5" width="17" height="67" />
+    <text x="240" y="659" font-size="31.5" text-anchor="middle">Broker-1</text>
+  </g>
+  <g id="broker-2">
+    <rect class="box" x="512" y="482" width="405.8" height="192.5" />
+    <text x="690" y="547" font-size="32" text-anchor="end">
+      <tspan x="690">replica-2</tspan>
+      <tspan x="690" dy="37">leader</tspan>
+    </text>
+    <rect x="699.2" y="511.5" width="173.7" height="84.5" fill="#cdfdc5" stroke="#808080" stroke-width="2" />
+    <rect class="msg" x="706.5" y="520.5" width="17.5" height="67" />
+    <rect class="msg" x="730.2" y="520.5" width="17.5" height="67" />
+    <rect class="msg" x="754" y="520.5" width="17" height="67" />
+    <rect class="msg" x="777.2" y="520.5" width="17.8" height="67" />
+    <rect class="msg" x="801.2" y="520.5" width="17.5" height="67" />
+    <rect class="msg dash" x="825" y="520.5" width="18" height="67" />
+    <rect class="msg dash" x="849" y="520.5" width="18" height="67" />
+    <text x="716" y="659" font-size="31.5" text-anchor="middle">Broker-2</text>
+  </g>
+  <g id="broker-3">
+    <rect class="box" x="988" y="482.5" width="406" height="192" />
+    <text x="1166" y="547" font-size="32" text-anchor="end">
+      <tspan x="1166">replica-3</tspan>
+      <tspan x="1166" dy="37">follower</tspan>
+    </text>
+    <rect class="box" x="1175.2" y="511.5" width="173.7" height="84.5" />
+    <rect class="msg" x="1182.5" y="520.5" width="17.5" height="67" />
+    <rect class="msg" x="1206.2" y="520.5" width="17.5" height="67" />
+    <rect class="msg" x="1230" y="520.5" width="17" height="67" />
+    <text x="1192" y="659" font-size="31.5" text-anchor="middle">Broker-3</text>
+    <text x="1286" y="463" font-size="32" text-anchor="middle">not caught up</text>
+  </g>
+  <!-- Connectors are painted above the panels; labels follow so no route crosses text. -->
+  <path class="arrow" d="M699 322C705 390 721 455 746 507" />
+  <path class="line dash" d="M809 520C826 472 833 429 832 405" />
+  <path class="arrow dash" d="M828 346C818 281 789 219 762 178" />
+  <path class="line" d="M734 511.5C702.3 486.1 660.4 464.1 613 453.5" />
+  <path class="arrow" d="M495 453.3C455.6 462.4 415.3 481.2 376 513" />
+  <path class="line dash" d="M386 592C433 619 463 629 476 630" />
+  <path class="arrow dash" d="M600 637C635 631 676 615 714 599" />
+  <text x="831" y="380" font-size="32" text-anchor="middle">2. ack</text>
+  <text x="543" y="456" font-size="31.5" text-anchor="middle">fetch</text>
+  <text x="541" y="648" font-size="31.5" text-anchor="middle">synced</text>
+
+  <!-- In-sync replica set and acknowledgement mode summary -->
+  <text x="43" y="756" font-size="31.5">ISR: {replica-1, replica-2}, ack=1</text>
+</svg>

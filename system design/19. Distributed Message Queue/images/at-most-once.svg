@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1712" height="220" viewBox="0 0 1712 220" role="img" aria-labelledby="title desc">
+  <title id="title">At-most-once delivery</title>
+  <desc id="desc">A producer or queue may lose a message, but the consumer will not receive a duplicate.</desc>
+  <!-- Shared diagram definitions -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth" orient="auto-start-reverse">
+      <path d="M0 0 10 5 0 10z"/>
+    </marker>
+    <style>text{font-family:Arial,Helvetica,sans-serif;fill:#000}.box{fill:#fff;stroke:#888;stroke-width:2}.line{fill:none;stroke:#000;stroke-width:2}.arrow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrow)}.dash{stroke-dasharray:10 8}.msg{fill:#fff;stroke:#888;stroke-width:2}.persist{fill:#bdf7bd;stroke:#888;stroke-width:2}.new{fill:#fffdb5;stroke:#888;stroke-width:2}</style>
+  </defs>
+  <rect id="background" width="1712" height="220" fill="#fff"/>
+  <!-- Delivery chain -->
+  <rect id="producer" class="box" x="29" y="34" width="341" height="161" rx="11"/>
+  <text x="200" y="127" font-size="35" text-anchor="middle">Producer</text>
+  <rect id="queue" class="box" x="684" y="34" width="341" height="161" rx="11"/>
+  <text x="855" y="75" font-size="35" text-anchor="middle">Message queue</text>
+  <g id="queued-messages">
+    <rect class="msg" x="737" y="103" width="26" height="71"/>
+    <rect class="msg" x="772" y="103" width="26" height="71"/>
+    <rect class="msg" x="807" y="103" width="26" height="71"/>
+    <rect class="msg" x="842" y="103" width="26" height="71"/>
+    <rect class="msg" x="877" y="103" width="26" height="71"/>
+    <rect class="msg" x="912" y="103" width="26" height="71"/>
+    <rect class="msg" x="947" y="103" width="26" height="71"/>
+  </g>
+  <rect id="consumer" class="box" x="1338" y="34" width="341" height="161" rx="11"/>
+  <text x="1509" y="127" font-size="35" text-anchor="middle">Consumer</text>
+  <!-- Loss points -->
+  <path class="line" d="M370 114H402"/>
+  <path class="arrow" d="M650 114H682"/>
+  <text x="526" y="126" font-size="35" text-anchor="middle">may lose msg</text>
+  <path class="line" d="M1025 114H1057"/>
+  <path class="arrow" d="M1305 114H1336"/>
+  <text x="1181" y="126" font-size="35" text-anchor="middle">may lose msg</text>
+</svg>
