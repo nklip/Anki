@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="984" height="844" viewBox="0 0 984 844" role="img" aria-labelledby="title desc">
+  <title id="title">Map tile URL calculation flow</title>
+  <desc id="desc">The mobile user fetches tile URLs through a load balancer and map tile service, then downloads the tiles from a CDN.</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z"/></marker><style>text{font-family:Arial,Helvetica,sans-serif;fill:#000}.box{fill:#fff;stroke:#000;stroke-width:2}.arrow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrow)}.step{fill:#fff;stroke:#000;stroke-width:2}</style></defs>
+  <rect id="background" width="984" height="844" fill="#fff"/>
+  <!-- Client and CDN -->
+  <text x="275" y="45" font-size="36" text-anchor="middle">Mobile User</text>
+  <g id="phone"><rect x="249" y="63" width="53" height="80" rx="8"/><rect x="256" y="70" width="39" height="51" fill="#fff"/><circle cx="275.5" cy="133" r="6" fill="#fff"/></g>
+  <path class="arrow" d="M302 99H703"/>
+  <circle class="step" cx="378" cy="99" r="22"/><text x="378" y="112" font-size="34" text-anchor="middle">4</text>
+  <rect x="405" y="76" width="228" height="47" fill="#fff"/><text x="410" y="111" font-size="34">Download tiles</text>
+  <g id="cdn-cloud" fill="#000"><circle cx="747" cy="108" r="39"/><circle cx="790" cy="80" r="45"/><circle cx="834" cy="111" r="37"/><rect x="713" y="105" width="158" height="52" rx="26"/></g><text x="792" y="191" font-size="36" text-anchor="middle">CDN</text>
+  <!-- URL request path -->
+  <path class="arrow" d="M275 143V376"/>
+  <circle class="step" cx="109" cy="249" r="22"/><text x="109" y="262" font-size="34" text-anchor="middle">1</text>
+  <rect x="136" y="225" width="330" height="48" fill="#fff"/><text x="141" y="260" font-size="34">Fetch URLs of tiles</text>
+  <rect id="load-balancer" class="box" x="133" y="377" width="283" height="95"/><text x="275" y="436" font-size="34" text-anchor="middle">Load Balancer</text>
+  <path class="arrow" d="M275 472V666"/>
+  <circle class="step" cx="119" cy="562" r="22"/><text x="119" y="575" font-size="34" text-anchor="middle">2</text>
+  <rect x="146" y="538" width="291" height="48" fill="#fff"/><text x="151" y="573" font-size="34">Forward Request</text>
+  <rect id="map-tile-service" class="box" x="133" y="668" width="283" height="110"/>
+  <circle class="step" cx="174" cy="724" r="22"/><text x="174" y="737" font-size="34" text-anchor="middle">3</text>
+  <text x="306" y="715" font-size="34" text-anchor="middle"><tspan x="306">Construct</tspan><tspan x="306" dy="39">URLs of tiles</tspan></text>
+  <text x="275" y="811" font-size="34" text-anchor="middle">Map Tile Service</text>
+</svg>

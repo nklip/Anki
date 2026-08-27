@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1496" height="1416" viewBox="0 0 1496 1416" role="img" aria-labelledby="title desc">
+  <title id="title">Navigation service architecture</title>
+  <desc id="desc">The navigation service uses geocoding, route planning, ranking, shortest paths, ETA, traffic, routing tiles, and location data.</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z"/></marker><style>text{font-family:Arial,Helvetica,sans-serif;fill:#000}.box{fill:#fff;stroke:#000;stroke-width:2}.arrow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrow)}.db{fill:#fff;stroke:#000;stroke-width:2}</style></defs>
+  <rect id="background" width="1496" height="1416" fill="#fff"/>
+  <!-- Entry and geocoding -->
+  <text x="848" y="47" font-size="32" text-anchor="middle">Mobile User</text>
+  <g id="phone"><rect x="824" y="54" width="48" height="80" rx="8"/><rect x="831" y="63" width="34" height="50" fill="#fff"/><circle cx="848" cy="124" r="6" fill="#fff"/></g>
+  <path class="arrow" d="M848 134V228"/>
+  <rect id="navigation-service" class="box" x="719" y="231" width="258" height="85"/><text x="848" y="266" font-size="31" text-anchor="middle"><tspan x="848">Navigation</tspan><tspan x="848" dy="35">Service</tspan></text>
+  <path class="arrow" d="M719 273H585"/>
+  <rect id="geocoding-service" class="box" x="329" y="231" width="257" height="85"/><text x="457" y="266" font-size="31" text-anchor="middle"><tspan x="457">Geocoding</tspan><tspan x="457" dy="35">Service</tspan></text>
+  <path class="arrow" d="M329 273H195"/>
+  <g id="geocoding-db" class="db"><path d="M94 236v71c0 11 23 19 51 19s51-8 51-19v-71"/><ellipse cx="145" cy="236" rx="51" ry="12"/></g><text x="145" y="354" font-size="30" text-anchor="middle">Geocoding DB</text>
+  <path class="arrow" d="M848 316V430"/>
+  <!-- Route planner fan-out -->
+  <rect id="route-planner-service" class="box" x="719" y="432" width="258" height="85"/><text x="848" y="467" font-size="31" text-anchor="middle"><tspan x="848">Route Planner</tspan><tspan x="848" dy="35">Service</tspan></text>
+  <path class="arrow" d="M761 517 544 623"/><path class="arrow" d="M848 517V623"/><path class="arrow" d="M935 517 1152 623"/>
+  <rect id="ranker" class="box" x="329" y="625" width="257" height="85"/><text x="457" y="680" font-size="31" text-anchor="middle">Ranker</text>
+  <rect id="shortest-path-service" class="box" x="719" y="625" width="258" height="85"/><text x="848" y="660" font-size="31" text-anchor="middle"><tspan x="848">Shortest Path</tspan><tspan x="848" dy="35">Service</tspan></text>
+  <rect id="eta-service" class="box" x="1109" y="625" width="258" height="85"/><text x="1238" y="680" font-size="31" text-anchor="middle">ETA Service</text>
+  <path class="arrow" d="M457 710V823"/><path class="arrow" d="M848 710V817"/><path class="arrow" d="M1238 710V817"/>
+  <rect id="filter-service" class="box" x="329" y="825" width="257" height="86"/><text x="457" y="860" font-size="29" text-anchor="middle"><tspan x="457">Filter Service</tspan><tspan x="457" dy="34">(Avoid tolls, …)</tspan></text>
+  <g id="routing-tiles" class="db"><path d="M797 833v73c0 11 23 19 51 19s51-8 51-19v-73"/><ellipse cx="848" cy="833" rx="51" ry="12"/></g><text x="848" y="951" font-size="29" text-anchor="middle"><tspan x="848">Routing Tiles</tspan><tspan x="848" dy="34">(Object storage)</tspan></text>
+  <g id="traffic-db" class="db"><path d="M1187 833v73c0 11 23 19 51 19s51-8 51-19v-73"/><ellipse cx="1238" cy="833" rx="51" ry="12"/></g><text x="1174" y="879" font-size="30" text-anchor="end">Traffic DB</text>
+  <!-- Traffic update pipeline -->
+  <path class="arrow" d="M1238 1042V924"/>
+  <rect id="update-traffic-service" class="box" x="1109" y="1043" width="258" height="85"/><text x="1238" y="1078" font-size="29" text-anchor="middle"><tspan x="1238">Update Traffic</tspan><tspan x="1238" dy="34">Service</tspan></text>
+  <path class="arrow" d="M1238 1128V1251"/>
+  <g id="location-db" class="db"><path d="M1187 1267v72c0 11 23 19 51 19s51-8 51-19v-72"/><ellipse cx="1238" cy="1267" rx="51" ry="12"/></g><text x="1238" y="1383" font-size="30" text-anchor="middle">Location DB</text>
+</svg>

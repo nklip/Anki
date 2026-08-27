@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2008" height="1524" viewBox="0 0 2008 1524" role="img"
+  aria-labelledby="title desc">
+  <title id="title">Final navigation system design</title>
+  <desc id="desc">The navigation service coordinates geocoding, route planning, ranking, shortest paths, ETA, adaptive
+    rerouting, traffic updates, and their databases.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 10 5 0 10z" />
+    </marker>
+    <style>
+      text {
+        font-family: Arial, Helvetica, sans-serif;
+        fill: #000
+      }
+
+      .box {
+        fill: #fff;
+        stroke: #000;
+        stroke-width: 2
+      }
+
+      .accent {
+        fill: #f2a6ef;
+        stroke: #000;
+        stroke-width: 2
+      }
+
+      .arrow {
+        fill: none;
+        stroke: #000;
+        stroke-width: 2;
+        marker-end: url(#arrow)
+      }
+
+      .db {
+        fill: #fff;
+        stroke: #000;
+        stroke-width: 2
+      }
+    </style>
+  </defs>
+  <rect id="background" width="2008" height="1524" fill="#fff" />
+  <!-- Entry and geocoding -->
+  <text x="852" y="52" font-size="32" text-anchor="middle">Mobile User</text>
+  <g id="phone">
+    <rect x="830" y="62" width="45" height="78" rx="8" />
+    <rect x="837" y="71" width="31" height="49" fill="#fff" />
+    <circle cx="852.5" cy="130" r="6" fill="#fff" />
+  </g>
+  <path class="arrow" d="M852 140V231" />
+  <rect id="navigation-service" class="box" x="725" y="234" width="255" height="85" />
+  <text x="852" y="269" font-size="31" text-anchor="middle">
+    <tspan x="852">Navigation</tspan>
+    <tspan x="852" dy="35">Service</tspan>
+  </text>
+  <path class="arrow" d="M725 276H594" />
+  <rect id="geocoding-service" class="box" x="340" y="234" width="254" height="85" />
+  <text x="467" y="269" font-size="31" text-anchor="middle">
+    <tspan x="467">Geocoding</tspan>
+    <tspan x="467" dy="35">Service</tspan>
+  </text>
+  <path class="arrow" d="M340 276H207" />
+  <g id="geocoding-db" class="db">
+    <path d="M109 237v73c0 11 22 19 49 19s49-8 49-19v-73" />
+    <ellipse cx="158" cy="237" rx="49" ry="12" />
+  </g>
+  <text x="158" y="356" font-size="30" text-anchor="middle">Geocoding DB</text>
+  <!-- Route planner fan-out -->
+  <path class="arrow" d="M852 319V430" />
+  <rect id="route-planner-service" class="box" x="725" y="432" width="255" height="85" />
+  <text x="852" y="467" font-size="31" text-anchor="middle">
+    <tspan x="852">Route Planner</tspan>
+    <tspan x="852" dy="35">Service</tspan>
+  </text>
+  <path class="arrow" d="M766 517 553 623" />
+  <path class="arrow" d="M852 517V623" />
+  <path class="arrow" d="M938 517 1153 623" />
+  <rect id="ranker" class="box" x="340" y="624" width="254" height="85" /><text x="467" y="679" font-size="31"
+    text-anchor="middle">Ranker</text>
+  <rect id="shortest-path-service" class="box" x="725" y="624" width="255" height="85" /><text x="852" y="659"
+    font-size="31" text-anchor="middle">
+    <tspan x="852">Shortest Path</tspan>
+    <tspan x="852" dy="35">Service</tspan>
+  </text>
+  <rect id="eta-service" class="box" x="1110" y="624" width="255" height="85" /><text x="1237" y="679" font-size="31"
+    text-anchor="middle">ETA Service</text>
+  <path class="arrow" d="M467 709V820" />
+  <path class="arrow" d="M852 709V815" />
+  <path class="arrow" d="M1237 709V815" />
+  <rect id="filter-service" class="box" x="340" y="822" width="254" height="85" /><text x="467" y="857" font-size="29"
+    text-anchor="middle">
+    <tspan x="467">Filter Service</tspan>
+    <tspan x="467" dy="34">(Avoid tolls, …)</tspan>
+  </text>
+  <g id="routing-tiles" class="db">
+    <path d="M803 831v72c0 11 22 19 49 19s49-8 49-19v-72" />
+    <ellipse cx="852" cy="831" rx="49" ry="12" />
+  </g><text x="852" y="960" font-size="29" text-anchor="middle">
+    <tspan x="852">Routing Tiles</tspan>
+    <tspan x="852" dy="34">(Object storage)</tspan>
+  </text>
+  <!-- Adaptive ETA branch -->
+  <path class="arrow" d="M934 319 1545 623" />
+  <rect id="adaptive-eta" class="accent" x="1497" y="624" width="254" height="85" /><text x="1624" y="659"
+    font-size="29" text-anchor="middle">
+    <tspan x="1624">Adaptive ETA and</tspan>
+    <tspan x="1624" dy="34">Rerouting</tspan>
+  </text>
+  <path class="arrow" d="M1624 709V815" />
+  <path class="arrow" d="M1544 709 1288 829" />
+  <g id="active-users" class="db">
+    <path d="M1575 831v72c0 11 22 19 49 19s49-8 49-19v-72" />
+    <ellipse cx="1624" cy="831" rx="49" ry="12" />
+  </g><text x="1624" y="955" font-size="30" text-anchor="middle">Active Users</text>
+  <!-- Traffic data pipeline -->
+  <g id="traffic-db" class="db">
+    <path d="M1188 831v72c0 11 22 19 49 19s49-8 49-19v-72" />
+    <ellipse cx="1237" cy="831" rx="49" ry="12" />
+  </g><text x="1160" y="878" font-size="30" text-anchor="end">Traffic DB</text>
+  <path class="arrow" d="M1237 1020V920" />
+  <rect id="update-traffic-service" class="box" x="1110" y="1021" width="255" height="85" /><text x="1237" y="1056"
+    font-size="29" text-anchor="middle">
+    <tspan x="1237">Update Traffic</tspan>
+    <tspan x="1237" dy="34">Service</tspan>
+  </text>
+  <path class="arrow" d="M1237 1106V1216" />
+  <g id="location-db" class="db">
+    <path d="M1188 1232v72c0 11 22 19 49 19s49-8 49-19v-72" />
+    <ellipse cx="1237" cy="1232" rx="49" ry="12" />
+  </g><text x="1237" y="1360" font-size="30" text-anchor="middle">Location DB</text>
+</svg>

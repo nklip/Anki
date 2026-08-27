@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1172" height="986" viewBox="0 0 1172 986" role="img"
+  aria-labelledby="title desc">
+  <title id="title">Content delivery with and without a CDN</title>
+  <desc id="desc">A direct origin connection takes 300 milliseconds, while a nearby CDN point of presence takes 10
+    milliseconds.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 10 5 0 10z" />
+    </marker>
+    <symbol id="person" viewBox="0 0 56 64">
+      <circle cx="28" cy="17" r="14" />
+      <path d="M5 61v-10c0-14 10-23 23-23s23 9 23 23v10z" />
+    </symbol>
+    <symbol id="server" viewBox="0 0 76 100">
+      <path d="M8 8h48l14 10v67L54 94H8z" fill="#888" />
+      <path d="M56 8 70 18v67L56 94z" fill="#aaa" />
+      <rect x="17" y="18" width="31" height="14" rx="2" fill="#eee" />
+      <rect x="17" y="38" width="31" height="14" rx="2" fill="#eee" />
+      <circle cx="33" cy="72" r="6" fill="#eee" />
+    </symbol>
+    <symbol id="pop" viewBox="0 0 112 98">
+      <path d="M2 9 28 5v82L2 82zM42 2h30v91H42zM83 7l27 4v72l-27 5z" />
+      <g fill="#fff">
+        <rect x="8" y="16" width="13" height="4" />
+        <rect x="8" y="25" width="13" height="4" />
+        <rect x="49" y="13" width="17" height="4" />
+        <rect x="49" y="22" width="17" height="4" />
+        <rect x="90" y="17" width="13" height="4" />
+        <rect x="90" y="26" width="13" height="4" />
+        <circle cx="57" cy="70" r="6" />
+      </g>
+    </symbol>
+    <style>
+      text {
+        font-family: Arial, Helvetica, sans-serif;
+        fill: #000
+      }
+
+      .frame {
+        fill: #fff;
+        stroke: #444;
+        stroke-width: 2;
+        stroke-dasharray: 8 6
+      }
+
+      .line {
+        fill: none;
+        stroke: #000;
+        stroke-width: 2
+      }
+
+      .arrow {
+        fill: none;
+        stroke: #000;
+        stroke-width: 2;
+        marker-end: url(#arrow)
+      }
+    </style>
+  </defs>
+  <rect id="background" width="1172" height="986" fill="#fff" />
+  <!-- Direct origin path -->
+  <rect id="without-cdn" class="frame" x="253" y="34" width="631" height="183" />
+  <text x="568" y="73" font-size="28" text-anchor="middle">Without CDN</text>
+  <use href="#server" x="290" y="99" width="95" height="95" />
+  <path class="arrow" d="M383 144H777" />
+  <rect x="530" y="123" width="92" height="42" fill="#fff" />
+  <text x="576" y="154" font-size="28" text-anchor="middle">300 ms</text>
+  <use href="#person" x="780" y="118" width="58" height="58" />
+  <!-- Comparison arrow -->
+  <path id="comparison-arrow" d="M568 239 610 257 590 257 590 326 610 326 568 345 526 326 547 326 547 257 526 257z"
+    fill="#fff" stroke="#000" stroke-width="2" />
+  <!-- CDN topology -->
+  <rect id="with-cdn" class="frame" x="81" y="365" width="998" height="592" />
+  <text x="578" y="395" font-size="28" text-anchor="middle">With CDN</text>
+  <path class="line" stroke-dasharray="8 6" d="M490 650H214M518 625 707 470M520 650 720 650M510 677 708 815" />
+  <use href="#server" x="432" y="604" width="105" height="105" />
+  <text x="485" y="726" font-size="28" text-anchor="middle">Origin Server</text>
+  <use href="#pop" x="111" y="606" width="115" height="100" />
+  <text x="169" y="734" font-size="28" text-anchor="middle">POP</text>
+  <use href="#pop" x="705" y="604" width="115" height="100" />
+  <text x="762" y="734" font-size="28" text-anchor="middle">POP</text>
+  <use href="#pop" x="704" y="399" width="115" height="100" />
+  <text x="761" y="527" font-size="28" text-anchor="middle">POP</text>
+  <path class="arrow" d="M817 437H979" />
+  <rect x="849" y="414" width="88" height="42" fill="#fff" />
+  <text x="893" y="445" font-size="28" text-anchor="middle">10 ms</text>
+  <use href="#person" x="982" y="409" width="58" height="58" />
+  <use href="#pop" x="705" y="807" width="115" height="100" />
+  <text x="762" y="930" font-size="28" text-anchor="middle">POP</text>
+</svg>

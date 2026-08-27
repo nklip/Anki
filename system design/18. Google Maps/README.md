@@ -48,7 +48,7 @@ Before jumping into the design, there are some map-related concepts we should un
 World is a sphere, rotating on its axis. Positiions are defined by latitude (how far north/south you are) and longitude (how far east/west you are):
 
 <div style="margin-left:3rem">
-    <img src="./images/partitioning-system.png" alt="partitioning-system" width="500" />
+    <img src="./images/partitioning-system.svg" alt="partitioning-system" width="500" />
 </div>
 
 #### Going from 3D to 2D
@@ -134,13 +134,13 @@ Assuming gps update requests are batched, we arrive at 200k QPS and 1mil QPS at 
 ## Step 2: Propose High-Level Design and Get Buy-In
 
 <div style="margin-left:3rem">
-    <img src="./images/high-level-design.png" alt="high-level-design" width="500" />
+    <img src="./images/high-level-design.svg" alt="high-level-design" width="500" />
 </div>
 
 ### **Location service**
 
 <div style="margin-left:3rem">
-    <img src="./images/location-service.png" alt="location-service" width="500" />
+    <img src="./images/location-service.svg" alt="location-service" width="500" />
 </div>
 
 It is responsible for recording a user's location updates:
@@ -150,7 +150,7 @@ It is responsible for recording a user's location updates:
 Instead of sending location updates to the server all the time, we can batch the updates on the client-side and send batches instead:
 
 <div style="margin-left:3rem">
-    <img src="./images/location-update-batches.png" alt="location-update-batches" width="500" />
+    <img src="./images/location-update-batches.svg" alt="location-update-batches" width="500" />
 </div>
 
 Despite this optimization, for a system of Google Maps scale, load will still be significant. Therefore, we can leverage a database, optimized for heavy writes such as Cassandra.
@@ -218,13 +218,13 @@ How should the map tiles be served to the client?
  * Map tiles are served statically, based on their geohash, which a client can calculate. They can be statically stored & served from a CDN
 
 <div style="margin-left:3rem">
-    <img src="./images/static-map-tiles.png" alt="static-map-tiles" width="500" />
+    <img src="./images/static-map-tiles.svg" alt="static-map-tiles" width="500" />
 </div>
 
 CDNs enable users to fetch map tiles from point-of-presence servers (POP) which are closest to users in order to minimize latency:
 
 <div style="margin-left:3rem">
-    <img src="./images/cdn-vs-no-cdn.png" alt="cdn-vs-no-cdn" width="500" />
+    <img src="./images/cdn-vs-no-cdn.svg" alt="cdn-vs-no-cdn" width="500" />
 </div>
 
 Options to consider for determining map tiles:
@@ -232,7 +232,7 @@ Options to consider for determining map tiles:
  * alternatively, we can have simple API which calculates the map tile URLs on behalf of the clients at the cost of additional API call
 
 <div style="margin-left:3rem">
-    <img src="./images/map-tile-url-calculation.png" alt="map-tile-url-calculation" width="500" />
+    <img src="./images/map-tile-url-calculation.svg" alt="map-tile-url-calculation" width="500" />
 </div>
 
 ---
@@ -262,7 +262,7 @@ We can use Cassandra for storing this kind of data as its nature is to be write-
 Example row:
 
 <div style="margin-left:3rem">
-    <img src="./images/user-location-data-torw.png" alt="user-location-data-row" width="500" />
+    <img src="./images/user-location-data-torw.svg" alt="user-location-data-row" width="500" />
 </div>
 
 #### Geocoding database
@@ -286,7 +286,7 @@ As we discussed, we will precompute map tiling images and store them in CDN.
 Let's focus on the database design and how user location is stored in detail for this service.
 
 <div style="margin-left:3rem">
-    <img src="./images/location-service-diagram.png" alt="location-service-diagram" width="500" />
+    <img src="./images/location-service-diagram.svg" alt="location-service-diagram" width="500" />
 </div>
 
 We can use a NoSQL database to facilitate the heavy write load we have on location updates. We prioritize availability over consistency as user location data often changes and becomes stale as new updates arrive.
@@ -296,7 +296,7 @@ We'll choose Cassandra as our database choice as it nicely fits all our requirem
 Example row we're going to store:
 
 <div style="margin-left:3rem">
-    <img src="./images/user-location-row-example.png" alt="user-location-row-example" width="500" />
+    <img src="./images/user-location-row-example.svg" alt="user-location-row-example" width="500" />
 </div>
 
  * `user_id` is the partition key in order to quickly access all location updates for a particular user
@@ -305,7 +305,7 @@ Example row we're going to store:
 We also leverage Kafka to stream location updates to various other service which need the location updates for various purposes:
 
 <div style="margin-left:3rem">
-    <img src="./images/location-update-streaming.png" alt="location-update-streaming" width="500" />
+    <img src="./images/location-update-streaming.svg" alt="location-update-streaming" width="500" />
 </div>
 
 #### Rendering map
@@ -327,7 +327,7 @@ This will have substantial bandwidth savings.
 This service is responsible for finding the fastest routes:
 
 <div style="margin-left:3rem">
-    <img src="./images/navigation-service.png" alt="navigation-service" width="500" />
+    <img src="./images/navigation-service.svg" alt="navigation-service" width="500" />
 </div>
 
 Let's go through each component in this sub-system.
@@ -417,7 +417,7 @@ user_1, r_1, super(r_1), super(super(r_1)), ...
 ```
 
 <div style="margin-left:3rem">
-    <img src="./images/adaptive-eta-data-storage.png" alt="adaptive-eta-data-storage" width="500" />
+    <img src="./images/adaptive-eta-data-storage.svg" alt="adaptive-eta-data-storage" width="500" />
 </div>
 
 Using this, we only need to check if the final tile of a user includes the traffic accident tile to see if user is impacted.
@@ -438,7 +438,7 @@ We have several options, which enable us to proactively push data to clients fro
 This is our final design:
 
 <div style="margin-left:3rem">
-    <img src="./images/final-design.png" alt="final-design" width="500" />
+    <img src="./images/final-design.svg" alt="final-design" width="500" />
 </div>
 
 One additional feature we could provide is multi-stop navigation which can be sold to enterprise customers such as Uber or Lyft in order to determine optimal path for visiting a set of locations.

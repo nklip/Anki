@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1504" height="1342" viewBox="0 0 1504 1342" role="img"
+  aria-labelledby="title desc">
+  <title id="title">Adaptive ETA routing tile hierarchy</title>
+  <desc id="desc">Three routing tile levels progressively expand from the origin until the destination is included.
+  </desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8"
+      orient="auto-start-reverse">
+      <path d="M0 0 10 5 0 10z" />
+    </marker>
+    <style>
+      text {
+        font-family: Arial, Helvetica, sans-serif;
+        fill: #000
+      }
+
+      .border {
+        fill: #fff;
+        stroke: #000;
+        stroke-width: 2.5;
+        stroke-dasharray: 12 9
+      }
+
+      .tile {
+        fill: #fff;
+        stroke: #000;
+        stroke-width: 2.5
+      }
+
+      .line {
+        fill: none;
+        stroke: #000;
+        stroke-width: 2.5
+      }
+
+      .arrow {
+        fill: none;
+        stroke: #000;
+        stroke-width: 2.5;
+        marker-end: url(#arrow)
+      }
+    </style>
+  </defs>
+  <rect id="background" width="1504" height="1342" fill="#fff" />
+  <!-- Level containers -->
+  <rect id="origin-only-region" class="border" x="60" y="34" width="1404" height="216" />
+  <rect id="level-one-region" class="border" x="60" y="299" width="1404" height="325" />
+  <rect id="level-two-region" class="border" x="60" y="675" width="1404" height="632" />
+  <text x="80" y="157" font-size="42">This routing tile only contains origin</text>
+  <text x="1184" y="157" font-size="42">Routing tile</text>
+  <path class="arrow" d="M1285 166V412" />
+  <text x="1285" y="453" font-size="42" text-anchor="middle">
+    <tspan x="1285">Level 1</tspan>
+    <tspan x="1285" dy="46">Routing tile</tspan>
+  </text>
+  <path class="arrow" d="M1285 510V979" />
+  <text x="1285" y="981" font-size="42" text-anchor="middle">
+    <tspan x="1285">Level 2</tspan>
+    <tspan x="1285" dy="46">Routing tile</tspan>
+  </text>
+  <!-- Nested tiles and route progression -->
+  <rect id="origin-tile" class="tile" x="739" y="87" width="108" height="109" />
+  <circle id="origin-top" cx="812" cy="127" r="17" fill="#f4a6ef" stroke="#000" stroke-width="2.5" />
+  <path class="arrow" d="M931 127H830" />
+  <text x="934" y="142" font-size="42">Origin</text>
+  <path class="arrow" d="M780 196 742 350" />
+  <g id="level-one-tile">
+    <rect class="tile" x="630" y="352" width="216" height="216" />
+    <path class="line" d="M738 352V568M630 460H846" />
+    <circle cx="812" cy="391" r="17" fill="#f4a6ef" stroke="#000" stroke-width="2.5" />
+    <path class="arrow" d="M932 391H830" />
+    <text x="935" y="406" font-size="42">Origin</text>
+  </g>
+  <path class="arrow" d="M739 568 632 727" />
+  <g id="level-two-tile">
+    <rect class="tile" x="416" y="729" width="430" height="431" />
+    <path class="line" d="M630 729V1160M739 729V945M416 945H846M630 837H846" />
+    <circle cx="812" cy="769" r="17" fill="#f4a6ef" stroke="#000" stroke-width="2.5" />
+    <path class="arrow" d="M932 769H830" />
+    <text x="935" y="784" font-size="42">Origin</text>
+    <circle cx="481" cy="1123" r="17" fill="#00f128" stroke="#000" stroke-width="2.5" />
+    <path class="arrow" d="M354 1123H463" />
+    <text x="120" y="1138" font-size="42">Destination</text>
+  </g>
+  <text x="416" y="1213" font-size="40" text-anchor="middle">
+    <tspan x="416">This routing tile contains</tspan>
+    <tspan x="416" dy="45">both origin and destination</tspan>
+  </text>
+</svg>

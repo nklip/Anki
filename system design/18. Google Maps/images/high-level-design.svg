@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1362" height="872" viewBox="0 0 1362 872" role="img" aria-labelledby="title desc">
+  <title id="title">High-level Google Maps design</title>
+  <desc id="desc">A mobile user uses navigation and location services through a load balancer, while static map images are delivered through a CDN.</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z"/></marker><style>text{font-family:Arial,Helvetica,sans-serif;fill:#000}.box{fill:#fff;stroke:#000;stroke-width:2}.arrow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrow)}.db{fill:#fff;stroke:#000;stroke-width:2}</style></defs>
+  <rect id="background" width="1362" height="872" fill="#fff"/>
+  <!-- Mobile and CDN paths -->
+  <text x="523" y="46" font-size="32" text-anchor="middle">Mobile User</text>
+  <g id="phone"><rect x="500" y="51" width="45" height="77" rx="8"/><rect x="507" y="60" width="31" height="48" fill="#fff"/><circle cx="522.5" cy="118" r="6" fill="#fff"/></g>
+  <path class="arrow" d="M545 90H1030"/>
+  <g id="cdn-cloud" fill="#000"><circle cx="1073" cy="101" r="36"/><circle cx="1106" cy="75" r="43"/><circle cx="1142" cy="103" r="34"/><rect x="1042" y="98" width="130" height="44" rx="22"/></g>
+  <text x="1195" y="101" font-size="32">CDN</text>
+  <path class="arrow" d="M1106 142V291"/>
+  <g id="origin-db" class="db"><path d="M1059 306v66c0 10 21 18 47 18s47-8 47-18v-66"/><ellipse cx="1106" cy="306" rx="47" ry="12"/></g>
+  <text x="1106" y="443" font-size="31" text-anchor="middle"><tspan x="1106">Precomputed Map Images</tspan><tspan x="1106" dy="36">(Origin)</tspan></text>
+  <!-- Dynamic request path -->
+  <path class="arrow" d="M523 128V297"/>
+  <rect id="load-balancer" class="box" x="401" y="299" width="244" height="81"/>
+  <text x="523" y="350" font-size="31" text-anchor="middle">Load Balancer</text>
+  <path class="arrow" d="M478 380 354 499"/><path class="arrow" d="M568 380 703 499"/>
+  <rect id="navigation-service" class="box" x="189" y="500" width="244" height="81"/>
+  <text x="311" y="532" font-size="31" text-anchor="middle"><tspan x="311">Navigation</tspan><tspan x="311" dy="35">Service</tspan></text>
+  <rect id="location-service" class="box" x="626" y="500" width="244" height="81"/>
+  <text x="748" y="532" font-size="31" text-anchor="middle"><tspan x="748">Location</tspan><tspan x="748" dy="35">Service</tspan></text>
+  <!-- Service stores -->
+  <path class="arrow" d="M280 581 204 688"/><path class="arrow" d="M342 581 419 688"/><path class="arrow" d="M748 581V688"/>
+  <g id="geocoding-db" class="db"><path d="M121 702v66c0 10 21 18 47 18s47-8 47-18v-66"/><ellipse cx="168" cy="702" rx="47" ry="12"/></g>
+  <text x="168" y="814" font-size="29" text-anchor="middle">Geocoding DB</text>
+  <g id="routing-tiles" class="db"><path d="M409 702v66c0 10 21 18 47 18s47-8 47-18v-66"/><ellipse cx="456" cy="702" rx="47" ry="12"/></g>
+  <text x="456" y="813" font-size="29" text-anchor="middle"><tspan x="456">Routing Tiles</tspan><tspan x="456" dy="33">(Object storage)</tspan></text>
+  <g id="user-location-db" class="db"><path d="M701 702v66c0 10 21 18 47 18s47-8 47-18v-66"/><ellipse cx="748" cy="702" rx="47" ry="12"/></g>
+  <text x="748" y="814" font-size="29" text-anchor="middle">User Location DB</text>
+</svg>

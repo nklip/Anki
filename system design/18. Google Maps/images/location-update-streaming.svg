@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1962" height="1114" viewBox="0 0 1962 1114" role="img" aria-labelledby="title desc">
+  <title id="title">Streaming location update architecture</title>
+  <desc id="desc">The location service writes to the user location database and Kafka; Kafka fans updates to traffic, personalization, routing tile, and analytics services and databases.</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 10 5 0 10z"/></marker><style>text{font-family:Arial,Helvetica,sans-serif;fill:#000}.box{fill:#fff;stroke:#000;stroke-width:2}.region{fill:#fff;stroke:#000;stroke-width:2;stroke-dasharray:11 8}.arrow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrow)}.db{fill:#fff;stroke:#000;stroke-width:2}</style></defs>
+  <rect id="background" width="1962" height="1114" fill="#fff"/>
+  <!-- Ingestion -->
+  <text x="212" y="58" font-size="36" text-anchor="middle">Mobile User</text>
+  <g id="phone"><rect x="183" y="70" width="58" height="96" rx="10"/><rect x="191" y="81" width="42" height="62" fill="#fff"/><circle cx="212" cy="155" r="7" fill="#fff"/></g>
+  <path class="arrow" d="M212 166V302"/>
+  <rect id="load-balancer" class="box" x="55" y="306" width="313" height="104"/><text x="211" y="372" font-size="36" text-anchor="middle">Load Balancer</text>
+  <path class="arrow" d="M211 410V546"/>
+  <rect id="location-service" class="box" x="55" y="550" width="313" height="104"/><text x="211" y="592" font-size="36" text-anchor="middle"><tspan x="211">Location</tspan><tspan x="211" dy="42">Service</tspan></text>
+  <path class="arrow" d="M211 654V792"/>
+  <g id="user-location-db" class="db"><path d="M150 806v88c0 14 27 24 61 24s61-10 61-24v-88"/><ellipse cx="211" cy="806" rx="61" ry="15"/></g><text x="211" y="952" font-size="35" text-anchor="middle">User Location DB</text>
+  <!-- Event stream -->
+  <path class="arrow" d="M368 602H578"/>
+  <g id="kafka" class="db"><path d="M580 552h241v100H580c-18 0-32-22-32-50s14-50 32-50z"/><ellipse cx="821" cy="602" rx="28" ry="50"/></g><text x="700" y="614" font-size="36" text-anchor="middle">Kafka</text>
+  <!-- Stream consumers -->
+  <rect id="consumer-region" class="region" x="1077" y="118" width="851" height="966"/>
+  <path class="arrow" d="M837 571 1130 322"/><path class="arrow" d="M844 583 1130 519"/><path class="arrow" d="M844 619 1130 680"/><path class="arrow" d="M837 633 1130 879"/>
+  <rect id="traffic-update-service" class="box" x="1131" y="180" width="313" height="146"/><text x="1288" y="243" font-size="35" text-anchor="middle"><tspan x="1288">Traffic Update</tspan><tspan x="1288" dy="42">Service</tspan></text>
+  <rect id="personalization-service" class="box" x="1131" y="412" width="313" height="148"/><text x="1288" y="457" font-size="34" text-anchor="middle"><tspan x="1288">Machine Learning</tspan><tspan x="1288" dy="40">Service for</tspan><tspan x="1288" dy="40">Personalization</tspan></text>
+  <rect id="routing-tile-service" class="box" x="1131" y="645" width="313" height="147"/><text x="1288" y="691" font-size="34" text-anchor="middle"><tspan x="1288">Routing Tile</tspan><tspan x="1288" dy="40">Processing</tspan><tspan x="1288" dy="40">Service</tspan></text>
+  <rect id="analytics-service" class="box" x="1131" y="878" width="313" height="146"/><text x="1288" y="965" font-size="35" text-anchor="middle">Analytics</text>
+  <!-- Consumer stores -->
+  <path class="arrow" d="M1444 253H1665"/><path class="arrow" d="M1444 486H1665"/><path class="arrow" d="M1444 718H1665"/><path class="arrow" d="M1444 951H1665"/>
+  <g id="traffic-db" class="db"><path d="M1667 204v88c0 14 27 24 61 24s61-10 61-24v-88"/><ellipse cx="1728" cy="204" rx="61" ry="15"/></g><text x="1728" y="351" font-size="35" text-anchor="middle">Traffic DB</text>
+  <g id="personalization-db" class="db"><path d="M1667 437v88c0 14 27 24 61 24s61-10 61-24v-88"/><ellipse cx="1728" cy="437" rx="61" ry="15"/></g><text x="1728" y="582" font-size="34" text-anchor="middle">Personalization DB</text>
+  <g id="routing-tiles" class="db"><path d="M1667 669v88c0 14 27 24 61 24s61-10 61-24v-88"/><ellipse cx="1728" cy="669" rx="61" ry="15"/></g><text x="1728" y="816" font-size="34" text-anchor="middle"><tspan x="1728">Routing Tiles</tspan><tspan x="1728" dy="40">(Object storage)</tspan></text>
+  <g id="analytics-db" class="db"><path d="M1667 902v88c0 14 27 24 61 24s61-10 61-24v-88"/><ellipse cx="1728" cy="902" rx="61" ry="15"/></g><text x="1728" y="1048" font-size="35" text-anchor="middle">Analytics DB</text>
+</svg>
