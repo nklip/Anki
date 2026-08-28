@@ -9,7 +9,7 @@ Hence, tracking ad click events is important. In this chapter, we explore how to
 Digital advertising has a process called **real-time bidding (RTB)**, where digital advertising inventory is bought and sold:
 
 <div style="margin-left:3rem">
-    <img src="./images/digital-advertising-example.png" alt="digital-advertising-example" width="500" />
+    <img src="./images/digital-advertising-example.svg" alt="digital-advertising-example" width="500" />
 </div>
 
 Speed of RTB is important as it usually occurs within a second.
@@ -169,7 +169,7 @@ Hence, we'll use the same data store (Cassandra) here as well.
 Here's how our system looks like:
 
 <div style="margin-left:3rem">
-    <img src="./images/high-level-design-1.png" alt="high-level-design-1" width="500" />
+    <img src="./images/high-level-design-1.svg" alt="high-level-design-1" width="500" />
 </div>
 
 Data flows as an unbounded data stream on both inputs and outputs.
@@ -178,7 +178,7 @@ In order to avoid having a synchronous sink, where a consumer crashing can cause
 we'll leverage asynchronous processing using message queues (Kafka) to decouple consumers and producers.
 
 <div style="margin-left:3rem">
-    <img src="./images/high-level-design-2.png" alt="high-level-design-2" width="500" />
+    <img src="./images/high-level-design-2.svg" alt="high-level-design-2" width="500" />
 </div>
 
 The first message queue stores ad click event data:
@@ -196,17 +196,17 @@ As well as top N clicked ads aggregated per minute:
 The second message queue is there in order to achieve end to end exactly-once atomic commit semantics:
 
 <div style="margin-left:3rem">
-    <img src="./images/atomic-commit.png" alt="atomic-commit" width="500" />
+    <img src="./images/atomic-commit.svg" alt="atomic-commit" width="500" />
 </div>
 
 For the aggregation service, using the MapReduce framework is a good option:
 
 <div style="margin-left:3rem">
-    <img src="./images/ad-count-map-reduce.png" alt="ad-count-map-reduce" width="500" />
+    <img src="./images/ad-count-map-reduce.svg" alt="ad-count-map-reduce" width="500" />
 </div>
 
 <div style="margin-left:3rem">
-    <img src="./images/top-100-map-reduce.png" alt="top-100-map-reduce" width="500" />
+    <img src="./images/top-100-map-reduce.svg" alt="top-100-map-reduce" width="500" />
 </div>
 
 Each node is responsible for one single task and it sends the processing result to the downstream node.
@@ -216,13 +216,13 @@ The map node is responsible for reading from the data source, then filtering and
 For example, the map node can allocate data across different aggregation nodes based on the `ad_id`:
 
 <div style="margin-left:3rem">
-    <img src="./images/map-node.png" alt="map-node" width="500" />
+    <img src="./images/map-node.svg" alt="map-node" width="500" />
 </div>
 
 Alternatively, we can distribute ads across Kafka partitions and let the aggregation nodes subscribe directly within a consumer group.
 However, the mapping node enables us to sanitize or transform the data before subsequent processing.
 
-Another reason might be that we don't have control over how data is produced, 
+Another reason might be that we don't have control over how data is produced,
 so events related to the same `ad_id` might go on different partitions.
 
 The aggregate node counts ad click events by `ad_id` in-memory every minute.
@@ -230,7 +230,7 @@ The aggregate node counts ad click events by `ad_id` in-memory every minute.
 The reduce node collects aggregated results from aggregate node and produces the final result:
 
 <div style="margin-left:3rem">
-    <img src="./images/reduce-node.png" alt="reduce-node" width="500" />
+    <img src="./images/reduce-node.svg" alt="reduce-node" width="500" />
 </div>
 
 This DAG model uses the MapReduce paradigm. It takes big data and leverages parallel distributed computing to turn it into regular-sized data.
@@ -242,7 +242,7 @@ Let's explore how this model can now help us to achieve our various use-cases.
 **Use-case 1 - aggregate the number of clicks**:
 
 <div style="margin-left:3rem">
-    <img src="./images/use-case-1.png" alt="use-case-1" width="500" />
+    <img src="./images/use-case-1.svg" alt="use-case-1" width="500" />
 </div>
 
  - Ads are partitioned using `ad_id % 3`
@@ -250,7 +250,7 @@ Let's explore how this model can now help us to achieve our various use-cases.
 **Use-case 2 - return top N most clicked ads**:
 
 <div style="margin-left:3rem">
-    <img src="./images/use-case-2.png" alt="use-case-2" width="500" />
+    <img src="./images/use-case-2.svg" alt="use-case-2" width="500" />
 </div>
 
  - In this case, we're aggregating the top 3 ads, but this can be extended to top N ads easily
@@ -283,7 +283,7 @@ A limitation of this approach is that it creates many more buckets and records, 
 Let's dive deeper into some of the more interesting topics.
 
 ### **Streaming vs. Batching**
-The high-level architecture we proposed is a type of stream processing system. 
+The high-level architecture we proposed is a type of stream processing system.
 Here's a comparison between three types of systems:
 |                         | Services (Online system)      | Batch system (offline system)                          | Streaming system (near real-time system)     |
 |-------------------------|-------------------------------|--------------------------------------------------------|----------------------------------------------|
@@ -293,7 +293,7 @@ Here's a comparison between three types of systems:
 | Performance measurement | Availability, latency         | Throughput                                             | Throughput, latency                          |
 | Example                 | Online shopping               | MapReduce                                              | Flink [13]                                   |
 
-In our design, we used a mixture of batching and streaming. 
+In our design, we used a mixture of batching and streaming.
 
 We used streaming for processing data as it arrives and generates aggregated results in near real-time.
 We used batching, on the other hand, for historical data backup.
@@ -307,13 +307,13 @@ The key idea is to use a single stream processing engine.
 Lambda architecture:
 
 <div style="margin-left:3rem">
-    <img src="./images/lambda-architecture.png" alt="lambda-architecture" width="500" />
+    <img src="./images/lambda-architecture.svg" alt="lambda-architecture" width="500" />
 </div>
 
 Kappa architecture:
 
 <div style="margin-left:3rem">
-    <img src="./images/kappa-architecture.png" alt="kappa-architecture" width="500" />
+    <img src="./images/kappa-architecture.svg" alt="kappa-architecture" width="500" />
 </div>
 
 Our high-level design uses Kappa architecture as reprocessing of historical data also goes through the aggregation service.
@@ -324,7 +324,7 @@ Whenever we have to recalculate aggregated data due to eg a major bug in aggrega
  - Aggregated results are sent to the second message queue, after which we update the results in the aggregation database.
 
 <div style="margin-left:3rem">
-    <img src="./images/recalculation-example.png" alt="recalculation-example" width="500" />
+    <img src="./images/recalculation-example.svg" alt="recalculation-example" width="500" />
 </div>
 
 ### **Time**
@@ -349,14 +349,14 @@ To mitigate the issue of delayed events, a technique called "watermark" can be l
 In the example below, event 2 misses the window where it needs to be aggregated:
 
 <div style="margin-left:3rem">
-    <img src="./images/watermark-technique.png" alt="watermark-technique" width="500" />
+    <img src="./images/watermark-technique.svg" alt="watermark-technique" width="500" />
 </div>
 
 However, if we purposefully extend the aggregation window, we can reduce the likelihood of missed events.
 The extended part of a window is called a "watermark":
 
 <div style="margin-left:3rem">
-    <img src="./images/watermark-2.png" alt="watermark-2" width="500" />
+    <img src="./images/watermark-2.svg" alt="watermark-2" width="500" />
 </div>
 
  - Short watermark increases likelihood of missed events, but reduces latency
@@ -376,13 +376,13 @@ There are four types of window functions:
 In our design, we leverage a tumbling window for ad click aggregations:
 
 <div style="margin-left:3rem">
-    <img src="./images/tumbling-window.png" alt="tumbling-window" width="500" />
+    <img src="./images/tumbling-window.svg" alt="tumbling-window" width="500" />
 </div>
 
 As well as a sliding window for the top N clicked ads in M minutes aggregation:
 
 <div style="margin-left:3rem">
-    <img src="./images/sliding-window.png" alt="sliding-window" width="500" />
+    <img src="./images/sliding-window.svg" alt="sliding-window" width="500" />
 </div>
 
 ### **Delivery guarantees**
@@ -408,7 +408,7 @@ It can come from a wide range of sources:
 Here's an example of data duplication occurring due to failure to acknowledge an event on the last hop:
 
 <div style="margin-left:3rem">
-    <img src="./images/data-duplication-example.png" alt="data-duplication-example" width="500" />
+    <img src="./images/data-duplication-example.svg" alt="data-duplication-example" width="500" />
 </div>
 
 In this example, offset 100 will be processed and sent downstream multiple times.
@@ -416,13 +416,13 @@ In this example, offset 100 will be processed and sent downstream multiple times
 One option to try and mitigate this is to store the last seen offset in HDFS/S3, but this risks the result never reaching downstream:
 
 <div style="margin-left:3rem">
-    <img src="./images/data-duplication-example-2.png" alt="data-duplication-example-2" width="500" />
+    <img src="./images/data-duplication-example-2.svg" alt="data-duplication-example-2" width="500" />
 </div>
 
 Finally, we can store the offset while interacting with downstream atomically. To achieve this, we need to implement a distributed transaction:
 
 <div style="margin-left:3rem">
-    <img src="./images/data-duplication-example-3.png" alt="data-duplication-example-3" width="500" />
+    <img src="./images/data-duplication-example-3.svg" alt="data-duplication-example-3" width="500" />
 </div>
 
 **Personal side-note**: Alternatively, if the downstream system handles the aggregation result idempotently, there is no need for a distributed transaction.
@@ -441,13 +441,13 @@ How do we scale the message queue:
  - We could also consider partitioning the topic by geography, eg `topic_na`, `topic_eu`, etc.
 
 <div style="margin-left:3rem">
-    <img src="./images/scale-consumers.png" alt="scale-consumers" width="500" />
+    <img src="./images/scale-consumers.svg" alt="scale-consumers" width="500" />
 </div>
 
 How do we scale the aggregation service:
 
 <div style="margin-left:3rem">
-    <img src="./images/aggregation-service-scaling.png" alt="aggregation-service-scaling" width="500" />
+    <img src="./images/aggregation-service-scaling.svg" alt="aggregation-service-scaling" width="500" />
 </div>
 
  - The map-reduce nodes can easily be scaled by adding more nodes
@@ -457,7 +457,7 @@ How do we scale the aggregation service:
  - Here's the multi-threading example:
 
 <div style="margin-left:3rem">
-    <img src="./images/multi-threading-example.png" alt="multi-threading-example" width="500" />
+    <img src="./images/multi-threading-example.svg" alt="multi-threading-example" width="500" />
 </div>
 
 How do we scale the database:
@@ -466,13 +466,13 @@ How do we scale the database:
  - With this approach, no manual (re)sharding is required
 
 <div style="margin-left:3rem">
-    <img src="./images/cassandra-scalability.png" alt="cassandra-scalability" width="500" />
+    <img src="./images/cassandra-scalability.svg" alt="cassandra-scalability" width="500" />
 </div>
 
 Another scalability issue to consider is the hotspot issue - what if an ad is more popular and gets more attention than others?
 
 <div style="margin-left:3rem">
-    <img src="./images/hotspot-issue.png" alt="hotspot-issue" width="500" />
+    <img src="./images/hotspot-issue.svg" alt="hotspot-issue" width="500" />
 </div>
 
  - In the above example, aggregation service nodes can apply for extra resources via the resource manager
@@ -493,13 +493,13 @@ However, there is additional intermediary state we need to maintain, as we're ag
 We can make snapshots at a particular minute for the on-going aggregation:
 
 <div style="margin-left:3rem">
-    <img src="./images/fault-tolerance-example.png" alt="fault-tolerance-example" width="500" />
+    <img src="./images/fault-tolerance-example.svg" alt="fault-tolerance-example" width="500" />
 </div>
 
 If a node goes down, the new node can read the latest committed consumer offset, as well as the latest snapshot to continue the job:
 
 <div style="margin-left:3rem">
-    <img src="./images/fault-tolerance-recovery-example.png" alt="fault-tolerance-recovery-example" width="500" />
+    <img src="./images/fault-tolerance-recovery-example.svg" alt="fault-tolerance-recovery-example" width="500" />
 </div>
 
 ### **Data monitoring and correctness**
@@ -514,7 +514,7 @@ We also need to implement a reconciliation flow which is a batch job, running at
 It calculates the aggregated results from the raw data and compares them against the actual data stored in the aggregation database:
 
 <div style="margin-left:3rem">
-    <img src="./images/reconciliation-flow.png" alt="reconciliation-flow" width="500" />
+    <img src="./images/reconciliation-flow.svg" alt="reconciliation-flow" width="500" />
 </div>
 
 ### **Alternative design**
@@ -527,7 +527,7 @@ An alternative design, which leverages off-the-shelf tooling, is to store ad cli
 Aggregation is typically done in OLAP databases such as ClickHouse or Druid.
 
 <div style="margin-left:3rem">
-    <img src="./images/alternative-design.png" alt="alternative-design" width="500" />
+    <img src="./images/alternative-design.svg" alt="alternative-design" width="500" />
 </div>
 
 ---

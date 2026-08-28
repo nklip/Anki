@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1328" height="1018" viewBox="0 0 1328 1018" role="img" aria-labelledby="title desc">
+  <title id="title">Data duplication failure mode</title>
+  <desc id="desc">The aggregator consumes offsets one hundred through one hundred ten and sends the aggregate downstream. Failure before acknowledging offset one hundred ten makes the data run again.</desc>
+  <style>
+    text{font-family:Arial,Helvetica,sans-serif;fill:#111}
+    .box{fill:#fff;stroke:#111;stroke-width:2.7}
+    .line{fill:none;stroke:#111;stroke-width:2.7}
+    .dash{fill:none;stroke:#111;stroke-width:2.7;stroke-dasharray:10 9}
+  </style>
+  <rect width="1328" height="1018" fill="#fff"/>
+  <!-- Sequence participants. -->
+  <rect class="box" x="45" y="36" width="291" height="116" rx="18"/>
+  <text x="190.5" y="83" font-size="39" text-anchor="middle"><tspan x="190.5">Upstream</tspan><tspan x="190.5" dy="46">(Kafka)</tspan></text>
+  <rect class="box" x="528" y="36" width="289" height="116" rx="18"/>
+  <text x="672.5" y="106" font-size="39" text-anchor="middle">Aggregator</text>
+  <rect class="box" x="1004" y="36" width="290" height="116" rx="18"/>
+  <text x="1149" y="83" font-size="39" text-anchor="middle"><tspan x="1149">Downstream</tspan><tspan x="1149" dy="46">(Kafka)</tspan></text>
+  <!-- Dashed lifelines and activation bars. -->
+  <path class="dash" d="M189 152V272M189 852V1000"/>
+  <path class="dash" d="M673 152V329"/>
+  <path class="dash" d="M1147 152V704M1147 817V1000"/>
+  <rect class="box" x="175" y="272" width="30" height="580"/>
+  <rect class="box" x="658" y="329" width="29" height="523"/>
+  <rect class="box" x="1132" y="704" width="30" height="113"/>
+  <!-- 1. Poll events: the arrow points from the aggregator to upstream. -->
+  <path class="line" d="M658 331H226"/>
+  <polygon points="205,331 226,320 226,342" fill="#111"/>
+  <text x="438" y="318" font-size="40" text-anchor="middle">1. Poll events</text>
+  <!-- 2. Consume events beginning at offset 100. -->
+  <path class="line" d="M205 444H637"/>
+  <polygon points="658,444 637,433 637,455" fill="#111"/>
+  <text x="429" y="386" font-size="40" text-anchor="middle"><tspan x="429">2. Consume from</tspan><tspan x="429" dy="48">offset 100</tspan></text>
+  <!-- 3. Local aggregation loop for offsets 100 through 110. -->
+  <path class="line" d="M687 495C810 495 890 510 890 539C890 575 800 585 708 585"/>
+  <polygon points="687,585 708,574 708,596" fill="#111"/>
+  <text x="891" y="433" font-size="40" text-anchor="middle"><tspan x="891">3. Aggregate events</tspan><tspan x="891" dy="48">from 100 to 110</tspan></text>
+  <!-- 4. Send the aggregate downstream. -->
+  <path class="line" d="M687 704H1111"/>
+  <polygon points="1132,704 1111,693 1111,715" fill="#111"/>
+  <text x="912" y="646" font-size="40" text-anchor="middle"><tspan x="912">4. Send aggregated</tspan><tspan x="912" dy="48">result</tspan></text>
+  <!-- 5. Downstream acknowledgement. -->
+  <path class="line" d="M1132 817H708"/>
+  <polygon points="687,817 708,806 708,828" fill="#111"/>
+  <text x="914" y="802" font-size="40" text-anchor="middle">5. Ack back</text>
+  <!-- 6. Upstream acknowledgement; the X marks the failure point. -->
+  <path class="line" d="M658 852H630M574 852H226"/>
+  <polygon points="205,852 226,841 226,863" fill="#111"/>
+  <text x="432" y="795" font-size="40" text-anchor="middle"><tspan x="432">6. Ack upstream</tspan><tspan x="432" dy="48">with offset 110</tspan></text>
+  <text x="602" y="860" font-size="46" text-anchor="middle">X</text>
+  <text x="601" y="910" font-size="39" text-anchor="middle"><tspan x="601">Data duplication</tspan><tspan x="601" dy="43">if system failed at step 6</tspan><tspan x="601" dy="43">and consume again from offset 100</tspan></text>
+</svg>

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1950" height="606" viewBox="0 0 1950 606" role="img" aria-labelledby="title desc">
+  <title id="title">Late events in event-time windows</title>
+  <desc id="desc">Event-time and processing-time timelines show late arrivals two and five entering their event-time windows after their timestamps.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="strokeWidth" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#111"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#111}
+      .axis{fill:none;stroke:#111;stroke-width:2.8}
+      .dash{fill:none;stroke:#111;stroke-width:2.8;stroke-dasharray:11 9}
+      .outline{fill:#fff;stroke:#777;stroke-width:2.8}
+    </style>
+  </defs>
+  <rect width="1950" height="606" fill="#fff"/>
+  <!-- Shared second markers and vertical guides. -->
+  <g font-size="38" text-anchor="middle">
+    <text x="375" y="69">0</text><text x="585" y="69">30</text><text x="792" y="69">60</text>
+    <text x="1002" y="69">90</text><text x="1209" y="69">120</text><text x="1418" y="69">150</text><text x="1628" y="69">180</text>
+  </g>
+  <text x="1900" y="69" font-size="38" text-anchor="end">Second</text>
+  <g class="dash">
+    <path d="M375 78V579"/><path d="M585 78V579"/><path d="M792 78V579"/>
+    <path d="M1002 78V579"/><path d="M1209 78V579"/><path d="M1418 78V579"/><path d="M1628 78V579"/>
+  </g>
+  <!-- Event-time and processing-time axes, split around numbered events. -->
+  <text x="343" y="115" font-size="43" text-anchor="end">Event Time</text>
+  <path class="axis" d="M375 99H482M542 99H677M737 99H865M925 99H1269M1329 99H1512M1572 99H1815"/>
+  <path class="axis" marker-end="url(#arrow)" d="M1815 99H1847"/>
+  <text x="343" y="208" font-size="43" text-anchor="end">Processing Time</text>
+  <path class="axis" d="M375 187H617M677 187H821M881 187H916M976 187H1328M1388 187H1653M1713 187H1815"/>
+  <path class="axis" marker-end="url(#arrow)" d="M1815 187H1847"/>
+  <g class="outline">
+    <circle cx="512" cy="99" r="29"/><circle cx="707" cy="99" r="29"/><circle cx="895" cy="99" r="29"/><circle cx="1299" cy="99" r="29"/><circle cx="1542" cy="99" r="29"/>
+    <circle cx="647" cy="187" r="29"/><circle cx="851" cy="187" r="29"/><circle cx="946" cy="187" r="29"/><circle cx="1358" cy="187" r="29"/><circle cx="1683" cy="187" r="29"/>
+  </g>
+  <g font-size="31" text-anchor="middle">
+    <text x="512" y="110">1</text><text x="707" y="110">2</text><text x="895" y="110">3</text><text x="1299" y="110">4</text><text x="1542" y="110">5</text>
+    <text x="647" y="198">1</text><text x="851" y="198">2</text><text x="946" y="198">3</text><text x="1358" y="198">4</text><text x="1683" y="198">5</text>
+  </g>
+  <!-- Three windows highlight the late portion in pink. -->
+  <g font-size="43" text-anchor="end">
+    <text x="343" y="342">Window 1</text><text x="343" y="436">Window 2</text><text x="343" y="530">Window 3</text>
+  </g>
+  <rect class="outline" x="375" y="284" width="535" height="84"/>
+  <rect class="outline" x="792" y="377" width="535" height="86"/>
+  <rect class="outline" x="1209" y="471" width="535" height="85"/>
+  <rect x="792" y="284" width="118" height="84" fill="#efb2f3" stroke="#111" stroke-width="2.8"/>
+  <rect x="1209" y="377" width="118" height="86" fill="#efb2f3" stroke="#111" stroke-width="2.8"/>
+  <rect x="1628" y="471" width="116" height="85" fill="#efb2f3" stroke="#111" stroke-width="2.8"/>
+  <g class="outline">
+    <circle cx="647" cy="326" r="29"/><circle cx="851" cy="326" r="29"/><circle cx="946" cy="420" r="29"/><circle cx="1358" cy="513" r="29"/><circle cx="1683" cy="513" r="29"/>
+  </g>
+  <g font-size="31" text-anchor="middle">
+    <text x="647" y="337">1</text><text x="851" y="337">2</text><text x="946" y="431">3</text><text x="1358" y="524">4</text><text x="1683" y="524">5</text>
+  </g>
+</svg>

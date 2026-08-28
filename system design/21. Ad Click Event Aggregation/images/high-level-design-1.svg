@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1812" height="400" viewBox="0 0 1812 400" role="img" aria-labelledby="title desc">
+  <title id="title">High-level ad click aggregation design</title>
+  <desc id="desc">A log watcher pushes data to an aggregation service, which stores per-ad and top-ad aggregates in a database queried by a query service.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="strokeWidth" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#111"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#111}
+      .line{fill:none;stroke:#111;stroke-width:2.5}
+      .flow{fill:none;stroke:#111;stroke-width:2.5;marker-end:url(#arrow)}
+      .dash{fill:none;stroke:#111;stroke-width:2.5;stroke-dasharray:10 8}
+      .box{fill:#fff;stroke:#111;stroke-width:2.5}
+    </style>
+  </defs>
+  <rect width="1812" height="400" fill="#fff"/>
+  <!-- Four processing stages. -->
+  <g font-size="31" text-anchor="middle">
+    <text x="133" y="82">Input</text><text x="670" y="82">Process</text><text x="1158" y="82">Output</text><text x="1671" y="82">Display</text>
+  </g>
+  <g class="dash">
+    <!-- Stage dividers are interrupted wherever a label crosses the stage boundary. -->
+    <path d="M395 48V175M395 235V359"/>
+    <path d="M938 48V95M938 175V225M938 305V359"/>
+    <path d="M1397 48V175M1397 235V359"/>
+  </g>
+  <!-- Input and aggregation service. -->
+  <rect class="box" x="28" y="161" width="206" height="87"/>
+  <text x="131" y="216" font-size="33" text-anchor="middle">Log Watcher</text>
+  <path class="line" d="M234 205H300"/>
+  <text x="405" y="215" font-size="32" text-anchor="middle">Push data</text>
+  <path class="line" d="M515 205H540"/>
+  <polygon points="559,205 540,195 540,215" fill="#111"/>
+  <rect class="box" x="559" y="145" width="206" height="119"/>
+  <text x="662" y="183" font-size="32" text-anchor="middle"><tspan x="662">Data</tspan><tspan x="662" dy="36">Aggregation</tspan><tspan x="662" dy="36">Service</tspan></text>
+  <!-- Two aggregate streams enter the database. -->
+  <path class="line" d="M765 159L795 153"/>
+  <text x="929" y="128" font-size="24" text-anchor="middle"><tspan x="929">Ad count</tspan><tspan x="929" dy="29">(Aggregate every min)</tspan></text>
+  <path class="line" d="M1072 151L1079 154"/>
+  <polygon points="1088,159 1071,164 1078,147" fill="#111"/>
+  <path class="line" d="M765 244L778 247"/>
+  <text x="916" y="260" font-size="24" text-anchor="middle"><tspan x="916">Top 100 most clicked Ads</tspan><tspan x="916" dy="31">(Aggregate every min)</tspan></text>
+  <path class="line" d="M1072 251L1079 248"/>
+  <polygon points="1088,241 1077,255 1071,238" fill="#111"/>
+  <!-- Aggregate database. -->
+  <path class="box" d="M1091 155V246C1091 260 1120 267 1157 267C1194 267 1225 260 1225 246V155Z"/>
+  <ellipse class="box" cx="1158" cy="155" rx="67" ry="13"/>
+  <text x="1158" y="218" font-size="32" text-anchor="middle">Database</text>
+  <!-- Query service reads the aggregates. -->
+  <rect class="box" x="1550" y="161" width="239" height="87"/>
+  <text x="1669.5" y="216" font-size="32" text-anchor="middle">Query Service</text>
+  <path class="line" d="M1550 205H1470"/>
+  <text x="1396" y="215" font-size="32" text-anchor="middle">Query</text>
+  <path class="line" d="M1320 205H1250"/>
+  <polygon points="1228,205 1250,194 1250,216" fill="#111"/>
+</svg>

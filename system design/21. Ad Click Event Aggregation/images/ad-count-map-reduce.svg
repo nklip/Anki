@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="804" viewBox="0 0 1160 804" role="img" aria-labelledby="title desc">
+  <title id="title">Ad count map-reduce</title>
+  <desc id="desc">A map step fans input into two minute-based aggregate steps that emit ad counts.</desc>
+  <!-- Shared styles and compact arrowheads mirror the PNG etalon. -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="strokeWidth" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#111"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#111;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
+      .node{fill:#fff;stroke:#111;stroke-width:2.5}
+      .boundary{fill:none;stroke:#777;stroke-width:2.5;stroke-dasharray:9 7}
+      .flow{fill:none;stroke:#111;stroke-width:2.5;marker-end:url(#arrow)}
+      .line{fill:none;stroke:#111;stroke-width:2.5}
+    </style>
+  </defs>
+  <rect width="1160" height="804" fill="#fff"/>
+
+  <!-- One-minute aggregation service boundary. -->
+  <rect class="boundary" x="230" y="83" width="657" height="641"/>
+  <text x="559" y="61" font-size="37" text-anchor="middle">Aggregate every minute</text>
+  <text x="559" y="760" font-size="35" text-anchor="middle">Aggregation Service</text>
+
+  <!-- Map input and fan-out; each shaft ends at the target boundary. -->
+  <path class="line" d="M39 403H61"/>
+  <path class="flow" d="M158 403H270"/>
+  <text x="108" y="397" font-size="34" text-anchor="middle">
+    <tspan x="108" dy="0">Data</tspan><tspan x="108" dy="38">Input</tspan>
+  </text>
+  <circle class="node" cx="372" cy="403" r="100"/>
+  <text x="372" y="415" font-size="36" text-anchor="middle">Map</text>
+
+  <path class="flow" d="M462 359L642 256"/>
+  <circle class="node" cx="742" cy="217" r="100"/>
+  <text x="742" y="229" font-size="36" text-anchor="middle">Aggregate</text>
+  <path class="flow" d="M842 217H960"/>
+  <text x="967" y="229" font-size="35">Ad count</text>
+
+  <path class="flow" d="M462 447L642 556"/>
+  <circle class="node" cx="742" cy="596" r="100"/>
+  <text x="742" y="608" font-size="36" text-anchor="middle">Aggregate</text>
+  <path class="flow" d="M842 596H960"/>
+  <text x="967" y="608" font-size="35">Ad count</text>
+</svg>

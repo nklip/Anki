@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1570" height="822" viewBox="0 0 1570 822" role="img" aria-labelledby="title desc">
+  <title id="title">Top 100 map-reduce aggregation</title>
+  <desc id="desc">A map worker fans input into two aggregate workers, whose partial results are reduced into the top 100 ads.</desc>
+  <!-- Compact arrowheads and shared line styles reproduce the PNG routing. -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="strokeWidth" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#111"/></marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#111}
+      .node{fill:#fff;stroke:#111;stroke-width:2.5}
+      .boundary{fill:none;stroke:#777;stroke-width:2.5;stroke-dasharray:9 7}
+      .flow{fill:none;stroke:#111;stroke-width:2.5;marker-end:url(#arrow)}
+      .line{fill:none;stroke:#111;stroke-width:2.5}
+    </style>
+  </defs>
+  <rect width="1570" height="822" fill="#fff"/>
+
+  <!-- Top-100 aggregation service boundary. -->
+  <rect class="boundary" x="221" y="100" width="1038" height="643"/>
+  <text x="740" y="82" font-size="36" text-anchor="middle">Top 100 aggregation</text>
+  <text x="740" y="789" font-size="36" text-anchor="middle">Aggregation Service</text>
+
+  <!-- Input and two-way aggregation fan-out. -->
+  <path class="line" d="M29 422H50"/>
+  <path class="flow" d="M149 422H259"/>
+  <text x="99" y="414" font-size="35" text-anchor="middle"><tspan x="99" dy="0">Data</tspan><tspan x="99" dy="39">Input</tspan></text>
+  <circle class="node" cx="360" cy="422" r="100"/>
+  <text x="360" y="434" font-size="36" text-anchor="middle">Map</text>
+
+  <circle class="node" cx="733" cy="236" r="100"/>
+  <text x="733" y="248" font-size="35" text-anchor="middle">Aggregate</text>
+  <circle class="node" cx="733" cy="615" r="100"/>
+  <text x="733" y="627" font-size="35" text-anchor="middle">Aggregate</text>
+  <path class="flow" d="M449 376L643 279"/>
+  <path class="flow" d="M449 468L643 570"/>
+
+  <circle class="node" cx="1121" cy="422" r="100"/>
+  <text x="1121" y="434" font-size="36" text-anchor="middle">Reduce</text>
+  <path class="flow" d="M823 279L1031 376"/>
+  <path class="flow" d="M823 570L1031 468"/>
+  <path class="flow" d="M1221 422H1332"/>
+  <text x="1338" y="434" font-size="36">Top 100 Ads</text>
+</svg>

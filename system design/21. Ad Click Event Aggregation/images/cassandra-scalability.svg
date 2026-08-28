@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1352" height="1234" viewBox="0 0 1352 1234" role="img" aria-labelledby="diagram-title diagram-desc">
+  <title id="diagram-title">Cassandra token ownership with and without virtual nodes</title>
+  <desc id="diagram-desc">Two comparisons. Above the divider, a ring without virtual nodes is cut into six large token ranges A to F, so each of the six nodes holds only three ranges and rebalancing moves large blocks. Below the divider, the same ring is cut into sixteen smaller virtual-node ranges A to P, so each node holds eight scattered ranges and load spreads evenly across the cluster.</desc>
+  <!-- Flat light-blue token ranges and light-grey range pills replace the etalon gradients, at the author's request. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#000}
+      .head{font-size:37px}
+      .title{font-size:36px}
+      .tag{font-size:28px;text-anchor:middle}
+      .band{fill:#c3d7ec;stroke:#000;stroke-width:3.1}
+      .hub{fill:#fff;stroke:#000;stroke-width:3.1}
+      .spoke{stroke:#000;stroke-width:3.1}
+      .pill{fill:#d8d8d8;stroke:#000;stroke-width:3}
+      .group{fill:none;stroke:#000;stroke-width:2;stroke-dasharray:2.2 7.36}
+    </style>
+  </defs>
+  <rect width="1352" height="1234" fill="#fff"/>
+  <g id="ring-without-virtual-nodes">
+    <!-- Annulus = filled outer disc with a white hub punched out; the spokes are the token-range boundaries. -->
+    <circle class="band" cx="298" cy="245" r="198.2"/>
+    <circle class="hub" cx="298" cy="245" r="159.2"/>
+    <line class="spoke" x1="218.4" y1="107.13" x2="198.9" y2="73.35"/>
+    <line class="spoke" x1="377.6" y1="107.13" x2="397.1" y2="73.35"/>
+    <line class="spoke" x1="457.2" y1="245" x2="496.2" y2="245"/>
+    <line class="spoke" x1="377.6" y1="382.87" x2="397.1" y2="416.65"/>
+    <line class="spoke" x1="218.4" y1="382.87" x2="198.9" y2="416.65"/>
+    <line class="spoke" x1="138.8" y1="245" x2="99.8" y2="245"/>
+    <text class="tag" x="298" y="77">A</text>
+    <text class="tag" x="452.15" y="166">B</text>
+    <text class="tag" x="452.15" y="344">C</text>
+    <text class="tag" x="298" y="433">D</text>
+    <text class="tag" x="143.85" y="344">E</text>
+    <text class="tag" x="143.85" y="166">F</text>
+    <text class="title" x="199" y="236">Ring without</text>
+    <text class="title" x="195" y="280">virtual nodes</text>
+  </g>
+  <g id="ring-with-virtual-nodes">
+    <!-- Annulus = filled outer disc with a white hub punched out; the spokes are the token-range boundaries. -->
+    <circle class="band" cx="298" cy="863" r="198.2"/>
+    <circle class="hub" cx="298" cy="863" r="159.2"/>
+    <line class="spoke" x1="298" y1="703.8" x2="298" y2="664.8"/>
+    <line class="spoke" x1="358.92" y1="715.92" x2="373.85" y2="679.89"/>
+    <line class="spoke" x1="410.57" y1="750.43" x2="438.15" y2="722.85"/>
+    <line class="spoke" x1="445.08" y1="802.08" x2="481.11" y2="787.15"/>
+    <line class="spoke" x1="457.2" y1="863" x2="496.2" y2="863"/>
+    <line class="spoke" x1="445.08" y1="923.92" x2="481.11" y2="938.85"/>
+    <line class="spoke" x1="410.57" y1="975.57" x2="438.15" y2="1003.15"/>
+    <line class="spoke" x1="358.92" y1="1010.08" x2="373.85" y2="1046.11"/>
+    <line class="spoke" x1="298" y1="1022.2" x2="298" y2="1061.2"/>
+    <line class="spoke" x1="237.08" y1="1010.08" x2="222.15" y2="1046.11"/>
+    <line class="spoke" x1="185.43" y1="975.57" x2="157.85" y2="1003.15"/>
+    <line class="spoke" x1="150.92" y1="923.92" x2="114.89" y2="938.85"/>
+    <line class="spoke" x1="138.8" y1="863" x2="99.8" y2="863"/>
+    <line class="spoke" x1="150.92" y1="802.08" x2="114.89" y2="787.15"/>
+    <line class="spoke" x1="185.43" y1="750.43" x2="157.85" y2="722.85"/>
+    <line class="spoke" x1="237.08" y1="715.92" x2="222.15" y2="679.89"/>
+    <text class="tag" x="332.73" y="698.42" transform="rotate(11.25 332.73 688.42)">D</text>
+    <text class="tag" x="396.89" y="725" transform="rotate(33.75 396.89 715)">E</text>
+    <text class="tag" x="446" y="774.11" transform="rotate(56.25 446 764.11)">F</text>
+    <text class="tag" x="472.58" y="838.27" transform="rotate(78.75 472.58 828.27)">G</text>
+    <text class="tag" x="472.58" y="907.73" transform="rotate(101.25 472.58 897.73)">H</text>
+    <text class="tag" x="446" y="971.89" transform="rotate(123.75 446 961.89)">I</text>
+    <text class="tag" x="396.89" y="1021" transform="rotate(146.25 396.89 1011)">J</text>
+    <text class="tag" x="332.73" y="1047.58" transform="rotate(168.75 332.73 1037.58)">K</text>
+    <text class="tag" x="263.27" y="1047.58" transform="rotate(191.25 263.27 1037.58)">L</text>
+    <text class="tag" x="199.11" y="1021" transform="rotate(213.75 199.11 1011)">M</text>
+    <text class="tag" x="150" y="971.89" transform="rotate(236.25 150 961.89)">N</text>
+    <text class="tag" x="123.42" y="907.73" transform="rotate(258.75 123.42 897.73)">O</text>
+    <text class="tag" x="123.42" y="838.27" transform="rotate(281.25 123.42 828.27)">P</text>
+    <text class="tag" x="150" y="774.11" transform="rotate(303.75 150 764.11)">A</text>
+    <text class="tag" x="199.11" y="725" transform="rotate(326.25 199.11 715)">B</text>
+    <text class="tag" x="263.27" y="698.42" transform="rotate(348.75 263.27 688.42)">C</text>
+    <text class="title" x="223.5" y="855">Ring with</text>
+    <text class="title" x="195" y="899">virtual nodes</text>
+  </g>
+  <!-- Physical nodes. Each dotted group holds the token ranges that node owns. -->
+  <g id="node-groups">
+    <rect class="group" x="573.77" y="77.11" width="214.97" height="136.45" rx="20"/>
+    <rect class="group" x="830.07" y="75.59" width="214.98" height="136.4" rx="20"/>
+    <rect class="group" x="1080.06" y="75.59" width="214.99" height="136.39" rx="20"/>
+    <rect class="group" x="573.77" y="253.15" width="214.96" height="136.45" rx="20"/>
+    <rect class="group" x="830.07" y="253.15" width="214.98" height="136.45" rx="20"/>
+    <rect class="group" x="1078.53" y="253.15" width="214.95" height="136.45" rx="20"/>
+    <rect class="group" x="573.98" y="584.69" width="214.75" height="261.61" rx="20"/>
+    <rect class="group" x="826.96" y="584.68" width="214.98" height="261.62" rx="20"/>
+    <rect class="group" x="1081.74" y="584.69" width="214.95" height="261.61" rx="20"/>
+    <rect class="group" x="573.98" y="886" width="214.75" height="261.69" rx="20"/>
+    <rect class="group" x="828.8" y="886" width="214.68" height="261.69" rx="20"/>
+    <rect class="group" x="1081.74" y="886" width="214.95" height="261.69" rx="20"/>
+    <rect class="pill" x="634" y="86" width="92" height="54" rx="18"/><text class="tag" x="680" y="123">A</text>
+    <rect class="pill" x="890" y="85" width="92.5" height="53.5" rx="18"/><text class="tag" x="936.25" y="121.75">B</text>
+    <rect class="pill" x="1140" y="85" width="92.5" height="53.5" rx="18"/><text class="tag" x="1186.25" y="121.75">C</text>
+    <rect class="pill" x="581" y="150" width="92.5" height="53.5" rx="18"/><text class="tag" x="627.25" y="186.75">F</text>
+    <rect class="pill" x="686" y="150" width="92.5" height="53.5" rx="18"/><text class="tag" x="732.25" y="186.75">E</text>
+    <rect class="pill" x="837.5" y="148" width="92.5" height="54" rx="18"/><text class="tag" x="883.75" y="185">A</text>
+    <rect class="pill" x="943" y="148" width="92" height="54" rx="18"/><text class="tag" x="989" y="185">F</text>
+    <rect class="pill" x="1088" y="148" width="92" height="54" rx="18"/><text class="tag" x="1134" y="185">B</text>
+    <rect class="pill" x="1193" y="148" width="92" height="54" rx="18"/><text class="tag" x="1239" y="185">A</text>
+    <rect class="pill" x="634" y="262" width="92" height="54" rx="18"/><text class="tag" x="680" y="299">D</text>
+    <rect class="pill" x="890" y="262" width="92.5" height="54" rx="18"/><text class="tag" x="936.25" y="299">E</text>
+    <rect class="pill" x="1138.5" y="262" width="92.5" height="54" rx="18"/><text class="tag" x="1184.75" y="299">F</text>
+    <rect class="pill" x="581" y="326" width="92.5" height="53.5" rx="18"/><text class="tag" x="627.25" y="362.75">C</text>
+    <rect class="pill" x="686.5" y="326" width="92" height="53.5" rx="18"/><text class="tag" x="732.5" y="362.75">B</text>
+    <rect class="pill" x="837.5" y="326" width="92.5" height="53.5" rx="18"/><text class="tag" x="883.75" y="362.75">D</text>
+    <rect class="pill" x="943" y="326" width="92" height="53.5" rx="18"/><text class="tag" x="989" y="362.75">C</text>
+    <rect class="pill" x="1086" y="326" width="92" height="53.5" rx="18"/><text class="tag" x="1132" y="362.75">E</text>
+    <rect class="pill" x="1191" y="326" width="92.5" height="53.5" rx="18"/><text class="tag" x="1237.25" y="362.75">D</text>
+    <rect class="pill" x="581" y="592" width="92.5" height="54" rx="18"/><text class="tag" x="627.25" y="629">B</text>
+    <rect class="pill" x="686.5" y="592" width="92" height="54" rx="18"/><text class="tag" x="732.5" y="629">E</text>
+    <rect class="pill" x="836" y="592" width="92" height="54" rx="18"/><text class="tag" x="882" y="629">A</text>
+    <rect class="pill" x="941" y="592" width="92.5" height="54" rx="18"/><text class="tag" x="987.25" y="629">P</text>
+    <rect class="pill" x="1091" y="592" width="92" height="54" rx="18"/><text class="tag" x="1137" y="629">K</text>
+    <rect class="pill" x="1196" y="592" width="92" height="54" rx="18"/><text class="tag" x="1242" y="629">G</text>
+    <rect class="pill" x="581" y="657" width="92.5" height="54" rx="18"/><text class="tag" x="627.25" y="694">G</text>
+    <rect class="pill" x="686" y="657" width="92.5" height="54" rx="18"/><text class="tag" x="732.25" y="694">K</text>
+    <rect class="pill" x="836" y="657" width="92" height="54" rx="18"/><text class="tag" x="882" y="694">M</text>
+    <rect class="pill" x="941" y="657" width="92.5" height="54" rx="18"/><text class="tag" x="987.25" y="694">O</text>
+    <rect class="pill" x="1091" y="657" width="92" height="54" rx="18"/><text class="tag" x="1137" y="694">C</text>
+    <rect class="pill" x="1196" y="657" width="92" height="54" rx="18"/><text class="tag" x="1242" y="694">N</text>
+    <rect class="pill" x="581" y="720.5" width="92.5" height="54" rx="18"/><text class="tag" x="627.25" y="757.5">D</text>
+    <rect class="pill" x="686" y="720.5" width="92.5" height="54" rx="18"/><text class="tag" x="732.25" y="757.5">J</text>
+    <rect class="pill" x="836" y="720.5" width="92" height="54" rx="18"/><text class="tag" x="882" y="757.5">D</text>
+    <rect class="pill" x="941" y="720.5" width="92.5" height="54" rx="18"/><text class="tag" x="987.25" y="757.5">H</text>
+    <rect class="pill" x="1091" y="720.5" width="92" height="54" rx="18"/><text class="tag" x="1137" y="757.5">J</text>
+    <rect class="pill" x="1196" y="720.5" width="92" height="54" rx="18"/><text class="tag" x="1242" y="757.5">F</text>
+    <rect class="pill" x="580" y="784" width="92" height="54" rx="18"/><text class="tag" x="626" y="821">L</text>
+    <rect class="pill" x="686.5" y="784" width="92" height="54" rx="18"/><text class="tag" x="732.5" y="821">A</text>
+    <rect class="pill" x="834.5" y="784" width="92" height="54" rx="18"/><text class="tag" x="880.5" y="821">K</text>
+    <rect class="pill" x="941" y="784" width="92.5" height="54" rx="18"/><text class="tag" x="987.25" y="821">F</text>
+    <rect class="pill" x="1089" y="784" width="92.5" height="54" rx="18"/><text class="tag" x="1135.25" y="821">P</text>
+    <rect class="pill" x="1196" y="784" width="92" height="54" rx="18"/><text class="tag" x="1242" y="821">I</text>
+    <rect class="pill" x="581" y="893.5" width="92.5" height="53.5" rx="18"/><text class="tag" x="627.25" y="930.25">M</text>
+    <rect class="pill" x="686" y="893.5" width="92.5" height="53.5" rx="18"/><text class="tag" x="732.25" y="930.25">O</text>
+    <rect class="pill" x="836" y="893.5" width="92" height="53.5" rx="18"/><text class="tag" x="882" y="930.25">E</text>
+    <rect class="pill" x="941" y="893.5" width="92.5" height="53.5" rx="18"/><text class="tag" x="987.25" y="930.25">P</text>
+    <rect class="pill" x="1091" y="893.5" width="92" height="53.5" rx="18"/><text class="tag" x="1137" y="930.25">H</text>
+    <rect class="pill" x="1196" y="893.5" width="92" height="53.5" rx="18"/><text class="tag" x="1242" y="930.25">C</text>
+    <rect class="pill" x="581" y="958.5" width="92.5" height="53.5" rx="18"/><text class="tag" x="627.25" y="995.25">I</text>
+    <rect class="pill" x="686.5" y="958.5" width="92" height="53.5" rx="18"/><text class="tag" x="732.5" y="995.25">H</text>
+    <rect class="pill" x="836" y="958.5" width="92" height="53.5" rx="18"/><text class="tag" x="882" y="995.25">I</text>
+    <rect class="pill" x="941" y="958.5" width="92.5" height="53.5" rx="18"/><text class="tag" x="987.25" y="995.25">A</text>
+    <rect class="pill" x="1091" y="958.5" width="92" height="53.5" rx="18"/><text class="tag" x="1137" y="995.25">B</text>
+    <rect class="pill" x="1196" y="958.5" width="92" height="53.5" rx="18"/><text class="tag" x="1242" y="995.25">O</text>
+    <rect class="pill" x="581" y="1022" width="92.5" height="53.5" rx="18"/><text class="tag" x="627.25" y="1058.75">B</text>
+    <rect class="pill" x="686" y="1022" width="92.5" height="53.5" rx="18"/><text class="tag" x="732.25" y="1058.75">L</text>
+    <rect class="pill" x="836" y="1022" width="92" height="53.5" rx="18"/><text class="tag" x="882" y="1058.75">M</text>
+    <rect class="pill" x="941" y="1022" width="92.5" height="53.5" rx="18"/><text class="tag" x="987.25" y="1058.75">C</text>
+    <rect class="pill" x="1091" y="1022" width="92" height="53.5" rx="18"/><text class="tag" x="1137" y="1058.75">N</text>
+    <rect class="pill" x="1196" y="1022" width="92" height="53.5" rx="18"/><text class="tag" x="1242" y="1058.75">E</text>
+    <rect class="pill" x="580" y="1085" width="92" height="54" rx="18"/><text class="tag" x="626" y="1122">F</text>
+    <rect class="pill" x="686.5" y="1085" width="92" height="54" rx="18"/><text class="tag" x="732.5" y="1122">D</text>
+    <rect class="pill" x="834.5" y="1085" width="92.5" height="54" rx="18"/><text class="tag" x="880.75" y="1122">G</text>
+    <rect class="pill" x="941" y="1085" width="92.5" height="54" rx="18"/><text class="tag" x="987.25" y="1122">N</text>
+    <rect class="pill" x="1089" y="1085" width="92.5" height="54" rx="18"/><text class="tag" x="1135.25" y="1122">J</text>
+    <rect class="pill" x="1196" y="1085" width="92" height="54" rx="18"/><text class="tag" x="1242" y="1122">L</text>
+    <text class="head" x="620.5" y="60">Node 1</text>
+    <text class="head" x="872.5" y="60">Node 2</text>
+    <text class="head" x="1127.5" y="60">Node 3</text>
+    <text class="head" x="621.5" y="434">Node 4</text>
+    <text class="head" x="871" y="434">Node 5</text>
+    <text class="head" x="1129.5" y="431">Node 6</text>
+    <text class="head" x="620.5" y="567">Node 1</text>
+    <text class="head" x="877" y="567">Node 2</text>
+    <text class="head" x="1127.5" y="567">Node 3</text>
+    <text class="head" x="621.5" y="1195">Node 4</text>
+    <text class="head" x="876" y="1196">Node 5</text>
+    <text class="head" x="1129.5" y="1192">Node 6</text>
+  </g>
+  <!-- Divider between the two scenarios. -->
+  <line x1="66.5" y1="490" x2="1310.5" y2="490" stroke="#000" stroke-width="4.7"/>
+</svg>

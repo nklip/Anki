@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1784" height="452" viewBox="0 0 1784 452" role="img" aria-labelledby="diagram-title diagram-desc">
+  <title id="diagram-title">A sliding three-minute window advancing one minute at a time</title>
+  <desc id="diagram-desc">A timeline marked in minutes 1 to 5, with a dashed guide at each minute. Two aggregation windows sit below it, each three minutes wide and each labelled top ads from last 3 minutes. The first spans minutes 1 to 4 and the second minutes 2 to 5, so consecutive runs overlap by two minutes: the window is three minutes long but runs every minute.</desc>
+  <!-- One arrowhead marker and one style block drive the diagram; restyle from here. -->
+  <defs>
+    <marker id="head" viewBox="0 0 24 18" refX="1" refY="9" markerWidth="24" markerHeight="18" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L24 9L0 18Z" fill="#000"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:40.5px;fill:#000}
+      .box{fill:#fff;stroke:#000;stroke-width:2.5}
+      .axis{fill:none;stroke:#000;stroke-width:2.5;marker-end:url(#head)}
+      .tick{fill:none;stroke:#000;stroke-width:2.5;stroke-dasharray:12 8}
+    </style>
+  </defs>
+  <rect width="1784" height="452" fill="#fff"/>
+  <!-- Minute guides run the full height so both windows can be read against the same ticks. -->
+  <g id="minute-guides">
+    <line class="tick" x1="418.7" y1="80" x2="418.7" y2="412.5"/>
+    <line class="tick" x1="676.8" y1="80" x2="676.8" y2="412.5"/>
+    <line class="tick" x1="935.5" y1="80" x2="935.5" y2="412.5"/>
+    <line class="tick" x1="1194.2" y1="80" x2="1194.2" y2="412.5"/>
+    <line class="tick" x1="1453" y1="80" x2="1453" y2="412.5"/>
+  </g>
+  <!-- Timeline; the head sits clear of the "Minute" label. -->
+  <path class="axis" id="timeline" d="M325 99.04L1660 99.04"/>
+  <g id="minute-labels">
+    <text x="407" y="70">1</text>
+    <text x="666" y="70">2</text>
+    <text x="924.5" y="70">3</text>
+    <text x="1184" y="70">4</text>
+    <text x="1442" y="71">5</text>
+  </g>
+  <!-- Two runs of the same three-minute window, offset by one minute; the overlap is the point. -->
+  <g id="windows">
+    <rect class="box" x="417" y="180.5" width="778" height="79.2"/>
+    <rect class="box" x="676.3" y="269.3" width="778" height="79.4"/>
+  </g>
+  <g id="labels">
+    <text x="1611" y="70">Minute</text>
+    <text x="75" y="236">Sliding window</text>
+    <text x="47" y="282">(3 minute window,</text>
+    <text x="44" y="328">Run every minute)</text>
+    <text x="558" y="235">Top ads from last 3 minutes</text>
+    <text x="817" y="323">Top ads from last 3 minutes</text>
+  </g>
+</svg>

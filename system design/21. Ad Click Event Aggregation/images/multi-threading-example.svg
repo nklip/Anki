@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1838" height="1426" viewBox="0 0 1838 1426" role="img" aria-labelledby="title desc">
+  <title id="title">Multi-threaded aggregation services</title>
+  <desc id="desc">Kafka divides all events between two aggregation service nodes. Each service assigns three ad identifiers to three dedicated worker threads.</desc>
+  <!-- Shared monochrome styles preserve the source diagram's editable geometry. -->
+  <style>
+    text{font-family:Arial,Helvetica,sans-serif;fill:#111}
+    .shape{fill:#fff;stroke:#111;stroke-width:2.5}
+    .group{fill:none;stroke:#111;stroke-width:2.5;stroke-dasharray:10 8}
+    .connector{fill:none;stroke:#111;stroke-width:2.5}
+  </style>
+  <rect width="1838" height="1426" fill="#fff"/>
+
+  <!-- Kafka queue and its two service-node assignments. -->
+  <path class="shape" d="M111 640H354C409 640 409 755 354 755H111C69 755 69 640 111 640Z"/>
+  <path class="shape" d="M354 640C323 640 323 755 354 755"/>
+  <text x="218" y="711" font-size="40" text-anchor="middle">Kafka</text>
+  <text x="143" y="620" font-size="40">All Events</text>
+  <!-- These plain distribution lines intentionally cross the dashed service boundaries. -->
+  <path id="upper-service-connector" class="connector" data-connector="true" d="M354 640L842 448"/>
+  <path id="lower-service-connector" class="connector" data-connector="true" d="M354 755L838 981"/>
+
+  <!-- Aggregation node handling ad identifiers 1 through 3. -->
+  <rect class="group" x="766" y="30" width="1029" height="662"/>
+  <text x="807" y="98" font-size="40">Aggregation Service Node</text>
+  <text x="1602" y="98" font-size="40" text-anchor="middle">Threads</text>
+  <rect class="shape" x="800" y="335" width="364" height="113"/>
+  <text x="982" y="382" font-size="40" text-anchor="middle"><tspan x="982">Events of ad_id</tspan><tspan x="982" dy="46">From 1 to 3</tspan></text>
+
+  <!-- Thread connectors meet ellipse boundaries without arrowheads in the etalon. -->
+  <path id="thread-1-connector" class="connector" data-connector="true" d="M1164 335L1463 230"/>
+  <path id="thread-2-connector" class="connector" data-connector="true" d="M1164 392H1445"/>
+  <path id="thread-3-connector" class="connector" data-connector="true" d="M1164 448L1463 552"/>
+  <ellipse class="shape" cx="1602" cy="195" rx="157" ry="76"/>
+  <ellipse class="shape" cx="1602" cy="391" rx="157" ry="76"/>
+  <ellipse class="shape" cx="1602" cy="587" rx="157" ry="76"/>
+  <g font-size="38" text-anchor="middle">
+    <text x="1602" y="190"><tspan x="1602">thread_id = 1</tspan><tspan x="1602" dy="43">ad_id = 1</tspan></text>
+    <text x="1602" y="386"><tspan x="1602">thread_id = 2</tspan><tspan x="1602" dy="43">ad_id = 2</tspan></text>
+    <text x="1602" y="582"><tspan x="1602">thread_id = 3</tspan><tspan x="1602" dy="43">ad_id = 3</tspan></text>
+  </g>
+
+  <!-- Aggregation node handling ad identifiers 4 through 6. -->
+  <rect class="group" x="766" y="737" width="1029" height="662"/>
+  <rect class="shape" x="800" y="981" width="364" height="113"/>
+  <text x="982" y="1028" font-size="40" text-anchor="middle"><tspan x="982">Events of ad_id</tspan><tspan x="982" dy="46">From 4 to 6</tspan></text>
+
+  <path id="thread-4-connector" class="connector" data-connector="true" d="M1164 981L1463 877"/>
+  <path id="thread-5-connector" class="connector" data-connector="true" d="M1164 1038H1445"/>
+  <path id="thread-6-connector" class="connector" data-connector="true" d="M1164 1094L1463 1199"/>
+  <ellipse class="shape" cx="1602" cy="842" rx="157" ry="76"/>
+  <ellipse class="shape" cx="1602" cy="1038" rx="157" ry="76"/>
+  <ellipse class="shape" cx="1602" cy="1234" rx="157" ry="76"/>
+  <g font-size="38" text-anchor="middle">
+    <text x="1602" y="837"><tspan x="1602">thread_id = 1</tspan><tspan x="1602" dy="43">ad_id = 4</tspan></text>
+    <text x="1602" y="1033"><tspan x="1602">thread_id = 2</tspan><tspan x="1602" dy="43">ad_id = 5</tspan></text>
+    <text x="1602" y="1229"><tspan x="1602">thread_id = 3</tspan><tspan x="1602" dy="43">ad_id = 6</tspan></text>
+  </g>
+  <text x="807" y="1360" font-size="40">Aggregation Service Node</text>
+  <text x="1602" y="1360" font-size="40" text-anchor="middle">Threads</text>
+</svg>

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1780" height="432" viewBox="0 0 1780 432" role="img" aria-labelledby="title desc">
+  <title id="title">One-minute tumbling windows</title>
+  <desc id="desc">Four non-overlapping one-minute windows aggregate click counts independently along a five-minute timeline.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="strokeWidth" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#111"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#111}
+      .line{fill:none;stroke:#111;stroke-width:2.5}
+      .dash{fill:none;stroke:#111;stroke-width:2.5;stroke-dasharray:10 9}
+      .bucket{fill:#fff;stroke:#111;stroke-width:2.5}
+    </style>
+  </defs>
+  <rect width="1780" height="432" fill="#fff"/>
+  <!-- Timeline and minute boundaries. -->
+  <path class="line" marker-end="url(#arrow)" d="M330 91H1685"/>
+  <text x="1732" y="62" font-size="37" text-anchor="end">Minute</text>
+  <g font-size="36" text-anchor="middle">
+    <text x="424" y="62">1</text>
+    <text x="683" y="62">2</text>
+    <text x="942" y="62">3</text>
+    <text x="1201" y="62">4</text>
+    <text x="1463" y="62">5</text>
+  </g>
+  <g class="dash">
+    <path d="M424 68V407"/>
+    <path d="M683 68V407"/>
+    <path d="M942 68V407"/>
+    <path d="M1201 68V407"/>
+    <path d="M1463 68V407"/>
+  </g>
+  <!-- Non-overlapping one-minute aggregation buckets. -->
+  <text x="377" y="229" font-size="38" text-anchor="end">
+    <tspan x="377">Tumbling Window</tspan>
+    <tspan x="377" dy="43">(1 minute window)</tspan>
+  </text>
+  <g class="bucket">
+    <rect x="424" y="173" width="259" height="82"/>
+    <rect x="683" y="173" width="259" height="82"/>
+    <rect x="942" y="173" width="259" height="82"/>
+    <rect x="1201" y="173" width="262" height="82"/>
+  </g>
+  <g font-size="29" text-anchor="middle">
+    <text x="553.5" y="207"><tspan x="553.5">Aggregate</tspan><tspan x="553.5" dy="34">click count</tspan></text>
+    <text x="812.5" y="207"><tspan x="812.5">Aggregate</tspan><tspan x="812.5" dy="34">click count</tspan></text>
+    <text x="1071.5" y="207"><tspan x="1071.5">Aggregate</tspan><tspan x="1071.5" dy="34">click count</tspan></text>
+    <text x="1332" y="207"><tspan x="1332">Aggregate</tspan><tspan x="1332" dy="34">click count</tspan></text>
+  </g>
+</svg>

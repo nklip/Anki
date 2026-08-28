@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1336" height="1018" viewBox="0 0 1336 1018" role="img" aria-labelledby="title desc">
+  <title id="title">Map node partitions ad events</title>
+  <desc id="desc">The map operation routes even ad IDs to aggregate node 1 and odd ad IDs to aggregate node 2.</desc>
+  <!-- The two routing labels occupy deliberate gaps in their connector shafts. -->
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="strokeWidth" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#111"/></marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#111}
+      .node{fill:#fff;stroke:#111;stroke-width:2.5}
+      .flow{fill:none;stroke:#111;stroke-width:2.5;marker-end:url(#arrow)}
+      .line{fill:none;stroke:#111;stroke-width:2.5}
+    </style>
+  </defs>
+  <rect width="1336" height="1018" fill="#fff"/>
+
+  <!-- Input and map worker. -->
+  <path class="line" d="M51 514H136"/>
+  <path class="flow" d="M260 514H389"/>
+  <text x="201" y="505" font-size="42" text-anchor="middle"><tspan x="201" dy="0">Data</tspan><tspan x="201" dy="46">Input</tspan></text>
+  <circle class="node" cx="518" cy="514" r="127"/>
+  <text x="518" y="529" font-size="44" text-anchor="middle">Map</text>
+
+  <!-- Even and odd IDs are routed to separate aggregate nodes. -->
+  <circle class="node" cx="1148" cy="167" r="126"/>
+  <text x="1148" y="154" font-size="44" text-anchor="middle"><tspan x="1148" dy="0">Aggregate</tspan><tspan x="1148" dy="52">Node 1</tspan></text>
+  <path class="line" d="M629 453L700 415"/>
+  <path class="flow" d="M920 295L1038 228"/>
+  <text x="808" y="372" font-size="43" text-anchor="middle">ad_id %2 = 0</text>
+
+  <circle class="node" cx="1148" cy="861" r="126"/>
+  <text x="1148" y="848" font-size="44" text-anchor="middle"><tspan x="1148" dy="0">Aggregate</tspan><tspan x="1148" dy="52">Node 2</tspan></text>
+  <path class="line" d="M629 575L700 615"/>
+  <path class="flow" d="M920 730L1038 800"/>
+  <text x="808" y="691" font-size="43" text-anchor="middle">ad_id %2 = 1</text>
+</svg>

@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1796" height="1322" viewBox="0 0 1796 1322" role="img" aria-labelledby="title desc">
+  <title id="title">Handling a hot aggregation key</title>
+  <desc id="desc">A resource manager detects a hot ad identifier, allocates three temporary aggregate workers, splits the events between them, and reduces their partial results before the normal reduce stage.</desc>
+  <style>
+    text{font-family:Arial,Helvetica,sans-serif;fill:#111}
+    .node{fill:#fff;stroke:#111;stroke-width:2.7}
+    .line{fill:none;stroke:#111;stroke-width:2.7}
+    .dash{fill:none;stroke:#111;stroke-width:2.7;stroke-dasharray:10 8}
+  </style>
+  <rect width="1796" height="1322" fill="#fff"/>
+  <!-- Normal map, aggregate, and reduce data path. -->
+  <circle class="node" cx="357" cy="1003" r="96"/>
+  <text x="357" y="1018" font-size="36" text-anchor="middle">Map</text>
+  <path class="line" d="M67 1002H108"/>
+  <text x="158" y="994" font-size="35" text-anchor="middle"><tspan x="158">Data</tspan><tspan x="158" dy="40">Input</tspan></text>
+  <path class="line" d="M203 1002H241"/>
+  <polygon points="261,1002 241,992 241,1012" fill="#111"/>
+
+  <circle class="node" cx="877" cy="806" r="96"/>
+  <text x="877" y="822" font-size="37" text-anchor="middle">Aggregate</text>
+  <circle class="node" cx="886" cy="1208" r="96"/>
+  <text x="886" y="1224" font-size="37" text-anchor="middle">Aggregate</text>
+  <!-- Leave the connector open behind the label, matching the PNG's text clearance. -->
+  <path class="line" d="M445 966L508 942M744 854L773 843"/>
+  <polygon points="786,838 768,835 776,853" fill="#111"/>
+  <path class="line" d="M447 1038L776 1166"/>
+  <polygon points="797,1173 780,1157 773,1177" fill="#111"/>
+  <text x="630" y="914" font-size="35" text-anchor="middle">ad1, 300 events</text>
+
+  <circle class="node" cx="1387" cy="1010" r="96"/>
+  <text x="1387" y="1027" font-size="36" text-anchor="middle">Reduce</text>
+  <path class="line" d="M966 842L1277 963"/>
+  <polygon points="1298,974 1278,959 1271,979" fill="#111"/>
+  <path class="line" d="M975 1173L1278 1053"/>
+  <polygon points="1298,1045 1271,1040 1278,1060" fill="#111"/>
+  <path class="line" d="M1483 1010H1493"/>
+  <text x="1590" y="1003" font-size="35" text-anchor="middle"><tspan x="1590">Aggregated</tspan><tspan x="1590" dy="40">Output</tspan></text>
+  <path class="line" d="M1680 1010H1695"/>
+  <polygon points="1715,1010 1695,1000 1695,1020" fill="#111"/>
+
+  <!-- Resource manager and temporary hotspot workers. -->
+  <rect class="node" x="438" y="265" width="188" height="91"/>
+  <text x="532" y="300" font-size="35" text-anchor="middle"><tspan x="532">Resource</tspan><tspan x="532" dy="40">Manager</tspan></text>
+  <rect class="dash" x="1082" y="54" width="612" height="512"/>
+  <circle class="node" cx="1186" cy="159" r="69"/>
+  <circle class="node" cx="1186" cy="310" r="69"/>
+  <circle class="node" cx="1186" cy="461" r="69"/>
+  <g font-size="30" text-anchor="middle">
+    <text x="1186" y="169">Aggregate</text><text x="1186" y="320">Aggregate</text><text x="1186" y="471">Aggregate</text>
+  </g>
+  <circle class="node" cx="1580" cy="310" r="70"/>
+  <text x="1580" y="320" font-size="30" text-anchor="middle">Reduce</text>
+  <!-- Three hundred events are split into three one-hundred-event partials. -->
+  <path class="line" d="M1250 185L1290 200M1438 254L1500 277"/>
+  <polygon points="1515,285 1497,286 1504,267" fill="#111"/>
+  <text x="1362" y="238" font-size="30" text-anchor="middle">100 events</text>
+  <path class="line" d="M1255 310H1292M1438 310H1490"/>
+  <polygon points="1510,310 1490,300 1490,320" fill="#111"/>
+  <text x="1364" y="320" font-size="30" text-anchor="middle">100 events</text>
+  <path class="line" d="M1250 435L1295 418M1438 366L1500 343"/>
+  <polygon points="1515,335 1504,353 1497,334" fill="#111"/>
+  <text x="1366" y="410" font-size="30" text-anchor="middle">100 events</text>
+
+  <!-- 1. The hot worker requests additional resources. -->
+  <path class="dash" d="M823 727L734 602M653 484L576 371"/>
+  <polygon points="566,356 584,366 569,376" fill="#111"/>
+  <circle class="node" cx="605" cy="552" r="23"/>
+  <text x="605" y="562" font-size="28" text-anchor="middle">1</text>
+  <text x="704" y="529" font-size="34" text-anchor="middle"><tspan x="704">Apply for</tspan><tspan x="704" dy="39">extra</tspan><tspan x="704" dy="39">resources</tspan></text>
+
+  <!-- 2. The manager allocates the extra worker group. -->
+  <path class="dash" d="M626 311H754M962 311H1062"/>
+  <polygon points="1082,311 1062,301 1062,321" fill="#111"/>
+  <circle class="node" cx="779" cy="309" r="23"/>
+  <text x="779" y="319" font-size="28" text-anchor="middle">2</text>
+  <text x="882" y="289" font-size="34" text-anchor="middle"><tspan x="882">Extra</tspan><tspan x="882" dy="39">resource</tspan><tspan x="882" dy="39">allocated</tspan></text>
+
+  <!-- 3. The hot event stream is split between the temporary workers. -->
+  <path class="dash" d="M872 710L914 607M1000 514L1065 456"/>
+  <polygon points="1082,441 1072,461 1059,446" fill="#111"/>
+  <circle class="node" cx="972" cy="528" r="23"/>
+  <text x="972" y="538" font-size="28" text-anchor="middle">3</text>
+  <text x="938" y="591" font-size="34" text-anchor="middle">Split events</text>
+
+  <!-- 4. The reduced partial result returns to the normal aggregate worker. -->
+  <path class="dash" d="M1228 566L1187 620M1101 714L991 788"/>
+  <polygon points="973,800 987,782 999,799" fill="#111"/>
+  <circle class="node" cx="1157" cy="650" r="23"/>
+  <text x="1157" y="660" font-size="28" text-anchor="middle">4</text>
+  <text x="1126" y="705" font-size="34" text-anchor="middle">Reduced result</text>
+</svg>

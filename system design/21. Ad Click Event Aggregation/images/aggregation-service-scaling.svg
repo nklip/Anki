@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1966" height="1250" viewBox="0 0 1966 1250" role="img" aria-labelledby="diagram-title diagram-desc">
+  <title id="diagram-title">Scaling the aggregation service with map and reduce nodes</title>
+  <desc id="diagram-desc">Three Kafka partitions each feed a map aggregation server. Every map server splits its work into three map-output partitions, and those partitions are shuffled across three reduce aggregation servers. Each reduce server takes the partitions it owns as reduce input, merges them in a reduce process, and writes one reduce output.</desc>
+  <!-- One arrowhead definition and one style block feed every connector; edit them here to restyle the whole diagram. -->
+  <defs>
+    <marker id="arrowhead" viewBox="0 0 23 16" refX="1" refY="8" markerWidth="23" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L23 8L0 16Z" fill="#000"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:38.5px;fill:#000}
+      .box{fill:#fff;stroke:#000;stroke-width:2.5}
+      .flow{fill:none;stroke:#000;stroke-width:2.5;marker-end:url(#arrowhead)}
+    </style>
+  </defs>
+  <rect width="1966" height="1250" fill="#fff"/>
+  <!-- Column headers name the five stages read left to right; they sit above the panels and touch no connector. -->
+  <g id="column-headers">
+    <text x="514.5" y="95">Map Calculation</text>
+    <text x="895.5" y="73">Map</text><text x="874.5" y="117">Output</text>
+    <text x="1188.5" y="73">Reduce</text><text x="1211" y="117">Input</text>
+    <text x="1485.5" y="73">Reduce</text><text x="1456" y="117">Calculation</text>
+    <text x="1784" y="73">Reduce</text><text x="1791.5" y="117">Output</text>
+  </g>
+  <!-- Map side: each Kafka partition feeds one aggregation server whose map process fans out to three map-output partitions. -->
+  <g id="map-server-1">
+    <!-- Kafka cylinder: left cap and right ellipse share rx=29.85, ry=54 about cy=313.84. -->
+    <path class="box" d="M74.15 259.84L313.15 259.84A29.85 54 0 0 1 313.15 367.84L74.15 367.84A29.85 54 0 0 1 74.15 259.84Z"/>
+    <path class="box" fill="none" d="M313.15 259.84A29.85 54 0 0 0 313.15 367.84"/>
+    <text x="124" y="328">Kafka</text>
+    <path class="flow" d="M343 313.84L452.45 313.84"/>
+    <rect class="box" x="475.7" y="145.84" width="518.8" height="336"/>
+    <text x="486.5" y="199">Aggregation Server 1</text>
+    <rect class="box" x="517.51" y="276.3" width="266.65" height="75.21"/>
+    <text x="540.5" y="328">Map process</text>
+    <rect class="box" x="900" y="202" width="63.38" height="63.39"/>
+    <rect class="box" x="900" y="282.3" width="63.38" height="63.39"/>
+    <rect class="box" x="900" y="362.39" width="63.38" height="63.39"/>
+    <!-- Fan-out leaves the map process box at its two right corners and at mid-height; each head stops on the square border. -->
+    <path class="flow" d="M784.16 276.3L877.61 249.31"/>
+    <path class="flow" d="M784.16 313.84L876.75 313.84"/>
+    <path class="flow" d="M784.16 351.51L877.61 378.49"/>
+  </g>
+  <g id="map-server-2">
+    <!-- Kafka cylinder: left cap and right ellipse share rx=29.85, ry=54 about cy=682. -->
+    <path class="box" d="M74.15 628L313.15 628A29.85 54 0 0 1 313.15 736L74.15 736A29.85 54 0 0 1 74.15 628Z"/>
+    <path class="box" fill="none" d="M313.15 628A29.85 54 0 0 0 313.15 736"/>
+    <text x="124" y="696.16">Kafka</text>
+    <path class="flow" d="M343 682L452.45 682"/>
+    <rect class="box" x="475.7" y="514" width="518.8" height="336"/>
+    <text x="486.5" y="567.16">Aggregation Server 2</text>
+    <rect class="box" x="517.51" y="644.47" width="266.65" height="75.21"/>
+    <text x="540.5" y="696.16">Map process</text>
+    <rect class="box" x="900" y="570.16" width="63.38" height="63.39"/>
+    <rect class="box" x="900" y="650.47" width="63.38" height="63.39"/>
+    <rect class="box" x="900" y="730.56" width="63.38" height="63.39"/>
+    <!-- Fan-out leaves the map process box at its two right corners and at mid-height; each head stops on the square border. -->
+    <path class="flow" d="M784.16 644.47L877.61 617.48"/>
+    <path class="flow" d="M784.16 682L876.75 682"/>
+    <path class="flow" d="M784.16 719.67L877.61 746.65"/>
+  </g>
+  <g id="map-server-3">
+    <!-- Kafka cylinder: left cap and right ellipse share rx=29.85, ry=54 about cy=1050.17. -->
+    <path class="box" d="M74.15 996.17L313.15 996.17A29.85 54 0 0 1 313.15 1104.17L74.15 1104.17A29.85 54 0 0 1 74.15 996.17Z"/>
+    <path class="box" fill="none" d="M313.15 996.17A29.85 54 0 0 0 313.15 1104.17"/>
+    <text x="124" y="1064.33">Kafka</text>
+    <path class="flow" d="M343 1050.17L452.45 1050.17"/>
+    <rect class="box" x="475.7" y="882.17" width="518.8" height="336"/>
+    <text x="486.5" y="935.33">Aggregation Server 3</text>
+    <rect class="box" x="517.51" y="1012.63" width="266.65" height="75.21"/>
+    <text x="540.5" y="1064.33">Map process</text>
+    <rect class="box" x="900" y="938.33" width="63.38" height="63.39"/>
+    <rect class="box" x="900" y="1018.63" width="63.38" height="63.39"/>
+    <rect class="box" x="900" y="1098.72" width="63.38" height="63.39"/>
+    <!-- Fan-out leaves the map process box at its two right corners and at mid-height; each head stops on the square border. -->
+    <path class="flow" d="M784.16 1012.63L877.61 985.64"/>
+    <path class="flow" d="M784.16 1050.17L876.75 1050.17"/>
+    <path class="flow" d="M784.16 1087.84L877.61 1114.82"/>
+  </g>
+  <!-- Reduce side: the partitions a server owns arrive as reduce input, merge in the reduce process, and leave as one reduce output. -->
+  <g id="reduce-server-1">
+    <rect class="box" x="1191.7" y="145.84" width="719.6" height="336"/>
+    <text x="1369.5" y="199">Aggregation Server 1</text>
+    <rect class="box" x="1222.71" y="160.3" width="63.46" height="63.3"/>
+    <rect class="box" x="1222.71" y="240.38" width="63.46" height="63.3"/>
+    <rect class="box" x="1222.71" y="320.5" width="63.46" height="63.3"/>
+    <rect class="box" x="1222.71" y="400.6" width="63.46" height="63.3"/>
+    <rect class="box" x="1393.71" y="276.3" width="316.78" height="75.2"/>
+    <text x="1413" y="328">Reduce process</text>
+    <rect class="box" x="1818.01" y="219.99" width="63.39" height="187.7"/>
+    <!-- Fan-in: one shaft per owned partition, each head stopping on the reduce process left border. -->
+    <path class="flow" d="M1286.17 210.84L1373.61 263.4"/>
+    <path class="flow" d="M1286.17 277.61L1370.85 293.83"/>
+    <path class="flow" d="M1286.17 346L1370.8 330.99"/>
+    <path class="flow" d="M1286.17 413.03L1373.44 362.25"/>
+    <path class="flow" d="M1710.49 313.84L1794.76 313.84"/>
+  </g>
+  <g id="reduce-server-2">
+    <rect class="box" x="1191.7" y="514" width="719.6" height="336"/>
+    <text x="1369.5" y="567.16">Aggregation Server 2</text>
+    <rect class="box" x="1222.71" y="570" width="63.46" height="63.3"/>
+    <rect class="box" x="1222.71" y="650" width="63.46" height="63.3"/>
+    <rect class="box" x="1222.71" y="730.5" width="63.46" height="63.3"/>
+    <rect class="box" x="1393.71" y="644.47" width="316.78" height="75.2"/>
+    <text x="1413" y="696.16">Reduce process</text>
+    <rect class="box" x="1818.01" y="588.15" width="63.39" height="187.7"/>
+    <!-- Fan-in: one shaft per owned partition, each head stopping on the reduce process left border. -->
+    <path class="flow" d="M1286.17 613.46L1371.88 645.85"/>
+    <path class="flow" d="M1286.17 679.52L1370.5 674.38"/>
+    <path class="flow" d="M1286.17 748.48L1372.11 713.15"/>
+    <path class="flow" d="M1710.49 682L1794.76 682"/>
+  </g>
+  <g id="reduce-server-3">
+    <rect class="box" x="1191.7" y="882.17" width="719.6" height="336"/>
+    <text x="1369.5" y="935.33">Aggregation Server 3</text>
+    <rect class="box" x="1222.71" y="938" width="63.46" height="63.3"/>
+    <rect class="box" x="1222.71" y="1098" width="63.46" height="63.3"/>
+    <rect class="box" x="1393.71" y="1012.63" width="316.78" height="75.2"/>
+    <text x="1413" y="1064.33">Reduce process</text>
+    <rect class="box" x="1818.01" y="956.32" width="63.39" height="187.7"/>
+    <!-- Fan-in: one shaft per owned partition, each head stopping on the reduce process left border. -->
+    <path class="flow" d="M1286.17 981.81L1371.92 1014.67"/>
+    <path class="flow" d="M1286.17 1117.2L1371.97 1083.68"/>
+    <path class="flow" d="M1710.49 1050.17L1794.76 1050.17"/>
+  </g>
+  <!-- Shuffle: nine shafts carry the map-output partitions across the gap. Straight shafts keep a server's own partition; -->
+  <!-- the six diagonals cross each other on purpose to show that partitions are redistributed between servers. -->
+  <g id="shuffle">
+    <path class="flow" d="M994.5 313.84L1168.45 313.84"/>
+    <path class="flow" d="M994.5 682L1168.45 682"/>
+    <path class="flow" d="M994.5 1050.17L1168.45 1050.17"/>
+    <path class="flow" d="M994.5 394.6L1174.62 568.5"/>
+    <path class="flow" d="M989.16 481.84L1184.79 861.37"/>
+    <path class="flow" d="M994.5 594.66L1174.85 415.42"/>
+    <path class="flow" d="M994.5 757.32L1175.52 953.23"/>
+    <path class="flow" d="M993.09 882.17L1180.42 502.82"/>
+    <path class="flow" d="M994.5 944.03L1173.68 791.89"/>
+  </g>
+</svg>

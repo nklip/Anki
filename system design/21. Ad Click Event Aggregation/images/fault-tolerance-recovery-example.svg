@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1464" height="758" viewBox="0 0 1464 758" role="img" aria-labelledby="title desc">
+  <title id="title">Aggregation-node recovery from snapshots</title>
+  <desc id="desc">External nodes switch from a failed primary aggregation node to a new node. The primary writes incremental snapshots to shared snapshot storage, which restores the replacement.</desc>
+  <style>
+    text{font-family:Arial,Helvetica,sans-serif;fill:#111}
+    .box{fill:#fff;stroke:#111;stroke-width:2.7}
+    .line{fill:none;stroke:#111;stroke-width:2.7}
+    .dash{fill:none;stroke:#111;stroke-width:2.7;stroke-dasharray:10 8}
+  </style>
+  <rect width="1464" height="758" fill="#fff"/>
+  <!-- External clients and the old/new aggregation nodes. -->
+  <rect class="box" x="603" y="47" width="242" height="100"/>
+  <text x="724" y="91" font-size="38" text-anchor="middle"><tspan x="724">External</tspan><tspan x="724" dy="43">Nodes</tspan></text>
+  <rect class="box" x="99" y="505" width="241" height="137"/>
+  <text x="219.5" y="546" font-size="36" text-anchor="middle"><tspan x="219.5">Primary</tspan><tspan x="219.5" dy="42">aggregation</tspan><tspan x="219.5" dy="42">node</tspan></text>
+  <rect class="box" x="1108" y="505" width="240" height="137"/>
+  <text x="1228" y="546" font-size="36" text-anchor="middle"><tspan x="1228">New</tspan><tspan x="1228" dy="42">aggregation</tspan><tspan x="1228" dy="42">node</tspan></text>
+  <!-- The failed dashed connection is split around the red failure marker. -->
+  <path class="dash" d="M672 147L520 290M458 350L308 491"/>
+  <polygon points="293,505 315,498 301,484" fill="#111"/>
+  <text x="489" y="333" font-size="36" text-anchor="middle" fill="#f02212" style="fill:#f02212">X</text>
+  <!-- External traffic is redirected to the replacement node. -->
+  <path class="line" d="M775 147L1141 488"/>
+  <polygon points="1157,503 1135,496 1149,481" fill="#111"/>
+  <!-- Shared snapshot storage between the nodes. -->
+  <path class="box" d="M645 511V624C645 639 680 648 723.5 648C767 648 802 639 802 624V511Z"/>
+  <ellipse class="box" cx="723.5" cy="511" rx="78.5" ry="16"/>
+  <text x="724" y="686" font-size="36" text-anchor="middle"><tspan x="724">Snapshot</tspan><tspan x="724" dy="42">Storage</tspan></text>
+  <!-- Incremental snapshots move from the primary into storage. -->
+  <path class="dash" d="M340 573H382M594 573H625"/>
+  <polygon points="645,573 625,563 625,583" fill="#111"/>
+  <text x="488" y="568" font-size="34" text-anchor="middle"><tspan x="488">Incremental</tspan><tspan x="488" dy="38">Snapshot</tspan></text>
+  <!-- The new node restores state from the shared snapshot. -->
+  <path class="dash" d="M802 573H1088"/>
+  <polygon points="1108,573 1088,563 1088,583" fill="#111"/>
+</svg>

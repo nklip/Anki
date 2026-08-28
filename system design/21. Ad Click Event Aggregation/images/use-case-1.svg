@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1856" height="758" viewBox="0 0 1856 758" role="img" aria-labelledby="diagram-title diagram-desc">
+  <title id="diagram-title">Counting clicks per ad with map and aggregate stages</title>
+  <desc id="diagram-desc">A pipeline in four columns: inputs, map, aggregate and outputs. A legend gives each ad an outline shape: a diamond is ad_id 3, a circle is ad_id 1 and a square is ad_id 2. All click events enter the map stage as one mixed stream of twelve events. The map stage groups them by ad, and the aggregate stage collects each group into its own row: four diamonds, three circles and five squares. The outputs read that ad3 was clicked 4 times, ad1 3 times and ad2 5 times, each in the past 1 minute.</desc>
+  <!-- One arrowhead marker and one style block drive the diagram; the event marks share the .mark class. -->
+  <defs>
+    <marker id="head" viewBox="0 0 19.6 15.7" refX="1" refY="7.85" markerWidth="19.6" markerHeight="15.7" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L19.6 7.85L0 15.7Z" fill="#000"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:30px;fill:#000}
+      .box{fill:#fff;stroke:#000;stroke-width:1.8}
+      .mark{fill:#fff;stroke:#000;stroke-width:1.8}
+      .flow{fill:none;stroke:#000;stroke-width:1.8;marker-end:url(#head)}
+      .sep{fill:none;stroke:#000;stroke-width:1.8;stroke-dasharray:9 5.87}
+    </style>
+  </defs>
+  <rect width="1856" height="758" fill="#fff"/>
+  <!-- Dashed separators divide the four pipeline stages. -->
+  <g id="stage-separators">
+    <line class="sep" x1="729" y1="39" x2="729" y2="715"/>
+    <line class="sep" x1="1010" y1="39" x2="1010" y2="715"/>
+    <line class="sep" x1="1403" y1="39" x2="1403" y2="715"/>
+  </g>
+  <!-- Legend: one outline shape per ad id, reused for every event mark below. -->
+  <rect class="box" x="39.93" y="33.36" width="373.14" height="186.28"/>
+  <!-- Containers: the mixed input stream, the map column, and one aggregate row per ad. -->
+  <g id="containers">
+    <rect class="box" x="483.93" y="373" width="198.43" height="82"/>
+    <rect class="box" x="777.36" y="151.64" width="186.57" height="524.43"/>
+    <rect class="box" x="1058.93" y="194.9" width="288.14" height="81.2"/>
+    <rect class="box" x="1058.93" y="368.9" width="288.14" height="81.2"/>
+    <rect class="box" x="1058.93" y="541.9" width="288.14" height="82.2"/>
+  </g>
+  <!-- Event marks: diamond = ad3, circle = ad1, square = ad2. -->
+  <g id="event-marks">
+    <path class="mark" d="M79.5 52.9L98.1 71.5L79.5 90.1L60.9 71.5Z"/>
+    <circle class="mark" cx="79.5" cy="126.5" r="18.6"/>
+    <rect class="mark" x="60.9" y="162.9" width="37.2" height="37.2"/>
+    <path class="mark" d="M838.5 180.9L857.1 199.5L838.5 218.1L819.9 199.5Z"/>
+    <path class="mark" d="M892.5 180.9L911.1 199.5L892.5 218.1L873.9 199.5Z"/>
+    <path class="mark" d="M838.5 233.9L857.1 252.5L838.5 271.1L819.9 252.5Z"/>
+    <rect class="mark" x="873.9" y="233.9" width="37.2" height="37.2"/>
+    <circle class="mark" cx="838.5" cy="385.5" r="18.6"/>
+    <path class="mark" d="M892.5 366.9L911.1 385.5L892.5 404.1L873.9 385.5Z"/>
+    <circle class="mark" cx="838.5" cy="439.5" r="18.6"/>
+    <rect class="mark" x="873.9" y="420.9" width="37.2" height="37.2"/>
+    <rect class="mark" x="819.9" y="546.9" width="37.2" height="37.2"/>
+    <rect class="mark" x="873.9" y="546.9" width="37.2" height="37.2"/>
+    <rect class="mark" x="819.9" y="599.9" width="37.2" height="37.2"/>
+    <circle class="mark" cx="892.5" cy="618.5" r="18.6"/>
+    <path class="mark" d="M1121.5 216.9L1140.1 235.5L1121.5 254.1L1102.9 235.5Z"/>
+    <path class="mark" d="M1174.5 216.9L1193.1 235.5L1174.5 254.1L1155.9 235.5Z"/>
+    <path class="mark" d="M1228.5 216.9L1247.1 235.5L1228.5 254.1L1209.9 235.5Z"/>
+    <path class="mark" d="M1282.5 216.9L1301.1 235.5L1282.5 254.1L1263.9 235.5Z"/>
+    <circle class="mark" cx="1148.5" cy="409.5" r="18.6"/>
+    <circle class="mark" cx="1202.5" cy="409.5" r="18.6"/>
+    <circle class="mark" cx="1257.5" cy="409.5" r="18.6"/>
+    <rect class="mark" x="1076.9" y="564.9" width="37.2" height="37.2"/>
+    <rect class="mark" x="1130.9" y="564.9" width="37.2" height="37.2"/>
+    <rect class="mark" x="1183.9" y="564.9" width="37.2" height="37.2"/>
+    <rect class="mark" x="1237.9" y="564.9" width="37.2" height="37.2"/>
+    <rect class="mark" x="1291.9" y="564.9" width="37.2" height="37.2"/>
+  </g>
+  <g id="connectors">
+    <path class="flow" d="M682.36 413.84L758.76 413.84"/>
+    <path class="flow" d="M963.93 345.19L1043.9 286.88"/>
+    <path class="flow" d="M963.93 412.07L1040.33 412.07"/>
+    <path class="flow" d="M963.93 478.51L1043.64 533.68"/>
+    <path class="flow" d="M1347.07 235.58L1439.9 235.58"/>
+    <path class="flow" d="M1347.07 409.44L1439.9 409.44"/>
+    <path class="flow" d="M1347.07 583.31L1439.9 583.31"/>
+  </g>
+  <g id="labels">
+    <text x="110" y="82">Events with ad_id = 3</text>
+    <text x="110" y="137">Events with ad_id = 1</text>
+    <text x="110" y="192">Events with ad_id = 2</text>
+    <text x="542" y="82">Inputs</text>
+    <text x="841.5" y="82">Map</text>
+    <text x="1134" y="81">Aggregate</text>
+    <text x="1578" y="82">Outputs</text>
+    <text x="278" y="390">Click count</text>
+    <text x="249" y="425">(Minute interval</text>
+    <text x="267.5" y="459">aggregation)</text>
+    <text x="517" y="424">All Events</text>
+    <text x="1472" y="229">ad3 was clicked 4 times</text>
+    <text x="1499.5" y="263">in the past 1 minute</text>
+    <text x="1472" y="403">ad1 was clicked 3 times</text>
+    <text x="1499.5" y="437">in the past 1 minute</text>
+    <text x="1472" y="577">ad2 was clicked 5 times</text>
+    <text x="1499.5" y="611">in the past 1 minute</text>
+  </g>
+</svg>

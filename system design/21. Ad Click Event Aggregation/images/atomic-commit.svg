@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1840" height="1126" viewBox="0 0 1840 1126" role="img" aria-labelledby="diagram-title diagram-desc">
+  <title id="diagram-title">Atomic commit across aggregation and the downstream queue</title>
+  <desc id="diagram-desc">A log watcher publishes click events to a message queue. Inside a dashed atomic-commit boundary, the data aggregation service consumes that queue and publishes per-minute ad counts and top 100 most clicked ads to a second message queue, so consuming the input and producing the output commit together. Outside the boundary, a database writer copies raw events into the raw data database, another database writer pulls the aggregation results into the aggregation database, and a query service dashboard reads those results back.</desc>
+  <!-- One arrowhead marker and one style block drive every connector; restyle the diagram from here. -->
+  <defs>
+    <marker id="arrowhead" viewBox="0 0 21.3 16" refX="1" refY="8" markerWidth="21.3" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L21.3 8L0 16Z" fill="#000"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:33.5px;fill:#000}
+      .note{font-size:25.5px}
+      .box{fill:#fff;stroke:#000;stroke-width:2}
+      .flow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrowhead)}
+      .dash{fill:none;stroke:#000;stroke-width:2;stroke-dasharray:9.94 6.71}
+    </style>
+  </defs>
+  <rect width="1840" height="1126" fill="#fff"/>
+  <!-- Atomic-commit boundary. The dash phase is set to the etalon; keep the offset if the box is resized. -->
+  <rect class="dash" id="atomic-commit-boundary" x="328.61" y="45.25" width="1371.89" height="285.14" stroke-dashoffset="0.81"/>
+  <text x="904" y="87">Atomic commit</text>
+  <!-- Ingestion: log watcher to the input queue to the aggregation service. -->
+  <g id="ingestion">
+    <rect class="box" x="34" y="166.25" width="222.75" height="91.58"/>
+    <text x="51" y="224">Log Watcher</text>
+    <!-- Message queue drawn as a cylinder: left cap, body, right cap ellipse plus its visible seam. -->
+    <path class="box" d="M408.84 163.75L616.95 163.75A25.95 47.04 0 0 1 616.95 257.83L408.84 257.83A25.95 47.04 0 0 1 408.84 163.75Z"/>
+    <path class="box" fill="none" d="M616.95 163.75A25.95 47.04 0 0 0 616.95 257.83"/>
+    <text x="414.5" y="204">Message</text><text x="432" y="241">Queue</text>
+    <path class="flow" d="M256.75 211.5L361.6 211.5"/>
+    <path class="flow" d="M642.9 210.81L731.95 210.81"/>
+    <rect class="box" x="753.25" y="147.39" width="222.75" height="126.86"/>
+    <text x="829.5" y="184">Data</text><text x="774.5" y="223">Aggregation</text><text x="809" y="260">Service</text>
+  </g>
+  <!-- Output queue and the two aggregation streams. Each connector is deliberately broken so its label sits in the gap. -->
+  <g id="aggregation-output">
+    <path class="box" d="M1420.45 163.75L1628.56 163.75A25.95 47.04 0 0 1 1628.56 257.83L1420.45 257.83A25.95 47.04 0 0 1 1420.45 163.75Z"/>
+    <path class="box" fill="none" d="M1628.56 163.75A25.95 47.04 0 0 0 1628.56 257.83"/>
+    <text x="1434.5" y="204">Message</text><text x="1452" y="241">Queue</text>
+    <path class="line" fill="none" stroke="#000" stroke-width="2" d="M976 172.16Q1011.75 163.05 1047.5 157.5"/>
+    <path class="flow" d="M1311.5 157.6Q1347.62 162.88 1383.74 170.65"/>
+    <text class="note" x="1129.5" y="140">Ad count</text>
+    <text class="note" x="1053.5" y="170">(Aggregate every min)</text>
+    <path class="line" fill="none" stroke="#000" stroke-width="2" d="M976 246.95Q1000.75 253.21 1025.5 257.88"/>
+    <path class="flow" d="M1334.5 262.69Q1359.85 258.58 1385.2 253.08"/>
+    <text class="note" x="1036" y="267">Top 100 most clicked Ads</text>
+    <text class="note" x="1054" y="297">(Aggregate every min)</text>
+  </g>
+  <!-- Raw path: the input queue is also drained to the raw data database. -->
+  <g id="raw-path">
+    <path class="flow" d="M512.82 257.83L512.82 443.31"/>
+    <rect class="box" x="416.39" y="464.61" width="192.86" height="91.56"/>
+    <text x="441" y="503">Database</text><text x="468" y="542">Writer</text>
+    <path class="flow" d="M512.82 556.17L512.82 678.31"/>
+    <path class="box" d="M440.39 714.09V829.81A72.43 14.5 0 0 0 585.25 829.81V714.09A72.43 14.5 0 0 0 440.39 714.09Z"/>
+    <path class="box" fill="none" d="M440.39 714.09A72.43 14.5 0 0 0 585.25 714.09"/>
+    <text x="278.5" y="765">Raw data</text><text x="280.5" y="803">database</text>
+  </g>
+  <!-- Aggregate path: results are pulled into the aggregation database and read back by the dashboard. -->
+  <g id="aggregate-path">
+    <path class="line" fill="none" stroke="#000" stroke-width="2" d="M1524.55 257.83L1524.55 357"/>
+    <text x="1349.5" y="399">Pull aggregation results</text>
+    <path class="flow" d="M1524.55 416.5L1524.55 443.31"/>
+    <rect class="box" x="1428" y="464.61" width="193" height="91.56"/>
+    <text x="1453" y="503">Database</text><text x="1480" y="542">Writer</text>
+    <path class="flow" d="M1524.55 556.17L1524.55 678.31"/>
+    <path class="box" d="M1452.17 714.09V829.81A72.43 14.5 0 0 0 1597 829.81V714.09A72.43 14.5 0 0 0 1452.17 714.09Z"/>
+    <path class="box" fill="none" d="M1452.17 714.09A72.43 14.5 0 0 0 1597 714.09"/>
+    <text x="1608.5" y="765">Aggregation</text><text x="1630.5" y="803">database</text>
+    <path class="flow" d="M1524.55 885L1524.55 865.63"/>
+    <text x="1332" y="925">Query aggregation results</text>
+    <path class="line" fill="none" stroke="#000" stroke-width="2" d="M1524.55 968.75L1524.55 943.5"/>
+    <rect class="box" x="1413.17" y="968.75" width="222.66" height="127.15"/>
+    <text x="1479" y="1005">Query</text><text x="1468.5" y="1043">Service</text><text x="1431" y="1082">(Dashboard)</text>
+  </g>
+</svg>

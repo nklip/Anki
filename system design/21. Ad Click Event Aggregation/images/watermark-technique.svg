@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1988" height="616" viewBox="0 0 1988 616" role="img" aria-labelledby="title desc">
+  <title id="title">Watermark-based event-time windows</title>
+  <desc id="desc">Event-time windows close at sixty, one hundred twenty, and one hundred eighty seconds while processing-time arrivals may lag.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="strokeWidth" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#111"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#111}
+      .axis{fill:none;stroke:#111;stroke-width:2.8}
+      .dash{fill:none;stroke:#111;stroke-width:2.8;stroke-dasharray:11 9}
+      .outline{fill:#fff;stroke:#777;stroke-width:2.8}
+    </style>
+  </defs>
+  <rect width="1988" height="616" fill="#fff"/>
+  <!-- Shared second markers and watermark guides. -->
+  <g font-size="38" text-anchor="middle">
+    <text x="381" y="70">0</text><text x="590" y="70">30</text><text x="798" y="70">60</text>
+    <text x="1008" y="70">90</text><text x="1215" y="70">120</text><text x="1425" y="70">150</text><text x="1635" y="70">180</text>
+  </g>
+  <text x="1906" y="70" font-size="38" text-anchor="end">Second</text>
+  <g class="dash">
+    <path d="M381 78V587"/><path d="M590 78V587"/><path d="M798 78V587"/>
+    <path d="M1008 78V587"/><path d="M1215 78V587"/><path d="M1425 78V587"/><path d="M1635 78V587"/>
+  </g>
+  <!-- Event and processing timelines are split around each numbered event. -->
+  <text x="347" y="117" font-size="43" text-anchor="end">Event Time</text>
+  <path class="axis" d="M381 101H488M548 101H679M739 101H873M933 101H1275M1335 101H1520M1580 101H1816"/>
+  <path class="axis" marker-end="url(#arrow)" d="M1816 101H1850"/>
+  <text x="347" y="210" font-size="43" text-anchor="end">Processing Time</text>
+  <path class="axis" d="M381 190H622M682 190H828M888 190H922M982 190H1335M1395 190H1660M1720 190H1816"/>
+  <path class="axis" marker-end="url(#arrow)" d="M1816 190H1850"/>
+  <g class="outline">
+    <circle cx="518" cy="101" r="29"/><circle cx="709" cy="101" r="29"/><circle cx="903" cy="101" r="29"/><circle cx="1305" cy="101" r="29"/><circle cx="1550" cy="101" r="29"/>
+    <circle cx="652" cy="190" r="29"/><circle cx="858" cy="190" r="29"/><circle cx="952" cy="190" r="29"/><circle cx="1365" cy="190" r="29"/><circle cx="1690" cy="190" r="29"/>
+  </g>
+  <g font-size="31" text-anchor="middle">
+    <text x="518" y="112">1</text><text x="709" y="112">2</text><text x="903" y="112">3</text><text x="1305" y="112">4</text><text x="1550" y="112">5</text>
+    <text x="652" y="201">1</text><text x="858" y="201">2</text><text x="952" y="201">3</text><text x="1365" y="201">4</text><text x="1690" y="201">5</text>
+  </g>
+  <!-- Non-overlapping event-time windows closed by advancing watermarks. -->
+  <g font-size="43" text-anchor="end">
+    <text x="347" y="347">Window 1</text><text x="347" y="441">Window 2</text><text x="347" y="535">Window 3</text>
+  </g>
+  <rect class="outline" x="383" y="290" width="413" height="81"/>
+  <rect class="outline" x="798" y="385" width="413" height="83"/>
+  <rect class="outline" x="1215" y="478" width="416" height="84"/>
+  <g class="outline">
+    <circle cx="652" cy="330" r="29"/><circle cx="952" cy="426" r="29"/><circle cx="1365" cy="520" r="29"/>
+  </g>
+  <g font-size="31" text-anchor="middle">
+    <text x="652" y="341">1</text><text x="952" y="437">3</text><text x="1365" y="531">4</text>
+  </g>
+</svg>

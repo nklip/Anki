@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1778" height="1024" viewBox="0 0 1778 1024" role="img" aria-labelledby="title desc">
+  <title id="title">Scalable ad-click aggregation design</title>
+  <desc id="desc">A log watcher writes to an input queue consumed by the aggregation service and raw-data writer. Aggregates enter a second queue, are persisted, and are queried by a dashboard service.</desc>
+  <style>
+    text{font-family:Arial,Helvetica,sans-serif;fill:#111}
+    .box{fill:#fff;stroke:#111;stroke-width:2.7}
+    .line{fill:none;stroke:#111;stroke-width:2.7}
+  </style>
+  <rect width="1778" height="1024" fill="#fff"/>
+  <!-- Ingestion path: log watcher to queue to aggregation service. -->
+  <rect class="box" x="33" y="85" width="217" height="90"/>
+  <text x="141.5" y="147" font-size="36" text-anchor="middle">Log Watcher</text>
+  <path class="line" d="M250 130H353"/>
+  <polygon points="373,130 353,120 353,140" fill="#111"/>
+  <path class="box" d="M408 85H599V175H408C389 175 373 155 373 130C373 105 389 85 408 85Z"/>
+  <ellipse class="box" cx="599" cy="130" rx="29" ry="45"/>
+  <text x="486" y="120" font-size="35" text-anchor="middle"><tspan x="486">Message</tspan><tspan x="486" dy="43">Queue</tspan></text>
+  <path class="line" d="M628 130H714"/>
+  <polygon points="734,130 714,120 714,140" fill="#111"/>
+  <rect class="box" x="734" y="68" width="219" height="125"/>
+  <text x="843.5" y="108" font-size="34" text-anchor="middle"><tspan x="843.5">Data</tspan><tspan x="843.5" dy="38">Aggregation</tspan><tspan x="843.5" dy="38">Service</tspan></text>
+  <!-- The input queue is also persisted as raw data. -->
+  <path class="line" d="M500 175V355"/>
+  <polygon points="500,375 490,355 510,355" fill="#111"/>
+  <rect class="box" x="406" y="375" width="188" height="94"/>
+  <text x="500" y="414" font-size="35" text-anchor="middle"><tspan x="500">Database</tspan><tspan x="500" dy="40">Writer</tspan></text>
+  <path class="line" d="M500 469V586"/>
+  <polygon points="500,606 490,586 510,586" fill="#111"/>
+  <path class="box" d="M429 621V719C429 736 461 746 500 746C539 746 571 736 571 719V621Z"/>
+  <ellipse class="box" cx="500" cy="621" rx="71" ry="15"/>
+  <text x="338" y="673" font-size="33" text-anchor="middle"><tspan x="338">Raw data</tspan><tspan x="338" dy="40">database</tspan></text>
+  <!-- Two aggregate streams enter the output queue. -->
+  <path class="line" d="M953 95C970 90 985 86 995 84"/>
+  <text x="1146" y="58" font-size="29" text-anchor="middle"><tspan x="1146">Ad count</tspan><tspan x="1146" dy="34">(Aggregate every min)</tspan></text>
+  <path class="line" d="M1300 84C1320 87 1334 92 1345 97"/>
+  <polygon points="1361,101 1339,102 1346,83" fill="#111"/>
+  <path class="line" d="M953 160C962 164 970 167 980 170"/>
+  <text x="1147" y="184" font-size="28" text-anchor="middle"><tspan x="1147">Top 100 most clicked Ads</tspan><tspan x="1147" dy="34">(Aggregate every min)</tspan></text>
+  <path class="line" d="M1320 170C1330 168 1338 165 1346 162"/>
+  <polygon points="1361,157 1347,174 1339,155" fill="#111"/>
+  <path class="box" d="M1396 85H1585V175H1396C1377 175 1361 155 1361 130C1361 105 1377 85 1396 85Z"/>
+  <ellipse class="box" cx="1585" cy="130" rx="30" ry="45"/>
+  <text x="1487" y="120" font-size="35" text-anchor="middle"><tspan x="1487">Message</tspan><tspan x="1487" dy="43">Queue</tspan></text>
+  <!-- Aggregation writer pulls from the output queue. -->
+  <path class="line" d="M1488 175V234"/>
+  <text x="1488" y="279" font-size="33" text-anchor="middle">Pull aggregation results</text>
+  <path class="line" d="M1488 312V355"/>
+  <polygon points="1488,375 1478,355 1498,355" fill="#111"/>
+  <rect class="box" x="1393" y="375" width="189" height="94"/>
+  <text x="1487.5" y="414" font-size="35" text-anchor="middle"><tspan x="1487.5">Database</tspan><tspan x="1487.5" dy="40">Writer</tspan></text>
+  <path class="line" d="M1488 469V586"/>
+  <polygon points="1488,606 1478,586 1498,586" fill="#111"/>
+  <path class="box" d="M1417 621V719C1417 736 1449 746 1488 746C1527 746 1559 736 1559 719V621Z"/>
+  <ellipse class="box" cx="1488" cy="621" rx="71" ry="15"/>
+  <text x="1661" y="673" font-size="33" text-anchor="middle"><tspan x="1661">Aggregation</tspan><tspan x="1661" dy="40">database</tspan></text>
+  <!-- Dashboard queries the aggregation database. -->
+  <rect class="box" x="1378" y="868" width="218" height="127"/>
+  <text x="1487" y="909" font-size="34" text-anchor="middle"><tspan x="1487">Query</tspan><tspan x="1487" dy="39">Service</tspan><tspan x="1487" dy="39">(Dashboard)</tspan></text>
+  <path class="line" d="M1488 868V850"/>
+  <text x="1488" y="834" font-size="33" text-anchor="middle">Query aggregation results</text>
+  <path class="line" d="M1488 793V766"/>
+  <polygon points="1488,746 1478,766 1498,766" fill="#111"/>
+</svg>

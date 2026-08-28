@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1952" height="830" viewBox="0 0 1952 830" role="img" aria-labelledby="diagram-title diagram-desc">
+  <title id="diagram-title">Reconciliation of the raw and aggregation databases</title>
+  <desc id="diagram-desc">The live path runs left to right: a log watcher publishes to a message queue, whose events are both aggregated per minute into a second message queue and written by a database writer into the raw data database. From the second queue another database writer fills the aggregation database, which the query service dashboard reads. The reconciliation job, highlighted in pink, reads the raw data database and the aggregation database and compares them. Where they disagree it triggers a recalculation service, which replays the raw data through a recalculation-only aggregation service back into the second queue, so the corrected numbers reach the aggregation database.</desc>
+  <!-- One arrowhead marker and one style block drive every connector; restyle from here. -->
+  <defs>
+    <marker id="head" viewBox="0 0 17 13.4" refX="1" refY="6.7" markerWidth="17" markerHeight="13.4" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L17 6.7L0 13.4Z" fill="#000"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:29px;fill:#000}
+      .note{font-size:22px}
+      .box{fill:#fff;stroke:#000;stroke-width:1.75}
+      .pink{fill:#ffbfff;stroke:#000;stroke-width:1.75}
+      .flow{fill:none;stroke:#000;stroke-width:1.75;marker-end:url(#head)}
+      .plain{fill:none;stroke:#000;stroke-width:1.75}
+    </style>
+  </defs>
+  <rect width="1952" height="830" fill="#fff"/>
+  <!-- Live ingest path: log watcher, queue, aggregation service, output queue, database writers. -->
+  <g id="pipeline">
+    <rect class="box" x="31.93" y="179.65" width="194.14" height="79.99"/>
+    <rect class="box" x="657.36" y="51.93" width="194.28" height="110.71"/>
+    <rect class="box" x="1590.2" y="67.35" width="168.55" height="79.91"/>
+    <rect class="box" x="670.37" y="291.07" width="168.26" height="79.93"/>
+    <rect class="box" x="1179.75" y="280.07" width="300.5" height="110.86"/>
+    <rect class="box" x="1232.93" y="522.64" width="194.13" height="80.01"/>
+    <rect class="box" x="1577.5" y="507.26" width="194.26" height="110.74"/>
+    <!-- Message queues: left cap, body, right cap ellipse plus its visible seam. -->
+    <path class="box" d="M358.14 177.5L540.29 177.5A22.64 41.08 0 0 1 540.29 259.66L358.14 259.66A22.64 41.08 0 0 1 358.14 177.5Z"/>
+    <path class="box" fill="none" d="M540.29 177.5A22.64 41.08 0 0 0 540.29 259.66"/>
+    <path class="box" d="M1238.87 66.36L1420.29 66.36A22.21 41 0 0 1 1420.29 148.36L1238.87 148.36A22.21 41 0 0 1 1238.87 66.36Z"/>
+    <path class="box" fill="none" d="M1420.29 66.36A22.21 41 0 0 0 1420.29 148.36"/>
+    <!-- Databases drawn as cylinders: body plus the visible top ellipse. -->
+    <path class="box" d="M691.36 512.15V613.14A63.15 12.79 0 0 0 817.65 613.14V512.15A63.15 12.79 0 0 0 691.36 512.15Z"/>
+    <path class="box" fill="none" d="M691.36 512.15A63.15 12.79 0 0 0 817.65 512.15"/>
+    <path class="box" d="M1611.51 284.95V385.95A63.22 12.71 0 0 0 1737.94 385.95V284.95A63.22 12.71 0 0 0 1611.51 284.95Z"/>
+    <path class="box" fill="none" d="M1611.51 284.95A63.22 12.71 0 0 0 1737.94 284.95"/>
+  </g>
+  <!-- Reconciliation is the highlighted job that compares the two stores. -->
+  <rect class="pink" id="reconciliation" x="1220" y="723.5" width="220" height="79.5"/>
+  <g id="connectors">
+    <path class="flow" d="M226.07 219.06L319.5 219.06"/>
+    <path class="flow" d="M550.16 181.61L642.33 148.04"/>
+    <path class="flow" d="M549.91 255.77L655.36 294.72"/>
+    <!-- The two aggregate streams are deliberately broken so each label sits in the gap. -->
+    <path class="plain" d="M851.64 73.58Q882.32 65.77 913 60.92"/>
+    <path class="flow" d="M1148 61.5Q1178.41 65.98 1208.83 72.65"/>
+    <path class="plain" d="M851.64 138.83Q872.82 144.22 894 148.28"/>
+    <path class="flow" d="M1166 152.24Q1187.94 148.75 1209.89 143.75"/>
+    <path class="flow" d="M1442.5 107.31L1574.2 107.31"/>
+    <path class="flow" d="M754.49 371L754.49 483.36"/>
+    <path class="flow" d="M1674.65 147.26L1674.65 256.24"/>
+    <path class="flow" d="M1674.65 507.26L1674.65 414.66"/>
+    <path class="flow" d="M1232.93 562.64L833.65 562.64"/>
+    <path class="flow" d="M1330.01 522.64L1330.01 406.93"/>
+    <path class="flow" d="M1329.99 280.07L1329.99 164.36"/>
+    <path class="flow" d="M1219.86 724.37L832.76 589.46"/>
+    <path class="flow" d="M1361.9 723.5L1616.35 406.61"/>
+  </g>
+  <g id="labels">
+    <text x="48" y="230">Log Watcher</text>
+    <text x="364.5" y="212">Message</text>
+    <text x="379.5" y="246">Queue</text>
+    <text x="724.5" y="84">Data</text>
+    <text x="676.5" y="118">Aggregation</text>
+    <text x="706.5" y="150">Service</text>
+    <text x="1252.5" y="101">Message</text>
+    <text x="1267" y="134">Queue</text>
+    <text x="1613" y="101">Database</text>
+    <text x="1636" y="135">Writer</text>
+    <text x="693" y="325">Database</text>
+    <text x="715.5" y="358">Writer</text>
+    <text x="1218" y="313">Data Aggregation</text>
+    <text x="1282" y="346">Service</text>
+    <text x="1202" y="378">(Recalculation only)</text>
+    <text x="1243" y="556">Recalculation</text>
+    <text x="1282" y="590">Service</text>
+    <text x="550" y="556">Raw data</text>
+    <text x="551" y="590">database</text>
+    <text x="1744" y="329">Aggregation</text>
+    <text x="1762" y="363">database</text>
+    <text x="1634.5" y="539">Query</text>
+    <text x="1627" y="573">Service</text>
+    <text x="1593.5" y="606">(Dashboard)</text>
+    <text x="1240" y="774">Reconciliation</text>
+    <text class="note" x="985.5" y="46">Ad count</text>
+    <text class="note" x="920.5" y="72">(Aggregate every min)</text>
+    <text class="note" x="905.5" y="157">Top 100 most clicked Ads</text>
+    <text class="note" x="921" y="183">(Aggregate every min)</text>
+  </g>
+</svg>

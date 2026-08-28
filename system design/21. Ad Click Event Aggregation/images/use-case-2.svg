@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1844" height="1030" viewBox="0 0 1844 1030" role="img" aria-labelledby="diagram-title diagram-desc">
+  <title id="diagram-title">Finding the top 3 most clicked ads with map, aggregate and reduce</title>
+  <desc id="diagram-desc">A pipeline in five columns: inputs, map, aggregate, reduce and outputs. All click events are split by the map stage into three groups of five ads each. The aggregate stage counts clicks per ad within each group and keeps only that group’s top 3, striking through the rest. The reduce stage merges the nine survivors into one ranked list and again strikes through everything below third place, leaving ad3 with 12 clicks, ad1 with 9 and ad2 with 8. The output states that the top 3 most clicked ads in the past 1 minute are ad3, ad1 and ad2.</desc>
+  <!-- One arrowhead marker and one style block drive the diagram; .out marks a count that was dropped. -->
+  <defs>
+    <marker id="head" viewBox="0 0 20 14.6" refX="1" refY="7.3" markerWidth="20" markerHeight="14.6" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L20 7.3L0 14.6Z" fill="#000"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:31px;fill:#000}
+      .num{text-anchor:end}
+      .box{fill:#fff;stroke:#000;stroke-width:1.9}
+      .flow{fill:none;stroke:#000;stroke-width:1.9;marker-end:url(#head)}
+      .sep{fill:none;stroke:#000;stroke-width:1.9;stroke-dasharray:9.5 5.85}
+      .out{stroke:#000;stroke-width:1.9}
+    </style>
+  </defs>
+  <rect width="1844" height="1030" fill="#fff"/>
+  <!-- Dashed separators divide the five pipeline stages. -->
+  <g id="stage-separators">
+    <line class="sep" x1="548" y1="34" x2="548" y2="995"/>
+    <line class="sep" x1="925.5" y1="34" x2="925.5" y2="995"/>
+    <line class="sep" x1="1205" y1="34" x2="1205" y2="995"/>
+    <line class="sep" x1="1480.5" y1="34" x2="1480.5" y2="995"/>
+  </g>
+  <g id="headers">
+    <text x="358" y="82">Inputs</text>
+    <text x="702.5" y="82">Map</text>
+    <text x="993.5" y="82">Aggregate</text>
+    <text x="1294.5" y="82">Reduce</text>
+    <text x="1608" y="82">Outputs</text>
+  </g>
+  <g id="task-label">
+    <text x="91" y="498">Top 3 most</text>
+    <text x="91" y="534">clicked ads</text>
+    <text x="61" y="569">(Minute interval</text>
+    <text x="80" y="604">aggregation)</text>
+  </g>
+  <!-- Inputs: one mixed event stream. -->
+  <rect class="box" x="297.75" y="498.07" width="205.25" height="84.43"/>
+  <text x="331.5" y="551">All Events</text>
+  <!-- Map: the stream is split into three groups of five ads. -->
+  <g id="map-groups">
+    <rect class="box" x="596" y="206" width="273.36" height="84"/>
+    <text x="612.5" y="242">Events: ad3, ad6,</text><text x="620.5" y="277">ad9, ad12, ad15</text>
+    <rect class="box" x="596" y="498" width="273.36" height="84"/>
+    <text x="612.5" y="534">Events: ad1, ad4,</text><text x="620.5" y="569">ad7, ad10, ad13</text>
+    <rect class="box" x="596" y="790" width="273.36" height="85"/>
+    <text x="612.5" y="826">Events: ad2, ad5,</text><text x="620.5" y="861">ad8, ad11, ad14</text>
+  </g>
+  <!-- Aggregate: counts per ad; the strike-through rows fall outside that group's top 3. -->
+  <g id="aggregate-groups">
+    <rect class="box" x="984" y="135" width="162" height="226"/>
+    <text x="1007" y="181">ad3:</text><text class="num" x="1122.5" y="181">12</text>
+    <text x="1007" y="220">ad6:</text><text class="num" x="1122.5" y="220">5</text>
+    <text x="1007" y="259">ad9:</text><text class="num" x="1122.5" y="259">3</text>
+    <text x="1007" y="299">ad12:</text><text class="num" x="1122.5" y="299">1</text>
+    <text x="1007" y="338">ad15:</text><text class="num" x="1122.5" y="338">1</text>
+    <line class="out" x1="995" y1="287.5" x2="1134" y2="287.5"/>
+    <line class="out" x1="995" y1="328.5" x2="1134" y2="328.5"/>
+    <rect class="box" x="984" y="427" width="162" height="226"/>
+    <text x="1007" y="473">ad1:</text><text class="num" x="1122.5" y="473">9</text>
+    <text x="1007" y="512">ad4:</text><text class="num" x="1122.5" y="512">4</text>
+    <text x="1007" y="551">ad7:</text><text class="num" x="1122.5" y="551">3</text>
+    <text x="1007" y="591">ad10:</text><text class="num" x="1122.5" y="591">2</text>
+    <text x="1007" y="630">ad13:</text><text class="num" x="1122.5" y="630">1</text>
+    <line class="out" x1="995" y1="578.5" x2="1134" y2="578.5"/>
+    <line class="out" x1="995" y1="619" x2="1134" y2="619"/>
+    <rect class="box" x="984" y="720" width="162" height="225"/>
+    <text x="1007" y="765">ad2:</text><text class="num" x="1122.5" y="765">8</text>
+    <text x="1007" y="804">ad5:</text><text class="num" x="1122.5" y="804">4</text>
+    <text x="1007" y="843">ad8:</text><text class="num" x="1122.5" y="843">3</text>
+    <text x="1007" y="883">ad11:</text><text class="num" x="1122.5" y="883">2</text>
+    <text x="1007" y="922">ad14:</text><text class="num" x="1122.5" y="922">1</text>
+    <line class="out" x1="995" y1="874.5" x2="1134" y2="874.5"/>
+    <line class="out" x1="995" y1="914.5" x2="1134" y2="914.5"/>
+  </g>
+  <!-- Reduce: the nine survivors merged and ranked; only the first three remain. -->
+  <g id="reduce-group">
+    <rect class="box" x="1266.75" y="349" width="162" height="382"/>
+    <text x="1291" y="394">ad3:</text><text class="num" x="1406" y="394">12</text>
+    <text x="1291" y="433">ad1:</text><text class="num" x="1406" y="433">9</text>
+    <text x="1291" y="472">ad2:</text><text class="num" x="1406" y="472">8</text>
+    <text x="1291" y="512">ad6:</text><text class="num" x="1406" y="512">5</text>
+    <text x="1291" y="551">ad4:</text><text class="num" x="1406" y="551">4</text>
+    <text x="1291" y="590">ad5:</text><text class="num" x="1406" y="590">4</text>
+    <text x="1291" y="630">ad9:</text><text class="num" x="1406" y="630">3</text>
+    <text x="1291" y="669">ad7:</text><text class="num" x="1406" y="669">3</text>
+    <text x="1291" y="708">ad8:</text><text class="num" x="1406" y="708">3</text>
+    <line class="out" x1="1277" y1="500" x2="1417" y2="500"/>
+    <line class="out" x1="1277" y1="540.5" x2="1417" y2="540.5"/>
+    <line class="out" x1="1277" y1="580.5" x2="1417" y2="580.5"/>
+    <line class="out" x1="1277" y1="620.5" x2="1417" y2="620.5"/>
+    <line class="out" x1="1277" y1="659.5" x2="1417" y2="659.5"/>
+    <line class="out" x1="1277" y1="700.5" x2="1417" y2="700.5"/>
+  </g>
+  <g id="connectors">
+    <path class="flow" d="M434.4 498.07L592.28 304.72"/>
+    <path class="flow" d="M503 540.31L577 540.31"/>
+    <path class="flow" d="M433.3 582.5L585.71 775.1"/>
+    <path class="flow" d="M869.36 248.13L965 248.13"/>
+    <path class="flow" d="M869.36 540.31L965 540.31"/>
+    <path class="flow" d="M869.36 832.48L965 832.48"/>
+    <path class="flow" d="M1146 332.66L1253.49 443.05"/>
+    <path class="flow" d="M1146 540.31L1247.75 540.31"/>
+    <path class="flow" d="M1146 748.05L1253.51 637.31"/>
+    <path class="flow" d="M1428.75 540.93L1507 540.93"/>
+  </g>
+  <g id="output">
+    <text x="1534.5" y="500">Top 3 most clicked</text>
+    <text x="1548" y="535">ads in the past 1</text>
+    <text x="1554.5" y="571">minute are ad3,</text>
+    <text x="1576" y="606">ad1 and ad2</text>
+  </g>
+</svg>

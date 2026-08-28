@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1966" height="1346" viewBox="0 0 1966 1346" role="img" aria-labelledby="diagram-title diagram-desc">
+  <title id="diagram-title">A distributed transaction makes the offset save and the downstream send atomic</title>
+  <desc id="diagram-desc">A sequence diagram with four participants: upstream Kafka, the aggregator, HDFS or S3, and downstream Kafka. The aggregator polls upstream Kafka, consumes from offset 100, verifies the offset against storage, and aggregates events from 100 to 110. A dashed box labelled distributed transaction then encloses three steps that commit or fail together: sending the aggregated result downstream, saving the new offset to storage, and receiving the downstream acknowledgement. Only after that transaction commits does the aggregator acknowledge upstream with offset 110, so no window exists in which the offset has moved but the result was never delivered.</desc>
+  <!-- One arrowhead marker and one style block drive every message; restyle from here. -->
+  <defs>
+    <marker id="head" viewBox="0 0 27 27" refX="1" refY="13.5" markerWidth="27" markerHeight="27" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L27 13.5L0 27Z" fill="#000"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:43px;fill:#000}
+      .box{fill:#fff;stroke:#000;stroke-width:3.13}
+      .life{fill:none;stroke:#000;stroke-width:3.13;stroke-dasharray:9.3 9.5}
+      .flow{fill:none;stroke:#000;stroke-width:3.13;marker-end:url(#head)}
+      .txn{fill:none;stroke:#000;stroke-width:3.13;stroke-dasharray:9.62 9.18}
+      .txn-label{font-size:37.5px;fill:#f00}
+    </style>
+  </defs>
+  <rect width="1966" height="1346" fill="#fff"/>
+  <!-- Lifelines run behind the activation bars, which are opaque and hide the dashes they cross. -->
+  <g id="lifelines">
+    <line class="life" x1="210.57" y1="162.2" x2="210.57" y2="1317"/>
+    <line class="life" x1="733.71" y1="162.2" x2="733.71" y2="1317"/>
+    <line class="life" x1="1247.47" y1="162.2" x2="1247.47" y2="1317"/>
+    <line class="life" x1="1764.35" y1="162.2" x2="1764.35" y2="1317"/>
+  </g>
+  <g id="participants">
+    <rect class="box" x="53.94" y="37.06" width="313.25" height="124.73" rx="15"/>
+    <rect class="box" x="577.08" y="37.06" width="313.25" height="124.73" rx="15"/>
+    <rect class="box" x="1090.84" y="37.06" width="313.25" height="124.73" rx="15"/>
+    <rect class="box" x="1607.72" y="37.06" width="313.25" height="124.73" rx="15"/>
+  </g>
+  <!-- Steps 4 to 6 are wrapped in one distributed transaction; the dash phase matches the etalon. -->
+  <rect class="txn" id="transaction-boundary" x="785.38" y="766.15" width="924.12" height="344.45" stroke-dashoffset="0.12"/>
+  <g id="activations">
+    <rect class="box" x="194.91" y="293.57" width="31.31" height="869.86"/>
+    <rect class="box" x="718.05" y="355.57" width="31.31" height="808.86"/>
+    <rect class="box" x="1231.81" y="556.57" width="31.31" height="43.86"/>
+    <rect class="box" x="1231.81" y="913.57" width="31.31" height="43.86"/>
+    <rect class="box" x="1748.69" y="828.57" width="31.31" height="240.86"/>
+  </g>
+  <!-- Messages in order 1 to 7. -->
+  <g id="messages">
+    <path class="flow" d="M718.05 356.27L252.22 356.27"/>
+    <path class="flow" d="M226.22 478.05L692.05 478.05"/>
+    <path class="flow" d="M749.36 559.88L1205.81 559.88"/>
+    <!-- Self-call: the aggregator folds events 100 to 110 into one result. -->
+    <path class="flow" d="M749.36 670.5C1034.43 658.26 1043.09 739.91 775.35 733.38"/>
+    <path class="flow" d="M749.36 838.15L1722.69 838.15"/>
+    <path class="flow" d="M749.36 915.28L1205.81 915.28"/>
+    <path class="flow" d="M1748.69 1067.27L775.36 1067.27"/>
+    <path class="flow" d="M718.05 1164.17L252.22 1164.17"/>
+  </g>
+  <g id="labels">
+    <text x="116.5" y="92">Upstream</text>
+    <text x="140" y="138">(Kafka)</text>
+    <text x="627" y="114">Aggregator</text>
+    <text x="1143.5" y="113">HDFS / S3</text>
+    <text x="1643" y="92">Downstream</text>
+    <text x="1693.5" y="138">(Kafka)</text>
+    <text x="342.5" y="342">1. Poll events</text>
+    <text x="307.5" y="417">2. Consume from</text>
+    <text x="378" y="464">offset 100</text>
+    <text x="850.5" y="545">3.1 Verify offset</text>
+    <text x="843" y="625">3. Aggregate events</text>
+    <text x="885" y="671">from 100 to 110</text>
+    <text class="txn-label" x="1062" y="750">Distributed transaction</text>
+    <text x="1004.5" y="824">4. Send aggregated result</text>
+    <text x="864" y="902">5. Save offset</text>
+    <text x="1142" y="1053">6. Ack back</text>
+    <text x="317.5" y="1103">7. Ack upstream</text>
+    <text x="290" y="1150">with new offset 110</text>
+  </g>
+</svg>

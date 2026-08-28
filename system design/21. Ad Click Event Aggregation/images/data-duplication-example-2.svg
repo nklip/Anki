@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1950" height="1348" viewBox="0 0 1950 1348" role="img" aria-labelledby="diagram-title diagram-desc">
+  <title id="diagram-title">Message loss when the offset is saved before the result is sent</title>
+  <desc id="diagram-desc">A sequence diagram with four participants: upstream Kafka, the aggregator, HDFS or S3, and downstream Kafka. The aggregator polls upstream Kafka, consumes from offset 100, verifies the offset against storage, aggregates events from 100 to 110, and then saves the new offset to storage. Only afterwards does it send the aggregated result downstream, receive an acknowledgement, and acknowledge upstream with offset 110. The red step 3.2 marks the problem: because the offset is saved before the result is confirmed downstream, a failure after that point loses the messages between 100 and 110.</desc>
+  <!-- Two arrowhead markers (black and red) and one style block drive every message; restyle from here. -->
+  <defs>
+    <marker id="head" viewBox="0 0 27 27" refX="1" refY="13.5" markerWidth="27" markerHeight="27" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L27 13.5L0 27Z" fill="#000"/>
+    </marker>
+    <marker id="head-red" viewBox="0 0 27 27" refX="1" refY="13.5" markerWidth="27" markerHeight="27" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L27 13.5L0 27Z" fill="#f00"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:43px;fill:#000}
+      .box{fill:#fff;stroke:#000;stroke-width:3.13}
+      .life{fill:none;stroke:#000;stroke-width:3.13;stroke-dasharray:9.3 9.48}
+      .flow{fill:none;stroke:#000;stroke-width:3.13;marker-end:url(#head)}
+      .red{stroke:#f00;fill:#f00;marker-end:url(#head-red)}
+      text.red{fill:#f00}
+    </style>
+  </defs>
+  <rect width="1950" height="1348" fill="#fff"/>
+  <!-- Lifelines run behind the activation bars, which are opaque and hide the dashes they cross. -->
+  <g id="lifelines">
+    <line class="life" x1="190.57" y1="158.2" x2="190.57" y2="1313"/>
+    <line class="life" x1="713.71" y1="158.2" x2="713.71" y2="1313"/>
+    <line class="life" x1="1227.47" y1="158.2" x2="1227.47" y2="1313"/>
+    <line class="life" x1="1744.35" y1="158.2" x2="1744.35" y2="1313"/>
+  </g>
+  <!-- Participants. -->
+  <g id="participants">
+    <rect class="box" x="33.94" y="33.06" width="313.25" height="124.73" rx="15"/>
+    <rect class="box" x="557.08" y="33.06" width="313.25" height="124.73" rx="15"/>
+    <rect class="box" x="1070.84" y="33.06" width="313.25" height="124.73" rx="15"/>
+    <rect class="box" x="1587.72" y="33.06" width="313.25" height="124.73" rx="15"/>
+  </g>
+  <!-- Activation bars: the period each participant is doing work. -->
+  <g id="activations">
+    <rect class="box" x="174.91" y="289.57" width="31.31" height="869.86"/>
+    <rect class="box" x="698.05" y="351.57" width="31.31" height="808.86"/>
+    <rect class="box" x="1211.81" y="552.57" width="31.31" height="281.86"/>
+    <rect class="box" x="1728.69" y="1047.57" width="31.31" height="77.83"/>
+  </g>
+  <!-- Messages in order 1 to 6. Step 3.2 is red: saving the offset here is what can lose messages. -->
+  <g id="messages">
+    <path class="flow" d="M698.05 352.27L232.22 352.27"/>
+    <path class="flow" d="M206.22 474.05L672.05 474.05"/>
+    <path class="flow" d="M729.36 555.85L1185.81 555.85"/>
+    <!-- Self-call: the aggregator folds events 100 to 110 into one result before saving the offset. -->
+    <path class="flow" d="M729.36 678.75C1024.61 668.88 1024.61 752.12 755.3 742.35"/>
+    <path class="flow red" d="M729.36 825.63L1185.81 825.63"/>
+    <path class="flow" d="M729.36 1056.48L1702.69 1056.48"/>
+    <path class="flow" d="M1728.69 1125.86L755.36 1125.86"/>
+    <path class="flow" d="M698.05 1160.4L232.22 1160.4"/>
+  </g>
+  <g id="labels">
+    <text x="96.5" y="88">Upstream</text>
+    <text x="120" y="134">(Kafka)</text>
+    <text x="607" y="110">Aggregator</text>
+    <text x="1123.5" y="109">HDFS / S3</text>
+    <text x="1623" y="88">Downstream</text>
+    <text x="1673.5" y="134">(Kafka)</text>
+    <text x="322.5" y="338">1. Poll events</text>
+    <text x="287.5" y="413">2. Consume from</text>
+    <text x="358" y="460">offset 100</text>
+    <text class="red" x="830.5" y="541">3.1 Verify offset</text>
+    <text x="823" y="621">3. Aggregate events</text>
+    <text x="865" y="667">from 100 to 110</text>
+    <text class="red" x="832" y="811">3.2 Save offset</text>
+    <text class="red" x="888" y="879">Can cause potential</text>
+    <text class="red" x="947" y="926">message loss</text>
+    <text x="984.5" y="1042">4. Send aggregated result</text>
+    <text x="297.5" y="1099">6. Ack upstream</text>
+    <text x="1122.5" y="1111">5. Ack back</text>
+    <text x="270" y="1146">with new offset 110</text>
+  </g>
+</svg>

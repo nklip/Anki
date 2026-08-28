@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1948" height="698" viewBox="0 0 1948 698" role="img" aria-labelledby="diagram-title diagram-desc">
+  <title id="diagram-title">Rebalancing a Kafka consumer group onto one consumer per partition</title>
+  <desc id="diagram-desc">Two states of the same topic, side by side. On the left, the topic has four partitions but only two consumers, so consumer 0 reads partitions 0 and 1 while consumer 1 reads partitions 2 and 3. A rebalance arrow leads to the right, where two more consumers have been added, highlighted in pink. Now each of the four partitions feeds its own consumer, so a single consumer no longer has to keep up with two partitions.</desc>
+  <!-- One arrowhead marker and one style block drive the diagram; restyle from here. -->
+  <defs>
+    <marker id="head" viewBox="0 0 23 16.6" refX="1" refY="8.3" markerWidth="23" markerHeight="16.6" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L23 8.3L0 16.6Z" fill="#000"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:39px;fill:#000}
+      .box{fill:#fff;stroke:#000;stroke-width:2.5}
+      .added{fill:#ffbfff;stroke:#000;stroke-width:2.5}
+      .group{fill:none;stroke:#000;stroke-width:2.5;stroke-dasharray:11.7 7.77}
+      .flow{fill:none;stroke:#000;stroke-width:2.5;marker-end:url(#head)}
+    </style>
+  </defs>
+  <rect width="1948" height="698" fill="#fff"/>
+  <!-- Before: four partitions share two consumers. -->
+  <g id="before">
+    <rect class="group" x="36.29" y="41.99" width="783.42" height="624.31" stroke-dashoffset="1.13"/>
+    <rect class="box" x="74.7" y="81.5" width="322.59" height="542.8"/>
+    <rect class="box" x="106.5" y="171" width="258" height="76.7"/>
+    <rect class="box" x="106.5" y="286.5" width="258" height="76.7"/>
+    <rect class="box" x="106.5" y="402.5" width="258" height="76.7"/>
+    <rect class="box" x="106.5" y="517.5" width="258" height="76.7"/>
+    <rect class="box" x="529.5" y="235.5" width="259" height="77"/>
+    <rect class="box" x="529.5" y="460.5" width="259" height="77"/>
+    <text x="189" y="122">Topic</text>
+    <text x="148" y="224">Partition 0</text>
+    <text x="148" y="340">Partition 1</text>
+    <text x="147.5" y="455">Partition 2</text>
+    <text x="148" y="571">Partition 3</text>
+    <text x="553" y="287">Consumer 0</text>
+    <text x="553" y="513">Consumer 1</text>
+    <!-- Two partitions per consumer: the pairs converge. -->
+    <path class="flow" d="M364.5 229.49L507.75 251.3"/>
+    <path class="flow" d="M364.5 309.87L507.66 292.6"/>
+    <path class="flow" d="M364.5 458.86L507.71 478.61"/>
+    <path class="flow" d="M364.5 539.26L507.7 519.91"/>
+  </g>
+  <!-- The rebalance itself, drawn as a block arrow pointing at the after state. -->
+  <g id="rebalance">
+    <path class="box" d="M845.6 318.5H1077V283L1105.5 352.4L1077 421.5V387.3H845.6Z"/>
+    <text x="872.5" y="367">Rebalance</text>
+  </g>
+  <!-- After: consumers 2 and 3 are new, so every partition gets its own consumer. -->
+  <g id="after">
+    <rect class="group" x="1125.29" y="40.7" width="783.42" height="624.31" stroke-dashoffset="1.13"/>
+    <rect class="box" x="1161.5" y="82.5" width="322" height="542.5"/>
+    <rect class="box" x="1193.5" y="172.5" width="258" height="76.7"/>
+    <rect class="box" x="1193.5" y="288" width="258" height="76.7"/>
+    <rect class="box" x="1193.5" y="403.5" width="258" height="76.7"/>
+    <rect class="box" x="1193.5" y="519.5" width="258" height="76.7"/>
+    <rect class="box" x="1616.5" y="172.5" width="259" height="76.7"/>
+    <rect class="box" x="1616.5" y="288" width="259" height="76.7"/>
+    <rect class="added" x="1616.5" y="403.5" width="259" height="76.7"/>
+    <rect class="added" x="1616.5" y="519.5" width="259" height="76.7"/>
+    <text x="1276" y="123">Topic</text>
+    <text x="1235" y="225">Partition 0</text>
+    <text x="1235" y="341">Partition 1</text>
+    <text x="1234.5" y="456">Partition 2</text>
+    <text x="1235" y="572">Partition 3</text>
+    <text x="1640" y="224">Consumer 0</text>
+    <text x="1640" y="340">Consumer 1</text>
+    <text x="1640" y="455">Consumer 2</text>
+    <text x="1639.5" y="571">Consumer 3</text>
+    <path class="flow" d="M1451.5 210.5L1593 210.5"/>
+    <path class="flow" d="M1451.5 326L1593 326"/>
+    <path class="flow" d="M1451.5 442L1593 442"/>
+    <path class="flow" d="M1451.5 557.5L1593 557.5"/>
+  </g>
+</svg>

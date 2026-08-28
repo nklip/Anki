@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1868" height="716" viewBox="0 0 1868 716" role="img" aria-labelledby="title desc">
+  <title id="title">Lambda architecture</title>
+  <desc id="desc">Incoming data is copied to batch and streaming engines. Both processing paths write to one serving backend, which answers queries, while raw data and results are retained in shared storage.</desc>
+  <!-- Shared visual rules mirror the monochrome PNG and keep repair targets easy to find. -->
+  <style>
+    text{font-family:Arial,Helvetica,sans-serif;fill:#111}
+    .shape{fill:#fff;stroke:#111;stroke-width:2.2}
+    .group{fill:none;stroke:#111;stroke-width:2.2;stroke-dasharray:9 7}
+    .connector{fill:none;stroke:#111;stroke-width:2.2}
+  </style>
+  <rect width="1868" height="716" fill="#fff"/>
+
+  <!-- The etalon contains the clipped edge of an enclosing dashed panel. -->
+  <path class="group" d="M0 0V716"/>
+  <text x="41" y="57" font-size="32">Lambda Architecture</text>
+
+  <!-- Input icon, queue, and the fan-out into the two processing paths. -->
+  <path class="shape" d="M64 242H107L117 252V295H64Z M107 242V253H117"/>
+  <path id="input-flow-shaft" class="connector" data-connector="true" d="M117 268H264"/>
+  <polygon points="284,268 264,258 264,278" fill="#111"/>
+  <path class="shape" d="M308 224H506C538 224 538 313 506 313H308C276 313 276 224 308 224Z"/>
+  <path class="shape" d="M506 224C474 224 474 313 506 313"/>
+
+  <!-- Batch processing layer. -->
+  <rect class="group" x="694" y="39" width="336" height="177"/>
+  <text x="862" y="91" font-size="32" text-anchor="middle">Batch Layer</text>
+  <rect class="shape" x="719" y="129" width="290" height="60"/>
+  <text x="864" y="170" font-size="32" text-anchor="middle">Batch Engine</text>
+  <path id="batch-input-flow-shaft" class="connector" data-connector="true" d="M522 236L700 180"/>
+  <polygon points="719,174 697,170 703,190" fill="#111"/>
+
+  <!-- Streaming processing layer. -->
+  <rect class="group" x="696" y="259" width="336" height="178"/>
+  <text x="864" y="310" font-size="32" text-anchor="middle">Streaming Layer</text>
+  <rect class="shape" x="721" y="348" width="290" height="61"/>
+  <text x="866" y="390" font-size="32" text-anchor="middle">Real-time Engine</text>
+  <path id="stream-input-flow-shaft" class="connector" data-connector="true" d="M522 302L702 356"/>
+  <polygon points="721,362 699,366 705,347" fill="#111"/>
+
+  <!-- Serving path where the batch and streaming results converge. -->
+  <rect class="group" x="1195" y="142" width="347" height="178"/>
+  <text x="1369" y="201" font-size="32" text-anchor="middle">Serving Layer</text>
+  <rect class="shape" x="1223" y="238" width="290" height="62"/>
+  <text x="1368" y="280" font-size="32" text-anchor="middle">Serving Backend</text>
+  <path id="batch-serving-flow-shaft" class="connector" data-connector="true" d="M981 189L1204 248"/>
+  <polygon points="1223,253 1201,258 1206,238" fill="#111"/>
+  <path id="stream-serving-flow-shaft" class="connector" data-connector="true" d="M984 348L1204 291"/>
+  <polygon points="1223,286 1206,301 1201,281" fill="#111"/>
+
+  <!-- Queries travel from the client toward the serving backend. -->
+  <rect class="shape" x="1654" y="239" width="137" height="61"/>
+  <text x="1722.5" y="280" font-size="32" text-anchor="middle">Query</text>
+  <path id="query-flow-shaft" class="connector" data-connector="true" d="M1654 269H1534"/>
+  <polygon points="1514,269 1534,259 1534,279" fill="#111"/>
+
+  <!-- Shared durable storage for raw events and processed results. -->
+  <rect class="group" x="299" y="479" width="1183" height="196"/>
+  <text x="890.5" y="589" font-size="32" text-anchor="middle">Data Storage</text>
+  <path class="shape" d="M340 528V601C340 614 478 614 478 601V528"/>
+  <ellipse class="shape" cx="409" cy="528" rx="69" ry="9"/>
+  <text x="409" y="642" font-size="32" text-anchor="middle">Raw Data</text>
+  <path class="shape" d="M1301 528V601C1301 614 1439 614 1439 601V528"/>
+  <ellipse class="shape" cx="1370" cy="528" rx="69" ry="9"/>
+  <text x="1370" y="642" font-size="32" text-anchor="middle">Results</text>
+</svg>
