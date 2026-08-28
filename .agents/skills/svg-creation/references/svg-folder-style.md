@@ -1,11 +1,12 @@
-# SVG folder conventions
+# SVG asset-folder conventions
 
-Read this reference when creating or substantially editing diagrams in the selected `svg/` folder.
+Read this reference when creating or substantially editing diagrams in the selected `svg/` or `images/` folder.
 
 ## Location and neighboring files
 
-- Treat the nearest relevant `svg/` folder below the current working directory as the output boundary.
-- When an existing SVG is the source or reference, use its containing folder for the new or revised file.
+- Treat the current working directory as the output boundary when it is already named `svg` or `images`; do not add another asset-directory layer beneath it.
+- Otherwise, use the nearest relevant existing `svg/` or `images/` folder at or below the current working directory. Never create nested combinations such as `svg/svg/`, `svg/images/`, `images/svg/`, or `images/images/`.
+- When an existing SVG or PNG etalon is the source or reference, use its containing asset folder for the new or revised SVG. Keeping same-stem SVG and PNG files together enables automatic reference comparison.
 - Inspect nearby SVGs before introducing a new canvas size, font family, palette, component shape, or connector convention. Prefer a coherent folder over a one-off visual style.
 - Preserve accessible metadata and useful XML comments found in well-maintained neighbors. Do not copy omissions from older or minimal examples.
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -27,6 +28,40 @@ def svg_with_label(text_y: float, transform: str) -> str:
   <path d="M20 100H169" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
   <text x="100" y="{text_y}" text-anchor="middle" transform="{transform}" font-family="Arial, sans-serif" font-size="18">rotated label</text>
 </svg>"""
+
+
+def simple_svg(rect_x: int = 20, rect_width: int = 80) -> str:
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="120" height="80" viewBox="0 0 120 80" role="img" aria-labelledby="title desc">
+  <title id="title">Reference comparison fixture</title>
+  <desc id="desc">A dark rectangle used to exercise raster comparison.</desc>
+  <!-- Shared definitions. -->
+  <defs/>
+  <!-- Shape under test. -->
+  <rect x="{rect_x}" y="20" width="{rect_width}" height="40" fill="#111111"/>
+</svg>"""
+
+
+def render_png(svg_path: Path, png_path: Path) -> None:
+    runtime = CHECK_SVG.sharp_runtime()
+    if runtime is None:
+        raise unittest.SkipTest("Node.js with sharp is unavailable")
+    node, environment = runtime
+    process = subprocess.run(
+        [
+            node,
+            "-e",
+            "const sharp=require('sharp');sharp(process.argv[1]).png().toFile(process.argv[2]).catch(e=>{console.error(e);process.exit(1)})",
+            str(svg_path),
+            str(png_path),
+        ],
+        env=environment,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        check=False,
+    )
+    if process.returncode:
+        raise AssertionError(process.stderr)
 
 
 class CheckSvgTransformTests(unittest.TestCase):
@@ -102,6 +137,198 @@ class CheckSvgTransformTests(unittest.TestCase):
             any("symbol #tile needs explicit" in warning for warning in report.warnings),
             report.warnings,
         )
+
+    def test_tspan_line_is_checked_against_labeled_manual_connector(self) -> None:
+        source = """<svg xmlns="http://www.w3.org/2000/svg" width="120" height="80" viewBox="0 0 120 80" role="img" aria-labelledby="title desc">
+  <title id="title">Tspan fixture</title>
+  <desc id="desc">A second text line crossed by a manually headed connector shaft.</desc>
+  <!-- Text under test. -->
+  <text x="20" y="20" font-size="14"><tspan x="20">First</tspan><tspan x="20" dy="20">Second</tspan></text>
+  <!-- Manual arrow shaft under test. -->
+  <line id="flow-shaft" x1="0" y1="40" x2="110" y2="40" stroke="#000" stroke-width="2"/>
+</svg>"""
+        report = self.report_for(source)
+        self.assertTrue(
+            any("'Second'" in warning and "text/connector overlap" in warning for warning in report.warnings),
+            report.warnings,
+        )
+        self.assertFalse(any("use <tspan>" in warning for warning in report.warnings), report.warnings)
+
+    def test_transform_only_text_uses_default_origin_for_collision_check(self) -> None:
+        source = """<svg xmlns="http://www.w3.org/2000/svg" width="120" height="80" viewBox="0 0 120 80" role="img" aria-labelledby="title desc">
+  <title id="title">Transform-only text fixture</title>
+  <desc id="desc">Text positioned only by a transform is crossed by a manually headed connector shaft.</desc>
+  <!-- Transform-only label under test. -->
+  <text transform="translate(20 40)" font-size="14">crossed label</text>
+  <!-- Manual arrow shaft under test. -->
+  <line id="flow-shaft" x1="0" y1="40" x2="115" y2="40" stroke="#000" stroke-width="2"/>
+</svg>"""
+        report = self.report_for(source)
+        self.assertTrue(
+            any("'crossed label'" in warning and "text/connector overlap" in warning for warning in report.warnings),
+            report.warnings,
+        )
+
+    def test_unparseable_single_line_text_position_is_reported(self) -> None:
+        source = """<svg xmlns="http://www.w3.org/2000/svg" width="120" height="80" viewBox="0 0 120 80" role="img" aria-labelledby="title desc">
+  <title id="title">Unparseable text position fixture</title>
+  <desc id="desc">A single-line label has a position that cannot be estimated structurally.</desc>
+  <!-- Label with an unsupported coordinate under test. -->
+  <text x="calc(50%)" y="40" font-size="14">uncertain label</text>
+</svg>"""
+        report = self.report_for(source)
+        self.assertTrue(
+            any("single-line <text> element" in warning for warning in report.warnings),
+            report.warnings,
+        )
+
+    def test_connector_hint_is_detected_inside_natural_identifiers(self) -> None:
+        for identifier in ("mainArrow", "arrow2", "dataflow", "arrowline", "edgeArrowTop"):
+            with self.subTest(identifier=identifier):
+                source = f"""<svg xmlns="http://www.w3.org/2000/svg" width="120" height="80" viewBox="0 0 120 80" role="img" aria-labelledby="title desc">
+  <title id="title">Connector identifier fixture</title>
+  <desc id="desc">A manual connector with a natural identifier crossing a text label.</desc>
+  <!-- Label under test. -->
+  <text x="20" y="44" font-size="14">crossed label</text>
+  <!-- Manual connector under test. -->
+  <line id="{identifier}" x1="0" y1="40" x2="115" y2="40" stroke="#000" stroke-width="2"/>
+</svg>"""
+                report = self.report_for(source)
+                self.assertTrue(
+                    any(
+                        "text/connector overlap" in warning and f"<line#{identifier}>" in warning
+                        for warning in report.warnings
+                    ),
+                    report.warnings,
+                )
+
+    def test_line_without_connector_hint_is_not_classified_as_connector(self) -> None:
+        source = """<svg xmlns="http://www.w3.org/2000/svg" width="120" height="80" viewBox="0 0 120 80" role="img" aria-labelledby="title desc">
+  <title id="title">Neutral line fixture</title>
+  <desc id="desc">A line without a connector hint crossing a text label.</desc>
+  <!-- Label under test. -->
+  <text x="20" y="44" font-size="14">crossed label</text>
+  <!-- Neutral guide under test. -->
+  <line id="baselineGuide" x1="0" y1="40" x2="115" y2="40" stroke="#000" stroke-width="2"/>
+</svg>"""
+        report = self.report_for(source)
+        self.assertFalse(any("text/connector overlap" in warning for warning in report.warnings), report.warnings)
+
+    def test_embedded_raster_reference_is_rejected(self) -> None:
+        source = simple_svg().replace(
+            "  <!-- Shape under test. -->",
+            '  <!-- Shape under test. -->\n  <image href="fixture.png" x="0" y="0" width="120" height="80"/>',
+        )
+        report = self.report_for(source)
+        self.assertTrue(any("<image>" in error for error in report.errors), report.errors)
+
+
+class CheckSvgReferenceTests(unittest.TestCase):
+    def test_matching_same_stem_png_passes_reference_comparison(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            svg = root / "fixture.svg"
+            png = root / "fixture.png"
+            svg.write_text(simple_svg(), encoding="utf-8")
+            render_png(svg, png)
+            report = CHECK_SVG.check_file(
+                svg,
+                CHECK_SVG.CheckOptions(reference_mode="auto", compare_max_size=256),
+            )
+            self.assertTrue(report.reference_checked)
+            self.assertEqual([], report.errors)
+            self.assertEqual([], report.warnings)
+
+    def test_correct_nonidentical_recreation_passes_default_thresholds(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            reference_source = root / "reference-source.svg"
+            candidate = root / "fixture.svg"
+            reference = root / "fixture.png"
+            candidate_render = root / "candidate-render.png"
+            reference_source.write_text(simple_svg(), encoding="utf-8")
+            candidate.write_text(
+                simple_svg().replace(
+                    '<rect x="20" y="20" width="80" height="40" fill="#111111"/>',
+                    '<path d="M21 20H101V60H21Z" fill="#151515"/>',
+                ),
+                encoding="utf-8",
+            )
+            render_png(reference_source, reference)
+            render_png(candidate, candidate_render)
+            self.assertNotEqual(reference.read_bytes(), candidate_render.read_bytes())
+
+            report = CHECK_SVG.check_file(
+                candidate,
+                CHECK_SVG.CheckOptions(reference_mode="auto", compare_max_size=256),
+            )
+            self.assertTrue(report.reference_checked)
+            self.assertEqual([], report.errors)
+            self.assertEqual([], report.warnings)
+
+    def test_scaled_viewbox_with_matching_root_size_has_no_dimension_warning(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            svg = root / "fixture.svg"
+            png = root / "fixture.png"
+            source = simple_svg().replace(
+                'width="120" height="80" viewBox="0 0 120 80"',
+                'width="1400" height="980" viewBox="0 0 200 140"',
+            )
+            svg.write_text(source, encoding="utf-8")
+            render_png(svg, png)
+            report = CHECK_SVG.check_file(
+                svg,
+                CHECK_SVG.CheckOptions(reference_mode="auto", compare_max_size=256),
+            )
+            self.assertTrue(report.reference_checked)
+            self.assertEqual([], report.errors)
+            self.assertEqual([], report.warnings)
+
+    def test_missing_and_displaced_content_fails_reference_comparison(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            reference_source = root / "reference-source.svg"
+            candidate = root / "fixture.svg"
+            reference = root / "fixture.png"
+            reference_source.write_text(simple_svg(), encoding="utf-8")
+            candidate.write_text(simple_svg(rect_x=85, rect_width=35), encoding="utf-8")
+            render_png(reference_source, reference)
+            report = CHECK_SVG.check_file(
+                candidate,
+                CHECK_SVG.CheckOptions(reference_mode="auto", compare_max_size=256),
+            )
+            messages = [*report.errors, *report.warnings]
+            self.assertTrue(report.reference_checked)
+            self.assertTrue(any("reference ink recall" in message for message in messages), messages)
+            self.assertTrue(any("reference ink precision" in message for message in messages), messages)
+
+    def test_required_reference_reports_missing_png(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            svg = Path(directory) / "fixture.svg"
+            svg.write_text(simple_svg(), encoding="utf-8")
+            report = CHECK_SVG.check_file(svg, CHECK_SVG.CheckOptions(reference_mode="required"))
+            self.assertTrue(any("no same-stem PNG reference" in error for error in report.errors), report.errors)
+
+    def test_prohibited_raster_content_is_not_rendered_for_comparison(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            reference_source = root / "reference-source.svg"
+            candidate = root / "fixture.svg"
+            reference = root / "fixture.png"
+            reference_source.write_text(simple_svg(), encoding="utf-8")
+            candidate.write_text(
+                simple_svg().replace(
+                    "  <!-- Shape under test. -->",
+                    '  <!-- Shape under test. -->\n  <image href="fixture.png" x="0" y="0" width="120" height="80"/>',
+                ),
+                encoding="utf-8",
+            )
+            render_png(reference_source, reference)
+            report = CHECK_SVG.check_file(candidate, CHECK_SVG.CheckOptions(reference_mode="auto"))
+            self.assertFalse(report.reference_checked)
+            self.assertTrue(any("<image>" in error for error in report.errors), report.errors)
+            self.assertTrue(any("comparison skipped" in note for note in report.notes), report.notes)
 
 
 if __name__ == "__main__":
