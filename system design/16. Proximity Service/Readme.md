@@ -97,7 +97,7 @@ AND (longitude BETWEEN :long - radius AND :long + radius);
 - **Inefficient**: Requires scanning the entire database.
 - **Limited by one-dimensional indexes** (latitude/longitude).
 
-A potiential improvement is to build index on logitude and latitude columns, alhtough this is slighlty better but still vry slow.
+A potiential improvement is to build index on logitude and latitude columns, although this is slighlty better but still very slow.
 
 ### Better Approach
 - The problem with last approach is that the database index can only increase search speed in one dimension.
@@ -188,7 +188,7 @@ It maps a sphere to a !D index based on Hilbert curve.Two points that are close 
   </div>
 
 - **Divides the earth into small cells using a Hilbert curve**.
-- Great for geofencing becuase it can cover arbitrary areas with varying levels.
+- Great for geofencing because it can cover arbitrary areas with varying levels.
 - Geofencing also allows to define parameters that surround the area of interest.
 - Aother advantage if instead of having a fixed level of precision, we can specify min,max level and max cells in S2.
 
@@ -196,7 +196,7 @@ It maps a sphere to a !D index based on Hilbert curve.Two points that are close 
 ## Tradeoff Comparison
 
 #### Geohash
-- Easy to use and implement- No need to build/rebuild a tree
+- Easy to use and implement - No need to build/rebuild a tree
 - Supports fixed radius results
 - Updating the index is easy.
 - Cannot dynamically adjust the grid size based on population density.
