@@ -70,7 +70,7 @@ and data will be synced to n3 when the network partition is resolved.
 
 ### 2. Data Replication
 - Replicate data across `N` servers for high availability.
-- The N servers are chosen by walking clockwise from the server position and choose the first N servers on the ring to store data copies.Place replicas in distinct data centers to improve reliability in case of virtual nodes.
+- The N servers are chosen by walking clockwise from the server position and choose the first N servers on the ring to store data copies. Place replicas in distinct data centers to improve reliability in case of virtual nodes.
 
     <p align="center">
     <img src="./images/data-replication.svg" alt="Data replication" width="300">
