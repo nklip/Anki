@@ -299,7 +299,7 @@ With a well-chosen time-series DB, we might not need to introduce our own cachin
 
 Most time-series DBs don't support SQL simply because it is ineffective for querying time-series data. Here's an example SQL query for computing an exponential moving average:
 
-```
+```sql
 select id,
        temp,
        avg(temp) over (partition by group_nr order by time_read) as rolling_avg
@@ -379,7 +379,7 @@ Finally, we can also use cold storage to use old data, which is no longer used. 
 
 Configuration is loaded to cache servers. Rules are typically defined in YAML format. Here's an example:
 
-```
+```yaml
 - name: instance_down
   rules:
 
