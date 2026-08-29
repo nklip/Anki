@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1130" height="1066" viewBox="0 0 1130 1066" role="img" aria-labelledby="idempotency-title idempotency-desc">
+  <title id="idempotency-title">An idempotency key stops a double submit</title>
+  <desc id="idempotency-desc">A sequence diagram between a user and the reservation service. Step 1: the user generates a reservation order. Step 2: the service shows the reservation page carrying a reservation_id. Step 3a: the user submits the reservation with that reservation_id and it succeeds. Step 3b: the same submission is sent again with the same reservation_id, and a red X marks it as rejected before it reaches the service, because the unique constraint on reservation_id is violated.</desc>
+  <defs>
+    <marker id="head-flow" viewBox="0 0 21.1 16.6" refX="21.1" refY="8.3" markerWidth="21.1" markerHeight="16.6" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 21.1 8.3 0 16.6Z" fill="#000"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:35px;fill:#000}
+      .node{fill:none;stroke:#000;stroke-width:2.2}
+      .bar{fill:#fff;stroke:#000;stroke-width:2.2}
+      .ring{fill:#fff;stroke:#000;stroke-width:2.2}
+      .line{fill:none;stroke:#000;stroke-width:2.2}
+      .flow{fill:none;stroke:#000;stroke-width:2.2;marker-end:url(#head-flow)}
+      /* Every dashed run in the source shares one 17.59px period. */
+      .life,.dash{fill:none;stroke:#000;stroke-width:2.2;stroke-dasharray:10.9 6.69}
+      .dash.flow{marker-end:url(#head-flow)}
+      .actor{fill:#000}
+      .num{font-size:36px}
+      .num-wide{font-size:32px}
+      .note{font-size:31px}
+      .note-id{font-size:30px}
+      .err{font-size:35.5px;font-weight:bold;fill:#ff2600}
+      /* Arial is not the face the source used: it sets "(reservation_id)" ~2% wide
+         and "Submit" ~3% narrow, so those two words carry their own size. */
+      .id{font-size:34.3px}
+      .sub{font-size:36px}
+    </style>
+  </defs>
+  <rect id="background" width="1130" height="1066" fill="#fff"/>
+
+  <!-- Left participant: the person clicking. The lifeline runs behind the activation bar. -->
+  <g id="user">
+    <text id="label-user" x="76" y="67">User</text>
+    <g class="actor">
+      <circle cx="111.9" cy="94.6" r="17.55"/>
+      <path d="M76.75 147.25V138.6A35.125 17.3 0 0 1 147 138.6V147.25Z"/>
+    </g>
+    <path id="user-lifeline" class="life" d="M113.05 154.77V1038.25"/>
+    <rect id="user-activation" class="bar" x="102" y="233.17" width="20.83" height="805.08"/>
+  </g>
+
+  <!-- Right participant. -->
+  <g id="reservation-service">
+    <rect class="node" x="828.83" y="60.5" width="254.53" height="103.33"/>
+    <text x="863" y="105">Reservation</text>
+    <text x="897" y="145">Service</text>
+    <!-- The source lifeline is a hair off vertical: it drifts 0.6px left over its length. -->
+    <path id="service-lifeline" class="life" d="M956.18 163.11 955.57 1038.25"/>
+    <rect id="service-activation-1" class="bar" x="945.45" y="320.17" width="21.16" height="201.22"/>
+    <rect id="service-activation-2" class="bar" x="945.45" y="677.5" width="21.16" height="201.33"/>
+  </g>
+
+  <!-- 1. The order is generated. Each message line breaks where its label sits on top of it. -->
+  <g id="step-1">
+    <path class="line" d="M122.83 347.55H311.86"/>
+    <path class="flow" d="M797.33 347.55H943.9"/>
+    <circle class="ring" cx="334.04" cy="347.73" r="21.08"/>
+    <text class="num" x="324" y="361">1</text>
+    <text x="366" y="359.5">Generate reservation order</text>
+  </g>
+
+  <!-- 2. The reply is dashed, and carries the reservation_id the next step will reuse. -->
+  <g id="step-2">
+    <path class="dash" d="M945.61 495.63H890.45" stroke-dashoffset="1.42"/>
+    <path class="dash flow" d="M216.65 495.63H124.75" stroke-dashoffset="9.15"/>
+    <circle class="ring" cx="238.83" cy="495.87" r="21.08"/>
+    <text class="num" x="228" y="510">2</text>
+    <text x="270" y="507.5">Show <tspan x="369">reservation</tspan> <tspan x="553">page</tspan> <tspan class="id" x="641">(reservation_id)</tspan></text>
+  </g>
+
+  <!-- 3a. First submit: it lands. -->
+  <g id="step-3a">
+    <path class="line" d="M122.83 713.73H242.04"/>
+    <path class="flow" d="M848.77 713.73H943.9"/>
+    <circle class="ring" cx="264.23" cy="713.97" r="21.08"/>
+    <text class="num-wide" x="247" y="725">3a</text>
+    <text x="294" y="725"><tspan class="sub">Submit</tspan> <tspan x="416">reservation</tspan> <tspan class="id" x="599">(reservation_id)</tspan></text>
+  </g>
+
+  <!-- 3b. The retry is identical, so the database rejects it; the line breaks around the X. -->
+  <g id="step-3b">
+    <path class="line" d="M122.83 846.25H242.04"/>
+    <path class="line" d="M846.26 846.25H873.96"/>
+    <path class="flow" d="M902.57 846.25H943.9"/>
+    <circle class="ring" cx="264.22" cy="846.42" r="21.08"/>
+    <text class="num-wide" x="246" y="858">3b</text>
+    <text x="292" y="858"><tspan class="sub">Submit</tspan> <tspan x="414">reservation</tspan> <tspan class="id" x="597">(reservation_id)</tspan></text>
+  </g>
+
+  <!-- Why 3b fails, annotated off to the side. -->
+  <g id="rejection">
+    <text class="err" x="875" y="860">X</text>
+    <path class="flow" d="M766 977.3 872 859.8"/>
+    <text class="note" x="539" y="1006.5">Unique constraint is violated</text>
+    <text class="note-id" x="629" y="1042">(reservation_id)</text>
+  </g>
+</svg>

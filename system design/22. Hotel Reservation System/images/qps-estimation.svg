@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1290" height="630" viewBox="0 0 1290 630" role="img" aria-labelledby="qps-title qps-desc">
+  <title id="qps-title">Hotel reservation query-per-second estimation funnel</title>
+  <desc id="qps-desc">An inverted funnel narrows from 300 queries per second viewing hotel or room details, to 30 queries per second ordering the booking page, to 3 queries per second reserving rooms.</desc>
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:44px;fill:#000;text-anchor:middle}
+      .funnel{fill:#fff;stroke:#000;stroke-width:2.2;stroke-linejoin:round}
+      .divider{fill:none;stroke:#000;stroke-width:2.2}
+    </style>
+  </defs>
+  <rect id="background" width="1290" height="630" fill="#fff"/>
+
+  <!-- The outer triangle expresses how traffic narrows toward actual reservations. -->
+  <path id="qps-funnel" class="funnel" d="M24 25.5H1272L648 613Z"/>
+
+  <!-- Horizontal cuts divide the three stages at their exact funnel boundaries. -->
+  <path id="view-to-booking-divider" class="divider" d="M214 205.5H1082"/>
+  <path id="booking-to-reservation-divider" class="divider" d="M415.5 395.5H880.5"/>
+
+  <!-- Traffic estimates, ordered from broad browsing demand to completed reservations. -->
+  <g id="qps-labels">
+    <text x="648" y="99">View hotel/room detail</text>
+    <text x="648" y="148">(QPS=300)</text>
+
+    <text x="648" y="279">Order booking page</text>
+    <text x="648" y="328">(QPS=30)</text>
+
+    <text x="648" y="450">Reserve rooms</text>
+    <text x="648" y="499">(QPS=3)</text>
+  </g>
+</svg>

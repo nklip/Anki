@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1746" height="1092" viewBox="0 0 1746 1092" role="img" aria-labelledby="unique-title unique-desc">
+  <title id="unique-title">Duplicate reservation insert rejected by a unique constraint</title>
+  <desc id="unique-desc">A user's first click inserts reservation ID 121 and stores one row. A second click attempts the same reservation ID, violates the reservation table's unique constraint, and is rejected.</desc>
+
+  <!-- Shared typography, strokes, and arrowheads. -->
+  <defs>
+    <marker id="flow-arrowhead" viewBox="0 0 20 18" refX="20" refY="9" markerWidth="20" markerHeight="18" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+      <path d="M0 0 20 9 0 18Z" fill="#000"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#000}
+      .heading{font-size:36px;text-anchor:middle}
+      .request{fill:#fff;stroke:#000;stroke-width:2}
+      .request-text{font-size:36px}
+      .request-heading{font-size:36px}
+      .plain-shaft{fill:none;stroke:#000;stroke-width:2}
+      .flow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#flow-arrowhead)}
+      .dashed-flow{fill:none;stroke:#000;stroke-width:2;stroke-dasharray:11 8;marker-end:url(#flow-arrowhead)}
+      .duplicate-flow{fill:none;stroke:#000;stroke-width:2;stroke-dasharray:11 8;marker-start:url(#flow-arrowhead);marker-end:url(#flow-arrowhead)}
+      .duplicate-id{fill:none;stroke:#ee451d;stroke-width:5;stroke-linejoin:round}
+      .schema-line{fill:none;stroke:#bac0c1;stroke-width:5}
+      .schema-title{font-size:28px;font-weight:700;text-anchor:middle}
+      .schema-field{font-size:28px}
+      .schema-key{font-weight:700}
+      .stored-row{fill:#fff;stroke:#000;stroke-width:2.5;stroke-dasharray:12 7}
+      .success-mark{fill:#3897fa}
+      .failure-mark{fill:#ee451d}
+    </style>
+  </defs>
+  <rect id="background" width="1746" height="1092" fill="#fff"/>
+
+  <!-- Two clicks from the same user produce two identical insert attempts. -->
+  <g id="click-origins">
+    <text class="heading" x="313" y="67">User’s first click</text>
+    <circle cx="313" cy="93" r="18" fill="#000"/>
+    <path d="M279 145V136.5A34.5 17.5 0 0 1 348 136.5V145Z" fill="#000"/>
+    <path id="firstClickShaft" class="plain-shaft" d="M313 145V353"/>
+
+    <text class="heading" x="1047" y="67">User’s second click</text>
+    <circle cx="1047" cy="93" r="18" fill="#000"/>
+    <path d="M1013 145V136.5A34.5 17.5 0 0 1 1082 136.5V145Z" fill="#000"/>
+    <path id="secondClickShaft" class="plain-shaft" d="M1047 145V353"/>
+  </g>
+
+  <!-- Insert request containers and highlighted duplicate reservation IDs. -->
+  <g id="insert-requests">
+    <rect class="request" x="50" y="354" width="507" height="387"/>
+    <rect class="request" x="784" y="354" width="507" height="387"/>
+    <rect id="first-duplicate-id" class="duplicate-id" x="61.5" y="404.5" width="84" height="45"/>
+    <rect id="second-duplicate-id" class="duplicate-id" x="796.5" y="404.5" width="84" height="45"/>
+  </g>
+
+  <!-- The double-ended dashed line makes the repeated ID explicit. -->
+  <path id="duplicateReservationIdFlow" class="duplicate-flow" d="M150 427.5H792"/>
+
+  <!-- SQL-like values remain real text and sit above connector geometry. -->
+  <g id="insert-text" class="request-text">
+    <text class="request-heading" transform="translate(66 399) scale(.95 1)">INSERT INTO RESERVATION (</text>
+    <text x="66" y="439">121,</text>
+    <text x="66" y="479">2,</text>
+    <text x="66" y="519">3,</text>
+    <text x="66" y="559">2021-06-01,</text>
+    <text x="66" y="599">2021-06-04,</text>
+    <text x="66" y="639">pending_pay,</text>
+    <text x="66" y="679">guest1</text>
+    <text x="66" y="719">)</text>
+
+    <text class="request-heading" transform="translate(800 399) scale(.95 1)">INSERT INTO RESERVATION (</text>
+    <text x="800" y="439">121,</text>
+    <text x="800" y="479">2,</text>
+    <text x="800" y="519">3,</text>
+    <text x="800" y="559">2021-06-01,</text>
+    <text x="800" y="599">2021-06-04,</text>
+    <text x="800" y="639">pending_pay,</text>
+    <text x="800" y="679">guest1</text>
+    <text x="800" y="719">)</text>
+  </g>
+
+  <!-- Reservation schema: reservation_id is the unique key that rejects the retry. -->
+  <g id="reservation-schema">
+    <rect class="schema-line" x="1427" y="31" width="271" height="415"/>
+    <path class="schema-line" d="M1427 80H1698M1427 137H1698"/>
+    <text class="schema-title" x="1562.5" y="67">reservation</text>
+    <text class="schema-field schema-key" x="1440" y="122">reservation_id</text>
+    <text class="schema-field" x="1440" y="177">hotel_id</text>
+    <text class="schema-field" x="1440" y="218">room_type_id</text>
+    <text class="schema-field" x="1440" y="259">start_date</text>
+    <text class="schema-field" x="1440" y="301">end_date</text>
+    <text class="schema-field" x="1440" y="342">status</text>
+    <text class="schema-field" x="1440" y="384">guest_id</text>
+  </g>
+
+  <!-- The callout points to the repeated key without touching its text. -->
+  <path id="uniqueConstraintViolationFlow" class="dashed-flow" d="M1417 594 884 441"/>
+  <text class="heading" x="1540" y="602">
+    <tspan x="1540">Unique</tspan>
+    <tspan x="1540" dy="40">constraint</tspan>
+    <tspan x="1540" dy="40">violation</tspan>
+  </text>
+
+  <!-- The first insert succeeds; the duplicate retry fails. Shafts are split around the symbols. -->
+  <g id="insert-outcomes">
+    <path id="firstOutcomeUpperShaft" class="plain-shaft" d="M313 741V815"/>
+    <text class="success-mark" x="313" y="870" text-anchor="middle" font-size="58" font-weight="700">✓</text>
+    <path id="firstOutcomeFlow" class="flow" d="M313 890V949"/>
+
+    <path id="secondOutcomeUpperShaft" class="plain-shaft" d="M1047 741V794"/>
+    <text class="failure-mark" x="1047" y="864" text-anchor="middle" font-size="56" font-weight="700">X</text>
+    <path id="secondOutcomeFlow" class="flow" d="M1047 883V949"/>
+  </g>
+
+  <!-- Only the first click creates a persisted reservation row. -->
+  <g id="stored-reservation-row">
+    <rect class="stored-row" x="138" y="950" width="1068" height="116"/>
+    <text transform="translate(180 1015) scale(1.033 1)" font-size="34">row 1: 121, 2, 3, 2021-06-01, 2021-06-04, pending_pay, guest1</text>
+  </g>
+</svg>

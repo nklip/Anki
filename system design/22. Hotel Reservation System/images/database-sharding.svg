@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1964" height="1122" viewBox="0 0 1964 1122" role="img" aria-labelledby="database-sharding-title database-sharding-desc">
+  <title id="database-sharding-title">Sharding the reservation database by hotel_id</title>
+  <desc id="database-sharding-desc">The reservation service routes every request through a hotel_id modulo 16 hash, which fans out to sixteen database shards labelled Shard 0 through Shard 15.</desc>
+  <defs>
+    <marker id="head-flow" viewBox="0 0 23 17" refX="23" refY="8.5" markerWidth="23" markerHeight="17" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 23 8.5 0 17Z" fill="#000"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:36.5px;fill:#000;text-anchor:middle}
+      .node{fill:#fff;stroke:#000;stroke-width:2}
+      .flow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#head-flow)}
+    </style>
+  </defs>
+  <rect id="background" width="1964" height="1122" fill="#fff"/>
+
+  <!-- Caller. -->
+  <rect id="reservation-service" class="node" x="852.5" y="24" width="264" height="107.5"/>
+  <text id="reservation-service-label" x="984" y="70"><tspan x="984">Reservation</tspan><tspan x="984" dy="42">Service</tspan></text>
+  <path id="arrow-service-to-router" class="flow" d="M984.5 131.5V319.5"/>
+
+  <!-- Shard key: hotel_id modulo 16 picks the target shard. -->
+  <path id="shard-router" class="node" d="M984 320 1149.6 401.7 984 483.4 818.4 401.7Z"/>
+  <!-- letter-spacing matches the wider glyph tracking of the source rendering. -->
+  <text id="shard-router-label" x="988" y="414" letter-spacing="0.5">hotel_id % 16</text>
+
+  <!-- Sixteen shards, drawn as cylinders: open body path plus the top ellipse. -->
+  <g id="shards">
+    <g id="shard-0"><path class="node" d="M50 352V452.75A62.75 12.75 0 0 0 175.5 452.75V352"/><ellipse class="node" cx="112.75" cy="352" rx="62.75" ry="12.75"/><text x="112.75" y="400"><tspan x="112.75">Shard</tspan><tspan x="112.75" dy="42">0</tspan></text></g>
+    <g id="shard-1"><path class="node" d="M72.25 495.5V596.25A62.75 12.75 0 0 0 197.75 596.25V495.5"/><ellipse class="node" cx="135" cy="495.5" rx="62.75" ry="12.75"/><text x="135" y="544"><tspan x="135">Shard</tspan><tspan x="135" dy="41">1</tspan></text></g>
+    <g id="shard-2"><path class="node" d="M181.5 630V730.75A62.75 12.75 0 0 0 307 730.75V630"/><ellipse class="node" cx="244.25" cy="630" rx="62.75" ry="12.75"/><text x="244.25" y="679"><tspan x="244.25">Shard</tspan><tspan x="244.25" dy="41">2</tspan></text></g>
+    <g id="shard-3"><path class="node" d="M313.25 755.5V856.25A62.75 12.75 0 0 0 438.75 856.25V755.5"/><ellipse class="node" cx="376" cy="755.5" rx="62.75" ry="12.75"/><text x="376" y="804"><tspan x="376">Shard</tspan><tspan x="376" dy="42">3</tspan></text></g>
+    <g id="shard-4"><path class="node" d="M447.75 828V928.75A62.75 12.75 0 0 0 573.25 928.75V828"/><ellipse class="node" cx="510.5" cy="828" rx="62.75" ry="12.75"/><text x="510.5" y="877"><tspan x="510.5">Shard</tspan><tspan x="510.5" dy="41">4</tspan></text></g>
+    <g id="shard-5"><path class="node" d="M582.5 887.5V988.25A62.75 12.75 0 0 0 708 988.25V887.5"/><ellipse class="node" cx="645.25" cy="887.5" rx="62.75" ry="12.75"/><text x="645.25" y="936"><tspan x="645.25">Shard</tspan><tspan x="645.25" dy="41">5</tspan></text></g>
+    <g id="shard-6"><path class="node" d="M717 953.5V1054.25A62.75 12.75 0 0 0 842.5 1054.25V953.5"/><ellipse class="node" cx="779.75" cy="953.5" rx="62.75" ry="12.75"/><text x="779.75" y="1003"><tspan x="779.75">Shard</tspan><tspan x="779.75" dy="42">6</tspan></text></g>
+    <g id="shard-7"><path class="node" d="M851.5 978.5V1079.25A62.75 12.75 0 0 0 977 1079.25V978.5"/><ellipse class="node" cx="914.25" cy="978.5" rx="62.75" ry="12.75"/><text x="914.25" y="1028"><tspan x="914.25">Shard</tspan><tspan x="914.25" dy="41">7</tspan></text></g>
+    <g id="shard-8"><path class="node" d="M986 978.5V1079.25A62.75 12.75 0 0 0 1111.5 1079.25V978.5"/><ellipse class="node" cx="1048.75" cy="978.5" rx="62.75" ry="12.75"/><text x="1048.75" y="1028"><tspan x="1048.75">Shard</tspan><tspan x="1048.75" dy="42">8</tspan></text></g>
+    <g id="shard-9"><path class="node" d="M1120.5 953.5V1054.25A62.75 12.75 0 0 0 1246 1054.25V953.5"/><ellipse class="node" cx="1183.25" cy="953.5" rx="62.75" ry="12.75"/><text x="1183.25" y="1003"><tspan x="1183.25">Shard</tspan><tspan x="1183.25" dy="42">9</tspan></text></g>
+    <g id="shard-10"><path class="node" d="M1255.25 887.5V988.25A62.75 12.75 0 0 0 1380.75 988.25V887.5"/><ellipse class="node" cx="1318" cy="887.5" rx="62.75" ry="12.75"/><text x="1318" y="936"><tspan x="1318">Shard</tspan><tspan x="1318" dy="42">10</tspan></text></g>
+    <g id="shard-11"><path class="node" d="M1389.75 828V928.75A62.75 12.75 0 0 0 1515.25 928.75V828"/><ellipse class="node" cx="1452.5" cy="828" rx="62.75" ry="12.75"/><text x="1452.5" y="877"><tspan x="1452.5">Shard</tspan><tspan x="1452.5" dy="41">11</tspan></text></g>
+    <g id="shard-12"><path class="node" d="M1524.25 755.5V856.25A62.75 12.75 0 0 0 1649.75 856.25V755.5"/><ellipse class="node" cx="1587" cy="755.5" rx="62.75" ry="12.75"/><text x="1587" y="804"><tspan x="1587">Shard</tspan><tspan x="1587" dy="41">12</tspan></text></g>
+    <g id="shard-13"><path class="node" d="M1658.75 620.5V721.25A62.75 12.75 0 0 0 1784.25 721.25V620.5"/><ellipse class="node" cx="1721.5" cy="620.5" rx="62.75" ry="12.75"/><text x="1721.5" y="670"><tspan x="1721.5">Shard</tspan><tspan x="1721.5" dy="42">13</tspan></text></g>
+    <g id="shard-14"><path class="node" d="M1771.25 495.5V596.25A62.75 12.75 0 0 0 1896.75 596.25V495.5"/><ellipse class="node" cx="1834" cy="495.5" rx="62.75" ry="12.75"/><text x="1834" y="544"><tspan x="1834">Shard</tspan><tspan x="1834" dy="41">14</tspan></text></g>
+    <g id="shard-15"><path class="node" d="M1793.5 352V452.75A62.75 12.75 0 0 0 1919 452.75V352"/><ellipse class="node" cx="1856.25" cy="352" rx="62.75" ry="12.75"/><text x="1856.25" y="400"><tspan x="1856.25">Shard</tspan><tspan x="1856.25" dy="41">15</tspan></text></g>
+  </g>
+  <!-- Routing fan-out: one connector per shard, each ending on the shard outline. -->
+  <g id="shard-connectors">
+    <path id="arrow-shard-0" class="flow" d="M818.8 401.5 175.35 401.5"/>
+    <path id="arrow-shard-1" class="flow" d="M860.41 422.43 197.6 534.64"/>
+    <path id="arrow-shard-2" class="flow" d="M889.82 436.94 306.85 656.27"/>
+    <path id="arrow-shard-3" class="flow" d="M913.21 448.47 438.6 763.49"/>
+    <path id="arrow-shard-4" class="flow" d="M929.48 456.5 566.02 822"/>
+    <path id="arrow-shard-5" class="flow" d="M944.57 463.95 682.84 877.11"/>
+    <path id="arrow-shard-6" class="flow" d="M960.15 471.63 800.47 941.23"/>
+    <path id="arrow-shard-7" class="flow" d="M975.35 479.13 920.81 965.57"/>
+    <path id="arrow-shard-8" class="flow" d="M991.93 479.49 1041.87 965.58"/>
+    <path id="arrow-shard-9" class="flow" d="M1007.31 471.9 1162.31 941.25"/>
+    <path id="arrow-shard-10" class="flow" d="M1022.87 464.23 1279.83 877.2"/>
+    <path id="arrow-shard-11" class="flow" d="M1038.15 456.68 1396.8 822.07"/>
+    <path id="arrow-shard-12" class="flow" d="M1054.36 448.69 1524.4 763.68"/>
+    <path id="arrow-shard-13" class="flow" d="M1079.31 436.38 1658.9 647.85"/>
+    <path id="arrow-shard-14" class="flow" d="M1107.59 422.43 1771.4 534.76"/>
+    <path id="arrow-shard-15" class="flow" d="M1149.2 401.5 1793.65 401.5"/>
+  </g>
+</svg>

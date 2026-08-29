@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1094" height="682" viewBox="0 0 1094 682" role="img" aria-labelledby="inventory-cache-title inventory-cache-desc">
+  <title id="inventory-cache-title">Inventory cache for hotel reservations</title>
+  <desc id="inventory-cache-desc">The reservation service queries an inventory cache and updates shard 15 of the inventory database. The database asynchronously refreshes the cache.</desc>
+  <defs>
+    <marker id="head-flow" viewBox="0 0 21 17" refX="21" refY="8.5" markerWidth="21" markerHeight="17" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 21 8.5 0 17Z" fill="#000"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:39px;fill:#000}
+      .node{fill:#fff;stroke:#000;stroke-width:2.15}
+      .line{fill:none;stroke:#000;stroke-width:2.15}
+      .flow{fill:none;stroke:#000;stroke-width:2.15;marker-end:url(#head-flow)}
+      .store-label{font-size:38px}
+      .db-label{font-size:37px}
+    </style>
+  </defs>
+  <rect id="background" width="1094" height="682" fill="#fff"/>
+
+  <!-- Reservation service at the top of the read/write split. -->
+  <g id="reservation-service">
+    <rect class="node" x="424.5" y="29.5" width="279.5" height="117.5"/>
+    <text x="461.5" y="79">Reservation</text>
+    <text x="500" y="125.5">Service</text>
+  </g>
+
+  <!-- Read path: the label occupies the intentional gap between two shaft segments. -->
+  <g id="query-inventory">
+    <path class="line" d="M516.5 147 413.5 276.5"/>
+    <text x="248" y="326">Query inventory</text>
+    <path id="queryInventoryArrow" class="flow" d="M357.5 348 248.5 484"/>
+  </g>
+
+  <!-- Write path to the authoritative inventory shard. -->
+  <g id="update-inventory">
+    <path class="line" d="M612.5 147 720 277"/>
+    <text x="601" y="326">Update inventory</text>
+    <path id="updateInventoryArrow" class="flow" d="M780 348 889.5 480.5"/>
+  </g>
+
+  <!-- Redis-style cache icon, kept as editable vector faces and marks. -->
+  <g id="inventory-cache-icon">
+    <path d="M142.5 548.5 199.5 525 256.5 547.5 256.5 567 199.5 595 142.5 569Z" fill="#a62610"/>
+    <path d="M142.5 533 199.5 510 256.5 532.5 256.5 551 199.5 578 142.5 553Z" fill="#d53318"/>
+    <path d="M142.5 517 199.5 493.5 256.5 516 256.5 535 199.5 561.5 142.5 536Z" fill="#a62610"/>
+    <path d="M142.5 517 199.5 493.5 256.5 516 199.5 540Z" fill="#e4381b"/>
+    <ellipse cx="175.5" cy="518.5" rx="14.5" ry="6.5" fill="#fff"/>
+    <path d="M198.5 500 202 508.5 212 509 204 514.5 206.5 523 198.5 517.5 190.5 523 193 514.5 185 509 195 508.5Z" fill="#fff"/>
+    <path d="M184.5 527.5 211.5 524 199.5 538Z" fill="#fff"/>
+  </g>
+
+  <!-- Inventory database shard. The lower arc closes the cylinder body. -->
+  <g id="inventory-database">
+    <path class="node" d="M874.5 489V598A66.25 12.4 0 0 0 1007 598V489"/>
+    <ellipse class="node" cx="940.75" cy="489" rx="66.25" ry="13.2"/>
+    <text class="db-label" x="886" y="544">Shard</text>
+    <text class="db-label" x="919" y="584">15</text>
+  </g>
+
+  <!-- Cache invalidation travels from the database back to Redis. -->
+  <g id="async-cache-update">
+    <path class="line" d="M874.5 544.5H765"/>
+    <path id="asyncUpdateCacheArrow" class="flow" d="M389 544.5H261"/>
+    <text x="400" y="558">Async update cache</text>
+  </g>
+
+  <text class="store-label" x="58.5" y="644">Inventory Cache</text>
+  <text class="store-label" x="828" y="651">Inventory DB</text>
+</svg>

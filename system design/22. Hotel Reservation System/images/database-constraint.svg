@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1478" height="1368" viewBox="0 0 1478 1368" role="img" aria-labelledby="database-constraint-title database-constraint-desc">
+  <title id="database-constraint-title">Database constraint rejects an overbooking</title>
+  <desc id="database-constraint-desc">Two users read the same room inventory. User 1 reserves the last room and commits successfully. User 2 then tries to reserve the same room, and the database constraint total_inventory minus total_reserved greater than or equal to zero rejects the write.</desc>
+  <defs>
+    <marker id="head-flow" viewBox="0 0 18 14" refX="18" refY="7" markerWidth="18" markerHeight="14" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 18 7 0 14Z" fill="#000"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:29.3px;fill:#000}
+      .node{fill:none;stroke:#000;stroke-width:2}
+      .flow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#head-flow)}
+      .actor{fill:#000}
+    </style>
+  </defs>
+  <rect id="background" width="1478" height="1368" fill="#fff"/>
+
+  <!-- Time axis down the left edge. -->
+  <text id="label-time" x="46.5" y="66">Time</text>
+  <path id="axis-time" class="flow" d="M123 25V1333"/>
+
+  <!-- Step 1: both users read the same counters. -->
+  <rect id="state-user1" class="node" x="153" y="84" width="313" height="85"/>
+  <text id="state-user1-text" x="308.5" y="119.5" text-anchor="middle"><tspan x="308.5">total_inventory = 100</tspan><tspan x="308.5" dy="33">total_reserved = 99</tspan></text>
+  <rect id="state-user2" class="node" x="1132" y="84" width="313" height="85"/>
+  <text id="state-user2-text" x="1287" y="119.5" text-anchor="middle"><tspan x="1287">total_inventory = 100</tspan><tspan x="1287" dy="33">total_reserved = 99</tspan></text>
+
+  <!-- Actors. Head plus an elliptical-capped torso, matching the source silhouette. -->
+  <text id="label-user1" x="575" y="77.5" text-anchor="middle">User 1</text>
+  <g id="actor-user1" class="actor">
+    <circle cx="575.5" cy="111.5" r="14.5"/>
+    <path d="M546 155V149A29 16 0 0 1 604 149V155Z"/>
+  </g>
+  <text id="label-user2" x="1023" y="77.5" text-anchor="middle">User 2</text>
+  <g id="actor-user2" class="actor">
+    <circle cx="1022.5" cy="111.5" r="14.5"/>
+    <path d="M994 155V149A29 16 0 0 1 1052 149V155Z"/>
+  </g>
+
+  <!-- Step markers. -->
+  <g id="step-1-user1"><circle class="node" cx="513.5" cy="125.5" r="17.5"/><text x="513.5" y="137" text-anchor="middle">1</text></g>
+  <g id="step-1-user2"><circle class="node" cx="1087.5" cy="125.5" r="17.5"/><text x="1087.5" y="137" text-anchor="middle">1</text></g>
+  <g id="step-2"><circle class="node" cx="852" cy="344.5" r="17.5"/><text x="852" y="356" text-anchor="middle">2</text></g>
+  <g id="step-3"><circle class="node" cx="401.5" cy="507.5" r="17.5"/><text x="401.5" y="519" text-anchor="middle">3</text></g>
+  <g id="step-4"><circle class="node" cx="420" cy="711" r="17.5"/><text x="420" y="722.5" text-anchor="middle">4</text></g>
+  <g id="step-5"><circle class="node" cx="496.5" cy="897" r="17.5"/><text x="496.5" y="908.5" text-anchor="middle">5</text></g>
+  <g id="step-6"><circle class="node" cx="868" cy="1035.5" r="17.5"/><text x="868" y="1047" text-anchor="middle">6</text></g>
+
+  <!-- User 2 timeline: reads inventory early, writes late. -->
+  <path id="arrow-user2-read" class="flow" d="M1023 133V309"/>
+  <text id="label-step-2" x="1023" y="338.5" text-anchor="middle"><tspan x="1023">Check room inventory</tspan><tspan x="1023" dy="34">1 room left</tspan></text>
+  <path id="arrow-user2-write" class="flow" d="M1023 382V995"/>
+  <text id="label-step-6" x="1023" y="1025" text-anchor="middle"><tspan x="1023">Reserve room:</tspan><tspan x="1023" dy="33.5">total_reserved += 1</tspan></text>
+
+  <!-- User 1 timeline: read, reserve, commit. -->
+  <path id="arrow-user1-read" class="flow" d="M575 133V472"/>
+  <text id="label-step-3" x="575" y="501.5" text-anchor="middle"><tspan x="575">Check room inventory</tspan><tspan x="575" dy="34">1 room left</tspan></text>
+  <path id="arrow-user1-reserve" class="flow" d="M575 545V675"/>
+  <text id="label-step-4" x="575" y="704.5" text-anchor="middle"><tspan x="575">Reserve room:</tspan><tspan x="575" dy="34">total_reserved += 1</tspan></text>
+  <path id="arrow-user1-commit" class="flow" d="M575 748V878"/>
+  <text id="label-step-5" x="575" y="907.5" text-anchor="middle">Commit</text>
+
+  <!-- Outcome glyphs drawn as paths so they do not depend on symbol fonts. -->
+  <path id="mark-success" d="M582 928 590 928 576 949 572.5 961 571 961 564 949 560 945.5 561.5 943.5 570.5 949.5 575 940Z" fill="#3897fa"/>
+  <g id="mark-failure" fill="#ee451d">
+    <path d="M1009 1079 1016 1079 1038 1110 1031 1110Z"/>
+    <path d="M1029 1079 1036 1079 1014 1110 1008 1110Z"/>
+  </g>
+
+  <!-- Callout pointing at the rejected write. -->
+  <path id="arrow-constraint" class="flow" d="M818 1230.5 983.2 1068.8"/>
+  <text id="label-constraint" x="796.5" y="1260" text-anchor="middle">total_inventory - total_reserved &gt;= 0 constraint is violated</text>
+</svg>

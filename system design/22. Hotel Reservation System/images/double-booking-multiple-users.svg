@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1438" height="1262" viewBox="0 0 1438 1262" role="img" aria-labelledby="double-booking-multiple-users-title double-booking-multiple-users-desc">
+  <title id="double-booking-multiple-users-title">Two users double-book the last room</title>
+  <desc id="double-booking-multiple-users-desc">A time axis runs down the left. Two users each read the same room inventory, total_inventory 100 and total_reserved 99, so both see one room left. User 2 checks first and user 1 checks second, but because neither has committed yet, both go on to reserve the room by incrementing total_reserved. User 1 commits, then user 2 commits, and both commits succeed. Each ends with total_reserved 100, so the single remaining room has been sold twice.</desc>
+  <defs>
+    <marker id="head-flow" viewBox="0 0 14.5 12" refX="14.5" refY="6" markerWidth="14.5" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 14.5 6 0 12Z" fill="#000"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:27px;fill:#000}
+      .node{fill:none;stroke:#000;stroke-width:1.65}
+      .flow{fill:none;stroke:#000;stroke-width:1.65;marker-end:url(#head-flow)}
+      .actor{fill:#000}
+      .ok{fill:none;stroke:#0096ff;stroke-width:4.85;stroke-linecap:round;stroke-linejoin:round}
+    </style>
+  </defs>
+  <rect id="background" width="1438" height="1262" fill="#fff"/>
+
+  <!-- Time axis down the left edge; everything below is ordered by it. -->
+  <text id="label-time" x="51.5" y="75">Time</text>
+  <path id="axis-time" class="flow" d="M133.44 38V1240.5"/>
+
+  <!-- Step 1: both users read the same counters, so both see one room left. -->
+  <rect id="state-user1-before" class="node" x="160.93" y="92.07" width="288.24" height="78.43"/>
+  <text id="state-user1-before-text" x="179.5" y="126"><tspan x="179.5">total_inventory = 100</tspan><tspan x="189" y="156">total_reserved = 99</tspan></text>
+  <rect id="state-user2-before" class="node" x="1060.93" y="92.07" width="288.24" height="78.43"/>
+  <text id="state-user2-before-text" x="1079.5" y="126"><tspan x="1079.5">total_inventory = 100</tspan><tspan x="1089" y="156">total_reserved = 99</tspan></text>
+
+  <!-- Actors: head plus an elliptical-capped torso, matching the source silhouette. -->
+  <text id="label-user1" x="509" y="86">User 1</text>
+  <g id="actor-user1" class="actor">
+    <circle cx="549" cy="118" r="13"/>
+    <path d="M522 157.5V152.05A26.75 14.15 0 0 1 575.5 152.05V157.5Z"/>
+  </g>
+  <text id="label-user2" x="921" y="86">User 2</text>
+  <g id="actor-user2" class="actor">
+    <circle cx="960.8" cy="118" r="13"/>
+    <path d="M934 157.5V152.05A26.75 14.15 0 0 1 987.5 152.05V157.5Z"/>
+  </g>
+
+  <!-- User 2 acts first: check, then reserve, then commit. -->
+  <path id="arrow-user2-check" class="flow" d="M960.94 157.5V299"/>
+  <text id="label-step-2" x="830" y="327">Check room inventory</text>
+  <text id="label-step-2b" x="896.5" y="359">1 room left</text>
+  <path id="arrow-user2-reserve" class="flow" d="M960.94 365V802"/>
+  <text id="label-step-5" x="872" y="830">Reserve room:</text>
+  <text id="label-step-5b" x="844.5" y="861">total_reserved += 1</text>
+  <path id="arrow-user2-commit" class="flow" d="M960.94 868V1132"/>
+  <text id="label-step-7" x="914" y="1160">Commit</text>
+
+  <!-- User 1 interleaves: it reads after user 2 but commits first. -->
+  <path id="arrow-user1-check" class="flow" d="M549.17 157.5V449"/>
+  <text id="label-step-3" x="418" y="477">Check room inventory</text>
+  <text id="label-step-3b" x="484.5" y="509">1 room left</text>
+  <path id="arrow-user1-reserve" class="flow" d="M549.17 515V636"/>
+  <text id="label-step-4" x="460.5" y="664">Reserve room:</text>
+  <text id="label-step-4b" x="432.5" y="695">total_reserved += 1</text>
+  <path id="arrow-user1-commit" class="flow" d="M549.17 701V999"/>
+  <text id="label-step-6" x="502.5" y="1027">Commit</text>
+
+  <!-- Both commits succeed: each user ends at total_reserved = 100 for the same single room. -->
+  <rect id="state-user1-after" class="node" x="160.93" y="978.36" width="288.24" height="78.28"/>
+  <text id="state-user1-after-text" x="179.5" y="1012"><tspan x="179.5">total_inventory = 100</tspan><tspan x="181.5" y="1043">total_reserved = 100</tspan></text>
+  <path id="ok-user1" class="ok" d="M537.3 1066.2 545.6 1077.4 560.6 1051.3"/>
+  <rect id="state-user2-after" class="node" x="1060.93" y="1111.64" width="288.24" height="78.36"/>
+  <text id="state-user2-after-text" x="1079.5" y="1145"><tspan x="1079.5">total_inventory = 100</tspan><tspan x="1081.5" y="1176">total_reserved = 100</tspan></text>
+  <path id="ok-user2" class="ok" d="M948.8 1195.7 957.1 1206.9 972.1 1180.8"/>
+
+  <!-- Step markers, numbered in the order the steps actually happen. -->
+  <g id="step-markers">
+    <g id="step-1-0"><circle class="node" cx="492.63" cy="130.68" r="15.92"/><text x="492.63" y="140.98" text-anchor="middle">1</text></g>
+    <g id="step-1-1"><circle class="node" cx="1020.11" cy="130.68" r="15.92"/><text x="1020.11" y="140.98" text-anchor="middle">1</text></g>
+    <g id="step-2-2"><circle class="node" cx="803.87" cy="332.18" r="15.92"/><text x="803.87" y="342.48" text-anchor="middle">2</text></g>
+    <g id="step-3-3"><circle class="node" cx="389.12" cy="482.18" r="15.92"/><text x="389.12" y="492.48" text-anchor="middle">3</text></g>
+    <g id="step-4-4"><circle class="node" cx="406.5" cy="668.94" r="15.92"/><text x="406.5" y="679.24" text-anchor="middle">4</text></g>
+    <g id="step-5-5"><circle class="node" cx="819.88" cy="835.57" r="15.92"/><text x="819.88" y="845.87" text-anchor="middle">5</text></g>
+    <g id="step-6-6"><circle class="node" cx="478.5" cy="1016.9" r="15.92"/><text x="478.5" y="1027.2" text-anchor="middle">6</text></g>
+    <g id="step-7-7"><circle class="node" cx="889.5" cy="1150.14" r="15.92"/><text x="889.5" y="1160.44" text-anchor="middle">7</text></g>
+  </g>
+</svg>

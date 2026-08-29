@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1362" height="1150" viewBox="0 0 1362 1150" role="img" aria-labelledby="atomicity-monolith-title atomicity-monolith-desc">
+  <title id="atomicity-monolith-title">Atomicity in a monolithic hotel reservation system</title>
+  <desc id="atomicity-monolith-desc">Sequence diagram: a user calls one database to manage room inventory and then to reserve a room. Because both calls hit the same database, they run inside a single transaction, so either both succeed or both roll back.</desc>
+
+  <!-- Shared definitions: arrowheads sized from the etalon (message 27x16, reply 25x13, span 23x15). -->
+  <defs>
+    <marker id="head-message" viewBox="0 0 27 16" refX="27" refY="8" markerWidth="27" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 27 8 0 16Z" fill="#000"/></marker>
+    <marker id="head-reply" viewBox="0 0 25 13" refX="25" refY="6.5" markerWidth="25" markerHeight="13" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 25 6.5 0 13Z" fill="#000"/></marker>
+    <marker id="head-span-end" viewBox="0 0 23 15" refX="23" refY="7.5" markerWidth="23" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 23 7.5 0 15Z" fill="#000"/></marker>
+    <!-- Backward-pointing twin of head-span-end; refX=0 puts its tip on the path start. -->
+    <marker id="head-span-start" viewBox="0 0 23 15" refX="0" refY="7.5" markerWidth="23" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto"><path d="M23 0 0 7.5 23 15Z" fill="#000"/></marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:38px;fill:#000}
+      .lifeline{fill:none;stroke:#000;stroke-width:3;stroke-dasharray:10.9 7.95}
+      .activation{fill:#fff;stroke:#000;stroke-width:3}
+      .node{fill:#fff;stroke:#000;stroke-width:3}
+      .flow{fill:none;stroke:#000;stroke-width:3}
+      .reply{fill:none;stroke:#000;stroke-width:3;stroke-dasharray:10.9 7.95}
+    </style>
+  </defs>
+  <rect id="background" width="1362" height="1150" fill="#fff"/>
+
+  <!-- Left participant: the user, drawn as a filled actor glyph above its lifeline. -->
+  <text id="label-user" x="110" y="79" text-anchor="middle">User</text>
+  <g id="actor-user" fill="#000">
+    <circle cx="107.5" cy="109" r="18.5"/>
+    <!-- Shoulders: elliptical cap over straight sides, matching the etalon silhouette. -->
+    <path d="M70 165.5V154A37.5 16 0 0 1 145 154V165.5Z"/>
+  </g>
+  <path id="lifeline-user" class="lifeline" d="M108.5 173V256.5"/>
+  <!-- The user stays active for the whole exchange, so one tall activation bar spans the diagram. -->
+  <rect id="activation-user" class="activation" x="97.5" y="256.5" width="22" height="864"/>
+
+  <!-- Right participant: the single database shared by both operations. -->
+  <text id="label-database" x="1013.5" y="79" text-anchor="middle">Database</text>
+  <g id="node-database">
+    <path class="node" d="M947.5 102.5V208A64.75 12 0 0 0 1077 208V102.5"/>
+    <ellipse class="node" cx="1012.25" cy="102.5" rx="64.75" ry="12.75"/>
+  </g>
+  <path id="lifeline-database" class="lifeline" d="M1012 218V1121"/>
+  <rect id="activation-database-1" class="activation" x="1001.5" y="350" width="22" height="216"/>
+  <rect id="activation-database-2" class="activation" x="1001.5" y="733.5" width="22" height="216"/>
+
+  <!-- Step 1: manage room inventory. Each shaft stops well clear of its label; the head meets the activation bar. -->
+  <path id="arrow-manage-inventory-left" class="flow" d="M120 379H370"/>
+  <path id="arrow-manage-inventory" class="flow" marker-end="url(#head-message)" d="M805 379H1001.5"/>
+  <text x="587.5" y="393" text-anchor="middle">Manage room inventory</text>
+  <!-- Reply 1: dashed return to the user; phase starts at the database so the right end lands on the bar. -->
+  <path id="arrow-inventory-reply" class="reply" marker-end="url(#head-reply)" d="M1001.5 538H119.5"/>
+
+  <!-- Step 2: reserve room, issued against the same database. -->
+  <path id="arrow-reserve-room-left" class="flow" d="M120 772H428"/>
+  <path id="arrow-reserve-room" class="flow" marker-end="url(#head-message)" d="M687 772H1001.5"/>
+  <text x="557.5" y="786" text-anchor="middle">Reserve room</text>
+  <path id="arrow-reserve-reply" class="reply" marker-end="url(#head-reply)" d="M1001.5 913H119.5"/>
+
+  <!-- Transaction span: two boundary ticks plus a double-headed measure line covering both operations. -->
+  <path id="span-tick-top" class="flow" d="M1038 379H1179"/>
+  <path id="span-tick-bottom" class="flow" d="M1038 914H1179"/>
+  <path id="span-transaction" class="flow" marker-start="url(#head-span-start)" marker-end="url(#head-span-end)" d="M1111 379V914"/>
+  <!-- Span label is left-anchored per line so its box stays clear of the measure line. -->
+  <text id="label-single-transaction" y="640"><tspan x="1165.5">Single</tspan><tspan x="1118" dy="44">Transaction</tspan></text>
+</svg>

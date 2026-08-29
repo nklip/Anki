@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="630" viewBox="0 0 1320 630" role="img" aria-labelledby="state-title state-desc">
+  <title id="state-title">Reservation status state machine</title>
+  <desc id="state-desc">A pending reservation may be canceled, paid, or rejected. A paid reservation may later be refunded.</desc>
+
+  <!-- Shared visual styles and a compact arrowhead that stops before each state box. -->
+  <defs>
+    <marker id="state-arrowhead" viewBox="0 0 18 18" refX="18" refY="9" markerWidth="18" markerHeight="18" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 18 9 0 18Z" fill="#000"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:36px;fill:#000;text-anchor:middle}
+      .state{fill:#fff;stroke:#000;stroke-width:2}
+      .flow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#state-arrowhead)}
+    </style>
+  </defs>
+  <rect id="background" width="1320" height="630" fill="#fff"/>
+
+  <!-- Reservation states. -->
+  <g id="states">
+    <rect id="pending-state" class="state" x="514" y="37" width="300" height="100"/>
+    <rect id="canceled-state" class="state" x="42" y="266" width="300" height="100"/>
+    <rect id="paid-state" class="state" x="514" y="266" width="300" height="100"/>
+    <rect id="rejected-state" class="state" x="986" y="266" width="300" height="100"/>
+    <rect id="refunded-state" class="state" x="514" y="495" width="300" height="100"/>
+
+    <text x="664" y="99">Pending</text>
+    <text x="192" y="328">Canceled</text>
+    <text x="664" y="328">Paid</text>
+    <text x="1136" y="328">Rejected</text>
+    <text x="664" y="557">Refunded</text>
+  </g>
+
+  <!-- Pending can terminate on either side or advance vertically to Paid. -->
+  <g id="pending-transitions">
+    <path id="pendingToCanceledFlow" class="flow" d="M514 84C382 98 272 151 216 264"/>
+    <path id="pendingToPaidFlow" class="flow" d="M664 137V264"/>
+    <path id="pendingToRejectedFlow" class="flow" d="M814 84C946 98 1056 151 1110 264"/>
+  </g>
+
+  <!-- A completed payment may later be refunded. -->
+  <path id="paidToRefundedFlow" class="flow" d="M664 366V493"/>
+</svg>

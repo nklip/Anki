@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="514" viewBox="0 0 1920 514" role="img" aria-labelledby="architecture-title architecture-desc">
+  <title id="architecture-title">Monolithic architecture compared with microservice architecture</title>
+  <desc id="architecture-desc">On the left, reservation, inventory, and payment services all write to one shared hotel database in a monolithic architecture. On the right, each service owns a separate database in a microservice architecture.</desc>
+  <defs>
+    <marker id="head-flow" viewBox="0 0 20 16" refX="20" refY="8" markerWidth="20" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 20 8 0 16Z" fill="#000"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:32px;fill:#000}
+      .panel,.node,.database{fill:#fff;stroke:#000;stroke-width:2}
+      .flow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#head-flow)}
+      .caption{font-size:32px}
+    </style>
+  </defs>
+  <rect id="background" width="1920" height="514" fill="#fff"/>
+
+  <!-- Left panel: several business areas share one database. -->
+  <g id="monolithic-architecture">
+    <rect class="panel" x="25.5" y="23" width="880" height="438.5"/>
+
+    <g id="monolith-services">
+      <rect class="node" x="60.5" y="60.5" width="225" height="92"/>
+      <text x="91" y="101">Reservation</text>
+      <text x="121" y="136">Service</text>
+
+      <rect class="node" x="353.5" y="60.5" width="225" height="92"/>
+      <text x="402" y="101">Inventory</text>
+      <text x="415" y="136">Service</text>
+
+      <rect class="node" x="645.5" y="60.5" width="225" height="92"/>
+      <text x="697" y="101">Payment</text>
+      <text x="708" y="136">Service</text>
+    </g>
+
+    <!-- Three service arrows converge on the shared database boundary. -->
+    <path id="reservationSharedDatabaseArrow" class="flow" d="M233 152.5 412 286"/>
+    <path id="inventorySharedDatabaseArrow" class="flow" d="M465.5 152.5V274"/>
+    <path id="paymentSharedDatabaseArrow" class="flow" d="M698 152.5 519 286"/>
+
+    <g id="hotel-database">
+      <path class="database" d="M412.5 285.5V369A53.5 10.8 0 0 0 519.5 369V285.5"/>
+      <ellipse class="database" cx="466" cy="285.5" rx="53.5" ry="10.8"/>
+      <text x="402" y="413">Hotel DB</text>
+    </g>
+    <text class="caption" x="306" y="492">Monolithic Architecture</text>
+  </g>
+
+  <!-- Right panel: every service owns its data store. -->
+  <g id="microservice-architecture">
+    <rect class="panel" x="1019.5" y="23" width="880" height="438.5"/>
+
+    <g id="microservices">
+      <rect class="node" x="1054.5" y="60.5" width="225" height="92"/>
+      <text x="1085" y="101">Reservation</text>
+      <text x="1115" y="136">Service</text>
+
+      <rect class="node" x="1346.5" y="60.5" width="225" height="92"/>
+      <text x="1395" y="101">Inventory</text>
+      <text x="1408" y="136">Service</text>
+
+      <rect class="node" x="1639.5" y="60.5" width="225" height="92"/>
+      <text x="1691" y="101">Payment</text>
+      <text x="1702" y="136">Service</text>
+    </g>
+
+    <path id="reservationOwnDatabaseArrow" class="flow" d="M1166.5 152.5V274"/>
+    <path id="inventoryOwnDatabaseArrow" class="flow" d="M1459.5 152.5V274"/>
+    <path id="paymentOwnDatabaseArrow" class="flow" d="M1752 152.5V274"/>
+
+    <!-- Three identical cylinders reinforce independent ownership. -->
+    <g id="reservation-database">
+      <path class="database" d="M1113.5 285.5V369A53.5 10.8 0 0 0 1220.5 369V285.5"/>
+      <ellipse class="database" cx="1167" cy="285.5" rx="53.5" ry="10.8"/>
+      <text x="1059" y="413">Reservation DB</text>
+    </g>
+    <g id="inventory-database">
+      <path class="database" d="M1405.5 285.5V369A53.5 10.8 0 0 0 1512.5 369V285.5"/>
+      <ellipse class="database" cx="1459" cy="285.5" rx="53.5" ry="10.8"/>
+      <text x="1369" y="413">Inventory DB</text>
+    </g>
+    <g id="payment-database">
+      <path class="database" d="M1698.5 285.5V369A53.5 10.8 0 0 0 1805.5 369V285.5"/>
+      <ellipse class="database" cx="1752" cy="285.5" rx="53.5" ry="10.8"/>
+      <text x="1665" y="413">Payment DB</text>
+    </g>
+    <text class="caption" x="1284" y="492">Microservice Architecture</text>
+  </g>
+</svg>

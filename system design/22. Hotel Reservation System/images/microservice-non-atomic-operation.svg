@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1748" height="1062" viewBox="0 0 1748 1062" role="img" aria-labelledby="non-atomic-title non-atomic-desc">
+  <title id="non-atomic-title">Separate microservice operations are not one atomic transaction</title>
+  <desc id="non-atomic-desc">A sequence diagram with a user, an inventory service, and a reservation service. Managing room inventory is one transaction in the inventory service. Reserving a room later is a separate transaction in the reservation service, so the two operations are not atomic together.</desc>
+  <defs>
+    <marker id="head-flow" viewBox="0 0 23 18" refX="23" refY="9" markerWidth="23" markerHeight="18" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 23 9 0 18Z" fill="#000"/>
+    </marker>
+    <marker id="head-transaction" viewBox="0 0 21 17" refX="20" refY="8.5" markerWidth="21" markerHeight="17" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+      <path d="M0 0 20 8.5 0 17Z" fill="#000"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:40px;fill:#000}
+      .node{fill:#fff;stroke:#000;stroke-width:2.2}
+      .lifeline{fill:none;stroke:#000;stroke-width:2.2;stroke-dasharray:12 8}
+      .shaft{fill:none;stroke:#000;stroke-width:2.2}
+      .flow{fill:none;stroke:#000;stroke-width:2.2;marker-end:url(#head-flow)}
+      .reply{fill:none;stroke:#000;stroke-width:2.2;stroke-dasharray:12 8;marker-end:url(#head-flow)}
+      .transaction{fill:none;stroke:#000;stroke-width:2.2;marker-start:url(#head-transaction);marker-end:url(#head-transaction)}
+    </style>
+  </defs>
+  <rect id="background" width="1748" height="1062" fill="#fff"/>
+
+  <!-- Sequence participants. -->
+  <g id="user">
+    <text x="91" y="81">User</text>
+    <circle cx="132" cy="114" r="20" fill="#000"/>
+    <path d="M92 175V166A40 21 0 0 1 172 166V175Z" fill="#000"/>
+    <path class="lifeline" d="M133 182V271"/>
+    <rect class="node" x="120.5" y="271.5" width="25" height="761.5"/>
+  </g>
+
+  <g id="inventory-service">
+    <rect class="node" x="736.5" y="42.5" width="290" height="118.5"/>
+    <text x="799" y="95">Inventory</text>
+    <text x="815" y="138">Service</text>
+    <path class="lifeline" d="M881.5 161V337"/>
+    <rect class="node" x="868.5" y="337.5" width="25" height="229"/>
+    <path class="lifeline" d="M881.5 566.5V1033"/>
+  </g>
+
+  <g id="reservation-service">
+    <rect class="node" x="1239.5" y="42.5" width="290" height="118.5"/>
+    <text x="1279" y="95">Reservation</text>
+    <text x="1318" y="138">Service</text>
+    <path class="lifeline" d="M1384.5 161V759"/>
+    <rect class="node" x="1372.5" y="759.5" width="24" height="229"/>
+    <path class="lifeline" d="M1384.5 988.5V1033"/>
+  </g>
+
+  <!-- First operation: manage inventory, then return to the user. -->
+  <g id="manage-room-inventory">
+    <path class="shaft" d="M145.5 369H281"/>
+    <text x="293" y="383">Manage room inventory</text>
+    <!-- The short extra gap keeps the connector clear under fallback font metrics. -->
+    <path id="manageInventoryArrow" class="flow" d="M748 369H867"/>
+    <path id="manageInventoryReply" class="reply" d="M868.5 537H147"/>
+  </g>
+
+  <!-- The inventory service owns one local transaction only. -->
+  <g id="inventory-transaction">
+    <path class="shaft" d="M910 369H1059"/>
+    <path class="shaft" d="M910 537H1059"/>
+    <path id="inventoryTransactionArrow" class="transaction" d="M986.5 371V535"/>
+    <text x="1047" y="443">Single</text>
+    <text x="999" y="489">Transaction</text>
+  </g>
+
+  <!-- Second operation: reserve the room in another service and transaction. -->
+  <g id="reserve-room">
+    <path class="shaft" d="M145.5 787H984"/>
+    <text x="996" y="803">Reserve room</text>
+    <path id="reserveRoomArrow" class="flow" d="M1258 787H1371"/>
+    <path id="reserveRoomReply" class="reply" d="M1372.5 936H147"/>
+  </g>
+
+  <!-- The reservation service commits independently of the earlier inventory change. -->
+  <g id="reservation-transaction">
+    <path class="shaft" d="M1413 787H1562"/>
+    <path class="shaft" d="M1413 936H1562"/>
+    <path id="reservationTransactionArrow" class="transaction" d="M1490.5 789V934"/>
+    <text x="1550" y="854">Single</text>
+    <text x="1503" y="900">Transaction</text>
+  </g>
+</svg>

@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1946" height="1100" viewBox="0 0 1946 1100" role="img" aria-labelledby="high-level-design-title high-level-design-desc">
+  <title id="high-level-design-title">Hotel reservation system high-level design</title>
+  <desc id="high-level-design-desc">The diagram is split by two dividers: external above internal, and public to the left of private. Externally, a user on a mobile device fetches static content from a CDN and sends requests to the public API gateway; an admin sits on the private side. Internally, the public API gateway fans out to four services — hotel, rate, reservation and payment — each with its own database, and the hotel service also reads a hotel cache. On the private side the admin reaches an internal API which drives the hotel management service.</desc>
+  <defs>
+    <marker id="head-flow" viewBox="0 0 20.75 14.5" refX="20.75" refY="7.25" markerWidth="20.75" markerHeight="14.5" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 20.75 7.25 0 14.5Z" fill="#000"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:34.5px;fill:#000}
+      .node{fill:none;stroke:#000;stroke-width:2.05}
+      .flow{fill:none;stroke:#000;stroke-width:2.05;marker-end:url(#head-flow)}
+      .divider{fill:none;stroke:#000;stroke-width:2.15}
+      .icon{fill:#000}
+      .cut{fill:#fff}
+      .small{font-size:27.5px}
+    </style>
+  </defs>
+  <rect id="background" width="1946" height="1100" fill="#fff"/>
+
+  <!-- Trust boundaries: external above internal, public left of private. -->
+  <path id="divider-external-internal" class="divider" d="M37 292.54H1911"/>
+  <path id="divider-public-private" class="divider" d="M1462.67 57V1064"/>
+
+  <!-- External actors and their entry points. -->
+  <g id="cdn" class="icon">
+    <circle cx="450.5" cy="161.3" r="47.5"/><circle cx="413.8" cy="177" r="38.8"/>
+    <circle cx="495.5" cy="183" r="30.5"/><circle cx="458" cy="176" r="40"/>
+    <!-- Shallow ellipse across the base; without it the puffs scallop the underside. -->
+    <ellipse cx="455" cy="191" rx="70" ry="24"/>
+  </g>
+  <g id="user-device">
+    <rect class="icon" x="779" y="116.5" width="55.5" height="95" rx="9"/>
+    <rect class="cut" x="787.5" y="129.5" width="38" height="60"/>
+    <circle class="cut" cx="806" cy="200" r="6.5"/>
+  </g>
+  <g id="admin" class="icon">
+    <circle cx="1691.5" cy="146.5" r="17"/>
+    <path d="M1657 199V190.28A34 17.03 0 0 1 1725 190.28V199Z"/>
+  </g>
+  <path id="arrow-user-cdn" class="flow" d="M779 164.7H521"/>
+  <path id="arrow-user-gateway" class="flow" d="M806.5 211.5V382.5"/>
+  <path id="arrow-admin-internal-api" class="flow" d="M1691.5 199V387.5"/>
+
+  <!-- Services and their stores. -->
+  <g id="boxes">
+    <rect id="box-gw" class="node" x="655.6" y="382.5" width="302.9" height="101"/>
+    <rect id="box-internal-api" class="node" x="1540" y="387.5" width="302.5" height="101"/>
+    <rect id="box-hotel-service" class="node" x="203.5" y="664.5" width="248" height="101"/>
+    <rect id="box-rate-service" class="node" x="527.5" y="664.5" width="249" height="101"/>
+    <rect id="box-reservation-service" class="node" x="852" y="664.5" width="248.5" height="101"/>
+    <rect id="box-payment-service" class="node" x="1176.5" y="664.5" width="249" height="101"/>
+    <rect id="box-hotel-management" class="node" x="1501" y="664.5" width="380.5" height="101"/>
+  </g>
+  <!-- Databases drawn as cylinders: body plus the visible top ellipse. -->
+  <g id="databases">
+    <path id="hotel-db" class="node" d="M382.4 913.4V1007.8A59 11.875 0 0 0 500.4 1007.8V913.4A59 11.875 0 0 0 382.4 913.4Z"/>
+    <path class="node" d="M382.4 913.4A59 11.875 0 0 0 500.4 913.4"/>
+    <path id="rate-db" class="node" d="M593.4 913.4V1007.8A59 11.875 0 0 0 711.4 1007.8V913.4A59 11.875 0 0 0 593.4 913.4Z"/>
+    <path class="node" d="M593.4 913.4A59 11.875 0 0 0 711.4 913.4"/>
+    <path id="reservation-db" class="node" d="M917.8 913.4V1007.8A59.1 11.875 0 0 0 1036 1007.8V913.4A59.1 11.875 0 0 0 917.8 913.4Z"/>
+    <path class="node" d="M917.8 913.4A59.1 11.875 0 0 0 1036 913.4"/>
+    <path id="payment-db" class="node" d="M1242.4 913.4V1007.8A59.05 11.875 0 0 0 1360.5 1007.8V913.4A59.05 11.875 0 0 0 1242.4 913.4Z"/>
+    <path class="node" d="M1242.4 913.4A59.05 11.875 0 0 0 1360.5 913.4"/>
+  </g>
+  <rect id="hotel-cache" class="node" x="150.75" y="901.5" width="116.75" height="118" rx="23.25"/>
+
+  <!-- The gateway fans out to the four public services. -->
+  <g id="fanout">
+    <path class="flow" d="M720.73 483.5 413.31 664.5"/>
+    <path class="flow" d="M779.2 483.5 680.16 664.5"/>
+    <path class="flow" d="M837.69 483.5 946.46 664.5"/>
+    <path class="flow" d="M896.26 483.5 1212.72 664.5"/>
+  </g>
+  <!-- Each service writes to its own store; the hotel service also reads its cache. -->
+  <g id="service-stores">
+    <path class="flow" d="M303.62 765.5 238.09 901.5"/>
+    <path class="flow" d="M351.13 765.5 414.16 901.5"/>
+    <path class="flow" d="M651.5 765.5V901.5"/>
+    <path class="flow" d="M976.5 765.5V901.5"/>
+    <path class="flow" d="M1301 765.5V901.5"/>
+    <path class="flow" d="M1691.5 488.5V664.5"/>
+  </g>
+
+  <g id="labels">
+    <text x="1350" y="109">Public</text>
+    <text x="1482" y="109">Private</text>
+    <text x="67" y="265">External</text>
+    <text x="68.5" y="347">Internal</text>
+    <text x="413" y="253">CDN</text>
+    <text x="843.5" y="177">User</text>
+    <text x="1743" y="177">Admin</text>
+    <text x="728" y="426">Public API</text>
+    <text x="738.5" y="465">Gateway</text>
+    <text x="1603" y="451">Internal API</text>
+    <text x="225.5" y="728">Hotel Service</text>
+    <text x="554" y="728">Rate Service</text>
+    <text x="885" y="708">Reservation</text>
+    <text x="919" y="748">Service</text>
+    <text x="1232.5" y="708">Payment</text>
+    <text x="1244" y="748">Service</text>
+    <text x="1545.5" y="708">Hotel Management</text>
+    <text x="1634" y="748">Service</text>
+    <text x="115" y="1054">Hotel Cache</text>
+    <text x="372.5" y="1054">Hotel DB</text>
+    <text x="587" y="1054">Rate DB</text>
+    <text x="856" y="1054">Reservation DB</text>
+    <text x="1204.5" y="1054">Payment DB</text>
+    <text class="small" x="170.5" y="969">Cache</text>
+  </g>
+</svg>

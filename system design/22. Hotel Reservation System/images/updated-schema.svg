@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1366" height="1028" viewBox="0 0 1366 1028" role="img" aria-labelledby="updated-title updated-desc">
+  <title id="updated-title">Updated hotel reservation database schema</title>
+  <desc id="updated-desc">Hotel Service owns hotel and room, Rate Service owns room type rate, Guest Service owns guest, and Reservation Service owns room type inventory and reservation.</desc>
+
+  <!-- Shared styles preserve the etalon's service boundaries and database-table hierarchy. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#000}
+      .service-boundary{fill:none;stroke:#000;stroke-width:2.5;stroke-dasharray:10 9}
+      .service-title{font-size:36px;text-anchor:middle}
+      .table-box,.table-divider{fill:none;stroke:#000;stroke-width:1.6}
+      .table-title{font-size:28px;font-weight:700;text-anchor:middle}
+      .field{font-size:28px}
+      .key{font-weight:700}
+      .foreign-key{font-style:italic}
+    </style>
+  </defs>
+  <rect id="background" width="1366" height="1028" fill="#fff"/>
+
+  <!-- Dashed boundaries show which microservice owns each table. -->
+  <g id="service-boundaries">
+    <rect id="hotel-service-boundary" class="service-boundary" x="27.5" y="24.5" width="395.5" height="975.5"/>
+    <rect id="rate-service-boundary" class="service-boundary" x="481.5" y="24.5" width="396.5" height="351"/>
+    <rect id="guest-service-boundary" class="service-boundary" x="936" y="24.5" width="396" height="398.5"/>
+    <rect id="reservation-service-boundary" class="service-boundary" x="481.5" y="459" width="850.5" height="541"/>
+  </g>
+
+  <!-- Service names. -->
+  <g id="service-titles" class="service-title">
+    <text x="225.25" y="92">Hotel Service</text>
+    <text x="679.75" y="92">Rate Service</text>
+    <text x="1134" y="92">Guest Service</text>
+    <text x="930.5" y="526">Reservation Service</text>
+  </g>
+
+  <!-- Hotel Service tables. -->
+  <g id="hotel-table">
+    <rect class="table-box" x="54.5" y="120.5" width="341" height="275"/>
+    <path class="table-divider" d="M54.5 179.5H395.5"/>
+    <text class="table-title" x="225" y="158">hotel</text>
+    <text class="field key" x="66" y="227">hotel_id</text>
+    <text class="field key" x="293" y="227">PK</text>
+    <text class="field" x="66" y="275">name</text>
+    <text class="field" x="66" y="322">address</text>
+    <text class="field" x="66" y="370">location</text>
+  </g>
+
+  <g id="room-table">
+    <rect class="table-box" x="54.5" y="555.5" width="341" height="417"/>
+    <path class="table-divider" d="M54.5 613.5H395.5"/>
+    <text class="table-title" x="225" y="593">room</text>
+    <text class="field key" x="66" y="663">room_id</text>
+    <text class="field key" x="293" y="663">PK</text>
+    <text class="field" x="66" y="711">room_type_id</text>
+    <text class="field" x="66" y="758">floor</text>
+    <text class="field" x="66" y="805">number</text>
+    <text class="field" x="66" y="853">hotel_id</text>
+    <text class="field" x="66" y="900">name</text>
+    <text class="field" x="66" y="948">is_available</text>
+  </g>
+
+  <!-- Rate Service table. -->
+  <g id="room-type-rate-table">
+    <rect class="table-box" x="508.5" y="120.5" width="341" height="227"/>
+    <path class="table-divider" d="M508.5 179.5H849.5"/>
+    <text class="table-title" x="679" y="158">room_type_rate</text>
+    <text class="field key" x="521" y="227">hotel_id</text>
+    <text class="field key" x="748" y="227">PK</text>
+    <text class="field key" x="521" y="275">date</text>
+    <text class="field key" x="748" y="275">PK</text>
+    <text class="field" x="521" y="322">rate</text>
+  </g>
+
+  <!-- Guest Service table. -->
+  <g id="guest-table">
+    <rect class="table-box" x="963.5" y="120.5" width="341" height="275"/>
+    <path class="table-divider" d="M963.5 179.5H1304.5"/>
+    <text class="table-title" x="1134" y="158">guest</text>
+    <text class="field key" x="975" y="227">guest_id</text>
+    <text class="field key" x="1203" y="227">PK</text>
+    <text class="field" x="975" y="275">first_name</text>
+    <text class="field" x="975" y="322">last_name</text>
+    <text class="field" x="975" y="370">email</text>
+  </g>
+
+  <!-- Reservation Service inventory table uses a three-column composite key. -->
+  <g id="room-type-inventory-table">
+    <rect class="table-box" x="508.5" y="555.5" width="341" height="322"/>
+    <path class="table-divider" d="M508.5 613.5H849.5"/>
+    <text class="table-title" x="679" y="593">room_type_inventory</text>
+    <text class="field key" x="521" y="663">hotel_id</text>
+    <text class="field key" x="521" y="711">room_type_id</text>
+    <text class="field key" x="521" y="758">date</text>
+    <text class="field" x="521" y="805">total_inventory</text>
+    <text class="field" x="521" y="853">total_reserved</text>
+  </g>
+
+  <!-- Reservation table; italic fields visually identify the referenced hotel and room type. -->
+  <g id="reservation-table">
+    <rect class="table-box" x="963.5" y="555.5" width="341" height="417"/>
+    <path class="table-divider" d="M963.5 613.5H1304.5"/>
+    <text class="table-title" x="1134" y="593">reservation</text>
+    <text class="field key" x="975" y="663">reservation_id</text>
+    <text class="field key" x="1203" y="663">PK</text>
+    <text class="field foreign-key" x="975" y="711">hotel_id</text>
+    <text class="field foreign-key" x="975" y="758">room_type_id</text>
+    <text class="field" x="975" y="805">start_date</text>
+    <text class="field" x="975" y="853">end_date</text>
+    <text class="field" x="975" y="900">status</text>
+    <text class="field" x="975" y="948">guest_id</text>
+  </g>
+</svg>

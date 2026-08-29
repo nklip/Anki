@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1994" height="1320" viewBox="0 0 1994 1320" role="img" aria-labelledby="pessimistic-title pessimistic-desc">
+  <title id="pessimistic-title">Pessimistic locking serializes competing reservations</title>
+  <desc id="pessimistic-desc">Time flows downward. User 1 begins Transaction 1, locks the room inventory with SELECT FOR UPDATE, reserves the room, and commits. Transaction 2 waits for Transaction 1 to finish, then checks the locked inventory, discovers all 100 rooms are reserved, cannot reserve another room, and rolls back.</desc>
+  <defs>
+    <marker id="head-flow" viewBox="0 0 22 17" refX="22" refY="8.5" markerWidth="22" markerHeight="17" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 22 8.5 0 17Z" fill="#000"/>
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:40px;fill:#000}
+      .panel{fill:none;stroke:#000;stroke-width:2.4;stroke-dasharray:12 8}
+      .step{fill:#fff;stroke:#000;stroke-width:2.2}
+      .shaft{fill:none;stroke:#000;stroke-width:2.2}
+      .flow{fill:none;stroke:#000;stroke-width:2.2;marker-end:url(#head-flow)}
+      .panel-title{font-size:40px}
+      .step-text{font-size:39px}
+    </style>
+  </defs>
+  <rect id="background" width="1994" height="1320" fill="#fff"/>
+
+  <!-- Time axis establishes the top-to-bottom reading order. -->
+  <g id="time-axis">
+    <text x="43" y="69">Time</text>
+    <path id="timeFlowArrow" class="flow" d="M156.5 30V1291"/>
+  </g>
+
+  <!-- User 1 and its transaction timeline. -->
+  <g id="user-1">
+    <text text-anchor="middle" x="540.5" y="71">User 1</text>
+    <circle cx="540.5" cy="106" r="19" fill="#000"/>
+    <path d="M501.5 164V155.5A39 19 0 0 1 579.5 155.5V164Z" fill="#000"/>
+    <path class="shaft" d="M540.5 164V312"/>
+    <path id="user1CompletionArrow" class="flow" d="M540.5 937V1291"/>
+  </g>
+
+  <!-- Transaction 1 acquires the row lock, updates inventory, and commits. -->
+  <g id="transaction-1">
+    <rect class="panel" x="240.5" y="312.5" width="600.5" height="624.5"/>
+    <text class="panel-title" text-anchor="middle" x="540.5" y="365">Transaction 1</text>
+
+    <rect class="step" x="275.5" y="401.5" width="530" height="71.5"/>
+    <text class="step-text" text-anchor="middle" x="540.5" y="452">BEGIN TRANSACTION</text>
+
+    <rect class="step" x="275.5" y="498.5" width="530" height="140.5"/>
+    <text class="step-text" text-anchor="middle" x="540.5" y="564"># check room inventory</text>
+    <text class="step-text" text-anchor="middle" x="540.5" y="609">SELECT ... FOR UPDATE</text>
+
+    <rect class="step" x="275.5" y="664.5" width="530" height="140.5"/>
+    <text class="step-text" text-anchor="middle" x="540.5" y="726"># reserve room</text>
+    <text class="step-text" text-anchor="middle" x="540.5" y="780">UPDATE query</text>
+
+    <rect class="step" x="275.5" y="830.5" width="530" height="70.5"/>
+    <text class="step-text" text-anchor="middle" x="540.5" y="880">COMMIT TRANSACTION</text>
+  </g>
+
+  <!-- The center annotation shows the interval during which the second lock request blocks. -->
+  <g id="wait-interval">
+    <path class="shaft" d="M1113 499H1235"/>
+    <path id="waitStartArrow" class="flow" d="M1176 574V500"/>
+    <text text-anchor="middle" x="1176" y="642">Transaction 2</text>
+    <text text-anchor="middle" x="1176" y="687">waits for</text>
+    <text text-anchor="middle" x="1176" y="733">Transaction 1</text>
+    <text text-anchor="middle" x="1176" y="779">to finish</text>
+    <path id="waitEndArrow" class="flow" d="M1176 799V898"/>
+    <path class="shaft" d="M1113 899H1235"/>
+  </g>
+
+  <!-- User 2 starts concurrently, but its transaction completes only after the wait. -->
+  <g id="user-2">
+    <text text-anchor="middle" x="1616.5" y="71">User 2</text>
+    <circle cx="1616.5" cy="106" r="19" fill="#000"/>
+    <path d="M1577.5 164V155.5A39 19 0 0 1 1655.5 155.5V164Z" fill="#000"/>
+    <path class="shaft" d="M1616.5 164V312"/>
+    <path id="user2CompletionArrow" class="flow" d="M1616.5 1225V1291"/>
+  </g>
+
+  <!-- Transaction 2 sees the committed inventory and rolls back instead of overselling. -->
+  <g id="transaction-2">
+    <rect class="panel" x="1316.5" y="312.5" width="600.5" height="912.5"/>
+    <text class="panel-title" text-anchor="middle" x="1616.5" y="365">Transaction 2</text>
+
+    <rect class="step" x="1351.5" y="401.5" width="530" height="71.5"/>
+    <text class="step-text" text-anchor="middle" x="1616.5" y="452">BEGIN TRANSACTION</text>
+
+    <rect class="step" x="1351.5" y="498.5" width="530" height="402.5"/>
+    <text class="step-text" text-anchor="middle" x="1616.5" y="696"># check room inventory</text>
+    <text class="step-text" text-anchor="middle" x="1616.5" y="741">SELECT ... FOR UPDATE</text>
+
+    <rect class="step" x="1351.5" y="926.5" width="530" height="162.5"/>
+    <text class="step-text" text-anchor="middle" x="1616.5" y="977"># reserve room</text>
+    <text class="step-text" text-anchor="middle" x="1616.5" y="1025">Total reserved = 100, cannot</text>
+    <text class="step-text" text-anchor="middle" x="1616.5" y="1072">reserve room</text>
+
+    <rect class="step" x="1351.5" y="1114.5" width="530" height="71.5"/>
+    <text class="step-text" text-anchor="middle" x="1616.5" y="1165">ROLLBACK TRANSACTION</text>
+  </g>
+</svg>
