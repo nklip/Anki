@@ -151,7 +151,7 @@ We need to also monitor size of outgoing message queue. Growing too large might 
 Here's the email receiving flow:
 
 <div style="margin-left:3rem">
-    <img src="./images/email-receiving-flkow.svg" alt="email-receiving-flow" width="500" />
+    <img src="./images/email-receiving-flow.svg" alt="email-receiving-flow" width="500" />
 </div>
 
 - Incoming emails arrive at the SMTP load balancer. Mails are distributed to SMTP servers, where mail acceptance policy is done (eg invalid emails are directly discarded).
