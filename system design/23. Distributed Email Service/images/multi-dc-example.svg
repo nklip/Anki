@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1362"
+     height="1260"
+     viewBox="0 0 1362 1260"
+     role="img"
+     aria-labelledby="multi-dc-title multi-dc-desc">
+  <title id="multi-dc-title">Multi-data-center email routing and failover</title>
+  <desc id="multi-dc-desc">The top scenario routes a United States user to the United States data center and replicates the database to Europe. The bottom scenario marks the United States route as failed and sends the user to the Europe data center instead.</desc>
+
+  <!-- Shared panel, node, typography, user, database, and connector definitions. -->
+  <defs>
+    <style>
+      .scenario-frame { fill: none; stroke: #111; stroke-width: 2; stroke-dasharray: 9 6; }
+      .data-center { fill: #fff; stroke: #111; stroke-width: 2; }
+      .server-box { fill: #fff; stroke: #111; stroke-width: 2; }
+      .diagram-text { font: 400 32px Arial, Helvetica, sans-serif; fill: #050505; }
+      .centered { text-anchor: middle; }
+      .connector { fill: none; stroke: #111; stroke-width: 2; marker-end: url(#arrowhead); }
+      .database-shape { fill: #fff; stroke: #111; stroke-width: 2; }
+    </style>
+    <marker id="arrowhead"
+            markerWidth="18"
+            markerHeight="16"
+            viewBox="0 -6 12 12"
+            refX="11.5"
+            refY="0"
+            orient="auto"
+            markerUnits="userSpaceOnUse">
+      <path d="M0-6L12 0L0 6Z" fill="#111"/>
+    </marker>
+    <symbol id="person" viewBox="0 0 59 59">
+      <circle cx="29" cy="15" r="14.5" fill="#000"/>
+      <path d="M0 59V54C0 42 12 37 29 37S58 42 58 54V59Z" fill="#000"/>
+    </symbol>
+    <symbol id="database" viewBox="0 0 98 99">
+      <path class="database-shape" d="M1 10V88A48 10 0 0 0 97 88V10"/>
+      <ellipse class="database-shape" cx="49" cy="10" rx="48" ry="10"/>
+    </symbol>
+  </defs>
+
+  <rect id="background" width="1362" height="1260" fill="#fff"/>
+
+  <!-- Two dashed frames separate normal routing from cross-region failover. -->
+  <g id="scenario-boundaries">
+    <rect id="normal-scenario" class="scenario-frame" x="41" y="23" width="1282" height="588"/>
+    <rect id="failover-scenario" class="scenario-frame" x="41" y="649" width="1282" height="589"/>
+  </g>
+
+  <!-- Repeated data-center frames and their server/database nodes. -->
+  <g id="data-centers">
+    <g id="normal-us-data-center">
+      <rect class="data-center" x="600" y="53" width="689" height="224"/>
+      <text class="diagram-text centered" x="944.5" y="95">United States Data Center</text>
+      <rect class="server-box" x="647" y="137" width="163" height="85"/>
+      <text class="diagram-text centered" x="728.5" y="191">Servers</text>
+      <use href="#database" x="1007" y="131" width="98" height="99"/>
+      <text class="diagram-text" x="1118" y="191">Databases</text>
+    </g>
+
+    <g id="normal-europe-data-center">
+      <rect class="data-center" x="600" y="362" width="689" height="224"/>
+      <rect class="server-box" x="647" y="415" width="163" height="86"/>
+      <text class="diagram-text centered" x="728.5" y="469">Servers</text>
+      <use href="#database" x="1007" y="409" width="98" height="99"/>
+      <text class="diagram-text" x="1118" y="469">Databases</text>
+      <text class="diagram-text centered" x="944.5" y="561">Europe Data Center</text>
+    </g>
+
+    <g id="failover-us-data-center">
+      <rect class="data-center" x="600" y="676" width="689" height="224"/>
+      <text class="diagram-text centered" x="944.5" y="718">United States Data Center</text>
+      <rect class="server-box" x="647" y="760" width="163" height="86"/>
+      <text class="diagram-text centered" x="728.5" y="812">Servers</text>
+      <use href="#database" x="1007" y="754" width="98" height="99"/>
+      <text class="diagram-text" x="1118" y="812">Databases</text>
+    </g>
+
+    <g id="failover-europe-data-center">
+      <rect class="data-center" x="600" y="985" width="689" height="224"/>
+      <rect class="server-box" x="647" y="1038" width="163" height="86"/>
+      <text class="diagram-text centered" x="728.5" y="1090">Servers</text>
+      <use href="#database" x="1007" y="1032" width="98" height="99"/>
+      <text class="diagram-text" x="1118" y="1090">Databases</text>
+      <text class="diagram-text centered" x="944.5" y="1184">Europe Data Center</text>
+    </g>
+  </g>
+
+  <!-- Server requests terminate at the database outlines; replication arrows leave a label gap. -->
+  <g id="internal-data-center-connectors">
+    <path id="normal-us-server-database" class="connector" d="M810 180H1007"/>
+    <path id="normal-europe-server-database" class="connector" d="M810 458H1007"/>
+    <path id="failover-us-server-database" class="connector" d="M810 803H1007"/>
+    <path id="failover-europe-server-database" class="connector" d="M810 1081H1007"/>
+
+    <path id="normal-replication-up" class="connector" d="M1055 295V229"/>
+    <path id="normal-replication-down" class="connector" d="M1055 346V409"/>
+    <text class="diagram-text centered" x="1055" y="331">Replication</text>
+
+    <path id="failover-replication-up" class="connector" d="M1055 918V852"/>
+    <path id="failover-replication-down" class="connector" d="M1055 970V1032"/>
+    <text class="diagram-text centered" x="1055" y="954">Replication</text>
+  </g>
+
+  <!-- User labels and icons stay above their routes for readable endpoints. -->
+  <g id="users">
+    <g id="normal-us-user">
+      <text class="diagram-text centered" x="156" y="310">User from</text>
+      <text class="diagram-text centered" x="156" y="345">United States</text>
+      <use href="#person" x="255" y="288" width="59" height="59"/>
+    </g>
+    <g id="failover-us-user">
+      <text class="diagram-text centered" x="156" y="933">User from</text>
+      <text class="diagram-text centered" x="156" y="968">United States</text>
+      <use href="#person" x="255" y="911" width="59" height="59"/>
+    </g>
+  </g>
+
+  <!-- The lower split route shows the failed U.S. path and successful Europe fallback. -->
+  <g id="user-routing-connectors">
+    <path id="normal-user-route" class="connector" d="M313 309L647 204"/>
+    <path id="failed-us-route" class="connector" d="M313 932L647 829"/>
+    <path id="europe-fallback-route" class="connector" d="M313 950L647 1055"/>
+    <!-- The red cross intentionally sits on the failed route; it is a symbol, not a label. -->
+    <g id="failed-route-mark" fill="none" stroke="#ee451d" stroke-width="3.5">
+      <path d="M447 877L466 896"/>
+      <path d="M466 877L447 896"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,174 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1328"
+     height="1040"
+     viewBox="0 0 1328 1040"
+     role="img"
+     aria-labelledby="architecture-title architecture-desc">
+  <title id="architecture-title">Distributed email service high-level architecture</title>
+  <desc id="architecture-desc">Webmail connects over HTTPS to web servers and over WebSocket to real-time servers. Both service groups use a storage layer containing a metadata database, attachment store, distributed cache, and search store.</desc>
+
+  <!-- Shared visual language, reusable browser marks, and boundary-safe arrows. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #111; font-size: 36px; }
+      .node { fill: #fff; stroke: #171717; stroke-width: 2; }
+      .route { fill: none; stroke: #111; stroke-width: 2.2; }
+      .center { text-anchor: middle; }
+    </style>
+    <marker id="flow-arrowhead"
+            markerWidth="20"
+            markerHeight="20"
+            viewBox="0 0 20 20"
+            refX="18.5"
+            refY="10"
+            markerUnits="userSpaceOnUse"
+            orient="auto">
+      <path d="M0 0L20 10L0 20Z" fill="#111"/>
+    </marker>
+    <radialGradient id="chrome-blue" cx="42%" cy="35%" r="70%">
+      <stop offset="0" stop-color="#4c9bff"/>
+      <stop offset="1" stop-color="#2877de"/>
+    </radialGradient>
+    <linearGradient id="safari-blue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#46d6fa"/>
+      <stop offset="1" stop-color="#087bd7"/>
+    </linearGradient>
+
+    <symbol id="edge-mark" viewBox="0 0 27600 27600">
+      <defs>
+        <linearGradient id="edge-dark" x1="6870" y1="18705" x2="24704" y2="18705" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#0c59a4"/>
+          <stop offset="1" stop-color="#114a8b"/>
+        </linearGradient>
+        <linearGradient id="edge-blue" x1="16272" y1="10968" x2="5133" y2="23102" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#1b9de2"/>
+          <stop offset="0.16" stop-color="#1595df"/>
+          <stop offset="0.67" stop-color="#0680d7"/>
+          <stop offset="1" stop-color="#0078d4"/>
+        </linearGradient>
+        <radialGradient id="edge-dark-shade" cx="16720" cy="18747" r="9538" gradientUnits="userSpaceOnUse">
+          <stop offset="0.72" stop-opacity="0"/>
+          <stop offset="0.95" stop-opacity="0.53"/>
+          <stop offset="1"/>
+        </radialGradient>
+        <radialGradient id="edge-blue-shade" cx="7130" cy="19866" r="14324"
+                        gradientUnits="userSpaceOnUse"
+                        gradientTransform="matrix(.14843 -.98892 .79688 .1196 -8759 25542)">
+          <stop offset="0.76" stop-opacity="0"/>
+          <stop offset="0.95" stop-opacity="0.5"/>
+          <stop offset="1"/>
+        </radialGradient>
+        <radialGradient id="edge-green" cx="2523" cy="4680" r="20243"
+                        gradientUnits="userSpaceOnUse"
+                        gradientTransform="matrix(-.03715 .99931 -2.12836 -.07913 13579 3530)">
+          <stop offset="0" stop-color="#35c1f1"/>
+          <stop offset="0.11" stop-color="#34c1ed"/>
+          <stop offset="0.23" stop-color="#2fc2df"/>
+          <stop offset="0.31" stop-color="#2bc3d2"/>
+          <stop offset="0.67" stop-color="#36c752"/>
+        </radialGradient>
+        <radialGradient id="edge-green-highlight" cx="24247" cy="7758" r="9734"
+                        gradientUnits="userSpaceOnUse"
+                        gradientTransform="matrix(.28109 .95968 -.78353 .22949 24510 -16292)">
+          <stop offset="0" stop-color="#66eb6e"/>
+          <stop offset="1" stop-color="#66eb6e" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <path d="M24105 20053A9345 9345 0 0 1 23052 20525A10202 10202 0 0 1 19462 21171C14730 21171 10607 17916 10607 13739C10607 12564 11287 11546 12250 11010C7970 11190 6870 15650 6870 18263C6870 25650 13680 26400 15146 26400C15937 26400 17130 26170 17850 25944L17980 25900A12834 12834 0 0 0 24640 20618C24860 20268 24472 19861 24105 20053Z" fill="url(#edge-dark)"/>
+      <path d="M24105 20053A9345 9345 0 0 1 23052 20525A10202 10202 0 0 1 19462 21171C14730 21171 10607 17916 10607 13739C10607 12564 11287 11546 12250 11010C7970 11190 6870 15650 6870 18263C6870 25650 13680 26400 15146 26400C15937 26400 17130 26170 17850 25944L17980 25900A12834 12834 0 0 0 24640 20618C24860 20268 24472 19861 24105 20053Z" fill="url(#edge-dark-shade)" opacity="0.35"/>
+      <path d="M11571 25141A7913 7913 0 0 1 9298 23004A8145 8145 0 0 1 7784 18264A8093 8093 0 0 1 10877 11869A8082 8082 0 0 1 12250 11010C12562 10862 13096 10596 13804 10606A3236 3236 0 0 1 16373 11903A3184 3184 0 0 1 17009 13769C17009 13748 19455 5788 9004 5788C4614 5788 1000 9954 1000 13608C1000 15927 1538 17778 2212 19212A12833 12833 0 0 0 9896 25969A12795 12795 0 0 0 13804 26579C15218 26579 16578 26346 17849 25923A7575 7575 0 0 1 11571 25141Z" fill="url(#edge-blue)"/>
+      <path d="M11571 25141A7913 7913 0 0 1 9298 23004A8145 8145 0 0 1 7784 18264A8093 8093 0 0 1 10877 11869A8082 8082 0 0 1 12250 11010C12562 10862 13096 10596 13804 10606A3236 3236 0 0 1 16373 11903A3184 3184 0 0 1 17009 13769C17009 13748 19455 5788 9004 5788C4614 5788 1000 9954 1000 13608C1000 15927 1538 17778 2212 19212A12833 12833 0 0 0 9896 25969A12795 12795 0 0 0 13804 26579C15218 26579 16578 26346 17849 25923A7575 7575 0 0 1 11571 25141Z" fill="url(#edge-blue-shade)" opacity="0.4"/>
+      <path d="M16231 15886C16151 15991 15901 16136 15901 16452C15901 16712 16071 16964 16373 17175C17811 18178 20522 18043 20529 18043A5954 5954 0 0 0 23556 17204A6147 6147 0 0 0 24689 16354A6180 6180 0 0 0 26599 11917C26625 9675 25803 8185 25466 7525C23346 3384 18772 1000 13798 1000C6787 1000 1095 6635 1000 13620C1047 9966 4679 7015 8996 7015C9346 7015 11342 7049 13196 8022C14830 8880 15686 9916 16282 10943C16900 12010 17010 13358 17010 13895S16739 15228 16231 15886Z" fill="url(#edge-green)"/>
+      <path d="M16231 15886C16151 15991 15901 16136 15901 16452C15901 16712 16071 16964 16373 17175C17811 18178 20522 18043 20529 18043A5954 5954 0 0 0 23556 17204A6147 6147 0 0 0 24689 16354A6180 6180 0 0 0 26599 11917C26625 9675 25803 8185 25466 7525C23346 3384 18772 1000 13798 1000C6787 1000 1095 6635 1000 13620C1047 9966 4679 7015 8996 7015C9346 7015 11342 7049 13196 8022C14830 8880 15686 9916 16282 10943C16900 12010 17010 13358 17010 13895S16739 15228 16231 15886Z" fill="url(#edge-green-highlight)"/>
+    </symbol>
+    <symbol id="chrome-mark" viewBox="0 0 64 64">
+      <path d="M32 32L16 4.287A32 32 0 0 1 64 32Z" fill="#f44336"/>
+      <path d="M32 32H64A32 32 0 0 1 16 59.713Z" fill="#fbc02d"/>
+      <path d="M32 32L16 59.713A32 32 0 0 1 16 4.287Z" fill="#0f9d58"/>
+      <circle cx="32" cy="32" r="16" fill="#fff"/>
+      <circle cx="32" cy="32" r="12.5" fill="url(#chrome-blue)"/>
+    </symbol>
+    <symbol id="safari-mark" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="32" fill="url(#safari-blue)"/>
+      <circle cx="32" cy="32" r="28" fill="none" stroke="#dff7ff" stroke-width="2"/>
+      <g stroke="#fff" stroke-width="1.4">
+        <path d="M32 2V8M32 56V62M2 32H8M56 32H62"/>
+        <path d="M11 11L15 15M49 49L53 53M53 11L49 15M15 49L11 53"/>
+      </g>
+      <path d="M51 12L38 35L13 53L27 28Z" fill="#ed1c24"/>
+      <path d="M13 53L27 28L38 35Z" fill="#fff"/>
+      <circle cx="32" cy="32" r="3" fill="#fff"/>
+    </symbol>
+  </defs>
+  <rect id="background" width="1328" height="1040" fill="#fff"/>
+
+  <!-- Storage panel sits behind both incoming arrows and persistence symbols. -->
+  <rect id="storage-layer-panel" class="node" x="44" y="695" width="1247" height="318"/>
+
+  <!-- Protocol labels intentionally interrupt their two-part connector shafts. -->
+  <g id="service-routes">
+    <path id="https-lead-in" class="route" d="M592 226L557 272"/>
+    <path id="https-arrow" class="route" data-connector="true"
+          d="M510 334L456 402" marker-end="url(#flow-arrowhead)"/>
+    <path id="websocket-lead-in" class="route" d="M739 226L774 273"/>
+    <path id="websocket-arrow" class="route" data-connector="true"
+          d="M813 335L861 402" marker-end="url(#flow-arrowhead)"/>
+
+    <path id="web-storage-arrow" class="route" data-connector="true"
+          d="M452 504L568 695" marker-end="url(#flow-arrowhead)"/>
+    <path id="realtime-storage-arrow" class="route" data-connector="true"
+          d="M865 504L759 695" marker-end="url(#flow-arrowhead)"/>
+  </g>
+
+  <!-- Browser client and the two service groups establish the top-down flow. -->
+  <g id="service-nodes">
+    <rect class="node" x="448" y="29" width="439" height="197"/>
+    <use href="#edge-mark" x="491" y="59" width="98" height="98"/>
+    <use href="#chrome-mark" x="620" y="59" width="98" height="98"/>
+    <use href="#safari-mark" x="750" y="59" width="98" height="98"/>
+    <text class="center" x="667.5" y="201">Webmail</text>
+
+    <rect class="node" x="320" y="402" width="195" height="102"/>
+    <text class="center" x="417.5" y="447">
+      <tspan x="417.5">Web</tspan>
+      <tspan x="417.5" dy="39">Servers</tspan>
+    </text>
+
+    <rect class="node" x="801" y="402" width="195" height="102"/>
+    <text class="center" x="898.5" y="447">
+      <tspan x="898.5">Real-time</tspan>
+      <tspan x="898.5" dy="39">Servers</tspan>
+    </text>
+  </g>
+
+  <!-- Protocol names remain clear of both halves of their connector. -->
+  <g id="protocol-labels">
+    <text class="center" x="535" y="314">https</text>
+    <text class="center" x="774" y="321">WebSocket</text>
+  </g>
+
+  <!-- Four source-native database cylinders reproduce the storage layer. -->
+  <g id="storage-nodes">
+    <g id="metadata-database">
+      <path class="node" d="M137 751V843C137 859 253 859 253 843V751"/>
+      <ellipse class="node" cx="195" cy="751" rx="58" ry="11"/>
+      <text class="center" x="195" y="890">Metadata DB</text>
+    </g>
+    <g id="attachment-store">
+      <path class="node" d="M459 751V843C459 859 575 859 575 843V751"/>
+      <ellipse class="node" cx="517" cy="751" rx="58" ry="11"/>
+      <text class="center" x="517" y="890">Attachment store</text>
+    </g>
+    <g id="distributed-cache">
+      <path class="node" d="M782 751V843C782 859 898 859 898 843V751"/>
+      <ellipse class="node" cx="840" cy="751" rx="58" ry="11"/>
+      <text class="center" x="840" y="890">Distributed cache</text>
+    </g>
+    <g id="search-store">
+      <path class="node" d="M1091 751V843C1091 859 1207 859 1207 843V751"/>
+      <ellipse class="node" cx="1149" cy="751" rx="58" ry="11"/>
+      <text class="center" x="1149" y="890">Search store</text>
+    </g>
+    <text class="center" x="667.5" y="981">Storage Layer</text>
+  </g>
+</svg>

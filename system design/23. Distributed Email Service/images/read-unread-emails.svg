@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1288"
+     height="568"
+     viewBox="0 0 1288 568"
+     role="img"
+     aria-labelledby="read-unread-title read-unread-desc">
+  <title id="read-unread-title">Read and unread email table schemas</title>
+  <desc id="read-unread-desc">Two Cassandra tables named read_emails and unread_emails share the same schema. User ID and folder ID are partition keys, email ID is a descending clustering key, and from, subject, and preview are text fields.</desc>
+
+  <!-- Shared schema-table geometry and typography match the neighboring chapter diagrams. -->
+  <defs>
+    <style>
+      .frame { fill: none; stroke: #111; stroke-width: 2; }
+      .table-title { font: 700 41px Arial, Helvetica, sans-serif; fill: #050505; text-anchor: middle; }
+      .cell { font: 400 41px Arial, Helvetica, sans-serif; fill: #050505; }
+    </style>
+  </defs>
+  <rect id="background" width="1288" height="568" fill="#fff"/>
+
+  <!-- Each compact table uses one outer frame and one header divider. -->
+  <g id="table-frames">
+    <rect id="read-emails-frame" class="frame" x="27" y="29" width="568" height="509"/>
+    <path id="read-emails-header-divider" class="frame" d="M27 109H595"/>
+    <text class="table-title" x="311" y="79">read_emails</text>
+
+    <rect id="unread-emails-frame" class="frame" x="692" y="29" width="568" height="509"/>
+    <path id="unread-emails-header-divider" class="frame" d="M692 109H1260"/>
+    <text class="table-title" x="976" y="79">unread_emails</text>
+  </g>
+
+  <!-- Read-email columns, data types, and Cassandra key markers. -->
+  <g id="read-emails-schema" class="cell">
+    <text x="44" y="176">user_id</text>
+    <text x="279" y="176">UUID</text>
+    <text x="528" y="176">K</text>
+
+    <text x="44" y="241">folder_id</text>
+    <text x="279" y="241">UUID</text>
+    <text x="528" y="241">K</text>
+
+    <text x="44" y="306">email_id</text>
+    <text x="279" y="306">TIMEUUID</text>
+    <text x="528" y="306">C↓</text>
+
+    <text x="44" y="371">from</text>
+    <text x="279" y="371">TEXT</text>
+
+    <text x="44" y="436">subject</text>
+    <text x="279" y="436">TEXT</text>
+
+    <text x="44" y="501">preview</text>
+    <text x="279" y="501">TEXT</text>
+  </g>
+
+  <!-- Unread-email columns deliberately mirror the read table one-for-one. -->
+  <g id="unread-emails-schema" class="cell">
+    <text x="709" y="176">user_id</text>
+    <text x="944" y="176">UUID</text>
+    <text x="1193" y="176">K</text>
+
+    <text x="709" y="241">folder_id</text>
+    <text x="944" y="241">UUID</text>
+    <text x="1193" y="241">K</text>
+
+    <text x="709" y="306">email_id</text>
+    <text x="944" y="306">TIMEUUID</text>
+    <text x="1193" y="306">C↓</text>
+
+    <text x="709" y="371">from</text>
+    <text x="944" y="371">TEXT</text>
+
+    <text x="709" y="436">subject</text>
+    <text x="944" y="436">TEXT</text>
+
+    <text x="709" y="501">preview</text>
+    <text x="944" y="501">TEXT</text>
+  </g>
+</svg>

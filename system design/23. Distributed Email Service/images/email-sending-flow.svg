@@ -1,0 +1,300 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1698"
+     height="1126"
+     viewBox="0 0 1698 1126"
+     role="img"
+     aria-labelledby="sending-title sending-desc">
+  <title id="sending-title">Email sending flow</title>
+  <desc id="sending-desc">Webmail sends an email through a load balancer and web servers. The email enters an outgoing queue, is processed by SMTP with retry, virus, and spam checks, then reaches the Internet. Metadata, search data, attachments, and the latest email are also written to storage.</desc>
+
+  <!-- Shared styles, reusable symbols, and a boundary-safe arrowhead. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#111;font-size:30px}
+      .node{fill:#fff;stroke:#222;stroke-width:1.7}
+      .pink-node{fill:#f3a7f2;stroke:#222;stroke-width:1.7}
+      .zone{fill:none;stroke:#222;stroke-width:1.7;stroke-dasharray:8 7}
+      .route{fill:none;stroke:#111;stroke-width:1.9}
+      .center{text-anchor:middle}
+      .storage-note{font-size:27px}
+      .step-text{font-size:27px;text-anchor:middle}
+    </style>
+    <marker id="flow-arrowhead"
+            markerWidth="19"
+            markerHeight="19"
+            viewBox="0 0 19 19"
+            refX="17.5"
+            refY="9.5"
+            markerUnits="userSpaceOnUse"
+            orient="auto-start-reverse">
+      <path d="M0 0L19 9.5L0 19Z" fill="#111"/>
+    </marker>
+    <radialGradient id="chrome-blue" cx="42%" cy="35%" r="70%">
+      <stop offset="0" stop-color="#4c9bff"/>
+      <stop offset="1" stop-color="#2877de"/>
+    </radialGradient>
+    <linearGradient id="safari-blue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#46d6fa"/>
+      <stop offset="1" stop-color="#087bd7"/>
+    </linearGradient>
+
+    <symbol id="message-envelope" viewBox="0 0 42 30">
+      <path d="M1 1H41V29H1Z M1 1L21 17L41 1" fill="#fff" stroke="#222" stroke-width="1.7"/>
+    </symbol>
+    <symbol id="edge-mark" viewBox="0 0 27600 27600">
+      <defs>
+        <linearGradient id="edge-dark" x1="6870" y1="18705" x2="24704" y2="18705" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#0c59a4"/><stop offset="1" stop-color="#114a8b"/>
+        </linearGradient>
+        <linearGradient id="edge-blue" x1="16272" y1="10968" x2="5133" y2="23102" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#1b9de2"/><stop offset="0.16" stop-color="#1595df"/><stop offset="0.67" stop-color="#0680d7"/><stop offset="1" stop-color="#0078d4"/>
+        </linearGradient>
+        <radialGradient id="edge-dark-shade" cx="16720" cy="18747" r="9538" gradientUnits="userSpaceOnUse">
+          <stop offset="0.72" stop-opacity="0"/><stop offset="0.95" stop-opacity="0.53"/><stop offset="1"/>
+        </radialGradient>
+        <radialGradient id="edge-blue-shade" cx="7130" cy="19866" r="14324" gradientUnits="userSpaceOnUse" gradientTransform="matrix(.14843 -.98892 .79688 .1196 -8759 25542)">
+          <stop offset="0.76" stop-opacity="0"/><stop offset="0.95" stop-opacity="0.5"/><stop offset="1"/>
+        </radialGradient>
+        <radialGradient id="edge-green" cx="2523" cy="4680" r="20243" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-.03715 .99931 -2.12836 -.07913 13579 3530)">
+          <stop offset="0" stop-color="#35c1f1"/><stop offset="0.11" stop-color="#34c1ed"/><stop offset="0.23" stop-color="#2fc2df"/><stop offset="0.31" stop-color="#2bc3d2"/><stop offset="0.67" stop-color="#36c752"/>
+        </radialGradient>
+        <radialGradient id="edge-green-highlight" cx="24247" cy="7758" r="9734" gradientUnits="userSpaceOnUse" gradientTransform="matrix(.28109 .95968 -.78353 .22949 24510 -16292)">
+          <stop offset="0" stop-color="#66eb6e"/><stop offset="1" stop-color="#66eb6e" stop-opacity="0"/>
+        </radialGradient>
+        <path id="edge-dark-shape" d="M24105 20053a9345 9345 0 0 1-1053 472 10202 10202 0 0 1-3590 646c-4732 0-8855-3255-8855-7432 0-1175 680-2193 1643-2729-4280 180-5380 4640-5380 7253 0 7387 6810 8137 8276 8137 791 0 1984-230 2704-456l130-44a12834 12834 0 0 0 6660-5282c220-350-168-757-535-565z"/>
+        <path id="edge-blue-shape" d="M11571 25141a7913 7913 0 0 1-2273-2137 8145 8145 0 0 1-1514-4740 8093 8093 0 0 1 3093-6395 8082 8082 0 0 1 1373-859c312-148 846-414 1554-404a3236 3236 0 0 1 2569 1297 3184 3184 0 0 1 636 1866c0-21 2446-7960-8005-7960-4390 0-8004 4166-8004 7820 0 2319 538 4170 1212 5604a12833 12833 0 0 0 7684 6757 12795 12795 0 0 0 3908 610c1414 0 2774-233 4045-656a7575 7575 0 0 1-6278-803z"/>
+        <path id="edge-green-shape" d="M16231 15886c-80 105-330 250-330 566 0 260 170 512 472 723 1438 1003 4149 868 4156 868a5954 5954 0 0 0 3027-839 6147 6147 0 0 0 1133-850 6180 6180 0 0 0 1910-4437c26-2242-796-3732-1133-4392-2120-4141-6694-6525-11668-6525-7011 0-12703 5635-12798 12620 47-3654 3679-6605 7996-6605 350 0 2346 34 4200 1007 1634 858 2490 1894 3086 2921 618 1067 728 2415 728 2952s-271 1333-780 1990z"/>
+      </defs>
+      <use href="#edge-dark-shape" fill="url(#edge-dark)"/>
+      <use href="#edge-dark-shape" fill="url(#edge-dark-shade)" opacity="0.35"/>
+      <use href="#edge-blue-shape" fill="url(#edge-blue)"/>
+      <use href="#edge-blue-shape" fill="url(#edge-blue-shade)" opacity="0.4"/>
+      <use href="#edge-green-shape" fill="url(#edge-green)"/>
+      <use href="#edge-green-shape" fill="url(#edge-green-highlight)"/>
+    </symbol>
+    <symbol id="chrome-mark" viewBox="0 0 64 64">
+      <path d="M32 32L16 4.287A32 32 0 0 1 64 32Z" fill="#f44336"/>
+      <path d="M32 32H64A32 32 0 0 1 16 59.713Z" fill="#fbc02d"/>
+      <path d="M32 32L16 59.713A32 32 0 0 1 16 4.287Z" fill="#0f9d58"/>
+      <circle cx="32" cy="32" r="16" fill="#fff"/>
+      <circle cx="32" cy="32" r="12.5" fill="url(#chrome-blue)"/>
+    </symbol>
+    <symbol id="safari-mark" viewBox="0 0 64 64">
+      <circle cx="32" cy="32" r="32" fill="url(#safari-blue)"/>
+      <circle cx="32" cy="32" r="28" fill="none" stroke="#dff7ff" stroke-width="2"/>
+      <g stroke="#fff" stroke-width="1.4">
+        <path d="M32 2V8M32 56V62M2 32H8M56 32H62"/>
+        <path d="M11 11L15 15M49 49L53 53M53 11L49 15M15 49L11 53"/>
+      </g>
+      <path d="M51 12L38 35L13 53L27 28Z" fill="#ed1c24"/>
+      <path d="M13 53L27 28L38 35Z" fill="#fff"/>
+      <circle cx="32" cy="32" r="3" fill="#fff"/>
+    </symbol>
+    <symbol id="redis-mark" viewBox="0 0 68 65">
+      <path d="M0 39L34 25L68 39V50L34 65L0 50Z" fill="#b90000"/>
+      <path d="M0 26L34 12L68 26V38L34 52L0 38Z" fill="#d60000"/>
+      <path d="M0 14L34 0L68 14L34 29Z" fill="#ef0000"/>
+      <path d="M23 12L31 10L35 5L39 10L47 12L40 16L41 21L34 18L27 21L28 16Z" fill="#fff"/>
+      <ellipse cx="50" cy="15" rx="5" ry="3" fill="#fff"/>
+    </symbol>
+  </defs>
+  <rect id="background" width="1698" height="1126" fill="#fff"/>
+
+  <!-- Processing and storage boundaries establish the major groups. -->
+  <rect id="smtp-processing-zone" class="zone" x="963" y="28" width="327" height="584"/>
+  <rect id="storage-layer-panel" class="node" x="52" y="775" width="1102" height="328"/>
+
+  <!-- Main numbered routes are split around their step circles. -->
+  <g id="main-flow-routes">
+    <path id="webmail-step-line" class="route" d="M213 193V217"/>
+    <path id="https-continuation" class="route" d="M213 259V265"/>
+    <path id="https-to-load-balancer-arrow" class="route" data-connector="true"
+          d="M213 265V297" marker-end="url(#flow-arrowhead)"/>
+
+    <path id="load-balancer-step-line" class="route" d="M213 382V405"/>
+    <path id="load-balancer-continuation" class="route" d="M213 447V453"/>
+    <path id="load-balancer-to-web-arrow" class="route" data-connector="true"
+          d="M213 453V490" marker-end="url(#flow-arrowhead)"/>
+
+    <path id="web-to-storage-step-line" class="route" d="M282 575L430 665"/>
+    <path id="web-storage-continuation" class="route" d="M466 687L471 690"/>
+    <path id="web-to-storage-arrow" class="route" data-connector="true"
+          d="M471 690L588 765" marker-end="url(#flow-arrowhead)"/>
+
+    <path id="web-to-outgoing-step-line" class="route" d="M343 533H427"/>
+    <path id="outgoing-continuation" class="route" d="M469 533H475"/>
+    <path id="web-to-outgoing-arrow" class="route" data-connector="true"
+          d="M475 533H563" marker-end="url(#flow-arrowhead)"/>
+
+    <!-- One continuous curve passes behind the white 4.b step circle. -->
+    <path id="error-curve" class="route"
+          d="M270 490C348 438 470 380 564 366"/>
+    <path id="web-to-error-arrow" class="route" data-connector="true"
+          d="M538 371L564 366" marker-end="url(#flow-arrowhead)"/>
+
+    <path id="outgoing-to-smtp-step-line" class="route" d="M784 533H853"/>
+    <path id="smtp-queue-continuation" class="route" d="M895 533H901"/>
+    <path id="outgoing-to-smtp-arrow" class="route" data-connector="true"
+          d="M901 533H997" marker-end="url(#flow-arrowhead)"/>
+
+    <path id="smtp-to-storage-step-line" class="route" d="M979 612L848 667"/>
+    <path id="smtp-storage-continuation" class="route" d="M812 687L806 690"/>
+    <path id="smtp-to-storage-arrow" class="route" data-connector="true"
+          d="M806 690L625 765" marker-end="url(#flow-arrowhead)"/>
+
+    <path id="smtp-to-internet-step-line" class="route" d="M1257 533H1349"/>
+    <path id="internet-continuation" class="route" d="M1391 533H1397"/>
+    <path id="smtp-to-internet-arrow" class="route" data-connector="true"
+          d="M1397 533H1462" marker-end="url(#flow-arrowhead)"/>
+  </g>
+
+  <!-- Smooth feedback curves run continuously behind the white processing nodes. -->
+  <g id="smtp-feedback-routes">
+    <path id="retry-feedback-arrow" class="route" data-connector="true"
+          d="M1127 490V437"
+          marker-start="url(#flow-arrowhead)" marker-end="url(#flow-arrowhead)"/>
+
+    <path id="virus-curve" class="route"
+          d="M1091 490C1058 446 1058 335 1095 298"/>
+    <path id="virus-return-arrow" class="route" data-connector="true"
+          d="M1079 474L1091 490" marker-end="url(#flow-arrowhead)"/>
+    <path id="virus-request-arrow" class="route" data-connector="true"
+          d="M1083 310L1095 298" marker-end="url(#flow-arrowhead)"/>
+
+    <path id="spam-curve" class="route"
+          d="M1155 490C1200 430 1205 230 1151 159"/>
+    <path id="spam-return-arrow" class="route" data-connector="true"
+          d="M1164 478L1155 490" marker-end="url(#flow-arrowhead)"/>
+    <path id="spam-request-arrow" class="route" data-connector="true"
+          d="M1163 175L1151 159" marker-end="url(#flow-arrowhead)"/>
+  </g>
+
+  <!-- Storage fan-out lines leave a clear gap for each explanatory label. -->
+  <g id="storage-fanout-routes">
+    <path id="metadata-lead-in" class="route" d="M566 785L367 830"/>
+    <path id="metadata-arrow" class="route" data-connector="true"
+          d="M277 869L205 899" marker-end="url(#flow-arrowhead)"/>
+    <path id="search-store-lead-in" class="route" d="M589 785L524 829"/>
+    <path id="search-store-arrow" class="route" data-connector="true"
+          d="M488 869L480 889" marker-end="url(#flow-arrowhead)"/>
+    <path id="attachment-lead-in" class="route" d="M618 785L687 829"/>
+    <path id="attachment-arrow" class="route" data-connector="true"
+          d="M743 869L753 889" marker-end="url(#flow-arrowhead)"/>
+    <path id="latest-email-lead-in" class="route" d="M641 785L845 830"/>
+    <path id="latest-email-arrow" class="route" data-connector="true"
+          d="M936 869L1013 899" marker-end="url(#flow-arrowhead)"/>
+  </g>
+
+  <!-- Webmail, load balancer, and web-server entry path. -->
+  <g id="webmail-and-web-nodes">
+    <rect class="node" x="25" y="28" width="377" height="165"/>
+    <use href="#edge-mark" x="63" y="52" width="80" height="80"/>
+    <use href="#chrome-mark" x="174" y="52" width="80" height="80"/>
+    <use href="#safari-mark" x="286" y="52" width="80" height="80"/>
+    <text class="center" x="213.5" y="171">Webmail</text>
+
+    <rect class="node" x="83" y="297" width="260" height="85"/>
+    <text class="center" x="213" y="351">Load balancer</text>
+    <rect class="pink-node" x="83" y="490" width="260" height="85"/>
+    <text class="center" x="213" y="544">Web servers</text>
+  </g>
+
+  <!-- Error and outgoing queues use the same horizontal-cylinder construction. -->
+  <g id="email-queues">
+    <g id="error-queue">
+      <path class="node"
+            d="M590 318H762C774 318 784 336 784 358C784 380 774 398 762 398H590C575 398 563 380 563 358C563 336 575 318 590 318Z"/>
+      <ellipse class="node" cx="762" cy="358" rx="22" ry="40"/>
+      <use href="#message-envelope" x="586" y="343" width="42" height="30"/>
+      <use href="#message-envelope" x="636" y="343" width="42" height="30"/>
+      <use href="#message-envelope" x="686" y="343" width="42" height="30"/>
+      <text class="center" x="674" y="427">Error queue</text>
+    </g>
+    <g id="outgoing-queue">
+      <path class="node"
+            d="M590 493H762C774 493 784 511 784 533C784 555 774 573 762 573H590C575 573 563 555 563 533C563 511 575 493 590 493Z"/>
+      <ellipse class="node" cx="762" cy="533" rx="22" ry="40"/>
+      <use href="#message-envelope" x="582" y="518" width="42" height="30"/>
+      <use href="#message-envelope" x="632" y="518" width="42" height="30"/>
+      <use href="#message-envelope" x="682" y="518" width="42" height="30"/>
+      <text class="center" x="674" y="604">Outgoing queue</text>
+    </g>
+  </g>
+
+  <!-- SMTP processing and its retry/check nodes. -->
+  <g id="smtp-processing-nodes">
+    <rect class="node" x="997" y="74" width="260" height="85"/>
+    <text class="center" x="1127" y="128">Check spam</text>
+    <rect class="node" x="997" y="213" width="260" height="85"/>
+    <text class="center" x="1127" y="267">Check virus</text>
+    <rect class="node" x="997" y="351" width="260" height="86"/>
+    <text class="center" x="1127" y="405">Retry</text>
+    <rect class="pink-node" x="997" y="490" width="260" height="86"/>
+    <text class="center" x="1127" y="544">SMTP Outgoing</text>
+  </g>
+
+  <!-- Internet cloud receives the final SMTP delivery. -->
+  <g id="internet-node">
+    <path class="node"
+          d="M1468 550
+             C1447 544 1450 520 1468 508
+             C1458 482 1484 462 1515 476
+             C1526 456 1573 456 1587 475
+             C1619 458 1652 476 1649 505
+             C1673 514 1668 543 1650 551
+             C1667 573 1645 596 1612 590
+             C1603 612 1556 610 1540 590
+             C1508 604 1474 589 1473 569
+             C1457 566 1452 556 1468 550Z"/>
+    <text class="center" x="1562" y="544">Internet</text>
+  </g>
+
+  <!-- Storage bus and four source-native persistence symbols. -->
+  <g id="storage-layer-nodes">
+    <rect id="storage-bus" class="node" x="553" y="765" width="100" height="20"/>
+    <g id="metadata-database">
+      <path class="node" d="M106 901V972C106 991 205 991 205 972V901"/>
+      <ellipse class="node" cx="155.5" cy="901" rx="49.5" ry="11"/>
+      <text class="center" x="155.5" y="1016">Database</text>
+    </g>
+    <g id="search-database">
+      <path class="node" d="M407 901V972C407 991 506 991 506 972V901"/>
+      <ellipse class="node" cx="456.5" cy="901" rx="49.5" ry="11"/>
+      <text class="center" x="456.5" y="1016">Database</text>
+    </g>
+    <g id="attachment-object-store">
+      <path class="node" d="M710 901L729 987H790L809 901Z"/>
+      <ellipse class="node" cx="759.5" cy="901" rx="49.5" ry="13"/>
+      <circle cx="759.5" cy="944" r="10" fill="none" stroke="#222" stroke-width="1.6"/>
+      <path d="M731 979L741 957L751 979Z" fill="none" stroke="#222" stroke-width="1.6"/>
+      <rect x="761" y="958" width="22" height="21" fill="none" stroke="#222" stroke-width="1.6"/>
+      <text class="center" x="759.5" y="1016">Object Store</text>
+    </g>
+    <g id="latest-email-cache">
+      <use href="#redis-mark" x="1013" y="899" width="88" height="84"/>
+      <text class="center" x="1057" y="1016">Cache</text>
+    </g>
+    <text class="center" x="603" y="1084">Storage Layer</text>
+  </g>
+
+  <!-- Storage-route labels remain clear of their split arrows. -->
+  <g id="storage-route-labels">
+    <text class="center storage-note" x="316" y="856">Metadata</text>
+    <text class="center storage-note" x="505" y="856">Search store</text>
+    <text class="center storage-note" x="714" y="856">Attachment</text>
+    <text class="center storage-note" x="891" y="856">Latest email</text>
+  </g>
+
+  <!-- Numbered circles preserve the etalon's reading order and branch names. -->
+  <g id="numbered-steps">
+    <g><circle class="node" cx="213" cy="238" r="21"/><text class="step-text" x="213" y="248">1</text></g>
+    <g><circle class="node" cx="213" cy="426" r="21"/><text class="step-text" x="213" y="436">2</text></g>
+    <g><circle class="node" cx="448" cy="676" r="21"/><text class="step-text" x="448" y="686">3</text></g>
+    <g><circle class="node" cx="448" cy="534" r="21"/><text class="step-text" x="448" y="544">4.a</text></g>
+    <g><circle class="node" cx="448" cy="394" r="21"/><text class="step-text" x="448" y="404">4.b</text></g>
+    <g><circle class="node" cx="874" cy="533" r="21"/><text class="step-text" x="874" y="543">5</text></g>
+    <g><circle class="node" cx="830" cy="676" r="21"/><text class="step-text" x="830" y="686">6</text></g>
+    <g><circle class="node" cx="1370" cy="533" r="21"/><text class="step-text" x="1370" y="543">7</text></g>
+  </g>
+  <text x="241" y="249">HTTPS</text>
+</svg>

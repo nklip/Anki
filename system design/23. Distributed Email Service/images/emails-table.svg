@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="876"
+     height="982"
+     viewBox="0 0 876 982"
+     role="img"
+     aria-labelledby="emails-table-title emails-table-desc">
+  <title id="emails-table-title">emails_by_folder table schema</title>
+  <desc id="emails-table-desc">A table named emails_by_folder. The partition keys are user_id and folder_id, the descending clustering key is email_id, and the remaining columns store sender, subject, preview, and read status.</desc>
+
+  <!-- Shared typography and the white canvas match the PNG etalon. -->
+  <defs>
+    <style>
+      .frame { fill: none; stroke: #111; stroke-width: 3; }
+      .title { font: 700 64px Arial, Helvetica, sans-serif; fill: #050505; text-anchor: middle; }
+      .cell { font: 400 64px Arial, Helvetica, sans-serif; fill: #050505; }
+    </style>
+  </defs>
+  <rect id="background" width="876" height="982" fill="#fff"/>
+
+  <!-- The header is part of one compact table frame, not a separate card. -->
+  <g id="table-frame">
+    <rect class="frame" x="34.5" y="28.5" width="808" height="928"/>
+    <path class="frame" d="M35 158.5H842"/>
+    <text class="title" x="438" y="109">emails_by_folder</text>
+  </g>
+
+  <!-- Column names, data types, and Cassandra key markers. -->
+  <g id="schema-rows" class="cell">
+    <text x="82" y="260">user_id</text>
+    <text x="389" y="260">UUID</text>
+    <text x="717" y="260">K</text>
+
+    <text x="82" y="366">folder_id</text>
+    <text x="389" y="366">UUID</text>
+    <text x="717" y="366">K</text>
+
+    <text x="82" y="473">email_id</text>
+    <text x="389" y="473">TIMEUUID</text>
+    <text x="717" y="473">C↓</text>
+
+    <text x="82" y="580">from</text>
+    <text x="389" y="580">TEXT</text>
+
+    <text x="82" y="686">subject</text>
+    <text x="389" y="686">TEXT</text>
+
+    <text x="82" y="793">preview</text>
+    <text x="389" y="793">TEXT</text>
+
+    <text x="82" y="899">is_read</text>
+    <text x="389" y="899">BOOLEAN</text>
+  </g>
+</svg>

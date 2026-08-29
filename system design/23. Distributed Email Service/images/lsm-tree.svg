@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1926"
+     height="1002"
+     viewBox="0 0 1926 1002"
+     role="img"
+     aria-labelledby="lsm-tree-title lsm-tree-desc">
+  <title id="lsm-tree-title">LSM-tree storage levels over time</title>
+  <desc id="lsm-tree-desc">An upward time axis accompanies five storage levels. Level 0 is held in memory as many small runs, while Levels 1 through 4 are stored on disk as progressively fewer and larger merged runs.</desc>
+
+  <!-- Shared row, label, and source-native database-run styling. -->
+  <defs>
+    <style>
+      .level-frame { fill: #fff; stroke: #191919; stroke-width: 2.2; stroke-dasharray: 7 6; }
+      .memory-frame { fill: #f07269; }
+      .level-label { font: 400 32px Arial, Helvetica, sans-serif; fill: #080808; text-anchor: middle; }
+      .run-shape { fill: #fff; stroke: #111; stroke-width: 2.2; }
+      .time-shaft { fill: none; stroke: #111; stroke-width: 2.2; }
+      .time-label { font: 400 32px Arial, Helvetica, sans-serif; fill: #080808; }
+    </style>
+
+    <!-- Each run size has fixed geometry so repeated instances remain easy to align. -->
+    <symbol id="run-level-4" viewBox="0 0 311 156">
+      <path class="run-shape" d="M1 33V122A154 33 0 0 0 309 122V33"/>
+      <ellipse class="run-shape" cx="155" cy="33" rx="154" ry="32"/>
+    </symbol>
+    <symbol id="run-level-3" viewBox="0 0 267 134">
+      <path class="run-shape" d="M1 33V100A132 33 0 0 0 265 100V33"/>
+      <ellipse class="run-shape" cx="133" cy="33" rx="132" ry="32"/>
+    </symbol>
+    <symbol id="run-level-2" viewBox="0 0 157 112">
+      <path class="run-shape" d="M1 33V78A77 33 0 0 0 155 78V33"/>
+      <ellipse class="run-shape" cx="78" cy="33" rx="77" ry="32"/>
+    </symbol>
+    <symbol id="run-level-1" viewBox="0 0 69 68">
+      <path class="run-shape" d="M1 13V55A33.5 12 0 0 0 68 55V13"/>
+      <ellipse class="run-shape" cx="34.5" cy="13" rx="33.5" ry="12"/>
+    </symbol>
+    <symbol id="run-level-0" viewBox="0 0 45 50">
+      <path class="run-shape" d="M1 9V40A21.5 9 0 0 0 44 40V9"/>
+      <ellipse class="run-shape" cx="22.5" cy="9" rx="21.5" ry="8"/>
+    </symbol>
+  </defs>
+
+  <rect id="background" width="1926" height="1002" fill="#fff"/>
+
+  <!-- The time axis points upward; its shaft stops beneath the separate arrowhead. -->
+  <g id="time-axis">
+    <path id="time-shaft" class="time-shaft" data-connector="true" d="M138 976V67"/>
+    <path id="time-arrowhead" d="M138 52L127 72L138 67L149 72Z" fill="#111"/>
+    <text class="time-label" x="15" y="964">Time</text>
+  </g>
+
+  <!-- Dashed bands reproduce the memory-to-disk levels of the PNG etalon. -->
+  <g id="storage-level-frames">
+    <rect id="level-4-frame" class="level-frame" x="248" y="30" width="1631" height="242" rx="35"/>
+    <rect id="level-3-frame" class="level-frame" x="248" y="294" width="1631" height="221" rx="31"/>
+    <rect id="level-2-frame" class="level-frame" x="248" y="532" width="1631" height="158" rx="23"/>
+    <rect id="level-1-frame" class="level-frame" x="248" y="710" width="1631" height="113" rx="19"/>
+    <rect id="level-0-frame" class="level-frame memory-frame" x="248" y="866" width="1631" height="112" rx="19"/>
+  </g>
+
+  <!-- Labels form a stable left column inside every storage band. -->
+  <g id="storage-level-labels" class="level-label">
+    <text x="358" y="144">Level 4</text>
+    <text x="358" y="181">(disk)</text>
+
+    <text x="358" y="402">Level 3</text>
+    <text x="358" y="439">(disk)</text>
+
+    <text x="358" y="604">Level 2</text>
+    <text x="358" y="641">(disk)</text>
+
+    <text x="358" y="758">Level 1</text>
+    <text x="358" y="795">(disk)</text>
+
+    <text x="358" y="914">Level 0</text>
+    <text x="358" y="951">(Memory)</text>
+  </g>
+
+  <!-- Disk runs become larger and fewer as compaction advances upward. -->
+  <g id="disk-runs">
+    <use href="#run-level-4" x="1040" y="74" width="311" height="156"/>
+
+    <use href="#run-level-3" x="778" y="342" width="267" height="134"/>
+    <use href="#run-level-3" x="1378" y="333" width="267" height="134"/>
+
+    <use href="#run-level-2" x="646" y="553" width="157" height="112"/>
+    <use href="#run-level-2" x="932" y="553" width="157" height="112"/>
+    <use href="#run-level-2" x="1311" y="553" width="157" height="112"/>
+    <use href="#run-level-2" x="1576" y="553" width="157" height="112"/>
+
+    <use href="#run-level-1" x="602" y="729" width="69" height="68"/>
+    <use href="#run-level-1" x="767" y="731" width="69" height="68"/>
+    <use href="#run-level-1" x="903" y="731" width="69" height="68"/>
+    <use href="#run-level-1" x="1045" y="729" width="69" height="68"/>
+    <use href="#run-level-1" x="1267" y="731" width="69" height="68"/>
+    <use href="#run-level-1" x="1402" y="731" width="69" height="68"/>
+    <use href="#run-level-1" x="1563" y="731" width="69" height="68"/>
+    <use href="#run-level-1" x="1696" y="731" width="69" height="68"/>
+  </g>
+
+  <!-- The in-memory level begins with many small independently editable runs. -->
+  <g id="memory-runs">
+    <use href="#run-level-0" x="560" y="896" width="45" height="50"/>
+    <use href="#run-level-0" x="646" y="897" width="45" height="50"/>
+    <use href="#run-level-0" x="736" y="897" width="45" height="50"/>
+    <use href="#run-level-0" x="820" y="898" width="45" height="50"/>
+    <use href="#run-level-0" x="889" y="898" width="45" height="50"/>
+    <use href="#run-level-0" x="969" y="898" width="45" height="50"/>
+    <use href="#run-level-0" x="1045" y="898" width="45" height="50"/>
+    <use href="#run-level-0" x="1129" y="898" width="45" height="50"/>
+    <use href="#run-level-0" x="1225" y="898" width="45" height="50"/>
+    <use href="#run-level-0" x="1307" y="898" width="45" height="50"/>
+    <use href="#run-level-0" x="1402" y="898" width="45" height="50"/>
+    <use href="#run-level-0" x="1489" y="897" width="45" height="50"/>
+    <use href="#run-level-0" x="1576" y="898" width="45" height="50"/>
+    <use href="#run-level-0" x="1642" y="898" width="45" height="50"/>
+    <use href="#run-level-0" x="1708" y="898" width="45" height="50"/>
+    <use href="#run-level-0" x="1774" y="898" width="45" height="50"/>
+  </g>
+</svg>

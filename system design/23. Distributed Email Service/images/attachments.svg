@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1328" height="642" viewBox="0 0 1328 642" role="img" aria-labelledby="attachments-title attachments-desc">
+  <title id="attachments-title">Email and attachment storage schema</title>
+  <desc id="attachments-desc">The emails_by_user table stores email content and attachment metadata. The attachments table stores each attachment URL. K marks a partition key, while C and C-down-arrow mark clustering columns and their order.</desc>
+
+  <!-- Shared table and text styles preserve the etalon's compact schema layout. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:40px;fill:#000}
+      .table-box,.table-divider{fill:none;stroke:#1a1a1a;stroke-width:1.6}
+      .table-title{font-size:40px;font-weight:700;text-anchor:middle}
+      .attachment-label{font-size:36px}
+    </style>
+  </defs>
+  <rect id="background" width="1328" height="642" fill="#fff"/>
+
+  <!-- Email rows are partitioned by user and ordered by email identifier. -->
+  <g id="emails-by-user-table">
+    <rect class="table-box" x="45.5" y="40.5" width="607.5" height="567"/>
+    <path class="table-divider" d="M45.5 120.5H653"/>
+    <text class="table-title" x="349.25" y="92">emails_by_user</text>
+
+    <text x="60" y="186">user_id</text>
+    <text x="293" y="186">UUID</text>
+    <text x="588" y="186">K</text>
+
+    <text x="60" y="250">email_id</text>
+    <text x="293" y="250">TIMEUUID</text>
+    <text x="588" y="250">C↓</text>
+
+    <text x="60" y="314">from</text>
+    <text x="293" y="314">TEXT</text>
+
+    <text x="60" y="379">to</text>
+    <text x="293" y="379">LIST&lt;TEXT&gt;</text>
+
+    <text x="60" y="444">subject</text>
+    <text x="293" y="444">TEXT</text>
+
+    <text x="60" y="509">body</text>
+    <text x="293" y="509">TEXT</text>
+
+    <text class="attachment-label" transform="translate(60 574) scale(1 1.1)" letter-spacing="1.5">attachments</text>
+    <text transform="translate(293 574) scale(.97 1)">LIST&lt;filename|size&gt;</text>
+  </g>
+
+  <!-- Attachment rows are clustered by filename within each email. -->
+  <g id="attachments-table">
+    <rect class="table-box" x="745" y="40.5" width="534.5" height="309"/>
+    <path class="table-divider" d="M745 120.5H1279.5"/>
+    <text class="table-title" x="1012.25" y="92">attachments</text>
+
+    <text x="760" y="186">email_id</text>
+    <text x="957" y="186">TIMEUUID</text>
+    <text x="1214" y="186">C</text>
+
+    <text x="760" y="250">filename</text>
+    <text x="957" y="250">TEXT</text>
+    <text x="1214" y="250">K</text>
+
+    <text x="760" y="314">url</text>
+    <text x="957" y="314">TEXT</text>
+  </g>
+</svg>

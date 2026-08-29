@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1166"
+     height="928"
+     viewBox="0 0 1166 928"
+     role="img"
+     aria-labelledby="traditional-mail-title traditional-mail-desc">
+  <title id="traditional-mail-title">Traditional mail-server delivery</title>
+  <desc id="traditional-mail-desc">Alice sends an email from Outlook through outlook.com SMTP to gmail.com SMTP. Gmail stores the message, and Bob retrieves it through the Gmail client and the IMAP or POP server.</desc>
+
+  <!-- Shared diagrams styles, arrowheads, people, storage, and mail-client icons. -->
+  <defs>
+    <style>
+      .mail-server-frame { fill: none; stroke: #111; stroke-width: 2; stroke-dasharray: 8 6; }
+      .service-box { fill: #fff; stroke: #111; stroke-width: 2; }
+      .diagram-text { font: 400 32px Arial, Helvetica, sans-serif; fill: #050505; }
+      .centered { text-anchor: middle; }
+      .line { fill: none; stroke: #111; stroke-width: 2; }
+      .connector { fill: none; stroke: #111; stroke-width: 2; marker-end: url(#arrowhead); }
+      .storage-shape { fill: #fff; stroke: #111; stroke-width: 2; }
+    </style>
+    <marker id="arrowhead"
+            markerWidth="18"
+            markerHeight="16"
+            viewBox="0 -6 12 12"
+            refX="11.5"
+            refY="0"
+            orient="auto"
+            markerUnits="userSpaceOnUse">
+      <path d="M0-6L12 0L0 6Z" fill="#111"/>
+    </marker>
+    <symbol id="person" viewBox="0 0 59 59">
+      <circle cx="29.5" cy="14.5" r="14.5" fill="#000"/>
+      <path d="M0 59V54C0 42 12 37 29.5 37S59 42 59 54V59Z" fill="#000"/>
+    </symbol>
+    <symbol id="storage" viewBox="0 0 141 98">
+      <path class="storage-shape" d="M1 10V87A69.5 10 0 0 0 140 87V10"/>
+      <ellipse class="storage-shape" cx="70.5" cy="10" rx="69.5" ry="10"/>
+    </symbol>
+    <linearGradient id="outlook-blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#159fe6"/>
+      <stop offset="1" stop-color="#0078d4"/>
+    </linearGradient>
+    <symbol id="outlook-client-icon" viewBox="0 0 73 66">
+      <rect x="17" width="53" height="64" rx="3" fill="url(#outlook-blue)"/>
+      <path d="M17 13H70V31H17Z" fill="#08a6e8" opacity=".8"/>
+      <path d="M17 31L44 48L70 31V64H17Z" fill="#0878d1"/>
+      <path d="M17 64L40 44L47 48L70 64Z" fill="#159fe6"/>
+      <rect y="15" width="38" height="40" rx="2" fill="#126fd2"/>
+      <text x="19" y="45" text-anchor="middle" font-family="Arial, Helvetica, sans-serif"
+            font-size="28" font-weight="700" fill="#fff">O</text>
+    </symbol>
+    <symbol id="gmail-client-icon" viewBox="0 0 73 56">
+      <path d="M0 11Q0 3 6 1L36.5 25V40L9 19V56H0Z" fill="#4285f4"/>
+      <path d="M73 11Q73 3 67 1L36.5 25V40L64 19V56H73Z" fill="#34a853"/>
+      <path d="M6 1Q10-1 14 3L36.5 20L59 3Q63-1 67 1L36.5 27Z" fill="#ea4335"/>
+      <path d="M59 3Q63-1 67 1Q73 3 73 11L64 19V8Z" fill="#fbbc04"/>
+      <path d="M0 11Q0 3 6 1L9 3V19Z" fill="#c5221f"/>
+    </symbol>
+  </defs>
+
+  <rect id="background" width="1166" height="928" fill="#fff"/>
+
+  <!-- Sender and recipient identities sit directly above their client applications. -->
+  <g id="mail-users">
+    <text class="diagram-text centered" x="262" y="58">User Alice</text>
+    <text class="diagram-text centered" x="262" y="92">alice@outlook.com</text>
+    <use href="#person" x="233" y="112" width="59" height="59"/>
+
+    <text class="diagram-text centered" x="909" y="58">User Bob</text>
+    <text class="diagram-text centered" x="909" y="92">bob@gmail.com</text>
+    <use href="#person" x="880" y="112" width="59" height="59"/>
+  </g>
+
+  <!-- The vertical user routes terminate at the source-native mail-client icons. -->
+  <g id="mail-clients">
+    <path id="alice-client-connector" class="connector" d="M262 171V261"/>
+    <text class="diagram-text centered" x="156" y="287">Outlook</text>
+    <text class="diagram-text centered" x="156" y="321">client</text>
+    <use href="#outlook-client-icon" x="226" y="261" width="73" height="66"/>
+
+    <path id="bob-client-connector" class="connector" d="M909 171V266"/>
+    <use href="#gmail-client-icon" x="873" y="266" width="73" height="56"/>
+    <text class="diagram-text" x="956" y="287">Gmail</text>
+    <text class="diagram-text" x="956" y="321">client</text>
+  </g>
+
+  <!-- Numbered client-to-server actions leave clear gaps around their labels. -->
+  <g id="client-server-actions">
+    <path id="send-label-leader" class="line" d="M278 327L300 366"/>
+    <text class="diagram-text" x="241" y="403">① Send</text>
+    <path id="send-to-outlook-smtp" class="connector" d="M324 418L359 482"/>
+
+    <path id="get-label-leader" class="line" d="M922 322L943 361"/>
+    <text class="diagram-text" x="895" y="395">④ Get</text>
+    <path id="get-from-gmail-imap" class="connector" d="M963 410L999 482"/>
+  </g>
+
+  <!-- Dashed frames group the protocol services and storage for each domain. -->
+  <g id="domain-mail-servers">
+    <rect id="outlook-mail-server-frame" class="mail-server-frame" x="40" y="452" width="456" height="449"/>
+    <rect id="gmail-mail-server-frame" class="mail-server-frame" x="682" y="452" width="456" height="449"/>
+
+    <rect class="service-box" x="71" y="482" width="165" height="86"/>
+    <text class="diagram-text centered" x="153.5" y="519">IMAP/POP</text>
+    <text class="diagram-text centered" x="153.5" y="552">Server</text>
+
+    <rect class="service-box" x="299" y="482" width="165" height="86"/>
+    <text class="diagram-text centered" x="381.5" y="519">SMTP</text>
+    <text class="diagram-text centered" x="381.5" y="552">Server</text>
+
+    <rect class="service-box" x="719" y="482" width="165" height="86"/>
+    <text class="diagram-text centered" x="801.5" y="519">SMTP</text>
+    <text class="diagram-text centered" x="801.5" y="552">Server</text>
+
+    <rect class="service-box" x="937" y="482" width="165" height="86"/>
+    <text class="diagram-text centered" x="1019.5" y="519">IMAP/POP</text>
+    <text class="diagram-text centered" x="1019.5" y="552">Server</text>
+  </g>
+
+  <!-- Step 2 crosses domains; splitting the shaft preserves the white label gap. -->
+  <g id="cross-domain-send">
+    <path class="line" d="M464 525H527"/>
+    <text class="diagram-text" x="527" y="536">② Send</text>
+    <path id="outlook-to-gmail-smtp" class="connector" d="M637 525H719"/>
+  </g>
+
+  <!-- Fetch and store routes are layered above the storage cylinders but below labels. -->
+  <g id="storage-actions">
+    <path class="line" d="M177 568L198 612"/>
+    <text class="diagram-text" x="178" y="641" font-size="24">Fetch</text>
+    <path id="outlook-fetch-storage" class="connector" d="M217 654L240 699"/>
+
+    <path class="line" d="M356 568L335 612"/>
+    <text class="diagram-text" x="296" y="641" font-size="24">Store</text>
+    <path id="outlook-store-storage" class="connector" d="M311 654L289 699"/>
+
+    <path class="line" d="M826 568L846 612"/>
+    <text class="diagram-text" x="796" y="641">③ Store</text>
+    <path id="gmail-store-storage" class="connector" d="M865 654L887 699"/>
+
+    <path class="line" d="M1000 568L976 612"/>
+    <text class="diagram-text" x="937" y="641" font-size="24">Fetch</text>
+    <path id="gmail-fetch-storage" class="connector" d="M955 654L936 699"/>
+  </g>
+
+  <!-- Mailbox storage and domain captions complete each server boundary. -->
+  <g id="mail-storage">
+    <use href="#storage" x="192" y="699" width="141" height="98"/>
+    <text class="diagram-text centered" x="262.5" y="764">Storage</text>
+    <text class="diagram-text centered" x="262" y="844">outlook.com</text>
+    <text class="diagram-text centered" x="262" y="878">mail server</text>
+
+    <use href="#storage" x="839" y="699" width="141" height="98"/>
+    <text class="diagram-text centered" x="909.5" y="764">Storage</text>
+    <text class="diagram-text centered" x="909" y="844">gmail.com</text>
+    <text class="diagram-text centered" x="909" y="878">mail server</text>
+  </g>
+</svg>

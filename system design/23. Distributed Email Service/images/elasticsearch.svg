@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1210"
+     height="1224"
+     viewBox="0 0 1210 1224"
+     role="img"
+     aria-labelledby="elasticsearch-title elasticsearch-desc">
+  <title id="elasticsearch-title">Elasticsearch indexing path for email operations</title>
+  <desc id="elasticsearch-desc">Search reads synchronously through a RESTful API, while send, receive, and delete operations publish asynchronously through Kafka. Kafka consumers update the RESTful API, which writes to an Elasticsearch cluster.</desc>
+
+  <!-- Shared typography, strokes, and arrowhead geometry match the PNG etalon. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#000;font-size:34px}
+      .node{fill:#fff;stroke:#111;stroke-width:2}
+      .route{fill:none;stroke:#111;stroke-width:2.1}
+      .node-label{text-anchor:middle}
+    </style>
+    <marker id="arrowhead"
+            markerWidth="20"
+            markerHeight="20"
+            viewBox="0 0 20 20"
+            refX="18"
+            refY="10"
+            markerUnits="userSpaceOnUse"
+            orient="auto">
+      <path d="M0 0L20 10L0 20Z" fill="#111"/>
+    </marker>
+  </defs>
+  <rect id="background" width="1210" height="1224" fill="#fff"/>
+
+  <!-- Routes are split around the Sync and Async labels to keep text unobstructed. -->
+  <g id="operation-routes">
+    <path id="search-lead-in" class="route" d="M177 139C193 228 223 333 280 418"/>
+    <path id="search-to-rest-arrow" class="route" data-connector="true"
+          d="M316 475C385 582 485 679 614 746"
+          marker-end="url(#arrowhead)"/>
+
+    <path id="send-lead-in" class="route" d="M507 139L554 181"/>
+    <path id="send-to-kafka-arrow" class="route" data-connector="true"
+          d="M617 240L693 309"
+          marker-end="url(#arrowhead)"/>
+
+    <path id="receive-lead-in" class="route" d="M742 139V184"/>
+    <path id="receive-to-kafka-arrow" class="route" data-connector="true"
+          d="M742 242V309"
+          marker-end="url(#arrowhead)"/>
+
+    <path id="delete-lead-in" class="route" d="M978 139L928 184"/>
+    <path id="delete-to-kafka-arrow" class="route" data-connector="true"
+          d="M866 241L793 309"
+          marker-end="url(#arrowhead)"/>
+
+    <path id="kafka-to-consumers-arrow" class="route" data-connector="true"
+          d="M742 401V525"
+          marker-end="url(#arrowhead)"/>
+    <path id="consumers-to-rest-arrow" class="route" data-connector="true"
+          d="M742 623V746"
+          marker-end="url(#arrowhead)"/>
+    <path id="rest-to-cluster-arrow" class="route" data-connector="true"
+          d="M742 844V968"
+          marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- User-facing operations. -->
+  <g id="operations">
+    <rect class="node" x="40" y="41" width="254" height="97"/>
+    <rect class="node" x="328" y="41" width="254" height="97"/>
+    <rect class="node" x="616" y="41" width="254" height="97"/>
+    <rect class="node" x="903" y="41" width="254" height="97"/>
+
+    <text class="node-label" x="167" y="102">Search</text>
+    <text class="node-label" x="455" y="102">Send email</text>
+    <text class="node-label" x="743" y="102">Receive email</text>
+    <text class="node-label" x="1030" y="102">Delete email</text>
+  </g>
+
+  <!-- Labels explain whether each operation waits for the indexing path. -->
+  <g id="route-labels">
+    <text class="node-label" x="296" y="459">Sync</text>
+    <text class="node-label" x="586" y="224">Async</text>
+    <text class="node-label" x="742" y="225">Async</text>
+    <text class="node-label" x="895" y="225">Async</text>
+  </g>
+
+  <!-- Kafka is drawn as the horizontal cylinder shown in the source image. -->
+  <g id="kafka-node">
+    <path class="node"
+          d="M632 309.5H853
+             C868.5 309.5 881 330 881 355
+             C881 380 868.5 400.5 853 400.5
+             H632
+             C616.5 400.5 604 380 604 355
+             C604 330 616.5 309.5 632 309.5Z"/>
+    <ellipse class="node" cx="853" cy="355" rx="28" ry="45.5"/>
+    <text class="node-label" x="742" y="367">Kafka</text>
+  </g>
+
+  <!-- Consumers expose the indexed data through a RESTful API. -->
+  <g id="consumer-and-api-nodes">
+    <rect class="node" x="579" y="525" width="327" height="98"/>
+    <text class="node-label" x="742.5" y="586">Kafka Consumers</text>
+
+    <rect class="node" x="615" y="746" width="255" height="98"/>
+    <text class="node-label" x="742.5" y="807">RESTful API</text>
+  </g>
+
+  <!-- The cluster contains three editable database-cylinder symbols. -->
+  <g id="elasticsearch-cluster">
+    <rect class="node" x="433" y="969" width="618" height="230"/>
+
+    <g id="elasticsearch-node-1">
+      <path class="node" d="M495 1018V1105.5C495 1120 606 1120 606 1105.5V1018"/>
+      <ellipse class="node" cx="550.5" cy="1018" rx="55.5" ry="11.5"/>
+    </g>
+    <g id="elasticsearch-node-2">
+      <path class="node" d="M687 1018V1105.5C687 1120 798 1120 798 1105.5V1018"/>
+      <ellipse class="node" cx="742.5" cy="1018" rx="55.5" ry="11.5"/>
+    </g>
+    <g id="elasticsearch-node-3">
+      <path class="node" d="M879 1018V1105.5C879 1120 990 1120 990 1105.5V1018"/>
+      <ellipse class="node" cx="934.5" cy="1018" rx="55.5" ry="11.5"/>
+    </g>
+
+    <text class="node-label" x="742" y="1173">Elasticsearch Cluster</text>
+  </g>
+</svg>

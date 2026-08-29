@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="920"
+     height="1166"
+     viewBox="0 0 920 1166"
+     role="img"
+     aria-labelledby="local-storage-title local-storage-desc">
+  <title id="local-storage-title">Maildir local directory storage</title>
+  <desc id="local-storage-desc">The home directory contains user1 and user2. Each user has a Maildir directory with cur, new, and tmp subdirectories.</desc>
+
+  <!-- Shared folder construction, typography, and subtle bottom background fade. -->
+  <defs>
+    <style>
+      .tree-line { fill: none; stroke: #111; stroke-width: 2.5; }
+      .folder-label { font: 400 30px Arial, Helvetica, sans-serif; fill: #fff; text-anchor: middle; }
+    </style>
+    <linearGradient id="page-fade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="0.9" stop-color="#fff"/>
+      <stop offset="1" stop-color="#f2f2f2"/>
+    </linearGradient>
+    <symbol id="folder" viewBox="0 0 119 96">
+      <path d="M63 13L77 0H112Q119 0 119 7V13Z" fill="#555"/>
+      <path d="M7 17H119V96H0V24Q0 17 7 17Z" fill="#555"/>
+    </symbol>
+  </defs>
+  <rect id="background" width="920" height="1166" fill="url(#page-fade)"/>
+
+  <!-- Tree routes are deliberately behind folders so branch endpoints are hidden. -->
+  <g id="directory-tree-routes" class="tree-line">
+    <path id="home-entry" d="M0 69H59"/>
+    <path id="home-trunk" d="M118 117V740"/>
+    <path id="user1-branch" d="M118 216H499"/>
+    <path id="user2-branch" d="M118 740H499"/>
+
+    <path id="user1-maildir-trunk" d="M558 262V595"/>
+    <path id="user1-cur-branch" d="M558 285H748"/>
+    <path id="user1-new-branch" d="M558 430H748"/>
+    <path id="user1-tmp-branch" d="M558 595H748"/>
+
+    <path id="user2-maildir-trunk" d="M558 786V1094"/>
+    <path id="user2-cur-branch" d="M558 802H748"/>
+    <path id="user2-new-branch" d="M558 951H748"/>
+    <path id="user2-tmp-branch" d="M558 1094H748"/>
+  </g>
+
+  <!-- Home and per-user Maildir hierarchy reuse one editable folder symbol. -->
+  <g id="directory-folders">
+    <g id="home-folder">
+      <use href="#folder" x="59" y="22" width="119" height="96"/>
+      <text class="folder-label" x="118.5" y="92">home</text>
+    </g>
+
+    <g id="user1-folder">
+      <use href="#folder" x="249" y="167" width="119" height="96"/>
+      <text class="folder-label" x="308.5" y="237">user1</text>
+    </g>
+    <g id="user1-maildir-folder">
+      <use href="#folder" x="499" y="167" width="119" height="96"/>
+      <text class="folder-label" x="558.5" y="237">Maildir</text>
+    </g>
+    <g id="user1-cur-folder">
+      <use href="#folder" x="748" y="214" width="119" height="96"/>
+      <text class="folder-label" x="807.5" y="284">cur</text>
+    </g>
+    <g id="user1-new-folder">
+      <use href="#folder" x="748" y="381" width="119" height="96"/>
+      <text class="folder-label" x="807.5" y="451">new</text>
+    </g>
+    <g id="user1-tmp-folder">
+      <use href="#folder" x="748" y="548" width="119" height="96"/>
+      <text class="folder-label" x="807.5" y="618">tmp</text>
+    </g>
+
+    <g id="user2-folder">
+      <use href="#folder" x="249" y="690" width="119" height="96"/>
+      <text class="folder-label" x="308.5" y="760">user2</text>
+    </g>
+    <g id="user2-maildir-folder">
+      <use href="#folder" x="499" y="690" width="119" height="96"/>
+      <text class="folder-label" x="558.5" y="760">Maildir</text>
+    </g>
+    <g id="user2-cur-folder">
+      <use href="#folder" x="748" y="723" width="119" height="96"/>
+      <text class="folder-label" x="807.5" y="793">cur</text>
+    </g>
+    <g id="user2-new-folder">
+      <use href="#folder" x="748" y="889" width="119" height="96"/>
+      <text class="folder-label" x="807.5" y="959">new</text>
+    </g>
+    <g id="user2-tmp-folder">
+      <use href="#folder" x="748" y="1056" width="119" height="96"/>
+      <text class="folder-label" x="807.5" y="1126">tmp</text>
+    </g>
+  </g>
+</svg>
