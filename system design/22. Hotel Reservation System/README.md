@@ -281,24 +281,24 @@ This problem can be solved using some form of locking mechanism:
 Here's the SQL we use to reserve a room:
 
 ```sql
-# step 1: check room inventory
+-- step 1: check room inventory
 SELECT date, total_inventory, total_reserved
 FROM room_type_inventory
 WHERE room_type_id = ${roomTypeId} AND hotel_id = ${hotelId}
 AND date between ${startDate} and ${endDate}
 
-# For every entry returned from step 1
+-- For every entry returned from step 1
 if((total_reserved + ${numberOfRoomsToReserve}) > 110% * total_inventory) {
-  Rollback
+    ROLLBACK
 }
 
-# step 2: reserve rooms
+-- step 2: reserve rooms
 UPDATE room_type_inventory
 SET total_reserved = total_reserved + ${numberOfRoomsToReserve}
 WHERE room_type_id = ${roomTypeId}
 AND date between ${startDate} and ${endDate}
 
-Commit
+COMMIT
 ```
 
 #### Option 1: Pessimistic locking
