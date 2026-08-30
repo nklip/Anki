@@ -179,7 +179,7 @@ A potiential improvement is to build index on logitude and latitude columns, alt
  - Also possible to update the quadtree on the fly but more complex to implement. (Needs locking mechanism)
 
 ### **Option 5: Google S2**
-It maps a sphere to a !D index based on Hilbert curve.Two points that are close to each other on the Hilbert curve are close in 1D space.
+It maps a sphere to a !D index based on Hilbert curve. Two points that are close to each other on the Hilbert curve are close in 1D space.
 
 
   <div style="margin-left:3rem">
@@ -190,7 +190,7 @@ It maps a sphere to a !D index based on Hilbert curve.Two points that are close 
 - **Divides the earth into small cells using a Hilbert curve**.
 - Great for geofencing because it can cover arbitrary areas with varying levels.
 - Geofencing also allows to define parameters that surround the area of interest.
-- Aother advantage if instead of having a fixed level of precision, we can specify min,max level and max cells in S2.
+- Another advantage if instead of having a fixed level of precision, we can specify min,max level and max cells in S2.
 
 
 ## Tradeoff Comparison
