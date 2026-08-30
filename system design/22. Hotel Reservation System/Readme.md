@@ -1,17 +1,17 @@
 # Chapter 22: Hotel Reservation System
-<sub>[Back to System Design](../README.md#content)</sub>
+<sub>[Back to System Design](../Readme.md#content)</sub>
 
 ## Introduction
 In this chapter, we're designing a **hotel reservation system**, similar to Marriott International.
 
-Applicable to other types of systems as well - Airbnb, flight reservation, movie ticket booking.
+The design is also applicable to other types of systems, such as Airbnb, flight reservations, and movie-ticket booking.
 
 ---
 
 ## Step 1: Understand the Problem and Establish Design Scope
 Before diving into designing the system, we should ask the interviewer questions to clarify the scope:
  - C: What is the scale of the system?
- - I: We're building a website for a hotel chain \w 5000 hotels and 1mil rooms
+ - I: We're building a website for a hotel chain with 5000 hotels and 1 million rooms.
  - C: Do customers pay when they make a reservation or when they arrive at the hotel?
  - I: They pay in full when making reservations.
  - C: Do customers book hotel rooms through the website only? Do we have to support other reservation options such as phone calls?
@@ -19,8 +19,8 @@ Before diving into designing the system, we should ask the interviewer questions
  - C: Can customers cancel reservations?
  - I: Yes
  - C: Other things to consider?
- - I: Yes, we allow overbooking by 10%. Hotel will sell more rooms than there actually are. Hotels do this in anticipation that clients will cancel bookings.
- - C: Since not much time, we'll focus on - show hotel-related page, hotel-room details page, reserve a room, admin panel, support overbooking.
+ - I: Yes, we allow overbooking by 10%. A hotel will sell more rooms than it actually has. Hotels do this in anticipation that clients will cancel bookings.
+ - C: Since there isn't much time, we'll focus on showing a hotel-related page, showing a hotel-room details page, reserving a room, providing an admin panel, and supporting overbooking.
  - I: Sounds good.
  - I: One more thing - hotel prices change all the time. Assume a hotel room's price changes every day.
  - C: OK.
@@ -30,13 +30,13 @@ Before diving into designing the system, we should ask the interviewer questions
  - Moderate latency - it's ideal to have low latency when a user makes a reservation, but it's acceptable if the system takes a few seconds to process it.
 
 ### **Back-of-the-envelope estimation**
- - 5000 hotels and 1mil rooms in total
+ - 5,000 hotels and 1 million rooms in total
  - Assume 70% of rooms are occupied and average stay duration is 3 days
- - Estimated daily reservations - 1mil * 0.7 / 3 = ~240k reservations per day
+ - Estimated daily reservations - 1 million * 0.7 / 3 = ~240,000 reservations per day
  - Reservations per second - 240k / 10^5 seconds in a day = ~3. Average reservation TPS is low.
 
 Let's estimate the QPS. If we assume that there are three steps to reach the reservation page and there is a 10% conversion rate per page,
-we can estimate that if there are 3 reservations, then there must be 30 views of reservation page and 300 views of hotel room detail page.
+we can estimate that if there are 3 reservations, then there must be 30 views of the reservation page and 300 views of the hotel-room details page.
 
 <div style="margin-left:3rem">
     <img src="./images/qps-estimation.svg" alt="qps-estimation" width="500" />
@@ -45,13 +45,13 @@ we can estimate that if there are 3 reservations, then there must be 30 views of
 ---
 
 ## Step 2: Propose High-Level Design and Get Buy-In
-We'll explore - API Design, Data model, high-level design.
+We'll explore API design, the data model, and the high-level design.
 
 ### **API Design**
-This API Design focuses on the core endpoints (using RESTful practices), we'll need in order to support a hotel reservation system.
+This API design focuses on the core endpoints (using RESTful practices) that we'll need to support a hotel reservation system.
 
 A fully-fledged system would require a more extensive API with support for searching for rooms based on lots of criteria, but we won't be focusing on that in this section.
-Reason is that they aren't technically challenging, so they're out of scope.
+The reason is that they aren't technically challenging, so they're out of scope.
 
 **Hotel-related API**
  - `GET /v1/hotels/{id}` - get detailed info about a hotel
@@ -83,7 +83,7 @@ Here's an example request to make a reservation:
 }
 ```
 
-Note that the `reservationID` is an idempotency key to avoid double booking. Details explained in [concurrency section](#concurrency-issues)
+Note that the `reservationID` is an idempotency key to avoid double booking. Details are explained in the [concurrency section](#concurrency-issues).
 
 ### **Data model**
 Before we choose what database to use, let's consider our access patterns.
@@ -108,7 +108,7 @@ Here is our schema design:
     <img src="./images/schema-design.svg" alt="schema-design" width="500" />
 </div>
 
-Most fields are self-explanatory. Only field worth mentioning is the `status` field which represents the state machine of a given room:
+Most fields are self-explanatory. The only field worth mentioning is the `status` field, which represents the state machine of a given room:
 
 <div style="margin-left:3rem">
     <img src="./images/status-state-machine.svg" alt="status-state-machine" width="500" />
@@ -130,7 +130,7 @@ We've chosen a microservice architecture for this design. It has gained great po
  - **Users**: book a hotel room on their phone or computer
  - **Admin**: perform administrative functions such as refunding/cancelling a payment, etc
  - **CDN**: caches static resources such as JS bundles, images, videos, etc
- - **Public API Gateway**: fully-managed service which supports rate limiting, authentication, etc.
+ - **Public API Gateway**: fully managed service that supports rate limiting, authentication, etc.
  - **Internal APIs**: only visible to authorized personnel. Usually protected by a VPN.
  - **Hotel service**: provides detailed information about hotels and rooms. Hotel and room data is static, so it can be cached aggressively.
  - **Rate service**: provides room rates for different future dates. An interesting note about this domain is that prices depend on how full a hotel is at a given day.
@@ -138,7 +138,7 @@ We've chosen a microservice architecture for this design. It has gained great po
  - **Payment service**: processes payments and updates reservation statuses on success.
  - **Hotel management service**: available to authorized personnel only. Allows certain administrative functions for managing and viewing reservations, hotels, etc.
 
-Inter-service communication can be facilitated via a RPC framework, such as gRPC.
+Inter-service communication can be facilitated via an RPC framework, such as gRPC.
 
 ---
 
@@ -175,16 +175,16 @@ Here's the updated schema:
  - **room**: contains information about a room
  - **room_type_rate**: contains information about prices for a given room type
  - **reservation**: records guest reservation data
- - **room_type_inventory**: stores inventory data about hotel rooms.
+ - **room_type_inventory**: stores inventory data about hotel rooms
 
 Let's take a look at the `room_type_inventory` columns as that table is more interesting:
  - **hotel_id**: id of hotel
  - **room_type_id**: id of a room type
  - **date**: a single date
- - **total_inventory**: total number of rooms minus those that are temporarily taken off the inventory.
+ - **total_inventory**: total number of rooms minus those that are temporarily taken out of inventory
  - **total_reserved**: total number of rooms booked for given (hotel_id, room_type_id, date)
 
-There are alternative ways to design this table, but having one room per (hotel_id, room_type_id, date) enables easy 
+There are alternative ways to design this table, but having one row per (hotel_id, room_type_id, date) enables easy
 reservation management and easier queries.
 
 The rows in the table are pre-populated using a daily CRON job.
@@ -212,17 +212,17 @@ AND date between ${startDate} and ${endDate}
 
 How to check availability for a specified number of rooms using that data (note that we support overbooking):
 
-```
+```text
 if (total_reserved + ${numberOfRoomsToReserve}) <= 110% * total_inventory
 ```
 
 Now let's do some estimation about the storage volume.
  - We have 5000 hotels.
  - Each hotel has 20 types of rooms.
- - 5000 * 20 * 2 (years) * 365 (days) = 73mil rows
+ - 5,000 * 20 * 2 (years) * 365 (days) = 73 million rows
 
 73 million rows is not a lot of data and a single database server can handle it.
-It makes sense, however, to setup read replication (potentially across different zones) to enable high availability.
+It makes sense, however, to set up read replication (potentially across different zones) to enable high availability.
 
 Follow-up question - if reservation data is too large for a single database, what would you do?
  - Store only current and future reservation data. Reservation history can be moved to cold storage.
@@ -242,8 +242,8 @@ Here's a visualization of the first problem:
 </div>
 
 There are two approaches to solving this problem:
- - Client-side handling - front-end can disable the book button once clicked. If a user disabled javascript, however, they won't see the button becoming grayed out.
- - Idemptent API - Add an idempotency key to the API, which enables a user to execute an action once, regardless of how many times the endpoint is invoked:
+ - Client-side handling - the front end can disable the book button once clicked. If a user disabled JavaScript, however, they won't see the button becoming grayed out.
+ - Idempotent API - Add an idempotency key to the API, which enables a user to execute an action once, regardless of how many times the endpoint is invoked:
 
 <div style="margin-left:3rem">
     <img src="./images/idempotency.svg" alt="idempotency" width="500" />
@@ -268,7 +268,7 @@ What if there are multiple users making the same reservation?
  - Let's assume the transaction isolation level is not serializable
  - User 1 and 2 attempt to book the same room at the same time.
  - Transaction 1 checks if there are enough rooms - there are
- - Transaction 2 check if there are enough rooms - there are
+ - Transaction 2 checks if there are enough rooms - there are.
  - Transaction 2 reserves the room and updates the inventory
  - Transaction 1 also reserves the room as it still sees there are 99 `total_reserved` rooms out of 100.
  - Both transactions successfully commit the changes
@@ -335,13 +335,13 @@ There are two common ways to implement it - version numbers and timestamps. Vers
  - When the user updates the row, the version number is increased by 1 and written back to the database
  - Database validation prevents the insert if the new version number doesn't exceed the previous one
 
-Optimistic locking is usually faster than pessimistic locking as we're not locking the database. 
+Optimistic locking is usually faster than pessimistic locking as we're not locking the database.
 Its performance tends to degrade when concurrency is high, however, as that leads to a lot of rollbacks.
 
 Pros:
  - It prevents applications from editing stale data
  - We don't need to acquire a lock in the database
- - Preferred option when data contention is low, ie rarely are there update conflicts
+ - Preferred option when data contention is low, i.e., when update conflicts are rare.
 
 Cons:
  - Performance is poor when data contention is high
@@ -351,7 +351,7 @@ Optimistic locking is a good option for our system as reservation QPS is not ext
 #### Option 3: Database constraints
 This approach is very similar to optimistic locking, but the guardrails are implemented using a database constraint:
 
-```
+```sql
 CONSTRAINT `check_room_count` CHECK((`total_inventory - total_reserved` >= 0))
 ```
 
@@ -371,9 +371,9 @@ Cons:
 This is another good option for a hotel reservation system due to its ease of implementation.
 
 ### **Scalability**
-Usually, the load of a hotel reservation system is not high. 
+Usually, the load of a hotel reservation system is not high.
 
-However, the interviewer might ask you how you'd handle a situation where the system gets adopted for a larger, popular travel site such as booking.com
+However, the interviewer might ask you how you'd handle a situation where the system gets adopted by a larger, popular travel site such as Booking.com.
 In that case, QPS can be 1000 times larger.
 
 When there is such a situation, it is important to understand where our bottlenecks are. All the services are stateless, so they can be easily scaled via replication.
@@ -382,8 +382,8 @@ The database, however, is stateful and it's not as obvious how it can get scaled
 
 One way to scale it is by implementing database sharding - we can split the data across multiple databases, where each of them contain a portion of the data.
 
-We can shard based on `hotel_id` as all queries filter based on it. 
-Assuming, QPS is 30,000, after sharding the database in 16 shards, each shard handles 1875 QPS, which is within a single MySQL cluster's load capacity.
+We can shard based on `hotel_id` as all queries filter based on it.
+Assuming QPS is 30,000, after sharding the database into 16 shards, each shard handles 1875 QPS, which is within a single MySQL cluster's load capacity.
 
 <div style="margin-left:3rem">
     <img src="./images/database-sharding.svg" alt="database-sharding" width="500" />
@@ -397,19 +397,19 @@ We can also utilize caching for room inventory and reservations via Redis. We ca
 
 The way we store an inventory is based on the `hotel_id`, `room_type_id` and `date`:
 
-```
+```text
 key: hotelID_roomTypeID_{date}
 value: the number of available rooms for the given hotel ID, room type ID and date.
 ```
 
-Data consistency happens async and is managed by using a CDC streaming mechanism - database changes are read and applied to a separate system.
+Data consistency happens asynchronously and is managed using a CDC streaming mechanism - database changes are read and applied to a separate system.
 Debezium is a popular option for synchronizing database changes with Redis.
 
 Using such a mechanism, there is a possibility that the cache and database are inconsistent for some time.
 This is fine in our case because the database will prevent us from making an invalid reservation.
 
-This will cause some issue on the UI as a user would have to refresh the page to see that "there are no more rooms left", 
-but that is something which can happen regardless of this issue if eg a person hesitates a lot before making a reservation.
+This will cause some issues in the UI, as a user would have to refresh the page to see that "there are no more rooms left,"
+but that is something that can happen regardless of this issue if, e.g., a person hesitates for a long time before making a reservation.
 
 Caching pros:
  - Reduced database load
@@ -421,8 +421,8 @@ Caching cons:
 ### **Data consistency among services**
 A monolithic application enables us to use a shared relational database for ensuring data consistency.
 
-In our microservice design, we chose a hybrid approach where some services are separate, 
-but the reservation and inventory APIs are handled by the same servicefor the reservation and inventory APIs.
+In our microservice design, we chose a hybrid approach where some services are separate,
+but the reservation and inventory APIs are handled by the same service.
 
 This is done because we want to leverage the relational database's ACID guarantees to ensure consistency.
 
@@ -432,7 +432,7 @@ However, the interviewer might challenge this approach as it's not a pure micros
     <img src="./images/microservices-vs-monolith.svg" alt="microservices-vs-monolith" width="500" />
 </div>
 
-This can lead to consistency issues. In a monolithic server, we can leverage a relational DBs transaction capabilities to implement atomic operations:
+This can lead to consistency issues. In a monolithic server, we can leverage a relational DB's transaction capabilities to implement atomic operations:
 
 <div style="margin-left:3rem">
     <img src="./images/atomicity-monolith.svg" alt="atomicity-monolith" width="500" />
@@ -445,11 +445,11 @@ It's more challenging, however, to guarantee this atomicity when the operation s
 </div>
 
 There are some well-known techniques to handle these data inconsistencies:
- - **Two-phase commit**: a database protocol which guarantees atomic transaction commit across multiple nodes. 
+ - **Two-phase commit**: a database protocol which guarantees atomic transaction commit across multiple nodes.
    It's not performant, though, since a single node lag leads to all nodes blocking the operation.
  - **Saga**: a sequence of local transactions, where compensating transactions are triggered if any of the steps in a workflow fail. This is an eventually consistent approach.
 
-It's worth noting that addressing data inconsistencies across microservices is a challenging problem, which raise the system complexity.
+It's worth noting that addressing data inconsistencies across microservices is a challenging problem that raises the system complexity.
 It is good to consider whether the cost is worth it, given our more pragmatic approach of encapsulating dependent operations within the same relational database.
 
 ---

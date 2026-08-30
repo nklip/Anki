@@ -1,5 +1,5 @@
 # Chapter 16: Proximity Service
-<sub>[Back to System Design](../README.md#content)</sub>
+<sub>[Back to System Design](../Readme.md#content)</sub>
 
 ## Introduction
 A **proximity service** is designed to find nearby locations, such as restaurants, hotels, gas stations, and other businesses. This functionality is used in applications like **Google Maps** and **Yelp** to help users discover places within a defined radius.
@@ -34,7 +34,7 @@ GET /v1/search/nearby
 - **Request Parameters**:
   - `latitude`: User’s location latitude.
   - `longitude`: User’s location longitude.
-  - `radius`: Search radius (default: 5000m).
+  - `radius`: Search radius (default: 5000 m).
 
 #### **Business APIs**
 | API Endpoint                     | Description                                      |
@@ -46,16 +46,16 @@ GET /v1/search/nearby
 
 
 ### **Data Model**
-- Since the read volume is high because two features are very commonly used, a realtional database such as MySQL is a good fit.
+- Since the read volume is high because two features are very commonly used, a relational database such as MySQL is a good fit.
   - Search for nearby businesses
   - View the detailed information of a business
 
 ### **Data Schema**
-- Key Database tables are the business table and the geospatial index table
-- The business table consists the detailed information about a business.
+- Key database tables are the business table and the geospatial index table.
+- The business table contains detailed information about a business.
 
 ### **High-Level System Architecture**
-The system comprises of two parts: Location based service (LBS) and business related service.
+The system comprises two parts: a location-based service (LBS) and a business-related service.
 
 <div style="margin-left:3rem">
     <img src="./images/high-level-design.svg" alt="HLD" width="400" />
@@ -71,8 +71,8 @@ The system comprises of two parts: Location based service (LBS) and business rel
 - **Load Balancer**: Routes traffic to LBS and Business service.
 - **Database Cluster**:
   - Uses **primary-replica architecture** for read-heavy workloads.
-  - There might be some discrepancy between data read b/w data read by LBS and data written by by primary database.
-  - This incosistency is not an issue beacuase the business information is not updated in real-time.
+  - There might be some discrepancy between data read by LBS and data written by the primary database.
+  - This inconsistency is not an issue because the business information is not updated in real time.
 
 ---
 
@@ -84,10 +84,10 @@ The system comprises of two parts: Location based service (LBS) and business rel
     <img src="./images/2d-search.png" alt="2D" width="250" />
 </div>
 
-The most intuitive way is to draw a circle with pre-defined radius and find all the businesses within the circle.
+The most intuitive way is to draw a circle with a predefined radius and find all the businesses within the circle.
 
 **SQL Query:**
-```
+```sql
 SELECT business_id, latitude, longitude
 FROM business
 WHERE (latitude BETWEEN :lat - radius AND :lat + radius)
@@ -97,11 +97,11 @@ AND (longitude BETWEEN :long - radius AND :long + radius);
 - **Inefficient**: Requires scanning the entire database.
 - **Limited by one-dimensional indexes** (latitude/longitude).
 
-A potiential improvement is to build index on logitude and latitude columns, although this is slighlty better but still very slow.
+A potential improvement is to build indexes on the longitude and latitude columns. Although this is slightly better, it is still very slow.
 
 ### Better Approach
-- The problem with last approach is that the database index can only increase search speed in one dimension.
-- An optimal apporach is to reprsent the two-dimensional data into one dimension using geospatial indexing.
+- The problem with the previous approach is that the database index can only increase search speed in one dimension.
+- An optimal approach is to represent the two-dimensional data in one dimension using geospatial indexing.
   - Hash: Even grid, Geo Hash
   - Tree: Quadtree, Google S2, RTree
 
@@ -120,9 +120,9 @@ A potiential improvement is to build index on logitude and latitude columns, alt
 - **Issue**: Uneven business distribution (high density in cities, sparse in rural areas).
 
 ### **Option 3: Geohash**
-- Divide the planet into four quadrants along with the prime meridian and equator. And then divide each grid into four smaller grids. 
-- Each grids can be represented by altering b/w longitude and latitude bit.
-- Repeat this subdivision
+- Divide the planet into four quadrants along with the prime meridian and equator. And then divide each grid into four smaller grids.
+- Each grid can be represented by alternating between longitude and latitude bits.
+- Repeat this subdivision.
 
   <div style="margin-left:3rem">
     <img src="./images/geohash.png" alt="Geohash" width="300" />
@@ -130,7 +130,7 @@ A potiential improvement is to build index on logitude and latitude columns, alt
   </div>
 
 
-- **Encodes latitude and longitude into a single alphanumeric string**. It has 12 precisions (levels)
+- **Encodes latitude and longitude into a single alphanumeric string**. It has 12 precision levels.
 - **Hierarchical grid structure** allows for efficient searching.
 - The right precision is chosen by using the minimal geohash length according to the table.
   <div style="margin-left:3rem">
@@ -144,7 +144,7 @@ A potiential improvement is to build index on logitude and latitude columns, alt
   </div>
 
   - **Boundary issues** (businesses close to grid edges may get excluded).
-    - Two locations can be very close but have no shared prefix at all (can be on other side of equator)
+    - Two locations can be very close but have no shared prefix at all (they can be on the other side of the equator).
     - Two locations can have a long shared prefix but belong to different geohashes.
   - Solution: Need to search neighboring grids.
 
@@ -152,7 +152,7 @@ A potiential improvement is to build index on logitude and latitude columns, alt
 ### **Option 4: Quadtree**
 
   A quadtree is a tree data structure that recursively divides a two-dimensional space into four quadrants, with each internal node having exactly four children, representing the four sub-regions of the space.
-  - The quadtree is an in-memory data structure and it runs on each LBS server and built on server startup time.
+  - The quadtree is an in-memory data structure that runs on each LBS server and is built when the server starts.
 
   <div style="margin-left:3rem">
     <img src="./images/quadtree.svg" alt="Quadtree" width="500" />
@@ -164,8 +164,8 @@ A potiential improvement is to build index on logitude and latitude columns, alt
     <img src="./images/building-quadtree.svg" alt="Building Quadtree" width="500" />
   </div>
 
-- The quadtree index doen't take too much memory (typically in GBs) and can easily fit in one server.
-- Since tge time complexity to build the tree is nlogn, it might take a few minutes to build the tree.
+- The quadtree index doesn't take too much memory (typically in GBs) and can easily fit on one server.
+- Since the time complexity to build the tree is O(n log n), it might take a few minutes to build the tree.
 - **Efficient for k-nearest search queries** (e.g., find the closest gas station).
 
   <div style="margin-left:3rem">
@@ -173,13 +173,13 @@ A potiential improvement is to build index on logitude and latitude columns, alt
   </div>
 
 #### Operational considerations
- - For around 200 million businesses, it might take few minutes to build a quadtree at the server start time.
+ - For around 200 million businesses, it might take a few minutes to build a quadtree when the server starts.
  - While the quadtree is built it cannot serve traffic, therefore a new release should be rolled out incrementally to a subset of servers.
- - When updating a business or adding a new the easiest approach is to incrementally rebuild the quadtree. (Leading to a lot of cache invalidation)
+ - When updating a business or adding a new one, the easiest approach is to incrementally rebuild the quadtree. (This leads to a lot of cache invalidation.)
  - Also possible to update the quadtree on the fly but more complex to implement. (Needs locking mechanism)
 
 ### **Option 5: Google S2**
-It maps a sphere to a !D index based on Hilbert curve. Two points that are close to each other on the Hilbert curve are close in 1D space.
+It maps a sphere to a 1D index based on a Hilbert curve. Two points that are close to each other on the Hilbert curve are close in 1D space.
 
 
   <div style="margin-left:3rem">
@@ -189,8 +189,8 @@ It maps a sphere to a !D index based on Hilbert curve. Two points that are close
 
 - **Divides the earth into small cells using a Hilbert curve**.
 - Great for geofencing because it can cover arbitrary areas with varying levels.
-- Geofencing also allows to define parameters that surround the area of interest.
-- Another advantage if instead of having a fixed level of precision, we can specify min,max level and max cells in S2.
+- Geofencing also allows us to define parameters that surround the area of interest.
+- Another advantage is that, instead of having a fixed level of precision, we can specify minimum and maximum levels and a maximum number of cells in S2.
 
 
 ## Tradeoff Comparison
@@ -204,7 +204,7 @@ It maps a sphere to a !D index based on Hilbert curve. Two points that are close
 #### Quadtree
 - Slightly harder to implement.
 - Supports fetching k-nearest businesses.
-- Can dynamically adjust the grid size based on population desnsity.
+- Can dynamically adjust the grid size based on population density.
 - Updating the index is more complicated as might need to rebuild the whole tree.
 
 ---
@@ -222,15 +222,15 @@ It maps a sphere to a !D index based on Hilbert curve. Two points that are close
 | 9q9hvu  | 112        |
 
 ### **Scaling the Geospatial Index**
-- Might not be a good fit for the geohash table. In this case everything can fit in a single server so there's no tehcnical reason for sharding.
+- Sharding might not be a good fit for the geohash table. In this case, everything can fit on a single server, so there's no technical reason for sharding.
 - A better approach is to have read-replicas to help with read loads.
 
 ---
 
 ### **Cache Strategy**
 The most obvious cache key choice is the location coordinate, however it has a few issues:
- - Location coordinates from gps are not accurate.
- - A user can move casuing the location coordinate to change.
+ - Location coordinates from GPS are not accurate.
+ - A user can move, causing the location coordinate to change.
  - A better key is the geohash.
 
 | Cache Key  | Cache Value |
@@ -272,7 +272,7 @@ This final algorithm looks like this:
 4. **Fetching Neighboring Geohashes:**
    - LBS calculates **neighboring geohashes** to include nearby areas.
    - The result is a list:
-     ```
+     ```text
      [my_geohash, neighbor1_geohash, neighbor2_geohash, ..., neighbor8_geohash]
      ```
 
@@ -307,5 +307,4 @@ This method ensures **low-latency, scalable** retrieval of businesses near a use
 1. [Geohash Algorithm](https://www.movable-type.co.uk/scripts/geohash.html)
 2. [Quadtree Indexing](https://en.wikipedia.org/wiki/Quadtree)
 3. [Google S2 Geometry](https://s2geometry.io/)
-
 

@@ -1,5 +1,5 @@
 # Chapter 11: Design a News Feed System
-<sub>[Back to System Design](../README.md#content)</sub>
+<sub>[Back to System Design](../Readme.md#content)</sub>
 
 ## Introduction
 A **news feed system** displays a constantly updating list of posts (status updates, photos, videos, and links) from a user’s connections. Examples include Facebook’s news feed, Instagram’s feed, and Twitter’s timeline. This chapter explores the design of a scalable news feed system.
@@ -87,7 +87,7 @@ The design includes two main flows:
 
         <img src="./images/feed-publishing-deep-dive.svg" alt="Feed Publishing Deep Dive" width="500">
 
-    The **fanout service** works as following:
+    The **fanout service** works as follows:
 
     1. **Fetch Friend IDs:** Retrieve the friend list from a graph database.
     2. **Filter Friends from Cache:** Access user settings in the cache to exclude certain friends (e.g., muted friends or selective sharing preferences).

@@ -1,5 +1,5 @@
 # Chapter 8: Design a URL Shortener
-<sub>[Back to System Design](../README.md#content)</sub>
+<sub>[Back to System Design](../Readme.md#content)</sub>
 
 ## Introduction
 This chapter discusses the design of a URL shortening service like TinyURL. The system's main goals include **URL shortening**, **redirecting**, and **high scalability** to handle large traffic volumes.
@@ -29,7 +29,7 @@ This chapter discusses the design of a URL shortening service like TinyURL. The 
     </p>
 
 ### URL Redirection
-- **301 Redirect:**  A 301 redirect shows that the requested URL is “permanently” moved to the long URL. The browser caches the response, and
+- **301 Redirect:** A 301 redirect shows that the requested URL has been permanently moved to the long URL. The browser caches the response, and
 subsequent requests for the same URL will not be sent to the URL shortening service.
 - **302 Redirect:** Temporary; useful for analytics like tracking clicks.
 
@@ -58,8 +58,8 @@ Store `<shortURL, longURL>` mappings in a relational database to optimize memory
 ### Hash Function
 #### 1. Base 62 Conversion:
 - Encodes numbers using characters `[0-9, a-z, A-Z]`, providing **62 possible characters**.
-- Base conversion is another approach commonly used for URL shorteners. 
-- A unique id can be assigned to the short url and ID can be base 62 converted to get the short URL.
+- Base conversion is another approach commonly used for URL shorteners.
+- A unique ID can be assigned to the short URL, and the ID can be converted to Base 62 to get the short URL.
 - A 7-character hash supports up to **3.5 trillion unique URLs**, enough for 365 billion URLs.
 
 **Example:**
@@ -72,7 +72,7 @@ Convert ID `2009215674938` to Base 62:
     <img src="./images/hash-function.svg" alt="Hash Function" width="500">
 
 - One approach is to collect the first 7 characters of a hash value; however, this method can lead to hash collisions.
-- To resolve collisions,recursively append a new predefined string until no more collision but this can be expensive.
+- To resolve collisions, recursively append a new predefined string until there are no more collisions, but this can be expensive.
 - Resolve collisions with **Bloom Filters** for efficient lookup.
 
     <p align="center">
@@ -81,16 +81,16 @@ Convert ID `2009215674938` to Base 62:
 
 ### Comparison
 
--  **Hash + Collision Resolution:**
+- **Hash + Collision Resolution:**
     - Fixed short URL length
     - Does not need a unique ID generator
-    - Collision is possbile and needs resolution
+    - Collision is possible and needs resolution
     - Not possible to find the next available short URL because it does not depend on ID
 
 - **Base 62 Conversion**
     - The length is not fixed and goes up with ID
     - It needs a unique ID generator
-    - Collision is not possbile
+    - Collision is not possible
     - Easy to find the next short URL if ID increments by 1 (Can be a security concern)
 
 ---
@@ -136,4 +136,3 @@ Convert ID `2009215674938` to Base 62:
 
 ### High Availability and Reliability
 - Ensure consistent and reliable services using database replication and fault-tolerant design.
-

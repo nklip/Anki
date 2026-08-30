@@ -1,5 +1,5 @@
 # Chapter 9: Design a Web Crawler
-<sub>[Back to System Design](../README.md#content)</sub>
+<sub>[Back to System Design](../Readme.md#content)</sub>
 
 ## Introduction
 A **web crawler**, also known as a spider or robot, is used to discover and collect web content, such as web pages, images, and videos. This chapter focuses on designing a scalable web crawler for **search engine indexing**.
@@ -38,8 +38,8 @@ A good web crawler must address:
 </p>
 
 1. **Seed URLs:** Starting points for the crawler.
-    - Need to selective as a good starting point that a crawler can utilize to traverse as many links as possible.
-    - Can be based on locality based on different popular website or based on topics.
+    - They need to be selected as good starting points that a crawler can use to traverse as many links as possible.
+    - They can be based on locality, popular websites, or topics.
     - Strategies: Categorize by locality or topic (e.g., sports, healthcare).
 
 2. **URL Frontier:** Stores URLs to be downloaded.
@@ -79,14 +79,14 @@ A good web crawler must address:
 
 ## Step 3: Deep Dive into Key Components
 ### DFS/BFS
--  The web can be though of as a directed graph where web pages are nodes and hyperlinks (URLs) as edges.
--  BFS is usually used for graph traversal as the depth can be be very deep thus DFS is not ideal.
--  Standard BFS does not take the priority of a URL into consideration, not every page has the same level of quality and importance.
+- The web can be thought of as a directed graph where web pages are nodes and hyperlinks (URLs) are edges.
+- BFS is usually used for graph traversal because the depth can be very large; thus, DFS is not ideal.
+- Standard BFS does not take the priority of a URL into consideration. Not every page has the same level of quality and importance.
 
 
 ### URL Frontier
 - **Politeness:**
-    - Ensure only one request per host at a time. Add a dealy b/w two download tasks.
+    - Ensure only one request per host at a time. Add a delay between two download tasks.
     - Use a mapping from hostnames to queues and worker (download) threads.
     - Each downloader thread has a separate FIFO queue and only downloads URLs from that queue.
 
@@ -94,7 +94,7 @@ A good web crawler must address:
 
     - **Queue router:** Ensures that each queue (b1, b2, … bn) only contains URLs from the same host.
     - **Mapping table:** It maps each host to a queue.
-    - **Queue selector:** Each worker thread is mapped to a FIFO queue, and it only downloads URLs from that queue. The queue selection logic is done by the Queue selector.
+    - **Queue selector:** Each worker thread is mapped to a FIFO queue, and it only downloads URLs from that queue. The queue selection logic is handled by the queue selector.
     - **Worker thread 1 to N.** A worker thread downloads web pages sequentially from the same host. A delay can be added between two download tasks.
 
 - **Priority:**
@@ -105,8 +105,8 @@ A good web crawler must address:
     - **Prioritizer:** It takes URLs as input and computes the priorities.
     - **Queue f1 to fn:** Each queue has an assigned priority. Queues with high priority are selected with higher probability.
     - **Queue selector:** Randomly choose a queue with a bias towards queues with higher priority.
-    - **Front queues:** manage prioritization
-    - **Back queues:** manage politeness
+    - **Front queues:** Manage prioritization.
+    - **Back queues:** Manage politeness.
 
 - **Freshness:** Recrawl based on update history or importance.
 
@@ -150,4 +150,3 @@ A good web crawler must address:
 - **Database Sharding:** Scale the data layer using replication and sharding.
 - **Horizontal Scaling:** Use stateless servers to scale crawl jobs efficiently.
 - **Analytics:** Collect and analyze data for insights.
-

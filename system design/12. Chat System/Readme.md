@@ -1,5 +1,5 @@
 # Chapter 12: Design a Chat System
-<sub>[Back to System Design](../README.md#content)</sub>
+<sub>[Back to System Design](../Readme.md#content)</sub>
 
 ## Introduction
 A **chat system** supports real-time messaging between users. This chapter focuses on designing a chat app that includes:
@@ -34,7 +34,7 @@ The system targets **50 million daily active users (DAU)** and stores chat histo
 
       <div style="margin-left:2rem">
       <img src="./images/basic-design.svg" alt="Basic Design" width="500">
-      <div>
+      </div>
 
 2. **Receiver Side:**
    - **Polling:**
@@ -51,9 +51,9 @@ The system targets **50 million daily active users (DAU)** and stores chat histo
 
    - **WebSocket:**
       - A bi-directional, persistent connection for real-time communication, chosen for both sending and receiving messages.
-      - Uses WebSockets (ws) protocol for sending and recieving messages.
+      - Uses the WebSocket (`ws`) protocol for sending and receiving messages.
 
-         <img src="./images/websocket.svg" alt="Websocket"  width="400" >
+         <img src="./images/websocket.svg" alt="Websocket" width="400" >
 
 ---
 
@@ -72,7 +72,7 @@ The system targets **50 million daily active users (DAU)** and stores chat histo
    - Responsible for message delivery and synchronization.
 3. **Third-Party Integration:**
    - Push notification services notify users about new messages.
-   - Refer Notification System chapter for notifications implementation.
+   - Refer to the Notification System chapter for notification implementation.
 
 ---
 ### Design
@@ -80,28 +80,28 @@ The system targets **50 million daily active users (DAU)** and stores chat histo
 The client maintains a persistent WebSocket connection to a chat server for real-time messaging.
 
 <div style="margin-left:3rem">
-      <img src="./images/high-level-design.svg" alt="High Level Design" width="450"> 
+      <img src="./images/high-level-design.svg" alt="High Level Design" width="450">
 </div>
 
 - Chat servers facilitate message sending/receiving.
 - Presence servers manage online/offline status.
-- API servers handle everything including user login, signup, change profile, etc.
+- API servers handle everything including user login, signup, profile changes, etc.
 - Notification servers send push notifications.
-- Finally, the key-value store is used to store chat history.Key-value stores for the database of the chat history data for following reasons:
+- Finally, the key-value store is used to store chat history. Key-value stores are suitable for chat history for the following reasons:
    - It allows easy horizontal scaling.
    - KV stores provide very low latency to access data.
-   - Relational databases do not handle long tail of data well. When the indexes grow
+   - Relational databases do not handle the long tail of data well. When the indexes grow
    large, random access is expensive.
    - KV stores are adopted by other proven reliable chat applications. For example,
    both Facebook messenger and Discord.
 
 
-Following are the data models for one-to-one chat and group chat.
-   - The primary key is message id, which helps to decide message sequence.
-   - For the group chat the composite primary key is (channel_id, message_id).
+The following are the data models for one-to-one chat and group chat.
+   - The primary key is the message ID, which helps determine message sequence.
+   - For the group chat, the composite primary key is (channel_id, message_id).
       - IDs can be generated using a global 64-bit sequence number generator like Snowflake.
-      - A better approach is to use local sequence number generator. Local means IDs are only unique within a group.
-      - The reason why local IDs work is that maintaining message sequence within one-on-one channel or a group channel is sufficient. 
+      - A better approach is to use a local sequence number generator. Local means IDs are only unique within a group.
+      - The reason why local IDs work is that maintaining message sequence within one-on-one channel or a group channel is sufficient.
 
       <img src="./images/one-to-one-chat.svg" alt="One to one chat design" width="300">
       <img src="./images/group-chat.svg" alt="Group chat design" width="300">
@@ -116,7 +116,7 @@ Following are the data models for one-to-one chat and group chat.
 </div>
 
 - The primary role of service discovery is to recommend the best chat server for a client based
-on the criteria like geographical location, server capacity.
+on criteria such as geographical location and server capacity.
 - Uses **Apache Zookeeper** to allocate chat servers based on criteria like geographic location and server capacity.
 - Ensures efficient load distribution and minimizes latency.
 
@@ -140,7 +140,7 @@ on the criteria like geographical location, server capacity.
 
 - Messages are copied to individual inboxes for each recipient in the group.
 - Simplifies synchronization but becomes expensive for larger groups.
-- On the recipient side, a recipient can receive messages from multiple users. Each recipient
+- On the recipient side, each recipient can receive messages from multiple users. Each recipient
 has an inbox (message sync queue) which contains messages from different senders.
 
 ---
@@ -150,25 +150,25 @@ has an inbox (message sync queue) which contains messages from different senders
 Many users have multiple devices. We need to synchronize the message across the devices.
 Each device maintains a variable called cur_max_message_id, which keeps track of the latest
 message ID on the device. Messages that satisfy the following two conditions are considered
-as news messages:
+as new messages:
 
 <div style="margin-left:3rem">
-   <img src="./images/message-synchronization.svg" alt="Message Synchronization"  width="400">
+   <img src="./images/message-synchronization.svg" alt="Message Synchronization" width="400">
 </div>
 
 - The recipient ID is equal to the currently logged-in user ID.
-- Message ID in the key-value store is larger than cur_max_message_id
+- The message ID in the key-value store is larger than cur_max_message_id.
 
 ---
 
 ### Online Presence
-1. **Heartbeat Mechanism:** 
+1. **Heartbeat Mechanism:**
    <div style="margin-left:3rem">
       <img src="./images/heartbeat-mechanism.svg" alt="Heartbeat Mechanism" width="400">
    </div>
 
    - Clients send periodic heartbeats to presence servers to indicate they are online.
-   - If no heartbeat is received within a threshold (for eg x = 30), the user is marked offline.
+   - If no heartbeat is received within a threshold (e.g., `x = 30`), the user is marked offline.
 
 
 2. **Fanout Model:**
@@ -178,9 +178,9 @@ as news messages:
    </div>
 
    - Presence updates are pushed to friends using a publish-subscribe model in which each friend pair maintains a channel.
-   - When User A’s online status changes, it publishes the event to three channels, channel A-B, A-C, and A-D. 
-   - Those three channels are subscribed by User B, C, and D, respectively which get the online status updates.
-   - The above design is effective for a small user groups.
+   - When User A’s online status changes, it publishes the event to three channels, channel A-B, A-C, and A-D.
+   - Those three channels are subscribed to by Users B, C, and D, respectively, who receive the online status updates.
+   - The above design is effective for small user groups.
 
 ---
 
@@ -199,4 +199,3 @@ as news messages:
 2. **End-to-End Encryption:** Ensure message privacy.
 3. **Client-Side Caching:** Reduce data transfer for better performance.
 4. **Improved Load Times:** Use geographically distributed caching networks.
-

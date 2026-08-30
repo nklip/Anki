@@ -1,5 +1,5 @@
 # Chapter 10: Design a Notification System
-<sub>[Back to System Design](../README.md#content)</sub>
+<sub>[Back to System Design](../Readme.md#content)</sub>
 
 ## Introduction
 A **notification system** is essential for modern applications, providing timely updates like product notifications, events, offers, and alerts. Notifications can be sent through:
@@ -13,7 +13,7 @@ The chapter focuses on designing a scalable system capable of sending millions o
 
 ## Step 1: Understanding the Problem
 ### Requirements
-- **Notification Types:** Push notifications, SMS, and Emails.
+- **Notification Types:** Push notifications, SMS, and emails.
 - **Delivery:** Soft real-time system with minimal delays.
 - **Platforms:** iOS, Android, and desktop.
 - **Triggers:** Notifications can be triggered by client applications or scheduled on servers.
@@ -54,10 +54,10 @@ The chapter focuses on designing a scalable system capable of sending millions o
 
    - **Trigger Services:**
       - Generate events to initiate notifications (e.g., billing reminders, shipping updates).
-      - A service can be a micro-service, a cron job, or a distributed system that triggers notification sending events.
+      - A service can be a microservice, a cron job, or a distributed system that triggers notification-sending events.
    - **Notification Server:**
       - Provide APIs for services to send notifications.
-      - Carry out basic validations to verify emails, phone numbers.
+      - Carry out basic validations to verify email addresses and phone numbers.
       - Query the database or cache to fetch data needed to render a notification.
    - **Third-Party Services:** Deliver notifications to users.
 
@@ -75,8 +75,8 @@ The chapter focuses on designing a scalable system capable of sending millions o
 - Move databases and caches out of the notification server.
 - Introduce **horizontal scaling** with multiple notification servers.
 - Use **message queues** to decouple system components.
-   -  Message queues serve as buffers when high volumes of notifications are to be sent out.
-- Add workers that pull notification events from message queues and send them to corresponding third party services.
+   - Message queues serve as buffers when high volumes of notifications are to be sent out.
+- Add workers that pull notification events from message queues and send them to corresponding third-party services.
 
 ---
 
@@ -89,13 +89,13 @@ The chapter focuses on designing a scalable system capable of sending millions o
    </div>
 
    - Persist notification data in a database and implement a retry mechanism.
-   - The Notification log database is included for data persistence.
+   - The notification log database is included for data persistence.
 
 
 2. **Deduplication:**
    - Check event IDs to avoid sending duplicate notifications.
-   - When a notification event first arrives, check if it is seen before by checking the event ID.
-If seen before discard it, otherwise send out the notification.
+   - When a notification event first arrives, check whether it has been seen before by checking the event ID.
+If it has been seen before, discard it; otherwise, send out the notification.
 
 
 ### Additional Components
@@ -135,4 +135,3 @@ If seen before discard it, otherwise send out the notification.
 2. **Message Queues:** Decouple processing to handle high volumes.
 3. **Caching:** Reduce latency by caching frequently accessed data.
 4. **Distributed Crawling:** Optimize message delivery geographically for better performance.
-

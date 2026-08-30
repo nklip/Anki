@@ -1,5 +1,5 @@
 # Chapter 27: Digital Wallet
-<sub>[Back to System Design](../README.md#content)</sub>
+<sub>[Back to System Design](../Readme.md#content)</sub>
 
 ## Introduction
 **Payment platforms** usually have a **wallet service**, where they allow clients to store funds within the application, which they can withdraw later.
@@ -16,7 +16,7 @@ You can also use it to pay for goods & services or transfer money to other users
  * C: Should we only focus on transfers between digital wallets? Should we support any other operations?
  * I: Let's focus on transfers between digital wallets for now.
  * C: How many transactions per second does the system need to support?
- * I: Let's assume 1mil TPS
+ * I: Let's assume 1 million TPS
  * C: A digital wallet has strict correctness requirements. Can we assume transactional guarantees are sufficient?
  * I: Sounds good
  * C: Do we need to prove correctness?
@@ -28,17 +28,17 @@ You can also use it to pay for goods & services or transfer money to other users
 
 Here's what we have to support in summary:
  * Support balance transfers between two accounts
- * Support 1mil TPS
+ * Support 1 million TPS
  * Reliability is 99.99%
  * Support transactions
  * Support reproducibility
 
 ### **Back-of-the-envelope estimation**
-A traditional relational database, provisioned in the cloud can support ~1000 TPS.
+A traditional relational database provisioned in the cloud can support ~1000 TPS.
 
-In order to reach 1mil TPS, we'd need 1000 database nodes. But if each transfer has two legs, then we actually need to support 2mil TPS.
+In order to reach 1 million TPS, we'd need 1,000 database nodes. But if each transfer has two legs, then we actually need to support 2 million TPS.
 
-One of our design goals would be to increase the TPS a single node can handle so that we can have less database nodes.
+One of our design goals would be to increase the TPS a single node can handle so that we can have fewer database nodes.
 
 | Per-node TPS | Node Number |
 |--------------|-------------|
@@ -52,14 +52,14 @@ One of our design goals would be to increase the TPS a single node can handle so
 
 ### **API Design**
 We only need to support one endpoint for this interview:
-```
+```http
 POST /v1/wallet/balance_transfer - transfers balance from one wallet to another
 ```
 
 Request parameters - from_account, to_account, amount (string to not lose precision), currency, transaction_id (idempotency key).
 
 Sample response:
-```
+```json
 {
     "status": "success"
     "transaction_id": "01589980-2664-11ec-9621-0242ac130002"
@@ -71,16 +71,16 @@ Our wallet application maintains account balances for every user account.
 
 One good data structure to represent this is a `map<user_id, balance>`, which can be implemented using an in-memory Redis store.
 
-Since one redis node cannot withstand 1mil TPS, we need to partition our redis cluster into multiple nodes.
+Since one Redis node cannot withstand 1 million TPS, we need to partition our Redis cluster across multiple nodes.
 
 Example partitioning algorithm:
-```
+```java
 String accountID = "A";
-Int partitionNumber = 7;
-Int myPartition = accountID.hashCode() % partitionNumber;
+int partitionNumber = 7;
+int myPartition = accountID.hashCode() % partitionNumber;
 ```
 
-Zookeeper can be used to store the number of partitions and addresses of redis nodes as it's a highly-available configuration storage. 
+ZooKeeper can be used to store the number of partitions and addresses of Redis nodes, as it's a highly available configuration store.
 
 Finally, a wallet service is a stateless service responsible for carrying out transfer operations. It can easily scale horizontally:
 
@@ -103,8 +103,8 @@ Here's how the two-phase commit (2PC) protocol works:
     <img src="./images/2pc-protocol.png" alt="2pc-protocol" width="500" />
 </div>
 
- * Coordinator (wallet service) performs read and write operations on multiple databases as normal
- * When application is ready to commit the transaction, coordinator asks all databases to prepare it
+ * The coordinator (wallet service) performs read and write operations on multiple databases as normal.
+ * When the application is ready to commit the transaction, the coordinator asks all databases to prepare it.
  * If all databases replied with a "yes", then the coordinator asks the databases to commit the transaction.
  * Otherwise, all databases are asked to abort the transaction
 
@@ -114,8 +114,8 @@ Downsides to the 2PC approach:
 
 ### **Distributed transaction using Try-Confirm/Cancel (TC/C)**
 TC/C is a variation of the 2PC protocol, which works with compensating transactions:
- * Coordinator asks all databases to reserve resources for the transaction
- * Coordinator collects replies from DBs - if yes, DBs are asked to try-confirm. If no, DBs are asked to try-cancel.
+ * The coordinator asks all databases to reserve resources for the transaction.
+ * The coordinator collects replies from DBs - if yes, DBs are asked to try-confirm. If no, DBs are asked to try-cancel.
 
 One important difference between TC/C and 2PC is that 2PC performs a single transaction, whereas in TC/C, there are two independent transactions.
 
@@ -133,8 +133,8 @@ Phase 1 - try:
     <img src="./images/try-phase.png" alt="try-phase" width="500" />
 </div>
 
- * coordinator starts local transaction in A's DB to reduce A's balance by 1$
- * C's DB is given a NOP instruction, which does nothing
+ * The coordinator starts a local transaction in A's DB to reduce A's balance by $1.
+ * C's DB is given a NOP instruction, which does nothing.
 
 Phase 2a - confirm:
 
@@ -142,8 +142,8 @@ Phase 2a - confirm:
     <img src="./images/confirm-phase.png" alt="confirm-phase" width="500" />
 </div>
 
- * if both DBs replied with "yes", confirm phase starts.
- * A's DB receives NOP, whereas C's DB is instructed to increase C's balance by 1$ (local transaction)
+ * If both DBs replied with "yes," the confirm phase starts.
+ * A's DB receives NOP, whereas C's DB is instructed to increase C's balance by $1 (a local transaction).
 
 Phase 2b - cancel:
 
@@ -152,7 +152,7 @@ Phase 2b - cancel:
 </div>
 
  * If any of the operations in phase 1 fails, the cancel phase starts.
- * A's DB is instructed to increase A's balance by 1$, C's DB receives NOP
+ * A's DB is instructed to increase A's balance by $1, and C's DB receives NOP.
 
 Here's a comparison between 2PC and TC/C:
 
@@ -164,18 +164,18 @@ Here's a comparison between 2PC and TC/C:
 TC/C is also referred to as a distributed transaction by compensation. High-level operation is handled in the business logic.
 
 Other properties of TC/C:
- * database agnostic, as long as database supports transactions
+ * Database-agnostic, as long as the database supports transactions
  * Details and complexity of distributed transactions need to be handled in the business logic
 
 ### **TC/C Failure modes**
-If the coordinator dies mid-flight, it needs to recover its intermediary state. 
+If the coordinator dies mid-flight, it needs to recover its intermediary state.
 That can be done by maintaining phase status tables, atomically updated within the database shards:
 
 <div style="margin-left:3rem">
     <img src="./images/phase-status-tables.png" alt="phase-status-tables" width="500" />
 </div>
 
-What does that table contain:
+What does that table contain?
  * ID and content of distributed transaction
  * status of try phase - not sent, has been sent, response received
  * second phase name - confirm or cancel
@@ -188,7 +188,7 @@ One caveat when using TC/C is that there is a brief moment where the account sta
     <img src="./images/unbalanced-state.png" alt="unbalanced-state" width="500" />
 </div>
 
-This is fine as long as we always recover from this state and that users cannot use the intermediary state to eg spend it. 
+This is fine as long as we always recover from this state and users cannot use the intermediate state to, e.g., spend it.
 This is guaranteed by always executing deductions prior to additions.
 
 | Try phase choices  | Account A | Account C |
@@ -199,22 +199,22 @@ This is guaranteed by always executing deductions prior to additions.
 
 Note that choice 3 from table above is invalid because we cannot guarantee atomic execution of transactions across different databases without relying on 2PC.
 
-One edge-case to address is out of order execution:
+One edge case to address is out-of-order execution:
 
 <div style="margin-left:3rem">
     <img src="./images/out-of-order-execution.png" alt="out-of-order-execution" width="500" />
 </div>
 
-It is possible that a database receives a cancel operation, before receiving a try. This edge case can be handled by adding an out of order flag in our phase status table.
-When we receive a try operation, we first check if the out of order flag is set and if so, a failure is returned.
+It is possible that a database receives a cancel operation before receiving a try. This edge case can be handled by adding an out-of-order flag to our phase-status table.
+When we receive a try operation, we first check whether the out-of-order flag is set; if so, a failure is returned.
 
 ### **Distributed transaction using Saga**
-Another popular approach is using Sagas - a standard for implementing distributed transactions with microservice architectures.
+Another popular approach is using Saga - a standard for implementing distributed transactions with microservice architectures.
 
 Here's how it works:
- * all operations are ordered in a sequence. All operations are independent in their own databases.
- * operations are executed from first to last
- * when an operation fails, the entire process starts to roll back until the beginning with compensating operations
+ * All operations are ordered in a sequence. All operations are independent in their own databases.
+ * Operations are executed from first to last.
+ * When an operation fails, the entire process starts to roll back to the beginning with compensating operations.
 
 <div style="margin-left:3rem">
     <img src="./images/saga.png" alt="saga" width="500" />
@@ -224,7 +224,7 @@ How do we coordinate the workflow? There are two approaches we can take:
  * Choreography - all services involved in a saga subscribe to the related events and do their part in the saga
  * Orchestration - a single coordinator instructs all services to do their jobs in the correct order
 
-The challenge of using choreography is that business logic is split across multiple service, which communicate asynchronously.
+The challenge of using choreography is that business logic is split across multiple services, which communicate asynchronously.
 The orchestration approach handles complexity well, so it is typically the preferred approach in a digital wallet system.
 
 Here's a comparison between TC/C and Saga:
@@ -251,16 +251,16 @@ In real-life, a digital wallet application might be audited and we have to answe
 Event sourcing is a technique which helps us answer these questions.
 
 It consists of four concepts:
- * command - intended action from the real world, eg transfer 1$ from account A to B. Need to have a global order, due to which they're put into a FIFO queue.
-   * commands, unlike events, can fail and have some randomness due to eg IO or invalid state.
+ * command - intended action from the real world, e.g., transfer $1 from account A to B. Commands need to have a global order, so they're put into a FIFO queue.
+   * commands, unlike events, can fail and have some randomness due to, e.g., I/O or an invalid state.
    * commands can produce zero or more events
-   * event generation can contain randomness such as external IO. This will be revisited later
- * event - historical facts about events which occured in the system, eg "transferred 1$ from A to B".
+   * event generation can contain randomness such as external I/O. This will be revisited later
+ * event - historical facts about events that occurred in the system, e.g., "transferred $1 from A to B."
    * unlike commands, events are facts that have happened within our system
    * similar to commands, they need to be ordered, hence, they're enqueued in a FIFO queue
- * state - what has changed as a result of an event. Eg a key-value store between account and their balances.
+ * state - what has changed as a result of an event. E.g., a key-value store mapping accounts to their balances.
  * state machine - drives the event sourcing process. It mainly validates commands and applies events to update the system state.
-   * the state machine should be deterministic, hence, it shouldn't read external IO or rely on randomness. 
+   * the state machine should be deterministic; hence, it shouldn't read external I/O or rely on randomness.
 
 <div style="margin-left:3rem">
     <img src="./images/event-sourcing.png" alt="event-sourcing" width="500" />
@@ -284,15 +284,15 @@ Here's the full picture:
     <img src="./images/wallet-service-state-macghine.png" alt="wallet-service-state-machine" width="500" />
 </div>
 
- * state machine reads commands from the command queue
- * balance state is read from the database
- * command is validated. If valid, two events for each of the accounts is generated
- * next event is read and applied by updating the balance (state) in the database
+ * The state machine reads commands from the command queue.
+ * The balance state is read from the database.
+ * The command is validated. If valid, one event for each account is generated.
+ * The next event is read and applied by updating the balance (state) in the database.
 
 The main advantage of using event sourcing is its reproducibility. In this design, all state update operations are saved as immutable history of all balance changes.
 
-Historical balances can always be reconstructed by replaying events from the beginning. 
-Because the event list is immutable and the state machine is deterministic, we are guaranteed to succeed in replaying any of the intermediary states.
+Historical balances can always be reconstructed by replaying events from the beginning.
+Because the event list is immutable and the state machine is deterministic, we are guaranteed to succeed in replaying any of the intermediate states.
 
 <div style="margin-left:3rem">
     <img src="./images/historical-states.png" alt="historical-states" width="500" />
@@ -312,22 +312,22 @@ Answering client queries about their balance can be addressed using the CQRS arc
 ---
 
 ## Step 3: Design Deep Dive
-In this section we'll explore some performance optimizations as we're still required to scale to 1mil TPS.
+In this section, we'll explore some performance optimizations, as we're still required to scale to 1 million TPS.
 
 ### **High-performance event sourcing**
-The first optimization we'll explore is to save commands and events into local disk store instead of an external store such as Kafka.
+The first optimization we'll explore is to save commands and events in a local disk store instead of an external store such as Kafka.
 
 This avoids the network latency and also, since we're only doing appends, that operation is generally fast for HDDs.
 
 The next optimization is to cache recent commands and events in-memory in order to save the time of loading them back from disk.
 
-At a low-level, we can achieve the aforementioned optimizations by leveraging a command called mmap, which stores data in local disk as well as cache it in-memory:
+At a low level, we can achieve the aforementioned optimizations by leveraging a command called mmap, which stores data on local disk and caches it in memory:
 
 <div style="margin-left:3rem">
     <img src="./images/mmap-optimization.png" alt="mmap-optimization" width="500" />
 </div>
 
-The next optimization we can do is also store state in the local file system using SQLite - a file-based local relational database. RocksDB is also another good option.
+The next optimization is to store state in the local file system using SQLite, a file-based local relational database. RocksDB is another good option.
 
 For our purposes, we'll choose RocksDB because it uses a log-structured merge-tree (LSM), which is optimized for write operations.
 Read performance is optimized via caching.
@@ -336,7 +336,7 @@ Read performance is optimized via caching.
     <img src="./images/rocks-db-approach.png" alt="rocks-db-approach" width="500" />
 </div>
 
-To optimize the reproducibility, we can periodically save snapshots to disk so that we don't have to reproduce a given state from the very beginning every time. We could store snapshots as large binary files in distributed file storage, eg HDFS:
+To optimize replay performance, we can periodically save snapshots to disk so that we don't have to reproduce a given state from the very beginning every time. We could store snapshots as large binary files in distributed file storage, e.g., HDFS:
 
 <div style="margin-left:3rem">
     <img src="./images/snapshot-approach.png" alt="snapshot-approach" width="500" />
@@ -356,7 +356,7 @@ In order to achieve high reliability for events, we need to replicate the list a
 
 To achieve this, we can employ a consensus algorithm, such as Raft.
 
-With Raft, there is a leader who is active and there are followers who are passive. If a leader dies, one of the followers picks up. 
+With Raft, there is a leader who is active and there are followers who are passive. If a leader dies, one of the followers picks up.
 As long as more than half of the nodes are up, the system continues running.
 
 <div style="margin-left:3rem">
@@ -369,7 +369,7 @@ With this approach, all nodes update the state, based on the events list. Raft e
 So far, we've managed to design a system which has high single-node performance and is reliable.
 
 Some limitations we have to tackle:
- * The capacity of a single raft group is limited. At some point, we need to shard the data and implement distributed transactions
+ * The capacity of a single Raft group is limited. At some point, we need to shard the data and implement distributed transactions.
  * In the CQRS architecture, the request/response flow is slow. A client would need to periodically poll the system to learn when their wallet has been updated
 
 Polling is not real-time, hence, it can take a while for a user to learn about an update in their balance. Also, it can overload the query services if the polling frequency is too high:
@@ -386,13 +386,13 @@ To mitigate the system load, we can introduce a reverse proxy, which sends comma
 
 This alleviates the system load as we could fetch data for multiple users using a single request, but it still doesn't solve the real-time receipt requirement.
 
-One final change we could do is make the read-only state machines push responses back to the reverse proxy once it's available. This can give the user the sense that updates happen real-time:
+One final change we could make is to have the read-only state machines push responses back to the reverse proxy once they're available. This can give the user the sense that updates happen in real time:
 
 <div style="margin-left:3rem">
     <img src="./images/push-state-machines.png" alt="push-state-machines" width="500" />
 </div>
 
-Finally, to scale the system even further, we can shard the system into multiple raft groups, where we implement distributed transactions on top of them using an orchestrator either via TC/C or Sagas:
+Finally, to scale the system even further, we can shard the system into multiple Raft groups, where we implement distributed transactions on top of them using an orchestrator via either TC/C or Saga:
 
 <div style="margin-left:3rem">
     <img src="./images/sharded-raft-groups.png" alt="sharded-raft-groups" width="500" />

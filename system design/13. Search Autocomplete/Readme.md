@@ -1,5 +1,5 @@
 # Chapter 13: Design a Search Autocomplete System
-<sub>[Back to System Design](../README.md#content)</sub>
+<sub>[Back to System Design](../Readme.md#content)</sub>
 
 ## Introduction
 Autocomplete, also known as typeahead or incremental search, provides real-time suggestions to users as they type in search boxes. The system must efficiently deliver top-k relevant and popular suggestions based on historical query data.
@@ -24,10 +24,10 @@ Autocomplete, also known as typeahead or incremental search, provides real-time 
 ---
 
 ## Step 2: High-Level Design
-At the high-level, the system is broken down into two services:
+At a high level, the system is broken down into two services:
 1. **Data Gathering Service:**
     - Collects user queries and aggregates them for frequency analysis in real-time.
-    - Real-time processing is not practical for large data sets; however, it is a good starting point
+    - Real-time processing is not practical for large data sets; however, it is a good starting point.
 
 
 2. **Query Service:** Provides the top-k suggestions based on the user’s input.
@@ -48,10 +48,10 @@ At the high-level, the system is broken down into two services:
     <img src="./images/basic-search-suggestions.svg" alt="Search Suggestions" width="360">
 </div>
 
-- Uses the frequency table from data gathering service.
-- Processes user input and retrieves top-k suggestions from the frequency table using a Trie.
+- Uses the frequency table from the data gathering service.
+- Processes user input and retrieves top-k suggestions from the frequency table using a trie.
 - Optimized for fast lookups using caching and efficient data structures.
-- For example when a user types “tw” in the search box, the following top 5 searched queries are displayed.
+- For example, when a user types “tw” in the search box, the following top 5 searched queries are displayed.
 
 
 ---
@@ -65,27 +65,27 @@ The **trie** is a tree-like data structure used to store and retrieve query stri
 1. **Compact Storage:** Represents prefixes hierarchically to minimize redundancy.
 2. **Frequency Information:** Stores the popularity of queries at each node.
 
-4. **Steps to get top k most searched queries**
+3. **Steps to Get the Top-k Most Searched Queries**
    <div style="margin-left:3rem">
       <img src="./images/trie-structure.svg" alt="Trie Structure" width="500">
    </div>
 
-    - Find the prefix
-    - Traverse the subtree from prefix node to get all valid children
-    - Sort the children and get top k 
+    - Find the prefix.
+    - Traverse the subtree from the prefix node to get all valid children.
+    - Sort the children and get the top-k results.
 
 
-3. **Optimizations:**
+4. **Optimizations:**
    - Cache top-k queries at each node to speed up retrieval and avoid traversing the whole trie.
 
         <img src="./images/cached-trie.svg" alt="Cached Trie" width="600">
 
-   - Limit prefix length to reduce search space as users rarely type a loong search query (say 50).
+   - Limit prefix length to reduce the search space, as users rarely type a long search query (e.g., 50 characters).
 
 #### Trie Operations
 1. **Create:**
     - Built weekly using aggregated query data.
-    - The source of data is from Analytics Log/DB.
+    - The data comes from the analytics log/database.
 2. **Update:** Rarely updated in real-time; weekly updates replace old data.
 3. **Delete:**
       <div style="margin-left:3rem">
@@ -94,7 +94,7 @@ The **trie** is a tree-like data structure used to store and retrieve query stri
 
     - Filters remove unwanted or harmful suggestions (e.g., hate speech).
     - Having a filter layer gives us the flexibility of removing results based on different filter rules.
-    - Unwanted suggestions are removed physically from the database asynchronically.
+    - Unwanted suggestions are physically removed from the database asynchronously.
 
 
 ---
@@ -123,9 +123,9 @@ The **trie** is a tree-like data structure used to store and retrieve query stri
 ---
 
 ### Data Gathering Pipeline
-In the high-level design, whenever a user types a search query, data is updated in real-time. This appraoch is not practical.
+In the high-level design, whenever a user types a search query, data is updated in real time. This approach is not practical.
 - Users may enter billions of queries per day. Updating the trie on every query is not feasible.
-- Top suggestions may not change much one the trie is built.
+- Top suggestions may not change much once the trie is built.
 
 
 #### Updated Design
@@ -136,7 +136,7 @@ In the high-level design, whenever a user types a search query, data is updated 
 
 1. **Analytics Logs:**
    - Stores raw query data as logs for weekly aggregation.
-   - Logs are append-only and are not indexed
+   - Logs are append-only and are not indexed.
 2. **Aggregators:**
    - Process logs into frequency tables, suitable for trie construction.
    - For real-time applications such as Twitter, aggregate data in a shorter time interval.
@@ -144,9 +144,9 @@ In the high-level design, whenever a user types a search query, data is updated 
 3. **Workers:**
    - Asynchronous servers rebuild the trie and store it in persistent storage.
 4. **Storage Options:**
-    - **Trie Cache**: Trie Cache is a distributed cache system that keeps trie in memory for fast read.
+    - **Trie Cache**: Trie Cache is a distributed cache system that keeps the trie in memory for fast reads.
     - **Trie DB**
-        1. **Document Store (e.g., MongoDB)**: Since a new trie is built weekly, we can periodically take a snapshot of it, serialize it, and store the serialized data in the database like MongoDB
+        1. **Document Store (e.g., MongoDB)**: Since a new trie is built weekly, we can periodically take a snapshot of it, serialize it, and store the serialized data in a database like MongoDB.
         2. **Key-Value Store:**
             - Maps prefixes to node data for fast access.
             - Every prefix in the trie is mapped to a key in a hash table.
@@ -176,4 +176,3 @@ In the high-level design, whenever a user types a search query, data is updated 
 
 ### Trending Queries
 - Handle real-time events by dynamically updating trie nodes or weighting recent queries more heavily.
-

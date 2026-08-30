@@ -1,5 +1,5 @@
 # Chapter 2: Back-of-the-Envelope Estimation
-<sub>[Back to System Design](../README.md#content)</sub>
+<sub>[Back to System Design](../Readme.md#content)</sub>
 
 ## Introduction
 Back-of-the-envelope estimation is a crucial skill in system design interviews. It involves making quick, rough calculations to assess system capacity or performance. According to Jeff Dean, Google Senior Fellow, these estimates help evaluate whether designs meet requirements through thought experiments and common performance benchmarks.
@@ -29,7 +29,7 @@ Latency numbers represent the time taken for various operations in computing sys
 | Main Memory Access       | 100 ns         |
 | SSD Random Read          | 150 µs         |
 | HDD Random Seek          | 10 ms          |
-| Round-Trip in Data Center| 500 µs         |
+| Round-Trip in Data Center | 500 µs        |
 | Inter-Region Data Center | 150 ms         |
 
 **Key Insights:**
@@ -63,9 +63,9 @@ Cloud providers like Amazon, Google, and Microsoft aim for SLAs (Service Level A
 - **Data retention:** 5 years.
 
 ### Estimations
-1. **Query Per Second (QPS):**
+1. **Queries Per Second (QPS):**
    - DAU = \( 300M x 50\% = 150M \)
-   - Tweets QPS = \( 150M x 2 tweets / 24 hour / 3600 seconds = ~3500 )
+   - Tweets QPS = \( 150M x 2 tweets / 24 hours / 3600 seconds = ~3500 \)
    - Peak QPS = \( 2 x 3500 = ~7000 \)
 
 2. **Media Storage:**
@@ -96,4 +96,3 @@ Avoid ambiguity by labeling units (e.g., `5 MB` instead of `5`).
 - **Storage Requirements:** Estimate total data needs.
 - **Cache Requirements:** Evaluate memory requirements for caching.
 - **Number of Servers:** Calculate hardware needs based on workload.
-

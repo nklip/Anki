@@ -1,5 +1,5 @@
 # Chapter 20: Metrics Monitoring and Alerting System
-<sub>[Back to System Design](../README.md#content)</sub>
+<sub>[Back to System Design](../Readme.md#content)</sub>
 
 ## Introduction
 This chapter focuses on designing a highly scalable **metrics monitoring and alerting system**, which is critical for ensuring high availability and reliability.
@@ -7,7 +7,7 @@ This chapter focuses on designing a highly scalable **metrics monitoring and ale
 ---
 
 ## Step 1: Understand the Problem and Establish Design Scope
-A metrics monitoring system can mean a lot of different things - eg you don't want to design a logs aggregation system, when the interviewer is interested in infra metrics only.
+A metrics monitoring system can mean many different things - e.g., you don't want to design a log-aggregation system when the interviewer is interested in infrastructure metrics only.
 
 Let's try to understand the problem first:
  - C: Who are we building the system for? An in-house monitoring system for a big tech company or a SaaS like DataDog?
@@ -15,7 +15,7 @@ Let's try to understand the problem first:
  - C: Which metrics do we want to collect?
  - I: Operational system metrics - CPU load, Memory, Data disk space. But also high-level metrics like requests per second. Business metrics are not in scope.
  - C: What is the scale of the infrastructure we're monitoring?
- - I: 100mil daily active users, 1000 server pools, 100 machines per pool
+ - I: 100 million daily active users, 1,000 server pools, 100 machines per pool
  - C: How long should we keep the data?
  - I: Let's assume 1y retention.
  - C: May we reduce metrics data resolution for long-term storage?
@@ -29,8 +29,8 @@ Let's try to understand the problem first:
 
 ### **High-level requirements and assumptions**
 The infrastructure being monitored is large-scale:
- - 100mil DAU
- - 1000 server pools * 100 machines * ~100 metrics per machine -> ~10mil metrics
+ - 100 million DAU
+ - 1,000 server pools * 100 machines * ~100 metrics per machine -> ~10 million metrics
  - 1-year data retention
  - Data retention policy - raw for 7d, 1-minute resolution for 30d, 1h resolution for 1y
 
@@ -68,7 +68,7 @@ There are five core components involved in a metrics monitoring and alerting sys
  - **Visualization**: Present data in graphs, charts, etc
 
 ### **Data model**
-Metrics data is usually recorded as a time-series, which contains a set of values with timestamps.
+Metrics data is usually recorded as a time series, which contains a set of values with timestamps.
 The series can be identified by name and an optional set of tags.
 
 Example 1 - What is the CPU load on production server instance i631 at 20:00?
@@ -83,11 +83,11 @@ The data can be identified by the following table:
     <img src="./images/metrics-example-1-data.svg" alt="metrics-example-1-data" width="500" />
 </div>
 
-The time series is identified by the metric name, labels and a single point in at a specific time.
+The time series is identified by the metric name, labels, and a single point at a specific time.
 
 Example 2 - What is the average CPU load across all web servers in the us-west region for the last 10min?
 
-```
+```text
 CPU.load host=webserver01,region=us-west 1613707265 50
 
 CPU.load host=webserver01,region=us-west 1613707265 62
@@ -103,10 +103,10 @@ CPU.load host=webserver01,region=us-west 1613707265 76
 CPU.load host=webserver01,region=us-west 1613707265 83
 ```
 
-This is an example data we might pull from storage to answer that question.
+This is example data we might pull from storage to answer that question.
 The average CPU load can be calculated by averaging the values in the last column of the rows.
 
-The format shown above is called the line protocol and is used by many popular monitoring software in the market - eg Prometheus, OpenTSDB.
+The format shown above is called the line protocol and is used by many popular monitoring products on the market, e.g., Prometheus and OpenTSDB.
 
 What every time series consists of:
 
@@ -120,13 +120,13 @@ A good way to visualize how data looks like:
     <img src="./images/time-series-data-viz.svg" alt="time-series-data-viz" width="500" />
 </div>
 
- - The x axis is the time
- - the y axis is the dimension you're querying - eg metric name, tag, etc.
+ - The x-axis is time.
+ - The y-axis is the dimension you're querying, e.g., metric name, tag, etc.
 
-The data access pattern is write-heavy and spiky reads as we collect a lot of metrics, but they are infrequently accessed, although in bursts when eg there are ongoing incidents.
+The data-access pattern is write-heavy with spiky reads, as we collect many metrics, but they are accessed infrequently except in bursts, e.g., during ongoing incidents.
 
 The data storage system is the heart of this design.
- - It is not recommended to use a general-purpose database for this problem, although you could achieve good scale \w expert-level tuning.
+ - It is not recommended to use a general-purpose database for this problem, although you could achieve good scale with expert-level tuning.
  - Using a NoSQL database can work in theory, but it is hard to devise a scalable schema for effectively storing and querying time-series data.
 
 There are many databases, specifically tailored for storing time-series data. Many of them support custom query interfaces which allow for effective querying of time-series data.
@@ -148,7 +148,7 @@ For the purposes of the interview, it is sufficient to understand that metrics a
 One nice feature of time-series databases is the efficient aggregation and analysis of large amounts of time-series data by labels.
 InfluxDB, for example, builds indexes for each label.
 
-It is critical, however, to keep the cardinality of labels low - ie, not using too many unique labels.
+It is critical, however, to keep the cardinality of labels low - i.e., not use too many unique labels.
 
 ### **High-level Design**
 
@@ -186,7 +186,7 @@ Here's how the pull model might look like:
 For this solution, the metrics collector needs to maintain an up-to-date list of services and metrics endpoints.
 We can use Zookeeper or etcd for that purpose - service discovery.
 
-Service discovery contains contains configuration rules about when and where to collect metrics from:
+Service discovery contains configuration rules about when and where to collect metrics:
 
 <div style="margin-left:3rem">
     <img src="./images/service-discovery-example.svg" alt="service-discovery-example" width="500" />
@@ -199,11 +199,11 @@ Here's a detailed explanation of the metrics collection flow:
 </div>
 
  - Metrics collector fetches configuration metadata from service discovery. This includes pulling interval, IP addresses, timeout & retry params.
- - Metrics collector pulls metrics data via a pre-defined http endpoint (eg `/metrics`). This is typically done by a client library.
+ - The metrics collector pulls metrics data via a predefined HTTP endpoint (e.g., `/metrics`). This is typically done by a client library.
  - Alternatively, the metrics collector can register a change event notification with the service discovery to be notified once the service endpoint changes.
  - Another option is for the metrics collector to periodically poll for metrics endpoint configuration changes.
 
-At our scale, a single metrics collector is not enough. There must be multiple instances. 
+At our scale, a single metrics collector is not enough. There must be multiple instances.
 However, there must also be some kind of synchronization among them so that two collectors don't collect the same metrics twice.
 
 One solution for this is to position collectors and servers on a consistent hash ring and associate a set of servers with a single collector only:
@@ -218,7 +218,7 @@ With the push model, on the other hand, services push their metrics to the metri
     <img src="./images/push-model-example.svg" alt="push-model-example" width="500" />
 </div>
 
-In this approach, typically a collection agent is installed alongside service instances. 
+In this approach, typically a collection agent is installed alongside service instances.
 The agent collects metrics from the server and pushes them to the metrics collector.
 
 <div style="margin-left:3rem">
@@ -227,12 +227,12 @@ The agent collects metrics from the server and pushes them to the metrics collec
 
 With this model, we can potentially aggregate metrics before sending them to the collector, which reduces the volume of data processed by the collector.
 
-On the flip side, metrics collector can reject push requests as it can't handle the load. 
+On the flip side, metrics collector can reject push requests as it can't handle the load.
 It is important, hence, to add the collector to an auto-scaling group behind a load balancer.
 
-so which one is better? There are trade-offs between both approaches and different systems use different approaches:
+So which one is better? There are trade-offs between both approaches, and different systems use different approaches:
  - Prometheus uses a pull architecture
- - Amazon Cloud Watch and Graphite use a push architecture
+ - Amazon CloudWatch and Graphite use a push architecture.
 
 Here are some of the main differences between push and pull:
 |                                        | Pull                                                                                                                                                                                                    | Push                                                                                                                                                                                                                                    |
@@ -252,7 +252,7 @@ There is no clear winner. A large organization probably needs to support both. T
     <img src="./images/metrics-transmission-pipeline.svg" alt="metrics-transmission-pipeline" width="500" />
 </div>
 
-The metrics collector is provisioned in an auto-scaling group, regardless if we use the push or pull model.
+The metrics collector is provisioned in an auto-scaling group, regardless of whether we use the push or pull model.
 
 There is a chance of data loss if the time-series DB is down, however. To mitigate this, we'll provision a queuing mechanism:
 
@@ -260,11 +260,11 @@ There is a chance of data loss if the time-series DB is down, however. To mitiga
     <img src="./images/queuing-mechanism.svg" alt="queuing-mechanism" width="500" />
 </div>
 
- - Metrics collectors push metrics data into kafka
+ - Metrics collectors push metrics data into Kafka.
  - Consumers or stream processing services such as Apache Storm, Flink or Spark process the data and push it to the time-series DB
 
 This approach has several advantages:
- - Kafka is used as a highly-reliable and scalable distributed message platform
+ - Kafka is used as a highly reliable and scalable distributed messaging platform.
  - It decouples data collection and data processing from one another
  - It can prevent data loss by retaining the data in Kafka
 
@@ -281,14 +281,14 @@ It can be argued that using that would be as scalable as using Kafka for queuing
 
 ### **Where aggregations can happen**
 Metrics can be aggregated at several places. There are trade-offs between different choices:
- - **Collection agent**: client-side collection agent only supports simple aggregation logic. Eg collect a counter for 1m and send it to the metrics collector.
+ - **Collection agent**: the client-side collection agent only supports simple aggregation logic. For example, it can collect a counter for one minute and send it to the metrics collector.
  - **Ingestion pipeline**: To aggregate data before writing to the DB, we need a stream processing engine like Flink. This reduces write volume, but we lose data precision as we don't store raw data.
  - **Query side**: We can aggregate data when we run queries via our visualization system. There is no data loss, but queries can be slow due to a lot of data processing.
 
 ### **Query Service**
 Having a separate query service from the time-series DB decouples the visualization and alerting system from the database, which enables us to decouple the DB from clients and change it at will.
 
-We can add a Cache layer here to reduce the load to the time-series database:
+We can add a cache layer here to reduce the load on the time-series database:
 
 <div style="margin-left:3rem">
     <img src="./images/cache-layer-query-service.svg" alt="cache-layer-query-service" width="500" />
@@ -322,7 +322,7 @@ order by time_read;
 
 Here's the same query in Flux - query language used in InfluxDB:
 
-```
+```flux
 from(db:"telegraf")
   |> range(start:-1h)
   |> filter(fn: (r) => r._measurement == "foo")
@@ -332,7 +332,7 @@ from(db:"telegraf")
 ### **Storage layer**
 It is important to choose the time-series database carefully.
 
-According to research published by Facebook, ~85% of queries to the operational store were for data from the past 26h.
+According to research published by Facebook, ~85% of queries to the operational store were for data from the past 26 hours.
 
 If we choose a database, which harnesses this property, it could have significant impact on system performance. InfluxDB is one such option.
 
@@ -348,7 +348,7 @@ In the above example, instead of storing full timestamps, we can store timestamp
 
 Another technique we can employ is down-sampling - converting high-resolution data to low-resolution in order to reduce disk usage.
 
-We can use that for old data and make the rules configurable by data scientists, eg:
+We can use that for old data and make the rules configurable by data scientists, e.g.:
  - 7d - no down-sampling
  - 30d - down-sample to 1min
  - 1y - down-sample to 1h
@@ -369,7 +369,7 @@ down-sampled to 30-second resolution:
 | cpu    | 2021-10-24T19:00:00Z | host-a   | 19                 |
 | cpu    | 2021-10-24T19:00:30Z | host-a   | 25                 |
 
-Finally, we can also use cold storage to use old data, which is no longer used. The financial cost for cold storage is much lower.
+Finally, we can use cold storage for old data that is no longer used. The financial cost of cold storage is much lower.
 
 ### **Alerting system**
 
@@ -395,7 +395,7 @@ The alert manager fetches alert configurations from cache. Based on configuratio
 If a rule is met, an alert event is created.
 
 Other responsibilities of the alert manager are:
- - Filtering, merging and deduplicating alerts. Eg if an alert of a single instance is triggered multiple times, only one alert event is generated.
+ - Filtering, merging, and deduplicating alerts. For example, if an alert for a single instance is triggered multiple times, only one alert event is generated.
  - Access control - it is important to restrict alert-management operations to certain individuals only
  - Retry - the manager ensures that the alert is propagated at least once.
 
@@ -407,7 +407,7 @@ Finally, alert consumers pull alerts data from Kafka and send notifications over
 In the real-world, there are many off-the-shelf solutions for alerting systems. It is difficult to justify building your own system in-house.
 
 ### **Visualization system**
-The visualization system shows metrics and alerts over a time period. Here's an dashboard built with Grafana:
+The visualization system shows metrics and alerts over a time period. Here's a dashboard built with Grafana:
 
 <div style="margin-left:3rem">
     <img src="./images/grafana-dashboard.png" alt="grafana-dashboard" width="500" />

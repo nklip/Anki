@@ -1,6 +1,6 @@
 
 # [System Design Interview - An Insider's Guide (Vol 1 and 2)](https://bytebytego.com/courses/system-design-interview)
-These notes are based on the System Design Interview books - [Vol 1 and Vol 2 2nd Ed](https://www.goodreads.com/book/show/54109255-system-design-interview-an-insider-s-guide)
+These notes are based on the System Design Interview books - [Vol 1 and Vol 2 2nd Ed](https://www.goodreads.com/book/show/54109255-system-design-interview-an-insider-s-guide).
 
 Check the notes here: https://pagefy.io/system-design/system-design-interview-by-alex-xu
 
@@ -37,7 +37,7 @@ Check the notes here: https://pagefy.io/system-design/system-design-interview-by
  * [Chapter 28 - Stock Exchange](./28.%20Stock%20Exchange/Readme.md)
 
 
-# Additonal Resources
+# Additional Resources
 
 ### Rate Limiting
 - [Circuit Breaker Algorithm](https://martinfowler.com/bliki/CircuitBreaker.html)
@@ -46,7 +46,7 @@ Check the notes here: https://pagefy.io/system-design/system-design-interview-by
 
 ### Consistent Hashing
 - [Consistent Hashing](https://tom-e-white.com/2007/11/consistent-hashing.html)
-- [CS168: Introduction and Consistent Hashing:]( http://theory.stanford.edu/~tim/s16/l/l1.pdf)
+- [CS168: Introduction and Consistent Hashing:](http://theory.stanford.edu/~tim/s16/l/l1.pdf)
 - [Apache Cassandra](http://www.cs.cornell.edu/Projects/ladis2009/papers/Lakshman-ladis2009.PDF)
 - [Scaling Discord](https://blog.discord.com/scaling-elixir-f9b8e1e7c29b)
 - [Google Maglev](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/44824.pdf)
@@ -82,7 +82,7 @@ Check the notes here: https://pagefy.io/system-design/system-design-interview-by
 - [Prefix Hash Tree](https://people.eecs.berkeley.edu/~sylvia/papers/pht.pdf)
 
 
-### Youtube
+### YouTube
 - [YouTube Architecture](http://highscalability.com/youtube-architecture)
 - [YouTube scalability 2012](https://www.youtube.com/watch?v=w5WVu624fY8)
 - [Transcoding Videos at Scale](https://www.egnyte.com/blog/2018/12/transcoding-how-we-serve-videos-at-scale/)

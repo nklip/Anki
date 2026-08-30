@@ -1,5 +1,5 @@
 # Chapter 24: S3-like Object Storage
-<sub>[Back to System Design](../README.md#content)</sub>
+<sub>[Back to System Design](../Readme.md#content)</sub>
 
 ## Introduction
 
@@ -10,15 +10,15 @@ Storage systems fall into three broad categories:
 - **File storage**
 - **Object storage**
 
-**Block storage** are devices, which came out in 1960s. HDDs and SSDs are such examples.
+**Block storage** devices emerged in the 1960s. HDDs and SSDs are examples.
 These devices are typically physically attached to a server, although they can also be network-attached via high-speed network protocols.
-Servers can format the raw blocks and use them as a file system or it can hand control of them to servers directly.
+Servers can format the raw blocks and use them as a file system, or they can hand control of them directly to applications.
 
 **File storage** is built on top of block storage. It provides a higher level of abstraction, making it easier to manage folders and files.
 
 **Object storage** sacrifices performance for high durability, vast scale and low cost.
 It targets "cold" data and is mainly used for archival and backup.
-There is no hierarchical directory structure, all data is stored as objects in a flat structure.
+There is no hierarchical directory structure; all data is stored as objects in a flat structure.
 It is relatively slow compared to other storage types. Most cloud providers have an object storage offering - Amazon S3, Google GCS, etc.
 
 <div style="margin-left:3rem">
@@ -35,9 +35,9 @@ It is relatively slow compared to other storage types. Most cloud providers have
 | Scalability     | Medium scalability               | High scalability                        | Vast scalability               |
 | Good for        | Virtual machines (VM), databases | General-purpose file system access      | Binary data, unstructured data |
 
-Some terminology, related to object storage:
+Some terminology related to object storage:
 - **Bucket** - logical container for objects. Name is globally unique.
-- **Object** - An individual piece of data, stored in a bucket. Contains object data and metadata.
+- **Object** - an individual piece of data stored in a bucket. Contains object data and metadata.
 - **Versioning** - A feature keeping multiple variants of an object in the same bucket.
 - **Uniform Resource Identifier (URI)** - each resource is uniquely identified by a URI.
 - **Service-level Agreement (SLA)** - contract between service provider and client.
@@ -57,7 +57,7 @@ Amazon S3 Standard-Infrequent Access storage class SLAs:
 - I: We need to store both massive objects and small objects efficiently
 - C: How much data do we store in a year?
 - I: 100 petabytes
-- C: Can we assume 6 nines of data durbility (99.9999%) and service availability of 4 nines (99.99%)?
+- C: Can we assume 6 nines of data durability (99.9999%) and service availability of 4 nines (99.99%)?
 - I: Yes, sounds reasonable
 
 ### **Non-functional requirements**
@@ -69,28 +69,28 @@ Amazon S3 Standard-Infrequent Access storage class SLAs:
 
 ### **Back-of-the-envelope estimation**
 
-Object storage is likely to have bottlenecks in disk capacity or IO per second (IOPS).
+Object storage is likely to have bottlenecks in disk capacity or input/output operations per second (IOPS).
 
 Assumptions:
-- we have 20% small (less than 1mb), 60% mid-size (1-64mb) and 20% large objects (greater than 64mb),
+- We have 20% small (less than 1 MB), 60% mid-size (1-64 MB), and 20% large objects (greater than 64 MB).
 - One hard disk (SATA, 7200rpm) is capable of doing 100-150 random seeks per second (100-150 IOPS)
 
 Given the assumptions, we can estimate the total number of objects the system can persist.
-- Let's use median size per object type to simplify calculation - 0.5mb for small, 32mb for medium, 200mb for large.
-- Given 100PB of storage (10^11 MB) and 40% of storage usage results in 0.68bil objects
-- If we assume metadata is 1kb, then we need 0.68tb space to store metadata info
+- Let's use the median size per object type to simplify the calculation - 0.5 MB for small, 32 MB for medium, and 200 MB for large.
+- Given 100 PB of storage (10^11 MB), 40% of storage usage results in 0.68 billion objects.
+- If we assume metadata is 1 KB, then we need 0.68 TB of space to store metadata information.
 
 ---
 
 ## Step 2: Propose High-Level Design and Get Buy-In
 
 Let's explore some interesting properties of object storage before diving into the design:
-- **Object immutability** - objects in object storage are immutable (not the case in other storage systems). We may delete them or replace them, but no update.
+- **Object immutability** - objects in object storage are immutable (unlike in other storage systems). We may delete or replace them, but we cannot update them.
 - **Key-value store** - an object URI is its key and we can get its contents by making an HTTP call
-- **Write once, read many times** - data access pattern is writing once and reading many times. According to some Linkedin research, 95% of operations are reads
+- **Write once, read many times** - the data-access pattern is writing once and reading many times. According to some LinkedIn research, 95% of operations are reads.
 - Support both small and large objects
 
-Design philosophy of object storage is similar to UNIX - when we save a file, it creates the filename in a data structure, called inode and file data is stored in different disk locations.
+The design philosophy of object storage is similar to UNIX - when we save a file, it creates the filename in a data structure called an inode, and file data is stored in different disk locations.
 The inode contains a list of file block pointers, which point to different locations on disk.
 
 When accessing a file, we first fetch its metadata from the inode, prior to fetching the file contents.
@@ -135,7 +135,7 @@ By separating metadata from file contents, we can scale the different stores ind
 
 Example object upload request:
 
-```
+```http
 PUT /bucket-to-share/script.txt HTTP/1.1
 Host: foo.s3example.org
 Date: Sun, 12 Sept 2021 17:51:00 GMT
@@ -149,11 +149,11 @@ x-amz-meta-author: Alex
 
 ### **Downloading an object**
 
-Buckets have no directory hierarchy, buy we can create a logical hierarchy by concatenating bucket name and object name to simulate a folder structure.
+Buckets have no directory hierarchy, but we can create a logical hierarchy by concatenating the bucket name and object name to simulate a folder structure.
 
 Example GET request for fetching an object:
 
-```
+```http
 GET /bucket-to-share/script.txt HTTP/1.1
 Host: foo.s3example.org
 Date: Sun, 12 Sept 2021 18:30:01 GMT
@@ -164,7 +164,7 @@ Authorization: authorization string
     <img src="./images/download-object.svg" alt="download-object" width="500" />
 </div>
 
-1. Client sends an HTTP GET request to the load balancer, ie `GET /bucket-to-share/script.txt`
+1. The client sends an HTTP GET request to the load balancer, i.e., `GET /bucket-to-share/script.txt`.
 2. API service queries IAM to verify the user has correct permissions to read the bucket
 3. Once validated, UUID of object is retrieved from metadata store
 4. Object payload is retrieved from data store based on UUID
@@ -191,8 +191,8 @@ The data store's main components:
 The data routing service provides a RESTful or gRPC API to access the data node cluster.
 It is a stateless service, which scales by adding more servers.
 
-It's main responsibilities are:
-- querying the placement service to get the best data node to store data
+Its main responsibilities are:
+- Querying the placement service to get the best data node to store data
 - reading data from data nodes and returning it to the API service
 - Writing data to data nodes
 
@@ -206,10 +206,10 @@ It maintains a virtual cluster map, which determines the physical topology of a 
 The service also sends heartbeats to all data nodes to determine if they should be removed from the virtual cluster.
 
 Since this is a critical service, it is recommended to maintain a cluster of 5 or 7 replicas, synchronized via Paxos or Raft consensus algorithms.
-Eg a 7 node cluster can tolerate 3 nodes failing.
+E.g., a 7-node cluster can tolerate 3 node failures.
 
 Data nodes store the actual object data.
-Reliability and durability is ensured by replicating data to multiple data nodes.
+Reliability and durability are ensured by replicating data to multiple data nodes.
 
 Each data node has a daemon running, which sends heartbeats to the placement service.
 
@@ -229,7 +229,7 @@ The heartbeat includes:
 - The UUID of the object is returned to the API service.
 
 Caveats:
-- Given an object UUID, it's replication group is deterministically chosen by using consistent hashing
+- Given an object UUID, its replication group is deterministically chosen using consistent hashing.
 - In step 4, the primary data node replicates the object data before returning a response. This favors strong consistency over higher latency.
 
 <div style="margin-left:3rem">
@@ -242,7 +242,7 @@ One simple approach to managing data is to store each object in a separate file.
 
 This works, but is not performant with many small files in a file system:
 - Data blocks on HDD are wasted, because every file uses the whole block size. Typical block size is 4kb.
-- Many files means many inodes. Operating systems don't deal well with too many inodes and there is also a max inode limit.
+- Many files mean many inodes. Operating systems don't deal well with too many inodes, and there is also a maximum inode limit.
 
 These issues can be addressed by merging many small files into bigger ones via a write-ahead log (WAL). Once the file reaches its capacity (typically a few GB), a new file is created:
 
@@ -271,7 +271,7 @@ Downsides:
 - we'd need to aggressively scale the cluster to serve all requests
 - there's additional network latency between data node and db cluster
 
-An alternative is to take advantage of the fact that data nodes are only interested to data related to them,
+An alternative is to take advantage of the fact that data nodes are only interested in data related to them,
 so we can deploy the relational db within the data node itself.
 
 SQLite is a good option as it's a lightweight file-based relational database.
@@ -290,7 +290,7 @@ SQLite is a good option as it's a lightweight file-based relational database.
 
 Data durability is an important requirement in our design. In order to achieve 6 nines of durability, every failure case needs to be properly examined.
 
-First problem to address is hardware failures. We can achieve that by replicating data nodes to minimize probability of failure.
+The first problem to address is hardware failure. We can achieve that by replicating data nodes to minimize the probability of failure.
 But in addition to that, we also ought to replicate across different failure domains (cross-rack, cross-dc, separate networks, etc).
 A critical event can cause multiple hardware failures within the same domain:
 
@@ -332,7 +332,7 @@ Erasure coding is also much harder to implement.
 
 #### Correctness verification
 
-If a disk fails entirely, then the failure is easy to detect. This is less straightforward in the event part of the disk memory gets corrupted.
+If a disk fails entirely, then the failure is easy to detect. This is less straightforward if part of the disk gets corrupted.
 
 To detect this, we can use checksums - a hash of the file contents, which can be used to verify the file's integrity.
 
@@ -374,11 +374,11 @@ Even with this sharding scheme, though, listing objects in a bucket will be slow
 In a single database, listing an object based on its prefix (looks like a directory) works like this:
 
 ```sql
-SELECT * FROM object WHERE bucket_id = "123" AND object_name LIKE `abc/%`
+SELECT * FROM object WHERE bucket_id = '123' AND object_name LIKE 'abc/%'
 ```
 
 This is challenging to fulfill when the database is sharded. To achieve it, we can run the query on every shard and aggregate the results in-memory.
-This makes pagination challenging though, since different shards contain a different result size and we need to maintain separate limit/offset for each.
+This makes pagination challenging, though, since different shards contain different result sizes, and we need to maintain separate limits/offsets for each.
 
 We can leverage the fact that typically object stores are not optimized for listing objects, so we can sacrifice listing performance.
 We can also create a denormalized table for listing objects, sharded by bucket ID.
@@ -410,18 +410,18 @@ Uploading large files can be optimized by using multipart uploads - splitting a 
 
 1. Client calls service to initiate a multipart upload
 2. Data store returns an upload ID which uniquely identifies the upload
-3. Client splits the large file into several chunks, uploaded independently using the upload id
-4. When a chunk is uploaded, the data store returns an etag, which is a md5 checksum, identifying that upload chunk
-5. After all parts are uploaded, client sends a complete multipart upload request, which includes upload_id, part numbers and all etags
+3. The client splits the large file into several chunks, uploaded independently using the upload ID.
+4. When a chunk is uploaded, the data store returns an ETag, which is an MD5 checksum identifying that upload chunk.
+5. After all parts are uploaded, the client sends a complete multipart upload request, which includes the upload ID, part numbers, and all ETags.
 6. Data store reassembles the object from its parts. The process can take a few minutes. After that, success response is returned to the client.
 
-Old parts, which are no longer useful can be removed at this point. We can introduce a garbage collector to deal with it.
+Old parts that are no longer useful can be removed at this point. We can introduce a garbage collector to deal with them.
 
 ### **Garbage collection**
 
-Garbage collection is the process of reclaiming storage space, which is no longer used. There are a few ways data becomes garbage:
+Garbage collection is the process of reclaiming storage space that is no longer used. There are a few ways data becomes garbage:
 - **lazy object deletion** - object is marked as deleted without actually getting deleted
-- **orphan data** - eg an upload failed mid-flight and old parts need to be deleted
+- **orphan data** - e.g., an upload failed mid-flight and old parts need to be deleted
 - **corrupted data** - data which failed checksum verification
 
 The garbage collector is also responsible for reclaiming unused space in replicas.
@@ -444,4 +444,4 @@ Things we covered:
 - Designing an S3-like object storage
 - Comparing differences between object, block and file storages
 - Covered uploading, downloading, listing, versioning of objects in a bucket
-- Deep dived in the design - data store and metadata store, replication and erasure coding, multipart uploads, sharding
+- Diving deep into the design - data store and metadata store, replication and erasure coding, multipart uploads, and sharding

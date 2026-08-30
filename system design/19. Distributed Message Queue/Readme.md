@@ -1,12 +1,12 @@
 # Chapter 19: Distributed Message Queue
-<sub>[Back to System Design](../README.md#content)</sub>
+<sub>[Back to System Design](../Readme.md#content)</sub>
 
 ## Introduction
 
 We'll be designing a **distributed message queue** in this chapter.
 
 Benefits of message queues:
-- **Decoupling**: Eliminates tight coupling between components. Let them update separately.
+- **Decoupling**: Eliminates tight coupling between components. Lets them update separately.
 - **Improved scalability**: Producers and consumers can be scaled independently based on traffic.
 - **Increased availability**: If one part of the system goes down, other parts continue interacting with the queue.
 - **Better performance**: Producers can produce messages without waiting for consumer confirmation.
@@ -14,7 +14,7 @@ Benefits of message queues:
 Some popular message queue implementations - Kafka, RabbitMQ, RocketMQ, Apache Pulsar, ActiveMQ, ZeroMQ.
 
 Strictly speaking, Kafka and Pulsar are not message queues. They are event streaming platforms.
-There is however a convergence of features which blurs the distinction between message queues and event streaming platforms.
+There is, however, a convergence of features that blurs the distinction between message queues and event-streaming platforms.
 
 In this chapter, we'll be building a message queue with support for more advanced features such as long data retention, repeated message consumption, etc.
 
@@ -22,21 +22,21 @@ In this chapter, we'll be building a message queue with support for more advance
 
 ## Step 1: Understand the Problem and Establish Design Scope
 
-Message queues ought to support few basic features - producers produce messages and consumers consume them.
-There are, however, different considerations with regards to performance, message delivery, data retention, etc.
+Message queues ought to support a few basic features - producers produce messages and consumers consume them.
+There are, however, different considerations with regard to performance, message delivery, data retention, etc.
 
 Here's a set of potential questions between Candidate and Interviewer:
  * C: What's the format and average message size? Is it text only?
  * I: Messages are text-only and usually a few KBs
  * C: Can messages be repeatedly consumed?
- * I: Yes, messages can be repeatedly consumed by different consumers. This is an added requirement, which traditional message queues don't support.
+ * I: Yes, messages can be repeatedly consumed by different consumers. This is an added requirement that traditional message queues don't support.
  * C: Are messages consumed in the same order they were produced?
- * I: Yes, order guarantee should be preserved. This is an added requirement, traditional message queues don't support this.
+ * I: Yes, the ordering guarantee should be preserved. This is an added requirement; traditional message queues don't support this.
  * C: What are the data retention requirements?
  * I: Messages need to have a retention of two weeks. This is an added requirement.
  * C: How many producers and consumers do we want to support?
  * I: The more, the better.
- * C: What data delivery semantic do we want to support? At-most-once, at-least-once, exactly-once?
+ * C: What data-delivery semantics do we want to support? At-most-once, at-least-once, exactly-once?
  * I: We definitely want to support at-least-once. Ideally, we can support all and make them configurable.
  * C: What's the target throughput for end-to-end latency?
  * I: It should support high throughput for use cases like log aggregation and low throughput for more traditional use cases.
@@ -49,11 +49,11 @@ Here's a set of potential questions between Candidate and Interviewer:
  * Historical data can be truncated
  * Message size is in the KB range
  * Order of messages needs to be preserved
- * Data delivery semantics is configurable - at-most-once/at-least-once/exactly-once.
+ * Data-delivery semantics are configurable - at-most-once/at-least-once/exactly-once.
 
 ### **Non-functional requirements**
 
-- **High throughput or low latency**: Configurable based on use-case
+- **High throughput or low latency**: Configurable based on the use case.
 - **Scalable**: system should be distributed and support a sudden surge in message volume
 - **Persistent and durable**: data should be persisted on disk and replicated among nodes
 
@@ -84,8 +84,8 @@ The first type of messaging model is point-to-point and it's commonly found in t
 
  * A message is sent to a queue and it's consumed by exactly one consumer.
  * There can be multiple consumers, but a message is consumed only once.
- * Once message is acknowledged as consumed, it is removed from the queue.
- * There is no data retention in the point-to-point model, but there is such in our design.
+ * Once a message is acknowledged as consumed, it is removed from the queue.
+ * There is no data retention in the point-to-point model, but our design has it.
 
 On the other hand, the publish-subscribe model is more common for event streaming platforms:
 
@@ -93,7 +93,7 @@ On the other hand, the publish-subscribe model is more common for event streamin
     <img src="./images/publish-subscribe-model.svg" alt="publish-subscribe-model" width="500" />
 </div>
 
- * In this model, messages are associated to a topic.
+ * In this model, messages are associated with a topic.
  * Consumers are subscribed to a topic and they receive all messages sent to this topic.
 
 ### **Topics, partitions and brokers**
@@ -108,8 +108,8 @@ What if the data volume for a topic is too large? One way to scale is by splitti
  * The servers that host partitions are called brokers
  * Each topic operates like a queue using FIFO for message processing. Message order is preserved within a partition.
  * The position of a message within the partition is called an **offset**.
- * Each message produced is sent to a specific partition. A partition key specifies which partition a message should land in. 
-   * Eg a `user_id` can be used as a partition key to guarantee order of messages for the same user.
+ * Each message produced is sent to a specific partition. A partition key specifies which partition a message should land in.
+   * E.g., a `user_id` can be used as a partition key to guarantee the order of messages for the same user.
  * Each consumer subscribes to one or more partitions. When there are multiple consumers for the same messages, they form a consumer group.
 
 ### **Consumer groups**
@@ -123,7 +123,7 @@ Consumer groups are a set of consumers working together to consume messages from
  * Messages are replicated per consumer group (not per consumer).
  * Each consumer group maintains its own offset.
  * Reading messages in parallel by a consumer group improves throughput but hampers the ordering guarantee.
- * This can be mitigated by only allowing one consumer from a group to be subscribed to a partition. 
+ * This can be mitigated by only allowing one consumer from a group to be subscribed to a partition.
  * This means that we can't have more consumers in a group than there are partitions.
 
 ### **High-level architecture**
@@ -144,8 +144,8 @@ Consumer groups are a set of consumers working together to consume messages from
 ## Step 3: Design Deep Dive
 
 In order to achieve high throughput and preserve the high data retention requirement, we made some important design choices:
- * We chose an on-disk data structure which takes advantage of the properties of modern HDD and disk caching strategies of modern OS-es.
- * The message data structure is immutable to avoid extra copying, which we want to avoid in a high volume/high traffic system.
+ * We chose an on-disk data structure that takes advantage of the properties of modern HDDs and the disk-caching strategies of modern operating systems.
+ * The message data structure is immutable to avoid extra copying, which we want to avoid in a high-volume/high-traffic system.
  * We designed our writes around batching as small I/O is an enemy of high throughput.
 
 ### **Data storage**
@@ -155,8 +155,8 @@ In order to find the best data store for messages, we must examine a message's p
  * No update/delete operations. In traditional message queues, there is a "delete" operation as messages are not retained.
  * Predominantly sequential read/write access pattern.
 
-What are our options:
-- **Database**: not ideal as typical databases don't support well both write and read heavy systems.
+What are our options?
+- **Database**: Not ideal, as typical databases don't support both write- and read-heavy systems well.
 - **Write-ahead log (WAL)**: a plain text file which only supports appending to it and is very HDD-friendly.
   * We split partitions into segments to avoid maintaining a very large file.
   * Old segments are read-only. Writes are accepted by latest segment only.
@@ -167,7 +167,7 @@ What are our options:
 
 WAL files are extremely efficient when used with traditional HDDs.
 
-There is a misconception that HDD acces is slow, but that hugely depends on the access pattern.
+There is a misconception that HDD access is slow, but that depends heavily on the access pattern.
 When the access pattern is sequential (as in our case), HDDs can achieve several MB/s write/read speed which is sufficient for our needs.
 We also piggyback on the fact that the OS caches disk data in memory aggressively.
 
@@ -186,9 +186,9 @@ For more flexibility, the producer can override default keys in order to control
 
 The message value is the payload of a message. It can be plaintext or a compressed binary block.
 
-**Note:** Message keys, unlike traditional KV stores, need not be unique. It is acceptable to have duplicate keys and for it to even be missing.
+**Note:** Message keys, unlike traditional KV stores, need not be unique. It is acceptable to have duplicate keys or even a missing key.
 
-Other message files:
+Other message fields:
 - **Topic**: topic the message belongs to
 - **Partition**: The ID of the partition a message belongs to
 - **Offset**: The position of the message in a partition. A message can be located via `topic`, `partition`, `offset`.
@@ -218,7 +218,7 @@ If tuned for throughput, we might need more partitions per topic to compensate f
 
 If a producer wants to send a message to a partition, which broker should it connect to?
 
-One option is to introduce a routing layer, which route messages to the correct broker. If replication is enabled, the correct broker is the leader replica:
+One option is to introduce a routing layer that routes messages to the correct broker. If replication is enabled, the correct broker is the leader replica:
 
 <div style="margin-left:3rem">
     <img src="./images/routing-layer.svg" alt="routing-layer" width="500" />
@@ -226,7 +226,7 @@ One option is to introduce a routing layer, which route messages to the correct 
 
  * Routing layer reads the replication plan from the metadata store and caches it locally.
  * Producer sends a message to the routing layer.
- * Message is forwarded to broker 1 who is the leader of the given partition
+ * The message is forwarded to broker 1, which is the leader of the given partition.
  * Follower replicas pull the new message from the leader. Once enough confirmations are received, the leader commits the data and responds to the producer.
 
 The reason for having replicas is to enable fault tolerance.
@@ -245,13 +245,13 @@ To mitigate these issues, we can embed the routing layer into the producer:
  * Producers can control which partition a message is routed to
  * The buffer allows us to batch messages in-memory and send out larger batches in a single request, which increases throughput.
 
-The batch size choice is a classical trade-off between throughput and latency. 
+The batch size choice is a classical trade-off between throughput and latency.
 
 <div style="margin-left:3rem">
     <img src="./images/batch-size-throughput-vs-latency.svg" alt="batch-size-throughput-vs-latency" width="500" />
 </div>
 
- * Larger batch size leads to longer wait time before batch is committed. 
+ * Larger batch size leads to longer wait time before batch is committed.
  * Smaller batch size leads to request being sent sooner and having lower latency but lower throughput.
 
 ### **Consumer flow**
@@ -264,15 +264,15 @@ The consumer specifies its offset in a partition and receives a chunk of message
 
 One important consideration when designing the consumer is whether to use a push or a pull model:
 - **Push model**: leads to lower latency as broker pushes messages to consumer as it receives them.
-  * However, if rate of consumption falls behind the rate of production, the consumer can be overwhelmed.
+  * However, if the rate of consumption falls behind the rate of production, the consumer can be overwhelmed.
   * It is challenging to deal with consumers with varying processing power as the broker controls the rate of consumption.
 - **Pull model**: leads to the consumer controlling the consumption rate.
-  * If rate of consumption is slow, consumer will not be overwhelmed and we can scale it to catch up.
+  * If the rate of consumption is slow, the consumer will not be overwhelmed, and we can scale it to catch up.
   * The pull model is more suitable for batch processing, because with the push model, the broker can't know how many messages a consumer can handle.
   * With the pull model, on the other hand, consumers can aggressively fetch large message batches.
-  * The down side is the higher latency and extra network calls when there are no new messages. Latter issue can be mitigated using long polling.
+  * The downside is the higher latency and extra network calls when there are no new messages. The latter issue can be mitigated using long polling.
 
-Hence, most message queues (and us) choose the pull model.
+Hence, most message queues, including ours, choose the pull model.
 
 <div style="margin-left:3rem">
     <img src="./images/consumer-flow.svg" alt="consumer-flow" width="500" />
@@ -288,11 +288,11 @@ Hence, most message queues (and us) choose the pull model.
 
 ### **Consumer rebalancing**
 
-Consumer rebalancing is responsible for deciding which consumers are responsible for which partition.
+Consumer rebalancing is responsible for deciding which consumers are responsible for which partitions.
 
 This process occurs when a consumer joins/leaves or a partition is added/removed.
 
-The broker, acting as a coordinator plays a huge role in orchestrating the rebalancing workflow.
+The broker, acting as a coordinator, plays a huge role in orchestrating the rebalancing workflow.
 
 <div style="margin-left:3rem">
     <img src="./images/consumer-rebalancing.svg" alt="consumer-rebalancing" width="500" />
@@ -346,7 +346,7 @@ The state storage stores mapping between partitions and consumers, as well as th
     <img src="./images/state-storage.svg" alt="state-storage" width="500" />
 </div>
 
-Group 1's offset is at 6, meaning all previous messages are consumed. If a consumer crashes, the new consumer will continue from that message on wards.
+Group 1's offset is at 6, meaning all previous messages are consumed. If a consumer crashes, the new consumer will continue from that message onward.
 
 Data access patterns for consumer states:
  * Frequent read/write operations, but low volume
@@ -354,28 +354,28 @@ Data access patterns for consumer states:
  * Random read/write
  * Data consistency is important
 
-Given these requirements, a fast KV storage like Zookeeper is ideal.
+Given these requirements, a fast KV store like ZooKeeper is ideal.
 
 ### **Metadata storage**
 
 The metadata storage stores configuration and topic properties - partition number, retention period, replica distribution.
 
 Metadata doesn't change often and volume is small, but there is a high consistency requirement.
-Zookeeper is a good choice for this storage.
+ZooKeeper is a good choice for this storage.
 
 ### **ZooKeeper**
 
-Zookeeper is essential for building distributed message queues.
+ZooKeeper is essential for building distributed message queues.
 
-It is a hierarchical key-value store, commonly used for a distributed configuration, synchronization service and naming registry (ie service discovery).
+It is a hierarchical key-value store commonly used for distributed configuration, synchronization services, and naming registries (i.e., service discovery).
 
 <div style="margin-left:3rem">
     <img src="./images/zookeeper.svg" alt="zookeeper" width="500" />
 </div>
 
-With this change, the broker only needs to maintain data for the messages. Metadata and state storage is in Zookeeper.
+With this change, the broker only needs to maintain data for the messages. Metadata and state storage are in ZooKeeper.
 
-Zookeeper also helps with leader election of the broker replicas.
+ZooKeeper also helps with leader election of the broker replicas.
 
 ### **Replication**
 
@@ -398,7 +398,7 @@ One problem we need to tackle is keeping messages in-sync between the leader and
 
 In-sync replicas (ISR) are replicas for a partition that stay in-sync with the leader.
 
-The `replica.lag.max.messages` defines how many messages can a replica be lagging behind the leader to be considered in-sync.
+The `replica.lag.max.messages` setting defines how many messages a replica can lag behind the leader and still be considered in sync.
 
 <div style="margin-left:3rem">
     <img src="./images/in-sync-replicas-example.svg" alt="in-sync-replicas-example" width="500" />
@@ -439,7 +439,7 @@ On the consumer side, we can connect all consumers to the leader for a partition
  * Messages in a partition are sent to only one consumer in a group, which limits the connections to the leader replica
  * The number of connections to leader replica is typically not high as long as the topic is not super hot
  * We can scale a hot topic by increasing the number of partitions and consumers
- * In certain scenarios, it might make sense to let a consumer lead from an ISR, eg if they're located in a separate DC
+ * In certain scenarios, it might make sense to let a consumer read from an ISR, e.g., if they're located in a separate data center.
 
 The ISR list is maintained by the leader who tracks the lag between itself and each replica.
 
@@ -455,9 +455,9 @@ The producer is much smaller than the consumer. Its scalability can easily be ac
 
 Consumer groups are isolated from each other. It is easy to add/remove consumer groups at will.
 
-Rebalancing help handle the case when consumers are added/removed from a group gracefully.
+Rebalancing helps gracefully handle cases when consumers are added to or removed from a group.
 
-Consumer groups are rebalancing help us achieve scalability and fault tolerance.
+Consumer groups and rebalancing help us achieve scalability and fault tolerance.
 
 #### Broker
 
@@ -474,7 +474,7 @@ How do brokers handle failure?
 Additional considerations to make the broker fault-tolerant:
  * The minimum number of ISRs balances latency and safety. You can fine-tune it to meet your needs.
  * If all replicas of a partition are in the same node, then it's a waste of resources. Replicas should be across different brokers.
- * If all replicas of a partition crash, then the data is lost forever. Spreading replicas across data centers can help, but it adds up a lot of latency. One option is to use [data mirroring](https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=27846330) as a work around.
+ * If all replicas of a partition crash, then the data is lost forever. Spreading replicas across data centers can help, but it adds a lot of latency. One option is to use [data mirroring](https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=27846330) as a workaround.
 
 How do we handle redistribution of replicas when a new broker is added?
 
@@ -482,7 +482,7 @@ How do we handle redistribution of replicas when a new broker is added?
     <img src="./images/broker-replica-redistribution.svg" alt="broker-replica-redistribution" width="500" />
 </div>
 
- * We can temporarily allow more replicas than configured, until new broker catches up
+ * We can temporarily allow more replicas than configured until the new broker catches up.
  * Once it does, we can remove the partition replica which is no longer needed
 
 #### Partition
@@ -503,7 +503,7 @@ Decreasing the number of partitions is more involved:
 
  * Once a partition is decommissioned, new messages are only received by remaining partitions
  * The decommissioned partition isn't removed immediately as messages can still be consumed from it
- * Once a pre-configured retention period passes, do we truncate the data and storage space is freed up
+ * Once a preconfigured retention period passes, we truncate the data, and storage space is freed up.
  * During the transitional period, producers only send messages to active partitions, but consumers read from all
  * Once retention period expires, consumers are rebalanced
 
@@ -513,7 +513,7 @@ Let's discuss different delivery semantics.
 
 #### At-most once
 
-With this guarantee, messages are delivered not more than once and could not be delivered at all.
+With this guarantee, messages are delivered no more than once and might not be delivered at all.
 
 <div style="margin-left:3rem">
     <img src="./images/at-most-once.svg" alt="at-most-once" width="500" />
@@ -532,12 +532,12 @@ A message can be sent more than once and no message should be left unprocessed.
 
  * Producer sends message with `ack=1` or `ack=all`. If there is any issue, it will keep retrying.
  * Consumer fetches the message and consumes the offset only after it's done processing it.
- * It is possible for a message to be delivered more than once if eg consumer crashes before committing offset but after processing it.
+ * It is possible for a message to be delivered more than once if, e.g., a consumer crashes before committing the offset but after processing it.
  * This is why, this is good for use-cases where data duplication is acceptable or deduplication is possible.
 
 #### Exactly once
 
-Extremely costly to implement for the system, albeit it's the friendliest guarantee to users:
+This is extremely costly for the system to implement, although it's the friendliest guarantee for users:
 
 <div style="margin-left:3rem">
     <img src="./images/exactly-once.svg" alt="exactly-once" width="500" />
@@ -545,7 +545,7 @@ Extremely costly to implement for the system, albeit it's the friendliest guaran
 
 ### **Advanced features**
 
-Let's discuss some advanced features, we might discuss in the interview.
+Let's discuss some advanced features we might mention in the interview.
 
 #### Message filtering
 
@@ -559,7 +559,7 @@ We can resolve this using message filtering.
  * A naive approach would be to do the filtering on the consumer-side, but that introduces unnecessary consumer traffic
  * Alternatively, messages can have tags attached to them and consumers can specify which tags they're subscribed to
  * Filtering could also be done via the message payloads but that can be challenging and unsafe for encrypted/serialized messages
- * For more complex mathematical formulaes, the broker could implement a grammar parser or script executor, but that can be heavyweight for the message queue
+ * For more complex mathematical formulas, the broker could implement a grammar parser or script executor, but that can be heavyweight for the message queue.
 
 <div style="margin-left:3rem">
     <img src="./images/message-filtering.svg" alt="message-filtering" width="500" />
@@ -567,7 +567,7 @@ We can resolve this using message filtering.
 
 #### Delayed messages & scheduled messages
 
-For some use-cases, we might want to delay or schedule message delivery. 
+For some use-cases, we might want to delay or schedule message delivery.
 For example, we might submit a payment verification check for 30m from now, which triggers the consumer to see if a payment was successful.
 
 This can be achieved by sending messages to temporary storage in the broker and moving the message to the partition at the right time:
@@ -586,4 +586,4 @@ This can be achieved by sending messages to temporary storage in the broker and 
 Additional talking points:
 - **Protocol of communication**: Important considerations - support all use-cases and high data volume, as well as verify message integrity. Popular protocols - AMQP and Kafka protocol.
 - **Retry consumption**: if we can't process a message immediately, we could send it to a dedicated retry topic to be attempted later.
-- **Historical data archive**: old messages can be backed up in high-capacity storages such as HDFS or object storage (eg S3).
+- **Historical data archive**: Old messages can be backed up in high-capacity storage such as HDFS or object storage (e.g., S3).

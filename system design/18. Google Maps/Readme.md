@@ -1,14 +1,14 @@
 # Chapter 18: Google Maps
-<sub>[Back to System Design](../README.md#content)</sub>
+<sub>[Back to System Design](../Readme.md#content)</sub>
 
 ## Introduction
 
 We'll design a simple version of **Google Maps**.
 
-Some facts about google maps:
+Some facts about Google Maps:
  * Started in 2005
  * Provides various services - satellite imagery, street maps, real-time traffic conditions, route planning
- * By 2021, had 1bil daily active users, 99% coverage of the world, 25mil updates daily of real-time location info
+ * By 2021, it had 1 billion daily active users, 99% coverage of the world, and 25 million daily real-time location updates.
 
 ---
 
@@ -16,27 +16,27 @@ Some facts about google maps:
 
 Sample Q&A between candidate and interviewer:
  * C: How many daily active users are we dealing with?
- * I: 1bil DAU
+ * I: 1 billion DAU
  * C: What features should we focus on?
  * I: Location update, navigation, ETA, map rendering
  * C: How large is road data? Do we have access to it?
- * I: We obtained road data from various sources, it's TBs of raw data
+ * I: We obtained road data from various sources; it's terabytes of raw data.
  * C: Should we take traffic conditions into consideration?
  * I: Yes, we should for accurate time estimations
  * C: How about different travel modes - by foot, biking, driving?
  * I: We should support those
  * C: How about multi-stop directions?
- * I: Let's not focus on that for scope of interview
+ * I: Let's not focus on that for the scope of the interview.
  * C: Business places and photos?
  * I: Good question, but no need to consider those
 
-We'll focus on three key features - user location update, navigation service including ETA, map rendering.
+We'll focus on three key features: user location updates, a navigation service including ETA, and map rendering.
 
 ### **Non-functional requirements**
 
-- **Accuracy**: user shouldn't get wrong directions
+- **Accuracy**: Users shouldn't get wrong directions.
 - **Smooth navigation**: Users should experience smooth map rendering
-- **Data and battery usage**: Client should use as little data and battery as possible. Important for mobile devices.
+- **Data and battery usage**: The client should use as little data and battery as possible. This is important for mobile devices.
 - General availability and scalability requirements
 
 ### **Map 101**
@@ -45,7 +45,7 @@ Before jumping into the design, there are some map-related concepts we should un
 
 #### Positioning system
 
-World is a sphere, rotating on its axis. Positiions are defined by latitude (how far north/south you are) and longitude (how far east/west you are):
+The world is a sphere rotating on its axis. Positions are defined by latitude (how far north/south you are) and longitude (how far east/west you are):
 
 <div style="margin-left:3rem">
     <img src="./images/partitioning-system.svg" alt="partitioning-system" width="500" />
@@ -53,7 +53,7 @@ World is a sphere, rotating on its axis. Positiions are defined by latitude (how
 
 #### Going from 3D to 2D
 
-The process of translating points from 3D to 2D plane is called "map projection".
+The process of translating points from 3D to a 2D plane is called "map projection."
 
 There are different ways to do it and each comes with its pros and cons. Almost all distort the actual geometry.
 
@@ -61,21 +61,21 @@ There are different ways to do it and each comes with its pros and cons. Almost 
     <img src="./images/map-projections.png" alt="map-projections" width="500" />
 </div>
 
-Google maps selected a modified version of Mercator projection called "Web Mercator".
+Google Maps selected a modified version of the Mercator projection called "Web Mercator."
 
 #### Geocoding
 
-Geocoding is the process of converting addresses to geographic coordinates. 
+Geocoding is the process of converting addresses to geographic coordinates.
 
 The reverse process is called "reverse geocoding".
 
-One way to achieve this is to use interpolation - leveraging data from different sources (eg GIS-es) where street network is mapped to geo coordinate space.
+One way to achieve this is to use interpolation, leveraging data from different sources (e.g., GISes) where a street network is mapped to geographic coordinate space.
 
 #### Geohashing
 
-Geohashing is an encoding system which encodes a geographic area into a string of letters and digits.
+Geohashing is an encoding system that encodes a geographic area into a string of letters and digits.
 
-It depicts the world as a flattened surface and recursively sub-divides it into four quadrants:
+It depicts the world as a flattened surface and recursively subdivides it into four quadrants:
 
 <div style="margin-left:3rem">
     <img src="./images/geohashing.png" alt="geohashing" width="500" />
@@ -83,13 +83,13 @@ It depicts the world as a flattened surface and recursively sub-divides it into 
 
 #### Map rendering
 
-Map rendering happens via tiling. Instead of rendering entire map as one big custom image, world is broken up into smaller tiles.
+Map rendering happens via tiling. Instead of rendering the entire map as one big custom image, the world is broken up into smaller tiles.
 
-Client only downloads relevant tiles and renders them like stitching together a mosaic.
+The client only downloads relevant tiles and renders them by stitching together a mosaic.
 
-There are different tiles for different zoom levels. Client chooses appropriate tiles based on the client's zoom level.
+There are different tiles for different zoom levels. The client chooses appropriate tiles based on its zoom level.
 
-Eg, zooming out the entire world would download only a single 256x256 tile, representing the whole world.
+E.g., zooming out to the entire world would download only a single 256x256 tile representing the whole world.
 
 #### Road data processing for navigation algorithms
 
@@ -99,7 +99,7 @@ In most routing algorithms, intersections are represented as nodes and roads are
     <img src="./images/road-representation.png" alt="road-representation" width="500" />
 </div>
 
-Most navigation algorithms use a modified version of Djikstra or A* algorithms.
+Most navigation algorithms use a modified version of Dijkstra's or A* algorithm.
 
 Pathfinding performance is sensitive to the size of the graph. To work at scale, we can't represent the whole world as a graph and run the algorithm on it.
 
@@ -113,7 +113,7 @@ Routing tiles hold references to neighboring tiles and algorithms can stitch tog
 
 This technique enables us to significantly reduce memory bandwidth and only load the tiles we need for the given source/destination pair.
 
-However, for larger routes, stitching together small, detailed routing tiles would still be time/memory consuming. Instead, there are routing tiles with different level of detail and the algorithm uses the appropriately-detailed tiles, based on the destination we're headed for:
+However, for larger routes, stitching together small, detailed routing tiles would still be time- and memory-consuming. Instead, there are routing tiles with different levels of detail, and the algorithm uses the appropriately detailed tiles based on the destination we're headed for:
 
 <div style="margin-left:3rem">
     <img src="./images/map-routing-hierarchical.png" alt="map-routing-hierarchical" width="500" />
@@ -122,12 +122,12 @@ However, for larger routes, stitching together small, detailed routing tiles wou
 ### **Back-of-the-envelope estimation**
 
 For storage, we need to store:
- * map of the world - estimated as ~70pb based on all the tiles we need to store, but factoring in compression of very similar tiles (eg vast desert)
+ * Map of the world - estimated as ~70 PB based on all the tiles we need to store, but factoring in compression of very similar tiles (e.g., vast deserts)
  * metadata - negligible in size, so we can skip it from calculation
  * Road info - stored as routing tiles
 
-Estimated QPS for navigation requests - 1bil DAU at 35min of usage per week -> 5bil minutes per day. 
-Assuming gps update requests are batched, we arrive at 200k QPS and 1mil QPS at peak load
+Estimated QPS for navigation requests - 1 billion DAU at 35 minutes of usage per week -> 5 billion minutes per day.
+Assuming GPS update requests are batched, we arrive at 200k QPS and 1 million QPS at peak load.
 
 ---
 
@@ -145,7 +145,7 @@ Assuming gps update requests are batched, we arrive at 200k QPS and 1mil QPS at 
 
 It is responsible for recording a user's location updates:
  * location updates are sent every `t` seconds
- * location data streams can be used to improve the service over time, eg provide more accurate ETAs, monitor traffic data, detect closed roads, analyze user behavior, etc
+ * Location data streams can be used to improve the service over time, e.g., provide more accurate ETAs, monitor traffic data, detect closed roads, analyze user behavior, etc.
 
 Instead of sending location updates to the server all the time, we can batch the updates on the client-side and send batches instead:
 
@@ -159,7 +159,7 @@ We can also leverage Kafka for efficient stream processing of location updates, 
 
 Example location update request payload:
 
-```
+```http
 POST /v1/locations
 Parameters
   locs: JSON encoded array of (latitude, longitude, timestamp) tuples.
@@ -167,11 +167,11 @@ Parameters
 
 ### **Navigation service**
 
-This component is responsible for finding fast routes between A and B in a reasonable time (a little bit of latency is okay). Route need not be the fastest, but accuracy is important.
+This component is responsible for finding fast routes between A and B in a reasonable time (a little bit of latency is okay). The route need not be the fastest, but accuracy is important.
 
 Example request payload:
 
-```
+```http
 GET /v1/nav?origin=1355+market+street,SF&destination=Disneyland
 ```
 
@@ -203,7 +203,7 @@ Example response:
 }
 ```
 
-Traffic changes and reroutes are not taken into consideration yet, those will be tackled in the deep dive section.
+Traffic changes and reroutes are not taken into consideration yet; those will be tackled in the deep dive section.
 
 ### **Map rendering**
 
@@ -211,7 +211,7 @@ Holding the entire data set of mapping tiles on the client-side is not feasible 
 
 They need to be fetched on-demand from the server, based on the client's location and zoom level.
 
-When should new tiles be fetched - while user is zooming in/out and during navigation, while they're going towards a new tile.
+When should new tiles be fetched? They should be fetched while the user is zooming in or out and during navigation as they move toward a new tile.
 
 How should the map tiles be served to the client?
  * They can be built dynamically, but that puts a huge load on the server and also makes caching hard
@@ -228,8 +228,8 @@ CDNs enable users to fetch map tiles from point-of-presence servers (POP) which 
 </div>
 
 Options to consider for determining map tiles:
- * geohash for map tile can be calculated on the client-side. If that's the case, we should be careful that we commit to this type of map tile calculation for the long-term as forcing clients to update is hard
- * alternatively, we can have simple API which calculates the map tile URLs on behalf of the clients at the cost of additional API call
+ * A geohash for a map tile can be calculated on the client side. If that's the case, we should be careful about committing to this type of map-tile calculation for the long term, as forcing clients to update is hard.
+ * Alternatively, we can have a simple API that calculates the map-tile URLs on behalf of clients at the cost of an additional API call.
 
 <div style="margin-left:3rem">
     <img src="./images/map-tile-url-calculation.svg" alt="map-tile-url-calculation" width="500" />
@@ -249,13 +249,13 @@ Initial road data set is obtained from different sources. It is improved over ti
 
 The road data is unstructured. We have a periodic offline processing pipeline, which transforms this raw data into the graph-based routing tiles our app needs.
 
-Instead of storing these tiles in a database as we don't need any database features. We can store them in S3 object storage, while caching them agressively.
+Instead of storing these tiles in a database, we can store them in S3 object storage because we don't need any database features, while caching them aggressively.
 
 We can also leverage libraries to compress adjacency lists into binary files efficiently.
 
 #### User location data
 
-User location data is very useful for updaring traffic conditions and doing all sorts of other analysis.
+User location data is very useful for updating traffic conditions and doing all sorts of other analysis.
 
 We can use Cassandra for storing this kind of data as its nature is to be write-heavy.
 
@@ -302,7 +302,7 @@ Example row we're going to store:
  * `user_id` is the partition key in order to quickly access all location updates for a particular user
  * `timestamp` is the clustering key in order to store the data sorted by the time a location update is received
 
-We also leverage Kafka to stream location updates to various other service which need the location updates for various purposes:
+We also leverage Kafka to stream location updates to various other services that need them for various purposes:
 
 <div style="margin-left:3rem">
     <img src="./images/location-update-streaming.svg" alt="location-update-streaming" width="500" />
@@ -332,11 +332,11 @@ This service is responsible for finding the fastest routes:
 
 Let's go through each component in this sub-system.
 
-First, we have the geocoding service which resolves an address to a location of lat/long pair.
+First, we have the geocoding service, which resolves an address to a lat/long pair.
 
 Example request:
 
-```
+```text
 https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA
 ```
 
@@ -388,9 +388,9 @@ The shortest-path service runs a variation of the A* algorithm against the routi
 
 The ETA service is called by the route planner to get estimated time based on machine learning algorithms, predicting ETA based on traffic data.
 
-The ranker service is responsible to rank different possible paths based on filters, passed by the user, ie flags to avoid toll roads or freeways.
+The ranker service is responsible for ranking different possible paths based on filters passed by the user, i.e., flags to avoid toll roads or freeways.
 
-The updater service asynchronously update some of the important databases to keep them up-to-date.
+The updater service asynchronously updates some of the important databases to keep them up to date.
 
 #### Improvement - adaptive ETA and rerouting
 
@@ -400,7 +400,7 @@ One way to implement this is to store users who are currently navigating through
 
 Data might look like this:
 
-```
+```text
 user_1: r_1, r_2, r_3, …, r_k
 user_2: r_4, r_6, r_9, …, r_n
 user_3: r_2, r_8, r_9, …, r_m
@@ -412,7 +412,7 @@ If a traffic accident happens on some tile, we can identify all users whose path
 
 To reduce the amount of tiles we store in the database, we can instead store the origin routing tile and several routing tiles in different resolution levels until the destination tile is also included:
 
-```
+```text
 user_1, r_1, super(r_1), super(super(r_1)), ...
 ```
 
@@ -420,16 +420,16 @@ user_1, r_1, super(r_1), super(super(r_1)), ...
     <img src="./images/adaptive-eta-data-storage.svg" alt="adaptive-eta-data-storage" width="500" />
 </div>
 
-Using this, we only need to check if the final tile of a user includes the traffic accident tile to see if user is impacted.
+Using this, we only need to check whether the final tile of a user includes the traffic-accident tile to see whether the user is impacted.
 
 We can also keep track of all possible routes for a navigating user and notify them if a faster re-route is available.
 
 #### Delivery protocols
 
 We have several options, which enable us to proactively push data to clients from the server:
- * Mobile push notifications don't work because payload is limited and it's not available for web apps
+ * Mobile push notifications don't work because the payload is limited and they aren't available for web apps.
  * WebSocket is generally a better option than long-polling as it has less compute footprint on servers
- * We can also use server-sent events (SSE) but lean towards web sockets as they support bi-directional communication which can come in handy for eg a last-mile delivery feature
+ * We can also use server-sent events (SSE) but lean toward WebSockets, as they support bidirectional communication, which can be useful for, e.g., a last-mile delivery feature.
 
 ---
 
@@ -441,4 +441,4 @@ This is our final design:
     <img src="./images/final-design.svg" alt="final-design" width="500" />
 </div>
 
-One additional feature we could provide is multi-stop navigation which can be sold to enterprise customers such as Uber or Lyft in order to determine optimal path for visiting a set of locations.
+One additional feature we could provide is multi-stop navigation, which can be sold to enterprise customers such as Uber or Lyft to determine the optimal path for visiting a set of locations.

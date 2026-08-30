@@ -1,5 +1,5 @@
 # Chapter 3: A Framework for System Design Interviews
-<sub>[Back to System Design](../README.md#content)</sub>
+<sub>[Back to System Design](../Readme.md#content)</sub>
 
 ## Introduction
 System design interviews are a key part of the hiring process, simulating real-life problem-solving scenarios. These interviews evaluate not just technical skills but also collaboration, communication, and the ability to handle ambiguous requirements.
@@ -25,7 +25,8 @@ This chapter introduces a **4-step framework** for navigating system design inte
 - **Document Assumptions:** Write assumptions on a whiteboard or paper for reference.
 
 ### Example
-**Problem:** Design a news feed system.  
+**Problem:** Design a news feed system.
+
 **Questions:**
 - Is it a mobile app, web app, or both?
 - How many friends can a user have?
@@ -108,9 +109,8 @@ For a news feed system, divide the design into:
 
 ## Time Management
 
-### Suggested Time Allocation (for 45-Minute Interviews):
+### Suggested Time Allocation (for 45-Minute Interviews)
 1. **Understand Problem and Scope:** 3–10 minutes
 2. **High-Level Design and Buy-In:** 10–15 minutes
 3. **Deep Dive:** 10–25 minutes
 4. **Wrap-Up:** 3–5 minutes
-
