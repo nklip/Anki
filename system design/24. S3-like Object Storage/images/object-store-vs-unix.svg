@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1368" height="1058" viewBox="0 0 1368 1058"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Object store compared with a Unix file system</title>
+  <desc id="desc">The Unix file system stores file metadata and block pointers in an inode, then reads blocks through local disk access. The object store maps object names to object IDs in a metadata store and retrieves the object from a data store over the network.</desc>
+
+  <!-- Shared typography, system frames, panels, and connector styles. -->
+  <defs>
+    <style>
+      .canvas{fill:#fff}
+      text{font-family:Arial,Helvetica,sans-serif;fill:#000;font-size:36px;font-weight:400}
+      .frame{fill:none;stroke:#000;stroke-width:2;stroke-dasharray:10 6.5}
+      .panel,.cell,.disk-block{fill:#fff;stroke:#000;stroke-width:2}
+      .outline{fill:none}
+      .grid{fill:none;stroke:#000;stroke-width:2}
+      .connector,.arrow-shaft{fill:none;stroke:#000;stroke-width:2}
+      .arrow-head{fill:#000}
+      .center{text-anchor:middle}
+      .small{font-size:34px}
+      .ellipsis{font-size:40px;letter-spacing:4px}
+    </style>
+  </defs>
+
+  <rect class="canvas" width="1368" height="1058"/>
+
+  <!-- Side-by-side system boundaries and headings. -->
+  <rect id="unix-system-boundary" class="frame" x="63" y="32" width="496" height="1000"/>
+  <rect id="object-store-system-boundary" class="frame" x="737" y="32" width="572" height="1000"/>
+  <text class="center" x="311" y="81">Unix File System</text>
+  <text class="center" x="1023" y="81">Object Store System</text>
+
+  <!-- Unix inode metadata and file-block pointers. -->
+  <g id="unix-inode">
+    <rect class="panel" x="133" y="119" width="323" height="426"/>
+    <text class="center" x="294.5" y="155">inode</text>
+    <text class="center" x="294.5" y="228">File Name</text>
+    <text class="center" x="294.5" y="268">Owner UID</text>
+    <text class="center" x="294.5" y="308">Group UID</text>
+    <text class="center" x="294.5" y="348">Mode</text>
+    <!-- Three circles reproduce the ellipsis without an oversized text bounding box. -->
+    <g fill="#000"><circle cx="282" cy="383" r="2.2"/><circle cx="294.5" cy="383" r="2.2"/><circle cx="307" cy="383" r="2.2"/></g>
+    <text class="small" x="151" y="476">File block pointers</text>
+
+    <g id="inode-pointer-cells">
+      <rect class="cell" x="159" y="485" width="270" height="35"/>
+      <path class="grid" d="M193 485V520M227 485V520M260 485V520M294 485V520M328 485V520M362 485V520M395 485V520"/>
+    </g>
+  </g>
+
+  <!-- Pointer connectors are split above and below the Local Disk Access label. -->
+  <g id="local-disk-pointer-links">
+    <path class="connector" data-connector="true" d="M178 520L196 607"/>
+    <path class="connector" data-connector="true" d="M214 520L243 607"/>
+    <path class="connector" data-connector="true" d="M250 520L284 607"/>
+    <text x="107" y="642">Local Disk Access</text>
+
+    <path class="arrow-shaft" data-connector="true" d="M206 660L220 748"/>
+    <polygon class="arrow-head" points="211,748 228,745 223,768"/>
+    <path class="arrow-shaft" data-connector="true" d="M260 660L316 839"/>
+    <polygon class="arrow-head" points="307,842 324,837 323,859"/>
+    <path class="arrow-shaft" data-connector="true" d="M304 660L347 769"/>
+    <polygon class="arrow-head" points="338,771 355,765 353,789"/>
+  </g>
+
+  <!-- Local hard disk and the three addressed blocks. -->
+  <g id="hard-disk">
+    <circle class="panel outline" cx="299" cy="845" r="151"/>
+    <rect class="disk-block" x="198" y="768" width="63" height="25"/>
+    <rect class="disk-block" x="327" y="789" width="63" height="25"/>
+    <rect class="disk-block" x="294" y="859" width="63" height="25"/>
+    <text class="center" x="299" y="951">Hard disk</text>
+  </g>
+
+  <!-- Object-name to object-ID mappings in the metadata store. -->
+  <g id="metadata-store">
+    <rect class="panel" x="800" y="119" width="446" height="426"/>
+    <text class="center" x="1023" y="155">MetaStore</text>
+
+    <g id="object-id-row-1">
+      <text x="825" y="238" style="font-size:32px" textLength="200" lengthAdjust="spacingAndGlyphs"
+            transform="translate(0 238) scale(1 1.125) translate(0 -238)">Object name</text>
+      <path class="arrow-shaft" data-connector="true" d="M1027 227H1048"/>
+      <polygon class="arrow-head" points="1047,218 1047,236 1069,227"/>
+      <text x="1074" y="238">Object ID</text>
+    </g>
+    <g id="object-id-row-2">
+      <text x="825" y="306" style="font-size:32px" textLength="200" lengthAdjust="spacingAndGlyphs"
+            transform="translate(0 306) scale(1 1.125) translate(0 -306)">Object name</text>
+      <path class="arrow-shaft" data-connector="true" d="M1027 295H1048"/>
+      <polygon class="arrow-head" points="1047,286 1047,304 1069,295"/>
+      <text x="1074" y="306">Object ID</text>
+    </g>
+    <g id="object-id-row-3">
+      <text x="825" y="374" style="font-size:32px" textLength="200" lengthAdjust="spacingAndGlyphs"
+            transform="translate(0 374) scale(1 1.125) translate(0 -374)">Object name</text>
+      <path class="arrow-shaft" data-connector="true" d="M1027 363H1048"/>
+      <polygon class="arrow-head" points="1047,354 1047,372 1069,363"/>
+      <text x="1074" y="374">Object ID</text>
+    </g>
+    <g id="object-id-row-4">
+      <text x="825" y="442" style="font-size:32px" textLength="200" lengthAdjust="spacingAndGlyphs"
+            transform="translate(0 442) scale(1 1.125) translate(0 -442)">Object name</text>
+      <path class="arrow-shaft" data-connector="true" d="M1027 431H1048"/>
+      <polygon class="arrow-head" points="1047,422 1047,440 1069,431"/>
+      <text x="1074" y="442">Object ID</text>
+    </g>
+    <g id="object-id-row-5">
+      <text x="825" y="510" style="font-size:32px" textLength="200" lengthAdjust="spacingAndGlyphs"
+            transform="translate(0 510) scale(1 1.125) translate(0 -510)">Object name</text>
+      <path class="arrow-shaft" data-connector="true" d="M1027 499H1048"/>
+      <polygon class="arrow-head" points="1047,490 1047,508 1069,499"/>
+      <text x="1074" y="510">Object ID</text>
+    </g>
+  </g>
+
+  <!-- A network request resolves the selected ID to its stored object. -->
+  <g id="network-object-request">
+    <path class="connector" data-connector="true" d="M1140 525L1135 567"/>
+    <text class="center" x="1117" y="602">Network Request</text>
+    <path class="arrow-shaft" data-connector="true" d="M1130 620L1124 663"/>
+    <polygon class="arrow-head" points="1116,662 1132,665 1123,683"/>
+  </g>
+
+  <!-- Data store record: an object body is associated with its object ID. -->
+  <g id="data-store-record">
+    <rect class="panel outline" x="800" y="632" width="446" height="364"/>
+    <circle class="panel" cx="925" cy="823" r="80"/>
+    <circle class="panel" cx="1116" cy="729" r="46"/>
+    <path class="connector" data-connector="true" d="M997 787L1075 749"/>
+    <text class="center" x="925" y="835">Object</text>
+    <text class="center" x="1116" y="741">ID</text>
+    <text class="center" x="1023" y="963">DataStore</text>
+  </g>
+</svg>

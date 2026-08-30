@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1562" height="926" viewBox="0 0 1562 926"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Main components of an object data store</title>
+  <desc id="desc">A data-routing service exchanges data with a primary data node, a placement service tracks all nodes through heartbeats, and the primary replicates data to two secondary nodes.</desc>
+
+  <!-- Shared labels, node glyph, and repair-safe arrowhead. -->
+  <defs>
+    <marker id="arrowhead" markerWidth="22" markerHeight="16" refX="22" refY="8"
+            viewBox="0 0 22 16" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L22 8L0 16Z" fill="#000"/>
+    </marker>
+    <style>
+      .canvas { fill: #fff; }
+      .service-box { fill: #fff; stroke: #000; stroke-width: 2.3; }
+      .service-label, .node-label, .flow-label {
+        fill: #000;
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 400;
+      }
+      .service-label { font-size: 39px; text-anchor: middle; }
+      .node-label { font-size: 39px; }
+      .flow-label { font-size: 35px; }
+      .center { text-anchor: middle; }
+      .connector { fill: none; stroke: #000; stroke-width: 2.5; }
+      .arrow { fill: none; stroke: #000; stroke-width: 2.5; marker-end: url(#arrowhead); }
+      .disk-stroke { fill: none; stroke: #555; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+
+    <!-- Source-native disk glyph used for the primary and both secondary nodes. -->
+    <symbol id="disk-node" viewBox="0 0 84 102">
+      <rect x="1.5" y="1.5" width="81" height="99" rx="2" fill="#fff" stroke="#555" stroke-width="3.5"/>
+      <path class="disk-stroke" d="M24 12H60"/>
+      <circle class="disk-stroke" cx="11" cy="11" r="2.5"/>
+      <circle class="disk-stroke" cx="73" cy="11" r="2.5"/>
+      <circle class="disk-stroke" cx="11" cy="91" r="2.5"/>
+      <circle class="disk-stroke" cx="73" cy="91" r="2.5"/>
+      <circle class="disk-stroke" cx="42" cy="50" r="27"/>
+      <circle class="disk-stroke" cx="42" cy="50" r="7"/>
+      <path class="disk-stroke" d="M48 56L63 78"/>
+    </symbol>
+  </defs>
+
+  <rect class="canvas" width="1562" height="926"/>
+
+  <!-- Routing and placement services form the control plane at the left. -->
+  <g id="service-components">
+    <rect class="service-box" x="57" y="413" width="273" height="112"/>
+    <text class="service-label" x="193.5" y="460">
+      <tspan x="193.5">Data Routing</tspan>
+      <tspan x="193.5" dy="44">Service</tspan>
+    </text>
+
+    <rect class="service-box" x="604" y="413" width="213" height="112"/>
+    <text class="service-label" x="710.5" y="460">
+      <tspan x="710.5">Placement</tspan>
+      <tspan x="710.5" dy="44">Service</tspan>
+    </text>
+  </g>
+
+  <!-- Primary and secondary storage nodes. -->
+  <g id="data-node-components">
+    <text class="node-label center" x="1229" y="66">Data Node</text>
+    <use href="#disk-node" x="1187" y="78" width="84" height="102"/>
+    <text class="node-label" x="1279" y="139">Primary</text>
+
+    <use href="#disk-node" x="1187" y="417" width="84" height="102"/>
+    <text class="node-label center" x="1229" y="555">Data Node</text>
+    <text class="node-label center" x="1229" y="604">Secondary</text>
+
+    <use href="#disk-node" x="1187" y="752" width="84" height="102"/>
+    <text class="node-label" x="1279" y="808">Secondary</text>
+    <text class="node-label center" x="1229" y="889">Data Node</text>
+  </g>
+
+  <!-- Data flows in both directions between routing and the selected primary. -->
+  <g id="data-traffic-flow">
+    <path id="data-traffic-to-primary" class="arrow"
+          d="M775 195C914 163 1040 144 1163 133"/>
+    <path id="data-traffic-to-routing" class="arrow"
+          d="M539 262C421 304 323 357 252 412"/>
+    <text class="flow-label" x="550" y="242">Data traffic</text>
+  </g>
+
+  <!-- Routing and placement exchange lookup information in both directions. -->
+  <g id="routing-placement-flow">
+    <path id="placement-to-routing" class="arrow" d="M458 469H330"/>
+    <path id="routing-to-placement" class="arrow" d="M458 469H604"/>
+  </g>
+
+  <!-- Heartbeats are bidirectional and split around their labels for readability. -->
+  <g id="heartbeat-flows">
+    <path id="primary-heartbeat-up" class="arrow" d="M1029 258L1163 172"/>
+    <path id="primary-heartbeat-down" class="arrow" d="M935 324L797 412"/>
+    <text class="flow-label" x="904" y="301">Heartbeat</text>
+
+    <path id="middle-heartbeat-left" class="arrow" d="M894 469H817"/>
+    <path id="middle-heartbeat-right" class="arrow" d="M1095 469H1163"/>
+    <text class="flow-label" x="904" y="481">Heartbeat</text>
+
+    <path id="lower-heartbeat-left" class="arrow" d="M935 612L797 526"/>
+    <path id="lower-heartbeat-right" class="arrow" d="M1034 676L1163 750"/>
+    <text class="flow-label" x="910" y="655">Heartbeat</text>
+  </g>
+
+  <!-- The primary replicates downward to both secondary data nodes. -->
+  <g id="replication-flows">
+    <path id="middle-replication-shaft" class="connector" data-connector="true" d="M1229 193V255"/>
+    <path id="middle-replication-arrow" class="arrow" d="M1229 340V400"/>
+    <text class="flow-label center" x="1229" y="288">Data</text>
+    <text class="flow-label center" x="1229" y="327">replication</text>
+
+    <path id="lower-replication-shaft" class="connector" data-connector="true"
+          d="M1294 180C1372 247 1420 329 1443 410"/>
+    <path id="lower-replication-arrow" class="arrow"
+          d="M1447 503C1438 587 1384 680 1294 744"/>
+    <text class="flow-label center" x="1418" y="451">Data</text>
+    <text class="flow-label center" x="1418" y="491">replication</text>
+  </g>
+</svg>

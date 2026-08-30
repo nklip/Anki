@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1100" height="822" viewBox="0 0 1100 822"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Erasure coding versus three-copy replication</title>
+  <desc id="desc">Three-copy replication stores three complete one-gigabyte copies, while four-plus-two erasure coding distributes four data fragments and two pink parity fragments of 0.25 gigabytes across six nodes.</desc>
+
+  <!-- Shared typography, storage cells, and parity color. -->
+  <defs>
+    <style>
+      .canvas { fill: #fff; }
+      .cell { fill: #fff; stroke: #000; stroke-width: 2.2; }
+      .parity { fill: #ffc0ff; }
+      .heading, .cell-label, .fragment-label {
+        fill: #000;
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 400;
+      }
+      .heading { font-size: 34px; text-anchor: middle; }
+      .cell-label { font-size: 36px; text-anchor: middle; }
+      .fragment-label { font-size: 20px; text-anchor: middle; }
+      .arrow-shaft { fill: none; stroke: #000; stroke-width: 2.2; }
+      .arrow-head { fill: #000; }
+    </style>
+  </defs>
+
+  <rect class="canvas" width="1100" height="822"/>
+
+  <!-- Three complete replicas: one original and two highlighted copies. -->
+  <g id="three-copy-replication">
+    <text class="heading" x="622" y="66">3-copy replication</text>
+    <text class="heading" x="620" y="107">Data is distributed across 3 nodes</text>
+
+    <!-- Shafts end inside separate heads, preventing renderer-specific tip protrusions. -->
+    <path id="replica-one-shaft" class="arrow-shaft" data-connector="true" d="M509 121L488.8 151.9"/>
+    <path id="replica-two-shaft" class="arrow-shaft" data-connector="true" d="M620 121V149"/>
+    <path id="replica-three-shaft" class="arrow-shaft" data-connector="true" d="M733 121L755.5 152.4"/>
+    <polygon id="replica-one-head" class="arrow-head" points="479,167 484.1,146.4 495.8,154.1"/>
+    <polygon id="replica-two-head" class="arrow-head" points="620,167 613,147 627,147"/>
+    <polygon id="replica-three-head" class="arrow-head" points="766,167 748.7,154.8 760,146.7"/>
+
+    <rect class="cell" x="312" y="168" width="207" height="207"/>
+    <rect class="cell parity" x="519" y="168" width="207" height="207"/>
+    <rect class="cell parity" x="726" y="168" width="207" height="207"/>
+
+    <text class="cell-label" x="415.5" y="283">1GB</text>
+    <text class="cell-label" x="622.5" y="283">1GB</text>
+    <text class="cell-label" x="829.5" y="283">1GB</text>
+  </g>
+
+  <!-- Four data fragments and two parity fragments form the 4+2 erasure code. -->
+  <g id="four-plus-two-erasure-coding">
+    <rect class="cell" x="312" y="445" width="52" height="207"/>
+    <rect class="cell" x="364" y="445" width="52" height="207"/>
+    <rect class="cell" x="416" y="445" width="51" height="207"/>
+    <rect class="cell" x="467" y="445" width="52" height="207"/>
+    <rect class="cell parity" x="519" y="445" width="52" height="207"/>
+    <rect class="cell parity" x="571" y="445" width="52" height="207"/>
+
+    <text class="fragment-label" x="338" y="545">
+      <tspan x="338">0.25</tspan><tspan x="338" dy="25">GB</tspan>
+    </text>
+    <text class="fragment-label" x="390" y="545">
+      <tspan x="390">0.25</tspan><tspan x="390" dy="25">GB</tspan>
+    </text>
+    <text class="fragment-label" x="441.5" y="545">
+      <tspan x="441.5">0.25</tspan><tspan x="441.5" dy="25">GB</tspan>
+    </text>
+    <text class="fragment-label" x="493" y="545">
+      <tspan x="493">0.25</tspan><tspan x="493" dy="25">GB</tspan>
+    </text>
+    <text class="fragment-label" x="545" y="545">
+      <tspan x="545">0.25</tspan><tspan x="545" dy="25">GB</tspan>
+    </text>
+    <text class="fragment-label" x="597" y="545">
+      <tspan x="597">0.25</tspan><tspan x="597" dy="25">GB</tspan>
+    </text>
+
+    <!-- Six upward arrows use independent heads so no shaft can show through a pointed tip. -->
+    <path id="fragment-one-shaft" class="arrow-shaft" data-connector="true" d="M362 710L355.9 671.8"/>
+    <path id="fragment-two-shaft" class="arrow-shaft" data-connector="true" d="M414 710L407.9 671.8"/>
+    <path id="fragment-three-shaft" class="arrow-shaft" data-connector="true" d="M450 710L447.3 672"/>
+    <path id="fragment-four-shaft" class="arrow-shaft" data-connector="true" d="M489 710L489.7 672"/>
+    <path id="fragment-five-shaft" class="arrow-shaft" data-connector="true" d="M523 710L527.8 671.9"/>
+    <path id="fragment-six-shaft" class="arrow-shaft" data-connector="true" d="M572 710L577.5 671.8"/>
+
+    <polygon id="fragment-one-head" class="arrow-head" points="353,654 363.1,672.6 349.3,674.9"/>
+    <polygon id="fragment-two-head" class="arrow-head" points="405,654 415.1,672.6 401.3,674.9"/>
+    <polygon id="fragment-three-head" class="arrow-head" points="446,654 454.4,673.5 440.4,674.4"/>
+    <polygon id="fragment-four-head" class="arrow-head" points="490,654 496.6,674.1 482.6,673.9"/>
+    <polygon id="fragment-five-head" class="arrow-head" points="530,654 534.5,674.7 520.6,673"/>
+    <polygon id="fragment-six-head" class="arrow-head" points="580,654 584.1,674.8 570.2,672.8"/>
+
+    <text class="heading" x="467.5" y="746">Data is distributed across 6 nodes</text>
+    <text class="heading" x="467.5" y="789">Erasure coding (4+2)</text>
+  </g>
+</svg>

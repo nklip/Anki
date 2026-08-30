@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1548" height="1152" viewBox="0 0 1548 1152"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Consistency versus latency</title>
+  <desc id="desc">Three replication timelines compare waiting for all replicas, one replica, or only the primary. Longer API-service wait time improves consistency but increases latency.</desc>
+
+  <!-- Reusable timeline marks and connector arrowheads. -->
+  <defs>
+    <marker id="arrowhead" markerWidth="22" markerHeight="16" refX="22" refY="8"
+            viewBox="0 0 22 16" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L22 8L0 16Z" fill="#000"/>
+    </marker>
+    <style>
+      .canvas { fill: #fff; }
+      .panel { fill: #fff; stroke: #000; stroke-width: 2.5; }
+      .label { fill: #000; font-family: Arial, Helvetica, sans-serif; font-size: 37px; font-weight: 400; }
+      .legend-label { fill: #3c4043; font-family: Arial, Helvetica, sans-serif; font-size: 37px; font-weight: 400; }
+      .axis, .flow { fill: none; stroke: #000; stroke-width: 2.5; marker-end: url(#arrowhead); }
+      .guide { fill: none; stroke: #000; stroke-width: 1; stroke-dasharray: 5 4; }
+      .wait { fill: none; stroke: #0f32ff; stroke-width: 8; stroke-linecap: round; }
+      .event { fill: #fff; stroke: #000; stroke-width: 2.5; }
+    </style>
+  </defs>
+
+  <rect class="canvas" width="1548" height="1152"/>
+
+  <!-- Legend for the blue API wait interval. -->
+  <rect class="panel" x="48" y="34" width="550" height="67"/>
+  <path class="wait" d="M75 66H224"/>
+  <text class="legend-label" x="246" y="80">API service wait time</text>
+
+  <!-- The three option frames. -->
+  <rect class="panel" x="48" y="145" width="1037" height="285"/>
+  <rect class="panel" x="48" y="488" width="1037" height="285"/>
+  <rect class="panel" x="48" y="830" width="1037" height="285"/>
+
+  <!-- Shared timing guides span all three choices. -->
+  <path class="guide" d="M536 127V1152 M636 127V1152 M844 127V1152 M913 127V1152"/>
+
+  <!-- Option 1: the request waits until both secondary replicas acknowledge. -->
+  <g id="highest-consistency-timeline">
+    <text class="label" x="451" y="194" text-anchor="end">Data routing service</text>
+    <text class="label" x="451" y="266" text-anchor="end">Primary data node</text>
+    <text class="label" x="451" y="339" text-anchor="end">Secondary data node 1</text>
+    <text class="label" x="451" y="412" text-anchor="end">Secondary data node 2</text>
+
+    <!-- Separate axes are required because marker-end applies only once per SVG path. -->
+    <path class="axis" d="M496 181H1057"/>
+    <path class="axis" d="M496 252H1057"/>
+    <path class="axis" d="M496 325H1057"/>
+    <path class="axis" d="M496 398H1057"/>
+    <path class="wait" d="M536 181H992"/>
+
+    <!-- Every tip stops at the target event's outer circle boundary. -->
+    <path class="flow" d="M536 181L566 243"/>
+    <path class="flow" d="M570 252H626"/>
+    <path class="flow" d="M636 252L714 318"/>
+    <path class="flow" d="M636 252L717 389"/>
+    <path class="flow" d="M722 325H768"/>
+    <path class="flow" d="M778 325L837 259"/>
+    <path class="flow" d="M722 398H853"/>
+    <path class="flow" d="M863 398L910 261"/>
+    <path class="flow" d="M913 252L985 188"/>
+
+    <g id="option-one-events">
+      <circle class="event" cx="536" cy="181" r="8.5"/>
+      <circle class="event" cx="570" cy="252" r="8.5"/>
+      <circle class="event" cx="636" cy="252" r="8.5"/>
+      <circle class="event" cx="722" cy="325" r="8.5"/>
+      <circle class="event" cx="778" cy="325" r="8.5"/>
+      <circle class="event" cx="722" cy="398" r="8.5"/>
+      <circle class="event" cx="844" cy="252" r="8.5"/>
+      <circle class="event" cx="863" cy="398" r="8.5"/>
+      <circle class="event" cx="913" cy="252" r="8.5"/>
+      <circle class="event" cx="992" cy="181" r="8.5"/>
+    </g>
+  </g>
+
+  <!-- Option 2: one secondary acknowledgement ends the API wait. -->
+  <g id="medium-consistency-timeline">
+    <text class="label" x="451" y="529" text-anchor="end">Data routing service</text>
+    <text class="label" x="451" y="601" text-anchor="end">Primary data node</text>
+    <text class="label" x="451" y="674" text-anchor="end">Secondary data node 1</text>
+    <text class="label" x="451" y="747" text-anchor="end">Secondary data node 2</text>
+
+    <path class="axis" d="M496 515H1057"/>
+    <path class="axis" d="M496 585H1057"/>
+    <path class="axis" d="M496 659H1057"/>
+    <path class="axis" d="M496 732H1057"/>
+    <path class="wait" d="M536 515H890"/>
+
+    <path class="flow" d="M536 515L566 576"/>
+    <path class="flow" d="M570 585H626"/>
+    <path class="flow" d="M636 585L714 652"/>
+    <path class="flow" d="M636 585L717 723"/>
+    <path class="flow" d="M722 659H768"/>
+    <path class="flow" d="M778 659L837 592"/>
+    <path class="flow" d="M722 732H853"/>
+    <path class="flow" d="M863 732L910 594"/>
+    <path class="flow" d="M844 585L884 523"/>
+
+    <g id="option-two-events">
+      <circle class="event" cx="536" cy="515" r="8.5"/>
+      <circle class="event" cx="570" cy="585" r="8.5"/>
+      <circle class="event" cx="636" cy="585" r="8.5"/>
+      <circle class="event" cx="722" cy="659" r="8.5"/>
+      <circle class="event" cx="778" cy="659" r="8.5"/>
+      <circle class="event" cx="722" cy="732" r="8.5"/>
+      <circle class="event" cx="844" cy="585" r="8.5"/>
+      <circle class="event" cx="863" cy="732" r="8.5"/>
+      <circle class="event" cx="913" cy="585" r="8.5"/>
+      <circle class="event" cx="890" cy="515" r="8.5"/>
+    </g>
+  </g>
+
+  <!-- Option 3: primary acceptance ends the API wait before replication completes. -->
+  <g id="lowest-latency-timeline">
+    <text class="label" x="451" y="874" text-anchor="end">Data routing service</text>
+    <text class="label" x="451" y="946" text-anchor="end">Primary data node</text>
+    <text class="label" x="451" y="1019" text-anchor="end">Secondary data node 1</text>
+    <text class="label" x="451" y="1093" text-anchor="end">Secondary data node 2</text>
+
+    <path class="axis" d="M496 864H1057"/>
+    <path class="axis" d="M496 934H1057"/>
+    <path class="axis" d="M496 1008H1057"/>
+    <path class="axis" d="M496 1081H1057"/>
+    <path class="wait" d="M536 864H685"/>
+
+    <path class="flow" d="M536 864L566 925"/>
+    <path class="flow" d="M570 934H626"/>
+    <path class="flow" d="M636 934L714 1001"/>
+    <path class="flow" d="M636 934L717 1072"/>
+    <path class="flow" d="M722 1008H768"/>
+    <path class="flow" d="M778 1008L837 941"/>
+    <path class="flow" d="M722 1081H853"/>
+    <path class="flow" d="M863 1081L910 943"/>
+    <path class="flow" d="M636 934L679 872"/>
+
+    <g id="option-three-events">
+      <circle class="event" cx="536" cy="864" r="8.5"/>
+      <circle class="event" cx="570" cy="934" r="8.5"/>
+      <circle class="event" cx="636" cy="934" r="8.5"/>
+      <circle class="event" cx="722" cy="1008" r="8.5"/>
+      <circle class="event" cx="778" cy="1008" r="8.5"/>
+      <circle class="event" cx="722" cy="1081" r="8.5"/>
+      <circle class="event" cx="844" cy="934" r="8.5"/>
+      <circle class="event" cx="863" cy="1081" r="8.5"/>
+      <circle class="event" cx="913" cy="934" r="8.5"/>
+      <circle class="event" cx="685" cy="864" r="8.5"/>
+    </g>
+  </g>
+
+  <!-- Option summaries. -->
+  <text class="label" x="1109" y="256">
+    <tspan x="1109">First option:</tspan>
+    <tspan x="1139" dy="45">Best consistency</tspan>
+    <tspan x="1139" dy="44">Highest latency</tspan>
+  </text>
+  <text class="label" x="1109" y="603">
+    <tspan x="1109">Second option:</tspan>
+    <tspan x="1155" dy="45">Medium consistency</tspan>
+    <tspan x="1155" dy="44">Medium latency</tspan>
+  </text>
+  <text class="label" x="1109" y="941">
+    <tspan x="1109">Third option:</tspan>
+    <tspan x="1155" dy="48">Worst consistency</tspan>
+    <tspan x="1155" dy="42">Lowest latency</tspan>
+  </text>
+</svg>

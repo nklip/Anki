@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1824" height="1032" viewBox="0 0 1824 1032"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Object data persistence on a data node</title>
+  <desc id="desc">On one local machine, the data node service appends an object to the read-write file /data/c in the local file system and records its file name, start offset and object size as a row in the object_mapping table of the object mapping database, then answers the API service.</desc>
+
+  <!-- Shared styles. One arrowhead serves both solid flows and dashed callouts. -->
+  <defs>
+    <marker id="arrowhead" viewBox="0 0 18 13" refX="18" refY="6.5" markerWidth="18" markerHeight="13"
+            markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 18 6.5 0 13Z" fill="#000"/></marker>
+    <style>
+      .canvas{fill:#fff}
+      text{font-family:Arial,Helvetica,sans-serif;fill:#000;font-size:27px;text-anchor:middle}
+      .start{text-anchor:start}
+      .step-number{font-size:24px}
+      .boundary{fill:none;stroke:#000;stroke-width:2;stroke-dasharray:9.5 3.86}
+      .frame{fill:#fff;stroke:#000;stroke-width:2}
+      .rule{fill:none;stroke:#000;stroke-width:2}
+      .highlight{fill:#f7c5fd;stroke:#000;stroke-width:2;stroke-dasharray:9.5 3.86}
+      .badge{fill:#fff;stroke:#000;stroke-width:2}
+      .flow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrowhead)}
+      .flow-shaft{fill:none;stroke:#000;stroke-width:2}
+      .callout{fill:none;stroke:#000;stroke-width:2;stroke-dasharray:9.5 3.86;marker-end:url(#arrowhead)}
+      .callout-tail{fill:none;stroke:#000;stroke-width:2;stroke-dasharray:9.5 3.86}
+      .dot{fill:#000}
+    </style>
+  </defs>
+  <rect class="canvas" width="1824" height="1032"/>
+
+  <!-- Everything below the API service runs on one machine. -->
+  <rect id="local-machine" class="boundary" x="44" y="181" width="1748" height="822"/>
+  <text class="start" x="83" y="241">Local Machine</text>
+  <!-- Services above and beside the machine boundary. -->
+  <rect id="api-service" class="frame" x="1047" y="33" width="226" height="73.5"/>
+  <text x="1159" y="81">API Service</text>
+  <rect id="data-node-service" class="frame" x="1068" y="208" width="184" height="83"/>
+  <text x="1160" y="244"><tspan x="1160">Data Node</tspan><tspan x="1160" dy="32">Service</tspan></text>
+  <!-- Local file system: two sealed read-only files and the active read-write file. -->
+  <rect id="local-file-system" class="frame" x="67" y="356" width="866" height="622"/>
+  <text x="500" y="954">Local File System</text>
+  <g id="file-data-a">
+    <rect class="frame" x="99" y="445" width="226" height="456"/>
+    <path class="rule" d="M99 554H325"/>
+    <path class="rule" d="M99 624H325"/>
+    <path class="rule" d="M99 703H325"/>
+    <path class="rule" d="M99 737H325"/>
+    <path class="rule" d="M99 830H325"/>
+    <text x="212" y="406.5"><tspan x="212">Read-only File</tspan><tspan x="212" dy="31">/data/a</tspan></text>
+  </g>
+  <g id="file-data-b">
+    <rect class="frame" x="387" y="445" width="227" height="456"/>
+    <path class="rule" d="M387 545.5H614"/>
+    <path class="rule" d="M387 616H614"/>
+    <path class="rule" d="M387 650H614"/>
+    <path class="rule" d="M387 732H614"/>
+    <path class="rule" d="M387 802H614"/>
+    <path class="rule" d="M387 824H614"/>
+    <path class="rule" d="M387 866H614"/>
+    <text x="500.5" y="406.5"><tspan x="500.5">Read-only File</tspan><tspan x="500.5" dy="31">/data/b</tspan></text>
+  </g>
+  <!-- /data/c is still open for appends; its ragged foot marks the unused tail. -->
+  <g id="file-data-c">
+    <path fill="#fff" d="M676 445H902V868C821.6 853.8 755.4 913 676 884Z"/>
+    <path class="rule" d="M676 445H902"/>
+    <path class="rule" d="M676 445V673.5"/>
+    <path class="rule" d="M676 743.5V884"/>
+    <path class="rule" d="M902 445V673.5"/>
+    <path class="rule" d="M902 743.5V868"/>
+    <path class="rule" d="M676 884C755.4 913 821.6 853.8 902 868"/>
+    <path class="rule" d="M676 503H902"/>
+    <path class="rule" d="M676 603H902"/>
+    <path class="rule" d="M676 743.5H902"/>
+    <rect id="object-4" class="highlight" x="676" y="673.5" width="226" height="70"/>
+    <text x="788.5" y="406.5"><tspan x="788.5">Read-write File</tspan><tspan x="788.5" dy="31">/data/c</tspan></text>
+    <text x="788.5" y="483">object 1</text>
+    <text x="788.5" y="562">object 2</text>
+    <text x="788.5" y="647">object 3</text>
+    <text x="788.5" y="717">object 4</text>
+    <text x="789.5" y="822">Empty spaces</text>
+  </g>
+  <!-- Object mapping database and the row written for this object. -->
+  <g id="object-mapping-database">
+    <path class="frame" d="M1137 466V770A317 38 0 0 0 1771 770V466"/>
+    <ellipse class="frame" cx="1454" cy="466" rx="317" ry="38"/>
+    <text x="1449" y="558">object_mapping table</text>
+    <g id="mapping-table">
+      <path class="rule" d="M1184 577V757"/>
+      <path class="rule" d="M1317.5 577V757"/>
+      <path class="rule" d="M1451.5 577V757"/>
+      <path class="rule" d="M1585.5 577V757"/>
+      <path class="rule" d="M1720 577V757"/>
+      <path class="rule" d="M1184 577H1720"/>
+      <path class="rule" d="M1184 613H1720"/>
+      <path class="rule" d="M1184 649H1720"/>
+      <path class="rule" d="M1184 685H1720"/>
+      <path class="rule" d="M1184 721H1720"/>
+      <path class="rule" d="M1184 757H1720"/>
+      <text x="1250.25" y="604">obj_id</text>
+      <text x="1250.25" y="748">object 6</text>
+      <text x="1384" y="604">file_name</text>
+      <text x="1384" y="748">/data/c</text>
+      <text x="1518" y="604">offset</text>
+      <text x="1518" y="748">0x232B3</text>
+      <text x="1652.25" y="604">obj_size</text>
+      <text x="1652.25" y="748">512</text>
+    </g>
+    <text x="1453" y="833"><tspan x="1453">Object Mapping</tspan><tspan x="1453" dy="32">Database</tspan></text>
+  </g>
+  <!-- Numbered request flow. -->
+  <g id="flows">
+    <path id="flow-write-0" class="flow-shaft" data-connector="true" d="M1121 106 C1114.72 119.03 1109.57 130.64 1107.13 142.57"/>
+    <path id="flow-write" class="flow" data-connector="true" d="M1107.59 174.04 C1109.84 183.75 1114.12 194.37 1121 206.5"/>
+    <path id="flow-ack-0" class="flow-shaft" data-connector="true" d="M1197.5 207.5 C1200.81 197.25 1205.39 186.33 1208.16 174.04"/>
+    <path id="flow-ack" class="flow" data-connector="true" d="M1209.92 142.59 C1208.49 131.28 1204.63 118.86 1197 105"/>
+    <path id="flow-append-0" class="flow-shaft" data-connector="true" d="M1137 291 C1115.66 324.64 1095.24 357.81 1074.87 390.24"/>
+    <path id="flow-append" class="flow" data-connector="true" d="M1055.13 421.44 C996.12 513.75 935.29 599.29 852 672"/>
+    <path id="flow-record-0" class="flow-shaft" data-connector="true" d="M1192 291 C1207.21 309.22 1222.14 327.67 1236.96 346.21"/>
+    <path id="flow-record" class="flow" data-connector="true" d="M1259.75 374.87 C1274.47 393.43 1289.16 412.02 1304 430.5"/>
+    <g id="step-1"><circle class="badge" cx="1107.5" cy="156.5" r="12"/><text class="step-number" x="1107.5" y="165.5">1</text></g>
+    <g id="step-4"><circle class="badge" cx="1212" cy="156.5" r="12"/><text class="step-number" x="1212" y="165.5">4</text></g>
+    <g id="step-2"><circle class="badge" cx="1064.5" cy="404" r="12"/><text class="step-number" x="1064.5" y="413">2</text></g>
+    <g id="step-3"><circle class="badge" cx="1250.5" cy="358.5" r="12"/><text class="step-number" x="1250.5" y="367.5">3</text></g>
+  </g>
+  <!-- Callouts tying the stored row back to the bytes it describes. -->
+  <g id="callouts">
+    <circle class="dot" cx="1348.5" cy="717.5" r="6"/>
+    <path id="call-fn-0" class="callout-tail" data-connector="true" d="M1348.5 717.5 C1266.19 666.64 1182.84 620.09 1099.31 576.36"/>
+    <path id="call-fn" class="callout" data-connector="true" d="M1031.48 541.45 C966.74 508.67 902.03 477.35 837.76 446.79"/>
+    <text x="1063.5" y="567">file_name</text>
+    <circle class="dot" cx="1466.5" cy="718.5" r="6"/>
+    <path id="call-so-0" class="callout-tail" data-connector="true" d="M1466.5 718.5 C1359.62 696.95 1253.73 667.66 1145.75 655.87"/>
+    <path id="call-so" class="callout" data-connector="true" d="M959.24 657.32 C940.28 660.08 921.2 663.77 902 668.5"/>
+    <text x="1052.5" y="665">start_offset</text>
+    <circle class="dot" cx="1592.5" cy="758.5" r="6"/>
+    <path id="call-os-0" class="callout-tail" data-connector="true" d="M1592.5 758.5 C1439.29 790.84 1285.88 795.83 1132.75 780.85"/>
+    <path id="call-os" class="callout" data-connector="true" d="M968.29 757.4 C943.85 752.87 919.42 747.89 895 742.5"/>
+    <text x="1050.5" y="778">object_size</text>
+  </g>
+</svg>

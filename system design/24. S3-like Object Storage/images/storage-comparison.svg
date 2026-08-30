@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1802" height="684" viewBox="0 0 1802 684"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Block, file, and object storage comparison</title>
+  <desc id="desc">Block storage arranges equal-sized blocks, file storage organizes folders and files in a hierarchy, and object storage combines an object payload with an ID and metadata.</desc>
+
+  <!-- Shared diagram styles and reusable source-native storage symbols. -->
+  <defs>
+    <style>
+      .canvas { fill: #fff; }
+      text {
+        fill: #000;
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 400;
+      }
+      .title { font-size: 42px; }
+      .block-label { font-size: 42px; }
+      .node-label { font-size: 32px; }
+      .center { text-anchor: middle; }
+      .outline, .panel, .cube-face, .node {
+        fill: #fff;
+        stroke: #000;
+        stroke-width: 2.2;
+      }
+      .connector, .arrow-shaft {
+        fill: none;
+        stroke: #000;
+        stroke-width: 2.2;
+      }
+      .arrow-head, .solid-icon { fill: #000; }
+    </style>
+
+    <symbol id="block-cube" viewBox="0 0 137 137">
+      <polygon class="cube-face" points="1,15 14,1 137,1 123,15"/>
+      <polygon class="cube-face" points="123,15 137,1 137,124 123,137"/>
+      <rect class="cube-face" x="1" y="15" width="122" height="122"/>
+      <text class="block-label center" x="62" y="90">block</text>
+    </symbol>
+
+    <symbol id="folder-icon" viewBox="0 0 65 52">
+      <path class="solid-icon"
+            d="M6 0H28L35 7H59Q65 7 65 13V46Q65 52 59 52H6Q0 52 0 46V6Q0 0 6 0Z"/>
+    </symbol>
+
+    <symbol id="file-icon" viewBox="0 0 53 66">
+      <path class="solid-icon" fill-rule="evenodd"
+            d="M7 0H31L53 22V59Q53 66 46 66H7Q0 66 0 59V7Q0 0 7 0ZM31 5V22H48Z"/>
+    </symbol>
+  </defs>
+
+  <rect class="canvas" width="1802" height="684"/>
+
+  <!-- Block storage: a cylindrical device containing a regular grid of blocks. -->
+  <g id="block-storage">
+    <path class="outline" d="M18 105V598C18 632 143 659 297 659C452 659 577 632 577 598V105"/>
+    <ellipse class="outline" cx="297.5" cy="105" rx="279.5" ry="62"/>
+    <text class="title center" x="297.5" y="119">Block Storage</text>
+
+    <use href="#block-cube" x="69" y="180" width="137" height="137"/>
+    <use href="#block-cube" x="228" y="180" width="137" height="137"/>
+    <use href="#block-cube" x="387" y="180" width="137" height="137"/>
+    <use href="#block-cube" x="69" y="333" width="137" height="138"/>
+    <use href="#block-cube" x="228" y="333" width="137" height="138"/>
+    <use href="#block-cube" x="387" y="333" width="137" height="138"/>
+    <use href="#block-cube" x="69" y="486" width="137" height="138"/>
+    <use href="#block-cube" x="228" y="486" width="137" height="138"/>
+    <use href="#block-cube" x="387" y="486" width="137" height="138"/>
+  </g>
+
+  <!-- File storage: folder and file nodes connected in a directory tree. -->
+  <g id="file-storage">
+    <rect class="panel" x="637" y="56" width="540" height="604"/>
+    <text class="title center" x="907" y="98">File Storage</text>
+
+    <use href="#folder-icon" x="711" y="139" width="65" height="52"/>
+    <use href="#folder-icon" x="876" y="200" width="65" height="52"/>
+    <use href="#file-icon" x="1032" y="193" width="53" height="66"/>
+    <use href="#folder-icon" x="1032" y="287" width="65" height="52"/>
+    <use href="#folder-icon" x="876" y="360" width="65" height="52"/>
+    <use href="#file-icon" x="876" y="451" width="53" height="66"/>
+    <use href="#file-icon" x="876" y="556" width="53" height="66"/>
+
+    <!-- The tree's vertical spine joins four child branches. -->
+    <path id="file-tree-spine" class="connector" data-connector="true" d="M743 191V589"/>
+
+    <path id="folder-one-arrow-shaft" class="arrow-shaft" data-connector="true" d="M743 226H850"/>
+    <polygon id="folder-one-arrowhead" class="arrow-head" points="873,226 850,216 850,236"/>
+
+    <path id="nested-file-branch" class="connector" data-connector="true" d="M941 226H985V313H1008"/>
+    <polygon id="nested-file-arrowhead" class="arrow-head" points="1031,313 1008,303 1008,323"/>
+
+    <path id="document-one-arrow-shaft" class="arrow-shaft" data-connector="true" d="M941 226H1009"/>
+    <polygon id="document-one-arrowhead" class="arrow-head" points="1031,226 1009,216 1009,236"/>
+
+    <path id="folder-two-arrow-shaft" class="arrow-shaft" data-connector="true" d="M743 386H850"/>
+    <polygon id="folder-two-arrowhead" class="arrow-head" points="873,386 850,376 850,396"/>
+
+    <path id="document-two-arrow-shaft" class="arrow-shaft" data-connector="true" d="M743 484H850"/>
+    <polygon id="document-two-arrowhead" class="arrow-head" points="873,484 850,474 850,494"/>
+
+    <path id="document-three-arrow-shaft" class="arrow-shaft" data-connector="true" d="M743 589H850"/>
+    <polygon id="document-three-arrowhead" class="arrow-head" points="873,589 850,579 850,599"/>
+  </g>
+
+  <!-- Object storage: each object is modeled as payload plus identity and metadata. -->
+  <g id="object-storage">
+    <rect class="panel" x="1238" y="56" width="539" height="604"/>
+    <text class="title center" x="1507.5" y="98">Object Storage</text>
+
+    <!-- Connectors are painted first so every node remains clean and readable. -->
+    <g id="object-relations">
+      <path class="connector" data-connector="true" d="M1324 203L1452 291"/>
+      <path class="connector" data-connector="true" d="M1632 201L1534 286"/>
+      <path class="connector" data-connector="true" d="M1388 369L1444 342"/>
+
+      <path class="connector" data-connector="true" d="M1697 406L1700 475"/>
+      <path class="connector" data-connector="true" d="M1561 485L1651 513"/>
+      <path class="connector" data-connector="true" d="M1442 580L1650 540"/>
+    </g>
+
+    <g id="top-object">
+      <circle class="node" cx="1303" cy="188" r="26"/>
+      <text class="node-label center" x="1303" y="199">ID</text>
+
+      <circle class="node" cx="1666" cy="168" r="48"/>
+      <text class="node-label center" x="1666" y="161" style="font-size:26px"
+            textLength="67" lengthAdjust="spacingAndGlyphs"
+            transform="translate(0 161) scale(1 1.2308) translate(0 -161)">Meta</text>
+      <text class="node-label center" x="1666" y="197" style="font-size:26px"
+            textLength="63" lengthAdjust="spacingAndGlyphs"
+            transform="translate(0 197) scale(1 1.2308) translate(0 -197)">data</text>
+
+      <circle class="node" cx="1325" cy="398" r="68"/>
+      <text class="node-label center" x="1325" y="409">Payload</text>
+
+      <circle class="node" cx="1493" cy="320" r="54"/>
+      <text class="node-label center" x="1493" y="331" style="font-size:26px"
+            textLength="91" lengthAdjust="spacingAndGlyphs"
+            transform="translate(0 331) scale(1 1.2308) translate(0 -331)">Object</text>
+    </g>
+
+    <g id="bottom-object">
+      <circle class="node" cx="1696" cy="358" r="48"/>
+      <text class="node-label center" x="1696" y="351" style="font-size:26px"
+            textLength="67" lengthAdjust="spacingAndGlyphs"
+            transform="translate(0 351) scale(1 1.2308) translate(0 -351)">Meta</text>
+      <text class="node-label center" x="1696" y="387" style="font-size:26px"
+            textLength="63" lengthAdjust="spacingAndGlyphs"
+            transform="translate(0 387) scale(1 1.2308) translate(0 -387)">data</text>
+
+      <circle class="node" cx="1495" cy="467" r="68"/>
+      <text class="node-label center" x="1495" y="478">Payload</text>
+
+      <circle class="node" cx="1416" cy="585" r="26"/>
+      <text class="node-label center" x="1416" y="596">ID</text>
+
+      <circle class="node" cx="1702" cy="529" r="54"/>
+      <text class="node-label center" x="1702" y="540" style="font-size:26px"
+            textLength="91" lengthAdjust="spacingAndGlyphs"
+            transform="translate(0 540) scale(1 1.2308) translate(0 -540)">Object</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1796" height="574" viewBox="0 0 1796 574"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Virtual cluster map</title>
+  <desc id="desc">A four-level placement hierarchy: the Default root spans two datacenters, each datacenter holds two hosts, and each host holds three of the twelve partitions.</desc>
+
+  <!-- Shared styles. Hairline rules match the source; one arrowhead serves every edge. -->
+  <defs>
+    <marker id="arrowhead" viewBox="0 0 16 12" refX="16" refY="6" markerWidth="16" markerHeight="12"
+            markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 16 6 0 12Z" fill="#000"/></marker>
+    <style>
+      .canvas{fill:#fff}
+      text{font-family:Arial,Helvetica,sans-serif;fill:#000;font-size:25px;text-anchor:middle}
+      .tier-label{text-anchor:start}
+      .grid{fill:none;stroke:#000;stroke-width:1.3}
+      .node{fill:#fff;stroke:#000;stroke-width:1.3}
+      .edge{fill:none;stroke:#000;stroke-width:1.3;marker-end:url(#arrowhead)}
+    </style>
+  </defs>
+  <rect class="canvas" width="1796" height="574"/>
+
+  <!-- Tier bands, labelled down the left edge. -->
+  <g id="tiers">
+    <rect class="grid" x="27.5" y="32.5" width="1749" height="520"/>
+    <path class="grid" d="M27.5 144.5H1776.5"/>
+    <path class="grid" d="M27.5 256.5H1776.5"/>
+    <path class="grid" d="M27.5 368H1776.5"/>
+    <text class="tier-label" x="53" y="98">Root</text>
+    <text class="tier-label" x="53" y="209">Datacenter</text>
+    <text class="tier-label" x="53" y="321">Host</text>
+    <text class="tier-label" x="53" y="469">Partition</text>
+  </g>
+  <!-- Placement tree. -->
+  <g id="nodes">
+    <g id="root-default"><rect class="node" x="910.5" y="58" width="119" height="44"/><text x="970" y="89">Default</text></g>
+    <g id="dc-1"><rect class="node" x="529" y="180" width="119" height="44"/><text x="588.5" y="211">DC-1</text></g>
+    <g id="dc-2"><rect class="node" x="1314" y="180" width="119" height="44"/><text x="1373.5" y="211">DC-2</text></g>
+    <g id="host-1"><rect class="node" x="331" y="290" width="119" height="44"/><text x="390.5" y="321">Host-1</text></g>
+    <g id="host-2"><rect class="node" x="721" y="290" width="119" height="44"/><text x="780.5" y="321">Host-2</text></g>
+    <g id="host-3"><rect class="node" x="1120" y="290" width="119" height="44"/><text x="1179.5" y="321">Host-3</text></g>
+    <g id="host-4"><rect class="node" x="1511" y="290" width="119" height="44"/><text x="1570.5" y="321">Host-4</text></g>
+    <g id="partition-1"><rect class="node" x="219" y="415" width="145.5" height="44"/><text x="291.75" y="445">Partition-1</text></g>
+    <g id="partition-3"><rect class="node" x="419.5" y="415" width="145.5" height="44"/><text x="492.25" y="445">Partition-3</text></g>
+    <g id="partition-4"><rect class="node" x="614.5" y="415" width="145.5" height="44"/><text x="687.25" y="445">Partition-4</text></g>
+    <g id="partition-6"><rect class="node" x="809.5" y="415" width="145.5" height="44"/><text x="882.25" y="445">Partition-6</text></g>
+    <g id="partition-7"><rect class="node" x="1008" y="415" width="145.5" height="44"/><text x="1080.75" y="445">Partition-7</text></g>
+    <g id="partition-9"><rect class="node" x="1207" y="415" width="145.5" height="44"/><text x="1279.75" y="445">Partition-9</text></g>
+    <g id="partition-10"><rect class="node" x="1399" y="415" width="145.5" height="44"/><text x="1471.75" y="445">Partition-10</text></g>
+    <g id="partition-12"><rect class="node" x="1598" y="415" width="145.5" height="44"/><text x="1670.75" y="445">Partition-12</text></g>
+    <g id="partition-2"><rect class="node" x="318" y="479.5" width="145.5" height="44"/><text x="390.75" y="510">Partition-2</text></g>
+    <g id="partition-5"><rect class="node" x="708" y="479.5" width="145.5" height="44"/><text x="780.75" y="510">Partition-5</text></g>
+    <g id="partition-8"><rect class="node" x="1107" y="479.5" width="145.5" height="44"/><text x="1179.75" y="510">Partition-8</text></g>
+    <g id="partition-11"><rect class="node" x="1497.5" y="479.5" width="145.5" height="44"/><text x="1570.25" y="510">Partition-11</text></g>
+  </g>
+  <!-- Parent-to-child edges; each head stops on the child box outline. -->
+  <g id="edges">
+    <path id="edge-1" class="edge" d="M910.5 98.5 648 182.2"/>
+    <path id="edge-2" class="edge" d="M1029.5 97.9 1314 183.6"/>
+    <path id="edge-3" class="edge" d="M547.9 224 426.9 290"/>
+    <path id="edge-4" class="edge" d="M626.6 224 744 290"/>
+    <path id="edge-5" class="edge" d="M1333.8 224 1215.2 290"/>
+    <path id="edge-6" class="edge" d="M1412.8 224 1532.8 290"/>
+    <path id="edge-7" class="edge" d="M372.2 334 308.1 415"/>
+    <path id="edge-8" class="edge" d="M390.6 334 390.2 479.5"/>
+    <path id="edge-9" class="edge" d="M408.4 334 474.6 415"/>
+    <path id="edge-10" class="edge" d="M763 334 702.4 415"/>
+    <path id="edge-11" class="edge" d="M779.4 334 779.8 479.5"/>
+    <path id="edge-12" class="edge" d="M798.3 334 864.4 415"/>
+    <path id="edge-13" class="edge" d="M1161.3 334 1097.1 415"/>
+    <path id="edge-14" class="edge" d="M1178.9 334 1179.1 479.5"/>
+    <path id="edge-15" class="edge" d="M1197.1 334 1262.4 415"/>
+    <path id="edge-16" class="edge" d="M1551.9 334 1487.9 415"/>
+    <path id="edge-17" class="edge" d="M1569.4 334 1569.6 479.5"/>
+    <path id="edge-18" class="edge" d="M1587.8 334 1652.9 415"/>
+  </g>
+</svg>

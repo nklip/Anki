@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1210" height="1414" viewBox="0 0 1210 1414"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Multipart object upload sequence</title>
+  <desc id="desc">A client initiates a multipart upload, receives an upload ID, uploads parts one, two, and eight while receiving an ETag for each, then completes the upload by sending the upload ID and part-to-ETag mappings before receiving success.</desc>
+
+  <!-- Shared typography, phase frames, message shafts, and symbols. -->
+  <defs>
+    <style>
+      .canvas{fill:#fff}
+      text{font-family:Arial,Helvetica,sans-serif;fill:#000;font-size:34px;font-weight:400}
+      .node{fill:#fff;stroke:#000;stroke-width:2}
+      .phase{fill:none;stroke:#000;stroke-width:2;stroke-dasharray:10 6.5}
+      .lifeline,.arrow-shaft,.connector{fill:none;stroke:#000;stroke-width:2}
+      .arrow-head{fill:#000}
+      .number-circle{fill:#fff;stroke:#000;stroke-width:2}
+      .number{font-size:28px;text-anchor:middle}
+      .center{text-anchor:middle}
+      .part-label{font-size:34px}
+      .ellipsis{font-size:42px;letter-spacing:4px;text-anchor:middle}
+    </style>
+  </defs>
+
+  <rect class="canvas" width="1210" height="1414"/>
+
+  <!-- Participants and their vertical lifelines. -->
+  <g id="client">
+    <circle cx="239.5" cy="57.5" r="16.5" fill="#000"/>
+    <path d="M207 106V96A32.5 14 0 0 1 272 96V106Z" fill="#000"/>
+  </g>
+  <rect id="data-store" class="node" x="939" y="26" width="179" height="95"/>
+  <text class="center" x="1028.5" y="85">Data Store</text>
+  <path id="client-lifeline" class="lifeline" d="M239 106V1364"/>
+  <path id="store-lifeline" class="lifeline" d="M1029 121V1364"/>
+  <!-- The shaft ends are hidden under the triangular heads for a clean join. -->
+  <path id="client-lifeline-end-shaft" class="arrow-shaft" data-connector="true" d="M239 1364V1370"/>
+  <polygon class="arrow-head" points="230,1364 248,1364 239,1385"/>
+  <path id="store-lifeline-end-shaft" class="arrow-shaft" data-connector="true" d="M1029 1364V1370"/>
+  <polygon class="arrow-head" points="1020,1364 1038,1364 1029,1385"/>
+
+  <!-- Phase boundaries and labels. -->
+  <rect id="initiation-phase" class="phase" x="202" y="178" width="868" height="138"/>
+  <rect id="upload-phase" class="phase" x="202" y="325" width="868" height="635"/>
+  <rect id="completion-phase" class="phase" x="202" y="1003" width="868" height="356"/>
+  <text class="center" x="128" y="259">Initiation</text>
+  <text class="center" x="126" y="595">
+    <tspan x="126">Multipart</tspan>
+    <tspan x="126" dy="38">Upload</tspan>
+  </text>
+  <text class="center" x="105" y="1193">Completion</text>
+
+  <!-- 1. The client starts the multipart upload. -->
+  <g id="initiate-upload-message">
+    <path class="arrow-shaft" data-connector="true" d="M239 200H449"/>
+    <path class="arrow-shaft" data-connector="true" d="M875 200H1009"/>
+    <polygon class="arrow-head" points="1008,191 1008,209 1029,200"/>
+    <circle class="number-circle" cx="464" cy="200" r="15"/>
+    <text class="number" x="464" y="210">1</text>
+    <!-- Horizontal text sizing matches the etalon while leaving measurable shaft clearance. -->
+    <text x="490" y="212" style="font-size:28px" textLength="374" lengthAdjust="spacingAndGlyphs"
+          transform="translate(0 212) scale(1 1.2143) translate(0 -212)">Multipart upload initiation</text>
+  </g>
+
+  <!-- 2. The data store returns an upload ID. -->
+  <g id="upload-id-response">
+    <path class="arrow-shaft" data-connector="true" d="M1029 287H710"/>
+    <path class="arrow-shaft" data-connector="true" d="M523 287H259"/>
+    <polygon class="arrow-head" points="260,278 260,296 239,287"/>
+    <circle class="number-circle" cx="539" cy="287" r="15"/>
+    <text class="number" x="539" y="297">2</text>
+    <text x="560" y="299">uploadID</text>
+  </g>
+
+  <!-- Multipart part requests and ETag responses. -->
+  <g id="part-one-exchange">
+    <path class="arrow-shaft" data-connector="true" d="M239 395H464"/>
+    <path class="arrow-shaft" data-connector="true" d="M496 395H523"/>
+    <path class="arrow-shaft" data-connector="true" d="M744 395H1009"/>
+    <polygon class="arrow-head" points="1008,386 1008,404 1029,395"/>
+    <circle class="number-circle" cx="480" cy="395" r="15"/>
+    <text class="number" x="480" y="405">3</text>
+
+    <rect class="node" x="523" y="346" width="221" height="112"/>
+    <path class="node" d="M542 362H574L583 371V395H542Z"/>
+    <path class="connector" d="M574 362V371H583"/>
+    <rect class="node" x="542" y="409" width="41" height="32"/>
+    <text class="part-label" x="596" y="390">Part 1</text>
+    <text class="part-label" x="596" y="438">uploadID</text>
+
+    <path class="arrow-shaft" data-connector="true" d="M1029 488H697"/>
+    <path class="arrow-shaft" data-connector="true" d="M526 488H259"/>
+    <polygon class="arrow-head" points="260,479 260,497 239,488"/>
+    <circle class="number-circle" cx="540" cy="487" r="15"/>
+    <text class="number" x="540" y="497">4</text>
+    <text x="588" y="499">ETag 1</text>
+  </g>
+
+  <g id="part-two-exchange">
+    <path class="arrow-shaft" data-connector="true" d="M239 597H523"/>
+    <path class="arrow-shaft" data-connector="true" d="M744 597H1009"/>
+    <polygon class="arrow-head" points="1008,588 1008,606 1029,597"/>
+
+    <rect class="node" x="523" y="547" width="221" height="112"/>
+    <path class="node" d="M542 563H574L583 572V596H542Z"/>
+    <path class="connector" d="M574 563V572H583"/>
+    <rect class="node" x="542" y="610" width="41" height="32"/>
+    <text class="part-label" x="596" y="591">Part 2</text>
+    <text class="part-label" x="596" y="639">uploadID</text>
+
+    <path class="arrow-shaft" data-connector="true" d="M1029 688H697"/>
+    <path class="arrow-shaft" data-connector="true" d="M579 688H259"/>
+    <polygon class="arrow-head" points="260,679 260,697 239,688"/>
+    <text x="588" y="702">ETag 2</text>
+  </g>
+
+  <text class="ellipsis" x="635" y="764">.....</text>
+
+  <g id="part-eight-exchange">
+    <path class="arrow-shaft" data-connector="true" d="M239 837H526"/>
+    <path class="arrow-shaft" data-connector="true" d="M747 837H1009"/>
+    <polygon class="arrow-head" points="1008,828 1008,846 1029,837"/>
+
+    <rect class="node" x="526" y="779" width="221" height="111"/>
+    <path class="node" d="M544 795H576L585 804V827H544Z"/>
+    <path class="connector" d="M576 795V804H585"/>
+    <rect class="node" x="544" y="842" width="41" height="32"/>
+    <text class="part-label" x="598" y="823">Part 8</text>
+    <text class="part-label" x="598" y="871">uploadID</text>
+
+    <path class="arrow-shaft" data-connector="true" d="M1029 930H697"/>
+    <path class="arrow-shaft" data-connector="true" d="M585 930H259"/>
+    <polygon class="arrow-head" points="260,921 260,939 239,930"/>
+    <text x="588" y="943">ETag 8</text>
+  </g>
+
+  <!-- 5. Completion sends the upload ID and the ordered part-to-ETag manifest. -->
+  <g id="complete-upload-message">
+    <path class="arrow-shaft" data-connector="true" d="M239 1163H400"/>
+    <path class="arrow-shaft" data-connector="true" d="M883 1163H1009"/>
+    <polygon class="arrow-head" points="1008,1154 1008,1172 1029,1163"/>
+    <circle class="number-circle" cx="422" cy="1163" r="15"/>
+    <text class="number" x="422" y="1173">5</text>
+    <text class="center" x="518" y="1136">
+      <tspan x="518">Multipart</tspan>
+      <tspan x="518" dy="38">upload</tspan>
+      <tspan x="518" dy="38">completion</tspan>
+    </text>
+
+    <rect class="node" x="603" y="1031" width="280" height="265"/>
+    <text x="623" y="1082">uploadID</text>
+    <text x="623" y="1129" style="font-size:28px" textLength="88" lengthAdjust="spacingAndGlyphs"
+          transform="translate(0 1129) scale(1 1.2143) translate(0 -1129)">Part 1</text>
+    <path class="arrow-shaft" data-connector="true" d="M716 1118H747"/>
+    <polygon class="arrow-head" points="746,1110 746,1126 767,1118"/>
+    <text x="770" y="1129">ETag 1</text>
+    <text x="623" y="1176" style="font-size:28px" textLength="88" lengthAdjust="spacingAndGlyphs"
+          transform="translate(0 1176) scale(1 1.2143) translate(0 -1176)">Part 2</text>
+    <path class="arrow-shaft" data-connector="true" d="M716 1165H747"/>
+    <polygon class="arrow-head" points="746,1157 746,1173 767,1165"/>
+    <text x="770" y="1176">ETag 2</text>
+    <text class="ellipsis" x="721" y="1223">.....</text>
+    <text x="623" y="1274" style="font-size:28px" textLength="88" lengthAdjust="spacingAndGlyphs"
+          transform="translate(0 1274) scale(1 1.2143) translate(0 -1274)">Part 8</text>
+    <path class="arrow-shaft" data-connector="true" d="M716 1263H747"/>
+    <polygon class="arrow-head" points="746,1255 746,1271 767,1263"/>
+    <text x="770" y="1274">ETag 8</text>
+  </g>
+
+  <!-- 6. The data store confirms success. -->
+  <g id="success-response">
+    <path class="arrow-shaft" data-connector="true" d="M1029 1329H712"/>
+    <path class="arrow-shaft" data-connector="true" d="M537 1329H259"/>
+    <polygon class="arrow-head" points="260,1320 260,1338 239,1329"/>
+    <circle class="number-circle" cx="552" cy="1329" r="15"/>
+    <text class="number" x="552" y="1339">6</text>
+    <text x="570" y="1342">Success</text>
+  </g>
+</svg>

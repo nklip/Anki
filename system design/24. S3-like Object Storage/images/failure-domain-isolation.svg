@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1652" height="1148" viewBox="0 0 1652 1148"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Failure-domain isolation across availability zones</title>
+  <desc id="desc">Three availability zones have independent power and networking. Each zone contains two racks with two nodes, and data is replicated bidirectionally among all three zones.</desc>
+
+  <!-- Shared high-contrast boxes, labels, and manually joined arrow geometry. -->
+  <defs>
+    <style>
+      .canvas { fill: #fff; }
+      .zone, .rack, .node { fill: #fff; stroke: #000; stroke-width: 2.2; }
+      .zone-label, .rack-label, .node-label, .flow-label {
+        fill: #000;
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 400;
+        text-anchor: middle;
+      }
+      .zone-label { font-size: 34px; }
+      .zone-detail { font-size: 32px; }
+      .rack-label, .node-label, .flow-label { font-size: 34px; }
+      .arrow-shaft { fill: none; stroke: #000; stroke-width: 2.2; }
+      .arrow-head { fill: #000; }
+    </style>
+  </defs>
+
+  <rect class="canvas" width="1652" height="1148"/>
+
+  <!-- AZ 1: upper failure domain. -->
+  <g id="availability-zone-one">
+    <rect class="zone" x="566" y="24" width="576" height="404"/>
+    <text class="zone-label" x="854" y="76">AZ 1</text>
+    <text class="zone-label zone-detail" x="854" y="118">(Independent power and networking)</text>
+
+    <rect class="rack" x="616" y="147" width="200" height="251"/>
+    <text class="rack-label" x="716" y="194">Rack 1</text>
+    <rect class="node" x="640" y="216" width="151" height="69"/>
+    <text class="node-label" x="715.5" y="263">Node 1</text>
+    <rect class="node" x="640" y="300" width="151" height="69"/>
+    <text class="node-label" x="715.5" y="347">Node 2</text>
+
+    <rect class="rack" x="893" y="147" width="200" height="251"/>
+    <text class="rack-label" x="993" y="194">Rack 2</text>
+    <rect class="node" x="917" y="216" width="151" height="69"/>
+    <text class="node-label" x="992.5" y="263">Node 1</text>
+    <rect class="node" x="917" y="300" width="151" height="69"/>
+    <text class="node-label" x="992.5" y="347">Node 2</text>
+  </g>
+
+  <!-- AZ 3: lower-left failure domain. -->
+  <g id="availability-zone-three">
+    <rect class="zone" x="107" y="715" width="576" height="403"/>
+    <text class="zone-label" x="395" y="768">AZ 3</text>
+    <text class="zone-label zone-detail" x="395" y="810">(Independent power and networking)</text>
+
+    <rect class="rack" x="157" y="838" width="200" height="251"/>
+    <text class="rack-label" x="257" y="885">Rack 1</text>
+    <rect class="node" x="181" y="907" width="151" height="70"/>
+    <text class="node-label" x="256.5" y="954">Node 1</text>
+    <rect class="node" x="181" y="990" width="151" height="70"/>
+    <text class="node-label" x="256.5" y="1037">Node 2</text>
+
+    <rect class="rack" x="433" y="838" width="200" height="251"/>
+    <text class="rack-label" x="533" y="885">Rack 2</text>
+    <rect class="node" x="458" y="907" width="151" height="70"/>
+    <text class="node-label" x="533.5" y="954">Node 1</text>
+    <rect class="node" x="458" y="990" width="151" height="70"/>
+    <text class="node-label" x="533.5" y="1037">Node 2</text>
+  </g>
+
+  <!-- AZ 2: lower-right failure domain. -->
+  <g id="availability-zone-two">
+    <rect class="zone" x="1029" y="715" width="576" height="403"/>
+    <text class="zone-label" x="1317" y="768">AZ 2</text>
+    <text class="zone-label zone-detail" x="1317" y="810">(Independent power and networking)</text>
+
+    <rect class="rack" x="1079" y="838" width="200" height="251"/>
+    <text class="rack-label" x="1179" y="885">Rack 1</text>
+    <rect class="node" x="1103" y="907" width="151" height="70"/>
+    <text class="node-label" x="1178.5" y="954">Node 1</text>
+    <rect class="node" x="1103" y="990" width="151" height="70"/>
+    <text class="node-label" x="1178.5" y="1037">Node 2</text>
+
+    <rect class="rack" x="1355" y="838" width="200" height="251"/>
+    <text class="rack-label" x="1455" y="885">Rack 2</text>
+    <rect class="node" x="1380" y="907" width="151" height="70"/>
+    <text class="node-label" x="1455.5" y="954">Node 1</text>
+    <rect class="node" x="1380" y="990" width="151" height="70"/>
+    <text class="node-label" x="1455.5" y="1037">Node 2</text>
+  </g>
+
+  <!-- AZ 1 ↔ AZ 3 replication; shafts terminate inside independently drawn heads. -->
+  <g id="zone-one-three-replication">
+    <path id="az3-to-az1-shaft" class="arrow-shaft" data-connector="true" d="M647 537L709.9 443.9"/>
+    <polygon id="az3-to-az1-head" class="arrow-head" points="720,429 714.6,449.5 703,441.7"/>
+    <path id="az1-to-az3-shaft" class="arrow-shaft" data-connector="true" d="M609 596L539.1 699.1"/>
+    <polygon id="az1-to-az3-head" class="arrow-head" points="529,714 534.4,693.5 546,701.4"/>
+    <text class="flow-label" x="628" y="579">Replicate</text>
+  </g>
+
+  <!-- AZ 1 ↔ AZ 2 replication. -->
+  <g id="zone-one-two-replication">
+    <path id="az2-to-az1-shaft" class="arrow-shaft" data-connector="true" d="M1066 540L1000.2 443.9"/>
+    <polygon id="az2-to-az1-head" class="arrow-head" points="990,429 1007.1,441.5 995.5,449.5"/>
+    <path id="az1-to-az2-shaft" class="arrow-shaft" data-connector="true" d="M1105 599L1171.1 699"/>
+    <polygon id="az1-to-az2-head" class="arrow-head" points="1181,714 1164.1,701.2 1175.8,693.5"/>
+    <text class="flow-label" x="1085" y="582">Replicate</text>
+  </g>
+
+  <!-- AZ 3 ↔ AZ 2 replication crosses the lower gap without touching its label. -->
+  <g id="zone-three-two-replication">
+    <path id="az2-to-az3-shaft" class="arrow-shaft" data-connector="true" d="M778 917H702"/>
+    <polygon id="az2-to-az3-head" class="arrow-head" points="684,917 704,910 704,924"/>
+    <path id="az3-to-az2-shaft" class="arrow-shaft" data-connector="true" d="M944 917H1010"/>
+    <polygon id="az3-to-az2-head" class="arrow-head" points="1028,917 1008,910 1008,924"/>
+    <text class="flow-label" x="861" y="929">Replicate</text>
+  </g>
+</svg>

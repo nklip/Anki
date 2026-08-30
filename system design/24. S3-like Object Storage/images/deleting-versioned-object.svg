@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1850" height="896" viewBox="0 0 1850 896"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Deleting a versioned object</title>
+  <desc id="desc">A new current version contains a delete marker while three previous metadata versions still reference their corresponding stored object IDs in the data store.</desc>
+
+  <!-- Shared typography, metadata styles, and compact arrowheads. -->
+  <defs>
+    <marker id="arrowhead" markerWidth="22" markerHeight="16" refX="22" refY="8"
+            viewBox="0 0 22 16" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L22 8L0 16Z" fill="#000"/>
+    </marker>
+    <style>
+      .canvas { fill: #fff; }
+      .frame, .record, .version-box, .object-box {
+        fill: #fff;
+        stroke: #000;
+        stroke-width: 2.2;
+      }
+      .delete-fill { fill: #f7a7f5; }
+      .heading, .label, .record-text {
+        fill: #000;
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 400;
+      }
+      .heading { font-size: 35px; }
+      .label { font-size: 34px; }
+      .record-text { font-size: 34px; }
+      .version-text { letter-spacing: 1.7px; }
+      .center { text-anchor: middle; }
+      .connector { fill: none; stroke: #000; stroke-width: 2.2; }
+      .arrow { fill: none; stroke: #000; stroke-width: 2.2; marker-end: url(#arrowhead); }
+      .dashed-arrow { fill: none; stroke: #000; stroke-width: 2.2; stroke-dasharray: 9 7; marker-end: url(#arrowhead); }
+      .object-blob { fill: #fff; stroke: #000; stroke-width: 2.2; }
+    </style>
+  </defs>
+
+  <rect class="canvas" width="1850" height="896"/>
+
+  <!-- Store boundaries and section headings. -->
+  <g id="store-frames">
+    <rect class="frame" x="251" y="87" width="886" height="774"/>
+    <text class="heading" x="553" y="78">Metadata Store</text>
+
+    <rect class="frame" x="1243" y="360" width="565" height="501"/>
+    <text class="heading" x="1446" y="353">Data Store</text>
+  </g>
+
+  <!-- Explanatory annotations identify the new and former current versions. -->
+  <g id="version-annotations">
+    <text class="heading" x="165" y="49">Current version</text>
+    <path id="current-version-annotation" class="dashed-arrow" d="M300 62L414 167"/>
+
+    <text class="label" x="69" y="249">
+      <tspan x="69">Previous</tspan>
+      <tspan x="80" dy="39">current</tspan>
+      <tspan x="80" dy="39">version</tspan>
+    </text>
+    <path id="previous-version-annotation" class="dashed-arrow" d="M210 301L359 348"/>
+  </g>
+
+  <!-- Upward timeline shows the progression from oldest to newest version. -->
+  <path id="version-timeline" class="arrow" d="M667 846V109"/>
+
+  <!-- Current version: deletion adds metadata only, with no data-store object. -->
+  <g id="current-delete-version">
+    <rect class="version-box" x="269" y="168" width="340" height="51"/>
+    <!-- Horizontal condensation plus letter spacing preserves the etalon width with safer bounds. -->
+    <text class="record-text version-text" x="276" y="206"
+          transform="translate(276 0) scale(.895 1) translate(-276 0)">object_version = kk1h</text>
+    <path id="current-version-link" class="arrow" d="M609 194H720"/>
+
+    <rect class="record" x="721" y="165" width="385" height="114"/>
+    <rect class="delete-fill" x="722.1" y="222" width="382.8" height="55.9"/>
+    <path class="connector" data-connector="true" d="M721 222H1106"/>
+    <text class="record-text" x="742" y="206">object_name=script.txt</text>
+    <text class="record-text center" x="913.5" y="263">Delete Marker</text>
+  </g>
+
+  <!-- Previous metadata versions retain their object IDs. -->
+  <g id="previous-metadata-versions">
+    <text class="record-text version-text" x="280" y="387"
+          transform="translate(280 0) scale(.895 1) translate(-280 0)">object_version = fas3</text>
+    <path id="fas3-version-link" class="arrow" d="M625 374H720"/>
+    <rect class="record" x="721" y="346" width="385" height="113"/>
+    <path class="connector" data-connector="true" d="M721 403H1106"/>
+    <text class="record-text" x="742" y="388">object_name=script.txt</text>
+    <text class="record-text center" x="913.5" y="444">object_id=0xM13n</text>
+
+    <text class="record-text version-text" x="283" y="568"
+          transform="translate(283 0) scale(.895 1) translate(-283 0)">object_version = bn31</text>
+    <path id="bn31-version-link" class="arrow" d="M625 555H720"/>
+    <rect class="record" x="721" y="527" width="385" height="114"/>
+    <path class="connector" data-connector="true" d="M721 584H1106"/>
+    <text class="record-text" x="742" y="569">object_name=script.txt</text>
+    <text class="record-text center" x="913.5" y="625">object_id=0x12Ha</text>
+
+    <text class="record-text version-text" x="290" y="749"
+          transform="translate(290 0) scale(.895 1) translate(-290 0)">object_version = 1ag1</text>
+    <path id="oneag1-version-link" class="arrow" d="M638 737H720"/>
+    <rect class="record" x="721" y="708" width="385" height="114"/>
+    <path class="connector" data-connector="true" d="M721 765H1106"/>
+    <text class="record-text" x="742" y="750">object_name=script.txt</text>
+    <text class="record-text center" x="913.5" y="806">object_id=0x91b4</text>
+  </g>
+
+  <!-- Dashed references join metadata IDs to their data-store entries. -->
+  <g id="metadata-to-data-links">
+    <path id="fas3-object-reference" class="dashed-arrow" d="M1106 431H1288"/>
+    <path id="bn31-object-reference" class="dashed-arrow" d="M1106 612H1288"/>
+    <path id="oneag1-object-reference" class="dashed-arrow" d="M1106 794H1288"/>
+  </g>
+
+  <!-- Stored objects remain present for every version preceding the delete marker. -->
+  <g id="stored-objects">
+    <rect class="object-box" x="1289" y="403" width="322" height="57"/>
+    <text class="record-text center" x="1450" y="444">object_id=0xM13n</text>
+    <path id="fas3-object-link" class="connector" d="M1611 431H1686"/>
+    <rect class="object-blob" x="1686" y="391" width="82" height="81" rx="20"/>
+
+    <rect class="object-box" x="1289" y="584" width="322" height="57"/>
+    <text class="record-text center" x="1450" y="625">object_id=0x12Ha</text>
+    <path id="bn31-object-link" class="connector" d="M1611 612H1686"/>
+    <rect class="object-blob" x="1686" y="572" width="82" height="82" rx="20"/>
+
+    <rect class="object-box" x="1289" y="765" width="322" height="57"/>
+    <text class="record-text center" x="1450" y="806">object_id=0x91b4</text>
+    <path id="oneag1-object-link" class="connector" d="M1611 794H1686"/>
+    <rect class="object-blob" x="1686" y="753" width="82" height="82" rx="20"/>
+  </g>
+</svg>

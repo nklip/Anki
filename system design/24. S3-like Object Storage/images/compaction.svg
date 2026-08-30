@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1650" height="1344" viewBox="0 0 1650 1344"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Object-store file compaction</title>
+  <desc id="desc">Before compaction, deleted objects leave gaps in a read-only file. Live objects are copied into a smaller file and the object mapping table is updated with a new file name and offset.</desc>
+
+  <!-- Reusable style and compact arrowhead used by every transfer path. -->
+  <defs>
+    <marker id="arrowhead" markerWidth="16" markerHeight="16" refX="14" refY="8"
+            viewBox="0 0 16 16" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L16 8L0 16Z" fill="#000"/>
+    </marker>
+    <style>
+      .canvas { fill: #fff; }
+      .panel, .table, .file { fill: #fff; stroke: #000; stroke-width: 2; }
+      .line { fill: none; stroke: #000; stroke-width: 2; }
+      .deleted { fill: #ccc; stroke: #000; stroke-width: 2; }
+      .live { fill: #ffc0ff; stroke: #000; stroke-width: 2; }
+      .text { fill: #000; font-family: Arial, Helvetica, sans-serif; font-size: 34px; font-weight: 400; }
+      .center { text-anchor: middle; }
+      .flow { fill: none; stroke: #000; stroke-width: 2; marker-end: url(#arrowhead); }
+      .copy-flow { stroke-dasharray: 10 8; }
+      .dash { fill: none; stroke: #000; stroke-width: 2; stroke-dasharray: 10 8; }
+      .step { fill: #fff; stroke: #000; stroke-width: 2; }
+      .step-text { fill: #000; font-family: Arial, Helvetica, sans-serif; font-size: 27px; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect class="canvas" width="1650" height="1344"/>
+
+  <!-- Before/after state boundaries. -->
+  <rect class="panel" x="55" y="32" width="717" height="1249"/>
+  <rect class="panel" x="874" y="32" width="716" height="1249"/>
+
+  <!-- Object mapping tables. -->
+  <g id="mapping-table-before">
+    <text class="text center" x="417" y="72">object_mapping table</text>
+    <rect class="table" x="93" y="92" width="648" height="218"/>
+    <path class="line" d="M93 136H741 M93 179H741 M93 222H741 M93 265H741 M255 92V310 M417 92V310 M579 92V310"/>
+    <text class="text center" x="174" y="126">obj_id</text>
+    <text class="text center" x="336" y="126">file_name</text>
+    <text class="text center" x="498" y="126">offset</text>
+    <text class="text center" x="660" y="126">obj_size</text>
+    <text class="text center" x="174" y="299">object 3</text>
+    <text class="text center" x="336" y="299">/data/b</text>
+    <text class="text center" x="498" y="299">0x232B3</text>
+  </g>
+
+  <g id="mapping-table-after">
+    <text class="text center" x="1232" y="72">object_mapping table</text>
+    <rect class="table" x="909" y="92" width="646" height="218"/>
+    <path class="line" d="M909 136H1555 M909 179H1555 M909 222H1555 M909 265H1555 M1070 92V310 M1232 92V310 M1393 92V310"/>
+    <text class="text center" x="990" y="126">obj_id</text>
+    <text class="text center" x="1151" y="126">file_name</text>
+    <text class="text center" x="1312" y="126">offset</text>
+    <text class="text center" x="1474" y="126">obj_size</text>
+    <text class="text center" x="990" y="299">object 3</text>
+    <text class="text center" x="1151" y="299">/data/d</text>
+    <text class="text center" x="1312" y="299">0x10013</text>
+  </g>
+
+  <!-- Read-only file before compaction, including deleted gray objects. -->
+  <g id="file-before">
+    <text class="text center" x="416.5" y="505">/data/b</text>
+    <rect class="file" x="280" y="515" width="273" height="702"/>
+    <path class="line" d="M280 635H553 M280 720H553 M280 762H553 M280 970H553 M280 1055H553 M280 1176H553"/>
+    <rect class="deleted" x="280" y="635" width="273" height="85"/>
+    <rect class="live" x="280" y="720" width="273" height="42"/>
+    <rect class="deleted" x="280" y="970" width="273" height="85"/>
+    <text class="text center" x="416.5" y="690">Object 2</text>
+    <text class="text center" x="416.5" y="753">Object 3</text>
+    <text class="text center" x="416.5" y="1025">Object 5</text>
+    <text x="246" y="690" fill="#ff2600" font-family="Arial, Helvetica, sans-serif" font-size="36">X</text>
+    <text x="246" y="1024" fill="#ff2600" font-family="Arial, Helvetica, sans-serif" font-size="36">X</text>
+    <text class="text center" x="416.5" y="1250">Read-only File</text>
+  </g>
+
+  <!-- Compacted destination file; only Object 3 is called out in the etalon. -->
+  <g id="file-after">
+    <text class="text center" x="1231.5" y="505">/data/d</text>
+    <rect class="file" x="1095" y="515" width="273" height="533"/>
+    <path class="line" d="M1095 635H1368 M1095 677H1368 M1095 886H1368 M1095 1006H1368"/>
+    <rect class="live" x="1095" y="635" width="273" height="42"/>
+    <text class="text center" x="1231.5" y="669">Object 3</text>
+    <text class="text center" x="1231.5" y="1081">Read-only File</text>
+  </g>
+
+  <!-- Dashed arrows explain where file names, offsets, and live object ranges move. -->
+  <g id="object-copy-flows">
+    <path class="flow copy-flow" d="M345 310C364 357 390 414 407 471"/>
+    <path class="flow copy-flow" d="M522 310C640 428 675 570 553 720"/>
+    <path class="flow copy-flow" d="M1156 310C1175 356 1205 414 1223 471"/>
+    <path class="flow copy-flow" d="M1344 310C1442 425 1449 538 1368 635"/>
+    <path class="flow copy-flow" d="M553 575H1095"/>
+    <!-- Step 1 creates a real gap in this dashed shaft; the circle below fills it. -->
+    <path class="dash" d="M553 741L807 701"/>
+    <path class="flow copy-flow" d="M837 693L1095 656"/>
+    <path class="flow copy-flow" d="M553 861L1095 783"/>
+    <path class="flow copy-flow" d="M553 1114L1095 956"/>
+    <path class="flow copy-flow" d="M553 1194L1095 1030"/>
+  </g>
+
+  <!-- Solid arrows update the file name and offset in the mapping table. -->
+  <g id="mapping-update-flows">
+    <!-- Each numbered step is a true interruption, not a line hidden behind text. -->
+    <path class="line" d="M542 265C650 225 740 201 807 199"/>
+    <path class="flow" d="M837 199C950 196 1080 215 1252 265"/>
+    <path class="line" d="M376 310C520 380 680 389 807 383"/>
+    <path class="flow" d="M837 383C920 374 1000 347 1095 310"/>
+  </g>
+
+  <!-- Step markers are painted last so they interrupt the underlying routes cleanly. -->
+  <g id="step-labels">
+    <circle class="step" cx="822" cy="199" r="15"/>
+    <text class="step-text" x="822" y="208">2</text>
+    <circle class="step" cx="822" cy="383" r="15"/>
+    <text class="step-text" x="822" y="392">2</text>
+    <circle class="step" cx="822" cy="695" r="15"/>
+    <text class="step-text" x="822" y="704">1</text>
+  </g>
+
+  <!-- State captions. -->
+  <text class="text center" x="413.5" y="1314">Before Compaction</text>
+  <text class="text center" x="1232" y="1314">After Compaction</text>
+</svg>

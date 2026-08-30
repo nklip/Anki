@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1638" height="1110" viewBox="0 0 1638 1110"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Uploading an object to the object store</title>
+  <desc id="desc">A client creates a bucket and an object through the load balancer and API service. Identity and access management validates each request, metadata is stored in the metadata database, and the object is uploaded to the primary data service and replicated to two secondary storage nodes.</desc>
+
+  <!-- Shared from the companion download diagram: typography, stores, badges, and compact arrows. -->
+  <defs>
+    <marker id="arrowhead" viewBox="0 0 20 15" refX="20" refY="7.5"
+            markerWidth="20" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L20 7.5L0 15Z" fill="#000"/>
+    </marker>
+    <marker id="tick-arrow" viewBox="0 0 10 7" refX="10" refY="3.5"
+            markerWidth="10" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L10 3.5L0 7Z" fill="#000"/>
+    </marker>
+    <style>
+      .canvas{fill:#fff}
+      text{font-family:Arial,Helvetica,sans-serif;fill:#000}
+      .node-label{font-size:33px;text-anchor:middle}
+      .flow-label{font-size:29px;text-anchor:middle}
+      .path-label{font-family:monospace;font-size:27.8px}
+      .small-label{font-size:25px;text-anchor:middle}
+      .box{fill:#fff;stroke:#000;stroke-width:2}
+      .panel{fill:#fff;stroke:#000;stroke-width:2.3}
+      .group{fill:none;stroke:#000;stroke-width:2.3;stroke-dasharray:10 6.3}
+      .store{fill:#fff;stroke:#000;stroke-width:2}
+      .glyph{fill:#000}
+      .connector{fill:none;stroke:#000;stroke-width:2}
+      .arrow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrowhead)}
+      .tree{fill:none;stroke:#000;stroke-width:1.5}
+      .tree-arrow{fill:none;stroke:#000;stroke-width:1.5;marker-end:url(#tick-arrow)}
+      .badge{fill:#fff;stroke:#000;stroke-width:2}
+    </style>
+
+    <!-- Cylinder reused for the metadata database and all storage disks. -->
+    <symbol id="cylinder" viewBox="0 0 67 67">
+      <path class="store" d="M1 7.5V59.5A32.5 6.5 0 0 0 66 59.5V7.5"/>
+      <ellipse class="store" cx="33.5" cy="7.5" rx="32.5" ry="6.5"/>
+    </symbol>
+
+    <!-- These adjacent digits are one reusable visual unit above the authorization label. -->
+    <symbol id="authorization-badge-numbers" viewBox="0 0 68 30">
+      <text class="flow-label" x="15" y="25.7">2</text>
+      <text class="flow-label" x="53" y="25.7">5</text>
+    </symbol>
+  </defs>
+
+  <rect class="canvas" width="1638" height="1110"/>
+
+  <!-- Client and the two upload operations entering the same load balancer. -->
+  <g id="client" class="glyph">
+    <circle cx="689.5" cy="60.5" r="16.5"/>
+    <path d="M657 109V99A32.5 14 0 0 1 722 99V109Z"/>
+  </g>
+  <path id="client-load-balancer-arrow" class="arrow" d="M689 110V264"/>
+
+  <text class="flow-label" x="448" y="159" style="text-anchor:start">HTTP PUT:</text>
+  <g id="step-1">
+    <circle class="badge" cx="428" cy="181" r="14.75"/>
+    <text class="flow-label" x="428" y="191.7">1</text>
+  </g>
+  <text class="flow-label" x="448" y="192" style="text-anchor:start">Create bucket</text>
+  <g transform="scale(.82 1)">
+    <text class="path-label" x="546.34" y="225">/bucket-to-share</text>
+  </g>
+
+  <text class="flow-label" x="750" y="160" style="text-anchor:start">HTTP PUT:</text>
+  <g id="step-4">
+    <circle class="badge" cx="726" cy="181" r="14.75"/>
+    <text class="flow-label" x="726" y="191.7">4</text>
+  </g>
+  <text class="flow-label" x="750" y="194" style="text-anchor:start">Create object</text>
+  <text class="path-label" x="750" y="225">script.txt</text>
+
+  <!-- Load balancer: the same fan-out glyph used by download-object.svg. -->
+  <text class="node-label" x="497" y="317">Load balancer</text>
+  <g id="load-balancer">
+    <rect class="box" x="615" y="265" width="148" height="80"/>
+    <rect class="box" x="679" y="276" width="21" height="13"/>
+    <path class="connector" data-connector="true" d="M689.5 289V305.5"/>
+    <path class="tree" data-connector="true" d="M646.5 305.5H731.5"/>
+    <path class="tree-arrow" d="M646.5 305.5V320.5"/>
+    <path class="tree-arrow" d="M689.5 305.5V320.5"/>
+    <path class="tree-arrow" d="M731.5 305.5V320.5"/>
+    <rect class="box" x="636" y="322" width="21" height="13"/>
+    <rect class="box" x="679" y="322" width="21" height="13"/>
+    <rect class="box" x="721" y="322" width="21" height="13"/>
+  </g>
+  <path id="load-balancer-api-arrow" class="arrow" d="M689 346V501"/>
+
+  <!-- API service coordinates the authorization, metadata, and data-store writes. -->
+  <rect id="api-service" class="box" x="542" y="502" width="295" height="47"/>
+  <text class="node-label" x="689.5" y="537">API Service</text>
+
+  <!-- Identity and access management: open box and padlock reused from the download flow. -->
+  <g id="iam">
+    <path class="box" d="M151 489H240V572H151Z"/>
+    <path class="box" d="M151 489L161 479H250L240 489Z"/>
+    <path class="box" d="M240 489L250 479V562L240 572Z"/>
+    <path fill="none" stroke="#000" stroke-width="3.5" d="M234.5 562V556.5A8 8 0 0 1 250.5 556.5V562"/>
+    <rect class="glyph" x="227" y="560" width="31" height="27" rx="3"/>
+    <g fill="#fff">
+      <circle cx="243.3" cy="572.8" r="2.8"/>
+      <path d="M242 572L245.5 575.5L238.9 576.2Z"/>
+    </g>
+  </g>
+  <text class="node-label" x="201" y="620">
+    <tspan x="201">Identity &amp; Access</tspan>
+    <tspan x="201" dy="38">Management</tspan>
+  </text>
+
+  <!-- Authorization is split around its three-line label to preserve text clearance. -->
+  <path id="api-iam-connector" class="connector" data-connector="true" d="M541 525.5H504"/>
+  <path id="api-iam-arrow" class="arrow" d="M309 525.5H251"/>
+  <g id="authorization-steps">
+    <circle class="badge" cx="389" cy="456" r="14.75"/>
+    <circle class="badge" cx="427" cy="456" r="14.75"/>
+    <use href="#authorization-badge-numbers" x="374" y="441" width="68" height="30"/>
+  </g>
+  <text class="flow-label" x="407" y="500">
+    <tspan x="407">Identity</tspan>
+    <tspan x="407" dy="33" style="font-size:25px"
+           textLength="181" lengthAdjust="spacingAndGlyphs">validation and</tspan>
+    <tspan x="407" dy="34" style="font-size:25px"
+           textLength="174" lengthAdjust="spacingAndGlyphs">authorization</tspan>
+  </text>
+
+  <!-- Metadata creation: labels flank the shared downward write to the metadata service. -->
+  <path id="api-metadata-arrow" class="arrow" d="M689 550V764"/>
+  <g id="step-3">
+    <circle class="badge" cx="469" cy="636" r="14.75"/>
+    <text class="flow-label" x="469" y="646.7">3</text>
+  </g>
+  <text class="flow-label" x="580" y="630">
+    <tspan x="580">Create bucket</tspan>
+    <tspan x="580" dy="33">metadata</tspan>
+  </text>
+  <g id="step-7">
+    <circle class="badge" cx="726" cy="636" r="14.75"/>
+    <text class="flow-label" x="726" y="646.7">7</text>
+  </g>
+  <text class="flow-label" x="840" y="630">
+    <tspan x="840">Create object</tspan>
+    <tspan x="840" dy="33">metadata</tspan>
+  </text>
+
+  <g id="metadata-store">
+    <rect class="group" x="487" y="711" width="407" height="334"/>
+    <rect class="box" x="521" y="765" width="336" height="47"/>
+    <text class="node-label" x="689" y="800">Metadata Service</text>
+    <path id="metadata-database-arrow" class="arrow" d="M689 813V915"/>
+    <use href="#cylinder" x="656" y="916" width="67" height="67"/>
+    <text class="node-label" x="689.5" y="1014">Metadata DB</text>
+    <text class="node-label" x="690.5" y="1077">Metadata Store</text>
+  </g>
+
+  <!-- Data store: the primary receives the upload and replicates to two secondaries. -->
+  <g id="data-store">
+    <rect class="group" x="1050" y="162" width="518" height="727"/>
+
+    <g id="secondary-storage-node-top">
+      <rect class="panel" x="1088" y="201" width="441" height="183"/>
+      <text class="node-label" x="1445.5" y="234">Secondary</text>
+      <rect class="box" x="1120" y="245" width="179" height="94"/>
+      <text class="node-label" x="1209.5" y="284">
+        <tspan x="1209.5">Data</tspan>
+        <tspan x="1209.5" dy="39">Service</tspan>
+      </text>
+      <use href="#cylinder" x="1430" y="259" width="67" height="67"/>
+      <path id="top-service-disk-arrow" class="arrow" d="M1299 292H1429"/>
+      <text class="small-label" x="1445.5" y="375">Storage Node</text>
+    </g>
+
+    <g id="primary-storage-node">
+      <rect class="panel" x="1088" y="434" width="441" height="183"/>
+      <text class="node-label" x="1471" y="467">Primary</text>
+      <rect class="box" x="1120" y="478" width="179" height="94"/>
+      <text class="node-label" x="1209.5" y="518">
+        <tspan x="1209.5">Data</tspan>
+        <tspan x="1209.5" dy="38">Service</tspan>
+      </text>
+      <use href="#cylinder" x="1430" y="492" width="67" height="67"/>
+      <path id="primary-service-disk-arrow" class="arrow" d="M1299 525H1429"/>
+      <text class="small-label" x="1445.5" y="608">Storage Node</text>
+    </g>
+
+    <g id="secondary-storage-node-bottom">
+      <rect class="panel" x="1088" y="667" width="441" height="183"/>
+      <text class="node-label" x="1448" y="700">Secondary</text>
+      <rect class="box" x="1120" y="711" width="179" height="95"/>
+      <text class="node-label" x="1209.5" y="751">
+        <tspan x="1209.5">Data</tspan>
+        <tspan x="1209.5" dy="38">Service</tspan>
+      </text>
+      <use href="#cylinder" x="1430" y="725" width="67" height="67"/>
+      <path id="bottom-service-disk-arrow" class="arrow" d="M1299 758H1429"/>
+      <text class="small-label" x="1445.5" y="841">Storage Node</text>
+    </g>
+
+    <path id="replication-up-arrow" class="arrow" d="M1209 478V340"/>
+    <path id="replication-down-arrow" class="arrow" d="M1209 572V710"/>
+    <text class="node-label" x="1309" y="922">Data Store</text>
+  </g>
+
+  <!-- Step 6: the API sends the object bytes to the primary data service. -->
+  <path id="api-upload-connector" class="connector" data-connector="true" d="M837 525.5H890"/>
+  <path id="api-upload-arrow" class="arrow" d="M991 525.5H1119"/>
+  <g id="step-6">
+    <circle class="badge" cx="941" cy="471" r="14.75"/>
+    <text class="flow-label" x="941" y="481.7">6</text>
+  </g>
+  <text class="flow-label" x="941" y="520">
+    <tspan x="941">Upload</tspan>
+    <tspan x="941" dy="33">object</tspan>
+  </text>
+</svg>

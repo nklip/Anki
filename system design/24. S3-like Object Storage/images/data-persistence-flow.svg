@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1842" height="846" viewBox="0 0 1842 846"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Object data persistence flow</title>
+  <desc id="desc">An API service writes through a data-routing service. Placement selects the primary data node, heartbeats report node health, and the primary replicates data to two secondary nodes before the object ID is returned.</desc>
+
+  <!-- Shared geometry and repair-safe arrowhead. -->
+  <defs>
+    <marker id="arrowhead" markerWidth="22" markerHeight="16" refX="22" refY="8"
+            viewBox="0 0 22 16" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L22 8L0 16Z" fill="#000"/>
+    </marker>
+    <style>
+      .canvas { fill: #fff; }
+      .frame, .service-box { fill: #fff; stroke: #000; stroke-width: 2; }
+      .label { fill: #000; font-family: Arial, Helvetica, sans-serif; font-size: 34px; font-weight: 400; }
+      .detail { fill: #000; font-family: Arial, Helvetica, sans-serif; font-size: 30px; font-weight: 400; }
+      .center { text-anchor: middle; }
+      .connector { fill: none; stroke: #000; stroke-width: 2; }
+      .arrow { fill: none; stroke: #000; stroke-width: 2; marker-end: url(#arrowhead); }
+      .step { fill: #fff; stroke: #000; stroke-width: 2; }
+      .step-number { fill: #000; font-family: Arial, Helvetica, sans-serif; font-size: 27px; text-anchor: middle; }
+      .disk-stroke { fill: none; stroke: #555; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+
+    <!-- Source-native disk glyph used for each data node. -->
+    <g id="disk-node">
+      <rect x="0" y="0" width="72" height="88" rx="2" fill="#fff" stroke="#555" stroke-width="3"/>
+      <path class="disk-stroke" d="M20 10H52"/>
+      <circle cx="9" cy="10" r="2.5" class="disk-stroke"/>
+      <circle cx="63" cy="10" r="2.5" class="disk-stroke"/>
+      <circle cx="9" cy="78" r="2.5" class="disk-stroke"/>
+      <circle cx="63" cy="78" r="2.5" class="disk-stroke"/>
+      <circle cx="36" cy="44" r="23" class="disk-stroke"/>
+      <circle cx="36" cy="44" r="7" class="disk-stroke"/>
+      <path class="disk-stroke" d="M42 50L55 68"/>
+    </g>
+  </defs>
+
+  <rect class="canvas" width="1842" height="846"/>
+
+  <!-- Data-store boundary and service nodes. -->
+  <rect class="frame" x="467" y="34" width="1330" height="783"/>
+  <text class="label" x="520" y="94">Data Store</text>
+
+  <rect class="service-box" x="50" y="381" width="183" height="95"/>
+  <text class="label center" x="141.5" y="421">
+    <tspan x="141.5">API</tspan>
+    <tspan x="141.5" dy="37">Service</tspan>
+  </text>
+
+  <rect class="service-box" x="500" y="381" width="220" height="95"/>
+  <text class="label center" x="610" y="421">
+    <tspan x="610">Data Routing</tspan>
+    <tspan x="610" dy="37">Service</tspan>
+  </text>
+
+  <rect class="service-box" x="990" y="381" width="183" height="95"/>
+  <text class="label center" x="1081.5" y="421">
+    <tspan x="1081.5">Placement</tspan>
+    <tspan x="1081.5" dy="37">Service</tspan>
+  </text>
+
+  <!-- Write request and object-ID reply. Labels are painted over deliberate shaft gaps. -->
+  <g id="client-request-flow">
+    <path class="connector" d="M233 394L268 385"/>
+    <path class="arrow" d="M440 385L500 394"/>
+    <circle class="step" cx="295" cy="379" r="15"/>
+    <text class="step-number" x="295" y="388">1</text>
+    <text class="detail" x="320" y="390" style="font-size:25px">Write data</text>
+
+    <path class="connector" d="M500 465L460 473"/>
+    <path class="arrow" d="M275 472L233 469"/>
+    <circle class="step" cx="295" cy="484" r="15"/>
+    <text class="step-number" x="295" y="493">5</text>
+    <text class="detail center" x="385" y="477">Reply with</text>
+    <text class="detail center" x="385" y="513">ObjId</text>
+  </g>
+
+  <!-- Placement lookup is bidirectional; the central explanation occupies the line gap. -->
+  <g id="placement-lookup-flow">
+    <path class="arrow" d="M770 428H720"/>
+    <path class="arrow" d="M938 428H990"/>
+    <circle class="step" cx="852" cy="326" r="15"/>
+    <text class="step-number" x="852" y="335">2</text>
+    <text class="detail center" x="854" y="370">Choose</text>
+    <text class="detail center" x="854" y="406">primary by</text>
+    <text class="detail center" x="854" y="442">consulting</text>
+    <text class="detail center" x="854" y="478">placement</text>
+    <text class="detail center" x="854" y="514">service</text>
+  </g>
+
+  <!-- Primary, middle-secondary, and lower-secondary data nodes. -->
+  <g id="data-nodes">
+    <text class="label center" x="1529" y="80">Data Node</text>
+    <use href="#disk-node" x="1493" y="90" width="72" height="88"/>
+    <text class="label" x="1571" y="146">Primary</text>
+
+    <use href="#disk-node" x="1493" y="385" width="72" height="88"/>
+    <text class="label center" x="1529" y="503">Data Node</text>
+    <text class="label center" x="1529" y="545">Secondary</text>
+
+    <use href="#disk-node" x="1493" y="666" width="72" height="88"/>
+    <text class="label" x="1571" y="721">Secondary</text>
+    <text class="label center" x="1529" y="786">Data Node</text>
+  </g>
+
+  <!-- Step 3 sends the payload directly from routing to the selected primary. -->
+  <g id="primary-write-flow">
+    <path class="connector" d="M648 381C760 258 865 204 960 185"/>
+    <path class="arrow" d="M1165 128C1270 112 1370 116 1471 126"/>
+    <circle class="step" cx="866" cy="149" r="15"/>
+    <text class="step-number" x="866" y="158">3</text>
+    <text class="detail" x="886" y="162">Send data to primary node</text>
+  </g>
+
+  <!-- Heartbeat returns; shafts are split around their text labels. -->
+  <g id="heartbeat-flows">
+    <path class="arrow" d="M1355 250L1471 174"/>
+    <path class="arrow" d="M1280 300L1157 381"/>
+    <text class="detail center" x="1318" y="286">Heartbeat</text>
+
+    <path class="arrow" d="M1405 428H1471"/>
+    <path class="arrow" d="M1240 428H1173"/>
+    <text class="detail center" x="1318" y="438">Heartbeat</text>
+
+    <path class="arrow" d="M1365 598L1471 663"/>
+    <path class="arrow" d="M1285 552L1158 476"/>
+    <text class="detail center" x="1318" y="587">Heartbeat</text>
+  </g>
+
+  <!-- Step 4 replication paths stop just outside each destination disk. -->
+  <g id="replication-flows">
+    <path class="connector" d="M1529 190V245"/>
+    <path class="arrow" d="M1529 331V370"/>
+    <circle class="step" cx="1467" cy="273" r="15"/>
+    <text class="step-number" x="1467" y="282">4</text>
+    <text class="detail center" x="1529" y="282">Data</text>
+    <text class="detail center" x="1529" y="318">replication</text>
+
+    <path class="connector" d="M1585 181C1648 241 1685 309 1705 351"/>
+    <path class="arrow" d="M1711 480C1695 544 1653 614 1588 663"/>
+    <circle class="step" cx="1712" cy="377" r="15"/>
+    <text class="step-number" x="1712" y="384" style="font-size:22px">4</text>
+    <text class="detail center" x="1712" y="422">Data</text>
+    <text class="detail center" x="1712" y="458">replication</text>
+  </g>
+</svg>

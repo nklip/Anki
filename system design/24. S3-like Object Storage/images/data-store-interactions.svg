@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1562" height="812" viewBox="0 0 1562 812"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Data store upload and download interactions</title>
+  <desc id="desc">Two request and response flows show an API service uploading file content to a data store and downloading that content later by object ID.</desc>
+
+  <!-- Shared typography, panels, and compact connector arrowhead. -->
+  <defs>
+    <marker id="arrowhead" markerWidth="22" markerHeight="16" refX="22" refY="8"
+            viewBox="0 0 22 16" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L22 8L0 16Z" fill="#000"/>
+    </marker>
+    <style>
+      .canvas { fill: #fff; }
+      .panel, .api-box { fill: #fff; stroke: #000; stroke-width: 2.3; }
+      .title, .node-label, .flow-label, .api-label {
+        fill: #000;
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 400;
+      }
+      .title { font-size: 42px; text-anchor: middle; }
+      .api-label { font-size: 40px; text-anchor: middle; }
+      .node-label { font-size: 38px; text-anchor: middle; }
+      .flow-label { font-size: 36px; }
+      .id-label { font-size: 35px; }
+      .connector { fill: none; stroke: #000; stroke-width: 2.5; }
+      .arrow { fill: none; stroke: #000; stroke-width: 2.5; marker-end: url(#arrowhead); }
+      .store { fill: #fff; stroke: #000; stroke-width: 2.3; }
+    </style>
+
+    <!-- Editable cylinder icon; every use specifies an explicit rendered size. -->
+    <symbol id="data-store" viewBox="0 0 82 80">
+      <path class="store" d="M1 9V70C1 75 19 79 41 79C63 79 81 75 81 70V9"/>
+      <ellipse class="store" cx="41" cy="9" rx="40" ry="8"/>
+    </symbol>
+  </defs>
+
+  <rect class="canvas" width="1562" height="812"/>
+
+  <!-- Upload panel and its endpoint nodes. -->
+  <g id="upload-panel">
+    <rect class="panel" x="35" y="33" width="1498" height="343"/>
+    <text class="title" x="784" y="75">Upload Object</text>
+
+    <rect class="api-box" x="76" y="163" width="184" height="116"/>
+    <text class="api-label" x="168" y="212">
+      <tspan x="168">API</tspan>
+      <tspan x="168" dy="46">Service</tspan>
+    </text>
+
+    <use href="#data-store" x="1392" y="180" width="82" height="80"/>
+    <text class="node-label" x="1433" y="301">DataStore</text>
+
+    <!-- Request route is split around the two-line request label. -->
+    <path id="upload-request-shaft-left" class="connector" data-connector="true"
+          d="M260 203C386 181 505 169 623 166"/>
+    <path id="upload-request-arrow-right" class="arrow"
+          d="M1020 171C1170 179 1283 192 1390 212"/>
+    <text class="flow-label" x="636" y="154">Request: Upload</text>
+    <text class="flow-label" x="636" y="194">Payload: file_content</text>
+
+    <!-- Response returns left; both shafts stop outside the response label. -->
+    <path id="upload-response-shaft-right" class="connector" data-connector="true"
+          d="M1392 232C1315 254 1247 270 1180 280"/>
+    <path id="upload-response-arrow-left" class="arrow"
+          d="M430 280C364 270 312 259 261 248"/>
+    <text class="flow-label" x="315" y="325" style="font-size:34px">Response: ObjectID= 30a3e98e-55d9-11ec-bf63-0242ac130002</text>
+  </g>
+
+  <!-- Download panel mirrors the upload flow while returning the stored payload. -->
+  <g id="download-panel">
+    <rect class="panel" x="35" y="445" width="1498" height="343"/>
+    <text class="title" x="784" y="486">Download Object</text>
+
+    <rect class="api-box" x="76" y="567" width="184" height="116"/>
+    <text class="api-label" x="168" y="616">
+      <tspan x="168">API</tspan>
+      <tspan x="168" dy="46">Service</tspan>
+    </text>
+
+    <use href="#data-store" x="1392" y="585" width="82" height="80"/>
+    <text class="node-label" x="1433" y="706">DataStore</text>
+
+    <!-- Object-ID request remains clear of both text lines and ends at the cylinder edge. -->
+    <path id="download-request-shaft-left" class="connector" data-connector="true"
+          d="M260 609C329 599 390 591 450 585"/>
+    <path id="download-request-arrow-right" class="arrow"
+          d="M1300 617C1333 617 1362 618 1390 619"/>
+    <text class="flow-label" x="480" y="563">Request: Download</text>
+    <text class="flow-label id-label" x="640" y="603" text-anchor="end">ObjectID:</text>
+    <text class="flow-label" x="650" y="603" style="font-size:33px">30a3e98e-55d9-11ec-bf63-0242ac130002</text>
+
+    <!-- Downloaded data returns to the API along the lower curved route. -->
+    <path id="download-response-shaft-right" class="connector" data-connector="true"
+          d="M1392 637C1284 668 1194 684 1115 692"/>
+    <path id="download-response-arrow-left" class="arrow"
+          d="M540 699C426 686 342 668 261 650"/>
+    <text class="flow-label" x="574" y="726">Response: data = file_content</text>
+  </g>
+</svg>

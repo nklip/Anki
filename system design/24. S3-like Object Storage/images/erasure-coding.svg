@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1342" height="918" viewBox="0 0 1342 918"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Erasure coding of an object into data and parity chunks</title>
+  <desc id="desc">Four stages: an object is split into four equal-sized data chunks d1 to d4; two parity chunks p1 and p2 are calculated from them; a node crash loses d3 and d4; and the surviving chunks d1, d2, p1 and p2 reconstruct the lost d3 and d4.</desc>
+
+  <!-- Shared styles. Splines carry a single arrowhead at the chunk they feed. -->
+  <defs>
+    <marker id="arrowhead" viewBox="0 0 20 11" refX="20" refY="5.5" markerWidth="20" markerHeight="11"
+            markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 20 5.5 0 11Z" fill="#000"/></marker>
+    <style>
+      .canvas{fill:#fff}
+      text{font-family:Arial,Helvetica,sans-serif;fill:#000;text-anchor:middle;font-size:30px}
+      .heading{letter-spacing:0.45px}
+      .divider{stroke:#000;stroke-width:2}
+      .chunk{fill:#fff;stroke:#000;stroke-width:2}
+      .parity{fill:#f7c5fd;stroke:#000;stroke-width:2}
+      .lost{fill:#fff;stroke:#000;stroke-width:2;stroke-dasharray:9 6}
+      .badge{fill:none;stroke:#000;stroke-width:2}
+      .spline{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrowhead)}
+      .cross{fill:none;stroke:#ee451d;stroke-width:4.2}
+    </style>
+  </defs>
+  <rect class="canvas" width="1342" height="918"/>
+
+  <!-- Stage dividers. -->
+  <g id="dividers">
+    <path class="divider" d="M241 29V893"/>
+    <path class="divider" d="M491 29V893"/>
+    <path class="divider" d="M762 29V893"/>
+    <path class="divider" d="M1031 29V893"/>
+    <path class="divider" d="M1292 29V893"/>
+  </g>
+  <!-- Stage headings. -->
+  <g id="headings">
+    <g id="stage-1">
+      <circle class="badge" cx="369.5" cy="60.5" r="13.75"/>
+      <text x="369.5" y="71.5">1</text>
+      <text class="heading" x="370" y="108"><tspan x="370">Split into</tspan><tspan x="370" dy="35.5">equal-sized</tspan><tspan x="370" dy="35.5">data chunks</tspan></text>
+    </g>
+    <g id="stage-2">
+      <circle class="badge" cx="627" cy="60.5" r="13.75"/>
+      <text x="627" y="71.5">2</text>
+      <text class="heading" x="627" y="108"><tspan x="627">Calculate</tspan><tspan x="627" dy="35.5">parities</tspan></text>
+    </g>
+    <g id="stage-3">
+      <circle class="badge" cx="897" cy="60.5" r="13.75"/>
+      <text x="897" y="71.5">3</text>
+      <text class="heading" x="897" y="109"><tspan x="897">Data loss due</tspan><tspan x="897" dy="35">to node crash</tspan></text>
+    </g>
+    <g id="stage-4">
+      <circle class="badge" cx="1162" cy="60.5" r="13.75"/>
+      <text x="1162" y="71.5">4</text>
+      <text class="heading" x="1162" y="109"><tspan x="1162">Data</tspan><tspan x="1162" dy="35">reconstruction</tspan></text>
+    </g>
+  </g>
+  <!-- Stage 1: the object and the four equal-sized data chunks. -->
+  <rect id="object" class="chunk" x="82" y="301" width="62" height="250"/>
+  <g id="chunks-split">
+    <g id="split-d1"><rect class="chunk" x="339" y="229" width="62" height="62.5"/><text x="370" y="272">d1</text></g>
+    <g id="split-d2"><rect class="chunk" x="339" y="339" width="62" height="62.5"/><text x="370" y="381">d2</text></g>
+    <g id="split-d3"><rect class="chunk" x="339" y="449" width="62" height="62.5"/><text x="370" y="491">d3</text></g>
+    <g id="split-d4"><rect class="chunk" x="339" y="558" width="62" height="62.5"/><text x="370" y="601">d4</text></g>
+  </g>
+  <g id="chunks-parity">
+    <g id="parity-d1"><rect class="chunk" x="596" y="229" width="62" height="62.5"/><text x="627" y="272">d1</text></g>
+    <g id="parity-d2"><rect class="chunk" x="596" y="339" width="62" height="62.5"/><text x="627" y="381">d2</text></g>
+    <g id="parity-d3"><rect class="chunk" x="596" y="449" width="62" height="62.5"/><text x="627" y="491">d3</text></g>
+    <g id="parity-d4"><rect class="chunk" x="596" y="558" width="62" height="62.5"/><text x="627" y="601">d4</text></g>
+    <g id="parity-p1"><rect class="parity" x="596" y="668" width="62" height="62.5"/><text x="627" y="709">p1</text></g>
+    <g id="parity-p2"><rect class="parity" x="596" y="778" width="62" height="62.5"/><text x="627" y="819">p2</text></g>
+  </g>
+  <!-- Stage 3: d3 and d4 are lost with the crashed node. -->
+  <g id="chunks-crash">
+    <g id="crash-d1"><rect class="chunk" x="866" y="229" width="62" height="62.5"/><text x="897" y="272">d1</text></g>
+    <g id="crash-d2"><rect class="chunk" x="866" y="339" width="62" height="62.5"/><text x="897" y="381">d2</text></g>
+    <g id="crash-d3"><rect class="lost" x="866" y="449" width="62" height="62.5"/><text x="897" y="491">d3</text></g>
+    <g id="crash-d4"><rect class="lost" x="866" y="558" width="62" height="62.5"/><text x="897" y="601">d4</text></g>
+    <g id="crash-p1"><rect class="parity" x="866" y="668" width="62" height="62.5"/><text x="897" y="709">p1</text></g>
+    <g id="crash-p2"><rect class="parity" x="866" y="778" width="62" height="62.5"/><text x="897" y="819">p2</text></g>
+    <g class="cross"><path d="M859 466.5 874.5 487.5"/><path d="M873.5 466.5 858.5 487.5"/></g>
+    <g class="cross"><path d="M859 579.5 874.5 600.5"/><path d="M873.5 579.5 858.5 600.5"/></g>
+  </g>
+  <g id="chunks-restored">
+    <g id="restored-d3"><rect class="chunk" x="1131" y="449" width="62" height="62.5"/><text x="1162" y="491">d3</text></g>
+    <g id="restored-d4"><rect class="chunk" x="1131" y="558" width="62" height="62.5"/><text x="1162" y="601">d4</text></g>
+  </g>
+  <!-- Chunk flows, fitted to the source splines. -->
+  <g id="flows">
+    <path id="flow-src-d1" class="spline" d="M144.5 405.5 C209 364.1 273.3 322.3 338 281.5"/>
+    <path id="flow-src-d2" class="spline" d="M144.5 418.5 C209 404.7 273.5 390.8 338 377"/>
+    <path id="flow-src-d3" class="spline" d="M144.5 432.5 C209 445.8 273.5 459.2 338 472.5"/>
+    <path id="flow-src-d4" class="spline" d="M144.5 445.5 C209 486.3 273.5 527.2 338 568"/>
+    <path id="flow-d1-p1" class="spline" d="M380 292 C418.7 422.3 484.2 588.6 595.5 674"/>
+    <path id="flow-d1-p2" class="spline" d="M380 292 C431.9 462.3 507.4 698 595.5 782"/>
+    <path id="flow-d2-p1" class="spline" d="M381 401 C439.8 499.5 486.4 587.2 595.5 674"/>
+    <path id="flow-d2-p2" class="spline" d="M385 401 C423.9 532.9 497 687 595.5 782"/>
+    <path id="flow-d3-p1" class="spline" d="M401 510 C469.4 564.5 531.8 622.1 595.5 674"/>
+    <path id="flow-d3-p2" class="spline" d="M392 511 C455.3 609 518.6 701.4 595.5 782"/>
+    <path id="flow-d4-p1" class="spline" d="M401 578 C476.7 584.1 535 632.9 595.5 674"/>
+    <path id="flow-d4-p2" class="spline" d="M401 618 C470.3 669.3 534.7 731.4 595.5 782"/>
+    <path id="flow-c3d1-d4" class="spline" d="M904.5 292 C934.76 413.96 989.39 560.04 1130 592"/>
+    <path id="flow-c3d1-d3" class="spline" d="M923 292 C975.93 370.83 1059.56 440.17 1130 469"/>
+    <path id="flow-c3d2-d3" class="spline" d="M928 380 C928.1 395.29 1060.22 441.26 1130 469"/>
+    <path id="flow-c3d2-d4" class="spline" d="M906 401 C935.19 502.67 1005.32 586.74 1130 592"/>
+    <path id="flow-c3p1-d3" class="spline" d="M909 668 C946.42 560.22 1022.19 454.14 1130 469"/>
+    <path id="flow-c3p1-d4" class="spline" d="M928 673 C1005.36 625.45 1062.07 612.14 1130 592"/>
+    <path id="flow-c3p2-d3" class="spline" d="M906 778 C940.15 655.35 1014.25 462.16 1130 469"/>
+    <path id="flow-c3p2-d4" class="spline" d="M916 778 C964.59 687.78 1042.28 622.23 1130 592"/>
+  </g>
+</svg>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1644" height="1068" viewBox="0 0 1644 1068"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Write-ahead log optimization: appending an object to the open file</title>
+  <desc id="desc">The API service hands object 4 to the local file system, where it is appended into the free space of the single read-write file instead of a separate write-ahead log; the two older files stay read-only.</desc>
+
+  <!-- Shared styles; one arrowhead serves both the hand-off and the append path. -->
+  <defs>
+    <marker id="arrowhead" viewBox="0 0 19 15" refX="19" refY="7.5" markerWidth="19" markerHeight="15"
+            markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 19 7.5 0 15Z" fill="#000"/></marker>
+    <style>
+      .canvas{fill:#fff}
+      text{font-family:Arial,Helvetica,sans-serif;fill:#000;font-size:32px;text-anchor:middle}
+      .frame{fill:#fff;stroke:#000;stroke-width:2}
+      .rule{fill:none;stroke:#000;stroke-width:2}
+      .payload{fill:#f7c5fd;stroke:#000;stroke-width:2}
+      .highlight{fill:#f7c5fd;stroke:#000;stroke-width:2;stroke-dasharray:10 5.7}
+      .flow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrowhead)}
+    </style>
+  </defs>
+  <rect class="canvas" width="1644" height="1068"/>
+
+  <!-- Incoming object hand-off. -->
+  <rect id="api-service" class="frame" x="1326" y="39" width="265" height="85.5"/>
+  <text x="1458.5" y="94">API Service</text>
+  <path id="handoff" class="flow" d="M1458.5 124.5V294.5"/>
+  <rect id="incoming-object" class="payload" x="1326" y="296.5" width="265" height="82.5"/>
+  <text x="1457.5" y="348">object 4</text>
+  <!-- Local file system: two sealed read-only files and the open read-write file. -->
+  <rect id="local-file-system" class="frame" x="93" y="287" width="1103" height="753"/>
+  <text x="641.5" y="1021">Local File System</text>
+  <g id="file-read-only-1">
+    <rect class="frame" x="171.5" y="387" width="265" height="574.5"/>
+    <path class="rule" d="M171.5 514H436.5"/>
+    <path class="rule" d="M171.5 597H436.5"/>
+    <path class="rule" d="M171.5 688H436.5"/>
+    <path class="rule" d="M171.5 728H436.5"/>
+    <path class="rule" d="M171.5 770H436.5"/>
+    <path class="rule" d="M171.5 852.5H436.5"/>
+    <text x="304" y="364.5">Read-only File</text>
+  </g>
+  <g id="file-read-only-2">
+    <rect class="frame" x="509" y="387" width="265" height="574.5"/>
+    <path class="rule" d="M509 504H774"/>
+    <path class="rule" d="M509 586.5H774"/>
+    <path class="rule" d="M509 627H774"/>
+    <path class="rule" d="M509 829.5H774"/>
+    <path class="rule" d="M509 912H774"/>
+    <text x="641.5" y="364.5">Read-only File</text>
+  </g>
+  <!-- The read-write file: its ragged foot marks the unused tail. -->
+  <g id="file-read-write">
+    <path fill="#fff" d="M847 387H1112V914.5C1022.47 895.45 934.39 979.58 847 939Z"/>
+    <path class="rule" d="M847 387H1112"/>
+    <!-- Side strokes stop at the appended object so its dashed border reads cleanly. -->
+    <path class="rule" d="M847 387V653"/>
+    <path class="rule" d="M847 735V939"/>
+    <path class="rule" d="M1112 387V653"/>
+    <path class="rule" d="M1112 735V914.5"/>
+    <path class="rule" d="M847 939C934.39 979.58 1022.47 895.45 1112 914.5"/>
+    <path class="rule" d="M847 454.5H1112"/>
+    <path class="rule" d="M847 571.5H1112"/>
+    <rect id="object-4-slot" class="highlight" x="847" y="653" width="265" height="82"/>
+    <text x="979.5" y="364.5">Read-write File</text>
+    <text x="978.5" y="432">object 1</text>
+    <text x="978.5" y="524.5">object 2</text>
+    <text x="978.5" y="623.5">object 3</text>
+    <text x="978.5" y="705.5">object 4</text>
+    <text x="979.5" y="844.5">Empty spaces</text>
+  </g>
+  <!-- The object is appended into the free space of the open file. -->
+  <path id="append" class="flow" d="M1451 379C1408.17 554.17 1294.67 665.78 1112.5 690.5"/>
+</svg>

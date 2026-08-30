@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1392" height="1238" viewBox="0 0 1392 1238"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Checksums for file correctness</title>
+  <desc id="desc">Two read-only files keep one checksum at the end, while a read-write file keeps one checksum beside each object and leaves reusable empty space below.</desc>
+
+  <!-- Shared visual language from the PNG etalon. -->
+  <defs>
+    <style>
+      .frame { fill: #fff; stroke: #000; stroke-width: 2; }
+      .divider { fill: none; stroke: #000; stroke-width: 2; }
+      .checksum { fill: #ffc0ff; stroke: #000; stroke-width: 2; }
+      .label { fill: #000; font-family: Arial, Helvetica, sans-serif; font-size: 36px; font-weight: 400; }
+      .center { text-anchor: middle; }
+    </style>
+  </defs>
+
+  <!-- Opaque canvas preserves the PNG's white margin outside the system frame. -->
+  <rect width="1392" height="1238" fill="#fff"/>
+
+  <!-- Local file-system boundary. -->
+  <rect class="frame" x="74" y="30" width="1248" height="1139"/>
+
+  <!-- Read-only file 1: objects are appended and share one trailing checksum. -->
+  <text class="label center" x="264" y="98">Read-only File</text>
+  <rect class="frame" x="114" y="124" width="300" height="989"/>
+  <path class="divider" d="M114 268H414 M114 361H414 M114 466H414 M114 510H414 M114 827H414 M114 920H414 M114 1067H414"/>
+  <rect class="checksum" x="114" y="1067" width="300" height="46"/>
+  <text class="label center" x="264" y="1103">Checksum</text>
+
+  <!-- Read-only file 2 uses different object sizes but the same trailing-checksum rule. -->
+  <text class="label center" x="646" y="98">Read-only File</text>
+  <rect class="frame" x="496" y="124" width="300" height="989"/>
+  <path class="divider" d="M496 257H796 M496 350H796 M496 395H796 M496 626H796 M496 719H796 M496 851H796 M496 1067H796"/>
+  <rect class="checksum" x="496" y="1067" width="300" height="46"/>
+  <text class="label center" x="646" y="1103">Checksum</text>
+
+  <!-- Read-write file: every object row owns a checksum; the curved foot denotes unused capacity. -->
+  <text class="label center" x="1079" y="98">Read-write File</text>
+  <path class="frame" d="M878 124H1279V981 C1197 951 1134 984 1064 1007 C992 1032 934 1045 878 1015Z"/>
+  <rect x="1055" y="124" width="224" height="577" fill="#ffc0ff"/>
+  <path class="divider" d="M878 200H1279 M878 333H1279 M878 426H1279 M878 472H1279 M878 701H1279 M1055 124V701"/>
+
+  <!-- Object/checksum row labels. -->
+  <text class="label" x="903" y="175">object 1</text>
+  <text class="label" x="1082" y="175">Checksum</text>
+  <text class="label" x="903" y="280">object 2</text>
+  <text class="label" x="1082" y="281">Checksum</text>
+  <text class="label" x="903" y="394">object 3</text>
+  <text class="label" x="1082" y="394">Checksum</text>
+  <text class="label" x="903" y="459">object 4</text>
+  <text class="label" x="1082" y="459">Checksum</text>
+  <text class="label" x="903" y="599">object 5</text>
+  <text class="label" x="1082" y="599">Checksum</text>
+  <text class="label center" x="1079" y="869">Empty spaces</text>
+
+  <!-- File-system caption deliberately sits just below the enclosing frame. -->
+  <text class="label center" x="696" y="1209">Local File System</text>
+</svg>

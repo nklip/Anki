@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1596" height="1102" viewBox="0 0 1596 1102"
+     role="img" aria-labelledby="title desc">
+  <title id="title">High-level design of an object storage system</title>
+  <desc id="desc">A client reaches an API service through a load balancer. The API service uses identity and access management, a metadata service and database, and a replicated data store with one primary and two secondary storage nodes.</desc>
+
+  <!-- Reused from download-object.svg: shared typography, strokes, arrowhead, and cylinder geometry. -->
+  <defs>
+    <marker id="arrowhead" viewBox="0 0 20 15" refX="20" refY="7.5"
+            markerWidth="20" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 20 7.5 0 15Z" fill="#000"/>
+    </marker>
+    <marker id="small-arrowhead" viewBox="0 0 10 7" refX="10" refY="3.5"
+            markerWidth="10" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 10 3.5 0 7Z" fill="#000"/>
+    </marker>
+    <style>
+      .canvas{fill:#fff}
+      text{font-family:Arial,Helvetica,sans-serif;fill:#000}
+      .node-label{font-size:33px;text-anchor:middle}
+      .small-label{font-size:27px;text-anchor:middle}
+      .box{fill:#fff;stroke:#000;stroke-width:2}
+      .panel{fill:#fff;stroke:#000;stroke-width:2.3}
+      .group{fill:none;stroke:#000;stroke-width:2.3;stroke-dasharray:10 6.3}
+      .store{fill:#fff;stroke:#000;stroke-width:2}
+      .glyph{fill:#000}
+      .connector{fill:none;stroke:#000;stroke-width:2}
+      .arrow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrowhead)}
+      .tree{fill:none;stroke:#000;stroke-width:1.5}
+      .tree-arrow{fill:none;stroke:#000;stroke-width:1.5;marker-end:url(#small-arrowhead)}
+    </style>
+
+    <symbol id="cylinder" viewBox="0 0 67 67">
+      <path class="store" d="M1 7.5V59.5A32.5 6.5 0 0 0 66 59.5V7.5"/>
+      <ellipse class="store" cx="33.5" cy="7.5" rx="32.5" ry="6.5"/>
+    </symbol>
+  </defs>
+
+  <rect class="canvas" width="1596" height="1102"/>
+
+  <!-- Client and request path. -->
+  <g id="client" class="glyph">
+    <circle cx="627.5" cy="51.5" r="16.5"/>
+    <path d="M595 102V92A32.5 14 0 0 1 660 92V102Z"/>
+  </g>
+  <path id="client-to-load-balancer-arrow" class="arrow" d="M627.5 103.5V232.5"/>
+
+  <!-- Load balancer and its fan-out glyph. -->
+  <text class="node-label" x="429" y="289">Load balancer</text>
+  <g id="load-balancer">
+    <rect class="box" x="550" y="234" width="156" height="83"/>
+    <rect class="box" x="617" y="245" width="22" height="13"/>
+    <path class="connector" d="M628 258V275.5"/>
+    <path class="tree" d="M583 275.5H672"/>
+    <path class="tree-arrow" d="M583 275.5V292"/>
+    <path class="tree-arrow" d="M628 275.5V292"/>
+    <path class="tree-arrow" d="M672 275.5V292"/>
+    <rect class="box" x="572" y="294" width="22" height="13"/>
+    <rect class="box" x="617" y="294" width="22" height="13"/>
+    <rect class="box" x="661" y="294" width="22" height="13"/>
+  </g>
+  <path id="load-balancer-to-api-arrow" class="arrow" d="M627.5 318.5V478.5"/>
+
+  <!-- API service and the identity-and-access dependency. -->
+  <rect id="api-service" class="box" x="474" y="480" width="308" height="50"/>
+  <text class="node-label" x="628" y="517">API Service</text>
+  <g id="identity-access-management">
+    <path class="box" d="M129 465H218V548H129Z"/>
+    <path class="box" d="M129 465 139 455H228L218 465Z"/>
+    <path class="box" d="M218 465 228 455V538L218 548Z"/>
+    <path fill="none" stroke="#000" stroke-width="3.5" d="M212.5 538V532.5A8 8 0 0 1 228.5 532.5V538"/>
+    <rect class="glyph" x="205" y="536" width="31" height="27" rx="3"/>
+    <g fill="#fff">
+      <circle cx="221.3" cy="548.8" r="2.8"/>
+      <path d="M220 548 223.5 551.5 216.9 552.2Z"/>
+    </g>
+  </g>
+  <path id="api-to-identity-arrow" class="arrow" d="M473 505H234.5"/>
+  <text class="node-label" x="180" y="603">
+    <tspan x="180">Identity &amp; Access</tspan>
+    <tspan x="180" dy="38">Management</tspan>
+  </text>
+
+  <!-- Metadata store: API requests are resolved to object metadata. -->
+  <rect id="metadata-store-boundary" class="group" x="409" y="698.5" width="437" height="331.5"/>
+  <path id="api-to-metadata-arrow" class="arrow" d="M628 531V752.5"/>
+  <rect id="metadata-service" class="box" x="452" y="754" width="351" height="49"/>
+  <text class="node-label" x="627.5" y="790">Metadata Service</text>
+  <path id="metadata-service-to-db-arrow" class="arrow" d="M627.5 804V895.5"/>
+  <use href="#cylinder" x="594" y="897" width="67" height="67"/>
+  <text class="node-label" x="627.5" y="999">Metadata DB</text>
+  <text class="node-label" x="627.5" y="1065">Metadata Store</text>
+
+  <!-- Data store: the API writes to the primary data-store service. -->
+  <rect id="data-store-boundary" class="group" x="1003" y="126.5" width="539" height="756.5"/>
+  <g id="secondary-storage-node-top">
+    <rect class="panel" x="1042" y="166" width="459" height="191"/>
+    <text class="node-label" x="1415" y="200">Secondary</text>
+    <rect class="box" x="1075" y="201" width="187" height="122"/>
+    <text class="node-label" x="1168.5" y="256">
+      <tspan x="1168.5">Data Store</tspan>
+      <tspan x="1168.5" dy="38">Service</tspan>
+    </text>
+    <path class="arrow" d="M1263 262H1397.5"/>
+    <use href="#cylinder" x="1399" y="228" width="67" height="67"/>
+    <text class="small-label" x="1410" y="349">Storage Node</text>
+  </g>
+
+  <g id="primary-storage-node">
+    <rect class="panel" x="1042" y="409" width="459" height="191"/>
+    <!-- Drawn over the panel fill so the API-to-primary connector remains continuous. -->
+    <path id="api-to-primary-store-arrow" class="arrow" d="M783 505H1073.5"/>
+    <text class="node-label" x="1439" y="443">Primary</text>
+    <rect class="box" x="1075" y="444" width="187" height="122"/>
+    <text class="node-label" x="1168.5" y="499">
+      <tspan x="1168.5">Data Store</tspan>
+      <tspan x="1168.5" dy="38">Service</tspan>
+    </text>
+    <path class="arrow" d="M1263 505H1397.5"/>
+    <use href="#cylinder" x="1399" y="471" width="67" height="67"/>
+    <text class="small-label" x="1410" y="592">Storage Node</text>
+  </g>
+
+  <g id="secondary-storage-node-bottom">
+    <rect class="panel" x="1042" y="652" width="459" height="191"/>
+    <text class="node-label" x="1415" y="686">Secondary</text>
+    <rect class="box" x="1075" y="687" width="187" height="122"/>
+    <text class="node-label" x="1168.5" y="742">
+      <tspan x="1168.5">Data Store</tspan>
+      <tspan x="1168.5" dy="38">Service</tspan>
+    </text>
+    <path class="arrow" d="M1263 748H1397.5"/>
+    <use href="#cylinder" x="1399" y="714" width="67" height="67"/>
+    <text class="small-label" x="1410" y="835">Storage Node</text>
+  </g>
+
+  <!-- Primary-to-secondary replication. -->
+  <path id="replication-to-top-secondary-arrow" class="arrow" d="M1168.5 443V324.5"/>
+  <path id="replication-to-bottom-secondary-arrow" class="arrow" d="M1168.5 567V685.5"/>
+  <text class="node-label" x="1272.5" y="916">Data Store</text>
+</svg>
