@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1310" height="480" viewBox="0 0 1310 480"
+     role="img" aria-labelledby="title desc">
+  <title id="title">API gateway routes mapped to leaderboard Lambda functions</title>
+  <desc id="desc">A two-column mapping table connects GET /v1/scores to LeaderboardFetchTop10, GET /v1/scores/{:user_id} to LeaderboardFetchPlayerRank, and POST /v1/scores to LeaderboardUpdateScore.</desc>
+
+  <!-- The palette and typography reproduce the source table while keeping every label editable. -->
+  <defs>
+    <style>
+      .canvas{fill:#fff}
+      .stripe{fill:#f5f5f5}
+      .grid{fill:none;stroke:#e9e9e9;stroke-width:2}
+      .divider{fill:none;stroke:#e9e9e9;stroke-width:2}
+      text{font-family:Arial,Helvetica,sans-serif;font-size:36px;fill:#212529;font-weight:400}
+      .header{font-weight:700}
+    </style>
+  </defs>
+
+  <rect class="canvas" width="1310" height="480"/>
+
+  <!-- Alternating row fills are painted below a single crisp grid. -->
+  <g id="row-backgrounds">
+    <rect class="stripe" x="34" y="29" width="1248" height="106"/>
+    <rect class="stripe" x="34" y="243" width="1248" height="107"/>
+  </g>
+
+  <g id="table-grid">
+    <rect class="grid" x="34" y="29" width="1248" height="428"/>
+    <path class="divider" d="M618 29V457"/>
+    <path class="divider" d="M34 136H1282M34 243H1282M34 350H1282"/>
+  </g>
+
+  <!-- Header and API-to-function mappings. -->
+  <g id="mapping-text">
+    <text class="header" x="60" y="97">APIs</text>
+    <text class="header" x="643" y="97">Lambda function</text>
+
+    <text x="60" y="203">GET /v1/scores</text>
+    <text x="643" y="203">LeaderboardFetchTop10</text>
+
+    <text x="60" y="310">GET /v1/scores/{:user_id}</text>
+    <text x="643" y="310">LeaderboardFetchPlayerRank</text>
+
+    <text x="60" y="417">POST /v1/scores</text>
+    <text x="643" y="417">LeaderboardUpdateScore</text>
+  </g>
+</svg>

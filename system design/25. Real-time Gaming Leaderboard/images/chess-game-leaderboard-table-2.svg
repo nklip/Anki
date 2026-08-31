@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1464" height="614" viewBox="0 0 1464 614"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Chess leaderboard global secondary index</title>
+  <desc id="desc">A global secondary index uses the leaderboard name as its partition key and score as its sort key. Each indexed row also includes user ID, email, and profile picture URL.</desc>
+
+  <!-- Typography follows table 1: sans-serif identifiers and URLs, serif scores and emails. -->
+  <defs>
+    <style>
+      .canvas{fill:#fff}
+      text{font-family:Arial,Helvetica,sans-serif;fill:#111;font-weight:400}
+      .header{font-size:34px;font-weight:700}
+      .sans-cell{font-size:33px}
+      .score-cell{font-family:"Times New Roman",Times,serif;font-size:34px}
+      .email-cell{font-family:"Times New Roman",Times,serif;font-size:36px}
+      .grid{fill:none;stroke:#111;stroke-width:1.5}
+    </style>
+  </defs>
+
+  <rect class="canvas" width="1464" height="614"/>
+
+  <!-- The top row groups the two index keys separately from copied attributes. -->
+  <g id="table-grid">
+    <rect class="grid" x="43.5" y="43.5" width="1381" height="541"/>
+    <path class="grid" d="M466 43.5V584.5"/>
+    <path class="grid" d="M311.5 100.5V584.5M730.5 100.5V584.5M989.5 100.5V584.5"/>
+    <path class="grid" d="M43.5 100.5H1424.5M43.5 241.5H1424.5M43.5 298.5H1424.5M43.5 355.5H1424.5M43.5 412.5H1424.5M43.5 470.5H1424.5M43.5 527.5H1424.5"/>
+  </g>
+
+  <!-- Group and column headers. -->
+  <g id="table-headers">
+    <text class="header" x="68" y="83">Global Secondary Index</text>
+    <text class="header" x="945" y="83" text-anchor="middle">Attributes</text>
+
+    <text class="header" x="62" y="141">
+      <tspan x="62">Partition key</tspan>
+      <tspan x="62" dy="42">(PK)</tspan>
+    </text>
+    <text class="header" x="330" y="141">
+      <tspan x="330">Sort</tspan>
+      <tspan x="330" dy="42">key</tspan>
+      <tspan x="330" dy="42">(score)</tspan>
+    </text>
+    <text class="header" x="484" y="141">user_id</text>
+    <text class="header" x="748" y="141">email</text>
+    <text class="header" x="1008" y="141">profile_pic</text>
+  </g>
+
+  <!-- Indexed leaderboard records ordered by score within each leaderboard partition. -->
+  <g id="leaderboard-index-records">
+    <g id="record-lovelove">
+      <text class="sans-cell" x="62" y="281">chess#2020-02</text>
+      <text class="score-cell" x="330" y="281">309</text>
+      <text class="sans-cell" x="484" y="281">lovelove</text>
+      <text class="email-cell" x="748" y="281">love@test.com</text>
+      <text class="sans-cell" x="1008" y="281">https://cdn.example/3.png</text>
+    </g>
+
+    <g id="record-i-love-tofu">
+      <text class="sans-cell" x="62" y="338">chess#2020-02</text>
+      <text class="score-cell" x="330" y="338">209</text>
+      <text class="sans-cell" x="484" y="338">i_love_tofu</text>
+      <!-- A fractional adjustment preserves the etalon while keeping the long address clear of the next cell. -->
+      <text class="email-cell" x="748" y="338" style="font-size:35.8px">test@test.com</text>
+      <text class="sans-cell" x="1008" y="338">https://cdn.example/p.png</text>
+    </g>
+
+    <g id="record-golden-gate">
+      <text class="sans-cell" x="62" y="395">chess#2020-03</text>
+      <text class="score-cell" x="330" y="395">103</text>
+      <text class="sans-cell" x="484" y="395">golden_gate</text>
+      <text class="email-cell" x="748" y="395">gold@test.com</text>
+      <text class="sans-cell" x="1008" y="395">https://cdn.example/2.png</text>
+    </g>
+
+    <g id="record-pizza-or-bread">
+      <text class="sans-cell" x="62" y="452">chess#2020-02</text>
+      <text class="score-cell" x="330" y="452">203</text>
+      <text class="sans-cell" x="484" y="452">pizza_or_bread</text>
+      <text class="email-cell" x="748" y="452">piz@test.com</text>
+      <text class="sans-cell" x="1008" y="452">https://cdn.example/31.png</text>
+    </g>
+
+    <g id="record-ocean">
+      <text class="sans-cell" x="62" y="510">chess#2020-02</text>
+      <text class="score-cell" x="330" y="510">10</text>
+      <text class="sans-cell" x="484" y="510">ocean</text>
+      <text class="email-cell" x="748" y="510">oce@test.com</text>
+      <text class="sans-cell" x="1008" y="510">https://cdn.example/32.png</text>
+    </g>
+
+    <g id="additional-records">
+      <text class="sans-cell" x="62" y="567">...</text>
+      <text class="score-cell" x="330" y="567">...</text>
+      <text class="sans-cell" x="484" y="567">...</text>
+      <text class="email-cell" x="748" y="567">...</text>
+      <text class="sans-cell" x="1008" y="567">...</text>
+    </g>
+  </g>
+</svg>

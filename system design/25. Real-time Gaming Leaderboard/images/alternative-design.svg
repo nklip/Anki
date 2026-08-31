@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1366" height="1108" viewBox="0 0 1366 1108"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Current and alternative leaderboard update designs</title>
+  <desc id="desc">The current option sends a game win to the game service and then updates the leaderboard service. The alternative option sets and updates the score directly from the user client to the leaderboard service.</desc>
+
+  <!-- Shared typography, grouped boundaries, reusable client glyph, and precise arrow parts. -->
+  <defs>
+    <style>
+      .canvas{fill:#fff}
+      text{font-family:Arial,Helvetica,sans-serif;fill:#000;font-weight:400}
+      .title{font-size:40px;text-anchor:middle}
+      .label{font-size:38px}
+      .node-label{font-size:38px;text-anchor:middle}
+      .number{font-size:36px;text-anchor:middle}
+      .boundary{fill:none;stroke:#000;stroke-width:2.2;stroke-dasharray:10 7}
+      .box{fill:#fff;stroke:#000;stroke-width:2.2}
+      .shaft{fill:none;stroke:#000;stroke-width:2.2}
+      .arrow-head,.glyph{fill:#000}
+      .badge{fill:#fff;stroke:#000;stroke-width:2.2}
+    </style>
+
+    <!-- User and phone appear unchanged in both design alternatives. -->
+    <symbol id="user-client" viewBox="0 0 242 221">
+      <rect class="box" x="1" y="1" width="240" height="220"/>
+      <circle class="glyph" cx="86" cy="92" r="18.5"/>
+      <path class="glyph" d="M49 148V138C49 129 65 121 86 121S123 129 123 138V148Z"/>
+      <rect class="glyph" x="133" y="60" width="59" height="101" rx="12"/>
+      <rect x="142" y="74" width="41" height="63" fill="#fff"/>
+      <circle cx="162.5" cy="150.5" r="6.5" fill="#fff"/>
+    </symbol>
+  </defs>
+
+  <rect class="canvas" width="1366" height="1108"/>
+
+  <!-- Dashed option boundaries are painted before title masks and all foreground content. -->
+  <rect id="current-option-boundary" class="boundary" x="69" y="52" width="427" height="1023"/>
+  <rect id="alternative-option-boundary" class="boundary" x="762" y="52" width="536" height="1023"/>
+
+  <g id="option-headings">
+    <rect class="canvas" x="153" y="25" width="262" height="54"/>
+    <text class="title" x="284" y="67">Current Option</text>
+    <rect class="canvas" x="875" y="25" width="313" height="54"/>
+    <text class="title" x="1031.5" y="67">Alternative Option</text>
+  </g>
+
+  <!-- Current option: user -> game service -> leaderboard service. -->
+  <g id="current-option">
+    <use href="#user-client" x="162" y="123" width="242" height="221"/>
+
+    <path id="current-user-to-label-shaft" class="shaft" data-connector="true" d="M283 344V408"/>
+    <g id="current-step-1">
+      <circle class="badge" cx="144" cy="442" r="26"/>
+      <text class="number" x="144" y="454">1</text>
+      <text class="label" x="184" y="455">Win a game</text>
+    </g>
+    <!-- Shaft stops under the triangular base; the tip remains one pixel above the service box. -->
+    <path id="current-game-arrow-shaft" class="shaft" data-connector="true" d="M283 474V533"/>
+    <polygon id="current-game-arrowhead" class="arrow-head" points="283,553 273,533 293,533"/>
+
+    <rect class="box" x="184" y="554" width="197" height="112"/>
+    <text class="node-label" x="282.5" y="603">
+      <tspan x="282.5">Game</tspan>
+      <tspan x="282.5" dy="42">service</tspan>
+    </text>
+
+    <path id="game-to-update-label-shaft" class="shaft" data-connector="true" d="M283 666V738"/>
+    <g id="current-step-2">
+      <circle class="badge" cx="136" cy="771" r="26"/>
+      <text class="number" x="136" y="783">2</text>
+      <text class="label" x="174" y="784">Update score</text>
+    </g>
+    <path id="current-leaderboard-arrow-shaft" class="shaft" data-connector="true" d="M283 804V854"/>
+    <polygon id="current-leaderboard-arrowhead" class="arrow-head" points="283,874 273,854 293,854"/>
+
+    <rect class="box" x="138" y="875" width="290" height="112"/>
+    <text class="node-label" x="283" y="924">
+      <tspan x="283">Leaderboard</tspan>
+      <tspan x="283" dy="42">service</tspan>
+    </text>
+  </g>
+
+  <!-- Alternative option: the client writes the score directly to the leaderboard service. -->
+  <g id="alternative-option">
+    <use href="#user-client" x="850" y="123" width="242" height="221"/>
+
+    <g id="alternative-step-1">
+      <circle class="badge" cx="1187" cy="185" r="26"/>
+      <text class="number" x="1187" y="197">1</text>
+      <text class="label" x="1109" y="246">Set score</text>
+    </g>
+
+    <path id="alternative-user-to-label-shaft" class="shaft" data-connector="true" d="M971 344V578"/>
+    <g id="alternative-step-2">
+      <circle class="badge" cx="823" cy="610" r="26"/>
+      <text class="number" x="823" y="622">2</text>
+      <text class="label" x="860" y="623">Update score</text>
+    </g>
+    <path id="alternative-leaderboard-arrow-shaft" class="shaft" data-connector="true" d="M971 643V854"/>
+    <polygon id="alternative-leaderboard-arrowhead" class="arrow-head" points="971,874 961,854 981,854"/>
+
+    <rect class="box" x="825" y="875" width="290" height="112"/>
+    <text class="node-label" x="970" y="924">
+      <tspan x="970">Leaderboard</tspan>
+      <tspan x="970" dy="42">service</tspan>
+    </text>
+  </g>
+</svg>
