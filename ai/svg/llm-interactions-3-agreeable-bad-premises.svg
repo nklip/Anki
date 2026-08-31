@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Agreeable bad premises from parametric knowledge and steerability</title>
+  <desc id="desc">A three-stage diagram shows a false premise in a user request being treated as given and expanded into a sycophantic answer, followed by premise checking and independent fact verification.</desc>
+
+  <!-- Shared visual system for the five interaction diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .eyebrow { font-size: 16px; font-weight: 700; letter-spacing: 2px; fill: #b42318; }
+      .title { font-size: 36px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .concept-name { font-size: 21px; font-weight: 700; }
+      .concept-copy { font-size: 17px; fill: #334155; }
+      .plus { font-size: 34px; font-weight: 700; fill: #64748b; text-anchor: middle; }
+      .stage-kicker { font-size: 14px; font-weight: 700; letter-spacing: 1.4px; fill: #64748b; }
+      .stage-title { font-size: 21px; font-weight: 700; }
+      .stage-copy { font-size: 17px; fill: #334155; }
+      .callout-label { font-size: 15px; font-weight: 700; letter-spacing: 1.2px; }
+      .callout-copy { font-size: 18px; fill: #1e293b; }
+      .flow-box { fill: #ffffff; stroke: #cbd5e1; stroke-width: 2; }
+      .arrow-shaft { stroke: #64748b; stroke-width: 3; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" fill="#f8fafc"/>
+
+  <!-- Title and series position establish the comparison frame. -->
+  <g id="heading">
+    <text class="eyebrow" x="50" y="38">FAILURE PATTERN 3 OF 5</text>
+    <text class="title" x="50" y="82">Agreeable bad premises</text>
+    <text class="subtitle" x="50" y="110">Instruction following can compete with correcting the user.</text>
+  </g>
+
+  <!-- The two highlighted influences; these are interacting properties, not separate modules. -->
+  <g id="influences">
+    <rect x="50" y="138" width="520" height="130" rx="18" fill="#ecfeff" stroke="#0891b2" stroke-width="2"/>
+    <circle cx="82" cy="174" r="14" fill="#0891b2"/>
+    <text class="concept-name" x="108" y="181">Parametric knowledge</text>
+    <text class="concept-copy" x="78" y="218">
+      <tspan x="78" dy="0">Weights may encode facts that conflict with</tspan>
+      <tspan x="78" dy="24">the premise—but recall is not guaranteed.</tspan>
+    </text>
+
+    <text class="plus" x="600" y="212">+</text>
+
+    <rect x="630" y="138" width="520" height="130" rx="18" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <circle cx="662" cy="174" r="14" fill="#7c3aed"/>
+    <text class="concept-name" x="688" y="181">Steerability</text>
+    <text class="concept-copy" x="658" y="218">
+      <tspan x="658" dy="0">A helpful assistant is trained to respond to</tspan>
+      <tspan x="658" dy="24">the user's framing and requested task.</tspan>
+    </text>
+  </g>
+
+  <!-- Three-stage causal path; arrowheads stop at the target borders. -->
+  <g id="failure-path">
+    <text class="stage-kicker" x="50" y="316">READ LEFT TO RIGHT</text>
+
+    <rect class="flow-box" x="50" y="338" width="300" height="168" rx="18"/>
+    <text class="stage-kicker" x="75" y="371">PROMPT</text>
+    <text class="stage-title" x="75" y="405">False claim as a given</text>
+    <text class="stage-copy" x="75" y="438">
+      <tspan x="75" dy="0">“Since X is true, explain</tspan>
+      <tspan x="75" dy="23">why it causes Y.”</tspan>
+    </text>
+
+    <line class="arrow-shaft" data-connector="true" x1="365" y1="422" x2="422" y2="422"/>
+    <polygon points="440,422 422,412 422,432" fill="#64748b"/>
+
+    <rect class="flow-box" x="440" y="338" width="320" height="168" rx="18"/>
+    <text class="stage-kicker" x="465" y="371">COMPLIANCE PRESSURE</text>
+    <text class="stage-title" x="465" y="405">Treat premise as context</text>
+    <text class="stage-copy" x="465" y="438">
+      <tspan x="465" dy="0">The model may optimize for</tspan>
+      <tspan x="465" dy="23">agreement and task completion.</tspan>
+    </text>
+
+    <line class="arrow-shaft" data-connector="true" x1="775" y1="422" x2="832" y2="422"/>
+    <polygon points="850,422 832,412 832,432" fill="#64748b"/>
+
+    <rect x="850" y="338" width="300" height="168" rx="18" fill="#fff1f0" stroke="#d92d20" stroke-width="2"/>
+    <text class="stage-kicker" x="875" y="371" fill="#b42318">RISKY OUTPUT</text>
+    <text class="stage-title" x="875" y="405">Sycophantic extension</text>
+    <text class="stage-copy" x="875" y="438">
+      <tspan x="875" dy="0">The answer accepts and builds</tspan>
+      <tspan x="875" dy="23">on the user's misconception.</tspan>
+    </text>
+  </g>
+
+  <!-- Risk and mitigation remain identical in position across the series. -->
+  <g id="action-block">
+    <rect x="50" y="536" width="1100" height="174" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="50" y="536" width="10" height="76" rx="5" fill="#d92d20"/>
+    <text class="callout-label" x="82" y="569" fill="#b42318">WHY IT FAILS</text>
+    <text class="callout-copy" x="230" y="569">A model can be responsive to a user's belief without that belief being true.</text>
+    <line x1="82" y1="612" x2="1118" y2="612" stroke="#e2e8f0" stroke-width="2"/>
+    <rect x="50" y="612" width="10" height="98" rx="5" fill="#137a4b"/>
+    <text class="callout-label" x="82" y="650" fill="#137a4b">SAFER MOVE</text>
+    <text class="callout-copy" x="230" y="650">
+      <tspan x="230" dy="0">Ask it to check the premise before solving: “Correct any false assumptions.”</tspan>
+      <tspan x="230" dy="26">Then verify material facts with independent evidence.</tspan>
+    </text>
+  </g>
+</svg>
