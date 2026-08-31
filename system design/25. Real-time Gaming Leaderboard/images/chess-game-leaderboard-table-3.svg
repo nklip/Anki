@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1450" height="598" viewBox="0 0 1450 598"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Chess leaderboard sharded global secondary index</title>
+  <desc id="desc">A global secondary index table whose partition keys combine a monthly chess leaderboard with a shard suffix. Scores are sort keys, followed by user ID, email, and profile picture URL attributes.</desc>
+
+  <!-- Shared table styling keeps the source editable and mirrors the PNG etalon. -->
+  <defs>
+    <style>
+      .canvas{fill:#fff}
+      text{font-family:Arial,Helvetica,sans-serif;fill:#111;font-weight:400}
+      .header{font-size:34px;font-weight:700}
+      .sans-cell{font-size:33px}
+      .score-cell{font-family:"Times New Roman",Times,serif;font-size:34px}
+      .grid{fill:none;stroke:#111;stroke-width:1.5}
+    </style>
+  </defs>
+
+  <rect class="canvas" width="1450" height="598"/>
+
+  <!-- The top band groups the two index keys separately from copied attributes. -->
+  <g id="table-grid">
+    <rect class="grid" x="31.5" y="19.5" width="1386" height="554"/>
+    <path class="grid" d="M487.5 19.5V573.5"/>
+    <path class="grid" d="M342.5 78.5V573.5M743.5 78.5V573.5M993.5 78.5V573.5"/>
+    <path class="grid" d="M31.5 78.5H1417.5M31.5 221.5H1417.5M31.5 280.5H1417.5M31.5 338.5H1417.5M31.5 397.5H1417.5M31.5 456H1417.5M31.5 514.5H1417.5"/>
+  </g>
+
+  <!-- Group and column headers. -->
+  <g id="table-headers">
+    <text class="header" x="73" y="60">Global Secondary Index</text>
+    <text class="header" x="952.5" y="60" text-anchor="middle">Attributes</text>
+
+    <!-- Slightly tightened to retain visible clearance before the narrow score column. -->
+    <text class="header" x="49" y="119" style="font-size:32.2px">Partition key (PK)</text>
+    <text class="header" x="358" y="119">
+      <tspan x="358">Sort</tspan>
+      <tspan x="358" dy="42">key</tspan>
+      <tspan x="358" dy="42">(score)</tspan>
+    </text>
+    <text class="header" x="502" y="119">user_id</text>
+    <text class="header" x="758" y="119">email</text>
+    <text class="header" x="1009" y="119">profile_pic</text>
+  </g>
+
+  <!-- Sharded leaderboard index records ordered by score within each composite key. -->
+  <g id="leaderboard-index-records">
+    <g id="record-lovelove">
+      <text class="sans-cell" x="48" y="263">chess#2020-02#p0</text>
+      <text class="score-cell" x="358" y="263">309</text>
+      <text class="sans-cell" x="502" y="263">lovelove</text>
+      <text class="sans-cell" x="758" y="263">love@test.com</text>
+      <text class="sans-cell" x="1009" y="263">https://cdn.example/3.png</text>
+    </g>
+
+    <g id="record-i-love-tofu">
+      <text class="sans-cell" x="48" y="322">chess#2020-02#p1</text>
+      <text class="score-cell" x="358" y="322">209</text>
+      <text class="sans-cell" x="502" y="322">i_love_tofu</text>
+      <text class="sans-cell" x="758" y="322">test@test.com</text>
+      <text class="sans-cell" x="1009" y="322">https://cdn.example/p.png</text>
+    </g>
+
+    <g id="record-golden-gate">
+      <text class="sans-cell" x="48" y="380">chess#2020-03#p2</text>
+      <text class="score-cell" x="358" y="380">103</text>
+      <text class="sans-cell" x="502" y="380">golden_gate</text>
+      <text class="sans-cell" x="758" y="380">gold@test.com</text>
+      <text class="sans-cell" x="1009" y="380">https://cdn.example/2.png</text>
+    </g>
+
+    <g id="record-pizza-or-bread">
+      <text class="sans-cell" x="48" y="439">chess#2020-02#p1</text>
+      <text class="score-cell" x="358" y="439">203</text>
+      <text class="sans-cell" x="502" y="439">pizza_or_bread</text>
+      <text class="sans-cell" x="758" y="439">piz@test.com</text>
+      <text class="sans-cell" x="1009" y="439">https://cdn.example/31.png</text>
+    </g>
+
+    <g id="record-ocean">
+      <text class="sans-cell" x="48" y="498">chess#2020-02#p2</text>
+      <text class="score-cell" x="358" y="498">10</text>
+      <text class="sans-cell" x="502" y="498">ocean</text>
+      <text class="sans-cell" x="758" y="498">oce@test.com</text>
+      <!-- The longest URL is fractionally tightened so its estimated bounds remain inside the canvas. -->
+      <text class="sans-cell" x="1009" y="498" style="font-size:32.6px">https://cdn.example/32.png</text>
+    </g>
+
+    <g id="additional-records">
+      <text class="sans-cell" x="48" y="556">...</text>
+      <text class="score-cell" x="358" y="556">...</text>
+      <text class="sans-cell" x="502" y="556">...</text>
+      <text class="sans-cell" x="758" y="556">...</text>
+      <text class="sans-cell" x="1009" y="556">...</text>
+    </g>
+  </g>
+</svg>

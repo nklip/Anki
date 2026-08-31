@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1364" height="242" viewBox="0 0 1364 242"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Find a player's leaderboard position</title>
+  <desc id="desc">The leaderboard service fetches records from the database sorted by rank.</desc>
+
+  <!-- Shared typography and precise connector styling from the PNG etalon. -->
+  <defs>
+    <style>
+      .canvas{fill:#fff}
+      text{font-family:Arial,Helvetica,sans-serif;fill:#000;font-weight:400}
+      .node-label{font-size:40px;text-anchor:middle}
+      .flow-label{font-size:40px}
+      .outline{fill:#fff;stroke:#111;stroke-width:2.2}
+      .shaft{fill:none;stroke:#111;stroke-width:2.2}
+      .arrow-head{fill:#000}
+    </style>
+  </defs>
+
+  <rect class="canvas" width="1364" height="242"/>
+
+  <!-- The application service that initiates the rank query. -->
+  <g id="leaderboard-service">
+    <rect class="outline" x="64.5" y="67.5" width="354" height="122"/>
+    <text class="node-label" x="241.5" y="119">
+      <tspan x="241.5">Leaderboard</tspan>
+      <tspan x="241.5" dy="45">service</tspan>
+    </text>
+  </g>
+
+  <!-- The label sits in a deliberate gap between the two horizontal shaft segments. -->
+  <g id="rank-query-flow">
+    <path id="query-leading-shaft" class="shaft" data-connector="true" d="M419.5 128.5H505"/>
+    <!-- Explicit words retain the PNG's natural spacing and give each label honest connector clearance. -->
+    <g id="rank-query-label" aria-label="Fetch from DB, sorted by rank"
+       transform="matrix(1 0 0 1.108108 0 -15.4594)">
+      <text class="flow-label" aria-hidden="true" x="518" y="143">Fetch from DB, sorted by rank</text>
+    </g>
+    <!-- The shaft ends under the triangle base; its tip meets but does not enter the database boundary. -->
+    <path id="query-trailing-shaft" class="shaft" data-connector="true" d="M1077 128.5H1154"/>
+    <polygon id="query-arrowhead" class="arrow-head" points="1174,128.5 1154,118.5 1154,138.5"/>
+  </g>
+
+  <!-- Database cylinder receiving the rank-sorted query. -->
+  <g id="leaderboard-database">
+    <path class="outline" d="M1175 71V185C1175 194 1205 201 1243.5 201S1312 194 1312 185V71"/>
+    <ellipse class="outline" cx="1243.5" cy="71" rx="68.5" ry="15"/>
+  </g>
+</svg>

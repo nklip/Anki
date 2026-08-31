@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1694" height="1344" viewBox="0 0 1694 1344"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Redis Cluster hash-slot partitioning</title>
+  <desc id="desc">A client sends a key through a proxy. The proxy calculates CRC16 of the key modulo 16384 and routes the request to one of three Redis shards. Each shard has one primary Redis node and two replicas.</desc>
+
+  <!-- Shared typography, connector styling, and the cube portion of the reused Redis mark. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .outline{fill:#fff;stroke:#111;stroke-width:2.2}
+      .cluster-outline{fill:none;stroke:#111;stroke-width:2.2}
+      .shard{fill:none;stroke:#111;stroke-width:2.2;stroke-dasharray:10 8}
+      .shaft{fill:none;stroke:#111;stroke-width:2.2;stroke-linecap:butt}
+      .arrow-head{fill:#111}
+      .node-label{font-size:36px;text-anchor:middle}
+      .formula{font-size:36px}
+      .slot-label{font-size:34px;text-anchor:middle}
+      .role-label{font-size:34px}
+      .replica-label{font-size:34px;text-anchor:middle}
+      .shard-label{font-size:34px;text-anchor:middle}
+      .cluster-label{font-size:36px;text-anchor:middle}
+    </style>
+
+    <!-- Exact cube layers from the Redis symbol in user-scoring-point-lambda.svg. -->
+    <symbol id="redis-cube" viewBox="17 0 95 81" preserveAspectRatio="xMidYMid meet">
+      <path fill="#A41E11" d="M106.9 62.7c-5 2.6-30.7 13.2-36.2 16-5.5 2.9-8.5 2.8-12.8.8-4.4-2.1-31.7-13.1-36.7-15.5-2.5-1.2-3.8-2.2-3.8-3.1v-9.4s35.6-7.8 41.4-9.8c5.8-2.1 7.8-2.1 12.6-.3 4.9 1.8 34.2 7.1 39 8.8v9.3c.1.9-1 1.9-3.5 3.2z"/>
+      <path fill="#D82C20" d="M106.9 53.3c-5 2.6-30.7 13.2-36.2 16-5.5 2.9-8.5 2.8-12.8.8C53.5 68 26.2 57 21.2 54.6c-4.9-2.4-5-4-.2-5.9 4.8-1.9 32.1-12.6 37.8-14.6 5.8-2.1 7.8-2.1 12.6-.3 4.9 1.8 30.5 12 35.3 13.7 5 1.8 5.2 3.2.2 5.8z"/>
+      <path fill="#A41E11" d="M106.9 47.4c-5 2.6-30.7 13.2-36.2 16-5.5 2.9-8.5 2.8-12.8.8-4.4-2.1-31.7-13.2-36.7-15.5-2.5-1.2-3.8-2.2-3.8-3.1v-9.4s35.6-7.8 41.4-9.8c5.8-2.1 7.8-2.1 12.6-.3 4.9 1.8 34.2 7.1 39 8.8v9.3c.1.9-1 1.9-3.5 3.2z"/>
+      <path fill="#D82C20" d="M106.9 38c-5 2.6-30.7 13.2-36.2 16-5.5 2.9-8.5 2.8-12.8.8-4.3-2.1-31.7-13.1-36.6-15.5-4.9-2.4-5-4-.2-5.9 4.8-1.9 32.1-12.6 37.8-14.6 5.8-2.1 7.8-2.1 12.6-.3 4.9 1.8 30.5 12 35.3 13.7 4.9 1.7 5.1 3.2.1 5.8z"/>
+      <path fill="#A41E11" d="M106.9 31.5c-5 2.6-30.7 13.2-36.2 16-5.5 2.9-8.5 2.8-12.8.8-4.3-2.1-31.7-13.1-36.6-15.5-2.5-1.2-3.8-2.2-3.8-3.1v-9.4s35.6-7.8 41.4-9.8c5.8-2.1 7.8-2.1 12.6-.3 4.9 1.8 34.2 7.1 39 8.8v9.3c0 .8-1.1 1.9-3.6 3.2z"/>
+      <path fill="#D82C20" d="M106.9 22.1c-5 2.6-30.7 13.2-36.2 16-5.5 2.9-8.5 2.8-12.8.8-4.3-2.1-31.7-13.1-36.6-15.5s-5-4-.2-5.9c4.8-1.9 32.1-12.6 37.8-14.6C64.7.8 66.7.8 71.5 2.6c4.9 1.8 30.5 12 35.3 13.7 4.9 1.7 5.1 3.2.1 5.8z"/>
+      <path fill="#fff" d="M76.2 13l-8.1.8-1.8 4.4-2.9-4.9-9.3-.8L61 10l-2-3.8 6.5 2.5 6.1-2-1.7 4zM65.8 34.1l-15-6.3 21.6-3.3z"/>
+      <ellipse fill="#fff" cx="45" cy="19.9" rx="11.5" ry="4.5"/>
+      <path fill="#7A0C00" d="M85.7 14.2l12.8 5-12.8 5.1z"/>
+      <path fill="#AD2115" d="M71.6 19.8l14.1-5.6v10.1l-1.3.5z"/>
+    </symbol>
+  </defs>
+
+  <rect width="1694" height="1344" fill="#fff"/>
+
+  <!-- Client request enters the proxy vertically. -->
+  <g id="client-node">
+    <rect class="outline" x="735" y="40" width="221" height="132"/>
+    <text class="node-label" x="845.5" y="119">Client</text>
+  </g>
+  <g id="client-to-proxy">
+    <path id="client-to-proxy-shaft" class="shaft" data-connector="true" d="M846 172V321"/>
+    <polygon id="client-to-proxy-arrowhead" class="arrow-head" points="846,343 836,321 856,321"/>
+  </g>
+
+  <!-- Proxy calculates a Redis Cluster hash slot before selecting a shard. -->
+  <g id="proxy-node">
+    <rect class="outline" x="735" y="343" width="221" height="132"/>
+    <text class="node-label" x="845.5" y="421">Proxy</text>
+    <text class="formula" x="969" y="421">Slot = CRC16(key) % 16384</text>
+  </g>
+
+  <!-- The three routes are split around their slot labels so no connector crosses text. -->
+  <g id="slot-routing">
+    <path id="left-slot-leading-shaft" class="shaft" data-connector="true" d="M735 425C620 460 531 508 478 572"/>
+    <text class="slot-label" x="453" y="615">Slot: [0, 5500]</text>
+    <path id="left-slot-trailing-shaft" class="shaft" data-connector="true" d="M436 633C409 674 390 715 380 744"/>
+    <polygon id="left-slot-arrowhead" class="arrow-head" points="378,766 370,743 390,749"/>
+
+    <path id="middle-slot-leading-shaft" class="shaft" data-connector="true" d="M846 475V571"/>
+    <text class="slot-label" x="846" y="615">Slot: [5501, 11000]</text>
+    <path id="middle-slot-trailing-shaft" class="shaft" data-connector="true" d="M846 633V744"/>
+    <polygon id="middle-slot-arrowhead" class="arrow-head" points="846,766 836,744 856,744"/>
+
+    <path id="right-slot-leading-shaft" class="shaft" data-connector="true" d="M956 435C1068 466 1138 510 1182 572"/>
+    <text class="slot-label" x="1208" y="615">Slot: [11001, 16383]</text>
+    <path id="right-slot-trailing-shaft" class="shaft" data-connector="true" d="M1226 633C1254 674 1274 715 1286 744"/>
+    <polygon id="right-slot-arrowhead" class="arrow-head" points="1291,766 1277,747 1297,742"/>
+  </g>
+
+  <!-- Redis Cluster boundary and the three dashed shard groups. -->
+  <g id="redis-cluster">
+    <rect class="cluster-outline" x="98" y="718" width="1496" height="599"/>
+    <rect class="shard" x="153" y="766" width="395" height="462"/>
+    <rect class="shard" x="649" y="766" width="394" height="462"/>
+    <rect class="shard" x="1145" y="766" width="396" height="462"/>
+    <text class="cluster-label" x="846" y="1293">Redis Cluster</text>
+  </g>
+
+  <!-- Shard 1: one primary and two replicas. -->
+  <g id="shard-one">
+    <text class="role-label" x="168" y="853">Primary</text>
+    <use href="#redis-cube" x="299" y="800" width="102" height="87"/>
+    <path id="shard-one-left-replica-shaft" class="shaft" data-connector="true" d="M319 893L288 942"/>
+    <polygon id="shard-one-left-replica-arrowhead" class="arrow-head" points="277,960 279,936 296,947"/>
+    <path id="shard-one-right-replica-shaft" class="shaft" data-connector="true" d="M381 893L409 941"/>
+    <polygon id="shard-one-right-replica-arrowhead" class="arrow-head" points="420,960 401,946 418,936"/>
+    <use href="#redis-cube" x="194" y="968" width="102" height="87"/>
+    <use href="#redis-cube" x="399" y="968" width="102" height="87"/>
+    <text class="replica-label" x="245" y="1095">Replica</text>
+    <text class="replica-label" x="450" y="1095">Replica</text>
+    <text class="shard-label" x="350.5" y="1160"><tspan x="350.5">Shard 1</tspan><tspan x="350.5" dy="40">Slot: [0, 5500]</tspan></text>
+  </g>
+
+  <!-- Shard 2: one primary and two replicas. -->
+  <g id="shard-two">
+    <text class="role-label" x="665" y="853">Primary</text>
+    <use href="#redis-cube" x="795" y="800" width="102" height="87"/>
+    <path id="shard-two-left-replica-shaft" class="shaft" data-connector="true" d="M815 893L784 942"/>
+    <polygon id="shard-two-left-replica-arrowhead" class="arrow-head" points="773,960 775,936 792,947"/>
+    <path id="shard-two-right-replica-shaft" class="shaft" data-connector="true" d="M877 893L905 941"/>
+    <polygon id="shard-two-right-replica-arrowhead" class="arrow-head" points="916,960 897,946 914,936"/>
+    <use href="#redis-cube" x="690" y="968" width="102" height="87"/>
+    <use href="#redis-cube" x="895" y="968" width="102" height="87"/>
+    <text class="replica-label" x="741" y="1095">Replica</text>
+    <text class="replica-label" x="946" y="1095">Replica</text>
+    <text class="shard-label" x="846" y="1160"><tspan x="846">Shard 2</tspan><tspan x="846" dy="40">Slot: [5501, 11000]</tspan></text>
+  </g>
+
+  <!-- The etalon names the third range “Shard 2”; preserve that label verbatim. -->
+  <g id="shard-three">
+    <text class="role-label" x="1160" y="853">Primary</text>
+    <use href="#redis-cube" x="1292" y="800" width="102" height="87"/>
+    <path id="shard-three-left-replica-shaft" class="shaft" data-connector="true" d="M1312 893L1281 942"/>
+    <polygon id="shard-three-left-replica-arrowhead" class="arrow-head" points="1270,960 1272,936 1289,947"/>
+    <path id="shard-three-right-replica-shaft" class="shaft" data-connector="true" d="M1374 893L1402 941"/>
+    <polygon id="shard-three-right-replica-arrowhead" class="arrow-head" points="1413,960 1394,946 1411,936"/>
+    <use href="#redis-cube" x="1187" y="968" width="102" height="87"/>
+    <use href="#redis-cube" x="1392" y="968" width="102" height="87"/>
+    <text class="replica-label" x="1238" y="1095">Replica</text>
+    <text class="replica-label" x="1443" y="1095">Replica</text>
+    <text class="shard-label" x="1343" y="1160"><tspan x="1343">Shard 2</tspan><tspan x="1343" dy="40">Slot: [11001, 16383]</tspan></text>
+  </g>
+</svg>

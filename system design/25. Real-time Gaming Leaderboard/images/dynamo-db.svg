@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1344" height="286" viewBox="0 0 1344 286"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Leaderboard service backed by DynamoDB</title>
+  <desc id="desc">Left to right: a Leaderboard service box, an arrow into the AWS API Gateway mark, an arrow into the AWS Lambda mark, and an arrow into the AWS DynamoDB mark. The leaderboard service calls API Gateway, API Gateway invokes a Lambda function, and the Lambda function reads and writes the leaderboard data in DynamoDB.</desc>
+
+  <!-- Shared typography and connector styling. The AWS marks below carry their own fills. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400;font-size:32px;text-anchor:middle}
+      .box{fill:#fff;stroke:#111;stroke-width:2}
+      .shaft{fill:none;stroke:#111;stroke-width:2.2}
+      .arrow-head{fill:#111}
+    </style>
+  </defs>
+
+  <rect id="canvas" width="1344" height="286" fill="#fff"/>
+
+  <!-- The originating application node. Two centred lines share the box centre x=206. -->
+  <g id="leaderboard-service">
+    <rect class="box" x="63" y="60" width="286" height="99"/>
+    <text x="206" y="102"><tspan x="206">Leaderboard</tspan><tspan x="206" dy="38">service</tspan></text>
+  </g>
+
+  <!-- Left-to-right call chain. Each shaft stops one pixel inside its triangular head so the
+       join is continuous; every head keeps a clear gap before the mark it points at. -->
+  <g id="pipeline-connectors">
+    <path id="service-to-gateway-shaft" class="shaft" data-connector="true" d="M350 109H532"/>
+    <polygon id="service-to-gateway-arrowhead" class="arrow-head" points="550,109 531,100.5 531,117.5"/>
+    <path id="gateway-to-lambda-shaft" class="shaft" data-connector="true" d="M678 109H846"/>
+    <polygon id="gateway-to-lambda-arrowhead" class="arrow-head" points="864,109 845,100.5 845,117.5"/>
+    <path id="lambda-to-dynamodb-shaft" class="shaft" data-connector="true" d="M966 109H1134"/>
+    <polygon id="lambda-to-dynamodb-arrowhead" class="arrow-head" points="1152,109 1133,100.5 1133,117.5"/>
+  </g>
+
+  <!-- AWS marks are traced as flat colour regions: one silhouette path per icon carries the
+       shaded faces, and the lighter faces are painted over it. Edit a face by editing its path. -->
+  <g id="aws-api-gateway">
+    <path id="api-gateway-shaded" fill="#88692b" d="M616.0,162.5 608.0,159.5 601.5,155.0 601.0,142.5 587.0,146.5 582.0,146.5 570.5,140.0 571.0,115.5 573.0,114.5 574.0,115.5 589.0,114.5 600.0,115.5 601.5,114.0 601.0,104.5 584.0,104.5 572.0,103.5 570.5,102.0 570.5,78.0 583.0,71.5 601.0,75.5 601.5,63.0 615.0,55.5 628.5,62.0 629.0,75.5 647.0,71.5 659.5,78.0 659.0,103.5 629.0,104.5 628.5,108.0 628.5,114.0 632.0,115.5 641.0,114.5 659.5,116.0 659.5,140.0 649.0,146.5 629.0,143.5 628.5,155.0 616.0,162.5Z"/>
+    <path id="api-gateway-lit" fill="#dca743" d="M615.0,160.5 605.0,156.5 602.5,154.0 602.5,141.0 590.5,135.0 591.0,124.5 602.5,125.0 602.5,97.0 592.0,95.5 590.5,94.0 590.5,83.0 602.5,78.0 602.5,64.0 613.0,57.5 615.5,58.0 615.0,160.5ZM649.0,103.5 630.0,103.5 628.5,102.0 629.0,92.5 636.0,94.5 640.5,93.0 640.5,83.0 630.0,79.5 631.0,76.5 646.5,73.0 646.5,99.0 649.5,102.0 649.0,103.5ZM593.0,103.5 579.0,103.5 572.5,102.0 573.0,77.5 581.0,73.5 583.5,74.0 583.5,101.0 593.0,101.5 593.0,103.5ZM583.0,144.5 572.5,140.0 573.0,116.5 583.5,118.0 583.0,144.5ZM646.0,145.5 628.5,141.0 629.0,139.5 640.5,135.0 640.5,125.0 635.0,122.5 630.0,122.5 628.5,121.0 629.0,116.5 647.5,118.0 646.0,145.5Z"/>
+    <text x="614.3" y="204"><tspan x="614.3">AWS</tspan><tspan x="614.3" dy="38">API Gateway</tspan></text>
+  </g>
+
+  <g id="aws-lambda">
+    <!-- One even-odd path: the outer lambda outline plus its three white counters. -->
+    <path id="lambda-glyph" fill="#e87a30" fill-rule="evenodd" d="M961.0,158.5 938.0,158.5 935.5,157.0 901.5,86.0 886.0,85.5 884.5,84.0 884.5,61.0 886.0,59.5 918.0,59.5 919.5,61.0 950.5,127.0 954.0,131.5 961.0,131.5 963.5,133.0 964.5,136.0 963.5,157.0 961.0,158.5ZM958.5,153.0 959.5,152.0 959.5,137.0 951.0,136.5 949.5,135.0 923.5,79.0 916.5,67.0 916.5,65.0 913.0,63.5 890.0,63.5 889.5,81.0 900.0,81.5 902.0,80.5 904.5,82.0 938.5,153.0 958.5,153.0ZM896.0,158.5 872.0,158.5 868.5,155.0 879.5,134.0 879.5,132.0 881.5,130.0 881.5,128.0 883.5,126.0 886.5,117.0 888.5,115.0 895.5,99.0 899.0,98.5 912.5,124.0 912.5,129.0 910.5,131.0 899.5,156.0 896.0,158.5ZM895.5,153.0 907.5,128.0 906.5,122.0 898.0,106.5 896.5,107.0 887.5,128.0 875.5,151.0 876.0,153.5 895.5,153.0Z"/>
+    <text x="916.5" y="204"><tspan x="916.5">AWS</tspan><tspan x="916.5" dy="38">Lambda</tspan></text>
+  </g>
+
+  <g id="aws-dynamodb">
+    <path id="dynamodb-body" fill="#2d74bb" d="M1211.0,166.5 1187.0,155.5 1174.5,141.0 1174.5,131.0 1177.5,129.0 1174.5,123.0 1174.5,115.0 1178.5,113.0 1178.5,110.0 1176.0,109.5 1174.5,107.0 1174.5,99.0 1177.5,96.0 1177.5,94.0 1174.5,91.0 1174.5,82.0 1188.0,66.5 1208.0,56.5 1240.0,56.5 1262.0,67.5 1272.5,80.0 1271.5,94.0 1272.5,109.0 1269.5,110.0 1269.5,112.0 1272.5,114.0 1272.5,125.0 1270.5,127.0 1270.5,129.0 1272.5,130.0 1272.5,142.0 1262.0,154.5 1243.0,164.5 1211.0,166.5Z"/>
+    <path id="dynamodb-bands" fill="#184070" d="M1186.0,151.5 1182.5,149.0 1176.5,141.0 1176.5,131.0 1179.5,130.0 1179.5,127.0 1176.5,125.0 1176.5,115.0 1179.5,114.0 1179.5,109.0 1176.5,108.0 1176.5,98.0 1179.5,96.0 1179.5,93.0 1176.5,91.0 1176.5,85.0 1176.5,81.0 1186.0,69.5 1187.5,70.0 1187.0,83.5 1199.0,81.5 1200.0,79.5 1205.0,78.5 1242.0,78.5 1258.0,83.5 1269.5,91.0 1268.0,93.5 1266.0,93.5 1261.0,90.5 1239.0,85.5 1211.0,85.5 1203.0,88.5 1196.0,88.5 1188.0,90.5 1186.5,92.0 1188.0,107.5 1250.0,107.5 1251.0,108.5 1268.5,109.0 1268.5,113.0 1265.0,114.5 1240.0,114.5 1239.0,115.5 1192.0,115.5 1188.0,114.5 1186.5,117.0 1187.5,120.0 1186.5,130.0 1188.0,131.5 1209.0,136.5 1242.0,136.5 1246.0,134.5 1259.0,132.5 1266.0,128.5 1268.5,129.0 1268.5,132.0 1260.0,138.5 1239.0,144.5 1208.0,144.5 1187.0,138.5 1187.5,147.0 1186.0,151.5Z"/>
+    <path id="dynamodb-left-facets" fill="#215d9b" d="M1191.0,83.5 1186.5,83.0 1187.5,68.0 1193.0,66.5 1194.0,64.5 1198.0,64.5 1202.0,60.5 1208.0,58.5 1209.5,78.0 1200.0,79.5 1199.0,81.5 1194.0,81.5 1191.0,83.5ZM1208.0,107.5 1188.0,107.5 1186.5,92.0 1188.0,90.5 1196.0,88.5 1203.0,88.5 1208.0,86.5 1208.0,107.5ZM1208.0,135.5 1191.0,132.5 1186.5,130.0 1187.5,125.0 1186.5,117.0 1188.0,114.5 1208.5,116.0 1208.0,135.5ZM1208.0,164.5 1196.0,158.5 1193.0,155.5 1186.5,154.0 1187.0,138.5 1207.0,143.5 1208.5,145.0 1208.0,164.5Z"/>
+    <path id="dynamodb-highlights" fill="#4a98d1" d="M1261.0,83.5 1251.0,81.5 1239.5,77.0 1240.0,57.5 1263.5,69.0 1261.5,71.0 1261.0,83.5ZM1260.0,107.5 1239.5,106.0 1240.0,86.5 1254.0,89.5 1261.5,93.0 1261.5,106.0 1260.0,107.5ZM1242.0,135.5 1239.5,135.0 1239.5,117.0 1241.0,115.5 1261.0,115.5 1261.5,130.0 1260.0,131.5 1242.0,135.5ZM1243.0,164.5 1239.5,164.0 1239.5,146.0 1253.0,140.5 1261.0,139.5 1261.5,151.0 1263.5,153.0 1243.0,164.5Z"/>
+    <text x="1223.5" y="206"><tspan x="1223.5">AWS</tspan><tspan x="1223.5" dy="38">DynamoDB</tspan></text>
+  </g>
+</svg>

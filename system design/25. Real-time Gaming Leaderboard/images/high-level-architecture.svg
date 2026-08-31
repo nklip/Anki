@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1102" height="1066" viewBox="0 0 1102 1066"
+     role="img" aria-labelledby="title desc">
+  <title id="title">High-level gaming leaderboard architecture</title>
+  <desc id="desc">A mobile user wins a game through the game service. The game service updates the leaderboard service, which writes to a leaderboard store. The user can also request the leaderboard or a player rank directly from the leaderboard service.</desc>
+
+  <!-- Shared styling for nodes, instructional callouts, and carefully joined manual arrows. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .outline{fill:#fff;stroke:#111;stroke-width:2.2}
+      .shaft{fill:none;stroke:#111;stroke-width:2.2;stroke-linecap:butt}
+      .arrow-head{fill:#111}
+      .node-label{font-size:36px;text-anchor:middle}
+      .instruction{font-size:36px}
+      .step-circle{fill:#fff;stroke:#111;stroke-width:2.2}
+      .step-number{font-size:36px;text-anchor:middle}
+      .store-label{font-size:36px;text-anchor:middle}
+    </style>
+  </defs>
+
+  <rect width="1102" height="1066" fill="#fff"/>
+
+  <!-- Mobile player entry point. -->
+  <g id="mobile-player">
+    <rect class="outline" x="375" y="33" width="235" height="215"/>
+    <circle cx="459" cy="123" r="18"/>
+    <path d="M423 176v-11c0-8.5 16-15 36-15s36 6.5 36 15v11z" fill="#000"/>
+    <rect x="504" y="91" width="58" height="99" rx="12" fill="#000"/>
+    <rect x="513" y="102" width="40" height="70" fill="#fff"/>
+    <circle cx="533" cy="179" r="6.5" fill="#fff"/>
+  </g>
+
+  <!-- Step 1: the player reports a win to the game service. -->
+  <g id="win-game-flow">
+    <path id="win-game-leading-shaft" class="shaft" data-connector="true" d="M417 248L327 375"/>
+    <circle class="step-circle" cx="170" cy="407" r="25"/>
+    <text class="step-number" x="170" y="420">1</text>
+    <text class="instruction" x="210" y="420">Win a game</text>
+    <path id="win-game-trailing-shaft" class="shaft" data-connector="true" d="M281 439L220 522"/>
+    <polygon id="win-game-arrowhead" class="arrow-head" points="210,542 211,517 229,527"/>
+  </g>
+
+  <!-- Step 4: leaderboard reads originate from the same mobile user. -->
+  <g id="read-leaderboard-flow">
+    <path id="read-leaderboard-leading-shaft" class="shaft" data-connector="true" d="M573 248L655 359"/>
+    <circle class="step-circle" cx="502" cy="412" r="25"/>
+    <text class="step-number" x="502" y="425">4</text>
+    <text class="instruction" x="544" y="403"><tspan x="544">a. Get leaderboard</tspan><tspan x="544" dy="44">b. Get player_rank</tspan></text>
+    <path id="read-leaderboard-trailing-shaft" class="shaft" data-connector="true" d="M732 463L777 522"/>
+    <polygon id="read-leaderboard-arrowhead" class="arrow-head" points="790,542 769,528 785,516"/>
+  </g>
+
+  <!-- Game service records the result. -->
+  <g id="game-service">
+    <rect class="outline" x="75" y="541" width="192" height="110"/>
+    <text class="node-label" x="171" y="589"><tspan x="171">Game</tspan><tspan x="171" dy="40">service</tspan></text>
+  </g>
+
+  <!-- Step 2: score update moves from the game service into the leaderboard service. -->
+  <g id="score-update-flow">
+    <path id="score-update-leading-shaft" class="shaft" data-connector="true" d="M267 597H326"/>
+    <circle class="step-circle" cx="352" cy="597" r="25"/>
+    <text class="step-number" x="352" y="610">2</text>
+    <text class="instruction" x="387" y="610">Update score</text>
+    <path id="score-update-trailing-shaft" class="shaft" data-connector="true" d="M625 597H667"/>
+    <polygon id="score-update-arrowhead" class="arrow-head" points="690,597 667,587 667,607"/>
+  </g>
+
+  <!-- Leaderboard service handles both score updates and read requests. -->
+  <g id="leaderboard-service">
+    <rect class="outline" x="690" y="541" width="284" height="110"/>
+    <text class="node-label" x="832" y="589"><tspan x="832">Leaderboard</tspan><tspan x="832" dy="40">service</tspan></text>
+  </g>
+
+  <!-- Step 3: the leaderboard service persists the updated score. -->
+  <g id="store-update-flow">
+    <path id="store-update-leading-shaft" class="shaft" data-connector="true" d="M832 651V699"/>
+    <circle class="step-circle" cx="687" cy="731" r="25"/>
+    <text class="step-number" x="687" y="744">3</text>
+    <text class="instruction" x="725" y="744">Update score</text>
+    <path id="store-update-trailing-shaft" class="shaft" data-connector="true" d="M832 770V806"/>
+    <polygon id="store-update-arrowhead" class="arrow-head" points="832,829 822,806 842,806"/>
+  </g>
+
+  <!-- Persistent leaderboard store. The arrow tip stops at the cylinder's top boundary. -->
+  <g id="leaderboard-store">
+    <path class="outline" d="M771 841V942C771 950 798 956 832 956S893 950 893 942V841"/>
+    <ellipse class="outline" cx="832" cy="841" rx="61" ry="13"/>
+    <text class="store-label" x="832" y="993"><tspan x="832">Leaderboard</tspan><tspan x="832" dy="39">Store</tspan></text>
+  </g>
+</svg>
