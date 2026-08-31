@@ -344,8 +344,6 @@ In our case, we'll store checksums for each file and each object:
 
 In the case of erasure coding (8+4), we'll need to fetch each of the 8 pieces of data separately and verify each of their checksums.
 
-// sprint 2
-
 ### **Metadata data model**
 
 Table schemas:
