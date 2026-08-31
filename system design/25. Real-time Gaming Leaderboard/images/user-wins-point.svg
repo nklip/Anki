@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1354" height="216" viewBox="0 0 1354 216"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Persist a point won by a user</title>
+  <desc id="desc">The leaderboard service inserts or updates the user's score in the database.</desc>
+
+  <!-- Shared black outline and text treatment follow the compact PNG etalon. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .outline{fill:#fff;stroke:#111;stroke-width:2.6}
+      .node-label{font-size:40px;text-anchor:middle}
+      .flow-label{font-size:40px}
+      .shaft{fill:#111}
+      .arrow-head{fill:#111}
+    </style>
+  </defs>
+
+  <rect width="1354" height="216" fill="#fff"/>
+
+  <!-- The service that owns the leaderboard update. -->
+  <g id="leaderboard-service">
+    <rect class="outline" x="54" y="42" width="354" height="123"/>
+    <text class="node-label" x="237" y="95"
+          transform="translate(237 95) scale(1.018 1.035) translate(-237 -95)">Leaderboard</text>
+    <text class="node-label" x="231" y="141"
+          transform="translate(231 141) scale(1.024 1.035) translate(-231 -141)">service</text>
+  </g>
+
+  <!-- The operation label sits in a deliberate gap between the two shaft segments. -->
+  <g id="database-write-flow">
+    <rect id="write-leading-shaft" data-connector="true"
+          class="shaft" x="409" y="102" width="171" height="2.5"/>
+    <rect id="write-trailing-shaft" data-connector="true"
+          class="shaft" x="953" y="102" width="188" height="2.5"/>
+    <path id="write-arrowhead" class="arrow-head"
+          d="M1164 103.25 L1140 93 L1140 113.5 Z"/>
+    <text class="flow-label" x="592" y="118"
+          transform="translate(592 118) scale(1.024 1.03) translate(-592 -118)">Insert or update DB</text>
+  </g>
+
+  <!-- A source-native cylinder represents the database; the arrow tip meets its boundary. -->
+  <g id="database-cylinder">
+    <path class="outline"
+          d="M1165 45.5
+             V160.5
+             C1165 169 1195.5 176 1233.25 176
+             C1271 176 1301.5 169 1301.5 160.5
+             V45.5 Z"/>
+    <ellipse class="outline" cx="1233.25" cy="45.5" rx="68.25" ry="14.5"/>
+  </g>
+</svg>

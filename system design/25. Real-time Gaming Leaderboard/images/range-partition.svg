@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1856" height="206" viewBox="0 0 1856 206"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Leaderboard range partitioning</title>
+  <desc id="desc">Leaderboard scores are partitioned into sorted sets for ranges 1 through 100, 101 through 200, 201 through 300, continuing through 901 through 1000.</desc>
+
+  <!-- Shared shard box and label treatment sampled from the PNG etalon. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-size:36px;font-weight:400;text-anchor:middle}
+      .partition-box{fill:#fff;stroke:#111;stroke-width:2}
+      .partition-link{fill:none;stroke:#111;stroke-width:2}
+    </style>
+  </defs>
+
+  <rect width="1856" height="206" fill="#fff"/>
+
+  <!-- Continuous links show the ordered progression across score ranges. -->
+  <g id="partition-links">
+    <path class="partition-link" data-connector="true" d="M302 107.5 H488"/>
+    <path class="partition-link" data-connector="true" d="M726 107.5 H911"/>
+    <path class="partition-link" data-connector="true" d="M1149 107.5 H1321"/>
+    <path class="partition-link" data-connector="true" d="M1412 107.5 H1574"/>
+  </g>
+
+  <!-- Four visible sorted-set shards; the ellipsis stands for intermediate ranges. -->
+  <g id="range-partitions">
+    <g id="range-1-100">
+      <rect class="partition-box" x="64" y="40.5" width="238" height="134"/>
+      <text x="183" y="100"><tspan x="183">[1, 100]</tspan><tspan x="183" dy="39">Sorted set</tspan></text>
+    </g>
+    <g id="range-101-200">
+      <rect class="partition-box" x="488" y="40.5" width="238" height="134"/>
+      <text x="607" y="100"><tspan x="607">[101, 200]</tspan><tspan x="607" dy="39">Sorted set</tspan></text>
+    </g>
+    <g id="range-201-300">
+      <rect class="partition-box" x="911" y="40.5" width="238" height="134"/>
+      <text x="1030" y="100"><tspan x="1030">[201, 300]</tspan><tspan x="1030" dy="39">Sorted set</tspan></text>
+    </g>
+    <text id="omitted-ranges" x="1366" y="121">......</text>
+    <g id="range-901-1000">
+      <rect class="partition-box" x="1574" y="40.5" width="238" height="134"/>
+      <text x="1693" y="100"><tspan x="1693">[901, 1000]</tspan><tspan x="1693" dy="39">Sorted set</tspan></text>
+    </g>
+  </g>
+</svg>

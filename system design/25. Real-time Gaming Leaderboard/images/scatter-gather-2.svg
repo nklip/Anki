@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1744" height="1284" viewBox="0 0 1744 1284"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Scatter-gather leaderboard query</title>
+  <desc id="desc">Three partition queries each scatter for their local top ten. Their results gather into a single ordered top ten leaderboard containing scores and user IDs.</desc>
+
+  <!-- Shared table typography, grids, and arrowhead sampled from the PNG etalon. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-size:36px;font-weight:400}
+      .section-title{font-size:36px}
+      .header-cell{font-size:36px;font-weight:700}
+      .score-cell{font-family:"Times New Roman",Times,serif;font-size:36px}
+      .grid{fill:#fff;stroke:#111;stroke-width:1.5}
+      .grid-line{fill:none;stroke:#111;stroke-width:1.5}
+      .gather-flow{fill:none;stroke:#111;stroke-width:1.8}
+    </style>
+    <marker id="gather-arrowhead" viewBox="0 0 11 9" refX="11" refY="4.5"
+            markerWidth="20" markerHeight="17" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 L11 4.5 L0 9 Z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect width="1744" height="1284" fill="#fff"/>
+
+  <!-- Partition 0 local top results. -->
+  <g id="partition-0-results">
+    <text class="section-title" x="250" y="78">top 10 from partition 0 (scatter)</text>
+    <g id="partition-0-grid">
+      <rect class="grid" x="93.5" y="102.5" width="812" height="279"/>
+      <path class="grid-line" d="M446.5 102.5V381.5M620.5 102.5V381.5"/>
+      <path class="grid-line" d="M93.5 256.5H905.5M93.5 319.5H905.5"/>
+    </g>
+    <g id="partition-0-labels">
+      <text class="header-cell" x="118" y="145">Partition key (PK)</text>
+      <text class="header-cell" x="471" y="145"><tspan x="471">Sort</tspan><tspan x="471" dy="44">key</tspan><tspan x="471" dy="43">(score)</tspan></text>
+      <text class="header-cell" x="644" y="145">user_id</text>
+      <text x="118" y="299">chess#2020-02#p0</text>
+      <text class="score-cell" x="471" y="299">309</text>
+      <text x="644" y="299">lovelove</text>
+      <text x="118" y="363">...</text>
+      <text class="score-cell" x="471" y="363">...</text>
+      <text x="644" y="363">...</text>
+    </g>
+  </g>
+
+  <!-- Partition 1 local top results. -->
+  <g id="partition-1-results">
+    <text class="section-title" x="250" y="477">top 10 from partition 1 (scatter)</text>
+    <g id="partition-1-grid">
+      <rect class="grid" x="93.5" y="501.5" width="812" height="342"/>
+      <path class="grid-line" d="M446.5 501.5V843.5M620.5 501.5V843.5"/>
+      <path class="grid-line" d="M93.5 655.5H905.5M93.5 717.5H905.5M93.5 780.5H905.5"/>
+    </g>
+    <g id="partition-1-labels">
+      <text class="header-cell" x="118" y="544">Partition key (PK)</text>
+      <text class="header-cell" x="471" y="544"><tspan x="471">Sort</tspan><tspan x="471" dy="44">key</tspan><tspan x="471" dy="43">(score)</tspan></text>
+      <text class="header-cell" x="644" y="544">user_id</text>
+      <text x="118" y="698">chess#2020-02#p1</text>
+      <text class="score-cell" x="471" y="698">209</text>
+      <text x="644" y="698">i_love_tofu</text>
+      <text x="118" y="761">chess#2020-02#p1</text>
+      <text class="score-cell" x="471" y="761">203</text>
+      <text x="644" y="761">pizza_or_bread</text>
+      <text x="118" y="824">...</text>
+      <text class="score-cell" x="471" y="824">...</text>
+      <text x="644" y="824">...</text>
+    </g>
+  </g>
+
+  <!-- Partition 2 local top results. -->
+  <g id="partition-2-results">
+    <text class="section-title" x="250" y="938">top 10 from partition 2 (scatter)</text>
+    <g id="partition-2-grid">
+      <rect class="grid" x="93.5" y="962.5" width="812" height="280"/>
+      <path class="grid-line" d="M446.5 962.5V1242.5M620.5 962.5V1242.5"/>
+      <path class="grid-line" d="M93.5 1116.5H905.5M93.5 1178.5H905.5"/>
+    </g>
+    <g id="partition-2-labels">
+      <text class="header-cell" x="118" y="1005">Partition key (PK)</text>
+      <text class="header-cell" x="471" y="1005"><tspan x="471">Sort</tspan><tspan x="471" dy="44">key</tspan><tspan x="471" dy="43">(score)</tspan></text>
+      <text class="header-cell" x="644" y="1005">user_id</text>
+      <text x="118" y="1159">chess#2020-02#p2</text>
+      <text class="score-cell" x="471" y="1159">10</text>
+      <text x="644" y="1159">ocean</text>
+      <text x="118" y="1222">...</text>
+      <text class="score-cell" x="471" y="1222">...</text>
+      <text x="644" y="1222">...</text>
+    </g>
+  </g>
+
+  <!-- Gather routes remain continuous; diagonal labels are positioned above them. -->
+  <g id="gather-routes">
+    <path id="partition-0-gather" class="gather-flow" data-connector="true" d="M905.5 242 L1244 608" marker-end="url(#gather-arrowhead)"/>
+    <path id="partition-1-gather" class="gather-flow" data-connector="true" d="M905.5 671.5 H1244" marker-end="url(#gather-arrowhead)"/>
+    <path id="partition-2-gather" class="gather-flow" data-connector="true" d="M905.5 1103 L1244 735" marker-end="url(#gather-arrowhead)"/>
+  </g>
+
+  <!-- Gather labels are kept above their routes. -->
+  <g id="gather-labels">
+    <text x="1025" y="350">gather</text>
+    <text x="1025" y="650">gather</text>
+    <text x="1025" y="850">gather</text>
+  </g>
+
+  <!-- Final merged top-ten leaderboard. -->
+  <g id="top-10-leaderboard">
+    <text class="section-title" x="1474" y="302" text-anchor="middle">Top 10 leaderboard</text>
+    <g id="top-10-grid">
+      <rect class="grid" x="1254.5" y="326.5" width="439" height="692"/>
+      <path class="grid-line" d="M1398.5 326.5V1018.5"/>
+      <path class="grid-line" d="M1254.5 389.5H1693.5M1254.5 452.5H1693.5M1254.5 515.5H1693.5M1254.5 578.5H1693.5M1254.5 640.5H1693.5M1254.5 703.5H1693.5M1254.5 766.5H1693.5M1254.5 829.5H1693.5M1254.5 892.5H1693.5M1254.5 955.5H1693.5"/>
+    </g>
+    <g id="top-10-labels">
+      <text class="header-cell" x="1278" y="369">score</text>
+      <text class="header-cell" x="1422" y="369">user_id</text>
+      <text class="score-cell" x="1278" y="433">309</text><text x="1422" y="433">lovelove</text>
+      <text class="score-cell" x="1278" y="496">209</text><text x="1422" y="496">i_love_tofu</text>
+      <text class="score-cell" x="1278" y="559">203</text><text x="1422" y="559">pizza_or_bread</text>
+      <text class="score-cell" x="1278" y="621">200</text><text x="1422" y="621">Apple</text>
+      <text class="score-cell" x="1278" y="684">199</text><text x="1422" y="684">Orange</text>
+      <text class="score-cell" x="1278" y="747">197</text><text x="1422" y="747">peach</text>
+      <text class="score-cell" x="1278" y="810">196</text><text x="1422" y="810">data</text>
+      <text class="score-cell" x="1278" y="873">180</text><text x="1422" y="873">Bird</text>
+      <text class="score-cell" x="1278" y="936">179</text><text x="1422" y="936">cc</text>
+      <text class="score-cell" x="1278" y="999">177</text><text x="1422" y="999">too_much</text>
+    </g>
+  </g>
+</svg>

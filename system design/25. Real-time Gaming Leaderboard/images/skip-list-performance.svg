@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1956" height="322" viewBox="0 0 1956 322"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Skip-list search performance</title>
+  <desc id="desc">A six-level skip list contains increasingly sparse express lanes above a dense base list. The search path moves right across each useful level, drops down, and finishes at a red target node near the end of the base list.</desc>
+
+  <!-- Reusable node and the thin search-path treatment sampled from the PNG etalon. -->
+  <defs>
+    <style>
+      .node{color:#111}
+      .selected-node{color:#f00}
+      .search-shaft{fill:none;stroke:#111;stroke-width:1.1}
+      .search-head{fill:#111}
+    </style>
+    <symbol id="skip-node" viewBox="0 0 12 12">
+      <circle cx="6" cy="6" r="5.4" fill="currentColor"/>
+      <circle cx="6" cy="6" r="4.1" fill="#fff"/>
+    </symbol>
+    <symbol id="selected-skip-node" viewBox="0 0 12 12">
+      <circle cx="6" cy="6" r="5.4" fill="#111"/>
+      <circle cx="6" cy="6" r="4.1" fill="#f00"/>
+    </symbol>
+  </defs>
+
+  <rect width="1956" height="322" fill="#fff"/>
+
+  <!-- Search route shafts stop at the bases of their own triangular heads. -->
+  <g id="skip-list-search-route">
+    <path id="top-search-shaft" class="search-shaft" data-connector="true" d="M52.5 44 H979"/>
+    <path id="drop-to-level-4-shaft" class="search-shaft" data-connector="true" d="M993 49.5 V79"/>
+    <path id="level-4-search-shaft" class="search-shaft" data-connector="true" d="M998.5 92 H1452"/>
+    <path id="drop-to-level-3-shaft" class="search-shaft" data-connector="true" d="M1465.95 97.5 V127"/>
+    <path id="level-3-search-shaft" class="search-shaft" data-connector="true" d="M1471.45 140 H1689.5"/>
+    <path id="drop-to-level-2-shaft" class="search-shaft" data-connector="true" d="M1702.78 145.5 V175"/>
+    <path id="level-2-search-shaft" class="search-shaft" data-connector="true" d="M1708.28 188 H1807"/>
+    <path id="drop-to-level-1-shaft" class="search-shaft" data-connector="true" d="M1821.02 193.5 V223"/>
+    <path id="drop-to-base-shaft" class="search-shaft" data-connector="true" d="M1821.02 241.5 V270"/>
+    <path id="base-search-shaft" class="search-shaft" data-connector="true" d="M1826.52 283 H1837.5"/>
+
+    <!-- Every tip meets the next circle boundary without crossing it. -->
+    <g id="search-arrowheads" class="search-head">
+      <path id="top-search-head" d="M987.5 44 L979 39.5 L979 48.5 Z"/>
+      <path id="drop-to-level-4-head" d="M993 86.5 L988.5 79 L997.5 79 Z"/>
+      <path id="level-4-search-head" d="M1460.45 92 L1452 87.5 L1452 96.5 Z"/>
+      <path id="drop-to-level-3-head" d="M1465.95 134.5 L1461.45 127 L1470.45 127 Z"/>
+      <path id="level-3-search-head" d="M1697.28 140 L1689.5 135.5 L1689.5 144.5 Z"/>
+      <path id="drop-to-level-2-head" d="M1702.78 182.5 L1698.28 175 L1707.28 175 Z"/>
+      <path id="level-2-search-head" d="M1815.52 188 L1807 183.5 L1807 192.5 Z"/>
+      <path id="drop-to-level-1-head" d="M1821.02 230.5 L1816.52 223 L1825.52 223 Z"/>
+      <path id="drop-to-base-head" d="M1821.02 277.5 L1816.52 270 L1825.52 270 Z"/>
+      <path id="base-search-head" d="M1844.56 283 L1837.5 278.5 L1837.5 287.5 Z"/>
+    </g>
+  </g>
+
+  <!-- Six skip-list levels: each higher lane retains every second node. -->
+  <g id="skip-list-levels">
+    <g id="level-5">
+      <use class="node" href="#skip-node" x="41" y="38" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="986.78" y="38" width="12" height="12"/>
+    </g>
+    <g id="level-4">
+      <use class="node" href="#skip-node" x="41" y="86" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="513.89" y="86" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="986.78" y="86" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1459.67" y="86" width="12" height="12"/>
+    </g>
+    <g id="level-3">
+      <use class="node" href="#skip-node" x="41" y="134" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="277.44" y="134" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="513.89" y="134" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="750.33" y="134" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="986.78" y="134" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1223.22" y="134" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1459.67" y="134" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1696.11" y="134" width="12" height="12"/>
+    </g>
+    <g id="level-2">
+      <use class="node" href="#skip-node" x="41" y="182" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="159.22" y="182" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="277.44" y="182" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="395.67" y="182" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="513.89" y="182" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="632.11" y="182" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="750.33" y="182" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="868.56" y="182" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="986.78" y="182" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1105" y="182" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1223.22" y="182" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1341.44" y="182" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1459.67" y="182" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1577.89" y="182" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1696.11" y="182" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1814.33" y="182" width="12" height="12"/>
+    </g>
+    <g id="level-1">
+      <use class="node" href="#skip-node" x="41" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="100.11" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="159.22" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="218.33" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="277.44" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="336.56" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="395.67" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="454.78" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="513.89" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="573" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="632.11" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="691.22" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="750.33" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="809.44" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="868.56" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="927.67" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="986.78" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1045.89" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1105" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1164.11" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1223.22" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1282.33" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1341.44" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1400.56" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1459.67" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1518.78" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1577.89" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1637" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1696.11" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1755.22" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1814.33" y="230" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1873.44" y="230" width="12" height="12"/>
+    </g>
+    <g id="level-0">
+      <use class="node" href="#skip-node" x="41" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="70.56" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="100.11" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="129.67" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="159.22" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="188.78" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="218.33" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="247.89" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="277.44" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="307" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="336.56" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="366.11" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="395.67" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="425.22" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="454.78" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="484.33" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="513.89" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="543.44" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="573" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="602.56" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="632.11" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="661.67" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="691.22" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="720.78" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="750.33" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="779.89" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="809.44" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="839" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="868.56" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="898.11" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="927.67" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="957.22" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="986.78" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1016.33" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1045.89" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1075.44" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1105" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1134.56" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1164.11" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1193.67" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1223.22" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1252.78" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1282.33" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1311.89" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1341.44" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1371" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1400.56" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1430.11" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1459.67" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1489.22" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1518.78" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1548.33" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1577.89" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1607.44" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1637" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1666.56" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1696.11" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1725.67" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1755.22" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1784.78" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1814.33" y="277" width="12" height="12"/>
+      <use id="selected-score-node" class="selected-node" href="#selected-skip-node" x="1843.89" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1873.44" y="277" width="12" height="12"/>
+      <use class="node" href="#skip-node" x="1903" y="277" width="12" height="12"/>
+    </g>
+  </g>
+</svg>

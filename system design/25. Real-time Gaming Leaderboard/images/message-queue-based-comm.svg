@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1372" height="516" viewBox="0 0 1372 516"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Message-queue-based communication</title>
+  <desc id="desc">The game service publishes events to Kafka. Kafka distributes those events asynchronously to the leaderboard service, analytic service, and push notification service.</desc>
+
+  <!-- Shared typography, service boxes, and compact arrowhead. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-size:40px;font-weight:400;text-anchor:middle}
+      .service-box{fill:#fff;stroke:#111;stroke-width:2}
+      .flow-shaft{fill:none;stroke:#111;stroke-width:2.2}
+    </style>
+    <marker id="flow-arrowhead" viewBox="0 0 11 9" refX="11" refY="4.5"
+            markerWidth="22" markerHeight="18" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 L11 4.5 L0 9 Z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect width="1372" height="516" fill="#fff"/>
+
+  <!-- Service containers. -->
+  <g id="service-containers">
+    <rect class="service-box" x="57.5" y="205.5" width="201" height="114"/>
+    <rect class="service-box" x="978.5" y="39.5" width="327" height="114"/>
+    <rect class="service-box" x="978.5" y="205.5" width="327" height="114"/>
+    <rect class="service-box" x="978.5" y="371.5" width="327" height="114"/>
+  </g>
+
+  <!-- Connectors are painted before Kafka and all labels; their heads stop at receiving boundaries. -->
+  <g id="message-flows">
+    <path id="game-to-kafka-flow" class="flow-shaft" data-connector="true"
+          d="M258.5 262.5 H507" marker-end="url(#flow-arrowhead)"/>
+    <path id="kafka-to-leaderboard-flow" class="flow-shaft" data-connector="true"
+          d="M726 228.5 L978.5 148" marker-end="url(#flow-arrowhead)"/>
+    <path id="kafka-to-analytics-flow" class="flow-shaft" data-connector="true"
+          d="M729.5 262.5 H978.5" marker-end="url(#flow-arrowhead)"/>
+    <path id="kafka-to-notifications-flow" class="flow-shaft" data-connector="true"
+          d="M726 296.5 L978.5 376" marker-end="url(#flow-arrowhead)"/>
+  </g>
+
+  <!-- Kafka cylinder: a rounded left body with a full right end cap. -->
+  <g id="kafka-queue">
+    <path d="M528 206 H707 V319 H528 C499 319 499 206 528 206 Z"
+          fill="#fff" stroke="#111" stroke-width="2"/>
+    <ellipse cx="707" cy="262.5" rx="22.5" ry="56.5"
+             fill="#fff" stroke="#111" stroke-width="2"/>
+  </g>
+
+  <!-- Labels remain above all connector geometry. -->
+  <g id="service-labels">
+    <text x="158" y="254"><tspan x="158">Game</tspan><tspan x="158" dy="44">service</tspan></text>
+    <text x="605" y="276">Kafka</text>
+    <text x="1142" y="89"><tspan x="1142">Leaderboard</tspan><tspan x="1142" dy="43">service</tspan></text>
+    <text x="1142" y="254"><tspan x="1142">Analytic</tspan><tspan x="1142" dy="44">service</tspan></text>
+    <text x="1142" y="420"><tspan x="1142">Push Notification</tspan><tspan x="1142" dy="43">service</tspan></text>
+  </g>
+</svg>

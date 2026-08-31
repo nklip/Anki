@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1342" height="1182" viewBox="0 0 1342 1182"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Skip-list indexes for leaderboard scores</title>
+  <desc id="desc">A sorted base list is promoted into one-level and two-level skip-list indexes. Bold links show the lookup path to score 45, which is highlighted in pink in every base list.</desc>
+
+  <!-- Shared boxes, panel boundaries, typography, and two connector weights. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .panel{fill:none;stroke:#111;stroke-width:2;stroke-dasharray:10 7}
+      .panel-label{font-size:31px}
+      .node-box{fill:#fff;stroke:#111;stroke-width:1.8}
+      .target-node{fill:#ffc0ff}
+      .node-value{font-size:31px;text-anchor:middle}
+      .index-link{fill:none;stroke:#111;stroke-width:1.25}
+      .search-link{fill:none;stroke:#111;stroke-width:3.5}
+      .stage-arrow{fill:#fff;stroke:#111;stroke-width:2;stroke-linejoin:round}
+    </style>
+    <marker id="index-arrowhead" viewBox="0 0 10 8" refX="10" refY="4"
+            markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 L10 4 L0 8 Z" fill="#111"/>
+    </marker>
+    <marker id="search-arrowhead" viewBox="0 0 12 10" refX="12" refY="5"
+            markerWidth="24" markerHeight="20" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 L12 5 L0 10 Z" fill="#111"/>
+    </marker>
+  </defs>
+
+  <rect width="1342" height="1182" fill="#fff"/>
+
+  <!-- Dashed boundaries separate the base, level-1, and level-2 teaching stages. -->
+  <g id="stage-boundaries">
+    <rect class="panel" x="52.5" y="33.5" width="1238" height="134"/>
+    <rect class="panel" x="52.5" y="272.5" width="1238" height="294"/>
+    <rect class="panel" x="52.5" y="669.5" width="1238" height="482"/>
+    <text class="panel-label" x="149" y="112">Base list</text>
+    <text class="panel-label" x="85" y="347">Level 1 index</text>
+    <text class="panel-label" x="85" y="755">Level 2 index</text>
+    <text class="panel-label" x="85" y="937">Level 1 index</text>
+  </g>
+
+  <!-- Large outlined arrows indicate adding another skip-list index level. -->
+  <g id="stage-transitions">
+    <path id="base-to-level-1-arrow" class="stage-arrow" d="M648 190 H695 V228 H718 L672 251 L625 228 H648 Z"/>
+    <path id="level-1-to-level-2-arrow" class="stage-arrow" d="M648 588 H695 V626 H718 L672 649 L625 626 H648 Z"/>
+  </g>
+
+  <!-- Connectors are below nodes so their tips terminate cleanly at box boundaries. -->
+  <g id="base-list-links">
+    <path id="base-1-to-4" class="search-link" data-connector="true" d="M352 101 L392 101" marker-end="url(#search-arrowhead)"/>
+    <path id="base-4-to-8" class="search-link" data-connector="true" d="M452 101 L491 101" marker-end="url(#search-arrowhead)"/>
+    <path id="base-8-to-10" class="search-link" data-connector="true" d="M551 101 L591 101" marker-end="url(#search-arrowhead)"/>
+    <path id="base-10-to-15" class="search-link" data-connector="true" d="M651 101 L690 101" marker-end="url(#search-arrowhead)"/>
+    <path id="base-15-to-26" class="search-link" data-connector="true" d="M750 101 L790 101" marker-end="url(#search-arrowhead)"/>
+    <path id="base-26-to-36" class="search-link" data-connector="true" d="M850 101 L889 101" marker-end="url(#search-arrowhead)"/>
+    <path id="base-36-to-45" class="search-link" data-connector="true" d="M949 101 L989 101" marker-end="url(#search-arrowhead)"/>
+    <path id="base-45-to-60" class="index-link" data-connector="true" d="M1049 101 L1088 101" marker-end="url(#index-arrowhead)"/>
+    <path id="base-60-to-68" class="index-link" data-connector="true" d="M1148 101 L1188 101" marker-end="url(#index-arrowhead)"/>
+  </g>
+
+  <g id="level-1-stage-links">
+    <path id="level-1-top-1-to-8" class="search-link" data-connector="true" d="M352 335 L491 335" marker-end="url(#search-arrowhead)"/>
+    <path id="level-1-top-8-to-15" class="search-link" data-connector="true" d="M551 335 L690 335" marker-end="url(#search-arrowhead)"/>
+    <path id="level-1-top-15-to-36" class="search-link" data-connector="true" d="M750 335 L889 335" marker-end="url(#search-arrowhead)"/>
+    <path id="level-1-top-36-to-60" class="index-link" data-connector="true" d="M949 335 L1088 335" marker-end="url(#index-arrowhead)"/>
+    <path id="level-1-drop-1" class="index-link" data-connector="true" d="M322 361 L322 468" marker-end="url(#index-arrowhead)"/>
+    <path id="level-1-drop-8" class="index-link" data-connector="true" d="M521 361 L521 468" marker-end="url(#index-arrowhead)"/>
+    <path id="level-1-drop-15" class="index-link" data-connector="true" d="M720 361 L720 468" marker-end="url(#index-arrowhead)"/>
+    <path id="level-1-drop-36" class="search-link" data-connector="true" d="M919 361 L919 468" marker-end="url(#search-arrowhead)"/>
+    <path id="level-1-drop-60" class="index-link" data-connector="true" d="M1118 361 L1118 468" marker-end="url(#index-arrowhead)"/>
+    <path id="level-1-base-1-to-4" class="index-link" data-connector="true" d="M352 493 L392 493" marker-end="url(#index-arrowhead)"/>
+    <path id="level-1-base-4-to-8" class="index-link" data-connector="true" d="M452 493 L491 493" marker-end="url(#index-arrowhead)"/>
+    <path id="level-1-base-8-to-10" class="index-link" data-connector="true" d="M551 493 L591 493" marker-end="url(#index-arrowhead)"/>
+    <path id="level-1-base-10-to-15" class="index-link" data-connector="true" d="M651 493 L690 493" marker-end="url(#index-arrowhead)"/>
+    <path id="level-1-base-15-to-26" class="index-link" data-connector="true" d="M750 493 L790 493" marker-end="url(#index-arrowhead)"/>
+    <path id="level-1-base-26-to-36" class="index-link" data-connector="true" d="M850 493 L889 493" marker-end="url(#index-arrowhead)"/>
+    <path id="level-1-base-36-to-45" class="search-link" data-connector="true" d="M949 493 L989 493" marker-end="url(#search-arrowhead)"/>
+    <path id="level-1-base-45-to-60" class="index-link" data-connector="true" d="M1049 493 L1088 493" marker-end="url(#index-arrowhead)"/>
+    <path id="level-1-base-60-to-68" class="index-link" data-connector="true" d="M1148 493 L1188 493" marker-end="url(#index-arrowhead)"/>
+  </g>
+
+  <g id="level-2-stage-links">
+    <path id="level-2-top-1-to-15" class="search-link" data-connector="true" d="M352 743 L690 743" marker-end="url(#search-arrowhead)"/>
+    <path id="level-2-top-15-to-60" class="index-link" data-connector="true" d="M750 743 L1088 743" marker-end="url(#index-arrowhead)"/>
+    <path id="level-2-drop-1" class="index-link" data-connector="true" d="M322 769 L322 900" marker-end="url(#index-arrowhead)"/>
+    <path id="level-2-drop-15" class="search-link" data-connector="true" d="M720 769 L720 900" marker-end="url(#search-arrowhead)"/>
+    <path id="level-2-drop-60" class="index-link" data-connector="true" d="M1118 769 L1118 900" marker-end="url(#index-arrowhead)"/>
+    <path id="level-2-mid-1-to-8" class="index-link" data-connector="true" d="M352 925 L491 925" marker-end="url(#index-arrowhead)"/>
+    <path id="level-2-mid-8-to-15" class="index-link" data-connector="true" d="M551 925 L690 925" marker-end="url(#index-arrowhead)"/>
+    <path id="level-2-mid-15-to-36" class="search-link" data-connector="true" d="M750 925 L889 925" marker-end="url(#search-arrowhead)"/>
+    <path id="level-2-mid-36-to-60" class="index-link" data-connector="true" d="M949 925 L1088 925" marker-end="url(#index-arrowhead)"/>
+    <path id="level-2-mid-drop-1" class="index-link" data-connector="true" d="M322 951 L322 1058" marker-end="url(#index-arrowhead)"/>
+    <path id="level-2-mid-drop-8" class="index-link" data-connector="true" d="M521 951 L521 1058" marker-end="url(#index-arrowhead)"/>
+    <path id="level-2-mid-drop-15" class="index-link" data-connector="true" d="M720 951 L720 1058" marker-end="url(#index-arrowhead)"/>
+    <path id="level-2-mid-drop-36" class="search-link" data-connector="true" d="M919 951 L919 1058" marker-end="url(#search-arrowhead)"/>
+    <path id="level-2-mid-drop-60" class="index-link" data-connector="true" d="M1118 951 L1118 1058" marker-end="url(#index-arrowhead)"/>
+    <path id="level-2-base-1-to-4" class="index-link" data-connector="true" d="M352 1083 L392 1083" marker-end="url(#index-arrowhead)"/>
+    <path id="level-2-base-4-to-8" class="index-link" data-connector="true" d="M452 1083 L491 1083" marker-end="url(#index-arrowhead)"/>
+    <path id="level-2-base-8-to-10" class="index-link" data-connector="true" d="M551 1083 L591 1083" marker-end="url(#index-arrowhead)"/>
+    <path id="level-2-base-10-to-15" class="index-link" data-connector="true" d="M651 1083 L690 1083" marker-end="url(#index-arrowhead)"/>
+    <path id="level-2-base-15-to-26" class="index-link" data-connector="true" d="M750 1083 L790 1083" marker-end="url(#index-arrowhead)"/>
+    <path id="level-2-base-26-to-36" class="index-link" data-connector="true" d="M850 1083 L889 1083" marker-end="url(#index-arrowhead)"/>
+    <path id="level-2-base-36-to-45" class="search-link" data-connector="true" d="M949 1083 L989 1083" marker-end="url(#search-arrowhead)"/>
+    <path id="level-2-base-45-to-60" class="index-link" data-connector="true" d="M1049 1083 L1088 1083" marker-end="url(#index-arrowhead)"/>
+    <path id="level-2-base-60-to-68" class="index-link" data-connector="true" d="M1148 1083 L1188 1083" marker-end="url(#index-arrowhead)"/>
+  </g>
+
+  <!-- Nodes are painted above links; the value 45 remains the highlighted target. -->
+  <g id="base-list-nodes">
+      <g id="base-1">
+        <rect class="node-box" x="292" y="75" width="60" height="51"/>
+        <text class="node-value" x="322" y="112">1</text>
+      </g>
+      <g id="base-4">
+        <rect class="node-box" x="392" y="75" width="60" height="51"/>
+        <text class="node-value" x="422" y="112">4</text>
+      </g>
+      <g id="base-8">
+        <rect class="node-box" x="491" y="75" width="60" height="51"/>
+        <text class="node-value" x="521" y="112">8</text>
+      </g>
+      <g id="base-10">
+        <rect class="node-box" x="591" y="75" width="60" height="51"/>
+        <text class="node-value" x="621" y="112">10</text>
+      </g>
+      <g id="base-15">
+        <rect class="node-box" x="690" y="75" width="60" height="51"/>
+        <text class="node-value" x="720" y="112">15</text>
+      </g>
+      <g id="base-26">
+        <rect class="node-box" x="790" y="75" width="60" height="51"/>
+        <text class="node-value" x="820" y="112">26</text>
+      </g>
+      <g id="base-36">
+        <rect class="node-box" x="889" y="75" width="60" height="51"/>
+        <text class="node-value" x="919" y="112">36</text>
+      </g>
+      <g id="base-45">
+        <rect class="node-box target-node" x="989" y="75" width="60" height="51"/>
+        <text class="node-value" x="1019" y="112">45</text>
+      </g>
+      <g id="base-60">
+        <rect class="node-box" x="1088" y="75" width="60" height="51"/>
+        <text class="node-value" x="1118" y="112">60</text>
+      </g>
+      <g id="base-68">
+        <rect class="node-box" x="1188" y="75" width="60" height="51"/>
+        <text class="node-value" x="1218" y="112">68</text>
+      </g>
+  </g>
+
+  <g id="level-1-stage-nodes">
+    <g id="level-1-index-nodes">
+      <g id="level-1-index-1">
+        <rect class="node-box" x="292" y="310" width="60" height="51"/>
+        <text class="node-value" x="322" y="347">1</text>
+      </g>
+      <g id="level-1-index-8">
+        <rect class="node-box" x="491" y="310" width="60" height="51"/>
+        <text class="node-value" x="521" y="347">8</text>
+      </g>
+      <g id="level-1-index-15">
+        <rect class="node-box" x="690" y="310" width="60" height="51"/>
+        <text class="node-value" x="720" y="347">15</text>
+      </g>
+      <g id="level-1-index-36">
+        <rect class="node-box" x="889" y="310" width="60" height="51"/>
+        <text class="node-value" x="919" y="347">36</text>
+      </g>
+      <g id="level-1-index-60">
+        <rect class="node-box" x="1088" y="310" width="60" height="51"/>
+        <text class="node-value" x="1118" y="347">60</text>
+      </g>
+    </g>
+    <g id="level-1-base-nodes">
+      <g id="level-1-base-1">
+        <rect class="node-box" x="292" y="468" width="60" height="51"/>
+        <text class="node-value" x="322" y="505">1</text>
+      </g>
+      <g id="level-1-base-4">
+        <rect class="node-box" x="392" y="468" width="60" height="51"/>
+        <text class="node-value" x="422" y="505">4</text>
+      </g>
+      <g id="level-1-base-8">
+        <rect class="node-box" x="491" y="468" width="60" height="51"/>
+        <text class="node-value" x="521" y="505">8</text>
+      </g>
+      <g id="level-1-base-10">
+        <rect class="node-box" x="591" y="468" width="60" height="51"/>
+        <text class="node-value" x="621" y="505">10</text>
+      </g>
+      <g id="level-1-base-15">
+        <rect class="node-box" x="690" y="468" width="60" height="51"/>
+        <text class="node-value" x="720" y="505">15</text>
+      </g>
+      <g id="level-1-base-26">
+        <rect class="node-box" x="790" y="468" width="60" height="51"/>
+        <text class="node-value" x="820" y="505">26</text>
+      </g>
+      <g id="level-1-base-36">
+        <rect class="node-box" x="889" y="468" width="60" height="51"/>
+        <text class="node-value" x="919" y="505">36</text>
+      </g>
+      <g id="level-1-base-45">
+        <rect class="node-box target-node" x="989" y="468" width="60" height="51"/>
+        <text class="node-value" x="1019" y="505">45</text>
+      </g>
+      <g id="level-1-base-60">
+        <rect class="node-box" x="1088" y="468" width="60" height="51"/>
+        <text class="node-value" x="1118" y="505">60</text>
+      </g>
+      <g id="level-1-base-68">
+        <rect class="node-box" x="1188" y="468" width="60" height="51"/>
+        <text class="node-value" x="1218" y="505">68</text>
+      </g>
+    </g>
+  </g>
+
+  <g id="level-2-stage-nodes">
+    <g id="level-2-index-nodes">
+      <g id="level-2-index-1">
+        <rect class="node-box" x="292" y="718" width="60" height="51"/>
+        <text class="node-value" x="322" y="755">1</text>
+      </g>
+      <g id="level-2-index-15">
+        <rect class="node-box" x="690" y="718" width="60" height="51"/>
+        <text class="node-value" x="720" y="755">15</text>
+      </g>
+      <g id="level-2-index-60">
+        <rect class="node-box" x="1088" y="718" width="60" height="51"/>
+        <text class="node-value" x="1118" y="755">60</text>
+      </g>
+    </g>
+    <g id="level-2-level-1-nodes">
+      <g id="level-2-level-1-1">
+        <rect class="node-box" x="292" y="900" width="60" height="51"/>
+        <text class="node-value" x="322" y="937">1</text>
+      </g>
+      <g id="level-2-level-1-8">
+        <rect class="node-box" x="491" y="900" width="60" height="51"/>
+        <text class="node-value" x="521" y="937">8</text>
+      </g>
+      <g id="level-2-level-1-15">
+        <rect class="node-box" x="690" y="900" width="60" height="51"/>
+        <text class="node-value" x="720" y="937">15</text>
+      </g>
+      <g id="level-2-level-1-36">
+        <rect class="node-box" x="889" y="900" width="60" height="51"/>
+        <text class="node-value" x="919" y="937">36</text>
+      </g>
+      <g id="level-2-level-1-60">
+        <rect class="node-box" x="1088" y="900" width="60" height="51"/>
+        <text class="node-value" x="1118" y="937">60</text>
+      </g>
+    </g>
+    <g id="level-2-base-nodes">
+      <g id="level-2-base-1">
+        <rect class="node-box" x="292" y="1058" width="60" height="51"/>
+        <text class="node-value" x="322" y="1095">1</text>
+      </g>
+      <g id="level-2-base-4">
+        <rect class="node-box" x="392" y="1058" width="60" height="51"/>
+        <text class="node-value" x="422" y="1095">4</text>
+      </g>
+      <g id="level-2-base-8">
+        <rect class="node-box" x="491" y="1058" width="60" height="51"/>
+        <text class="node-value" x="521" y="1095">8</text>
+      </g>
+      <g id="level-2-base-10">
+        <rect class="node-box" x="591" y="1058" width="60" height="51"/>
+        <text class="node-value" x="621" y="1095">10</text>
+      </g>
+      <g id="level-2-base-15">
+        <rect class="node-box" x="690" y="1058" width="60" height="51"/>
+        <text class="node-value" x="720" y="1095">15</text>
+      </g>
+      <g id="level-2-base-26">
+        <rect class="node-box" x="790" y="1058" width="60" height="51"/>
+        <text class="node-value" x="820" y="1095">26</text>
+      </g>
+      <g id="level-2-base-36">
+        <rect class="node-box" x="889" y="1058" width="60" height="51"/>
+        <text class="node-value" x="919" y="1095">36</text>
+      </g>
+      <g id="level-2-base-45">
+        <rect class="node-box target-node" x="989" y="1058" width="60" height="51"/>
+        <text class="node-value" x="1019" y="1095">45</text>
+      </g>
+      <g id="level-2-base-60">
+        <rect class="node-box" x="1088" y="1058" width="60" height="51"/>
+        <text class="node-value" x="1118" y="1095">60</text>
+      </g>
+      <g id="level-2-base-68">
+        <rect class="node-box" x="1188" y="1058" width="60" height="51"/>
+        <text class="node-value" x="1218" y="1095">68</text>
+      </g>
+    </g>
+  </g>
+</svg>
