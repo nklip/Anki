@@ -194,7 +194,7 @@ What if the interviewer wants to update the design to include a feature where we
 One way to handle this is to define a pool of pubsub channels, based on geohash:
 
 <div style="margin-left:3rem">
-    <img src="./images/geohash-pubsub.png" alt="geohash-pubsub" width="500" />
+    <img src="./images/geohash-pubsub.svg" alt="geohash-pubsub" width="500" />
 </div>
 
 Anyone within the geohash subscribes to the appropriate channel to receive location updates for random users:
@@ -206,7 +206,7 @@ Anyone within the geohash subscribes to the appropriate channel to receive locat
 We could also subscribe to several geohashes to handle cases where someone is close but in a bordering geohash:
 
 <div style="margin-left:3rem">
-    <img src="./images/geohash-borders.png" alt="geohash-borders" width="500" />
+    <img src="./images/geohash-borders.svg" alt="geohash-borders" width="500" />
 </div>
 
 ### **Alternative to Redis pub/sub**
