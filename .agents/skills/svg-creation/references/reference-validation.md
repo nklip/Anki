@@ -57,4 +57,4 @@ The checker needs Node.js with `sharp` to render both images consistently. It au
 
 ## Complete manual review
 
-Comparison metrics cannot determine whether an arrow points to the correct semantic target or whether a tiny arrowhead crosses a boundary in a misleading way. Inspect the SVG and etalon side by side at full size and zoom into every connector endpoint and dense region. Do not embed the etalon with `<image>`: the final file must remain editable, source-native SVG.
+Comparison metrics cannot determine whether an arrow points to the correct semantic target or whether a tiny arrowhead crosses a boundary in a misleading way. Inspect the SVG and etalon side by side at full size, then inspect every connector endpoint at 8×–10× zoom. Reject a narrow shaft tail visible after a tapered nose, a gap before the target, or a nose that enters the target. When a shared marker has one bad join, review every use and every orientation rather than repairing only the reported example. Do not embed the etalon with `<image>`: the final file must remain editable, source-native SVG.

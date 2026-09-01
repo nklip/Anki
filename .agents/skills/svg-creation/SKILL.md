@@ -50,6 +50,9 @@ Before running the validator outside the bundled Codex environment, install the 
 - The shaft or path portion of an arrow may cross or overlap non-text objects when that overlap is necessary to communicate a relation, sequence, or order. Make the overlap visibly intentional through routing, contrast, dash pattern, or a concise XML comment. It must never overlap text.
 - Apart from the controlled join with its own shaft, an arrowhead must not overlap any object. Its tip may meet a target boundary, but it must not enter the target shape, collide with another connector, or cover any text.
 - For curved or reusable arrows, use a `<marker>` with a unique ID, positive viewport dimensions, explicit `viewBox`, `refX`, `refY`, `orient="auto"` or `auto-start-reverse`, and deliberate `markerUnits`. Ensure every `url(#...)` reference resolves.
+- For a tapered marker head, do not register `refX` at the sharp tip when the stroked shaft would remain visible through the narrowing nose. Put the shaft endpoint far enough inside the head for the head's cross-section to cover the full shaft, including antialiasing. With a 2-unit shaft and an 18×16 triangular head whose tip is at x=18, `refX="16"` is a practical starting point; scale the inset for other geometry. See [marker nose joins](references/svg-folder-style.md#marker-nose-joins).
+- A tip that projects beyond the marker reference point also projects beyond the connector path endpoint. Pull that endpoint back by the same distance along the connector's final direction—using the final tangent for a curve—so the visible tip meets the target boundary without entering it. Treat the path endpoint and the visible nose as different points.
+- Apply the same join rule to every equivalent arrowhead in the diagram. If one marker shows a shaft tail, gap, or target penetration, audit every use of that marker at horizontal, vertical, diagonal, and curved orientations; create a separate marker variant only when different stroke or target geometry genuinely requires it, and comment the reason.
 - Account for stroke width and the head's forward extent when choosing the path endpoint. A path may continue across a non-text object when the intended relationship calls for it, while the head remains clear at its final destination.
 - Never rely on a zero-length connector for orientation. Inspect heads at horizontal, vertical, and diagonal angles and near every canvas edge.
 
@@ -62,7 +65,7 @@ Before running the validator outside the bundled Codex environment, install the 
 5. Inspect the full image and zoom into every dense region. Confirm:
    - no text touches or overlaps other text, borders, arrow shafts, arrowheads, or canvas edges;
    - any arrow shaft crossing or overlapping a non-text object is intentional, readable, and necessary to show relation or order;
-   - every arrowhead is present, aligned, unclipped, pointed in the intended direction, joined cleanly to its shaft, and free from overlap with other objects;
+   - every arrowhead is present, aligned, unclipped, pointed in the intended direction, joined cleanly to its shaft, and free from overlap with other objects; at high zoom, no narrow shaft tail remains visible after a tapered nose;
    - connector routing and layer order remain understandable;
    - no large unused region dominates the composition unless that space has an explicit grouping or sequencing purpose;
    - a first-time learner can identify the subject, starting point, reading order, rule or relationship, and outcome without external explanation;

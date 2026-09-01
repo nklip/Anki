@@ -37,6 +37,28 @@ Separate a hand-drawn shaft and triangular head when exact geometry matters. Sto
 
 There is no universal connector layer. A shaft may sit above or below a shape according to the relationship being shown. Keep text visually above crossing geometry and keep arrowheads fully visible. Add a concise XML comment when an unusual crossing or layer choice would otherwise look accidental.
 
+### Marker nose joins
+
+SVG paints a marker-ended shaft all the way to the path endpoint. If a triangular marker registers `refX` at its sharp tip, the stroked shaft can remain visible through the last narrow part of the triangle and look like a rectangular tail after the apparent nose.
+
+- Register the marker slightly behind its tip so the tip projects forward and the shaft endpoint lies under a part of the head wide enough to cover the entire stroke. Include antialiasing clearance rather than matching the mathematical edges exactly.
+- With `markerUnits="userSpaceOnUse"`, a 2-unit shaft, and this common 18×16 triangle, a 2-unit projection is a useful starting point:
+
+  ```xml
+  <!-- The tip at x=18 projects 2 units beyond the shaft endpoint at refX=16. -->
+  <marker id="arrowhead" markerWidth="18" markerHeight="16"
+          viewBox="0 0 18 16" refX="16" refY="8"
+          orient="auto" markerUnits="userSpaceOnUse">
+    <path d="M0 0 L18 8 L0 16 Z" fill="#000"/>
+  </marker>
+  ```
+
+- Scale the projection for the actual shaft width, head taper, and `markerUnits`. The head's cross-section at the path endpoint must cover the shaft; 1–2 units is not a universal value.
+- Compensate for the forward projection when placing the connector. If the desired visible tip is target point `T`, projection distance is `d`, and `u` is the final unit direction, place the path endpoint at `T − d·u`. For a cubic Bézier, use its final tangent direction. This keeps the nose on the target boundary instead of pushing it inside the target.
+- Use one join convention for all equivalent arrows. After changing a shared marker, inspect every reference to it and every orientation. Separate variants are appropriate only when stroke width, head geometry, or target geometry differs; document the exception beside the definition.
+
+At 8×–10× zoom, reject all three failure modes: a shaft tail visible beyond the tapered nose, a white gap between nose and target, or a nose that penetrates the target boundary.
+
 ## Text layout
 
 SVG does not wrap text automatically. Split long labels into deliberate lines, provide consistent line height, and leave generous padding from borders and all arrow geometry. Render with realistic fallback fonts before finalizing container dimensions.
