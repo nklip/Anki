@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1750" height="1454" viewBox="0 0 1750 1454"
+     role="img" aria-labelledby="title desc">
+  <title id="title">CQRS architecture with command, event, and read paths</title>
+  <desc id="desc">A client sends debit commands through a command queue. Events update the current state and are published to rebuild a historical read state queried through a separate query service.</desc>
+
+  <defs>
+    <style>
+      text{font-family:Helvetica,Arial,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .outline{fill:#fff;stroke:#000;stroke-width:2.5}
+      .yellow{fill:#feffc0}
+      .cyan{fill:#bfffff}
+      .green{fill:#bfffbf}
+      .connector{fill:none;stroke:#000;stroke-width:2.5;stroke-linejoin:round}
+      .step-spoke{fill:none;stroke:#000;stroke-width:2.5;stroke-linejoin:round}
+      .dashed{fill:none;stroke:#000;stroke-width:2.5;stroke-dasharray:12 10;stroke-linejoin:round}
+      .section-title{font-size:40px}
+      .queue-title{font-size:30px}
+      .command-text{font-size:32px}
+      .event-text{font-size:30px}
+      .flow-label{font-size:32px}
+      .state-title{font-size:31px;text-anchor:middle}
+      .state-value{font-size:30px}
+      .step-label{font-size:31px}
+      .step-circle{fill:#fff;stroke:#000;stroke-width:2.5}
+      .step-digit{font-size:22px;text-anchor:middle}
+      .mini-stroke{fill:none;stroke:#000;stroke-width:1.45;stroke-linecap:butt}
+    </style>
+
+    <!-- Four-unit projection gives every 2.5-unit connector full taper coverage at its endpoint. -->
+    <marker id="arrowhead" markerWidth="24" markerHeight="20" viewBox="0 0 24 20"
+            refX="20" refY="10" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L24 10 L0 20 Z" fill="#000"/>
+    </marker>
+
+    <!-- Reusable toothed operation node. -->
+    <polygon id="operation-gear"
+             points="0,-24 2.48,-18.84 6.21,-23.18 7.27,-17.55 12,-20.78 11.57,-15.07 16.97,-16.97 15.07,-11.57 20.78,-12 17.55,-7.27 23.18,-6.21 18.84,-2.48 24,0 18.84,2.48 23.18,6.21 17.55,7.27 20.78,12 15.07,11.57 16.97,16.97 11.57,15.07 12,20.78 7.27,17.55 6.21,23.18 2.48,18.84 0,24 -2.48,18.84 -6.21,23.18 -7.27,17.55 -12,20.78 -11.57,15.07 -16.97,16.97 -15.07,11.57 -20.78,12 -17.55,7.27 -23.18,6.21 -18.84,2.48 -24,0 -18.84,-2.48 -23.18,-6.21 -17.55,-7.27 -20.78,-12 -15.07,-11.57 -16.97,-16.97 -11.57,-15.07 -12,-20.78 -7.27,-17.55 -6.21,-23.18 -2.48,-18.84"
+             fill="#fff" stroke="#000" stroke-width="1.7" stroke-linejoin="miter"/>
+  </defs>
+
+  <rect width="1750" height="1454" fill="#fff"/>
+
+  <!-- Main architectural boundaries. -->
+  <g id="architecture-boundaries">
+    <rect id="write-path-boundary" class="outline" x="485.5" y="29.5" width="1224" height="680"/>
+    <rect id="command-queue-boundary" class="outline" x="648.5" y="157" width="619.5" height="147.5"/>
+    <rect id="event-queue-boundary" class="outline" x="513.5" y="493.5" width="908" height="147"/>
+    <rect id="read-path-boundary" class="outline" x="1033.5" y="850" width="598.5" height="566"/>
+  </g>
+
+  <!-- Command cards. The debit mark and miniature arrow are drawn as equal-width strokes. -->
+  <g id="command-cards">
+    <rect id="incoming-command" class="outline" x="290.5" y="190.5" width="156.5" height="80.5"/>
+    <rect id="command-c" class="outline yellow" x="701.5" y="190.5" width="157.5" height="80.5"/>
+    <rect id="command-b" class="outline cyan" x="887.5" y="190.5" width="157.5" height="80.5"/>
+    <rect id="command-d" class="outline green" x="1072.5" y="190.5" width="157.5" height="80.5"/>
+
+    <g id="incoming-command-symbols">
+      <path class="mini-stroke" d="M337 231 H348"/>
+      <path class="mini-stroke" d="M388 231 H397"/>
+      <path d="M396 225.5 L408 231 L396 236.5 Z" fill="#000"/>
+    </g>
+    <g id="queued-command-c-symbols">
+      <path class="mini-stroke" d="M749 231 H761"/>
+      <path class="mini-stroke" d="M800 231 H809"/>
+      <path d="M808 225.5 L820 231 L808 236.5 Z" fill="#000"/>
+    </g>
+    <g id="queued-command-b-symbols">
+      <path class="mini-stroke" d="M935 231 H947"/>
+      <path class="mini-stroke" d="M986 231 H995"/>
+      <path d="M994 225.5 L1006 231 L994 236.5 Z" fill="#000"/>
+    </g>
+    <g id="queued-command-d-symbols">
+      <path class="mini-stroke" d="M1120 231 H1132"/>
+      <path class="mini-stroke" d="M1171 231 H1180"/>
+      <path d="M1179 225.5 L1191 231 L1179 236.5 Z" fill="#000"/>
+    </g>
+  </g>
+
+  <!-- Event cards use the same color grouping as their originating commands. -->
+  <g id="event-cards">
+    <rect id="event-a-debit-yellow" class="outline yellow" x="546.5" y="536.5" width="129" height="61"/>
+    <rect id="event-c-credit" class="outline yellow" x="688.5" y="536.5" width="129" height="61"/>
+    <rect id="event-a-debit-cyan" class="outline cyan" x="830.5" y="536.5" width="129" height="61"/>
+    <rect id="event-b-credit" class="outline cyan" x="972.5" y="536.5" width="129" height="61"/>
+    <rect id="event-a-debit-green" class="outline green" x="1114.5" y="536.5" width="129" height="61"/>
+    <rect id="event-d-credit" class="outline green" x="1256.5" y="536.5" width="129" height="61"/>
+  </g>
+
+  <!-- Current and historical state stores. -->
+  <g id="current-state-store">
+    <ellipse class="outline" cx="1576" cy="97" rx="90" ry="23"/>
+    <path class="outline" d="M1486 97 V278 C1486 309 1666 309 1666 278 V97"/>
+    <ellipse cx="1576" cy="97" rx="90" ry="23" fill="#fff" stroke="#000" stroke-width="2.5"/>
+  </g>
+  <g id="historical-state-store">
+    <ellipse class="outline" cx="1489" cy="1144" rx="90" ry="23"/>
+    <path class="outline" d="M1399 1144 V1319 C1399 1351 1579 1351 1579 1319 V1144"/>
+    <ellipse cx="1489" cy="1144" rx="90" ry="23" fill="#fff" stroke="#000" stroke-width="2.5"/>
+  </g>
+
+  <!-- Client input and query routes. -->
+  <g id="client-routes">
+    <path id="client-command" class="connector" data-connector="true" d="M172 230 H286" marker-end="url(#arrowhead)"/>
+    <path id="command-to-in" class="connector" data-connector="true" d="M447 230 H507"/>
+    <path id="in-to-command-queue" class="connector" data-connector="true" d="M563 230 H644" marker-end="url(#arrowhead)"/>
+
+    <path id="client-query-before-label" class="connector" data-connector="true"
+          d="M113 264 C185 490 326 699 500 821"/>
+    <path id="client-query-after-label" class="connector" data-connector="true"
+          d="M563 875 C720 998 898 1110 1080.38 1195.31" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Commands expand into one or more events. -->
+  <g id="command-to-event-routes">
+    <path class="dashed" data-connector="true" d="M759 271 L629.79 528.43" marker-end="url(#arrowhead)"/>
+    <path class="dashed" data-connector="true" d="M775 271 L756.29 528.01" marker-end="url(#arrowhead)"/>
+    <path class="dashed" data-connector="true" d="M957 271 L902.82 528.09" marker-end="url(#arrowhead)"/>
+    <path class="dashed" data-connector="true" d="M972 271 L1028.15 528.09" marker-end="url(#arrowhead)"/>
+
+    <path id="green-command-to-step-one" class="connector" data-connector="true" d="M1172 271 L1203 321"/>
+    <path id="step-one-join" class="step-spoke" d="M1217 345 L1222 354"/>
+    <path id="step-one-to-operation" class="connector" data-connector="true"
+          d="M1222 354 L1238.17 385.44" marker-end="url(#arrowhead)"/>
+
+    <path id="operation-to-left-step-three" class="step-spoke" d="M1240 432 L1230 452"/>
+    <path id="left-step-three-join" class="step-spoke" d="M1217 476 L1214 483"/>
+    <path id="left-step-three-to-event" class="connector" data-connector="true"
+          d="M1214 483 L1195.51 528.30" marker-end="url(#arrowhead)"/>
+    <path id="operation-to-right-step-three" class="step-spoke" d="M1261 433 L1269 451"/>
+    <path id="right-step-three-join" class="step-spoke" d="M1281 477 L1285 484"/>
+    <path id="right-step-three-to-event" class="connector" data-connector="true"
+          d="M1285 484 L1304.40 528.34" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Current-state reads and update. Labels sit in deliberate gaps in the shafts. -->
+  <g id="current-state-routes">
+    <path id="read-current-state-before-label" class="connector" data-connector="true" d="M1270 399 L1310 371"/>
+    <path id="read-current-state-after-label" class="connector" data-connector="true" d="M1404 306 L1482.72 251.28" marker-end="url(#arrowhead)"/>
+
+    <path id="event-to-update-before-label" class="connector" data-connector="true" d="M1385 557 L1441 544"/>
+    <path id="event-to-update-after-label" class="connector" data-connector="true" d="M1535 501 L1560.17 475.83" marker-end="url(#arrowhead)"/>
+
+    <path id="update-state-before-label" class="connector" data-connector="true" d="M1577 432 V405"/>
+    <path id="update-state-after-label" class="connector" data-connector="true" d="M1577 349 V306" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Event publication feeds the separately optimized read model. -->
+  <g id="read-model-routes">
+    <path id="publish-events-before-label" class="dashed" data-connector="true"
+          d="M1367 598 C1417 631 1449 691 1462 741"/>
+    <path id="publish-events-after-label" class="dashed" data-connector="true"
+          d="M1475 799 C1482 830 1486 859 1487.72 884.01" marker-end="url(#arrowhead)"/>
+    <path id="rebuild-state-before-label" class="connector" data-connector="true" d="M1489 936 V977"/>
+    <path id="rebuild-state-after-label" class="connector" data-connector="true"
+          d="M1489 1057 V1117" marker-end="url(#arrowhead)"/>
+    <path id="query-service-to-history" class="connector" data-connector="true"
+          d="M1300 1237 H1395" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Operation nodes are painted above their incident connector endpoints. -->
+  <g id="operation-nodes">
+    <use href="#operation-gear" transform="translate(1251 411)"/>
+    <use href="#operation-gear" transform="translate(1577 456)"/>
+    <use href="#operation-gear" transform="translate(1489 912)"/>
+  </g>
+
+  <!-- Query-service component is painted above the incoming arrow for a clean edge join. -->
+  <rect id="query-service" class="outline" x="1084.5" y="1181.5" width="215.5" height="110"/>
+
+  <!-- Text is last so no connector can cross a label. -->
+  <g id="labels">
+    <text class="section-title" x="54" y="244">Client</text>
+    <text class="section-title" x="1007" y="79">Write Path</text>
+    <text class="queue-title" x="847" y="138">Command Queue</text>
+    <text class="queue-title" x="879" y="682">Event Queue</text>
+    <text class="section-title" x="1068" y="926">Read Path</text>
+
+    <text class="command-text" x="307" y="242">A</text>
+    <text class="command-text" x="348" y="242">$1</text>
+    <text class="command-text" x="414" y="242">C</text>
+    <text class="flow-label" x="520" y="243">in</text>
+
+    <text class="command-text" x="718" y="242">A</text>
+    <text class="command-text" x="761" y="242">$1</text>
+    <text class="command-text" x="825" y="242">C</text>
+    <text class="command-text" x="904" y="242">A</text>
+    <text class="command-text" x="947" y="242">$1</text>
+    <text class="command-text" x="1011" y="242">B</text>
+    <text class="command-text" x="1089" y="242">A</text>
+    <text class="command-text" x="1132" y="242">$1</text>
+    <text class="command-text" x="1196" y="242">D</text>
+
+    <text class="event-text" x="570" y="578">A: -$1</text>
+    <text class="event-text" x="712" y="578">C: +$1</text>
+    <text class="event-text" x="854" y="578">A: -$1</text>
+    <text class="event-text" x="996" y="578">B: +$1</text>
+    <text class="event-text" x="1138" y="578">A: -$1</text>
+    <text class="event-text" x="1280" y="578">D: +$1</text>
+
+    <text class="state-title" x="1576" y="111">State</text>
+    <text class="state-value" x="1535" y="165">A: $5</text>
+    <text class="state-value" x="1535" y="200">B: $4</text>
+    <text class="state-value" x="1535" y="235">C: $3</text>
+    <text class="state-value" x="1535" y="270">D: $2</text>
+
+    <circle class="step-circle" cx="1210" cy="333" r="14"/>
+    <text class="step-digit" x="1210" y="341">1</text>
+    <text class="step-label" x="1308" y="337">②Read</text>
+    <circle class="step-circle" cx="1223" cy="464" r="14"/>
+    <text class="step-digit" x="1223" y="472">3</text>
+    <circle class="step-circle" cx="1275" cy="464" r="14"/>
+    <text class="step-digit" x="1275" y="472">3</text>
+    <text class="step-label" x="1431" y="532">④Read</text>
+    <text class="step-label" x="1494" y="386">⑤Update</text>
+
+    <text class="flow-label" x="1380" y="782">Publish Events</text>
+    <text class="flow-label" x="484" y="856">query</text>
+
+    <text class="flow-label" x="1437" y="1008">Rebuild</text>
+    <text class="flow-label" x="1453" y="1046">State</text>
+
+    <text class="section-title" x="1139" y="1230">Query</text>
+    <text class="section-title" x="1127" y="1274">Service</text>
+
+    <text class="state-value" x="1448" y="1201">A: $5</text>
+    <text class="state-value" x="1448" y="1237">B: $4</text>
+    <text class="state-value" x="1448" y="1273">C: $3</text>
+    <text class="state-value" x="1448" y="1309">D: $2</text>
+    <text class="flow-label" x="1386" y="1379">Historical State</text>
+  </g>
+</svg>

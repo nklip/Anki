@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1976" height="952" viewBox="0 0 1976 952"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Snapshot approach for rebuilding a read-only wallet state machine</title>
+  <desc id="desc">Commands become events in memory while command, RocksDB, and event files persist on disk. Events replicate to a read-only state machine. Periodic RocksDB snapshots are stored by date in an object store and can be loaded to rebuild the queryable state.</desc>
+
+  <!-- Shared source-matched typography, reusable components, and shaft-safe arrowhead. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .outline{fill:#fff;stroke:#000;stroke-width:2;stroke-linejoin:round}
+      .connector{fill:none;stroke:#000;stroke-width:2;stroke-linejoin:round}
+      .dashed{fill:none;stroke:#000;stroke-width:2;stroke-dasharray:9 7;stroke-linejoin:round}
+      .section-label{font-size:28px;text-anchor:middle}
+      .list-label{font-size:34px;text-anchor:middle}
+      .state-label{font-size:34px}
+      .cache-label{font-size:25px;text-anchor:middle}
+      .map-label{font-size:32px;text-anchor:middle}
+      .file-label{font-size:34px;text-anchor:middle}
+      .flow-label{font-size:26px;text-anchor:middle}
+      .machine-label{font-size:30px}
+      .snapshot-label{font-size:26px;text-anchor:middle}
+      .date-label{font-size:26px;text-anchor:middle}
+      .store-label{font-size:30px;text-anchor:middle}
+    </style>
+
+    <!-- The three-unit projection covers the full two-unit shaft before the tapered nose. -->
+    <marker id="arrowhead" markerWidth="18" markerHeight="16"
+            viewBox="0 0 18 16" refX="15" refY="8"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L18 8 L0 16 Z" fill="#000"/>
+    </marker>
+
+    <!-- Compact 32-tooth state-machine processor reused in memory and the read model. -->
+    <polygon id="processing-gear"
+             points="0,-36 3.1,-31.1 7.1,-35.3 9.2,-29.9 14,-33.3 15,-27.6 20.2,-30 20,-24.2 25.8,-25.8 24.2,-20 30,-20.2 27.6,-15 33.3,-14 29.9,-9.2 35.3,-7.1 31.1,-3.1 36,0 31.1,3.1 35.3,7.1 29.9,9.2 33.3,14 27.6,15 30,20.2 24.2,20 25.8,25.8 20,24.2 20.2,30 15,27.6 14,33.3 9.2,29.9 7.1,35.3 3.1,31.1 0,36 -3.1,31.1 -7.1,35.3 -9.2,29.9 -14,33.3 -15,27.6 -20.2,30 -20,24.2 -25.8,25.8 -24.2,20 -30,20.2 -27.6,15 -33.3,14 -29.9,9.2 -35.3,7.1 -31.1,3.1 -36,0 -31.1,-3.1 -35.3,-7.1 -29.9,-9.2 -33.3,-14 -27.6,-15 -30,-20.2 -24.2,-20 -25.8,-25.8 -20,-24.2 -20.2,-30 -15,-27.6 -14,-33.3 -9.2,-29.9 -7.1,-35.3 -3.1,-31.1"
+             fill="#fff" stroke="#000" stroke-width="2" stroke-linejoin="miter"/>
+
+    <!-- Small RocksDB cache cylinder. -->
+    <symbol id="cache-store" viewBox="0 0 82 66">
+      <path class="outline" d="M1 8 V57 C1 62 19 65 41 65 C63 65 81 62 81 57 V8 Z"/>
+      <ellipse class="outline" cx="41" cy="8" rx="40" ry="7"/>
+    </symbol>
+
+    <!-- Folded disk file used for command, RocksDB, and event persistence. -->
+    <symbol id="disk-file" viewBox="0 0 196 147">
+      <path class="outline" d="M1 1 H148 C164 1 195 26 195 44 V146 H1 Z"/>
+      <path class="connector" d="M151 1 C159 8 158 19 159 30 C172 30 184 29 195 36"/>
+    </symbol>
+
+    <!-- Wider folded snapshot file; text remains editable outside the symbol. -->
+    <symbol id="snapshot-file" viewBox="0 0 247 94">
+      <path class="outline" d="M1 1 H194 C212 1 246 20 246 31 V93 H1 Z"/>
+      <path class="connector" d="M197 1 C205 7 204 16 205 24 C221 24 235 23 246 29"/>
+    </symbol>
+  </defs>
+
+  <rect width="1976" height="952" fill="#fff"/>
+
+  <!-- Four boundaries separate live memory, local disk, the read model, and snapshots. -->
+  <g id="system-regions">
+    <rect class="outline" x="39.5" y="33.5" width="994.5" height="361.5"/>
+    <rect class="outline" x="138" y="518.5" width="797.5" height="316.5"/>
+    <rect class="outline" x="1213" y="33.5" width="551.5" height="361.5"/>
+    <rect class="outline" x="1191" y="499.5" width="506" height="420.5"/>
+  </g>
+
+  <!-- In-memory command processing and its RocksDB state cache. -->
+  <g id="memory-nodes">
+    <rect id="command-list" class="outline" x="87" y="122" width="325" height="83"/>
+    <rect id="event-list" class="outline" x="661" y="122" width="325" height="83"/>
+    <use href="#cache-store" x="501" y="290" width="71" height="57"/>
+  </g>
+
+  <!-- Solid commands become events; dashed routes update and restore the cache. -->
+  <g id="memory-flows">
+    <path id="command-to-processor" class="connector" data-connector="true"
+          d="M412 163.5 H498" marker-end="url(#arrowhead)"/>
+    <path id="processor-to-events" class="connector" data-connector="true"
+          d="M573 163.5 H658" marker-end="url(#arrowhead)"/>
+
+    <path id="processor-to-cache" class="dashed" data-connector="true"
+          d="M537 200 V287" marker-end="url(#arrowhead)"/>
+    <path id="rocksdb-file-to-cache" class="dashed" data-connector="true"
+          d="M537 548 V350" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Local persistence files; every use declares its positive source-native viewport. -->
+  <g id="disk-files">
+    <use href="#disk-file" x="171" y="547" width="157" height="117"/>
+    <use href="#disk-file" x="459" y="547" width="157" height="117"/>
+    <use href="#disk-file" x="746" y="547" width="157" height="117"/>
+  </g>
+
+  <!-- Memory-map routes are split around labels so no dashed shaft crosses text. -->
+  <g id="mmap-routes">
+    <path id="command-file-to-mmap" class="dashed" data-connector="true" d="M249.5 548 V484"/>
+    <path id="command-mmap-to-list" class="dashed" data-connector="true"
+          d="M249.5 433 V208" marker-end="url(#arrowhead)"/>
+
+    <path id="event-file-to-mmap" class="dashed" data-connector="true" d="M824.5 548 V484"/>
+    <path id="event-mmap-to-list" class="dashed" data-connector="true"
+          d="M824.5 433 V208" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Replicated events feed a separate queryable read-only state machine. -->
+  <g id="read-only-state-machine">
+    <rect id="read-event-list" class="outline" x="1262" y="122" width="324" height="83"/>
+
+    <path id="replicate-before-label" class="dashed" data-connector="true" d="M986 163.5 H1048"/>
+    <path id="replicate-after-label" class="dashed" data-connector="true"
+          d="M1210 163.5 H1259" marker-end="url(#arrowhead)"/>
+
+    <path id="read-events-to-processor" class="connector" data-connector="true"
+          d="M1586 163.5 H1632" marker-end="url(#arrowhead)"/>
+
+    <!-- Query travels right-to-left; the head meets the gear boundary without entering it. -->
+    <path id="query-before-label" class="connector" data-connector="true" d="M1888 163.5 H1875"/>
+    <path id="query-after-label" class="connector" data-connector="true"
+          d="M1768 163.5 H1710" marker-end="url(#arrowhead)"/>
+    <circle class="outline" cx="1901" cy="163.5" r="13"/>
+  </g>
+
+  <!-- Snapshot creation is dashed; loading a selected snapshot is a solid state restore. -->
+  <g id="snapshot-flows">
+    <!-- Keep the dashed crest visibly below the disk border; the previous curve nearly merged with it. -->
+    <path id="take-snapshot-before-label" class="dashed" data-connector="true"
+          d="M610 570 C730 532 836 526 955 525"/>
+    <!-- Cross the object-store boundary well below its top-left corner, matching the etalon's clearance. -->
+    <path id="take-snapshot-after-label" class="dashed" data-connector="true"
+          d="M1155 525 C1256 538 1320 549 1367 560"
+          marker-end="url(#arrowhead)"/>
+
+    <path id="load-snapshot-before-label" class="connector" data-connector="true"
+          d="M1513 541 L1542 472"/>
+    <path id="load-snapshot-after-label" class="connector" data-connector="true"
+          d="M1565 415 L1657.8 199.2" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Dated snapshots in the object store remain independent editable files. -->
+  <g id="object-store-snapshots">
+    <use href="#snapshot-file" x="1370" y="541" width="247" height="94"/>
+    <use href="#snapshot-file" x="1370" y="646" width="247" height="94"/>
+    <use href="#snapshot-file" x="1370" y="750" width="247" height="94"/>
+  </g>
+
+  <!-- Processors are above incident shafts so their toothed perimeters stay crisp. -->
+  <use href="#processing-gear" transform="translate(537 163.5)"/>
+  <use href="#processing-gear" transform="translate(1671 163.5)"/>
+
+  <!-- Region, node, route, file, and snapshot labels are painted last. -->
+  <g id="labels">
+    <text class="section-label" x="537" y="70">memory</text>
+    <text class="list-label" x="249.5" y="175">Command List</text>
+    <text class="list-label" x="823.5" y="175">Event List</text>
+
+    <text class="state-label" x="418" y="330">State</text>
+    <text class="cache-label" x="635" y="299">RocksDB</text>
+    <text class="cache-label" x="635" y="327">In-memory</text>
+    <text class="cache-label" x="635" y="355">cache</text>
+
+    <text class="map-label" x="249.5" y="466">mmap</text>
+    <text class="map-label" x="824.5" y="466">mmap</text>
+
+    <text class="file-label" x="249.5" y="700">
+      <tspan x="249.5">Command</tspan><tspan x="249.5" dy="42">File</tspan>
+    </text>
+    <text class="file-label" x="537.5" y="700">
+      <tspan x="537.5">RocksDB</tspan><tspan x="537.5" dy="42">File</tspan>
+    </text>
+    <text class="file-label" x="824.5" y="700">
+      <tspan x="824.5">Event</tspan><tspan x="824.5" dy="42">File</tspan>
+    </text>
+    <text class="section-label" x="537" y="817">disk</text>
+
+    <text class="flow-label" x="1129" y="172">Replicate</text>
+    <text class="list-label" x="1424" y="175">Event List</text>
+    <text class="machine-label" x="1223" y="378">Read-only State Machine</text>
+    <text class="flow-label" x="1820" y="172">Query</text>
+
+    <text class="flow-label" x="1055" y="534">Take snapshot</text>
+    <text class="flow-label" x="1547" y="455">Load snapshot</text>
+
+    <text class="snapshot-label" x="1310" y="600">Snapshot</text>
+    <text class="date-label" x="1494" y="600">2020-03-03 24:00</text>
+    <text class="snapshot-label" x="1310" y="704">Snapshot</text>
+    <text class="date-label" x="1494" y="704">2020-03-02 24:00</text>
+    <text class="snapshot-label" x="1310" y="808">Snapshot</text>
+    <text class="date-label" x="1494" y="808">2020-03-01 24:00</text>
+    <text class="store-label" x="1444" y="900">Object Store</text>
+  </g>
+</svg>

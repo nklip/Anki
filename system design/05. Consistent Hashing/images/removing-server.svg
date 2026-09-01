@@ -3,42 +3,48 @@
   <desc id="desc">Server s1 is removed. Only key k1's clockwise range moves, continuing past the removed position to server s2.</desc>
 
   <defs>
-    <marker id="arrow" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="0" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L13 7L0 13Z" fill="#111"/></marker>
+    <!-- The head projects five units beyond the shaft endpoint; its wider body hides the four-unit shaft. -->
+    <marker id="arrow" markerWidth="28" markerHeight="30" viewBox="0 0 28 30" refX="23" refY="15" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0L28 15L0 30Z" fill="#111"/>
+    </marker>
   </defs>
   <rect width="1478" height="1040" fill="white"/>
+  <!-- The reference places the diagram on a subtly off-white inset. -->
+  <rect x="46" y="90" width="1378" height="950" fill="#fefefe"/>
 
   <!-- Four-server legend before the removal. -->
-  <text x="50" y="207" font-family="Georgia,serif" font-size="34">Servers</text>
-  <g font-family="Arial,sans-serif" font-size="27">
-    <rect x="46" y="248" width="120" height="120" rx="19" fill="#c3a4ce"/><text x="106" y="319" text-anchor="middle">server 0</text>
-    <rect x="46" y="396" width="120" height="120" rx="19" fill="#08b5d3"/><text x="106" y="467" text-anchor="middle">server 1</text>
-    <rect x="46" y="554" width="120" height="120" rx="19" fill="#f13cf1"/><text x="106" y="625" text-anchor="middle">server 2</text>
-    <rect x="46" y="695" width="120" height="120" rx="19" fill="#ffad55"/><text x="106" y="766" text-anchor="middle">server 3</text>
+  <text x="51" y="208" font-family="Georgia,serif" font-size="33">Servers</text>
+  <g font-family="Helvetica,Arial,sans-serif" font-size="28">
+    <rect x="46" y="247" width="120" height="120" rx="19" fill="#c6aad2"/><text x="105" y="317" text-anchor="middle">server 0</text>
+    <rect x="46" y="395" width="120" height="120" rx="19" fill="#00b7df"/><text x="105" y="465" text-anchor="middle">server 1</text>
+    <rect x="46" y="553" width="120" height="120" rx="19" fill="#ff58ff"/><text x="105" y="623" text-anchor="middle">server 2</text>
+    <rect x="46" y="694" width="120" height="120" rx="19" fill="#ffb15e"/><text x="105" y="764" text-anchor="middle">server 3</text>
   </g>
 
   <!-- Ring, surviving servers, and key positions. -->
-  <circle cx="711" cy="512" r="381" fill="none" stroke="#6f6f6f" stroke-width="7"/>
+  <circle cx="718" cy="493" r="376" fill="none" stroke="#666666" stroke-width="7"/>
   <g font-family="Georgia,serif" font-size="31" text-anchor="middle">
-    <circle cx="984" cy="223" r="30" fill="#c3a4ce"/><text x="984" y="234">s0</text>
-    <circle cx="984" cy="755" r="30" fill="#08b5d3"/><text x="984" y="766">s1</text>
-    <circle cx="414" cy="755" r="30" fill="#f13cf1"/><text x="414" y="766">s2</text>
-    <circle cx="449" cy="223" r="30" fill="#ffad55"/><text x="449" y="234">s3</text>
+    <circle cx="984" cy="223" r="30" fill="#c6aad2"/><text x="984" y="238">s0</text>
+    <circle cx="984" cy="755" r="30" fill="#00b7df"/>
+    <circle cx="440" cy="755" r="30" fill="#ff58ff"/><text x="440" y="770">s2</text>
+    <circle cx="449" cy="223" r="30" fill="#ffb15e"/><text x="449" y="236">s3</text>
   </g>
-  <g font-family="Georgia,serif" font-size="28" text-anchor="middle">
-    <circle cx="649" cy="116" r="25" fill="white" stroke="#111" stroke-width="6"/><text x="649" y="126">k0</text>
-    <circle cx="1047" cy="617" r="25" fill="white" stroke="#111" stroke-width="6"/><text x="1047" y="627">k1</text>
-    <circle cx="600" cy="858" r="25" fill="white" stroke="#111" stroke-width="6"/><text x="600" y="868">k2</text>
-    <circle cx="320" cy="568" r="25" fill="white" stroke="#111" stroke-width="6"/><text x="320" y="578">k3</text>
+  <g font-family="Georgia,serif" font-size="31" text-anchor="middle">
+    <circle cx="648" cy="117" r="24" fill="white" stroke="#111" stroke-width="6"/><text x="648" y="130">k0</text>
+    <circle cx="1073" cy="613" r="24" fill="white" stroke="#111" stroke-width="6"/><text x="1073" y="626">k1</text>
+    <circle cx="624" cy="852" r="24" fill="white" stroke="#111" stroke-width="6"/><text x="624" y="865">k2</text>
+    <circle cx="342" cy="565" r="24" fill="white" stroke="#111" stroke-width="6"/><text x="342" y="578">k3</text>
   </g>
 
   <!-- Red cross marks s1; the affected range now continues clockwise to s2. -->
-  <text x="880" y="771" font-family="Georgia,serif" font-size="30">s1</text>
-  <path d="M965 735L1003 773M1003 735L965 773" stroke="#f0475d" stroke-width="10"/>
-  <path id="reassign-k1-to-s2" d="M1073 617C1104 866 943 1009 713 1010C500 1011 417 903 414 806" fill="none" stroke="#111" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="905" y="766" font-family="Arial,sans-serif" font-size="31">s1</text>
+  <path d="M972 742L999 769M999 742L972 769" fill="none" stroke="#ef476f" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
+  <!-- The marker endpoint is tucked beneath its head so no shaft tail reaches the tapered nose. -->
+  <path id="reassign-k1-to-s2" data-connector="true" d="M1099 613C1123 858 959 1000 735 1010C526 1019 442 904 436 790" fill="none" stroke="#111" stroke-width="4" marker-end="url(#arrow)"/>
 
   <!-- Symbol definitions. -->
-  <g font-family="Arial,sans-serif" font-size="29">
-    <text x="1220" y="294">s0 = server 0</text><text x="1220" y="332">s1 = server 1</text><text x="1220" y="370">s2 = server 2</text><text x="1220" y="408">s3 = server 3</text>
-    <text x="1220" y="484">k0 = key0</text><text x="1220" y="522">k1 = key1</text><text x="1220" y="560">k2 = key2</text><text x="1220" y="598">k3 = key3</text>
+  <g font-family="Arial,sans-serif" font-size="33">
+    <text x="1220" y="295">s0 = server 0</text><text x="1220" y="333">s1 = server 1</text><text x="1220" y="371">s2 = server 2</text><text x="1220" y="409">s3 = server 3</text>
+    <text x="1220" y="485">k0 = key0</text><text x="1220" y="523">k1 = key1</text><text x="1220" y="561">k2 = key2</text><text x="1220" y="599">k3 = key3</text>
   </g>
 </svg>

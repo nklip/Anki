@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1350" height="586" viewBox="0 0 1350 586"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Event sourcing flow</title>
+  <desc id="desc">A command is validated by a state machine to create an event. A second state machine applies the event, while both stages read from or write to the shared state store.</desc>
+
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .outline{fill:#fff;stroke:#000;stroke-width:2.5;stroke-linejoin:round}
+      .connector{fill:none;stroke:#000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:round}
+      .box-label{font-size:42px;text-anchor:middle}
+      .machine-label{font-size:32px;text-anchor:middle}
+      .flow-label{font-size:32px}
+      .store-label{font-size:42px;text-anchor:middle}
+    </style>
+
+    <!-- The tip projects four units past each compensated shaft endpoint so the
+         tapered head fully covers the 2.5-unit stroke in every orientation. -->
+    <marker id="arrowhead" markerWidth="24" markerHeight="20" viewBox="0 0 24 20"
+            refX="20" refY="10" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L24 10 L0 20 Z" fill="#000"/>
+    </marker>
+
+    <!-- Thirty-two shallow teeth reproduce the source's state-machine outline. -->
+    <polygon id="state-machine-gear"
+             points="0,-60 5.1,-51.75 11.71,-58.85 15.09,-49.76 22.96,-55.43 24.51,-45.86 33.33,-49.89 32.99,-40.2 42.43,-42.43 40.2,-32.99 49.89,-33.33 45.86,-24.51 55.43,-22.96 49.76,-15.09 58.85,-11.71 51.75,-5.1 60,0 51.75,5.1 58.85,11.71 49.76,15.09 55.43,22.96 45.86,24.51 49.89,33.33 40.2,32.99 42.43,42.43 32.99,40.2 33.33,49.89 24.51,45.86 22.96,55.43 15.09,49.76 11.71,58.85 5.1,51.75 0,60 -5.1,51.75 -11.71,58.85 -15.09,49.76 -22.96,55.43 -24.51,45.86 -33.33,49.89 -32.99,40.2 -42.43,42.43 -40.2,32.99 -49.89,33.33 -45.86,24.51 -55.43,22.96 -49.76,15.09 -58.85,11.71 -51.75,5.1 -60,0 -51.75,-5.1 -58.85,-11.71 -49.76,-15.09 -55.43,-22.96 -45.86,-24.51 -49.89,-33.33 -40.2,-32.99 -42.43,-42.43 -32.99,-40.2 -33.33,-49.89 -24.51,-45.86 -22.96,-55.43 -15.09,-49.76 -11.71,-58.85 -5.1,-51.75"
+             fill="#fff" stroke="#000" stroke-width="2.5" stroke-linejoin="miter"/>
+  </defs>
+
+  <rect width="1350" height="586" fill="#fff"/>
+
+  <!-- Command and event records form the main left-to-right flow. -->
+  <g id="records">
+    <rect id="command-record" class="outline" x="77.5" y="138.5" width="231" height="82"/>
+    <rect id="event-record" class="outline" x="750.5" y="138.5" width="231" height="82"/>
+  </g>
+
+  <!-- Primary horizontal route; the Validate label sits in a deliberate shaft gap. -->
+  <g id="main-flow">
+    <path id="command-to-first-machine" class="connector" data-connector="true"
+          d="M308 180 H395" marker-end="url(#arrowhead)"/>
+    <path id="first-machine-to-validate" class="connector" d="M520 180 H562"/>
+    <path id="validate-to-event" class="connector" data-connector="true"
+          d="M704 180 H746" marker-end="url(#arrowhead)"/>
+    <path id="event-to-second-machine" class="connector" data-connector="true"
+          d="M981 180 H1167" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Read and apply routes are split around their labels so no shaft touches text. -->
+  <g id="state-routes">
+    <path id="first-machine-to-read" class="connector" d="M507 217 L618 302"/>
+    <path id="read-to-state" class="connector" data-connector="true"
+          d="M697 365 L793.800 437.600" marker-end="url(#arrowhead)"/>
+
+    <path id="second-machine-to-apply" class="connector" d="M1182 217 L1107 286"/>
+    <path id="apply-to-state" class="connector" data-connector="true"
+          d="M1035 349 L934.998 437.352" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Shared state store; the top ellipse masks the cylinder's body seam. -->
+  <g id="state-store">
+    <path class="outline" d="M794 445 V544 C794 559 938 559 938 544 V445"/>
+    <ellipse class="outline" cx="866" cy="445" rx="72" ry="12"/>
+  </g>
+
+  <!-- State-machine gears are painted over their incoming and outgoing shafts. -->
+  <g id="state-machines">
+    <use href="#state-machine-gear" transform="translate(460 180)"/>
+    <use href="#state-machine-gear" transform="translate(1232 180)"/>
+  </g>
+
+  <!-- Labels are last so every connector gap remains visually clean. -->
+  <g id="labels">
+    <text class="machine-label" x="460" y="70">State</text>
+    <text class="machine-label" x="460" y="107">Machine</text>
+    <text class="machine-label" x="1232" y="70">State</text>
+    <text class="machine-label" x="1232" y="107">Machine</text>
+
+    <text class="box-label" x="192.5" y="195">Command</text>
+    <text class="box-label" x="865.5" y="195">Event</text>
+    <text class="flow-label" x="574" y="190">Validate</text>
+    <text class="flow-label" x="622" y="343">Read</text>
+    <text class="flow-label" x="1031" y="328">Apply</text>
+    <text class="store-label" x="866" y="515">State</text>
+  </g>
+</svg>

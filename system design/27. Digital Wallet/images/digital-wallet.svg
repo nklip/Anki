@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1920" height="372" viewBox="0 0 1920 372"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Digital wallet payment flow</title>
+  <desc id="desc">A bank card deposits money into a digital wallet in the payment system, and the wallet can then pay an e-commerce site.</desc>
+
+  <!-- Shared typography, strokes, and repair-friendly icon geometry. -->
+  <defs>
+    <style>
+      text{font-family:Helvetica,Arial,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .outline{fill:#fff;stroke:#000;stroke-width:2.5;stroke-linejoin:round}
+      .flow-shaft{fill:none;stroke:#000;stroke-width:2.5;stroke-linecap:butt}
+      .diagram-stroke{fill:none;stroke:#000;stroke-width:2.5;stroke-linecap:butt}
+      .label{font-size:40px}
+      .dollar{font-size:96px;font-weight:700}
+      .icon-stroke{fill:none;stroke:#000;stroke-width:9;stroke-linejoin:round}
+    </style>
+  </defs>
+
+  <rect width="1920" height="372" fill="#fff"/>
+
+  <!-- Domain boundaries: bank, payment system, and e-commerce site. -->
+  <g id="system-boundaries">
+    <path id="bank-boundary" class="outline"
+          d="M80 270 V114.5 L217.5 36.5 L356 114.5 V270 Z"/>
+    <rect id="payment-system-boundary" class="outline"
+          x="776.5" y="51.5" width="323.5" height="231"/>
+    <rect id="wallet-boundary" class="outline"
+          x="868.5" y="94.5" width="140.5" height="128"/>
+    <rect id="commerce-boundary" class="outline"
+          x="1520.5" y="51.5" width="308" height="231"/>
+  </g>
+
+  <!-- Horizontal flow is split around the Deposit label; heads stop at their targets. -->
+  <g id="payment-flow">
+    <path id="deposit-before-label" class="flow-shaft" data-connector="true" d="M264 158 H490"/>
+    <path id="deposit-continuation" class="diagram-stroke" d="M644 158 H670"/>
+    <path id="deposit-after-label" class="flow-shaft" data-connector="true" d="M670 158 H844"/>
+    <path id="deposit-arrowhead" d="M844 148 L869 158 L844 168 Z" fill="#000"/>
+
+    <path id="wallet-to-commerce" class="flow-shaft" data-connector="true" d="M1009 158 H1603"/>
+    <path id="commerce-arrowhead" d="M1603 148 L1628 158 L1603 168 Z" fill="#000"/>
+  </g>
+
+  <!-- Bank-card icon; the stripe extends beneath the thick rounded border. -->
+  <g id="bank-card-icon">
+    <rect x="175.5" y="125.5" width="84.5" height="65" rx="6.5"
+          fill="#fff" stroke="#000" stroke-width="9"/>
+    <rect x="175.5" y="140" width="84.5" height="18" fill="#000"/>
+  </g>
+
+  <!-- Wallet balance is a bold dollar symbol inside its own account box. -->
+  <text id="wallet-dollar" class="dollar" x="912" y="191">$</text>
+
+  <!-- Shopping-cart silhouette recreated as simple editable paths and circles. -->
+  <g id="shopping-cart-icon" fill="#000">
+    <path d="M1628 111 H1643 L1648 121 H1714
+             C1721 121 1724 127 1720 134
+             L1698 164 H1660 L1641 121 H1628 Z"/>
+    <path class="icon-stroke" d="M1661 159 L1652 177 Q1650 181 1658 181 H1710"/>
+    <circle cx="1655" cy="196" r="10"/>
+    <circle cx="1703" cy="196" r="10"/>
+  </g>
+
+  <!-- Labels are painted last to keep every letter clear of connector shafts. -->
+  <g id="labels">
+    <text class="label" x="131" y="243">Bank card</text>
+    <text class="label" x="174" y="325">Bank</text>
+    <text class="label" x="501" y="172">Deposit</text>
+
+    <text class="label" x="832" y="259">Digital wallet</text>
+    <text class="label" x="796" y="325">Payment System</text>
+
+    <text class="label" x="1540" y="325">E-commerce site</text>
+  </g>
+</svg>

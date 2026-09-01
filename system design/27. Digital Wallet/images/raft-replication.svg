@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1588" height="982" viewBox="0 0 1588 982"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Raft replication separates wallet writes from read projections</title>
+  <desc id="desc">A client sends commands to the leader in a three-node Raft group. Events replicate to two followers and update write-side stores. Dashed event streams build three independent read-side projections that a second client queries.</desc>
+
+  <!-- Shared typography, exact reference colors, reusable nodes, and shaft-safe arrowheads. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .outline{fill:#fff;stroke:#000;stroke-width:2.2}
+      .panel{stroke:#000;stroke-width:2.2}
+      .connector{fill:none;stroke:#000;stroke-width:2.2}
+      .replication{fill:none;stroke:#000;stroke-width:2.2;stroke-dasharray:10 8}
+      .boundary{fill:none;stroke:#000;stroke-width:2.2;stroke-dasharray:10 8}
+      .role-label{font-size:34px;text-anchor:middle}
+      .node-label{font-size:34px;text-anchor:middle}
+      .raft-label{font-size:34px;text-anchor:middle}
+      .group-label{font-size:34px;text-anchor:middle}
+      .query-label{font-size:32px}
+      .zone-label{font-size:34px;text-anchor:middle}
+    </style>
+
+    <!-- The 3.5-unit projection hides every 2.2-unit shaft before the tapered nose. -->
+    <marker id="arrowhead" markerWidth="20" markerHeight="16"
+            viewBox="0 0 20 16" refX="16.5" refY="8"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L20 8 L0 16 Z" fill="#000"/>
+    </marker>
+
+    <!-- Reusable toothed projection worker; every use has an explicit 72×72 viewport. -->
+    <symbol id="projection-worker" viewBox="0 0 80 80">
+      <polygon class="outline"
+               points="40.0,1.0 43.8,6.2 48.7,2.0 51.2,7.9 56.9,4.9 58.1,11.2 64.3,9.5 64.0,16.0 70.5,15.7 68.8,21.9 75.1,23.1 72.1,28.8 78.0,31.3 73.8,36.2 79.0,40.0 73.8,43.8 78.0,48.7 72.1,51.2 75.1,56.9 68.8,58.1 70.5,64.3 64.0,64.0 64.3,70.5 58.1,68.8 56.9,75.1 51.2,72.1 48.7,78.0 43.8,73.8 40.0,79.0 36.2,73.8 31.3,78.0 28.8,72.1 23.1,75.1 21.9,68.8 15.7,70.5 16.0,64.0 9.5,64.3 11.2,58.1 4.9,56.9 7.9,51.2 2.0,48.7 6.2,43.8 1.0,40.0 6.2,36.2 2.0,31.3 7.9,28.8 4.9,23.1 11.2,21.9 9.5,15.7 16.0,16.0 15.7,9.5 21.9,11.2 23.1,4.9 28.8,7.9 31.3,2.0 36.2,6.2"/>
+    </symbol>
+
+    <!-- Small database cylinder reused by all write and read projections. -->
+    <symbol id="database-store" viewBox="0 0 82 66">
+      <path class="outline" d="M1 8 V57 C1 62 19 65 41 65 C63 65 81 62 81 57 V8 Z"/>
+      <ellipse class="outline" cx="41" cy="8" rx="40" ry="7"/>
+    </symbol>
+
+    <!-- Compact client silhouette reused on the command and query sides. -->
+    <symbol id="client-icon" viewBox="0 0 64 64">
+      <circle cx="32" cy="16" r="15.5" fill="#000"/>
+      <path d="M1 63 V56 C1 37 63 37 63 56 V63 Z" fill="#000"/>
+    </symbol>
+  </defs>
+
+  <rect width="1588" height="982" fill="#fff"/>
+
+  <!-- Dashed boundaries divide the client, write-side Raft group, and read-side projection lane. -->
+  <g id="write-read-boundaries">
+    <path class="boundary" d="M133.5 37 V946"/>
+    <path class="boundary" d="M1119.5 37 V946"/>
+    <path class="boundary" d="M1378.5 37 V946"/>
+  </g>
+
+  <!-- Outer Raft group and its follower, leader, and follower lanes. -->
+  <g id="raft-node-group">
+    <rect class="outline" x="157.5" y="130.5" width="938" height="688"/>
+    <rect class="panel" x="198" y="199.5" width="856" height="132.5" fill="#cafdff"/>
+    <rect class="panel" x="198" y="408.5" width="856" height="131.5" fill="#f7c4fd"/>
+    <rect class="panel" x="198" y="618.5" width="856" height="132.5" fill="#cafdff"/>
+  </g>
+
+  <!-- Replicated events asynchronously build one read projection per Raft node. -->
+  <g id="read-projection-flows">
+    <!-- Each visible nose meets the near edge of its read worker without entering it. -->
+    <path id="top-read-projection" class="replication" data-connector="true"
+          d="M703 306 C835 405 1000 360 1149.3 282.6"
+          marker-end="url(#arrowhead)"/>
+    <path id="leader-read-projection" class="replication" data-connector="true"
+          d="M703 515 C840 613 1000 570 1149.3 491.6"
+          marker-end="url(#arrowhead)"/>
+    <path id="bottom-read-projection" class="replication" data-connector="true"
+          d="M703 724 C840 822 1000 778 1149.3 701.6"
+          marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Command, event, projection, and store routes. Endpoints compensate for marker projection. -->
+  <g id="row-connectors">
+    <path id="client-to-command" class="connector" data-connector="true"
+          d="M103 474.75 H233" marker-end="url(#arrowhead)"/>
+    <path id="command-to-worker" class="connector" data-connector="true"
+          d="M432.5 474.75 H474.5" marker-end="url(#arrowhead)"/>
+    <path id="worker-to-leader-events" class="connector" data-connector="true"
+          d="M548.1 474.75 H590" marker-end="url(#arrowhead)"/>
+
+    <path id="top-events-to-worker" class="connector" data-connector="true"
+          d="M743.5 265.75 H811.5" marker-end="url(#arrowhead)"/>
+    <path id="top-worker-to-store" class="connector" data-connector="true"
+          d="M885.1 265.75 H953.4" marker-end="url(#arrowhead)"/>
+    <path id="top-read-worker-to-store" class="connector" data-connector="true"
+          d="M1219.1 265.75 H1266.4" marker-end="url(#arrowhead)"/>
+
+    <path id="leader-events-to-worker" class="connector" data-connector="true"
+          d="M743.5 474.75 H811.5" marker-end="url(#arrowhead)"/>
+    <path id="leader-worker-to-store" class="connector" data-connector="true"
+          d="M885.1 474.75 H953.4" marker-end="url(#arrowhead)"/>
+    <path id="leader-read-worker-to-store" class="connector" data-connector="true"
+          d="M1219.1 474.75 H1266.4" marker-end="url(#arrowhead)"/>
+
+    <path id="bottom-events-to-worker" class="connector" data-connector="true"
+          d="M743.5 684.75 H811.5" marker-end="url(#arrowhead)"/>
+    <path id="bottom-worker-to-store" class="connector" data-connector="true"
+          d="M885.1 684.75 H953.4" marker-end="url(#arrowhead)"/>
+    <path id="bottom-read-worker-to-store" class="connector" data-connector="true"
+          d="M1219.1 684.75 H1266.4" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Raft arrows are split around their labels so no shaft crosses text. -->
+  <g id="raft-replication">
+    <path id="leader-to-top-follower" class="connector" data-connector="true"
+          d="M668.5 344 V310.5" marker-end="url(#arrowhead)"/>
+    <path id="top-follower-to-leader" class="connector" data-connector="true"
+          d="M668.5 398 V430" marker-end="url(#arrowhead)"/>
+
+    <path id="leader-to-bottom-follower" class="connector" data-connector="true"
+          d="M668.5 553 V519.5" marker-end="url(#arrowhead)"/>
+    <path id="bottom-follower-to-leader" class="connector" data-connector="true"
+          d="M668.5 608 V639" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Query routes cross the dashed boundary intentionally and terminate on store edges. -->
+  <g id="query-routes">
+    <path id="query-top-store" class="connector" data-connector="true"
+          d="M1481 441 L1336.5 294.5" marker-end="url(#arrowhead)"/>
+    <path id="query-middle-before-label" class="connector" data-connector="true"
+          d="M1474 474.75 H1481"/>
+    <path id="query-middle-after-label" class="connector" data-connector="true"
+          d="M1365 474.75 H1344.6" marker-end="url(#arrowhead)"/>
+    <path id="query-bottom-store" class="connector" data-connector="true"
+          d="M1481 508 L1338.5 655.5" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Process boxes, projection workers, stores, and clients. -->
+  <g id="processing-nodes">
+    <rect class="outline" x="593.5" y="224.5" width="150" height="82.5"/>
+    <rect class="outline" x="236.5" y="433.5" width="196" height="82.5"/>
+    <rect class="outline" x="593.5" y="433.5" width="150" height="82.5"/>
+    <rect class="outline" x="593.5" y="643.5" width="150" height="82.5"/>
+
+    <use href="#projection-worker" x="477" y="438.75" width="72" height="72"/>
+    <use href="#projection-worker" x="814" y="229.75" width="72" height="72"/>
+    <use href="#projection-worker" x="814" y="438.75" width="72" height="72"/>
+    <use href="#projection-worker" x="814" y="648.75" width="72" height="72"/>
+    <use href="#projection-worker" x="1148" y="229.75" width="72" height="72"/>
+    <use href="#projection-worker" x="1148" y="438.75" width="72" height="72"/>
+    <use href="#projection-worker" x="1148" y="648.75" width="72" height="72"/>
+
+    <use href="#database-store" x="956" y="236" width="73" height="59"/>
+    <use href="#database-store" x="956" y="445" width="73" height="59"/>
+    <use href="#database-store" x="956" y="655" width="73" height="59"/>
+    <use href="#database-store" x="1269" y="236" width="73" height="59"/>
+    <use href="#database-store" x="1269" y="445" width="73" height="59"/>
+    <use href="#database-store" x="1269" y="655" width="73" height="59"/>
+
+    <use href="#client-icon" x="40.5" y="442.5" width="64" height="64"/>
+    <use href="#client-icon" x="1478.5" y="442.5" width="64" height="64"/>
+  </g>
+
+  <!-- Labels are painted last so no connector crosses or underlines their glyphs. -->
+  <g id="labels">
+    <text class="role-label" x="374" y="278">Follower</text>
+    <text class="role-label" x="374" y="697">Follower</text>
+
+    <text class="node-label" x="668.5" y="278">Events</text>
+    <text class="node-label" x="334.5" y="487">Commands</text>
+    <text class="node-label" x="668.5" y="487">Events</text>
+    <text class="node-label" x="668.5" y="697">Events</text>
+
+    <text class="raft-label" x="668.5" y="381">Raft</text>
+    <text class="raft-label" x="668.5" y="591">Raft</text>
+    <text class="group-label" x="626.5" y="798">Raft Node Group</text>
+
+    <text class="query-label" x="1468" y="487" text-anchor="end">Query</text>
+  </g>
+
+  <!-- Bottom double-headed spans identify the write and read regions without crossing labels. -->
+  <g id="write-read-legend">
+    <path class="connector" data-connector="true" d="M154 906 H610"/>
+    <path d="M133.5 906 L154 898 L154 914 Z" fill="#000"/>
+    <path class="connector" data-connector="true" d="M714 906 H1099"/>
+    <path d="M1119.5 906 L1099 898 L1099 914 Z" fill="#000"/>
+    <text class="zone-label" x="662" y="917">Write</text>
+
+    <path class="connector" data-connector="true" d="M1140 906 H1203"/>
+    <path d="M1119.5 906 L1140 898 L1140 914 Z" fill="#000"/>
+    <path class="connector" data-connector="true" d="M1293 906 H1358"/>
+    <path d="M1378.5 906 L1358 898 L1358 914 Z" fill="#000"/>
+    <text class="zone-label" x="1248" y="917">Read</text>
+  </g>
+</svg>

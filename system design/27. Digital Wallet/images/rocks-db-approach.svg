@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1352" height="1076" viewBox="0 0 1352 1076"
+     role="img" aria-labelledby="title desc">
+  <title id="title">RocksDB approach with memory-mapped command and event files</title>
+  <desc id="desc">A command list is processed into an event list in memory. The processor also updates a RocksDB in-memory state cache. Command, RocksDB, and event files persist the three structures on disk, with dashed memory-mapped routes back into memory.</desc>
+
+  <!-- Shared typography, reusable source-native components, and shaft-safe arrows. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .outline{fill:#fff;stroke:#000;stroke-width:2.5;stroke-linejoin:round}
+      .connector{fill:none;stroke:#000;stroke-width:2.5;stroke-linejoin:round}
+      .mapped{fill:none;stroke:#000;stroke-width:2.5;stroke-dasharray:12 10;stroke-linejoin:round}
+      .section-label{font-size:40px;text-anchor:middle}
+      .list-label{font-size:40px;text-anchor:middle}
+      .map-label{font-size:40px}
+      .state-label{font-size:40px}
+      .cache-label{font-size:31px;text-anchor:middle}
+      .file-label{font-size:40px;text-anchor:middle}
+    </style>
+
+    <!-- The 3.5-unit projection hides the 2.5-unit shaft beneath the tapered head. -->
+    <marker id="arrowhead" markerWidth="24" markerHeight="20"
+            viewBox="0 0 24 20" refX="20.5" refY="10"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L24 10 L0 20 Z" fill="#000"/>
+    </marker>
+
+    <!-- Compact 32-tooth processing node between the in-memory lists. -->
+    <polygon id="processing-gear"
+             points="0,-43 3.65,-37.09 8.39,-42.17 10.82,-35.67 16.46,-39.73 17.57,-32.87 23.89,-35.75 23.64,-28.81 30.41,-30.41 28.81,-23.64 35.75,-23.89 32.87,-17.57 39.73,-16.46 35.67,-10.82 42.17,-8.39 37.09,-3.65 43,0 37.09,3.65 42.17,8.39 35.67,10.82 39.73,16.46 32.87,17.57 35.75,23.89 28.81,23.64 30.41,30.41 23.64,28.81 23.89,35.75 17.57,32.87 16.46,39.73 10.82,35.67 8.39,42.17 3.65,37.09 0,43 -3.65,37.09 -8.39,42.17 -10.82,35.67 -16.46,39.73 -17.57,32.87 -23.89,35.75 -23.64,28.81 -30.41,30.41 -28.81,23.64 -35.75,23.89 -32.87,17.57 -39.73,16.46 -35.67,10.82 -42.17,8.39 -37.09,3.65 -43,0 -37.09,-3.65 -42.17,-8.39 -35.67,-10.82 -39.73,-16.46 -32.87,-17.57 -35.75,-23.89 -28.81,-23.64 -30.41,-30.41 -23.64,-28.81 -23.89,-35.75 -17.57,-32.87 -16.46,-39.73 -10.82,-35.67 -8.39,-42.17 -3.65,-37.09"
+             fill="#fff" stroke="#000" stroke-width="2.5" stroke-linejoin="miter"/>
+
+    <!-- Small RocksDB cache cylinder used in the memory area. -->
+    <symbol id="cache-store" viewBox="0 0 92 74">
+      <path class="outline" d="M1 9 V64 C1 70 21 73 46 73 C71 73 91 70 91 64 V9 Z"/>
+      <ellipse class="outline" cx="46" cy="9" rx="45" ry="8"/>
+    </symbol>
+
+    <!-- Reusable folded file; each instance declares a 196×147 viewport. -->
+    <symbol id="disk-file" viewBox="0 0 196 147">
+      <path class="outline" d="M1 1 H148 C164 1 195 26 195 44 V146 H1 Z"/>
+      <path class="connector" d="M151 1 C159 8 158 19 159 30 C172 30 184 29 195 36"/>
+    </symbol>
+  </defs>
+
+  <rect width="1352" height="1076" fill="#fff"/>
+
+  <!-- Memory contains the command list, processor, event list, and RocksDB cache. -->
+  <g id="memory-area">
+    <rect class="outline" x="52" y="38" width="1247" height="455"/>
+    <rect id="command-list" class="outline" x="112" y="149" width="408" height="104"/>
+    <rect id="event-list" class="outline" x="832" y="149" width="408" height="104"/>
+  </g>
+
+  <!-- Solid in-memory processing flow; visible noses stop on node boundaries. -->
+  <g id="memory-flow">
+    <path id="command-to-processing" class="connector" data-connector="true"
+          d="M520 201 H629.5" marker-end="url(#arrowhead)"/>
+    <path id="processing-to-event" class="connector" data-connector="true"
+          d="M719 201 H828.5" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- RocksDB receives processed state in memory and restores it from its disk file. -->
+  <g id="rocksdb-state-routes">
+    <path id="processor-to-cache" class="mapped" data-connector="true"
+          d="M676 244 V356.5" marker-end="url(#arrowhead)"/>
+    <path id="rocksdb-file-to-cache" class="mapped" data-connector="true"
+          d="M676 684 V435.5" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Disk boundary and three editable folded-file instances. -->
+  <g id="disk-area">
+    <rect class="outline" x="176" y="648" width="999" height="397"/>
+    <use href="#disk-file" x="217" y="682" width="196" height="147"/>
+    <use href="#disk-file" x="578" y="682" width="196" height="147"/>
+    <use href="#disk-file" x="938" y="682" width="196" height="147"/>
+  </g>
+
+  <!-- Command and event mmap routes are split around their labels. -->
+  <g id="mmap-routes">
+    <path id="command-file-to-label" class="mapped" data-connector="true" d="M315 683 V594"/>
+    <path id="command-label-to-memory" class="mapped" data-connector="true"
+          d="M315 528 V256.5" marker-end="url(#arrowhead)"/>
+
+    <path id="event-file-to-label" class="mapped" data-connector="true" d="M1036 683 V594"/>
+    <path id="event-label-to-memory" class="mapped" data-connector="true"
+          d="M1036 528 V256.5" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Nodes are above incident paths so their outlines stay crisp at every join. -->
+  <use href="#processing-gear" transform="translate(676 201)"/>
+  <use href="#cache-store" x="630" y="359" width="92" height="74"/>
+
+  <!-- Text is painted last and kept clear of every solid and dashed connector. -->
+  <g id="labels">
+    <text class="section-label" x="676" y="88">memory</text>
+    <text class="list-label" x="316" y="216">Command List</text>
+    <text class="list-label" x="1036" y="216">Event List</text>
+
+    <text class="state-label" x="526" y="409">State</text>
+    <text class="cache-label" x="802" y="369">RocksDB</text>
+    <text class="cache-label" x="802" y="405">In-memory</text>
+    <text class="cache-label" x="802" y="440">cache</text>
+
+    <text class="map-label" x="259" y="576">mmap</text>
+    <text class="map-label" x="980" y="576">mmap</text>
+
+    <text class="file-label" x="315" y="878">Command</text>
+    <text class="file-label" x="315" y="924">File</text>
+    <text class="file-label" x="676" y="878">RocksDB</text>
+    <text class="file-label" x="676" y="924">File</text>
+    <text class="file-label" x="1036" y="878">Event</text>
+    <text class="file-label" x="1036" y="924">File</text>
+    <text class="section-label" x="676" y="1024">disk</text>
+  </g>
+</svg>

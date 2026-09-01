@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1428" height="1564" viewBox="0 0 1428 1564"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Wallet transactions across sharded Raft groups</title>
+  <desc id="desc">A TCC or Saga coordinator sends commands to two account partitions. Each partition uses a three-node Raft group, writes events to local stores, builds read projections, and pushes the latest status to its reverse proxy in real time.</desc>
+
+  <!-- Shared typography, exact semantic colors, reusable nodes, and shaft-safe heads. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .outline{fill:#fff;stroke:#000;stroke-width:1.5}
+      .panel{stroke:#000;stroke-width:1.5}
+      .connector{fill:none;stroke:#000;stroke-width:1.5}
+      .async{fill:none;stroke:#000;stroke-width:1.5;stroke-dasharray:7 5}
+      .boundary{fill:none;stroke:#000;stroke-width:1.5;stroke-dasharray:7 5}
+      .red-flow{fill:none;stroke:#ed451d;stroke-width:2.5}
+      .blue-flow{fill:none;stroke:#3897fa;stroke-width:2.5}
+      .red-async{fill:none;stroke:#ed451d;stroke-width:2.5;stroke-dasharray:12 9}
+      .annotation{fill:none;stroke:#000;stroke-width:1.4;stroke-dasharray:6 5}
+      .headline{font-size:22px;text-anchor:middle}
+      .role-label,.node-label,.raft-label,.group-label{font-size:22px;text-anchor:middle}
+      .zone-label{font-size:22px;text-anchor:middle}
+      .partition-label{font-size:22px;text-anchor:middle}
+      .callout-label{font-size:21px}
+      .proxy-label{font-size:21px;text-anchor:middle}
+      .coordinator-label{font-size:21px;text-anchor:middle}
+      .phase-label{font-size:16px;text-anchor:middle}
+    </style>
+
+    <!-- The 2.5-unit projection fully covers every 1.5-unit black shaft at the nose. -->
+    <marker id="black-arrowhead" markerWidth="14" markerHeight="12"
+            viewBox="0 0 14 12" refX="11.5" refY="6"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L14 6 L0 12 Z" fill="#000"/>
+    </marker>
+    <!-- Colored heads project 3.5 units, hiding their wider shafts before the sharp tip. -->
+    <marker id="red-arrowhead" markerWidth="16" markerHeight="14"
+            viewBox="0 0 16 14" refX="12.5" refY="7"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L16 7 L0 14 Z" fill="#ed451d"/>
+    </marker>
+    <marker id="blue-arrowhead" markerWidth="16" markerHeight="14"
+            viewBox="0 0 16 14" refX="12.5" refY="7"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L16 7 L0 14 Z" fill="#3897fa"/>
+    </marker>
+    <marker id="annotation-arrowhead" markerWidth="12" markerHeight="10"
+            viewBox="0 0 12 10" refX="10" refY="5"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L12 5 L0 10 Z" fill="#000"/>
+    </marker>
+
+    <!-- Source-native toothed projection worker, reused at write and read stages. -->
+    <symbol id="projection-worker" viewBox="0 0 80 80">
+      <polygon class="outline"
+               points="40,1 43.8,6.2 48.7,2 51.2,7.9 56.9,4.9 58.1,11.2 64.3,9.5 64,16 70.5,15.7 68.8,21.9 75.1,23.1 72.1,28.8 78,31.3 73.8,36.2 79,40 73.8,43.8 78,48.7 72.1,51.2 75.1,56.9 68.8,58.1 70.5,64.3 64,64 64.3,70.5 58.1,68.8 56.9,75.1 51.2,72.1 48.7,78 43.8,73.8 40,79 36.2,73.8 31.3,78 28.8,72.1 23.1,75.1 21.9,68.8 15.7,70.5 16,64 9.5,64.3 11.2,58.1 4.9,56.9 7.9,51.2 2,48.7 6.2,43.8 1,40 6.2,36.2 2,31.3 7.9,28.8 4.9,23.1 11.2,21.9 9.5,15.7 16,16 15.7,9.5 21.9,11.2 23.1,4.9 28.8,7.9 31.3,2 36.2,6.2"/>
+    </symbol>
+
+    <!-- Small editable database cylinder used by every write and read projection. -->
+    <symbol id="database-store" viewBox="0 0 82 66">
+      <path class="outline" d="M1 8 V57 C1 62 19 65 41 65 C63 65 81 62 81 57 V8 Z"/>
+      <ellipse class="outline" cx="41" cy="8" rx="40" ry="7"/>
+    </symbol>
+
+    <!-- One partition core; both uses preserve explicit dimensions and identical routing. -->
+    <symbol id="partition-core" viewBox="0 0 1428 650">
+      <!-- Dashed lanes separate reverse proxy, write-side Raft state, and read projections. -->
+      <path class="boundary" d="M430 0 V620 M1103 0 V620 M1278 0 V620"/>
+
+      <!-- Three-node Raft group with a highlighted leader lane. -->
+      <rect class="outline" x="446" y="65" width="640" height="468"/>
+      <rect class="panel" x="474" y="111" width="585" height="91" fill="#cafdff"/>
+      <rect class="panel" x="474" y="254" width="585" height="91" fill="#f7c4fd"/>
+      <rect class="panel" x="474" y="398" width="585" height="90" fill="#cafdff"/>
+
+      <!-- Asynchronous event streams build the read-side projections. -->
+      <path class="async" data-connector="true"
+            d="M817 184 C900 248 1022 227 1119.8 160"
+            marker-end="url(#black-arrowhead)"/>
+      <path class="red-async" data-connector="true"
+            d="M817 327 C912 393 1028 370 1119.7 304"
+            marker-end="url(#red-arrowhead)"/>
+      <path class="async" data-connector="true"
+            d="M817 471 C910 535 1028 512 1119.8 446"
+            marker-end="url(#black-arrowhead)"/>
+
+      <!-- Leader command flow is red; replicated write-side routes remain black. -->
+      <path class="red-flow" data-connector="true" d="M410 299 H496.5"
+            marker-end="url(#red-arrowhead)"/>
+      <path class="red-flow" data-connector="true" d="M634 299 H661.5"
+            marker-end="url(#red-arrowhead)"/>
+      <path class="red-flow" data-connector="true" d="M713 299 H740.5"
+            marker-end="url(#red-arrowhead)"/>
+
+      <path class="connector" data-connector="true" d="M846 157 H892.5"
+            marker-end="url(#black-arrowhead)"/>
+      <path class="connector" data-connector="true" d="M944 157 H988.5"
+            marker-end="url(#black-arrowhead)"/>
+      <path class="connector" data-connector="true" d="M1171 157 H1203.5"
+            marker-end="url(#black-arrowhead)"/>
+
+      <path class="connector" data-connector="true" d="M846 299 H892.5"
+            marker-end="url(#black-arrowhead)"/>
+      <path class="connector" data-connector="true" d="M944 299 H988.5"
+            marker-end="url(#black-arrowhead)"/>
+      <path class="red-flow" data-connector="true" d="M1171 299 H1202.5"
+            marker-end="url(#red-arrowhead)"/>
+
+      <path class="connector" data-connector="true" d="M846 443 H892.5"
+            marker-end="url(#black-arrowhead)"/>
+      <path class="connector" data-connector="true" d="M944 443 H988.5"
+            marker-end="url(#black-arrowhead)"/>
+      <path class="connector" data-connector="true" d="M1171 443 H1203.5"
+            marker-end="url(#black-arrowhead)"/>
+
+      <!-- Bidirectional Raft arrows are split around labels to protect text clearance. -->
+      <path class="connector" data-connector="true" d="M795 202 V187.5"
+            marker-end="url(#black-arrowhead)"/>
+      <path class="connector" data-connector="true" d="M795 244 V267.5"
+            marker-end="url(#black-arrowhead)"/>
+      <path class="connector" data-connector="true" d="M795 345 V330.5"
+            marker-end="url(#black-arrowhead)"/>
+      <path class="connector" data-connector="true" d="M795 387 V411.5"
+            marker-end="url(#black-arrowhead)"/>
+
+      <!-- Boxes, gears, stores, and proxy junction sit above their incident paths. -->
+      <rect class="outline" x="744" y="129" width="102" height="56"/>
+      <rect class="outline" x="500" y="271" width="134" height="57"/>
+      <rect class="outline" x="744" y="271" width="102" height="57"/>
+      <rect class="outline" x="744" y="415" width="102" height="56"/>
+
+      <use href="#projection-worker" x="896" y="133" width="48" height="48"/>
+      <use href="#projection-worker" x="1123" y="133" width="48" height="48"/>
+      <use href="#projection-worker" x="665" y="275" width="48" height="48"/>
+      <use href="#projection-worker" x="896" y="275" width="48" height="48"/>
+      <use href="#projection-worker" x="1123" y="275" width="48" height="48"/>
+      <use href="#projection-worker" x="896" y="419" width="48" height="48"/>
+      <use href="#projection-worker" x="1123" y="419" width="48" height="48"/>
+
+      <use href="#database-store" x="991" y="138" width="48" height="38"/>
+      <use href="#database-store" x="1206" y="138" width="48" height="38"/>
+      <use href="#database-store" x="991" y="280" width="48" height="38"/>
+      <use href="#database-store" x="1206" y="280" width="48" height="38"/>
+      <use href="#database-store" x="991" y="424" width="48" height="38"/>
+      <use href="#database-store" x="1206" y="424" width="48" height="38"/>
+
+      <circle class="outline" cx="402" cy="299" r="8"/>
+
+      <!-- Labels are last inside the symbol so no connector crosses glyphs. -->
+      <text class="role-label" x="594" y="165">Follower</text>
+      <text class="node-label" x="795" y="165">Events</text>
+      <text class="node-label" x="567" y="307">Commands</text>
+      <text class="node-label" x="795" y="307">Events</text>
+      <text class="node-label" x="795" y="451">Events</text>
+      <text class="role-label" x="594" y="451">Follower</text>
+      <text class="raft-label" x="795" y="237">Raft</text>
+      <text class="raft-label" x="795" y="380">Raft</text>
+      <text class="group-label" x="766" y="519">Raft Node Group</text>
+
+      <!-- Double-headed spans name the write and read lanes without crossing labels. -->
+      <path class="connector" data-connector="true" d="M450 595 H750 M815 595 H1083"/>
+      <path d="M430 595 L450 588 L450 602 Z M1103 595 L1083 588 L1083 602 Z" fill="#000"/>
+      <text class="zone-label" x="782" y="603">Write</text>
+
+      <path class="connector" data-connector="true" d="M1123 595 H1159 M1218 595 H1258"/>
+      <path d="M1103 595 L1123 588 L1123 602 Z M1278 595 L1258 588 L1258 602 Z" fill="#000"/>
+      <text class="zone-label" x="1189" y="603">Read</text>
+    </symbol>
+  </defs>
+
+  <rect width="1428" height="1564" fill="#fff"/>
+
+  <!-- Partition boundaries retain the source's stacked account-shard reading order. -->
+  <rect class="boundary" x="376.5" y="32.5" width="949.5" height="736.5"/>
+  <rect class="boundary" x="376.5" y="807.5" width="949.5" height="735.5"/>
+
+  <use href="#partition-core" x="0" y="100" width="1428" height="650"/>
+  <use href="#partition-core" x="0" y="863" width="1428" height="650"/>
+
+  <!-- Each leader read store pushes status around the perimeter to its reverse proxy. -->
+  <g id="real-time-status-push">
+    <path id="partition-a-status-before-label" class="blue-flow" data-connector="true"
+          d="M1254 399 H1297 V55 H1175"/>
+    <path id="partition-a-status-after-label" class="blue-flow" data-connector="true"
+          d="M560 55 H402 V387.5"
+          marker-end="url(#blue-arrowhead)"/>
+    <path id="partition-c-status-before-label" class="blue-flow" data-connector="true"
+          d="M1254 1162 H1307 V1502 H1175"/>
+    <path id="partition-c-status-after-label" class="blue-flow" data-connector="true"
+          d="M560 1502 H402 V1173.5"
+          marker-end="url(#blue-arrowhead)"/>
+
+    <!-- White backplates keep the blue perimeter clear of its explanatory labels. -->
+    <rect x="555" y="40" width="625" height="31" fill="#fff"/>
+    <text class="headline" x="868" y="64">Push the latest status to reverse proxy in real-time</text>
+    <rect x="555" y="1487" width="625" height="31" fill="#fff"/>
+    <text class="headline" x="877.5" y="1511">Push the latest status to reverse proxy in real-time</text>
+  </g>
+
+  <!-- Coordinator command and response curves terminate on node boundaries, not inside them. -->
+  <g id="coordinator-partition-flows">
+    <path id="command-account-a-before-label" class="red-flow" data-connector="true"
+          d="M270 745 C288 700 303 662 314 631"/>
+    <path id="command-account-a-after-label" class="red-flow" data-connector="true"
+          d="M329 595 C354 526 378 460 394.6 409.2"
+          marker-end="url(#red-arrowhead)"/>
+    <path id="response-account-a-before-label" class="blue-flow" data-connector="true"
+          d="M396 406 C356 430 330 451 315 470"/>
+    <path id="response-account-a-after-label" class="blue-flow" data-connector="true"
+          d="M291 505 C255 570 245 660 250 741.5"
+          marker-end="url(#blue-arrowhead)"/>
+
+    <path id="command-account-c-before-label" class="red-flow" data-connector="true"
+          d="M270 824 C289 868 304 906 315 934"/>
+    <path id="command-account-c-after-label" class="red-flow" data-connector="true"
+          d="M329 987 C354 1050 378 1111 394.6 1152.7"
+          marker-end="url(#red-arrowhead)"/>
+    <path id="response-account-c-before-label" class="blue-flow" data-connector="true"
+          d="M396 1156 C356 1128 331 1091 315 1068"/>
+    <path id="response-account-c-after-label" class="blue-flow" data-connector="true"
+          d="M289 1032 C255 968 245 900 250 827.5"
+          marker-end="url(#blue-arrowhead)"/>
+  </g>
+
+  <!-- Client, saga coordinator, and its durable phase-status table. -->
+  <g id="coordinator-and-client">
+    <g id="client" fill="#000">
+      <circle cx="106" cy="774" r="10"/>
+      <path d="M85 806 V801 C85 787 127 787 127 801 V806 Z"/>
+    </g>
+
+    <path class="connector" data-connector="true" d="M130 784 H174"/>
+    <path d="M128 784 L139 779 L139 789 Z M178 784 L167 779 L167 789 Z" fill="#000"/>
+
+    <rect class="outline" x="178" y="745" width="152" height="79"/>
+    <text class="coordinator-label" x="254" y="779">TCC/Saga</text>
+    <text class="coordinator-label" x="254" y="804">Coordinator</text>
+
+    <path id="coordinator-to-table" class="connector" data-connector="true"
+          d="M225 824 L188.8 881.9" marker-end="url(#black-arrowhead)"/>
+
+    <path class="outline" d="M85 896 V1007 C85 1016 110 1022 141 1022 C172 1022 197 1016 197 1007 V896 Z"/>
+    <ellipse class="outline" cx="141" cy="896" rx="56" ry="14"/>
+    <rect x="111" y="934" width="61" height="62" fill="#f7c4fd" stroke="#000" stroke-width="1.5"/>
+    <text class="phase-label" x="141.5" y="953">Phase</text>
+    <text class="phase-label" x="141.5" y="972">Status</text>
+    <text class="phase-label" x="141.5" y="991">Table</text>
+  </g>
+
+  <!-- Explanatory callouts are isolated from the colored routes and point to proxy junctions. -->
+  <g id="callouts">
+    <text class="proxy-label" x="293" y="241">
+      <tspan x="293">Reverse</tspan><tspan x="293" dy="24">Proxy</tspan>
+    </text>
+    <path class="annotation" data-connector="true" d="M323 273 L397.8 389"
+          marker-end="url(#annotation-arrowhead)"/>
+
+    <text class="callout-label" x="244" y="496">Response</text>
+    <text class="callout-label" x="270" y="622">Command</text>
+    <text class="callout-label" x="270" y="962">Command</text>
+    <text class="callout-label" x="235" y="1058">Response</text>
+
+    <text class="proxy-label" x="293" y="1274">
+      <tspan x="293">Reverse</tspan><tspan x="293" dy="24">Proxy</tspan>
+    </text>
+    <path class="annotation" data-connector="true" d="M321 1247 L397.8 1175"
+          marker-end="url(#annotation-arrowhead)"/>
+  </g>
+
+  <!-- Partition captions are painted last for crisp separation from dashed boundaries. -->
+  <g id="partition-captions">
+    <rect x="738" y="738" width="226" height="29" fill="#fff"/>
+    <text class="partition-label" x="851" y="760">Partition 1 (account A)</text>
+    <rect x="738" y="810" width="226" height="29" fill="#fff"/>
+    <text class="partition-label" x="851" y="832">Partition 2 (account C)</text>
+  </g>
+</svg>

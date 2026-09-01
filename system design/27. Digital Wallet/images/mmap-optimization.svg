@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1346" height="1096" viewBox="0 0 1346 1096"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Memory-mapped command and event files</title>
+  <desc id="desc">A command list and event list in memory are connected through a processing step. Each list is memory-mapped to its corresponding command or event file on disk.</desc>
+
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .outline{fill:#fff;stroke:#000;stroke-width:2.5;stroke-linejoin:round}
+      .connector{fill:none;stroke:#000;stroke-width:2.5;stroke-linejoin:round}
+      .mapped{fill:none;stroke:#000;stroke-width:2.5;stroke-dasharray:12 10;stroke-linejoin:round}
+      .section-label{font-size:40px;text-anchor:middle}
+      .list-label{font-size:40px;text-anchor:middle}
+      .map-label{font-size:40px}
+      .file-label{font-size:40px;text-anchor:middle}
+    </style>
+
+    <!-- Broad source-matched arrowhead used on solid and dashed routes. -->
+    <marker id="arrowhead" markerWidth="24" markerHeight="20" viewBox="0 0 24 20"
+            refX="24" refY="10" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L24 10 L0 20 Z" fill="#000"/>
+    </marker>
+
+    <!-- Compact 32-tooth processing node between the in-memory lists. -->
+    <polygon id="processing-gear"
+             points="0,-43 3.65,-37.09 8.39,-42.17 10.82,-35.67 16.46,-39.73 17.57,-32.87 23.89,-35.75 23.64,-28.81 30.41,-30.41 28.81,-23.64 35.75,-23.89 32.87,-17.57 39.73,-16.46 35.67,-10.82 42.17,-8.39 37.09,-3.65 43,0 37.09,3.65 42.17,8.39 35.67,10.82 39.73,16.46 32.87,17.57 35.75,23.89 28.81,23.64 30.41,30.41 23.64,28.81 23.89,35.75 17.57,32.87 16.46,39.73 10.82,35.67 8.39,42.17 3.65,37.09 0,43 -3.65,37.09 -8.39,42.17 -10.82,35.67 -16.46,39.73 -17.57,32.87 -23.89,35.75 -23.64,28.81 -30.41,30.41 -28.81,23.64 -35.75,23.89 -32.87,17.57 -39.73,16.46 -35.67,10.82 -42.17,8.39 -37.09,3.65 -43,0 -37.09,-3.65 -42.17,-8.39 -35.67,-10.82 -39.73,-16.46 -32.87,-17.57 -35.75,-23.89 -28.81,-23.64 -30.41,-30.41 -23.64,-28.81 -23.89,-35.75 -17.57,-32.87 -16.46,-39.73 -10.82,-35.67 -8.39,-42.17 -3.65,-37.09"
+             fill="#fff" stroke="#000" stroke-width="2.5" stroke-linejoin="miter"/>
+  </defs>
+
+  <rect width="1346" height="1096" fill="#fff"/>
+
+  <!-- In-memory area with command and event lists. -->
+  <g id="memory-area">
+    <rect class="outline" x="44" y="41.5" width="1247" height="327.5"/>
+    <rect id="command-list" class="outline" x="103.5" y="153.5" width="407" height="103"/>
+    <rect id="event-list" class="outline" x="824.5" y="153.5" width="408" height="103"/>
+  </g>
+
+  <!-- Solid in-memory processing flow; heads terminate at the gear and event-list boundaries. -->
+  <g id="memory-flow">
+    <path id="command-to-processing" class="connector" data-connector="true"
+          d="M510.5 204.5 H623.5" marker-end="url(#arrowhead)"/>
+    <path id="processing-to-event" class="connector" data-connector="true"
+          d="M711 204.5 H824.5" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Disk boundary and two editable folded-file outlines. -->
+  <g id="disk-area">
+    <rect class="outline" x="362.5" y="651.5" width="611" height="422"/>
+
+    <path id="command-file" class="outline"
+          d="M440 720 H585 C601 720 634 745 634 763 V864 H440 Z"/>
+    <path class="connector" d="M588 720 C596 727 595 738 596 749 C609 749 623 748 634 755"/>
+
+    <path id="event-file" class="outline"
+          d="M716 720 H861 C877 720 911 745 911 763 V864 H716 Z"/>
+    <path class="connector" d="M864 720 C872 727 871 738 872 749 C885 749 900 748 911 755"/>
+  </g>
+
+  <!-- Each dashed mmap route is split around its label; only the memory-facing segment has a head. -->
+  <g id="mmap-routes">
+    <path id="command-file-to-label" class="mapped" d="M508 720 L435 532"/>
+    <path id="command-label-to-memory" class="mapped" data-connector="true"
+          d="M408 462 L329 257" marker-end="url(#arrowhead)"/>
+
+    <path id="event-file-to-label" class="mapped" d="M841 720 L905 542"/>
+    <path id="event-label-to-memory" class="mapped" data-connector="true"
+          d="M935 462 L1008 257" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Processing node is above both shafts so its toothed perimeter remains crisp. -->
+  <use href="#processing-gear" transform="translate(667.5 204.5)"/>
+
+  <!-- Text is painted last, centered within its owning region. -->
+  <g id="labels">
+    <text class="section-label" x="668" y="91">memory</text>
+    <text class="list-label" x="307" y="219">Command List</text>
+    <text class="list-label" x="1028.5" y="219">Event List</text>
+
+    <text class="map-label" x="364" y="511">mmap</text>
+    <text class="map-label" x="863" y="517">mmap</text>
+
+    <text class="file-label" x="537.5" y="914">Command</text>
+    <text class="file-label" x="537.5" y="959">File</text>
+    <text class="file-label" x="813.5" y="914">Event</text>
+    <text class="file-label" x="813.5" y="959">File</text>
+    <text class="section-label" x="668" y="1054">disk</text>
+  </g>
+</svg>

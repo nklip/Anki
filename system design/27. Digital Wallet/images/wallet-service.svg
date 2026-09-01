@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1654" height="906" viewBox="0 0 1654 906"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Wallet service routes transfers to Redis partitions</title>
+  <desc id="desc">Two wallet-service instances receive transfer commands, consult ZooKeeper for partition information, and can route work to Redis partitions A, B, and C. The highlighted transfer debits one dollar from A and credits one dollar to B.</desc>
+
+  <!-- Source-matched typography, semantic transfer color, and shaft-safe arrowheads. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .outline{fill:#fff;stroke:#000;stroke-width:2.5;stroke-linejoin:round}
+      .connector{fill:none;stroke:#000;stroke-width:2.5;stroke-linejoin:round}
+      .transfer{fill:none;stroke:#ed451d;stroke-width:4;stroke-linejoin:round}
+      .command-label{font-size:38px;text-anchor:middle}
+      .service-label{font-size:38px;text-anchor:middle}
+      .transfer-label{font-size:38px}
+      .partition-value{font-size:38px;text-anchor:middle}
+      .system-label{font-size:38px;text-anchor:middle}
+      .mini-stroke{fill:none;stroke:#000;stroke-width:2.5;stroke-linecap:butt}
+    </style>
+
+    <!-- Each black tip projects 5 px beyond its endpoint, where the taper fully covers the shaft. -->
+    <marker id="black-arrowhead" markerWidth="22" markerHeight="18"
+            viewBox="0 0 22 18" refX="17" refY="9"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L22 9 L0 18 Z" fill="#000"/>
+    </marker>
+    <!-- The broader red tip projects 9 px so its taper also covers the four-unit shaft. -->
+    <marker id="red-arrowhead" markerWidth="30" markerHeight="22"
+            viewBox="0 0 30 22" refX="21" refY="11"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L30 11 L0 22 Z" fill="#ed451d"/>
+    </marker>
+  </defs>
+
+  <rect width="1654" height="906" fill="#fff"/>
+
+  <!-- Command origins and their vertical input routes. -->
+  <g id="transfer-command-inputs">
+    <circle class="outline" cx="500.5" cy="107.5" r="24.5"/>
+    <circle class="outline" cx="945.5" cy="107.5" r="24.5"/>
+
+    <path id="highlighted-command-before-label" class="transfer" data-connector="true"
+          d="M500.5 132 V201"/>
+    <path id="highlighted-command-after-label" class="transfer" data-connector="true"
+          d="M500.5 266 V327.5" marker-end="url(#red-arrowhead)"/>
+    <path id="second-command" class="connector" data-connector="true"
+          d="M945.5 132 V331.5" marker-end="url(#black-arrowhead)"/>
+  </g>
+
+  <!-- Every wallet-service instance can address all three Redis partitions. -->
+  <g id="redis-routing">
+    <!-- Highlighted A debit; the shaft is split around its inline value label. -->
+    <path id="debit-a-before-label" class="transfer" data-connector="true"
+          d="M469.5 442.5 L435.5 497"/>
+    <path id="debit-a-after-label" class="transfer" data-connector="true"
+          d="M408 547 L326.8 683.8" marker-end="url(#red-arrowhead)"/>
+
+    <!-- Highlighted B credit; the same marker join is used at the Redis boundary. -->
+    <path id="credit-b-before-label" class="transfer" data-connector="true"
+          d="M531.5 442.5 L566.5 497"/>
+    <path id="credit-b-after-label" class="transfer" data-connector="true"
+          d="M594.5 547 L680.5 683.9" marker-end="url(#red-arrowhead)"/>
+
+    <path id="left-wallet-to-c" class="connector" data-connector="true"
+          d="M596 442.5 L1043.7 689.1" marker-end="url(#black-arrowhead)"/>
+
+    <!-- Crossing diagonals make the all-services-to-all-partitions routing explicit. -->
+    <path id="right-wallet-to-a" class="connector" data-connector="true"
+          d="M849 442.5 L402.8 689.0" marker-end="url(#black-arrowhead)"/>
+    <path id="right-wallet-to-b" class="connector" data-connector="true"
+          d="M912 442.5 L764.5 687.2" marker-end="url(#black-arrowhead)"/>
+    <path id="right-wallet-to-c" class="connector" data-connector="true"
+          d="M978 442.5 L1123.5 687.2" marker-end="url(#black-arrowhead)"/>
+  </g>
+
+  <!-- Wallet-service workers sit above the routing lines at their source edges. -->
+  <g id="wallet-services">
+    <rect class="outline" x="393.5" y="336.5" width="214" height="106"/>
+    <rect class="outline" x="839.5" y="336.5" width="213" height="106"/>
+  </g>
+
+  <!-- Both workers consult ZooKeeper for the current partition ownership map. -->
+  <g id="zookeeper-routes">
+    <path id="left-wallet-to-zookeeper" class="connector" data-connector="true"
+          d="M607.5 350 C842 274 1118 249 1352.8 339.9"
+          marker-end="url(#black-arrowhead)"/>
+    <path id="right-wallet-to-zookeeper" class="connector" data-connector="true"
+          d="M1052.5 391 L1352.5 394.5"
+          marker-end="url(#black-arrowhead)"/>
+  </g>
+
+  <!-- Redis partitions remain simple editable key/balance boxes. -->
+  <g id="redis-partitions">
+    <rect class="outline" x="139.5" y="691.5" width="290" height="123"/>
+    <rect class="outline" x="578.5" y="691.5" width="290" height="123"/>
+    <rect class="outline" x="1016.5" y="691.5" width="290" height="123"/>
+  </g>
+
+  <!-- ZooKeeper cylinder containing partition metadata. -->
+  <g id="zookeeper-store">
+    <path class="outline"
+          d="M1357.5 333.5 V463.5 C1357.5 484 1580.5 484 1580.5 463.5 V333.5"/>
+    <ellipse class="outline" cx="1469" cy="333.5" rx="111.5" ry="16.5"/>
+  </g>
+
+  <!-- Text is last so neither the routing mesh nor the highlighted path crosses a label. -->
+  <g id="labels">
+    <text class="command-label" x="500.5" y="64">Transfer Command</text>
+    <text class="command-label" x="945.5" y="64">Transfer Command</text>
+
+    <!-- The miniature arrow is separate geometry so its proportions match the etalon. -->
+    <text class="transfer-label" x="420" y="246">A</text>
+    <path class="mini-stroke" d="M445 233.5 H475"/>
+    <text class="transfer-label" x="486" y="246">$1</text>
+    <path class="mini-stroke" d="M539 233.5 H559"/>
+    <path d="M557 223.5 L578 233.5 L557 243.5 Z" fill="#000"/>
+    <text class="transfer-label" x="579" y="246">B</text>
+
+    <text class="service-label" x="500.5" y="381">Wallet</text>
+    <text class="service-label" x="500.5" y="423">Service</text>
+    <text class="service-label" x="946" y="381">Wallet</text>
+    <text class="service-label" x="946" y="423">Service</text>
+
+    <text class="transfer-label" x="359" y="533">A: - $1</text>
+    <text class="transfer-label" x="524" y="533">B: + $1</text>
+
+    <text class="partition-value" x="284.5" y="768">{ A: balance }</text>
+    <text class="partition-value" x="723.5" y="768">{ B: balance }</text>
+    <text class="partition-value" x="1161.5" y="768">{ C: balance }</text>
+    <text class="system-label" x="284.5" y="861">Redis</text>
+    <text class="system-label" x="723.5" y="861">Redis</text>
+    <text class="system-label" x="1161.5" y="861">Redis</text>
+
+    <text class="service-label" x="1469" y="398">Partition</text>
+    <text class="service-label" x="1469" y="440">Info</text>
+    <text class="system-label" x="1469" y="523">Zookeeper</text>
+  </g>
+</svg>

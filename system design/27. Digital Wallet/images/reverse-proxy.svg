@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1800" height="1106" viewBox="0 0 1800 1106"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Reverse proxy polls for the latest wallet status</title>
+  <desc id="desc">A client sends a command through a reverse proxy to the leader in a three-node Raft group. Events replicate to followers and update write and read projections. The reverse proxy periodically queries the leader read store and returns the latest status to the client.</desc>
+
+  <!-- Shared reference colors, typography, reusable nodes, and shaft-safe arrowheads. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .outline{fill:#fff;stroke:#000;stroke-width:2.5}
+      .panel{stroke:#000;stroke-width:2.5}
+      .connector{fill:none;stroke:#000;stroke-width:2.5}
+      .red-flow{fill:none;stroke:#ed451d;stroke-width:4}
+      .blue-flow{fill:none;stroke:#3897fa;stroke-width:4}
+      .async-flow{fill:none;stroke:#000;stroke-width:2.5;stroke-dasharray:11 9}
+      .annotation{fill:none;stroke:#000;stroke-width:2.2;stroke-dasharray:10 8}
+      .boundary{fill:none;stroke:#000;stroke-width:2.3;stroke-dasharray:10 8}
+      .headline{font-size:34px;text-anchor:middle}
+      .role-label{font-size:34px;text-anchor:middle}
+      .node-label{font-size:34px;text-anchor:middle}
+      .raft-label{font-size:34px;text-anchor:middle}
+      .group-label{font-size:34px;text-anchor:middle}
+      .callout-label{font-size:34px}
+      .proxy-label{font-size:34px;text-anchor:middle}
+      .zone-label{font-size:34px;text-anchor:middle}
+    </style>
+
+    <!-- A 3.5-unit projection covers each 2.5-unit black shaft inside its nose. -->
+    <marker id="black-arrowhead" markerWidth="22" markerHeight="18"
+            viewBox="0 0 22 18" refX="18.5" refY="9"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L22 9 L0 18 Z" fill="#000"/>
+    </marker>
+    <!-- Four-unit colored shafts need a five-unit projection for a clean tapered nose. -->
+    <marker id="red-arrowhead" markerWidth="22" markerHeight="18"
+            viewBox="0 0 22 18" refX="17" refY="9"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L22 9 L0 18 Z" fill="#ed451d"/>
+    </marker>
+    <marker id="blue-arrowhead" markerWidth="24" markerHeight="20"
+            viewBox="0 0 24 20" refX="19" refY="10"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L24 10 L0 20 Z" fill="#3897fa"/>
+    </marker>
+    <marker id="annotation-arrowhead" markerWidth="14" markerHeight="12"
+            viewBox="0 0 14 12" refX="11.5" refY="6"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L14 6 L0 12 Z" fill="#000"/>
+    </marker>
+
+    <!-- Projection worker symbol; every use declares an explicit 72×72 viewport. -->
+    <symbol id="projection-worker" viewBox="0 0 80 80">
+      <polygon class="outline"
+               points="40.0,1.0 43.8,6.2 48.7,2.0 51.2,7.9 56.9,4.9 58.1,11.2 64.3,9.5 64.0,16.0 70.5,15.7 68.8,21.9 75.1,23.1 72.1,28.8 78.0,31.3 73.8,36.2 79.0,40.0 73.8,43.8 78.0,48.7 72.1,51.2 75.1,56.9 68.8,58.1 70.5,64.3 64.0,64.0 64.3,70.5 58.1,68.8 56.9,75.1 51.2,72.1 48.7,78.0 43.8,73.8 40.0,79.0 36.2,73.8 31.3,78.0 28.8,72.1 23.1,75.1 21.9,68.8 15.7,70.5 16.0,64.0 9.5,64.3 11.2,58.1 4.9,56.9 7.9,51.2 2.0,48.7 6.2,43.8 1.0,40.0 6.2,36.2 2.0,31.3 7.9,28.8 4.9,23.1 11.2,21.9 9.5,15.7 16.0,16.0 15.7,9.5 21.9,11.2 23.1,4.9 28.8,7.9 31.3,2.0 36.2,6.2"/>
+    </symbol>
+
+    <!-- Small database cylinder reused by write-side and read-side projections. -->
+    <symbol id="database-store" viewBox="0 0 82 66">
+      <path class="outline" d="M1 8 V57 C1 62 19 65 41 65 C63 65 81 62 81 57 V8 Z"/>
+      <ellipse class="outline" cx="41" cy="8" rx="40" ry="7"/>
+    </symbol>
+  </defs>
+
+  <rect width="1800" height="1106" fill="#fff"/>
+
+  <!-- The proxy follows the blue perimeter to poll the leader read store. -->
+  <g id="polling-loop">
+    <path id="polling-loop-start" class="blue-flow" data-connector="true"
+          d="M330 563 V49 H708"/>
+    <path id="polling-loop-end" class="blue-flow" data-connector="true"
+          d="M1394 49 H1717 V576 H1651.1"
+          marker-end="url(#blue-arrowhead)"/>
+    <text class="headline" x="1051" y="62">Periodically query for the latest status</text>
+  </g>
+
+  <!-- Dashed boundaries separate the proxy lane, write side, and read side. -->
+  <g id="write-read-boundaries">
+    <path class="boundary" d="M387 118 V1069"/>
+    <path class="boundary" d="M1418 118 V1069"/>
+    <path class="boundary" d="M1687 118 V1069"/>
+  </g>
+
+  <!-- Outer Raft group and its follower, leader, and follower lanes. -->
+  <g id="raft-node-group">
+    <rect class="outline" x="411" y="216" width="981" height="719"/>
+    <rect class="panel" x="454" y="288" width="896" height="139" fill="#cafdff"/>
+    <rect class="panel" x="454" y="507" width="896" height="138" fill="#f7c4fd"/>
+    <rect class="panel" x="454" y="725" width="896" height="139" fill="#cafdff"/>
+  </g>
+
+  <!-- Replicated events update independent read projections; the leader path is highlighted red. -->
+  <g id="read-side-projection-flows">
+    <path id="top-read-projection" class="async-flow" data-connector="true"
+          d="M982 401 C1109 500 1289 457 1448.4 374.2"
+          marker-end="url(#black-arrowhead)"/>
+    <path id="leader-read-projection" class="red-flow" data-connector="true"
+          stroke-dasharray="18 16"
+          d="M992 618 C1129 718 1309 684 1447.2 593.3"
+          marker-end="url(#red-arrowhead)"/>
+    <path id="bottom-read-projection" class="async-flow" data-connector="true"
+          d="M972 837 C1129 936 1304 914 1448.6 811.5"
+          marker-end="url(#black-arrowhead)"/>
+  </g>
+
+  <!-- Commands enter through the proxy; replicated events update write-side stores. -->
+  <g id="row-connectors">
+    <path id="proxy-to-command" class="red-flow" data-connector="true"
+          d="M343 576 H489" marker-end="url(#red-arrowhead)"/>
+    <path id="command-to-worker" class="red-flow" data-connector="true"
+          d="M699 576 H744" marker-end="url(#red-arrowhead)"/>
+    <path id="worker-to-leader-events" class="red-flow" data-connector="true"
+          d="M820 576 H863" marker-end="url(#red-arrowhead)"/>
+
+    <path id="top-events-to-worker" class="connector" data-connector="true"
+          d="M1025 358 H1100.5" marker-end="url(#black-arrowhead)"/>
+    <path id="top-worker-to-store" class="connector" data-connector="true"
+          d="M1175 358 H1244.5" marker-end="url(#black-arrowhead)"/>
+    <path id="top-read-worker-to-store" class="connector" data-connector="true"
+          d="M1518 358 H1570.5" marker-end="url(#black-arrowhead)"/>
+
+    <path id="leader-events-to-worker" class="connector" data-connector="true"
+          d="M1025 576 H1100.5" marker-end="url(#black-arrowhead)"/>
+    <path id="leader-worker-to-store" class="connector" data-connector="true"
+          d="M1175 576 H1244.5" marker-end="url(#black-arrowhead)"/>
+    <path id="leader-read-worker-to-store" class="red-flow" data-connector="true"
+          d="M1518 576 H1569" marker-end="url(#red-arrowhead)"/>
+
+    <path id="bottom-events-to-worker" class="connector" data-connector="true"
+          d="M1025 795 H1100.5" marker-end="url(#black-arrowhead)"/>
+    <path id="bottom-worker-to-store" class="connector" data-connector="true"
+          d="M1175 795 H1244.5" marker-end="url(#black-arrowhead)"/>
+    <path id="bottom-read-worker-to-store" class="connector" data-connector="true"
+          d="M1518 795 H1570.5" marker-end="url(#black-arrowhead)"/>
+  </g>
+
+  <!-- Raft arrows are split around labels so shafts never cross text. -->
+  <g id="raft-replication">
+    <path id="leader-to-top-follower" class="connector" data-connector="true"
+          d="M946.5 442 V404.5" marker-end="url(#black-arrowhead)"/>
+    <path id="top-follower-to-leader" class="connector" data-connector="true"
+          d="M946.5 489 V529.5" marker-end="url(#black-arrowhead)"/>
+    <text class="raft-label" x="946.5" y="477">Raft</text>
+
+    <path id="leader-to-bottom-follower" class="connector" data-connector="true"
+          d="M946.5 661 V621.5" marker-end="url(#black-arrowhead)"/>
+    <path id="bottom-follower-to-leader" class="connector" data-connector="true"
+          d="M946.5 708 V748.5" marker-end="url(#black-arrowhead)"/>
+    <text class="raft-label" x="946.5" y="696">Raft</text>
+  </g>
+
+  <!-- Process boxes, projection workers, and stores are painted above incident connectors. -->
+  <g id="processing-nodes">
+    <rect class="outline" x="868" y="315" width="157" height="85"/>
+    <rect class="outline" x="494" y="533" width="205" height="85"/>
+    <rect class="outline" x="868" y="533" width="157" height="85"/>
+    <rect class="outline" x="868" y="752" width="157" height="85"/>
+
+    <use href="#projection-worker" x="1103" y="322" width="72" height="72"/>
+    <use href="#projection-worker" x="1446" y="322" width="72" height="72"/>
+    <use href="#projection-worker" x="748" y="540" width="72" height="72"/>
+    <use href="#projection-worker" x="1103" y="540" width="72" height="72"/>
+    <use href="#projection-worker" x="1446" y="540" width="72" height="72"/>
+    <use href="#projection-worker" x="1103" y="759" width="72" height="72"/>
+    <use href="#projection-worker" x="1446" y="759" width="72" height="72"/>
+
+    <use href="#database-store" x="1247" y="328" width="74" height="60"/>
+    <use href="#database-store" x="1573" y="328" width="74" height="60"/>
+    <use href="#database-store" x="1247" y="546" width="74" height="60"/>
+    <use href="#database-store" x="1573" y="546" width="74" height="60"/>
+    <use href="#database-store" x="1247" y="765" width="74" height="60"/>
+    <use href="#database-store" x="1573" y="765" width="74" height="60"/>
+  </g>
+
+  <!-- Lane, node, and group labels are painted after all connector geometry. -->
+  <g id="labels">
+    <text class="role-label" x="639" y="371">Follower</text>
+    <text class="role-label" x="639" y="807">Follower</text>
+
+    <text class="node-label" x="946.5" y="370">Events</text>
+    <text class="node-label" x="596.5" y="588">Commands</text>
+    <text class="node-label" x="946.5" y="588">Events</text>
+    <text class="node-label" x="946.5" y="807">Events</text>
+
+    <text class="group-label" x="903" y="912">Raft Node Group</text>
+  </g>
+
+  <!-- Client, reverse proxy, command/response curves, and dashed explanatory callouts. -->
+  <g id="client-and-proxy">
+    <g id="client" fill="#000">
+      <circle cx="143" cy="559" r="16.5"/>
+      <path d="M111 611 V602 C111 583 175 583 175 602 V611 Z"/>
+    </g>
+
+    <path id="proxy-response" class="blue-flow" data-connector="true"
+          d="M318 568 C268 530 206 532 163.6 553.1"
+          marker-end="url(#blue-arrowhead)"/>
+    <path id="client-command" class="red-flow" data-connector="true"
+          d="M169 590 C223 620 276 612 315.2 585.2"
+          marker-end="url(#red-arrowhead)"/>
+
+    <circle class="outline" cx="330" cy="576" r="13"/>
+
+    <text class="callout-label" x="132" y="477">Response</text>
+    <!-- Tip meets the near edge of the blue response stroke rather than its centerline. -->
+    <path id="response-callout" class="annotation" data-connector="true"
+          d="M211 490 L230 536.9" marker-end="url(#annotation-arrowhead)"/>
+
+    <text class="callout-label" x="111" y="696">Command</text>
+    <!-- Tip meets the near edge of the red command stroke rather than its centerline. -->
+    <path id="command-callout" class="annotation" data-connector="true"
+          d="M201 662 L228.2 615.8" marker-end="url(#annotation-arrowhead)"/>
+
+    <text class="proxy-label" x="287" y="760">
+      <tspan x="287">Reverse</tspan>
+      <tspan x="287" dy="38">Proxy</tspan>
+    </text>
+    <path id="proxy-callout" class="annotation" data-connector="true"
+          d="M302 720 L323.6 591.5" marker-end="url(#annotation-arrowhead)"/>
+  </g>
+
+  <!-- Bottom double-headed spans name the write and read regions. -->
+  <g id="write-read-legend">
+    <path class="connector" data-connector="true" d="M410 1028 H876"/>
+    <path d="M387 1028 L410 1019 L410 1037 Z" fill="#000"/>
+    <path class="connector" data-connector="true" d="M980 1028 H1395"/>
+    <path d="M1418 1028 L1395 1019 L1395 1037 Z" fill="#000"/>
+    <text class="zone-label" x="929" y="1039">Write</text>
+
+    <path class="connector" data-connector="true" d="M1441 1028 H1501"/>
+    <path d="M1418 1028 L1441 1019 L1441 1037 Z" fill="#000"/>
+    <path class="connector" data-connector="true" d="M1604 1028 H1664"/>
+    <path d="M1687 1028 L1664 1019 L1664 1037 Z" fill="#000"/>
+    <text class="zone-label" x="1553" y="1039">Read</text>
+  </g>
+</svg>

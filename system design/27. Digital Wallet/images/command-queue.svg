@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1418" height="364" viewBox="0 0 1418 364"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Kafka command queue</title>
+  <desc id="desc">A debit command enters a Kafka command queue containing commands for recipients C, B, and D, then leaves the queue and reaches a terminal processing event.</desc>
+
+  <!-- Shared typography and strokes follow the source diagram's monochrome visual language. -->
+  <defs>
+    <style>
+      text{font-family:Helvetica,Arial,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .container{fill:#fff;stroke:#000;stroke-width:2.5}
+      .command-label{font-size:33.5px}
+      .recipient-c{font-size:33px}
+      .recipient-b{font-size:31px}
+      .recipient-d{font-size:30.5px}
+      .transport-label{font-size:44px}
+      .queue-title{font-size:45px;letter-spacing:-.5px;text-anchor:middle}
+      .queue-subtitle{font-size:43px;letter-spacing:.4px;text-anchor:middle}
+      .flow-shaft{fill:none;stroke:#000;stroke-width:2.5}
+      .inline-stroke{fill:none;stroke:#000;stroke-width:1.38;stroke-linecap:butt}
+    </style>
+  </defs>
+
+  <rect width="1418" height="364" fill="#fff"/>
+
+  <!-- Queue boundary and command cards; keep the cards aligned to a shared baseline. -->
+  <g id="queue-structure">
+    <rect id="queue-boundary" class="container" x="419.5" y="41.5" width="680" height="162"/>
+    <rect id="incoming-command-card" class="container" x="88.5" y="78.5" width="171" height="88"/>
+    <rect id="command-card-c" class="container" x="478" y="78.5" width="171.5" height="88"/>
+    <rect id="command-card-b" class="container" x="682" y="78.5" width="171.5" height="88"/>
+    <rect id="command-card-d" class="container" x="886" y="78.5" width="171.5" height="88"/>
+  </g>
+
+  <!-- Main transport lanes are split around the in/out labels. -->
+  <g id="queue-flow">
+    <path id="input-before-label" class="flow-shaft" data-connector="true" d="M259.5 122.5 H299"/>
+    <path id="input-after-label" class="flow-shaft" data-connector="true" d="M361 122.5 H394"/>
+    <path id="input-arrowhead" d="M393 112.5 L420 122.5 L393 132.5 Z" fill="#000"/>
+
+    <!-- The output shaft intentionally crosses the queue boundary before the out label. -->
+    <path id="output-before-label" class="flow-shaft" data-connector="true" d="M1057.5 122.5 H1122"/>
+    <path id="output-after-label" class="flow-shaft" data-connector="true" d="M1214 122.5 H1271"/>
+    <path id="output-arrowhead" d="M1270 112.5 L1297 122.5 L1270 132.5 Z" fill="#000"/>
+  </g>
+
+  <!-- Terminal event is painted after the arrow so its white fill keeps the join clean. -->
+  <circle id="terminal-event" class="container" cx="1317.5" cy="122.5" r="18.5"/>
+
+  <!-- Debit minus signs and arrow shafts share one centerline and stroke width in every card. -->
+  <g id="command-symbols">
+    <g id="incoming-command-arrow">
+      <path id="incoming-command-minus" class="inline-stroke" d="M142 122.64 H156"/>
+      <path class="inline-stroke" d="M193 122.64 H203"/>
+      <path d="M202 117.5 L213 122.5 L202 127.5 Z" fill="#000"/>
+    </g>
+    <g id="queued-command-c-arrow">
+      <path id="queued-command-c-minus" class="inline-stroke" d="M531 122.64 H545"/>
+      <path class="inline-stroke" d="M582 122.64 H592"/>
+      <path d="M591 117.5 L602 122.5 L591 127.5 Z" fill="#000"/>
+    </g>
+    <g id="queued-command-b-arrow">
+      <path id="queued-command-b-minus" class="inline-stroke" d="M735 122.64 H749"/>
+      <path class="inline-stroke" d="M787 122.64 H797"/>
+      <path d="M796 117.5 L807 122.5 L796 127.5 Z" fill="#000"/>
+    </g>
+    <g id="queued-command-d-arrow">
+      <path id="queued-command-d-minus" class="inline-stroke" d="M939 122.64 H953"/>
+      <path class="inline-stroke" d="M990 122.64 H1000"/>
+      <path d="M999 117.5 L1010 122.5 L999 127.5 Z" fill="#000"/>
+    </g>
+  </g>
+
+  <!-- Text remains above all connector geometry. -->
+  <g id="labels">
+    <text class="command-label" x="106" y="133">A</text>
+    <text class="command-label" x="156" y="132.5">$1</text>
+    <text class="command-label recipient-c" x="227" y="133">C</text>
+
+    <text class="transport-label" x="313" y="139">in</text>
+
+    <text class="command-label" x="495" y="133">A</text>
+    <text class="command-label" x="545" y="132.5">$1</text>
+    <text class="command-label recipient-c" x="616" y="133">C</text>
+    <text class="command-label" x="699" y="133">A</text>
+    <text class="command-label" x="750" y="132.5">$1</text>
+    <text class="command-label recipient-b" x="823" y="133">B</text>
+    <text class="command-label" x="903" y="133">A</text>
+    <text class="command-label" x="954" y="132.5">$1</text>
+    <text class="command-label recipient-d" x="1027" y="133">D</text>
+
+    <text class="transport-label" x="1137" y="138" style="letter-spacing:1px">out</text>
+
+    <text class="queue-title" x="768" y="259.5">Command Queue</text>
+    <text class="queue-subtitle" x="768" y="308">Kafka</text>
+  </g>
+</svg>

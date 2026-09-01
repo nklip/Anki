@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1708" height="884" viewBox="0 0 1708 884"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Wallet service state machine</title>
+  <desc id="desc">A client command enters a command queue. The wallet state machine validates it against stored balances, emits debit and credit events, reads those events, and updates the state store.</desc>
+
+  <!-- Shared styles, shaft-safe arrowhead, and reusable operation-node geometry. -->
+  <defs>
+    <style>
+      text{font-family:Helvetica,Arial,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .outline{fill:#fff;stroke:#000;stroke-width:2.5}
+      .yellow{fill:#fffec4}
+      .cyan{fill:#cafcff}
+      .green{fill:#cbfcc3}
+      .connector{fill:none;stroke:#000;stroke-width:2.5;stroke-linejoin:round}
+      .step-spoke{fill:none;stroke:#000;stroke-width:2.5;stroke-linejoin:round}
+      .dashed{fill:none;stroke:#000;stroke-width:2.5;stroke-dasharray:12 10;stroke-linejoin:round}
+      .leader{fill:none;stroke:#000;stroke-width:1.45;stroke-dasharray:5 5}
+      .queue-title{font-size:30px}
+      .client-label{font-size:40px}
+      .command-text{font-size:32px}
+      .event-text{font-size:30px}
+      .flow-label{font-size:32px}
+      .state-title{font-size:31px;text-anchor:middle}
+      .state-value{font-size:30px}
+      .step-label{font-size:31px}
+      .step-circle{fill:#fff;stroke:#000;stroke-width:2.5}
+      .step-digit{font-size:22px;text-anchor:middle}
+      .mini-stroke{fill:none;stroke:#000;stroke-width:1.45;stroke-linecap:butt}
+    </style>
+
+    <!-- The tip projects two pixels beyond refX; connector endpoints are pulled back accordingly. -->
+    <marker id="arrowhead" markerWidth="24" markerHeight="20" viewBox="0 0 24 20"
+            refX="22" refY="10" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L24 10 L0 20 Z" fill="#000"/>
+    </marker>
+
+    <polygon id="operation-gear"
+             points="0,-24 2.48,-18.84 6.21,-23.18 7.27,-17.55 12,-20.78 11.57,-15.07 16.97,-16.97 15.07,-11.57 20.78,-12 17.55,-7.27 23.18,-6.21 18.84,-2.48 24,0 18.84,2.48 23.18,6.21 17.55,7.27 20.78,12 15.07,11.57 16.97,16.97 11.57,15.07 12,20.78 7.27,17.55 6.21,23.18 2.48,18.84 0,24 -2.48,18.84 -6.21,23.18 -7.27,17.55 -12,20.78 -11.57,15.07 -16.97,16.97 -15.07,11.57 -20.78,12 -17.55,7.27 -23.18,6.21 -18.84,2.48 -24,0 -18.84,-2.48 -23.18,-6.21 -17.55,-7.27 -20.78,-12 -15.07,-11.57 -16.97,-16.97 -11.57,-15.07 -12,-20.78 -7.27,-17.55 -6.21,-23.18 -2.48,-18.84"
+             fill="#fff" stroke="#000" stroke-width="1.7" stroke-linejoin="miter"/>
+  </defs>
+
+  <rect width="1708" height="884" fill="#fff"/>
+
+  <!-- Queue boundaries and their color-coded command and event cards. -->
+  <g id="queue-boundaries">
+    <rect class="outline" x="608.5" y="96.5" width="619" height="147.5"/>
+    <rect class="outline" x="472.5" y="432.5" width="908.5" height="147"/>
+  </g>
+
+  <g id="command-cards">
+    <rect class="outline" x="307" y="129.5" width="156.5" height="80.5"/>
+    <rect class="outline yellow" x="661" y="129.5" width="157.5" height="80.5"/>
+    <rect class="outline cyan" x="846.5" y="129.5" width="157.5" height="80.5"/>
+    <rect class="outline green" x="1032" y="129.5" width="157.5" height="80.5"/>
+
+    <g id="incoming-command-symbols">
+      <path class="mini-stroke" d="M353.5 170 H365"/>
+      <path class="mini-stroke" d="M404.5 170 H413.5"/>
+      <path d="M412.5 164.5 L424.5 170 L412.5 175.5 Z" fill="#000"/>
+    </g>
+    <g id="queued-command-c-symbols">
+      <path class="mini-stroke" d="M708.5 170 H720.5"/>
+      <path class="mini-stroke" d="M759.5 170 H768.5"/>
+      <path d="M767.5 164.5 L779.5 170 L767.5 175.5 Z" fill="#000"/>
+    </g>
+    <g id="queued-command-b-symbols">
+      <path class="mini-stroke" d="M894.5 170 H906.5"/>
+      <path class="mini-stroke" d="M945.5 170 H954.5"/>
+      <path d="M953.5 164.5 L965.5 170 L953.5 175.5 Z" fill="#000"/>
+    </g>
+    <g id="queued-command-d-symbols">
+      <path class="mini-stroke" d="M1079.5 170 H1091.5"/>
+      <path class="mini-stroke" d="M1130.5 170 H1139.5"/>
+      <path d="M1138.5 164.5 L1150.5 170 L1138.5 175.5 Z" fill="#000"/>
+    </g>
+  </g>
+
+  <g id="event-cards">
+    <rect class="outline yellow" x="506" y="475.5" width="129" height="61"/>
+    <rect class="outline yellow" x="648" y="475.5" width="129" height="61"/>
+    <rect class="outline cyan" x="790" y="475.5" width="129" height="61"/>
+    <rect class="outline cyan" x="932" y="475.5" width="129" height="61"/>
+    <rect class="outline green" x="1074" y="475.5" width="129" height="61"/>
+    <rect class="outline green" x="1216" y="475.5" width="129" height="61"/>
+  </g>
+
+  <!-- The balance store is a simple editable cylinder, not a raster trace. -->
+  <g id="state-store">
+    <path class="outline" d="M1456.5 258 V441.5 C1456.5 473 1637.5 473 1637.5 441.5 V258"/>
+    <ellipse class="outline" cx="1547" cy="258" rx="90.5" ry="23"/>
+  </g>
+
+  <!-- Client input route and queue-to-event expansion. -->
+  <g id="command-routes">
+    <path class="connector" data-connector="true" d="M188 170 H305" marker-end="url(#arrowhead)"/>
+    <path class="connector" data-connector="true" d="M467 170 H499"/>
+    <path class="connector" data-connector="true" d="M555 170 H606.5" marker-end="url(#arrowhead)"/>
+
+    <path class="dashed" data-connector="true" d="M718.5 210 L588.4 473.7" marker-end="url(#arrowhead)"/>
+    <path class="dashed" data-connector="true" d="M734.5 210 L715.2 473.5" marker-end="url(#arrowhead)"/>
+    <path class="dashed" data-connector="true" d="M916.5 210 L861.4 473.6" marker-end="url(#arrowhead)"/>
+    <path class="dashed" data-connector="true" d="M931.5 210 L988.6 473.6" marker-end="url(#arrowhead)"/>
+
+    <path class="step-spoke" d="M1131.5 210 L1162.3 259.8"/>
+    <path class="step-spoke" d="M1176.6 284.1 L1181.5 293"/>
+    <path class="connector" data-connector="true" d="M1181.5 293 L1198.6 326.2" marker-end="url(#arrowhead)"/>
+
+    <path class="step-spoke" d="M1198 371 L1188 391"/>
+    <path class="step-spoke" d="M1176.6 415.5 L1173.5 422.5"/>
+    <path class="connector" data-connector="true" d="M1173.5 422.5 L1153.8 473.6" marker-end="url(#arrowhead)"/>
+    <path class="step-spoke" d="M1225 365 L1238 390.5"/>
+    <path class="connector" data-connector="true" d="M1250 415 L1275.5 473.6" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- State validation, event application, and the final balance update. -->
+  <g id="state-machine-routes">
+    <path class="leader" d="M1311 260 L1226 334"/>
+
+    <path class="connector" data-connector="true" d="M1233 350 H1273"/>
+    <path class="connector" data-connector="true" d="M1400 350 H1454.5" marker-end="url(#arrowhead)"/>
+
+    <path class="connector" data-connector="true" d="M1295 536.5 L1352 633"/>
+    <path class="connector" data-connector="true" d="M1370 670 L1400.7 719.2" marker-end="url(#arrowhead)"/>
+
+    <path class="connector" data-connector="true" d="M1421 719 L1451 632"/>
+    <path class="connector" data-connector="true" d="M1464 589 L1505.3 466.2" marker-end="url(#arrowhead)"/>
+
+    <path class="leader" d="M1515 728 L1435 741"/>
+  </g>
+
+  <!-- Operation nodes and numbered joins sit above their incident shafts. -->
+  <g id="operation-nodes">
+    <use href="#operation-gear" transform="translate(1209 350)"/>
+    <use href="#operation-gear" transform="translate(1412 741)"/>
+
+    <circle class="step-circle" cx="1169.5" cy="272" r="14"/>
+    <circle class="step-circle" cx="1182.5" cy="403" r="14"/>
+    <circle class="step-circle" cx="1245" cy="403" r="14"/>
+  </g>
+
+  <!-- Labels are last so connectors never show through their glyphs. -->
+  <g id="labels">
+    <text class="client-label" x="70" y="183">Client</text>
+    <text class="queue-title" x="806.5" y="76">Command Queue</text>
+    <text class="queue-title" x="838.5" y="620">Event Queue</text>
+
+    <text class="command-text" x="324" y="181">A</text>
+    <text class="command-text" x="365" y="181">$1</text>
+    <text class="command-text" x="431" y="181">C</text>
+    <text class="flow-label" x="511" y="182">in</text>
+
+    <text class="command-text" x="677.5" y="181">A</text>
+    <text class="command-text" x="720.5" y="181">$1</text>
+    <text class="command-text" x="784.5" y="181">C</text>
+    <text class="command-text" x="863" y="181">A</text>
+    <text class="command-text" x="906.5" y="181">$1</text>
+    <text class="command-text" x="970.5" y="181">B</text>
+    <text class="command-text" x="1048.5" y="181">A</text>
+    <text class="command-text" x="1091.5" y="181">$1</text>
+    <text class="command-text" x="1155.5" y="181">D</text>
+
+    <text class="event-text" x="530" y="517">A: -$1</text>
+    <text class="event-text" x="672" y="517">C: +$1</text>
+    <text class="event-text" x="814" y="517">A: -$1</text>
+    <text class="event-text" x="956" y="517">B: +$1</text>
+    <text class="event-text" x="1098" y="517">A: -$1</text>
+    <text class="event-text" x="1240" y="517">D: +$1</text>
+
+    <text class="state-title" x="1122" y="341">State</text>
+    <text class="state-title" x="1122" y="377">Machine</text>
+    <text class="flow-label" x="1288" y="213">Validate</text>
+    <text class="flow-label" x="1269" y="249">Commands</text>
+
+    <text class="step-digit" x="1169.5" y="280">1</text>
+    <text class="step-label" x="1279" y="360">② Read</text>
+    <text class="step-digit" x="1182.5" y="411">3</text>
+    <text class="step-digit" x="1245" y="411">3</text>
+    <text class="step-label" x="1294" y="664">④ Read</text>
+    <text class="step-label" x="1373" y="620">⑤ Update</text>
+
+    <text class="state-value" x="1506" y="327">A: $5</text>
+    <text class="state-value" x="1506" y="362">B: $4</text>
+    <text class="state-value" x="1506" y="397">C: $3</text>
+    <text class="state-value" x="1506" y="432">D: $2</text>
+    <text class="flow-label" x="1509" y="501">State</text>
+
+    <text class="flow-label" x="1518" y="713">Apply</text>
+    <text class="flow-label" x="1518" y="749">Events</text>
+    <text class="state-title" x="1412" y="805">State</text>
+    <text class="state-title" x="1412" y="840">Machine</text>
+  </g>
+</svg>

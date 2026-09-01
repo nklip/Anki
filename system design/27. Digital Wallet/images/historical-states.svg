@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1404" height="1044" viewBox="0 0 1404 1044"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Historical states rebuilt from an event queue</title>
+  <desc id="desc">Three debit commands produce paired debit and credit events. Replaying successive debit events reconstructs three historical wallet-state snapshots with balances of five, four, and three dollars.</desc>
+
+  <defs>
+    <style>
+      text{font-family:Helvetica,Arial,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .outline{fill:#fff;stroke:#000;stroke-width:2.5;stroke-linejoin:round}
+      .yellow{fill:#feffc0}
+      .cyan{fill:#bfffff}
+      .green{fill:#bfffbf}
+      .connector{fill:none;stroke:#000;stroke-width:2.5;stroke-linejoin:round}
+      .dashed{fill:none;stroke:#000;stroke-width:2.5;stroke-dasharray:12 10;stroke-linejoin:round}
+      .queue-label{font-size:32.5px}
+      .command-text{font-size:32px}
+      .event-text{font-size:31px}
+      .state-value{font-size:32px}
+      .snapshot-label{font-size:33px;text-anchor:middle}
+      .mini-stroke{fill:none;stroke:#000;stroke-width:1.6;stroke-linecap:butt}
+      .changed{fill:#fe2700}
+    </style>
+
+    <!-- Broad source-matched head for both dashed expansions and snapshot transitions. -->
+    <marker id="arrowhead" markerWidth="24" markerHeight="20" viewBox="0 0 24 20"
+            refX="24" refY="10" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L24 10 L0 20 Z" fill="#000"/>
+    </marker>
+  </defs>
+
+  <rect width="1404" height="1044" fill="#fff"/>
+
+  <!-- Command queue and its three color-coded transfer commands. -->
+  <g id="command-queue">
+    <rect class="outline" x="457.5" y="39" width="669" height="159"/>
+    <rect class="outline yellow" x="514.5" y="75.5" width="169" height="87"/>
+    <rect class="outline cyan" x="715.5" y="75.5" width="169" height="87"/>
+    <rect class="outline green" x="916.5" y="75.5" width="169" height="87"/>
+
+    <!-- Debit signs and miniature arrows are separate equal-width strokes for clean alignment. -->
+    <g id="command-c-symbols">
+      <path class="mini-stroke" d="M569 119 H581"/>
+      <path class="mini-stroke" d="M624 119 H633"/>
+      <path d="M632 113.5 L644 119 L632 124.5 Z" fill="#000"/>
+    </g>
+    <g id="command-b-symbols">
+      <path class="mini-stroke" d="M770 119 H782"/>
+      <path class="mini-stroke" d="M825 119 H834"/>
+      <path d="M833 113.5 L845 119 L833 124.5 Z" fill="#000"/>
+    </g>
+    <g id="command-d-symbols">
+      <path class="mini-stroke" d="M970 119 H982"/>
+      <path class="mini-stroke" d="M1025 119 H1034"/>
+      <path d="M1033 113.5 L1045 119 L1033 124.5 Z" fill="#000"/>
+    </g>
+  </g>
+
+  <!-- Event queue; each command expands into a debit and a matching credit event. -->
+  <g id="event-queue">
+    <rect class="outline" x="310.5" y="402.5" width="982" height="160"/>
+    <rect class="outline yellow" x="347.5" y="450" width="138" height="65"/>
+    <rect class="outline yellow" x="500.5" y="450" width="139" height="65"/>
+    <rect class="outline cyan" x="653.5" y="450" width="139" height="65"/>
+    <rect class="outline cyan" x="807" y="450" width="139" height="65"/>
+    <rect class="outline green" x="960.5" y="450" width="139" height="65"/>
+    <rect class="outline green" x="1114" y="450" width="139" height="65"/>
+  </g>
+
+  <!-- Dashed fan-out from each command to its two emitted events. -->
+  <g id="command-expansion-routes">
+    <path class="dashed" data-connector="true" d="M577 163 L434 449" marker-end="url(#arrowhead)"/>
+    <path class="dashed" data-connector="true" d="M595 163 L575 449" marker-end="url(#arrowhead)"/>
+    <path class="dashed" data-connector="true" d="M790 163 L734 449" marker-end="url(#arrowhead)"/>
+    <path class="dashed" data-connector="true" d="M807 163 L868 449" marker-end="url(#arrowhead)"/>
+    <path class="dashed" data-connector="true" d="M1005 163 L1026 449" marker-end="url(#arrowhead)"/>
+    <path class="dashed" data-connector="true" d="M1024 163 L1166 449" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Only the debit event for account A is replayed into each successive snapshot. -->
+  <g id="event-to-snapshot-routes">
+    <path class="dashed" data-connector="true" d="M416.5 516 V699" marker-end="url(#arrowhead)"/>
+    <path class="dashed" data-connector="true" d="M723 516 V699" marker-end="url(#arrowhead)"/>
+    <path class="dashed" data-connector="true" d="M1030 516 V699" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Three source-native cylinders represent state after one, two, and three debit events. -->
+  <g id="historical-state-stores">
+    <g id="historical-state-one">
+      <path class="outline" d="M319.5 723 V920 C319.5 957 514.5 957 514.5 920 V723"/>
+      <ellipse class="outline" cx="417" cy="723" rx="97.5" ry="25"/>
+    </g>
+    <g id="historical-state-two">
+      <path class="outline" d="M626.5 723 V920 C626.5 957 820.5 957 820.5 920 V723"/>
+      <ellipse class="outline" cx="723.5" cy="723" rx="97" ry="25"/>
+    </g>
+    <g id="historical-state-three">
+      <path class="outline" d="M933.5 723 V920 C933.5 957 1127.5 957 1127.5 920 V723"/>
+      <ellipse class="outline" cx="1030.5" cy="723" rx="97" ry="25"/>
+    </g>
+  </g>
+
+  <!-- Curved arrows carry the evolving A balance into the next historical snapshot. -->
+  <g id="snapshot-progression">
+    <path class="connector" data-connector="true"
+          d="M460 779 C543 733 625 733 711 768" marker-end="url(#arrowhead)"/>
+    <path class="connector" data-connector="true"
+          d="M767 779 C850 733 932 733 1018 768" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Labels are painted last so the replay routes never obscure account values. -->
+  <g id="labels">
+    <text class="queue-label" x="84" y="129">Command Queue</text>
+    <text class="queue-label" x="83" y="483.5">Event Queue</text>
+
+    <text class="command-text" x="533" y="128">A</text>
+    <text class="command-text" x="582" y="128">$1</text>
+    <text class="command-text" x="653" y="128">C</text>
+    <text class="command-text" x="734" y="128">A</text>
+    <text class="command-text" x="783" y="128">$1</text>
+    <text class="command-text" x="855" y="128">B</text>
+    <text class="command-text" x="934" y="128">A</text>
+    <text class="command-text" x="983" y="128">$1</text>
+    <text class="command-text" x="1055" y="128">D</text>
+
+    <text class="event-text" x="373" y="489">A: -$1</text>
+    <text class="event-text" x="525" y="489">C: +$1</text>
+    <text class="event-text" x="680" y="489">A: -$1</text>
+    <text class="event-text" x="834" y="489">B: +$1</text>
+    <text class="event-text" x="987" y="489">A: -$1</text>
+    <text class="event-text" x="1141" y="489">D: +$1</text>
+
+    <text class="state-value" x="371" y="797">A:</text>
+    <text class="state-value changed" x="418" y="797">$5</text>
+    <text class="state-value" x="371" y="836">B:</text>
+    <text class="state-value" x="418" y="836">$4</text>
+    <text class="state-value" x="371" y="875">C:</text>
+    <text class="state-value" x="418" y="875">$3</text>
+    <text class="state-value" x="371" y="914">D:</text>
+    <text class="state-value" x="418" y="914">$2</text>
+
+    <text class="state-value" x="679" y="797">A:</text>
+    <text class="state-value changed" x="726" y="797">$4</text>
+    <text class="state-value" x="679" y="836">B:</text>
+    <text class="state-value" x="726" y="836">$4</text>
+    <text class="state-value" x="679" y="875">C:</text>
+    <text class="state-value" x="726" y="875">$4</text>
+    <text class="state-value" x="679" y="914">D:</text>
+    <text class="state-value" x="726" y="914">$2</text>
+
+    <text class="state-value" x="986" y="797">A:</text>
+    <text class="state-value changed" x="1033" y="797">$3</text>
+    <text class="state-value" x="986" y="836">B:</text>
+    <text class="state-value" x="1033" y="836">$5</text>
+    <text class="state-value" x="986" y="875">C:</text>
+    <text class="state-value" x="1033" y="875">$4</text>
+    <text class="state-value" x="986" y="914">D:</text>
+    <text class="state-value" x="1033" y="914">$2</text>
+
+    <text class="snapshot-label" x="417" y="990">Historical State</text>
+    <text class="snapshot-label" x="723.5" y="990">Historical State</text>
+    <text class="snapshot-label" x="1030.5" y="990">Historical State</text>
+  </g>
+</svg>

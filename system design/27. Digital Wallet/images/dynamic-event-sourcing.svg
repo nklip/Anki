@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1770" height="472" viewBox="0 0 1770 472"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Dynamic event sourcing over time</title>
+  <desc id="desc">A timeline showing state producing commands, commands being validated into events, and events being applied to create new state.</desc>
+
+  <defs>
+    <style>
+      text{font-family:Helvetica,Arial,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .timeline{fill:none;stroke:#000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:round}
+      .transition{fill:none;stroke:#000;stroke-width:2.5;stroke-linecap:butt;stroke-linejoin:round}
+      .node{stroke:#000;stroke-width:2.5}
+      .command-node{fill:#bfffff}
+      .event-node{fill:#feffc0}
+      .state-node{fill:#ffbfff}
+      .track-label{font-size:40px}
+      .transition-label{font-size:32px}
+    </style>
+    <!-- The tip projects four units past each compensated shaft endpoint so the
+         tapered head fully covers the 2.5-unit stroke in every orientation. -->
+    <marker id="arrowhead" markerWidth="24" markerHeight="20" viewBox="0 0 24 20"
+            refX="20" refY="10" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L24 10 L0 20 Z" fill="#000"/>
+    </marker>
+  </defs>
+
+  <rect width="1770" height="472" fill="#fff"/>
+
+  <!-- The three parallel histories: command, event, and state. -->
+  <g id="timelines">
+    <path class="timeline" data-connector="true" d="M77 67 H1504" marker-end="url(#arrowhead)"/>
+    <path class="timeline" data-connector="true" d="M77 215.5 H1504" marker-end="url(#arrowhead)"/>
+    <path class="timeline" data-connector="true" d="M77 363.5 H1504" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Repeated state -> command -> event -> state transitions. -->
+  <g id="transitions">
+    <path id="state-one-to-command-one" class="transition" data-connector="true"
+          d="M179 342.5 L313.512 91.326" marker-end="url(#arrowhead)"/>
+
+    <!-- The first two connectors are split to leave clear space for their labels. -->
+    <path id="command-one-to-validate" class="transition" d="M340 86.9 L361.5 115"/>
+    <path id="validate-to-event-one" class="transition" data-connector="true"
+          d="M399.5 158.5 L420.577 194.449" marker-end="url(#arrowhead)"/>
+    <path id="event-one-to-apply" class="transition" d="M449.5 234 L469 261.5"/>
+    <path id="apply-to-state-two" class="transition" data-connector="true"
+          d="M500.5 311 L530.756 343.090" marker-end="url(#arrowhead)"/>
+
+    <path id="state-two-to-command-two" class="transition" data-connector="true"
+          d="M558 344.2 L722.222 91.155" marker-end="url(#arrowhead)"/>
+    <path id="command-two-to-event-two" class="transition" data-connector="true"
+          d="M748.4 86.1 L829.212 194.691" marker-end="url(#arrowhead)"/>
+    <path id="event-two-to-state-three" class="transition" data-connector="true"
+          d="M858.5 234 L940.100 342.800" marker-end="url(#arrowhead)"/>
+
+    <path id="state-three-to-command-three" class="transition" data-connector="true"
+          d="M968.4 345.2 L1142.446 90.104" marker-end="url(#arrowhead)"/>
+    <path id="command-three-to-event-three" class="transition" data-connector="true"
+          d="M1170.4 86.1 L1251.212 194.691" marker-end="url(#arrowhead)"/>
+    <path id="event-three-to-state-four" class="transition" data-connector="true"
+          d="M1280.5 234 L1362.100 342.800" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Nodes are painted over their tracks so every circle retains a clean interior. -->
+  <g id="nodes">
+    <circle class="node command-node" cx="326" cy="68" r="22"/>
+    <circle class="node command-node" cx="735" cy="68" r="22"/>
+    <circle class="node command-node" cx="1157" cy="68" r="22"/>
+
+    <circle class="node event-node" cx="436" cy="216" r="22"/>
+    <circle class="node event-node" cx="845" cy="216" r="22"/>
+    <circle class="node event-node" cx="1267" cy="216" r="22"/>
+
+    <circle class="node state-node" cx="168.5" cy="364" r="22"/>
+    <circle class="node state-node" cx="547" cy="364.5" r="22"/>
+    <circle class="node state-node" cx="956" cy="364.5" r="22"/>
+    <circle class="node state-node" cx="1378" cy="364.5" r="22"/>
+  </g>
+
+  <!-- Labels are painted last to preserve the intentional gaps in the first cycle. -->
+  <g id="labels">
+    <text class="transition-label" x="320" y="148">Validate</text>
+    <text class="transition-label" x="448" y="300">Apply</text>
+
+    <text class="track-label" x="1525" y="83">Command</text>
+    <text class="track-label" x="1525" y="231">Event</text>
+    <text class="track-label" x="1525" y="379">State</text>
+    <text class="track-label" x="1460" y="422">Time</text>
+  </g>
+</svg>

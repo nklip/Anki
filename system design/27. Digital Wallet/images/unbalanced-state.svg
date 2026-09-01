@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1972" height="814" viewBox="0 0 1972 814"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Temporary unbalanced state during a two-phase wallet transfer</title>
+  <desc id="desc">A coordinator first debits one dollar from database A while database C does nothing. The combined balance temporarily falls from one dollar to zero. During confirmation, database C receives one dollar and the total recovers to one dollar.</desc>
+
+  <!-- Source-matched typography, semantic colors, and shaft-safe arrowheads. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .timeline{fill:none;stroke:#000;stroke-width:2.2}
+      .phase-boundary{fill:none;stroke:#000;stroke-width:2.2;stroke-dasharray:10 8}
+      .lock-span{fill:none;stroke:#ff2600;stroke-width:6;stroke-linecap:round}
+      .event{fill:#fff;stroke:#000;stroke-width:2.2}
+      .message{fill:none;stroke:#000;stroke-width:2.2}
+      .annotation{fill:none;stroke:#000;stroke-width:1.4}
+      .balance-flow{fill:none;stroke:#000;stroke-width:2}
+      .participant{font-size:36px}
+      .participant-note{font-size:29px}
+      .phase-title{font-size:36px;text-anchor:middle}
+      .action-label,.operation-label{font-size:28px}
+      .state-label{font-size:23px;text-anchor:middle}
+      .sql-label{font-family:"Times New Roman",Times,serif;font-size:27px}
+      .status-label{font-size:28px}
+      .summary-label{font-size:27px}
+      .balance-label{font-size:27px}
+      .unbalanced-label{font-size:27px;text-anchor:middle}
+    </style>
+
+    <!-- Three-unit projection hides the full 2.2-unit message shaft before the nose. -->
+    <marker id="message-arrowhead" markerWidth="20" markerHeight="16"
+            viewBox="0 0 20 16" refX="17" refY="8"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L20 8 L0 16 Z" fill="#000"/>
+    </marker>
+    <!-- Small callout head projects two units and is compensated at each target. -->
+    <marker id="annotation-arrowhead" markerWidth="11" markerHeight="9"
+            viewBox="0 0 11 9" refX="9" refY="4.5"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L11 4.5 L0 9 Z" fill="#000"/>
+    </marker>
+    <path id="success-checkmark" d="M0 15 L6 21 L18 0 H22 L7 28 L0 20 Z"/>
+  </defs>
+
+  <rect width="1972" height="814" fill="#fff"/>
+
+  <!-- Dashed dividers mark the transaction start, phase transition, and confirmed end. -->
+  <g id="phase-boundaries">
+    <path class="phase-boundary" d="M295.5 41 V541"/>
+    <path class="phase-boundary" d="M1123.5 41 V541"/>
+    <path class="phase-boundary" d="M1742 41 V541"/>
+  </g>
+
+  <!-- Coordinator and database timelines; inline NOP labels occupy deliberate gaps. -->
+  <g id="participant-timelines">
+    <path class="timeline" d="M264 144.5 H1773"/>
+    <path d="M1796 144.5 L1773 135.5 L1773 153.5 Z" fill="#000"/>
+
+    <path class="timeline" d="M264 298.5 H1372 M1438 298.5 H1773"/>
+    <path d="M893 298.5 L870 289.5 L870 307.5 Z" fill="#000"/>
+    <path d="M1796 298.5 L1773 289.5 L1773 307.5 Z" fill="#000"/>
+
+    <path class="timeline" d="M264 453.5 H631 M699 453.5 H1773"/>
+    <path d="M933 453.5 L910 444.5 L910 462.5 Z" fill="#000"/>
+    <path d="M1796 453.5 L1773 444.5 L1773 462.5 Z" fill="#000"/>
+  </g>
+
+  <!-- Red spans expose the periods where A and then C are locked for balance updates. -->
+  <g id="database-locks">
+    <path id="database-a-lock-span" class="lock-span" d="M571 298.5 H829"/>
+    <path id="database-c-lock-span" class="lock-span" d="M1296 453.5 H1554"/>
+    <path class="timeline" d="M547 279 V321"/>
+    <path class="timeline" d="M857 279 V321"/>
+    <path class="timeline" d="M1270 434 V476"/>
+    <path class="timeline" d="M1578 434 V476"/>
+  </g>
+
+  <!-- First phase requests: debit A and perform no operation on C. -->
+  <g id="first-phase-requests">
+    <path id="try-a-before-label" class="message" data-connector="true" d="M325 145 L399 207"/>
+    <path id="try-a-after-label" class="message" data-connector="true"
+          d="M456 255 L496.7 289" marker-end="url(#message-arrowhead)"/>
+
+    <path id="first-nop-before-label" class="message" data-connector="true" d="M325 145 L425 348"/>
+    <path id="first-nop-after-label" class="message" data-connector="true"
+          d="M445 390 L470 439.6" marker-end="url(#message-arrowhead)"/>
+  </g>
+
+  <!-- First phase responses return completion to two coordinator events. -->
+  <g id="first-phase-responses">
+    <path id="first-a-done-before-label" class="message" data-connector="true" d="M906 299 L936 244"/>
+    <path id="first-a-done-after-label" class="message" data-connector="true"
+          d="M960 200 L983.2 159" marker-end="url(#message-arrowhead)"/>
+
+    <path id="first-c-done-before-label" class="message" data-connector="true" d="M946 454 L965 407"/>
+    <path id="first-c-done-after-label" class="message" data-connector="true"
+          d="M984 360 L1064 159.8" marker-end="url(#message-arrowhead)"/>
+  </g>
+
+  <!-- Confirm requests leave A unchanged and credit one dollar to C. -->
+  <g id="confirm-phase-requests">
+    <path id="confirm-a-before-label" class="message" data-connector="true" d="M1162 145 L1215 210"/>
+    <path id="confirm-a-after-label" class="message" data-connector="true"
+          d="M1250 250 L1279 286.7" marker-end="url(#message-arrowhead)"/>
+
+    <path id="confirm-c-before-label" class="message" data-connector="true" d="M1162 145 L1210 355"/>
+    <path id="confirm-c-after-label" class="message" data-connector="true"
+          d="M1220 400 L1228.3 438.5" marker-end="url(#message-arrowhead)"/>
+  </g>
+
+  <!-- Confirm responses show both databases completing the second phase. -->
+  <g id="confirm-phase-responses">
+    <path id="confirm-a-done-before-label" class="message" data-connector="true" d="M1506 299 L1530 240"/>
+    <path id="confirm-a-done-after-label" class="message" data-connector="true"
+          d="M1545 200 L1562 159.8" marker-end="url(#message-arrowhead)"/>
+
+    <path id="confirm-c-done-before-label" class="message" data-connector="true" d="M1623 454 L1636 405"/>
+    <path id="confirm-c-done-after-label" class="message" data-connector="true"
+          d="M1650 356 L1700.9 160.5" marker-end="url(#message-arrowhead)"/>
+  </g>
+
+  <!-- Event circles mask the underlying timelines and preserve clean message joins. -->
+  <g id="event-points">
+    <circle class="event" cx="325" cy="145" r="13"/>
+    <circle class="event" cx="991" cy="145" r="13"/>
+    <circle class="event" cx="1070" cy="145" r="13"/>
+    <circle class="event" cx="1162" cy="145" r="13"/>
+    <circle class="event" cx="1568" cy="145" r="13"/>
+    <circle class="event" cx="1705" cy="145" r="13"/>
+
+    <circle class="event" cx="509" cy="299" r="13"/>
+    <circle class="event" cx="906" cy="299" r="13"/>
+    <circle class="event" cx="1289" cy="299" r="13"/>
+    <circle class="event" cx="1506" cy="299" r="13"/>
+
+    <circle class="event" cx="477" cy="454" r="13"/>
+    <circle class="event" cx="946" cy="454" r="13"/>
+    <circle class="event" cx="1232" cy="454" r="13"/>
+    <circle class="event" cx="1623" cy="454" r="13"/>
+  </g>
+
+  <!-- Small annotation arrows identify lock boundaries and SQL application points. -->
+  <g id="annotations">
+    <path class="annotation" data-connector="true" d="M545 350 L547.6 323"
+          marker-end="url(#annotation-arrowhead)"/>
+    <path class="annotation" data-connector="true" d="M850 350 L856 323"
+          marker-end="url(#annotation-arrowhead)"/>
+    <path class="annotation" data-connector="true" d="M700 272 V296.5"
+          marker-end="url(#annotation-arrowhead)"/>
+
+    <path class="annotation" data-connector="true" d="M1265 503 L1270 478"
+          marker-end="url(#annotation-arrowhead)"/>
+    <path class="annotation" data-connector="true" d="M1555 503 L1577 478"
+          marker-end="url(#annotation-arrowhead)"/>
+    <path class="annotation" data-connector="true" d="M1443 521 L1428 456.5"
+          marker-end="url(#annotation-arrowhead)"/>
+  </g>
+
+  <!-- Bottom accounting annotations expose the temporary loss and later recovery. -->
+  <g id="balance-explanation">
+    <rect class="event" x="1151" y="616" width="118" height="42"/>
+
+    <path id="before-summary-callout" class="annotation" data-connector="true"
+          d="M323 619 L298 535" marker-end="url(#annotation-arrowhead)"/>
+    <path id="first-summary-callout" class="annotation" data-connector="true"
+          d="M1096 619 L1121.5 535" marker-end="url(#annotation-arrowhead)"/>
+    <path id="second-summary-callout" class="annotation" data-connector="true"
+          d="M1731 619 L1740 535" marker-end="url(#annotation-arrowhead)"/>
+
+    <!-- Curves are split around their labels; visible noses meet the summary targets. -->
+    <path id="money-loss-before-label" class="balance-flow" data-connector="true"
+          d="M500 667 C570 706 645 735 718 742"/>
+    <path id="money-loss-after-label" class="balance-flow" data-connector="true"
+          d="M914 745 C1018 722 1100 690 1164.5 660.5"
+          marker-end="url(#message-arrowhead)"/>
+
+    <path id="unbalanced-state-arrow" class="balance-flow" data-connector="true"
+          d="M1210 736 V661" marker-end="url(#message-arrowhead)"/>
+
+    <path id="money-recovery-before-label" class="balance-flow" data-connector="true"
+          d="M1268 660 C1330 695 1400 719 1452 731"/>
+    <path id="money-recovery-after-label" class="balance-flow" data-connector="true"
+          d="M1698 728 C1760 711 1810 682 1837 660"
+          marker-end="url(#message-arrowhead)"/>
+  </g>
+
+  <!-- Labels are last so no message, callout, or balance curve crosses text. -->
+  <g id="labels">
+    <text class="participant" x="54" y="156">Coordinator</text>
+    <text class="participant-note" x="55" y="196">(Wallet Service)</text>
+    <text class="participant" x="59" y="311">Database A</text>
+    <text class="participant" x="58" y="466">Database C</text>
+
+    <text class="phase-title" x="709.5" y="81">First Phase</text>
+    <text class="phase-title" x="1432.5" y="81">Second Phase: Confirm</text>
+
+    <text class="action-label" x="381" y="238">Try: A−$1</text>
+    <text class="action-label" x="405" y="382">NOP</text>
+    <text class="operation-label" x="632" y="464">NOP</text>
+    <text class="action-label" x="1205" y="239">NOP</text>
+    <text class="action-label" x="1145" y="391">Confirm: C+$1</text>
+    <text class="operation-label" x="1376" y="310">NOP</text>
+
+    <text class="sql-label" x="563" y="189">
+      <tspan x="563">UPDATE balance</tspan>
+      <tspan x="563" dy="31">SET amount = amount - 1</tspan>
+      <tspan x="563" dy="31">WHERE account = ‘A’</tspan>
+    </text>
+    <text class="sql-label" x="1317" y="550">
+      <tspan x="1317">UPDATE balance</tspan>
+      <tspan x="1317" dy="31">SET amount = amount + 1</tspan>
+      <tspan x="1317" dy="31">WHERE account = ‘C’</tspan>
+    </text>
+
+    <text class="operation-label" x="530" y="386">lock A</text>
+    <text class="operation-label" x="770" y="386">unlock A</text>
+    <text class="operation-label" x="1211" y="533">lock C</text>
+    <text class="operation-label" x="1549" y="533">unlock A</text>
+
+    <text class="state-label" x="509" y="335">A=$1</text>
+    <text class="state-label" x="906" y="335">A=$0</text>
+    <text class="state-label" x="1289" y="335">A=$0</text>
+    <text class="state-label" x="1506" y="335">A=$0</text>
+    <text class="state-label" x="477" y="490">C=$0</text>
+    <text class="state-label" x="946" y="490">C=$0</text>
+    <text class="state-label" x="1232" y="490">C=$0</text>
+    <text class="state-label" x="1623" y="490">C=$1</text>
+
+    <use href="#success-checkmark" transform="translate(908 203)" fill="#0096ff"/>
+    <text class="status-label" x="938" y="226">Done</text>
+    <use href="#success-checkmark" transform="translate(922 365)" fill="#0096ff"/>
+    <text class="status-label" x="952" y="389">Done</text>
+    <use href="#success-checkmark" transform="translate(1482 203)" fill="#0096ff"/>
+    <text class="status-label" x="1512" y="227">Done</text>
+    <use href="#success-checkmark" transform="translate(1587 364)" fill="#0096ff"/>
+    <text class="status-label" x="1617" y="387">Done</text>
+
+    <text class="summary-label" x="186" y="647">Before TCC start: A+C=<tspan dx="4" fill="#006cff">$1</tspan></text>
+    <text class="summary-label" x="950" y="648">After first phase:<tspan dx="13">A+C=</tspan><tspan dx="2" fill="#ff2600">$0</tspan></text>
+    <text class="summary-label" x="1573" y="648">After second phase: A+C=<tspan dx="4" fill="#006cff">$1</tspan></text>
+
+    <text class="balance-label" x="724" y="760">Money loss: $1</text>
+    <text class="balance-label" x="1455" y="757">Money recovery: $1</text>
+    <text class="unbalanced-label" x="1210" y="772">Unbalanced state</text>
+  </g>
+</svg>

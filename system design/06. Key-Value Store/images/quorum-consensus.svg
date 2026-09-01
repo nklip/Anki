@@ -2,39 +2,48 @@
   <title id="title">Quorum write reaches three replicas</title>
   <desc id="desc">A coordinator sends put key1 val1 to s0, s1, and s2 and receives acknowledgement messages from each replica.</desc>
 
-  <!-- Solid writes and dashed acknowledgements use the same compact head geometry. -->
+  <!-- Every direction uses the same compact arrowhead; paired lanes are offset by 20 units. -->
   <defs>
-    <marker id="black-arrow" markerWidth="14" markerHeight="14" refX="12" refY="7" viewBox="0 0 14 14" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1 13 7 1 13Z" fill="#111"/></marker>
+    <!-- The tip projects four units; every path endpoint is pulled back by the same amount. -->
+    <marker id="arrowhead" markerWidth="22" markerHeight="20" refX="18" refY="10" viewBox="0 0 22 20" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0L22 10L0 20Z" fill="#111"/>
+    </marker>
     <style>
-      .write { stroke: #111; stroke-width: 3; fill: none; marker-end: url(#black-arrow); }
-      .ack { stroke: #111; stroke-width: 3; stroke-dasharray: 8 8; fill: none; marker-end: url(#black-arrow); }
-      .label { font: 29px Georgia, serif; fill: #111; text-anchor: middle; }
-      .node-text { font: 34px Georgia, serif; fill: #111; text-anchor: middle; dominant-baseline: middle; }
+      .write { stroke: #111; stroke-width: 3; fill: none; marker-end: url(#arrowhead); }
+      .ack { stroke: #111; stroke-width: 3; stroke-dasharray: 9 9; fill: none; marker-end: url(#arrowhead); }
+      .label { font: 31px Georgia, serif; fill: #111; text-anchor: middle; }
+      .node-text { font: 36px Georgia, serif; fill: #111; text-anchor: middle; dominant-baseline: middle; }
     </style>
   </defs>
 
   <!-- Replica ring and coordinator. -->
   <rect width="1114" height="950" fill="#fff"/>
-  <circle cx="570" cy="475" r="410" fill="none" stroke="#707070" stroke-width="8"/>
-  <rect x="58" y="410" width="220" height="74" fill="#fff" stroke="#111" stroke-width="3"/>
-  <text class="label" x="154" y="458" font-size="32">coordinator</text>
-  <circle cx="570" cy="65" r="38" fill="#10afd2"/><text class="node-text" x="570" y="65">s0</text>
-  <circle cx="980" cy="475" r="38" fill="#10afd2"/><text class="node-text" x="980" y="475">s1</text>
-  <circle cx="570" cy="885" r="38" fill="#10afd2"/><text class="node-text" x="570" y="885">s2</text>
+  <!-- The captured diagram sits on this subtly off-white inset. -->
+  <rect x="39" y="9" width="993" height="941" fill="#fefefe"/>
+  <circle cx="562" cy="472.5" r="417.5" fill="none" stroke="#656565" stroke-width="7"/>
+  <rect x="66" y="409" width="210" height="64" fill="#fefefe" stroke="#111" stroke-width="2"/>
+  <text x="165" y="456" font-family="Georgia,serif" font-size="37" text-anchor="middle">coordinator</text>
+  <circle cx="563" cy="56" r="34" fill="#00b7df"/><text class="node-text" x="563" y="56">s0</text>
+  <circle cx="980" cy="474" r="34" fill="#00b7df"/><text class="node-text" x="980" y="474">s1</text>
+  <circle cx="563" cy="891" r="34" fill="#00b7df"/><text class="node-text" x="563" y="891">s2</text>
 
-  <!-- Each write and acknowledgement pair uses separate straight lanes. -->
-  <path class="write" d="M278 414 541 90"/>
-  <path class="ack" d="M551 99 278 426"/>
-  <text class="label" x="380" y="228" transform="rotate(-51 380 228)">put(key1, val1)</text>
-  <text class="label" x="444" y="286" transform="rotate(-51 444 286)">ACK</text>
+  <!-- s0 pair: parallel centerlines, 20 units apart, clipped to the box and blue circle. -->
+  <path class="write" data-connector="true" d="M270.58 408L532.47 78.36"/>
+  <path class="ack" data-connector="true" d="M550.62 87.66L279.49 428.94"/>
+  <text class="label" x="401" y="201" transform="rotate(-51.53 401 201)">put(key1, val1)</text>
+  <text class="label" x="485" y="266" transform="rotate(-51.53 485 266)">ACK</text>
 
-  <path class="write" d="M278 440 942 465"/>
-  <path class="ack" d="M942 483 278 460"/>
-  <text class="label" x="665" y="424">put(key1, val1)</text>
-  <text class="label" x="665" y="535">ACK</text>
+  <!-- s1 pair: short source stub preserves the boundary join without changing the lane angle. -->
+  <path d="M277 437.99L284.99 438.29" fill="none" stroke="#111" stroke-width="3"/>
+  <path class="write" data-connector="true" d="M284.99 438.29L943.9 462.66"/>
+  <path class="ack" data-connector="true" d="M947.16 482.79L281 458.15"/>
+  <text class="label" x="744" y="437" transform="rotate(2.12 744 437)">put(key1, val1)</text>
+  <text class="label" x="715" y="526" transform="rotate(2.12 715 526)">ACK</text>
 
-  <path class="write" d="M278 474 555 849"/>
-  <path class="ack" d="M542 858 278 482"/>
-  <text class="label" x="449" y="638" transform="rotate(54 449 638)">put(key1, val1)</text>
-  <text class="label" x="378" y="694" transform="rotate(54 378 694)">ACK</text>
+  <!-- s2 pair: parallel centerlines meet separate points along the coordinator's bottom edge. -->
+  <path d="M272.36 474L280 484.51" fill="none" stroke="#111" stroke-width="3"/>
+  <path class="write" data-connector="true" d="M280 484.51L549.64 855.6"/>
+  <path class="ack" data-connector="true" d="M535.81 870.59L249.99 477.24"/>
+  <text class="label" x="445" y="671" transform="rotate(54 445 671)">put(key1, val1)</text>
+  <text class="label" x="337" y="690" transform="rotate(54 337 690)">ACK</text>
 </svg>

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1986" height="560" viewBox="0 0 1986 560"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Cancel phase of a distributed wallet transaction</title>
+  <desc id="desc">The first phase debits one dollar from database A while database C performs no operation. Database A completes but database C fails, so a cancel phase restores the dollar to database A, leaves database C unchanged, and finishes both participants.</desc>
+
+  <!-- Shared styles and reusable, auto-oriented arrowheads. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .timeline{fill:none;stroke:#000;stroke-width:2.5}
+      .phase-boundary{fill:none;stroke:#000;stroke-width:2.5;stroke-dasharray:10 9}
+      .lock-span{fill:none;stroke:#fe2700;stroke-width:6}
+      .event{fill:#fff;stroke:#000;stroke-width:2.5}
+      .message-shaft{fill:none;stroke:#000;stroke-width:2.5}
+      .annotation-shaft{fill:none;stroke:#000;stroke-width:1.7}
+      .participant{font-size:38px}
+      .participant-note{font-size:30px}
+      .phase-title{font-size:36px;text-anchor:middle}
+      .action-label{font-size:28px}
+      .operation-label{font-size:28px}
+      .state-label{font-size:24px;text-anchor:middle}
+      .sql-label{font-family:"Times New Roman",Times,serif;font-size:28px}
+      .status-label{font-size:28px}
+      .success-mark{font-size:38px;fill:#0096ff}
+      .failure-mark{font-size:36px;fill:#fe2700}
+      .failure-label{font-size:28px;fill:#fe2700}
+    </style>
+
+    <!-- Four-unit projection gives the 2.5-unit shaft full taper coverage at its endpoint. -->
+    <marker id="message-arrowhead" markerWidth="20" markerHeight="16"
+            viewBox="0 0 20 16" refX="16" refY="8"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L20 8 L0 16 Z" fill="#000"/>
+    </marker>
+    <!-- The smaller callout head projects three units for the 1.7-unit annotation shaft. -->
+    <marker id="annotation-arrowhead" markerWidth="11" markerHeight="9"
+            viewBox="0 0 11 9" refX="8" refY="4.5"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L11 4.5 L0 9 Z" fill="#000"/>
+    </marker>
+    <path id="success-checkmark-shape"
+          d="M0 15 L6 21 L18 0 H22 L7 28 L0 20 Z"/>
+  </defs>
+
+  <rect width="1986" height="560" fill="#fff"/>
+
+  <!-- Dashed dividers frame the first phase and the compensating cancel phase. -->
+  <g id="phase-boundaries">
+    <path class="phase-boundary" d="M314.5 32.5 V520"/>
+    <path class="phase-boundary" d="M1145.5 32.5 V520"/>
+    <path class="phase-boundary" d="M1858.5 32.5 V520"/>
+  </g>
+
+  <!-- Participant timelines; C is split around its two inline NOP labels. -->
+  <g id="participant-timelines">
+    <path class="timeline" d="M283 135.5 H1798"/>
+    <path id="coordinator-time-head" d="M1810 135.5 L1798 128 L1798 143 Z" fill="#000"/>
+
+    <path class="timeline" d="M283 290.5 H1798"/>
+    <path id="database-a-first-time-head" d="M916 290.5 L893 281.5 L893 299.5 Z" fill="#000"/>
+    <path id="database-a-final-time-head" d="M1819 290.5 L1798 281.5 L1798 299.5 Z" fill="#000"/>
+
+    <path class="timeline" d="M283 445.5 H652 M714 445.5 H1444 M1504 445.5 H1912"/>
+    <path id="database-c-first-time-head" d="M956 445.5 L934 436.5 L934 454.5 Z" fill="#000"/>
+    <path id="database-c-final-time-head" d="M1934 445.5 L1912 436.5 L1912 454.5 Z" fill="#000"/>
+  </g>
+
+  <!-- Database A remains locked during each update. -->
+  <g id="database-a-locks">
+    <path id="first-phase-lock-span" class="lock-span" d="M590 290.5 H852"/>
+    <path id="cancel-phase-lock-span" class="lock-span" d="M1379 290.5 H1641"/>
+    <path class="timeline" d="M569 270 V312"/>
+    <path class="timeline" d="M879 270 V312"/>
+    <path class="timeline" d="M1339 270 V312"/>
+    <path class="timeline" d="M1665 270 V312"/>
+  </g>
+
+  <!-- First phase requests: debit A and perform no operation on C. -->
+  <g id="first-phase-requests">
+    <path id="try-a-source" class="message-shaft" data-connector="true" d="M344 136 L416 196"/>
+    <path id="try-a-target" class="message-shaft" data-connector="true"
+          d="M472 243 L515.92 279.45" marker-end="url(#message-arrowhead)"/>
+
+    <path id="first-nop-source" class="message-shaft" data-connector="true" d="M344 136 L445 340"/>
+    <path id="first-nop-target" class="message-shaft" data-connector="true"
+          d="M473 397 L489.25 430.40" marker-end="url(#message-arrowhead)"/>
+  </g>
+
+  <!-- First phase responses: A succeeds and C fails. Each shaft is split around its status label. -->
+  <g id="first-phase-responses">
+    <path id="database-a-done-source" class="message-shaft" data-connector="true" d="M928 291 L950 251"/>
+    <path id="database-a-done-target" class="message-shaft" data-connector="true"
+          d="M984.5 188 L1004.58 151.41" marker-end="url(#message-arrowhead)"/>
+
+    <path id="database-c-failed-source" class="message-shaft" data-connector="true" d="M968 446 L987 399"/>
+    <path id="database-c-failed-target" class="message-shaft" data-connector="true"
+          d="M1006 352 L1085.52 152.22" marker-end="url(#message-arrowhead)"/>
+  </g>
+
+  <!-- Cancel phase requests: restore A and leave C unchanged. -->
+  <g id="cancel-phase-requests">
+    <path id="cancel-a-source" class="message-shaft" data-connector="true" d="M1183 136 L1233.8 197"/>
+    <path id="cancel-a-target" class="message-shaft" data-connector="true"
+          d="M1277.9 250 L1300.80 277.55" marker-end="url(#message-arrowhead)"/>
+
+    <path id="cancel-nop-source" class="message-shaft" data-connector="true" d="M1183 136 L1228 331"/>
+    <path id="cancel-nop-target" class="message-shaft" data-connector="true"
+          d="M1241 389 L1250.11 429.10" marker-end="url(#message-arrowhead)"/>
+  </g>
+
+  <!-- Cancel phase responses: both participants report completion. -->
+  <g id="cancel-phase-responses">
+    <path id="cancel-a-done-source" class="message-shaft" data-connector="true" d="M1697 291 L1714 254"/>
+    <path id="cancel-a-done-target" class="message-shaft" data-connector="true"
+          d="M1743 190 L1760.71 151.93" marker-end="url(#message-arrowhead)"/>
+
+    <path id="cancel-c-done-source" class="message-shaft" data-connector="true" d="M1708 446 L1725.5 399"/>
+    <path id="cancel-c-done-target" class="message-shaft" data-connector="true"
+          d="M1744.7 348 L1815.93 152.36" marker-end="url(#message-arrowhead)"/>
+  </g>
+
+  <!-- Event circles mask timeline and connector starts for clean joins. -->
+  <g id="event-points">
+    <g id="coordinator-events">
+      <circle class="event" cx="344" cy="136" r="13.5"/>
+      <circle class="event" cx="1013" cy="136" r="13.5"/>
+      <circle class="event" cx="1092" cy="136" r="13.5"/>
+      <circle class="event" cx="1183" cy="136" r="13.5"/>
+      <circle class="event" cx="1768" cy="136" r="13.5"/>
+      <circle class="event" cx="1822" cy="136" r="13.5"/>
+    </g>
+    <g id="database-a-events">
+      <circle class="event" cx="529" cy="291" r="13.5"/>
+      <circle class="event" cx="928" cy="291" r="13.5"/>
+      <circle class="event" cx="1312" cy="291" r="13.5"/>
+      <circle class="event" cx="1697" cy="291" r="13.5"/>
+    </g>
+    <g id="database-c-events">
+      <circle class="event" cx="497" cy="446" r="13.5"/>
+      <circle class="event" cx="968" cy="446" r="13.5"/>
+      <circle class="event" cx="1254" cy="446" r="13.5"/>
+      <circle class="event" cx="1708" cy="446" r="13.5"/>
+    </g>
+  </g>
+
+  <!-- Small callouts identify lock boundaries and SQL application points. -->
+  <g id="annotations">
+    <path id="first-lock-callout" class="annotation-shaft" data-connector="true"
+          d="M591 347 L570.63 315.52" marker-end="url(#annotation-arrowhead)"/>
+    <path id="first-unlock-callout" class="annotation-shaft" data-connector="true"
+          d="M858 347 L877.42 315.55" marker-end="url(#annotation-arrowhead)"/>
+    <path id="cancel-lock-callout" class="annotation-shaft" data-connector="true"
+          d="M1378 347 L1341.26 314.97" marker-end="url(#annotation-arrowhead)"/>
+    <path id="cancel-unlock-callout" class="annotation-shaft" data-connector="true"
+          d="M1631 347 L1662.88 315.12" marker-end="url(#annotation-arrowhead)"/>
+
+    <path id="first-sql-callout" class="annotation-shaft" data-connector="true"
+          d="M722 264 V286" marker-end="url(#annotation-arrowhead)"/>
+    <path id="cancel-sql-callout" class="annotation-shaft" data-connector="true"
+          d="M1520 250 L1516.31 286.02" marker-end="url(#annotation-arrowhead)"/>
+  </g>
+
+  <!-- All labels are painted last and remain clear of the connector lanes. -->
+  <g id="labels">
+    <text class="participant" x="72" y="147">Coordinator</text>
+    <text class="participant-note" x="73" y="186">(Wallet Service)</text>
+    <text class="participant" x="78" y="302">Database A</text>
+    <text class="participant" x="76" y="458">Database C</text>
+
+    <text class="phase-title" x="720" y="74">First Phase</text>
+    <text class="phase-title" x="1536" y="74">Second Phase: Cancel</text>
+
+    <text class="action-label" x="402" y="231">Try: A−$1</text>
+    <text class="action-label" x="425" y="373">NOP</text>
+    <text class="operation-label" x="654" y="456">NOP</text>
+    <text class="action-label" x="1221" y="239">Cancel: A+$1</text>
+    <text class="action-label" x="1205" y="365">NOP</text>
+    <text class="operation-label" x="1446" y="456">NOP</text>
+
+    <text class="sql-label" x="583" y="181">
+      <tspan x="583">UPDATE balance</tspan>
+      <tspan x="583" dy="31">SET amount=amount-1</tspan>
+      <tspan x="583" dy="31">WHERE account=‘A’</tspan>
+    </text>
+    <text class="sql-label" x="1398" y="168">
+      <tspan x="1398">UPDATE balance</tspan>
+      <tspan x="1398" dy="31">SET amount=amount+1</tspan>
+      <tspan x="1398" dy="31">WHERE account=‘A’</tspan>
+    </text>
+
+    <text class="operation-label" x="550" y="378">lock A</text>
+    <text class="operation-label" x="791" y="377">unlock A</text>
+    <text class="operation-label" x="1369" y="378">lock C</text>
+    <text class="operation-label" x="1554" y="377">unlock A</text>
+
+    <text class="state-label" x="529" y="326">A=$1</text>
+    <text class="state-label" x="928" y="326">A=$0</text>
+    <text class="state-label" x="497" y="481">C=$0</text>
+    <text class="state-label" x="968" y="481">C=$0</text>
+    <text class="state-label" x="1310" y="326">A=$0</text>
+    <text class="state-label" x="1254" y="481">C=$0</text>
+    <text class="state-label" x="1697" y="326">A=$1</text>
+    <text class="state-label" x="1708" y="481">C=$0</text>
+
+    <use id="database-a-success-mark" href="#success-checkmark-shape"
+         transform="translate(928 197)" fill="#0096ff"/>
+    <text class="status-label" x="958" y="219">Done</text>
+    <text class="failure-mark" x="937" y="386">X</text>
+    <text class="failure-label" x="966" y="386">Failed</text>
+    <use id="cancel-a-success-mark" href="#success-checkmark-shape"
+         transform="translate(1675 206)" fill="#0096ff"/>
+    <text class="status-label" x="1704" y="229">Done</text>
+    <use id="cancel-c-success-mark" href="#success-checkmark-shape"
+         transform="translate(1692 357)" fill="#0096ff"/>
+    <text class="status-label" x="1722" y="379">Done</text>
+  </g>
+</svg>

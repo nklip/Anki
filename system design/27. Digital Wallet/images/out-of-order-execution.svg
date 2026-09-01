@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1690" height="720" viewBox="0 0 1690 720"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Out-of-order execution during a wallet transaction</title>
+  <desc id="desc">A delayed first-phase Try request reaches database C after the coordinator has already sent the second-phase Cancel request, so Cancel arrives before Try.</desc>
+
+  <!-- Shared styles keep the timing diagram source-native and easy to repair. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .timeline{fill:none;stroke:#000;stroke-width:2.5}
+      .phase-boundary{fill:none;stroke:#000;stroke-width:2.5;stroke-dasharray:10 9}
+      .event{fill:#fff;stroke:#000;stroke-width:2.5}
+      .message-shaft{fill:none;stroke:#000;stroke-width:3.2}
+      .annotation-shaft{fill:none;stroke:#000;stroke-width:1.4;stroke-dasharray:5 5}
+      .participant{font-size:42px}
+      .participant-note{font-size:31px}
+      .phase-title{font-size:41px;text-anchor:middle}
+      .action-label{font-size:32px}
+      .operation-label{font-size:30px}
+      .failure-mark{font-size:40px;fill:#fe2700}
+      .failure-label{font-size:32px;fill:#fe2700}
+      .caption{font-size:30px}
+      .emphasis{fill:#fe2700}
+    </style>
+
+  </defs>
+
+  <rect width="1690" height="720" fill="#fff"/>
+
+  <!-- Dashed dividers frame the first phase and the cancel phase. -->
+  <g id="phase-boundaries">
+    <path class="phase-boundary" d="M351 37 V591"/>
+    <path class="phase-boundary" d="M927.5 37 V591"/>
+    <path class="phase-boundary" d="M1495 34 V584"/>
+  </g>
+
+  <!-- Participant timelines; database C is split around its inline NOP label. -->
+  <g id="participant-timelines">
+    <path class="timeline" d="M315 154.5 H1560"/>
+    <path id="coordinator-time-head" d="M1584 154.5 L1560 144.5 L1560 164.5 Z" fill="#000"/>
+
+    <path class="timeline" d="M315 330.5 H1560"/>
+    <!-- First-phase progression on A: the shaft ends inside its separately painted triangular head. -->
+    <path id="database-a-first-phase-arrow-shaft" class="message-shaft" data-connector="true"
+          d="M608 330.5 H727.26"/>
+    <path id="database-a-time-head" d="M1584 330.5 L1560 320.5 L1560 340.5 Z" fill="#000"/>
+
+    <path class="timeline" d="M315 506.5 H734 M804 506.5 H1560"/>
+    <path id="database-c-time-head" d="M1584 506.5 L1560 496.5 L1560 516.5 Z" fill="#000"/>
+  </g>
+
+  <!-- Each target shaft stops inside a separate head; the heads are painted later at exact circle tangencies. -->
+  <!-- First phase: Try reaches A, A fails, and the Try for C is delayed in flight. -->
+  <g id="first-phase-messages">
+    <path id="try-a-source" class="message-shaft" data-connector="true" d="M395 164 L474 231"/>
+    <path id="try-a-target" class="message-shaft" data-connector="true"
+          d="M523 272 L568.04 309.43"/>
+
+    <path id="database-a-failed-source" class="message-shaft" data-connector="true" d="M768 318 L808 252"/>
+    <path id="database-a-failed-target" class="message-shaft" data-connector="true"
+          d="M831 210 L844.84 184.63"/>
+
+    <path id="delayed-try-source" class="message-shaft" data-connector="true" d="M397 160 L1219 441"/>
+    <path id="delayed-try-target" class="message-shaft" data-connector="true"
+          d="M1271 460 L1379 496.26"/>
+  </g>
+
+  <!-- Second phase: Cancel is dispatched before the delayed Try reaches database C. -->
+  <g id="cancel-phase-messages">
+    <path id="cancel-a-source" class="message-shaft" data-connector="true" d="M1007 165 L1061 212"/>
+    <path id="cancel-a-target" class="message-shaft" data-connector="true"
+          d="M1113 261 L1165.03 308.3"/>
+
+    <path id="cancel-c-source" class="message-shaft" data-connector="true" d="M1003 168 L1046 271"/>
+    <path id="cancel-c-target" class="message-shaft" data-connector="true"
+          d="M1068 320 L1133.87 475.91"/>
+  </g>
+
+  <!-- Dashed callout shafts also stop inside separately painted, smaller heads. -->
+  <g id="caption-callouts">
+    <path id="cancel-callout" class="annotation-shaft" data-connector="true"
+          d="M1084 651 L1137.08 529.67"/>
+    <path id="try-callout" class="annotation-shaft" data-connector="true"
+          d="M1465 652 L1419.64 530.19"/>
+  </g>
+
+  <!-- Event circles mask the timeline and connector joins cleanly. -->
+  <g id="event-points">
+    <circle class="event" cx="384" cy="155" r="14.5"/>
+    <circle class="event" cx="861" cy="155" r="14.5"/>
+    <circle class="event" cx="996" cy="155" r="14.5"/>
+
+    <circle class="event" cx="594" cy="331" r="14.5"/>
+    <circle class="event" cx="761" cy="331" r="14.5"/>
+    <circle class="event" cx="1190" cy="331" r="14.5"/>
+
+    <circle class="event" cx="1147" cy="507" r="14.5"/>
+    <circle class="event" cx="1411" cy="507" r="14.5"/>
+  </g>
+
+  <!-- Manual heads use a subtly flat nose tangent to the circle, avoiding both a thin tail and overlap. -->
+  <g id="message-arrowheads" fill="#000">
+    <path id="database-a-first-phase-arrowhead"
+          d="M725.26 322.5 L745.26 328.7 L745.26 332.3 L725.26 338.5 Z"/>
+    <path id="try-a-arrowhead"
+          d="M561.39 314.3 L580.74 322.32 L583.04 319.55 L571.62 302 Z"/>
+    <path id="database-a-failed-arrowhead"
+          d="M850.9 190.22 L855.04 169.69 L851.88 167.96 L836.86 182.55 Z"/>
+    <path id="delayed-try-arrowhead"
+          d="M1374.56 503.21 L1395.5 503.69 L1396.64 500.28 L1379.65 488.04 Z"/>
+    <path id="cancel-a-arrowhead"
+          d="M1158.17 312.87 L1177.14 321.74 L1179.56 319.07 L1168.93 301.03 Z"/>
+    <path id="cancel-c-arrowhead"
+          d="M1125.72 477.18 L1139.21 493.19 L1142.53 491.79 L1140.46 470.95 Z"/>
+  </g>
+
+  <g id="annotation-arrowheads" fill="#000">
+    <path id="cancel-callout-arrowhead"
+          d="M1140.34 532.19 L1141.51 521.79 L1139.86 521.07 L1133.01 528.99 Z"/>
+    <path id="try-callout-arrowhead"
+          d="M1423.74 529.73 L1417.34 521.45 L1415.65 522.07 L1416.24 532.53 Z"/>
+  </g>
+
+  <!-- Labels are painted last so connector shafts never cross through the words. -->
+  <g id="labels">
+    <text class="participant" x="77" y="168">Coordinator</text>
+    <text class="participant-note" x="78" y="210">(Wallet Service)</text>
+    <text class="participant" x="82" y="343">Database A</text>
+    <text class="participant" x="80" y="520">Database C</text>
+
+    <text class="phase-title" x="633" y="87">First Phase</text>
+    <text class="phase-title" x="1211" y="87">Second Phase: Cancel</text>
+
+    <text class="action-label" x="477" y="264">Try</text>
+    <text class="failure-mark" x="755" y="244">X</text>
+    <text class="failure-label" x="789" y="241">Failed</text>
+    <text class="action-label" x="1056" y="247">Cancel</text>
+    <text class="action-label" x="1000" y="307">Cancel</text>
+    <text class="action-label" x="1221" y="459">Try</text>
+    <text class="operation-label" x="736" y="519">NOP</text>
+
+    <text class="caption" x="846" y="676">Out-of-order:</text>
+    <text class="caption emphasis" x="1029" y="676">Cancel</text>
+    <text class="caption" x="1127" y="676">operation arrived before</text>
+    <text class="caption emphasis" x="1450" y="676">Try</text>
+    <text class="caption" x="1497" y="676">operation</text>
+  </g>
+</svg>
