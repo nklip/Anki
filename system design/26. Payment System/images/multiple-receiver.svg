@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1356" height="548" viewBox="0 0 1356 548"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Multiple receivers consume the same payment event</title>
+  <desc id="desc">Events enter a four-message queue. The newest message, m1, is independently delivered to the Payment System, Analytics, and Billing receivers.</desc>
+
+  <!-- Shared monochrome styles sampled from the PNG etalon. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .outline{fill:#fff;stroke:#000;stroke-width:2.5}
+      .shaft{fill:none;stroke:#000;stroke-width:2.5}
+      .arrow-head{fill:#000}
+      .main-label{font-size:40px;text-anchor:middle}
+      .message-label{font-size:40px;text-anchor:middle}
+    </style>
+    <!-- Every delivery arrow uses this 25-by-21 unit symmetric triangle (area 262.5 square units). -->
+    <path id="uniform-arrowhead-shape" d="M0 0 L-25 -10.5 L-25 10.5 Z"/>
+  </defs>
+
+  <rect width="1356" height="548" fill="#fff"/>
+
+  <!-- Incoming event source and its arrow into the queue. -->
+  <g id="event-source">
+    <ellipse class="outline" cx="153.5" cy="275.5" rx="90" ry="60"/>
+    <text class="main-label" x="153.5" y="289">Events</text>
+    <path id="event-to-queue-shaft" class="shaft" data-connector="true" d="M244 275.5 H342"/>
+    <use id="event-to-queue-arrowhead" class="arrow-head" href="#uniform-arrowhead-shape"
+         transform="translate(365 275.5)"/>
+  </g>
+
+  <!-- Four queued messages inside a rounded tube with a cylindrical end cap. -->
+  <g id="message-queue">
+    <path class="outline" d="M820 203.5 H410 C384.5 203.5 364 235.5 364 275.5 C364 315.5 384.5 347.5 410 347.5 H820 Z"/>
+    <ellipse class="outline" cx="820" cy="275.5" rx="51" ry="72"/>
+
+    <g id="queued-message-m4">
+      <rect class="outline" x="408" y="243" width="54" height="40"/>
+      <path class="shaft" d="M409 245 L435 261 L461 245"/>
+      <text class="message-label" x="435" y="322">m4</text>
+    </g>
+    <g id="queued-message-m3">
+      <rect class="outline" x="503" y="243" width="54" height="40"/>
+      <path class="shaft" d="M504 245 L530 261 L556 245"/>
+      <text class="message-label" x="530" y="322">m3</text>
+    </g>
+    <g id="queued-message-m2">
+      <rect class="outline" x="598" y="243" width="54" height="40"/>
+      <path class="shaft" d="M599 245 L625 261 L651 245"/>
+      <text class="message-label" x="625" y="322">m2</text>
+    </g>
+    <g id="queued-message-m1">
+      <rect class="outline" x="693" y="243" width="54" height="40"/>
+      <path class="shaft" d="M694 245 L720 261 L746 245"/>
+      <text class="message-label" x="720" y="322">m1</text>
+    </g>
+  </g>
+
+  <!-- The same newest message fans out to three independent receivers. -->
+  <g id="receiver-deliveries">
+    <!-- Payment delivery: the receiver-side shaft begins behind the envelope label, as in the etalon. -->
+    <g id="payment-delivery">
+      <path id="queue-to-payment-message-shaft" class="shaft" data-connector="true" d="M866 245 L938 213"/>
+      <path id="payment-message-to-receiver-shaft" class="shaft" data-connector="true" d="M993 187 L1095 141.3"/>
+      <use id="payment-delivery-arrowhead" class="arrow-head" href="#uniform-arrowhead-shape"
+           transform="translate(1109 135) rotate(-24.1455)"/>
+      <rect class="outline" x="938" y="181" width="55" height="41"/>
+      <path class="shaft" d="M939 183 L965.5 200 L992 183"/>
+      <text class="message-label" x="1025" y="211">m1</text>
+    </g>
+
+    <!-- Analytics delivery remains horizontal through the middle of the fan-out. -->
+    <g id="analytics-delivery">
+      <path id="queue-to-analytics-message-shaft" class="shaft" data-connector="true" d="M871 275.5 H938"/>
+      <path id="analytics-message-to-receiver-shaft" class="shaft" data-connector="true" d="M1051 275.5 H1086"/>
+      <use id="analytics-delivery-arrowhead" class="arrow-head" href="#uniform-arrowhead-shape"
+           transform="translate(1109 275.5)"/>
+      <rect class="outline" x="938" y="256" width="55" height="41"/>
+      <path class="shaft" d="M939 258 L965.5 275 L992 258"/>
+      <text class="message-label" x="1025" y="286">m1</text>
+    </g>
+
+    <!-- Billing delivery slopes down to the lower receiver. -->
+    <g id="billing-delivery">
+      <path id="queue-to-billing-message-shaft" class="shaft" data-connector="true" d="M866 305 L938 340"/>
+      <path id="billing-message-to-receiver-shaft" class="shaft" data-connector="true" d="M993 361 L1095 408.5"/>
+      <use id="billing-delivery-arrowhead" class="arrow-head" href="#uniform-arrowhead-shape"
+           transform="translate(1109 415) rotate(24.9662)"/>
+      <rect class="outline" x="938" y="331" width="55" height="40"/>
+      <path class="shaft" d="M939 333 L965.5 350 L992 333"/>
+      <text class="message-label" x="1025" y="361">m1</text>
+    </g>
+  </g>
+
+  <!-- Destination systems. Arrowheads meet, but do not cross, their boundaries. -->
+  <g id="receivers">
+    <g id="payment-system">
+      <rect class="outline" x="1109" y="39" width="203" height="97"/>
+      <text class="main-label" x="1210.5" y="79"><tspan x="1210.5">Payment</tspan><tspan x="1210.5" dy="44">System</tspan></text>
+    </g>
+    <g id="analytics-system">
+      <rect class="outline" x="1109" y="227" width="203" height="97"/>
+      <text class="main-label" x="1210.5" y="289">Analytics</text>
+    </g>
+    <g id="billing-system">
+      <rect class="outline" x="1109" y="415" width="203" height="97"/>
+      <text class="main-label" x="1210.5" y="478">Billing</text>
+    </g>
+  </g>
+</svg>

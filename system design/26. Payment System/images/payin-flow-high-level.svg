@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1792" height="952" viewBox="0 0 1792 952"
+     role="img" aria-labelledby="title desc">
+  <title id="title">High-level pay-in flow through a payment system</title>
+  <desc id="desc">A nine-step payment event enters an internal payment service, creates a payment order, stores and executes it through an external payment service provider and card scheme, then updates the internal wallet and ledger.</desc>
+
+  <!-- Shared line, text, database, step-number, and brand styles sampled from the PNG etalon. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .boundary,.node,.database{fill:#fff;stroke:#111;stroke-width:2.5}
+      .flow{fill:none;stroke:#111;stroke-width:2.5}
+      .arrow-head{fill:#000}
+      .node-label{font-size:36px;text-anchor:middle}
+      .flow-label{font-size:34px;text-anchor:middle}
+      .flow-label-mini{font-size:30px;text-anchor:middle}
+      .event-label{font-size:30px}
+      .system-label{font-size:38px;text-anchor:middle}
+      .region-label{font-size:35px}
+      .step-ring{fill:#fff;stroke:#111;stroke-width:2.5}
+      .step-number{font-size:30px;text-anchor:middle}
+      .provider-label{font-size:36px;text-anchor:middle}
+      .paypal-word{font-size:34px;font-weight:700;font-style:italic;fill:#003087}
+      .paypal-accent{fill:#009cde}
+      .stripe-word{font-size:64px;font-weight:700;letter-spacing:-3px;fill:#635bff}
+      .adyen-word{font-family:"Arial Black",Arial,Helvetica,sans-serif;font-size:55px;font-weight:900;letter-spacing:-3px;fill:#0abf53}
+      .visa-word{font-family:"Arial Black",Arial,Helvetica,sans-serif;font-size:56px;font-weight:900;font-style:italic;letter-spacing:-3px;fill:#17257f}
+      .mastercard-word{font-family:"Arial Narrow",Arial,Helvetica,sans-serif;font-size:38px;font-weight:700;font-style:italic;letter-spacing:-2.3px;fill:#fff;stroke:#1d2d75;stroke-width:2.2;paint-order:stroke fill}
+    </style>
+    <!-- Heads are separate from shafts so their tips can stop exactly at node boundaries. -->
+    <path id="flow-arrowhead-shape" d="M0 0 L-20 -8.5 L-20 8.5 Z"/>
+  </defs>
+
+  <rect width="1792" height="952" fill="#fff"/>
+
+  <!-- Internal and external regions; the divider stays behind all labels and flows. -->
+  <rect id="payment-system-boundary" class="boundary" x="84" y="249" width="862" height="550"/>
+  <path id="internal-external-divider" class="flow" d="M1037 27 V923"
+        stroke-dasharray="10 8"/>
+
+  <!-- Flow 1: a user emits the payment event into the Payment Service. -->
+  <g id="payment-event-source">
+    <circle cx="409" cy="81" r="17" fill="#000"/>
+    <path d="M376 125 C376 113 391 106 409 106 C427 106 442 113 442 125 V132 H376 Z"
+          fill="#000"/>
+    <path class="flow" d="M409 132 V158"/>
+
+    <circle class="step-ring" cx="294" cy="186" r="15"/>
+    <text class="step-number" x="294" y="197">1</text>
+    <text class="event-label" x="313" y="198">Payment event</text>
+
+    <!-- The shaft intentionally crosses the payment-system boundary before reaching the service. -->
+    <path id="payment-event-shaft" class="flow" data-connector="true" d="M409 216 V268"/>
+    <use id="payment-event-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(409 287) rotate(90)"/>
+  </g>
+
+  <!-- Core internal components and their persistent stores. -->
+  <g id="internal-components">
+    <g id="incoming-event-store">
+      <path class="database" d="M131 300 V366 C131 372 149 375 172.5 375 C196 375 214 372 214 366 V300 Z"/>
+      <ellipse class="database" cx="172.5" cy="300" rx="41.5" ry="9"/>
+    </g>
+
+    <g id="payment-service">
+      <rect class="node" x="322" y="291" width="174" height="84"/>
+      <text class="node-label" x="409" y="325">
+        <tspan x="409">Payment</tspan>
+        <tspan x="409" dy="40">Service</tspan>
+      </text>
+    </g>
+
+    <g id="payment-executor">
+      <rect class="node" x="722" y="291" width="174" height="84"/>
+      <text class="node-label" x="809" y="325">
+        <tspan x="809">Payment</tspan>
+        <tspan x="809" dy="40">Executor</tspan>
+      </text>
+    </g>
+
+    <g id="payment-order-store">
+      <path class="database" d="M768 491 V557 C768 563 786 566 809.5 566 C833 566 851 563 851 557 V491 Z"/>
+      <ellipse class="database" cx="809.5" cy="491" rx="41.5" ry="9"/>
+    </g>
+
+    <g id="ledger">
+      <rect class="node" x="208" y="491" width="174" height="85"/>
+      <text class="node-label" x="295" y="546">Ledger</text>
+    </g>
+
+    <g id="wallet">
+      <rect class="node" x="439" y="491" width="175" height="85"/>
+      <text class="node-label" x="526.5" y="546">Wallet</text>
+    </g>
+
+    <g id="ledger-store">
+      <path class="database" d="M253 693 V760 C253 766 271 769 294.5 769 C318 769 336 766 336 760 V693 Z"/>
+      <ellipse class="database" cx="294.5" cy="693" rx="41.5" ry="9"/>
+    </g>
+
+    <g id="wallet-store">
+      <path class="database" d="M485 693 V760 C485 766 503 769 526.5 769 C550 769 568 766 568 760 V693 Z"/>
+      <ellipse class="database" cx="526.5" cy="693" rx="41.5" ry="9"/>
+    </g>
+  </g>
+
+  <!-- Flows 2 and 3: persist the event, then create a payment order for execution. -->
+  <g id="event-and-order-flows">
+    <path id="event-store-source-shaft" class="flow" data-connector="true" d="M322 332 H285"/>
+    <path id="event-store-target-shaft" class="flow" data-connector="true" d="M253 332 H235"/>
+    <use id="event-store-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(216 332) rotate(180)"/>
+    <circle class="step-ring" cx="269" cy="332" r="15"/>
+    <text class="step-number" x="269" y="343">2</text>
+
+    <path id="payment-order-source-shaft" class="flow" data-connector="true" d="M496 332 H520"/>
+    <line id="payment-order-target-shaft" class="flow" data-connector="true"
+          x1="682" y1="332" x2="701" y2="332"/>
+    <use id="payment-order-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(720 332)"/>
+    <circle class="step-ring" cx="536" cy="332" r="15"/>
+    <text class="step-number" x="536" y="343">3</text>
+    <text class="flow-label-mini" x="620" y="325">
+      <tspan x="620">Payment</tspan>
+      <tspan x="620" dy="40">Order</tspan>
+    </text>
+  </g>
+
+  <!-- Flow 4: the executor and its order store exchange state in both directions. -->
+  <g id="executor-store-flow">
+    <use id="executor-store-up-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(809 378) rotate(-90)"/>
+    <line id="executor-store-upper-shaft" class="flow" data-connector="true"
+          x1="809" y1="397" x2="809" y2="407"/>
+    <circle class="step-ring" cx="809" cy="425" r="15"/>
+    <text class="step-number" x="809" y="435">4</text>
+    <line id="executor-store-lower-shaft" class="flow" data-connector="true"
+          x1="809" y1="445" x2="809" y2="459"/>
+    <use id="executor-store-down-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(809 478) rotate(90)"/>
+  </g>
+
+  <!-- Flows 5: the executor calls an external PSP, which routes to a card scheme. -->
+  <g id="external-payment-flow">
+    <path id="executor-to-psp-source-shaft" class="flow" data-connector="true" d="M896 332 H976"/>
+    <path id="executor-to-psp-target-shaft" class="flow" data-connector="true" d="M1006 332 H1115"/>
+    <use id="executor-to-psp-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(1134 332)"/>
+    <circle class="step-ring" cx="991" cy="332" r="15"/>
+    <text class="step-number" x="991" y="343">5</text>
+
+    <path id="psp-to-card-scheme-shaft" class="flow" data-connector="true" d="M1363 332 H1432"/>
+    <use id="psp-to-card-scheme-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(1451 332)"/>
+  </g>
+
+  <!-- Flows 6 and 8: successful execution updates wallet and ledger. -->
+  <g id="account-update-flows">
+    <line id="service-to-wallet-source-shaft" class="flow" data-connector="true"
+          x1="439" y1="379" x2="452" y2="404"/>
+    <line id="service-to-wallet-target-shaft" class="flow" data-connector="true"
+          x1="471" y1="446" x2="490" y2="472"/>
+    <use id="service-to-wallet-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(499 488) rotate(61.2)"/>
+    <circle class="step-ring" cx="461" cy="425" r="15"/>
+    <text class="step-number" x="461" y="435">6</text>
+
+    <line id="service-to-ledger-source-shaft" class="flow" data-connector="true"
+          x1="379" y1="379" x2="366" y2="404"/>
+    <line id="service-to-ledger-target-shaft" class="flow" data-connector="true"
+          x1="345" y1="446" x2="330" y2="472"/>
+    <use id="service-to-ledger-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(320 488) rotate(118.4)"/>
+    <circle class="step-ring" cx="356" cy="425" r="15"/>
+    <text class="step-number" x="356" y="435">8</text>
+  </g>
+
+  <!-- Flows 7 and 9: tips stop at y=682, leaving the same one-pixel gap before the database outlines as the etalon. -->
+  <g id="account-store-flows">
+    <line id="wallet-store-source-shaft" class="flow" data-connector="true"
+          x1="526.5" y1="576" x2="526.5" y2="612"/>
+    <line id="wallet-store-target-shaft" class="flow" data-connector="true"
+          x1="526.5" y1="650" x2="526.5" y2="663"/>
+    <use id="wallet-store-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(526.5 682) rotate(90)"/>
+    <circle class="step-ring" cx="526.5" cy="630" r="15"/>
+    <text class="step-number" x="526.5" y="640">7</text>
+
+    <line id="ledger-store-source-shaft" class="flow" data-connector="true"
+          x1="294.5" y1="576" x2="294.5" y2="612"/>
+    <line id="ledger-store-target-shaft" class="flow" data-connector="true"
+          x1="294.5" y1="650" x2="294.5" y2="663"/>
+    <use id="ledger-store-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(294.5 682) rotate(90)"/>
+    <circle class="step-ring" cx="294.5" cy="630" r="15"/>
+    <text class="step-number" x="294.5" y="640">9</text>
+  </g>
+
+  <!-- External provider box with editable approximations of the PayPal, Stripe, and Adyen marks. -->
+  <g id="payment-service-providers" aria-label="Payment service providers: PayPal, Stripe, and Adyen">
+    <rect class="node" x="1136" y="202" width="227" height="262"/>
+
+    <g id="paypal-logo" aria-label="PayPal">
+      <g transform="translate(684.5 188.7) scale(0.9)">
+        <path fill="#009cde"
+              d="M555 55 H578 C596 55 603 67 598 82 C593 97 581 102 566 102 H562 L558 110 H548 Z
+                 M565 67 L562 89 H570 C578 89 584 86 586 78 C588 71 584 67 576 67 Z"/>
+        <path fill="#003087"
+              d="M546 37 H573 C591 37 600 49 596 65 C592 82 580 89 561 89 H556 L552 109 H535 Z
+                 M559 51 L555 76 H565 C576 76 581 72 583 64 C585 56 580 51 571 51 Z"/>
+        <path fill="#001c64" opacity="0.72"
+              d="M558 55 H578 C589 55 596 61 597 70 C591 82 579 89 561 89 H556 L561 59 C561 57 560 56 558 55 Z"/>
+      </g>
+      <text class="paypal-word" x="1227" y="268">Pay<tspan class="paypal-accent">Pal</tspan></text>
+    </g>
+
+    <text id="stripe-logo" class="stripe-word" x="1250" y="359" text-anchor="middle">stripe</text>
+    <text id="adyen-logo" class="adyen-word" x="1250" y="437" text-anchor="middle">adyen</text>
+
+    <text class="provider-label" x="1249.5" y="497"><tspan x="1249.5">Payment Service</tspan><tspan x="1249.5" dy="40">Providers (PSP)</tspan></text>
+  </g>
+
+  <!-- External card-scheme box with editable Visa and overlapping-circle Mastercard marks. -->
+  <g id="card-schemes" aria-label="Card schemes: Visa and Mastercard">
+    <rect class="node" x="1453" y="202" width="251" height="262"/>
+    <text id="visa-logo" class="visa-word" x="1578.5" y="286" text-anchor="middle">VISA</text>
+
+    <g id="mastercard-logo" aria-label="Mastercard">
+      <circle cx="1542" cy="387" r="58" fill="#ea001b"/>
+      <circle cx="1616" cy="387" r="58" fill="#ff9900"/>
+      <path d="M1564 348 H1592 L1598 356 H1558 Z M1554 363 H1602 V371 H1554 Z M1551 379 H1605 V387 H1551 Z
+               M1554 403 H1602 V411 H1554 Z M1558 419 H1598 L1592 427 H1564 Z"
+            fill="#e32613"/>
+      <text class="mastercard-word" x="1579" y="407" text-anchor="middle">MasterCard</text>
+    </g>
+
+    <text class="provider-label" x="1578.5" y="497">Card Schemes</text>
+  </g>
+
+  <!-- Region labels remain separate from the dashed divider at the bottom of the canvas. -->
+  <text id="payment-system-label" class="system-label" x="794" y="769">Payment System</text>
+  <text id="internal-label" class="region-label" x="1023" y="900" text-anchor="end">Internal</text>
+  <text id="external-label" class="region-label" x="1052" y="900">External</text>
+</svg>

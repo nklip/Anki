@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1116" height="876" viewBox="0 0 1116 876"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Payment retry mechanism</title>
+  <desc id="desc">A sequence diagram shows a client making four ten-dollar payment attempts to a payment system. The first three attempts fail and are retried; the fourth attempt succeeds.</desc>
+
+  <!-- Shared typography and source-native diagram styling. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;font-weight:400;fill:#000}
+      .outline{fill:#fff;stroke:#000;stroke-width:2}
+      .lifeline{fill:none;stroke:#000;stroke-width:2}
+      .shaft{fill:none;stroke:#000;stroke-width:2}
+      .arrow-head{fill:#000}
+      .participant-label{font-size:30px;text-anchor:middle}
+      .message-label{font-size:30px}
+      .message-label-center{font-size:30px;text-anchor:middle}
+      .retry-label{font-size:30px}
+      .failure-mark{font-size:32px;fill:#ff2600;text-anchor:middle}
+      .success-mark{font-size:31px;fill:#0096ff;text-anchor:middle}
+    </style>
+  </defs>
+
+  <rect width="1116" height="876" fill="#fff"/>
+
+  <!-- Participants and their vertical lifelines. -->
+  <g id="participants">
+    <rect class="outline" x="132.5" y="39.5" width="156" height="75"/>
+    <text class="participant-label" x="210.5" y="88">Client</text>
+
+    <rect class="outline" x="684.5" y="39.5" width="157" height="75"/>
+    <text class="participant-label" x="763" y="71">
+      <tspan x="763">Payment</tspan>
+      <tspan x="763" dy="34">System</tspan>
+    </text>
+
+    <path id="client-lifeline" class="lifeline" d="M210.5 114.5 V843.5"/>
+    <path id="payment-system-lifeline" class="lifeline" d="M763 114.5 V841.5"/>
+  </g>
+
+  <!-- Four client-to-payment-system attempts. Each label sits in a deliberate shaft gap. -->
+  <g id="payment-attempts">
+    <g id="payment-attempt-1">
+      <path class="shaft" data-connector="true" d="M210.5 234.5 H423"/>
+      <path class="shaft" data-connector="true" d="M550 234.5 H744"/>
+      <path class="arrow-head" d="M763 234.5 L744 226.5 L744 242.5 Z"/>
+      <text class="message-label-center" x="486.5" y="246">Pay $10</text>
+    </g>
+    <g id="payment-attempt-2">
+      <path class="shaft" data-connector="true" d="M210.5 358.5 H423"/>
+      <path class="shaft" data-connector="true" d="M550 358.5 H744"/>
+      <path class="arrow-head" d="M763 358.5 L744 350.5 L744 366.5 Z"/>
+      <text class="message-label-center" x="486.5" y="370">Pay $10</text>
+    </g>
+    <g id="payment-attempt-3">
+      <path class="shaft" data-connector="true" d="M210.5 477.5 H423"/>
+      <path class="shaft" data-connector="true" d="M550 477.5 H744"/>
+      <path class="arrow-head" d="M763 477.5 L744 469.5 L744 485.5 Z"/>
+      <text class="message-label-center" x="486.5" y="489">Pay $10</text>
+    </g>
+    <g id="payment-attempt-4">
+      <path class="shaft" data-connector="true" d="M210.5 611.5 H423"/>
+      <path class="shaft" data-connector="true" d="M550 611.5 H744"/>
+      <path class="arrow-head" d="M763 611.5 L744 603.5 L744 619.5 Z"/>
+      <text class="message-label-center" x="486.5" y="623">Pay $10</text>
+    </g>
+  </g>
+
+  <!-- Payment-system responses: three failures followed by a successful response. -->
+  <g id="payment-responses">
+    <g id="failed-response-1">
+      <path class="arrow-head" d="M211.5 285.5 L230.5 277.5 L230.5 293.5 Z"/>
+      <path class="shaft" data-connector="true" d="M230.5 285.5 H474 M500 285.5 H763"/>
+      <text class="failure-mark" x="486.5" y="297">X</text>
+      <text class="message-label" x="775" y="293">Payment failed</text>
+    </g>
+    <g id="failed-response-2">
+      <path class="arrow-head" d="M211.5 404.5 L230.5 396.5 L230.5 412.5 Z"/>
+      <path class="shaft" data-connector="true" d="M230.5 404.5 H474 M500 404.5 H763"/>
+      <text class="failure-mark" x="486.5" y="416">X</text>
+      <text class="message-label" x="775" y="412">Payment failed</text>
+    </g>
+    <g id="failed-response-3">
+      <path class="arrow-head" d="M211.5 521.5 L230.5 513.5 L230.5 529.5 Z"/>
+      <path class="shaft" data-connector="true" d="M230.5 521.5 H474 M500 521.5 H763"/>
+      <text class="failure-mark" x="486.5" y="533">X</text>
+      <text class="message-label" x="775" y="529">Payment failed</text>
+    </g>
+    <g id="successful-response">
+      <path class="arrow-head" d="M211.5 653.5 L230.5 645.5 L230.5 661.5 Z"/>
+      <path class="shaft" data-connector="true" d="M230.5 653.5 H472 M499 653.5 H763"/>
+      <text class="success-mark" x="485.5" y="668">✓</text>
+      <text class="message-label" x="775" y="662">Payment succeeded</text>
+    </g>
+  </g>
+
+  <!-- Retry labels align with attempts two through four. -->
+  <g id="retry-labels">
+    <text class="retry-label" x="117" y="392">Retry</text>
+    <text class="retry-label" x="117" y="509">Retry</text>
+    <text class="retry-label" x="117" y="643">Retry</text>
+  </g>
+</svg>

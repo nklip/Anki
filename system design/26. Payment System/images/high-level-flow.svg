@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1304" height="474" viewBox="0 0 1304 474"
+     role="img" aria-labelledby="title desc">
+  <title id="title">High-level payment flow</title>
+  <desc id="desc">A buyer pays from a credit card into the e-commerce website's bank account, which pays out to the seller's bank account.</desc>
+
+  <!-- Shared monochrome styles match the source payment diagram. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .actor-label{font-size:40px;text-anchor:middle}
+      .node-label{font-size:40px;text-anchor:middle}
+      .flow-label{font-size:40px;text-anchor:middle}
+      .account{fill:#fff;stroke:#000;stroke-width:2.5}
+      .association{fill:none;stroke:#000;stroke-width:2.5;stroke-dasharray:12 8}
+      .shaft{fill:none;stroke:#000;stroke-width:2.5}
+      .arrow-head{fill:#000}
+    </style>
+  </defs>
+
+  <rect width="1304" height="474" fill="#fff"/>
+
+  <!-- Payment arrows are painted behind their labels and stop at the account boundaries. -->
+  <g id="payment-connectors">
+    <path id="pay-in-source-shaft" class="shaft" data-connector="true" d="M248 387 H322"/>
+    <path id="pay-in-target-shaft" class="shaft" data-connector="true" d="M461 387 H516"/>
+    <path id="pay-in-arrowhead" class="arrow-head" d="M516 377 L540 387 L516 397 Z"/>
+
+    <path id="pay-out-source-shaft" class="shaft" data-connector="true" d="M751 387 H800"/>
+    <path id="pay-out-target-shaft" class="shaft" data-connector="true" d="M966 387 H1018"/>
+    <path id="pay-out-arrowhead" class="arrow-head" d="M1018 377 L1043 387 L1018 397 Z"/>
+  </g>
+
+  <!-- Buyer and seller silhouettes. -->
+  <g id="buyer">
+    <text class="actor-label" x="144" y="116">Buyer</text>
+    <circle cx="144" cy="159" r="20" fill="#000"/>
+    <path d="M104 210 C104 198.5 122 189 144 189 C166 189 184 198.5 184 210 V219 H104 Z" fill="#000"/>
+    <path id="buyer-card-association" class="association" data-connector="true" d="M144 219 V331"/>
+  </g>
+
+  <g id="seller">
+    <text class="actor-label" x="1149" y="116">Seller</text>
+    <circle cx="1149" cy="159" r="20" fill="#000"/>
+    <path d="M1109 210 C1109 198.5 1127 189 1149 189 C1171 189 1189 198.5 1189 210 V219 H1109 Z" fill="#000"/>
+    <path id="seller-account-association" class="association" data-connector="true" d="M1149 219 V331"/>
+  </g>
+
+  <!-- E-commerce website and its shopping-cart symbol. -->
+  <g id="ecommerce-website">
+    <text class="actor-label" x="646.5" y="69"><tspan x="646.5">E-commerce</tspan>
+      <tspan x="646.5" dy="47">Website</tspan>
+    </text>
+
+    <g id="add-to-cart-icon" fill="#000">
+      <rect x="646" y="127" width="10" height="40"/>
+      <rect x="631" y="142" width="40" height="10"/>
+      <path d="M596 132 H611 L632 177 H674 L687 142 L697 146 L682 178 C680 183 676 187 670 187 H631 L621 199 C619 202 621 207 626 207 H686 V197 H628 L634 187 H629 C625 187 622 185 620 181 L606 142 H596 Z"/>
+      <circle cx="626" cy="222" r="10"/>
+      <circle cx="676" cy="222" r="10"/>
+    </g>
+    <path id="website-account-association" class="association" data-connector="true" d="M646.5 231 V323"/>
+  </g>
+
+  <!-- Source and destination payment instruments. -->
+  <g id="buyer-credit-card">
+    <rect class="account" x="39" y="337" width="209" height="100"/>
+    <text class="node-label" x="143.5" y="378"><tspan x="143.5">Credit</tspan>
+      <tspan x="143.5" dy="47">Card</tspan>
+    </text>
+  </g>
+
+  <g id="merchant-bank-account">
+    <rect class="account" x="541" y="337" width="210" height="100"/>
+    <text class="node-label" x="646" y="378"><tspan x="646">Bank</tspan>
+      <tspan x="646" dy="47">Account</tspan>
+    </text>
+  </g>
+
+  <g id="seller-bank-account">
+    <rect class="account" x="1044" y="337" width="210" height="100"/>
+    <text class="node-label" x="1149" y="378"><tspan x="1149">Bank</tspan>
+      <tspan x="1149" dy="47">Account</tspan>
+    </text>
+  </g>
+
+  <!-- Labels mask the center of each connector exactly as in the etalon. -->
+  <g id="payment-labels">
+    <text class="flow-label" x="391.5" y="402">Pay-in</text>
+    <text class="flow-label" x="884" y="402">Pay-out</text>
+  </g>
+</svg>

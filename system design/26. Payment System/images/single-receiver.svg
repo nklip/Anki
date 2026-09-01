@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1126" height="1262" viewBox="0 0 1126 1262"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Single-receiver message queue delivery</title>
+  <desc id="desc">The first state shows messages m4 through m1 waiting in one queue shared by Services A and B. The second state shows m1 delivered to Service A and m2 delivered to Service B, leaving m4 and m3 in the queue.</desc>
+
+  <!-- Shared monochrome styling sampled from the PNG etalon. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .outline{fill:#fff;stroke:#000;stroke-width:2.5}
+      .line{fill:none;stroke:#000;stroke-width:2.5}
+      .arrow-head{fill:#000}
+      .service-label{font-size:40px;text-anchor:middle}
+      .message-label{font-size:40px;text-anchor:middle}
+      .caption{font-size:36px;text-anchor:middle;fill:#202124}
+    </style>
+    <!-- A separate triangular head preserves the etalon's precise corner-to-corner arrows. -->
+    <path id="delivery-arrowhead-shape" d="M0 0 L-25 -10.5 L-25 10.5 Z"/>
+  </defs>
+
+  <rect width="1126" height="1262" fill="#fff"/>
+
+  <!-- First state: both services draw from the same four-message queue. -->
+  <g id="queue-before-delivery">
+    <!-- Delivery shafts end beneath their own heads; each tip meets a service-box corner. -->
+    <g id="before-delivery-connectors">
+      <path id="before-to-service-a-shaft" class="line" data-connector="true"
+            d="M588 254 L820 140.5"/>
+      <use id="before-to-service-a-head" class="arrow-head" href="#delivery-arrowhead-shape"
+           transform="translate(842 130) rotate(-26.1)"/>
+      <path id="before-to-service-b-shaft" class="line" data-connector="true"
+            d="M588 329 L820 441.5"/>
+      <use id="before-to-service-b-head" class="arrow-head" href="#delivery-arrowhead-shape"
+           transform="translate(842 452) rotate(25.9)"/>
+    </g>
+
+    <!-- Rounded queue body with a cylindrical receiving end. -->
+    <g id="before-message-queue">
+      <path class="outline"
+            d="M542 214 H121 C92 214 69 247.5 69 288.5 C69 330.5 92 363 121 363 H542 Z"/>
+      <ellipse class="outline" cx="542" cy="288.5" rx="52.5" ry="74.5"/>
+
+      <g id="before-message-m4">
+        <rect class="outline" x="114" y="254" width="56" height="42"/>
+        <path class="line" d="M115 256 L142 273 L169 256"/>
+        <text class="message-label" x="142" y="336">m4</text>
+      </g>
+      <g id="before-message-m3">
+        <rect class="outline" x="213" y="254" width="56" height="42"/>
+        <path class="line" d="M214 256 L241 273 L268 256"/>
+        <text class="message-label" x="241" y="336">m3</text>
+      </g>
+      <g id="before-message-m2">
+        <rect class="outline" x="311" y="254" width="56" height="42"/>
+        <path class="line" d="M312 256 L340 273 L366 256"/>
+        <text class="message-label" x="340" y="336">m2</text>
+      </g>
+      <g id="before-message-m1">
+        <rect class="outline" x="410" y="254" width="56" height="42"/>
+        <path class="line" d="M411 256 L439 273 L465 256"/>
+        <text class="message-label" x="439" y="336">m1</text>
+      </g>
+    </g>
+
+    <!-- Receiver boxes are painted above the arrow tips so the boundaries stay crisp. -->
+    <g id="before-receivers">
+      <rect class="outline" x="842" y="30" width="209" height="100"/>
+      <text class="service-label" x="946.5" y="95">Service A</text>
+      <rect class="outline" x="842" y="452" width="209" height="100"/>
+      <text class="service-label" x="946.5" y="517">Service B</text>
+    </g>
+  </g>
+
+  <!-- Original figure caption separating the two queue states. -->
+  <text id="figure-caption" class="caption" x="563" y="625">Figure 7 Message queue</text>
+
+  <!-- Second state: each consumed message goes to exactly one receiver. -->
+  <g id="queue-during-delivery">
+    <!-- These shafts pass behind the envelope icons, which act as message tokens. -->
+    <g id="during-delivery-connectors">
+      <path id="message-m1-delivery-shaft" class="line" data-connector="true"
+            d="M588 934 L820 820.5"/>
+      <use id="message-m1-delivery-head" class="arrow-head" href="#delivery-arrowhead-shape"
+           transform="translate(842 810) rotate(-26.1)"/>
+      <path id="message-m2-delivery-shaft" class="line" data-connector="true"
+            d="M588 1009 L820 1121.5"/>
+      <use id="message-m2-delivery-head" class="arrow-head" href="#delivery-arrowhead-shape"
+           transform="translate(842 1132) rotate(25.9)"/>
+    </g>
+
+    <!-- Queue after m1 and m2 have left; m4 and m3 remain. -->
+    <g id="during-message-queue">
+      <path class="outline"
+            d="M542 894 H121 C92 894 69 927.5 69 968.5 C69 1010.5 92 1043 121 1043 H542 Z"/>
+      <ellipse class="outline" cx="542" cy="968.5" rx="52.5" ry="74.5"/>
+
+      <g id="during-message-m4">
+        <rect class="outline" x="311" y="934" width="56" height="42"/>
+        <path class="line" d="M312 936 L340 953 L366 936"/>
+        <text class="message-label" x="340" y="1016">m4</text>
+      </g>
+      <g id="during-message-m3">
+        <rect class="outline" x="410" y="934" width="56" height="42"/>
+        <path class="line" d="M411 936 L439 953 L465 936"/>
+        <text class="message-label" x="439" y="1016">m3</text>
+      </g>
+    </g>
+
+    <!-- Delivered message tokens are painted over the shafts to keep the envelope edges readable. -->
+    <g id="delivered-message-m1">
+      <rect class="outline" x="670" y="863" width="56" height="42"/>
+      <path class="line" d="M671 865 L698 882 L725 865"/>
+      <text class="message-label" x="698" y="945">m1</text>
+    </g>
+    <g id="delivered-message-m2">
+      <rect class="outline" x="670" y="1042" width="56" height="42"/>
+      <path class="line" d="M671 1044 L698 1061 L725 1044"/>
+      <text class="message-label" x="698" y="1124">m2</text>
+    </g>
+
+    <!-- Receiver boxes repeat at the same horizontal position in the second state. -->
+    <g id="during-receivers">
+      <rect class="outline" x="842" y="710" width="209" height="100"/>
+      <text class="service-label" x="946.5" y="775">Service A</text>
+      <rect class="outline" x="842" y="1132" width="209" height="100"/>
+      <text class="service-label" x="946.5" y="1197">Service B</text>
+    </g>
+  </g>
+</svg>

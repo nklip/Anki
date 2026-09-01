@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1936" height="1088" viewBox="0 0 1936 1088"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Hosted payment page workflow</title>
+  <desc id="desc">Nine-step hosted payment workflow among a checkout page, a payment service, a payment service provider, a hosted payment page, and a payment completion page.</desc>
+
+  <!-- Shared definitions preserve the monochrome source style and reusable browser windows. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .group{fill:#fff;stroke:#111;stroke-width:2.5}
+      .node{fill:#fff;stroke:#111;stroke-width:2.5}
+      .browser-fill{fill:#f5f4f7}
+      .line{fill:none;stroke:#111;stroke-width:2.5}
+      .heading{font-size:38px;text-anchor:middle}
+      .label{font-size:38px;text-anchor:middle}
+      .node-label{font-size:38px;text-anchor:middle}
+      .step-number{font-size:28px;text-anchor:middle}
+    </style>
+
+    <!-- refX=2 anchors the head just inside its own base, so the head grows forward from the path
+         end and the shaft stops inside the triangle: no stub through the point, no gap at the join.
+         Each shaft is therefore drawn 20 units short of where its tip lands. -->
+    <marker id="arrowhead" markerWidth="22" markerHeight="18"
+            viewBox="0 0 22 18" refX="2" refY="9"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L22 9 L0 18 Z" fill="#111"/>
+    </marker>
+
+    <symbol id="browser-window" viewBox="0 0 149 149">
+      <rect class="browser-fill" x="1.5" y="1.5" width="146" height="146" stroke="#111" stroke-width="2.5"/>
+      <path d="M1.5 29 H147.5" class="line"/>
+      <circle cx="12" cy="15" r="4" fill="#111"/>
+      <circle cx="24" cy="15" r="4" fill="#111"/>
+      <circle cx="36" cy="15" r="4" fill="#111"/>
+      <path d="M48 15 H138" class="line" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+
+  <rect width="1936" height="1088" fill="#fff"/>
+
+  <!-- Major grouping regions. -->
+  <rect id="client-browser-boundary" class="group" x="504" y="43" width="1356" height="361"/>
+  <rect id="payment-system-boundary" class="group" x="113" y="746" width="686" height="229"/>
+
+  <!-- Connectors are split around labels so no shaft crosses text. -->
+  <g id="workflow-connectors">
+    <!-- Step 1: checkout request reaches the payment service. -->
+    <path id="checkout-request-upper-shaft" class="line" data-connector="true" d="M650 358 V525"/>
+    <path id="checkout-request-lower-shaft" class="line" data-connector="true"
+          d="M650 614 V769" marker-end="url(#arrowhead)"/>
+
+    <!-- Step 2: create the PSP payment. -->
+    <path id="create-payment-source-shaft" class="line" data-connector="true" d="M746 819 L925 791"/>
+    <path id="create-payment-target-shaft" class="line" data-connector="true"
+          d="M1244 793 C1316.7 796.6 1384.6 805 1443.3 814.7" marker-end="url(#arrowhead)"/>
+
+    <!-- Step 3: return the payment token to the payment service. -->
+    <path id="return-token-source-shaft" class="line" data-connector="true"
+          d="M1468 861 C1430 868 1400 874 1340 883.5"/>
+    <path id="return-token-target-shaft" class="line" data-connector="true"
+          d="M877 887 C816.2 881.4 787.1 875.8 769.2 870.2" marker-end="url(#arrowhead)"/>
+
+    <!-- Step 4: persist the token in the payment-system database. -->
+    <path id="store-token-source-shaft" class="line" data-connector="true" d="M555 840 H498"/>
+    <path id="store-token-target-shaft" class="line" data-connector="true"
+          d="M353 840 H282" marker-end="url(#arrowhead)"/>
+
+    <!-- Step 5: display the PSP-hosted payment page. -->
+    <path id="display-page-source-shaft" class="line" data-connector="true" d="M687 795 L781 682"/>
+    <path id="display-page-target-shaft" class="line" data-connector="true"
+          d="M971 456 L1027.6 380" marker-end="url(#arrowhead)"/>
+
+    <!-- Step 6: the hosted page starts payment processing at the PSP. -->
+    <path id="start-payment-source-shaft" class="line" data-connector="true" d="M1138 358 C1155 417 1181 483 1209 523"/>
+    <path id="start-payment-target-shaft" class="line" data-connector="true"
+          d="M1279 628 C1322.2 687.7 1381.4 742.3 1445.7 781.8" marker-end="url(#arrowhead)"/>
+
+    <!-- Step 7: the PSP returns its result to the hosted page. -->
+    <path id="payment-result-source-shaft" class="line" data-connector="true" d="M1552 795 C1531 712 1497 637 1456 584"/>
+    <path id="payment-result-target-shaft" class="line" data-connector="true"
+          d="M1371 477 C1320.4 425.5 1265.7 377.2 1212 342.6" marker-end="url(#arrowhead)"/>
+
+    <!-- Step 8: the browser is redirected to the completion page. -->
+    <path id="redirect-source-shaft" class="line" data-connector="true" d="M1191 283 H1248"/>
+    <path id="redirect-target-shaft" class="line" data-connector="true"
+          d="M1530 283 H1556" marker-end="url(#arrowhead)"/>
+
+    <!-- Step 9: the PSP sends a completion webhook back to the payment service. -->
+    <path id="webhook-source-shaft" class="line" data-connector="true" d="M1507 887 C1428 946 1343 983 1265 1003"/>
+    <path id="webhook-target-shaft" class="line" data-connector="true"
+          d="M929 1004 C854.7 979.8 792.4 942.9 748.8 904" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Browser pages. -->
+  <g id="checkout-page">
+    <text class="heading" x="650" y="153"><tspan x="650">Checkout</tspan><tspan x="650" dy="42">Page</tspan></text>
+    <use href="#browser-window" x="576" y="209" width="149" height="149"/>
+  </g>
+
+  <g id="hosted-payment-page">
+    <text class="heading" x="1114" y="153"><tspan x="1114">Hosted Payment</tspan><tspan x="1114" dy="42">Page</tspan></text>
+    <use href="#browser-window" x="1040" y="209" width="149" height="149"/>
+  </g>
+
+  <g id="completion-page">
+    <text class="heading" x="1656" y="153"><tspan x="1656">Payment Completion</tspan><tspan x="1656" dy="42">Page</tspan></text>
+    <use href="#browser-window" x="1582" y="209" width="149" height="149"/>
+  </g>
+
+  <!-- Payment-system nodes and external PSP. -->
+  <g id="token-database">
+    <path class="node" d="M166 804 V868 C166 875 186 880 211 880 C236 880 256 875 256 868 V804 Z"/>
+    <ellipse class="node" cx="211" cy="804" rx="45" ry="10"/>
+  </g>
+
+  <g id="payment-service">
+    <rect class="node" x="555" y="795" width="190" height="91"/>
+    <text class="node-label" x="650" y="834"><tspan x="650">Payment</tspan><tspan x="650" dy="41">Service</tspan></text>
+  </g>
+
+  <g id="payment-service-provider">
+    <rect class="node" x="1468" y="795" width="190" height="91"/>
+    <text class="node-label" x="1563" y="853">PSP</text>
+  </g>
+
+  <!-- Group titles remain above all connector geometry. -->
+  <text id="client-browser-title" class="heading" x="1182" y="79">Client Browser</text>
+  <text id="payment-system-title" class="heading" x="456" y="966">Payment System</text>
+
+  <!-- Numbered workflow annotations. -->
+  <g id="workflow-labels">
+    <g id="step-1">
+      <circle class="node" cx="650" cy="542" r="17"/>
+      <text class="step-number" x="650" y="552">1</text>
+      <text class="label" x="650" y="594">Checkout</text>
+    </g>
+
+    <g id="step-2">
+      <circle class="node" cx="942" cy="787" r="17"/>
+      <text class="step-number" x="942" y="797">2</text>
+      <text class="label" x="1098" y="779"><tspan x="1098">Create payment</tspan><tspan x="1098" dy="42">with nonce</tspan></text>
+    </g>
+
+    <g id="step-3">
+      <circle class="node" cx="899" cy="893" r="17"/>
+      <text class="step-number" x="899" y="903">3</text>
+      <text class="label" x="1120" y="906">Return payment token</text>
+    </g>
+
+    <g id="step-4">
+      <circle class="node" cx="368" cy="840" r="17"/>
+      <text class="step-number" x="368" y="850">4</text>
+      <text class="label" x="438" y="833"><tspan x="438">Store</tspan><tspan x="438" dy="42">token</tspan></text>
+    </g>
+
+    <g id="step-5">
+      <circle class="node" cx="876" cy="447" r="17"/>
+      <text class="step-number" x="876" y="457">5</text>
+      <text class="label" x="876" y="499"><tspan x="876">Display</tspan><tspan x="876" dy="42">PSP’s</tspan><tspan x="876" dy="42">Payment</tspan><tspan x="876" dy="42">page</tspan><tspan x="876" dy="42">with token</tspan></text>
+    </g>
+
+    <g id="step-6">
+      <circle class="node" cx="1153" cy="568" r="17"/>
+      <text class="step-number" x="1153" y="578">6</text>
+      <text class="label" x="1238" y="565"><tspan x="1238">Start</tspan><tspan x="1238" dy="42">payment</tspan></text>
+    </g>
+
+    <g id="step-7">
+      <circle class="node" cx="1509" cy="530" r="17"/>
+      <text class="step-number" x="1509" y="540">7</text>
+      <text class="label" x="1406" y="522"><tspan x="1406">Payment</tspan><tspan x="1406" dy="42">result</tspan></text>
+    </g>
+
+    <g id="step-8">
+      <circle class="node" cx="1267" cy="283" r="17"/>
+      <text class="step-number" x="1267" y="293">8</text>
+      <text class="label" x="1400" y="255"><tspan x="1400">Redirect</tspan><tspan x="1400" dy="42">to completion</tspan><tspan x="1400" dy="42">page</tspan></text>
+    </g>
+
+    <g id="step-9">
+      <circle class="node" cx="947" cy="998" r="17"/>
+      <text class="step-number" x="947" y="1008">9</text>
+      <text class="label" x="1116" y="1012"><tspan x="1116">Webhook with</tspan><tspan x="1116" dy="42">completion result</tspan></text>
+    </g>
+  </g>
+</svg>

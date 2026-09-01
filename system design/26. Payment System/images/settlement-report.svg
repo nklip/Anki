@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1758" height="938" viewBox="0 0 1758 938"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Settlement report and payment reconciliation flow</title>
+  <desc id="desc">A payment event flows through the internal payment service and executor to an external payment service provider and card scheme. The provider returns a settlement file, which is reconciled with internal payment-system records.</desc>
+
+  <!-- Shared diagram, connector, document, and editable brand definitions. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .boundary,.node,.database{fill:#fff;stroke:#111;stroke-width:2.5}
+      .reconciliation{fill:#ffbfff;stroke:#111;stroke-width:2.5}
+      .flow{fill:none;stroke:#111;stroke-width:2.5}
+      .arrow-head{fill:#000}
+      .node-label{font-size:36px;text-anchor:middle}
+      .event-label{font-size:30px;text-anchor:middle}
+      .region-label{font-size:36px}
+      .system-label{font-size:36px;text-anchor:middle}
+      .provider-label{font-size:36px;text-anchor:middle}
+      .settlement-label{font-size:36px}
+      .paypal-word{font-size:34px;font-weight:700;font-style:italic;fill:#003087}
+      .paypal-accent{fill:#009cde}
+      .stripe-word{font-size:64px;font-weight:700;letter-spacing:-3px;fill:#635bff}
+      .adyen-word{font-family:"Arial Black",Arial,Helvetica,sans-serif;font-size:55px;font-weight:900;letter-spacing:-3px;fill:#0abf53}
+      .visa-word{font-family:"Arial Black",Arial,Helvetica,sans-serif;font-size:56px;font-weight:900;font-style:italic;letter-spacing:-3px;fill:#17257f}
+      .mastercard-word{font-family:"Arial Narrow",Arial,Helvetica,sans-serif;font-size:38px;font-weight:700;font-style:italic;letter-spacing:-2.3px;fill:#fff;stroke:#1d2d75;stroke-width:2.2;paint-order:stroke fill}
+    </style>
+
+    <!-- Separate heads keep every target boundary unobscured. -->
+    <path id="flow-arrowhead-shape" d="M0 0 L-20 -8.5 L-20 8.5 Z"/>
+
+    <!-- Folded document used for both internal and PSP settlement reports. -->
+    <symbol id="document-icon" viewBox="0 0 43 52">
+      <path d="M1.25 1.25 H31 L41.75 12 V50.75 H1.25 Z" fill="#fff" stroke="#111" stroke-width="2.5"/>
+      <path d="M31 1.25 V12 H41.75" fill="none" stroke="#111" stroke-width="2.5"/>
+    </symbol>
+  </defs>
+
+  <rect width="1758" height="938" fill="#fff"/>
+
+  <!-- Internal payment-system boundary and the internal/external divider. -->
+  <rect id="payment-system-boundary" class="boundary" x="64" y="249" width="862" height="630"/>
+  <path id="internal-external-divider" class="flow" d="M1016 34 V903" stroke-dasharray="10 8"/>
+
+  <!-- Internal data stores and processing components. -->
+  <g id="internal-components">
+    <g id="incoming-event-store">
+      <path class="database" d="M111 298 V365 C111 371 129 373 152 373 C175 373 193 371 193 365 V298 Z"/>
+      <ellipse class="database" cx="152" cy="298" rx="41" ry="9"/>
+    </g>
+
+    <rect class="node" x="302" y="290" width="173" height="84"/>
+    <rect class="node" x="701" y="290" width="174" height="84"/>
+
+    <rect class="node" x="187" y="485" width="175" height="83"/>
+    <rect class="node" x="419" y="485" width="174" height="83"/>
+
+    <g id="payment-order-store">
+      <path class="database" d="M748 484 V550 C748 556 766 558 789 558 C812 558 830 556 830 550 V484 Z"/>
+      <ellipse class="database" cx="789" cy="484" rx="41" ry="9"/>
+    </g>
+
+    <g id="ledger-store">
+      <path class="database" d="M233 682 V748 C233 754 251 756 274 756 C297 756 315 754 315 748 V682 Z"/>
+      <ellipse class="database" cx="274" cy="682" rx="41" ry="9"/>
+    </g>
+
+    <g id="wallet-store">
+      <path class="database" d="M465 682 V748 C465 754 483 756 506 756 C529 756 547 754 547 748 V682 Z"/>
+      <ellipse class="database" cx="506" cy="682" rx="41" ry="9"/>
+    </g>
+
+    <rect id="reconciliation-node" class="reconciliation" x="663" y="675" width="251" height="82"/>
+  </g>
+
+  <!-- External PSP and card-scheme boundaries. -->
+  <rect id="psp-boundary" class="node" x="1116" y="204" width="227" height="254"/>
+  <rect id="card-scheme-boundary" class="node" x="1433" y="204" width="251" height="254"/>
+
+  <!-- Normal payment-event path through service, executor, PSP, and card scheme. -->
+  <g id="payment-flow-connectors">
+    <path id="payment-event-shaft" class="flow" data-connector="true" d="M388 215 V268"/>
+    <use id="payment-event-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(388 287) rotate(90)"/>
+
+    <path id="service-to-event-store-shaft" class="flow" data-connector="true" d="M302 331 H216"/>
+    <use id="service-to-event-store-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(196 331) rotate(180)"/>
+
+    <path id="service-to-executor-shaft" class="flow" data-connector="true" d="M475 331 H680"/>
+    <use id="service-to-executor-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(699 331)"/>
+
+    <path id="executor-to-psp-shaft" class="flow" data-connector="true" d="M875 331 H1096"/>
+    <use id="executor-to-psp-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(1115 331)"/>
+
+    <path id="psp-to-card-scheme-shaft" class="flow" data-connector="true" d="M1343 331 H1412"/>
+    <use id="psp-to-card-scheme-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(1431 331)"/>
+
+    <path id="executor-to-order-store-shaft" class="flow" data-connector="true" d="M788 377 V454"/>
+    <use id="executor-to-order-store-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(788 473) rotate(90)"/>
+  </g>
+
+  <!-- Internal accounting updates and their persistent stores. -->
+  <g id="accounting-connectors">
+    <path id="service-to-ledger-shaft" class="flow" data-connector="true" d="M360 378 L309 465"/>
+    <use id="service-to-ledger-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(300 482) rotate(119.2)"/>
+
+    <path id="service-to-wallet-shaft" class="flow" data-connector="true" d="M419 378 L470 465"/>
+    <use id="service-to-wallet-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(479 482) rotate(60.8)"/>
+
+    <path id="ledger-to-store-shaft" class="flow" data-connector="true" d="M274 571 V652"/>
+    <use id="ledger-to-store-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(274 671) rotate(90)"/>
+
+    <path id="wallet-to-store-shaft" class="flow" data-connector="true" d="M506 571 V652"/>
+    <use id="wallet-to-store-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(506 671) rotate(90)"/>
+  </g>
+
+  <!-- PSP settlement file travels inward to reconciliation. The document masks the join between the two segments. -->
+  <g id="settlement-file-flow">
+    <path id="psp-to-settlement-file-shaft" class="flow" data-connector="true" d="M1116 429 L1038 500"/>
+    <path id="settlement-file-to-reconciliation-shaft" class="flow" data-connector="true" d="M997 542 L853 660"/>
+    <use id="settlement-file-to-reconciliation-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(838 672) rotate(140.5)"/>
+  </g>
+
+  <!-- Internal report curves from the ledger store to reconciliation; the report document sits over the curve. -->
+  <g id="internal-report-flow">
+    <path id="internal-report-source-shaft" class="flow" data-connector="true"
+          d="M314 749 C345 771 378 785 410 789"/>
+    <path id="internal-report-target-shaft" class="flow" data-connector="true"
+          d="M451 790 C521 794 590 784 645 764"/>
+    <use id="internal-report-head" class="arrow-head" href="#flow-arrowhead-shape"
+         transform="translate(663 755) rotate(-26.6)"/>
+  </g>
+
+  <!-- Documents are above their connector geometry and the dashed divider. -->
+  <use id="settlement-file-document" href="#document-icon" x="996" y="492" width="43" height="52"/>
+  <use id="internal-report-document" href="#document-icon" x="409" y="764" width="43" height="52"/>
+
+  <!-- Editable PayPal, Stripe, and Adyen marks inside the PSP boundary. -->
+  <g id="payment-service-providers" aria-label="Payment service providers: PayPal, Stripe, and Adyen">
+    <g id="paypal-logo" aria-label="PayPal">
+      <g transform="translate(663.5 188.7) scale(0.9)">
+        <path fill="#009cde"
+              d="M555 55 H578 C596 55 603 67 598 82 C593 97 581 102 566 102 H562 L558 110 H548 Z
+                 M565 67 L562 89 H570 C578 89 584 86 586 78 C588 71 584 67 576 67 Z"/>
+        <path fill="#003087"
+              d="M546 37 H573 C591 37 600 49 596 65 C592 82 580 89 561 89 H556 L552 109 H535 Z
+                 M559 51 L555 76 H565 C576 76 581 72 583 64 C585 56 580 51 571 51 Z"/>
+        <path fill="#001c64" opacity="0.72"
+              d="M558 55 H578 C589 55 596 61 597 70 C591 82 579 89 561 89 H556 L561 59 C561 57 560 56 558 55 Z"/>
+      </g>
+      <text class="paypal-word" x="1207" y="268">Pay<tspan class="paypal-accent">Pal</tspan></text>
+    </g>
+
+    <text id="stripe-logo" class="stripe-word" x="1230" y="359" text-anchor="middle">stripe</text>
+    <text id="adyen-logo" class="adyen-word" x="1230" y="437" text-anchor="middle">adyen</text>
+  </g>
+
+  <!-- Editable Visa and Mastercard marks inside the card-scheme boundary. -->
+  <g id="card-schemes" aria-label="Card schemes: Visa and Mastercard">
+    <text id="visa-logo" class="visa-word" x="1558.5" y="286" text-anchor="middle">VISA</text>
+    <g id="mastercard-logo" aria-label="Mastercard">
+      <circle cx="1522" cy="384" r="57" fill="#ea001b"/>
+      <circle cx="1596" cy="384" r="57" fill="#ff9900"/>
+      <path d="M1544 345 H1572 L1578 353 H1538 Z M1534 360 H1582 V368 H1534 Z M1531 376 H1585 V384 H1531 Z
+               M1534 400 H1582 V408 H1534 Z M1538 416 H1578 L1572 424 H1544 Z"
+            fill="#e32613"/>
+      <text class="mastercard-word" x="1559" y="404" text-anchor="middle">MasterCard</text>
+    </g>
+  </g>
+
+  <!-- Labels are painted last so no connector can cross their glyphs. -->
+  <g id="diagram-labels">
+    <circle cx="388" cy="86" r="17" fill="#000"/>
+    <path d="M356 128 C356 116 371 110 388 110 C405 110 421 116 421 128 V136 H356 Z" fill="#000"/>
+    <path class="flow" d="M388 136 V160"/>
+    <text class="event-label" x="388" y="198">Payment event</text>
+
+    <text class="node-label" x="388.5" y="324"><tspan x="388.5">Payment</tspan><tspan x="388.5" dy="39">Service</tspan></text>
+    <text class="node-label" x="788" y="324"><tspan x="788">Payment</tspan><tspan x="788" dy="39">Executor</tspan></text>
+    <text class="node-label" x="274.5" y="538">Ledger</text>
+    <text class="node-label" x="506" y="538">Wallet</text>
+    <text class="node-label" x="788.5" y="727">Reconciliation</text>
+
+    <text class="provider-label" x="1229.5" y="150">
+      <tspan x="1229.5">Payment Service</tspan>
+      <tspan x="1229.5" dy="42">Providers (PSP)</tspan>
+    </text>
+    <text class="provider-label" x="1558.5" y="196">Card Schemes</text>
+
+    <text class="region-label" x="1004" y="91" text-anchor="end">Internal</text>
+    <text class="region-label" x="1031" y="91">External</text>
+    <text class="settlement-label" x="1047" y="530">Settlement file</text>
+    <text class="system-label" x="526" y="854">Payment System</text>
+  </g>
+</svg>

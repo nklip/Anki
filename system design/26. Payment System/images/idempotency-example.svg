@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1348" height="930" viewBox="0 0 1348 930"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Payment request idempotency example</title>
+  <desc id="desc">A client first submits a payment request with an idempotency key and receives a successful response. On retry, the same key lets the payment system return the previous response without processing the request again.</desc>
+
+  <!-- Shared monochrome styling sampled from the PNG etalon. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .panel{fill:none;stroke:#000;stroke-width:2.5;stroke-dasharray:11 7}
+      .node{fill:#fff;stroke:#000;stroke-width:2.5}
+      .flow{fill:none;stroke:#000;stroke-width:2.5}
+      .arrow-head{fill:#000}
+      .main-label{font-size:36px;text-anchor:middle}
+      .node-label{font-size:36px;text-anchor:middle}
+      .side-label{font-size:36px;text-anchor:middle}
+      .note{font-size:28px;text-anchor:middle}
+    </style>
+    <!-- Curved response arrows use one auto-oriented, mathematically symmetric head. -->
+    <marker id="response-arrowhead" markerWidth="10" markerHeight="6"
+            viewBox="0 0 10 6" refX="10" refY="3"
+            orient="auto" markerUnits="strokeWidth">
+      <path d="M0 0 L10 3 L0 6 Z" fill="#000"/>
+    </marker>
+  </defs>
+
+  <rect width="1348" height="930" fill="#fff"/>
+
+  <!-- First attempt: the payment is processed and its response is cached by key. -->
+  <g id="first-attempt">
+    <rect id="first-attempt-boundary" class="panel" x="51" y="37" width="1249" height="344"/>
+
+    <g id="first-client">
+      <rect class="node" x="101" y="164" width="187" height="89"/>
+      <text class="node-label" x="194.5" y="223">Client</text>
+      <!-- The lower baseline leaves a clear lane between the caption and response arrow. -->
+      <text class="side-label" x="194.5" y="306">First request</text>
+    </g>
+
+    <g id="first-payment-system">
+      <rect class="node" x="1056" y="164" width="187" height="89"/>
+      <text class="node-label" x="1149.5" y="201"><tspan x="1149.5">Payment</tspan><tspan x="1149.5" dy="39">System</tspan></text>
+    </g>
+
+    <!-- Request line is split around its label, matching the etalon's clear text lane. -->
+    <g id="first-request-connector">
+      <path id="first-request-source-shaft" class="flow" data-connector="true" d="M288 164 C345 143 401 124 456 113"/>
+      <path id="first-request-target-shaft" class="flow" data-connector="true" d="M861 113 C925 128 986 146 1036 158"/>
+      <path id="first-request-arrowhead" class="arrow-head" d="M1056 165 L1033 164 L1039 151 Z"/>
+      <text class="main-label" x="674" y="101">POST {idempotency-key: UUID}</text>
+    </g>
+
+    <!-- Response arcs back to the client and stops at its boundary. -->
+    <g id="first-response-connector">
+      <path id="first-response-source-shaft" class="flow" data-connector="true" d="M1056 252 C975 280 900 300 820 310"/>
+      <!-- The marker rotates around the curve's final tangent and meets the client only at its tip. -->
+      <path id="first-response-target-shaft" class="flow" data-connector="true"
+            d="M496 310 C418 300 351 280 288 253"
+            marker-end="url(#response-arrowhead)"/>
+      <text class="main-label" x="658" y="335">Charge succeeded</text>
+    </g>
+  </g>
+
+  <!-- The outlined downward arrow denotes the retry transition. -->
+  <g id="retry-transition">
+    <path d="M613 389 H739 V453 H802 L676 478 L550 453 H613 Z"
+          fill="#fff" stroke="#000" stroke-width="2.5" stroke-linejoin="miter"/>
+    <text class="main-label" x="676" y="439">Retry</text>
+  </g>
+
+  <!-- Retry: the duplicate request is recognized and the stored response is returned. -->
+  <g id="retry-attempt">
+    <rect id="retry-attempt-boundary" class="panel" x="51" y="487" width="1249" height="416"/>
+
+    <g id="retry-client">
+      <rect class="node" x="101" y="613" width="187" height="89"/>
+      <text class="node-label" x="194.5" y="672">Client</text>
+      <text class="side-label" x="194.5" y="738">Retry</text>
+    </g>
+
+    <g id="retry-payment-system">
+      <rect class="node" x="1056" y="613" width="187" height="89"/>
+      <text class="node-label" x="1149.5" y="650"><tspan x="1149.5">Payment</tspan><tspan x="1149.5" dy="39">System</tspan></text>
+      <text class="note" x="1149.5" y="730"><tspan x="1149.5">Server has</tspan><tspan x="1149.5" dy="32">already seen the</tspan><tspan x="1149.5" dy="32">idempotency key.</tspan><tspan x="1149.5" dy="32">Do not process</tspan><tspan x="1149.5" dy="32">the request again</tspan></text>
+    </g>
+
+    <g id="retry-request-connector">
+      <path id="retry-request-source-shaft" class="flow" data-connector="true" d="M288 613 C345 592 401 573 456 562"/>
+      <path id="retry-request-target-shaft" class="flow" data-connector="true" d="M861 562 C925 577 986 595 1036 607"/>
+      <path id="retry-request-arrowhead" class="arrow-head" d="M1056 614 L1033 613 L1039 600 Z"/>
+      <text class="main-label" x="674" y="550">POST {idempotency-key: UUID}</text>
+    </g>
+
+    <g id="retry-response-connector">
+      <path id="retry-response-source-shaft" class="flow" data-connector="true" d="M1056 701 C995 721 935 739 871 749"/>
+      <path id="retry-response-target-shaft" class="flow" data-connector="true"
+            d="M443 749 C391 738 346 723 288 702"
+            marker-end="url(#response-arrowhead)"/>
+      <text class="main-label" x="657" y="785">Return previous message</text>
+    </g>
+  </g>
+</svg>

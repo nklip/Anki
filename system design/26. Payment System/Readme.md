@@ -45,32 +45,33 @@ This is not high throughput for any database system, so it's not the focus of th
 At a high level, we have three actors participating in money movement:
 
 <div style="margin-left:3rem">
-    <img src="./images/high-level-flow.png" alt="high-level-flow" width="500" />
+    <img src="./images/high-level-flow.svg" alt="high-level-flow" width="500" />
 </div>
 
 ### **Pay-in flow**
 Here's the high-level overview of the pay-in flow:
 
 <div style="margin-left:3rem">
-    <img src="./images/payin-flow-high-level.png" alt="pay-in-flow-high-level" width="500" />
+    <img src="./images/payin-flow-high-level.svg" alt="pay-in-flow-high-level" width="500" />
 </div>
 
- * Payment service - accepts payment events and coordinates the payment process. It typically also performs a risk check using a third-party provider for AML violations or criminal activity.
- * Payment executor - executes a single payment order via the Payment Service Provider (PSP). Payment events may contain several payment orders.
- * Payment service provider (PSP) - moves money from one account to another, e.g., from a buyer's credit card account to an e-commerce site's bank account.
- * Card schemes - organizations that process credit card operations, e.g., Visa and Mastercard.
- * Ledger - keeps financial record of all payment transactions.
- * Wallet - keeps the account balance for all merchants.
+ * **Payment service** - accepts payment events and coordinates the payment process. It typically also performs a risk check using a third-party provider for AML violations or criminal activity.
+ * **Payment executor** - executes a single payment order via the Payment Service Provider (PSP). Payment events may contain several payment orders.
+ * **Payment service provider (PSP)** - moves money from one account to another, e.g., from a buyer's credit card account to an e-commerce site's bank account.
+ * **Card schemes** - organizations that process credit card operations, e.g., Visa and Mastercard.
+ * **Ledger** - keeps financial record of all payment transactions.
+ * **Wallet** - keeps the account balance for all merchants.
 
 Here's an example pay-in flow:
- * The user clicks "place order," and a payment event is sent to the payment service.
- * The payment service stores the event in its database.
- * The payment service calls the payment executor for all payment orders that are part of that payment event.
- * The payment executor stores the payment order in its database.
- * The payment executor calls an external PSP to process the credit card payment.
- * After the payment executor processes the payment, the payment service updates the wallet to record how much money the seller has.
- * The wallet service stores updated balance information in its database.
- * The payment service calls the ledger to record all money movements.
+ 1. The user clicks "place order," and a payment event is sent to the payment service.
+ 2. The payment service stores the event in its database.
+ 3. The payment service calls the payment executor for all payment orders that are part of that payment event.
+ 4. The payment executor stores the payment order in its database.
+ 5. The payment executor calls an external PSP to process the credit card payment.
+ 6. After the payment executor processes the payment, the payment service updates the wallet to record how much money the seller has.
+ 7. The wallet service stores updated balance information in its database.
+ 8. The payment service calls the ledger
+ 9. The ledger service stores the record of all money movements.
 
 ### **APIs for payment service**
 ```http
@@ -151,7 +152,7 @@ Sum of all transaction entries is always zero. This mechanism provides end-to-en
 To avoid storing credit card information and having to comply with various heavy regulations, most companies prefer utilizing a widget provided by PSPs that stores and handles credit card payments for them:
 
 <div style="margin-left:3rem">
-    <img src="./images/hosted-payment-page.png" alt="hosted-payment-page" width="500" />
+    <img src="./images/hosted-payment-page.svg" alt="hosted-payment-page" width="500" />
 </div>
 
 ### **Pay-out flow**
@@ -178,19 +179,19 @@ If we go down the traditional route, a PSP can be integrated in one of two ways:
 Here's how the hosted payment page workflow works:
 
 <div style="margin-left:3rem">
-    <img src="./images/hosted-payment-page-workflow.png" alt="hosted-payment-page-workflow" width="500" />
+    <img src="./images/hosted-payment-page-workflow.svg" alt="hosted-payment-page-workflow" width="500" />
 </div>
 
- * User clicks "checkout" button in the browser
- * Client calls the payment service with the payment order information
- * After receiving payment order information, the payment service sends a payment registration request to the PSP.
- * The PSP receives payment info such as currency, amount, expiration, etc, as well as a UUID for idempotency purposes. Typically the UUID of the payment order.
- * The PSP returns a token that uniquely identifies the payment registration. The token is stored in the payment service database.
- * Once the token is stored, the user is served a PSP-hosted payment page. It is initialized using the token as well as a redirect URL for success/failure.
- * User fills in payment details on the PSP page, PSP processes payment and returns the payment status
- * The user is now redirected back to the redirect URL. Example redirect URL - `https://your-company.com/?tokenID=JIOUIQ123NSF&payResult=X324FSa`.
- * Asynchronously, the PSP calls our payment service via a webhook to inform our backend of the payment result
- * Payment service records the payment result based on the webhook received
+ 1. User clicks "checkout" button in the browser
+ 2. Client calls the payment service with the payment order information
+ 3. After receiving payment order information, the payment service sends a payment registration request to the PSP.
+ 4. The PSP receives payment info such as currency, amount, expiration, etc, as well as a UUID for idempotency purposes. Typically the UUID of the payment order.
+ 5. The PSP returns a token that uniquely identifies the payment registration. The token is stored in the payment service database.
+ 6. Once the token is stored, the user is served a PSP-hosted payment page. It is initialized using the token as well as a redirect URL for success/failure.
+ 7. User fills in payment details on the PSP page, PSP processes payment and returns the payment status
+ 8. The user is now redirected back to the redirect URL. Example redirect URL - `https://your-company.com/?tokenID=JIOUIQ123NSF&payResult=X324FSa`.
+ 9. Asynchronously, the PSP calls our payment service via a webhook to inform our backend of the payment result
+ 10. Payment service records the payment result based on the webhook received
 
 ### **Reconciliation**
 The previous section explains the happy path of a payment. Unhappy paths are detected and reconciled using a background reconciliation process.
@@ -198,7 +199,7 @@ The previous section explains the happy path of a payment. Unhappy paths are det
 Every night, the PSP sends a settlement file which our system uses to compare the external system's state against our internal system's state.
 
 <div style="margin-left:3rem">
-    <img src="./images/settlement-report.png" alt="settlement-report" width="500" />
+    <img src="./images/settlement-report.svg" alt="settlement-report" width="500" />
 </div>
 
 This process can also be used to detect internal inconsistencies, for example, between the ledger and wallet services.
@@ -230,16 +231,16 @@ Synchronous communication (i.e., HTTP) works well for small-scale systems, but s
 
 Asynchronous communication can be divided into two categories.
 
-Single receiver - multiple receivers subscribe to the same topic and messages are processed only once:
+**Single receiver** - multiple receivers subscribe to the same topic and messages are processed only once:
 
 <div style="margin-left:3rem">
-    <img src="./images/single-receiver.png" alt="single-receiver" width="500" />
+    <img src="./images/single-receiver.svg" alt="single-receiver" width="500" />
 </div>
 
-Multiple receivers - multiple receivers subscribe to the same topic, but messages are forwarded to all of them:
+**Multiple receivers** - multiple receivers subscribe to the same topic, but messages are forwarded to all of them:
 
 <div style="margin-left:3rem">
-    <img src="./images/multiple-receiver.png" alt="multiple-receiver" width="500" />
+    <img src="./images/multiple-receiver.svg" alt="multiple-receiver" width="500" />
 </div>
 
 The latter model works well for our payment system, as a payment can trigger multiple side effects handled by different services.
@@ -254,7 +255,7 @@ Every payment system needs to address failed payments. Here are some of the mech
  * Dead-letter queue - payments which have terminally failed are pushed to a dead-letter queue, where the failed payment can be debugged and inspected.
 
 <div style="margin-left:3rem">
-    <img src="./images/failed-payments.png" alt="failed-payments" width="500" />
+    <img src="./images/failed-payments.svg" alt="failed-payments" width="500" />
 </div>
 
 ### **Exactly-once delivery**
@@ -265,7 +266,7 @@ An operation is executed exactly once if it is executed at least once and at mos
 To achieve the at-least-once guarantee, we'll use a retry mechanism:
 
 <div style="margin-left:3rem">
-    <img src="./images/retry-mechanism.png" alt="retry-mechanism" width="500" />
+    <img src="./images/retry-mechanism.svg" alt="retry-mechanism" width="500" />
 </div>
 
 Here are some common strategies for deciding the retry intervals:
@@ -287,7 +288,7 @@ From an API perspective, clients can make multiple calls which produce the same 
 Idempotency is managed by a special header in the request (e.g., `idempotency-key`), which is typically a UUID.
 
 <div style="margin-left:3rem">
-    <img src="./images/idempotency-example.png" alt="idempotency-example" width="500" />
+    <img src="./images/idempotency-example.svg" alt="idempotency-example" width="500" />
 </div>
 
 Idempotency can be achieved using the database's mechanism of adding unique key constraints:

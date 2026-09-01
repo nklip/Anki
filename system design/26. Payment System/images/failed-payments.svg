@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1956" height="846" viewBox="0 0 1956 846"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Handling failed payments</title>
+  <desc id="desc">An initial payment failure is tested for retryability. Retryable failures enter a retry queue and are sent back to the payment system. A later failure loops back to retry when retryable or enters a dead-letter queue when it is not. Non-retryable initial failures are stored in the database.</desc>
+
+  <!-- Shared monochrome styles follow the PNG etalon. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .outline{fill:#fff;stroke:#111;stroke-width:2.2}
+      .shaft{fill:none;stroke:#111;stroke-width:2.2;stroke-linejoin:miter}
+      .arrow-head{fill:#111}
+      .label{font-size:34px}
+      .center-label{font-size:34px;text-anchor:middle}
+      .node-label{font-size:34px;text-anchor:middle}
+      .step-label{font-size:29px;text-anchor:middle}
+    </style>
+  </defs>
+
+  <rect width="1956" height="846" fill="#fff"/>
+
+  <!-- Initial-failure connectors are drawn below nodes and numbered step circles. -->
+  <g id="initial-failure-connectors">
+    <path id="failure-to-decision-shaft" class="shaft" data-connector="true" d="M167 476.5 H288"/>
+    <path id="failure-to-decision-head" class="arrow-head" d="M310 476.5 L288 466.5 L288 486.5 Z"/>
+
+    <path id="initial-retry-yes-shaft" class="shaft" data-connector="true"
+          d="M372.5 414 V364 M372.5 318 V258.5 H500"/>
+    <path id="initial-retry-yes-head" class="arrow-head" d="M522 258.5 L500 248.5 L500 268.5 Z"/>
+
+    <path id="initial-retry-no-shaft" class="shaft" data-connector="true"
+          d="M372.5 539 V590 M372.5 636 V699.5 H549"/>
+    <path id="initial-retry-no-head" class="arrow-head" d="M571 699.5 L549 689.5 L549 709.5 Z"/>
+  </g>
+
+  <!-- Retry processing and the second retryability decision. -->
+  <g id="retry-processing-connectors">
+    <path id="queue-to-payment-shaft" class="shaft" data-connector="true"
+          d="M827 258.5 H873 M919 258.5 H955"/>
+    <path id="queue-to-payment-head" class="arrow-head" d="M978 258.5 L955 248.5 L955 268.5 Z"/>
+
+    <path id="payment-to-failure-shaft" class="shaft" data-connector="true" d="M1154 258.5 H1305"/>
+    <path id="payment-to-failure-head" class="arrow-head" d="M1328 258.5 L1305 248.5 L1305 268.5 Z"/>
+
+    <path id="failure-to-second-decision-shaft" class="shaft" data-connector="true" d="M1452 258.5 H1605"/>
+    <path id="failure-to-second-decision-head" class="arrow-head" d="M1628 258.5 L1605 248.5 L1605 268.5 Z"/>
+
+    <path id="second-retry-yes-shaft" class="shaft" data-connector="true"
+          d="M1689 197 V146 M1689 100 V43 H675 V196"/>
+    <path id="second-retry-yes-head" class="arrow-head" d="M675 218 L665 196 L685 196 Z"/>
+
+    <path id="second-retry-no-shaft" class="shaft" data-connector="true"
+          d="M1689 321 V360 M1689 406 V444"/>
+    <path id="second-retry-no-head" class="arrow-head" d="M1689 467 L1679 444 L1699 444 Z"/>
+  </g>
+
+  <!-- Initial failure and first retryability decision. -->
+  <g id="initial-failure-node">
+    <circle class="outline" cx="104.5" cy="476.5" r="62.5"/>
+    <text class="node-label" x="104.5" y="573">Failure</text>
+  </g>
+
+  <g id="initial-retry-decision">
+    <path class="outline" d="M372.5 414 L435 476.5 L372.5 539 L310 476.5 Z"/>
+    <text class="center-label" x="372.5" y="489">?</text>
+    <text class="label" x="441" y="490">Retryable?</text>
+  </g>
+
+  <!-- Retry queue, payment system, and the retried failure. -->
+  <g id="retry-queue">
+    <path class="outline"
+          d="M553.5 218.5 H796
+             C778.5 218.5 765 236.5 765 258.5
+             C765 280.5 778.5 299 796 299
+             H553.5 C536 299 522 281 522 258.5 C522 236 536 218.5 553.5 218.5 Z"/>
+    <ellipse class="outline" cx="796" cy="258.75" rx="31" ry="40.25"/>
+    <text class="node-label" x="674.5" y="331">Retry Queue</text>
+  </g>
+
+  <g id="payment-system">
+    <rect class="outline" x="978" y="217" width="176" height="84"/>
+    <text class="node-label" x="1066" y="252">
+      <tspan x="1066">Payment</tspan>
+      <tspan x="1066" dy="39">System</tspan>
+    </text>
+  </g>
+
+  <g id="retried-failure-node">
+    <circle class="outline" cx="1390" cy="258.5" r="62.5"/>
+    <text class="node-label" x="1390" y="356">Failure</text>
+  </g>
+
+  <g id="second-retry-decision">
+    <path class="outline" d="M1689 196.5 L1751.5 259 L1689 321.5 L1626.5 259 Z"/>
+    <text class="label" x="1754" y="271">Retryable?</text>
+  </g>
+
+  <!-- Non-retryable destinations: the operational database and dead-letter queue. -->
+  <g id="database-node">
+    <path class="outline"
+          d="M571 643 V755.5
+             C571 764 603.5 771 644 771
+             C684.5 771 716.5 764 716.5 755.5 V643 Z"/>
+    <ellipse class="outline" cx="643.75" cy="643" rx="72.75" ry="15.5"/>
+    <text class="node-label" x="643.75" y="805">Database</text>
+  </g>
+
+  <g id="dead-letter-queue">
+    <path class="outline"
+          d="M1604 467.5 H1792
+             C1778.5 467.5 1768 485 1768 507
+             C1768 529 1778.5 547 1792 547
+             H1604 C1586.5 547 1572 529 1572 507.25 C1572 485.5 1586.5 467.5 1604 467.5 Z"/>
+    <ellipse class="outline" cx="1792" cy="507.25" rx="25" ry="39.75"/>
+    <text class="node-label" x="1689.5" y="581">Dead Letter Queue</text>
+  </g>
+
+  <!-- Numbered branch annotations mask the shaft beneath each circle, matching the etalon. -->
+  <g id="step-markers">
+    <g id="step-1a">
+      <circle class="outline" cx="372.5" cy="341" r="23"/>
+      <text class="step-label" x="372.5" y="352">1a</text>
+      <text class="label" x="403" y="353">Yes</text>
+    </g>
+    <g id="step-1b">
+      <circle class="outline" cx="372.5" cy="613" r="23"/>
+      <text class="step-label" x="372.5" y="624">1b</text>
+      <text class="label" x="403" y="625">No</text>
+    </g>
+    <g id="step-2">
+      <circle class="outline" cx="896" cy="258.5" r="23"/>
+      <text class="step-label" x="896" y="269">2</text>
+    </g>
+    <g id="step-3a">
+      <circle class="outline" cx="1689" cy="123" r="23"/>
+      <text class="step-label" x="1689" y="134">3a</text>
+      <text class="label" x="1719" y="135">Yes</text>
+    </g>
+    <g id="step-3b">
+      <circle class="outline" cx="1689" cy="383" r="23"/>
+      <text class="step-label" x="1689" y="394">3b</text>
+      <text class="label" x="1719" y="395">No</text>
+    </g>
+  </g>
+</svg>
