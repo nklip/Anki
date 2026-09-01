@@ -281,7 +281,7 @@ For our wallet service, the commands are balance transfer requests. We can put t
 Here's the full picture:
 
 <div style="margin-left:3rem">
-    <img src="./images/wallet-service-state-macghine.svg" alt="wallet-service-state-machine" width="500" />
+    <img src="./images/wallet-service-state-machine.svg" alt="wallet-service-state-machine" width="500" />
 </div>
 
  * The state machine reads commands from the command queue.
