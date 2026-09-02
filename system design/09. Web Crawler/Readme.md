@@ -4,6 +4,11 @@
 ## Introduction
 A **web crawler**, also known as a spider or robot, is used to discover and collect web content, such as web pages, images, and videos. This chapter focuses on designing a scalable web crawler for **search engine indexing**.
 
+Visual example of the crawl process:
+<p align="center">
+<img src="./images/visual-process.svg" alt="visial example of the crawl process" width="700">
+</p>
+
 ### Applications of Web Crawlers
 1. **Search Engine Indexing:** Collect web pages to create searchable indexes (e.g., Googlebot).
 2. **Web Archiving:** Preserve web data for future use (e.g., US Library of Congress).
@@ -20,6 +25,21 @@ A good web crawler must address:
 ---
 
 ## Step 1: Understanding the Problem
+
+Here's a set of potential questions between Candidate and Interviewer:
+
+* C: What is the main purpose of the crawler? Is it used for search engine indexing, data mining, or something else?
+* I: Search engine indexing.
+* C: How many web pages does the web crawler collect per month?
+* I: 1 billion pages.
+* C: What content types are included? HTML only or other content types such as PDFs and images as well?
+* I: HTML only.
+* C: Shall we consider newly added or edited web pages?
+* I: Yes, we should consider the newly added or edited web pages.
+* C: Do we need to store HTML pages crawled from the web?
+* I: Yes, up to 5 years
+* C: How do we handle web pages with duplicate content?
+* I: Pages with duplicate content should be ignored.
 
 ### Requirements
 1. Crawl **1 billion web pages per month** (400 pages/second, peak 800 QPS).
@@ -61,19 +81,31 @@ A good web crawler must address:
 9. **URL Filter:** Excludes blacklisted or erroneous URLs.
 
 10. **URL Seen?** Tracks visited URLs to avoid duplication.
+    - Bloom filter and hash table are common techniques to implement the “URL Seen?” component.
 
 11. **URL Storage:** Stores already visited URLs.
-
 
 ---
 
 ### Workflow
-1. Add **Seed URLs** to the URL Frontier.
-2. **HTML Downloader** fetches URLs and resolves their IPs via the DNS Resolver.
-3. **Content Parser** validates and passes content to the "Content Seen?" component.
-4. If the content is new, extract links via the **URL Extractor**.
-5. Filter and add unique links to the URL Frontier.
 
+<p align="center">
+<img src="./images/web-crawler-workflow.svg" alt="Web Crawler Workflow" width="700">
+</p>
+
+1. Add **Seed URLs** to the **URL Frontier**
+2. **HTML Downloader** fetches a list of URLs from **URL Frontier**.
+3. **HTML Downloader** gets IP addresses of URLs from **DNS resolver** and starts downloading.
+4. **Content Parser** parses HTML pages and checks if pages are malformed.
+5. After content is parsed and validated, it is passed to the **Content Seen?** component.
+6. **Content Seen?** component checks if a HTML page is already in the storage.
+    - If it is in the storage, this means the same content in a different URL has already been processed. In this case, the HTML page is discarded.
+    - If it is not in the storage, the system has not processed the same content before. The content is passed to **Link Extractor**.
+7. **Link extractor** extracts links from HTML pages.
+8. Extracted links are passed to the **URL filter**. 
+9. After links are filtered, they are passed to the **URL Seen?** component.
+10. **URL Seen** component checks if a URL is already in the storage, if yes, it is processed before, and nothing needs to be done.
+11. If a URL has not been processed before, it is added to the URL Frontier.
 
 ---
 
@@ -100,7 +132,7 @@ A good web crawler must address:
 - **Priority:**
     - Assign higher priority to important pages (e.g., by PageRank or update frequency).
 
-        <img src="./images/prioritizer.svg" alt="Politeness" width="500">
+        <img src="./images/prioritizer.svg" alt="Prioritizer" width="500">
 
     - **Prioritizer:** It takes URLs as input and computes the priorities.
     - **Queue f1 to fn:** Each queue has an assigned priority. Queues with high priority are selected with higher probability.
@@ -128,7 +160,7 @@ A good web crawler must address:
 - Add modules for new content types (e.g., PNG downloader, web monitor).
 - Example: Plug in a module to monitor web content for copyright violations.
 
-    <img src="./images/extensibility.svg" alt="Politeness" width="600">
+    <img src="./images/extensibility.svg" alt="Extensibility" width="600">
 ---
 
 ### Avoiding Problematic Content

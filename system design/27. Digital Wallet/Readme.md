@@ -112,7 +112,11 @@ Downsides to the 2PC approach:
  * Not performant due to lock contention
  * The coordinator is a single point of failure
 
-### **Distributed transaction using Try-Confirm/Cancel (TC/C)**
+<div style="margin-left:3rem">
+    <img src="./images/coordinator-crashes.svg" alt="coordinator-crashes" width="500" />
+</div>
+
+### **Distributed transaction: Try-Confirm/Cancel (TC/C)**
 TC/C is a variation of the 2PC protocol, which works with compensating transactions:
  * The coordinator asks all databases to reserve resources for the transaction.
  * The coordinator collects replies from DBs - if yes, DBs are asked to try-confirm. If no, DBs are asked to try-cancel.
@@ -127,28 +131,28 @@ Here's how TC/C works in phases:
 | 2     | Confirm   | Do nothing          | Balance change: +$1 |
 |       | Cancel    | Balance change: +$1 | Do Nothing          |
 
-#### **Phase 1 - try:**
+#### **Phase 1 - Try:**
 
 <div style="margin-left:3rem">
-    <img src="./images/try-phase.svg" alt="try-phase" width="500" />
+    <img src="./images/tcc-try-phase.svg" alt="try-phase" width="500" />
 </div>
 
  * The coordinator starts a local transaction in A's DB to reduce A's balance by $1.
  * C's DB is given a NOP instruction, which does nothing.
 
-#### **Phase 2a - confirm:**
+#### **Phase 2a - Confirm:**
 
 <div style="margin-left:3rem">
-    <img src="./images/confirm-phase.svg" alt="confirm-phase" width="500" />
+    <img src="./images/tcc-confirm-phase.svg" alt="confirm-phase" width="500" />
 </div>
 
  * If both DBs replied with "yes," the confirm phase starts.
  * A's DB receives NOP, whereas C's DB is instructed to increase C's balance by $1 (a local transaction).
 
-#### **Phase 2b - cancel:**
+#### **Phase 2b - Cancel:**
 
 <div style="margin-left:3rem">
-    <img src="./images/cancel-phase.svg" alt="cancel-phase" width="500" />
+    <img src="./images/tcc-cancel-phase.svg" alt="cancel-phase" width="500" />
 </div>
 
  * If any of the operations in phase 1 fails, the cancel phase starts.
@@ -208,13 +212,13 @@ One edge case to address is out-of-order execution:
 It is possible that a database receives a cancel operation before receiving a try. This edge case can be handled by adding an out-of-order flag to our phase-status table.
 When we receive a try operation, we first check whether the out-of-order flag is set; if so, a failure is returned.
 
-### **Distributed transaction using Saga**
+### **Distributed transaction: Saga**
 Another popular approach is using Saga - a standard for implementing distributed transactions with microservice architectures.
 
 Here's how it works:
- * All operations are ordered in a sequence. All operations are independent in their own databases.
- * Operations are executed from first to last.
- * When an operation fails, the entire process starts to roll back to the beginning with compensating operations.
+1. All operations are ordered in a sequence. Each operation is an independent transaction on its own database.
+2. Operations are executed from the first to the last. When one operation has finished, the next operation is triggered.
+3. When an operation has failed, the entire process starts to roll back from the current operation to the first operation in reverse order, using compensating transactions. So if a distributed transaction has operations, we need to prepare operations: for the normal case and another for the compensating transaction during rollback.
 
 <div style="margin-left:3rem">
     <img src="./images/saga.svg" alt="saga" width="500" />
@@ -227,7 +231,7 @@ How do we coordinate the workflow? There are two approaches we can take:
 The challenge of using choreography is that business logic is split across multiple services, which communicate asynchronously.
 The orchestration approach handles complexity well, so it is typically the preferred approach in a digital wallet system.
 
-Here's a comparison between TC/C and Saga:
+#### Here's a comparison between TC/C and Saga:
 
 |                                           | TC/C            | Saga                     |
 |-------------------------------------------|-----------------|--------------------------|
@@ -354,10 +358,24 @@ In order to achieve high reliability for events, we need to replicate the list a
  * that there is no data loss
  * the relative order of data within a log file remains the same across replicas
 
-To achieve this, we can employ a consensus algorithm, such as Raft.
+To achieve this, we can employ a consensus algorithm, such as **Raft**.
 
-With Raft, there is a leader who is active and there are followers who are passive. If a leader dies, one of the followers picks up.
-As long as more than half of the nodes are up, the system continues running.
+The Raft algorithm guarantees that as long as more than half of the nodes are online, the append-only lists on them have the same data. For example, if we have 5 nodes and use the Raft algorithm to synchronize their data, as long as at least 3 (more than half) of the nodes are up, the system can still work properly as a whole.
+
+<div style="margin-left:3rem">
+    <img src="./images/raft-three-nodes-up.svg" alt="raft-three-nodes-up" width="500" />
+</div>
+
+A node can have three different roles in the Raft algorithm.
+1. Leader
+2. Candidate
+3. Follower
+
+We can find the implementation of the Raft algorithm in the Raft paper. We will only cover the high levels here and not go into detail. In Raft, at most one node is the leader of the cluster and the remaining nodes are followers. The leader is responsible for receiving external commands and replicating data reliably across nodes in the cluster.
+
+With the Raft algorithm, the system is reliable as long as the majority of the nodes are operational.
+
+For example, if there are 3 nodes in the cluster, it could tolerate the failure of 1 node, and if there are 5 nodes, it can tolerate the failure of 2 nodes.
 
 <div style="margin-left:3rem">
     <img src="./images/raft-replication.svg" alt="raft-replication" width="500" />
@@ -399,14 +417,21 @@ Finally, to scale the system even further, we can shard the system into multiple
 </div>
 
 Here's an example lifecycle of a balance transfer request in our final system:
- * User A sends a distributed transaction to the Saga coordinator with two operations - `A-1` and `C+1`.
- * Saga coordinator creates a record in the phase status table to trace the status of the transaction
- * Coordinator determines which partitions it needs to send commands to.
- * Partition 1's raft leader receives the `A-1` command, validates it, converts it to an event and replicates it across other nodes in the raft group
- * Event result is synchronized to the read state machine, which pushes a response back to the coordinator
- * Coordinator creates a record indicating that the operation was successful and proceeds with the next operation - `C+1`
- * Next operation is executed similarly to the first one - partition is determined, command is sent, executed, read state machine pushes back a response
- * Coordinator creates a record indicating operation 2 was also successful and finally informs the client of the result
+1. User A sends a distributed transaction to the Saga coordinator. It contains two operations: `A-$1` and `C+$1`.
+2. Saga coordinator creates a record in the Phase Status Table to trace the status of a transaction.
+3. Saga coordinator examines the order of operations and determines that it needs to handle `A-$1` first. The coordinator sends `A-$1` as a Command to Partition 1, which contains account A’s information.
+4. Partition 1’s Raft leader receives the `A-$1` command and stores it in the command list. It then validates the command. If it is valid, it is converted into an Event. The Raft consensus algorithm is used to synchronize data across different nodes. The Event (deducting $1 from A’s account balance) is executed after synchronization is complete.
+5. After the Event is synchronized, the Event Sourcing framework of Partition 1 synchronizes the data to the read path using CQRS. The read path reconstructs the state and the status of execution.
+6. The read path of Partition 1 pushes the status back to the caller of the Event Sourcing framework, which is the Saga coordinator.
+7. Saga coordinator receives the success status from Partition 1.
+8. The Saga coordinator creates a record, indicating the operation in Partition 1 is successful, in the Phase Status table.
+9. Because the first operation succeeds, the Saga coordinator executes the second operation, which is `C+$1`. The coordinator sends `C+$1` as a Command to Partition 2 which contains account C’s information.
+10. Partition 2’s Raft leader receives the `C+$1` command and saves it to the command list. If it is valid, it is converted into an Event. The Raft consensus algorithm is used to synchronize data across different nodes. The Event (add $1 to C’s account ) is executed after synchronization is complete.
+11. After the Event is synchronized, the Event Sourcing framework of Partition 2 synchronizes the data to the read path using CQRS. The read path will reconstruct the state and the status of execution.
+12. The read path of Partition 2 pushes the status back to the caller of the Event Sourcing framework, which is the Saga coordinator.
+13. The Saga coordinator receives success status from Partition 2.
+14. The Saga coordinator creates a record, indicating the operation in Partition 2 is successful in the Phase Status table.
+15. At this time, all operations succeed and the distributed transaction is completed. The Saga coordinator responds to its caller with the result.
 
 ---
 

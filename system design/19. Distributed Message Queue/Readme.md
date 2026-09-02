@@ -76,7 +76,7 @@ Key components of a message queue:
 
 ### **Messaging models**
 
-The first type of messaging model is point-to-point and it's commonly found in traditional message queues:
+The first type of messaging model is **point-to-point** and it's commonly found in traditional message queues:
 
 <div style="margin-left:3rem">
     <img src="./images/point-to-point-model.svg" alt="point-to-point-model" width="500" />
@@ -85,9 +85,9 @@ The first type of messaging model is point-to-point and it's commonly found in t
  * A message is sent to a queue and it's consumed by exactly one consumer.
  * There can be multiple consumers, but a message is consumed only once.
  * Once a message is acknowledged as consumed, it is removed from the queue.
- * There is no data retention in the point-to-point model, but our design has it.
+ * There is no data retention in the **point-to-point** model, but our design has it.
 
-On the other hand, the publish-subscribe model is more common for event streaming platforms:
+On the other hand, the **publish-subscribe model** is more common for event streaming platforms:
 
 <div style="margin-left:3rem">
     <img src="./images/publish-subscribe-model.svg" alt="publish-subscribe-model" width="500" />
@@ -98,14 +98,14 @@ On the other hand, the publish-subscribe model is more common for event streamin
 
 ### **Topics, partitions and brokers**
 
-What if the data volume for a topic is too large? One way to scale is by splitting a topic into partitions (aka sharding):
+What if the data volume for a topic is too large? One way to scale is by splitting a topic into **partitions** (aka **sharding**):
 
 <div style="margin-left:3rem">
     <img src="./images/partitions.svg" alt="partitions" width="500" />
 </div>
 
  * Messages sent to a topic are evenly distributed across partitions
- * The servers that host partitions are called brokers
+ * The servers that host partitions are called **brokers**
  * Each topic operates like a queue using FIFO for message processing. Message order is preserved within a partition.
  * The position of a message within the partition is called an **offset**.
  * Each message produced is sent to a specific partition. A partition key specifies which partition a message should land in.
@@ -114,15 +114,15 @@ What if the data volume for a topic is too large? One way to scale is by splitti
 
 ### **Consumer groups**
 
-Consumer groups are a set of consumers working together to consume messages from a topic:
+**Consumer groups** are a set of consumers working together to consume messages from a topic:
 
 <div style="margin-left:3rem">
     <img src="./images/consumer-groups.svg" alt="consumer-groups" width="500" />
 </div>
 
- * Messages are replicated per consumer group (not per consumer).
- * Each consumer group maintains its own offset.
- * Reading messages in parallel by a consumer group improves throughput but hampers the ordering guarantee.
+ * Messages are replicated per **consumer group** (not per consumer).
+ * Each **consumer group** maintains its own offset.
+ * Reading messages in parallel by a **consumer group** improves throughput but hampers the ordering guarantee.
  * This can be mitigated by only allowing one consumer from a group to be subscribed to a partition.
  * This means that we can't have more consumers in a group than there are partitions.
 
@@ -224,10 +224,11 @@ One option is to introduce a routing layer that routes messages to the correct b
     <img src="./images/routing-layer.svg" alt="routing-layer" width="500" />
 </div>
 
- * Routing layer reads the replication plan from the metadata store and caches it locally.
- * Producer sends a message to the routing layer.
- * The message is forwarded to broker 1, which is the leader of the given partition.
- * Follower replicas pull the new message from the leader. Once enough confirmations are received, the leader commits the data and responds to the producer.
+Routing layer:
+1. The producer sends messages to the routing layer.
+2. The routing layer reads the replica distribution plan from the metadata storage and caches it locally. When a message arrives, it routes the message to the leader replica of partition 1, which is stored in broker 1.
+3. The leader replica receives the message and follower replicas pull data from the leader.
+4. When “enough” replicas have synchronized the message, the leader commits the data (persisted on disk), which means the data can be consumed. Then it responds to the producer.
 
 The reason for having replicas is to enable fault tolerance.
 
@@ -278,13 +279,11 @@ Hence, most message queues, including ours, choose the pull model.
     <img src="./images/consumer-flow.svg" alt="consumer-flow" width="500" />
 </div>
 
- * A new consumer subscribes to topic A and joins group 1.
- * The correct broker node is found by hashing the group name. This way, all consumers in a group connect to the same broker.
- * Note that this consumer group coordinator is different from the coordination service (ZooKeeper).
- * Coordinator confirms that the consumer has joined the group and assigns partition 2 to that consumer.
- * There are different partition assignment strategies - round-robin, range, etc.
- * Consumer fetches latest messages from the last offset. The state storage keeps the consumer offsets.
- * Consumer processes messages and commits the offset to the broker. The order of those operations affects the message delivery semantics.
+1. A new consumer wants to join group 1 and subscribes to topic A. It finds the corresponding broker node by hashing the group name. By doing so, all the consumers in the same group connect to the same broker, which is also called the coordinator of this consumer group. Despite the naming similarity, the consumer group coordinator is different from the coordination service mentioned in High-Level Design. The former coordinates the consumer group, while the latter coordinates the broker cluster.
+2. The coordinator confirms that the consumer has joined the group and assigns partition 2 to the consumer. There are different partition assignment strategies including round-robin, range, etc.
+3. Consumer fetches messages from the last consumed offset, which is managed by the state storage.
+4. Consumer processes messages and commits the offset to the broker. The order of data processing and offset committing affects the message delivery semantics, which will be discussed shortly.
+
 
 ### **Consumer rebalancing**
 
@@ -308,35 +307,40 @@ When the coordinator stops receiving heartbeats from the consumers in a group, a
     <img src="./images/consumer-rebalance-example.svg" alt="consumer-rebalance-example" width="500" />
 </div>
 
-Let's explore what happens when a consumer joins a group:
+Let's explore what happens when a **consumer joins a group**:
 
 <div style="margin-left:3rem">
     <img src="./images/consumer-join-group-usecase.svg" alt="consumer-join-group-usecase" width="500" />
 </div>
 
- * Initially, only consumer A is in the group and it consumes all partitions.
- * Consumer B sends a request to join the group.
- * The coordinator notifies all group members that it's time to rebalance passively - as a response to the heartbeat.
- * Once all consumers rejoin the group, the coordinator chooses a leader and notifies the rest about the election result.
- * The leader generates the partition dispatch plan and sends it to the coordinator. Others wait for the dispatch plan.
- * Consumers start consuming from the newly assigned partitions.
+1. Initially, only consumer A is in the group. It consumes all the partitions and keeps the heartbeat with the coordinator.
+2. Consumer B sends a request to join the group.
+3. The coordinator knows it’s time to rebalance, so it notifies all the consumers in the group in a passive way. When A’s heartbeat is received by the coordinator, it asks A to rejoin the group.
+4. Once all the consumers have rejoined the group, the coordinator chooses one of them as the leader and informs all the consumers about the election result.
+5. The leader consumer generates the partition dispatch plan and sends it to the coordinator. Follower consumers ask the coordinator about the partition dispatch plan.
+6. Consumers start consuming messages from newly assigned partitions.
 
-Here's what happens when a consumer leaves the group:
+Here's what happens when a **consumer leaves the group**:
 
 <div style="margin-left:3rem">
     <img src="./images/consumer-leaves-group-usecase.svg" alt="consumer-leaves-group-usecase" width="500" />
 </div>
 
- * Consumer A and B are in the same group
- * Consumer A asks to leave the group
- * When coordinator receives B's heartbeat, it informs them that it's time to rebalance.
- * The rest of the steps are the same.
+1. Consumer A and B are in the same consumer group.
+2. Consumer A needs to be shut down, so it requests to leave the group.
+3. The coordinator knows it’s time to rebalance. When B’s heartbeat is received by the coordinator, it asks B to rejoin the group.
+4. The remaining steps are the same as the ones shown
 
-The process is similar when a consumer doesn't send a heartbeat for a long time:
+The process is similar when a **consumer crashes** (doesn't send a heartbeat for a long time):
 
 <div style="margin-left:3rem">
     <img src="./images/consumer-no-heartbeat-usecase.svg" alt="consumer-no-heartbeat-usecase" width="500" />
 </div>
+
+1. Consumer A and B keep heartbeats with the coordinator.
+2. Consumer A crashes, so there is no heartbeat sent from consumer A to the coordinator. Since the coordinator doesn’t get any heartbeat signal within a specified amount of time from consumer A, it marks the consumer as dead.
+3. The coordinator triggers the rebalance process.
+4. The following steps are the same as the ones in the previous scenario.
 
 ### **State storage**
 
@@ -396,7 +400,7 @@ In distributed systems, hardware issues are inevitable. We can tackle this via r
 
 One problem we need to tackle is keeping messages in-sync between the leader and the followers for a given partition.
 
-In-sync replicas (ISR) are replicas for a partition that stay in-sync with the leader.
+**In-sync replicas (ISR)** are replicas for a partition that stay in-sync with the leader.
 
 The `replica.lag.max.messages` setting defines how many messages a replica can lag behind the leader and still be considered in sync.
 

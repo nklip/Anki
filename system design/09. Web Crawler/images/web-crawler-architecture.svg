@@ -9,11 +9,11 @@
     </marker>
     <style>
       .node { fill: #fff; stroke: #111; stroke-width: 2; }
-      .storage { fill: #fff; stroke: #111; stroke-width: 3; }
+      .storage { fill: #fff; stroke: #111; stroke-width: 3; stroke-linejoin: round; }
       .flow { fill: none; stroke: #111; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-black); }
       .two-way { fill: none; stroke: #111; stroke-width: 2.2; marker-start: url(#arrow-black); marker-end: url(#arrow-black); }
       .label { font-family: Arial, Helvetica, sans-serif; font-size: 24px; fill: #111; text-anchor: middle; dominant-baseline: middle; }
-      .storage-label { font-family: Arial, Helvetica, sans-serif; font-size: 22px; fill: #111; text-anchor: middle; }
+      .storage-label { font-family: Arial, Helvetica, sans-serif; font-size: 24px; fill: #111; text-anchor: middle; }
     </style>
   </defs>
 
@@ -50,11 +50,10 @@
 
   <!-- Content storage exchanges fingerprints with the duplicate-content check. -->
   <g id="content-storage">
-    <rect class="storage" x="1297" y="50" width="122" height="83"/>
+    <path class="storage" d="M1297 50 V133 C1297 143 1324 151 1358 151 C1392 151 1419 143 1419 133 V50"/>
     <ellipse class="storage" cx="1358" cy="50" rx="61" ry="18"/>
-    <path class="storage" d="M1297 133 A61 18 0 0 0 1419 133"/>
-    <text class="storage-label" x="1358" y="94">Content</text>
-    <text class="storage-label" x="1358" y="120">Storage</text>
+    <text class="storage-label" x="1358" y="99">Content</text>
+    <text class="storage-label" x="1358" y="128">Storage</text>
     <path class="two-way" d="M1357 151 V248"/>
   </g>
 
@@ -76,11 +75,10 @@
   <!-- URL storage lookup and update use the original single bidirectional connector. -->
   <g id="url-storage">
     <path class="two-way" d="M1358 867 V964"/>
-    <rect class="storage" x="1297" y="982" width="122" height="76"/>
+    <path class="storage" d="M1297 982 V1058 C1297 1068 1324 1076 1358 1076 C1392 1076 1419 1068 1419 1058 V982"/>
     <ellipse class="storage" cx="1358" cy="982" rx="61" ry="18"/>
-    <path class="storage" d="M1297 1058 A61 18 0 0 0 1419 1058"/>
-    <text class="storage-label" x="1358" y="1022">URL</text>
-    <text class="storage-label" x="1358" y="1048">Storage</text>
+    <text class="storage-label" x="1358" y="1031">URL</text>
+    <text class="storage-label" x="1358" y="1060">Storage</text>
   </g>
 
   <!-- Feedback route mirrors the PNG: left from URL Seen, then up into the frontier. -->

@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="928" height="1016" viewBox="0 0 928 1016" role="img" aria-labelledby="title desc">
+  <title id="title">Web crawler link expansion</title>
+  <desc id="desc">A seed page containing links to a.com, b.com, and c.com expands into those three pages. Each downloaded page reveals more links, which expand into lime.com, peach.com, mango.com, banana.com, orange.com, and plum.com pages.</desc>
+
+  <!-- Shared browser-window styling and the pale-blue crawl-flow arrow. -->
+  <defs>
+    <marker id="arrowhead" markerWidth="18" markerHeight="18" viewBox="0 0 18 18" refX="16" refY="9" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L18 9 L0 18 Z" fill="#8ba7d6"/>
+    </marker>
+    <style>
+      .browser-large { fill: #fff; stroke: #313e4e; stroke-width: 7; }
+      .browser-small { fill: #fff; stroke: #313e4e; stroke-width: 5.5; }
+      .browser-rule { fill: none; stroke: #5894c7; stroke-width: 3; stroke-linecap: round; }
+      .browser-rule-small { fill: none; stroke: #5894c7; stroke-width: 2.4; stroke-linecap: round; }
+      .browser-dot { fill: #5894c7; }
+      .flow { fill: none; stroke: #8ba7d6; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrowhead); }
+      .link { font-family: Arial, Helvetica, sans-serif; font-size: 17px; fill: #0000b8; text-decoration: underline; }
+      .page-label { font-family: Arial, Helvetica, sans-serif; font-size: 17px; fill: #000; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect width="928" height="1016" fill="#fff"/>
+
+  <!-- Crawl connectors sit below the windows; each visible nose stops in the source's whitespace before its destination. -->
+  <g id="crawl-flow">
+    <path class="flow" d="M238 568 L450.9 246.2"/>
+    <path class="flow" d="M238 568 H439"/>
+    <path class="flow" d="M238 568 L439.8 790.6"/>
+
+    <path class="flow" d="M670 243 L773.8 103.6"/>
+    <path class="flow" d="M670 243 L773 242.9"/>
+    <path class="flow" d="M670 243 L774.6 369.5"/>
+
+    <path class="flow" d="M661 568 H773"/>
+
+    <path class="flow" d="M662 771 H775"/>
+    <path class="flow" d="M662 771 L776.6 900.7"/>
+  </g>
+
+  <!-- Seed page: the starting URL list. -->
+  <g id="seed-page">
+    <rect class="browser-large" x="34" y="498" width="188" height="138" rx="13"/>
+    <circle class="browser-dot" cx="55" cy="516" r="5"/>
+    <circle class="browser-dot" cx="70" cy="516" r="5"/>
+    <circle class="browser-dot" cx="85" cy="516" r="5"/>
+    <path class="browser-rule" d="M47 531 H209"/>
+    <text class="link" x="58" y="558">www.a.com</text>
+    <text class="link" x="58" y="587">www.b.com</text>
+    <text class="link" x="58" y="616">www.c.com</text>
+  </g>
+
+  <!-- First crawl level: pages found in the seed list and the links extracted from each page. -->
+  <g id="first-level-pages">
+    <g id="a-page">
+      <rect class="browser-large" x="467" y="173" width="187" height="138" rx="13"/>
+      <circle class="browser-dot" cx="488" cy="190" r="5"/>
+      <circle class="browser-dot" cx="503" cy="190" r="5"/>
+      <circle class="browser-dot" cx="518" cy="190" r="5"/>
+      <path class="browser-rule" d="M480 206 H641"/>
+      <text class="link" x="491" y="234">www.lime.com</text>
+      <text class="link" x="491" y="263">www.peach.com</text>
+      <text class="link" x="491" y="292">www.mango.com</text>
+      <text class="page-label" x="560.5" y="335">a.com page</text>
+    </g>
+
+    <g id="b-page">
+      <rect class="browser-large" x="457" y="498" width="186" height="138" rx="13"/>
+      <circle class="browser-dot" cx="477" cy="516" r="5"/>
+      <circle class="browser-dot" cx="492" cy="516" r="5"/>
+      <circle class="browser-dot" cx="507" cy="516" r="5"/>
+      <path class="browser-rule" d="M469 531 H631"/>
+      <text class="link" x="481" y="558">www.banana.com</text>
+      <text class="page-label" x="550" y="670">b.com page</text>
+    </g>
+
+    <g id="c-page">
+      <rect class="browser-large" x="457" y="724" width="186" height="138" rx="13"/>
+      <circle class="browser-dot" cx="477" cy="742" r="5"/>
+      <circle class="browser-dot" cx="492" cy="742" r="5"/>
+      <circle class="browser-dot" cx="507" cy="742" r="5"/>
+      <path class="browser-rule" d="M469 757 H631"/>
+      <text class="link" x="481" y="784">www.orange.com</text>
+      <text class="link" x="481" y="813">www.plum.com</text>
+      <text class="page-label" x="550" y="896">c.com page</text>
+    </g>
+  </g>
+
+  <!-- Second crawl level: compact destination windows preserve the reference's staggered layout. -->
+  <g id="second-level-pages">
+    <g id="lime-page">
+      <rect class="browser-small" x="782" y="27" width="110" height="81" rx="9"/>
+      <circle class="browser-dot" cx="793" cy="37" r="3.5"/>
+      <circle class="browser-dot" cx="803" cy="37" r="3.5"/>
+      <circle class="browser-dot" cx="813" cy="37" r="3.5"/>
+      <path class="browser-rule-small" d="M789 46 H885"/>
+      <text class="page-label" x="837" y="140">lime.com page</text>
+    </g>
+
+    <g id="peach-page">
+      <rect class="browser-small" x="786" y="200" width="110" height="81" rx="9"/>
+      <circle class="browser-dot" cx="797" cy="210" r="3.5"/>
+      <circle class="browser-dot" cx="807" cy="210" r="3.5"/>
+      <circle class="browser-dot" cx="817" cy="210" r="3.5"/>
+      <path class="browser-rule-small" d="M793 219 H889"/>
+      <text class="page-label" x="841" y="313">peach.com page</text>
+    </g>
+
+    <g id="mango-page">
+      <rect class="browser-small" x="786" y="366" width="110" height="80" rx="9"/>
+      <circle class="browser-dot" cx="797" cy="376" r="3.5"/>
+      <circle class="browser-dot" cx="807" cy="376" r="3.5"/>
+      <circle class="browser-dot" cx="817" cy="376" r="3.5"/>
+      <path class="browser-rule-small" d="M793 385 H889"/>
+      <text class="page-label" x="841" y="479">mango.com page</text>
+    </g>
+
+    <g id="banana-page">
+      <rect class="browser-small" x="786" y="528" width="110" height="80" rx="9"/>
+      <circle class="browser-dot" cx="797" cy="538" r="3.5"/>
+      <circle class="browser-dot" cx="807" cy="538" r="3.5"/>
+      <circle class="browser-dot" cx="817" cy="538" r="3.5"/>
+      <path class="browser-rule-small" d="M793 547 H889"/>
+      <text class="page-label" x="841" y="635">banana.com page</text>
+    </g>
+
+    <g id="orange-page">
+      <rect class="browser-small" x="787" y="729" width="110" height="80" rx="9"/>
+      <circle class="browser-dot" cx="798" cy="739" r="3.5"/>
+      <circle class="browser-dot" cx="808" cy="739" r="3.5"/>
+      <circle class="browser-dot" cx="818" cy="739" r="3.5"/>
+      <path class="browser-rule-small" d="M794 748 H890"/>
+      <text class="page-label" x="842" y="843">orange.com page</text>
+    </g>
+
+    <g id="plum-page">
+      <rect class="browser-small" x="789" y="895" width="110" height="80" rx="9"/>
+      <circle class="browser-dot" cx="800" cy="905" r="3.5"/>
+      <circle class="browser-dot" cx="810" cy="905" r="3.5"/>
+      <circle class="browser-dot" cx="820" cy="905" r="3.5"/>
+      <path class="browser-rule-small" d="M796 914 H892"/>
+      <text class="page-label" x="844" y="1010">plum.com page</text>
+    </g>
+  </g>
+</svg>

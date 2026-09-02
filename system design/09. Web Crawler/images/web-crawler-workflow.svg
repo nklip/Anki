@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1186" height="814" viewBox="0 0 1186 814" role="img" aria-labelledby="title desc">
+  <title id="title">Web crawler workflow</title>
+  <desc id="desc">An eleven-step web-crawler workflow. Seed URLs pass through the URL frontier, downloader, content parser, duplicate-content check, link extractor, URL filter, and duplicate-URL check. DNS, content storage, and URL storage support the flow, while unseen URLs return to the frontier.</desc>
+
+  <!-- Shared shapes, typography, and a tapered arrow whose nose projects to each target boundary. -->
+  <defs>
+    <marker id="arrow-black" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="10.5" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L12 6 L0 12 Z" fill="#000"/>
+    </marker>
+    <style>
+      .node { fill: #fff; stroke: #000; stroke-width: 1.6; }
+      .storage { fill: #fff; stroke: #000; stroke-width: 2.4; stroke-linejoin: round; }
+      .flow { fill: none; stroke: #000; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-black); }
+      .two-way { fill: none; stroke: #000; stroke-width: 1.6; marker-start: url(#arrow-black); marker-end: url(#arrow-black); }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 18px; fill: #111; text-anchor: middle; dominant-baseline: middle; }
+      .storage-label { font-family: Arial, Helvetica, sans-serif; font-size: 18px; fill: #111; text-anchor: middle; }
+      .step-circle { fill: #fff; stroke: #000; stroke-width: 1.5; }
+      .step-number { font-family: Arial, Helvetica, sans-serif; font-size: 16px; fill: #111; text-anchor: middle; dominant-baseline: middle; }
+    </style>
+  </defs>
+
+  <rect width="1186" height="814" fill="#fff"/>
+
+  <!-- Main left-to-right crawl path. Endpoints are pulled back 1.5 units so marker tips meet, but do not enter, box borders. -->
+  <g id="primary-flow">
+    <rect class="node" x="20" y="180" width="174" height="73" rx="11"/>
+    <text class="label" x="107" y="217">seed URLs</text>
+    <path class="flow" d="M194 216.5 H248.5"/>
+
+    <rect class="node" x="250" y="180" width="174" height="73" rx="11"/>
+    <text class="label" x="337" y="217">URL Frontier</text>
+    <path class="flow" d="M424 216.5 H479.5"/>
+
+    <rect class="node" x="481" y="180" width="174" height="73" rx="11"/>
+    <text class="label" x="568" y="217">HTML Downloader</text>
+    <path class="flow" d="M655 216.5 H723.5"/>
+
+    <rect class="node" x="725" y="180" width="175" height="73" rx="11"/>
+    <text class="label" x="812.5" y="217">Content Parser</text>
+    <path class="flow" d="M900 216.5 H975.5"/>
+
+    <rect class="node" x="977" y="180" width="159" height="73" rx="11"/>
+    <text class="label" x="1056.5" y="217">Content Seen?</text>
+  </g>
+
+  <!-- DNS lookup branches upward from the downloader. -->
+  <g id="dns-resolver">
+    <rect class="node" x="481" y="26" width="174" height="77" rx="11"/>
+    <text class="label" x="568" y="65">DNS Resolver</text>
+    <path class="flow" d="M568 180 V104.5"/>
+  </g>
+
+  <!-- Content storage uses the narrow vertical cylinder shown in the workflow reference. -->
+  <g id="content-storage">
+    <path class="storage" d="M1013 35 V92 C1013 100 1033 106 1057 106 C1081 106 1101 100 1101 92 V35"/>
+    <ellipse class="storage" cx="1057" cy="35" rx="44" ry="15"/>
+    <text class="storage-label" x="1057" y="70">Content</text>
+    <text class="storage-label" x="1057" y="91">Storage</text>
+    <path class="two-way" d="M1057 107.5 V178.5"/>
+  </g>
+
+  <!-- Extracted links descend through filtering and URL deduplication. -->
+  <g id="link-processing">
+    <path class="flow" d="M1056.5 253 V292.5"/>
+    <rect class="node" x="977" y="294" width="159" height="73" rx="11"/>
+    <text class="label" x="1056.5" y="331">Link Extractor</text>
+
+    <path class="flow" d="M1056.5 367 V422.5"/>
+    <rect class="node" x="970" y="424" width="174" height="73" rx="11"/>
+    <text class="label" x="1057" y="461">URL Filter</text>
+
+    <path class="flow" d="M1057 497 V566.5"/>
+    <rect class="node" x="974" y="568" width="166" height="72" rx="11"/>
+    <text class="label" x="1057" y="604.5">URL Seen?</text>
+  </g>
+
+  <!-- URL storage repeats the same vertical-cylinder convention and uses a bidirectional lookup connector. -->
+  <g id="url-storage">
+    <path class="two-way" d="M1057 641.5 V710.5"/>
+    <path class="storage" d="M1013 727 V785 C1013 793 1033 799 1057 799 C1081 799 1101 793 1101 785 V727"/>
+    <ellipse class="storage" cx="1057" cy="727" rx="44" ry="15"/>
+    <text class="storage-label" x="1057" y="762">URL</text>
+    <text class="storage-label" x="1057" y="783">Storage</text>
+  </g>
+
+  <!-- Unseen URLs loop left and then upward into the frontier; the rounded corner mirrors the PNG. -->
+  <path id="frontier-feedback" class="flow" d="M974 604 H350 Q336 604 336 590 V254.5"/>
+
+  <!-- Circled numbers label the eleven operations; a 1-unit baseline offset optically centers each glyph. -->
+  <g id="workflow-steps">
+    <g><circle class="step-circle" cx="216" cy="195" r="15"/><text class="step-number" x="216" y="195" dy="1">1</text></g>
+    <g><circle class="step-circle" cx="452" cy="195" r="15"/><text class="step-number" x="452" y="195" dy="1">2</text></g>
+    <g><circle class="step-circle" cx="538" cy="150" r="15"/><text class="step-number" x="538" y="150" dy="1">3</text></g>
+    <g><circle class="step-circle" cx="683" cy="195" r="15"/><text class="step-number" x="683" y="195" dy="1">4</text></g>
+    <g><circle class="step-circle" cx="938" cy="195" r="15"/><text class="step-number" x="938" y="195" dy="1">5</text></g>
+    <g><circle class="step-circle" cx="1085" cy="143" r="15"/><text class="step-number" x="1085" y="143" dy="1">6</text></g>
+    <g><circle class="step-circle" cx="1085" cy="273" r="15"/><text class="step-number" x="1085" y="273" dy="1">7</text></g>
+    <g><circle class="step-circle" cx="1085" cy="395" r="15"/><text class="step-number" x="1085" y="395" dy="1">8</text></g>
+    <g><circle class="step-circle" cx="1085" cy="531" r="15"/><text class="step-number" x="1085" y="531" dy="1">9</text></g>
+    <g><circle class="step-circle" cx="1085" cy="683" r="15"/><text class="step-number" x="1085" y="683" dy="1">10</text></g>
+    <g><circle class="step-circle" cx="653.5" cy="583" r="15"/><text class="step-number" x="653.5" y="583" dy="1">11</text></g>
+  </g>
+</svg>

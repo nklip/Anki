@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1354" height="589" viewBox="0 0 894 388" preserveAspectRatio="none"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Two-phase commit when the coordinator crashes during Prepare</title>
+  <desc id="desc">The coordinator writes to databases A and C, then asks both databases to prepare. The coordinator crashes before receiving their yes votes, so both replies stop without a decision and no commit phase occurs.</desc>
+
+  <!-- Two-phase-commit primitives are reused from 2pc-protocol.svg at the reference's compact scale. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .timeline{fill:none;stroke:#000;stroke-width:1.7}
+      .phase-boundary{fill:none;stroke:#000;stroke-width:1.7;stroke-dasharray:7 6}
+      .event{fill:#fff;stroke:#000;stroke-width:1.7}
+      .message-shaft{fill:none;stroke:#000;stroke-width:1.7}
+      .participant{font-size:25.5px}
+      .participant-note{font-size:20px}
+      .phase-title{font-size:25.5px;text-anchor:middle}
+      .message-label{font-size:24px}
+      .status-label{font-size:20px}
+      .crash-label{font-size:24px;fill:#fe2700}
+      .time-label{font-size:25.5px}
+    </style>
+
+    <!-- The scaled marker keeps the shaft endpoint beneath a wide part of the tapered head. -->
+    <marker id="message-arrowhead" markerWidth="13.33" markerHeight="10.67"
+            viewBox="0 0 13.33 10.67" refX="10.66" refY="5.335"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L13.33 5.335 L0 10.67 Z" fill="#000"/>
+    </marker>
+  </defs>
+
+  <rect width="894" height="388" fill="#fff"/>
+
+  <!-- Dashed boundaries isolate the initial writes from the Prepare phase; no Commit phase is present. -->
+  <g id="phase-boundaries">
+    <path class="phase-boundary" d="M180.5 21 V362"/>
+    <path class="phase-boundary" d="M510.5 21 V362"/>
+  </g>
+
+  <!-- Participant timelines continue to the time arrow even though the coordinator has failed. -->
+  <g id="participant-timelines">
+    <!-- The coordinator line is split around the crash label so it never crosses the red text. -->
+    <path id="coordinator-timeline-before-crash" class="timeline" d="M163 70.5 H568"/>
+    <path id="coordinator-timeline-after-crash" class="timeline" d="M691 70.5 H798"/>
+    <path d="M811 70.5 L798 64.5 L798 76.5 Z" fill="#000"/>
+    <path class="timeline" d="M163 176.5 H798"/>
+    <path d="M811 176.5 L798 170.5 L798 182.5 Z" fill="#000"/>
+    <path class="timeline" d="M163 281.5 H798"/>
+    <path d="M811 281.5 L798 275.5 L798 287.5 Z" fill="#000"/>
+  </g>
+
+  <!-- Initial writes and their successful acknowledgements reuse the split-label connector pattern. -->
+  <g id="initial-write-connectors">
+    <path id="write-database-a" class="message-shaft" data-connector="true"
+          d="M208 71 C219 104 233 142 244 166.5"
+          marker-end="url(#message-arrowhead)"/>
+
+    <path id="database-a-ok-source" class="message-shaft" data-connector="true" d="M294 177 L305 141.5"/>
+    <path id="database-a-ok-target" class="message-shaft" data-connector="true"
+          d="M314 112.5 L324 81.5" marker-end="url(#message-arrowhead)"/>
+
+    <path id="write-database-c" class="message-shaft" data-connector="true"
+          d="M363 71 C370 134 381 223 388 269"
+          marker-end="url(#message-arrowhead)"/>
+
+    <path id="database-c-ok-source" class="message-shaft" data-connector="true" d="M444 282 L471 141.5"/>
+    <path id="database-c-ok-target" class="message-shaft" data-connector="true"
+          d="M477 112.5 L484 82" marker-end="url(#message-arrowhead)"/>
+  </g>
+
+  <!-- Prepare requests reach both databases before the coordinator crashes. -->
+  <g id="prepare-connectors">
+    <path id="prepare-database-a" class="message-shaft" data-connector="true"
+          d="M539 71 C558 104 581 143 600 166"
+          marker-end="url(#message-arrowhead)"/>
+    <path id="prepare-database-c" class="message-shaft" data-connector="true"
+          d="M539 71 C554 136 577 229 590 269"
+          marker-end="url(#message-arrowhead)"/>
+  </g>
+
+  <!-- Yes replies are split around their labels and terminate below the red failure marks. -->
+  <g id="blocked-yes-replies">
+    <path id="database-a-yes-source" class="message-shaft" data-connector="true" d="M659 177 L670 160"/>
+    <path id="database-a-yes-target" class="message-shaft" data-connector="true"
+          d="M687 124 L696 104" marker-end="url(#message-arrowhead)"/>
+
+    <!-- Both pieces lie on the same centerline from the Database C event to the failure mark. -->
+    <path id="database-c-yes-source" class="message-shaft" data-connector="true" d="M672 282 L720 160"/>
+    <path id="database-c-yes-target" class="message-shaft" data-connector="true"
+          d="M733.75 125 L742 104" marker-end="url(#message-arrowhead)"/>
+  </g>
+
+  <!-- Event circles mask the timelines and connector starts for the same clean joins as 2pc-protocol.svg. -->
+  <g id="event-points">
+    <g id="coordinator-events">
+      <circle class="event" cx="208" cy="70.5" r="9"/>
+      <circle class="event" cx="328" cy="70.5" r="9"/>
+      <circle class="event" cx="363" cy="70.5" r="9"/>
+      <circle class="event" cx="490" cy="70.5" r="9"/>
+      <circle class="event" cx="539" cy="70.5" r="9"/>
+    </g>
+    <g id="database-a-events">
+      <circle class="event" cx="247" cy="176.5" r="9"/>
+      <circle class="event" cx="294" cy="176.5" r="9"/>
+      <circle class="event" cx="607" cy="176.5" r="9"/>
+      <circle class="event" cx="659" cy="176.5" r="9"/>
+    </g>
+    <g id="database-c-events">
+      <circle class="event" cx="390" cy="281.5" r="9"/>
+      <circle class="event" cx="444" cy="281.5" r="9"/>
+      <circle class="event" cx="594" cy="281.5" r="9"/>
+      <circle class="event" cx="672" cy="281.5" r="9"/>
+    </g>
+  </g>
+
+  <!-- Labels and failure marks stay above every connector and timeline. -->
+  <g id="labels">
+    <text class="participant" x="12" y="75">Coordinator</text>
+    <text class="participant-note" x="12" y="103">(Wallet Service)</text>
+    <text class="participant" x="14" y="184">Database A</text>
+    <text class="participant" x="14" y="291">Database C</text>
+
+    <text class="phase-title" x="665" y="35">Prepare</text>
+    <text class="time-label" x="819" y="79">time</text>
+
+    <text class="message-label" x="215" y="61">write data</text>
+    <text class="message-label" x="375" y="61">write data</text>
+    <text class="status-label" x="301" y="133">ok</text>
+    <text class="status-label" x="465" y="133">ok</text>
+    <text class="status-label" x="665" y="149">yes</text>
+    <text class="status-label" x="716" y="149">yes</text>
+
+    <text class="crash-label" x="576" y="80">X Crashed</text>
+    <text class="crash-label" x="692" y="98">X</text>
+    <text class="crash-label" x="736" y="98">X</text>
+  </g>
+</svg>

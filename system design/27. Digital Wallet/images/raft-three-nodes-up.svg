@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="662" height="160" viewBox="0 0 662 160"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Three Raft nodes are up and two are down</title>
+  <desc id="desc">Five Raft node indicators in one row. The first three circles are pale green and labeled Up; the final two circles are white and labeled Down.</desc>
+
+  <!-- Shared styling keeps the five status indicators easy to adjust as a unit. -->
+  <defs>
+    <style>
+      .node{stroke:#000;stroke-width:2;fill:#fff}
+      .node-up{fill:#d6fbca}
+      .status{font:400 40px Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;text-anchor:middle}
+    </style>
+  </defs>
+
+  <rect width="662" height="160" fill="#fff"/>
+
+  <!-- Node health circles; each center is spaced 131 pixels from the previous one. -->
+  <g id="raft-node-statuses">
+    <circle id="node-1-up" class="node node-up" cx="62" cy="68" r="22"/>
+    <circle id="node-2-up" class="node node-up" cx="193" cy="68" r="22"/>
+    <circle id="node-3-up" class="node node-up" cx="324" cy="68" r="22"/>
+    <circle id="node-4-down" class="node" cx="455" cy="68" r="22"/>
+    <circle id="node-5-down" class="node" cx="586" cy="68" r="22"/>
+  </g>
+
+  <!-- Status labels are real text and align on the same baseline as the reference. -->
+  <g id="status-labels">
+    <text class="status" x="62" y="129">Up</text>
+    <text class="status" x="193" y="129">Up</text>
+    <text class="status" x="324" y="129">Up</text>
+    <text class="status" x="455" y="129">Down</text>
+    <text class="status" x="586" y="129">Down</text>
+  </g>
+</svg>
