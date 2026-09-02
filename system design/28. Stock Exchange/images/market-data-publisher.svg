@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1738" height="916" viewBox="0 0 869 458"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Market-data publisher with candlestick ring buffers</title>
+  <desc id="desc">Orders and matched results enter a market-data publisher that maintains three order books and candlestick ring buffers for one minute, one hour, and one day. The data is persisted and then sent to a data service.</desc>
+
+  <!-- Compact typography and symmetric arrows follow the source's two-times export. -->
+  <defs>
+    <style>
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 17px; font-weight: normal; fill: #000; }
+      .small { font-family: Arial, Helvetica, sans-serif; font-size: 15px; font-weight: normal; fill: #000; }
+      .center { text-anchor: middle; }
+      .box { fill: #fff; stroke: #000; stroke-width: 1; }
+      .connector { fill: none; stroke: #000; stroke-width: 1; }
+      .callout { fill: none; stroke: #000; stroke-width: 1; stroke-dasharray: 5 4; }
+    </style>
+    <marker id="arrowhead" markerWidth="12" markerHeight="10" viewBox="0 0 12 10"
+            refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L12 5 L0 10 Z" fill="#000"/>
+    </marker>
+
+    <!-- One editable ring-buffer glyph is reused for the three time scales. -->
+    <g id="segmented-ring">
+      <circle r="31" fill="#fff" stroke="#000" stroke-width="1"/>
+      <circle r="28.5" fill="none" stroke="#cfcdfe" stroke-width="4"/>
+      <circle r="26.5" fill="#fff" stroke="#000" stroke-width="0.7"/>
+      <path id="ring-divider" d="M0 -31 V-26.5" stroke="#000" stroke-width="0.55"/>
+      <use href="#ring-divider" transform="rotate(15)"/><use href="#ring-divider" transform="rotate(30)"/>
+      <use href="#ring-divider" transform="rotate(45)"/><use href="#ring-divider" transform="rotate(60)"/>
+      <use href="#ring-divider" transform="rotate(75)"/><use href="#ring-divider" transform="rotate(90)"/>
+      <use href="#ring-divider" transform="rotate(105)"/><use href="#ring-divider" transform="rotate(120)"/>
+      <use href="#ring-divider" transform="rotate(135)"/><use href="#ring-divider" transform="rotate(150)"/>
+      <use href="#ring-divider" transform="rotate(165)"/><use href="#ring-divider" transform="rotate(180)"/>
+      <use href="#ring-divider" transform="rotate(195)"/><use href="#ring-divider" transform="rotate(210)"/>
+      <use href="#ring-divider" transform="rotate(225)"/><use href="#ring-divider" transform="rotate(240)"/>
+      <use href="#ring-divider" transform="rotate(255)"/><use href="#ring-divider" transform="rotate(270)"/>
+      <use href="#ring-divider" transform="rotate(285)"/><use href="#ring-divider" transform="rotate(300)"/>
+      <use href="#ring-divider" transform="rotate(315)"/><use href="#ring-divider" transform="rotate(330)"/>
+      <use href="#ring-divider" transform="rotate(345)"/>
+    </g>
+  </defs>
+
+  <rect width="869" height="458" fill="#fff"/>
+
+  <!-- Matching-engine input stream. -->
+  <rect class="box" x="29" y="159" width="122" height="49.5"/>
+  <g class="label center">
+    <text x="90" y="180"><tspan x="90">Matching</tspan><tspan x="90" dy="19">Engine</tspan></text>
+  </g>
+  <path class="connector" id="matching-results-start" data-connector="true" d="M151 183.5 H167"/>
+  <!-- Horizontal normalization matches the etalon's compact Arial metrics without changing text height. -->
+  <text class="label" x="215" y="190" transform="scale(.8 1)"
+        textLength="222.5" lengthAdjust="spacingAndGlyphs">Orders, matched results</text>
+  <!-- Keep a visible shaft from the label clearance point into the head at the MDP border. -->
+  <path class="connector" id="matching-results-arrow" data-connector="true" d="M357.5 183.5 H382.5" marker-end="url(#arrowhead)"/>
+
+  <!-- Market-data publisher and the three order books it maintains. -->
+  <rect class="box" x="384.5" y="18" width="273" height="331"/>
+  <text class="label center" x="521" y="47">MDP</text>
+  <g class="box">
+    <rect x="425" y="61" width="59" height="49"/>
+    <rect x="492" y="61" width="58.5" height="49"/>
+    <rect x="558.5" y="61" width="58.5" height="49"/>
+  </g>
+  <g class="label center">
+    <text x="454.5" y="82"><tspan x="454.5">Order</tspan><tspan x="454.5" dy="19">book</tspan></text>
+    <text x="521.25" y="82"><tspan x="521.25">Order</tspan><tspan x="521.25" dy="19">book</tspan></text>
+    <text x="587.75" y="82"><tspan x="587.75">Order</tspan><tspan x="587.75" dy="19">book</tspan></text>
+  </g>
+
+  <!-- Candlestick charts retain recent ticks in segmented circular ring buffers. -->
+  <rect class="box" x="404" y="136.5" width="234" height="110"/>
+  <text class="label center" x="521" y="158.5">Candlestick Charts</text>
+  <g aria-label="Candlestick ring buffers">
+    <use href="#segmented-ring" transform="translate(450 198.5)"/>
+    <use href="#segmented-ring" transform="translate(521 198.5)"/>
+    <use href="#segmented-ring" transform="translate(592 198.5)"/>
+    <g class="small center">
+      <text x="450" y="204">1 min</text>
+      <text x="521" y="204">1 hour</text>
+      <text x="592" y="204">1 day</text>
+    </g>
+  </g>
+
+  <!-- Ring-buffer callout: dashed shaft ends at the outer edge of the one-day ring. -->
+  <g class="label center">
+    <text x="759" y="113">Ring buffer</text>
+    <text x="759" y="132">Hold recent 100 ticks</text>
+  </g>
+  <path class="callout" id="ring-buffer-callout" data-connector="true" d="M718 139 L625 181" marker-end="url(#arrowhead)"/>
+
+  <!-- Persistence and downstream data service. -->
+  <path class="connector" id="charts-to-persistence" data-connector="true" d="M521 246.5 V280" marker-end="url(#arrowhead)"/>
+  <rect class="box" x="460" y="282" width="122.5" height="50"/>
+  <text class="label center" x="521.25" y="313">Persistence</text>
+
+  <path class="connector" id="publisher-to-service" data-connector="true" d="M521 349 V394.5" marker-end="url(#arrowhead)"/>
+  <rect class="box" x="460" y="396.5" width="122.5" height="49.5"/>
+  <text class="label center" x="521.25" y="427.5">Data Service</text>
+</svg>

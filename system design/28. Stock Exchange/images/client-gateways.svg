@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1370" height="722" viewBox="0 0 685 361"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Client gateway paths into a stock exchange</title>
+  <desc id="desc">The exchange website uses an app or web gateway, API users use an API gateway, and a broker or dealer can also connect to a colo engine. Both gateways lead to shared services.</desc>
+
+  <!-- Shared black-and-white styling for the exchange boundary, nodes, and labels. -->
+  <defs>
+    <style>
+      .label { font: 18px Arial, Helvetica, sans-serif; fill: #000; text-anchor: middle; }
+      .node { fill: #fff; stroke: #000; stroke-width: 1.1; }
+      .connector { fill: none; stroke: #000; stroke-width: 1.1; }
+    </style>
+  </defs>
+
+  <!-- Opaque canvas matches the white PNG background in every SVG renderer. -->
+  <rect width="685" height="361" fill="#fff"/>
+
+  <!-- Exchange system boundary. -->
+  <rect x="270.75" y="24" width="386.75" height="320.5" fill="#fff" stroke="#000" stroke-width="1.1"/>
+  <text class="label" x="464" y="50.5">Exchange</text>
+
+  <!-- External client types. -->
+  <g>
+    <rect class="node" x="34.75" y="72.75" width="131" height="52.75"/>
+    <rect class="node" x="34.75" y="174.75" width="131" height="52.75"/>
+    <rect class="node" x="34.75" y="276.75" width="131" height="52.75"/>
+  </g>
+  <g class="label">
+    <text x="100.25" y="95.5"><tspan x="100.25">Exchange</tspan><tspan x="100.25" dy="20">Website/App</tspan></text>
+    <text x="100.25" y="208">Broker/Dealer</text>
+    <text x="100.25" y="299"><tspan x="100.25">Other API</tspan><tspan x="100.25" dy="20">Users</tspan></text>
+  </g>
+
+  <!-- Exchange entry points and the co-located execution path. -->
+  <g>
+    <rect class="node" x="296.25" y="72.75" width="131" height="52.75"/>
+    <rect class="node" x="296.75" y="174.75" width="131" height="52.75"/>
+    <rect class="node" x="296.75" y="276.75" width="131" height="52.75"/>
+  </g>
+  <g class="label">
+    <text x="361.75" y="95.5"><tspan x="361.75">App/Web</tspan><tspan x="361.75" dy="20">Gateway</tspan></text>
+    <text x="362.25" y="197.5"><tspan x="362.25">API Gateway</tspan><tspan x="362.25" dy="20">(FIX/Non-FIX)</tspan></text>
+    <text x="362.25" y="309">Colo Engine</text>
+  </g>
+
+  <!-- Stacked shared-services cards; the front card carries the label. -->
+  <rect class="node" x="507.75" y="117.75" width="131" height="52.75"/>
+  <rect class="node" x="500.75" y="124.75" width="131" height="52.75"/>
+  <text class="label" x="566.25" y="147"><tspan x="566.25">Shared</tspan><tspan x="566.25" dy="20">Services</tspan></text>
+
+  <!-- Client-to-entry connectors. HTTP is placed in a deliberate gap in the first shaft. -->
+  <g class="connector">
+    <path id="website-http-shaft-left" data-connector="true" d="M165.75 99.25 H192"/>
+    <path id="website-http-shaft-right" data-connector="true" d="M250 99.25 H291"/>
+    <path id="broker-api-shaft" data-connector="true" d="M165.75 201.25 H291"/>
+    <path id="other-api-shaft" data-connector="true" d="M165.75 277.25 L292.75 228.78"/>
+    <path id="broker-colo-shaft" data-connector="true" d="M165.75 227.25 L292.75 275.24"/>
+    <path id="app-shared-shaft" data-connector="true" d="M427.25 115.75 L495.5 132.75"/>
+    <path id="api-shared-shaft" data-connector="true" d="M427.75 185.25 L495.5 169"/>
+  </g>
+  <g fill="#000">
+    <!-- All six connector heads use the PNG's consistent 11.25-by-10-unit geometry. -->
+    <path d="M296.25 99.25 L285 94.25 V104.25 Z"/>
+    <path d="M296.75 201.25 L285.5 196.25 V206.25 Z"/>
+    <!-- Rotated heads meet the lower-left and upper-left gateway corners. -->
+    <path d="M296.75 227.25 L284.46 226.59 L288.02 235.93 Z"/>
+    <path d="M296.75 276.75 L287.99 268.10 L284.46 277.45 Z"/>
+    <!-- Shared-services heads use the same geometry along their diagonal shafts. -->
+    <path d="M500.75 134 L491.03 126.44 L488.63 136.14 Z"/>
+    <path d="M500.75 167.75 L488.65 165.51 L490.98 175.23 Z"/>
+  </g>
+  <text class="label" x="221" y="106">HTTP</text>
+</svg>

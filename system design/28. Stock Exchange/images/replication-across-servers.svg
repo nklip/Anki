@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1852"
+     height="1150"
+     viewBox="0 0 926 575"
+     role="img"
+     aria-labelledby="diagram-title diagram-description">
+  <title id="diagram-title">Replication across matching-engine servers</title>
+  <desc id="diagram-description">
+    A hot matching engine reads new orders from and writes filled orders to a leader memory-mapped event store.
+    A warm matching engine replays new orders, while AppendEntries RPCs replicate the leader log to four follower event stores.
+  </desc>
+
+  <!-- Shared styles reproduce the PNG's two-times export grid. -->
+  <defs>
+    <style>
+      .label {
+        fill: #000;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+        font-weight: 400;
+        text-anchor: middle;
+      }
+      .engine-box,
+      .store-box,
+      .slot-rule,
+      .connector {
+        stroke: #000;
+        stroke-width: 1;
+      }
+      .engine-box,
+      .store-box {
+        fill: #fff;
+      }
+      .warm-box { fill: #ccc; }
+      .slot-rule,
+      .connector {
+        fill: none;
+        stroke-linecap: butt;
+        stroke-linejoin: miter;
+      }
+      .leader-slot { fill: #ffc0ff; }
+      .follower-slot { fill: #c0ffff; }
+    </style>
+    <!-- One symmetric head is reused for every straight and curved arrow. -->
+    <marker id="arrowhead" markerWidth="14" markerHeight="12"
+            viewBox="0 0 14 12" refX="11" refY="6"
+            orient="auto" markerUnits="userSpaceOnUse"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M0 0 L14 6 L0 12 Z" fill="#000"/>
+    </marker>
+  </defs>
+
+  <!-- Explicit artboard keeps the transparent SVG consistent with the white PNG. -->
+  <rect width="926" height="575" fill="#fff"/>
+
+  <!-- Active and standby matching engines. -->
+  <g id="matching-engines">
+    <rect class="engine-box" x="377" y="18" width="179" height="67.5"/>
+    <rect class="engine-box warm-box" x="655" y="18" width="179" height="67.5"/>
+    <g class="label">
+      <text x="466.5" y="47.5">
+        <tspan x="466.5">Matching Engine</tspan>
+        <tspan x="466.5" dy="21">(Hot)</tspan>
+      </text>
+      <text x="744.5" y="47.5">
+        <tspan x="744.5">Matching Engine</tspan>
+        <tspan x="744.5" dy="21">(Warm)</tspan>
+      </text>
+    </g>
+  </g>
+
+  <!-- Five replicated mmap logs; the colored first slot identifies leader versus followers. -->
+  <g id="event-stores">
+    <g id="leader-store">
+      <rect class="store-box" x="225" y="202" width="622.5" height="43"/>
+      <rect class="leader-slot" x="225.5" y="202.5" width="7.5" height="42"/>
+      <path class="slot-rule" d="M233 202V245 M241.25 202V245 M249.25 202V245 M257.25 202V245 M265.25 202V245 M273.25 202V245 M281.5 202V245 M289.5 202V245 M297.75 202V245 M305.75 202V245 M313.75 202V245 M322 202V245 M330 202V245 M338 202V245 M346.5 202V245 M354.75 202V245"/>
+      <text class="label" x="601.25" y="231">Event Store (mmap)</text>
+    </g>
+
+    <g id="follower-store-1">
+      <rect class="store-box" x="225" y="281" width="622.5" height="43"/>
+      <rect class="follower-slot" x="225.5" y="281.5" width="7.5" height="42"/>
+      <path class="slot-rule" d="M233 281V324 M241.25 281V324 M249.25 281V324 M257.25 281V324 M265.25 281V324 M273.25 281V324 M281.5 281V324 M289.5 281V324 M297.75 281V324 M305.75 281V324 M313.75 281V324 M322 281V324 M330 281V324 M338 281V324 M346.5 281V324 M354.75 281V324"/>
+      <text class="label" x="601.25" y="310">Event Store (mmap)</text>
+    </g>
+
+    <g id="follower-store-2">
+      <rect class="store-box" x="225" y="359.5" width="622.5" height="43"/>
+      <rect class="follower-slot" x="225.5" y="360" width="7.5" height="42"/>
+      <path class="slot-rule" d="M233 359.5V402.5 M241.25 359.5V402.5 M249.25 359.5V402.5 M257.25 359.5V402.5 M265.25 359.5V402.5 M273.25 359.5V402.5 M281.5 359.5V402.5 M289.5 359.5V402.5 M297.75 359.5V402.5 M305.75 359.5V402.5 M313.75 359.5V402.5 M322 359.5V402.5 M330 359.5V402.5 M338 359.5V402.5 M346.5 359.5V402.5 M354.75 359.5V402.5"/>
+      <text class="label" x="601.25" y="388.5">Event Store (mmap)</text>
+    </g>
+
+    <g id="follower-store-3">
+      <rect class="store-box" x="225" y="438.5" width="622.5" height="43"/>
+      <rect class="follower-slot" x="225.5" y="439" width="7.5" height="42"/>
+      <path class="slot-rule" d="M233 438.5V481.5 M241.25 438.5V481.5 M249.25 438.5V481.5 M257.25 438.5V481.5 M265.25 438.5V481.5 M273.25 438.5V481.5 M281.5 438.5V481.5 M289.5 438.5V481.5 M297.75 438.5V481.5 M305.75 438.5V481.5 M313.75 438.5V481.5 M322 438.5V481.5 M330 438.5V481.5 M338 438.5V481.5 M346.5 438.5V481.5 M354.75 438.5V481.5"/>
+      <text class="label" x="601.25" y="467.5">Event Store (mmap)</text>
+    </g>
+
+    <g id="follower-store-4">
+      <rect class="store-box" x="225" y="517" width="622.5" height="43.5"/>
+      <rect class="follower-slot" x="225.5" y="517.5" width="7.5" height="42.5"/>
+      <path class="slot-rule" d="M233 517V560.5 M241.25 517V560.5 M249.25 517V560.5 M257.25 517V560.5 M265.25 517V560.5 M273.25 517V560.5 M281.5 517V560.5 M289.5 517V560.5 M297.75 517V560.5 M305.75 517V560.5 M313.75 517V560.5 M322 517V560.5 M330 517V560.5 M338 517V560.5 M346.5 517V560.5 M354.75 517V560.5"/>
+      <text class="label" x="601.25" y="546.5">Event Store (mmap)</text>
+    </g>
+  </g>
+
+  <!-- Hot-engine input: the two shaft pieces leave the event label unobstructed. -->
+  <g id="hot-new-order-flow">
+    <path class="connector" data-connector="true" d="M445.5 202 C432 184 425 160 425 143"/>
+    <!-- The marker projects three units so its tip, not the path endpoint, meets the box. -->
+    <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
+          d="M430 113 C433 103 436.5 96 439.85 88"/>
+    <text class="label" x="426" y="135.5">NewOrderEvent</text>
+  </g>
+
+  <!-- Hot-engine output: filled orders append back to the leader log. -->
+  <g id="hot-order-filled-flow">
+    <path class="connector" data-connector="true" d="M497.5 85.5 C513.5 106 520.5 127 519.5 146"/>
+    <!-- Exact 45-degree centerline; the shaft ends beneath the symmetric 14x12 head. -->
+    <path class="connector" data-connector="true"
+          d="M511 175 C510 182 506.52 189.98 502.28 194.22"/>
+    <path d="M500.16 187.86 L494.5 202 L508.64 196.34 Z" fill="#000"/>
+    <text class="label" x="517" y="168">OrderFilledEvent</text>
+  </g>
+
+  <!-- Warm engine replays new-order events from the same leader log. -->
+  <g id="warm-new-order-flow">
+    <path class="connector" data-connector="true" d="M744.5 202V158"/>
+    <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
+          d="M744.5 129V88.5"/>
+    <text class="label" x="744.5" y="151">NewOrderEvent</text>
+  </g>
+
+  <!-- Replication fans out from the leader's first slot to all four followers. -->
+  <g id="append-entries-replication">
+    <path id="leader-to-follower-1" class="connector" data-connector="true"
+          marker-end="url(#arrowhead)" d="M229 245V278"/>
+
+    <!-- Each split route resumes at the same x-position below the label. -->
+    <g id="leader-to-follower-2">
+      <path class="connector" data-connector="true" d="M225 224 C202 245 207 286 207 324"/>
+      <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
+            d="M207 351 C207 362 216 367 222.6 372.2"/>
+    </g>
+
+    <g id="leader-to-follower-3">
+      <path class="connector" data-connector="true" d="M225 224 C191 248 174.5 286 174.5 324"/>
+      <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
+            d="M174.5 351 C174.5 386 199 429 222.8 451"/>
+    </g>
+
+    <g id="leader-to-follower-4">
+      <path class="connector" data-connector="true" d="M225 224 C167 267 147 299 147 324"/>
+      <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
+            d="M147 351 C147 405 160 481 222.6 530.7"/>
+    </g>
+
+    <text class="label" x="135.5" y="343.5">AppendEntries RPCs</text>
+  </g>
+</svg>

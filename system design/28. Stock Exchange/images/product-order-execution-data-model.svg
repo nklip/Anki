@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1354"
+     height="1560"
+     viewBox="0 0 677 780"
+     role="img"
+     aria-labelledby="diagram-title diagram-description">
+  <title id="diagram-title">Product, order, and execution data model</title>
+  <desc id="diagram-description">
+    UML-style data model showing the fields of Order, Execution, and Product.
+    One order can have zero or more executions, and each order belongs to one product.
+  </desc>
+
+  <!-- Shared visual styling keeps the source compact and easy to adjust. -->
+  <style>
+    .canvas { fill: #fff; }
+    .entity-box,
+    .divider,
+    .relationship,
+    .open-chevron {
+      fill: none;
+      stroke: #111;
+      stroke-width: .72;
+      stroke-linecap: square;
+      stroke-linejoin: miter;
+      vector-effect: non-scaling-stroke;
+    }
+    .entity-title,
+    .field,
+    .cardinality {
+      fill: #050505;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .entity-title {
+      font-size: 15px;
+      font-weight: 700;
+      text-anchor: middle;
+    }
+    .field {
+      font-size: 15.5px;
+      font-weight: 400;
+      paint-order: stroke fill;
+      stroke: #050505;
+      stroke-width: .08px;
+    }
+    .cardinality {
+      font-size: 13px;
+      font-weight: 400;
+    }
+  </style>
+
+  <!-- White artboard matches the PNG etalon. -->
+  <rect class="canvas" width="677" height="780"/>
+
+  <!-- Order entity. -->
+  <g id="order-entity">
+    <rect class="entity-box" x="79" y="14" width="208" height="417"/>
+    <path class="divider" d="M79 44.5H287"/>
+    <text class="entity-title" x="183" y="33.5">Order</text>
+    <g class="field">
+      <text x="85" y="69.5">+ orderID: UUID</text>
+      <text x="85" y="94.5">+ productID: int</text>
+      <text x="85" y="119.5">+ price: long</text>
+      <text x="85" y="144.5">+ quantity: long</text>
+      <text x="85" y="169.5">+ side: Side</text>
+      <text x="85" y="194.5">+ orderStatus: OrderStatus</text>
+      <text x="85" y="219.5">+ orderType: OrderType</text>
+      <text x="85" y="244.5">+ timeInForce: TimeInForce</text>
+      <text x="85" y="269.5">+ symbol: long</text>
+      <text x="85" y="294.5">+ userID: long</text>
+      <text x="85" y="319.5">+ clientOrderID: string</text>
+      <text x="85" y="344.5">+ broker: string</text>
+      <text x="85" y="369.5">+ accountID: long</text>
+      <text x="85" y="394.5">+ entryTime: long</text>
+      <text x="85" y="419.5">+ transactionTime: long</text>
+    </g>
+  </g>
+
+  <!-- Execution entity. -->
+  <g id="execution-entity">
+    <rect class="entity-box" x="408.5" y="14" width="207.5" height="417"/>
+    <path class="divider" d="M408.5 44.5H616"/>
+    <text class="entity-title" x="512.25" y="33.5">Execution</text>
+    <g class="field">
+      <text x="415" y="69.5">+ execID: UUID</text>
+      <text x="415" y="94.5">+ orderID: UUID</text>
+      <text x="415" y="119.5">+ price: long</text>
+      <text x="415" y="144.5">+ quantity: long</text>
+      <text x="415" y="169.5">+ side: Side</text>
+      <text x="415" y="194.5">+ orderStatus: OrderStatus</text>
+      <text x="415" y="219.5">+ orderType: OrderType</text>
+      <text x="415" y="244.5">+ symbol: long</text>
+      <text x="415" y="269.5">+ userID: long</text>
+      <text x="415" y="294.5">+ feeCurrency: Currency</text>
+      <text x="415" y="319.5">+ feeRate: long</text>
+      <text x="415" y="344.5">+ feeAmount: long</text>
+      <text x="415" y="369.5">+ accountID: long</text>
+      <text x="415" y="394.5">+ execStatus: ExecStatus</text>
+      <text x="415" y="419.5">+ transactionTime: long</text>
+    </g>
+  </g>
+
+  <!-- Product entity. -->
+  <g id="product-entity">
+    <rect class="entity-box" x="79" y="526.5" width="208" height="243"/>
+    <path class="divider" d="M79 557H287"/>
+    <text class="entity-title" x="183" y="546">Product</text>
+    <g class="field">
+      <text x="85" y="582">+ productID: int</text>
+      <text x="85" y="607">+ symbol: type</text>
+      <text x="85" y="632">+ lotSize: int</text>
+      <text x="85" y="657">+ tickSize: decimal</text>
+      <text x="85" y="682">+ quoteCurrency: Currency</text>
+      <text x="85" y="707">+ settleCurrency: Currency</text>
+      <text x="85" y="732">+ description: string</text>
+      <text x="85" y="757">+ field: type</text>
+    </g>
+  </g>
+
+  <!-- Order-to-execution relationship: one order has zero or more executions. -->
+  <g id="order-execution-relationship">
+    <path class="relationship" data-connector="true" d="M287 238H408.5"/>
+    <path class="open-chevron" d="M392.5 229.5L408.5 238L392.5 246.5"/>
+    <text class="cardinality" x="293" y="255">1</text>
+    <text class="cardinality" x="366.5" y="231.5">0..n</text>
+  </g>
+
+  <!-- Order-to-product relationship: each order belongs to one product. -->
+  <g id="order-product-relationship">
+    <path class="relationship" data-connector="true" d="M183 431V526.5"/>
+    <path class="open-chevron" d="M174.5 511L183 526.5L191.5 511"/>
+    <text class="cardinality" x="190" y="447">1</text>
+    <text class="cardinality" x="190" y="507">1</text>
+  </g>
+</svg>

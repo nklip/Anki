@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1172" height="1248" viewBox="0 0 586 624"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Pinned application loop inside an order manager</title>
+  <desc id="desc">Orders move through input, a single pinned application-loop thread that updates order state, and output. The application loop is pinned to CPU 1.</desc>
+
+  <!-- Shared monochrome system and the single highlighted CPU cell. -->
+  <defs>
+    <style>
+      .label { font: 20px Arial, Helvetica, sans-serif; fill: #000; }
+      .center { text-anchor: middle; }
+      .box { fill: #fff; stroke: #000; stroke-width: 1.25; }
+      .connector { fill: none; stroke: #000; stroke-width: 1.25; }
+    </style>
+  </defs>
+
+  <!-- Opaque canvas matches the white PNG background in every SVG renderer. -->
+  <rect width="586" height="624" fill="#fff"/>
+
+  <!-- Order-manager boundary and title. -->
+  <rect x="59.25" y="76.25" width="481.75" height="459.5" fill="#fff" stroke="#000" stroke-width="1.25"/>
+  <text class="label" x="388" y="106.5">Order Manager</text>
+
+  <!-- Input and output network loops. -->
+  <rect class="box" x="103.5" y="103.25" width="228.5" height="55.25"/>
+  <text class="label center" x="217.75" y="138">Input Thread/Netloop</text>
+  <rect class="box" x="103.5" y="459.75" width="228.5" height="55.75"/>
+  <text class="label center" x="217.75" y="495">Output Thread/Netloop</text>
+
+  <!-- Orders enter and leave vertically; the labels sit in explicit line gaps. -->
+  <g class="connector">
+    <path id="orders-in-shaft-top" data-connector="true" d="M217.75 15.5 V41.5"/>
+    <path id="orders-in-shaft-bottom" data-connector="true" d="M217.75 67.5 V90.5"/>
+    <path id="orders-out-shaft-top" data-connector="true" d="M217.75 515.5 V544.5"/>
+    <path id="orders-out-shaft-bottom" data-connector="true" d="M217.75 573 V603.5"/>
+  </g>
+  <g fill="#000">
+    <path d="M217.75 103.25 L212.75 90 H222.75 Z"/>
+    <path d="M217.75 607.5 L212.75 594.25 H222.75 Z"/>
+  </g>
+  <g class="label center">
+    <text x="217.75" y="61.5">orders</text>
+    <text x="217.75" y="565">orders</text>
+  </g>
+
+  <!-- Dashed application-loop boundary and its visible queue. -->
+  <rect x="82" y="233.25" width="175.75" height="152.5" fill="#fff" stroke="#000"
+        stroke-width="1.25" stroke-dasharray="6 4"/>
+  <text class="label center" x="137" y="293"><tspan x="137">Application</tspan><tspan x="137" dy="23">Loop</tspan><tspan x="137" dy="23">Thread</tspan></text>
+  <rect class="box" x="193.5" y="249.5" width="49" height="120"/>
+  <path d="M193.5 262.5 H242.5 M193.5 276 H242.5 M193.5 288.5 H242.5" fill="none" stroke="#000" stroke-width="1.25"/>
+  <!-- Three source-native queue dots avoid the ambiguous bounds of stacked period glyphs. -->
+  <g fill="#000">
+    <rect x="216.5" y="323" width="2.5" height="3"/>
+    <rect x="216.5" y="331" width="2.5" height="3"/>
+    <rect x="216.5" y="339" width="2.5" height="3"/>
+  </g>
+
+  <!-- Dispatch flow through the application loop. -->
+  <g class="connector">
+    <path id="dispatch-in-shaft-top" data-connector="true" d="M217.75 158.5 V187"/>
+    <path id="dispatch-in-shaft-bottom" data-connector="true" d="M217.75 215 V244.5"/>
+    <path id="dispatch-out-shaft-top" data-connector="true" d="M217.75 369.5 V393.5"/>
+    <path id="dispatch-out-shaft-bottom" data-connector="true" d="M217.75 423.5 V446.5"/>
+  </g>
+  <g fill="#000">
+    <!-- All main flow heads use the same 13.25-by-10-unit triangle. -->
+    <path d="M217.75 249.5 L212.75 236.25 H222.75 Z"/>
+    <path d="M217.75 459.75 L212.75 446.5 H222.75 Z"/>
+  </g>
+  <g class="label center">
+    <text x="217.75" y="208">dispatch</text>
+    <text x="217.75" y="415.5">dispatch</text>
+  </g>
+
+  <!-- The application thread updates the order state. The label breaks the diagonal shaft. -->
+  <rect class="box" x="386.75" y="231.25" width="131.5" height="55.5"/>
+  <text class="label center" x="452.5" y="266">Order State</text>
+  <g class="connector">
+    <path id="update-shaft-left" data-connector="true" d="M257.75 293.75 L284 289"/>
+    <path id="update-shaft-right" data-connector="true" d="M350 277 L381 271.25"/>
+  </g>
+  <!-- The standard flow-head geometry is rotated to follow the rising update shaft. -->
+  <path d="M386.75 270.25 L372.82 267.73 L374.62 277.56 Z" fill="#000"/>
+  <text class="label center" x="317" y="290">update</text>
+
+  <!-- CPU affinity route and an eight-core grid; CPU 1 is the highlighted target. -->
+  <g class="connector">
+    <path id="cpu-affinity-shaft-left" data-connector="true" d="M257.75 334 L293 343.5"/>
+    <path id="cpu-affinity-shaft-right" data-connector="true" d="M381 366.5 L417.5 376"/>
+  </g>
+  <!-- The standard flow-head geometry is rotated to follow the CPU-affinity shaft. -->
+  <path d="M422.5 377.25 L410.93 369.08 L408.42 378.76 Z" fill="#000"/>
+  <text class="label center" x="334" y="362">pin to CPU 1</text>
+
+  <g>
+    <rect x="422.75" y="341.75" width="55.5" height="110" fill="#fff" stroke="#000" stroke-width="1.25"/>
+    <rect x="422.75" y="369.25" width="27.75" height="27.5" fill="#f7c5fd"/>
+    <path d="M450.5 341.75 V451.75 M422.75 369.25 H478.25 M422.75 396.75 H478.25 M422.75 424.25 H478.25"
+          fill="none" stroke="#000" stroke-width="1.25"/>
+    <g class="label center">
+      <text x="436.5" y="363">0</text><text x="464.5" y="363">7</text>
+      <text x="436.5" y="390.5">1</text><text x="464.5" y="390.5">6</text>
+      <text x="436.5" y="418">2</text><text x="464.5" y="418">5</text>
+      <text x="436.5" y="445.5">3</text><text x="464.5" y="445.5">4</text>
+    </g>
+  </g>
+</svg>

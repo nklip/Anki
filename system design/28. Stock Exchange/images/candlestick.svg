@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="774" height="670" viewBox="0 0 387 335"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Anatomy of a bullish candlestick</title>
+  <desc id="desc">A candlestick labeled with its high, open, close, low, upper shadow, real body, and lower shadow.</desc>
+
+  <!-- Shared monochrome styling; the half-size viewBox preserves the source image's 2x export geometry. -->
+  <defs>
+    <style>
+      .label { font: 20px Arial, Helvetica, sans-serif; fill: #000; }
+      .guide { fill: none; stroke: #000; stroke-width: 1; }
+      .candle { fill: #000; }
+    </style>
+  </defs>
+
+  <!-- Opaque canvas matches the white PNG background in every SVG renderer. -->
+  <rect width="387" height="335" fill="#fff"/>
+
+  <!-- Price labels and short leader arrows. Each shaft stops under its own triangular head. -->
+  <g class="label">
+    <text x="57" y="38">High</text>
+    <text x="54" y="113">Open</text>
+    <text x="53" y="241">Close</text>
+    <text x="59" y="315">Low</text>
+  </g>
+  <g fill="#000">
+    <path id="high-label-shaft" data-connector="true" d="M100 30.5 H134" stroke="#000" stroke-width="1"/>
+    <path d="M139 30.5 L134 28 L134 33 Z"/>
+    <path id="open-label-shaft" data-connector="true" d="M103 105.5 H134" stroke="#000" stroke-width="1"/>
+    <path d="M139 105.5 L134 103 L134 108 Z"/>
+    <path id="close-label-shaft" data-connector="true" d="M104 234.5 H134" stroke="#000" stroke-width="1"/>
+    <path d="M139 234.5 L134 232 L134 237 Z"/>
+    <path id="low-label-shaft" data-connector="true" d="M99 307.5 H134" stroke="#000" stroke-width="1"/>
+    <path d="M139 307.5 L134 305 L134 310 Z"/>
+  </g>
+
+  <!-- Candlestick: heavy caps and wick surround an unfilled real body. -->
+  <g class="candle">
+    <rect x="142" y="28.5" width="38" height="5"/>
+    <rect x="158.5" y="31" width="5" height="75"/>
+    <path d="M142 103 H180 V237 H142 Z M147 108 V232 H175 V108 Z" fill-rule="evenodd"/>
+    <rect x="158.5" y="234" width="5" height="74"/>
+    <rect x="142" y="305.5" width="38" height="5"/>
+  </g>
+
+  <!-- Dimension guides; arrow tips meet their horizontal boundary ticks. -->
+  <g class="guide">
+    <path d="M186.5 30.5 H220 M186.5 105.5 H220 M186.5 234.5 H220 M186.5 307.5 H220"/>
+    <path id="upper-shadow-dimension" data-connector="true" d="M203.5 35 V101"/>
+    <path id="body-dimension" data-connector="true" d="M203.5 110 V230"/>
+    <path id="lower-shadow-dimension" data-connector="true" d="M203.5 239 V303"/>
+  </g>
+  <g fill="#000">
+    <path d="M203.5 30.5 L201 36 H206 Z M203.5 105.5 L201 100 H206 Z"/>
+    <path d="M203.5 105.5 L201 111 H206 Z M203.5 234.5 L201 229 H206 Z"/>
+    <path d="M203.5 234.5 L201 240 H206 Z M203.5 307.5 L201 302 H206 Z"/>
+  </g>
+
+  <!-- Names for the three vertical regions. -->
+  <g class="label">
+    <text x="211" y="75">Upper Shadow</text>
+    <text x="211" y="178">Real Body</text>
+    <text x="211" y="279">Lower Shadow</text>
+  </g>
+</svg>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1390" height="1058" viewBox="0 0 695 529"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Sequencer deep dive</title>
+  <desc id="desc">A gateway and matching engine write to separate ring buffers. A sequencer pulls from both buffers and appends the ordered events to a memory-mapped event store.</desc>
+
+  <!-- The half-size coordinate system reproduces the PNG's two-times export. -->
+  <defs>
+    <style>
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 21px; font-weight: normal; fill: #000; }
+      .step-number { font-family: Arial, Helvetica, sans-serif; font-size: 20px; font-weight: normal; fill: #000; }
+      .ring-label { font-family: Arial, Helvetica, sans-serif; font-size: 17px; font-weight: normal; fill: #000; }
+      .center { text-anchor: middle; }
+      .box { fill: #fff; stroke: #000; stroke-width: 1; }
+      .connector { fill: none; stroke: #000; stroke-width: 1; }
+      .step { fill: #fff; stroke: #000; stroke-width: 1; }
+    </style>
+
+    <!-- Every flow uses the same symmetric, fixed-size arrowhead. -->
+    <marker id="arrowhead" markerWidth="12" markerHeight="10" viewBox="0 0 12 10"
+            refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M0 0 L12 5 L0 10 Z" fill="#000"/>
+    </marker>
+
+    <!-- Editable 24-slot ring-buffer symbol used by both producers. -->
+    <g id="segmented-ring">
+      <circle r="39" fill="#fff" stroke="#000" stroke-width="1"/>
+      <circle r="36" fill="none" stroke="#d0cbff" stroke-width="6"/>
+      <circle r="33" fill="#fff" stroke="#000" stroke-width="0.7"/>
+      <path id="ring-divider" d="M0 -39 V-33" fill="none" stroke="#000" stroke-width="0.55"/>
+      <use href="#ring-divider" transform="rotate(15)"/><use href="#ring-divider" transform="rotate(30)"/>
+      <use href="#ring-divider" transform="rotate(45)"/><use href="#ring-divider" transform="rotate(60)"/>
+      <use href="#ring-divider" transform="rotate(75)"/><use href="#ring-divider" transform="rotate(90)"/>
+      <use href="#ring-divider" transform="rotate(105)"/><use href="#ring-divider" transform="rotate(120)"/>
+      <use href="#ring-divider" transform="rotate(135)"/><use href="#ring-divider" transform="rotate(150)"/>
+      <use href="#ring-divider" transform="rotate(165)"/><use href="#ring-divider" transform="rotate(180)"/>
+      <use href="#ring-divider" transform="rotate(195)"/><use href="#ring-divider" transform="rotate(210)"/>
+      <use href="#ring-divider" transform="rotate(225)"/><use href="#ring-divider" transform="rotate(240)"/>
+      <use href="#ring-divider" transform="rotate(255)"/><use href="#ring-divider" transform="rotate(270)"/>
+      <use href="#ring-divider" transform="rotate(285)"/><use href="#ring-divider" transform="rotate(300)"/>
+      <use href="#ring-divider" transform="rotate(315)"/><use href="#ring-divider" transform="rotate(330)"/>
+      <use href="#ring-divider" transform="rotate(345)"/>
+    </g>
+  </defs>
+
+  <rect width="695" height="529" fill="#fff"/>
+
+  <!-- Event producers. -->
+  <rect class="box" x="134.5" y="13.5" width="132" height="61"/>
+  <rect class="box" x="388.5" y="13.5" width="132" height="61"/>
+  <g class="label center">
+    <text x="200.5" y="51.5">Gateway</text>
+    <text x="454.5" y="39.5"><tspan x="454.5">Matching</tspan><tspan x="454.5" dy="25">Engine</tspan></text>
+  </g>
+
+  <!-- Producers append independently to their local ring buffers. -->
+  <path class="connector" id="gateway-to-step-1" data-connector="true"
+        d="M200.5 74.5 V100"/>
+  <path class="connector" id="step-1-to-ring" data-connector="true"
+        d="M200.5 129 V159" marker-end="url(#arrowhead)"/>
+  <path class="connector" id="matching-engine-to-ring" data-connector="true"
+        d="M454.5 74.5 V159" marker-end="url(#arrowhead)"/>
+
+  <g aria-label="Gateway ring buffer">
+    <use href="#segmented-ring" transform="translate(200.5 200)"/>
+    <text class="ring-label center" x="200.5" y="193.5"><tspan x="200.5">ring</tspan><tspan x="200.5" dy="20">buffer</tspan></text>
+  </g>
+  <g aria-label="Matching-engine ring buffer">
+    <use href="#segmented-ring" transform="translate(454.5 200)"/>
+    <text class="ring-label center" x="454.5" y="193.5"><tspan x="454.5">ring</tspan><tspan x="454.5" dy="20">buffer</tspan></text>
+  </g>
+
+  <!-- Numbered annotations sit above the shafts, leaving the original white gaps. -->
+  <g class="label">
+    <circle class="step" cx="200.5" cy="114.5" r="14.5"/>
+    <text class="step-number center" x="200.5" y="121.5">1</text>
+    <text x="220.5" y="123.5">Write to ring buffer</text>
+  </g>
+
+  <!-- The sequencer consumes each ring; step 2 forms the same slight elbow as the PNG. -->
+  <path class="connector" id="gateway-ring-to-step-2"
+        d="M226 229 L248 259.5"/>
+  <path class="connector" id="step-2-to-sequencer" data-connector="true"
+        d="M265 283 L300.5 322" marker-end="url(#arrowhead)"/>
+  <path class="connector" id="matching-ring-to-sequencer" data-connector="true"
+        d="M429.5 230 L355 322" marker-end="url(#arrowhead)"/>
+
+  <g class="label">
+    <text class="center" x="136.5" y="276.5">Sequencer pulls data</text>
+    <text class="center" x="136.5" y="301">from ring buffer</text>
+    <circle class="step" cx="256.5" cy="271.5" r="14.5"/>
+    <text class="step-number center" x="256.5" y="278.5">2</text>
+  </g>
+
+  <!-- Sequencer assigns the total order. -->
+  <rect class="box" x="261.5" y="324.5" width="132" height="61"/>
+  <text class="label center" x="327.5" y="362.5">Sequencer</text>
+
+  <!-- Step 3: append the ordered stream to the memory-mapped event store. -->
+  <path class="connector" id="sequencer-to-step-3" data-connector="true"
+        d="M327.5 385.5 V406.5"/>
+  <path class="connector" id="step-3-to-event-store" data-connector="true"
+        d="M327.5 435.5 V465.5" marker-end="url(#arrowhead)"/>
+  <g class="label">
+    <circle class="step" cx="327.5" cy="421" r="14.5"/>
+    <text class="step-number center" x="327.5" y="428">3</text>
+    <text x="349.5" y="428">Sequencer writes to Event Store</text>
+  </g>
+
+  <!-- Append-only mmap store; narrow leading cells depict occupied entries. -->
+  <rect class="box" x="111.5" y="467.5" width="432" height="45"/>
+  <path class="connector" d="M120 467.5 V512.5 M128.5 467.5 V512.5 M137 467.5 V512.5
+                               M145.5 467.5 V512.5 M154 467.5 V512.5 M162.5 467.5 V512.5
+                               M171 467.5 V512.5 M179.5 467.5 V512.5 M188 467.5 V512.5
+                               M196.5 467.5 V512.5 M205 467.5 V512.5 M213.5 467.5 V512.5
+                               M222 467.5 V512.5 M230.5 467.5 V512.5 M239 467.5 V512.5
+                               M247.5 467.5 V512.5"/>
+  <text class="label center" x="392.5" y="498">Event Store (mmap)</text>
+</svg>

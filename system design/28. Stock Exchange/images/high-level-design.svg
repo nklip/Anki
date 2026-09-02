@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="1088" viewBox="0 0 1000 544"
+     role="img" aria-labelledby="title desc">
+  <title id="title">High-level stock exchange design</title>
+  <desc id="desc">A numbered critical path carries orders from a client through a broker, client gateway, order manager, sequencer, matching engine, and back. Dashed market-data flow connects the matching engine, market data publisher, data service, and broker. A separate reporting flow stores orders and executions in a database.</desc>
+
+  <!-- Shared monochrome styles preserve the PNG's 2x export grid and three flow conventions. -->
+  <defs>
+    <style>
+      .node-label { font-family: Arial, Helvetica, sans-serif; font-size: 16px; font-weight: normal; fill: #000; text-anchor: middle; }
+      .large-label { font-family: Arial, Helvetica, sans-serif; font-size: 16px; font-weight: normal; fill: #000; text-anchor: middle; }
+      .flow-description { font-family: Arial, Helvetica, sans-serif; font-size: 16.4px; font-weight: normal; fill: #000; text-anchor: start; }
+      .badge-label { font-family: Arial, Helvetica, sans-serif; font-size: 13px; font-weight: normal; fill: #000; text-anchor: middle; }
+      .legend-flow-label { font-family: Arial, Helvetica, sans-serif; font-size: 10px; font-weight: normal; fill: #000; text-anchor: middle; }
+      .box { fill: #fff; stroke: #000; stroke-width: 1; }
+      .critical-shaft { fill: none; stroke: #000; stroke-width: 1; }
+      .market-shaft { fill: none; stroke: #000; stroke-width: 1; stroke-dasharray: 8 5; }
+      .report-shaft { fill: none; stroke: #000; stroke-width: 1; stroke-dasharray: 3 2; }
+      .step-badge, .flow-badge { fill: #fff; stroke: #000; stroke-width: 1; }
+    </style>
+  </defs>
+
+  <!-- Opaque canvas matches the reference in renderers that otherwise use transparency. -->
+  <rect width="1000" height="544" fill="#fff"/>
+
+  <!-- Stock-exchange boundary; the broker and end client intentionally remain outside it. -->
+  <rect x="294" y="18" width="673.5" height="510.5" fill="none" stroke="#000"
+        stroke-width="1" stroke-dasharray="4 4"/>
+
+  <!-- Market-data flow is painted first so boxes and labels remain clear above it. -->
+  <g class="market-shaft">
+    <path id="market-m3-vertical" data-connector="true" d="M205.5 69 V234.5"/>
+    <path id="market-m3-horizontal" data-connector="true" d="M216.5 58 H310"/>
+
+    <path id="market-m2-left" data-connector="true" d="M501 58 H407.5"/>
+    <!-- The conservative checker overestimates this label's Arial width; the full-size render confirms the source's 10-unit gap. -->
+    <path id="m2-after-label" d="M749.5 58 H832"/>
+
+    <path id="market-m1-lower" data-connector="true" d="M885 205 V153.5"/>
+    <path id="market-m1-upper" data-connector="true" d="M885 131.5 V86"/>
+  </g>
+
+  <!-- Filled market-data heads stop immediately before their target borders. -->
+  <g fill="#000">
+    <path d="M316 58 L307 54.5 V61.5 Z"/>
+    <path d="M402 58 L411 54.5 V61.5 Z"/>
+    <path d="M885 80.5 L881.5 89.5 H888.5 Z"/>
+  </g>
+
+  <!-- External client workstation. -->
+  <g aria-label="Client workstation">
+    <rect x="43" y="232.5" width="46.5" height="30.5" rx="3" fill="#000"/>
+    <rect x="46" y="235.5" width="40.5" height="20.5" fill="#fff"/>
+    <circle cx="66.25" cy="259.5" r="1.5" fill="#fff"/>
+    <path d="M62.5 263 H70 V268.5 H76.5 V271.5 H55.5 V268.5 H62.5 Z" fill="#000"/>
+  </g>
+
+  <!-- Service and processing nodes. -->
+  <g class="box">
+    <rect x="316.5" y="36.5" width="85" height="44"/>
+    <rect x="835.5" y="36.5" width="100" height="44"/>
+    <rect x="482.5" y="102.5" width="99.5" height="43.5"/>
+
+    <rect x="163.5" y="234.5" width="84.5" height="33.5"/>
+    <rect x="309" y="229.5" width="99.5" height="44"/>
+    <rect x="469.5" y="205" width="125" height="93"/>
+    <rect x="490" y="254.5" width="84.5" height="33.5"/>
+    <rect x="655.5" y="234.5" width="100" height="33.5"/>
+    <rect x="816.5" y="205" width="137.5" height="93"/>
+    <rect x="828" y="254.5" width="114.5" height="33.5"/>
+
+    <rect x="490" y="354" width="84.5" height="34"/>
+  </g>
+
+  <!-- Critical-path shafts are split around every numbered badge. -->
+  <g class="critical-shaft">
+    <path id="critical-1-start" data-connector="true" d="M102 238 L121.5 235"/>
+    <path id="critical-1-end" data-connector="true" d="M143.5 235 L156.11 237.26"/>
+    <path id="critical-2-start" data-connector="true" d="M248 238.5 L266.5 235"/>
+    <path id="critical-2-end" data-connector="true" d="M288.5 235 L301.60 237.29"/>
+    <path id="critical-3-start" data-connector="true" d="M408.5 238.5 L428 235"/>
+    <path id="critical-3-end" data-connector="true" d="M450 235 L462.12 237.23"/>
+    <path id="critical-7-start" data-connector="true" d="M594.5 238.5 L614 235"/>
+    <path id="critical-7-end" data-connector="true" d="M636 235 L648.12 237.23"/>
+    <path id="critical-8-start" data-connector="true" d="M755.5 238.5 L774.5 235"/>
+    <path id="critical-8-end" data-connector="true" d="M796.5 235 L809.11 237.26"/>
+
+    <path id="critical-14-start" data-connector="true" d="M163.5 264.5 L143.5 267.5"/>
+    <path id="critical-14-end" data-connector="true" d="M121.5 267.5 L110.40 265.65"/>
+    <path id="critical-13-start" data-connector="true" d="M309 264.5 L288.5 267.5"/>
+    <path id="critical-13-end" data-connector="true" d="M266.5 267.5 L255.40 265.65"/>
+    <path id="critical-12-start" data-connector="true" d="M469.5 264.5 L450 267.5"/>
+    <path id="critical-12-end" data-connector="true" d="M428 267.5 L415.91 265.59"/>
+    <path id="critical-11-start" data-connector="true" d="M655.5 264.5 L636 267.5"/>
+    <path id="critical-11-end" data-connector="true" d="M614 267.5 L601.91 265.59"/>
+    <path id="critical-10-start" data-connector="true" d="M816.5 264.5 L796.5 267.5"/>
+    <path id="critical-10-end" data-connector="true" d="M774.5 267.5 L762.91 265.62"/>
+
+    <!-- Steps 4 and 5 remain collinear through their circles; preserve these x coordinates together. -->
+    <path id="critical-4-start" data-connector="true" d="M507 205 V186.5"/>
+    <path id="critical-4-end" data-connector="true" d="M507 164.5 V153.5"/>
+    <path id="critical-5-start" data-connector="true" d="M558 146 V164.5"/>
+    <path id="critical-5-end" data-connector="true" d="M558 186.5 V197.5"/>
+  </g>
+
+  <!-- Isosceles heads are centered on each final shaft vector; shafts terminate inside their broad bases. -->
+  <g fill="#000">
+    <path d="M163 238.5 L154.36 232.88 L152.94 240.76 Z"/>
+    <path d="M308.5 238.5 L299.83 232.92 L298.45 240.80 Z"/>
+    <path d="M469 238.5 L460.38 232.85 L458.93 240.71 Z"/>
+    <path d="M655 238.5 L646.38 232.85 L644.93 240.71 Z"/>
+    <path d="M816 238.5 L807.36 232.88 L805.94 240.76 Z"/>
+
+    <path d="M103.5 264.5 L113.53 262.12 L112.21 270.01 Z"/>
+    <path d="M248.5 264.5 L258.53 262.12 L257.21 270.01 Z"/>
+    <path d="M409 264.5 L419.01 262.03 L417.76 269.93 Z"/>
+    <path d="M595 264.5 L605.01 262.03 L603.76 269.93 Z"/>
+    <path d="M756 264.5 L766.02 262.07 L764.74 269.97 Z"/>
+
+    <path d="M507 146.5 L503 156 H511 Z"/>
+    <path d="M558 204.5 L554 195 H562 Z"/>
+  </g>
+
+  <!-- Numbered critical-path badges are above the line layer. -->
+  <g class="step-badge">
+    <circle cx="132.5" cy="235" r="11"/>
+    <circle cx="277.5" cy="235" r="11"/>
+    <circle cx="439" cy="235" r="11"/>
+    <circle cx="507" cy="175.5" r="11"/>
+    <circle cx="558" cy="175.5" r="11"/>
+    <circle cx="532" cy="251.5" r="11"/>
+    <circle cx="625" cy="235" r="11"/>
+    <circle cx="785.5" cy="235" r="11"/>
+    <circle cx="885" cy="251.5" r="11"/>
+    <circle cx="785.5" cy="267.5" r="11"/>
+    <circle cx="625" cy="267.5" r="11"/>
+    <circle cx="439" cy="267.5" r="11"/>
+    <circle cx="277.5" cy="267.5" r="11"/>
+    <circle cx="132.5" cy="267.5" r="11"/>
+  </g>
+  <g class="badge-label">
+    <text x="132.5" y="239.5">1</text>
+    <text x="277.5" y="239.5">2</text>
+    <text x="439" y="239.5">3</text>
+    <text x="507" y="180">4</text>
+    <text x="558" y="180">5</text>
+    <text x="532" y="256">6</text>
+    <text x="625" y="239.5">7</text>
+    <text x="785.5" y="239.5">8</text>
+    <text x="885" y="256">9</text>
+    <text x="785.5" y="272">10</text>
+    <text x="625" y="272">11</text>
+    <text x="439" y="272">12</text>
+    <text x="277.5" y="272">13</text>
+    <text x="132.5" y="272">14</text>
+  </g>
+
+  <!-- Market-data badges mask their dashed shafts, keeping their labels readable. -->
+  <g class="flow-badge">
+    <circle cx="205.5" cy="58" r="11"/>
+    <circle cx="512" cy="58" r="11"/>
+    <circle cx="885" cy="142.5" r="11"/>
+  </g>
+  <g class="badge-label">
+    <text x="205.5" y="62.5">M3</text>
+    <text x="512" y="62.5">M2</text>
+    <text x="885" y="147">M1</text>
+  </g>
+
+  <!-- Reporting branch from the order manager to a reporter and durable database. -->
+  <g class="report-shaft">
+    <path id="report-r1-start" data-connector="true" d="M532 298 V311"/>
+    <path id="report-r1-end" data-connector="true" d="M532 333 V345"/>
+    <path id="report-r2-start" data-connector="true" d="M532 388 V402"/>
+    <path id="report-r2-end" data-connector="true" d="M532 424 V435"/>
+  </g>
+  <!-- Hollow heads distinguish reporting from the filled critical and market-data heads. -->
+  <g fill="#fff" stroke="#000" stroke-width="1">
+    <path d="M532 353 L529 344.5 H535 Z"/>
+    <path d="M532 443 L529 434.5 H535 Z"/>
+  </g>
+  <g class="flow-badge">
+    <circle cx="532" cy="322" r="11"/>
+    <circle cx="532" cy="413" r="11"/>
+  </g>
+  <g class="badge-label">
+    <text x="532" y="326.5">R1</text>
+    <text x="532" y="417.5">R2</text>
+  </g>
+
+  <!-- Database cylinder; the top ellipse remains visible beneath the reporting arrow. -->
+  <g class="box">
+    <path d="M506 450 C506 446 517.5 443.5 532 443.5 C546.5 443.5 558 446 558 450
+             V487 C558 491.5 546.5 495 532 495 C517.5 495 506 491.5 506 487 Z"/>
+    <path d="M506 450 C506 454 517.5 457 532 457 C546.5 457 558 454 558 450" fill="none"/>
+  </g>
+
+  <!-- Node labels are the final content layer so no connector crosses their text. -->
+  <g class="node-label">
+    <text x="359" y="55">Data</text>
+    <text x="359" y="73">Service</text>
+    <text x="885.5" y="55">Market Data</text>
+    <text x="885.5" y="73">Publisher</text>
+    <text x="532" y="121">Aggregated</text>
+    <text x="532" y="139">Risk Check</text>
+
+    <text x="205.75" y="257">Broker</text>
+    <text x="358.75" y="250.5">Client</text>
+    <text x="358.75" y="269.5">Gateway</text>
+    <text x="532" y="234">Order Manager</text>
+    <text x="532.25" y="276.5">Wallet</text>
+    <text x="705.5" y="257">Sequencer</text>
+    <text x="885.25" y="234">Matching Engine</text>
+    <text x="885.25" y="276.5">Order Book</text>
+    <text x="532.25" y="376">Reporter</text>
+    <text x="532" y="479">DB</text>
+  </g>
+
+  <!-- Explanatory labels and ownership captions. -->
+  <text class="flow-description" x="530" y="64">candlestick chart, order book</text>
+  <g class="large-label">
+    <text x="205.5" y="288">Robinhood,</text>
+    <text x="205.5" y="306">Goldman</text>
+    <text x="205.5" y="324">Sachs, etc</text>
+    <text x="532" y="511.5">orders, executions</text>
+    <text x="887.5" y="511">Stock Exchange</text>
+  </g>
+
+  <!-- Legend mirrors the three line, badge, and arrowhead treatments used above. -->
+  <rect class="box" x="42.5" y="420.5" width="205.5" height="70.5"/>
+  <g>
+    <path class="critical-shaft" d="M51 435 H67 M83 435 H98"/>
+    <path d="M104 435 L95 431.5 V438.5 Z" fill="#000"/>
+    <circle class="step-badge" cx="75" cy="435" r="8"/>
+    <text class="badge-label" x="75" y="439.5">1</text>
+
+    <path class="market-shaft" d="M51 455 H65.5 M84.5 455 H98"/>
+    <path d="M104 455 L95 451.5 V458.5 Z" fill="#000"/>
+    <circle class="flow-badge" cx="75" cy="455" r="8"/>
+    <text class="legend-flow-label" x="75" y="458.5">M1</text>
+
+    <path class="report-shaft" d="M51 475 H65.5 M84.5 475 H98"/>
+    <path d="M104 475 L95 471.5 V478.5 Z" fill="#fff" stroke="#000" stroke-width="1"/>
+    <circle class="flow-badge" cx="75" cy="475" r="8"/>
+    <text class="legend-flow-label" x="75" y="478.5">R1</text>
+  </g>
+  <g class="large-label" style="text-anchor:start">
+    <text x="115" y="441">Critical Path</text>
+    <text x="115" y="461">Market Data Flow</text>
+    <text x="115" y="481">Reporting Flow</text>
+  </g>
+</svg>

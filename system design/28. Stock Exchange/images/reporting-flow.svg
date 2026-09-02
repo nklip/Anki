@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1380"
+     height="1466"
+     viewBox="0 0 690 733"
+     role="img"
+     aria-labelledby="diagram-title diagram-description">
+  <title id="diagram-title">Order reporting flow</title>
+  <desc id="diagram-description">
+    Orders and fills move between the Order Manager and Matching Manager. The Reporter combines request and response events into execution reports, which feed settlement, clearing, books, records, and reporting databases.
+  </desc>
+
+  <!-- Shared styles and one balanced arrowhead keep every flow visually consistent. -->
+  <defs>
+    <style>
+      .label {
+        fill: #000;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 18px;
+        font-weight: 400;
+        text-anchor: middle;
+      }
+      .reporter-title { font-size: 20px; }
+      .exchange-small { font-size: 17px; }
+      .box,
+      .document,
+      .database,
+      .connector,
+      .exchange-continuation,
+      .group-box {
+        fill: #fff;
+        stroke: #000;
+        stroke-width: 1;
+      }
+      .connector,
+      .exchange-continuation {
+        fill: none;
+        stroke-linecap: butt;
+        stroke-linejoin: miter;
+      }
+      .group-box {
+        stroke-dasharray: 6 4;
+      }
+    </style>
+    <!-- The nose projects three units; connector endpoints are pulled back accordingly. -->
+    <marker id="arrowhead" markerWidth="14" markerHeight="12"
+            viewBox="0 0 14 12" refX="11" refY="6"
+            orient="auto" markerUnits="userSpaceOnUse"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M0 0 L14 6 L0 12 Z" fill="#000"/>
+    </marker>
+  </defs>
+
+  <!-- White artboard matches the PNG etalon. -->
+  <rect width="690" height="733" fill="#fff"/>
+
+  <!-- Top-level order services. -->
+  <g id="order-services">
+    <rect class="box" x="240" y="26" width="123.5" height="49.5"/>
+    <rect class="box" x="511.5" y="26" width="123.5" height="49.5"/>
+    <g class="label">
+      <text x="301.75" y="47">
+        <tspan x="301.75">Order</tspan>
+        <tspan x="301.75" dy="20">Manager</tspan>
+      </text>
+      <text x="573.25" y="47">
+        <tspan x="573.25">Matching</tspan>
+        <tspan x="573.25" dy="20">Manager</tspan>
+      </text>
+    </g>
+  </g>
+
+  <!-- Bidirectional service exchange; shafts are split around their labels. -->
+  <g id="service-exchange">
+    <path class="connector" data-connector="true" d="M511.5 31.5 L471 27"/>
+    <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
+          d="M406 27 L366.5 31.8"/>
+    <text class="label" x="438.5" y="32">orders</text>
+
+    <!-- Split only at the label-clearance boundary; both pieces remain collinear. -->
+    <path class="connector" data-connector="true" d="M363.5 67 L377 69.33"/>
+    <path class="exchange-continuation" d="M377 69.33 L392.5 72"/>
+    <path class="exchange-continuation" d="M483.5 73 L500.05 69.7"/>
+    <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
+          d="M500 69.7 L508.55 68"/>
+    <text class="label exchange-small" x="438.5" y="81.5">fills/rejects</text>
+  </g>
+
+  <!-- Order Manager forwards the combined stream into the Reporter. -->
+  <path id="order-manager-to-reporter" class="connector" data-connector="true"
+        marker-end="url(#arrowhead)" d="M301.75 75.5V146"/>
+
+  <!-- Reporter boundary and its request/response inputs. -->
+  <g id="reporter">
+    <rect class="box" x="126.5" y="149" width="350.5" height="259.5"/>
+    <text class="label reporter-title" x="301.75" y="170">Reporter</text>
+
+    <g id="request-group">
+      <rect class="group-box" x="142" y="188" width="128" height="112.5"/>
+      <text class="label" x="206" y="212">NewOrderReq</text>
+      <path class="document" d="M186.5 216.5 H215 L223 226 V266.5 H186.5 Z M215 216.5 V226 H223"/>
+      <text class="label" x="204.75" y="291">Request</text>
+    </g>
+
+    <g id="response-group">
+      <rect class="group-box" x="283.5" y="188" width="177" height="112.5"/>
+      <text class="label" x="345.75" y="212">NewOrderAck</text>
+      <path class="document" d="M327.5 216.5 H356 L364 226 V266.5 H327.5 Z M356 216.5 V226 H364"/>
+      <text class="label" x="426" y="212">Fill</text>
+      <path class="document" d="M408 216.5 H436.5 L444.5 226 V266.5 H408 Z M436.5 216.5 V226 H444.5"/>
+      <text class="label" x="372" y="291">Response</text>
+    </g>
+
+    <!-- Both groups contribute to the execution report document. -->
+    <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
+          d="M253 300.5 L281.4 332.9"/>
+    <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
+          d="M337 300.5 L318.1 332.9"/>
+    <path class="document" d="M283.5 331.5 H312 L320 341 V381.5 H283.5 Z M312 331.5 V341 H320"/>
+    <text class="label" x="301.75" y="398.5">ExecutionReport</text>
+  </g>
+
+  <!-- Operational consumers of execution reports. -->
+  <g id="operational-consumers">
+    <rect class="box" x="148.5" y="473" width="123.5" height="49.5"/>
+    <rect class="box" x="331" y="473" width="123.5" height="49.5"/>
+    <g class="label">
+      <text x="210.25" y="494.5">
+        <tspan x="210.25">Settlement &amp;</tspan>
+        <tspan x="210.25" dy="20">Clearing</tspan>
+      </text>
+      <text x="392.75" y="494.5">
+        <tspan x="392.75">Books &amp;</tspan>
+        <tspan x="392.75" dy="20">Records</tspan>
+      </text>
+    </g>
+
+    <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
+          d="M248 408.5 L222.2 470.2"/>
+    <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
+          d="M355.5 408.5 L381.8 470.2"/>
+  </g>
+
+  <!-- Side databases receive the settlement and books streams. -->
+  <g id="side-databases">
+    <g class="database" id="settlement-database">
+      <path d="M63 478 V518 C63 524 112.5 524 112.5 518 V478"/>
+      <ellipse cx="87.75" cy="478" rx="24.75" ry="5"/>
+    </g>
+    <g class="database" id="books-database">
+      <path d="M494 478 V518 C494 524 543.5 524 543.5 518 V478"/>
+      <ellipse cx="518.75" cy="478" rx="24.75" ry="5"/>
+    </g>
+    <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
+          d="M148.5 498 H115.5"/>
+    <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
+          d="M454.5 498 H491"/>
+  </g>
+
+  <!-- Consolidated reporting service and its warehouse database. -->
+  <g id="reporting-output">
+    <rect class="box" x="240" y="591.5" width="123.5" height="49.5"/>
+    <text class="label" x="301.75" y="623">Reporting</text>
+
+    <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
+          d="M230 522.5 L280.2 589.1"/>
+    <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
+          d="M374 522.5 L323.8 589.1"/>
+
+    <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
+          d="M301.75 641 V667"/>
+    <g class="database" id="reporting-database">
+      <path d="M277 675 V714 C277 720 326.5 720 326.5 714 V675"/>
+      <ellipse cx="301.75" cy="675" rx="24.75" ry="5"/>
+    </g>
+  </g>
+</svg>

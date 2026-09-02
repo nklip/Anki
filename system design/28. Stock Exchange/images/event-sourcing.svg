@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1404" height="696" viewBox="0 0 702 348"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Order state compared with event sourcing</title>
+  <desc id="desc">An OrderFilledEvent changes Order V1 in the New state into Order V2 in the Filled state. A state table stores both order versions, while an event-sourcing table stores the ordered NewOrderEvent and OrderFilledEvent records.</desc>
+
+  <!-- The half-size viewBox preserves the PNG reference's 2x export grid. -->
+  <defs>
+    <style>
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 20px; font-weight: normal; fill: #000; text-anchor: middle; }
+      .outline { fill: #fff; stroke: #000; stroke-width: 1; }
+      .rule { fill: none; stroke: #000; stroke-width: 1; }
+      .event-link { fill: none; stroke: #000; stroke-width: 1; }
+    </style>
+  </defs>
+
+  <!-- Explicit canvas gives every renderer the same white background as the PNG. -->
+  <rect width="702" height="348" fill="#fff"/>
+
+  <!-- Versioned order states. -->
+  <g class="outline">
+    <circle cx="143" cy="93" r="54"/>
+    <circle cx="500.5" cy="93" r="54"/>
+  </g>
+
+  <!-- The connector is split around its centered label; both halves share one angle. -->
+  <g class="event-link">
+    <path id="state-transition-left" d="M189 64 L235.5 44.5"/>
+    <path id="state-transition-right" d="M400.5 44.5 L447 63.5"/>
+  </g>
+  <!-- Tip lands on the second circle; the shaft ends inside this etalon-sized head. -->
+  <path d="M454.5 66 L441 64.5 L444.5 56.5 Z" fill="#000"/>
+
+  <g class="label">
+    <text x="319" y="39.5">OrderFilledEvent</text>
+    <text x="143" y="82">Order V1</text>
+    <text x="143" y="128">New</text>
+    <text x="500.5" y="82">Order V2</text>
+    <text x="500.5" y="128">Filled</text>
+  </g>
+
+  <!-- Current-state representation: each row stores a complete order version. -->
+  <text class="label" x="154.25" y="215">Order</text>
+  <path class="outline" d="M48 222.5 H260.5 V310.5 H48 Z"/>
+  <path class="rule" d="M132 222.5 V310.5 M48 251.5 H260.5 M48 281 H260.5"/>
+  <g class="label">
+    <text x="90" y="245">Version</text>
+    <text x="196.25" y="245">OrderStatus</text>
+    <text x="90" y="274">V1</text>
+    <text x="196.25" y="274">New</text>
+    <text x="90" y="303">V2</text>
+    <text x="196.25" y="303">Filled</text>
+    <text x="154.25" y="335">Non Event Sourcing</text>
+  </g>
+
+  <!-- Event-sourced representation: immutable events are ordered by sequence. -->
+  <text class="label" x="500.5" y="216.5">Event</text>
+  <path class="outline" d="M329 222.5 H672 V310.5 H329 Z"/>
+  <path class="rule" d="M500.5 222.5 V310.5 M329 251.5 H672 M329 281 H672"/>
+  <g class="label">
+    <text x="414.75" y="245">Event Sequence</text>
+    <text x="586.25" y="245">Event Type</text>
+    <text x="414.75" y="274">100</text>
+    <text x="586.25" y="274">NewOrderEvent</text>
+    <text x="414.75" y="303">101</text>
+    <text x="586.25" y="303">OrderFilledEvent</text>
+    <text x="500.5" y="335">Event Sourcing</text>
+  </g>
+</svg>

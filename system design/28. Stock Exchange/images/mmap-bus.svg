@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1340" height="992" viewBox="0 0 670 496"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Single-server mmap event bus</title>
+  <desc id="desc">On one server, the Order Manager, Matching Engine, and Market Data Publisher run application loops connected bidirectionally to a shared mmap bus. Reporter, Logging, Aggregated Risk Check, and Position Keeper services connect bidirectionally below the same bus.</desc>
+
+  <!-- Shared styles reproduce the PNG's two-times export grid. -->
+  <defs>
+    <style>
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 20px; font-weight: normal; fill: #000; }
+      .center { text-anchor: middle; }
+      .box { fill: #fff; stroke: #000; stroke-width: 1; }
+      .boundary { fill: none; stroke: #000; stroke-width: 1; stroke-dasharray: 6 4; }
+      .connector { fill: none; stroke: #000; stroke-width: 1; }
+    </style>
+    <!-- auto-start-reverse gives both ends the same mirrored, isosceles head. -->
+    <marker id="bidirectional-head" markerWidth="12" markerHeight="10" viewBox="0 0 12 10"
+            refX="10" refY="5" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L12 5 L0 10 Z" fill="#000"/>
+    </marker>
+  </defs>
+
+  <rect width="670" height="496" fill="#fff"/>
+
+  <!-- Dashed boundary establishes that every component runs on one physical server. -->
+  <rect class="boundary" x="28.5" y="18.5" width="624.5" height="462"/>
+  <text class="label center" x="335" y="48">One Single Server</text>
+
+  <!-- Upper application-loop services. -->
+  <g class="box">
+    <rect x="51.75" y="74.25" width="174.5" height="157"/>
+    <rect x="253.75" y="74.25" width="174" height="157"/>
+    <rect x="455.25" y="74.25" width="174.5" height="157"/>
+  </g>
+  <g class="label center">
+    <text x="139" y="107">Order Manager</text>
+    <text x="340.75" y="107">Matching Engine</text>
+    <text x="542.5" y="97"><tspan x="542.5">Market Data</tspan><tspan x="542.5" dy="21">Publisher</tspan></text>
+  </g>
+
+  <!-- Each editable queue shows five leading slots followed by remaining entries. -->
+  <g class="box">
+    <rect x="81.25" y="155.25" width="115.5" height="35.5"/>
+    <rect x="283.25" y="155.25" width="115" height="35.5"/>
+    <rect x="484.75" y="155.25" width="115.5" height="35.5"/>
+  </g>
+  <path class="connector" d="M92.5 155.25 V190.75 M103.5 155.25 V190.75 M114.5 155.25 V190.75 M125.5 155.25 V190.75 M136.75 155.25 V190.75
+                                M294.25 155.25 V190.75 M305.25 155.25 V190.75 M316.25 155.25 V190.75 M327.25 155.25 V190.75 M338.25 155.25 V190.75
+                                M496 155.25 V190.75 M507 155.25 V190.75 M518 155.25 V190.75 M529 155.25 V190.75 M540.25 155.25 V190.75"/>
+  <g class="label center">
+    <text x="166.5" y="181">...</text>
+    <text x="368" y="181">...</text>
+    <text x="570.5" y="181">...</text>
+    <text x="139" y="210">Application Loop</text>
+    <text x="340.75" y="210">Application Loop</text>
+    <text x="542.5" y="210">Application Loop</text>
+  </g>
+
+  <!-- Shared memory-mapped bus. -->
+  <rect class="box" x="51.75" y="301.25" width="578" height="35.5"/>
+  <text class="label center" x="340.75" y="326">mmap</text>
+
+  <!-- Bidirectional links: marker tips meet component and bus borders without entering them. -->
+  <g class="connector" marker-start="url(#bidirectional-head)" marker-end="url(#bidirectional-head)">
+    <path id="order-manager-bus" data-connector="true" d="M139 233.25 V299.25"/>
+    <path id="matching-engine-bus" data-connector="true" d="M340.75 233.25 V299.25"/>
+    <path id="publisher-bus" data-connector="true" d="M542.5 233.25 V299.25"/>
+  </g>
+
+  <!-- Lower services consume or publish through the same mmap bus. -->
+  <g class="box">
+    <rect x="57.75" y="397.75" width="128" height="54.5"/>
+    <rect x="203.75" y="397.75" width="128" height="54.5"/>
+    <rect x="349.75" y="397.75" width="128" height="54.5"/>
+    <rect x="496" y="397.75" width="127.75" height="54.5"/>
+  </g>
+  <g class="label center">
+    <text x="121.75" y="432.5">Reporter</text>
+    <text x="267.75" y="432.5">Logging</text>
+    <text x="413.75" y="421"><tspan x="413.75">Aggregated</tspan><tspan x="413.75" dy="21">Risk Check</tspan></text>
+    <text x="559.875" y="421"><tspan x="559.875">Position</tspan><tspan x="559.875" dy="21">Keeper</tspan></text>
+  </g>
+
+  <g class="connector" marker-start="url(#bidirectional-head)" marker-end="url(#bidirectional-head)">
+    <path id="bus-reporter" data-connector="true" d="M121.75 338.75 V395.75"/>
+    <path id="bus-logging" data-connector="true" d="M267.75 338.75 V395.75"/>
+    <path id="bus-risk-check" data-connector="true" d="M413.75 338.75 V395.75"/>
+    <path id="bus-position-keeper" data-connector="true" d="M559.875 338.75 V395.75"/>
+  </g>
+</svg>

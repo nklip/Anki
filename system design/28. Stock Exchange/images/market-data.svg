@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1370" height="908" viewBox="0 0 685 454"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Market-data publisher flow</title>
+  <desc id="desc">Orders and matched results flow from the matching engine into a market-data publisher. The publisher maintains order books and candlestick charts, persists the data, and sends it to a data service.</desc>
+
+  <!-- Shared box, text, and symmetric-arrow styles match the PNG's two-times grid. -->
+  <defs>
+    <style>
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 20px; font-weight: normal; fill: #000; }
+      .order-label { font-family: Arial, Helvetica, sans-serif; font-size: 19px; font-weight: normal; fill: #000; }
+      .flow-label { font-family: Arial, Helvetica, sans-serif; font-size: 19px; font-weight: normal; fill: #000; }
+      .center { text-anchor: middle; }
+      .box { fill: #fff; stroke: #000; stroke-width: 1; }
+      .connector { fill: none; stroke: #000; stroke-width: 1; }
+    </style>
+    <marker id="arrowhead" markerWidth="12" markerHeight="10" viewBox="0 0 12 10"
+            refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L12 5 L0 10 Z" fill="#000"/>
+    </marker>
+  </defs>
+
+  <rect width="685" height="454" fill="#fff"/>
+
+  <!-- Matching engine and its labeled result stream. -->
+  <rect class="box" x="27" y="146" width="132" height="53.5"/>
+  <g class="label center">
+    <text x="93" y="168.5">Matching</text>
+    <text x="93" y="189.5">Engine</text>
+  </g>
+  <path class="connector" id="matching-output-start" data-connector="true" d="M159 172.5 H175"/>
+  <!-- Horizontal normalization preserves the source's compact stream label and clear arrow corridor. -->
+  <text class="flow-label" x="225" y="180.5" transform="scale(.8 1)"
+        textLength="239.4" lengthAdjust="spacingAndGlyphs">Orders, matched results</text>
+  <path class="connector" id="matching-output-end" data-connector="true" d="M381 172.5 H404.5" marker-end="url(#arrowhead)"/>
+
+  <!-- Market-data publisher and its internal products. -->
+  <rect class="box" x="406.5" y="21.5" width="244.5" height="302"/>
+  <text class="label center" x="528.75" y="46.5">MDP</text>
+
+  <g class="box">
+    <rect x="425.5" y="62" width="63" height="53"/>
+    <rect x="497.5" y="62" width="63" height="53"/>
+    <rect x="569.5" y="62" width="63" height="53"/>
+  </g>
+  <g class="order-label center">
+    <text x="457" y="85"><tspan x="457">Order</tspan><tspan x="457" dy="20">book</tspan></text>
+    <text x="529" y="85"><tspan x="529">Order</tspan><tspan x="529" dy="20">book</tspan></text>
+    <text x="601" y="85"><tspan x="601">Order</tspan><tspan x="601" dy="20">book</tspan></text>
+  </g>
+
+  <rect class="box" x="462.5" y="156.5" width="133" height="53.5"/>
+  <g class="label center">
+    <text x="529" y="179"><tspan x="529">Candlestick</tspan><tspan x="529" dy="21">Charts</tspan></text>
+  </g>
+  <rect class="box" x="462.5" y="252" width="133" height="53.5"/>
+  <text class="label center" x="529" y="284.5">Persistence</text>
+
+  <!-- Internal and downstream flow; each visible tip meets its target boundary. -->
+  <path class="connector" id="charts-to-persistence" data-connector="true" d="M529 210 V250" marker-end="url(#arrowhead)"/>
+  <path class="connector" id="publisher-to-service" data-connector="true" d="M529 323.5 V383.5" marker-end="url(#arrowhead)"/>
+
+  <rect class="box" x="462.5" y="385.5" width="133" height="53.5"/>
+  <text class="label center" x="529" y="420">Data Service</text>
+</svg>

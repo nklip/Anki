@@ -9,7 +9,7 @@ Its basic function is to efficiently match buyers and sellers.
 Major stock exchanges include **NYSE** and **NASDAQ**, among others.
 
 <div style="margin-left:3rem">
-    <img src="./images/world-stock-exchanges.png" alt="world-stock-exchanges" width="500" />
+    <img src="./images/world-stock-exchanges.svg" alt="world-stock-exchanges" width="500" />
 </div>
 
 ---
@@ -72,25 +72,25 @@ The US market has three tiers of price quotes - L1, L2, L3.
 L1 market data contains best bid/ask prices and quantities:
 
 <div style="margin-left:3rem">
-    <img src="./images/l1-price.png" alt="l1-price" width="500" />
+    <img src="./images/l1-price.svg" alt="l1-price" width="500" />
 </div>
 
 L2 includes more price levels:
 
 <div style="margin-left:3rem">
-    <img src="./images/l2-price.png" alt="l2-price" width="500" />
+    <img src="./images/l2-price.svg" alt="l2-price" width="500" />
 </div>
 
 L3 shows levels and queued quantity at each level:
 
 <div style="margin-left:3rem">
-    <img src="./images/l3-price.png" alt="l3-price" width="500" />
+    <img src="./images/l3-price.svg" alt="l3-price" width="500" />
 </div>
 
 A candlestick shows the market's open and close prices, as well as the highest and lowest prices in the given interval:
 
 <div style="margin-left:3rem">
-    <img src="./images/candlestick.png" alt="candlestick" width="500" />
+    <img src="./images/candlestick.svg" alt="candlestick" width="500" />
 </div>
 
 FIX is a protocol for exchanging securities transaction information, used by most vendors. Example securities transaction:
@@ -101,24 +101,24 @@ FIX is a protocol for exchanging securities transaction information, used by mos
 ### **High-level design**
 
 <div style="margin-left:3rem">
-    <img src="./images/high-level-design.png" alt="high-level-design" width="500" />
+    <img src="./images/high-level-design.svg" alt="high-level-design" width="500" />
 </div>
 
-Trade flow:
- * Client places order via trading interface
- * Broker sends the order to the exchange
- * Order enters exchange through client gateway, which validates, rate limits, authenticates, etc. Order is forwarded to order manager.
- * Order manager performs risk checks based on rules set by the risk manager
- * After passing risk checks, order manager verifies there are sufficient funds in the wallet for the order
- * Order is sent to matching engine. When match is found, matching engine emits two executions (called fills) for buy and sell. Both orders are sequenced so that they're deterministic.
- * Executions are returned to the client.
+#### Trade flow:
+* Step 1: A client places an order via the broker’s web or mobile app.
+* Step 2: The broker sends the order to the exchange.
+* Step 3: The order enters the exchange through the client gateway. The client gateway performs basic gatekeeping functions such as input validation, * rate limiting, authentication, normalization, etc. The client gateway then forwards the order to the order manager.
+* Step 4 - 5: The order manager performs risk checks based on rules set by the risk manager.
+* Step 6: After passing risk checks, the order manager verifies there are sufficient funds in the wallet for the order.
+* Step 7 - 9: The order is sent to the matching engine. When a match is found, the matching engine emits two executions (also called fills), with one each for the buy and sell sides. To guarantee that matching results are deterministic when replay, both orders and executions are sequenced in the sequencer (more on the sequencer later).
+* Step 10 - 14: The executions are returned to the client.
 
-Market data flow (M1-M3):
- * matching engine generates a stream of executions, sent to the market data publisher
- * Market data publisher constructs the candlestick charts and sends them to the data service
- * Market data is stored in specialized storage for real-time analytics. Brokers connect to the data service for timely market data.
+#### Market data flow (M1-M3):
+* Step M1: The matching engine generates a stream of executions (fills) as matches are made. The stream is sent to the market data publisher.
+* Step M2: The market data publisher constructs the candlestick charts and the order books from the stream of executions as market data.
+* Step M3: The market data publisher sends the market data to the data service. The published market data is saved to specialized storage for real-time analytics. The brokers connect to the data service to obtain timely market data. Brokers relay market data to their clients.
 
-Reporter flow (R1-R2):
+#### Reporter flow (R1-R2):
  * The reporter collects all necessary reporting fields from orders and executions and writes them to the database.
  * reporting fields - client_id, price, quantity, order_type, filled_quantity, remaining_quantity
 
@@ -136,7 +136,7 @@ The matching engine is at its heart, also called the cross engine. Primary respo
 Next is the sequencer - it is the key component making the matching engine deterministic by stamping each inbound order and outbound fill with a sequence ID.
 
 <div style="margin-left:3rem">
-    <img src="./images/sequencer.png" alt="sequencer" width="500" />
+    <img src="./images/sequencer.svg" alt="sequencer" width="500" />
 </div>
 
 We stamp inbound orders and outbound fills for several reasons:
@@ -159,7 +159,7 @@ The main challenge with implementing the order manager is the state transition m
 Finally, the client gateway receives orders from users and sends them to the order manager. Its responsibilities:
 
 <div style="margin-left:3rem">
-    <img src="./images/client-gateway.png" alt="client-gateway" width="500" />
+    <img src="./images/client-gateway.svg" alt="client-gateway" width="500" />
 </div>
 
 Since the client gateway is on the critical path, it should stay lightweight.
@@ -167,7 +167,7 @@ Since the client gateway is on the critical path, it should stay lightweight.
 There can be multiple client gateways for different clients. For example, a colo engine is a trading engine server rented by the broker in the exchange's data center:
 
 <div style="margin-left:3rem">
-    <img src="./images/client-gateways.png" alt="client-gateways" width="500" />
+    <img src="./images/client-gateways.svg" alt="client-gateways" width="500" />
 </div>
 
 #### Market data flow
@@ -176,14 +176,14 @@ The market data publisher receives executions from the matching engine and build
 That data is sent to the data service, which is responsible for showing the aggregated data to subscribers:
 
 <div style="margin-left:3rem">
-    <img src="./images/market-data.png" alt="market-data" width="500" />
+    <img src="./images/market-data.svg" alt="market-data" width="500" />
 </div>
 
 #### Reporting flow
 The reporter is not on the critical path, but it is an important component nevertheless.
 
 <div style="margin-left:3rem">
-    <img src="./images/reporting-flow.png" alt="reporting-flow" width="500" />
+    <img src="./images/reporting-flow.svg" alt="reporting-flow" width="500" />
 </div>
 
 It is responsible for trading history, tax reporting, compliance reporting, settlements, etc.
@@ -284,7 +284,7 @@ An order represents an instruction for a buy/sell order. Executions are outbound
 Here's the data model:
 
 <div style="margin-left:3rem">
-    <img src="./images/product-order-execution-data-model.png" alt="product-order-execution-data-model" width="500" />
+    <img src="./images/product-order-execution-data-model.svg" alt="product-order-execution-data-model" width="500" />
 </div>
 
 We encounter orders and executions in all of our three flows:
@@ -304,7 +304,7 @@ An efficient data structure for this model needs to satisfy:
 Example order book execution:
 
 <div style="margin-left:3rem">
-    <img src="./images/order-book-execution.png" alt="order-book-execution" width="500" />
+    <img src="./images/order-book-execution.svg" alt="order-book-execution" width="500" />
 </div>
 
 After fulfilling this large order, the price increases as the bid/ask spread widens.
@@ -337,12 +337,13 @@ For a more efficient implementation, we can use a doubly-linked list instead of 
  * Canceling an order means deleting an order from the order book. We utilize `orderMap` for O(1) lookup and O(1) delete (due to the `Order` having a reference to the previous element in the list).
 
 <div style="margin-left:3rem">
-    <img src="./images/order-book-impl.png" alt="order-book-impl" width="500" />
+    <img src="./images/order-book-impl.svg" alt="order-book-impl" width="500" />
 </div>
 
 This data structure is also used in the market data services to reconstruct the order book.
 
 #### Candlestick chart
+
 The candlestick data is calculated within the market data services by processing orders in a time interval:
 ```java
 class Candlestick {
@@ -389,13 +390,13 @@ With such a design, we can achieve tens of milliseconds of end-to-end latency. W
 Hence, we'll put everything on one server and processes are going to communicate via mmap as an event store:
 
 <div style="margin-left:3rem">
-    <img src="./images/mmap-bus.png" alt="mmap-bus" width="500" />
+    <img src="./images/mmap-bus.svg" alt="mmap-bus" width="500" />
 </div>
 
 Another optimization is using an application loop (while loop executing mission-critical tasks), pinned to the same CPU to avoid context switching:
 
 <div style="margin-left:3rem">
-    <img src="./images/application-loop.png" alt="application-loop" width="500" />
+    <img src="./images/application-loop.svg" alt="application-loop" width="500" />
 </div>
 
 Another side effect of using an application loop is that there is no lock contention - multiple threads fighting for the same resource.
@@ -410,7 +411,7 @@ Event sourcing is discussed in depth in the [digital wallet chapter](../27.%20Di
 In a nutshell, instead of storing current states, we store immutable state transitions:
 
 <div style="margin-left:3rem">
-    <img src="./images/event-sourcing.png" alt="event-sourcing" width="500" />
+    <img src="./images/event-sourcing.svg" alt="event-sourcing" width="500" />
 </div>
 
  * On the left - traditional schema
@@ -419,7 +420,7 @@ In a nutshell, instead of storing current states, we store immutable state trans
 Here's how our design looks like thus far:
 
 <div style="margin-left:3rem">
-    <img src="./images/design-so-far.png" alt="design-so-far" width="500" />
+    <img src="./images/design-so-far.svg" alt="design-so-far" width="500" />
 </div>
 
  * external domain interacts with our client gateway using the FIX protocol
@@ -432,7 +433,7 @@ One additional optimization is that all components hold a copy of the order mana
 The sequencer in this design changes from being an event store to being a single writer that sequences events before forwarding them to the event store:
 
 <div style="margin-left:3rem">
-    <img src="./images/sequencer-deep-dive.png" alt="sequencer-deep-dive" width="500" />
+    <img src="./images/sequencer-deep-dive.svg" alt="sequencer-deep-dive" width="500" />
 </div>
 
 ### **High availability**
@@ -447,7 +448,7 @@ Stateless services such as the client gateway can easily be horizontally scaled 
 For stateful components, we can process inbound events, but not publish outbound events if we're not the leader:
 
 <div style="margin-left:3rem">
-    <img src="./images/leader-election.png" alt="leader-election" width="500" />
+    <img src="./images/leader-election.svg" alt="leader-election" width="500" />
 </div>
 
 To detect whether the primary replica is down, we can send heartbeats to detect that it's nonfunctional.
@@ -476,13 +477,13 @@ How to address these:
 Example of how replication works across different servers:
 
 <div style="margin-left:3rem">
-    <img src="./images/replication-across-servers.png" alt="replication-across-servers" width="500" />
+    <img src="./images/replication-across-servers.svg" alt="replication-across-servers" width="500" />
 </div>
 
 Example leader-election terms:
 
 <div style="margin-left:3rem">
-    <img src="./images/leader-election-terms.png" alt="leader-election-terms" width="500" />
+    <img src="./images/leader-election-terms.svg" alt="leader-election-terms" width="500" />
 </div>
 
 For details on how Raft works, [check this out](https://thesecretlivesofdata.com/raft/)
@@ -494,7 +495,8 @@ For a stock exchange, data loss is unacceptable, so we have to backup data often
 
 ### **Matching algorithms**
 Slight detour on how matching works via pseudocode:
-```text
+
+```java
 Context handleOrder(OrderBook orderBook, OrderEvent orderEvent) {
     if (orderEvent.getSequenceId() != nextSequence) {
         return Error(OUT_OF_ORDER, nextSequence);
@@ -555,7 +557,7 @@ Functional determinism is guaranteed via the sequencer technique we used.
 The actual time when the event happens doesn't matter:
 
 <div style="margin-left:3rem">
-    <img src="./images/determinism.png" alt="determinism" width="500" />
+    <img src="./images/determinism.svg" alt="determinism" width="500" />
 </div>
 
 Latency determinism is something we have to track. We can calculate it by monitoring 99th- or 99.99th-percentile latency.
@@ -568,7 +570,7 @@ The market data publisher receives matched results from the matching engine and 
 We only keep some of the candlesticks, as we don't have infinite memory. Clients can choose how much granularity they want. More granular information might require a higher price:
 
 <div style="margin-left:3rem">
-    <img src="./images/market-data-publisher.png" alt="market-data-publisher" width="500" />
+    <img src="./images/market-data-publisher.svg" alt="market-data-publisher" width="500" />
 </div>
 
 A ring buffer (aka circular buffer) is a fixed-size queue with the head connected to the tail. The space is preallocated to avoid allocations. The data structure is also lock-free.

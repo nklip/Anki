@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1708" height="394" viewBox="0 0 854 197"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Deterministic and clustered event timing</title>
+  <desc id="desc">Two horizontal timelines. The upper timeline shows six events separated over time; the lower timeline shows the same six events clustered at the start.</desc>
+
+  <!-- The half-size viewBox preserves the PNG reference's 2x export grid. -->
+  <defs>
+    <style>
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 20px; font-weight: normal; fill: #000; text-anchor: middle; }
+      .timeline { fill: none; stroke: #000; stroke-width: 1; }
+      .event { fill: #fff; stroke: #000; stroke-width: 1; }
+    </style>
+  </defs>
+
+  <!-- Opaque background matches the PNG in renderers that otherwise use transparency. -->
+  <rect width="854" height="197" fill="#fff"/>
+
+  <!-- Draw shafts first so the white event circles cleanly interrupt each timeline. -->
+  <g class="timeline">
+    <path id="separated-event-timeline" data-connector="true" d="M48 60.5 H790"/>
+    <path id="clustered-event-timeline" data-connector="true" d="M48 151 H790"/>
+  </g>
+
+  <!-- Separate triangles reproduce the compact 12-by-10-unit arrowheads in the etalon. -->
+  <g fill="#000">
+    <path d="M796 60.5 L784 55.5 V65.5 Z"/>
+    <path d="M796 151 L784 146 V156 Z"/>
+  </g>
+
+  <!-- Six individually timed events. Their centers follow the reference pixel grid. -->
+  <g class="event">
+    <circle cx="91.5" cy="61" r="17.5"/>
+    <circle cx="245" cy="61" r="17.5"/>
+    <circle cx="326.5" cy="61" r="17.5"/>
+    <circle cx="438.5" cy="61" r="17.5"/>
+    <circle cx="587.5" cy="61" r="17.5"/>
+    <circle cx="697.5" cy="61" r="17.5"/>
+  </g>
+
+  <g class="label">
+    <text x="91.5" y="38">event 1</text>
+    <text x="245" y="38">event 2</text>
+    <text x="326.5" y="38">event 3</text>
+    <text x="438.5" y="38">event 4</text>
+    <text x="587.5" y="38">event 5</text>
+    <text x="697.5" y="38">event 6</text>
+    <text x="791" y="82">Time</text>
+  </g>
+
+  <!-- The same six events arrive back-to-back on the lower timeline. -->
+  <g class="event">
+    <circle cx="91.5" cy="151.5" r="17.5"/>
+    <circle cx="126.5" cy="151.5" r="17.5"/>
+    <circle cx="161.5" cy="151.5" r="17.5"/>
+    <circle cx="196.5" cy="151.5" r="17.5"/>
+    <circle cx="231.5" cy="151.5" r="17.5"/>
+    <circle cx="266.5" cy="151.5" r="17.5"/>
+  </g>
+  <text class="label" x="791" y="172.5">Time</text>
+</svg>

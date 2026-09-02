@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1388" height="436" viewBox="0 0 694 218"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Inbound and outbound sequencers</title>
+  <desc id="desc">The Order Manager sends orders through an inbound sequencer to the Match Engine. Matched results return through an outbound sequencer to the Order Manager.</desc>
+
+  <!-- The half-size coordinate system preserves the PNG's two-times export. -->
+  <defs>
+    <style>
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 21px; font-weight: normal; fill: #000; }
+      .center { text-anchor: middle; }
+      .box { fill: #fff; stroke: #000; stroke-width: 1; }
+      .connector { fill: none; stroke: #000; stroke-width: 1; }
+    </style>
+
+    <!-- One symmetric fixed-size head serves every diagonal orientation. -->
+    <marker id="arrowhead" markerWidth="12" markerHeight="10" viewBox="0 0 12 10"
+            refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse"
+            preserveAspectRatio="xMidYMid meet">
+      <path d="M0 0 L12 5 L0 10 Z" fill="#000"/>
+    </marker>
+
+    <!-- Eight editable sequencer slots; the same glyph is reused for both directions. -->
+    <g id="sequencer-buffer">
+      <rect class="box" x="0" y="0" width="94" height="38"/>
+      <path class="connector" d="M11.75 0 V38 M23.5 0 V38 M35.25 0 V38 M47 0 V38
+                                   M58.75 0 V38 M70.5 0 V38 M82.25 0 V38"/>
+    </g>
+  </defs>
+
+  <rect width="694" height="218" fill="#fff"/>
+
+  <!-- Trading components at the two ends of the ordered event flow. -->
+  <rect class="box" x="36" y="80.5" width="164.5" height="54.5"/>
+  <rect class="box" x="495" y="80.5" width="165" height="54.5"/>
+  <g class="label center">
+    <text x="118.25" y="115">Order Manager</text>
+    <text x="577.5" y="115">Match Engine</text>
+  </g>
+
+  <!-- Sequencer buffers keep a deterministic order in each direction. -->
+  <use href="#sequencer-buffer" transform="translate(297.5 43.5)"/>
+  <use href="#sequencer-buffer" transform="translate(297.5 142) scale(1 .9868421053)"/>
+  <g class="label center">
+    <text x="344.5" y="38">Inbound Sequencer</text>
+    <text x="344.5" y="199.5">Outbound Sequencer</text>
+  </g>
+
+  <!-- Inbound path: Order Manager to sequencer, then sequencer to Match Engine. -->
+  <path class="connector" id="order-manager-to-inbound-sequencer" data-connector="true"
+        d="M200.5 87.5 L295.55 64.48" marker-end="url(#arrowhead)"/>
+  <path class="connector" id="inbound-sequencer-to-match-engine" data-connector="true"
+        d="M391.5 64 L493.05 87.55" marker-end="url(#arrowhead)"/>
+
+  <!-- Outbound path returns matched results to the Order Manager. -->
+  <path class="connector" id="match-engine-to-outbound-sequencer" data-connector="true"
+        d="M495 130 L393.43 158.98" marker-end="url(#arrowhead)"/>
+  <path class="connector" id="outbound-sequencer-to-order-manager" data-connector="true"
+        d="M297.5 159.5 L202.42 132.05" marker-end="url(#arrowhead)"/>
+</svg>

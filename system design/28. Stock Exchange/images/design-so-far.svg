@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1508" height="1490" viewBox="0 0 754 745"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Stock exchange design so far</title>
+  <desc id="desc">Orders enter through a gateway, are appended to an mmap event store, processed by the matching engine, published as market data, and consumed by a reporting-domain reporter.</desc>
+
+  <!-- The half-size viewBox preserves the PNG's 2x export grid and monochrome drawing style. -->
+  <defs>
+    <style>
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 15px; font-weight: normal; fill: #000; text-anchor: middle; }
+      .flow-label { font-family: Arial, Helvetica, sans-serif; font-size: 13px; font-weight: normal; fill: #000; text-anchor: middle; }
+      .box { fill: #fff; stroke: #000; stroke-width: 1; }
+      .connector { fill: none; stroke: #000; stroke-width: 1; }
+      .boundary { fill: none; stroke: #000; stroke-width: 1; stroke-dasharray: 4 3.25; }
+    </style>
+  </defs>
+
+  <!-- Opaque canvas matches the white reference background in every SVG renderer. -->
+  <rect width="754" height="745" fill="#fff"/>
+
+  <!-- Domain boundaries and headings. The vertical line separates FIX from SBE traffic. -->
+  <path class="boundary" d="M102.25 24.5 V624 H703"/>
+  <g class="label">
+    <text x="66" y="39.5"><tspan x="66">External</tspan><tspan x="66" dy="16">Domain</tspan><tspan x="66" dy="16">(FIX)</tspan></text>
+    <text x="137" y="39.5"><tspan x="137">Trading</tspan><tspan x="137" dy="16">Domain</tspan><tspan x="137" dy="16">(SBE)</tspan></text>
+    <text x="626" y="614.5">Trading Domain (SBE)</text>
+    <text x="633" y="643"><tspan x="633">Reporting Domain</tspan><tspan x="633" dy="16">(Your choice)</tspan></text>
+  </g>
+
+  <!-- Matching-engine boundary and internal stateful components. -->
+  <rect class="box" x="277.5" y="12.5" width="282" height="327.5"/>
+  <text class="label" x="418.5" y="32">Matching Engine</text>
+
+  <rect class="box" x="292" y="44.5" width="110" height="93.5"/>
+  <text class="label" x="347" y="66.5">Order Manager</text>
+  <rect class="box" x="301.5" y="82" width="90.5" height="42.5"/>
+  <text class="label" x="346.75" y="108.5">Order State</text>
+
+  <rect class="box" x="444" y="84" width="90.5" height="42.5"/>
+  <text class="label" x="489.25" y="102.5"><tspan x="489.25">Matching</tspan><tspan x="489.25" dy="16">Core</tspan></text>
+
+  <!-- Application-loop queue; the small cells are the ordered work slots. -->
+  <rect class="box" x="338" y="201" width="127" height="31"/>
+  <path d="M344 201 V232 M349.5 201 V232 M355.5 201 V232 M361.5 201 V232 M367 201 V232"
+        fill="none" stroke="#000" stroke-width="1"/>
+  <text class="label" x="415.75" y="224">App loop</text>
+
+  <rect class="box" x="307.5" y="281.5" width="90.5" height="43"/>
+  <text class="label" x="352.75" y="299.5"><tspan x="352.75">Event Store</tspan><tspan x="352.75" dy="16">Client</tspan></text>
+
+  <!-- Gateway receives FIX and writes a normalized NewOrderEvent. -->
+  <rect class="box" x="129.5" y="251" width="109.5" height="89"/>
+  <text class="label" x="184.25" y="272">Gateway</text>
+  <rect class="box" x="139" y="288" width="90.5" height="42.5"/>
+  <text class="label" x="184.25" y="306.5"><tspan x="184.25">Event Store</tspan><tspan x="184.25" dy="16">Client</tspan></text>
+
+  <!-- Market-data publisher consumes the same event stream. -->
+  <rect class="box" x="596" y="297.5" width="90.5" height="42.5"/>
+  <text class="label" x="641.25" y="316"><tspan x="641.25">Market Data</tspan><tspan x="641.25" dy="16">Publisher</tspan></text>
+
+  <!-- Memory-mapped event store. The highlighted slot is expanded below. -->
+  <rect x="140.5" y="395.5" width="555.5" height="31.5" fill="#fff"/>
+  <rect x="181.5" y="396" width="6" height="30.5" fill="#f7c5fd"/>
+  <path d="M140.5 395.5 H696 V427 H140.5 Z
+           M146.25 395.5 V427 M152 395.5 V427 M158 395.5 V427 M164 395.5 V427
+           M169.5 395.5 V427 M175.5 395.5 V427 M181.5 395.5 V427 M187.25 395.5 V427
+           M193 395.5 V427 M199 395.5 V427 M205 395.5 V427 M210.5 395.5 V427
+           M216.5 395.5 V427 M222.25 395.5 V427 M228 395.5 V427 M234 395.5 V427"
+        fill="none" stroke="#000" stroke-width="1"/>
+  <text class="label" x="465.25" y="418.5">Event Store (mmap)</text>
+
+  <!-- Highlighted event-store entry schema. -->
+  <path class="boundary" d="M184.5 427 V458.5"/>
+  <rect class="box" x="120.5" y="458.5" width="127.5" height="150.5"/>
+  <rect class="box" x="143.5" y="471" width="82" height="108.5"/>
+  <path d="M143.5 493 H225.5 M143.5 515 H225.5" fill="none" stroke="#000" stroke-width="1"/>
+  <g class="label">
+    <text x="184.5" y="487.5">Sequence</text>
+    <text x="184.5" y="509.5">Event type</text>
+    <text x="184.5" y="535.5"><tspan x="184.5">SBE</tspan><tspan x="184.5" dy="16">encoded</tspan><tspan x="184.5" dy="16">payload</tspan></text>
+    <text x="184.25" y="597.5">Event store entry</text>
+  </g>
+
+  <!-- Reporting-domain consumer and its independent order-manager view. -->
+  <rect class="box" x="410" y="643.5" width="110" height="89.5"/>
+  <text class="label" x="465" y="665.5">Reporter</text>
+  <rect class="box" x="419.5" y="681" width="90.5" height="42.5"/>
+  <text class="label" x="464.75" y="699.5"><tspan x="464.75">Order</tspan><tspan x="464.75" dy="16">Manager</tspan></text>
+
+  <!-- Straight connector shafts are split around their labels so no line crosses text. -->
+  <g class="connector">
+    <path id="fix-shaft-left" data-connector="true" d="M39 295.5 H54"/>
+    <path id="fix-shaft-right" data-connector="true" d="M84 295.5 H125"/>
+
+    <path id="gateway-event-shaft-top" data-connector="true" d="M184.5 340 V356"/>
+    <path id="gateway-event-shaft-bottom" data-connector="true" d="M184.5 382 V391.5"/>
+
+    <path id="validate-state-shaft-top" data-connector="true" d="M347 201 V182"/>
+    <path id="validate-state-shaft-bottom" data-connector="true" d="M347 148 V128.5"/>
+
+    <path id="pull-events-shaft-top" data-connector="true" d="M353 281.5 V270"/>
+    <path id="pull-events-shaft-bottom" data-connector="true" d="M353 247.5 V236"/>
+
+    <path id="market-events-shaft-top" data-connector="true" d="M641.5 395.5 V384"/>
+    <path id="market-events-shaft-bottom" data-connector="true" d="M641.5 361.5 V344"/>
+
+    <path id="report-events-shaft-top" data-connector="true" d="M465 427 V526"/>
+    <path id="report-events-shaft-bottom" data-connector="true" d="M465 550.5 V639.5"/>
+
+    <!-- Matching-core route is split around its two-line label. -->
+    <!-- Both visible halves share y = 447.3 - 0.7x; the label occupies the gap. -->
+    <path id="matching-core-shaft-start" data-connector="true" d="M351.86 201 L380.43 181"/>
+    <path id="matching-core-shaft-end" data-connector="true" d="M439 140 L454 129.5"/>
+
+    <!-- Curves use explicit label gaps; keep both halves aligned when editing. -->
+    <path id="new-order-return-shaft-lower" data-connector="true" d="M328.5 395.5 C318 384 313 374 312 368"/>
+    <!-- Final control point and endpoint follow a 3:4 up-right tangent into the head. -->
+    <path id="new-order-return-shaft-upper" data-connector="true" d="M313 346 C315 338 324.3 330.1 326.7 326.9"/>
+    <path id="order-filled-shaft-upper" data-connector="true" d="M377 324.5 C386 335 390 348 391 364"/>
+    <!-- Original PNG geometry: the curve resumes just below the label and ends inside the head. -->
+    <path id="order-filled-shaft-lower" data-connector="true" d="M384 383 C383.1 384.5 379.89 389.68 377.67 393"/>
+  </g>
+
+  <!-- Compact arrowheads match the source diagram's 8.5-by-6.5-unit heads. -->
+  <g fill="#000">
+    <path d="M129.5 295.5 L121 292.25 V298.75 Z"/>
+    <path d="M184.5 395.5 L181.25 387 H187.75 Z"/>
+    <path d="M347 124.5 L343.75 133 H350.25 Z"/>
+    <path d="M353 232 L349.75 240.5 H356.25 Z"/>
+    <path d="M641.5 340 L638.25 348.5 H644.75 Z"/>
+    <path d="M465 643.5 L461.75 635 H468.25 Z"/>
+
+    <!-- Diagonal matching-core head; tip meets the core's lower border. -->
+    <path d="M458 126.5 L449.25 129 L453.15 134.2 Z"/>
+    <!-- Curved-route heads use their final tangents for orientation. -->
+    <path d="M328.5 324.5 L320.8 329.35 L326 333.25 Z"/>
+    <path d="M376 395.5 L378 387 L383 390.5 Z"/>
+  </g>
+
+  <!-- Connector labels remain above all shafts and domain boundaries. -->
+  <g class="flow-label">
+    <text x="69" y="301">FIX</text>
+    <text x="184.5" y="372.5">NewOrderEvent</text>
+    <text x="345" y="162"><tspan x="345">Validate</tspan><tspan x="345" dy="14">update state</tspan></text>
+    <text x="417.5" y="154"><tspan x="417.5">Send to</tspan><tspan x="417.5" dy="14">matching</tspan></text>
+    <text x="353" y="261">Pull events</text>
+    <text x="306" y="361">NewOrderEvent</text>
+    <text x="388" y="378">OrderFilledEvent</text>
+    <text x="641.5" y="375">Events</text>
+    <text x="465" y="539.5">Events</text>
+  </g>
+</svg>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="424" viewBox="0 0 700 212"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Leader-election terms over time</title>
+  <desc id="desc">Five consensus terms appear on a left-to-right timeline. Cyan regions identify elections or a split vote, while the white regions identify normal operation.</desc>
+
+  <!-- Shared styles and a symmetric marker preserve the PNG's two-times export grid. -->
+  <defs>
+    <style>
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 20px; font-weight: normal; fill: #000; }
+      .center { text-anchor: middle; }
+      .timeline, .connector { fill: none; stroke: #000; stroke-width: 1; }
+      .term { fill: #fff; stroke: #000; stroke-width: 1; }
+      .election { fill: #4fbcbf; stroke: #000; stroke-width: 1; }
+    </style>
+    <!-- The tip projects two units beyond the shaft endpoint; its two sides are mirror images. -->
+    <marker id="arrowhead" markerWidth="12" markerHeight="10" viewBox="0 0 12 10"
+            refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L12 5 L0 10 Z" fill="#000"/>
+    </marker>
+  </defs>
+
+  <rect width="700" height="212" fill="#fff"/>
+
+  <!-- Three clipped glyph remnants are present at the source canvas's top edge. -->
+  <path d="M53 0 H56 V1 H53 Z M244 0 H245.5 V1 H244 Z M389 0 H390.5 V1 H389 Z" fill="#000"/>
+
+  <!-- Time axis is painted behind the opaque term boxes. -->
+  <path class="timeline" d="M49.5 76.5 H591.5 M643 76.5 H669.5" marker-end="url(#arrowhead)"/>
+  <text class="label" x="598" y="84">time</text>
+
+  <!-- Terms; cyan spans show intervals occupied by an election. -->
+  <g>
+    <rect class="term" x="65.5" y="59" width="77.5" height="35.5"/>
+    <rect class="election" x="65.5" y="59" width="11.5" height="35.5"/>
+
+    <rect class="term" x="153.5" y="59" width="57.5" height="35.5"/>
+    <rect class="election" x="153.5" y="59" width="6.5" height="35.5"/>
+
+    <rect class="term" x="223" y="59" width="163.5" height="35.5"/>
+    <rect class="election" x="223" y="59" width="17.5" height="35.5"/>
+
+    <rect class="election" x="400" y="59" width="46" height="35.5"/>
+
+    <rect class="term" x="459" y="59" width="98" height="35.5"/>
+    <rect class="election" x="459" y="59" width="12" height="35.5"/>
+  </g>
+
+  <g class="label center">
+    <text x="104" y="53.5">Term 1</text>
+    <text x="182.5" y="53.5">Term 2</text>
+    <text x="304.75" y="53.5">Term 3</text>
+    <text x="423" y="53.5">Term 4</text>
+    <text x="508" y="53.5">Term 5</text>
+  </g>
+
+  <!-- Annotation arrows stop at the lower edges of their corresponding term intervals. -->
+  <g class="connector" marker-end="url(#arrowhead)">
+    <path id="term-1-election-arrow" data-connector="true" d="M112 167 L76 97"/>
+    <path id="term-2-election-arrow" data-connector="true" d="M124 167 L156 97"/>
+    <path id="normal-operation-start-arrow" data-connector="true" d="M270.5 167 L205 96.5"/>
+    <path id="normal-operation-end-arrow" data-connector="true" d="M286 167 L304.5 97"/>
+    <path id="split-vote-arrow" data-connector="true" d="M438 167 L426.5 97"/>
+  </g>
+  <g class="label center">
+    <text x="117.5" y="187">Elections</text>
+    <text x="276" y="187">Normal Operation</text>
+    <text x="438" y="187">Split Vote</text>
+  </g>
+</svg>

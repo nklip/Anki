@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1390" height="536" viewBox="0 0 695 268"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Hot and warm matching-engine leader election</title>
+  <desc id="desc">A hot matching engine reads new-order events and writes order-filled events to an mmap event store. A warm matching engine follows new-order events from the same store so it can take over.</desc>
+
+  <!-- Source-native styles reproduce the monochrome PNG and its warm-node gray. -->
+  <defs>
+    <style>
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 20px; font-weight: normal; fill: #000; }
+      .center { text-anchor: middle; }
+      .box { fill: #fff; stroke: #000; stroke-width: 1; }
+      .warm { fill: #ccc; stroke: #000; stroke-width: 1; }
+      .connector { fill: none; stroke: #000; stroke-width: 1; }
+      .event-curve { fill: none; stroke: #000; stroke-width: 1; }
+    </style>
+    <marker id="arrowhead" markerWidth="12" markerHeight="10" viewBox="0 0 12 10"
+            refX="10" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L12 5 L0 10 Z" fill="#000"/>
+    </marker>
+  </defs>
+
+  <rect width="695" height="268" fill="#fff"/>
+
+  <!-- Matching-engine replicas. -->
+  <rect class="box" x="188" y="18.5" width="179.5" height="68"/>
+  <rect class="warm" x="467" y="18.5" width="179.5" height="68"/>
+  <g class="label center">
+    <text x="277.75" y="48.5">Matching Engine</text>
+    <text x="277.75" y="70.5">(Hot)</text>
+    <text x="556.75" y="48.5">Matching Engine</text>
+    <text x="556.75" y="70.5">(Warm)</text>
+  </g>
+
+  <!-- Event-flow curves are split around their labels so no shaft crosses text. -->
+  <g>
+    <!-- These label-side curve halves carry no head; the arrow-ending halves remain checker-visible below. -->
+    <path class="event-curve" id="new-order-lower" d="M255 202.5 C240 186 229 161 231 143"/>
+    <path class="connector" id="new-order-upper" data-connector="true" d="M234 114 C238 103 243 95 247 88.5" marker-end="url(#arrowhead)"/>
+
+    <path class="event-curve" id="filled-order-upper" d="M304.5 86.5 C318 109 323 128 322 147"/>
+    <path class="connector" id="filled-order-lower" data-connector="true" d="M317 177 C313 188 308 196 303 200.5" marker-end="url(#arrowhead)"/>
+
+    <path class="event-curve" id="warm-new-order-lower" d="M556.5 202.5 V160"/>
+    <path class="connector" id="warm-new-order-upper" data-connector="true" d="M556.5 132 V88.5" marker-end="url(#arrowhead)"/>
+  </g>
+  <g class="label center">
+    <text x="232" y="134.5">NewOrderEvent</text>
+    <text x="321" y="165.5">OrderFilledEvent</text>
+    <text x="556.5" y="151.5">NewOrderEvent</text>
+  </g>
+
+  <!-- mmap event store; the narrow leading cells depict its append-only event sequence. -->
+  <rect class="box" x="36" y="202.5" width="624" height="43.5"/>
+  <path class="connector" d="M44 202.5 V246 M52 202.5 V246 M60.5 202.5 V246 M68.5 202.5 V246
+                                M76 202.5 V246 M84.5 202.5 V246 M92.5 202.5 V246 M100.5 202.5 V246
+                                M108.5 202.5 V246 M117 202.5 V246 M125 202.5 V246 M133.5 202.5 V246
+                                M141.5 202.5 V246 M149.5 202.5 V246 M157.5 202.5 V246 M166.5 202.5 V246"/>
+  <text class="label center" x="412" y="231.5">Event Store (mmap)</text>
+</svg>
