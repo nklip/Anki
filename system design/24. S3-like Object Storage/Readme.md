@@ -98,7 +98,7 @@ When accessing a file, we first fetch its metadata from the inode, prior to fetc
 Object storage works similarly - metadata store is used for file information, but contents are stored on disk:
 
 <div style="margin-left:3rem">
-    <img src="./images/object-store-vs-unix.svg" alt="object-store-vs-unix" width="500" />
+    <img src="./images/compare-object-store-vs-unix-file.svg" alt="compare-object-store-vs-unix-file" width="500" />
 </div>
 
 By separating metadata from file contents, we can scale the different stores independently:
@@ -122,7 +122,7 @@ By separating metadata from file contents, we can scale the different stores ind
 ### **Uploading an object**
 
 <div style="margin-left:3rem">
-    <img src="./images/uploading-object.svg" alt="uploading-object" width="500" />
+    <img src="./images/object-uploading.svg" alt="object-uploading" width="500" />
 </div>
 
 1. Create a bucket named "bucket-to-share" via HTTP PUT request
@@ -161,7 +161,7 @@ Authorization: authorization string
 ```
 
 <div style="margin-left:3rem">
-    <img src="./images/download-object.svg" alt="download-object" width="500" />
+    <img src="./images/object-downloading.svg" alt="object-downloading" width="500" />
 </div>
 
 1. The client sends an HTTP GET request to the load balancer, i.e., `GET /bucket-to-share/script.txt`.
@@ -223,10 +223,11 @@ The heartbeat includes:
     <img src="./images/data-persistence-flow.svg" alt="data-persistence-flow" width="500" />
 </div>
 
-- API service forwards the object data to data store
-- Data routing service sends the data to the primary data node
-- Primary data node saves the data locally and replicates it to two secondary data nodes. Response is sent after successful replication.
-- The UUID of the object is returned to the API service.
+1. The API service forwards the object data to the data store.
+2. The data routing service generates a UUID for this object and queries the placement service to find out the data node to store this object. The placement service checks the virtual cluster map and returns the primary data node.
+3. The data routing service sends data directly to the primary data node, together with its UUID.
+4. The primary data node saves the data locally and replicates it to two secondary data nodes. The primary node responds to the data routing service when data is successfully replicated to all secondary nodes.
+5. The UUID of the object (ObjId) is returned to the API service.
 
 Caveats:
 - Given an object UUID, its replication group is deterministically chosen using consistent hashing.
@@ -282,9 +283,10 @@ SQLite is a good option as it's a lightweight file-based relational database.
     <img src="./images/updated-data-persistence-flow.svg" alt="updated-data-persistence-flow" width="500" />
 </div>
 
-- API Service sends a request to save a new object
-- Data node service appends the new object at the end of a file, named "/data/c"
-- A new record for the object is inserted into the object mapping table
+1. The API service sends a request to save a new object named “object 4”.
+2. The data node service appends the object named “object 4” at the end of the read-write file named “/data/c”.
+3. A new record of “object 4” is inserted into the object_mapping table.
+4. The data node service returns the UUID to the API service.
 
 #### Durability
 
@@ -384,12 +386,22 @@ That would make our listing query sufficiently fast as it's isolated to a single
 
 ### **Object versioning**
 
-Versioning works by having another `object_version` column which is of type TIMEUUID, enabling us to sort records based on it.
+Versioning is a feature that keeps multiple versions of an object in a bucket. With versioning, we can restore objects that are accidentally deleted or overwritten.
+
+<div style="margin-left:3rem">
+    <img src="./images/object-versioning.svg" alt="object-versioning" width="500" />
+</div>
+
+1. The client sends an HTTP PUT request to upload an object named “script.txt”.
+2. The API service verifies the user’s identity and ensures that the user has WRITE permission on the bucket.
+3. Once verified, the API service uploads the data to the data store. The data store persists the data as a new object and returns a new UUID to the API service.
+4. The API service calls the metadata store to store the metadata information of this object.
+5. To support versioning, the object table for the metadata store has a column called `object_version` that is only used if versioning is enabled. Instead of overwriting the existing record, a new record is inserted with the same bucket_id and object_name as the old record, but with a new `object_id` and `object_version`. The `object_id` is the UUID for the new object returned in step 3. The `object_version` is a TIMEUUID generated when the new row is inserted. No matter which database we choose for the metadata store, it should be efficient to look up the current version of an object. The current version has the largest TIMEUUID of all the entries with the same object_name.
 
 Each new version produces a new `object_id`:
 
 <div style="margin-left:3rem">
-    <img src="./images/object-versioning.svg" alt="object-versioning" width="500" />
+    <img src="./images/versioned-metadata.svg" alt="versioned-metadata" width="500" />
 </div>
 
 Deleting an object creates a new version with a special `object_id` indicating that the object was deleted. Queries for it return 404:

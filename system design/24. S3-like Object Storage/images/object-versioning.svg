@@ -1,147 +1,197 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg"
-     width="1844" height="858" viewBox="0 0 1844 858"
+     width="1122" height="830" viewBox="0 0 1122 830"
      role="img" aria-labelledby="title desc">
-  <title id="title">Object versioning</title>
-  <desc id="desc">Three metadata versions for script.txt point to three immutable objects in a data store. The newest and previous current versions are identified, and an upward arrow shows version progression.</desc>
+  <title id="title">Uploading an object with versioning</title>
+  <desc id="desc">A client uploads an object through a load balancer and API service. The API validates identity, checks whether the object exists and versioning is enabled, creates versioned object metadata, and sends the object to a primary storage service that replicates it to two secondary storage nodes.</desc>
 
+  <!-- Typography and reusable shapes follow the companion uploading-object diagram. -->
   <defs>
     <style>
       .canvas { fill: #fff; }
-      .frame, .record, .version-box, .object-box, .object-blob {
-        fill: #fff;
-        stroke: #000;
-        stroke-width: 2.2;
-      }
-      .heading, .label, .record-text, .caption {
-        fill: #000;
-        font-family: Arial, Helvetica, sans-serif;
-        font-weight: 400;
-      }
-      .heading { font-size: 35px; }
-      .label { font-size: 34px; }
-      .record-text { font-size: 34px; }
-      .version-text { letter-spacing: 1.7px; }
-      .caption { font-size: 36px; }
-      .center { text-anchor: middle; }
-      .connector, .shaft {
-        fill: none;
-        stroke: #000;
-        stroke-width: 2.2;
-      }
-      .dashed { stroke-dasharray: 9 7; }
-      .arrowhead { fill: #000; }
+      text { fill: #000; font-family: Arial, Helvetica, sans-serif; font-weight: 400; }
+      .node-label { font-size: 24px; text-anchor: middle; }
+      .flow-label { font-size: 23px; text-anchor: middle; }
+      .small-label { font-size: 19px; text-anchor: middle; }
+      .box { fill: #fff; stroke: #000; stroke-width: 1.5; }
+      .panel { fill: #fff; stroke: #000; stroke-width: 1.5; }
+      .group { fill: none; stroke: #000; stroke-width: 1.5; stroke-dasharray: 7 5; }
+      .store { fill: #fff; stroke: #000; stroke-width: 1.5; }
+      .glyph, .arrowhead { fill: #000; }
+      .connector, .shaft { fill: none; stroke: #000; stroke-width: 1.5; }
+      .tree { fill: none; stroke: #000; stroke-width: 1.25; }
+      .step-badge { fill: #fff; stroke: #000; stroke-width: 1.5; }
+      .step-number { font-size: 19px; text-anchor: middle; }
     </style>
+
+    <!-- Cylinder reused for the metadata database and every storage disk. -->
+    <symbol id="cylinder" viewBox="0 0 50 50">
+      <path class="store" d="M1 5.5V44.5A24 5 0 0 0 49 44.5V5.5"/>
+      <ellipse class="store" cx="25" cy="5.5" rx="24" ry="5"/>
+    </symbol>
   </defs>
 
-  <rect class="canvas" width="1844" height="858"/>
+  <rect class="canvas" width="1122" height="830"/>
 
-  <!-- Store boundaries and headings. -->
-  <g id="store-frames">
-    <rect class="frame" x="209" y="126" width="904" height="614"/>
-    <text class="heading center" x="661" y="118">Metadata Store</text>
-
-    <rect class="frame" x="1213" y="229" width="577" height="511"/>
-    <text class="heading center" x="1501.5" y="219">Data Store</text>
+  <!-- Client and step 1: a PUT request enters the load balancer. -->
+  <g id="client" class="glyph">
+    <circle cx="446.5" cy="53.5" r="12.5"/>
+    <path d="M423 89V82C423 75.4 433.5 71 446.5 71S470 75.4 470 82V89Z"/>
   </g>
+  <path id="client-stem" class="connector" data-connector="true" d="M446.5 89V121"/>
+  <g id="step-1">
+    <circle class="step-badge" cx="346" cy="140.5" r="10.5"/>
+    <text class="step-number" x="346" y="147">1</text>
+    <text class="flow-label" x="462" y="149">HTTP PUT object</text>
+  </g>
+  <path id="client-load-balancer-shaft" class="shaft" data-connector="true" d="M446.5 161V195"/>
+  <polygon id="client-load-balancer-arrowhead" class="arrowhead" points="446.5,208 440,195 453,195"/>
 
-  <!-- Dashed callouts identify the latest two versions. -->
-  <g id="version-annotations">
-    <text class="heading" x="180" y="50">Current version</text>
-    <path id="current-version-annotation-shaft" class="shaft dashed"
-          data-connector="true" d="M320 67L384.8 200.6"/>
-    <polygon id="current-version-annotation-arrowhead" class="arrowhead"
-             points="394,216 377.9,204.7 391.6,196.4"/>
+  <!-- Load balancer: the same fan-out glyph as uploading-object.svg. -->
+  <text class="node-label" x="304" y="247">Load balancer</text>
+  <g id="load-balancer">
+    <rect class="box" x="391" y="208" width="110" height="59"/>
+    <rect class="box" x="439" y="216" width="14" height="9"/>
+    <path class="connector" data-connector="true" d="M446 225V238"/>
+    <path class="tree" data-connector="true" d="M414 238H478"/>
+    <path class="tree" data-connector="true" d="M414 238V249"/>
+    <path class="tree" data-connector="true" d="M446 238V249"/>
+    <path class="tree" data-connector="true" d="M478 238V249"/>
+    <polygon class="arrowhead" points="414,254 410,247 418,247"/>
+    <polygon class="arrowhead" points="446,254 442,247 450,247"/>
+    <polygon class="arrowhead" points="478,254 474,247 482,247"/>
+    <rect class="box" x="407" y="250" width="14" height="9"/>
+    <rect class="box" x="439" y="250" width="14" height="9"/>
+    <rect class="box" x="471" y="250" width="14" height="9"/>
+  </g>
+  <path id="load-balancer-api-shaft" class="shaft" data-connector="true" d="M446.5 267V343"/>
+  <polygon id="load-balancer-api-arrowhead" class="arrowhead" points="446.5,356 440,343 453,343"/>
 
-    <text class="label center" x="115" y="262">
-      <tspan x="115">Previous</tspan>
-      <tspan x="115" dy="39">current</tspan>
-      <tspan x="115" dy="39">version</tspan>
+  <!-- The API service coordinates validation, version checks, metadata, and object bytes. -->
+  <rect id="api-service" class="box" x="339" y="356" width="218" height="36"/>
+  <text class="node-label" x="448" y="383">API Service</text>
+
+  <!-- Step 2: identity validation is split around its label to keep the arrow clear. -->
+  <g id="identity-service">
+    <path class="box" d="M51 346H118V408H51Z"/>
+    <path class="box" d="M51 346L58 339H124L118 346Z"/>
+    <path class="box" d="M118 346L124 339V401L118 408Z"/>
+    <path fill="none" stroke="#000" stroke-width="2.7" d="M111 398V393A7 7 0 0 1 125 393V398"/>
+    <rect class="glyph" x="106" y="397" width="24" height="23" rx="3"/>
+    <circle cx="118" cy="408" r="2.3" fill="#fff"/>
+  </g>
+  <text class="flow-label" x="5" y="444" style="text-anchor:start">Identity Service</text>
+  <path id="api-identity-connector" class="connector" data-connector="true" d="M339 374H321"/>
+  <path id="identity-arrow-shaft" class="shaft" data-connector="true" d="M167 374H138"/>
+  <polygon id="identity-arrowhead" class="arrowhead" points="124,374 138,367 138,381"/>
+  <g id="step-2">
+    <circle class="step-badge" cx="239" cy="324" r="10.5"/>
+    <text class="step-number" x="239" y="330.5">2</text>
+    <text class="flow-label" x="252" y="355">
+      <tspan x="252">Identity</tspan>
+      <tspan x="252" dy="25" transform="translate(252 0) scale(.84 1) translate(-252 0)">validation and</tspan>
+      <tspan x="252" dy="25" transform="translate(252 0) scale(.84 1) translate(-252 0)">authorization</tspan>
     </text>
-    <path id="previous-version-annotation-shaft" class="shaft dashed"
-          data-connector="true" d="M190 326L342 400"/>
-    <polygon id="previous-version-annotation-arrowhead" class="arrowhead"
-             points="358,408 338.5,407.2 345.5,392.8"/>
   </g>
 
-  <!-- The vertical arrow orders versions from oldest at the bottom to newest at the top. -->
-  <g id="version-timeline">
-    <path id="version-timeline-shaft" class="shaft" data-connector="true" d="M625 725V159"/>
-    <polygon id="version-timeline-arrowhead" class="arrowhead" points="625,137 614,160 636,160"/>
+  <!-- Steps 4 and 5: evaluate the versioning rule, then create object metadata. -->
+  <g id="step-4">
+    <circle class="step-badge" cx="190" cy="476" r="10.5"/>
+    <text class="step-number" x="190" y="482.5">4</text>
+    <text class="flow-label" x="198" y="459" style="text-anchor:start">
+      <tspan x="208">Check:</tspan>
+      <tspan x="208" dy="25" transform="translate(228 0) scale(.9 1) translate(-228 0)">1. Object exists?</tspan>
+      <tspan x="208" dy="25" transform="translate(228 0) scale(.79 1) translate(-228 0)">2. Versioning enabled?</tspan>
+    </text>
+  </g>
+  <path id="api-metadata-shaft" class="shaft" data-connector="true" d="M447.5 392V584"/>
+  <polygon id="api-metadata-arrowhead" class="arrowhead" points="447.5,598 440.5,584 454.5,584"/>
+  <g id="step-5">
+    <circle class="step-badge" cx="470" cy="476" r="10.5"/>
+    <text class="step-number" x="470" y="482.5">5</text>
+    <text class="flow-label" x="490" y="469" style="text-anchor:start">
+      <tspan x="490">Create object</tspan>
+      <tspan x="490" dy="25">metadata</tspan>
+    </text>
   </g>
 
-  <!-- Metadata rows. Each version selects one immutable object ID. -->
-  <g id="metadata-versions">
-    <g id="current-metadata-version">
-      <rect class="version-box" x="239" y="216" width="339" height="52"/>
-      <text class="record-text version-text" x="247" y="255" style="font-size:28px"
-            transform="translate(0 255) scale(1 1.2143) translate(0 -255)"
-            textLength="323" lengthAdjust="spacingAndGlyphs">object_version = fas3</text>
-      <path id="fas3-version-link-shaft" class="shaft" data-connector="true" d="M578 242H660"/>
-      <polygon id="fas3-version-link-arrowhead" class="arrowhead" points="680,242 660,232 660,252"/>
+  <!-- Metadata store receives the new versioned object record. -->
+  <g id="metadata-store">
+    <rect class="group" x="280" y="559" width="335" height="228"/>
+    <rect class="box" x="324" y="598" width="248" height="35"/>
+    <text class="node-label" x="448" y="624">Metadata Service</text>
+    <path id="metadata-database-shaft" class="shaft" data-connector="true" d="M448 633V681"/>
+    <polygon id="metadata-database-arrowhead" class="arrowhead" points="448,695 441,681 455,681"/>
+    <use href="#cylinder" x="423" y="694" width="50" height="50"/>
+    <text class="node-label" x="448" y="773">Metadata DB</text>
+    <text class="node-label" x="448" y="811">Metadata Store</text>
+  </g>
 
-      <rect class="record" x="680" y="213" width="393" height="116"/>
-      <path class="connector" data-connector="true" d="M680 271H1073"/>
-      <text class="record-text center" x="876.5" y="255">object_name=script.txt</text>
-      <text class="record-text center" x="876.5" y="313">object_id=0xM13n</text>
+  <!-- Data store: the primary receives the upload and replicates to two secondaries. -->
+  <g id="data-store">
+    <rect class="group" x="713" y="106" width="381" height="536"/>
+
+    <g id="secondary-storage-node-top">
+      <rect class="panel" x="742" y="134" width="325" height="136"/>
+      <text class="node-label" x="1006" y="159">Secondary</text>
+      <rect class="box" x="765" y="166" width="133" height="71"/>
+      <text class="node-label" x="831.5" y="197">
+        <tspan x="831.5">Storage</tspan>
+        <tspan x="831.5" dy="26">Service</tspan>
+      </text>
+      <path id="top-service-disk-shaft" class="shaft" data-connector="true" d="M898 202H980"/>
+      <polygon id="top-service-disk-arrowhead" class="arrowhead" points="994,202 980,195 980,209"/>
+      <use href="#cylinder" x="993" y="177" width="50" height="50"/>
+      <text class="small-label" x="1006" y="263">Storage Node</text>
     </g>
 
-    <g id="previous-metadata-version">
-      <text class="record-text version-text" x="234" y="440" style="font-size:28px"
-            transform="translate(0 440) scale(1 1.2143) translate(0 -440)"
-            textLength="329" lengthAdjust="spacingAndGlyphs">object_version = bn31</text>
-      <path id="bn31-version-link-shaft" class="shaft" data-connector="true" d="M566 428H660"/>
-      <polygon id="bn31-version-link-arrowhead" class="arrowhead" points="680,428 660,418 660,438"/>
-
-      <rect class="record" x="680" y="399" width="393" height="117"/>
-      <path class="connector" data-connector="true" d="M680 457H1073"/>
-      <text class="record-text center" x="876.5" y="441">object_name=script.txt</text>
-      <text class="record-text center" x="876.5" y="499">object_id=0x12Ha</text>
+    <g id="primary-storage-node">
+      <rect class="panel" x="742" y="307" width="325" height="134"/>
+      <text class="node-label" x="1023" y="331">Primary</text>
+      <rect class="box" x="765" y="338" width="133" height="70"/>
+      <text class="node-label" x="831.5" y="368">
+        <tspan x="831.5">Storage</tspan>
+        <tspan x="831.5" dy="26">Service</tspan>
+      </text>
+      <path id="primary-service-disk-shaft" class="shaft" data-connector="true" d="M898 374H980"/>
+      <polygon id="primary-service-disk-arrowhead" class="arrowhead" points="994,374 980,367 980,381"/>
+      <use href="#cylinder" x="993" y="349" width="50" height="50"/>
+      <text class="small-label" x="1006" y="434">Storage Node</text>
     </g>
 
-    <g id="oldest-metadata-version">
-      <text class="record-text version-text" x="240" y="625" style="font-size:28px"
-            transform="translate(0 625) scale(1 1.2143) translate(0 -625)"
-            textLength="323" lengthAdjust="spacingAndGlyphs">object_version = 1ag1</text>
-      <path id="oneag1-version-link-shaft" class="shaft" data-connector="true" d="M566 614H660"/>
-      <polygon id="oneag1-version-link-arrowhead" class="arrowhead" points="680,614 660,604 660,624"/>
-
-      <rect class="record" x="680" y="584" width="393" height="116"/>
-      <path class="connector" data-connector="true" d="M680 642H1073"/>
-      <text class="record-text center" x="876.5" y="626">object_name=script.txt</text>
-      <text class="record-text center" x="876.5" y="684">object_id=0x91b4</text>
+    <g id="secondary-storage-node-bottom">
+      <rect class="panel" x="742" y="478" width="325" height="135"/>
+      <text class="node-label" x="1006" y="503">Secondary</text>
+      <rect class="box" x="765" y="510" width="133" height="70"/>
+      <text class="node-label" x="831.5" y="540">
+        <tspan x="831.5">Storage</tspan>
+        <tspan x="831.5" dy="26">Service</tspan>
+      </text>
+      <path id="bottom-service-disk-shaft" class="shaft" data-connector="true" d="M898 545H980"/>
+      <polygon id="bottom-service-disk-arrowhead" class="arrowhead" points="994,545 980,538 980,552"/>
+      <use href="#cylinder" x="993" y="520" width="50" height="50"/>
+      <text class="small-label" x="1006" y="606">Storage Node</text>
     </g>
+
+    <!-- Replication noses meet the secondary service borders without entering the boxes. -->
+    <path id="replication-up-shaft" class="shaft" data-connector="true" d="M831 338V251"/>
+    <polygon id="replication-up-arrowhead" class="arrowhead" points="831,237 824,251 838,251"/>
+    <path id="replication-down-shaft" class="shaft" data-connector="true" d="M831 408V496"/>
+    <polygon id="replication-down-arrowhead" class="arrowhead" points="831,510 824,496 838,496"/>
+
+    <text class="node-label" x="904" y="666">Data Store</text>
   </g>
 
-  <!-- Dashed references stop at the data-store boxes; compact heads remain outside the boxes. -->
-  <g id="metadata-to-data-links">
-    <path id="fas3-object-reference-shaft" class="shaft dashed" data-connector="true" d="M1073 300H1240"/>
-    <polygon id="fas3-object-reference-arrowhead" class="arrowhead" points="1260,300 1240,290 1240,310"/>
-
-    <path id="bn31-object-reference-shaft" class="shaft dashed" data-connector="true" d="M1073 486H1240"/>
-    <polygon id="bn31-object-reference-arrowhead" class="arrowhead" points="1260,486 1240,476 1240,496"/>
-
-    <path id="oneag1-object-reference-shaft" class="shaft dashed" data-connector="true" d="M1073 671H1240"/>
-    <polygon id="oneag1-object-reference-arrowhead" class="arrowhead" points="1260,671 1240,661 1240,681"/>
+  <!-- Step 3 is painted last so its arrow stays visible across both store boundaries. -->
+  <path id="api-upload-connector" class="connector" data-connector="true" d="M557 374H596"/>
+  <path id="upload-object-shaft" class="shaft" data-connector="true" d="M670 374H751"/>
+  <polygon id="upload-object-arrowhead" class="arrowhead" points="765,374 751,367 751,381"/>
+  <g id="step-3">
+    <circle class="step-badge" cx="633" cy="333" r="10.5"/>
+    <text class="step-number" x="633" y="339.5">3</text>
+    <text class="flow-label" x="633" y="366">
+      <tspan x="633">Upload</tspan>
+      <tspan x="633" dy="25" transform="translate(633 0) scale(.82 1) translate(-633 0)">object</tspan>
+    </text>
   </g>
-
-  <!-- Data-store objects corresponding to the three metadata versions. -->
-  <g id="stored-objects">
-    <rect class="object-box" x="1260" y="271" width="329" height="58"/>
-    <text class="record-text center" x="1424.5" y="313">object_id=0xM13n</text>
-    <path id="fas3-object-link" class="connector" data-connector="true" d="M1589 300H1666"/>
-    <rect class="object-blob" x="1666" y="259" width="82" height="83" rx="20"/>
-
-    <rect class="object-box" x="1260" y="457" width="329" height="59"/>
-    <text class="record-text center" x="1424.5" y="499">object_id=0x12Ha</text>
-    <path id="bn31-object-link" class="connector" data-connector="true" d="M1589 486H1666"/>
-    <rect class="object-blob" x="1666" y="445" width="82" height="83" rx="20"/>
-
-    <rect class="object-box" x="1260" y="643" width="329" height="57"/>
-    <text class="record-text center" x="1424.5" y="685">object_id=0x91b4</text>
-    <path id="oneag1-object-link" class="connector" data-connector="true" d="M1589 671H1666"/>
-    <rect class="object-blob" x="1666" y="630" width="82" height="84" rx="20"/>
-  </g>
-
-  <text class="caption center" x="922" y="813">Figure 23 Versioned metadata</text>
 </svg>

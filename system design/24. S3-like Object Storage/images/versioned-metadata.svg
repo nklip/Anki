@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1844" height="858" viewBox="0 0 1844 858"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Object versioning</title>
+  <desc id="desc">Three metadata versions for script.txt point to three immutable objects in a data store. The newest and previous current versions are identified, and an upward arrow shows version progression.</desc>
+
+  <defs>
+    <style>
+      .canvas { fill: #fff; }
+      .frame, .record, .version-box, .object-box, .object-blob {
+        fill: #fff;
+        stroke: #000;
+        stroke-width: 2.2;
+      }
+      .heading, .label, .record-text, .caption {
+        fill: #000;
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 400;
+      }
+      .heading { font-size: 35px; }
+      .label { font-size: 34px; }
+      .record-text { font-size: 34px; }
+      .version-text { letter-spacing: 1.7px; }
+      .caption { font-size: 36px; }
+      .center { text-anchor: middle; }
+      .connector, .shaft {
+        fill: none;
+        stroke: #000;
+        stroke-width: 2.2;
+      }
+      .dashed { stroke-dasharray: 9 7; }
+      .arrowhead { fill: #000; }
+    </style>
+  </defs>
+
+  <rect class="canvas" width="1844" height="858"/>
+
+  <!-- Store boundaries and headings. -->
+  <g id="store-frames">
+    <rect class="frame" x="209" y="126" width="904" height="614"/>
+    <text class="heading center" x="661" y="118">Metadata Store</text>
+
+    <rect class="frame" x="1213" y="229" width="577" height="511"/>
+    <text class="heading center" x="1501.5" y="219">Data Store</text>
+  </g>
+
+  <!-- Dashed callouts identify the latest two versions. -->
+  <g id="version-annotations">
+    <text class="heading" x="180" y="50">Current version</text>
+    <path id="current-version-annotation-shaft" class="shaft dashed"
+          data-connector="true" d="M320 67L384.8 200.6"/>
+    <polygon id="current-version-annotation-arrowhead" class="arrowhead"
+             points="394,216 377.9,204.7 391.6,196.4"/>
+
+    <text class="label center" x="115" y="262">
+      <tspan x="115">Previous</tspan>
+      <tspan x="115" dy="39">current</tspan>
+      <tspan x="115" dy="39">version</tspan>
+    </text>
+    <path id="previous-version-annotation-shaft" class="shaft dashed"
+          data-connector="true" d="M190 326L342 400"/>
+    <polygon id="previous-version-annotation-arrowhead" class="arrowhead"
+             points="358,408 338.5,407.2 345.5,392.8"/>
+  </g>
+
+  <!-- The vertical arrow orders versions from oldest at the bottom to newest at the top. -->
+  <g id="version-timeline">
+    <path id="version-timeline-shaft" class="shaft" data-connector="true" d="M625 725V159"/>
+    <polygon id="version-timeline-arrowhead" class="arrowhead" points="625,137 614,160 636,160"/>
+  </g>
+
+  <!-- Metadata rows. Each version selects one immutable object ID. -->
+  <g id="metadata-versions">
+    <g id="current-metadata-version">
+      <rect class="version-box" x="239" y="216" width="339" height="52"/>
+      <text class="record-text version-text" x="247" y="255" style="font-size:28px"
+            transform="translate(0 255) scale(1 1.2143) translate(0 -255)"
+            textLength="323" lengthAdjust="spacingAndGlyphs">object_version = fas3</text>
+      <path id="fas3-version-link-shaft" class="shaft" data-connector="true" d="M578 242H660"/>
+      <polygon id="fas3-version-link-arrowhead" class="arrowhead" points="680,242 660,232 660,252"/>
+
+      <rect class="record" x="680" y="213" width="393" height="116"/>
+      <path class="connector" data-connector="true" d="M680 271H1073"/>
+      <text class="record-text center" x="876.5" y="255">object_name=script.txt</text>
+      <text class="record-text center" x="876.5" y="313">object_id=0xM13n</text>
+    </g>
+
+    <g id="previous-metadata-version">
+      <text class="record-text version-text" x="234" y="440" style="font-size:28px"
+            transform="translate(0 440) scale(1 1.2143) translate(0 -440)"
+            textLength="329" lengthAdjust="spacingAndGlyphs">object_version = bn31</text>
+      <path id="bn31-version-link-shaft" class="shaft" data-connector="true" d="M566 428H660"/>
+      <polygon id="bn31-version-link-arrowhead" class="arrowhead" points="680,428 660,418 660,438"/>
+
+      <rect class="record" x="680" y="399" width="393" height="117"/>
+      <path class="connector" data-connector="true" d="M680 457H1073"/>
+      <text class="record-text center" x="876.5" y="441">object_name=script.txt</text>
+      <text class="record-text center" x="876.5" y="499">object_id=0x12Ha</text>
+    </g>
+
+    <g id="oldest-metadata-version">
+      <text class="record-text version-text" x="240" y="625" style="font-size:28px"
+            transform="translate(0 625) scale(1 1.2143) translate(0 -625)"
+            textLength="323" lengthAdjust="spacingAndGlyphs">object_version = 1ag1</text>
+      <path id="oneag1-version-link-shaft" class="shaft" data-connector="true" d="M566 614H660"/>
+      <polygon id="oneag1-version-link-arrowhead" class="arrowhead" points="680,614 660,604 660,624"/>
+
+      <rect class="record" x="680" y="584" width="393" height="116"/>
+      <path class="connector" data-connector="true" d="M680 642H1073"/>
+      <text class="record-text center" x="876.5" y="626">object_name=script.txt</text>
+      <text class="record-text center" x="876.5" y="684">object_id=0x91b4</text>
+    </g>
+  </g>
+
+  <!-- Dashed references stop at the data-store boxes; compact heads remain outside the boxes. -->
+  <g id="metadata-to-data-links">
+    <path id="fas3-object-reference-shaft" class="shaft dashed" data-connector="true" d="M1073 300H1240"/>
+    <polygon id="fas3-object-reference-arrowhead" class="arrowhead" points="1260,300 1240,290 1240,310"/>
+
+    <path id="bn31-object-reference-shaft" class="shaft dashed" data-connector="true" d="M1073 486H1240"/>
+    <polygon id="bn31-object-reference-arrowhead" class="arrowhead" points="1260,486 1240,476 1240,496"/>
+
+    <path id="oneag1-object-reference-shaft" class="shaft dashed" data-connector="true" d="M1073 671H1240"/>
+    <polygon id="oneag1-object-reference-arrowhead" class="arrowhead" points="1260,671 1240,661 1240,681"/>
+  </g>
+
+  <!-- Data-store objects corresponding to the three metadata versions. -->
+  <g id="stored-objects">
+    <rect class="object-box" x="1260" y="271" width="329" height="58"/>
+    <text class="record-text center" x="1424.5" y="313">object_id=0xM13n</text>
+    <path id="fas3-object-link" class="connector" data-connector="true" d="M1589 300H1666"/>
+    <rect class="object-blob" x="1666" y="259" width="82" height="83" rx="20"/>
+
+    <rect class="object-box" x="1260" y="457" width="329" height="59"/>
+    <text class="record-text center" x="1424.5" y="499">object_id=0x12Ha</text>
+    <path id="bn31-object-link" class="connector" data-connector="true" d="M1589 486H1666"/>
+    <rect class="object-blob" x="1666" y="445" width="82" height="83" rx="20"/>
+
+    <rect class="object-box" x="1260" y="643" width="329" height="57"/>
+    <text class="record-text center" x="1424.5" y="685">object_id=0x91b4</text>
+    <path id="oneag1-object-link" class="connector" data-connector="true" d="M1589 671H1666"/>
+    <rect class="object-blob" x="1666" y="630" width="82" height="84" rx="20"/>
+  </g>
+
+  <text class="caption center" x="922" y="813">Versioned metadata</text>
+</svg>
