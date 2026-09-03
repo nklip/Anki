@@ -96,7 +96,7 @@ E.g., zooming out to the entire world would download only a single 256x256 tile 
 In most routing algorithms, intersections are represented as nodes and roads are represented as edges:
 
 <div style="margin-left:3rem">
-    <img src="./images/road-representation.png" alt="road-representation" width="500" />
+    <img src="./images/road-representation.svg" alt="road-representation" width="500" />
 </div>
 
 Most navigation algorithms use a modified version of Dijkstra's or A* algorithm.
@@ -108,7 +108,7 @@ Instead, we use a technique similar to tiling - we subdivide the world into smal
 Routing tiles hold references to neighboring tiles and algorithms can stitch together a bigger road graph as it traverses interconnected tiles:
 
 <div style="margin-left:3rem">
-    <img src="./images/routing-tiles.png" alt="routing-tiles" width="500" />
+    <img src="./images/routing-tiles.svg" alt="routing-tiles" width="500" />
 </div>
 
 This technique enables us to significantly reduce memory bandwidth and only load the tiles we need for the given source/destination pair.
@@ -276,7 +276,7 @@ We can use Redis for its fast read access speed, as we have frequent read and in
 As we discussed, we will precompute map tiling images and store them in CDN.
 
 <div style="margin-left:3rem">
-    <img src="./images/precomputed-map-tile-image.png" alt="precomputed-map-tile-image" width="500" />
+    <img src="./images/precomputed-map-tile-image.svg" alt="precomputed-map-tile-image" width="500" />
 </div>
 
 ### **Services**
