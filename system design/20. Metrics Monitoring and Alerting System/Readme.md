@@ -276,7 +276,7 @@ To scale this, we can further partition by tags/labels and categorize/prioritize
 </div>
 
 The main downside of using Kafka for this problem is the maintenance/operation overhead.
-An alternative is to use a large-scale ingestion system like [Gorilla](https://www.vldb.org/pvldb/vol8/p1816-teller.pdf).
+An alternative is to use a large-scale time-series storage engine like [Beringei](https://engineering.fb.com/2017/02/03/core-infra/beringei-a-high-performance-time-series-storage-engine/).
 It can be argued that using that would be as scalable as using Kafka for queuing.
 
 ### **Where aggregations can happen**
@@ -410,7 +410,7 @@ In the real-world, there are many off-the-shelf solutions for alerting systems. 
 The visualization system shows metrics and alerts over a time period. Here's a dashboard built with Grafana:
 
 <div style="margin-left:3rem">
-    <img src="./images/grafana-dashboard.png" alt="grafana-dashboard" width="500" />
+    <img src="./images/grafana-dashboard.svg" alt="grafana-dashboard" width="500" />
 </div>
 
 A high-quality visualization system is very hard to build. It is hard to justify not using an off-the-shelf solution like Grafana.
@@ -423,3 +423,36 @@ Here's our final design:
 <div style="margin-left:3rem">
     <img src="./images/final-design.svg" alt="final-design" width="500" />
 </div>
+
+## Reference materials
+
+1. [Datadog](https://www.datadoghq.com/)
+2. [Splunk](https://www.splunk.com/)
+3. [PagerDuty](https://www.pagerduty.com/)
+4. [Elastic stack](https://www.elastic.co/elastic-stack)
+5. [Dapper, a Large-Scale Distributed Systems Tracing Infrastructure](https://research.google/pubs/pub36356/)
+6. [Distributed Systems Tracing with Zipkin](https://blog.twitter.com/engineering/en_us/a/2012/distributed-systems-tracing-with-zipkin.html)
+7. [Prometheus](https://prometheus.io/docs/introduction/overview/)
+8. [OpenTSDB - A Distributed, Scalable Monitoring System](http://opentsdb.net/)
+9. [Data model](https://prometheus.io/docs/concepts/data_model/)
+10. [MySQL](https://www.mysql.com/)
+11. [Schema design for time-series data | Cloud Bigtable Documentation](https://cloud.google.com/bigtable/docs/schema-design-time-series)
+12. [MetricsDB. TimeSeriesDatabaseforstoringmetricsatTwitter](https://blog.twitter.com/engineering/en_us/topics/infrastructure/2019/metricsdb.html)
+13. [Amazon Timestream](https://aws.amazon.com/timestream/)
+14. [DB-Engines Ranking of time-series DBMS](https://db-engines.com/en/ranking/time+series+dbms)
+15. [InfluxDB](https://www.influxdata.com/)
+16. [etcd](https://etcd.io/)
+17. [Service Discovery with ZooKeeper](https://cloud.spring.io/spring-cloud-zookeeper/1.2.x/multi/multi_spring-cloud-zookeeper-discovery.html)
+18. [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/)
+19. [Graphite](https://graphiteapp.org/)
+20. [Push vs Pull](http://bit.ly/3aJEPxE)
+21. [Pull doesn’t scale - or does it?](https://prometheus.io/blog/2016/07/23/pull-does-not-scale-or-does-it/)
+22. [Monitoring Architecture](https://developer.lightbend.com/guides/monitoring-at-scale/monitoring-architecture/architecture.html)
+23. [Push vs Pull in Monitoring Systems](https://giedrius.blog/2019/05/11/push-vs-pull-in-monitoring-systems/)
+24. [Pushgateway](https://github.com/prometheus/pushgateway)
+25. [Building Applications with Serverless Architectures](https://aws.amazon.com/lambda/serverless-architectures-learn-more/)
+26. [Gorilla. AFast,Scalable,In-MemoryTimeSeriesDatabase](http://www.vldb.org/pvldb/vol8/p1816-teller.pdf)
+27. [Why We’re Building Flux, a New Data Scripting and Query Language](https://www.influxdata.com/blog/why-were-building-flux-a-new-data-scripting-and-query-language/)
+28. [InfluxDB storage engine](https://docs.influxdata.com/influxdb/v2.0/reference/internals/storage-engine/)
+29. [YAML](https://en.wikipedia.org/wiki/YAML)
+30. [Grafana Demo](https://play.grafana.org/)

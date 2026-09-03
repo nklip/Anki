@@ -215,3 +215,19 @@ contains 3 queues and a task scheduler.
 
 ### Non-Recoverable Errors
 - Stop malformed video processing and return error codes.
+
+## Reference materials
+
+1. [YouTube by the numbers](https://www.omnicoreagency.com/youtube-statistics/)
+2. [2019 YouTube Demographics](https://blog.hubspot.com/marketing/youtube-demographics)
+3. [Cloudfront Pricing](https://aws.amazon.com/cloudfront/pricing/)
+4. [Netflix on AWS](https://aws.amazon.com/solutions/case-studies/netflix/)
+5. [Akamai homepage](https://www.akamai.com/)
+6. [Binary large object](https://en.wikipedia.org/wiki/Binary_large_object)
+7. [Here’s What You Need to Know About Streaming Protocols](https://www.dacast.com/blog/streaming-protocols/)
+8. [SVE: Distributed Video Processing at Facebook Scale](https://www.cs.princeton.edu/~wlloyd/papers/sve-sosp17.pdf)
+9. [Video-on-Demand Transcoding Architecture Best Practices (in Chinese)](https://developer.volcengine.com/resource/7272947763787071544/)
+10. [Delegate access with a shared access signature](https://docs.microsoft.com/en-us/rest/api/storageservices/delegate-access-with-shared-access-signature)
+11. [YouTube scalability talk by early YouTube employee](https://www.youtube.com/watch?v=w5WVu624fY8)
+12. [Understanding the characteristics of internet short video sharing: A youtube-based measurement study](https://arxiv.org/pdf/0707.3670.pdf)
+13. [Content Popularity for Open Connect](https://netflixtechblog.com/content-popularity-for-open-connect-b86d56f613b)

@@ -442,3 +442,22 @@ This is our final design:
 </div>
 
 One additional feature we could provide is multi-stop navigation, which can be sold to enterprise customers such as Uber or Lyft to determine the optimal path for visiting a set of locations.
+
+## Reference materials
+
+1. [Google Maps Platform — developer documentation](https://developers.google.com/maps?hl=en_US)
+2. [Google Maps Platform — product overview](https://cloud.google.com/maps-platform/)
+3. [Prototyping a Smoother Map](https://medium.com/google-design/google-maps-cb0326d165f5)
+4. [Mercator projection](https://en.wikipedia.org/wiki/Mercator_projection)
+5. [Peirce quincuncial projection](https://en.wikipedia.org/wiki/Peirce_quincuncial_projection)
+6. [Gall–Peters projection](https://en.wikipedia.org/wiki/Gall–Peters_projection)
+7. [Winkel tripel projection](https://en.wikipedia.org/wiki/Winkel_tripel_projection)
+8. [Address geocoding](https://en.wikipedia.org/wiki/Address_geocoding)
+9. [Geohashing](https://kousiknath.medium.com/system-design-design-a-geo-spatial-index-for-real-time-location-search-10968fe62b9c)
+10. [HTTP keep-alive](https://en.wikipedia.org/wiki/HTTP_persistent_connection)
+11. [Directions API](https://developers.google.com/maps/documentation/directions/start?hl=en_US)
+12. [Adjacency list](https://en.wikipedia.org/wiki/Adjacency_list)
+13. [CAP theorem](https://en.wikipedia.org/wiki/CAP_theorem)
+14. [Valhalla tile structure](https://valhalla.github.io/valhalla/tiles/)
+15. [ETAs with GNNs](https://deepmind.com/blog/article/traffic-prediction-with-advanced-graph-neural-networks)
+16. [Google Maps 101: How AI helps predict traffic and determine routes](https://blog.google/products/maps/google-maps-101-how-ai-helps-predict-traffic-and-determine-routes/)

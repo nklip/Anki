@@ -331,3 +331,36 @@ Other talking points:
  * Geography - different regions might have different payment methods
  * Cash payment - very common in places like India and Brazil
  * Google/Apple Pay integration
+
+## Reference materials
+
+1. [Payment system](https://en.wikipedia.org/wiki/Payment_system)
+2. [AML/CFT](https://en.wikipedia.org/wiki/Money_laundering)
+3. [Card scheme](https://en.wikipedia.org/wiki/Card_scheme)
+4. [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217)
+5. [Stripe API Reference](https://stripe.com/docs/api)
+6. [Double-entry bookkeeping](https://en.wikipedia.org/wiki/Double-entry_bookkeeping)
+7. [Books, an immutable double-entry accounting database service](https://developer.squareup.com/blog/books-an-immutable-double-entry-accounting-database-service/)
+8. [Payment Card Industry Data Security Standard](https://en.wikipedia.org/wiki/Payment_Card_Industry_Data_Security_Standard)
+9. [Tipalti](https://tipalti.com/)
+10. [Nonce](https://en.wikipedia.org/wiki/Cryptographic_nonce)
+11. [Webhooks](https://stripe.com/docs/webhooks)
+12. [Customize your success page](https://stripe.com/docs/payments/checkout/custom-success-page)
+13. [3D Secure](https://en.wikipedia.org/wiki/3-D_Secure)
+14. [Kafka Connect Deep Dive – Error Handling and Dead Letter Queues](https://www.confluent.io/blog/kafka-connect-deep-dive-error-handling-dead-letter-queues/)
+15. [Reliable Processing in a Streaming Payment System](https://www.youtube.com/watch?v=5TD8m7w1xE0&list=PLLEUtp5eGr7Dz3fWGUpiSiG3d_WgJe-KJ)
+16. [Chain Services with Exactly-Once Guarantees](https://www.confluent.io/blog/chain-services-exactly-guarantees/)
+17. [Exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff)
+18. [Idempotence — Wikipedia overview](https://en.wikipedia.org/wiki/Idempotence)
+19. [Stripe idempotent requests](https://stripe.com/docs/api/idempotent_requests)
+20. [Idempotency — PayPal developer guide](https://developer.paypal.com/reference/guidelines/idempotency/)
+21. [Paxos](https://en.wikipedia.org/wiki/Paxos_(computer_science))
+22. [Raft](https://raft.github.io/)
+23. [YogabyteDB](https://www.yugabyte.com/)
+24. [Cockroachdb](https://www.cockroachlabs.com/)
+25. [What is DDoS attack](https://www.cloudflare.com/learning/ddos/what-is-a-ddos-attack/)
+26. [Fraud Management — Chargebee](https://www.chargebee.com/docs/payments/2.0/fraud-management/chargebee-fraud-management)
+27. [How Uber Processes Early Chargeback Signals](https://www.uber.com/us/en/blog/how-uber-processes-early-chargeback-signals/)
+28. [Re-Architecting Cash and Digital Wallet Payments for India with Uber Engineering](https://www.uber.com/us/en/blog/india-payments/)
+29. [Scaling Airbnb’s Payment Platform](https://medium.com/airbnb-engineering/scaling-airbnbs-payment-platform-43ebfc99b324)
+30. [Payments Integration at Uber: A Case Study](https://www.youtube.com/watch?v=yooCE5B0SRA)

@@ -449,3 +449,23 @@ Other things to discuss if time permits:
 - **Faster retrieval** - We can cache the user object via a Redis hash with mapping `user_id -> user object`. This enables faster retrieval vs. querying the database.
 - **Breaking ties** - When two players have the same score, we can break the tie by sorting them based on last played game.
 - **System failure recovery** - In the event of a large-scale Redis outage, we can recreate the leaderboard by going through the MySQL WAL entries with an ad hoc script.
+
+## Reference materials
+
+1. [Man-in-the-middle attack](https://en.wikipedia.org/wiki/Man-in-the-middle_attack)
+2. [Redis Sorted Set source code](https://github.com/redis/redis/blob/unstable/src/t_zset.c)
+3. [Geekbang](https://static001.geekbang.org/resource/image/46/a9/46d283cd82c987153b3fe0c76dfba8a9.jpg)
+4. [Building real-time Leaderboard with Redis](https://medium.com/@sandeep4.verma/building-real-time-leaderboard-with-redis-82c98aa47b9f)
+5. [Build a real-time gaming leaderboard with Amazon ElastiCache for Redis](https://aws.amazon.com/blogs/database/building-a-real-time-gaming-leaderboard-with-amazon-elasticache-for-redis)
+6. [How we created a real-time Leaderboard for a million Users](https://levelup.gitconnected.com/how-we-created-a-real-time-leaderboard-for-a-million-users-555aaa3ccf7b)
+7. [Build a real-time leaderboard with Redis](https://redis.io/tutorials/howtos/leaderboard/)
+8. [Lambda](https://aws.amazon.com/lambda/)
+9. [Google Cloud Functions](https://cloud.google.com/functions)
+10. [Azure Functions](https://azure.microsoft.com/en-us/services/functions/)
+11. [Info command](https://redis.io/commands/INFO)
+12. [Why redis cluster only have 16384 slots](https://stackoverflow.com/questions/36203532/why-redis-cluster-only-have-16384-slots)
+13. [Cyclic redundancy check](https://en.wikipedia.org/wiki/Cyclic_redundancy_check)
+14. [Choosing your node size](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/nodes-select-size.html)
+15. [How fast is Redis?](https://redis.io/topics/benchmarks)
+16. [Using Global Secondary Indexes in DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html)
+17. [Leaderboard & Write Sharding](https://www.dynamodbguide.com/leaderboard-write-sharding/)

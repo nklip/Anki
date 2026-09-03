@@ -445,3 +445,24 @@ Here's the evolution of our design:
  * The previous approach, although performant, wasn't durable. Hence, we introduced Raft consensus with replication to avoid single points of failure
  * We also adopted CQRS with a reverse proxy to manage a transaction's lifecycle on behalf of our users
  * Finally, we partitioned our data across multiple raft groups, which are orchestrated using a distributed transaction mechanism - TC/C or distributed saga
+
+## Reference materials
+
+1. [Transactional guarantees](https://docs.oracle.com/cd/E17275_01/html/programmer_reference/rep_trans.html)
+2. [TPC-E Top Price/Performance Results](http://tpc.org/tpce/results/tpce_price_perf_results5.asp?resulttype=all)
+3. [ISO 4217 CURRENCY CODES](https://en.wikipedia.org/wiki/ISO_4217)
+4. [Apache Zookeeper](https://zookeeper.apache.org/)
+5. [Martin Kleppmann (2017). Designing Data-Intensive Applications. O'Reilly Media.](https://www.oreilly.com/library/view/designing-data-intensive-applications/9781491903063/)
+6. [X/Open XA](https://en.wikipedia.org/wiki/X/Open_XA)
+7. [Compensating transaction](https://en.wikipedia.org/wiki/Compensating_transaction)
+8. [SAGAS, HectorGarcia-Molina](https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf)
+9. [Evans, E. (2003). Domain-Driven Design: Tackling Complexity in the Heart of Software. Addison-Wesley Professional.](https://www.pearson.com/en-gb/subject-catalog/p/domain-driven-design-tackling-complexity-in-the-heart-of-software/P200000009375)
+10. [Apache Kafka](https://kafka.apache.org/)
+11. [CQRS](https://martinfowler.com/bliki/CQRS.html)
+12. [Comparing Random and Sequential Access in Disk and Memory](https://deliveryimages.acm.org/10.1145/1570000/1563874/jacobs3.jpg)
+13. [mmap](https://man7.org/linux/man-pages/man2/mmap.2.html)
+14. [SQLite](https://www.sqlite.org/index.html)
+15. [RocksDB](https://rocksdb.org/)
+16. [Apache Hadoop](https://hadoop.apache.org/)
+17. [Raft](https://raft.github.io/)
+18. [Reverse proxy](https://en.wikipedia.org/wiki/Reverse_proxy)

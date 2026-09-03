@@ -443,3 +443,35 @@ Things we covered:
 - Comparing differences between object, block and file storages
 - Covered uploading, downloading, listing, versioning of objects in a bucket
 - Diving deep into the design - data store and metadata store, replication and erasure coding, multipart uploads, and sharding
+
+## Reference materials
+
+1. [Fibre channel](https://en.wikipedia.org/wiki/Fibre_Channel)
+2. [iSCSI](https://en.wikipedia.org/wiki/ISCSI)
+3. [Server Message Block](https://en.wikipedia.org/wiki/Server_Message_Block)
+4. [Network File System](https://en.wikipedia.org/wiki/Network_File_System)
+5. [Amazon S3 Strong Consistency](https://aws.amazon.com/s3/consistency/)
+6. [Serial Attached SCSI](https://en.wikipedia.org/wiki/Serial_Attached_SCSI)
+7. [AWS CLI ls command](https://docs.aws.amazon.com/cli/latest/reference/s3/ls.html)
+8. [Amazon S3 Service Level Agreement](https://aws.amazon.com/s3/sla/)
+9. [Ambry: LinkedIn’s Scalable Geo-Distributed Object Store](https://assured-cloud-computing.illinois.edu/files/2014/03/Ambry-LinkedIns-Scalable-GeoDistributed-Object-Store.pdf)
+10. [inode](https://en.wikipedia.org/wiki/Inode)
+11. [Ceph’s Rados Gateway](https://docs.ceph.com/en/pacific/radosgw/index.html)
+12. [grpc](https://grpc.io/)
+13. [Paxos](https://en.wikipedia.org/wiki/Paxos_(computer_science))
+14. [Raft](https://raft.github.io/)
+15. [Consistent hashing](https://www.toptal.com/big-data/consistent-hashing)
+16. [RocksDB](https://github.com/facebook/rocksdb)
+17. [SSTable](https://www.igvita.com/2012/02/06/sstable-and-log-structured-storage-leveldb/)
+18. [B+ tree](https://en.wikipedia.org/wiki/B%2B_tree)
+19. [SQLite](https://www.sqlite.org/index.html)
+20. [Data Durability Calculation](https://www.backblaze.com/blog/cloud-storage-durability/)
+21. [Rack](https://en.wikipedia.org/wiki/19-inch_rack)
+22. [Erasure Coding](https://en.wikipedia.org/wiki/Erasure_code)
+23. [Reed–Solomon error correction](https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction)
+24. [Erasure Coding Demystified](https://www.youtube.com/watch?v=Q5kVuM7zEUI)
+25. [Checksum](https://en.wikipedia.org/wiki/Checksum)
+26. [Md5](https://en.wikipedia.org/wiki/MD5)
+27. [Sha1](https://en.wikipedia.org/wiki/SHA-1)
+28. [Hmac](https://en.wikipedia.org/wiki/HMAC)
+29. [TIMEUUID](https://docs.datastax.com/en/cql-oss/3.3/cql/cql_reference/timeuuid_functions_r.html)

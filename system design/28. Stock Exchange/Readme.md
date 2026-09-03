@@ -610,3 +610,36 @@ DDoS is a challenge for exchanges, as there are some internet-facing services. H
 Other interesting notes:
  * Not all exchanges rely on putting everything on one big server, but some still do.
  * Modern exchanges rely more on cloud infrastructure and also on automatic market makers (AMM) to avoid maintaining an order book.
+
+## Reference materials
+
+1. [LMAX exchange was famous for its open-source Disruptor](https://www.lmax.com/exchange)
+2. [IEX attracts investors by “playing fair”, also is the “Flash Boys Exchange”](https://en.wikipedia.org/wiki/IEX)
+3. [NYSE matched volume](https://www.nyse.com/markets/us-equity-volumes)
+4. [HKEX Securities Statistics Archive](https://www.hkex.com.hk/Market-Data/Statistics/Consolidated-Reports/Securities-Statistics-Archive?sc_lang=en)
+5. [All of the World’s Stock Exchanges by Size](http://money.visualcapitalist.com/all-of-the-worlds-stock-exchanges-by-size/)
+6. [Denial of service attack](https://en.wikipedia.org/wiki/Denial-of-service_attack)
+7. [Market impact](https://en.wikipedia.org/wiki/Market_impact)
+8. [Fix trading](https://www.fixtrading.org/)
+9. [Event Sourcing](https://martinfowler.com/eaaDev/EventSourcing.html)
+10. [CME Co-Location and Data Center Services](https://www.cmegroup.com/trading/colocation/co-location-services.html)
+11. [Epoch and Unix timestamp converter](https://www.epochconverter.com/)
+12. [Order book — Investopedia definition](https://www.investopedia.com/terms/o/order-book.asp)
+13. [Order book — Wikipedia overview](https://en.wikipedia.org/wiki/Order_book)
+14. [How to Build a Fast Limit Order Book](https://bit.ly/3ngMtEO)
+15. [Developing with kdb+ and the q language](https://code.kx.com/q/)
+16. [Latency Numbers Every Programmer Should Know](https://gist.github.com/jboner/2841832)
+17. [mmap](https://en.wikipedia.org/wiki/Memory_map)
+18. [Context switch](https://bit.ly/3pva7A6)
+19. [Reliable User Datagram Protocol](https://en.wikipedia.org/wiki/Reliable_User_Datagram_Protocol)
+20. [Aeron](https://github.com/real-logic/aeron/wiki/Design-Overview)
+21. [Chaos engineering](https://en.wikipedia.org/wiki/Chaos_engineering)
+22. [Raft](https://raft.github.io/)
+23. [Designing for Understandability: the Raft Consensus Algorithm](https://raft.github.io/slides/uiuc2016.pdf)
+24. [Supported Matching Algorithms](https://bit.ly/3aYoCEo)
+25. [Dark pool](https://www.investopedia.com/terms/d/dark-pool.asp)
+26. [HdrHistogram: A High Dynamic Range Histogram](http://hdrhistogram.org/)
+27. [HotSpot (virtual machine)](https://en.wikipedia.org/wiki/HotSpot_(virtual_machine))
+28. [Cache line padding](https://bit.ly/3lZTFWz)
+29. [NACK-Oriented Reliable Multicast](https://en.wikipedia.org/wiki/NACK-Oriented_Reliable_Multicast)
+30. [AWS Coinbase Case Study](https://aws.amazon.com/solutions/case-studies/coinbase/)

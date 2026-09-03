@@ -591,3 +591,26 @@ Additional talking points:
 - **Protocol of communication**: Important considerations - support all use-cases and high data volume, as well as verify message integrity. Popular protocols - AMQP and Kafka protocol.
 - **Retry consumption**: if we can't process a message immediately, we could send it to a dedicated retry topic to be attempted later.
 - **Historical data archive**: Old messages can be backed up in high-capacity storage such as HDFS or object storage (e.g., S3).
+
+## Reference materials
+
+1. [Queue Length Limit](https://www.rabbitmq.com/maxlength.html)
+2. [Apache ZooKeeper - Wikipedia](https://en.wikipedia.org/wiki/Apache_ZooKeeper)
+3. [etcd](https://etcd.io/)
+4. [Comparison of disk and memory performance](https://deliveryimages.acm.org/10.1145/1570000/1563874/jacobs3.jpg)
+5. [Cyclic redundancy check](https://en.wikipedia.org/wiki/Cyclic_redundancy_check)
+6. [Push vs. pull](https://kafka.apache.org/documentation/#design_pull)
+7. [Kafka 2.0 Documentation](https://kafka.apache.org/20/documentation.html#consumerconfigs)
+8. [Kafka No Longer Requires ZooKeeper](https://towardsdatascience.com/kafka-no-longer-requires-zookeeper-ebfbf3862104)
+9. [Martin Kleppmann. (2017). ‘Replication’ in Designing Data-Intensive Applications. O'Reilly Media. pp. 151-197](https://www.oreilly.com/library/view/designing-data-intensive-applications/9781491903063/ch05.html)
+10. [Apache Kafka replication and in-sync replicas](https://kafka.apache.org/41/design/design/)
+11. [Apache Kafka allow consumers fetch from closest replica](https://cwiki.apache.org/confluence/display/KAFKA/KIP-392%3A+Allow+consumers+to+fetch+from+closest+replica)
+12. [Hands-free Kafka Replication](https://www.confluent.io/blog/hands-free-kafka-replication-a-lesson-in-operational-simplicity/)
+13. [Kafka high watermark](https://rongxinblog.wordpress.com/2016/07/29/kafka-high-watermark/)
+14. [Kafka mirroring](https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=27846330)
+15. [Message filtering in RocketMQ](https://partners-intl.aliyun.com/help/doc-detail/29543.htm)
+16. [Scheduled messages and delayed messages in Apache RocketMQ](https://partners-intl.aliyun.com/help/doc-detail/43349.htm)
+17. [Hashed and hierarchical timing wheels](http://www.cs.columbia.edu/~nahum/w6998/papers/sosp87-timing-wheels.pdf)
+18. [Advanced Message Queuing Protocol](https://en.wikipedia.org/wiki/Advanced_Message_Queuing_Protocol)
+19. [Kafka protocol guide](https://kafka.apache.org/protocol)
+20. [HDFS](https://hadoop.apache.org/docs/r1.2.1/hdfs_design.html)

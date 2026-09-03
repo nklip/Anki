@@ -199,3 +199,16 @@ as new messages:
 2. **End-to-End Encryption:** Ensure message privacy.
 3. **Client-Side Caching:** Reduce data transfer for better performance.
 4. **Improved Load Times:** Use geographically distributed caching networks.
+
+## Reference materials
+
+1. [Erlang at Facebook](https://www.erlang-factory.com/upload/presentations/31/EugeneLetuchy-ErlangatFacebook.pdf)
+2. [Messenger and WhatsApp process 60 billion messages a day](https://www.theverge.com/2016/4/12/11415198/facebook-messenger-whatsapp-number-messages-vs-sms-f8-2016)
+3. [Long tail](https://en.wikipedia.org/wiki/Long_tail)
+4. [The Underlying Technology of Messages](https://engineering.fb.com/2010/11/15/core-infra/the-underlying-technology-of-messages/)
+5. [How Discord Stores Billions of Messages](https://blog.discordapp.com/how-discord-stores-billions-of-messages-7fa6ec7ee4c7)
+6. [Announcing Snowflake](https://blog.twitter.com/engineering/en_us/a/2010/announcing-snowflake.html)
+7. [Apache ZooKeeper](https://zookeeper.apache.org/)
+8. [DAGOR: Overload Control for Scaling WeChat Microservices](https://arxiv.org/abs/1806.04075)
+9. [WhatsApp end-to-end encryption](https://faq.whatsapp.com/general/security-and-privacy/end-to-end-encryption)
+10. [Flannel: An Application-Level Edge Cache to Make Slack Scale](https://slack.engineering/flannel-an-application-level-edge-cache-to-make-slack-scale-b8a6400e2f6b)

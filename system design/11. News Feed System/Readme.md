@@ -129,3 +129,8 @@ The cache is divided into five layers:
 ### Monitoring
 1. Track key metrics like QPS (queries per second) and latency.
 2. Monitor cache hit rates and adjust configurations accordingly.
+
+## Reference materials
+
+1. [How Machine Learning Powers Facebook's News Feed Ranking](https://engineering.fb.com/2021/01/26/core-infra/news-feed-ranking/)
+2. [Friend of Friend recommendations Neo4j and SQL Sever](http://geekswithblogs.net/brendonpage/archive/2015/10/26/friend-of-friend-recommendations-with-neo4j.aspx)

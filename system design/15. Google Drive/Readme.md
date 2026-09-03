@@ -221,3 +221,17 @@ downloads blocks to construct the file.
    - Redirect traffic to remaining replicas.
 4. **Cloud Storage Failure:** Use cross-region replication to fetch unavailable files.
 5. **Notification Service Failure:** Clients reconnect to alternative servers.
+
+## Reference materials
+
+1. [Google Drive](https://www.google.com/drive/)
+2. [Upload file data](https://developers.google.com/drive/api/v2/manage-uploads)
+3. [Amazon S3](https://aws.amazon.com/s3)
+4. [Differential Synchronization — written article](https://neil.fraser.name/writing/sync/)
+5. [Differential Synchronization — video talk](https://www.youtube.com/watch?v=S2Hp_1jqpY8)
+6. [How We’ve Scaled Dropbox](https://youtu.be/PE4gwstWhmc)
+7. [Tridgell, A., & Mackerras, P. (1996). The rsync algorithm.](https://rsync.samba.org/tech_report/)
+8. [Librsync. (n.d.). Retrieved April 18, 2015](https://github.com/librsync/librsync)
+9. [ACID](https://en.wikipedia.org/wiki/ACID)
+10. [Dropbox Security Whitepaper](https://assets.dropbox.com/www/en-us/business/solutions/solutions/dfb_security_whitepaper.pdf)
+11. [Amazon S3 Glacier](https://aws.amazon.com/glacier/faqs/)

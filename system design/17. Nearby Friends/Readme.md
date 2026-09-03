@@ -228,3 +228,16 @@ Core components:
 - **Redis**: fast read and write of location data + pub/sub channels
 
 We also explored how to scale RESTful API servers, WebSocket servers, the data layer, and Redis Pub/Sub servers. We also explored an alternative to using Redis Pub/Sub and a "random nearby person" feature.
+
+## Reference materials
+
+1. [Facebook Launches “Nearby Friends”](https://techcrunch.com/2014/04/17/facebook-nearby-friends/)
+2. [Redis Pub/Sub documentation](https://redis.io/docs/latest/develop/pubsub/)
+3. [Redis Pub/Sub implementation](https://github.com/redis/redis/blob/unstable/src/pubsub.c)
+4. [etcd](https://etcd.io/)
+5. [Zookeeper](https://zookeeper.apache.org/)
+6. [Consistent hashing](https://www.toptal.com/big-data/consistent-hashing)
+7. [Erlang](https://www.erlang.org/)
+8. [Elixir](https://elixir-lang.org/)
+9. [A brief introduction to BEAM](https://www.erlang.org/blog/a-brief-beam-primer/)
+10. [OTP](https://www.erlang.org/doc/design_principles/des_princ.html)

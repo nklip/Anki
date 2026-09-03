@@ -464,3 +464,19 @@ These are the steps we went through:
  - We discussed race conditions and proposed solutions - pessimistic/optimistic locking, database constraints
  - Ways to scale the system via database sharding and caching
  - Finally we addressed how to handle data consistency issues across multiple microservices
+
+## Reference materials
+
+1. [Microservices](https://en.wikipedia.org/wiki/Microservices)
+2. [What Are The Benefits of Microservices Architecture?](https://www.appdynamics.com/topics/benefits-of-microservices)
+3. [gRPC](https://www.grpc.io/docs/what-is-grpc/introduction/)
+4. [Source: Booking.com iOS app](https://apps.apple.com/us/app/booking-com-hotels-travel/id367003839)
+5. [Serializability](https://en.wikipedia.org/wiki/Serializability)
+6. [Optimistic and pessimistic record locking](https://ibm.co/3Eb293O)
+7. [Optimistic concurrency control](https://en.wikipedia.org/wiki/Optimistic_concurrency_control)
+8. [Change data capture](https://docs.oracle.com/cd/B10500_01/server.920/a96520/cdc.htm)
+9. [Debizium](https://debezium.io/)
+10. [Debezium Server Redis sink](https://debezium.io/documentation/reference/stable/operations/debezium-server.html)
+11. [Monolithic Architecture](https://microservices.io/patterns/monolithic.html)
+12. [Two-phase commit protocol](https://en.wikipedia.org/wiki/Two-phase_commit_protocol)
+13. [Saga](https://microservices.io/patterns/data/saga.html)

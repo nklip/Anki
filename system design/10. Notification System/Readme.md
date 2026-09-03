@@ -135,3 +135,13 @@ If it has been seen before, discard it; otherwise, send out the notification.
 2. **Message Queues:** Decouple processing to handle high volumes.
 3. **Caching:** Reduce latency by caching frequently accessed data.
 4. **Distributed Crawling:** Optimize message delivery geographically for better performance.
+
+## Reference materials
+
+1. [Twilio SMS](https://www.twilio.com/sms)
+2. [Nexmo SMS](https://www.nexmo.com/products/sms)
+3. [Sendgrid](https://sendgrid.com/)
+4. [Mailchimp](https://mailchimp.com/)
+5. [You Cannot Have Exactly-Once Delivery](https://bravenewgeek.com/you-cannot-have-exactly-once-delivery/)
+6. [Push Notifications — IBM Cloud Event Notifications](https://cloud.ibm.com/docs/event-notifications?topic=event-notifications-en-destinations-push)
+7. [RadditMQ](https://bit.ly/2sotIa6)

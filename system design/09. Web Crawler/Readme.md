@@ -182,3 +182,19 @@ Here's a set of potential questions between Candidate and Interviewer:
 - **Database Sharding:** Scale the data layer using replication and sharding.
 - **Horizontal Scaling:** Use stateless servers to scale crawl jobs efficiently.
 - **Analytics:** Collect and analyze data for insights.
+
+## Reference materials
+
+1. [US Library of Congress](https://www.loc.gov/websites/)
+2. [EU Web Archive](http://data.europa.eu/webarchive)
+3. [Digimarc](https://www.digimarc.com/products/digimarc-services/piracy-intelligence)
+4. [Heydon A., Najork M. Mercator: A scalable, extensible web crawler World Wide Web, 2 (4) (1999), pp. 219-229](https://research.google/pubs/mercator-a-scalable-extensible-web-crawler/)
+5. [By Christopher Olston, Marc Najork: Web Crawling](http://infolab.stanford.edu/~olston/publications/crawling_survey.pdf)
+6. [29% Of Sites Face Duplicate Content Issues](https://tinyurl.com/y6tmh55y)
+7. [Rabin M.O., et al. Fingerprinting by random polynomials Center for Research in Computing Techn., Aiken Computation Laboratory, Univ. (1981)](https://books.google.com/books/about/Fingerprinting_by_Random_Polynomials.html?id=Emu_tgAACAAJ)
+8. [B. H. Bloom, “Space/time trade-offs in hash coding with allowable errors,” Communications of the ACM, vol. 13, no. 7, pp. 422–426, 1970.](https://doi.org/10.1145/362686.362692)
+9. [Donald J. Patterson, Web Crawling](https://www.ics.uci.edu/~lopes/teaching/cs221W12/slides/Lecture05.pdf)
+10. [L. Page, S. Brin, R. Motwani, and T. Winograd, “The PageRank Citation Ranking: Bringing Order to the Web,” Technical Report, Stanford University, 1998 (archived PDF).](https://gwern.net/doc/technology/google/1998-page.pdf)
+11. [Google Dynamic Rendering](https://developers.google.com/search/docs/guides/dynamic-rendering)
+12. [T. Urvoy, T. Lavergne, and P. Filoche, “Tracking web spam with hidden style similarity,” in Proceedings of the 2nd International Workshop on Adversarial Information Retrieval on the Web, 2006.](https://airweb.cse.lehigh.edu/2006/urvoy.pdf)
+13. [H.-T. Lee, D. Leonard, X. Wang, and D. Loguinov, “IRLbot: Scaling to 6 billion pages and beyond,” in Proceedings of the 17th International World Wide Web Conference, 2008.](https://irl.cse.tamu.edu/people/hsin-tsang/papers/www2008.pdf)

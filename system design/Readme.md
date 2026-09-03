@@ -2,7 +2,7 @@
 # [System Design Interview - An Insider's Guide (Vol 1 and 2)](https://bytebytego.com/courses/system-design-interview)
 These notes are based on the System Design Interview books - [Vol 1 and Vol 2 2nd Ed](https://www.goodreads.com/book/show/54109255-system-design-interview-an-insider-s-guide).
 
-Check the notes here: https://pagefy.io/system-design/system-design-interview-by-alex-xu
+Original notes repository: [liquidslr/system-design-notes](https://github.com/liquidslr/system-design-notes).
 
 **Note:** These notes are a work in progress.
 
@@ -79,13 +79,13 @@ Check the notes here: https://pagefy.io/system-design/system-design-interview-by
 
 ### Search Autocomplete
 - [How We Built Prefixy](https://medium.com/@prefixyteam/how-we-built-prefixy-a-scalable-prefix-search-service-for-powering-autocomplete-c20f98e2eff1)
-- [Prefix Hash Tree](https://people.eecs.berkeley.edu/~sylvia/papers/pht.pdf)
+- [Prefix Hash Tree (PODC brief)](https://dsf.berkeley.edu/papers/podc04-pht.pdf)
 
 
 ### YouTube
 - [YouTube Architecture](http://highscalability.com/youtube-architecture)
 - [YouTube scalability 2012](https://www.youtube.com/watch?v=w5WVu624fY8)
-- [Transcoding Videos at Scale](https://www.egnyte.com/blog/2018/12/transcoding-how-we-serve-videos-at-scale/)
+- [Transcoding: How We Serve Videos at Scale](https://www.egnyte.com/blog/post/transcoding-how-we-serve-videos-at-scale)
 - [Facebook Video Broadcasting](https://engineering.fb.com/ios/under-the-hood-broadcasting-live-video-to-millions/)
 - [Netflix Video Encoding at Scale](https://netflixtechblog.com/high-quality-video-encoding-at-scale-d159db052746)
 - [Netflix Shot based encoding](https://netflixtechblog.com/optimized-shot-based-encodes-now-streaming-4b9464204830)

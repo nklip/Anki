@@ -96,3 +96,12 @@ Avoid ambiguity by labeling units (e.g., `5 MB` instead of `5`).
 - **Storage Requirements:** Estimate total data needs.
 - **Cache Requirements:** Evaluate memory requirements for caching.
 - **Number of Servers:** Calculate hardware needs based on workload.
+
+## Reference materials
+
+1. [J. Dean.Google Pro Tip: Use Back-Of-The-Envelope-Calculations To Choose The Best Design](http://highscalability.com/blog/2011/1/26/google-pro-tip-use-back-of-the-envelope-calculations-to-choo.html)
+2. [System design primer](https://github.com/donnemartin/system-design-primer)
+3. [Latency Numbers Every Programmer Should Know](https://colin-scott.github.io/personal_website/research/interactive_latency.html)
+4. [AWS Compute Service Level Agreement](https://aws.amazon.com/compute/sla/)
+5. [Google Compute Engine Service Level Agreement](https://cloud.google.com/compute/sla)
+6. [SLA summary for Azure services](https://azure.microsoft.com/en-us/support/legal/sla/summary/)

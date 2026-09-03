@@ -114,3 +114,9 @@ For a news feed system, divide the design into:
 2. **High-Level Design and Buy-In:** 10–15 minutes
 3. **Deep Dive:** 10–25 minutes
 4. **Wrap-Up:** 3–5 minutes
+
+## Reference materials
+
+1. [A Framework for System Design Interviews — ByteByteGo](https://bytebytego.com/courses/system-design-interview/a-framework-for-system-design-interviews)
+2. [How to Approach a System Design Interview Question — System Design Primer](https://github.com/donnemartin/system-design-primer#how-to-approach-a-system-design-interview-question)
+3. [SDE II Interview Prep: System Design — Amazon Jobs](https://amazon.jobs/content/en-gb/how-we-hire/sde-ii-interview-prep)

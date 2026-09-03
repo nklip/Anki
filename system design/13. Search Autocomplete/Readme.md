@@ -176,3 +176,15 @@ In the high-level design, whenever a user types a search query, data is updated 
 
 ### Trending Queries
 - Handle real-time events by dynamically updating trie nodes or weighting recent queries more heavily.
+
+## Reference materials
+
+1. [The Life of a Typeahead Query](https://engineering.fb.com/2010/05/17/web/the-life-of-a-typeahead-query/)
+2. [How We Built Prefixy: A Scalable Prefix Search Service for Powering Autocomplete](https://medium.com/@prefixyteam/how-we-built-prefixy-a-scalable-prefix-search-service-for-powering-autocomplete-c20f98e2eff1)
+3. [Brief Announcement: Prefix Hash Tree](https://dsf.berkeley.edu/papers/podc04-pht.pdf)
+4. [MongoDB wikipedia](https://en.wikipedia.org/wiki/MongoDB)
+5. [Unicode frequently asked questions](https://www.unicode.org/faq/basic_q.html)
+6. [Apache hadoop](https://hadoop.apache.org/)
+7. [Spark streaming](https://spark.apache.org/streaming/)
+8. [Apache storm](https://storm.apache.org/)
+9. [Apache kafka](https://kafka.apache.org/documentation/)

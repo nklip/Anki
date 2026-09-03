@@ -136,3 +136,8 @@ Convert ID `2009215674938` to Base 62:
 
 ### High Availability and Reliability
 - Ensure consistent and reliable services using database replication and fault-tolerant design.
+
+## Reference materials
+
+1. [A RESTful Tutorial](https://www.restapitutorial.com/index.html)
+2. [Bloom filter](https://en.wikipedia.org/wiki/Bloom_filter)
