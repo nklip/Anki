@@ -58,7 +58,7 @@ The process of translating points from 3D to a 2D plane is called "map projectio
 There are different ways to do it and each comes with its pros and cons. Almost all distort the actual geometry.
 
 <div style="margin-left:3rem">
-    <img src="./images/map-projections.png" alt="map-projections" width="500" />
+    <img src="./images/map-projections.svg" alt="map-projections" width="500" />
 </div>
 
 Google Maps selected a modified version of the Mercator projection called "Web Mercator."
@@ -78,7 +78,7 @@ Geohashing is an encoding system that encodes a geographic area into a string of
 It depicts the world as a flattened surface and recursively subdivides it into four quadrants:
 
 <div style="margin-left:3rem">
-    <img src="./images/geohashing.png" alt="geohashing" width="500" />
+    <img src="./images/geohashing.svg" alt="geohashing" width="500" />
 </div>
 
 #### Map rendering
@@ -315,7 +315,7 @@ Map tiles are stored at various zoom levels. At the lowest zoom level, the entir
 As zoom levels increase, the number of map tiles quadruples:
 
 <div style="margin-left:3rem">
-    <img src="./images/zoom-level-increases.png" alt="zoom-level-increases" width="500" />
+    <img src="./images/zoom-level-increases.svg" alt="zoom-level-increases" width="500" />
 </div>
 
 One optimization we can use is to not send the entire image information over the network, but instead represent tiles as vectors (paths & polygons) and let the client render the tiles dynamically.
@@ -383,7 +383,7 @@ The shortest-path service runs a variation of the A* algorithm against the routi
  * The algorithm starts from the initial routing tile and starts traversing it until a good enough path is found to the destination tile
 
 <div style="margin-left:3rem">
-    <img src="./images/shortest-path-service.png" alt="shortest-path-service" width="500" />
+    <img src="./images/shortest-path-service.svg" alt="shortest-path-service" width="500" />
 </div>
 
 The ETA service is called by the route planner to get estimated time based on machine learning algorithms, predicting ETA based on traffic data.
