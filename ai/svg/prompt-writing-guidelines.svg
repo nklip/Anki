@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Six guidelines for writing one prompt ordered by leverage, and the two techniques that need extra model calls</title>
+  <desc id="desc">A wide left panel lists six numbered authoring habits for a single prompt, most important first: give context, specify constraints, ask it to think first, break into steps, show examples, and set role or tone. The two most important are marked as plain specification rather than named techniques. A tag on each row marks whether it is a named prompting technique or plain specification. A narrow right panel holds self-consistency and self-refine, two techniques that cannot be reached by improving a single prompt because they require more than one model call.</desc>
+
+  <!-- Shared visual system, matching the sibling LLM diagrams in this folder. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .eyebrow { font-size: 16px; font-weight: 700; letter-spacing: 2px; fill: #b42318; }
+      .title { font-size: 36px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .panel-label { font-size: 15px; font-weight: 700; letter-spacing: 1.4px; fill: #475569; }
+      .rule-name { font-size: 20px; font-weight: 700; }
+      .rule-copy { font-size: 16px; fill: #475569; }
+      .chip-text { font-size: 14px; font-weight: 700; text-anchor: middle; }
+      .chip-tech { fill: #2563eb; }
+      .chip-plain { fill: #64748b; }
+      .card-name { font-size: 20px; font-weight: 700; fill: #7c3aed; }
+      .card-copy { font-size: 16px; fill: #475569; }
+      .note { font-size: 16px; fill: #334155; }
+      .row-box { fill: #ffffff; stroke: #e2e8f0; stroke-width: 2; }
+      .badge-num { font-size: 17px; font-weight: 700; fill: #ffffff; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" fill="#f8fafc"/>
+
+  <!-- Heading states the lesson: the boundary is one call versus several. -->
+  <text class="eyebrow" x="50" y="40">PROMPT ENGINEERING</text>
+  <text class="title" x="50" y="84">Writing one prompt</text>
+  <text class="subtitle" x="50" y="114">Ordered by leverage — and the two techniques no single prompt can reach.</text>
+
+  <!-- Left panel: everything that fits inside a single prompt. -->
+  <rect x="50" y="142" width="700" height="574" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <text class="panel-label" x="74" y="180">WHAT GOES IN ONE PROMPT, MOST IMPORTANT FIRST</text>
+
+  <rect class="row-box" x="70" y="198" width="660" height="66" rx="12"/>
+  <circle cx="102" cy="231" r="17" fill="#334155"/>
+  <text class="badge-num" x="102" y="237">1</text>
+  <text class="rule-name" x="136" y="226">Give context</text>
+  <text class="rule-copy" x="136" y="250">The goal, the why, the background that matters</text>
+  <rect x="536" y="215" width="176" height="32" rx="16" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+  <text class="chip-text chip-plain" x="624" y="236">specification</text>
+
+  <rect class="row-box" x="70" y="280" width="660" height="66" rx="12"/>
+  <circle cx="102" cy="313" r="17" fill="#334155"/>
+  <text class="badge-num" x="102" y="319">2</text>
+  <text class="rule-name" x="136" y="308">Specify constraints</text>
+  <text class="rule-copy" x="136" y="332">Format, length, and what to leave out</text>
+  <rect x="536" y="297" width="176" height="32" rx="16" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+  <text class="chip-text chip-plain" x="624" y="318">specification</text>
+
+  <rect class="row-box" x="70" y="362" width="660" height="66" rx="12"/>
+  <circle cx="102" cy="395" r="17" fill="#334155"/>
+  <text class="badge-num" x="102" y="401">3</text>
+  <text class="rule-name" x="136" y="390">Ask it to think first</text>
+  <text class="rule-copy" x="136" y="414">Room to reason before committing to an answer</text>
+  <rect x="536" y="379" width="176" height="32" rx="16" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="chip-text chip-tech" x="624" y="400">chain-of-thought</text>
+
+  <rect class="row-box" x="70" y="444" width="660" height="66" rx="12"/>
+  <circle cx="102" cy="477" r="17" fill="#334155"/>
+  <text class="badge-num" x="102" y="483">4</text>
+  <text class="rule-name" x="136" y="472">Break into steps</text>
+  <text class="rule-copy" x="136" y="496">Sub-tasks in the order they should be solved</text>
+  <rect x="536" y="461" width="176" height="32" rx="16" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="chip-text chip-tech" x="624" y="482">decomposition</text>
+
+  <rect class="row-box" x="70" y="526" width="660" height="66" rx="12"/>
+  <circle cx="102" cy="559" r="17" fill="#334155"/>
+  <text class="badge-num" x="102" y="565">5</text>
+  <text class="rule-name" x="136" y="554">Show examples</text>
+  <text class="rule-copy" x="136" y="578">A few worked pairs — costs tokens</text>
+  <rect x="536" y="543" width="176" height="32" rx="16" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="chip-text chip-tech" x="624" y="564">few-shot</text>
+
+  <rect class="row-box" x="70" y="608" width="660" height="66" rx="12"/>
+  <circle cx="102" cy="641" r="17" fill="#334155"/>
+  <text class="badge-num" x="102" y="647">6</text>
+  <text class="rule-name" x="136" y="636">Set role or tone</text>
+  <text class="rule-copy" x="136" y="660">Audience and register — steers style only</text>
+  <rect x="536" y="625" width="176" height="32" rx="16" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="chip-text chip-tech" x="624" y="646">role prompting</text>
+
+  <!-- Right panel: the boundary of the lesson. These need repeated calls. -->
+  <rect x="790" y="142" width="360" height="574" rx="18" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+  <text class="panel-label" x="814" y="180">NEEDS MORE THAN ONE CALL</text>
+
+  <rect x="812" y="212" width="316" height="150" rx="14" fill="#ffffff" stroke="#c4b5fd" stroke-width="2"/>
+  <text class="card-name" x="836" y="248">Self-consistency</text>
+  <text class="card-copy" x="836" y="284">Answer the same question</text>
+  <text class="card-copy" x="836" y="310">several times, then keep</text>
+  <text class="card-copy" x="836" y="336">the majority answer.</text>
+
+  <rect x="812" y="386" width="316" height="150" rx="14" fill="#ffffff" stroke="#c4b5fd" stroke-width="2"/>
+  <text class="card-name" x="836" y="422">Self-refine</text>
+  <text class="card-copy" x="836" y="458">Have the model critique</text>
+  <text class="card-copy" x="836" y="484">its own draft, then write</text>
+  <text class="card-copy" x="836" y="510">a revised version.</text>
+
+  <text class="note" x="970" y="578" text-anchor="middle" font-weight="700">Polishing the wording</text>
+  <text class="note" x="970" y="604" text-anchor="middle" font-weight="700">cannot substitute</text>
+  <text class="note" x="970" y="630" text-anchor="middle" font-weight="700">for either one.</text>
+  <text class="card-copy" x="970" y="668" text-anchor="middle">They cost extra calls,</text>
+  <text class="card-copy" x="970" y="692" text-anchor="middle">and buy reliability.</text>
+
+  <text class="subtitle" x="600" y="742" text-anchor="middle">The two highest-leverage habits are not techniques at all — they are just a clear specification.</text>
+</svg>
