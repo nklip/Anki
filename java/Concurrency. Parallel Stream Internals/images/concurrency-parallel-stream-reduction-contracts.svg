@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900" role="img" aria-labelledby="title description">
+  <title id="title">Why a parallel reduction gives the same answer, and how a wrong identity breaks it</title>
+  <desc id="description">The top left shows one associative addition combined in two different groupings, both giving fifty. The top right shows reduce with an identity of five over the numbers one to eight, giving forty-one sequentially but seventy-six in parallel because the extra five is added once per partition. The bottom row compares three ways of building a result: reduce with immutable partials, a non concurrent collector with one container per leaf, and a concurrent collector writing into one shared container.</desc>
+
+  <!-- Shared styles; the green and red panels carry the correct and broken cases. -->
+  <defs>
+    <style>
+      .title { font: 700 36px sans-serif; fill: #111827; }
+      .subtitle { font: 20px sans-serif; fill: #4b5563; }
+      .header { font: 700 22px sans-serif; }
+      .body { font: 18px sans-serif; }
+      .small { font: 16px sans-serif; }
+      .code { font: 17px monospace; fill: #1f2937; }
+      .num { font: 700 19px monospace; }
+      .verdict { font: 700 21px sans-serif; }
+    </style>
+  </defs>
+
+  <rect width="1500" height="900" fill="#ffffff"/>
+  <text x="750" y="52" text-anchor="middle" class="title">The contracts that make the parallel answer correct</text>
+  <text x="750" y="86" text-anchor="middle" class="subtitle">Chunk boundaries are chosen at run time, so the result must not depend on where they fall</text>
+
+  <!-- Correct case: associativity means the grouping is free to change. -->
+  <rect x="45" y="112" width="690" height="330" rx="18" fill="#eaf6ec" stroke="#43804c" stroke-width="4"/>
+  <rect x="45" y="112" width="330" height="58" rx="18" fill="#43804c"/>
+  <rect x="45" y="152" width="330" height="18" fill="#43804c"/>
+  <text x="210" y="151" text-anchor="middle" class="header" fill="#ffffff">ASSOCIATIVE: SAFE</text>
+  <text x="400" y="151" class="code">reduce(0, Integer::sum)</text>
+
+  <text x="75" y="204" class="small" fill="#4b5563">Partial results 10, 15, 20, 5 — combined two different ways:</text>
+
+  <rect x="75" y="222" width="630" height="82" rx="12" fill="#ffffff" stroke="#79a982" stroke-width="2"/>
+  <text x="95" y="252" class="num" fill="#315e38">(10 + 15) + (20 + 5)</text>
+  <text x="400" y="252" class="small" fill="#4b5563">two workers, then one merge</text>
+  <text x="95" y="286" class="num" fill="#315e38">((10 + 15) + 20) + 5</text>
+  <text x="400" y="286" class="small" fill="#4b5563">one worker took three chunks</text>
+
+  <rect x="75" y="320" width="630" height="60" rx="12" fill="#f2f9f3" stroke="#43804c" stroke-width="3"/>
+  <text x="390" y="359" text-anchor="middle" class="verdict" fill="#315e38">Both give 50 — grouping cannot change the result</text>
+
+  <text x="390" y="412" text-anchor="middle" class="small" fill="#4b5563">Also required: the identity must be neutral, so identity op x always equals x.</text>
+
+  <!-- Broken case: 5 is not the identity of addition, so it is added once per partition. -->
+  <rect x="765" y="112" width="690" height="330" rx="18" fill="#fff1ef" stroke="#a94d41" stroke-width="4"/>
+  <rect x="765" y="112" width="330" height="58" rx="18" fill="#a94d41"/>
+  <rect x="765" y="152" width="330" height="18" fill="#a94d41"/>
+  <text x="930" y="151" text-anchor="middle" class="header" fill="#ffffff">WRONG IDENTITY: BUG</text>
+  <text x="1120" y="151" class="code">reduce(5, Integer::sum)</text>
+
+  <text x="795" y="204" class="small" fill="#4b5563">Numbers 1 to 8. The seed 5 is injected into every partition:</text>
+
+  <rect x="795" y="222" width="630" height="82" rx="12" fill="#ffffff" stroke="#c96a5b" stroke-width="2"/>
+  <text x="815" y="252" class="num" fill="#873c33">sequential</text>
+  <text x="1010" y="252" class="num" fill="#873c33">5 + 36</text>
+  <text x="1210" y="252" class="num" fill="#873c33">= 41</text>
+  <text x="815" y="286" class="num" fill="#873c33">parallel</text>
+  <text x="1010" y="286" class="num" fill="#873c33">36 + 5 x 8</text>
+  <text x="1210" y="286" class="num" fill="#873c33">= 76</text>
+
+  <rect x="795" y="320" width="630" height="60" rx="12" fill="#fff5f3" stroke="#a94d41" stroke-width="3"/>
+  <text x="1110" y="359" text-anchor="middle" class="verdict" fill="#873c33">Measured on JDK 26: the answer depends on the split</text>
+
+  <text x="1110" y="412" text-anchor="middle" class="small" fill="#4b5563">A test on a small list can still pass by accident, because tiny sources may not split at all.</text>
+
+  <!-- Three ways to build the final result, ordered by how much sharing they allow. -->
+  <text x="750" y="486" text-anchor="middle" class="header" fill="#273444">THREE WAYS TO TURN PARTIAL WORK INTO ONE RESULT</text>
+
+  <rect x="45" y="510" width="450" height="355" rx="18" fill="#eef5fc" stroke="#356da8" stroke-width="4"/>
+  <text x="270" y="552" text-anchor="middle" class="body" font-weight="700" fill="#234f7c">1  reduce()</text>
+  <text x="270" y="584" text-anchor="middle" class="code">immutable partials</text>
+  <rect x="80" y="606" width="110" height="52" rx="10" fill="#ffffff" stroke="#6d9dce" stroke-width="2"/>
+  <text x="135" y="640" text-anchor="middle" class="num" fill="#234f7c">25</text>
+  <rect x="215" y="606" width="110" height="52" rx="10" fill="#ffffff" stroke="#6d9dce" stroke-width="2"/>
+  <text x="270" y="640" text-anchor="middle" class="num" fill="#234f7c">25</text>
+  <rect x="350" y="606" width="110" height="52" rx="10" fill="#ffffff" stroke="#6d9dce" stroke-width="2"/>
+  <text x="405" y="640" text-anchor="middle" class="num" fill="#234f7c">50</text>
+  <text x="270" y="700" text-anchor="middle" class="small" fill="#4b5563">Each task returns a value; parents</text>
+  <text x="270" y="726" text-anchor="middle" class="small" fill="#4b5563">apply the operator to two of them.</text>
+  <text x="270" y="768" text-anchor="middle" class="small" font-weight="700" fill="#234f7c">Needs: associative operator,</text>
+  <text x="270" y="794" text-anchor="middle" class="small" font-weight="700" fill="#234f7c">neutral identity.</text>
+  <text x="270" y="836" text-anchor="middle" class="small" fill="#4b5563">No shared mutable state at all.</text>
+
+  <rect x="525" y="510" width="450" height="355" rx="18" fill="#f5f0fc" stroke="#7645a8" stroke-width="4"/>
+  <text x="750" y="552" text-anchor="middle" class="body" font-weight="700" fill="#563080">2  collect(), ordinary</text>
+  <text x="750" y="584" text-anchor="middle" class="code">one container per leaf</text>
+  <rect x="560" y="606" width="110" height="52" rx="10" fill="#ffffff" stroke="#c7b6da" stroke-width="2"/>
+  <text x="615" y="640" text-anchor="middle" class="code">list A</text>
+  <rect x="695" y="606" width="110" height="52" rx="10" fill="#ffffff" stroke="#c7b6da" stroke-width="2"/>
+  <text x="750" y="640" text-anchor="middle" class="code">list B</text>
+  <rect x="830" y="606" width="110" height="52" rx="10" fill="#f2ecfa" stroke="#7645a8" stroke-width="3"/>
+  <text x="885" y="640" text-anchor="middle" class="code">merged</text>
+  <text x="750" y="700" text-anchor="middle" class="small" fill="#4b5563">Every leaf fills its own container,</text>
+  <text x="750" y="726" text-anchor="middle" class="small" fill="#4b5563">then the combiner merges them.</text>
+  <text x="750" y="768" text-anchor="middle" class="small" font-weight="700" fill="#563080">This is why Collectors.toList()</text>
+  <text x="750" y="794" text-anchor="middle" class="small" font-weight="700" fill="#563080">is safe without synchronization.</text>
+  <text x="750" y="836" text-anchor="middle" class="small" fill="#4b5563">Merging copies, so it is not free.</text>
+
+  <rect x="1005" y="510" width="450" height="355" rx="18" fill="#fff8eb" stroke="#bd7823" stroke-width="4"/>
+  <text x="1230" y="552" text-anchor="middle" class="body" font-weight="700" fill="#7b4d16">3  concurrent collector</text>
+  <text x="1230" y="584" text-anchor="middle" class="code">one shared container</text>
+  <rect x="1105" y="606" width="250" height="52" rx="10" fill="#ffffff" stroke="#d8a45e" stroke-width="3"/>
+  <text x="1230" y="640" text-anchor="middle" class="code">shared, no merge</text>
+  <text x="1230" y="700" text-anchor="middle" class="small" fill="#4b5563">All leaves accumulate into one</text>
+  <text x="1230" y="726" text-anchor="middle" class="small" fill="#4b5563">thread-safe container instead.</text>
+  <text x="1230" y="762" text-anchor="middle" class="small" font-weight="700" fill="#7b4d16">Used only when the stream is parallel</text>
+  <text x="1230" y="788" text-anchor="middle" class="small" font-weight="700" fill="#7b4d16">AND the collector is CONCURRENT</text>
+  <text x="1230" y="814" text-anchor="middle" class="small" font-weight="700" fill="#7b4d16">AND (the stream is unordered OR</text>
+  <text x="1230" y="840" text-anchor="middle" class="small" font-weight="700" fill="#7b4d16">the collector is UNORDERED).</text>
+</svg>

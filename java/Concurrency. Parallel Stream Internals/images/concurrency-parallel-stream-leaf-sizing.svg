@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900" role="img" aria-labelledby="title description">
+  <title id="title">How a parallel stream decides how many leaf tasks to create</title>
+  <desc id="description">Three panels read left to right. The first derives the number of threads that run elements from the processor count. The second computes a target chunk size of source size divided by four times parallelism. The third halves the source repeatedly until a chunk fits the target, producing sixty-four leaf tasks for twelve runners.</desc>
+
+  <!-- Shared styles; change a size here rather than per element. -->
+  <defs>
+    <style>
+      .title { font: 700 36px sans-serif; fill: #111827; }
+      .subtitle { font: 20px sans-serif; fill: #4b5563; }
+      .header { font: 700 24px sans-serif; }
+      .body { font: 18px sans-serif; fill: #273444; }
+      .small { font: 16px sans-serif; fill: #4b5563; }
+      .code { font: 17px monospace; fill: #1f2937; }
+      .value { font: 700 26px monospace; }
+      .step { font: 700 20px monospace; }
+    </style>
+  </defs>
+
+  <rect width="1500" height="900" fill="#ffffff"/>
+  <text x="750" y="52" text-anchor="middle" class="title">How many chunks? From cores to leaf tasks</text>
+  <text x="750" y="86" text-anchor="middle" class="subtitle">Worked example: 100 000 elements on a 12-core machine, measured on JDK 26</text>
+
+  <!-- Panel 1: how many threads actually run elements. -->
+  <rect x="45" y="125" width="430" height="610" rx="18" fill="#eef5fc" stroke="#356da8" stroke-width="4"/>
+  <rect x="45" y="125" width="430" height="72" rx="18" fill="#356da8"/>
+  <rect x="45" y="177" width="430" height="20" fill="#356da8"/>
+  <text x="260" y="172" text-anchor="middle" class="header" fill="#ffffff">1  WHO CAN RUN WORK</text>
+
+  <rect x="75" y="225" width="370" height="96" rx="12" fill="#ffffff" stroke="#9bbbdc" stroke-width="2"/>
+  <text x="260" y="257" text-anchor="middle" class="code">availableProcessors()</text>
+  <text x="260" y="298" text-anchor="middle" class="value" fill="#234f7c">12</text>
+
+  <rect x="75" y="341" width="370" height="96" rx="12" fill="#ffffff" stroke="#9bbbdc" stroke-width="2"/>
+  <text x="260" y="373" text-anchor="middle" class="code">common pool: cores - 1</text>
+  <text x="260" y="414" text-anchor="middle" class="value" fill="#234f7c">11 workers</text>
+
+  <rect x="75" y="457" width="370" height="96" rx="12" fill="#ffffff" stroke="#43804c" stroke-width="3"/>
+  <text x="260" y="489" text-anchor="middle" class="code">11 workers + caller</text>
+  <text x="260" y="530" text-anchor="middle" class="value" fill="#315e38">12 runners</text>
+
+  <text x="260" y="600" text-anchor="middle" class="body" font-weight="700">The caller is a worker too</text>
+  <text x="260" y="633" text-anchor="middle" class="small">The thread that calls the terminal</text>
+  <text x="260" y="659" text-anchor="middle" class="small">operation runs the root task itself,</text>
+  <text x="260" y="685" text-anchor="middle" class="small">then helps until the tree completes.</text>
+
+  <!-- Panel 1 to panel 2; the gap between panels is deliberately empty. -->
+  <path d="M487 430 H514" data-connector="true" fill="none" stroke="#667085" stroke-width="5"/>
+  <polygon points="534,430 514,419 514,441" fill="#667085"/>
+
+  <!-- Panel 2: the target size arithmetic. -->
+  <rect x="535" y="125" width="430" height="610" rx="18" fill="#f5f0fc" stroke="#7645a8" stroke-width="4"/>
+  <rect x="535" y="125" width="430" height="72" rx="18" fill="#7645a8"/>
+  <rect x="535" y="177" width="430" height="20" fill="#7645a8"/>
+  <text x="750" y="172" text-anchor="middle" class="header" fill="#ffffff">2  TARGET CHUNK SIZE</text>
+
+  <rect x="565" y="225" width="370" height="96" rx="12" fill="#ffffff" stroke="#c7b6da" stroke-width="2"/>
+  <text x="750" y="257" text-anchor="middle" class="code">leafTarget = 4 x parallelism</text>
+  <text x="750" y="298" text-anchor="middle" class="value" fill="#563080">44</text>
+
+  <rect x="565" y="341" width="370" height="212" rx="12" fill="#ffffff" stroke="#c7b6da" stroke-width="2"/>
+  <text x="750" y="373" text-anchor="middle" class="code">targetSize =</text>
+  <text x="750" y="401" text-anchor="middle" class="code">size / leafTarget</text>
+  <text x="750" y="452" text-anchor="middle" class="step" fill="#563080">100000 / 44</text>
+  <text x="750" y="500" text-anchor="middle" class="value" fill="#563080">2272</text>
+  <text x="750" y="535" text-anchor="middle" class="small">elements per leaf, at most</text>
+
+  <text x="750" y="600" text-anchor="middle" class="body" font-weight="700">Four leaves per worker, on purpose</text>
+  <text x="750" y="633" text-anchor="middle" class="small">More tasks than workers means a</text>
+  <text x="750" y="659" text-anchor="middle" class="small">worker that finishes early still has</text>
+  <text x="750" y="685" text-anchor="middle" class="small">something left to steal.</text>
+
+  <!-- Panel 2 to panel 3. -->
+  <path d="M977 430 H1004" data-connector="true" fill="none" stroke="#667085" stroke-width="5"/>
+  <polygon points="1024,430 1004,419 1004,441" fill="#667085"/>
+
+  <!-- Panel 3: the split ladder. Each row is one trySplit() halving. -->
+  <rect x="1025" y="125" width="430" height="610" rx="18" fill="#fff8eb" stroke="#bd7823" stroke-width="4"/>
+  <rect x="1025" y="125" width="430" height="72" rx="18" fill="#bd7823"/>
+  <rect x="1025" y="177" width="430" height="20" fill="#bd7823"/>
+  <text x="1240" y="172" text-anchor="middle" class="header" fill="#ffffff">3  SPLIT WHILE TOO BIG</text>
+
+  <text x="1240" y="222" text-anchor="middle" class="small">while (size &gt; targetSize) trySplit()</text>
+
+  <rect x="1120" y="236" width="240" height="42" rx="10" fill="#ffffff" stroke="#d8a45e" stroke-width="2"/>
+  <text x="1240" y="264" text-anchor="middle" class="step" fill="#7b4d16">100000</text>
+  <rect x="1120" y="292" width="240" height="42" rx="10" fill="#ffffff" stroke="#d8a45e" stroke-width="2"/>
+  <text x="1240" y="320" text-anchor="middle" class="step" fill="#7b4d16">50000</text>
+  <rect x="1120" y="348" width="240" height="42" rx="10" fill="#ffffff" stroke="#d8a45e" stroke-width="2"/>
+  <text x="1240" y="376" text-anchor="middle" class="step" fill="#7b4d16">25000</text>
+  <rect x="1120" y="404" width="240" height="42" rx="10" fill="#ffffff" stroke="#d8a45e" stroke-width="2"/>
+  <text x="1240" y="432" text-anchor="middle" class="step" fill="#7b4d16">12500</text>
+  <rect x="1120" y="460" width="240" height="42" rx="10" fill="#ffffff" stroke="#d8a45e" stroke-width="2"/>
+  <text x="1240" y="488" text-anchor="middle" class="step" fill="#7b4d16">6250</text>
+  <rect x="1120" y="516" width="240" height="42" rx="10" fill="#ffffff" stroke="#d8a45e" stroke-width="2"/>
+  <text x="1240" y="544" text-anchor="middle" class="step" fill="#7b4d16">3125</text>
+
+  <!-- Last row is green: the first size that fits the target, so splitting stops. -->
+  <rect x="1120" y="572" width="240" height="46" rx="10" fill="#eaf6ec" stroke="#43804c" stroke-width="3"/>
+  <text x="1240" y="603" text-anchor="middle" class="step" fill="#315e38">1562  stop</text>
+
+  <text x="1240" y="659" text-anchor="middle" class="body" font-weight="700">6 halvings, so 2^6 leaves</text>
+  <text x="1240" y="692" text-anchor="middle" class="small">64 leaf tasks of about 1562 elements</text>
+
+  <!-- Conclusion strip; keep both lines inside the panel when editing wording. -->
+  <rect x="45" y="762" width="1410" height="102" rx="18" fill="#f8fafc" stroke="#c1cad5" stroke-width="3"/>
+  <text x="750" y="801" text-anchor="middle" class="body" font-weight="700">64 leaf tasks share 12 runners: one thread processes many chunks, and no element gets its own thread.</text>
+  <text x="750" y="838" text-anchor="middle" class="small">The 4-per-worker heuristic and the resulting leaf count are current OpenJDK behaviour, not guarantees of the Stream API.</text>
+</svg>

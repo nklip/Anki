@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900" role="img" aria-labelledby="title description">
+  <title id="title">Fork join scheduling of parallel stream tasks with work stealing</title>
+  <desc id="description">On the left, a task tree where each split forks one child and keeps computing the other, and the node colours show that leaves are spread across the calling thread and two pool workers. On the right, three work-stealing deques: an owner pushes and pops at the top end, while an idle worker steals the oldest task from the base end of another queue. Completion counts replace child-by-child joins, though a join can still park when there is nothing left to help with. A closing note records that the common pool is where a call from an ordinary thread lands, whereas subtasks forked inside a fork/join computation stay in the current pool.</desc>
+
+  <!-- Shared styles and the thread colour legend used by both panels. -->
+  <defs>
+    <style>
+      .title { font: 700 36px sans-serif; fill: #111827; }
+      .subtitle { font: 20px sans-serif; fill: #4b5563; }
+      .header { font: 700 22px sans-serif; }
+      .node { font: 700 17px sans-serif; }
+      .body { font: 18px sans-serif; }
+      .small { font: 16px sans-serif; }
+      .tiny { font: 14px sans-serif; fill: #667085; }
+      .code { font: 16px monospace; fill: #1f2937; }
+    </style>
+  </defs>
+
+  <rect width="1500" height="900" fill="#ffffff"/>
+  <text x="750" y="52" text-anchor="middle" class="title">Who actually runs your lambdas</text>
+  <text x="750" y="86" text-anchor="middle" class="subtitle">Each split forks one child and keeps the other; idle threads steal the rest</text>
+
+  <!-- Left panel: the task tree, coloured by the thread that executed each node. -->
+  <rect x="45" y="112" width="690" height="530" rx="18" fill="#f8fafc" stroke="#c1cad5" stroke-width="3"/>
+  <text x="390" y="152" text-anchor="middle" class="header" fill="#273444">ONE COUNTEDCOMPLETER TREE</text>
+
+  <rect x="300" y="176" width="180" height="58" rx="12" fill="#eef5fc" stroke="#356da8" stroke-width="3"/>
+  <text x="390" y="212" text-anchor="middle" class="node" fill="#234f7c">root task</text>
+
+  <!-- Split connectors use elbow routing so every head meets a box top squarely. -->
+  <path d="M390 234 V268 H240 V282" data-connector="true" fill="none" stroke="#667085" stroke-width="4"/>
+  <polygon points="240,302 229,282 251,282" fill="#667085"/>
+  <path d="M390 234 V268 H540 V282" data-connector="true" fill="none" stroke="#667085" stroke-width="4"/>
+  <polygon points="540,302 529,282 551,282" fill="#667085"/>
+
+  <rect x="150" y="302" width="180" height="58" rx="12" fill="#eef5fc" stroke="#356da8" stroke-width="3"/>
+  <text x="240" y="338" text-anchor="middle" class="node" fill="#234f7c">kept locally</text>
+
+  <rect x="450" y="302" width="180" height="58" rx="12" fill="#f5f0fc" stroke="#7645a8" stroke-width="3"/>
+  <text x="540" y="338" text-anchor="middle" class="node" fill="#563080">forked, then stolen</text>
+
+  <path d="M240 360 V394 H160 V408" data-connector="true" fill="none" stroke="#667085" stroke-width="4"/>
+  <polygon points="160,428 149,408 171,408" fill="#667085"/>
+  <path d="M240 360 V394 H320 V408" data-connector="true" fill="none" stroke="#667085" stroke-width="4"/>
+  <polygon points="320,428 309,408 331,408" fill="#667085"/>
+  <path d="M540 360 V394 H460 V408" data-connector="true" fill="none" stroke="#667085" stroke-width="4"/>
+  <polygon points="460,428 449,408 471,408" fill="#667085"/>
+  <path d="M540 360 V394 H620 V408" data-connector="true" fill="none" stroke="#667085" stroke-width="4"/>
+  <polygon points="620,428 609,408 631,408" fill="#667085"/>
+
+  <rect x="95" y="428" width="130" height="58" rx="12" fill="#eef5fc" stroke="#356da8" stroke-width="3"/>
+  <text x="160" y="464" text-anchor="middle" class="node" fill="#234f7c">leaf 1</text>
+  <rect x="255" y="428" width="130" height="58" rx="12" fill="#fff8eb" stroke="#bd7823" stroke-width="3"/>
+  <text x="320" y="464" text-anchor="middle" class="node" fill="#7b4d16">leaf 2</text>
+  <rect x="395" y="428" width="130" height="58" rx="12" fill="#f5f0fc" stroke="#7645a8" stroke-width="3"/>
+  <text x="460" y="464" text-anchor="middle" class="node" fill="#563080">leaf 3</text>
+  <rect x="555" y="428" width="130" height="58" rx="12" fill="#f5f0fc" stroke="#7645a8" stroke-width="3"/>
+  <text x="620" y="464" text-anchor="middle" class="node" fill="#563080">leaf 4</text>
+
+  <!-- Colour legend: which thread ran which node. -->
+  <rect x="70" y="510" width="18" height="18" rx="4" fill="#eef5fc" stroke="#356da8" stroke-width="3"/>
+  <text x="98" y="525" class="small" fill="#4b5563">calling thread</text>
+  <rect x="250" y="510" width="18" height="18" rx="4" fill="#f5f0fc" stroke="#7645a8" stroke-width="3"/>
+  <text x="278" y="525" class="small" fill="#4b5563">worker 1</text>
+  <rect x="400" y="510" width="18" height="18" rx="4" fill="#fff8eb" stroke="#bd7823" stroke-width="3"/>
+  <text x="428" y="525" class="small" fill="#4b5563">worker 2</text>
+
+  <text x="390" y="566" text-anchor="middle" class="small" fill="#4b5563">A parent sets a pending count of one, forks a single child, and keeps computing the other</text>
+  <text x="390" y="592" text-anchor="middle" class="small" fill="#4b5563">itself. When the forked side finishes, onCompletion() merges the two results and completes</text>
+  <text x="390" y="618" text-anchor="middle" class="small" fill="#4b5563">upward. This avoids child-by-child joins; join() still parks if helping runs out of work.</text>
+
+  <!-- Right panel: per-thread deques and the two ends they are accessed from. -->
+  <rect x="765" y="112" width="690" height="530" rx="18" fill="#f8fafc" stroke="#c1cad5" stroke-width="3"/>
+  <text x="1110" y="152" text-anchor="middle" class="header" fill="#273444">ONE DEQUE PER THREAD</text>
+
+  <text x="963" y="196" class="small" font-weight="700" fill="#234f7c">calling thread</text>
+  <rect x="960" y="208" width="78" height="52" rx="8" fill="#eef5fc" stroke="#356da8" stroke-width="2"/>
+  <rect x="1044" y="208" width="78" height="52" rx="8" fill="#eef5fc" stroke="#356da8" stroke-width="2"/>
+  <rect x="1128" y="208" width="78" height="52" rx="8" fill="#eef5fc" stroke="#356da8" stroke-width="2"/>
+  <text x="1244" y="228" class="tiny">owner pushes and</text>
+  <text x="1244" y="250" class="tiny">pops here (LIFO)</text>
+
+  <text x="963" y="326" class="small" font-weight="700" fill="#563080">worker 1</text>
+  <rect x="960" y="338" width="78" height="52" rx="8" fill="#f5f0fc" stroke="#7645a8" stroke-width="2"/>
+  <rect x="1044" y="338" width="78" height="52" rx="8" fill="#f5f0fc" stroke="#7645a8" stroke-width="2"/>
+  <rect x="1128" y="338" width="78" height="52" rx="8" fill="#f5f0fc" stroke="#7645a8" stroke-width="2"/>
+  <text x="1244" y="358" class="tiny">newest subtask</text>
+  <text x="1244" y="380" class="tiny">first: still cached</text>
+
+  <text x="963" y="456" class="small" font-weight="700" fill="#7b4d16">worker 2 — out of work</text>
+  <rect x="960" y="468" width="246" height="52" rx="8" fill="#ffffff" stroke="#bd7823" stroke-width="2" stroke-dasharray="10 7"/>
+  <text x="1083" y="501" text-anchor="middle" class="small" fill="#4b5563">empty</text>
+
+  <!-- Steal route: worker 2 leaves its own empty queue and takes the oldest task from worker 1's base end. -->
+  <path d="M944 494 H872 V364 H930" data-connector="true" fill="none" stroke="#bd7823" stroke-width="4"/>
+  <polygon points="950,364 930,353 930,375" fill="#bd7823"/>
+  <text x="1110" y="566" text-anchor="middle" class="small" font-weight="700" fill="#7b4d16">A thief takes from the far end: the oldest task there</text>
+  <text x="1110" y="592" text-anchor="middle" class="small" fill="#4b5563">is the largest unsplit chunk, so one steal moves</text>
+  <text x="1110" y="618" text-anchor="middle" class="small" fill="#4b5563">a lot of work and needs little coordination.</text>
+
+  <!-- Three take-aways; keep each column's text inside its own third. -->
+  <rect x="45" y="668" width="450" height="197" rx="18" fill="#eef5fc" stroke="#356da8" stroke-width="3"/>
+  <text x="270" y="708" text-anchor="middle" class="body" font-weight="700" fill="#234f7c">The caller is not idle</text>
+  <text x="270" y="746" text-anchor="middle" class="code">invoke() = run + help</text>
+  <text x="270" y="784" text-anchor="middle" class="small" fill="#4b5563">It executes the root task, then</text>
+  <text x="270" y="810" text-anchor="middle" class="small" fill="#4b5563">helps complete the tree, parking</text>
+  <text x="270" y="836" text-anchor="middle" class="small" fill="#4b5563">only if no work is left to help with.</text>
+
+  <rect x="525" y="668" width="450" height="197" rx="18" fill="#f5f0fc" stroke="#7645a8" stroke-width="3"/>
+  <text x="750" y="708" text-anchor="middle" class="body" font-weight="700" fill="#563080">Tasks, not threads</text>
+  <text x="750" y="746" text-anchor="middle" class="code">64 leaves, 12 runners</text>
+  <text x="750" y="784" text-anchor="middle" class="small" fill="#4b5563">One thread runs many leaves.</text>
+  <text x="750" y="810" text-anchor="middle" class="small" fill="#4b5563">Which thread runs which chunk</text>
+  <text x="750" y="836" text-anchor="middle" class="small" fill="#4b5563">is decided at run time.</text>
+
+  <rect x="1005" y="668" width="450" height="197" rx="18" fill="#fff8eb" stroke="#bd7823" stroke-width="3"/>
+  <text x="1230" y="704" text-anchor="middle" class="body" font-weight="700" fill="#7b4d16">The common pool is the default</text>
+  <text x="1230" y="740" text-anchor="middle" class="code">parallelism = cores - 1</text>
+  <text x="1230" y="776" text-anchor="middle" class="small" fill="#4b5563">A call from an ordinary thread lands</text>
+  <text x="1230" y="802" text-anchor="middle" class="small" fill="#4b5563">there and shares it with every other</text>
+  <text x="1230" y="828" text-anchor="middle" class="small" fill="#4b5563">such call. Inside a fork/join task,</text>
+  <text x="1230" y="854" text-anchor="middle" class="small" fill="#4b5563">subtasks stay in the current pool.</text>
+</svg>

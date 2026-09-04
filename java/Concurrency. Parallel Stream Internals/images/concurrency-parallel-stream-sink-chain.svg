@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900" role="img" aria-labelledby="title description">
+  <title id="title">A leaf task runs the pipeline stages as one fused chain of sinks</title>
+  <desc id="description">A chunk feeds a chain of three sinks: a filter sink, a mapping sink, and the terminal reducing sink that keeps one running total. The chain is constructed backwards from the terminal operation, but elements are pushed forwards one at a time, so no intermediate collection is created between stages. The fused chain covers one stateless segment; a stateful operation such as sorted or distinct would end the segment instead.</desc>
+
+  <!-- Shared styles; adjust sizes here rather than per element. -->
+  <defs>
+    <style>
+      .title { font: 700 36px sans-serif; fill: #111827; }
+      .subtitle { font: 20px sans-serif; fill: #4b5563; }
+      .header { font: 700 22px sans-serif; }
+      .boxTitle { font: 700 20px sans-serif; }
+      .body { font: 18px sans-serif; }
+      .small { font: 16px sans-serif; fill: #4b5563; }
+      .code { font: 17px monospace; fill: #1f2937; }
+      .codeSmall { font: 15px monospace; fill: #667085; }
+      .flowLabel { font: 700 18px sans-serif; }
+    </style>
+  </defs>
+
+  <rect width="1500" height="900" fill="#ffffff"/>
+  <text x="750" y="52" text-anchor="middle" class="title">Inside one leaf: stages are fused into a chain of sinks</text>
+  <text x="750" y="86" text-anchor="middle" class="subtitle">Every leaf runs this chain over its own chunk. It covers one stateless segment: a stateful stage ends the segment.</text>
+
+  <!-- The recorded pipeline that produces the chain below. -->
+  <rect x="45" y="112" width="1410" height="96" rx="16" fill="#f8fafc" stroke="#c1cad5" stroke-width="3"/>
+  <text x="75" y="145" class="small" font-weight="700">THE PIPELINE YOU WROTE</text>
+  <text x="75" y="184" class="code">orders.parallelStream().filter(Order::isCompleted).mapToLong(Order::amountInCents).sum();</text>
+
+  <!-- Construction arrow: wrapSink walks from the terminal stage back to the source. -->
+  <text x="750" y="252" text-anchor="middle" class="flowLabel" fill="#7645a8">BUILD ORDER — wrapSink() wraps the terminal sink first, then each earlier stage around it</text>
+  <path d="M1180 288 H320" data-connector="true" fill="none" stroke="#9c78c3" stroke-width="4" stroke-dasharray="12 8"/>
+  <polygon points="300,288 320,278 320,298" fill="#9c78c3"/>
+
+  <!-- Stage row. Boxes are separated by 60px corridors reserved for the flow arrows. -->
+  <rect x="50" y="330" width="160" height="170" rx="14" fill="#eef5fc" stroke="#356da8" stroke-width="3"/>
+  <text x="130" y="376" text-anchor="middle" class="boxTitle" fill="#234f7c">CHUNK</text>
+  <text x="130" y="414" text-anchor="middle" class="small">one leaf's</text>
+  <text x="130" y="440" text-anchor="middle" class="small">1562 orders</text>
+  <text x="130" y="472" text-anchor="middle" class="codeSmall">Spliterator</text>
+
+  <rect x="270" y="330" width="290" height="170" rx="14" fill="#f5f0fc" stroke="#7645a8" stroke-width="3"/>
+  <text x="415" y="368" text-anchor="middle" class="boxTitle" fill="#563080">FILTER SINK</text>
+  <text x="415" y="404" text-anchor="middle" class="code">accept(order)</text>
+  <text x="415" y="443" text-anchor="middle" class="small">completed → push downstream</text>
+  <text x="415" y="473" text-anchor="middle" class="small">otherwise → just return</text>
+
+  <rect x="620" y="330" width="290" height="170" rx="14" fill="#f5f0fc" stroke="#7645a8" stroke-width="3"/>
+  <text x="765" y="368" text-anchor="middle" class="boxTitle" fill="#563080">MAP SINK</text>
+  <text x="765" y="404" text-anchor="middle" class="code">accept(cents)</text>
+  <text x="765" y="443" text-anchor="middle" class="small">converts one value and</text>
+  <text x="765" y="473" text-anchor="middle" class="small">pushes it on — stores nothing</text>
+
+  <rect x="970" y="330" width="290" height="170" rx="14" fill="#fff8eb" stroke="#bd7823" stroke-width="3"/>
+  <text x="1115" y="368" text-anchor="middle" class="boxTitle" fill="#7b4d16">REDUCING SINK</text>
+  <text x="1115" y="404" text-anchor="middle" class="code">state += value</text>
+  <text x="1115" y="443" text-anchor="middle" class="small">the terminal stage keeps</text>
+  <text x="1115" y="473" text-anchor="middle" class="small">one running total</text>
+
+  <rect x="1320" y="330" width="130" height="170" rx="14" fill="#eaf6ec" stroke="#43804c" stroke-width="3"/>
+  <text x="1385" y="384" text-anchor="middle" class="boxTitle" fill="#315e38">LOCAL</text>
+  <text x="1385" y="412" text-anchor="middle" class="boxTitle" fill="#315e38">RESULT</text>
+  <text x="1385" y="456" text-anchor="middle" class="code">one long</text>
+  <text x="1385" y="482" text-anchor="middle" class="small">per leaf</text>
+
+  <!-- Forward data flow; each shaft stops at its own arrowhead base. -->
+  <path d="M215 415 H240" data-connector="true" fill="none" stroke="#667085" stroke-width="5"/>
+  <polygon points="260,415 240,404 240,426" fill="#667085"/>
+  <path d="M565 415 H590" data-connector="true" fill="none" stroke="#667085" stroke-width="5"/>
+  <polygon points="610,415 590,404 590,426" fill="#667085"/>
+  <path d="M915 415 H940" data-connector="true" fill="none" stroke="#667085" stroke-width="5"/>
+  <polygon points="960,415 940,404 940,426" fill="#667085"/>
+  <path d="M1265 415 H1290" data-connector="true" fill="none" stroke="#43804c" stroke-width="5"/>
+  <polygon points="1310,415 1290,404 1290,426" fill="#43804c"/>
+
+  <text x="750" y="545" text-anchor="middle" class="flowLabel" fill="#4b5563">DATA FLOW — one element travels the whole chain before the next one is read</text>
+
+  <!-- Left panel: the lifecycle every sink chain follows once per leaf. -->
+  <rect x="45" y="580" width="690" height="285" rx="18" fill="#eef5fc" stroke="#356da8" stroke-width="4"/>
+  <text x="390" y="622" text-anchor="middle" class="header" fill="#234f7c">EACH LEAF DRIVES THE SAME LIFECYCLE</text>
+
+  <rect x="80" y="648" width="180" height="62" rx="12" fill="#ffffff" stroke="#6d9dce" stroke-width="2"/>
+  <text x="170" y="686" text-anchor="middle" class="code">begin(size)</text>
+  <path d="M268 679 H288" data-connector="true" fill="none" stroke="#356da8" stroke-width="4"/>
+  <polygon points="304,679 288,670 288,688" fill="#356da8"/>
+
+  <rect x="310" y="648" width="200" height="62" rx="12" fill="#ffffff" stroke="#6d9dce" stroke-width="2"/>
+  <text x="410" y="686" text-anchor="middle" class="code">accept(e) x n</text>
+  <path d="M518 679 H538" data-connector="true" fill="none" stroke="#356da8" stroke-width="4"/>
+  <polygon points="554,679 538,670 538,688" fill="#356da8"/>
+
+  <rect x="560" y="648" width="140" height="62" rx="12" fill="#ffffff" stroke="#6d9dce" stroke-width="2"/>
+  <text x="630" y="686" text-anchor="middle" class="code">end()</text>
+
+  <text x="390" y="756" text-anchor="middle" class="small">begin() lets a stage size its buffer; end() lets it flush and publish.</text>
+  <text x="390" y="786" text-anchor="middle" class="small">A short-circuiting pipeline also polls cancellationRequested()</text>
+  <text x="390" y="812" text-anchor="middle" class="small">between elements, which is why a leaf can stop early.</text>
+  <text x="390" y="845" text-anchor="middle" class="small" font-style="italic">Sequential and parallel leaves use exactly this lifecycle.</text>
+
+  <!-- Right panel: two concrete elements, to show fusion instead of stage-by-stage passes. -->
+  <rect x="765" y="580" width="690" height="285" rx="18" fill="#fff8eb" stroke="#bd7823" stroke-width="4"/>
+  <text x="1110" y="622" text-anchor="middle" class="header" fill="#7b4d16">FUSION, NOT THREE PASSES</text>
+
+  <rect x="800" y="644" width="620" height="70" rx="12" fill="#ffffff" stroke="#e1bb82" stroke-width="2"/>
+  <text x="820" y="672" class="body" font-weight="700" fill="#315e38">order #7 completed</text>
+  <text x="820" y="700" class="small">filter passes it → mapped to 4200 → added to this leaf's total</text>
+
+  <rect x="800" y="726" width="620" height="70" rx="12" fill="#ffffff" stroke="#e1bb82" stroke-width="2"/>
+  <text x="820" y="754" class="body" font-weight="700" fill="#873c33">order #8 cancelled</text>
+  <text x="820" y="782" class="small">filter drops it → never mapped, never counted, no list built</text>
+
+  <text x="1110" y="826" text-anchor="middle" class="small">Stateless stages are wrappers, not collections.</text>
+  <text x="1110" y="852" text-anchor="middle" class="small">A sorted() or distinct() would end this segment instead.</text>
+</svg>

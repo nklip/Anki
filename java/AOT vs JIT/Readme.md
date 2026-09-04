@@ -12,7 +12,7 @@ Explain when machine code is produced, why profiling matters, what runs in produ
 
 This card first compares the models, then explains HotSpot warmup, full native AOT, profile-guided optimization, and Leyden's hybrid approach.
 
-![JIT and full native AOT compared](svg/aot_vs_jit.svg)
+![aot_vs_jit.svg](images/aot_vs_jit.svg)
 
 ## Core vocabulary
 
@@ -27,7 +27,7 @@ This card first compares the models, then explains HotSpot warmup, full native A
 
 The phrase “AOT Java” is ambiguous. The decisive question is: **does production run a native executable, or does it still run on HotSpot?**
 
-![Standard HotSpot, Native Image, and Leyden execution paths](svg/aot_vs_jit_modern_java_execution_paths.svg)
+![aot_vs_jit_modern_java_execution_paths.svg](images/aot_vs_jit_modern_java_execution_paths.svg)
 
 | Model | What happens before production | Where native code is produced | What runs in production |
 |---|---|---|---|
@@ -39,7 +39,7 @@ The phrase “AOT Java” is ambiguous. The decisive question is: **does product
 
 HotSpot normally uses **tiered compilation**. The interpreter and lower compiler tiers start execution and gather profiles. More optimizing tiers can then compile frequently executed methods using what the JVM has observed. Generated machine code is stored in the JVM's **code cache**.
 
-![HotSpot JIT compilation flow](svg/aot_vs_jit_jit_flow.svg)
+![aot_vs_jit_jit_flow.svg](images/aot_vs_jit_jit_flow.svg)
 
 The JVM remains involved after compilation. Optimizing compilers may make speculative assumptions, such as “this call site usually sees one implementation.” If reality changes, HotSpot can **deoptimize** that machine code, return execution to a less optimized form, and later compile again with newer information.
 
@@ -75,7 +75,7 @@ For trustworthy performance measurements, use a proper benchmarking harness and 
 
 At the start of a traditional run, HotSpot has little application-specific evidence. It must execute code, collect profiles, identify hot behavior, and compile optimized versions. **Warmup** is the period before the running application reaches representative, more fully optimized behavior; it is not a fixed number of seconds.
 
-![Traditional HotSpot JIT warmup](svg/aot_vs_jit_traditional_jit_warmup.svg)
+![aot_vs_jit_traditional_jit_warmup.svg](images/aot_vs_jit_traditional_jit_warmup.svg)
 
 The exact curve depends on the code, inputs, traffic, JVM settings, and what metric is observed. “Warm” also does not mean “finished forever”: HotSpot can continue learning and adapting.
 
@@ -83,7 +83,7 @@ The exact curve depends on the code, inputs, traffic, JVM settings, and what met
 
 GraalVM Native Image analyzes an application's reachable code and creates a platform-specific native executable. The image contains the application, required libraries, and necessary runtime pieces such as memory management and thread scheduling, but it does not launch as an ordinary HotSpot JVM process.
 
-![GraalVM Native Image build and PGO flow](svg/aot_vs_jit_graalvm_native_image.svg)
+![aot_vs_jit_graalvm_native_image.svg](images/aot_vs_jit_graalvm_native_image.svg)
 
 Native Image uses a **closed-world assumption**: at build time, it must determine which program elements may be reachable. Only reachable elements are included. Dynamic behavior that static analysis cannot discover—commonly reflection, dynamic proxies, resources, serialization, or Java Native Interface use—may require reachability metadata.
 
@@ -104,7 +104,7 @@ PGO helps the AOT compiler make decisions using evidence instead of static struc
 
 Project Leyden takes a different path. A training workflow records reusable information in an **AOT cache**. A later production launch uses that cache to avoid repeating some startup work, but the application still runs on HotSpot and the JIT remains active.
 
-![Project Leyden training cache and production JVM flow](svg/aot_vs_jit_hybrid.svg)
+![aot_vs_jit_hybrid.svg](images/aot_vs_jit_hybrid.svg)
 
 The recent milestones build on one another:
 
@@ -118,7 +118,7 @@ The cache is therefore **neither a standalone executable nor proof that all appl
 
 Without a saved profile, a new JVM must first observe enough current-run behavior. With JDK 25's AOT method profiles, the JIT receives useful training evidence at startup and can begin optimized compilation earlier.
 
-![HotSpot startup with and without cached method profiles](svg/aot_vs_jit_profile_guided_jvm_startup.svg)
+![aot_vs_jit_profile_guided_jvm_startup.svg](images/aot_vs_jit_profile_guided_jvm_startup.svg)
 
 The production run still gathers fresh profiles. If its workload differs from training, HotSpot can update its decisions, deoptimize outdated assumptions, and recompile. Leyden therefore aims to combine **earlier readiness** with **runtime adaptation**.
 

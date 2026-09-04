@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1500 900" role="img" aria-labelledby="title description">
+  <title id="title">How encounter order survives parallel execution for four terminal operations</title>
+  <desc id="description">The same ordered list of twelve numbers is run through four terminal operations on a parallel stream. forEach prints in an arbitrary order, forEachOrdered prints one to twelve, buffering a leaf only while an earlier leaf is unfinished, findFirst returns the first match in encounter order, and findAny returns whichever match a task found first. A closing note shows that count may skip the pipeline entirely.</desc>
+
+  <!-- Shared styles; each result card reuses the same three text sizes. -->
+  <defs>
+    <style>
+      .title { font: 700 36px sans-serif; fill: #111827; }
+      .subtitle { font: 20px sans-serif; fill: #4b5563; }
+      .cardTitle { font: 700 21px sans-serif; }
+      .body { font: 18px sans-serif; }
+      .small { font: 16px sans-serif; fill: #4b5563; }
+      .out { font: 700 19px monospace; }
+      .cell { font: 700 18px monospace; fill: #234f7c; }
+      .tag { font: 700 15px sans-serif; }
+    </style>
+  </defs>
+
+  <rect width="1500" height="900" fill="#ffffff"/>
+  <text x="750" y="52" text-anchor="middle" class="title">Encounter order is a contract, not the execution order</text>
+  <text x="750" y="86" text-anchor="middle" class="subtitle">One ordered list, four terminal operations, output observed from a parallel run on JDK 26</text>
+
+  <!-- The shared source for all four cards below. -->
+  <rect x="45" y="106" width="1410" height="126" rx="18" fill="#f8fafc" stroke="#c1cad5" stroke-width="3"/>
+  <text x="750" y="140" text-anchor="middle" class="body" font-weight="700" fill="#273444">SOURCE: an ordered List of 1 to 12, split across leaf tasks that run at the same time</text>
+
+  <rect x="143" y="158" width="92" height="44" rx="8" fill="#eef5fc" stroke="#356da8" stroke-width="2"/>
+  <text x="189" y="188" text-anchor="middle" class="cell">1</text>
+  <rect x="245" y="158" width="92" height="44" rx="8" fill="#eef5fc" stroke="#356da8" stroke-width="2"/>
+  <text x="291" y="188" text-anchor="middle" class="cell">2</text>
+  <rect x="347" y="158" width="92" height="44" rx="8" fill="#eef5fc" stroke="#356da8" stroke-width="2"/>
+  <text x="393" y="188" text-anchor="middle" class="cell">3</text>
+  <rect x="449" y="158" width="92" height="44" rx="8" fill="#eef5fc" stroke="#356da8" stroke-width="2"/>
+  <text x="495" y="188" text-anchor="middle" class="cell">4</text>
+  <rect x="551" y="158" width="92" height="44" rx="8" fill="#eef5fc" stroke="#356da8" stroke-width="2"/>
+  <text x="597" y="188" text-anchor="middle" class="cell">5</text>
+  <rect x="653" y="158" width="92" height="44" rx="8" fill="#eef5fc" stroke="#356da8" stroke-width="2"/>
+  <text x="699" y="188" text-anchor="middle" class="cell">6</text>
+  <rect x="755" y="158" width="92" height="44" rx="8" fill="#eef5fc" stroke="#356da8" stroke-width="2"/>
+  <text x="801" y="188" text-anchor="middle" class="cell">7</text>
+  <rect x="857" y="158" width="92" height="44" rx="8" fill="#eef5fc" stroke="#356da8" stroke-width="2"/>
+  <text x="903" y="188" text-anchor="middle" class="cell">8</text>
+  <rect x="959" y="158" width="92" height="44" rx="8" fill="#eef5fc" stroke="#356da8" stroke-width="2"/>
+  <text x="1005" y="188" text-anchor="middle" class="cell">9</text>
+  <rect x="1061" y="158" width="92" height="44" rx="8" fill="#eef5fc" stroke="#356da8" stroke-width="2"/>
+  <text x="1107" y="188" text-anchor="middle" class="cell">10</text>
+  <rect x="1163" y="158" width="92" height="44" rx="8" fill="#eef5fc" stroke="#356da8" stroke-width="2"/>
+  <text x="1209" y="188" text-anchor="middle" class="cell">11</text>
+  <rect x="1265" y="158" width="92" height="44" rx="8" fill="#eef5fc" stroke="#356da8" stroke-width="2"/>
+  <text x="1311" y="188" text-anchor="middle" class="cell">12</text>
+
+  <text x="750" y="222" text-anchor="middle" class="small">Encounter order is this left-to-right order. It is a property of the source, not of the schedule.</text>
+
+  <!-- Card 1: no ordering constraint at all. -->
+  <rect x="45" y="252" width="690" height="238" rx="18" fill="#fff8eb" stroke="#bd7823" stroke-width="4"/>
+  <rect x="75" y="272" width="210" height="34" rx="10" fill="#bd7823"/>
+  <text x="180" y="296" text-anchor="middle" class="tag" fill="#ffffff">ORDER NOT PRESERVED</text>
+  <text x="75" y="344" class="cardTitle" fill="#7b4d16">forEach(println)</text>
+  <text x="75" y="386" class="out" fill="#7b4d16">8 9 7 11 4 12 10 2 5 6 3 1</text>
+  <text x="75" y="428" class="small">Actions run wherever their chunk was processed. The spec allows</text>
+  <text x="75" y="454" class="small">any order, so this line changes between runs — and it is the</text>
+  <text x="75" y="480" class="small">cheapest option because nothing has to be coordinated.</text>
+
+  <!-- Card 2: same parallel upstream, ordered replay of the action. -->
+  <rect x="765" y="252" width="690" height="238" rx="18" fill="#eef5fc" stroke="#356da8" stroke-width="4"/>
+  <rect x="795" y="272" width="210" height="34" rx="10" fill="#356da8"/>
+  <text x="900" y="296" text-anchor="middle" class="tag" fill="#ffffff">ORDER PRESERVED</text>
+  <text x="795" y="344" class="cardTitle" fill="#234f7c">forEachOrdered(println)</text>
+  <text x="795" y="386" class="out" fill="#234f7c">1 2 3 4 5 6 7 8 9 10 11 12</text>
+  <text x="795" y="428" class="small">filter and map still run in parallel. Completion dependencies replay</text>
+  <text x="795" y="454" class="small">the actions in encounter order, and a leaf buffers into a Node only</text>
+  <text x="795" y="480" class="small">while an earlier leaf is unfinished. Correct, but the action serialises.</text>
+
+  <!-- Card 3: order-sensitive short circuit. -->
+  <rect x="45" y="510" width="690" height="238" rx="18" fill="#eaf6ec" stroke="#43804c" stroke-width="4"/>
+  <rect x="75" y="530" width="210" height="34" rx="10" fill="#43804c"/>
+  <text x="180" y="554" text-anchor="middle" class="tag" fill="#ffffff">ORDER PRESERVED</text>
+  <text x="75" y="602" class="cardTitle" fill="#315e38">filter(x % 3 == 0).findFirst()</text>
+  <text x="75" y="644" class="out" fill="#315e38">3</text>
+  <text x="75" y="686" class="small">Must return the first match in encounter order. When a task finds</text>
+  <text x="75" y="712" class="small">a candidate it cancels every task later in that order, but leaves</text>
+  <text x="75" y="738" class="small">already running finish their current element first.</text>
+
+  <!-- Card 4: deliberately unspecified result. -->
+  <rect x="765" y="510" width="690" height="238" rx="18" fill="#f5f0fc" stroke="#7645a8" stroke-width="4"/>
+  <rect x="795" y="530" width="210" height="34" rx="10" fill="#7645a8"/>
+  <text x="900" y="554" text-anchor="middle" class="tag" fill="#ffffff">ORDER NOT PRESERVED</text>
+  <text x="795" y="602" class="cardTitle" fill="#563080">filter(x % 3 == 0).findAny()</text>
+  <text x="795" y="644" class="out" fill="#563080">9</text>
+  <text x="795" y="686" class="small">Any match is a legal answer, so the first task to find one wins</text>
+  <text x="795" y="712" class="small">and no task has to wait for an earlier chunk. Same predicate,</text>
+  <text x="795" y="738" class="small">different result — and that is specified behaviour, not a bug.</text>
+
+  <!-- Closing warning: an intermediate side effect is not a guaranteed hook. -->
+  <rect x="45" y="768" width="1410" height="97" rx="18" fill="#fff1ef" stroke="#a94d41" stroke-width="3"/>
+  <text x="750" y="805" text-anchor="middle" class="body" font-weight="700" fill="#873c33">A stage may not run at all: list.stream().peek(print).count() printed nothing on 100 000 elements.</text>
+  <text x="750" y="841" text-anchor="middle" class="small">The size was already known, so the pipeline was never traversed. Never treat peek() as a guaranteed per-element hook.</text>
+</svg>
