@@ -66,13 +66,15 @@ YouTube is a massive video streaming platform supporting video uploads, playback
         <img src="./images/video-uploading-flow.svg" alt="Video Upload Flow" width="500">
     </div>
 
-    - [1] Videos are uploaded to blob storage.
-    - [2] Transcoding servers convert videos to multiple formats.
-    - [3] Once transcoding is complete, the following two steps are executed in parallel.
+    - [1] Videos are uploaded to the original storage.
+    - [2] Transcoding servers fetch videos from the original storage and start transcoding.
+    - [3] Once transcoding is complete, the following two steps are executed in parallel:
         - [3a] Transcoded videos are sent to transcoded storage.
         - [3b] Transcoding completion events are queued in the completion queue.
-    - [3a.1] Videos are distributed to the CDN.
-    - [3b.1] Completion handlers update metadata and inform users.
+    - [3a.1] Transcoded videos are distributed to CDN.
+    - [3b.1] Completion handler contains a bunch of workers that continuously pull event data from the queue.
+    - [3b.1.a] and [3b.1.b] Completion handler updates the metadata database and cache when video transcoding is complete.
+    - [4] API servers inform the client that the video is successfully uploaded and is ready for streaming.
 
 - **Metadata Upload (Steps):**
 
@@ -189,6 +191,7 @@ contains 3 queues and a task scheduler.
 3. **Parallel Processing:** Decouple modules using message queues for high parallelism.
 
     <img src="./images/message-queue1.svg" alt="Message Queue" width="600">
+
     <img src="./images/message-queue2.svg" alt="Message Queue" height="170" width="500">
 
 ### Safety Optimizations
