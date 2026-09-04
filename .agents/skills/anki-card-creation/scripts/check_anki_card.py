@@ -62,6 +62,30 @@ def fenced_blocks(text: str) -> tuple[list[tuple[str, str]], list[str]]:
     return blocks, errors
 
 
+def countable_text(text: str) -> str:
+    """Return the teaching content that counts toward the simple-mode budget.
+
+    The Front is a prompt rather than teaching content, and Sources are a
+    verification requirement whose length must not push a card over budget.
+    Both sections are excluded so the limit constrains only the Back.
+    """
+    spans: list[tuple[int, int]] = []
+    for match in SECOND_LEVEL_HEADING_RE.finditer(text):
+        if match.group(1).strip() not in {"Front", "Sources"}:
+            continue
+        following = SECOND_LEVEL_HEADING_RE.search(text, match.end())
+        spans.append((match.start(), following.start() if following else len(text)))
+
+    kept = []
+    cursor = 0
+    for start, end in sorted(spans):
+        if start > cursor:
+            kept.append(text[cursor:start])
+        cursor = max(cursor, end)
+    kept.append(text[cursor:])
+    return "".join(kept)
+
+
 def validate_text(
     text: str,
     card_path: Path,
@@ -113,11 +137,11 @@ def validate_text(
             if not re.search(r"\d", lead_text):
                 errors.append("the version lead must state the release or version")
 
-    character_count = len(text)
+    character_count = len(countable_text(text))
     if mode == "simple" and character_count > SIMPLE_CHARACTER_LIMIT:
         errors.append(
-            f"simple mode allows at most {SIMPLE_CHARACTER_LIMIT} characters; "
-            f"found {character_count}"
+            f"simple mode allows at most {SIMPLE_CHARACTER_LIMIT} characters "
+            f"outside Front and Sources; found {character_count}"
         )
 
     images = IMAGE_RE.findall(text)
@@ -191,12 +215,15 @@ counter.incrementAndGet();
     assert not validate_text(simple, Path("card.md"), "simple", check_image_files=False)
     assert not validate_text(complex_card, Path("card.md"), "complex", check_image_files=False)
 
-    at_simple_limit = simple + " " * (SIMPLE_CHARACTER_LIMIT - len(simple))
-    assert len(at_simple_limit) == SIMPLE_CHARACTER_LIMIT
+    # The budget applies to the Back only; padding goes there, not into Sources.
+    padded = simple.replace("## Sources", "PAD\n\n## Sources")
+    body = len(countable_text(padded))
+    at_simple_limit = padded.replace("PAD", "P" * (SIMPLE_CHARACTER_LIMIT - body + 3))
+    assert len(countable_text(at_simple_limit)) == SIMPLE_CHARACTER_LIMIT
     assert not validate_text(
         at_simple_limit, Path("card.md"), "simple", check_image_files=False
     )
-    above_simple_limit = at_simple_limit + "x"
+    above_simple_limit = at_simple_limit.replace("\n\n## Sources", "x\n\n## Sources")
     assert any("allows at most 3000" in error for error in validate_text(
         above_simple_limit, Path("card.md"), "simple", check_image_files=False
     ))
@@ -237,6 +264,20 @@ counter.incrementAndGet();
     assert any("requires at least" in error for error in validate_text(
         no_image, Path("card.md"), "simple", check_image_files=False
     ))
+
+    # A huge Front or Sources section must not push a card over budget.
+    fat_front = simple.replace(
+        "What is an atomic update?", "What is an atomic update? " + "q" * 5000
+    )
+    assert not validate_text(fat_front, Path("card.md"), "simple", check_image_files=False)
+    fat_sources = simple.replace(
+        "- [Java API](https://example.com/api)",
+        "- [Java API](https://example.com/api)\n\n  " + "s" * 5000,
+    )
+    assert not validate_text(fat_sources, Path("card.md"), "simple", check_image_files=False)
+    assert "Front" not in countable_text(simple)
+    assert "Sources" not in countable_text(simple)
+    assert "Atomic update" in countable_text(simple)
 
     bare_fence = simple.replace("```java", "```", 1)
     assert any("no language tag" in error for error in validate_text(
@@ -283,7 +324,9 @@ def main() -> int:
         return 1
 
     images = len(IMAGE_RE.findall(text))
-    print(f"{args.card}: OK ({args.mode}, {len(text)} characters, {images} visual(s))")
+    counted = len(countable_text(text))
+    budget = f"{counted} counted" if args.mode == "simple" else f"{len(text)}"
+    print(f"{args.card}: OK ({args.mode}, {budget} characters, {images} visual(s))")
     return 0
 
 
