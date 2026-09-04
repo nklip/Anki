@@ -1,0 +1,184 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1390" height="608" viewBox="0 0 1390 608"
+  role="img" aria-labelledby="title desc">
+  <title id="title">Shortest-path search across hierarchical routing tiles</title>
+  <desc id="desc">A simplified street map shows a black route from a red start pin to a red end pin. Large teal routing tiles cover the search area, while red and teal subdivisions add detail near the start and destination.</desc>
+  <defs>
+    <!-- Keep wide road strokes and rounded caps inside the visible map frame. -->
+    <clipPath id="map-clip">
+      <rect x="20" y="20" width="1350" height="572"/>
+    </clipPath>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #161616; }
+      .road-casing { fill: none; stroke: #f7f7f2; stroke-linecap: round; stroke-linejoin: round; }
+      .road { fill: none; stroke: #969a98; stroke-linecap: round; stroke-linejoin: round; }
+      .minor-casing { stroke-width: 13; }
+      .minor-road { stroke-width: 6; }
+      .major-casing { stroke-width: 25; }
+      .major-road { stroke-width: 14; }
+      .building { fill: #c9cbc7; stroke: #adb0ad; stroke-width: 1.2; }
+      .tile-coarse { fill: none; stroke: #28766f; stroke-width: 2; opacity: .88; }
+      .tile-focus { fill: none; stroke: #ad4f43; stroke-width: 2.2; opacity: .92; }
+    </style>
+    <g id="pin-symbol">
+      <path d="M0-19c-10.5 0-19 8.5-19 19 0 13 19 35 19 35S19 13 19 0C19-10.5 10.5-19 0-19Z"
+        fill="#ed3e38" stroke="#b92e2b" stroke-width="2"/>
+      <circle cy="0" r="7.5" fill="#fff"/>
+    </g>
+  </defs>
+
+  <!-- Pale land and park shapes keep the street network distinct without reproducing raster texture. -->
+  <rect id="canvas" width="1390" height="608" fill="#fff"/>
+  <rect id="map-background" x="20" y="20" width="1350" height="572" fill="#e5e9c7"/>
+  <g id="map-content" clip-path="url(#map-clip)">
+  <path id="northwest-park" d="M20 20H304L252 158H20Z" fill="#bfd2aa"/>
+  <path id="northeast-park" d="M1095 20H1370V178L1250 151Z" fill="#c4d7ae"/>
+  <path id="central-open-land" d="M406 265 720 215 888 397 744 592H366Z" fill="#edf0d5"/>
+
+  <!-- Buildings are discrete vector blocks; they sit below every road layer. -->
+  <g id="buildings" class="building">
+    <rect x="58" y="76" width="45" height="18" rx="4" transform="rotate(-38 80 85)"/>
+    <rect x="96" y="56" width="42" height="18" rx="4" transform="rotate(-38 117 65)"/>
+    <rect x="129" y="94" width="38" height="17" rx="4" transform="rotate(38 148 102)"/>
+    <rect x="155" y="118" width="43" height="18" rx="4" transform="rotate(38 176 127)"/>
+    <rect x="184" y="77" width="36" height="17" rx="4" transform="rotate(10 202 85)"/>
+    <rect x="230" y="80" width="38" height="17" rx="4" transform="rotate(10 249 88)"/>
+    <rect x="275" y="78" width="37" height="17" rx="4" transform="rotate(10 293 86)"/>
+    <rect x="96" y="175" width="39" height="17" rx="4" transform="rotate(-42 115 183)"/>
+    <rect x="132" y="157" width="43" height="17" rx="4" transform="rotate(-42 153 165)"/>
+    <rect x="173" y="192" width="40" height="17" rx="4" transform="rotate(6 193 200)"/>
+    <rect x="227" y="190" width="38" height="17" rx="4" transform="rotate(6 246 198)"/>
+    <rect x="108" y="285" width="37" height="17" rx="4" transform="rotate(-29 126 293)"/>
+    <rect x="77" y="311" width="42" height="18" rx="4" transform="rotate(-29 98 320)"/>
+    <rect x="116" y="457" width="39" height="18" rx="4" transform="rotate(18 135 466)"/>
+    <rect x="157" y="470" width="43" height="18" rx="4" transform="rotate(18 178 479)"/>
+    <rect x="198" y="489" width="37" height="17" rx="4" transform="rotate(18 216 497)"/>
+    <rect x="235" y="518" width="41" height="18" rx="4" transform="rotate(18 255 527)"/>
+    <rect x="294" y="526" width="37" height="18" rx="4" transform="rotate(-8 312 535)"/>
+
+    <rect x="573" y="72" width="35" height="16" rx="4" transform="rotate(24 590 80)"/>
+    <rect x="611" y="87" width="38" height="16" rx="4" transform="rotate(24 630 95)"/>
+    <rect x="650" y="101" width="37" height="16" rx="4" transform="rotate(24 668 109)"/>
+    <rect x="691" y="80" width="35" height="16" rx="4" transform="rotate(-9 708 88)"/>
+    <rect x="738" y="67" width="36" height="16" rx="4" transform="rotate(-9 756 75)"/>
+    <rect x="782" y="65" width="39" height="16" rx="4" transform="rotate(-9 801 73)"/>
+    <rect x="829" y="76" width="35" height="16" rx="4" transform="rotate(20 846 84)"/>
+    <rect x="742" y="178" width="35" height="17" rx="4" transform="rotate(35 759 186)"/>
+    <rect x="777" y="199" width="37" height="17" rx="4" transform="rotate(35 795 207)"/>
+    <rect x="831" y="173" width="38" height="17" rx="4" transform="rotate(-25 850 181)"/>
+    <rect x="864" y="151" width="36" height="17" rx="4" transform="rotate(-25 882 159)"/>
+
+    <rect x="1036" y="67" width="45" height="19" rx="5" transform="rotate(-18 1058 76)"/>
+    <rect x="1082" y="53" width="42" height="18" rx="5" transform="rotate(-18 1103 62)"/>
+    <rect x="1142" y="82" width="41" height="18" rx="5" transform="rotate(12 1162 91)"/>
+    <rect x="1190" y="91" width="39" height="18" rx="5" transform="rotate(12 1209 100)"/>
+    <rect x="1263" y="62" width="42" height="18" rx="5" transform="rotate(-26 1284 71)"/>
+    <rect x="1303" y="43" width="40" height="18" rx="5" transform="rotate(-26 1323 52)"/>
+    <rect x="1079" y="202" width="38" height="17" rx="5" transform="rotate(9 1098 210)"/>
+    <rect x="1125" y="209" width="42" height="17" rx="5" transform="rotate(9 1146 217)"/>
+    <rect x="1194" y="237" width="38" height="17" rx="5" transform="rotate(-11 1213 245)"/>
+    <rect x="1240" y="228" width="41" height="17" rx="5" transform="rotate(-11 1260 236)"/>
+    <rect x="1290" y="215" width="38" height="17" rx="5" transform="rotate(-11 1309 223)"/>
+    <rect x="1104" y="326" width="40" height="18" rx="5" transform="rotate(22 1124 335)"/>
+    <rect x="1146" y="345" width="39" height="18" rx="5" transform="rotate(22 1165 354)"/>
+    <rect x="1203" y="338" width="41" height="18" rx="5" transform="rotate(-8 1223 347)"/>
+    <rect x="1250" y="331" width="39" height="18" rx="5" transform="rotate(-8 1269 340)"/>
+    <rect x="1302" y="338" width="37" height="18" rx="5" transform="rotate(14 1320 347)"/>
+  </g>
+
+  <!-- Every casing is drawn first, then every road surface, so intersections remain continuous. -->
+  <g id="road-casings" class="road-casing">
+    <path class="major-casing" d="M28 531 165 399 194 351 215 359 226 391 249 420 266 398 253 333 292 231 374 259 383 210 459 232 494 232 590 258 633 296 650 296 681 254 738 205 800 263 830 238 914 211 923 164 944 119"/>
+    <path class="major-casing" d="M265 592 319 421 349 282 374 20"/>
+    <path class="major-casing" d="M20 190 137 254 248 278 411 341 539 429 713 592"/>
+    <path class="major-casing" d="M20 503 178 435 330 393 478 398 634 438 800 536 900 592"/>
+    <path class="major-casing" d="M890 20 923 116 960 178 1025 226 1128 237 1255 222 1370 244"/>
+    <path class="major-casing" d="M1077 592 1048 493 1063 390 1110 310 1190 281 1284 286 1370 323"/>
+    <path class="major-casing" d="M955 592 1001 523 1063 494 1155 487 1258 505 1370 566"/>
+    <path class="minor-casing" d="M45 43 143 135 219 156 293 132 347 89"/>
+    <path class="minor-casing" d="M44 269 124 205 218 211 300 246"/>
+    <path class="minor-casing" d="M43 495 86 405 127 369 201 349"/>
+    <path class="minor-casing" d="M555 44 632 70 699 124 739 205"/>
+    <path class="minor-casing" d="M724 44 725 126 738 205"/>
+    <path class="minor-casing" d="M895 43 856 97 830 161 830 238"/>
+    <path class="minor-casing" d="M1067 43 1030 95 1008 151 1025 226"/>
+    <path class="minor-casing" d="M1066 268 1136 207 1214 193 1283 205 1370 191"/>
+    <path class="minor-casing" d="M1064 390 1140 354 1218 354 1287 389 1370 390"/>
+    <path class="minor-casing" d="M895 495 944 447 997 421 1063 390"/>
+    <path class="minor-casing" d="M1141 592 1157 487"/>
+    <path class="minor-casing" d="M1261 592 1258 505"/>
+    <path class="minor-casing" d="M1370 95 1306 103 1248 126 1214 193"/>
+  </g>
+  <g id="road-surfaces" class="road">
+    <path class="major-road" d="M28 531 165 399 194 351 215 359 226 391 249 420 266 398 253 333 292 231 374 259 383 210 459 232 494 232 590 258 633 296 650 296 681 254 738 205 800 263 830 238 914 211 923 164 944 119"/>
+    <path class="major-road" d="M265 592 319 421 349 282 374 20"/>
+    <path class="major-road" d="M20 190 137 254 248 278 411 341 539 429 713 592"/>
+    <path class="major-road" d="M20 503 178 435 330 393 478 398 634 438 800 536 900 592"/>
+    <path class="major-road" d="M890 20 923 116 960 178 1025 226 1128 237 1255 222 1370 244"/>
+    <path class="major-road" d="M1077 592 1048 493 1063 390 1110 310 1190 281 1284 286 1370 323"/>
+    <path class="major-road" d="M955 592 1001 523 1063 494 1155 487 1258 505 1370 566"/>
+    <path class="minor-road" d="M45 43 143 135 219 156 293 132 347 89"/>
+    <path class="minor-road" d="M44 269 124 205 218 211 300 246"/>
+    <path class="minor-road" d="M43 495 86 405 127 369 201 349"/>
+    <path class="minor-road" d="M555 44 632 70 699 124 739 205"/>
+    <path class="minor-road" d="M724 44 725 126 738 205"/>
+    <path class="minor-road" d="M895 43 856 97 830 161 830 238"/>
+    <path class="minor-road" d="M1067 43 1030 95 1008 151 1025 226"/>
+    <path class="minor-road" d="M1066 268 1136 207 1214 193 1283 205 1370 191"/>
+    <path class="minor-road" d="M1064 390 1140 354 1218 354 1287 389 1370 390"/>
+    <path class="minor-road" d="M895 495 944 447 997 421 1063 390"/>
+    <path class="minor-road" d="M1141 592 1157 487"/>
+    <path class="minor-road" d="M1261 592 1258 505"/>
+    <path class="minor-road" d="M1370 95 1306 103 1248 126 1214 193"/>
+  </g>
+
+  <!-- Coarse tile index and the locally refined tiles used near route endpoints. -->
+  <g id="routing-tile-overlay">
+    <path class="tile-coarse" d="M44 43H1067V495H44ZM215 43V495M385 43V495M555 43V495M725 43V495M895 43V495M44 269H1067"/>
+
+    <!-- Start hierarchy: red tiles are inset from the coarse grid; green detail grids are inset again. -->
+    <g id="start-refined-tiles">
+      <rect class="tile-focus" x="220" y="48" width="75" height="103"/>
+      <rect class="tile-focus" x="303" y="48" width="77" height="103"/>
+      <rect class="tile-focus" x="220" y="159" width="160" height="105"/>
+      <path class="tile-coarse" d="M226 165H374V258H226ZM263 165V258M300 165V258M337 165V258M226 211.5H374"/>
+
+      <rect class="tile-focus" x="220" y="274" width="75" height="104"/>
+      <rect class="tile-focus" x="303" y="274" width="77" height="104"/>
+      <rect class="tile-focus" x="220" y="386" width="160" height="104"/>
+      <path class="tile-coarse" d="M226 280H289V372H226ZM257.5 280V372M226 326H289"/>
+    </g>
+
+    <!-- Destination hierarchy follows the same inset rule and never shares a boundary with its parent. -->
+    <g id="end-refined-tiles">
+      <rect class="tile-focus" x="730" y="48" width="75" height="103"/>
+      <rect class="tile-focus" x="813" y="48" width="77" height="103"/>
+      <rect class="tile-focus" x="730" y="159" width="160" height="105"/>
+      <path class="tile-coarse" d="M736 165H884V258H736ZM773 165V258M810 165V258M847 165V258M736 211.5H884"/>
+    </g>
+  </g>
+
+  <!-- The route remains the dominant layer and follows one continuous road centerline. -->
+  <path id="shortest-route" d="M165 399 177 366 192 351 203 348 214 356 224 386 249 420 266 398 253 333 292 231 374 259 383 210 459 232 494 232 590 258 633 296 650 296 681 254 738 205 800 263 830 238 914 211 923 164 944 119"
+    fill="none" stroke="#050505" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Labels are painted last, centered on straight road segments, and kept clear of the route and tile lines. -->
+  <g id="street-labels" font-weight="500" letter-spacing=".2" text-anchor="middle">
+    <text x="280" y="550" font-size="11.5" transform="rotate(-72.3 280 550)">Grand Avenue</text>
+    <text x="665" y="97" font-size="11.5" transform="rotate(38.9 665 97)">Wildwood Avenue</text>
+    <text x="1003" y="419" font-size="12.5" transform="rotate(-26.2 1003 419)">Boulder Lane</text>
+    <text x="1114" y="489" font-size="12" transform="rotate(-4 1114 489)">Aramon Avenue</text>
+  </g>
+
+  <!-- Endpoint labels remain readable at the 500 px display width used by the card. -->
+  <g id="start-point">
+    <use href="#pin-symbol" transform="translate(165 384) scale(.78)"/>
+    <rect x="104" y="401" width="52" height="27" rx="4" fill="#fff" stroke="#161616" stroke-width="1.5"/>
+    <text x="130" y="420" font-size="17" font-weight="700" text-anchor="middle">Start</text>
+  </g>
+  <g id="end-point">
+    <use href="#pin-symbol" transform="translate(944 99) scale(.78)"/>
+    <rect x="954" y="110" width="45" height="27" rx="4" fill="#fff" stroke="#161616" stroke-width="1.5"/>
+    <text x="976.5" y="129" font-size="17" font-weight="700" text-anchor="middle">End</text>
+  </g>
+  </g>
+</svg>
