@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="926" height="576" viewBox="0 0 926 576" role="img" aria-labelledby="title desc">
+  <title id="title">Labeled street grid beneath a geohash boundary</title>
+  <desc id="desc">A reduced San Francisco street map retains varied house footprints, neighborhood parks, principal streets, the original four-by-four boundary grid, and map attribution. Black street names with two-pixel white halos are painted above the road geometry and remain inside the map frame.</desc>
+  <metadata>Simplified street geometry derived from OpenStreetMap contributors; street names and layout follow boundary-issue.png.</metadata>
+
+  <!-- Shared map clipping and the reduced two-color map palette. -->
+  <defs>
+    <clipPath id="map-clip"><rect x="14" y="21" width="891" height="539"/></clipPath>
+    <!-- Eight compact block plans create varied neighborhoods without the original 545 KB footprint path. -->
+    <symbol id="houses-a" viewBox="0 0 42 100">
+      <g class="building"><rect x="2" y="4" width="9" height="15"/><rect x="2" y="23" width="9" height="16"/><rect x="2" y="43" width="9" height="14"/><rect x="2" y="61" width="9" height="16"/><rect x="2" y="81" width="9" height="15"/><rect x="31" y="3" width="9" height="18"/><rect x="31" y="25" width="9" height="14"/><rect x="31" y="43" width="9" height="17"/><rect x="31" y="64" width="9" height="13"/><rect x="31" y="81" width="9" height="15"/></g>
+    </symbol>
+    <symbol id="houses-b" viewBox="0 0 42 100">
+      <g class="building"><rect x="1" y="6" width="12" height="20"/><rect x="2" y="31" width="10" height="17"/><rect x="1" y="53" width="12" height="18"/><rect x="3" y="76" width="9" height="19"/><rect x="29" y="3" width="11" height="13"/><rect x="30" y="20" width="9" height="14"/><rect x="29" y="38" width="11" height="15"/><rect x="31" y="57" width="9" height="14"/><rect x="29" y="75" width="11" height="20"/></g>
+    </symbol>
+    <symbol id="houses-c" viewBox="0 0 42 100">
+      <g class="building"><rect x="2" y="5" width="8" height="14"/><rect x="17" y="3" width="9" height="17"/><rect x="32" y="6" width="8" height="14"/><rect x="3" y="29" width="10" height="15"/><rect x="17" y="27" width="8" height="18"/><rect x="30" y="30" width="10" height="14"/><rect x="2" y="54" width="9" height="16"/><rect x="17" y="55" width="10" height="14"/><rect x="32" y="53" width="8" height="18"/><rect x="4" y="79" width="8" height="16"/><rect x="18" y="77" width="8" height="18"/><rect x="31" y="80" width="10" height="14"/></g>
+    </symbol>
+    <symbol id="houses-d" viewBox="0 0 42 100">
+      <g class="building"><path d="M2 4H13V34H8V23H2ZM28 5H40V29H34V19H28Z"/><rect x="3" y="41" width="10" height="22"/><rect x="29" y="36" width="11" height="17"/><path d="M2 70H13V96H7V87H2ZM28 61H40V95H34V81H28Z"/></g>
+    </symbol>
+    <symbol id="houses-e" viewBox="0 0 42 100">
+      <g class="building"><rect x="2" y="5" width="14" height="18"/><rect x="26" y="3" width="14" height="22"/><rect x="4" y="31" width="10" height="15"/><rect x="27" y="33" width="12" height="14"/><rect x="1" y="54" width="14" height="19"/><rect x="28" y="52" width="11" height="23"/><rect x="4" y="81" width="11" height="14"/><rect x="26" y="82" width="14" height="13"/></g>
+    </symbol>
+    <symbol id="houses-f" viewBox="0 0 42 100">
+      <g class="building"><rect x="1" y="3" width="10" height="13"/><rect x="3" y="20" width="11" height="18"/><rect x="1" y="43" width="10" height="20"/><rect x="4" y="68" width="9" height="13"/><rect x="1" y="85" width="12" height="11"/><rect x="29" y="7" width="12" height="20"/><rect x="31" y="32" width="9" height="13"/><rect x="28" y="50" width="12" height="18"/><rect x="31" y="73" width="9" height="22"/></g>
+    </symbol>
+    <symbol id="houses-g" viewBox="0 0 42 100">
+      <g class="building"><path d="M2 4H16V15H11V30H2ZM27 3H40V28H34V19H27Z"/><rect x="3" y="37" width="12" height="16"/><rect x="28" y="35" width="12" height="21"/><rect x="1" y="61" width="10" height="14"/><rect x="31" y="63" width="9" height="13"/><rect x="3" y="82" width="13" height="14"/><rect x="27" y="81" width="13" height="15"/></g>
+    </symbol>
+    <symbol id="houses-h" viewBox="0 0 42 100">
+      <g class="building"><rect x="2" y="5" width="9" height="24"/><rect x="2" y="35" width="12" height="13"/><rect x="3" y="55" width="9" height="17"/><rect x="1" y="79" width="13" height="16"/><rect x="29" y="3" width="11" height="15"/><rect x="31" y="24" width="9" height="22"/><rect x="28" y="53" width="12" height="14"/><rect x="30" y="74" width="10" height="21"/></g>
+    </symbol>
+    <style>
+      .building{fill:#d5d6d5;stroke:#c5c7c6;stroke-width:.65;vector-effect:non-scaling-stroke}
+      .park{fill:#d5e5bd;stroke:#c2d8ab;stroke-width:1;vector-effect:non-scaling-stroke}
+      .park-detail{fill:#cfe2b6;stroke:#bdd3a6;stroke-width:.8;vector-effect:non-scaling-stroke}
+      .park-path{fill:none;stroke:#f1f2da;stroke-width:2;stroke-linecap:round;vector-effect:non-scaling-stroke}
+      .road-casing{fill:none;stroke:#b3b4b3;stroke-linecap:butt;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+      /* #b3b4b3 is the exact dark road grey sampled from boundary-issue.png. */
+      .grid{fill:none;stroke:#415f70;stroke-width:1.65;vector-effect:non-scaling-stroke}
+      /* The centered 4 px white stroke leaves a 2 px halo outside each black glyph. */
+      .street-label{fill:#000;stroke:#fff;stroke-width:4px;paint-order:stroke fill;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;font-family:Arial,Helvetica,sans-serif;font-size:17px;font-weight:400;letter-spacing:.15px}
+      .avenue-label{font-size:14px}
+      .attribution{fill:#fff;font-family:Arial,Helvetica,sans-serif;font-size:16.5px;font-weight:400;letter-spacing:.38px}
+    </style>
+  </defs>
+
+  <rect width="926" height="576" fill="#fff"/>
+
+  <!-- Simplified map: retain the reference crop without fine-grained cartographic detail. -->
+  <g id="map" clip-path="url(#map-clip)">
+    <rect x="14" y="21" width="891" height="539" fill="#e3e4cc"/>
+
+    <!-- Individually placed blocks align to the rotated street grid and keep at least four visible pixels from road edges. -->
+    <g id="varied-houses" transform="rotate(-3)">
+      <g id="north-houses">
+        <use href="#houses-a" x="10" y="46" width="42" height="100"/><use href="#houses-c" x="69" y="48" width="40" height="96"/>
+        <use href="#houses-f" x="127" y="46" width="41" height="98"/><use href="#houses-b" x="185" y="49" width="40" height="95"/>
+        <use href="#houses-h" x="242" y="46" width="42" height="100"/><use href="#houses-d" x="301" y="47" width="40" height="97"/>
+        <use href="#houses-e" x="359" y="49" width="40" height="95"/><use href="#houses-a" x="416" y="47" width="41" height="98"/>
+        <use href="#houses-g" x="475" y="46" width="40" height="100"/><use href="#houses-c" x="532" y="49" width="42" height="95"/>
+        <use href="#houses-b" x="591" y="47" width="40" height="98"/><use href="#houses-f" x="648" y="46" width="42" height="99"/>
+        <use href="#houses-d" x="707" y="49" width="40" height="95"/><use href="#houses-h" x="764" y="46" width="42" height="100"/>
+        <use href="#houses-e" x="823" y="48" width="40" height="97"/><use href="#houses-g" x="880" y="46" width="42" height="98"/>
+      </g>
+      <g id="upper-middle-houses">
+        <use href="#houses-d" x="11" y="167" width="40" height="96"/><use href="#houses-a" x="68" y="166" width="42" height="100"/>
+        <use href="#houses-g" x="127" y="168" width="40" height="96"/><use href="#houses-c" x="184" y="166" width="42" height="98"/>
+        <use href="#houses-e" x="243" y="169" width="40" height="95"/><use href="#houses-b" x="300" y="166" width="42" height="100"/>
+        <use href="#houses-h" x="359" y="168" width="40" height="97"/><use href="#houses-d" x="416" y="166" width="42" height="98"/>
+        <use href="#houses-f" x="475" y="169" width="40" height="95"/><use href="#houses-c" x="532" y="166" width="42" height="100"/>
+        <use href="#houses-a" x="591" y="168" width="40" height="97"/><use href="#houses-e" x="648" y="166" width="42" height="98"/>
+        <use href="#houses-g" x="707" y="169" width="40" height="95"/>
+        <use href="#houses-b" x="823" y="167" width="40" height="98"/><use href="#houses-d" x="880" y="166" width="42" height="100"/>
+      </g>
+      <g id="central-houses">
+        <use href="#houses-b" x="10" y="288" width="42" height="96"/><use href="#houses-e" x="69" y="286" width="40" height="100"/>
+        <use href="#houses-a" x="126" y="289" width="42" height="95"/><use href="#houses-g" x="185" y="286" width="40" height="98"/>
+        <use href="#houses-c" x="242" y="287" width="42" height="98"/>
+        <use href="#houses-f" x="359" y="286" width="40" height="100"/><use href="#houses-d" x="416" y="289" width="42" height="95"/>
+        <use href="#houses-h" x="475" y="286" width="40" height="98"/><use href="#houses-b" x="532" y="288" width="42" height="96"/>
+        <use href="#houses-e" x="591" y="286" width="40" height="100"/>
+        <use href="#houses-c" x="707" y="287" width="40" height="98"/><use href="#houses-a" x="764" y="289" width="42" height="95"/>
+        <use href="#houses-g" x="823" y="286" width="40" height="100"/><use href="#houses-f" x="880" y="288" width="42" height="96"/>
+      </g>
+      <g id="lower-middle-houses">
+        <use href="#houses-h" x="11" y="406" width="40" height="100"/><use href="#houses-c" x="68" y="409" width="42" height="95"/>
+        <use href="#houses-f" x="127" y="406" width="40" height="98"/>
+        <use href="#houses-b" x="242" y="408" width="42" height="96"/><use href="#houses-e" x="300" y="406" width="40" height="100"/>
+        <use href="#houses-a" x="359" y="409" width="40" height="95"/>
+        <use href="#houses-g" x="475" y="406" width="40" height="100"/><use href="#houses-d" x="532" y="408" width="42" height="96"/>
+        <use href="#houses-c" x="591" y="406" width="40" height="98"/><use href="#houses-h" x="648" y="409" width="42" height="95"/>
+        <use href="#houses-b" x="707" y="406" width="40" height="100"/><use href="#houses-f" x="764" y="408" width="42" height="96"/>
+        <use href="#houses-e" x="823" y="406" width="40" height="98"/><use href="#houses-a" x="880" y="409" width="42" height="95"/>
+      </g>
+      <g id="south-houses">
+        <use href="#houses-c" x="10" y="528" width="42" height="96"/><use href="#houses-g" x="69" y="526" width="40" height="100"/>
+        <use href="#houses-d" x="126" y="529" width="42" height="95"/><use href="#houses-a" x="185" y="526" width="40" height="98"/>
+        <use href="#houses-f" x="242" y="528" width="42" height="96"/><use href="#houses-h" x="301" y="526" width="40" height="100"/>
+        <use href="#houses-b" x="358" y="529" width="42" height="95"/><use href="#houses-e" x="417" y="526" width="40" height="98"/>
+        <use href="#houses-a" x="474" y="528" width="42" height="96"/><use href="#houses-d" x="533" y="526" width="40" height="100"/>
+        <use href="#houses-g" x="590" y="529" width="42" height="95"/><use href="#houses-c" x="649" y="526" width="40" height="98"/>
+        <use href="#houses-e" x="706" y="528" width="42" height="96"/><use href="#houses-b" x="765" y="526" width="40" height="100"/>
+        <use href="#houses-h" x="822" y="529" width="42" height="95"/><use href="#houses-f" x="881" y="526" width="40" height="98"/>
+      </g>
+    </g>
+
+    <!-- Five distinct green spaces replace selected housing blocks and maintain the same road-safe margin. -->
+    <g id="varied-parks" transform="rotate(-3)">
+      <g id="community-park">
+        <path class="park" d="M419 409Q437 405 455 411L457 491Q451 503 421 501L417 426Q416 415 419 409Z"/>
+        <path class="park-detail" d="M423 421H437V442H423ZM441 418H452V437H441Z"/>
+        <path class="park-path" d="M421 464Q438 450 454 466M431 499L435 442"/>
+      </g>
+      <g id="school-park">
+        <path class="park" d="M303 292Q317 286 338 291L340 378Q325 385 304 379L301 309Q300 299 303 292Z"/>
+        <rect class="park-detail" x="307" y="302" width="25" height="34" rx="6"/>
+        <path class="park-path" d="M306 352H335M319 339V376"/>
+      </g>
+      <g id="pocket-park">
+        <path class="park" d="M190 421L216 413Q224 429 221 457L224 488Q208 499 190 486L187 447Q185 430 190 421Z"/>
+        <circle class="park-detail" cx="205" cy="450" r="8"/><path class="park-path" d="M193 480Q204 461 218 432"/>
+      </g>
+      <g id="garden-park">
+        <path class="park" d="M769 173Q786 166 802 176L803 251Q789 263 770 255L767 195Q765 180 769 173Z"/>
+        <path class="park-detail" d="M775 184L793 181L798 198L779 202ZM776 219L797 215L799 239L778 243Z"/>
+      </g>
+      <g id="linear-park">
+        <path class="park" d="M655 292L693 289L697 378L658 383Q650 342 655 292Z"/>
+        <path class="park-path" d="M661 298Q687 326 690 374"/><circle class="park-detail" cx="673" cy="337" r="7"/>
+      </g>
+    </g>
+
+    <!-- One clean centerline replaces overlapping transit and divided-carriageway artifacts. -->
+    <g id="uniform-major-road">
+      <path id="uniform-major-road-casing" class="road-casing" d="M14 157.32L67.41 154.53L125.4 151.49L183.44 148.43L241.04 145.42L298.88 142.38L356.9 139.33L414.74 136.41L472.57 133.26L530.45 130.23L588.34 127.19L646.12 124.16L703.9 121.12L761.85 118.09L819.54 115L877.42 111.9L905 110.5" stroke-width="11"/>
+    </g>
+
+    <!-- Principal residential streets only; minor paths and service-road fragments are removed. -->
+    <path id="residential-road-casing" class="road-casing" d="M523.4 10.51L523.75 16.46L523.81 17.39L529.98 122.21L530.06 123.52L530.24 126.61L530.4 129.32L530.45 130.23M689.91 -116.45L690.14 -112.41L696.48 -4.73L696.85 1.41L697.17 6.91L699.7 49.85L701.07 73.14L703.44 113.31L703.5 114.39L703.84 120.22L703.9 121.12M111.65 -82.44L111.76 -80.63L117.99 25.41L118.36 31.75L118.74 38.24L125.03 144.82L125.34 150.58L125.4 151.49M458.55 -104.31L458.84 -99.93L465.17 7.13L465.55 13.54L465.9 19.58L472.19 126.48L472.51 132.36L472.57 133.26M227.03 -92.17L227.33 -87.17L233.97 25.69L239.39 117.47L240.69 139.14L240.99 144.51L241.04 145.42M400.75 -101.28L401.08 -96.57L402.63 -70.06L405.58 -19.77L407.31 10.1L407.69 16.58L408.04 22.51L413.22 110.42L414.36 129.56L414.69 135.4L414.74 136.41M284.86 -95.2L285.13 -90.63L285.18 -89.76L291.47 16.8L291.81 22.66L292.13 28.07L298.5 135.95L298.82 141.48L298.88 142.38M574.34 -110.38L574.58 -106.37L580.4 -7.72L580.47 -6.46L580.6 -4.29L580.96 1.93L581.29 7.47L581.63 13.26L587.87 119.24L587.95 120.47L588.29 126.28L588.34 127.19M342.87 -98.24L343.1 -94.39L349.38 12.22L349.46 13.58L349.82 19.61L350.14 25.2L356.47 131.81L356.53 132.91L356.81 138.43L356.9 139.33M754.75 -1.63L755.07 3.87L755.6 12.97L756.18 21.87L761.35 110.5L761.43 111.57L761.75 117.18L761.85 118.09M169.28 -89.14L169.58 -84.07L172.54 -34.66L175.86 22.37L176.23 28.72M863.63 -125.56L863.91 -120.82L863.92 -120.54L870.19 -14.03L870.55 -7.71L870.95 -0.91L877.16 104.63L877.2 105.25L877.42 108.97M53.37 -83.05L53.62 -78.81L53.68 -77.8L59.95 28.39L60.33 34.8M2.5 37.83L2.18 31.54L-0.67 -15.78M956.47 467.86L950.74 468.36L903.64 470.83L898.67 471.08L893.5 471.35L846.74 473.81L840.84 474.12L833.87 474.48L788.38 476.86L782.97 477.15L776.5 477.49L730.32 479.9L725.05 480.18L719 480.49L672.81 482.91L667.28 483.2L661.15 483.52L614.53 485.97L609.5 486.23L603.58 486.54L556.98 488.98L551.6 489.27L545.55 489.58L499.16 492.01L493.74 492.29L487.54 492.62L464.8 493.81L441.13 495.05L435.86 495.32L429.41 495.66L384.13 498.04L378 498.36L371.64 498.69L320.06 501.39L267.89 504.13L262.21 504.42L256.04 504.74L209.46 507.18L204.44 507.44L198.41 507.76L151.27 510.23L146.48 510.49L140.43 510.8L93.62 513.25L88.6 513.51L82.76 513.82L35.83 516.29L30.76 516.55L24.42 516.88L12.11 517.52L6.02 517.84M2.5 37.83L2.89 43.96L2.98 45.52L9.16 150.43L9.2 151.3L9.32 153.42L9.51 156.65L9.57 157.57M632.09 -113.41L632.38 -109.24L637.7 -18.34L638.69 -1.61L639.05 4.44L639.36 9.76L645.65 115.93L645.75 117.43L646.07 123.25L646.12 124.16M356.9 139.33L356.92 140.24L357.24 145.78L363.57 253.02L363.91 259.04L364.26 264.77L365.91 292.14L369.27 349.26L370.57 371.97L370.96 378.68L371.3 384.4L373.51 421.61L375.49 455.29L377.62 491.78L378 498.36L378.34 504.01L382.51 574.79L384.57 609.92L385.06 618.09L385.48 625.21L391.73 731.43L391.94 735L392.11 737.82L392.42 743.15L398.74 850.57L399.14 857.24L399.49 863.21L405.8 970.42L406.19 976.93M1006.56 344.99L1001.12 345.27L988.62 345.87L968.6 346.85L954.4 347.52L949.17 347.76L943.19 348.12L920.49 349.48L897.49 350.97L891.66 351.34L885.11 351.68L833.83 354.37L781.9 357.1L775.91 357.41L769.48 357.75L723.55 360.17L718 360.46L712.04 360.77L665.54 363.21L660.22 363.49L654.16 363.81L608.06 366.23L602.49 366.52L596.27 366.85L550.17 369.27L544.54 369.56L538.08 369.9L491.89 372.33L486.72 372.6L480.48 372.93L476.75 373.12L449.46 374.55L434.06 375.36L428.82 375.64L422.64 375.96L376.88 378.37L370.96 378.68L364.13 379.04L318.23 381.44L313 381.71L307.33 382.01L260.57 384.47L255.15 384.75L249.21 385.07L202.99 387.49L197.39 387.78L190.91 388.12L144.22 390.57L139.46 390.82L133.05 391.16L86.4 393.61L81.53 393.87L75.59 394.18L29.03 396.63L23.69 396.91L17.32 397.24L5.27 397.87L-1.04 398.2M-30.53 39.56L-22.21 39.13M-22.21 39.13L-20.14 39.02M847.87 593.86L848.31 601.22L854.54 706.8L854.78 710.81L854.91 713.57L855.26 719.47L861.55 826.53L861.92 832.97L862.27 838.82L868.57 946.07L868.96 952.71L869.31 958.56L875.62 1066.09L875.99 1072.39L876.33 1078.08L882.67 1185.93L883.03 1192.18L883.35 1197.58L888.58 1286.59L888.81 1290.47L889.6 1304.09L889.67 1305.19L889.89 1308.81L889.99 1310.65L890.05 1311.69L890.11 1312.71L890.27 1315.5L890.41 1318.27L896.68 1424.43L897.09 1431.38L897.4 1436.61L897.43 1437.26L903.75 1544.76L904.11 1550.93M805.78 -122.53L806.05 -118.03L806.15 -116.29L811.5 -25.21L811.61 -23.31L811.92 -18.03L812.35 -10.64L812.7 -4.67L813.07 1.55L819.3 107.55L819.33 108.23L819.54 111.73M790.03 596.89L790.46 604.12L790.52 605.2L796.72 710.05L796.93 713.58L797.09 716.61L797.4 721.99L803.7 828.8L804.12 836L804.47 841.91L811.18 955.74M16.64 277.26L-1.4 278.21L-2.12 278.25L-8.09 278.56M928.34 -10.74L928.73 -4.17L930.1 19.16L932.64 62.45L934.93 101.29L935.02 102.64L935.19 105.83M-8.09 278.56L-16.42 279M-16.42 279L-22.56 279.32L-23.63 279.38L-41.09 280.29M-9.37 398.64L-15.72 398.97L-34.03 399.94L-91.93 402.98L-145.25 405.78L-149.87 406.02L-155.44 406.31L-202.65 408.79L-207.7 409.05L-213.36 409.35L-260.89 411.85L-265.47 412.08L-271.12 412.38L-318.42 414.86L-323.41 415.12L-329.02 415.42L-334.63 415.71L-344.18 416.21L-376.17 417.9L-381.25 418.17L-386.89 418.46L-439.17 421.21L-497.01 424.24L-554.8 427.28L-612.69 430.31L-670.63 433.35L-723.36 436.14L-728.34 436.5M-1.04 398.2L-9.37 398.64M-26.97 519.57L-32.26 519.85L-77.47 522.22L-80.1 522.36L-84.88 522.61L-89.99 522.88L-91.31 522.95L-134.39 525.19L-142.81 525.63L-148.71 525.94L-200.63 528.66L-258.41 531.69L-316.35 534.73L-374.2 537.75L-432.1 540.79L-489.96 543.82L-547.76 546.85L-605.63 549.88L-663.56 552.91L-712.79 555.49L-717.22 555.69M6.02 517.84L-2.31 518.28M-55.21 40.86L-38.05 39.96L-37.04 39.9L-30.53 39.56M2.5 37.83L8.42 37.53L54.38 35.11L60.33 34.8M877.42 108.97L877.54 111.1L877.58 111.9L877.63 112.91L877.81 115.9M819.95 118.63L820.12 121.49L820.19 122.07L820.25 123.7L826.46 228.77L826.81 234.76L827.15 240.47L827.2 241.99L833.83 354.37L834.22 361.53L840.41 466.89L840.84 474.12L841.2 480.37L841.26 481.34L846.64 572.84L846.75 574.81L847.39 585.66L847.87 593.86M-48.14 160.59L-48.08 161.51L-47.91 164.53L-47.76 167.01L-47.69 168.26L-41.53 272.75L-41.09 280.29L-40.63 287.97L-34.45 392.81L-34.03 399.94L-33.59 407.33L-27.39 512.51L-27.32 513.61L-26.97 519.57L-26.66 524.84L-26.53 526.92L-20.42 630.69L-20.37 631.47L-19.91 639.3L-19.48 646.49L-19.38 648.2L-13.28 751.73L-13.21 752.81L-12.84 759.04L-12.52 764.43L-12.42 766.3L-6.23 871.14L-6.17 872.18L-5.8 878.48L-5.46 884.22L-5.36 885.93L-5.11 890.21L-4.18 905.94L0.84 991.01L0.91 992.13L1.26 998.12L1.58 1003.54L1.7 1005.61L7.88 1110.33L7.96 1111.78L8.32 1117.88L8.65 1123.4L8.74 1124.93L14.95 1230.27L15.38 1237.55L15.83 1245.17L18.63 1292.72L21.99 1349.64L22.06 1350.73L22.25 1353.06M68.48 172.64L74.03 266.71L74.08 267.65L74.47 274.23L74.82 280.16L74.92 281.93L81.07 386.05L81.15 387.36L81.53 393.87L81.89 399.87L82 401.75L88.19 506.47L88.22 507.08L88.6 513.51L88.96 519.6L89.05 521.23L95.12 623.84L95.18 624.99L95.23 625.68L95.67 633.25L96.1 640.48L96.19 641.97L102.74 752.99L109.42 866.2L109.79 872.41L110.11 877.84L110.14 878.33L116.49 985.71L116.86 992.07L117.18 997.45L117.22 998.13L123.49 1104.35L123.53 1105.09L123.93 1111.83L124.27 1117.51L124.37 1119.1L130.54 1223.78L130.59 1224.53L131 1231.5L131.34 1237.41L131.46 1239.32L137.59 1343.14L137.67 1344.44L137.99 1350.03L138.05 1351.05L138.11 1352.05L138.43 1357.29L144.76 1464.44L145.13 1470.79L145.46 1476.33L151.74 1582.84L151.81 1583.98L152.18 1590.15M125.94 160.7L132.04 264.62L132.43 271.19L132.78 277.19L135.17 317L137.6 358.5L139.07 384.12L139.46 390.82L139.81 396.76L146.09 503.82L146.48 510.49L146.85 516.58L153.09 622.01L153.59 630.4M60.33 34.8L60.7 41.01L66.96 147.02L67.03 147.78L67.35 153.62L67.41 154.53M176.23 28.72L170.02 29.05L124.15 31.45L118.36 31.75L111.77 32.1L66.17 34.49L60.33 34.8M176.23 28.72L176.6 34.8L183.07 142.16L183.38 147.5L183.44 148.43M183.44 148.43L183.48 149.31L183.78 154.75L190.01 262.03L190.34 268.15L190.7 273.8L197.01 381.21L197.39 387.78L197.72 393.51L204.06 500.96L204.44 507.44L204.79 513.28L211 618.14L211.04 618.88L211.08 619.52L211.5 627.18L211.95 634.22L212.03 635.56L218.23 740.58L218.44 744.06L218.56 746.92L218.86 752.08L225.22 859.86L225.59 866.34L225.9 871.58L225.93 872.07L232.26 979.5L232.65 986.02L232.99 991.8L239.32 1099.27L239.7 1105.76L240.03 1111.25L246.36 1218.72L246.76 1225.45L247.1 1231.17L253.39 1337.91L253.42 1338.45L253.74 1343.97L253.8 1345L253.86 1346L254.17 1351.26L254.24 1352.33L260.46 1458.06L260.86 1464.72L261.19 1470.41L267.44 1576.46L267.89 1584.08L268.25 1589.96L268.33 1591.56L270.42 1627.03L270.53 1628.85L270.92 1635.6M241.04 145.42L241.1 146.32L241.45 151.73L247.8 259.11L248.1 265.12L248.51 271.42L254.76 378.13L255.15 384.75L255.51 390.9L261.82 497.75L262.21 504.42L262.57 510.43L268.76 615.35L268.79 616.01L269.27 624.16L269.68 631.02L269.71 631.47L269.78 632.68L275.93 737L276.17 741.13L276.33 743.89L276.69 749.98L282.98 856.67L283.37 863.31L283.73 869.33L290.04 976.28L290.44 982.99L290.8 989.14L297.11 1096.12L297.49 1102.72L297.85 1108.69L304.15 1215.55L304.56 1222.42L304.89 1228.24L310.15 1319.36L310.2 1320.17L311.07 1335.43L311.39 1340.95L311.45 1341.98L311.51 1342.97L311.86 1348.24L318.27 1455.14L318.67 1461.69L319.02 1467.66L325.28 1573.77L325.33 1574.73L325.71 1581.12M298.88 142.38L298.93 143.29L299.25 148.82L305.61 255.85L305.94 262.08L306.3 267.56L312.62 375.26L313 381.71L313.35 387.76L320.06 501.39L324.44 575.69L325.66 596.37L326.63 612.83L327.12 621.13L327.52 627.89L327.55 628.35L333.82 734.08L334.06 738.08L334.19 740.85L334.54 746.88L340.83 853.49L341.23 860.27L341.59 866.28L347.91 973.49L348.29 979.96L348.63 985.67L354.98 1093.25L355.36 1099.7L355.7 1105.42L362.02 1212.59L362.42 1219.4L362.77 1225.32L369.05 1331.76L369.09 1332.39L369.41 1337.91L369.47 1338.94L369.53 1339.94L369.84 1345.2L369.91 1346.45L376.15 1452.09L376.53 1458.66L376.86 1464.17L383.18 1571.27L383.19 1572.08L383.59 1574.71L384.04 1576.53L384.61 1577.99L385.26 1579.49L385.75 1580.83L386.16 1582.32L386.43 1584.26L386.46 1585.09L386.22 1587.23L385.25 1591.32L384.21 1595.2L383.14 1599.64L382.2 1603.79L381.44 1607.58L380.62 1611.91L379.9 1616L379.22 1620.21L378.64 1624.51L378.06 1629.18L377.59 1633.92L376.61 1649.93M414.74 136.41L414.79 137.2L414.92 139.3L415.12 142.74L416.32 163.12L421.45 249.9L421.78 256.01L422.14 261.7L428.43 369.04L428.82 375.64L429.17 381.55L431.25 416.92L435.48 488.72L435.86 495.32L436.23 501.48L442.4 606.38L442.44 607.02L442.91 615.06L443.31 621.8L443.34 622.31L443.42 623.59L449.6 728.07L449.83 732.04L449.96 734.79L450.32 740.96L456.61 847.81L456.98 854.21L457.35 860.32L463.64 967.32L464.03 973.9L464.38 979.86L470.67 1086.87L471.07 1093.63L471.46 1100.16L477.71 1206.35L478.12 1213.36L478.51 1219.25L484.74 1325.77L484.77 1326.33L485.1 1331.85L485.16 1332.88L485.21 1333.89L485.52 1339.14L485.59 1340.22L486.01 1347.47L486.37 1353.51L491.8 1445.8L492.2 1452.59M473.62 151.15L479.29 246.95L479.64 252.97L479.98 258.71L486.33 365.98L486.72 372.6L487.05 378.36L489.05 412.84L493.35 485.71L493.74 492.29L494.1 498.41L500.33 603.93L500.8 612.03L501.23 619.25L507.72 728.96L507.87 731.75L508.44 741.45L510.28 772.73L513.59 828.79L514.57 845.45L514.91 851.18L515.21 856.23L520.52 946.32L521.57 964.14L521.97 970.87L522.3 976.62L528.61 1084.05L528.77 1086.82M530.45 130.23L530.5 131.13L530.83 136.65L530.88 137.51L537.12 242.59L537.18 244.05L537.5 249.93L537.86 255.63L537.98 256.85L544.15 362.65L544.17 362.99L544.54 369.56L544.9 375.42L544.95 376.32L551.21 482.75L551.6 489.27L551.94 495.03L558.11 599.95L558.16 600.67L558.65 609L559.08 616.21L559.15 617.39L565.55 725.76L565.7 728.73M588.34 127.19L588.4 128.09L588.73 133.67L588.86 135.05L595 239.33L595.07 240.9L595.4 246.9L595.75 252.6L595.87 253.86L602.1 359.85L602.49 366.52L602.85 372.64L609.13 479.89L609.5 486.23L609.83 491.86L615.15 582.03L615.19 582.71L615.44 586.14L616.05 596.96L616.09 597.73L616.56 605.97L616.99 613.27L617.05 614.29L623.49 722.85L623.62 725.69M646.12 124.16L646.16 125.06L646.5 130.63L646.58 131.92L652.85 238.06L653.2 243.86L653.54 249.74L659.83 356.86L660.22 363.49L660.57 369.52L666.9 476.71L667.28 483.2L667.63 489.19L672.79 579.38L673.81 594.81L674.34 602.94L674.78 610.22L681.06 716.23L681.26 719.62L681.4 722.66M703.9 121.12L703.95 122.03L704.28 127.59L704.34 128.45L710.63 234.95L710.98 240.84L711.36 246.64L717.63 354.12L718 360.46L718.35 366.48L724.67 473.41L725.05 480.18L725.42 486.15L730.47 572.1L731.35 586.67L731.63 591.56L732.1 599.92L732.53 607.13L738.8 713.49L739.01 716.77L739.15 719.63L739.43 725.28L739.72 729.28L741.44 758.59L746.19 839.04L752.85 952.21L753.24 958.77L753.59 964.79L759.99 1072.74L760.29 1078.46L760.65 1083.91L762.03 1107.24L767.04 1192L767.4 1198.19L767.72 1203.67L774.08 1311.39L774.47 1316.71L774.49 1317.73L774.54 1318.72L774.75 1324.1L781.02 1430.41L781.43 1437.43L781.78 1443.29L788.47 1556.93L795.43 1675.12M761.85 118.09L761.86 118.99L762.19 124.54L768.35 229.16L768.51 231.53L768.87 237.79L769.22 243.86L775.38 348.4L775.48 349.77L775.52 350.46L775.91 357.41L776.31 363.75L776.35 364.26L782.36 466.73L782.56 470.17L782.97 477.15L783.34 483.35L788.62 572.99L789.41 586.49L789.47 587.46L789.54 588.59L790.03 596.89M-2.31 518.28L-8.46 518.6M472.57 133.26L472.62 134.17L473 139.89L473.62 151.15M125.4 151.49L125.45 152.39L125.77 157.8L125.94 160.7M67.41 154.53L67.46 155.43L67.78 160.85L67.89 162.71L68.48 172.64M-8.46 518.6L-22.12 519.31L-26.97 519.57M884.61 231.72L879.1 232.01L832.72 234.45L826.81 234.76L821.18 235.05L774.67 237.49L768.87 237.79L763.25 238.09L737.46 239.44L716.89 240.53L710.98 240.84L705.43 241.12L658.8 243.57L653.2 243.86L647.35 244.17L601.37 246.59L595.4 246.9L589.61 247.2L543.4 249.63L537.5 249.93L531.74 250.24L485.63 252.66L479.64 252.97L474.31 253.25L427.53 255.7L421.78 256.01L416.26 256.29L369.75 258.73L363.91 259.04L358.21 259.34L311.65 261.79L305.94 262.08L300.33 262.38L254.5 264.78L248.1 265.12L243 265.39L196.04 267.86L190.34 268.15M884.61 231.72L884.99 237.67L885.07 238.6L891.26 344.47L891.66 351.34L892.07 358.22L898.34 465.17L898.67 471.08L899.02 476.74L904.27 566.47L905.34 583.94L905.71 590.9L906.12 597.03L912.4 704.1L912.61 707.74L912.73 710.54L913.06 716.11L919.36 823.42L919.75 829.95L920.11 836.07L926.39 943.19L926.78 949.69L927.12 955.45L933.41 1062.57L933.81 1069.36L934.17 1075.43L940.85 1189.16L941.14 1194.25L947.41 1301.47L947.47 1302.51L947.72 1305.91M79.96 1350.04L79.8 1347.3L79.77 1346.84L78.68 1328.41L73.55 1241.36L73.14 1234.52L72.7 1227.13L66.51 1122.25L66.08 1114.86L65.61 1107.01L59.44 1002.55L59 995.1L58.57 987.76L52.4 883.11L51.95 875.45L51.51 868.17L45.33 763.37L45.23 761.83L44.89 756.02L44.5 749.35L44.45 748.54L38.33 644.88L38.26 643.6L37.82 636.28L37.35 628.19L37.32 627.65L31.2 524.04L31.11 522.61L30.76 516.55L30.38 510.16L30.34 509.51L24.15 404.56L24.04 402.71L23.69 396.91L23.31 390.49L23.26 389.61L17.09 284.96L16.64 277.26L16.21 269.98L14.12 234.44L11.83 195.8L10.01 165.14L9.94 163.89L9.62 158.48L9.57 157.57M-20.14 39.02L-15.66 38.78L-14.45 38.72L-6.34 38.29L2.5 37.83M935.19 105.83L935.32 108.08L935.36 108.8L935.43 109.88L935.59 112.5M935.59 112.5L935.76 115.63L935.83 116.22L937.9 151.33L940.03 187.29L942.05 222.32L942.42 228.69M877.81 115.9L877.96 118.45L878.04 119.12L884.25 224.41L884.27 225.47L884.61 231.72M819.54 111.73L819.69 114.14L819.73 115L819.79 115.95L819.95 118.63M190.34 268.15L184.72 268.45L137.62 270.92L132.43 271.19L126.41 271.5L97.11 273.04L79.98 273.94L74.47 274.23L68.73 274.53L21.55 277.01L16.64 277.26M523.4 10.51L519.69 10.7L517.04 10.84L470.92 13.26L465.55 13.54L459.22 13.88L413.37 16.28L407.69 16.58L401.39 16.91L356.95 19.24L354.69 19.36L349.82 19.61L344.23 19.91L341.86 20.03L296.69 22.4L291.81 22.66L286.41 22.94L233.97 25.69L181.38 28.45L176.23 28.72M942.42 228.69L936.65 228.98L913.58 230.2M913.58 230.2L890.51 231.42L884.61 231.72" stroke-width="8"/>
+  </g>
+
+  <!-- The original grid geometry remains; the former green cell fills and all cell names are absent. -->
+  <g id="geohash-grid" class="grid" aria-hidden="true">
+    <path d="M237.5 21V560M460.5 21V560M683.5 21V560"/>
+    <path d="M14 155.5H905M14 290H905M14 423.5H905"/>
+  </g>
+
+  <!-- Painted after roads and grid; the clip is a final safeguard against labels leaving the map frame. -->
+  <g id="street-names" class="street-label" clip-path="url(#map-clip)" aria-label="Street names">
+    <g id="east-west-street-names">
+      <text x="235" y="151" text-anchor="middle" transform="rotate(-3 235 151)">Judah Street</text>
+      <text x="738" y="124" text-anchor="middle" transform="rotate(-3 738 124)">Judah Street</text>
+      <text x="235" y="271" text-anchor="middle" transform="rotate(-3 235 271)">Kirkham Street</text>
+      <text x="738" y="244" text-anchor="middle" transform="rotate(-3 738 244)">Kirkham Street</text>
+      <text x="235" y="391" text-anchor="middle" transform="rotate(-3 235 391)">Lawton Street</text>
+      <text x="738" y="364" text-anchor="middle" transform="rotate(-3 738 364)">Lawton Street</text>
+      <text x="767" y="483" text-anchor="middle" transform="rotate(-3 767 483)">Moraga Street</text>
+    </g>
+
+    <!-- Avenue baselines follow their road centerlines; a small normal offset visually centers each glyph over its road. -->
+    <g id="avenue-names" class="avenue-label">
+      <text x="121" y="160" transform="rotate(87 121 160)">34th Avenue</text>
+      <text x="79" y="430" transform="rotate(87 79 430)">35th Avenue</text>
+      <text x="195" y="430" transform="rotate(87 195 430)">33rd Avenue</text>
+      <text x="253" y="430" transform="rotate(87 253 430)">32nd Avenue</text>
+      <text x="311" y="430" transform="rotate(87 311 430)">31st Avenue</text>
+      <text x="427" y="425" transform="rotate(87 427 425)">29th Avenue</text>
+      <text x="489" y="430" transform="rotate(87 489 430)">28th Avenue</text>
+      <text x="547" y="425" transform="rotate(87 547 425)">27th Avenue</text>
+      <text x="605" y="420" transform="rotate(87 605 420)">26th Avenue</text>
+      <text x="664" y="415" transform="rotate(87 664 415)">25th Avenue</text>
+      <text x="700" y="145" transform="rotate(87 700 145)">24th Avenue</text>
+    </g>
+  </g>
+
+  <!-- Keep the black attribution box and its text exactly as requested. -->
+  <g id="map-attribution">
+    <rect x="253" y="535" width="652" height="25" fill="#050505"/>
+    <text class="attribution" x="255" y="555">Map tiles by Stamen Design, under CC BY 3.0. Data © OpenStreetMap contributors.</text>
+  </g>
+
+  <!-- Thin frame retains the reference canvas and crop boundary. -->
+  <rect x="14" y="21" width="891" height="539" fill="none" stroke="#728998" stroke-width="1"/>
+</svg>
