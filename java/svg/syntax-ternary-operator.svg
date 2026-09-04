@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="title description">
+  <title id="title">One arm of a conditional expression runs, but both arms decide its type</title>
+  <desc id="description">The left panel shows that only the selected arm is evaluated, so a call in the untaken arm never happens. The right panel shows that the compiler combines the types of both arms by binary numeric promotion, so an int and a double arm make the whole expression a double. The bottom row shows the resulting trap: mixing an Integer arm with an int arm makes the type int and unboxes a null into a NullPointerException, while keeping both arms boxed returns null safely.</desc>
+
+  <!-- Shared styles. Colour lives in classes because a class fill would override a fill attribute. -->
+  <defs>
+    <style>
+      .heading { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #202124; }
+      .body { font-family: Arial, Helvetica, sans-serif; fill: #303840; }
+      .muted { font-family: Arial, Helvetica, sans-serif; fill: #5f6872; }
+      .mono { font-family: Menlo, Consolas, "Liberation Mono", monospace; fill: #303840; }
+      .mono-dim { font-family: Menlo, Consolas, "Liberation Mono", monospace; fill: #8a939e; }
+      .light { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #ffffff; }
+      .blue { fill: #356eb3; }
+      .purple { fill: #744b91; }
+      .green { fill: #34834b; }
+      .red { fill: #a8322b; }
+    </style>
+  </defs>
+
+  <rect id="background" width="1200" height="720" fill="#ffffff"/>
+  <text x="600" y="42" text-anchor="middle" class="heading" font-size="28">One arm runs — but both arms decide the type</text>
+  <text x="600" y="74" text-anchor="middle" class="muted" font-size="17">That single rule explains every surprise the conditional operator produces.</text>
+
+  <!-- Left panel: evaluation. The untaken arm is drawn dashed and dimmed because it never executes. -->
+  <rect x="45" y="100" width="545" height="330" rx="16" fill="#eef5ff" stroke="#356eb3" stroke-width="3"/>
+  <rect x="45" y="100" width="545" height="46" rx="16" fill="#356eb3"/>
+  <rect x="45" y="130" width="545" height="16" fill="#356eb3"/>
+  <text x="317" y="132" text-anchor="middle" class="light" font-size="18">AT RUNTIME: ONE ARM RUNS</text>
+
+  <text x="317" y="184" text-anchor="middle" class="mono" font-size="19">flag ? bump() : 0</text>
+  <text x="317" y="210" text-anchor="middle" class="muted" font-size="15">when flag is false</text>
+
+  <rect x="80" y="228" width="210" height="64" rx="12" fill="#ffffff" stroke="#8a939e" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="185" y="256" text-anchor="middle" class="mono-dim" font-size="17">bump()</text>
+  <text x="185" y="279" text-anchor="middle" class="muted" font-size="14">never called</text>
+
+  <rect x="320" y="228" width="210" height="64" rx="12" fill="#edf8f0" stroke="#34834b" stroke-width="3"/>
+  <text x="425" y="256" text-anchor="middle" class="mono" font-size="17">0</text>
+  <text x="425" y="279" text-anchor="middle" class="muted" font-size="14">evaluated</text>
+
+  <rect x="80" y="306" width="450" height="40" rx="10" fill="#ffffff" stroke="#a9c5e2" stroke-width="2"/>
+  <text x="305" y="333" text-anchor="middle" class="body" font-size="16">the untaken arm has no side effects</text>
+
+  <rect x="80" y="358" width="450" height="52" rx="12" fill="#ffffff" stroke="#356eb3" stroke-width="3"/>
+  <text x="305" y="391" text-anchor="middle" class="mono blue" font-size="19" font-weight="bold">result: 0</text>
+
+  <!-- Right panel: typing. Both arms are combined before either has run. -->
+  <rect x="610" y="100" width="545" height="330" rx="16" fill="#faf8fc" stroke="#744b91" stroke-width="3"/>
+  <rect x="610" y="100" width="545" height="46" rx="16" fill="#744b91"/>
+  <rect x="610" y="130" width="545" height="16" fill="#744b91"/>
+  <text x="882" y="132" text-anchor="middle" class="light" font-size="18">AT COMPILE TIME: BOTH ARMS COUNT</text>
+
+  <text x="882" y="184" text-anchor="middle" class="mono" font-size="19">true ? 1 : 2.0</text>
+  <text x="882" y="210" text-anchor="middle" class="muted" font-size="15">neither arm has run yet</text>
+
+  <rect x="645" y="228" width="210" height="64" rx="12" fill="#ffffff" stroke="#b7a4c5" stroke-width="2"/>
+  <text x="750" y="256" text-anchor="middle" class="mono" font-size="17">1</text>
+  <text x="750" y="279" text-anchor="middle" class="muted" font-size="14">int</text>
+
+  <rect x="885" y="228" width="210" height="64" rx="12" fill="#ffffff" stroke="#b7a4c5" stroke-width="2"/>
+  <text x="990" y="256" text-anchor="middle" class="mono" font-size="17">2.0</text>
+  <text x="990" y="279" text-anchor="middle" class="muted" font-size="14">double</text>
+
+  <rect x="645" y="306" width="450" height="40" rx="10" fill="#ffffff" stroke="#b7a4c5" stroke-width="2"/>
+  <text x="870" y="333" text-anchor="middle" class="body" font-size="16">binary numeric promotion makes it double</text>
+
+  <rect x="645" y="358" width="450" height="52" rx="12" fill="#ffffff" stroke="#744b91" stroke-width="3"/>
+  <text x="870" y="391" text-anchor="middle" class="mono purple" font-size="19" font-weight="bold">result: 1.0 — not 1</text>
+
+  <!-- Bottom row: the trap that follows from the typing rule, and the one-word fix. -->
+  <text x="600" y="470" text-anchor="middle" class="heading" font-size="19">The trap this creates, and the fix</text>
+
+  <rect x="45" y="490" width="545" height="200" rx="16" fill="#fff5f4" stroke="#a8322b" stroke-width="3"/>
+  <text x="75" y="524" class="heading red" font-size="17">MIXING Integer WITH int</text>
+  <text x="75" y="556" class="mono" font-size="16">Integer x = null;</text>
+  <text x="75" y="582" class="mono" font-size="16">Integer r = true ? x : 0;</text>
+  <text x="75" y="618" class="body" font-size="15">arms are Integer and int, so the type is int</text>
+  <text x="75" y="644" class="body" font-size="15">x must be unboxed to reach that type</text>
+  <text x="75" y="674" class="heading red" font-size="16">NullPointerException</text>
+
+  <rect x="610" y="490" width="545" height="200" rx="16" fill="#edf8f0" stroke="#34834b" stroke-width="3"/>
+  <text x="640" y="524" class="heading green" font-size="17">KEEPING BOTH ARMS BOXED</text>
+  <text x="640" y="556" class="mono" font-size="16">Integer x = null;</text>
+  <text x="640" y="582" class="mono" font-size="16">Integer r = true ? x : Integer.valueOf(0);</text>
+  <text x="640" y="618" class="body" font-size="15">arms are Integer and Integer, so the type</text>
+  <text x="640" y="644" class="body" font-size="15">is Integer and nothing is unboxed</text>
+  <text x="640" y="674" class="heading green" font-size="16">r is null, no exception</text>
+</svg>
