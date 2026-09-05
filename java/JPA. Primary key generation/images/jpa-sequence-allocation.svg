@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="806" viewBox="0 0 1400 806" role="img" aria-labelledby="diagram-title diagram-description">
+  <title id="diagram-title">Two pods get separate ID pools from one database sequence</title>
+  <desc id="diagram-description">Read this sequence diagram from top to bottom. Two Java microservice pods, M1 and M2, use Hibernate pooled-lo with allocation size five and the same fresh PostgreSQL book_seq sequence, which starts at one and increments by five with cache one. M1 calls nextval and receives the single number one, then calculates its local ID pool one through five. M2 calls nextval and receives six, then calculates its separate pool six through ten. M2 can assign six while M1 still has two through five unused. The arrows show ID allocation, not entity inserts.</desc>
+
+  <!-- Shared visual system: blue and purple identify the pods; orange identifies the shared sequence; green identifies usable ID pools. -->
+  <defs>
+    <style>
+      .heading { font-family: Inter, Arial, sans-serif; font-weight: 700; fill: #17212b; }
+      .body { font-family: Inter, Arial, sans-serif; fill: #2f3a45; }
+      .muted { font-family: Inter, Arial, sans-serif; fill: #596673; }
+      .mono { font-family: "SFMono-Regular", Consolas, monospace; fill: #23303d; }
+      .light { font-family: Inter, Arial, sans-serif; font-weight: 700; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <!-- Title and configuration establish the exact optimizer and database assumptions before the first call. -->
+  <rect id="background" width="1400" height="806" fill="#ffffff"/>
+  <text x="700" y="45" text-anchor="middle" class="heading" font-size="31">Two pods get separate ID pools from one sequence</text>
+  <text x="700" y="78" text-anchor="middle" class="muted" font-size="18">Hibernate pooled-lo: each returned number starts a block of 5 IDs · Read from top to bottom</text>
+  <rect x="36" y="101" width="1328" height="43" rx="9" fill="#fff7ef" stroke="#b56032" stroke-width="1.5"/>
+  <text x="700" y="129" text-anchor="middle" class="body" font-size="17">Both pods: allocationSize = 5 · Fresh PostgreSQL book_seq: START WITH 1, INCREMENT BY 5, CACHE 1 (default)</text>
+
+  <!-- Three participant headers start the vertical lifelines. Local-state boxes below intentionally cover their own lifeline. -->
+  <g id="participants">
+    <rect x="110" y="168" width="300" height="67" rx="10" fill="#356da8"/>
+    <text x="260" y="196" text-anchor="middle" class="light" font-size="21">M1 · Java microservice</text>
+    <text x="260" y="219" text-anchor="middle" class="light" font-size="15">Pod 1 · Hibernate</text>
+    <rect x="510" y="168" width="380" height="67" rx="10" fill="#b56032"/>
+    <text x="700" y="196" text-anchor="middle" class="light" font-size="21">Shared database sequence</text>
+    <text x="700" y="219" text-anchor="middle" class="light" font-size="15">PostgreSQL · book_seq</text>
+    <rect x="990" y="168" width="300" height="67" rx="10" fill="#7651a5"/>
+    <text x="1140" y="196" text-anchor="middle" class="light" font-size="21">M2 · Java microservice</text>
+    <text x="1140" y="219" text-anchor="middle" class="light" font-size="15">Pod 2 · Hibernate</text>
+    <path id="m1-lifeline" d="M260 235V670" fill="none" stroke="#9aa6b2" stroke-width="2" stroke-dasharray="7 7"/>
+    <path id="sequence-lifeline" d="M700 235V670" fill="none" stroke="#9aa6b2" stroke-width="2" stroke-dasharray="7 7"/>
+    <path id="m2-lifeline" d="M1140 235V670" fill="none" stroke="#9aa6b2" stroke-width="2" stroke-dasharray="7 7"/>
+  </g>
+
+  <!-- The time arrow sits outside every message route and makes the reading direction explicit. -->
+  <g id="time-direction">
+    <text x="60" y="254" text-anchor="middle" class="muted" font-size="14">TIME</text>
+    <path id="time-arrow-shaft" data-connector="true" d="M60 270V637" fill="none" stroke="#9aa6b2" stroke-width="2.5"/>
+    <polygon points="52,636 60,650 68,636" fill="#9aa6b2"/>
+  </g>
+
+  <!-- First round trip: manual arrowheads stop just before the target lifeline. Each shaft ends inside its triangle base. -->
+  <g id="m1-allocation">
+    <text x="480" y="268" text-anchor="middle" class="mono" font-size="17">1 · SELECT nextval('book_seq')</text>
+    <path id="m1-request-shaft" data-connector="true" d="M264 283H681" fill="none" stroke="#356da8" stroke-width="3"/>
+    <polygon points="680,275 695,283 680,291" fill="#356da8"/>
+    <text x="480" y="321" text-anchor="middle" class="body" font-size="18">returns 1 (one number)</text>
+    <path id="m1-response-shaft" data-connector="true" d="M696 336H279" fill="none" stroke="#356da8" stroke-width="3" stroke-dasharray="8 5"/>
+    <!-- A solid final segment keeps the dashed response joined to its arrowhead. -->
+    <path id="m1-response-shaft-join" data-connector="true" d="M292 336H279" fill="none" stroke="#356da8" stroke-width="3"/>
+    <polygon points="280,328 265,336 280,344" fill="#356da8"/>
+
+    <rect id="m1-local-pool" x="110" y="359" width="300" height="83" rx="10" fill="#edf8f0" stroke="#43804c" stroke-width="2"/>
+    <text x="260" y="389" text-anchor="middle" class="heading" font-size="17">M1 calculates its local ID pool</text>
+    <text x="260" y="421" text-anchor="middle" class="mono" font-size="24">1, 2, 3, 4, 5</text>
+    <rect id="sequence-after-m1" x="558" y="368" width="284" height="65" rx="9" fill="#fff7ef" stroke="#b56032" stroke-width="1.5"/>
+    <text x="700" y="394" text-anchor="middle" class="body" font-size="16">Next call adds 5</text>
+    <text x="700" y="418" text-anchor="middle" class="mono" font-size="18">next value = 6</text>
+  </g>
+
+  <!-- Second round trip: M2 requests its own pool without any message to M1 or dependency on M1 consuming its IDs. -->
+  <g id="m2-allocation">
+    <text x="920" y="479" text-anchor="middle" class="mono" font-size="17">2 · SELECT nextval('book_seq')</text>
+    <path id="m2-request-shaft" data-connector="true" d="M1136 494H719" fill="none" stroke="#7651a5" stroke-width="3"/>
+    <polygon points="720,486 705,494 720,502" fill="#7651a5"/>
+    <text x="920" y="532" text-anchor="middle" class="body" font-size="18">returns 6 (one number)</text>
+    <path id="m2-response-shaft" data-connector="true" d="M704 547H1121" fill="none" stroke="#7651a5" stroke-width="3" stroke-dasharray="8 5"/>
+    <!-- Match the other response arrow's solid shaft-to-head join. -->
+    <path id="m2-response-shaft-join" data-connector="true" d="M1108 547H1121" fill="none" stroke="#7651a5" stroke-width="3"/>
+    <polygon points="1120,539 1135,547 1120,555" fill="#7651a5"/>
+
+    <rect id="m2-local-pool" x="990" y="570" width="300" height="83" rx="10" fill="#edf8f0" stroke="#43804c" stroke-width="2"/>
+    <text x="1140" y="600" text-anchor="middle" class="heading" font-size="17">M2 calculates its local ID pool</text>
+    <text x="1140" y="632" text-anchor="middle" class="mono" font-size="24">6, 7, 8, 9, 10</text>
+    <rect id="sequence-after-m2" x="558" y="579" width="284" height="65" rx="9" fill="#fff7ef" stroke="#b56032" stroke-width="1.5"/>
+    <text x="700" y="605" text-anchor="middle" class="body" font-size="16">Next call adds 5</text>
+    <text x="700" y="629" text-anchor="middle" class="mono" font-size="18">next value = 11</text>
+  </g>
+
+  <!-- The takeaway distinguishes independent ID assignment from the separate work of inserting entity rows. -->
+  <g id="takeaway">
+    <rect x="36" y="695" width="1328" height="80" rx="11" fill="#f7f9fb" stroke="#b8c2cc" stroke-width="1.5"/>
+    <text x="700" y="726" text-anchor="middle" class="heading" font-size="19">M2 can assign 6 while M1 still has 2–5 unused. Each pod uses its own pool independently.</text>
+    <text x="700" y="755" text-anchor="middle" class="body" font-size="17">These arrows show ID allocation. Each entity still needs an INSERT.</text>
+  </g>
+</svg>

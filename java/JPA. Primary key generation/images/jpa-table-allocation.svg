@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1215" viewBox="0 0 1400 1215" role="img" aria-labelledby="diagram-title diagram-description">
+  <title id="diagram-title">TABLE generation makes two pods take turns updating one generator row</title>
+  <desc id="diagram-description">A sequence diagram compares Hibernate TABLE allocation with native SEQUENCE allocation. TABLE uses pooled-lo, allocation size five, and stored-last-used semantics. The shared id_generator row for book initially stores zero. M1 locks the row, reads zero, updates it to five, and commits its separate allocation transaction before using IDs one through five. M2 requests the same row while M1 holds its lock and waits only until that allocation commit. M2 then locks and reads five, updates it to ten, and commits before using IDs six through ten. M1 can use its pool independently while M2 allocates. A lower contrast shows a native sequence returning one and six through atomic nextval calls, without Hibernate locking and updating a generator table or committing a separate allocation transaction. Both strategies assign IDs before entity inserts and allow compatible inserts to be batched.</desc>
+
+  <!-- Shared visual system: blue and purple identify the pods; orange identifies the generator row; green identifies usable local ID pools. -->
+  <defs>
+    <style>
+      .heading { font-family: Inter, Arial, sans-serif; font-weight: 700; fill: #17212b; }
+      .body { font-family: Inter, Arial, sans-serif; fill: #2f3a45; }
+      .muted { font-family: Inter, Arial, sans-serif; fill: #596673; }
+      .mono { font-family: "SFMono-Regular", Consolas, monospace; fill: #23303d; }
+      .light { font-family: Inter, Arial, sans-serif; font-weight: 700; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <!-- The initial row and optimizer assumptions distinguish stored counter values from the first ID in each pool. -->
+  <rect id="background" width="1400" height="1215" fill="#ffffff"/>
+  <text x="700" y="45" text-anchor="middle" class="heading" font-size="31">TABLE: two pods take turns updating one generator row</text>
+  <text x="700" y="78" text-anchor="middle" class="muted" font-size="18">Hibernate pooled-lo · allocationSize = 5 · each ID block uses a short, separate allocation transaction</text>
+  <rect x="36" y="101" width="1328" height="43" rx="9" fill="#fff7ef" stroke="#b56032" stroke-width="1.5"/>
+  <text x="700" y="129" text-anchor="middle" class="body" font-size="17">Initial id_generator row: segment_name = 'book', last_value = 0 · stored_last_used = true</text>
+
+  <!-- Three participant headers start the vertical lifelines. Thin orange bars mark exactly when a pod holds the generator row lock. -->
+  <g id="participants">
+    <rect x="100" y="168" width="300" height="67" rx="10" fill="#356da8"/>
+    <text x="250" y="196" text-anchor="middle" class="light" font-size="21">M1 · Java microservice</text>
+    <text x="250" y="219" text-anchor="middle" class="light" font-size="15">Pod 1 · Hibernate</text>
+    <rect x="510" y="168" width="380" height="67" rx="10" fill="#b56032"/>
+    <text x="700" y="196" text-anchor="middle" class="light" font-size="21">Shared generator table</text>
+    <text x="700" y="219" text-anchor="middle" class="light" font-size="15">id_generator · row for 'book'</text>
+    <rect x="1000" y="168" width="300" height="67" rx="10" fill="#7651a5"/>
+    <text x="1150" y="196" text-anchor="middle" class="light" font-size="21">M2 · Java microservice</text>
+    <text x="1150" y="219" text-anchor="middle" class="light" font-size="15">Pod 2 · Hibernate</text>
+    <path id="m1-lifeline" d="M250 235V818" fill="none" stroke="#9aa6b2" stroke-width="2" stroke-dasharray="7 7"/>
+    <path id="table-lifeline" d="M700 235V818" fill="none" stroke="#9aa6b2" stroke-width="2" stroke-dasharray="7 7"/>
+    <path id="m2-lifeline" d="M1150 235V818" fill="none" stroke="#9aa6b2" stroke-width="2" stroke-dasharray="7 7"/>
+    <rect id="m1-row-lock" x="694" y="284" width="12" height="222" fill="#fff3e8" stroke="#b56032" stroke-width="1.5"/>
+    <rect id="m2-row-lock" x="694" y="566" width="12" height="121" fill="#fff3e8" stroke="#b56032" stroke-width="1.5"/>
+  </g>
+
+  <!-- The time arrow stays outside the interaction area; all SQL messages are read from top to bottom. -->
+  <g id="time-direction">
+    <text x="55" y="254" text-anchor="middle" class="muted" font-size="14">TIME</text>
+    <path id="time-arrow-shaft" data-connector="true" d="M55 270V791" fill="none" stroke="#9aa6b2" stroke-width="2.5"/>
+    <polygon points="47,790 55,804 63,790" fill="#9aa6b2"/>
+  </g>
+
+  <!-- M1 obtains the row lock and reads the stored counter, which is zero, not the first assignable ID. -->
+  <g id="m1-lock-and-read">
+    <text x="470" y="268" text-anchor="middle" class="mono" font-size="17">SELECT last_value ... FOR UPDATE</text>
+    <path id="m1-read-shaft" data-connector="true" d="M254 284H678" fill="none" stroke="#356da8" stroke-width="3"/>
+    <polygon points="677,276 692,284 677,292" fill="#356da8"/>
+    <text x="470" y="316" text-anchor="middle" class="body" font-size="18">row locked; reads stored counter 0</text>
+    <path id="m1-counter-shaft" data-connector="true" d="M690 332H269" fill="none" stroke="#356da8" stroke-width="3" stroke-dasharray="8 5"/>
+    <!-- A solid final segment keeps every dashed response joined to its separate arrowhead. -->
+    <path id="m1-counter-shaft-join" data-connector="true" d="M282 332H269" fill="none" stroke="#356da8" stroke-width="3"/>
+    <polygon points="270,324 255,332 270,340" fill="#356da8"/>
+  </g>
+
+  <!-- M2's locking SELECT is blocked while M1's allocation transaction holds the same row lock. Its waiting note covers only its own lifeline. -->
+  <g id="m2-waits-for-row">
+    <text x="925" y="375" text-anchor="middle" class="mono" font-size="17">SELECT last_value ... FOR UPDATE</text>
+    <path id="m2-read-shaft" data-connector="true" d="M1146 391H722" fill="none" stroke="#7651a5" stroke-width="3"/>
+    <polygon points="723,383 708,391 723,399" fill="#7651a5"/>
+    <rect id="m2-wait-note" x="1000" y="412" width="300" height="91" rx="10" fill="#f4f0fa" stroke="#7651a5" stroke-width="2"/>
+    <text x="1150" y="441" text-anchor="middle" class="heading" font-size="18">M2 waits for this row lock</text>
+    <text x="1150" y="466" text-anchor="middle" class="body" font-size="16">until M1's allocation COMMIT</text>
+    <text x="1150" y="489" text-anchor="middle" class="muted" font-size="15">Its SELECT has not returned yet.</text>
+    <text x="725" y="437" class="body" font-size="16">M1 holds the row lock</text>
+  </g>
+
+  <!-- M1 advances the stored last-used counter by five and commits the short allocator transaction before it receives its usable pool. -->
+  <g id="m1-update-and-commit">
+    <text x="470" y="438" text-anchor="middle" class="mono" font-size="17">UPDATE ... SET last_value = 5</text>
+    <path id="m1-update-shaft" data-connector="true" d="M254 454H678" fill="none" stroke="#356da8" stroke-width="3"/>
+    <polygon points="677,446 692,454 677,462" fill="#356da8"/>
+    <text x="470" y="490" text-anchor="middle" class="mono" font-size="17">COMMIT allocation transaction</text>
+    <path id="m1-commit-shaft" data-connector="true" d="M254 506H678" fill="none" stroke="#356da8" stroke-width="3"/>
+    <polygon points="677,498 692,506 677,514" fill="#356da8"/>
+    <text x="725" y="515" class="body" font-size="16">Lock released</text>
+    <rect id="m1-local-pool" x="100" y="535" width="300" height="83" rx="10" fill="#edf8f0" stroke="#43804c" stroke-width="2"/>
+    <text x="250" y="565" text-anchor="middle" class="heading" font-size="17">After COMMIT: M1's local IDs</text>
+    <text x="250" y="597" text-anchor="middle" class="mono" font-size="24">1, 2, 3, 4, 5</text>
+  </g>
+
+  <!-- M2's pending SELECT resumes after M1 commits; it reads five, not six. Its own allocator transaction then stores ten. -->
+  <g id="m2-reads-updates-and-commits">
+    <text x="925" y="550" text-anchor="middle" class="body" font-size="18">lock acquired; reads stored counter 5</text>
+    <path id="m2-counter-shaft" data-connector="true" d="M710 566H1131" fill="none" stroke="#7651a5" stroke-width="3" stroke-dasharray="8 5"/>
+    <path id="m2-counter-shaft-join" data-connector="true" d="M1118 566H1131" fill="none" stroke="#7651a5" stroke-width="3"/>
+    <polygon points="1130,558 1145,566 1130,574" fill="#7651a5"/>
+    <text x="725" y="596" class="body" font-size="16">M2 holds the row lock</text>
+    <text x="925" y="619" text-anchor="middle" class="mono" font-size="17">UPDATE ... SET last_value = 10</text>
+    <path id="m2-update-shaft" data-connector="true" d="M1146 635H722" fill="none" stroke="#7651a5" stroke-width="3"/>
+    <polygon points="723,627 708,635 723,643" fill="#7651a5"/>
+    <text x="925" y="671" text-anchor="middle" class="mono" font-size="17">COMMIT allocation transaction</text>
+    <path id="m2-commit-shaft" data-connector="true" d="M1146 687H722" fill="none" stroke="#7651a5" stroke-width="3"/>
+    <polygon points="723,679 708,687 723,695" fill="#7651a5"/>
+    <text x="725" y="711" class="body" font-size="16">Lock released</text>
+    <rect id="m2-local-pool" x="1000" y="716" width="300" height="83" rx="10" fill="#edf8f0" stroke="#43804c" stroke-width="2"/>
+    <text x="1150" y="746" text-anchor="middle" class="heading" font-size="17">After COMMIT: M2's local IDs</text>
+    <text x="1150" y="778" text-anchor="middle" class="mono" font-size="24">6, 7, 8, 9, 10</text>
+  </g>
+
+  <!-- M1's independent work occupies its lane after allocation; it has no dependency on M2 finishing. -->
+  <g id="independent-pools">
+    <rect x="100" y="661" width="300" height="105" rx="10" fill="#eef5ff" stroke="#356da8" stroke-width="1.5"/>
+    <text x="250" y="691" text-anchor="middle" class="body" font-size="17">M1 can already assign IDs</text>
+    <text x="250" y="717" text-anchor="middle" class="body" font-size="17">from its own pool.</text>
+    <text x="250" y="743" text-anchor="middle" class="heading" font-size="17">It does not wait for M2.</text>
+    <rect x="36" y="835" width="1328" height="67" rx="10" fill="#f7f9fb" stroke="#b8c2cc" stroke-width="1.5"/>
+    <text x="700" y="862" text-anchor="middle" class="heading" font-size="18">The row lock ends at the allocation COMMIT; it does not last until the pool is consumed.</text>
+    <text x="700" y="887" text-anchor="middle" class="body" font-size="17">Both TABLE and SEQUENCE assign IDs before Book INSERTs, allowing compatible entity inserts to be batched.</text>
+  </g>
+
+  <!-- Native-sequence contrast is a compact left-to-right flow, separate from the top-to-bottom TABLE timeline. -->
+  <g id="native-sequence-contrast">
+    <rect x="36" y="925" width="1328" height="261" rx="11" fill="#ffffff" stroke="#b8c2cc" stroke-width="1.5"/>
+    <text x="700" y="957" text-anchor="middle" class="heading" font-size="23">Native SEQUENCE contrast · same pooled-lo and block size 5</text>
+    <text x="700" y="985" text-anchor="middle" class="body" font-size="16">The database coordinates atomic nextval calls; Hibernate does not lock/update a generator table or commit an allocation transaction.</text>
+
+    <rect x="60" y="1006" width="155" height="52" rx="9" fill="#356da8"/>
+    <text x="137" y="1039" text-anchor="middle" class="light" font-size="20">M1 calls first</text>
+    <path id="sequence-m1-call-shaft" data-connector="true" d="M225 1032H260" fill="none" stroke="#356da8" stroke-width="3"/>
+    <polygon points="259,1024 274,1032 259,1040" fill="#356da8"/>
+    <rect x="280" y="1006" width="440" height="52" rx="9" fill="#fff7ef" stroke="#b56032" stroke-width="1.5"/>
+    <text x="500" y="1039" text-anchor="middle" class="mono" font-size="19">SELECT nextval('book_seq')</text>
+    <path id="sequence-m1-return-shaft" data-connector="true" d="M730 1032H766" fill="none" stroke="#43804c" stroke-width="3"/>
+    <polygon points="765,1024 780,1032 765,1040" fill="#43804c"/>
+    <rect x="786" y="1006" width="160" height="52" rx="9" fill="#edf8f0" stroke="#43804c" stroke-width="1.5"/>
+    <text x="866" y="1039" text-anchor="middle" class="heading" font-size="21">returns 1</text>
+    <path id="sequence-m1-pool-shaft" data-connector="true" d="M956 1032H994" fill="none" stroke="#43804c" stroke-width="3"/>
+    <polygon points="993,1024 1008,1032 993,1040" fill="#43804c"/>
+    <rect x="1014" y="1006" width="326" height="52" rx="9" fill="#edf8f0" stroke="#43804c" stroke-width="1.5"/>
+    <text x="1177" y="1039" text-anchor="middle" class="heading" font-size="21">M1's local IDs: 1–5</text>
+
+    <rect x="60" y="1080" width="155" height="52" rx="9" fill="#7651a5"/>
+    <text x="137" y="1113" text-anchor="middle" class="light" font-size="20">M2 calls next</text>
+    <path id="sequence-m2-call-shaft" data-connector="true" d="M225 1106H260" fill="none" stroke="#7651a5" stroke-width="3"/>
+    <polygon points="259,1098 274,1106 259,1114" fill="#7651a5"/>
+    <rect x="280" y="1080" width="440" height="52" rx="9" fill="#fff7ef" stroke="#b56032" stroke-width="1.5"/>
+    <text x="500" y="1113" text-anchor="middle" class="mono" font-size="19">SELECT nextval('book_seq')</text>
+    <path id="sequence-m2-return-shaft" data-connector="true" d="M730 1106H766" fill="none" stroke="#43804c" stroke-width="3"/>
+    <polygon points="765,1098 780,1106 765,1114" fill="#43804c"/>
+    <rect x="786" y="1080" width="160" height="52" rx="9" fill="#edf8f0" stroke="#43804c" stroke-width="1.5"/>
+    <text x="866" y="1113" text-anchor="middle" class="heading" font-size="21">returns 6</text>
+    <path id="sequence-m2-pool-shaft" data-connector="true" d="M956 1106H994" fill="none" stroke="#43804c" stroke-width="3"/>
+    <polygon points="993,1098 1008,1106 993,1114" fill="#43804c"/>
+    <rect x="1014" y="1080" width="326" height="52" rx="9" fill="#edf8f0" stroke="#43804c" stroke-width="1.5"/>
+    <text x="1177" y="1113" text-anchor="middle" class="heading" font-size="21">M2's local IDs: 6–10</text>
+    <text x="700" y="1164" text-anchor="middle" class="muted" font-size="16">Fresh PostgreSQL book_seq: START WITH 1, INCREMENT BY 5, CACHE 1 (default)</text>
+  </g>
+</svg>
