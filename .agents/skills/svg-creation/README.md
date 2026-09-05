@@ -54,4 +54,17 @@ Run the strict check from the skill directory. A same-stem PNG beside the SVG is
 python3 scripts/check_svg.py --strict /path/to/example.svg
 ```
 
-See [references/reference-validation.md](references/reference-validation.md) for explicit references, required-reference batches, difference images, and interpretation of comparison metrics.
+Foreground comparison uses contrast from the reference canvas background, so light text and arrows on dark or colored canvases are checked without counting the entire background as ink. The selected background color is reported with the metrics; white-background scoring and default thresholds are preserved.
+
+See [references/reference-validation.md](references/reference-validation.md) for explicit references, required-reference batches, difference images, background detection limits, and interpretation of comparison metrics.
+
+## Validator regression tests
+
+Run from the repository root:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s .agents/skills/svg-creation/scripts/tests -v
+git diff --check
+```
+
+The suite covers local CSS references, marker definitions, transformed connectors, elliptical arcs, mixed text and nested spans, anchored text continuations, nonrendered descriptive elements, and light/dark/colored reference comparisons. Raster tests report skips if Node.js with `sharp` is unavailable; a fully verified run must include those tests.

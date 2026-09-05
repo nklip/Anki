@@ -36,11 +36,13 @@ Inspect all three generated files:
 
 - `*.rendered.png` is the normalized SVG render.
 - `*.reference.png` is the normalized PNG etalon.
-- `*.difference.png` highlights missing reference ink in magenta and extra SVG ink in cyan. Pale areas indicate smaller antialiasing or color differences.
+- `*.difference.png` highlights reduced reference foreground contrast in magenta and extra SVG foreground contrast in cyan, on both light and dark backgrounds. Gray marks color changes with equal foreground contrast; pale areas indicate smaller antialiasing or color differences.
 
 Start with the largest contiguous difference regions. Check missing arrowheads and shafts, endpoints crossing target boundaries, displaced text, wrong font size or weight, clipped content, canvas margins, fill and stroke colors, and layer order. Re-run the comparison after each coherent repair.
 
 ## Understand the gates
+
+Foreground ink means contrast from the reference canvas background, including light text on a dark canvas and colored content with similar luminance. The checker groups similar colors in the outer 5% border band, uses the majority group's average as the background, and reports the chosen color. It uses that same color for both images, so changing the SVG background cannot hide additional content. When no group has a majority, it falls back to white; exact white backgrounds retain the original luminance scoring. Complex backgrounds and content inside large filled panels still require careful manual inspection.
 
 The default comparison evaluates several independent signals so one aggregate score cannot hide an important defect:
 

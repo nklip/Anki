@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import math
 import os
 import re
@@ -18,14 +19,26 @@ from pathlib import Path
 from typing import Iterable, Sequence
 
 
-URL_REF_RE = re.compile(r"url\(\s*#([^\s)]+)\s*\)")
+CSS_ESCAPE = r"\\(?:[0-9a-fA-F]{1,6}(?:\r\n|[\t\n\f\r ])?|.)"
+CSS_VALUE_TOKEN_RE = re.compile(
+    rf"/\*.*?\*/|(?<![\w-])url\(\s*(?:"
+    rf'"(?P<double>(?:{CSS_ESCAPE}|[^"\\])*)"|'
+    rf"'(?P<single>(?:{CSS_ESCAPE}|[^'\\])*)'|"
+    rf"(?P<bare>(?:{CSS_ESCAPE}|[^\s()'\"\\])*))\s*\)"
+    rf'|"(?:{CSS_ESCAPE}|[^"\\])*"|'
+    rf"'(?:{CSS_ESCAPE}|[^'\\])*'",
+    re.DOTALL | re.IGNORECASE,
+)
+CSS_ESCAPE_RE = re.compile(
+    r"\\(?:([0-9a-fA-F]{1,6})(?:\r\n|[\t\n\f\r ])?|(\r\n|[\n\r\f])|(.))",
+    re.DOTALL,
+)
 COMMENT_RE = re.compile(r"<!--(.*?)-->", re.DOTALL)
 NUMBER_RE = re.compile(r"^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?")
-CSS_RULE_RE = re.compile(r"([^{}]+)\{([^{}]*)\}", re.DOTALL)
-CSS_DECL_RE = re.compile(r"([\w-]+)\s*:\s*([^;]+)")
 TRANSFORM_RE = re.compile(r"([A-Za-z]+)\s*\(([^)]*)\)")
 PATH_TOKEN_RE = re.compile(r"[A-Za-z]|[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?")
 CONNECTOR_HINT_RE = re.compile(r"arrow|connector|flow|shaft", re.IGNORECASE)
+MARKER_PROPERTIES = {"marker", "marker-start", "marker-mid", "marker-end"}
 
 
 def local_name(name: str) -> str:
@@ -44,10 +57,76 @@ def number(value: str | None) -> float | None:
         return None
 
 
+def local_url_references(value: str) -> set[str]:
+    """Read local CSS url() targets without treating comments or strings as references."""
+    def unescape(match: re.Match[str]) -> str:
+        if match.group(1):
+            codepoint = int(match.group(1), 16)
+            if 0 < codepoint <= 0x10FFFF and not 0xD800 <= codepoint <= 0xDFFF:
+                return chr(codepoint)
+            return "\ufffd"
+        return "" if match.group(2) else match.group(3)
+
+    references: set[str] = set()
+    for match in CSS_VALUE_TOKEN_RE.finditer(value):
+        target = next((part for part in match.groups() if part is not None), None)
+        if target is None:
+            continue
+        target = CSS_ESCAPE_RE.sub(unescape, target)
+        if target.startswith("#"):
+            references.add(target[1:])
+    return references
+
+
+def without_css_comments(value: str) -> str:
+    """Remove comments while preserving identical character sequences inside strings."""
+    return CSS_VALUE_TOKEN_RE.sub(
+        lambda match: " " if match.group(0).startswith("/*") else match.group(0), value
+    )
+
+
+def css_structure(value: str) -> str:
+    """Mask strings and URL tokens so their punctuation is not CSS structure."""
+    return CSS_VALUE_TOKEN_RE.sub(lambda match: " " * len(match.group(0)), value)
+
+
+def stylesheet_rules(value: str) -> Iterable[tuple[str, str]]:
+    """Yield leaf rule blocks, including rules nested in @media-style groups."""
+    value = without_css_comments(value)
+    blocks: list[tuple[str, int]] = []
+    boundary = 0
+    for index, character in enumerate(css_structure(value)):
+        if character == "{":
+            blocks.append((value[boundary:index].strip(), index + 1))
+            boundary = index + 1
+        elif character == "}":
+            if blocks:
+                selector, start = blocks.pop()
+                if "{" not in css_structure(value[start:index]):
+                    yield selector, value[start:index]
+            boundary = index + 1
+        elif character == ";":
+            boundary = index + 1
+
+
 def parse_style_attribute(value: str | None) -> dict[str, str]:
     if not value:
         return {}
-    return {key.strip(): item.strip() for key, item in CSS_DECL_RE.findall(value)}
+    value = without_css_comments(value)
+    # Ignore semicolons inside quoted strings and url() when separating declarations.
+    declarations: list[str] = []
+    start = 0
+    for index, character in enumerate(css_structure(value)):
+        if character == ";":
+            declarations.append(value[start:index])
+            start = index + 1
+    declarations.append(value[start:])
+    return {
+        key.strip().lower(): item.strip()
+        for declaration in declarations
+        for key, separator, item in [declaration.partition(":")]
+        if separator and re.fullmatch(r"[\w-]+", key.strip())
+    }
 
 
 def parse_styles(root: ET.Element) -> dict[str, dict[str, str]]:
@@ -55,8 +134,8 @@ def parse_styles(root: ET.Element) -> dict[str, dict[str, str]]:
     for element in root.iter():
         if local_name(element.tag) != "style" or not element.text:
             continue
-        for selectors, body in CSS_RULE_RE.findall(element.text):
-            declarations = {key.strip(): value.strip() for key, value in CSS_DECL_RE.findall(body)}
+        for selectors, body in stylesheet_rules(element.text):
+            declarations = parse_style_attribute(body)
             for selector in selectors.split(","):
                 selector = selector.strip()
                 if selector:
@@ -322,6 +401,33 @@ const fs = require('fs');
 const sharp = require('sharp');
 const [svg, reference, svgRaw, referenceRaw, widthText, heightText, svgPng, referencePng, diffPng] = process.argv.slice(1);
 const width = Number(widthText), height = Number(heightText);
+function backgroundColor(pixels) {
+  // The outer 5% band tolerates a thin frame and antialiasing on the canvas edge.
+  const bandX = Math.max(1, Math.ceil(width * 0.05));
+  const bandY = Math.max(1, Math.ceil(height * 0.05));
+  const buckets = new Map();
+  let samples = 0, dominant;
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      if (x >= bandX && x < width-bandX && y >= bandY && y < height-bandY) continue;
+      const i = (y*width+x)*3;
+      const key = ((pixels[i] >> 4) << 8) | ((pixels[i+1] >> 4) << 4) | (pixels[i+2] >> 4);
+      const bucket = buckets.get(key) || [0, 0, 0, 0];
+      bucket[0]++; bucket[1] += pixels[i]; bucket[2] += pixels[i+1]; bucket[3] += pixels[i+2];
+      buckets.set(key, bucket);
+      if (!dominant || bucket[0] > dominant[0]) dominant = bucket;
+      samples++;
+    }
+  }
+  // Preserve the traditional white baseline when the border has no stable background.
+  return dominant && dominant[0] > samples/2
+    ? dominant.slice(1).map(sum => Math.round(sum/dominant[0])) : [255, 255, 255];
+}
+function contrast(pixels, i, background) {
+  // Ceiling division preserves the previous 255-luma mask on white backgrounds.
+  return (77*Math.abs(pixels[i]-background[0]) + 150*Math.abs(pixels[i+1]-background[1])
+    + 29*Math.abs(pixels[i+2]-background[2]) + 255) >> 8;
+}
 async function rgb(input, svgInput) {
   let pipeline = sharp(input)
     .resize(width, height, {fit: 'fill', kernel: 'lanczos3'})
@@ -333,6 +439,8 @@ async function rgb(input, svgInput) {
 (async () => {
   const candidate = await rgb(svg, true);
   const etalon = await rgb(reference, false);
+  const background = backgroundColor(etalon);
+  process.stdout.write(JSON.stringify({background}));
   fs.writeFileSync(svgRaw, candidate);
   fs.writeFileSync(referenceRaw, etalon);
   if (svgPng !== '-') await sharp(candidate, {raw:{width,height,channels:3}}).png().toFile(svgPng);
@@ -340,17 +448,31 @@ async function rgb(input, svgInput) {
   if (diffPng !== '-') {
     const diff = Buffer.alloc(candidate.length, 255);
     for (let i = 0; i < candidate.length; i += 3) {
-      const c = (77*candidate[i] + 150*candidate[i+1] + 29*candidate[i+2]) >> 8;
-      const r = (77*etalon[i] + 150*etalon[i+1] + 29*etalon[i+2]) >> 8;
-      const delta = c-r;
-      const strength = Math.min(255, Math.abs(delta)*4);
+      const delta = contrast(etalon, i, background)-contrast(candidate, i, background);
+      const colorError = Math.max(...[0,1,2].map(channel => Math.abs(candidate[i+channel]-etalon[i+channel])));
+      const strength = Math.min(255, Math.max(Math.abs(delta), colorError)*4);
       if (delta > 0) { diff[i]=255; diff[i+1]=255-strength; diff[i+2]=255; }
       else if (delta < 0) { diff[i]=255-strength; diff[i+1]=255; diff[i+2]=255; }
+      else if (strength) { diff[i]=diff[i+1]=diff[i+2]=255-Math.round(strength/2); }
     }
     await sharp(diff, {raw:{width,height,channels:3}}).png().toFile(diffPng);
   }
 })().catch(error => { console.error(error.stack || String(error)); process.exit(1); });
 """
+
+
+def foreground_contrast(pixels: bytes, background: Sequence[int]) -> bytearray:
+    """Measure contrast from the reference canvas, including colored foregrounds."""
+    red, green, blue = background
+    return bytearray(
+        (
+            77 * abs(pixels[index] - red)
+            + 150 * abs(pixels[index + 1] - green)
+            + 29 * abs(pixels[index + 2] - blue)
+            + 255
+        ) >> 8
+        for index in range(0, len(pixels), 3)
+    )
 
 
 def dilate_mask(mask: bytearray, width: int, height: int, radius: int) -> bytearray:
@@ -489,6 +611,13 @@ def compare_reference_image(
             detail = " ".join(process.stderr.split())[-400:]
             report.error(f"reference renderer failed: {detail}")
             return
+        try:
+            background = json.loads(process.stdout)["background"]
+            if len(background) != 3 or any(type(channel) is not int or not 0 <= channel <= 255 for channel in background):
+                raise ValueError("invalid background color")
+        except (ValueError, KeyError, TypeError):
+            report.error("reference renderer returned invalid background-color metadata")
+            return
         candidate = candidate_raw.read_bytes()
         reference = reference_raw.read_bytes()
 
@@ -497,18 +626,16 @@ def compare_reference_image(
         report.error("reference renderer returned unexpected raw-image dimensions")
         return
     report.reference_checked = True
-    candidate_luma = bytearray(expected_bytes // 3)
-    reference_luma = bytearray(expected_bytes // 3)
+    candidate_contrast = foreground_contrast(candidate, background)
+    reference_contrast = foreground_contrast(reference, background)
     absolute_error = 0
-    for pixel, index in enumerate(range(0, expected_bytes, 3)):
-        candidate_luma[pixel] = (77 * candidate[index] + 150 * candidate[index + 1] + 29 * candidate[index + 2]) >> 8
-        reference_luma[pixel] = (77 * reference[index] + 150 * reference[index + 1] + 29 * reference[index + 2]) >> 8
+    for index in range(0, expected_bytes, 3):
         absolute_error += abs(candidate[index] - reference[index])
         absolute_error += abs(candidate[index + 1] - reference[index + 1])
         absolute_error += abs(candidate[index + 2] - reference[index + 2])
     mean_error = absolute_error / (expected_bytes * 255)
-    candidate_mask = bytearray(1 if 255 - value >= options.ink_threshold else 0 for value in candidate_luma)
-    reference_mask = bytearray(1 if 255 - value >= options.ink_threshold else 0 for value in reference_luma)
+    candidate_mask = bytearray(1 if value >= options.ink_threshold else 0 for value in candidate_contrast)
+    reference_mask = bytearray(1 if value >= options.ink_threshold else 0 for value in reference_contrast)
     candidate_ink, reference_ink = sum(candidate_mask), sum(reference_mask)
     candidate_dilated = dilate_mask(candidate_mask, width, height, options.pixel_tolerance)
     reference_dilated = dilate_mask(reference_mask, width, height, options.pixel_tolerance)
@@ -531,7 +658,8 @@ def compare_reference_image(
         else 1.0 if candidate_bounds != reference_bounds else 0.0
     )
     report.note(
-        f"visual comparison at {width}x{height}: mean error {mean_error:.3f}, "
+        f"visual comparison at {width}x{height} (background #{''.join(f'{channel:02x}' for channel in background)}): "
+        f"mean error {mean_error:.3f}, "
         f"ink recall {recall:.3f}, ink precision {precision:.3f}, "
         f"ink delta {ink_ratio_delta:.1%}, bounds drift {bounds_drift:.1%}"
     )
@@ -582,12 +710,16 @@ def collect_text_boxes(
 ) -> list[TextBox]:
     boxes: list[TextBox] = []
 
-    def text_delta(value: str | None, font_size: float) -> float | None:
+    def text_coordinate(value: str | None, font_size: float) -> float | None:
         if value is None:
             return None
         raw = value.strip()
+        # Lists and percentage/layout expressions need renderer metrics; do not
+        # silently use only their first number as a single run's position.
+        if not re.fullmatch(r"[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?(?:px|em|ex)?", raw):
+            return None
         parsed = number(raw)
-        if parsed is None:
+        if parsed is None or not math.isfinite(parsed):
             return None
         if raw.endswith("em"):
             return parsed * font_size
@@ -595,17 +727,13 @@ def collect_text_boxes(
             return parsed * font_size * 0.5
         return parsed
 
-    def append_box(element: ET.Element, label: str, x: float, y: float) -> float:
+    def text_width(element: ET.Element, label: str) -> float:
         font_size = number(inherited_property(element, "font-size", parents, styles)) or 16.0
         font_weight = inherited_property(element, "font-weight", parents, styles) or "normal"
-        width = estimate_text_width(label, font_size, font_weight in {"bold", "600", "700", "800", "900"})
-        anchor = inherited_property(element, "text-anchor", parents, styles) or "start"
-        if anchor == "middle":
-            left = x - width / 2
-        elif anchor == "end":
-            left = x - width
-        else:
-            left = x
+        return estimate_text_width(label, font_size, font_weight in {"bold", "600", "700", "800", "900"})
+
+    def append_box(element: ET.Element, label: str, left: float, y: float, width: float) -> None:
+        font_size = number(inherited_property(element, "font-size", parents, styles)) or 16.0
         local_polygon = (
             (left, y - 0.85 * font_size),
             (left + width, y - 0.85 * font_size),
@@ -623,7 +751,19 @@ def collect_text_boxes(
                 polygon=polygon,  # type: ignore[arg-type]
             )
         )
-        return width
+
+    def text_events(element: ET.Element) -> Iterable[tuple[ET.Element, str | None]]:
+        # Descriptive content is not painted and must not advance the text cursor.
+        if local_name(element.tag) in {"title", "desc", "metadata"}:
+            return
+        # None marks entry/positioning; a child's tail belongs to its parent.
+        yield element, None
+        if element.text:
+            yield element, element.text
+        for child in element:
+            yield from text_events(child)
+            if child.tail:
+                yield element, child.tail
 
     unestimated_text = 0
     unestimated_tspans = 0
@@ -632,42 +772,75 @@ def collect_text_boxes(
             continue
         if is_definition_element(element, parents):
             continue
-        tspans = [child for child in element if local_name(child.tag) == "tspan"]
-        if not tspans:
-            label = " ".join("".join(element.itertext()).split())
-            raw_x = element.attrib.get("x")
-            raw_y = element.attrib.get("y")
-            x = 0.0 if raw_x is None else number(raw_x)
-            y = 0.0 if raw_y is None else number(raw_y)
-            if label and x is not None and y is not None:
-                append_box(element, label, x, y)
-            elif label:
-                unestimated_text += 1
-            continue
+        has_tspans = any(local_name(child.tag) == "tspan" for child in element.iter())
+        current_x: float | None = 0.0
+        current_y: float | None = 0.0
+        # SVG anchors the entire chunk, including nested styles and relative
+        # offsets. Absolute x/y starts a new chunk; each inline tspan does not.
+        chunk: list[tuple[ET.Element, str, float, float, float]] = []
+        chunk_start = 0.0
+        chunk_end = 0.0
+        chunk_anchor = "start"
+        previous_space = False
 
-        current_x = number(element.attrib.get("x"))
-        current_y = number(element.attrib.get("y"))
-        for tspan in tspans:
-            font_size = number(inherited_property(tspan, "font-size", parents, styles)) or 16.0
-            explicit_x = number(tspan.attrib.get("x"))
-            explicit_y = number(tspan.attrib.get("y"))
-            if explicit_x is not None:
-                current_x = explicit_x
-            if explicit_y is not None:
-                current_y = explicit_y
-            dx = text_delta(tspan.attrib.get("dx"), font_size)
-            dy = text_delta(tspan.attrib.get("dy"), font_size)
-            if dx is not None and current_x is not None:
-                current_x += dx
-            if dy is not None and current_y is not None:
-                current_y += dy
-            label = " ".join("".join(tspan.itertext()).split())
-            if label and current_x is not None and current_y is not None:
-                width = append_box(tspan, label, current_x, current_y)
-                if explicit_x is None:
-                    current_x += width
-            elif label:
-                unestimated_tspans += 1
+        def flush_chunk() -> None:
+            nonlocal chunk, current_x, previous_space
+            if chunk:
+                advance = chunk_end - chunk_start
+                shift = advance / 2 if chunk_anchor == "middle" else advance if chunk_anchor == "end" else 0.0
+                for run_element, label, x, y, width in chunk:
+                    append_box(run_element, label, x - shift, y, width)
+                # A y-only position continues from the anchored end of the last
+                # chunk. Collapsed trailing whitespace is not painted.
+                current_x = chunk_end - shift
+                chunk = []
+            previous_space = False
+
+        for run_element, raw_text in text_events(element):
+            font_size = number(inherited_property(run_element, "font-size", parents, styles)) or 16.0
+            if raw_text is None:
+                if "x" in run_element.attrib or "y" in run_element.attrib:
+                    flush_chunk()
+                if "x" in run_element.attrib:
+                    current_x = text_coordinate(run_element.attrib["x"], font_size)
+                if "y" in run_element.attrib:
+                    current_y = text_coordinate(run_element.attrib["y"], font_size)
+                for attribute in ("dx", "dy"):
+                    if attribute not in run_element.attrib:
+                        continue
+                    delta = text_coordinate(run_element.attrib[attribute], font_size)
+                    if attribute == "dx":
+                        current_x = current_x + delta if current_x is not None and delta is not None else None
+                    else:
+                        current_y = current_y + delta if current_y is not None and delta is not None else None
+                continue
+
+            normalized = re.sub(r"\s+", " ", raw_text)
+            if not chunk or previous_space:
+                normalized = normalized.lstrip(" ")
+            if not normalized:
+                continue
+            previous_space = normalized.endswith(" ")
+            label = normalized.strip(" ")
+            if current_x is None or current_y is None:
+                if label:
+                    if has_tspans:
+                        unestimated_tspans += 1
+                    else:
+                        unestimated_text += 1
+                continue
+            if label:
+                leading = normalized[:len(normalized) - len(normalized.lstrip(" "))]
+                left = current_x + text_width(run_element, leading)
+                width = text_width(run_element, label)
+                if not chunk:
+                    chunk_start = left
+                    chunk_anchor = inherited_property(run_element, "text-anchor", parents, styles) or "start"
+                chunk.append((run_element, label, left, current_y, width))
+                chunk_end = left + width
+            # Explicit x sets the beginning of a run, never its ending cursor.
+            current_x += text_width(run_element, normalized)
+        flush_chunk()
     if unestimated_text:
         report.warn(
             f"could not estimate bounds for {unestimated_text} single-line <text> element(s); "
@@ -727,7 +900,73 @@ def interpolate_quadratic(start: Point, control: Point, end: Point, t: float) ->
     )
 
 
-def path_segments(raw: str) -> list[tuple[Point, Point]]:
+def arc_segments(
+    start: Point,
+    end: Point,
+    radius_x: float,
+    radius_y: float,
+    rotation: float,
+    large_arc: bool,
+    sweep: bool,
+    tolerance: float,
+) -> list[tuple[Point, Point]]:
+    """Flatten an SVG endpoint-parameterized ellipse, not its endpoint chord.
+
+    Center conversion and radius correction follow SVG implementation notes:
+    https://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
+    """
+    if start == end:
+        return []
+    rx, ry = abs(radius_x), abs(radius_y)
+    if rx == 0 or ry == 0:
+        return [(start, end)]
+    phi = math.radians(rotation % 360)
+    cosine, sine = math.cos(phi), math.sin(phi)
+    dx, dy = (start[0] - end[0]) / 2, (start[1] - end[1]) / 2
+    xp, yp = cosine * dx + sine * dy, -sine * dx + cosine * dy
+    normalized_x, normalized_y = xp / rx, yp / ry
+    radius_scale = math.hypot(normalized_x, normalized_y)
+    if radius_scale > 1:
+        rx *= radius_scale
+        ry *= radius_scale
+        normalized_x, normalized_y = xp / rx, yp / ry
+    squared_distance = normalized_x**2 + normalized_y**2
+    if squared_distance == 0:
+        return [(start, end)]
+    coefficient = math.sqrt(max(0.0, (1 - squared_distance) / squared_distance))
+    if large_arc == sweep:
+        coefficient = -coefficient
+    cxp, cyp = coefficient * rx * normalized_y, -coefficient * ry * normalized_x
+    cx = cosine * cxp - sine * cyp + (start[0] + end[0]) / 2
+    cy = sine * cxp + cosine * cyp + (start[1] + end[1]) / 2
+    ux, uy = (xp - cxp) / rx, (yp - cyp) / ry
+    vx, vy = (-xp - cxp) / rx, (-yp - cyp) / ry
+    theta = math.atan2(uy, ux)
+    delta = math.atan2(ux * vy - uy * vx, ux * vx + uy * vy)
+    if sweep and delta < 0:
+        delta += math.tau
+    elif not sweep and delta > 0:
+        delta -= math.tau
+
+    # Bound chord sagitta using the largest ellipse radius. The caller adjusts
+    # tolerance for transforms. A cap keeps extreme coordinates from exploding
+    # the structural check; font metrics and geometry remain heuristic.
+    max_angle = min(math.pi / 12, 4 * math.asin(math.sqrt(min(1.0, tolerance / (2 * max(rx, ry))))))
+    steps = min(4096, max(1, math.ceil(abs(delta) / max(max_angle, 1e-9))))
+    segments: list[tuple[Point, Point]] = []
+    previous = start
+    for step in range(1, steps + 1):
+        angle = theta + delta * step / steps
+        point = end if step == steps else (
+            cx + cosine * rx * math.cos(angle) - sine * ry * math.sin(angle),
+            cy + sine * rx * math.cos(angle) + cosine * ry * math.sin(angle),
+        )
+        segments.append((previous, point))
+        previous = point
+    return segments
+
+
+def path_segments(raw: str, tolerance: float = 0.25) -> list[tuple[Point, Point]]:
     tokens = PATH_TOKEN_RE.findall(raw)
     segments: list[tuple[Point, Point]] = []
     arity = {"M": 2, "L": 2, "H": 1, "V": 1, "C": 6, "S": 4, "Q": 4, "T": 2, "A": 7}
@@ -758,10 +997,34 @@ def path_segments(raw: str) -> list[tuple[Point, Point]]:
 
         upper = command.upper()
         count = arity.get(upper)
-        if count is None or index + count > len(tokens) or any(item.isalpha() for item in tokens[index : index + count]):
+        if count is None:
             break
-        values = [float(item) for item in tokens[index : index + count]]
-        index += count
+        values: list[float] = []
+        for argument in range(count):
+            if index >= len(tokens) or tokens[index].isalpha():
+                break
+            token = tokens[index]
+            if upper == "A" and argument in {3, 4}:
+                # Arc flags can abut one another and the following coordinate:
+                # A80 80 0 01180 100 means flags 0,1 and endpoint 180,100.
+                if token[0] not in "01":
+                    break
+                values.append(float(token[0]))
+                if len(token) > 1:
+                    tokens[index] = token[1:]
+                else:
+                    index += 1
+            else:
+                try:
+                    value = float(token)
+                except ValueError:
+                    break
+                if not math.isfinite(value):
+                    break
+                values.append(value)
+                index += 1
+        if len(values) != count:
+            break
         relative = command.islower()
         start = current
 
@@ -839,7 +1102,7 @@ def path_segments(raw: str) -> list[tuple[Point, Point]]:
             previous_control = control
         elif upper == "A":
             end = absolute_pair(values[5], values[6], relative, start)
-            segments.append((start, end))
+            segments.extend(arc_segments(start, end, values[0], values[1], values[2], bool(values[3]), bool(values[4]), tolerance))
             current = end
             previous_control = None
         previous_command = upper
@@ -858,9 +1121,9 @@ def collect_connector_segments(
             continue
         marker_values = [
             inherited_property(element, property_name, parents, styles)
-            for property_name in ("marker-start", "marker-mid", "marker-end")
+            for property_name in MARKER_PROPERTIES
         ]
-        marker_connector = any(value and URL_REF_RE.search(value) for value in marker_values)
+        marker_connector = any(value and local_url_references(value) for value in marker_values)
         hint = " ".join(
             filter(
                 None,
@@ -875,6 +1138,9 @@ def collect_connector_segments(
         if not marker_connector and not explicit_connector and not CONNECTOR_HINT_RE.search(hint):
             continue
 
+        matrix = cumulative_matrix(element, parents)
+        # Frobenius norm bounds the largest stretch, including skew.
+        stretch = math.sqrt(sum(value * value for value in matrix[:4]))
         raw_segments: list[tuple[Point, Point]] = []
         if name == "line":
             values = [number(element.attrib.get(attr)) for attr in ("x1", "y1", "x2", "y2")]
@@ -890,9 +1156,8 @@ def collect_connector_segments(
             ]
             raw_segments.extend(zip(points, points[1:]))
         else:
-            raw_segments = path_segments(element.attrib.get("d", ""))
+            raw_segments = path_segments(element.attrib.get("d", ""), 0.25 / max(stretch, 1.0))
 
-        matrix = cumulative_matrix(element, parents)
         stroke_width = number(inherited_property(element, "stroke-width", parents, styles)) or 1.0
         identifier = element.attrib.get("id")
         if identifier:
@@ -996,9 +1261,13 @@ def check_text(
             break
     reported_connector_collisions = 0
     for text_box in boxes:
+        reported_connectors: set[str] = set()
         for connector in connectors:
+            if connector.element_name in reported_connectors:
+                continue
             clearance = connector.stroke_width / 2 + 1.0
             if segment_polygon_distance(connector.start, connector.end, text_box.polygon) <= clearance:
+                reported_connectors.add(connector.element_name)
                 report.warn(
                     f"possible text/connector overlap: {text_box.label!r} with {connector.element_name}"
                 )
@@ -1035,9 +1304,11 @@ def check_ids_and_references(root: ET.Element, report: Report) -> None:
     references: set[str] = set()
     for element in root.iter():
         for key, value in element.attrib.items():
-            references.update(URL_REF_RE.findall(value))
+            references.update(local_url_references(value))
             if local_name(key) == "href" and value.startswith("#"):
                 references.add(value[1:])
+        if local_name(element.tag) == "style":
+            references.update(local_url_references("".join(element.itertext())))
     for reference in sorted(references - ids.keys()):
         report.error(f"unresolved reference #{reference}")
 
@@ -1076,16 +1347,24 @@ def check_symbol_uses(root: ET.Element, report: Report) -> None:
 def check_markers(root: ET.Element, report: Report) -> None:
     referenced_markers: set[str] = set()
     markers: dict[str, ET.Element] = {}
+    ids = {element.attrib["id"]: element for element in root.iter() if element.attrib.get("id")}
     for element in root.iter():
         if local_name(element.tag) == "marker" and element.attrib.get("id"):
             markers[element.attrib["id"]] = element
-        for key, value in element.attrib.items():
-            if local_name(key) in {"marker-start", "marker-mid", "marker-end"}:
-                referenced_markers.update(URL_REF_RE.findall(value))
+        declarations = list(element.attrib.items())
+        declarations.extend(parse_style_attribute(element.attrib.get("style")).items())
+        if local_name(element.tag) == "style":
+            for _, body in stylesheet_rules("".join(element.itertext())):
+                declarations.extend(parse_style_attribute(body).items())
+        for key, value in declarations:
+            if local_name(key).lower() in MARKER_PROPERTIES:
+                referenced_markers.update(local_url_references(value))
 
     for marker_id in sorted(referenced_markers):
         marker = markers.get(marker_id)
         if marker is None:
+            if marker_id in ids:
+                report.error(f"marker reference #{marker_id} does not target a <marker> element")
             continue
         for attr in ("markerWidth", "markerHeight", "refX", "refY", "orient"):
             if attr not in marker.attrib:
@@ -1222,7 +1501,7 @@ def main() -> int:
     reference_group.add_argument("--diff-dir", type=Path, help="write normalized SVG, reference, and difference PNGs")
     reference_group.add_argument("--compare-max-size", type=int, default=1024, help="maximum comparison width/height")
     reference_group.add_argument("--pixel-tolerance", type=int, default=2, help="pixel radius allowed for ink matching")
-    reference_group.add_argument("--ink-threshold", type=int, default=32, help="minimum darkness counted as foreground ink")
+    reference_group.add_argument("--ink-threshold", type=int, default=32, help="minimum contrast from the reference background counted as foreground ink")
     reference_group.add_argument("--min-ink-recall", type=float, default=0.88, help="minimum reference ink recovered")
     reference_group.add_argument("--min-ink-precision", type=float, default=0.88, help="minimum SVG ink matching the reference")
     reference_group.add_argument("--max-mean-error", type=float, default=0.08, help="maximum normalized mean pixel error")
