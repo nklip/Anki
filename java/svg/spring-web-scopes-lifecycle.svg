@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="880" viewBox="0 0 1200 880" role="img" aria-labelledby="title description">
+  <title id="title">What each Spring web scope is tied to, and what each one is for</title>
+  <desc id="description">Boxes show ownership boundaries for a bean definition: one application-scoped instance belongs to the ServletContext, each HTTP session holds its own session-scoped instance, and each HTTP request gets its own request-scoped instance when needed. A separate band shows one instance per STOMP WebSocket session; HTTP and WebSocket sessions have independent lifetimes. Four cards below give the instance count and typical uses for each scope.</desc>
+
+  <!-- Shared styles. Colour lives in classes because a class fill would override a fill attribute. -->
+  <defs>
+    <style>
+      .heading { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #202124; }
+      .body { font-family: Arial, Helvetica, sans-serif; fill: #303840; }
+      .muted { font-family: Arial, Helvetica, sans-serif; fill: #5f6872; }
+      .mono { font-family: Menlo, Consolas, "Liberation Mono", monospace; fill: #303840; }
+      .light { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #ffffff; }
+      .amber { fill: #b7791f; }
+      .blue { fill: #356eb3; }
+      .green { fill: #34834b; }
+      .purple { fill: #744b91; }
+    </style>
+  </defs>
+
+  <rect id="background" width="1200" height="880" fill="#ffffff"/>
+  <text x="600" y="42" text-anchor="middle" class="heading" font-size="28">Web scopes: one instance per boundary</text>
+  <text x="600" y="74" text-anchor="middle" class="muted" font-size="17">Boxes show ownership boundaries; HTTP and WebSocket sessions have independent lifetimes.</text>
+
+  <!-- Outermost lifetime: the ServletContext, which outlives every session. -->
+  <rect x="45" y="100" width="1110" height="500" rx="16" fill="#fffdf7" stroke="#b7791f" stroke-width="3"/>
+  <rect x="45" y="100" width="1110" height="40" rx="16" fill="#b7791f"/>
+  <rect x="45" y="124" width="1110" height="16" fill="#b7791f"/>
+  <text x="70" y="128" class="light" font-size="17">application — one instance per ServletContext, for the whole web app</text>
+
+  <!-- Two concurrent user sessions, each with its own session-scoped instance. -->
+  <rect x="75" y="168" width="520" height="248" rx="14" fill="#eef5ff" stroke="#356eb3" stroke-width="3"/>
+  <text x="98" y="198" class="heading blue" font-size="17">session — user A</text>
+  <text x="98" y="222" class="muted" font-size="14">one instance, reused across this user's requests</text>
+
+  <rect x="98" y="240" width="150" height="72" rx="10" fill="#edf8f0" stroke="#34834b" stroke-width="3"/>
+  <text x="173" y="268" text-anchor="middle" class="heading green" font-size="15">request 1</text>
+  <text x="173" y="292" text-anchor="middle" class="muted" font-size="13">new instance</text>
+
+  <rect x="264" y="240" width="150" height="72" rx="10" fill="#edf8f0" stroke="#34834b" stroke-width="3"/>
+  <text x="339" y="268" text-anchor="middle" class="heading green" font-size="15">request 2</text>
+  <text x="339" y="292" text-anchor="middle" class="muted" font-size="13">new instance</text>
+
+  <rect x="430" y="240" width="150" height="72" rx="10" fill="#edf8f0" stroke="#34834b" stroke-width="3"/>
+  <text x="505" y="268" text-anchor="middle" class="heading green" font-size="15">request 3</text>
+  <text x="505" y="292" text-anchor="middle" class="muted" font-size="13">new instance</text>
+
+  <text x="98" y="344" class="body" font-size="14">3 requests here means 3 request-scoped instances,</text>
+  <text x="98" y="366" class="body" font-size="14">but still only 1 session-scoped instance.</text>
+  <text x="98" y="396" class="mono" font-size="13">cart stays; correlation id does not</text>
+
+  <rect x="615" y="168" width="520" height="248" rx="14" fill="#eef5ff" stroke="#356eb3" stroke-width="3"/>
+  <text x="638" y="198" class="heading blue" font-size="17">session — user B</text>
+  <text x="638" y="222" class="muted" font-size="14">a separate instance; never shared with user A</text>
+
+  <rect x="638" y="240" width="150" height="72" rx="10" fill="#edf8f0" stroke="#34834b" stroke-width="3"/>
+  <text x="713" y="268" text-anchor="middle" class="heading green" font-size="15">request 1</text>
+  <text x="713" y="292" text-anchor="middle" class="muted" font-size="13">new instance</text>
+
+  <rect x="804" y="240" width="150" height="72" rx="10" fill="#edf8f0" stroke="#34834b" stroke-width="3"/>
+  <text x="879" y="268" text-anchor="middle" class="heading green" font-size="15">request 2</text>
+  <text x="879" y="292" text-anchor="middle" class="muted" font-size="13">new instance</text>
+
+  <text x="638" y="344" class="body" font-size="14">These two HTTP sessions hold separate state,</text>
+  <text x="638" y="366" class="body" font-size="14">so each cart belongs to its own session.</text>
+  <text x="638" y="396" class="mono" font-size="13">each session keeps its own cart</text>
+
+  <!-- WebSocket sessions are a separate lifetime, not nested inside an HTTP session. -->
+  <rect x="75" y="440" width="1060" height="136" rx="14" fill="#faf8fc" stroke="#744b91" stroke-width="3"/>
+  <text x="98" y="470" class="heading purple" font-size="17">websocket — one instance per STOMP session</text>
+  <text x="98" y="494" class="muted" font-size="14">A STOMP session has its own lifetime, separate from HTTP requests and HTTP sessions.</text>
+
+  <rect x="640" y="506" width="230" height="52" rx="10" fill="#ffffff" stroke="#744b91" stroke-width="2"/>
+  <text x="755" y="538" text-anchor="middle" class="mono" font-size="14">connection 1</text>
+  <rect x="890" y="506" width="230" height="52" rx="10" fill="#ffffff" stroke="#744b91" stroke-width="2"/>
+  <text x="1005" y="538" text-anchor="middle" class="mono" font-size="14">connection 2</text>
+
+  <text x="98" y="528" class="body" font-size="14">Destroyed when the socket closes, so</text>
+  <text x="98" y="550" class="body" font-size="14">@PreDestroy does run here.</text>
+
+  <!-- What each scope is actually for. -->
+  <text x="600" y="632" text-anchor="middle" class="heading" font-size="19">Reach for each one when the state has that exact lifetime</text>
+
+  <rect x="45" y="650" width="264" height="210" rx="14" fill="#edf8f0" stroke="#34834b" stroke-width="3"/>
+  <text x="177" y="682" text-anchor="middle" class="heading green" font-size="17">request</text>
+  <text x="177" y="708" text-anchor="middle" class="muted" font-size="13">one per HTTP request</text>
+  <text x="65" y="742" class="body" font-size="14">Correlation or trace id</text>
+  <text x="65" y="768" class="body" font-size="14">Decoded auth token</text>
+  <text x="65" y="794" class="body" font-size="14">Per-request audit log</text>
+  <text x="65" y="828" class="muted" font-size="13">Destroyed when request</text>
+  <text x="65" y="848" class="muted" font-size="13">processing completes.</text>
+
+  <rect x="327" y="650" width="264" height="210" rx="14" fill="#eef5ff" stroke="#356eb3" stroke-width="3"/>
+  <text x="459" y="682" text-anchor="middle" class="heading blue" font-size="17">session</text>
+  <text x="459" y="708" text-anchor="middle" class="muted" font-size="13">one per HTTP session</text>
+  <text x="347" y="742" class="body" font-size="14">Shopping cart</text>
+  <text x="347" y="768" class="body" font-size="14">User preferences</text>
+  <text x="347" y="794" class="body" font-size="14">Multi-step wizard state</text>
+  <text x="347" y="828" class="muted" font-size="13">Survives many requests</text>
+  <text x="347" y="848" class="muted" font-size="13">within one HTTP session.</text>
+
+  <rect x="609" y="650" width="264" height="210" rx="14" fill="#fffdf7" stroke="#b7791f" stroke-width="3"/>
+  <text x="741" y="682" text-anchor="middle" class="heading amber" font-size="17">application</text>
+  <text x="741" y="708" text-anchor="middle" class="muted" font-size="13">one per ServletContext</text>
+  <text x="629" y="742" class="body" font-size="14">App-wide read cache</text>
+  <text x="629" y="768" class="body" font-size="14">Shared static config</text>
+  <text x="629" y="794" class="body" font-size="14">Cross-context state</text>
+  <text x="629" y="828" class="muted" font-size="13">Shared across contexts in</text>
+  <text x="629" y="848" class="muted" font-size="13">the same ServletContext.</text>
+
+  <rect x="891" y="650" width="264" height="210" rx="14" fill="#faf8fc" stroke="#744b91" stroke-width="3"/>
+  <text x="1023" y="682" text-anchor="middle" class="heading purple" font-size="17">websocket</text>
+  <text x="1023" y="708" text-anchor="middle" class="muted" font-size="13">one per STOMP session</text>
+  <text x="911" y="742" class="body" font-size="14">Per-connection state</text>
+  <text x="911" y="768" class="body" font-size="14">Subscription bookkeeping</text>
+  <text x="911" y="794" class="body" font-size="14">Chat presence</text>
+  <text x="911" y="828" class="muted" font-size="13">Lives as long as the</text>
+  <text x="911" y="848" class="muted" font-size="13">socket stays open.</text>
+</svg>
