@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg"
      width="1824"
-     height="946"
-     viewBox="0 0 1824 946"
+     height="1006"
+     viewBox="0 0 1824 1006"
      role="img"
      aria-labelledby="receiving-title receiving-desc">
   <title id="receiving-title">Email receiving flow</title>
@@ -19,11 +19,12 @@
       .small{font-size:22px}
       .realtime-label{font-size:23px}
     </style>
+    <!-- The tip projects 2.5 units beyond the shaft; endpoints are retracted to target outlines. -->
     <marker id="flow-arrowhead"
             markerWidth="18"
             markerHeight="18"
             viewBox="0 0 18 18"
-            refX="16.5"
+            refX="15.5"
             refY="9"
             markerUnits="userSpaceOnUse"
             orient="auto-start-reverse">
@@ -78,92 +79,92 @@
       <circle cx="32" cy="32" r="12.5" fill="url(#chrome-blue)"/>
     </symbol>
   </defs>
-  <rect id="background" width="1824" height="946" fill="#fff"/>
+  <rect id="background" width="1824" height="1006" fill="#fff"/>
 
   <!-- Dashed zones group SMTP acceptance and mail processing. -->
   <rect id="smtp-acceptance-zone" class="zone" x="316" y="241" width="256" height="244"/>
   <rect id="mail-processing-zone" class="zone" x="913" y="115" width="257" height="377"/>
 
   <!-- The storage panel sits behind the fan-out routes and storage symbols. -->
-  <rect id="storage-layer-panel" class="node" x="611" y="652" width="863" height="264"/>
+  <rect id="storage-layer-panel" class="node" x="611" y="652" width="863" height="324"/>
 
-  <!-- Main numbered flow. Each line is split around its numbered step circle. -->
+  <!-- Main numbered flow, split around each step circle.
+       Steps 4 and 7 are centered between figures; steps 3 and 10 mirror into the bus's upper corners. -->
   <g id="main-flow-routes">
     <path id="incoming-email-line" class="route" d="M133 135V248"/>
     <path id="incoming-email-continuation" class="route" d="M133 280V286"/>
     <path id="incoming-email-arrow" class="route" data-connector="true"
-          d="M133 286V394" marker-end="url(#flow-arrowhead)"/>
+          d="M133 286V390.7" marker-end="url(#flow-arrowhead)"/>
 
     <path id="load-balancer-line" class="route" d="M235 428H260"/>
     <path id="load-balancer-to-smtp-arrow" class="route" data-connector="true"
-          d="M292 428H342" marker-end="url(#flow-arrowhead)"/>
+          d="M292 428H338.7" marker-end="url(#flow-arrowhead)"/>
 
-    <path id="smtp-to-storage-line" class="route" d="M547 463L784 555"/>
+    <path id="smtp-to-storage-line" class="route" d="M496 463L753.190524 554.375655"/>
     <path id="smtp-to-storage-arrow" class="route" data-connector="true"
-          d="M816 567L1017 644" marker-end="url(#flow-arrowhead)"/>
+          d="M784.851651 565.624345L1000.844261 642.363044" marker-end="url(#flow-arrowhead)"/>
 
-    <path id="smtp-to-queue-line" class="route" d="M547 428H596"/>
+    <path id="smtp-to-queue-line" class="route" d="M547 428H583.7"/>
     <path id="smtp-to-queue-arrow" class="route" data-connector="true"
-          d="M628 428H654" marker-end="url(#flow-arrowhead)"/>
+          d="M617.3 428H650.7" marker-end="url(#flow-arrowhead)"/>
 
     <path id="queue-to-processing-line" class="route" d="M827 428H854"/>
     <path id="queue-to-processing-arrow" class="route" data-connector="true"
-          d="M886 428H940" marker-end="url(#flow-arrowhead)"/>
+          d="M886 428H936.7" marker-end="url(#flow-arrowhead)"/>
 
     <path id="processing-to-storage-line" class="route" d="M1042 492V552"/>
     <path id="processing-storage-continuation" class="route" d="M1042 584V590"/>
     <path id="processing-to-storage-arrow" class="route" data-connector="true"
-          d="M1042 590V644" marker-end="url(#flow-arrowhead)"/>
+          d="M1042 590V640.7" marker-end="url(#flow-arrowhead)"/>
 
-    <path id="processing-to-realtime-line" class="route" d="M1144 428H1201"/>
+    <path id="processing-to-realtime-line" class="route" d="M1144 428H1187.7"/>
     <path id="processing-to-realtime-arrow" class="route" data-connector="true"
-          d="M1233 428H1265" marker-end="url(#flow-arrowhead)"/>
+          d="M1221.3 428H1261.7" marker-end="url(#flow-arrowhead)"/>
 
-    <!-- WebSocket communication is bidirectional, with a label-sized gap. -->
+    <!-- WebSocket and HTTPS use mirrored straight routes, split at y=256..301 for their labels. -->
     <path id="realtime-to-webmail-arrow" class="route" data-connector="true"
-          d="M1431 256L1480 163" marker-end="url(#flow-arrowhead)"/>
+          d="M1422.358326 256L1471.79645 165.991225" marker-end="url(#flow-arrowhead)"/>
     <path id="webmail-to-realtime-arrow" class="route" data-connector="true"
-          d="M1423 299L1381 394" marker-end="url(#flow-arrowhead)"/>
+          d="M1397.641674 301L1348.20355 391.008775" marker-end="url(#flow-arrowhead)"/>
 
     <!-- HTTPS communication is bidirectional, with a label-sized gap. -->
     <path id="webserver-to-webmail-arrow" class="route" data-connector="true"
-          d="M1596 254L1546 163" marker-end="url(#flow-arrowhead)"/>
+          d="M1596.641674 256L1547.20355 165.991225" marker-end="url(#flow-arrowhead)"/>
     <path id="webmail-to-webserver-arrow" class="route" data-connector="true"
-          d="M1619 299L1672 394" marker-end="url(#flow-arrowhead)"/>
+          d="M1621.358326 301L1670.79645 391.008775" marker-end="url(#flow-arrowhead)"/>
 
-    <path id="webserver-to-storage-line" class="route" d="M1589 463L1326 554"/>
+    <path id="webserver-to-storage-line" class="route" d="M1589 463L1331.809476 554.375655"/>
     <path id="webserver-to-storage-arrow" class="route" data-connector="true"
-          d="M1294 566L1067 644" marker-end="url(#flow-arrowhead)"/>
+          d="M1300.148349 565.624345L1084.155739 642.363044" marker-end="url(#flow-arrowhead)"/>
   </g>
 
-  <!-- Processing feedback arrows are drawn behind their boxes so crossings stay clean. -->
+  <!-- Smooth, continuous feedback curves are painted beneath the opaque processing boxes.
+       Straight terminal shafts use mirrored 3:4 directions, keeping each 18-unit head symmetric. -->
   <g id="processing-feedback-routes">
     <path id="virus-check-feedback" class="route" data-connector="true"
-          d="M1014 394C1005 375 1005 351 1014 338"
+          d="M1012.5 391.2L1000.5 375.2C996 369.2 996 362.8 1000.5 356.8L1012.5 340.8"
           marker-start="url(#flow-arrowhead)" marker-end="url(#flow-arrowhead)"/>
-    <!-- The virus box masks the middle of this feedback route in the etalon. -->
-    <path id="spam-feedback-return-arrow" class="route" data-connector="true"
-          d="M1064 394C1074 374 1078 354 1078 338"
-          marker-start="url(#flow-arrowhead)"/>
-    <path id="spam-feedback-request-arrow" class="route" data-connector="true"
-          d="M1078 270C1078 247 1071 226 1062 213"
-          marker-end="url(#flow-arrowhead)"/>
+    <!-- The white virus box hides the middle of this taller continuous curve. -->
+    <path id="spam-check-feedback" class="route" data-connector="true"
+          d="M1071.5 391.2L1083.5 375.2C1120 326.533333 1120 280.466667 1083.5 231.8L1071.5 215.8"
+          marker-start="url(#flow-arrowhead)" marker-end="url(#flow-arrowhead)"/>
   </g>
 
-  <!-- Storage fan-out lines are split around their labels. -->
+  <!-- Fan-out pairs use mirrored angles; each route stays collinear across its y=727..766 label gap.
+       Outer tips meet side edges, inner tips meet top rims, and all four labels share baseline y=754. -->
   <g id="storage-fanout-routes">
-    <path id="metadata-lead-in" class="route" d="M1018 661L855 697"/>
+    <path id="metadata-lead-in" class="route" d="M1018 661L896.134194 727"/>
     <path id="metadata-arrow" class="route" data-connector="true"
-          d="M786 735L730 753" marker-end="url(#flow-arrowhead)"/>
-    <path id="search-store-lead-in" class="route" d="M1031 661L980 697"/>
+          d="M824.122581 766L733.99831 814.809441" marker-end="url(#flow-arrowhead)"/>
+    <path id="search-store-lead-in" class="route" d="M1039.153846 661L988.384615 727"/>
     <path id="search-store-arrow" class="route" data-connector="true"
-          d="M951 735L947 746" marker-end="url(#flow-arrowhead)"/>
-    <path id="attachment-lead-in" class="route" d="M1053 661L1113 697"/>
+          d="M958.384615 766L930.524277 802.21844" marker-end="url(#flow-arrowhead)"/>
+    <path id="attachment-lead-in" class="route" d="M1055.615385 661L1106.384615 727"/>
     <path id="attachment-arrow" class="route" data-connector="true"
-          d="M1142 735L1157 746" marker-end="url(#flow-arrowhead)"/>
-    <path id="latest-email-lead-in" class="route" d="M1068 661L1230 697"/>
+          d="M1136.384615 766L1163.475723 801.21844" marker-end="url(#flow-arrowhead)"/>
+    <path id="latest-email-lead-in" class="route" d="M1068 661L1189.865806 727"/>
     <path id="latest-email-arrow" class="route" data-connector="true"
-          d="M1305 735L1362 753" marker-end="url(#flow-arrowhead)"/>
+          d="M1261.877419 766L1367.340884 823.116831" marker-end="url(#flow-arrowhead)"/>
   </g>
 
   <!-- Sender icon and the entry load balancer. -->
@@ -181,7 +182,7 @@
     <text class="center" x="444.5" y="326">policy</text>
 
     <path id="policy-smtp-arrow" class="route" data-connector="true"
-          d="M444.5 338V394"
+          d="M444.5 341.3V390.7"
           marker-start="url(#flow-arrowhead)" marker-end="url(#flow-arrowhead)"/>
     <rect class="pink-node" x="342" y="394" width="205" height="69"/>
     <text class="center" x="444.5" y="438">SMTP servers</text>
@@ -243,21 +244,22 @@
     </g>
   </g>
 
-  <!-- Storage bus and four persistence destinations. -->
+  <!-- Storage bus and four persistence destinations.
+       Every icon and its caption is 60 units lower, matching the spacing change in the sending diagram. -->
   <g id="storage-layer-nodes">
     <rect id="storage-bus" class="node" x="1004" y="644" width="77" height="17"/>
 
-    <g id="metadata-database">
+    <g id="metadata-database" transform="translate(0 60)">
       <path class="node" d="M653 756V810C653 826 731 826 731 810V756"/>
       <ellipse class="node" cx="692" cy="756" rx="39" ry="11"/>
       <text class="center" x="692" y="846">Database</text>
     </g>
-    <g id="search-database">
+    <g id="search-database" transform="translate(0 60)">
       <path class="node" d="M890 756V810C890 826 968 826 968 810V756"/>
       <ellipse class="node" cx="929" cy="756" rx="39" ry="11"/>
       <text class="center" x="929" y="846">Database</text>
     </g>
-    <g id="attachment-object-store">
+    <g id="attachment-object-store" transform="translate(0 60)">
       <path class="node" d="M1127 756L1142 823H1188L1203 756Z"/>
       <ellipse class="node" cx="1165" cy="756" rx="38" ry="12"/>
       <circle cx="1165" cy="787" r="8" fill="none" stroke="#333" stroke-width="1.5"/>
@@ -266,7 +268,7 @@
       <text class="center" x="1165" y="846">Object Store</text>
     </g>
 
-    <g id="latest-email-cache">
+    <g id="latest-email-cache" transform="translate(0 60)">
       <path d="M1363 792L1397 778L1431 792V803L1397 818L1363 803Z" fill="#b90000"/>
       <path d="M1363 779L1397 765L1431 779V791L1397 805L1363 791Z" fill="#d60000"/>
       <path d="M1363 767L1397 753L1431 767L1397 782Z" fill="#ef0000"/>
@@ -275,29 +277,29 @@
       <text class="center" x="1397" y="846">Cache</text>
     </g>
 
-    <text class="center" x="1042.5" y="900">Storage Layer</text>
+    <text class="center" x="1042.5" y="960">Storage Layer</text>
   </g>
 
   <!-- Fan-out labels remain above their corresponding split routes. -->
   <g id="storage-route-labels">
-    <text class="center small" x="818" y="719">Metadata</text>
-    <text class="center small" x="969" y="719">Search store</text>
-    <text class="center small" x="1114" y="719">Attachment</text>
-    <text class="center small" x="1272" y="719">Latest email</text>
+    <text class="center small" x="834" y="754">Metadata</text>
+    <text class="center small" x="968" y="754">Search store</text>
+    <text class="center small" x="1113" y="754">Attachment</text>
+    <text class="center small" x="1258" y="754">Latest email</text>
   </g>
 
   <!-- Numbered annotations mirror the source image's reading order. -->
   <g id="numbered-steps" font-size="24" text-anchor="middle">
     <g><circle class="node" cx="133" cy="264" r="16"/><text x="133" y="273">1</text></g>
     <g><circle class="node" cx="276" cy="428" r="16"/><text x="276" y="437">2</text></g>
-    <g><circle class="node" cx="800" cy="561" r="16"/><text x="800" y="570">3</text></g>
-    <g><circle class="node" cx="612" cy="428" r="16"/><text x="612" y="437">4</text></g>
+    <g><circle class="node" cx="769.021088" cy="560" r="16"/><text x="769.021088" y="569">3</text></g>
+    <g><circle class="node" cx="600.5" cy="428" r="16"/><text x="600.5" y="437">4</text></g>
     <g><circle class="node" cx="870" cy="428" r="16"/><text x="870" y="437">5</text></g>
     <g><circle class="node" cx="1042" cy="568" r="16"/><text x="1042" y="577">6</text></g>
-    <g><circle class="node" cx="1217" cy="428" r="16"/><text x="1217" y="437">7</text></g>
+    <g><circle class="node" cx="1204.5" cy="428" r="16"/><text x="1204.5" y="437">7</text></g>
     <g><circle class="node" cx="1348" cy="278" r="16"/><text x="1348" y="287">8</text></g>
     <g><circle class="node" cx="1557" cy="278" r="16"/><text x="1557" y="287">9</text></g>
-    <g><circle class="node" cx="1310" cy="560" r="16"/><text x="1310" y="569">10</text></g>
+    <g><circle class="node" cx="1315.978912" cy="560" r="16"/><text x="1315.978912" y="569">10</text></g>
   </g>
   <text x="1373" y="287">WebSocket</text>
   <text x="1582" y="287">Https</text>

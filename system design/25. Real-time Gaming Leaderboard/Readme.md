@@ -120,10 +120,12 @@ Example response:
     <img src="./images/high-level-architecture.svg" alt="high-level-architecture" width="500" />
 </div>
 
-- When a player wins a game, the client sends a request to the game service.
-- The game service validates whether the win is valid and calls the leaderboard service to update the player's score.
-- The leaderboard service updates the user's score in the leaderboard store.
-- The player calls the leaderboard service to fetch leaderboard data, e.g., the top 10 players and the given player's rank.
+1. When a player wins a game, the client sends a request to the game service.
+2. The game service ensures the win is valid and calls the leaderboard service to update the score.
+3. The leaderboard service updates the user’s score on the leaderboard store.
+4. A player makes a call to the leaderboard service directly to fetch leaderboard data, including:
+    - [a] top 10 leaderboard.
+    - [b] the rank of the player on the leaderboard.
 
 An alternative design which was considered is the client updating their score directly within the leaderboard service:
 

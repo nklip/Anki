@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg"
      width="1698"
-     height="1126"
-     viewBox="0 0 1698 1126"
+     height="1186"
+     viewBox="0 0 1698 1186"
      role="img"
      aria-labelledby="sending-title sending-desc">
   <title id="sending-title">Email sending flow</title>
@@ -19,11 +19,13 @@
       .storage-note{font-size:27px}
       .step-text{font-size:27px;text-anchor:middle}
     </style>
+    <!-- A 2.5-unit inset covers the 1.9-unit shaft, including antialiasing.
+         All marker endpoints are retracted so arrow tips meet the outer target stroke. -->
     <marker id="flow-arrowhead"
             markerWidth="19"
             markerHeight="19"
             viewBox="0 0 19 19"
-            refX="17.5"
+            refX="16.5"
             refY="9.5"
             markerUnits="userSpaceOnUse"
             orient="auto-start-reverse">
@@ -98,91 +100,86 @@
       <ellipse cx="50" cy="15" rx="5" ry="3" fill="#fff"/>
     </symbol>
   </defs>
-  <rect id="background" width="1698" height="1126" fill="#fff"/>
+  <rect id="background" width="1698" height="1186" fill="#fff"/>
 
   <!-- Processing and storage boundaries establish the major groups. -->
   <rect id="smtp-processing-zone" class="zone" x="963" y="28" width="327" height="584"/>
-  <rect id="storage-layer-panel" class="node" x="52" y="775" width="1102" height="328"/>
+  <rect id="storage-layer-panel" class="node" x="52" y="775" width="1102" height="388"/>
 
-  <!-- Main numbered routes are split around their step circles. -->
+  <!-- Main numbered routes are split around their step circles.
+       The Web route starts at its node's bottom center (213,575); its two segments share one line.
+       The SMTP route meets the processing-zone's left edge and mirrors the Web route's angle.
+       Both bus tips and step circles remain mirrored about x=603. -->
   <g id="main-flow-routes">
     <path id="webmail-step-line" class="route" d="M213 193V217"/>
     <path id="https-continuation" class="route" d="M213 259V265"/>
     <path id="https-to-load-balancer-arrow" class="route" data-connector="true"
-          d="M213 265V297" marker-end="url(#flow-arrowhead)"/>
+          d="M213 265V293.65" marker-end="url(#flow-arrowhead)"/>
 
     <path id="load-balancer-step-line" class="route" d="M213 382V405"/>
     <path id="load-balancer-continuation" class="route" d="M213 447V453"/>
     <path id="load-balancer-to-web-arrow" class="route" data-connector="true"
-          d="M213 453V490" marker-end="url(#flow-arrowhead)"/>
+          d="M213 453V486.65" marker-end="url(#flow-arrowhead)"/>
 
-    <path id="web-to-storage-step-line" class="route" d="M282 575L430 665"/>
-    <path id="web-storage-continuation" class="route" d="M466 687L471 690"/>
+    <path id="web-to-storage-step-line" class="route" d="M213 575L375.012369 665.357186"/>
     <path id="web-to-storage-arrow" class="route" data-connector="true"
-          d="M471 690L588 765" marker-end="url(#flow-arrowhead)"/>
+          d="M413.177956 686.642814L549.966614 762.932287" marker-end="url(#flow-arrowhead)"/>
 
-    <path id="web-to-outgoing-step-line" class="route" d="M343 533H427"/>
-    <path id="outgoing-continuation" class="route" d="M469 533H475"/>
+    <path id="web-to-outgoing-step-line" class="route" d="M343 533H423.17"/>
+    <path id="outgoing-continuation" class="route" d="M472.83 533H475"/>
     <path id="web-to-outgoing-arrow" class="route" data-connector="true"
-          d="M475 533H563" marker-end="url(#flow-arrowhead)"/>
+          d="M475 533H559.65" marker-end="url(#flow-arrowhead)"/>
 
-    <!-- One continuous curve passes behind the white 4.b step circle. -->
-    <path id="error-curve" class="route"
-          d="M270 490C348 438 470 380 564 366"/>
-    <path id="web-to-error-arrow" class="route" data-connector="true"
-          d="M538 371L564 366" marker-end="url(#flow-arrowhead)"/>
+    <!-- One smooth curve is split only at the outer edge of the 4.b step circle. -->
+    <path id="error-curve" class="route" data-connector="true"
+          d="M270 490C313.076722 461.282185 369.573328 430.734386 426.725153 406.841472 M472.399284 389.288584C503.170073 378.558296 533.127004 370.465238 560.218134 366.373368" marker-end="url(#flow-arrowhead)"/>
 
     <path id="outgoing-to-smtp-step-line" class="route" d="M784 533H853"/>
     <path id="smtp-queue-continuation" class="route" d="M895 533H901"/>
     <path id="outgoing-to-smtp-arrow" class="route" data-connector="true"
-          d="M901 533H997" marker-end="url(#flow-arrowhead)"/>
+          d="M901 533H993.65" marker-end="url(#flow-arrowhead)"/>
 
-    <path id="smtp-to-storage-step-line" class="route" d="M979 612L848 667"/>
-    <path id="smtp-storage-continuation" class="route" d="M812 687L806 690"/>
+    <path id="smtp-to-storage-step-line" class="route" d="M963 591.731535L830.987631 665.357186"/>
     <path id="smtp-to-storage-arrow" class="route" data-connector="true"
-          d="M806 690L625 765" marker-end="url(#flow-arrowhead)"/>
+          d="M792.822044 686.642814L656.033386 762.932287" marker-end="url(#flow-arrowhead)"/>
 
     <path id="smtp-to-internet-step-line" class="route" d="M1257 533H1349"/>
     <path id="internet-continuation" class="route" d="M1391 533H1397"/>
     <path id="smtp-to-internet-arrow" class="route" data-connector="true"
-          d="M1397 533H1462" marker-end="url(#flow-arrowhead)"/>
+          d="M1397 533H1450.018789" marker-end="url(#flow-arrowhead)"/>
   </g>
 
-  <!-- Smooth feedback curves run continuously behind the white processing nodes. -->
+  <!-- Two continuous feedback curves are painted before the opaque processing nodes.
+       Their middles intentionally pass beneath the white rectangles, which hide the strokes and protect text.
+       Each cubic joins straight terminal shafts tangentially; all four heads retain matching angles. -->
   <g id="smtp-feedback-routes">
     <path id="retry-feedback-arrow" class="route" data-connector="true"
-          d="M1127 490V437"
+          d="M1127 486.65V440.35"
           marker-start="url(#flow-arrowhead)" marker-end="url(#flow-arrowhead)"/>
 
-    <path id="virus-curve" class="route"
-          d="M1091 490C1058 446 1058 335 1095 298"/>
-    <path id="virus-return-arrow" class="route" data-connector="true"
-          d="M1079 474L1091 490" marker-end="url(#flow-arrowhead)"/>
-    <path id="virus-request-arrow" class="route" data-connector="true"
-          d="M1083 310L1095 298" marker-end="url(#flow-arrowhead)"/>
+    <path id="virus-curve" class="route" data-connector="true"
+          d="M1089.5 487.15L1075.4 468.35C1039.4 420.35 1043.4 367.65 1079.4 319.65L1093.5 300.85" marker-start="url(#flow-arrowhead)" marker-end="url(#flow-arrowhead)"/>
 
-    <path id="spam-curve" class="route"
-          d="M1155 490C1200 430 1205 230 1151 159"/>
-    <path id="spam-return-arrow" class="route" data-connector="true"
-          d="M1164 478L1155 490" marker-end="url(#flow-arrowhead)"/>
-    <path id="spam-request-arrow" class="route" data-connector="true"
-          d="M1163 175L1151 159" marker-end="url(#flow-arrowhead)"/>
+    <path id="spam-curve" class="route" data-connector="true"
+          d="M1164.5 487.15L1178.6 468.35C1244.6 380.35 1232.6 268.65 1166.6 180.65L1152.5 161.85" marker-start="url(#flow-arrowhead)" marker-end="url(#flow-arrowhead)"/>
   </g>
 
-  <!-- Storage fan-out lines leave a clear gap for each explanatory label. -->
+  <!-- Each fan-out pair has mirrored angles; both segments of every route are collinear.
+       Outer tips meet the Database's right rim and Cache's upper-left edge; inner tips meet top rims.
+       All four labels share baseline y=897 and equal connector gaps from y=864 to y=910. -->
   <g id="storage-fanout-routes">
-    <path id="metadata-lead-in" class="route" d="M566 785L367 830"/>
+    <path id="metadata-lead-in" class="route" d="M566 785L404.341762 864"/>
     <path id="metadata-arrow" class="route" data-connector="true"
-          d="M277 869L205 899" marker-end="url(#flow-arrowhead)"/>
-    <path id="search-store-lead-in" class="route" d="M589 785L524 829"/>
+          d="M310.211648 910L208.096141 959.902344" marker-end="url(#flow-arrowhead)"/>
+    <path id="search-store-lead-in" class="route" d="M593.291667 785L527.458333 864"/>
     <path id="search-store-arrow" class="route" data-connector="true"
-          d="M488 869L480 889" marker-end="url(#flow-arrowhead)"/>
-    <path id="attachment-lead-in" class="route" d="M618 785L687 829"/>
+          d="M489.125 910L458.100461 947.229447" marker-end="url(#flow-arrowhead)"/>
+    <path id="attachment-lead-in" class="route" d="M624.375 785L690.208334 864"/>
     <path id="attachment-arrow" class="route" data-connector="true"
-          d="M743 869L753 889" marker-end="url(#flow-arrowhead)"/>
-    <path id="latest-email-lead-in" class="route" d="M641 785L845 830"/>
+          d="M728.541667 910L757.899539 945.229447" marker-end="url(#flow-arrowhead)"/>
+    <path id="latest-email-lead-in" class="route" d="M641 785L802.658238 864"/>
     <path id="latest-email-arrow" class="route" data-connector="true"
-          d="M936 869L1013 899" marker-end="url(#flow-arrowhead)"/>
+          d="M896.788352 910L1022.222265 971.297706" marker-end="url(#flow-arrowhead)"/>
   </g>
 
   <!-- Webmail, load balancer, and web-server entry path. -->
@@ -249,20 +246,21 @@
     <text class="center" x="1562" y="544">Internet</text>
   </g>
 
-  <!-- Storage bus and four source-native persistence symbols. -->
+  <!-- Storage bus and four source-native persistence symbols.
+       All persistence icons sit 60 units lower to leave room for the label gaps and arrowheads. -->
   <g id="storage-layer-nodes">
     <rect id="storage-bus" class="node" x="553" y="765" width="100" height="20"/>
-    <g id="metadata-database">
+    <g id="metadata-database" transform="translate(0 60)">
       <path class="node" d="M106 901V972C106 991 205 991 205 972V901"/>
       <ellipse class="node" cx="155.5" cy="901" rx="49.5" ry="11"/>
       <text class="center" x="155.5" y="1016">Database</text>
     </g>
-    <g id="search-database">
+    <g id="search-database" transform="translate(0 60)">
       <path class="node" d="M407 901V972C407 991 506 991 506 972V901"/>
       <ellipse class="node" cx="456.5" cy="901" rx="49.5" ry="11"/>
       <text class="center" x="456.5" y="1016">Database</text>
     </g>
-    <g id="attachment-object-store">
+    <g id="attachment-object-store" transform="translate(0 60)">
       <path class="node" d="M710 901L729 987H790L809 901Z"/>
       <ellipse class="node" cx="759.5" cy="901" rx="49.5" ry="13"/>
       <circle cx="759.5" cy="944" r="10" fill="none" stroke="#222" stroke-width="1.6"/>
@@ -270,30 +268,31 @@
       <rect x="761" y="958" width="22" height="21" fill="none" stroke="#222" stroke-width="1.6"/>
       <text class="center" x="759.5" y="1016">Object Store</text>
     </g>
-    <g id="latest-email-cache">
+    <g id="latest-email-cache" transform="translate(0 60)">
       <use href="#redis-mark" x="1013" y="899" width="88" height="84"/>
       <text class="center" x="1057" y="1016">Cache</text>
     </g>
-    <text class="center" x="603" y="1084">Storage Layer</text>
+    <text class="center" x="603" y="1144">Storage Layer</text>
   </g>
 
   <!-- Storage-route labels remain clear of their split arrows. -->
   <g id="storage-route-labels">
-    <text class="center storage-note" x="316" y="856">Metadata</text>
-    <text class="center storage-note" x="505" y="856">Search store</text>
-    <text class="center storage-note" x="714" y="856">Attachment</text>
-    <text class="center storage-note" x="891" y="856">Latest email</text>
+    <text class="center storage-note" x="340.90625" y="897">Metadata</text>
+    <text class="center storage-note" x="514.958333" y="897">Search store</text>
+    <text class="center storage-note" x="702.708333" y="897">Attachment</text>
+    <text class="center storage-note" x="866.09375" y="897">Latest email</text>
   </g>
 
-  <!-- Numbered circles preserve the etalon's reading order and branch names. -->
+  <!-- Numbered circles preserve the reading order and branch names.
+       The two branch circles have extra padding for the wider 4.a and 4.b labels. -->
   <g id="numbered-steps">
     <g><circle class="node" cx="213" cy="238" r="21"/><text class="step-text" x="213" y="248">1</text></g>
     <g><circle class="node" cx="213" cy="426" r="21"/><text class="step-text" x="213" y="436">2</text></g>
-    <g><circle class="node" cx="448" cy="676" r="21"/><text class="step-text" x="448" y="686">3</text></g>
-    <g><circle class="node" cx="448" cy="534" r="21"/><text class="step-text" x="448" y="544">4.a</text></g>
-    <g><circle class="node" cx="448" cy="394" r="21"/><text class="step-text" x="448" y="404">4.b</text></g>
+    <g><circle class="node" cx="394.095163" cy="676" r="21"/><text class="step-text" x="394.095163" y="686">3</text></g>
+    <g><circle class="node" cx="448" cy="534" r="24"/><text class="step-text" x="448" y="544">4.a</text></g>
+    <g><circle class="node" cx="448" cy="394" r="24"/><text class="step-text" x="448" y="404">4.b</text></g>
     <g><circle class="node" cx="874" cy="533" r="21"/><text class="step-text" x="874" y="543">5</text></g>
-    <g><circle class="node" cx="830" cy="676" r="21"/><text class="step-text" x="830" y="686">6</text></g>
+    <g><circle class="node" cx="811.904837" cy="676" r="21"/><text class="step-text" x="811.904837" y="686">6</text></g>
     <g><circle class="node" cx="1370" cy="533" r="21"/><text class="step-text" x="1370" y="543">7</text></g>
   </g>
   <text x="241" y="249">HTTPS</text>

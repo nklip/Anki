@@ -182,16 +182,17 @@ Here's how the hosted payment page workflow works:
     <img src="./images/hosted-payment-page-workflow.svg" alt="hosted-payment-page-workflow" width="500" />
 </div>
 
- 1. User clicks "checkout" button in the browser
- 2. Client calls the payment service with the payment order information
- 3. After receiving payment order information, the payment service sends a payment registration request to the PSP.
- 4. The PSP receives payment info such as currency, amount, expiration, etc, as well as a UUID for idempotency purposes. Typically the UUID of the payment order.
- 5. The PSP returns a token that uniquely identifies the payment registration. The token is stored in the payment service database.
- 6. Once the token is stored, the user is served a PSP-hosted payment page. It is initialized using the token as well as a redirect URL for success/failure.
- 7. User fills in payment details on the PSP page, PSP processes payment and returns the payment status
- 8. The user is now redirected back to the redirect URL. Example redirect URL - `https://your-company.com/?tokenID=JIOUIQ123NSF&payResult=X324FSa`.
- 9. Asynchronously, the PSP calls our payment service via a webhook to inform our backend of the payment result
- 10. Payment service records the payment result based on the webhook received
+1. The user clicks the “checkout” button in the client browser. The client calls the payment service with the payment order information.
+2. After receiving the payment order information, the payment service sends a payment registration request to the PSP. This registration request contains payment information, such as the amount, currency, expiration date of the payment request, and the redirect URL. Because a payment order should be registered only once, there is a UUID field to ensure the exactly-once registration. This UUID is also called nonce [10]. Usually, this UUID is the ID of the payment order.
+3. The PSP returns a token back to the payment service. A token is a UUID on the PSP side that uniquely identifies the payment registration. We can examine the payment registration and the payment execution status later using this token.
+4. The payment service stores the token in the database before calling the PSP-hosted payment page.
+5. Once the token is persisted, the client displays a PSP-hosted payment page. Mobile applications usually use the PSP’s SDK integration for this functionality. Stripe provides a JavaScript library that displays the payment UI, collects sensitive payment information, and calls the PSP directly to complete the payment. Sensitive payment information is collected by Stripe. It never reaches our payment system. The hosted payment page usually needs two pieces of information:
+    - [a] The token we received in step 4. The PSP’s javascript code uses the token to retrieve detailed information about the payment request from the PSP’s backend. One important piece of information is how much money to collect.
+    - [b] Another important piece of information is the redirect URL. This is the web page URL that is called when the payment is complete. When the PSP’s JavaScript finishes the payment, it redirects the browser to the redirect URL. Usually, the redirect URL is an e-commerce web page that shows the status of the checkout. Note that the redirect URL is different from the webhook [11] URL in step 9.
+6. The user fills in the payment details on the PSP’s web page, such as the credit card number, holder’s name, expiration date, etc, then clicks the pay button. The PSP starts the payment processing.
+7. The PSP returns the payment status.
+8. The web page is now redirected to the redirect URL. The payment status that is received in step 7 is typically appended to the URL. For example, the full redirect URL could be [12]: `https://your-company.com/?tokenID=JIOUIQ123NSF&payResult=X324FSa`
+9. Asynchronously, the PSP calls the payment service with the payment status via a webhook. The webhook is an URL on the payment system side that was registered with the PSP during the initial setup with the PSP. When the payment system receives payment events through the webhook, it extracts the payment status and updates the payment_order_status field in the Payment Order database table.
 
 ### **Reconciliation**
 The previous section explains the happy path of a payment. Unhappy paths are detected and reconciled using a background reconciliation process.
@@ -250,13 +251,21 @@ Async communication trades simplicity and consistency for scalability and resili
 
 ### **Handling failed payments**
 Every payment system needs to address failed payments. Here are some of the mechanisms we'll use to achieve that:
- * Tracking payment state - whenever a payment fails, we can determine whether to retry/refund based on the payment state.
- * Retry queue - payments which we'll retry are published to a retry queue
- * Dead-letter queue - payments which have terminally failed are pushed to a dead-letter queue, where the failed payment can be debugged and inspected.
+ * **Tracking payment state** - whenever a payment fails, we can determine whether to retry/refund based on the payment state.
+ * **Retry queue** - payments which we'll retry are published to a retry queue
+ * **Dead-letter queue** - payments which have terminally failed are pushed to a dead-letter queue, where the failed payment can be debugged and inspected.
 
 <div style="margin-left:3rem">
     <img src="./images/failed-payments.svg" alt="failed-payments" width="500" />
 </div>
+
+1. Check whether the failure is retryable.
+    - [a] Retryable failures are routed to a retry queue.
+    - [b] For non-retryable failures such as invalid input, errors are stored in a database.
+2. The payment system consumes events from the retry queue and retries failed payment transactions.
+3. If the payment transaction fails again:
+    - [a] If the retry count doesn’t exceed the threshold, the event is routed to the retry queue.
+    - [b] If the retry count exceeds the threshold, the event is put in the dead letter queue. Those failed events might need to be investigated.
 
 ### **Exactly-once delivery**
 We need to ensure a payment gets processed exactly once to avoid double-charging a customer.

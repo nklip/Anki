@@ -63,9 +63,11 @@ Traditional mail servers work well when there are a limited number of users, con
     <img src="./images/traditional-mail-server.svg" alt="traditional-mail-server" width="500" />
 </div>
 
-- Alice logs into her Outlook email and presses "send". Email is sent to Outlook mail server. Communication is via SMTP.
-- Outlook server queries DNS to find MX record for gmail.com and transfers the email to their servers. Communication is via SMTP.
-- Bob fetches emails from his gmail server via IMAP/POP.
+The process consists of 4 steps:
+1. Alice logs in to her Outlook client, composes an email, and presses “send”. The email is sent to the Outlook mail server. The communication protocol between the Outlook client and mail server is SMTP.
+2. Outlook mail server queries the DNS (not shown in the diagram) to find the address of the recipient’s SMTP server. In this case, it is Gmail’s SMTP server. Next, it transfers the email to the Gmail mail server. The communication protocol between the mail servers is SMTP.
+3. The Gmail server stores the email and makes it available to Bob, the recipient.
+4. Gmail client fetches new emails through the IMAP/POP server when Bob logs in to Gmail.
 
 In traditional mail servers, emails were stored on the local file system. Every email was a separate file.
 
@@ -130,34 +132,42 @@ Here's the high-level design of the distributed mail server:
 - **Distributed cache** - We can cache recent emails in Redis to improve UX.
 - **Search store** - distributed document store, used for supporting full-text searches.
 
-Here's what the email sending flow looks like:
+Here's what the **email sending flow** looks like:
 
 <div style="margin-left:3rem">
     <img src="./images/email-sending-flow.svg" alt="email-sending-flow" width="500" />
 </div>
 
-- User writes an email and presses "send". Email is sent to load balancer.
-- Load balancer rate limits excessive mail sends and routes to one of the web servers.
-- Web servers do basic email validation (e.g., email size) and short-circuit the outbound flow if the domain is the same as the sender's, but perform a spam check first.
-- If basic validation passes, the email is sent to the message queue (the attachment is referenced from the object store).
-- If basic validation fails, the email is sent to the error queue.
-- SMTP outgoing workers pull messages from outgoing queue, do spam/virus checks and route to destination mail server.
-- Email is stored in the "Sent Emails" folder
+1. A user writes an email on webmail and presses the “send” button. The request is sent to the load balancer.
+2. The load balancer makes sure it doesn’t exceed the rate limit and routes traffic to web servers.
+3. Web servers are responsible for:
+    - [a] Basic email validation. Each incoming email is checked against pre-defined rules such as email size limit.
+    - [b] Checking if the domain of the recipient’s email address is the same as the sender. If it is the same, email data is inserted to storage, cache, and object store directly. The recipient can fetch the email directly via the RESTful API. There is no need to go to step 4.
+4. Message queues. If basic email validation succeeds, the email data is passed to the outgoing queue. If basic email validation fails, the email is put in the error queue.
+5. SMTP outgoing workers pull events from the outgoing queue and make sure emails are spam and virus free.
+6. The outgoing email is stored in the “Sent Folder” of the storage layer.
+7. SMTP outgoing workers send the email to the recipient mail server.
 
 We need to also monitor size of outgoing message queue. Growing too large might indicate a problem:
 - Recipient's mail server is unavailable. We can retry sending the email at a later time using exponential backoff.
 - Not enough consumers to handle the load, we might have to scale the consumers.
 
-Here's the email receiving flow:
+Here's the **email receiving flow**:
 
 <div style="margin-left:3rem">
     <img src="./images/email-receiving-flow.svg" alt="email-receiving-flow" width="500" />
 </div>
 
-- Incoming emails arrive at the SMTP load balancer. Emails are distributed to SMTP servers, where mail-acceptance policies are applied (e.g., invalid emails are directly discarded).
-- If an email attachment is too large, we can put it in an object store (S3).
-- Mail-processing workers do preliminary checks, after which emails are forwarded to storage, cache, the object store, and real-time servers.
-- Offline users get their new emails once they come back online via HTTP API.
+1. Incoming emails arrive at the SMTP load balancer.
+2. The load balancer distributes traffic among SMTP servers. Email acceptance policy can be configured and applied at the SMTP-connection level. For example, invalid emails are bounced to avoid unnecessary email processing.
+3. If the attachment of an email is too large to put into the queue, we can put it into the attachment store (s3).
+4. Emails are put in the incoming email queue. The queue decouples mail processing workers from SMTP servers so they can be scaled independently. Moreover, the queue serves as a buffer in case the email volume surges.
+5. Mail processing workers are responsible for a lot of tasks, including filtering out spam mails, stopping viruses, etc. The following steps assume an email passed the validation.
+6. The email is stored in the mail storage, cache, and object data store.
+7. If the receiver is currently online, the email is pushed to real-time servers.
+8. Real-time servers are WebSocket servers that allow clients to receive new emails in real-time.
+9. For offline users, emails are stored in the storage layer. When a user comes back online, the webmail client connects to web servers via RESTful API.
+10. Web servers pull new emails from the storage layer and return them to the client.
 
 ---
 
