@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="530" viewBox="0 0 1200 530" role="img" aria-labelledby="title description">
+  <title id="title">The Java Memory Model constrains observable behavior</title>
+  <desc id="description">Read left to right: a Java program with threads runs through implementation choices such as compiler optimizations and processor memory mechanisms, producing read values and program results. The enclosing Java Memory Model boundary indicates that the entire execution must obey the semantic rules. The implementation may optimize execution details but may produce only behaviors allowed by those rules.</desc>
+
+  <!-- Stable typography and colors match the companion model-versus-structure diagram. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172033; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 20px; fill: #5f6878; }
+      .heading { font-size: 24px; font-weight: 700; }
+      .label { font-size: 21px; font-weight: 700; }
+      .body { font-size: 19px; }
+      .small { font-size: 17px; fill: #5f6878; }
+    </style>
+  </defs>
+
+  <!-- Main lesson and reading direction appear before the semantic boundary. -->
+  <rect width="1200" height="530" fill="#ffffff"/>
+  <text x="600" y="46" text-anchor="middle" class="title">Implementations may optimize; observable behavior must obey the JMM</text>
+  <text x="600" y="80" text-anchor="middle" class="subtitle">Read left to right: program → execution choices → results</text>
+
+  <!-- Enclosure expresses a specification constraint, not an executing component or filter. -->
+  <g id="jmm-semantic-boundary">
+    <rect x="30" y="112" width="1140" height="310" rx="15" fill="#f6f9fd" stroke="#1f4e79" stroke-width="2.5"/>
+    <text x="60" y="151" class="heading" fill="#1f4e79">Java Memory Model: rules for legal executions</text>
+    <text x="60" y="181" class="small">This boundary applies to the entire execution, including which writes each read may observe.</text>
+
+    <!-- Source program; a pair of lanes makes the multithreaded starting point explicit. -->
+    <g id="java-program">
+      <rect x="60" y="210" width="270" height="178" rx="11" fill="#ffffff" stroke="#9db7d1" stroke-width="2"/>
+      <text x="195" y="245" text-anchor="middle" class="label">1. Java program</text>
+      <rect x="80" y="266" width="230" height="42" rx="6" fill="#dce9f7"/>
+      <text x="195" y="293" text-anchor="middle" class="body">Thread A's actions</text>
+      <rect x="80" y="320" width="230" height="42" rx="6" fill="#dce9f7"/>
+      <text x="195" y="347" text-anchor="middle" class="body">Thread B's actions</text>
+    </g>
+
+    <!-- Separate heads leave no exposed shaft beyond the nose; tips stop at panel boundaries. -->
+    <path id="program-execution-arrow" data-connector="true" d="M330 299 H382" fill="none" stroke="#1f4e79" stroke-width="4"/>
+    <polygon id="program-execution-arrowhead" points="400,299 382,289 382,309" fill="#1f4e79"/>
+
+    <!-- Implementation details are examples of freedom beneath the semantic contract. -->
+    <g id="execution-choices">
+      <rect x="400" y="210" width="400" height="178" rx="11" fill="#fff8e9" stroke="#d8b36a" stroke-width="2"/>
+      <text x="600" y="245" text-anchor="middle" class="label">2. Implementation choices</text>
+      <text x="600" y="281" text-anchor="middle" class="body">Compiler optimizations</text>
+      <text x="600" y="312" text-anchor="middle" class="body">Processor execution and caches</text>
+      <text x="600" y="354" text-anchor="middle" class="small">Execution details can vary.</text>
+    </g>
+
+    <path id="execution-results-arrow" data-connector="true" d="M800 299 H852" fill="none" stroke="#246c5a" stroke-width="4"/>
+    <polygon id="execution-results-arrowhead" points="870,299 852,289 852,309" fill="#246c5a"/>
+
+    <!-- Outcome is constrained; no implication of a runtime check or post-execution rejection. -->
+    <g id="observable-results">
+      <rect x="870" y="210" width="270" height="178" rx="11" fill="#e0f2eb" stroke="#8bbfb1" stroke-width="2"/>
+      <text x="1005" y="245" text-anchor="middle" class="label">3. Observable results</text>
+      <text x="1005" y="284" text-anchor="middle" class="body">Values read by threads</text>
+      <text x="1005" y="314" text-anchor="middle" class="body">and program results</text>
+      <text x="1005" y="354" text-anchor="middle" class="label" fill="#246c5a">Only allowed behavior</text>
+    </g>
+  </g>
+
+  <!-- Compact takeaway distinguishes a semantic model from one fixed hardware execution. -->
+  <rect x="100" y="449" width="1000" height="53" rx="10" fill="#f1f3f6"/>
+  <text x="600" y="482" text-anchor="middle" class="body">Reason from the JMM's guarantees; one observed run shows only one possible execution.</text>
+</svg>
