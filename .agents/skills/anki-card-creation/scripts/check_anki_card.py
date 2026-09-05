@@ -12,6 +12,11 @@ from pathlib import Path
 IMAGE_RE = re.compile(r"!\[([^\]]*)\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
 SOURCE_RE = re.compile(r"^- \[[^\]]+\]\(https?://[^)]+\)\s*$", re.MULTILINE)
 SECOND_LEVEL_HEADING_RE = re.compile(r"^## ([^#].*)$", re.MULTILINE)
+CARD_MODE_RE = re.compile(
+    r"^<!-- Card mode: (simple|complex)\. Validate with --mode (simple|complex)\. -->"
+    r"[ \t]*(?:\r?\n|$)",
+    re.MULTILINE,
+)
 STEP_HEADING_RE = re.compile(r"^(#{3,6}) Step \d+\b[^\n]*$", re.MULTILINE)
 VERSION_EVENT_RE = re.compile(
     r"\b(?:added|introduced|previewed|released|finalized|became|available)\b",
@@ -67,8 +72,9 @@ def countable_text(text: str) -> str:
 
     The Front is a prompt rather than teaching content, and Sources are a
     verification requirement whose length must not push a card over budget.
-    Both sections are excluded so the limit constrains only the Back.
+    Both sections and the card-mode metadata comment are excluded.
     """
+    text = CARD_MODE_RE.sub("", text)
     spans: list[tuple[int, int]] = []
     for match in SECOND_LEVEL_HEADING_RE.finditer(text):
         if match.group(1).strip() not in {"Front", "Sources"}:
@@ -96,7 +102,8 @@ def validate_text(
 ) -> list[str]:
     errors: list[str] = []
 
-    if not re.match(r"^# [^\n]+\n", text):
+    title = re.match(r"^# [^\n]+\n", text)
+    if not title:
         errors.append("the first line must be one level-one title")
 
     required = ["## Front", "## Back", "## Sources"]
@@ -106,6 +113,26 @@ def validate_text(
             errors.append(f"missing required heading: {heading}")
     if all(position >= 0 for position in positions) and positions != sorted(positions):
         errors.append("required headings must appear in the order Front, Back, Sources")
+
+    expected_comment = f"<!-- Card mode: {mode}. Validate with --mode {mode}. -->"
+    mode_comments = list(CARD_MODE_RE.finditer(text))
+    if len(mode_comments) != 1:
+        errors.append(f"include exactly one card mode comment: {expected_comment}")
+    else:
+        mode_comment = mode_comments[0]
+        if mode_comment.groups() != (mode, mode):
+            errors.append(f"card mode comment must match validation --mode {mode}: {expected_comment}")
+        front = re.search(r"^## Front[ \t]*$", text, re.MULTILINE)
+        if title and front and (
+            mode_comment.start() < title.end()
+            or mode_comment.end() > front.start()
+            or not re.fullmatch(r"(?:[ \t]*\r?\n)+", text[title.end():mode_comment.start()])
+            or not re.fullmatch(r"(?:[ \t]*\r?\n)+", text[mode_comment.end():front.start()])
+        ):
+            errors.append(
+                "card mode comment must sit between the title and ## Front, "
+                "with a blank line on each side and no intervening content"
+            )
 
     second_level_headings = SECOND_LEVEL_HEADING_RE.findall(text)
     if second_level_headings and second_level_headings[-1].strip() != "Sources":
@@ -157,6 +184,11 @@ def validate_text(
         if target.startswith(("http://", "https://", "data:")):
             errors.append(f"visual {target!r} must be a local repository file")
             continue
+        image_filename = Path(target).name
+        if image_filename not in alt_text:
+            errors.append(
+                f"visual {target!r} alt text must include filename {image_filename!r}"
+            )
         image_path = (card_path.parent / target).resolve()
         if image_path.suffix.lower() not in ALLOWED_IMAGE_SUFFIXES:
             errors.append(f"visual {target!r} has an unsupported file type")
@@ -190,6 +222,8 @@ def validate_text(
 def run_self_test() -> None:
     simple = """# Atomic update
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What is an atomic update?
@@ -198,7 +232,7 @@ What is an atomic update?
 
 An atomic update is observed as one indivisible action.
 
-![Atomic update](svg/atomic-update.svg)
+![atomic-update.svg](svg/atomic-update.svg)
 
 ```java
 counter.incrementAndGet();
@@ -209,11 +243,63 @@ counter.incrementAndGet();
 - [Java API](https://example.com/api)
 """
     complex_card = simple.replace(
-        "![Atomic update](svg/atomic-update.svg)",
-        "![Before](svg/before.svg)\n\n![After](svg/after.svg)",
-    )
+        "![atomic-update.svg](svg/atomic-update.svg)",
+        "![before.svg](svg/before.svg)\n\n![after.svg](svg/after.svg)",
+    ).replace("Card mode: simple. Validate with --mode simple.",
+              "Card mode: complex. Validate with --mode complex.")
     assert not validate_text(simple, Path("card.md"), "simple", check_image_files=False)
     assert not validate_text(complex_card, Path("card.md"), "complex", check_image_files=False)
+
+    # Mode metadata must be present, correctly positioned, and consistent with the CLI.
+    simple_comment = "<!-- Card mode: simple. Validate with --mode simple. -->"
+    complex_comment = "<!-- Card mode: complex. Validate with --mode complex. -->"
+    without_comment = simple.replace(simple_comment + "\n", "")
+    assert countable_text(simple) == countable_text(without_comment)
+    assert not validate_text(
+        simple.replace(simple_comment, simple_comment + "\n\n"),
+        Path("card.md"), "simple", check_image_files=False,
+    )
+    invalid_comments = (
+        without_comment,
+        simple.replace(simple_comment, "\\" + simple_comment),
+        simple.replace(simple_comment, simple_comment.replace("simple", "advanced")),
+        simple.replace(simple_comment, simple_comment.replace("--mode simple", "--mode complex")),
+        simple.replace(simple_comment, complex_comment),
+        simple.replace(simple_comment, simple_comment + "\n" + complex_comment),
+        simple.replace(simple_comment, simple_comment + "\nIntervening prose"),
+        simple.replace(simple_comment, "Intervening prose\n\n" + simple_comment),
+        simple.replace("# Atomic update\n\n", "# Atomic update\n", 1),
+        simple.replace(simple_comment + "\n\n", simple_comment + "\n", 1),
+        without_comment.replace("## Back", simple_comment + "\n## Back"),
+    )
+    for invalid_card in invalid_comments:
+        assert any("card mode comment" in error for error in validate_text(
+            invalid_card, Path("card.md"), "simple", check_image_files=False,
+        ))
+    assert any("must match validation --mode simple" in error for error in validate_text(
+        complex_card, Path("card.md"), "simple", check_image_files=False,
+    ))
+    assert any("must match validation --mode complex" in error for error in validate_text(
+        simple, Path("card.md"), "complex", check_image_files=False,
+    ))
+
+    # Local image alt text names the linked file, with optional teaching context.
+    descriptive_alt = simple.replace(
+        "![atomic-update.svg]", "![atomic-update.svg — An indivisible update]"
+    )
+    assert not validate_text(
+        descriptive_alt, Path("card.md"), "simple", check_image_files=False
+    )
+    nested_image = simple.replace("svg/atomic-update.svg", "images/steps/atomic-update.svg")
+    assert not validate_text(
+        nested_image, Path("card.md"), "simple", check_image_files=False
+    )
+    for invalid_alt in ("Atomic update", "other-update.svg", "atomic-update"):
+        missing_filename = simple.replace("![atomic-update.svg]", f"![{invalid_alt}]")
+        assert any("alt text must include filename 'atomic-update.svg'" in error
+                   for error in validate_text(
+                       missing_filename, Path("card.md"), "simple", check_image_files=False
+                   ))
 
     # The budget applies to the Back only; padding goes there, not into Sources.
     padded = simple.replace("## Sources", "PAD\n\n## Sources")
@@ -250,17 +336,17 @@ counter.incrementAndGet();
 
     process_card = complex_card.replace(
         "## Sources",
-        "### Step 1 — Read\n\n![Read](svg/read.svg)\n\n"
-        "### Step 2 — Write\n\n![Write](svg/write.svg)\n\n## Sources",
+        "### Step 1 — Read\n\n![read.svg](svg/read.svg)\n\n"
+        "### Step 2 — Write\n\n![write.svg](svg/write.svg)\n\n## Sources",
     )
     assert not validate_text(process_card, Path("card.md"), "complex", check_image_files=False)
 
-    missing_step_svg = process_card.replace("![Write](svg/write.svg)", "Step explanation")
+    missing_step_svg = process_card.replace("![write.svg](svg/write.svg)", "Step explanation")
     assert any("requires its own local .svg" in error for error in validate_text(
         missing_step_svg, Path("card.md"), "complex", check_image_files=False
     ))
 
-    no_image = simple.replace("![Atomic update](svg/atomic-update.svg)\n\n", "")
+    no_image = simple.replace("![atomic-update.svg](svg/atomic-update.svg)\n\n", "")
     assert any("requires at least" in error for error in validate_text(
         no_image, Path("card.md"), "simple", check_image_files=False
     ))

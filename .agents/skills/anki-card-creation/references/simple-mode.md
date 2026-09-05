@@ -8,9 +8,10 @@ Create one focused card that teaches a single core idea without assuming prior k
 
 Requirements:
 
+- Put `<!-- Card mode: simple. Validate with --mode simple. -->` between the title and `## Front`, with a blank line on each side and no intervening content.
 - The teaching content must contain **at most 3,000 Unicode characters**. The `## Front` and
   `## Sources` sections are excluded from that count: the Front is a prompt rather than teaching,
-  and a card must never have to drop a citation to stay in budget. Everything else — the Back,
+  and a card must never have to drop a citation to stay in budget. The mode comment is also excluded. Everything else — the Back,
   its headings, tables, code, and image links — counts. Measure it with the bundled validator;
   do not treat bytes or words as characters.
 - Include at least **one** local SVG or image. Prefer one purpose-built SVG that carries the central explanation.

@@ -46,15 +46,26 @@ Use the lifecycle wording from the authoritative source. Do not describe a previ
 
 - Write the `.md` file in the topic directory selected by the user. If none is specified, infer the best existing topic directory from the current repository and nearby cards.
 - Store local visuals in the sibling `svg/` directory when the output is an SVG; use lowercase hyphenated filenames.
-- Link visuals with a relative path and meaningful alt text, for example: `![How bucket selection works](svg/hashmap-bucket-selection.svg)`.
+- Link visuals with a relative path. The Markdown image alt text must contain the linked file's exact filename, including its extension, without requiring the directory path. Prefer the filename alone, for example: `![jpa-sequence-allocation.svg](images/jpa-sequence-allocation.svg)`. Put the teaching description in the surrounding prose; additional descriptive alt text is allowed when it also includes the filename.
 - Do not modify unrelated cards or diagrams. Preserve an existing card's filename unless the user asks to rename it.
 
 ## Required card structure
+
+Between the level-one title and `## Front`, add one HTML comment recording the selected mode and matching validation flag. Leave a blank line on each side of the comment, with no intervening content, as in `java/JPA. Primary key generation/Readme.md`. Use exactly one of these forms:
+
+```markdown
+<!-- Card mode: simple. Validate with --mode simple. -->
+<!-- Card mode: complex. Validate with --mode complex. -->
+```
+
+Add or update this comment whenever creating or revising a card. The comment is metadata and does not count toward the simple-mode character limit.
 
 Use this order:
 
 ```markdown
 # Clear topic title
+
+<!-- Card mode: simple. Validate with --mode simple. -->
 
 ## Front
 
@@ -66,7 +77,7 @@ A focused question that tells the learner what they should be able to explain.
 
 For other topics: the direct answer and most important fact first.
 
-![Meaningful description](svg/descriptive-name.svg)
+![descriptive-name.svg](svg/descriptive-name.svg)
 
 Beginner-friendly explanation, examples, and important limits.
 
@@ -100,7 +111,7 @@ Place each visual immediately after the paragraph or heading that introduces wha
 
 ## Final validation
 
-Run the validator from this skill directory:
+Run the validator from this skill directory with the `--mode` recorded in the card comment. The validator requires the comment and checks that its declared mode and flag match the selected validation mode:
 
 ```bash
 python3 scripts/check_anki_card.py --mode simple path/to/card.md
@@ -110,10 +121,12 @@ python3 scripts/check_anki_card.py --mode simple --require-version-lead path/to/
 
 Also verify:
 
+- The mode comment sits between the title and `## Front`, with a blank line on each side and no intervening content, and matches the mode used to create or revise the card.
 - The opening Back paragraph answers the Front directly.
 - A versioned feature card starts with the required bold feature-and-release sentence and passes `--require-version-lead`.
 - Every factual statement is supported by the chosen evidence path.
 - Every visual is referenced, rendered, inspected, and easy for a novice to interpret.
 - Each Java code fence uses `java`, and practical snippets compile or run as claimed.
+- Every Markdown image alt text contains the linked image's exact filename, including its extension.
 - No text or image link is broken.
 - Citations are last and no unrelated files changed.

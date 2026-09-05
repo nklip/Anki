@@ -8,6 +8,7 @@ Create a layered card that starts with the core mental model and then expands in
 
 Requirements:
 
+- Put `<!-- Card mode: complex. Validate with --mode complex. -->` between the title and `## Front`, with a blank line on each side and no intervening content.
 - There is no character limit, but every section must contribute to understanding or prevent a material misconception.
 - Include at least **two** local SVGs or images with different teaching purposes, such as structure plus behavior, or before-state plus after-state.
 - If the Back teaches a step-by-step process, every numbered or named step must have its own local `.svg` diagram immediately under that step's heading. A general overview image does not replace step-specific SVGs.
