@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">REST naming: resources in paths, actions in methods</title>
+  <desc id="desc">Typical resource naming for REST, Representational State Transfer. Read the request GET /customers/42/orders?status=paid from left to right: GET reads, customers is a plural collection with identifier 42, orders is a related plural collection, and the query filters to paid orders. For creation, prefer POST /orders with creation data in the request body to POST /create-order; the method carries the action.</desc>
+
+  <!-- Shared light palette; repeated segment colors connect code with its meaning. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .eyebrow { font-size: 14px; font-weight: 700; letter-spacing: 1.4px; fill: #475569; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .code { font-family: "Courier New", Courier, monospace; font-size: 26px; font-weight: 700; text-anchor: middle; }
+      .label { font-size: 21px; font-weight: 700; text-anchor: middle; }
+      .note { font-size: 17px; fill: #475569; text-anchor: middle; }
+      .small-code { font-family: "Courier New", Courier, monospace; font-size: 25px; font-weight: 700; }
+      .copy { font-size: 18px; fill: #334155; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="620" fill="#f8fafc"/>
+
+  <!-- Heading states the lesson and defines the abbreviation without surrounding prose. -->
+  <g id="heading">
+    <text class="eyebrow" x="50" y="33">TYPICAL RESOURCE NAMING</text>
+    <text class="title" x="50" y="77">REST naming: resources in paths, actions in methods</text>
+    <text class="subtitle" x="50" y="107">REST = Representational State Transfer</text>
+  </g>
+
+  <!-- Four adjacent request segments form one request, in the exact reading order. -->
+  <g id="request-breakdown">
+    <text class="eyebrow" x="50" y="149">READ THE REQUEST FROM LEFT TO RIGHT</text>
+
+    <rect id="method-panel" x="50" y="169" width="130" height="158" rx="15" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="code" x="115" y="212" style="fill:#1d4ed8">GET</text>
+    <text class="label" x="115" y="260">Read</text>
+    <text class="note" x="115" y="290">Method</text>
+
+    <rect id="customer-panel" x="202" y="169" width="310" height="158" rx="15" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="code" x="357" y="212" style="fill:#6d28d9">/customers/42</text>
+    <text class="label" x="357" y="260">Customer 42</text>
+    <text class="note" x="357" y="290">Plural collection + identifier</text>
+
+    <rect id="orders-panel" x="534" y="169" width="240" height="158" rx="15" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
+    <text class="code" x="654" y="212" style="fill:#166534">/orders</text>
+    <text class="label" x="654" y="260">Related orders</text>
+    <text class="note" x="654" y="290">Plural collection</text>
+
+    <rect id="query-panel" x="796" y="169" width="354" height="158" rx="15" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+    <text class="code" x="973" y="212" style="fill:#92400e">?status=paid</text>
+    <text class="label" x="973" y="260">Only paid orders</text>
+    <text class="note" x="973" y="290">Query filter</text>
+  </g>
+
+  <!-- The plain-language result makes the whole request's meaning explicit. -->
+  <g id="request-meaning">
+    <rect x="50" y="347" width="1100" height="65" rx="15" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="76" y="388" font-size="23" font-weight="700">Meaning:</text>
+    <text x="190" y="388" font-size="23">Read paid orders for customer 42.</text>
+  </g>
+
+  <!-- Before/after example: shaft ends beneath its own head, with open clearance at both ends. -->
+  <g id="creation-example">
+    <rect x="50" y="434" width="1100" height="145" rx="15" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="eyebrow" x="76" y="465">AVOID AN ACTION IN THE PATH</text>
+    <text class="small-code" x="76" y="504">POST /create-order</text>
+
+    <line id="creation-arrow-shaft" data-connector="true" x1="398" y1="496" x2="477" y2="496" stroke="#64748b" stroke-width="3"/>
+    <polygon id="creation-arrow-head" points="493,496 476,487 476,505" fill="#64748b"/>
+
+    <text class="eyebrow" x="534" y="465">PREFER A RESOURCE NAME</text>
+    <text class="small-code" x="534" y="504" style="fill:#166534">POST /orders</text>
+    <text class="copy" x="76" y="550">The method carries the action.</text>
+    <text class="copy" x="534" y="550">Send creation data in the request body.</text>
+  </g>
+</svg>

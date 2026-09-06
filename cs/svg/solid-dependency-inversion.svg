@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="725" viewBox="0 0 1200 725" role="img" aria-labelledby="title desc">
+  <title id="title">DIP: business rules own the contract</title>
+  <desc id="desc">Before, OrderService depends directly on SqlOrderRepository. After, the business policy defines an OrderRepository contract. OrderService depends on that contract, and SqlOrderRepository implements it. Both source-code arrows point toward the abstraction. At runtime the service still calls the supplied storage implementation through the contract. Startup code supplies that implementation using dependency injection.</desc>
+
+  <!-- Shared light palette; arrows denote source-code dependencies, not execution order. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .label { font-size: 21px; font-weight: 700; text-anchor: middle; }
+      .note { font-size: 18px; fill: #475569; text-anchor: middle; }
+      .section { font-size: 18px; font-weight: 700; }
+      .eyebrow { font-size: 18px; font-weight: 700; fill: #475569; }
+      .group-label { font-size: 14px; font-weight: 700; letter-spacing: 1px; fill: #475569; }
+      .copy { font-size: 19px; fill: #334155; }
+      .relation { font-size: 17px; fill: #475569; text-anchor: middle; }
+      .code { font-family: "Courier New", Courier, monospace; font-size: 22px; }
+    </style>
+  </defs>
+  <rect width="1200" height="725" fill="#f8fafc"/>
+
+  <!-- Heading defines the principle and the meaning of every connector. -->
+  <g id="heading">
+    <text class="eyebrow" x="50" y="35">D · DEPENDENCY INVERSION PRINCIPLE</text>
+    <text class="title" x="50" y="80">DIP: business rules own the contract</text>
+    <text class="subtitle" x="50" y="112">Protect business rules from storage details. Arrows below show source-code dependencies.</text>
+  </g>
+
+  <!-- Before: source code for business rules names the concrete storage implementation. -->
+  <g id="before-direct-dependency" transform="translate(0 24)">
+    <rect x="50" y="120" width="1100" height="155" rx="15" fill="#ffffff" stroke="#fecaca" stroke-width="2"/>
+    <text class="section" x="75" y="151" fill="#b91c1c">BEFORE — business logic names a storage class</text>
+    <rect x="80" y="175" width="330" height="76" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+    <rect x="790" y="175" width="330" height="76" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+    <text class="label" x="245" y="205">OrderService</text>
+    <text class="note" x="245" y="233">Business rules</text>
+    <text class="label" x="955" y="205">SqlOrderRepository</text>
+    <text class="note" x="955" y="233">Database implementation</text>
+    <text class="relation" x="600" y="195">depends on concrete class</text>
+    <!-- Shaft ends under its own head; tip stops just before the target border. -->
+    <line id="before-dependency-shaft" data-connector="true" x1="414" y1="220" x2="771" y2="220" stroke="#b91c1c" stroke-width="3"/>
+    <polygon id="before-dependency-head" points="787,220 770,211 770,229" fill="#b91c1c"/>
+  </g>
+
+  <!-- After: inward dependencies; match Before's 24-unit bottom padding and leave equal 140-unit corridors. -->
+  <g id="after-inverted-dependency" transform="translate(0 24)">
+    <rect x="50" y="297" width="1100" height="230" rx="15" fill="#ffffff" stroke="#bbf7d0" stroke-width="2"/>
+    <text class="section" x="75" y="328" fill="#166534">AFTER — the storage implementation follows the business contract</text>
+    <text class="group-label" x="77.5" y="378">BUSINESS POLICY + ITS CONTRACT</text>
+    <text class="group-label" x="877.5" y="378">STORAGE DETAIL</text>
+
+    <rect x="77.5" y="408" width="270" height="95" rx="12" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+    <rect x="487.5" y="408" width="250" height="95" rx="12" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+    <rect x="877.5" y="408" width="245" height="95" rx="12" fill="#ffffff" stroke="#15803d" stroke-width="2"/>
+    <text class="label" x="212.5" y="446">OrderService</text>
+    <text class="note" x="212.5" y="475">Uses save(order)</text>
+    <text class="label" x="612.5" y="438">OrderRepository</text>
+    <text class="note" x="612.5" y="465">Interface / contract</text>
+    <text class="note" x="612.5" y="489">save(order)</text>
+    <text class="label" x="1000" y="446">SqlOrderRepository</text>
+    <text class="note" x="1000" y="475">Implements save(order)</text>
+
+    <!-- Relation labels sit above the shafts in reserved corridors between boxes. -->
+    <text class="relation" x="417.5" y="435">depends on</text>
+    <line id="service-to-contract-shaft" data-connector="true" x1="351.5" y1="462" x2="468.5" y2="462" stroke="#2563eb" stroke-width="3"/>
+    <polygon id="service-to-contract-head" points="484.5,462 467.5,453 467.5,471" fill="#2563eb"/>
+    <text class="relation" x="807.5" y="435">implements</text>
+    <line id="storage-to-contract-shaft" data-connector="true" x1="873.5" y1="462" x2="756.5" y2="462" stroke="#15803d" stroke-width="3"/>
+    <polygon id="storage-to-contract-head" points="740.5,462 757.5,453 757.5,471" fill="#15803d"/>
+  </g>
+
+  <!-- Execution is explained separately so it cannot be mistaken for the dependency arrows. -->
+  <g id="runtime-and-injection" transform="translate(0 -15)">
+    <text class="section" x="50" y="601">At runtime, the service still calls the supplied storage object through the contract.</text>
+    <text class="code" x="50" y="641">OrderService(SqlOrderRepository())</text>
+    <text class="copy" x="50" y="675">Startup code supplies the object: this is dependency injection.</text>
+    <text class="copy" x="50" y="707">Dependency inversion chooses what the service depends on; injection chooses how it receives an object.</text>
+  </g>
+</svg>

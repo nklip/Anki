@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">SRP: separate code that changes for different reasons</title>
+  <desc id="desc">The Single Responsibility Principle groups code by the business responsibility that drives its changes. Before separation, Employee contains calculatePay for Finance, reportHours for Operations, and save for the Technology team. After separation, PayrollCalculator handles pay rules, HoursReporter handles reporting, and EmployeeRepository handles storage. Arrows labeled drives connect each reason to its code; arrows labeled extract show the separation. This is an example of separating responsibilities, not a rule to put one method in each class.</desc>
+
+  <!-- Shared CS typography; red identifies mixed responsibilities, green their separation. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .eyebrow { font-size: 18px; font-weight: 700; fill: #475569; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .column-title { font-size: 23px; font-weight: 700; }
+      .node-title { font-size: 22px; font-weight: 700; text-anchor: middle; }
+      .node-copy { font-size: 18px; fill: #475569; text-anchor: middle; }
+      .code { font-family: "Courier New", Courier, monospace; font-size: 21px; text-anchor: middle; }
+      .edge-label { font-size: 18px; fill: #475569; text-anchor: middle; }
+      .arrow-shaft { stroke: #64748b; stroke-width: 3; }
+      .copy { font-size: 19px; fill: #334155; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="700" fill="#f8fafc"/>
+
+  <!-- The lesson defines responsibility in terms of requested business changes. -->
+  <g id="heading">
+    <text class="eyebrow" x="50" y="35">S · SINGLE RESPONSIBILITY PRINCIPLE</text>
+    <text class="title" x="50" y="80">SRP: separate code that changes for different reasons</text>
+    <text class="subtitle" x="50" y="112">Group code by the actor whose business responsibility drives its changes. Read left to right.</text>
+  </g>
+
+  <!-- Three independent actors align horizontally with the code that serves them. -->
+  <g id="reasons-to-change">
+    <text class="column-title" x="50" y="175">Reason to change</text>
+    <rect x="50" y="244" width="230" height="74" rx="15" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="node-title" x="165" y="275">Finance</text>
+    <text class="node-copy" x="165" y="302">Pay rules</text>
+
+    <rect x="50" y="340" width="230" height="74" rx="15" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="node-title" x="165" y="371">Operations</text>
+    <text class="node-copy" x="165" y="398">Report requirements</text>
+
+    <rect x="50" y="436" width="230" height="74" rx="15" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="node-title" x="165" y="467">Technology team</text>
+    <text class="node-copy" x="165" y="494">Database schema</text>
+  </g>
+
+  <!-- One large Employee box visibly couples the three independent reasons for change. -->
+  <g id="mixed-employee-class">
+    <text class="column-title" x="348" y="175" style="fill:#b91c1c">Before: one class</text>
+    <rect id="employee-class" x="348" y="208" width="336" height="340" rx="18" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+    <text class="node-title" x="516" y="242">Employee</text>
+    <text class="code" x="516" y="288">calculatePay()</text>
+    <text class="code" x="516" y="384">reportHours()</text>
+    <text class="code" x="516" y="480">save()</text>
+    <text class="node-copy" x="516" y="525">Three reasons to change</text>
+  </g>
+
+  <!-- Separate class boxes isolate the reason behind each example method. -->
+  <g id="separated-responsibilities">
+    <text class="column-title" x="790" y="175" style="fill:#166534">After: separate responsibilities</text>
+    <rect x="790" y="244" width="360" height="74" rx="15" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
+    <text class="node-title" x="970" y="275">PayrollCalculator</text>
+    <text class="node-copy" x="970" y="302">calculatePay()</text>
+
+    <rect x="790" y="340" width="360" height="74" rx="15" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
+    <text class="node-title" x="970" y="371">HoursReporter</text>
+    <text class="node-copy" x="970" y="398">reportHours()</text>
+
+    <rect x="790" y="436" width="360" height="74" rx="15" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
+    <text class="node-title" x="970" y="467">EmployeeRepository</text>
+    <text class="node-copy" x="970" y="494">save()</text>
+    <text class="node-copy" x="970" y="548">Change each responsibility independently.</text>
+  </g>
+
+  <!-- All shafts stop under their own head bases; tips meet the outer target borders. -->
+  <g id="reason-and-extraction-arrows">
+    <text class="edge-label" x="314" y="261">drives</text>
+    <line class="arrow-shaft" data-connector="true" x1="282" y1="281" x2="331" y2="281"/>
+    <polygon points="347,281 330,272 330,290" fill="#64748b"/>
+    <text class="edge-label" x="737" y="261">extract</text>
+    <line class="arrow-shaft" data-connector="true" x1="686" y1="281" x2="773" y2="281"/>
+    <polygon points="789,281 772,272 772,290" fill="#64748b"/>
+
+    <text class="edge-label" x="314" y="357">drives</text>
+    <line class="arrow-shaft" data-connector="true" x1="282" y1="377" x2="331" y2="377"/>
+    <polygon points="347,377 330,368 330,386" fill="#64748b"/>
+    <text class="edge-label" x="737" y="357">extract</text>
+    <line class="arrow-shaft" data-connector="true" x1="686" y1="377" x2="773" y2="377"/>
+    <polygon points="789,377 772,368 772,386" fill="#64748b"/>
+
+    <text class="edge-label" x="314" y="453">drives</text>
+    <line class="arrow-shaft" data-connector="true" x1="282" y1="473" x2="331" y2="473"/>
+    <polygon points="347,473 330,464 330,482" fill="#64748b"/>
+    <text class="edge-label" x="737" y="453">extract</text>
+    <line class="arrow-shaft" data-connector="true" x1="686" y1="473" x2="773" y2="473"/>
+    <polygon points="789,473 772,464 772,482" fill="#64748b"/>
+  </g>
+
+  <!-- Prevent the common mistaken inference that every method needs its own class. -->
+  <g id="takeaway">
+    <rect x="50" y="582" width="1100" height="84" rx="15" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="76" y="617" font-size="23" font-weight="700">Split by responsibility, not by method count.</text>
+    <text class="copy" x="76" y="648">Each class may contain several methods that serve the same business responsibility.</text>
+  </g>
+</svg>

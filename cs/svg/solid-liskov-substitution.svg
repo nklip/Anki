@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="766" viewBox="0 0 1200 766" role="img" aria-labelledby="title desc">
+  <title id="title">LSP: preserve the promised behavior</title>
+  <desc id="desc">A mutable Rectangle promises that changing width leaves height unchanged and changing height leaves width unchanged. A client sets width to 5 and height to 4, expecting area 20. A Rectangle satisfies this expectation. A Square subclass that keeps both sides equal produces area 16 instead. The repair uses independent immutable Rectangle and Square implementations of a Shape interface that promises area but no dimension setters.</desc>
+
+  <!-- Match the folder's light palette; labels also distinguish contracts, success, and violation. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .eyebrow { font-size: 18px; font-weight: 700; fill: #475569; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .copy { font-size: 21px; fill: #334155; }
+      .note { font-size: 19px; fill: #475569; }
+      .node { font-size: 22px; font-weight: 700; text-anchor: middle; }
+      .relation { font-size: 19px; fill: #475569; text-anchor: middle; }
+      .code { font-family: "Courier New", Courier, monospace; font-size: 21px; }
+    </style>
+  </defs>
+  <rect width="1200" height="766" fill="#f8fafc"/>
+
+  <!-- Begin with a behavioral promise, then run the same client against both objects. -->
+  <g id="heading">
+    <text class="eyebrow" x="50" y="35">L · LISKOV SUBSTITUTION PRINCIPLE</text>
+    <text class="title" x="50" y="80">LSP: preserve the promised behavior</text>
+    <text class="subtitle" x="50" y="112">A subtype must remain usable wherever the original type's contract is expected.</text>
+  </g>
+  <g id="mutable-contract" transform="translate(0 26)">
+    <rect x="50" y="112" width="1100" height="91" rx="15" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="heading" x="75" y="146" style="fill:#1d4ed8">Contract: mutable Rectangle</text>
+    <text class="copy" x="75" y="180">setWidth changes only width. setHeight changes only height.</text>
+  </g>
+  <g id="client-expectation" transform="translate(0 26)">
+    <rect x="50" y="221" width="1100" height="79" rx="15" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="heading" x="75" y="253">The client uses that contract:</text>
+    <text class="code" x="75" y="283">setWidth(5); setHeight(4);</text>
+    <text class="copy" x="490" y="283">Expected area: 5 × 4 = 20</text>
+  </g>
+
+  <!-- Side-by-side outcomes make the behavioral failure visible without UML notation. -->
+  <g id="rectangle-outcome" transform="translate(0 26)">
+    <rect x="50" y="320" width="530" height="145" rx="15" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
+    <text class="heading" x="75" y="355" style="fill:#166534">Rectangle: contract preserved</text>
+    <text class="copy" x="75" y="390">Width 5, height 4</text>
+    <text class="heading" x="75" y="429">Actual area: 20 — as expected</text>
+  </g>
+  <g id="square-outcome" transform="translate(0 26)">
+    <rect x="620" y="320" width="530" height="145" rx="15" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+    <text class="heading" x="645" y="355" style="fill:#b91c1c">Square subclass: contract broken</text>
+    <text class="copy" x="645" y="390">setHeight(4) also changes width to 4.</text>
+    <text class="heading" x="645" y="429">Actual area: 16 — unexpected</text>
+  </g>
+  <text class="note" x="50" y="521">Being a rectangle in geometry does not guarantee compatibility with a mutable Rectangle contract.</text>
+
+  <!-- Repair narrows the shared promise. Each arrow points from implementation to contract. -->
+  <g id="independent-shapes" transform="translate(0 26)">
+    <rect x="50" y="518" width="1100" height="178" rx="15" fill="#ffffff" stroke="#15803d" stroke-width="2"/>
+    <text class="heading" x="75" y="553" style="fill:#166534">Repair: independent immutable shapes</text>
+    <rect x="75" y="582" width="250" height="60" rx="12" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
+    <rect x="500" y="582" width="200" height="60" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <rect x="900" y="582" width="225" height="60" rx="12" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
+    <text class="node" x="200" y="620">Rectangle</text>
+    <text class="node" x="600" y="620" style="fill:#1d4ed8">Shape.area()</text>
+    <text class="node" x="1012" y="620">Square</text>
+    <!-- Shafts end beneath triangle bases; tips meet the blue contract boundary. -->
+    <line id="rectangle-implements-shaft" data-connector="true" x1="325" y1="620" x2="484" y2="620" stroke="#64748b" stroke-width="2"/>
+    <polygon points="500,620 482,612 482,628" fill="#64748b"/>
+    <text class="relation" x="412" y="599">implements</text>
+    <line id="square-implements-shaft" data-connector="true" x1="900" y1="620" x2="716" y2="620" stroke="#64748b" stroke-width="2"/>
+    <polygon points="700,620 718,612 718,628" fill="#64748b"/>
+    <text class="relation" x="800" y="599">implements</text>
+    <text class="copy" x="75" y="676">Shape promises an area calculation; it promises no independently mutable dimensions.</text>
+  </g>
+</svg>
