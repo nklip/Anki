@@ -10,7 +10,7 @@ How does JPA generate a primary key, and how should you choose between `AUTO`, `
 
 **Java Persistence API (JPA) primary-key generation** uses `@GeneratedValue` for a simple entity ID. Jakarta Persistence 3.2 defines five strategies; `GenerationType.UUID` was introduced in Jakarta Persistence 3.1.
 
-The Hibernate-specific behavior and examples below target **Hibernate ORM 7.4.7.Final**, which implements Jakarta Persistence 3.2.
+The Hibernate-specific behavior and examples below target **Hibernate ORM 7.4.7.Final**, which implements Jakarta Persistence 3.2, except where a production example names its own release.
 
 The main question is: **who allocates the value, and is it known before the entity’s `INSERT`?**
 
@@ -241,7 +241,14 @@ Use it mainly when sequence-like behavior is required but a native sequence is u
 
 ### `UUID`: provider-generated, database-independent identity
 
+**A universally unique identifier (UUID) is a 128-bit identifier. `GenerationType.UUID` makes the persistence provider responsible for creating it.** With Hibernate, generation happens in the Java process before the entity's `INSERT`; it needs no database sequence, auto-increment column, or database UUID function.
+
+Modern, portable ID field mapping inside an entity:
+
 ```java
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import java.util.UUID;
 
 @Id
@@ -249,9 +256,11 @@ import java.util.UUID;
 private UUID id;
 ```
 
+The practical benefit is that the provider can allocate record IDs before insertion without a shared database counter. Hibernate insert batching remains possible when configured. **Having an ID does not mean the transaction has committed**; saving the record still requires a database.
+
 The provider generates an RFC 4122 UUID. Jakarta Persistence intentionally does **not** require one UUID version, so portable code must not assume random, time-based, or time-ordered values.
 
-Hibernate ORM 7.4 defaults its `@UuidGenerator` to random UUID version 4. It also exposes Hibernate-specific styles, including an incubating version 7 style:
+Hibernate ORM 7.4 defaults its `@UuidGenerator` to random UUID version 4. It also exposes Hibernate-specific styles, including an incubating version 7 style. Alternative ID field mapping:
 
 ```java
 import java.util.UUID;
@@ -263,20 +272,51 @@ import org.hibernate.annotations.UuidGenerator;
 private UUID id;
 ```
 
-Use the second mapping only when depending on Hibernate ORM 7.4 and its incubating API is acceptable. Prefer a native UUID or 16-byte database type when available instead of storing the textual 36-character form merely for display convenience.
+Use the version 7 mapping only when depending on Hibernate ORM 7.4 and its incubating API is acceptable. Prefer a native UUID or 16-byte database type when available instead of storing the textual 36-character form merely for display convenience.
+
+#### **Production example: Apache Airflow 3 (outside Java)**
+
+This example uses **Python/SQLAlchemy**. In **Airflow 3.0.0**, `DagVersion` stores versions of workflow definitions. Its SQLAlchemy mapping contains this Python field declaration:
+
+```python
+id = Column(UUIDType(binary=False), primary_key=True, default=uuid6.uuid7)
+```
+
+`DagVersion.write_dag()` creates the record without supplying an ID and adds it to the SQLAlchemy session. When preparing the `INSERT`, SQLAlchemy invokes the Python function `uuid6.uuid7` and sends the generated UUIDv7 as the primary-key value. The declaration passes the function without calling it, so SQLAlchemy can generate a value for each inserted record that lacks an ID.
+
+This demonstrates **provider-generated, database-independent UUID identity outside JPA**: SQLAlchemy performs generation in the Python process, with no database-side UUID function or sequence. The database still stores and enforces the primary key. This example uses Python/SQLAlchemy rather than Java's `GenerationType.UUID` annotation.
 
 ### Application-assigned IDs
 
-`@GeneratedValue` is optional. The application may set an ID before persistence:
+**Application-assigned means application code supplies the ID before `persist()`.** The value can still be a UUID; the difference is who creates it and when it becomes available. Omit `@GeneratedValue` for this mapping.
+
+For example, this entity-field fragment assigns an ID when a Java object is constructed:
 
 ```java
+import jakarta.persistence.Id;
 import java.util.UUID;
 
 @Id
 private UUID id = UUID.randomUUID();
 ```
 
-This gives the application immediate access to the ID and avoids a database allocator. In return, the application must guarantee uniqueness and must have clear rules for distinguishing new and existing entities.
+Assigned IDs also fit an import that must preserve a source system's stable, unique identifiers. They do not have to be UUIDs: the application can supply another valid mapped ID type.
+
+**Production details:** UUID collisions are extremely unlikely with a sound random generator, but they are not mathematically impossible; keep the database primary-key constraint. Application code owns ID assignment and must distinguish new entities from existing ones.
+
+**The following production-system examples demonstrate Java code assigning UUID identity outside JPA.** They show why an ID can be useful before storage; neither example uses `GenerationType.UUID`.
+
+#### **Production example: Apache Kafka 4.0.0 — topic identity**
+
+A topic is a named stream of records. In `ReplicationControlManager.createTopic()`, the controller generates the topic's UUID in Java with `Uuid.randomUuid()` and places it in a `TopicRecord` before the record is persisted in the metadata log. `Uuid` is Kafka's own UUID class.
+
+This lets Kafka distinguish two topics with the same name at different times. For example, deleting the `orders` topic and creating another `orders` topic gives the new topic a fresh identity. The UUID identifies the topic in metadata; it is not a JPA entity primary key.
+
+#### **Production example: Apache Cassandra (4.1 source branch) — node identity**
+
+A node is a Cassandra server participating in the cluster. `SystemKeyspace.getOrInitializeLocalHostId()` reuses the stored host ID when one exists. Otherwise, its default generator uses Java's `UUID.randomUUID()`, writes the new value to `system.local.host_id`, and flushes it to disk.
+
+The stored UUID lets the node retain its identity across restarts while its local system data is preserved. Here, `host_id` identifies the node; the primary key of the `system.local` table is the separate `key` column. Cassandra is itself a database, but this ID is generated by Java code without a database-side UUID function or sequence.
 
 ### How to choose
 
@@ -310,6 +350,13 @@ This gives the application immediate access to the ID and avoids a database allo
 - [Hibernate ORM 7.4.7 source — table generator allocation](https://github.com/hibernate/hibernate-orm/blob/7.4.7/hibernate-core/src/main/java/org/hibernate/id/enhanced/TableGenerator.java)
 - [Hibernate ORM 7.4.7 source — separate JDBC allocation transactions](https://github.com/hibernate/hibernate-orm/blob/7.4.7/hibernate-core/src/main/java/org/hibernate/resource/transaction/backend/jdbc/internal/JdbcIsolationDelegate.java)
 - [Hibernate ORM 7.4 API — `UuidGenerator.Style`](https://docs.hibernate.org/orm/7.4/javadocs/org/hibernate/annotations/UuidGenerator.Style.html)
+- [Apache Airflow 3.0.0 source — UUIDv7 primary-key default and workflow-version persistence](https://github.com/apache/airflow/blob/3.0.0/airflow-core/src/airflow/models/dag_version.py)
+- [SQLAlchemy 2.0 documentation — Python defaults invoked before sending data to the database](https://docs.sqlalchemy.org/en/20/core/defaults.html#python-executed-functions)
+- [Apache Kafka 4.0.0 source — generating a topic UUID before metadata persistence](https://github.com/apache/kafka/blob/4.0.0/metadata/src/main/java/org/apache/kafka/controller/ReplicationControlManager.java)
+- [Apache Kafka KIP-516 — distinguishing topics with UUID identifiers](https://cwiki.apache.org/confluence/spaces/KAFKA/pages/127406437/KIP-516%2BTopic%2BIdentifiers)
+- [Apache Cassandra 4.1 branch source — generating, storing, and reusing node host IDs](https://github.com/apache/cassandra/blob/cassandra-4.1/src/java/org/apache/cassandra/db/SystemKeyspace.java)
+- [Java SE 25 API — `UUID.randomUUID()` creates a version 4 UUID](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/UUID.html)
+- [RFC 9562 — UUID format, distributed generation, and collision resistance](https://www.rfc-editor.org/rfc/rfc9562.html)
 - [PostgreSQL 18 documentation — Identity columns](https://www.postgresql.org/docs/18/ddl-identity-columns.html)
 - [PostgreSQL 18 documentation — `CREATE SEQUENCE`](https://www.postgresql.org/docs/18/sql-createsequence.html)
 - [PostgreSQL 18 documentation — sequence functions and concurrent allocation](https://www.postgresql.org/docs/18/functions-sequence.html)
