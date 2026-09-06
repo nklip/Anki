@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="835" viewBox="0 0 1200 835" role="img" aria-labelledby="title desc">
+  <title id="title">WSGI and Servlet: a similar boundary in two languages</title>
+  <desc id="desc">Two parallel request-invocation diagrams compare Python WSGI with Java Servlet. A WSGI server calls a Python application callable using application(environ, start_response). The callable reads a request dictionary, supplies status and headers through a callback, and returns an iterable of body bytes. A Servlet container, such as Tomcat, manages and calls a Java Servlet instance using service(request, response). The servlet reads a request object and sets status, headers, and output through a response object. Both define a standard server-to-application boundary. WSGI is a small Python calling contract; the Servlet API also specifies lifecycle, sessions, filters, and other container services. Arrows show request invocation only, not creation of a new servlet per request.</desc>
+
+  <!-- Shared CS light theme; parallel geometry makes equivalent roles easy to compare. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .eyebrow { font-size: 14px; font-weight: 700; letter-spacing: 1.3px; fill: #475569; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .lane-title { font-size: 23px; font-weight: 700; }
+      .node-title { font-size: 22px; font-weight: 700; text-anchor: middle; }
+      .node-copy { font-size: 17px; fill: #475569; text-anchor: middle; }
+      .code { font-family: "Courier New", Courier, monospace; font-size: 18px; text-anchor: middle; }
+      .copy { font-size: 19px; fill: #334155; }
+      .arrow-shaft { stroke-width: 3; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="835" fill="#f8fafc"/>
+
+  <!-- The subject, reading rule and abbreviation definitions stand independently of the card. -->
+  <g id="heading">
+    <text class="eyebrow" x="50" y="33">COMPARE THE SAME BOUNDARY · ARROWS SHOW REQUEST INVOCATION</text>
+    <text class="title" x="50" y="77">WSGI and Servlet: a similar boundary in two languages</text>
+    <text class="subtitle" x="50" y="107">Both let compatible server runtimes call application code through a standard interface.</text>
+    <text class="subtitle" x="50" y="135">WSGI = Web Server Gateway Interface · API = Application Programming Interface</text>
+  </g>
+
+  <!-- Python lane: the contract labels a call between runtime and application, not an extra node. -->
+  <g id="python-wsgi-lane">
+    <rect x="50" y="160" width="1100" height="242" rx="18" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+    <text class="lane-title" x="74" y="194" style="fill:#6d28d9">Python: WSGI calling contract</text>
+
+    <rect id="wsgi-server" x="74" y="212" width="270" height="84" rx="15" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="node-title" x="209" y="246">WSGI server</text>
+    <text class="node-copy" x="209" y="275">Calls Python application code</text>
+
+    <rect id="python-application" x="876" y="212" width="250" height="84" rx="15" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="node-title" x="1001" y="246">Python callable</text>
+    <text class="node-copy" x="1001" y="275">Application or framework</text>
+
+    <!-- Shaft ends beneath its own triangle; tip meets the outer application border. -->
+    <text class="code" x="610" y="244" style="fill:#6d28d9">application(environ, start_response)</text>
+    <line class="arrow-shaft" data-connector="true" x1="346" y1="270" x2="859" y2="270" stroke="#7c3aed"/>
+    <polygon points="875,270 858,261 858,279" fill="#7c3aed"/>
+
+    <text class="copy" x="74" y="332">Read request: environ dictionary, including a stream for the request body.</text>
+    <text class="copy" x="74" y="367">Produce response: callback for status + headers; returned iterable yields body bytes.</text>
+  </g>
+
+  <!-- Java lane: container and servlet correspond to runtime and callable in the Python lane. -->
+  <g id="java-servlet-lane">
+    <rect x="50" y="422" width="1100" height="242" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+    <text class="lane-title" x="74" y="456" style="fill:#1d4ed8">Java: Servlet API</text>
+
+    <rect id="servlet-container" x="74" y="474" width="270" height="84" rx="15" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+    <text class="node-title" x="209" y="508">Servlet container</text>
+    <text class="node-copy" x="209" y="537">e.g. Tomcat</text>
+
+    <rect id="servlet-instance" x="876" y="474" width="250" height="84" rx="15" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+    <text class="node-title" x="1001" y="508">Servlet instance</text>
+    <text class="node-copy" x="1001" y="537">Handles request logic</text>
+
+    <!-- Reuse the same shaft/head join convention; no return-type equivalence is implied. -->
+    <text class="code" x="610" y="506" style="fill:#1d4ed8">service(request, response)</text>
+    <line class="arrow-shaft" data-connector="true" x1="346" y1="532" x2="859" y2="532" stroke="#2563eb"/>
+    <polygon points="875,532 858,523 858,541" fill="#2563eb"/>
+
+    <text class="copy" x="74" y="594">Read request: request object. The container manages and calls the servlet.</text>
+    <text class="copy" x="74" y="629">Produce response: set status and headers, then write the body through the response object.</text>
+  </g>
+
+  <!-- The analogy is structural; scope differences keep the two standards distinct. -->
+  <g id="shared-role-and-scope">
+    <rect x="50" y="684" width="1100" height="111" rx="15" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
+    <text x="76" y="719" font-size="23" font-weight="700">Same role: separate application code from the server through a standard interface.</text>
+    <text class="copy" x="76" y="750">WSGI: a small Python calling contract.</text>
+    <text class="copy" x="76" y="779">Servlet API: request handling plus lifecycle, sessions, filters and other container services.</text>
+  </g>
+</svg>

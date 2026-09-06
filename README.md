@@ -1,6 +1,6 @@
 # Anki Flashcards
 
-This repository contains Anki-ready study materials and teaching diagrams for Java, artificial intelligence, and system design.
+This repository contains Anki-ready study materials and teaching diagrams for artificial intelligence, Java, Python, and system design.
 
 ## Artificial intelligence
 
@@ -16,6 +16,10 @@ The [`java`](java/) folder contains Java learning materials:
 - SVG (`.svg`) diagrams and schemas in [`java/svg`](java/svg/) that illustrate concepts covered by the cards.
 
 The cards cover modern Java syntax, collections, concurrency, the Java Memory Model, JVM internals, garbage collection, JPA, Hibernate, and related development topics.
+
+## Python
+
+The [`python`](python/) folder contains Python cards, including [WSGI](python/WSGI.md). Local teaching diagrams live in [`python/svg`](python/svg/).
 
 ## System design
 
@@ -35,6 +39,10 @@ Each chapter keeps its notes in `Readme.md` and, where applicable, its diagrams 
 │   ├── svg/
 │   │   └── *.svg       # Java teaching diagrams
 │   └── *.md            # Java flashcards
+├── python/
+│   ├── svg/
+│   │   └── *.svg       # Python teaching diagrams
+│   └── *.md            # Python flashcards
 └── system design/
     ├── 01. Scaling/
     │   ├── images/     # Chapter diagrams

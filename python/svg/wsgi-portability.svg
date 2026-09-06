@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="660" viewBox="0 0 1200 660" role="img" aria-labelledby="title desc">
+  <title id="title">Why WSGI exists: portable Python web applications</title>
+  <desc id="desc">A schematic comparison with two web servers and two Python applications or frameworks. Without a shared interface, each server and application pairing may need its own integration code. With WSGI, Web Server Gateway Interface, compatible servers and applications follow one shared Python calling contract, so server and framework choices can be made independently. WSGI is the shared rule, not an additional server. The matrix is an illustration of compatibility, not a historical count of integrations.</desc>
+
+  <!-- Shared light palette matches adjacent Computer Science teaching diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .eyebrow { font-size: 14px; font-weight: 700; letter-spacing: 1.4px; fill: #475569; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .panel-title { font-size: 25px; font-weight: 700; }
+      .copy { font-size: 18px; fill: #334155; }
+      .column-label { font-size: 17px; font-weight: 700; text-anchor: middle; }
+      .row-label { font-size: 18px; font-weight: 700; }
+      .cell-label { font-size: 18px; font-weight: 700; text-anchor: middle; }
+      .cell-note { font-size: 16px; fill: #475569; text-anchor: middle; }
+      .code { font-family: "Courier New", Courier, monospace; font-size: 19px; fill: #6d28d9; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="660" fill="#f8fafc"/>
+
+  <!-- Define the standard and state its intended benefit before the comparison. -->
+  <g id="heading">
+    <text class="eyebrow" x="50" y="33">READ LEFT TO RIGHT · WHY STANDARDIZE?</text>
+    <text class="title" x="50" y="77">Why WSGI exists: portable Python web applications</text>
+    <text class="subtitle" x="50" y="107">WSGI = Web Server Gateway Interface</text>
+  </g>
+
+  <!-- Matrices show compatibility, not a runtime pipeline or extra network component. -->
+  <g id="separate-integrations">
+    <rect x="50" y="137" width="532" height="338" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="panel-title" x="74" y="176">1  Separate integrations</text>
+    <text class="copy" x="74" y="207">Each pairing may need its own integration code.</text>
+
+    <text class="column-label" x="287" y="246">App / framework X</text>
+    <text class="column-label" x="469" y="246">App / framework Y</text>
+    <text class="row-label" x="74" y="305">Server A</text>
+    <text class="row-label" x="74" y="385">Server B</text>
+
+    <rect x="202" y="266" width="170" height="64" rx="12" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+    <text class="cell-label" x="287" y="293">A + X</text>
+    <text class="cell-note" x="287" y="317">Specific integration</text>
+    <rect x="384" y="266" width="170" height="64" rx="12" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+    <text class="cell-label" x="469" y="293">A + Y</text>
+    <text class="cell-note" x="469" y="317">Specific integration</text>
+    <rect x="202" y="346" width="170" height="64" rx="12" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+    <text class="cell-label" x="287" y="373">B + X</text>
+    <text class="cell-note" x="287" y="397">Specific integration</text>
+    <rect x="384" y="346" width="170" height="64" rx="12" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+    <text class="cell-label" x="469" y="373">B + Y</text>
+    <text class="cell-note" x="469" y="397">Specific integration</text>
+    <text class="copy" x="74" y="448">A server choice can constrain the framework choice.</text>
+  </g>
+
+  <!-- Repeated identical WSGI cells mean one standard applies to every pairing. -->
+  <g id="shared-contract">
+    <rect x="618" y="137" width="532" height="338" rx="18" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+    <text class="panel-title" x="642" y="176">2  One shared contract</text>
+    <text class="copy" x="642" y="207">Each side implements the same WSGI conventions.</text>
+
+    <text class="column-label" x="855" y="246">App / framework X</text>
+    <text class="column-label" x="1037" y="246">App / framework Y</text>
+    <text class="row-label" x="642" y="305">Server A</text>
+    <text class="row-label" x="642" y="385">Server B</text>
+
+    <rect x="770" y="266" width="170" height="64" rx="12" fill="#ffffff" stroke="#7c3aed" stroke-width="1.5"/>
+    <text class="cell-label" x="855" y="293" style="fill:#6d28d9">WSGI</text>
+    <text class="cell-note" x="855" y="317">Same contract</text>
+    <rect x="952" y="266" width="170" height="64" rx="12" fill="#ffffff" stroke="#7c3aed" stroke-width="1.5"/>
+    <text class="cell-label" x="1037" y="293" style="fill:#6d28d9">WSGI</text>
+    <text class="cell-note" x="1037" y="317">Same contract</text>
+    <rect x="770" y="346" width="170" height="64" rx="12" fill="#ffffff" stroke="#7c3aed" stroke-width="1.5"/>
+    <text class="cell-label" x="855" y="373" style="fill:#6d28d9">WSGI</text>
+    <text class="cell-note" x="855" y="397">Same contract</text>
+    <rect x="952" y="346" width="170" height="64" rx="12" fill="#ffffff" stroke="#7c3aed" stroke-width="1.5"/>
+    <text class="cell-label" x="1037" y="373" style="fill:#6d28d9">WSGI</text>
+    <text class="cell-note" x="1037" y="397">Same contract</text>
+    <text class="copy" x="642" y="448">Choose compatible servers and frameworks freely.</text>
+  </g>
+
+  <!-- The takeaway clarifies both portability and the meaning of the shaded matrix. -->
+  <g id="takeaway">
+    <rect x="50" y="495" width="1100" height="111" rx="15" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
+    <text x="76" y="530" font-size="23" font-weight="700">Implement the same call contract; choose a compatible server independently.</text>
+    <text class="code" x="76" y="563">application(environ, start_response)</text>
+    <text class="copy" x="76" y="589">WSGI defines how the server calls Python application code. It is not an extra server.</text>
+    <text class="subtitle" x="50" y="637">Schematic compatibility example; not a historical count of integrations.</text>
+  </g>
+</svg>

@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">WSGI connects a web server to a Python application</title>
+  <desc id="desc">A typical simple application's request and response sequence. A client sends an HTTP request to a WSGI-capable server. The server calls application(environ, start_response) once per request. The application supplies status and headers through start_response and returns an iterable yielding body bytes. The server iterates the body and sends the HTTP response to the client. WSGI, Web Server Gateway Interface, is the Python call contract between server and application, not another network server. Environ contains request information; start_response is the callback for status and headers.</desc>
+
+  <!-- Shared light theme and manual arrowheads keep the sequence editable and portable. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .eyebrow { font-size: 14px; font-weight: 700; letter-spacing: 1.4px; fill: #475569; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .node-title { font-size: 21px; font-weight: 700; text-anchor: middle; }
+      .node-copy { font-size: 17px; fill: #475569; text-anchor: middle; }
+      .flow-label { font-size: 19px; font-weight: 700; }
+      .code { font-family: "Courier New", Courier, monospace; font-size: 18px; }
+      .copy { font-size: 18px; fill: #334155; }
+      .request-shaft { stroke: #2563eb; stroke-width: 3; }
+      .response-shaft { stroke: #15803d; stroke-width: 3; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="800" fill="#f8fafc"/>
+
+  <!-- The title defines the interface; the sequence is explicitly a typical simple case. -->
+  <g id="heading">
+    <text class="eyebrow" x="50" y="33">A TYPICAL SIMPLE APPLICATION · READ TOP TO BOTTOM</text>
+    <text class="title" x="50" y="77">WSGI connects a web server to a Python application</text>
+    <text class="subtitle" x="50" y="107">WSGI = Web Server Gateway Interface</text>
+  </g>
+
+  <!-- The shaded region is a contract, not an additional server or network hop. -->
+  <g id="participants">
+    <rect id="wsgi-contract-region" x="400" y="137" width="750" height="470" rx="18" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+    <text class="eyebrow" x="426" y="166" style="fill:#6d28d9">WSGI: THE PYTHON CALL CONTRACT BETWEEN THESE TWO PARTS</text>
+
+    <rect x="50" y="190" width="180" height="82" rx="15" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="node-title" x="140" y="224">Client</text>
+    <text class="node-copy" x="140" y="251">e.g. a browser</text>
+
+    <rect x="420" y="190" width="240" height="82" rx="15" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="node-title" x="540" y="224">Web server</text>
+    <text class="node-copy" x="540" y="251">Supports WSGI</text>
+
+    <rect x="900" y="190" width="230" height="82" rx="15" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
+    <text class="node-title" x="1015" y="224">Python application</text>
+    <text class="node-copy" x="1015" y="251">A callable</text>
+
+    <!-- Thin lifelines represent participants over time; arrow tips meet their outer edges. -->
+    <rect x="139" y="273" width="2" height="377" fill="#94a3b8"/>
+    <rect x="539" y="273" width="2" height="377" fill="#94a3b8"/>
+    <rect x="1014" y="273" width="2" height="308" fill="#94a3b8"/>
+  </g>
+
+  <!-- Network request; the arrow tip meets the server lifeline without passing it. -->
+  <g id="http-request">
+    <text class="flow-label" x="174" y="314" style="fill:#1d4ed8">1  HTTP request</text>
+    <line class="request-shaft" data-connector="true" x1="141" y1="333" x2="523" y2="333"/>
+    <polygon points="539,333 522,324 522,342" fill="#2563eb"/>
+  </g>
+
+  <!-- Python call: the server supplies both request information and its callback. -->
+  <g id="application-call">
+    <text class="flow-label" x="572" y="369" style="fill:#1d4ed8">2  Call once per request</text>
+    <text class="code" x="572" y="393">application(environ, start_response)</text>
+    <line class="request-shaft" data-connector="true" x1="541" y1="411" x2="998" y2="411"/>
+    <polygon points="1014,411 997,402 997,420" fill="#2563eb"/>
+  </g>
+
+  <!-- Callback and body iterable are separate parts of the application's response. -->
+  <g id="application-response">
+    <text class="flow-label" x="572" y="444" style="fill:#166534">3  Supply status + headers</text>
+    <text class="code" x="572" y="468">start_response(status, headers)</text>
+    <line class="response-shaft" data-connector="true" x1="1014" y1="486" x2="557" y2="486"/>
+    <polygon points="541,486 558,477 558,495" fill="#15803d"/>
+
+    <text class="flow-label" x="572" y="530" style="fill:#166534">4  Return an iterable yielding body bytes</text>
+    <line class="response-shaft" data-connector="true" x1="1014" y1="549" x2="557" y2="549"/>
+    <polygon points="541,549 558,540 558,558" fill="#15803d"/>
+    <text class="copy" x="572" y="585">The server iterates it to obtain the response body.</text>
+  </g>
+
+  <!-- Final network response flows back to the client after the server assembles it. -->
+  <g id="http-response">
+    <text class="flow-label" x="174" y="619" style="fill:#166534">5  HTTP response</text>
+    <line class="response-shaft" data-connector="true" x1="539" y1="637" x2="157" y2="637"/>
+    <polygon points="141,637 158,628 158,646" fill="#15803d"/>
+  </g>
+
+  <!-- Local definitions resolve protocol and parameter names without external prose. -->
+  <g id="definitions">
+    <rect x="50" y="675" width="1100" height="85" rx="15" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="copy" x="76" y="706">HTTP = Hypertext Transfer Protocol</text>
+    <text class="copy" x="76" y="737">environ = request information</text>
+    <text class="copy" x="530" y="706">start_response = status + header callback</text>
+    <text class="copy" x="530" y="737">WSGI specifies Python calls; it is not another server.</text>
+  </g>
+</svg>
