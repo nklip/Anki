@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="1522" height="712" viewBox="0 0 1522 712" role="img" aria-labelledby="title desc">
-  <title id="title">Road graph divided into three routing tiles</title>
-  <desc id="desc">The street map and original central road graph are preserved from road-representation.svg. The fourth layer extends the graph across three adjacent routing tiles, adding eighteen red nodes, black links and two side boundaries. Each routing tile has a black text label with a 15-pixel white halo, without a white rectangular panel. Graph annotations intentionally appear above the street labels.</desc>
+  <title id="title">Road representation — editable base map</title>
+  <desc id="desc">A base map reconstructed from road-representation.png with three editable layers: ground colors; roads and gray building footprints with 2-pixel borders; and street names plus map attribution text. Street names follow the roads in the top text layer, with a 5-pixel white halo. Graph nodes, graph edges and the graph frame are omitted. Roads and buildings partially hidden by those annotations are reconstructed from their visible surroundings.</desc>
   <!-- Shared crop preserves the PNG map extent and white canvas margin. -->
   <defs>
     <clipPath id="map-clip"><rect x="16" y="15" width="1492" height="680"/></clipPath>
-    <!-- Routing-tile reference is translated by (-2, -2) to register its identical map with the source SVG. -->
-    <clipPath id="routing-tiles-graph-clip"><rect x="196.33" y="295.33" width="1140" height="340"/></clipPath>
     <style>
       .street-name{font-family:'Avenir Next Condensed','Arial Narrow',Arial,sans-serif;font-size:30px;font-weight:400;letter-spacing:3.5px;fill:#505050;stroke:#fff;stroke-width:5;stroke-linejoin:round;paint-order:stroke fill;text-anchor:start}
-      .routing-tile-label{font-family:Arial,Helvetica,sans-serif;font-size:30px;font-weight:400;fill:#000;stroke:#fff;stroke-width:15;stroke-linejoin:round;paint-order:stroke fill;text-anchor:middle}
       .attribution{font-family:Arial,Helvetica,sans-serif;font-size:22.6px;fill:#fff}
     </style>
 <clipPath xmlns="http://www.w3.org/2000/svg" id="ground-map-clip"><rect x="16" y="15" width="1492" height="680" /></clipPath>
@@ -2018,101 +2015,5 @@
     <!-- Attribution remains above any street label that reaches the lower map edge. -->
     <rect id="attribution-background" x="656" y="658" width="852" height="37" fill="#000"/>
     <text id="map-attribution" class="attribution" xml:space="preserve" text-anchor="end" x="1500" y="686"><tspan text-decoration="underline">Map tiles by Stamen Design</tspan><tspan>, under </tspan><tspan text-decoration="underline">CC BY 3.0</tspan><tspan>. Data © </tspan><tspan text-decoration="underline">OpenStreetMap contributors</tspan></text>
-  </g>
-
-  <!-- LAYER 4: the graph is deliberately above the map text as requested and as shown in the PNG. -->
-  <g id="layer-4-graph" inkscape:groupmode="layer" inkscape:label="4 — Routing tiles">
-    <!-- Transparent graph boundary; the interior preserves the complete base map. -->
-    <rect id="graph-boundary" x="576.33" y="295.33" width="380" height="340" fill="none" stroke="#000" stroke-width="4"/>
-    <!-- Side-tile outlines share the original center rectangle's vertical borders. -->
-    <g id="side-tile-boundaries" fill="none" stroke="#000" stroke-width="4" stroke-linejoin="miter">
-      <path id="routing-tile-1-boundary" d="M576.33 295.33 H196.33 V635.33 H576.33"/>
-      <path id="routing-tile-3-boundary" d="M956.33 295.33 H1336.33 V635.33 H956.33"/>
-    </g>
-    <!-- Undirected links follow the reference's measured axes. Ends extend beneath their red nodes;
-         the original axes are slightly offset from some node centers. There are no arrowheads. -->
-    <g id="graph-edges" fill="none" stroke="#000" stroke-width="6" stroke-linecap="butt" stroke-linejoin="round">
-      <path id="graph-edge-a-b" data-from="graph-node-a" data-to="graph-node-b" d="M781.10 368.27 L715.56 332.39"/>
-      <path id="graph-edge-a-c" data-from="graph-node-a" data-to="graph-node-c" d="M722.30 330.87 L639.22 424.12"/>
-      <path id="graph-edge-b-d" data-from="graph-node-b" data-to="graph-node-d" d="M778.32 373.32 L710.73 449.68"/>
-      <path id="graph-edge-b-e" data-from="graph-node-b" data-to="graph-node-e" d="M841.40 426.05 L778.48 373.16"/>
-      <path id="graph-edge-c-d" data-from="graph-node-c" data-to="graph-node-d" d="M713.11 440.43 L640.12 417.59"/>
-      <path id="graph-edge-c-g" data-from="graph-node-c" data-to="graph-node-g" d="M646.01 426.90 L606.07 512.96"/>
-      <path id="graph-edge-d-f" data-from="graph-node-d" data-to="graph-node-f" d="M773.08 462.09 L711.95 443.89"/>
-      <path id="graph-edge-e-f" data-from="graph-node-e" data-to="graph-node-f" d="M832.14 417.46 L769.06 469.80"/>
-      <path id="graph-edge-e-i" data-from="graph-node-e" data-to="graph-node-i" d="M927.10 506.47 L839.62 428.13"/>
-      <path id="graph-edge-f-h" data-from="graph-node-f" data-to="graph-node-h" d="M776.87 473.81 L744.06 560.26"/>
-      <path id="graph-edge-f-i" data-from="graph-node-f" data-to="graph-node-i" d="M923.46 515.90 L772.32 465.37"/>
-      <path id="graph-edge-g-h" data-from="graph-node-g" data-to="graph-node-h" d="M735.37 560.70 L610.79 525.26"/>
-      <path id="graph-edge-h-j" data-from="graph-node-h" data-to="graph-node-j" d="M894.82 602.60 L736.34 557.30"/>
-      <path id="graph-edge-i-j" data-from="graph-node-i" data-to="graph-node-j" d="M928.90 508.27 L896.38 597.35"/>
-    </g>
-    <!-- Extra undirected links join the side tiles to the preserved center graph.
-         Edge 09 follows the reference's long diagonal continuation to the bottom tile boundary;
-         it crosses other links without additional red nodes. The two western branches are unmarked junctions;
-         their starts lie on the stem centerline so the butt caps cannot protrude past it. -->
-    <g id="routing-tile-extra-edges" fill="none" stroke="#000" stroke-width="6" stroke-linecap="butt" stroke-linejoin="round" clip-path="url(#routing-tiles-graph-clip)">
-      <path id="tile-extra-edge-01" data-from="graph-node-west-north" data-to="graph-node-west-southwest" d="M354.45 354.97 L296.34 547.33"/>
-      <path id="tile-extra-edge-02" data-from="west-street-junction" data-to="graph-node-west-center" d="M342.99 392.92 L416.34 413.31"/>
-      <path id="tile-extra-edge-03" data-from="graph-node-west-center" data-to="graph-node-west-northeast" d="M416.32 413.32 L487.17 319.59"/>
-      <path id="tile-extra-edge-04" data-from="graph-node-west-center" data-to="graph-node-west-east" d="M416.30 413.47 L476.27 429.73"/>
-      <path id="tile-extra-edge-05" data-from="west-street-junction" data-to="graph-node-west-lower-center" d="M327.39 444.55 L456.05 478.43"/>
-      <path id="tile-extra-edge-06" data-from="graph-node-west-lower-center" data-to="graph-node-g" d="M456.06 478.40 L612.53 519.55"/>
-      <path id="tile-extra-edge-07" data-from="graph-node-west-southwest" data-to="graph-node-west-southeast" d="M297.84 541.55 L554.84 621.04"/>
-      <path id="tile-extra-edge-08" data-from="graph-node-west-southeast" data-to="graph-node-g" d="M562.80 619.06 L607.12 512.76"/>
-      <path id="tile-extra-edge-09" data-from="graph-node-west-east" data-to="tile-boundary-exit" d="M476.11 429.91 L1222.85 637.07"/>
-      <path id="tile-extra-edge-10" data-from="graph-node-e" data-to="graph-node-east-west" d="M840.44 429.08 L996.22 415.61"/>
-      <path id="tile-extra-edge-11" data-from="graph-node-east-west" data-to="graph-node-east-northwest" d="M995.87 417.20 L1030.36 319.12"/>
-      <path id="tile-extra-edge-12" data-from="graph-node-east-northwest" data-to="graph-node-east-north-center" d="M1026.18 309.63 L1076.94 331.33"/>
-      <path id="tile-extra-edge-13" data-from="graph-node-east-north-center" data-to="graph-node-east-northeast" d="M1077.03 331.05 L1172.05 370.77"/>
-      <path id="tile-extra-edge-14" data-from="graph-node-east-north-center" data-to="graph-node-east-center-west" d="M1083.29 334.90 L1046.85 431.76"/>
-      <path id="tile-extra-edge-15" data-from="graph-node-east-west" data-to="graph-node-east-center-west" d="M995.03 422.01 L1053.15 435.78"/>
-      <path id="tile-extra-edge-16" data-from="graph-node-east-center-west" data-to="graph-node-east-center" d="M1052.96 435.85 L1148.58 458.83"/>
-      <path id="tile-extra-edge-17" data-from="graph-node-east-northeast" data-to="graph-node-east-upper-center" d="M1174.33 363.33 L1158.33 411.33"/>
-      <path id="tile-extra-edge-18" data-from="graph-node-east-upper-center" data-to="graph-node-east-center" d="M1156.72 410.97 L1140.72 464.08"/>
-      <path id="tile-extra-edge-19" data-from="graph-node-east-upper-center" data-to="graph-node-east-upper-terminal" d="M1158.66 409.98 L1315.05 454.66"/>
-      <path id="tile-extra-edge-20" data-from="graph-node-east-center" data-to="graph-node-east-middle-terminal" d="M1148.10 458.70 L1298.97 495.45"/>
-      <path id="tile-extra-edge-21" data-from="graph-node-east-center" data-to="graph-node-east-south-center" d="M1137.06 462.24 L1111.19 553.62"/>
-      <path id="tile-extra-edge-22" data-from="graph-node-east-south-center" data-to="graph-node-east-south-terminal" d="M1117.99 548.94 L1268.67 601.72"/>
-      <path id="tile-extra-edge-23" data-from="graph-node-i" data-to="graph-node-east-south-center" d="M927.84 501.37 L1114.83 561.27"/>
-    </g>
-    <!-- Nodes paint last, hiding link endpoints. The southwestern node is one pixel smaller. -->
-    <g id="graph-nodes" fill="#cc0000" stroke="#000" stroke-width="2">
-      <circle id="graph-node-a" cx="718.33" cy="327.33" r="20"/>
-      <circle id="graph-node-b" cx="778.33" cy="373.33" r="20"/>
-      <circle id="graph-node-c" cx="638.33" cy="423.33" r="20"/>
-      <circle id="graph-node-d" cx="710.33" cy="449.33" r="20"/>
-      <circle id="graph-node-e" cx="840.33" cy="427.33" r="20"/>
-      <circle id="graph-node-f" cx="770.33" cy="471.33" r="20"/>
-      <circle id="graph-node-g" cx="613.33" cy="516.33" r="19"/>
-      <circle id="graph-node-h" cx="736.33" cy="557.33" r="20"/>
-      <circle id="graph-node-i" cx="926.33" cy="507.33" r="20"/>
-      <circle id="graph-node-j" cx="896.33" cy="597.33" r="20"/>
-      <!-- Eighteen additional nodes from the western and eastern tiles; the original ten nodes stay unchanged. -->
-      <circle id="graph-node-west-north" cx="348.33" cy="353.33" r="20"/>
-      <circle id="graph-node-west-northeast" cx="476.83" cy="313.33" r="20"/>
-      <circle id="graph-node-west-center" cx="416.33" cy="413.33" r="20"/>
-      <circle id="graph-node-west-east" cx="476.83" cy="427.33" r="20"/>
-      <circle id="graph-node-west-lower-center" cx="456.33" cy="477.33" r="20"/>
-      <circle id="graph-node-west-southwest" cx="296.33" cy="547.33" r="20"/>
-      <circle id="graph-node-west-southeast" cx="556.33" cy="615.33" r="20"/>
-      <circle id="graph-node-east-northwest" cx="1023.83" cy="317.33" r="20"/>
-      <circle id="graph-node-east-north-center" cx="1076.33" cy="333.33" r="20"/>
-      <circle id="graph-node-east-northeast" cx="1174.33" cy="363.33" r="20"/>
-      <circle id="graph-node-east-west" cx="996.33" cy="417.33" r="20"/>
-      <circle id="graph-node-east-center-west" cx="1053.83" cy="433.33" r="20"/>
-      <circle id="graph-node-east-upper-center" cx="1158.33" cy="411.33" r="20"/>
-      <circle id="graph-node-east-center" cx="1146.33" cy="465.33" r="20"/>
-      <circle id="graph-node-east-upper-terminal" cx="1316.33" cy="449.33" r="20"/>
-      <circle id="graph-node-east-middle-terminal" cx="1296.33" cy="505.33" r="20"/>
-      <circle id="graph-node-east-south-center" cx="1116.33" cy="555.33" r="20"/>
-      <circle id="graph-node-east-south-terminal" cx="1270.33" cy="595.33" r="20"/>
-    </g>
-    <!-- Tile labels paint above the entire graph; only a 15-pixel white glyph halo is used. -->
-    <g id="routing-tile-labels" class="routing-tile-label">
-      <text id="routing-tile-1-label" x="386" y="275">Routing tile 1</text>
-      <text id="routing-tile-2-label" x="770" y="275">Routing tile 2</text>
-      <text id="routing-tile-3-label" x="1146" y="275">Routing tile 3</text>
-    </g>
   </g>
 </svg>

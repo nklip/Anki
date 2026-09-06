@@ -1,184 +1,746 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1390" height="608" viewBox="0 0 1390 608"
-  role="img" aria-labelledby="title desc">
-  <title id="title">Shortest-path search across hierarchical routing tiles</title>
-  <desc id="desc">A simplified street map shows a black route from a red start pin to a red end pin. Large teal routing tiles cover the search area, while red and teal subdivisions add detail near the start and destination.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="1390" height="608" viewBox="0 0 1390 608" role="img" aria-labelledby="map-title map-desc">
+  <title id="map-title">Shortest path through hierarchical routing tiles</title>
+  <desc id="map-desc">A pale green neighborhood map with gray buildings and roads. A black route connects red Start and End pins across green routing tiles and smaller red subdivisions. Four editable layers hold the ground, houses and roads with the route, street names and other text, and prominent green and red tile boundaries above everything.</desc>
+  <!-- Shared clipping and map styles; all visible artwork is editable vector geometry. -->
   <defs>
-    <!-- Keep wide road strokes and rounded caps inside the visible map frame. -->
-    <clipPath id="map-clip">
-      <rect x="20" y="20" width="1350" height="572"/>
-    </clipPath>
+    <clipPath id="map-extent"><rect x="20" y="20" width="1350" height="572"/></clipPath>
     <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #161616; }
-      .road-casing { fill: none; stroke: #f7f7f2; stroke-linecap: round; stroke-linejoin: round; }
-      .road { fill: none; stroke: #969a98; stroke-linecap: round; stroke-linejoin: round; }
-      .minor-casing { stroke-width: 13; }
-      .minor-road { stroke-width: 6; }
-      .major-casing { stroke-width: 25; }
-      .major-road { stroke-width: 14; }
-      .building { fill: #c9cbc7; stroke: #adb0ad; stroke-width: 1.2; }
-      .tile-coarse { fill: none; stroke: #28766f; stroke-width: 2; opacity: .88; }
-      .tile-focus { fill: none; stroke: #ad4f43; stroke-width: 2.2; opacity: .92; }
+      .road {fill:none;stroke:#9b9b9b;stroke-linecap:round;stroke-linejoin:round}
+      .minor-road {stroke-width:6}
+      .local-road {stroke-width:5}
+      .main-road {stroke-width:11}
+      .trail {fill:none;stroke:#9dab89;stroke-width:1.5;stroke-dasharray:3 5}
+      .tile-green {fill:none;stroke:#28704f;stroke-width:2.2}
+      .tile-red {fill:none;stroke:#b7463c;stroke-width:2.6}
+      .tile-inner {fill:none;stroke:#2d7960;stroke-width:2}
+      text {font-family:Arial,Helvetica,sans-serif}
+      .street-label {fill:#626862;stroke:#f5f5ec;stroke-width:2.8;stroke-linejoin:round;paint-order:stroke fill;text-anchor:middle;font-weight:400}
     </style>
-    <g id="pin-symbol">
-      <path d="M0-19c-10.5 0-19 8.5-19 19 0 13 19 35 19 35S19 13 19 0C19-10.5 10.5-19 0-19Z"
-        fill="#ed3e38" stroke="#b92e2b" stroke-width="2"/>
-      <circle cy="0" r="7.5" fill="#fff"/>
-    </g>
   </defs>
-
-  <!-- Pale land and park shapes keep the street network distinct without reproducing raster texture. -->
-  <rect id="canvas" width="1390" height="608" fill="#fff"/>
-  <rect id="map-background" x="20" y="20" width="1350" height="572" fill="#e5e9c7"/>
-  <g id="map-content" clip-path="url(#map-clip)">
-  <path id="northwest-park" d="M20 20H304L252 158H20Z" fill="#bfd2aa"/>
-  <path id="northeast-park" d="M1095 20H1370V178L1250 151Z" fill="#c4d7ae"/>
-  <path id="central-open-land" d="M406 265 720 215 888 397 744 592H366Z" fill="#edf0d5"/>
-
-  <!-- Buildings are discrete vector blocks; they sit below every road layer. -->
-  <g id="buildings" class="building">
-    <rect x="58" y="76" width="45" height="18" rx="4" transform="rotate(-38 80 85)"/>
-    <rect x="96" y="56" width="42" height="18" rx="4" transform="rotate(-38 117 65)"/>
-    <rect x="129" y="94" width="38" height="17" rx="4" transform="rotate(38 148 102)"/>
-    <rect x="155" y="118" width="43" height="18" rx="4" transform="rotate(38 176 127)"/>
-    <rect x="184" y="77" width="36" height="17" rx="4" transform="rotate(10 202 85)"/>
-    <rect x="230" y="80" width="38" height="17" rx="4" transform="rotate(10 249 88)"/>
-    <rect x="275" y="78" width="37" height="17" rx="4" transform="rotate(10 293 86)"/>
-    <rect x="96" y="175" width="39" height="17" rx="4" transform="rotate(-42 115 183)"/>
-    <rect x="132" y="157" width="43" height="17" rx="4" transform="rotate(-42 153 165)"/>
-    <rect x="173" y="192" width="40" height="17" rx="4" transform="rotate(6 193 200)"/>
-    <rect x="227" y="190" width="38" height="17" rx="4" transform="rotate(6 246 198)"/>
-    <rect x="108" y="285" width="37" height="17" rx="4" transform="rotate(-29 126 293)"/>
-    <rect x="77" y="311" width="42" height="18" rx="4" transform="rotate(-29 98 320)"/>
-    <rect x="116" y="457" width="39" height="18" rx="4" transform="rotate(18 135 466)"/>
-    <rect x="157" y="470" width="43" height="18" rx="4" transform="rotate(18 178 479)"/>
-    <rect x="198" y="489" width="37" height="17" rx="4" transform="rotate(18 216 497)"/>
-    <rect x="235" y="518" width="41" height="18" rx="4" transform="rotate(18 255 527)"/>
-    <rect x="294" y="526" width="37" height="18" rx="4" transform="rotate(-8 312 535)"/>
-
-    <rect x="573" y="72" width="35" height="16" rx="4" transform="rotate(24 590 80)"/>
-    <rect x="611" y="87" width="38" height="16" rx="4" transform="rotate(24 630 95)"/>
-    <rect x="650" y="101" width="37" height="16" rx="4" transform="rotate(24 668 109)"/>
-    <rect x="691" y="80" width="35" height="16" rx="4" transform="rotate(-9 708 88)"/>
-    <rect x="738" y="67" width="36" height="16" rx="4" transform="rotate(-9 756 75)"/>
-    <rect x="782" y="65" width="39" height="16" rx="4" transform="rotate(-9 801 73)"/>
-    <rect x="829" y="76" width="35" height="16" rx="4" transform="rotate(20 846 84)"/>
-    <rect x="742" y="178" width="35" height="17" rx="4" transform="rotate(35 759 186)"/>
-    <rect x="777" y="199" width="37" height="17" rx="4" transform="rotate(35 795 207)"/>
-    <rect x="831" y="173" width="38" height="17" rx="4" transform="rotate(-25 850 181)"/>
-    <rect x="864" y="151" width="36" height="17" rx="4" transform="rotate(-25 882 159)"/>
-
-    <rect x="1036" y="67" width="45" height="19" rx="5" transform="rotate(-18 1058 76)"/>
-    <rect x="1082" y="53" width="42" height="18" rx="5" transform="rotate(-18 1103 62)"/>
-    <rect x="1142" y="82" width="41" height="18" rx="5" transform="rotate(12 1162 91)"/>
-    <rect x="1190" y="91" width="39" height="18" rx="5" transform="rotate(12 1209 100)"/>
-    <rect x="1263" y="62" width="42" height="18" rx="5" transform="rotate(-26 1284 71)"/>
-    <rect x="1303" y="43" width="40" height="18" rx="5" transform="rotate(-26 1323 52)"/>
-    <rect x="1079" y="202" width="38" height="17" rx="5" transform="rotate(9 1098 210)"/>
-    <rect x="1125" y="209" width="42" height="17" rx="5" transform="rotate(9 1146 217)"/>
-    <rect x="1194" y="237" width="38" height="17" rx="5" transform="rotate(-11 1213 245)"/>
-    <rect x="1240" y="228" width="41" height="17" rx="5" transform="rotate(-11 1260 236)"/>
-    <rect x="1290" y="215" width="38" height="17" rx="5" transform="rotate(-11 1309 223)"/>
-    <rect x="1104" y="326" width="40" height="18" rx="5" transform="rotate(22 1124 335)"/>
-    <rect x="1146" y="345" width="39" height="18" rx="5" transform="rotate(22 1165 354)"/>
-    <rect x="1203" y="338" width="41" height="18" rx="5" transform="rotate(-8 1223 347)"/>
-    <rect x="1250" y="331" width="39" height="18" rx="5" transform="rotate(-8 1269 340)"/>
-    <rect x="1302" y="338" width="37" height="18" rx="5" transform="rotate(14 1320 347)"/>
-  </g>
-
-  <!-- Every casing is drawn first, then every road surface, so intersections remain continuous. -->
-  <g id="road-casings" class="road-casing">
-    <path class="major-casing" d="M28 531 165 399 194 351 215 359 226 391 249 420 266 398 253 333 292 231 374 259 383 210 459 232 494 232 590 258 633 296 650 296 681 254 738 205 800 263 830 238 914 211 923 164 944 119"/>
-    <path class="major-casing" d="M265 592 319 421 349 282 374 20"/>
-    <path class="major-casing" d="M20 190 137 254 248 278 411 341 539 429 713 592"/>
-    <path class="major-casing" d="M20 503 178 435 330 393 478 398 634 438 800 536 900 592"/>
-    <path class="major-casing" d="M890 20 923 116 960 178 1025 226 1128 237 1255 222 1370 244"/>
-    <path class="major-casing" d="M1077 592 1048 493 1063 390 1110 310 1190 281 1284 286 1370 323"/>
-    <path class="major-casing" d="M955 592 1001 523 1063 494 1155 487 1258 505 1370 566"/>
-    <path class="minor-casing" d="M45 43 143 135 219 156 293 132 347 89"/>
-    <path class="minor-casing" d="M44 269 124 205 218 211 300 246"/>
-    <path class="minor-casing" d="M43 495 86 405 127 369 201 349"/>
-    <path class="minor-casing" d="M555 44 632 70 699 124 739 205"/>
-    <path class="minor-casing" d="M724 44 725 126 738 205"/>
-    <path class="minor-casing" d="M895 43 856 97 830 161 830 238"/>
-    <path class="minor-casing" d="M1067 43 1030 95 1008 151 1025 226"/>
-    <path class="minor-casing" d="M1066 268 1136 207 1214 193 1283 205 1370 191"/>
-    <path class="minor-casing" d="M1064 390 1140 354 1218 354 1287 389 1370 390"/>
-    <path class="minor-casing" d="M895 495 944 447 997 421 1063 390"/>
-    <path class="minor-casing" d="M1141 592 1157 487"/>
-    <path class="minor-casing" d="M1261 592 1258 505"/>
-    <path class="minor-casing" d="M1370 95 1306 103 1248 126 1214 193"/>
-  </g>
-  <g id="road-surfaces" class="road">
-    <path class="major-road" d="M28 531 165 399 194 351 215 359 226 391 249 420 266 398 253 333 292 231 374 259 383 210 459 232 494 232 590 258 633 296 650 296 681 254 738 205 800 263 830 238 914 211 923 164 944 119"/>
-    <path class="major-road" d="M265 592 319 421 349 282 374 20"/>
-    <path class="major-road" d="M20 190 137 254 248 278 411 341 539 429 713 592"/>
-    <path class="major-road" d="M20 503 178 435 330 393 478 398 634 438 800 536 900 592"/>
-    <path class="major-road" d="M890 20 923 116 960 178 1025 226 1128 237 1255 222 1370 244"/>
-    <path class="major-road" d="M1077 592 1048 493 1063 390 1110 310 1190 281 1284 286 1370 323"/>
-    <path class="major-road" d="M955 592 1001 523 1063 494 1155 487 1258 505 1370 566"/>
-    <path class="minor-road" d="M45 43 143 135 219 156 293 132 347 89"/>
-    <path class="minor-road" d="M44 269 124 205 218 211 300 246"/>
-    <path class="minor-road" d="M43 495 86 405 127 369 201 349"/>
-    <path class="minor-road" d="M555 44 632 70 699 124 739 205"/>
-    <path class="minor-road" d="M724 44 725 126 738 205"/>
-    <path class="minor-road" d="M895 43 856 97 830 161 830 238"/>
-    <path class="minor-road" d="M1067 43 1030 95 1008 151 1025 226"/>
-    <path class="minor-road" d="M1066 268 1136 207 1214 193 1283 205 1370 191"/>
-    <path class="minor-road" d="M1064 390 1140 354 1218 354 1287 389 1370 390"/>
-    <path class="minor-road" d="M895 495 944 447 997 421 1063 390"/>
-    <path class="minor-road" d="M1141 592 1157 487"/>
-    <path class="minor-road" d="M1261 592 1258 505"/>
-    <path class="minor-road" d="M1370 95 1306 103 1248 126 1214 193"/>
-  </g>
-
-  <!-- Coarse tile index and the locally refined tiles used near route endpoints. -->
-  <g id="routing-tile-overlay">
-    <path class="tile-coarse" d="M44 43H1067V495H44ZM215 43V495M385 43V495M555 43V495M725 43V495M895 43V495M44 269H1067"/>
-
-    <!-- Start hierarchy: red tiles are inset from the coarse grid; green detail grids are inset again. -->
-    <g id="start-refined-tiles">
-      <rect class="tile-focus" x="220" y="48" width="75" height="103"/>
-      <rect class="tile-focus" x="303" y="48" width="77" height="103"/>
-      <rect class="tile-focus" x="220" y="159" width="160" height="105"/>
-      <path class="tile-coarse" d="M226 165H374V258H226ZM263 165V258M300 165V258M337 165V258M226 211.5H374"/>
-
-      <rect class="tile-focus" x="220" y="274" width="75" height="104"/>
-      <rect class="tile-focus" x="303" y="274" width="77" height="104"/>
-      <rect class="tile-focus" x="220" y="386" width="160" height="104"/>
-      <path class="tile-coarse" d="M226 280H289V372H226ZM257.5 280V372M226 326H289"/>
-    </g>
-
-    <!-- Destination hierarchy follows the same inset rule and never shares a boundary with its parent. -->
-    <g id="end-refined-tiles">
-      <rect class="tile-focus" x="730" y="48" width="75" height="103"/>
-      <rect class="tile-focus" x="813" y="48" width="77" height="103"/>
-      <rect class="tile-focus" x="730" y="159" width="160" height="105"/>
-      <path class="tile-coarse" d="M736 165H884V258H736ZM773 165V258M810 165V258M847 165V258M736 211.5H884"/>
+  <!-- Layer 1: canvas, ground color, planted areas, and the pale arterial corridor. -->
+  <g id="layer-1-ground" inkscape:groupmode="layer" inkscape:label="1 — Ground colour">
+    <rect id="canvas" width="1390" height="608" fill="#fff"/>
+    <g clip-path="url(#map-extent)">
+      <rect id="ground-colour" x="20" y="20" width="1350" height="572" fill="#dde1c1"/>
+      <path id="rose-garden-ground" d="M171 20H290L340 72 310 118 253 156 217 154 197 174 151 151 119 112Z" fill="#c5d4b1"/>
+      <path id="northern-park-ground" d="M1026 20H1251L1234 42 1201 50 1185 38 1149 48 1113 44 1090 54 1060 45Z" fill="#c6d6b2"/>
+      <path id="avenue-corridor" d="M384 0L471 0 444 106 420 178 426 237 408 302 398 392 362 476 333 609H245L288 472 311 388 329 304 337 210 361 106Z" fill="#f0f0f0"/>
     </g>
   </g>
-
-  <!-- The route remains the dominant layer and follows one continuous road centerline. -->
-  <path id="shortest-route" d="M165 399 177 366 192 351 203 348 214 356 224 386 249 420 266 398 253 333 292 231 374 259 383 210 459 232 494 232 590 258 633 296 650 296 681 254 738 205 800 263 830 238 914 211 923 164 944 119"
-    fill="none" stroke="#050505" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-
-  <!-- Labels are painted last, centered on straight road segments, and kept clear of the route and tile lines. -->
-  <g id="street-labels" font-weight="500" letter-spacing=".2" text-anchor="middle">
-    <text x="280" y="550" font-size="11.5" transform="rotate(-72.3 280 550)">Grand Avenue</text>
-    <text x="665" y="97" font-size="11.5" transform="rotate(38.9 665 97)">Wildwood Avenue</text>
-    <text x="1003" y="419" font-size="12.5" transform="rotate(-26.2 1003 419)">Boulder Lane</text>
-    <text x="1114" y="489" font-size="12" transform="rotate(-4 1114 489)">Aramon Avenue</text>
+  <!-- Layer 2: building footprints, road network, route and endpoint pins. -->
+  <g id="layer-2-houses-and-roads" inkscape:groupmode="layer" inkscape:label="2 — Houses and roads" clip-path="url(#map-extent)">
+    <!-- Building footprints follow the source map; no raster image or outlined text is included. -->
+<!-- Editable gray building footprints, fitted to the PNG source. -->
+<g id="building-footprints" fill="#d0d0cd" stroke="#c2c2bd" stroke-width="0.75" stroke-linejoin="round">
+  <polygon id="building-001" points="87.3,149.4 72.2,145.7 75,134.4 90.1,138.2"/>
+  <polygon id="building-002" points="141,59 145,60 146,63 151,66 153,64 153,68 156,69 159,74 165,74 165,79 163,79 162,77 163,80 161,82 161,87 160,85 158,86 160,87 160,89 165,89 165,93 171,98 175,99 175,101 181,105 180,111 177,115 165,104 161,105 161,102 155,96 151,96 152,94 149,95 145,92 144,86 151,83 151,78 147,76 147,74 145,74 141,78 142,80 134,78 136,77 134,75 134,71 138,68 139,65 141,65"/>
+  <polygon id="building-003" points="165.6,129.6 153.4,127.8 155.2,115.2 167.4,117"/>
+  <polygon id="building-004" points="300.8,32.6 293.5,35.6 290.6,28.4 298,25.4"/>
+  <polygon id="building-005" points="296.6,19.6 315.4,19.6 315.4,33.4 296.6,33.4"/>
+  <polygon id="building-006" points="303.5,39.9 315.4,31.6 319.5,37.4 307.6,45.8"/>
+  <polygon id="building-007" points="317.8,56.6 332.8,60.9 330.7,68.3 315.6,64"/>
+  <polygon id="building-008" points="322.6,50.6 332.4,50.6 332.4,60.4 322.6,60.4"/>
+  <polygon id="building-009" points="331,121.8 352.9,131.1 346.6,145.8 324.7,136.4"/>
+  <polygon id="building-010" points="340.4,41.3 327.7,43.6 326.3,36 339,33.6"/>
+  <polygon id="building-011" points="327.6,19.6 344.4,19.6 344.4,28.4 327.6,28.4"/>
+  <polygon id="building-012" points="330.4,26.5 344.3,29.6 343.1,34.9 329.2,31.9"/>
+  <polygon id="building-013" points="332,109.5 329.5,98.3 339.7,96 342.2,107.2"/>
+  <polygon id="building-014" points="349.4,85.6 349.4,94.3 340.6,94.3 340.6,85.7"/>
+  <polygon id="building-015" points="345.6,75.7 358.4,75.7 358.4,83.3 345.6,83.3"/>
+  <polygon id="building-016" points="351.1,66.5 365.7,68.9 364.3,77.1 349.7,74.6"/>
+  <polygon id="building-017" points="355.6,66.3 355.6,50.6 370.4,50.6 370.4,66.3"/>
+  <polygon id="building-018" points="372.4,153.3 360.6,153.3 360.6,147.7 372.4,147.7"/>
+  <polygon id="building-019" points="362.3,39.6 363.8,18.6 379.4,19.7 377.9,40.7"/>
+  <polygon id="building-020" points="376.4,128.7 376.4,145.3 366.6,145.3 366.6,128.7"/>
+  <polygon id="building-021-1" points="393,55 404,57 402,64 391,62"/>
+  <polygon id="building-021-2" points="392,65 403,67 401,74 390,72"/>
+  <polygon id="building-021-3" points="390,75 405,78 398,110 387,108"/>
+  <polygon id="building-022" points="391.7,45.6 409.4,46.7 408.9,55.1 391.2,54.1"/>
+  <polygon id="building-023" points="408.4,42.3 395.7,43.4 395.2,38 407.9,36.9"/>
+  <polygon id="building-024" points="398.6,19.6 413.4,19.6 413.4,37.4 398.6,37.4"/>
+  <polygon id="building-027" points="442.8,137.8 421.7,134.5 424.7,115.1 445.8,118.3"/>
+  <polygon id="building-028" points="445.4,111 434.1,107.8 437.9,94.5 449.2,97.7"/>
+  <polygon id="building-029" points="435.9,45.5 465.4,46.7 464.4,70.4 435,69.2"/>
+  <polygon id="building-030" points="444.7,19.6 463.4,20.7 463.1,25.1 444.4,24"/>
+  <polygon id="building-031" points="461.4,119.3 450.8,128.1 444.5,120.5 455,111.7"/>
+  <polygon id="building-032" points="448.7,88.6 459.1,90.3 457.5,99.9 447.1,98.2"/>
+  <polygon id="building-033" points="466.1,93.5 455.4,85 461.3,77.6 472,86.1"/>
+  <polygon id="building-034" points="458.6,159.9 467.3,149 475.4,155.5 466.7,166.4"/>
+  <polygon id="building-035" points="465.1,98.5 473.7,109.6 467.4,114.5 458.8,103.4"/>
+  <polygon id="building-036" points="479.3,43.4 464.2,42.3 464.8,34.5 479.9,35.6"/>
+  <polygon id="building-037" points="468.5,75.9 481.2,65.8 487.9,74.1 475.2,84.3"/>
+  <polygon id="building-038" points="479.5,140.6 488.5,154.1 479.4,160.2 470.4,146.7"/>
+  <polygon id="building-039" points="474.5,99 487,86.5 493.5,93 481,105.5"/>
+  <polygon id="building-040" points="495.4,146.3 477.6,146.3 477.6,134.7 495.4,134.7"/>
+  <polygon id="building-041" points="480.8,64.2 496.8,52.2 505.8,64.1 489.7,76.2"/>
+  <polygon id="building-042" points="481.6,19.6 496.4,19.6 496.4,29.4 481.6,29.4"/>
+  <polygon id="building-043" points="503.4,125.7 503.4,138.3 491.6,138.3 491.6,125.7"/>
+  <polygon id="building-044" points="491.8,83.2 499.8,77.2 506.7,86.4 498.6,92.5"/>
+  <polygon id="building-045" points="502.2,47.5 511.1,57.9 505.8,62.5 496.9,52.1"/>
+  <polygon id="building-046" points="508,66.9 518.4,79.9 512.5,84.7 502.1,71.7"/>
+  <polygon id="building-047" points="529,104 534,105 534,110 527,113 526,116 521,110 521,117 523,118 521,120 521,128 516,128 515,132 510,133 508,131 508,128 503,125 503,123 505,124 504,121 511,120 512,115 510,116 509,113 518,114 520,113 520,109 523,108 526,110 527,105"/>
+  <polygon id="building-048" points="514,42.4 518.4,53.4 509.9,56.8 505.5,45.8"/>
+  <polygon id="building-049" points="520.8,152.4 514,160.8 507.1,155.3 513.9,146.8"/>
+  <polygon id="building-050" points="524.4,135.3 542.3,144.2 535.4,158.1 517.5,149.2"/>
+  <polygon id="building-051" points="531,26 535,26 534,30 536,34 538,33 538,38 535,40 530,39 530,43 519,43 518,38 520,36 528,41 527,35 529,35 528,32 531,30"/>
+  <polygon id="building-052" points="522.8,65.6 551,47.3 559,59.7 530.8,78"/>
+  <polygon id="building-053" points="530.8,134.2 543.3,128.6 549.7,142.9 537.1,148.4"/>
+  <polygon id="building-054" points="531.9,104.9 549.9,94.1 556.6,105.3 538.6,116"/>
+  <polygon id="building-055" points="548.4,32.4 537.6,32.4 537.6,23.6 548.4,23.6"/>
+  <polygon id="building-056" points="546.4,168.5 540.8,150.3 551,147.2 556.6,165.4"/>
+  <polygon id="building-057" points="547.6,19.6 560.4,19.6 560.4,29.4 547.6,29.4"/>
+  <polygon id="building-058" points="553.9,122.1 576.9,112.9 581.2,123.7 558.2,132.9"/>
+  <polygon id="building-059" points="565.4,93.7 565.4,104.3 556.6,104.3 556.6,93.7"/>
+  <polygon id="building-060" points="570.7,56.1 560.8,59.4 558,51 567.9,47.7"/>
+  <polygon id="building-061" points="559.6,144.7 569.4,144.7 569.4,158.3 559.6,158.3"/>
+  <polygon id="building-062" points="561.6,19.6 571.4,19.6 571.4,31.4 561.6,31.4"/>
+  <polygon id="building-063" points="567.6,91.7 578.4,91.7 578.4,105.3 567.6,105.3"/>
+  <polygon id="building-064" points="575.5,159.5 569.6,141.8 578.6,138.8 584.5,156.5"/>
+  <polygon id="building-065" points="581.2,44.6 582.6,57.1 573,58.1 571.6,45.7"/>
+  <polygon id="building-066" points="586.1,27.9 575.7,29.4 574.9,23.5 585.2,22"/>
+  <polygon id="building-067" points="590.4,91.5 589.3,101.4 579.7,100.3 580.8,90.4"/>
+  <polygon id="building-068" points="591.4,36.6 591.4,42.4 580.6,42.4 580.6,36.6"/>
+  <polygon id="building-069" points="581,133.2 584.9,113.6 593.3,115.3 589.4,134.8"/>
+  <polygon id="building-070-1" points="586,146 592,143 596,153 589,155"/>
+  <polygon id="building-070-2" points="594,146 606,142 610,152 598,156"/>
+  <polygon id="building-070-3" points="607,141 616,138 620,150 610,153"/>
+  <polygon id="building-071" points="596.3,23 603.1,28.1 598.5,34.3 591.7,29.2"/>
+  <polygon id="building-072" points="593.7,90.6 602.4,91.7 600.7,105.1 592,104"/>
+  <polygon id="building-073" points="601.8,128.6 593.4,125.8 595.7,118.9 604.1,121.7"/>
+  <polygon id="building-074" points="606.7,42.3 596.7,43.4 596.1,38.3 606.2,37.2"/>
+  <polygon id="building-075" points="615.1,88.5 616.5,104.1 603,105.3 601.6,89.7"/>
+  <polygon id="building-076" points="608.8,127.4 606.6,119.8 613.1,117.9 615.2,125.6"/>
+  <polygon id="building-077" points="623.5,41.3 610.7,42.4 609.7,30.9 622.6,29.8"/>
+  <polygon id="building-078" points="616.6,119.7 626.4,119.7 626.4,125.3 616.6,125.3"/>
+  <polygon id="building-079" points="625,23.5 632.5,31 626,37.5 618.5,30"/>
+  <polygon id="building-080" points="618.6,91.7 628.4,91.7 628.4,106.3 618.6,106.3"/>
+  <polygon id="building-081" points="641.4,145.3 628.6,145.3 628.6,137.7 641.4,137.7"/>
+  <polygon id="building-082" points="629.6,19.6 644.4,19.6 644.4,26.4 629.6,26.4"/>
+  <polygon id="building-083" points="631.6,111.3 632.7,98.1 641,98.8 639.9,112"/>
+  <polygon id="building-084" points="643.6,109.3 644.7,98.1 652.9,98.9 651.7,110.1"/>
+  <polygon id="building-085" points="650.6,53.6 664.4,53.6 664.4,65.3 650.6,65.3"/>
+  <polygon id="building-086" points="657,68.5 665.5,60 672,66.5 663.5,75"/>
+  <polygon id="building-087" points="662.8,122.8 660.6,107.7 666.9,106.8 669.1,121.9"/>
+  <polygon id="building-088" points="684.9,53.4 675.8,65.9 664.9,58 674,45.5"/>
+  <polygon id="building-090" points="682.7,77.6 670,83.9 665.5,74.8 678.2,68.5"/>
+  <polygon id="building-091" points="676.3,145.3 678.7,163.9 668.6,165.2 666.1,146.7"/>
+  <polygon id="building-092" points="682.9,116.5 680.3,132.4 669.7,130.6 672.4,114.7"/>
+  <polygon id="building-093" points="699.9,32.2 678,27.4 680.3,17 702.2,21.9"/>
+  <polygon id="building-094" points="678.5,88.6 680.9,77.7 687.2,79.1 684.8,90"/>
+  <polygon id="building-095" points="702.7,73.6 680.3,69.9 683,53.7 705.5,57.4"/>
+  <polygon id="building-096" points="688.6,148 709.3,153.2 705.3,169.2 684.6,164"/>
+  <polygon id="building-097" points="696.1,137.5 684.8,131.2 689,123.7 700.3,130"/>
+  <polygon id="building-098" points="690.6,83.7 700.4,83.7 700.4,96.3 690.6,96.3"/>
+  <polygon id="building-099" points="714,25.6 709.6,41.7 697.4,38.4 701.8,22.2"/>
+  <polygon id="building-100" points="697.4,129.8 722.6,128.6 723.4,144.3 698.1,145.5"/>
+  <polygon id="building-101" points="702.3,105 703.8,88.4 715.8,89.5 714.3,106.1"/>
+  <polygon id="building-102" points="713.4,64.4 712.3,72.4 706.6,71.6 707.7,63.6"/>
+  <polygon id="building-103" points="724.4,63.6 724.4,78.3 715.6,78.3 715.6,63.6"/>
+  <polygon id="building-104" points="716.6,90.7 724.4,90.7 724.4,104.3 716.6,104.3"/>
+  <polygon id="building-105" points="733,17.8 735.4,34.3 722,36.2 719.6,19.7"/>
+  <polygon id="building-106" points="744.1,134.7 739.4,148.8 732.2,146.4 736.9,132.3"/>
+  <polygon id="building-107" points="750.4,23.6 750.4,42.4 735.6,42.4 735.6,23.6"/>
+  <polygon id="building-108" points="738.6,93.7 746.4,93.7 746.4,107.3 738.6,107.3"/>
+  <polygon id="building-109-1" points="741,63 750,59 750,71 740,70"/>
+  <polygon id="building-109-2" points="752,60 761,61 760,74 751,72"/>
+  <polygon id="building-109-3" points="764,58 775,57 776,68 764,68"/>
+  <polygon id="building-109-4" points="777,56 788,56 788,67 777,67"/>
+  <polygon id="building-109-5" points="790,54 800,55 801,65 790,65"/>
+  <polygon id="building-109-6" points="802,59 806,57 807,65 802,66"/>
+  <polygon id="building-110" points="741.6,138.7 754.4,138.7 754.4,151.3 741.6,151.3"/>
+  <polygon id="building-112" points="750.7,107.5 749.6,91.7 758.4,91.1 759.5,106.9"/>
+  <polygon id="building-113" points="756,80 760,82 760,85 758,86 758,82 756,82 754,86 751,87 751,84 753,84 753,82"/>
+  <polygon id="building-114" points="760.6,19.6 774.4,19.6 774.4,36.4 760.6,36.4"/>
+  <polygon id="building-115" points="771.4,86.7 771.4,100.3 761.6,100.3 761.6,86.7"/>
+  <polygon id="building-116" points="770.6,122.5 783.4,115.2 787.7,122.8 775,130.1"/>
+  <polygon id="building-117" points="776,98.8 772.9,84.6 779.6,83.1 782.8,97.3"/>
+  <polygon id="building-118" points="778.6,131.7 787.4,131.7 787.4,142.3 778.6,142.3"/>
+  <polygon id="building-119" points="785.6,79.7 793.4,79.7 793.4,94.3 785.6,94.3"/>
+  <polygon id="building-120" points="794.6,19.6 803.4,19.6 803.4,32.4 794.6,32.4"/>
+  <polygon id="building-121" points="797.1,94 795.4,80 802.7,79.1 804.5,93"/>
+  <polygon id="building-122" points="805.3,114.6 806.6,124 798.1,125.2 796.8,115.8"/>
+  <polygon id="building-123" points="805.6,19.6 813.4,19.6 813.4,29.4 805.6,29.4"/>
+  <polygon id="building-124" points="832.4,62.3 814.7,64.4 813.6,54.8 831.3,52.7"/>
+  <polygon id="building-125" points="813.6,82.7 819.4,82.7 819.4,98.3 813.6,98.3"/>
+  <polygon id="building-126" points="817,32 815.6,19.7 825.3,18.6 826.7,30.9"/>
+  <polygon id="building-127" points="818.6,75.7 826.4,75.7 826.4,83.3 818.6,83.3"/>
+  <polygon id="building-128" points="819.6,86.7 839.4,86.7 839.4,101.3 819.6,101.3"/>
+  <polygon id="building-129" points="821,129 824.3,119.1 840.8,124.6 837.5,134.5"/>
+  <polygon id="building-130" points="827.6,19.6 835.4,19.6 835.4,26.4 827.6,26.4"/>
+  <polygon id="building-131" points="832.5,54.5 840.3,52.6 843.4,65.3 835.7,67.2"/>
+  <polygon id="building-132" points="837.1,19.6 847.4,20.7 846.9,25.4 836.6,24.3"/>
+  <polygon id="building-133" points="842.1,125.2 857.1,128.9 853.9,141.8 838.9,138.1"/>
+  <polygon id="building-134" points="849.9,83.3 855.9,105.9 847.8,108 841.8,85.5"/>
+  <polygon id="building-135" points="862,44.1 866.7,53.6 849.2,62.3 844.5,52.8"/>
+  <polygon id="building-136" points="860.7,95.6 869.1,96.8 868,104.5 859.6,103.3"/>
+  <polygon id="building-137" points="873.1,95.9 860.5,79.9 869.4,73 881.9,89"/>
+  <polygon id="building-138" points="860.6,32.6 874.4,32.6 874.4,42.4 860.6,42.4"/>
+  <polygon id="building-139" points="860.6,144.7 871.4,144.7 871.4,153.3 860.6,153.3"/>
+  <polygon id="building-140" points="886.7,128.1 880.1,136.5 868.2,127 874.8,118.6"/>
+  <polygon id="building-141" points="882.7,83.5 871.4,68.9 877.6,64.1 888.9,78.6"/>
+  <polygon id="building-142" points="871.8,30.9 890.6,19.6 898.5,32.9 879.7,44.2"/>
+  <polygon id="building-143" points="882.6,113.7 888.4,113.7 888.4,121.3 882.6,121.3"/>
+  <polygon id="building-144" points="895.7,19.6 911.4,20.7 910.9,27.9 895.2,26.9"/>
+  <polygon id="building-145" points="898.7,106.4 897.6,94.7 904.9,94 906,105.7"/>
+  <polygon id="building-146" points="898.6,45.6 910.4,45.6 910.4,52.4 898.6,52.4"/>
+  <polygon id="building-147" points="914.2,160 900.3,150.2 907,140.7 920.9,150.5"/>
+  <polygon id="building-148" points="902.7,32.6 914.2,34.2 912.8,44 901.3,42.4"/>
+  <polygon id="building-149" points="916.1,27.5 923.6,39.5 916,44.3 908.5,32.3"/>
+  <polygon id="building-150" points="922,138.5 916,144.5 908.5,137 914.5,131"/>
+  <polygon id="building-151" points="914.3,118.2 927.2,125.9 922.3,134.2 909.3,126.4"/>
+  <polygon id="building-152" points="910.6,78.7 916.4,78.7 916.4,86.3 910.6,86.3"/>
+  <polygon id="building-153" points="915.5,118.2 923.4,102.3 936.9,109 929,124.9"/>
+  <polygon id="building-154" points="934.4,79.3 918,81.1 916.5,67.6 932.9,65.8"/>
+  <polygon id="building-155" points="928.8,35.5 920.5,25.8 927.6,19.7 935.9,29.4"/>
+  <polygon id="building-156" points="927.9,59.5 942.3,67.7 938,75.1 923.6,66.9"/>
+  <polygon id="building-157" points="932.6,19.6 947.4,19.6 947.4,29.4 932.6,29.4"/>
+  <polygon id="building-158" points="936.1,52.2 950,55.6 947.4,65.7 933.6,62.3"/>
+  <polygon id="building-159" points="958.2,154.1 942.2,156.1 940.1,139.4 956.2,137.4"/>
+  <polygon id="building-160" points="944.6,45.6 960.4,45.6 960.4,57.4 944.6,57.4"/>
+  <polygon id="building-161" points="952.3,114.6 953.4,137.3 948.9,137.5 947.9,114.8"/>
+  <polygon id="building-162" points="955.7,54.9 971,60 965,78 949.7,72.9"/>
+  <polygon id="building-163" points="950.2,87 951.9,78.6 957.4,79.7 955.7,88.1"/>
+  <polygon id="building-164" points="956.6,45.6 971.4,45.6 971.4,53.4 956.6,53.4"/>
+  <polygon id="building-165" points="969,144 972,144 973,146 982,144 979,148 977,148 979,155 976,156 975,159 972,158 972,161 970,160 970,162 966,162 966,166 961,166 959,163 959,160 962,161 961,158 969,157 971,159 970,156 973,153 973,150 971,148 968,148"/>
+  <polygon id="building-166" points="974.9,97.3 981.3,105 974.2,111 967.8,103.3"/>
+  <polygon id="building-167" points="985.2,43.6 970.6,42.3 971.4,34.2 985.9,35.6"/>
+  <polygon id="building-168" points="985.1,102.9 974.7,94.6 981.3,86.4 991.7,94.7"/>
+  <polygon id="building-169" points="984,75.5 994.5,86 988.5,92 978,81.5"/>
+  <polygon id="building-170" points="1005.7,151.8 984.6,156 981.2,138.6 1002.2,134.4"/>
+  <polygon id="building-171" points="992.7,19.6 1004.4,20.7 1003.8,27.2 992.1,26.2"/>
+  <polygon id="building-172" points="992.6,73.7 999.4,73.7 999.4,79.3 992.6,79.3"/>
+  <polygon id="building-173" points="1001.3,125 1013.1,133.8 1007.6,141.1 995.8,132.3"/>
+  <polygon id="building-174" points="1009.4,59.6 1009.4,72.3 998.6,72.3 998.6,59.6"/>
+  <polygon id="building-175" points="1015.4,32.4 999.6,32.4 999.6,21.7 1015.4,21.6"/>
+  <polygon id="building-176" points="1006,113.5 1020.8,125.8 1015,132.8 1000.2,120.4"/>
+  <polygon id="building-177" points="1009.4,49.4 1016.5,58.3 1009.5,63.9 1002.4,55"/>
+  <polygon id="building-178" points="1025.5,127 1015.5,117 1022.5,110 1032.5,120"/>
+  <polygon id="building-179" points="1015.6,45.6 1021.4,45.6 1021.4,52.4 1015.6,52.4"/>
+  <polygon id="building-180" points="1029,118.9 1020.9,102.6 1030.8,97.7 1038.9,114"/>
+  <polygon id="building-181" points="1047.2,158.8 1031.5,166 1024.2,150 1039.9,142.8"/>
+  <polygon id="building-182" points="1031.7,48.6 1044.3,48.6 1044.3,58.4 1031.7,58.4"/>
+  <polygon id="building-183" points="1037.7,95.7 1047.3,95.7 1047.3,108.3 1037.7,108.3"/>
+  <polygon id="building-184" points="1063.7,139.4 1050.1,154.5 1038.5,144 1052.1,129"/>
+  <polygon id="building-185" points="1056,78 1058,78 1057,80 1060,80 1060,84 1058,86 1060,87 1061,85 1060,89 1062,90 1062,98 1064,96 1064,102 1062,104 1052,104 1050,97 1046,96 1045,88 1042,87 1041,84 1044,79 1055,80"/>
+  <polygon id="building-187" points="1073.3,143.3 1068.7,143.3 1068.7,130.7 1073.3,130.7"/>
+  <polygon id="building-188" points="1090,54 1096,59 1098,63 1102,65 1105,65 1107,63 1107,58 1110,58 1110,60 1117,59 1117,61 1115,61 1117,65 1120,65 1122,69 1129,69 1129,74 1126,76 1126,78 1128,77 1128,75 1131,76 1127,80 1124,79 1121,84 1118,85 1118,87 1113,91 1113,93 1116,92 1115,95 1111,94 1107,98 1108,103 1102,102 1101,100 1099,102 1097,96 1092,97 1094,96 1094,94 1092,93 1090,88 1087,88 1086,90 1081,92 1081,94 1079,93 1079,91 1077,91 1078,95 1083,94 1084,92 1086,92 1086,90 1091,92 1092,96 1088,99 1088,101 1086,100 1085,104 1072,104 1071,102 1069,103 1071,94 1076,93 1074,92 1076,88 1073,84 1071,84 1071,79 1069,80 1069,76 1071,76 1081,68 1080,61 1084,59 1085,55 1088,56"/>
+  <polygon id="building-189" points="1073.1,148.8 1075.7,130.3 1085.4,131.7 1082.8,150.2"/>
+  <polygon id="building-190" points="1089.7,128.7 1106.3,128.7 1106.3,142.3 1089.7,142.3"/>
+  <polygon id="building-191" points="1139.1,130.9 1145,162.6 1127.1,166 1121.2,134.2"/>
+  <polygon id="building-192" points="1131.3,119.3 1121.7,119.3 1121.7,110.7 1131.3,110.7"/>
+  <polygon id="building-193" points="1138.3,123.7 1138.3,132.3 1122.7,132.3 1122.7,123.7"/>
+  <polygon id="building-194" points="1141.3,99.7 1141.3,109.3 1133.7,109.3 1133.7,99.7"/>
+  <polygon id="building-195" points="1151.3,87.7 1151.3,104.3 1142.7,104.3 1142.7,87.7"/>
+  <polygon id="building-196" points="1190.5,89.9 1157,88.1 1158.2,66.8 1191.6,68.7"/>
+  <polygon id="building-197" points="1162.2,141.7 1163.7,128.4 1178.2,130 1176.8,143.3"/>
+  <polygon id="building-198" points="1163.7,145.7 1172.3,145.7 1172.3,154.3 1163.7,154.3"/>
+  <polygon id="building-199" points="1190.3,126.4 1179.5,123.7 1183,109.4 1193.8,112.1"/>
+  <polygon id="building-200" points="1195.1,84.1 1196.6,94.8 1186.3,96.3 1184.7,85.5"/>
+  <polygon id="building-201" points="1218.7,136.4 1203.6,166.7 1185.3,157.6 1200.4,127.3"/>
+  <polygon id="building-202" points="1197,122 1188.9,112.2 1201.3,101.8 1209.4,111.6"/>
+  <polygon id="building-203" points="1190.7,93.7 1201.3,93.7 1201.3,104.3 1190.7,104.3"/>
+  <polygon id="building-204" points="1241,63.5 1217.1,62.1 1218,47.6 1241.8,49.1"/>
+  <polygon id="building-205" points="1221.6,117.9 1233.9,124 1229.6,132.7 1217.3,126.6"/>
+  <polygon id="building-206" points="1220.7,106.7 1232.3,106.7 1232.3,117.3 1220.7,117.3"/>
+  <polygon id="building-207" points="1235.5,86.9 1233.7,104.6 1220.9,103.3 1222.7,85.6"/>
+  <polygon id="building-208" points="1233.7,134.3 1233.7,124.7 1241.3,124.7 1241.3,134.3"/>
+  <polygon id="building-209" points="1235.1,168.9 1236.7,145.3 1245.2,145.9 1243.6,169.5"/>
+  <polygon id="building-210" points="1239,20 1252,20 1253,22 1255,20 1261,20 1260,22 1255,22 1254,26 1252,27 1257,31 1257,33 1253,38 1250,37 1251,44 1248,46 1246,51 1244,49 1242,49 1244,51 1241,51 1240,49 1245,39 1242,39 1243,37 1240,36 1240,34 1238,34 1237,32 1238,29 1242,29 1242,26 1244,27 1244,25 1239,23"/>
+  <polygon id="building-211" points="1246,103 1253,104 1252,110 1255,108 1255,112 1257,110 1260,111 1259,119 1257,117 1257,119 1259,120 1258,124 1264,123 1267,120 1272,121 1272,124 1270,124 1270,126 1267,128 1268,137 1266,141 1263,141 1262,138 1259,137 1261,128 1259,130 1257,128 1252,129 1251,127 1251,119 1254,116 1251,116 1252,114 1246,117 1241,116 1244,115 1241,114 1241,110 1245,108"/>
+  <polygon id="building-212" points="1263.7,63.6 1274.3,63.6 1274.3,83.3 1263.7,83.3"/>
+  <polygon id="building-213" points="1270.7,128.7 1279.3,128.7 1279.3,138.3 1270.7,138.3"/>
+  <polygon id="building-214" points="1285.8,75.3 1277.1,46.1 1290.7,42 1299.4,71.2"/>
+  <polygon id="building-215" points="1301.6,149.1 1279.2,136 1286.2,124.1 1308.6,137.2"/>
+  <polygon id="building-216" points="1293.5,110 1280,96.5 1290,86.5 1303.5,100"/>
+  <polygon id="building-217" points="1301,78 1305,79 1306,82 1312,81 1313,83 1315,83 1313,85 1316,86 1317,89 1327,88 1331,89 1331,91 1336,90 1340,92 1340,94 1344,94 1345,101 1342,101 1341,104 1337,104 1336,98 1334,99 1331,94 1324,94 1322,93 1322,91 1316,90 1315,94 1312,95 1312,93 1308,92 1307,90 1303,91 1297,88 1295,82 1300,81"/>
+  <polygon id="building-218" points="1313.1,22.9 1314.8,35.1 1303.7,36.7 1302,24.5"/>
+  <polygon id="building-219" points="1317.9,99.2 1326.5,105.6 1318.6,116.1 1310,109.7"/>
+  <polygon id="building-220" points="1310.7,141.7 1318.3,141.7 1318.3,149.3 1310.7,149.3"/>
+  <polygon id="building-221" points="1317.9,148.8 1328.2,154.9 1323.9,162.2 1313.6,156"/>
+  <polygon id="building-222" points="1320.4,22.3 1328.4,23.9 1327,31 1319,29.4"/>
+  <polygon id="building-223" points="1330.7,52.3 1330.7,26.6 1348.3,26.6 1348.3,52.4"/>
+  <polygon id="building-224" points="1363.9,126.2 1340.9,123.7 1342.2,111.9 1365.2,114.4"/>
+  <polygon id="building-225" points="1345.7,61.6 1354.3,61.6 1354.3,67.3 1345.7,67.3"/>
+  <polygon id="building-226" points="1353.1,107.1 1356.2,94.9 1373.3,99.2 1370.3,111.4"/>
+  <polygon id="building-227" points="1363.7,58.6 1370.3,58.6 1370.3,73.3 1363.7,73.3"/>
+  <polygon id="building-228" points="41.5,217.9 24.7,235.9 15.5,227.4 32.3,209.4"/>
+  <polygon id="building-229" points="35.8,208.6 22.3,204.1 26.2,192.4 39.7,196.9"/>
+  <polygon id="building-230" points="42.3,224.6 43.4,235.3 37.9,235.9 36.9,225.2"/>
+  <polygon id="building-231" points="46.4,227.8 62.8,239.2 54.8,250.7 38.4,239.2"/>
+  <polygon id="building-232" points="66,296.5 54.5,285 60,279.5 71.5,291"/>
+  <polygon id="building-233" points="62.8,272 76.6,280.6 71,289.5 57.2,280.9"/>
+  <polygon id="building-234" points="87.3,189.3 101.4,201.1 93.8,210.1 79.7,198.4"/>
+  <polygon id="building-235" points="100.3,256.4 87.7,253.9 89.9,242.6 102.5,245.1"/>
+  <polygon id="building-236" points="132,230.2 121.2,227.1 124.4,215.8 135.3,218.9"/>
+  <polygon id="building-237" points="152.4,233.7 144.1,248.2 126,237.8 134.3,223.3"/>
+  <polygon id="building-238" points="150,256.7 172.2,238.5 183,251.6 160.7,269.9"/>
+  <polygon id="building-239" points="165,286 174,294 176,294 176,296 181,296 181,298 179,298 182,301 186,302 186,305 188,305 187,303 191,304 191,310 184,310 183,307 178,305 176,301 172,301 171,296 169,296 171,298 170,300 165,300 164,303 158,304 154,299 157,298 157,293 160,293 159,291 161,291"/>
+  <polygon id="building-240" points="314,285 317,285 314,291 314,293 317,294 316,296 319,295 328,299 326,302 328,301 340,306 347,306 346,315 343,323 341,324 342,331 339,340 324,337 326,335 321,336 304,331 306,300 308,298 308,295 310,299 310,290"/>
+  <polygon id="building-241" points="346,204.5 359.6,206 359.1,210.6 345.5,209.1"/>
+  <polygon id="building-242" points="347.7,214.5 371.4,215.7 371,222.6 347.4,221.4"/>
+  <polygon id="building-243" points="450.5,165.6 459.3,158.3 464.5,164.5 455.7,171.8"/>
+  <polygon id="building-244" points="511.5,163.7 489.5,171.9 486.1,162.8 508.1,154.6"/>
+  <polygon id="building-245" points="512.5,173.8 525.2,167.5 530.3,177.8 517.6,184.1"/>
+  <polygon id="building-246" points="533.2,199.6 524,183.5 531.9,178.9 541.1,195"/>
+  <polygon id="building-247" points="541.8,164.4 530.1,168.3 527.1,159.3 538.8,155.4"/>
+  <polygon id="building-248" points="541.1,196.2 534.7,179.5 546.4,175 552.8,191.7"/>
+  <polygon id="building-249" points="556.6,173.7 562.4,173.7 562.4,189.3 556.6,189.3"/>
+  <polygon id="building-250" points="564.4,184.2 565.9,172.3 577,173.6 575.5,185.5"/>
+  <polygon id="building-251" points="577.2,170.4 590.1,172 588.9,182 576,180.4"/>
+  <polygon id="building-252" points="590.6,181.3 591.7,168.6 598.8,169.2 597.7,181.9"/>
+  <polygon id="building-253" points="590.8,221 594.8,202.7 606,205.2 601.9,223.5"/>
+  <polygon id="building-254" points="616.1,160.9 611.1,182.4 597.6,179.3 602.5,157.8"/>
+  <polygon id="building-255" points="617,215.7 605.8,211.5 610.3,199.6 621.5,203.8"/>
+  <polygon id="building-256" points="617.1,175.6 615.6,159.7 636.5,157.8 638,173.7"/>
+  <polygon id="building-257" points="633.4,199.7 631.4,215.5 620.1,214.1 622.1,198.3"/>
+  <polygon id="building-258" points="635.6,156.7 649.4,156.7 649.4,169.3 635.6,169.3"/>
+  <polygon id="building-259" points="635.7,227.3 645.8,212.1 653.1,217 643,232.1"/>
+  <polygon id="building-260" points="645.6,194.7 661.4,194.7 661.4,206.3 645.6,206.3"/>
+  <polygon id="building-261" points="654,169.2 652.3,155.1 662.3,153.9 664.1,168"/>
+  <polygon id="building-262" points="670.6,188.5 673.4,205.3 664.8,206.7 662,190"/>
+  <polygon id="building-263" points="677.5,223 691.5,237 684.5,244 670.5,230"/>
+  <polygon id="building-264" points="681.4,204.6 671.5,190.9 681.8,183.4 691.8,197.1"/>
+  <polygon id="building-265" points="688,217.6 703.8,226.6 698.4,236 682.6,227"/>
+  <polygon id="building-266" points="688.6,185.6 699.6,186.7 698.4,198.2 687.4,197.1"/>
+  <polygon id="building-267" points="701.4,226.2 694.5,215.9 701.8,211.1 708.6,221.3"/>
+  <polygon id="building-268" points="700.5,208 708,200.5 719,211.5 711.5,219"/>
+  <polygon id="building-269" points="724.6,156 718.4,171.5 710.8,168.5 717,153"/>
+  <polygon id="building-270" points="711.6,194.7 723.4,194.7 723.4,210.3 711.6,210.3"/>
+  <polygon id="building-271" points="754.9,203 738.1,182.8 744.8,177.2 761.6,197.4"/>
+  <polygon id="building-272" points="746.4,249.3 738.6,249.3 738.6,236.7 746.4,236.7"/>
+  <polygon id="building-273" points="745.2,222.6 758,233.2 751.5,241 738.7,230.4"/>
+  <polygon id="building-274" points="751.6,170.3 751.6,163.7 760.4,163.7 760.4,170.3"/>
+  <polygon id="building-275" points="755.1,210 759.8,197.5 771.1,201.8 766.4,214.3"/>
+  <polygon id="building-276" points="768.4,178.3 756.6,178.3 756.6,168.7 768.4,168.7"/>
+  <polygon id="building-277" points="758.6,245.7 768.4,245.7 768.4,259.4 758.6,259.4"/>
+  <polygon id="building-278" points="788.2,194.5 768.3,184.6 773.8,173.5 793.7,183.4"/>
+  <polygon id="building-279" points="785,215 788,215 787,220 782,220 783,223 779,227 777,227 777,224 774,222 774,216 776,221 778,219 781,219 781,216"/>
+  <polygon id="building-280" points="795.6,221.8 800.4,242.6 785.2,246.1 780.4,225.3"/>
+  <polygon id="building-281" points="796.4,186.5 785.5,177.2 791.8,169.9 802.7,179.3"/>
+  <polygon id="building-282" points="802,240 803,253 801,254 801,251 797,250 796,247 796,250 793,249 796,245 800,246 802,244"/>
+  <polygon id="building-283" points="819.7,234.4 818.6,223.7 824.7,223.1 825.7,233.8"/>
+  <polygon id="building-284" points="819.4,177.8 830.4,164.6 837,170 825.9,183.2"/>
+  <polygon id="building-285" points="825.6,214.7 835.4,214.7 835.4,229.3 825.6,229.3"/>
+  <polygon id="building-286" points="831.6,245.7 848.4,245.7 848.4,261.4 831.6,261.4"/>
+  <polygon id="building-287" points="833.6,175.7 844.4,175.7 844.4,188.3 833.6,188.3"/>
+  <polygon id="building-288" points="851,244.4 868.4,240 871.2,251.5 853.9,255.9"/>
+  <polygon id="building-289" points="861.8,201.3 871.7,203.8 870.1,210.1 860.2,207.7"/>
+  <polygon id="building-290" points="870,163 881,163 881,169 877,170 874,175 870,174 871,177 868,177 866,174 871,171 870,169 878,165"/>
+  <polygon id="building-291" points="871,234 874,235 873,237 878,237 880,241 879,243 876,238 877,250 880,250 881,252 881,254 879,255 877,255 877,252 870,250 873,248 873,245 868,241 872,238"/>
+  <polygon id="building-292" points="925,250 898.9,258.7 894.9,246.7 921,238"/>
+  <polygon id="building-293" points="913.5,177 897,160.5 904,153.5 920.5,170"/>
+  <polygon id="building-294" points="916,237.6 902.2,241.1 899.2,229.3 913.1,225.9"/>
+  <polygon id="building-295" points="903.6,254.7 921.4,254.7 921.4,267.4 903.6,267.4"/>
+  <polygon id="building-296" points="949.4,177.8 946,188 931.3,183.1 934.7,172.9"/>
+  <polygon id="building-297" points="932.6,155.7 942.4,155.7 942.4,170.3 932.6,170.3"/>
+  <polygon id="building-298" points="940.7,221.6 957.7,222.8 957.2,230.6 940.1,229.4"/>
+  <polygon id="building-299" points="949.4,295.6 949.4,307.4 940.6,307.4 940.6,295.6"/>
+  <polygon id="building-300" points="949.1,234.6 961.7,235.7 961.2,241.3 948.5,240.1"/>
+  <polygon id="building-301" points="957.4,294.4 948.6,294.4 948.6,284.6 957.4,284.6"/>
+  <polygon id="building-302" points="960.2,169.1 961.9,179.5 950.4,181.5 948.7,171"/>
+  <polygon id="building-303" points="961.8,285.1 948.7,281.8 950.9,272.9 964.1,276.2"/>
+  <polygon id="building-304" points="948.8,209.4 967.1,203.3 971,215 952.7,221.1"/>
+  <polygon id="building-305" points="972.5,253.4 949.9,250.7 950.9,241.6 973.6,244.2"/>
+  <polygon id="building-306" points="952.6,255.7 965.4,255.7 965.4,264.4 952.6,264.4"/>
+  <polygon id="building-307" points="969.3,199.4 984,192.1 990.9,206 976.2,213.3"/>
+  <polygon id="building-308" points="973.1,270.3 991.3,271.7 990,288.6 971.8,287.2"/>
+  <polygon id="building-309" points="975.6,291.6 991.4,291.6 991.4,316.4 975.6,316.4"/>
+  <polygon id="building-310" points="993.1,266.5 977.1,265.2 978.5,248.4 994.5,249.7"/>
+  <polygon id="building-311" points="980.8,184.5 993.9,191 990.6,197.7 977.5,191.2"/>
+  <polygon id="building-312" points="1000.9,244.1 980.8,247.8 979,237.7 999.1,234.1"/>
+  <polygon id="building-313" points="985.1,183 990.6,175.5 1002.7,184.6 997.1,192.1"/>
+  <polygon id="building-314" points="999.2,234.5 986,229.2 988.4,223.2 1001.6,228.5"/>
+  <polygon id="building-316" points="1009.9,220.7 1002.5,226.9 994.5,217.3 1001.9,211.1"/>
+  <polygon id="building-317" points="998.3,175.4 1006.6,171.3 1012.3,182.8 1004,186.9"/>
+  <polygon id="building-318" points="1018.4,213.3 1004.9,215.7 1002.5,202.5 1016,200"/>
+  <polygon id="building-319" points="1018.5,295 1011,302.5 1006.5,298 1014,290.5"/>
+  <polygon id="building-320" points="1017.5,181.4 1007.5,168.9 1016.1,162.1 1026.1,174.6"/>
+  <polygon id="building-321" points="1007.6,274.6 1017.4,274.6 1017.4,291.4 1007.6,291.4"/>
+  <polygon id="building-322" points="1013.1,269.1 1008.6,246.7 1024.5,243.5 1029,266"/>
+  <polygon id="building-323" points="1013.9,198.1 1034.2,194 1037.4,210.1 1017.1,214.1"/>
+  <polygon id="building-324" points="1025.3,251.4 1017,229.3 1026.4,225.7 1034.7,247.9"/>
+  <polygon id="building-325" points="1019.5,169.2 1023.4,161.3 1029.3,164.2 1025.4,172.1"/>
+  <polygon id="building-326" points="1021.6,271.6 1047.3,271.6 1047.3,289.4 1021.6,289.4"/>
+  <polygon id="building-327" points="1042.7,220 1054.1,233 1038.2,246.9 1026.8,233.9"/>
+  <polygon id="building-328" points="1033.7,185.7 1051.3,185.7 1051.3,201.3 1033.7,201.3"/>
+  <polygon id="building-329" points="1048.8,270.1 1044,257.4 1051.7,254.5 1056.5,267.2"/>
+  <polygon id="building-330" points="1044.7,196 1050.4,177.6 1064.5,182 1058.9,200.3"/>
+  <polygon id="building-331" points="1057.9,248.8 1050.7,253.6 1047.2,248.4 1054.5,243.6"/>
+  <polygon id="building-332" points="1054.6,297.9 1064.1,310.6 1058.1,315.1 1048.6,302.4"/>
+  <polygon id="building-333" points="1050.7,218.7 1060.3,218.7 1060.3,232.3 1050.7,232.3"/>
+  <polygon id="building-334" points="1058.7,269.9 1054.7,255.6 1061.9,253.5 1066,267.8"/>
+  <polygon id="building-335" points="1065.5,213.7 1064.3,228.4 1054.8,227.6 1056,212.9"/>
+  <polygon id="building-336" points="1064,292.8 1065.4,305.3 1057,306.2 1055.6,293.7"/>
+  <polygon id="building-337" points="1067.6,245.4 1088,234.5 1094.8,247.1 1074.4,258.1"/>
+  <polygon id="building-338" points="1078.9,167.7 1082.1,183.5 1071.8,185.6 1068.6,169.7"/>
+  <polygon id="building-339" points="1068.7,208.7 1075.3,208.7 1075.3,223.3 1068.7,223.3"/>
+  <polygon id="building-340" points="1071.8,298 1070.6,289.7 1077.5,288.7 1078.6,297"/>
+  <polygon id="building-341" points="1081,221.9 1073.1,206 1090.6,197.3 1098.5,213.2"/>
+  <polygon id="building-342" points="1079.8,278.6 1090,293.3 1083.8,297.7 1073.5,283"/>
+  <polygon id="building-343" points="1086.4,161.9 1093.5,176.2 1082.4,181.7 1075.3,167.4"/>
+  <polygon id="building-344" points="1102,292 1104,293 1102,296 1105,296 1105,294 1107,294 1106,296 1111,300 1111,302 1111,299 1113,299 1115,302 1109,303 1108,305 1102,305 1101,302 1102,308 1104,309 1103,314 1098,313 1098,311 1091,305 1092,308 1089,308 1094,308 1093,312 1096,314 1097,318 1092,319 1092,321 1089,320 1089,329 1076,329 1078,319 1081,318 1086,321 1086,323 1088,323 1087,314 1085,315 1082,312 1083,303 1086,303 1086,305 1088,305 1091,303 1092,298 1099,299 1099,296 1100,294 1102,294"/>
+  <polygon id="building-345" points="1081.8,276.4 1102.2,269.6 1107.2,284.6 1086.8,291.4"/>
+  <polygon id="building-346" points="1092.9,178.7 1086.7,160.1 1094.8,157.4 1101,176"/>
+  <polygon id="building-347" points="1090.7,237.7 1100.3,237.7 1100.3,246.3 1090.7,246.3"/>
+  <polygon id="building-348" points="1101.4,194.2 1106.8,210.4 1099.3,212.9 1093.9,196.7"/>
+  <polygon id="building-349" points="1102.1,227.5 1110.2,238 1105.1,241.9 1096.9,231.5"/>
+  <polygon id="building-350" points="1098.8,268.6 1118.2,256.2 1123.3,264.1 1103.8,276.5"/>
+  <polygon id="building-351" points="1103.7,173.4 1100.6,160.7 1109.3,158.6 1112.4,171.3"/>
+  <polygon id="building-352" points="1120.4,215.8 1114.2,235.4 1101.1,231.3 1107.3,211.6"/>
+  <polygon id="building-353" points="1111,187.9 1118,207.6 1108.3,211.1 1101.3,191.4"/>
+  <polygon id="building-354" points="1103.5,293.2 1114.4,271.3 1125.5,276.8 1114.6,298.7"/>
+  <polygon id="building-355" points="1131.9,185.7 1130.4,175.6 1145.1,173.5 1146.6,183.6"/>
+  <polygon id="building-356" points="1130.7,163.7 1148.3,163.7 1148.3,174.3 1130.7,174.3"/>
+  <polygon id="building-357" points="1150.2,203.4 1131.6,202 1133,184.6 1151.5,186"/>
+  <polygon id="building-358" points="1152.1,284.8 1149.1,305.7 1134.7,303.6 1137.7,282.7"/>
+  <polygon id="building-359" points="1151.3,205.7 1151.3,214.3 1135.7,214.3 1135.7,205.7"/>
+  <polygon id="building-360" points="1137.7,215.7 1154.3,215.7 1154.3,224.3 1137.7,224.3"/>
+  <polygon id="building-361" points="1155.4,279.3 1141.5,281.4 1140.4,274.2 1154.3,272.1"/>
+  <polygon id="building-362" points="1156.3,273.4 1140.7,273.4 1140.7,249.7 1156.3,249.7"/>
+  <polygon id="building-363" points="1150,250.8 1148.2,241.8 1158.1,239.8 1159.9,248.8"/>
+  <polygon id="building-364" points="1171.3,168.5 1159.8,167.1 1160.9,158.3 1172.4,159.7"/>
+  <polygon id="building-365" points="1174,179.4 1160.3,178.3 1161.2,167.7 1174.9,168.9"/>
+  <polygon id="building-366" points="1162.5,298.7 1163.7,290.6 1168.5,291.3 1167.3,299.4"/>
+  <polygon id="building-367" points="1176.3,179.7 1176.3,189.3 1163.7,189.3 1163.7,179.7"/>
+  <polygon id="building-368" points="1165.7,190.7 1178.3,190.7 1178.3,203.3 1165.7,203.3"/>
+  <polygon id="building-369" points="1165.7,204.7 1181.3,204.7 1181.3,225.3 1165.7,225.3"/>
+  <polygon id="building-370" points="1175.3,251.7 1175.3,265.4 1165.7,265.4 1165.7,251.7"/>
+  <polygon id="building-371" points="1185.3,248.7 1185.3,264.4 1177.7,264.4 1177.7,248.7"/>
+  <polygon id="building-372" points="1199.3,248.7 1199.3,268.4 1190.7,268.4 1190.7,248.7"/>
+  <polygon id="building-373" points="1211.3,191.7 1211.3,200.3 1195.7,200.3 1195.7,191.7"/>
+  <polygon id="building-374" points="1197.8,179.4 1214.4,182.4 1212.6,192 1196.1,189"/>
+  <polygon id="building-375" points="1207.9,209.7 1210.9,226.2 1199.5,228.3 1196.5,211.8"/>
+  <polygon id="building-376" points="1211.3,251.7 1211.3,268.4 1200.7,268.4 1200.7,251.7"/>
+  <polygon id="building-377" points="1220.4,211.7 1218.3,228.4 1210.1,227.4 1212.2,210.7"/>
+  <polygon id="building-378" points="1232.9,165.4 1211.1,164.1 1211.7,153.1 1233.5,154.4"/>
+  <polygon id="building-379" points="1216.3,196.7 1224.3,183.9 1233,189.3 1225,202.1"/>
+  <polygon id="building-380" points="1220.8,228.1 1225.2,211.8 1237.1,215 1232.6,231.4"/>
+  <polygon id="building-381" points="1221.6,270.3 1222.9,252.4 1231.2,253 1229.9,270.9"/>
+  <polygon id="building-382" points="1238,187 1245,189 1243,196 1240,196 1240,199 1243,200 1245,198 1245,200 1243,202 1241,202 1240,200 1240,202 1237,202 1234,204 1234,206 1230,207 1230,204 1228,205 1229,201 1235,201 1233,200 1233,198 1239,195 1237,193"/>
+  <polygon id="building-383" points="1232.7,258.6 1243.3,258.6 1243.3,283.4 1232.7,283.4"/>
+  <polygon id="building-384" points="1241.4,210.3 1249.3,214.2 1241.2,230.5 1233.3,226.6"/>
+  <polygon id="building-385" points="1255.7,192.9 1247.4,206.3 1241.5,202.6 1249.8,189.2"/>
+  <polygon id="building-386" points="1248.8,153.5 1259.1,157.4 1253.5,172.3 1243.2,168.5"/>
+  <polygon id="building-387" points="1255.1,224.5 1251.4,237.3 1244.1,235.3 1247.8,222.4"/>
+  <polygon id="building-388" points="1249,206.5 1259,196.5 1265,202.5 1255,212.5"/>
+  <polygon id="building-389" points="1262,305.5 1254.2,298.8 1260,292 1267.9,298.7"/>
+  <polygon id="building-390" points="1256.9,228.4 1268.3,230.9 1266.4,239.4 1255,236.9"/>
+  <polygon id="building-391" points="1272,162.3 1266.9,176.3 1255.8,172.2 1260.9,158.3"/>
+  <polygon id="building-392" points="1280.5,207.8 1273.6,221.7 1258.1,214 1265,200.1"/>
+  <polygon id="building-393" points="1272.6,242.3 1276.1,249.4 1263.8,255.5 1260.3,248.4"/>
+  <polygon id="building-394" points="1274.3,291.4 1261.7,291.4 1261.7,280.6 1274.3,280.6"/>
+  <polygon id="building-395" points="1265.9,281.6 1263.3,256.5 1279.3,254.8 1282,279.9"/>
+  <polygon id="building-396" points="1264.1,178.1 1273.5,164.7 1280.9,169.9 1271.5,183.3"/>
+  <polygon id="building-397" points="1272.7,293.6 1281.3,293.6 1281.3,304.4 1272.7,304.4"/>
+  <polygon id="building-398" points="1278.7,211.7 1288.3,211.7 1288.3,224.3 1278.7,224.3"/>
+  <polygon id="building-399" points="1278.9,186.8 1293.8,169.5 1304.6,178.8 1289.6,196.1"/>
+  <polygon id="building-400" points="1304.8,244.4 1288.4,243.3 1288.9,234.6 1305.4,235.7"/>
+  <polygon id="building-401" points="1296.3,224.4 1288.6,223.3 1289.5,216.7 1297.2,217.8"/>
+  <polygon id="building-402" points="1306.3,246.7 1306.3,269.4 1290.7,269.4 1290.7,246.7"/>
+  <polygon id="building-403" points="1311.3,271.6 1311.3,284.4 1297.7,284.4 1297.7,271.6"/>
+  <polygon id="building-404" points="1297.7,284.6 1309.3,284.6 1309.3,294.4 1297.7,294.4"/>
+  <polygon id="building-405" points="1302,193.3 1306,178.6 1316.4,181.4 1312.3,196.1"/>
+  <polygon id="building-406" points="1332.5,183.5 1329.7,198.4 1314.3,195.6 1317,180.6"/>
+  <polygon id="building-407" points="1347,213.3 1334.1,243.3 1320.2,237.3 1333,207.4"/>
+  <polygon id="building-408" points="1340.3,294.4 1326.7,294.4 1326.7,260.6 1340.3,260.6"/>
+  <polygon id="building-409" points="1345.5,300.1 1333.6,306.7 1328.5,297.6 1340.4,291"/>
+  <polygon id="building-410" points="1330.7,155.7 1339.3,155.7 1339.3,168.3 1330.7,168.3"/>
+  <polygon id="building-411" points="1341.7,241.7 1352.3,241.7 1352.3,250.3 1341.7,250.3"/>
+  <polygon id="building-412" points="1343.7,158.7 1354.3,158.7 1354.3,169.3 1343.7,169.3"/>
+  <polygon id="building-413" points="1349.2,183.7 1356.7,187.4 1354,192.9 1346.5,189.2"/>
+  <polygon id="building-414" points="1355.2,155.8 1370.9,157.8 1369.3,170.4 1353.6,168.4"/>
+  <polygon id="building-415" points="1369.3,248.7 1369.3,266.4 1354.7,266.4 1354.7,248.7"/>
+  <polygon id="building-416" points="1370.4,265.9 1369.3,285.4 1356.9,284.7 1358,265.2"/>
+  <polygon id="building-417" points="1370.3,222.7 1370.3,242.3 1360.7,242.3 1360.7,222.7"/>
+  <polygon id="building-418" points="24.5,365.1 38.2,349.9 45.7,356.6 32,371.9"/>
+  <polygon id="building-419" points="63.7,374.8 52.2,356.1 60.8,350.8 72.3,369.5"/>
+  <polygon id="building-420" points="59,350.5 66,343.5 79,356.5 72,363.5"/>
+  <polygon id="building-421" points="192,426.2 170.7,427.6 169.8,414.4 191.1,413"/>
+  <polygon id="building-422" points="428,439 430,439 429,441 432,440 432,442 436,442 436,444 439,445 442,442 449,442 453,445 451,449 454,449 453,446 455,446 456,451 455,454 453,454 455,455 453,462 451,461 451,463 447,465 441,464 439,462 442,461 437,462 437,460 435,462 436,468 431,475 431,478 423,479 420,475 417,475 417,477 414,476 413,472 414,470 416,470 417,465 421,461 420,452 425,446"/>
+  <polygon id="building-423" points="601.9,462.9 593.6,449 601.1,444.5 609.4,458.4"/>
+  <polygon id="building-424" points="606.1,436.2 615.5,448.8 607.3,455 597.9,442.4"/>
+  <polygon id="building-425" points="624.5,441.2 613.9,445.1 610.2,435.3 620.8,431.3"/>
+  <polygon id="building-426" points="636.7,469.5 625.4,454.5 633,448.8 644.2,463.8"/>
+  <polygon id="building-427" points="971.7,317.3 964.7,306.7 970.4,303 977.4,313.5"/>
+  <polygon id="building-428" points="978.9,321.6 991.2,315.5 995.5,324.2 983.2,330.3"/>
+  <polygon id="building-429" points="1028.7,318.6 1039.3,318.6 1039.3,329.4 1028.7,329.4"/>
+  <polygon id="building-430" points="1035.7,333.6 1048.3,333.6 1048.3,344.4 1035.7,344.4"/>
+  <polygon id="building-431" points="1050.8,304.6 1055.5,316.9 1044.2,321.2 1039.5,308.8"/>
+  <polygon id="building-432" points="1074.7,338.6 1086.3,338.6 1086.3,351.4 1074.7,351.4"/>
+  <polygon id="building-433" points="1115.8,335.5 1111.5,324.6 1125.7,318.9 1130.1,329.7"/>
+  <polygon id="building-434" points="1118.9,338.1 1132.4,332.6 1135.9,341.4 1122.4,346.8"/>
+  <polygon id="building-435" points="1134.3,307.5 1145.9,312.4 1141.8,322.1 1130.1,317.1"/>
+  <polygon id="building-436" points="1142.2,382.7 1140,391.4 1131.8,389.3 1134,380.6"/>
+  <polygon id="building-437" points="1132.7,368.6 1140.3,368.6 1140.3,381.4 1132.7,381.4"/>
+  <polygon id="building-438" points="1142.5,381.6 1143.8,366.5 1152.6,367.2 1151.3,382.4"/>
+  <polygon id="building-439" points="1143.7,328.6 1156.3,328.6 1156.3,339.4 1143.7,339.4"/>
+  <polygon id="building-440" points="1154.6,364.3 1175.9,369.2 1172.8,382.7 1151.5,377.8"/>
+  <polygon id="building-441" points="1163.3,323.3 1154.7,323.4 1154.7,315.6 1163.3,315.6"/>
+  <polygon id="building-442" points="1159.7,322.6 1180.3,322.6 1180.3,343.4 1159.7,343.4"/>
+  <polygon id="building-443" points="1178.7,392.2 1165.7,394.4 1164.7,388.2 1177.7,386"/>
+  <polygon id="building-444" points="1199,362 1202,365 1211,363 1211,376 1202,376 1202,378 1199,380 1196,379 1195,373 1192,381 1186,381 1185,379 1185,381 1183,383 1181,382 1180,385 1176,384 1176,381 1175,383 1173,382 1173,379 1175,379 1174,369 1181,370 1180,376 1182,381 1182,378 1185,377 1185,369 1183,370 1181,369 1181,367 1191,366 1192,368 1197,366"/>
+  <polygon id="building-445" points="1191.9,316.7 1196.6,323.7 1189.5,328.4 1184.8,321.4"/>
+  <polygon id="building-446" points="1194.5,329.5 1193.3,339.4 1186.5,338.5 1187.7,328.6"/>
+  <polygon id="building-447" points="1208.4,323.3 1207.3,339.4 1193.8,338.5 1194.9,322.4"/>
+  <polygon id="building-448" points="1221.8,363.4 1220.2,377.3 1211.3,376.3 1212.8,362.4"/>
+  <polygon id="building-449" points="1230.6,386.4 1215.3,384.9 1216.1,376.6 1231.4,378.1"/>
+  <polygon id="building-450" points="1227.3,393.8 1231.4,410.3 1221.3,412.8 1217.2,396.3"/>
+  <polygon id="building-451" points="1231.5,335.5 1241.4,336.7 1240.3,345.3 1230.4,344"/>
+  <polygon id="building-452" points="1230.7,318.6 1243.3,318.6 1243.3,329.4 1230.7,329.4"/>
+  <polygon id="building-453" points="1245.3,345.6 1245.3,355.4 1237.7,355.4 1237.7,345.6"/>
+  <polygon id="building-454" points="1248.3,308.6 1248.3,319.4 1238.7,319.4 1238.7,308.6"/>
+  <polygon id="building-455" points="1256.1,312.7 1244.4,309.2 1247.1,300 1258.8,303.5"/>
+  <polygon id="building-456" points="1248.9,356.9 1256.2,331.5 1281.4,338.8 1274.2,364.1"/>
+  <polygon id="building-457" points="1272.3,400.8 1261.2,406.3 1255.3,394.4 1266.4,388.9"/>
+  <polygon id="building-458" points="1271,395.5 1261.5,386 1270.5,377 1280,386.5"/>
+  <polygon id="building-459" points="1274,316 1276,316 1278,320 1274,324 1275,326 1273,326 1272,323 1270,324 1271,326 1269,326 1268,322 1270,321 1270,319 1272,322 1275,322 1275,320 1273,319"/>
+  <polygon id="building-460" points="1278,373.7 1290.8,381.7 1286.2,389.1 1273.4,381.1"/>
+  <polygon id="building-461" points="1275,418.5 1280.5,413 1291,423.5 1285.5,429"/>
+  <polygon id="building-462" points="1276.7,325.6 1294.3,325.6 1294.3,342.4 1276.7,342.4"/>
+  <polygon id="building-463" points="1285,305 1288,305 1286,307 1288,311 1281,313 1281,316 1278,315 1278,312 1280,312 1280,310 1282,310"/>
+  <polygon id="building-464" points="1283.5,374 1290,367.5 1299,376.5 1292.5,383"/>
+  <polygon id="building-465" points="1287.3,318.3 1302.3,321.6 1300.8,328.3 1285.8,325"/>
+  <polygon id="building-466" points="1303.7,355.4 1312.4,368.5 1301.4,375.8 1292.7,362.7"/>
+  <polygon id="building-467" points="1294.3,318.6 1296.7,300.6 1309.1,302.3 1306.7,320.2"/>
+  <polygon id="building-468" points="1295.7,394.6 1312.3,394.6 1312.3,407.4 1295.7,407.4"/>
+  <polygon id="building-469" points="1298.3,411.3 1308.8,412.8 1307.8,420 1297.3,418.5"/>
+  <polygon id="building-470" points="1320.3,349.6 1320.3,362.4 1306.7,362.4 1306.7,349.6"/>
+  <polygon id="building-471" points="1316.6,338.8 1327.9,346.9 1322.7,354.2 1311.3,346.1"/>
+  <polygon id="building-472" points="1325.9,382.8 1329.4,398.6 1315.8,401.6 1312.3,385.8"/>
+  <polygon id="building-473" points="1319.7,333.6 1334.3,333.6 1334.3,342.4 1319.7,342.4"/>
+  <polygon id="building-474" points="1332.9,405.1 1325.3,392.6 1333.6,387.6 1341.1,400.1"/>
+  <polygon id="building-475" points="1337.7,422.6 1351.3,422.6 1351.3,431.4 1337.7,431.4"/>
+  <polygon id="building-476" points="1347.4,311.3 1339.7,312.4 1338.8,306.2 1346.5,305.1"/>
+  <polygon id="building-477" points="1352.8,350.4 1343.2,353.6 1338.8,340.4 1348.4,337.2"/>
+  <polygon id="building-478" points="1351.3,364.4 1339.7,364.4 1339.7,353.6 1351.3,353.6"/>
+  <polygon id="building-479" points="1341.7,365.6 1350.3,365.6 1350.3,374.4 1341.7,374.4"/>
+  <polygon id="building-480" points="1362.6,396.6 1347.4,405.3 1342.2,396.2 1357.4,387.5"/>
+  <polygon id="building-481" points="1358.9,386.1 1345.7,389.4 1343.2,379.1 1356.3,375.8"/>
+  <polygon id="building-482" points="1346.7,311.6 1357.3,311.6 1357.3,322.4 1346.7,322.4"/>
+  <polygon id="building-483" points="1352.5,413.9 1369.3,404.9 1375.6,416.8 1358.9,425.8"/>
+  <polygon id="building-484" points="1354.7,315.6 1369.3,315.6 1369.3,336.4 1354.7,336.4"/>
+  <polygon id="building-485" points="30.4,502.9 33.4,525.3 21.4,526.9 18.4,504.5"/>
+  <polygon id="building-486" points="40.4,486 26.3,489.5 23.9,479.9 38,476.4"/>
+  <polygon id="building-487" points="41,555 43,556 46,564 45,568 49,570 47,579 50,578 50,583 46,591 36,591 35,582 32,581 34,579 32,578 31,570 27,566 25,566 26,563 24,565 24,562 26,562 27,560"/>
+  <polygon id="building-488" points="34.2,488.2 35.6,497.7 25.5,499.1 24.2,489.6"/>
+  <polygon id="building-489" points="40.4,463.6 40.4,476.4 32.6,476.4 32.6,463.6"/>
+  <polygon id="building-490" points="45.2,494.5 49.9,504 37.6,510.1 32.9,500.6"/>
+  <polygon id="building-491" points="56,519.7 45.3,529.1 39.6,522.6 50.3,513.3"/>
+  <polygon id="building-492" points="39.9,517.7 41.7,508.6 49.5,510.1 47.7,519.3"/>
+  <polygon id="building-493" points="44.6,557.6 50.2,544.7 62.5,550 57,562.9"/>
+  <polygon id="building-494" points="45.6,527.6 55.4,527.6 55.4,536.4 45.6,536.4"/>
+  <polygon id="building-495" points="50.4,547.2 51.7,536.6 58.3,537.4 57,548"/>
+  <polygon id="building-497" points="84.8,590.3 70.7,591.4 70.1,584.3 84.2,583.2"/>
+  <polygon id="building-498" points="125.5,521.5 111.9,537 104.2,530.3 117.8,514.7"/>
+  <polygon id="building-499" points="109,466 118.4,454.7 126,461 116.6,472.3"/>
+  <polygon id="building-500" points="160.7,457.5 179.1,458.7 178.3,470.8 159.9,469.5"/>
+  <polygon id="building-501" points="210.2,481.5 215.5,492.2 209.6,495.1 204.3,484.4"/>
+  <polygon id="building-502" points="217.7,577.6 231.3,577.6 231.3,591.4 217.7,591.4"/>
+  <polygon id="building-503" points="229.7,543.6 245.3,543.6 245.3,551.4 229.7,551.4"/>
+  <polygon id="building-504" points="261.4,495.6 261.4,506.4 245.7,506.4 245.7,495.6"/>
+  <polygon id="building-505" points="267.4,489.3 249.7,490.4 249.3,483.8 267,482.8"/>
+  <polygon id="building-506" points="262,551 271,552 273,554 276,554 275,556 279,556 278,558 276,557 277,562 274,561 276,562 276,565 278,565 278,569 276,571 275,578 272,578 270,586 259,583 260,581 258,582 258,579 260,577 260,573 256,573 258,571 253,572 253,570 255,571 254,566 256,568 255,562 257,563 257,559 260,560 260,557 262,558"/>
+  <polygon id="building-507" points="275.2,508.7 292.5,515.2 284.5,536.8 267.1,530.3"/>
+  <polygon id="building-508" points="280.6,490.3 283.5,470.3 297.3,472.3 294.5,492.3"/>
+  <polygon id="building-509" points="304.6,584.6 317.4,584.6 317.4,591.4 304.6,591.4"/>
+  <polygon id="building-510" points="314,547 324,549 320,551 326,550 325,552 331,551 337,553 335,564 328,563 326,565 324,574 315,572 317,570 311,570 314,561 313,559 311,559 311,554"/>
+  <polygon id="building-511" points="391.7,565.2 390.1,591.5 379.5,590.9 381.1,564.5"/>
+  <polygon id="building-512" points="402.2,562.4 381.6,561.3 382.2,551.3 402.7,552.4"/>
+  <polygon id="building-513" points="403.7,537.7 392.6,535.3 394.6,526 405.8,528.5"/>
+  <polygon id="building-514" points="396.2,580 408.4,581.7 406.8,593 394.6,591.3"/>
+  <polygon id="building-515" points="415.9,585.3 398.5,579.5 402.5,567.5 419.9,573.3"/>
+  <polygon id="building-516" points="441.9,551.6 416.9,532.9 425.1,521.9 450.2,540.7"/>
+  <polygon id="building-517" points="418.6,558.6 426.4,558.6 426.4,571.4 418.6,571.4"/>
+  <polygon id="building-518" points="452.8,480.5 467.6,486.1 463.8,496.3 449,490.7"/>
+  <polygon id="building-519" points="463.5,469 474.5,480 467.5,487 456.5,476"/>
+  <polygon id="building-520" points="549.4,591.4 536.6,591.4 536.6,581.6 549.4,581.6"/>
+  <polygon id="building-521" points="542.8,579.2 557.6,566 569,578.8 554.2,592"/>
+  <polygon id="building-522" points="558.8,571 572.8,551.4 585.2,560.3 571.2,579.9"/>
+  <polygon id="building-523" points="567.5,474 576,482.5 570,488.5 561.5,480"/>
+  <polygon id="building-524" points="568.1,470.9 582.5,458.5 594.5,472.5 580.1,484.8"/>
+  <polygon id="building-525" points="583.4,546.8 591.1,559.1 583.8,563.7 576.1,551.4"/>
+  <polygon id="building-526" points="587,454 591,454 590,456 592,456 593,454 593,459 595,463 597,463 597,466 592,466 593,462 591,460 587,460 586,457 584,459 583,456 587,456"/>
+  <polygon id="building-527" points="588,496 602,496 599,498 601,500 597,502 591,497 591,503 595,505 594,510 588,510 588,507 584,502 586,498 589,498"/>
+  <polygon id="building-528" points="587.6,544.6 596.4,544.6 596.4,553.4 587.6,553.4"/>
+  <polygon id="building-529" points="597.7,593.5 587.9,582.1 594,576.8 603.8,588.2"/>
+  <polygon id="building-530" points="609.3,493.4 592.9,491.3 594,482.5 610.4,484.6"/>
+  <polygon id="building-531" points="594.1,572.4 608,562.1 616.9,574 603.1,584.4"/>
+  <polygon id="building-532" points="616.8,489.5 601.8,482.8 607.1,470.9 622.1,477.6"/>
+  <polygon id="building-533" points="615,464.5 627.5,477 621.5,483 609,470.5"/>
+  <polygon id="building-534" points="625.8,461.2 634.5,471.4 629.6,475.6 620.9,465.4"/>
+</g>
+    <!-- Road centerlines follow the reference map. Connected branches end on shared centerlines, without gaps or projecting stubs. -->
+    <g id="road-network" class="road">
+      <path id="west-diagonal-north" class="minor-road" d="M12 194L179 12"/>
+      <path id="west-diagonal-middle" class="minor-road" d="M12 319L185 127"/>
+      <path id="west-diagonal-south" class="minor-road" d="M32 413L188 242 232 187 240 157 281 130"/>
+      <path id="western-cross-street" class="minor-road" d="M12 154L156.634 276.382"/>
+      <path id="western-lower-street" class="minor-road" d="M17 378L37 427 58 498 90 570 103 598"/>
+      <path id="western-bottom-junction" class="minor-road" d="M20 476Q36 429 54 427Q62 425 74 445L136 510 204 591"/>
+      <path id="western-bottom-loop" class="local-road" d="M53 592Q58 570 88.222 566"/>
+      <path id="start-approach" class="minor-road" d="M166 407L136 510"/>
+      <path id="start-cross-street" class="local-road" d="M92 346L166 407"/>
+      <path id="northwest-loop" class="minor-road" d="M283 16L305 59 328 83Q347 55 357 17"/>
+      <path id="garden-access" class="minor-road" d="M281 130Q263 115 273 111Q287 103 286 125L281 130"/>
+      <path id="garden-south-street" class="minor-road" d="M281 130L341 162 389 180"/>
+      <path id="avenue-north-junction" class="minor-road" d="M404.436 121.704Q440 118 480 85L540 13"/>
+      <path id="central-arterial" class="main-road" d="M436 6L416 81 391 169 378 248 362 314 341 405 318 493 289 606"/>
+      <path id="north-central-main-street" class="main-road" d="M390 180Q409 180 429 165L473 134 512 106Q563 67 609 75L651 78Q667 78 657 50L635 22"/>
+      <path id="north-central-link" class="minor-road" d="M536.986 89.555L608 61 657 44 692 40 717 49 741 49 842 39 894 12"/>
+      <path id="north-central-upper-link" class="minor-road" d="M649.192 40.063L656 12"/>
+      <path id="upper-middle-loop" class="local-road" d="M653 78L659 102 659 131Q657 136 642 135L591 132"/>
+      <path id="upper-middle-sweep" class="minor-road" d="M434.441 227.872L508 171Q557 133 591 132"/>
+      <path id="north-woodland-street" class="minor-road" d="M655.25 87Q697 124 724 119L778 109Q796 105 817 109L849 119Q873 121 889 102L916 73 957 29 988 6"/>
+      <path id="north-middle-through" class="minor-road" d="M493 238Q532 207 568 193L644 177Q679 170 707 181L741 207"/>
+      <path id="north-hill-loop" class="minor-road" d="M758 113Q775 124 778 161Q789 132 810 134Q826 136 849 162L884 211"/>
+      <path id="northeast-diagonal" class="minor-road" d="M887.158 104.044Q912 44 953 39L996 10"/>
+      <path id="northeast-upper-return" class="minor-road" d="M976 17L997 43Q1019 32 1038 40"/>
+      <path id="western-route-road" class="minor-road" d="M166 407L184 360 201 349 218 358 228 391 250 421 273 381 269 365 254 333 288 236 377 258 388 214"/>
+      <path id="western-feeder" class="minor-road" d="M214.458 208.928L288 236"/>
+      <path id="avenue-service-access" class="local-road" d="M334 266L323 293 358 302"/>
+      <path id="avenue-service-loop" class="local-road" d="M334 266L365 274 358 302"/>
+      <path id="central-route-road" class="minor-road" d="M388 214L465 237 493 238 599 265 636 296 651 297 668 285 679 265 741 207 797 263 827 242 917 213"/>
+      <path id="west-bottom-spine" class="minor-road" d="M250 421L235 483 204 591"/>
+      <path id="southern-cross-street" class="minor-road" d="M341 405L419 430 514 433"/>
+      <path id="southern-central-spine" class="minor-road" d="M465 237L440 350 419 430 362 601"/>
+      <path id="central-diagonal" class="minor-road" d="M465 237L555 347 635 435 677 483"/>
+      <path id="central-southwest-link" class="minor-road" d="M555 347L514 433 469 508Q465 518 472 537L528 599"/>
+      <path id="central-southwest-end" class="minor-road" d="M472 537L413 599"/>
+      <path id="south-cross-diagonal" class="minor-road" d="M551 479L621.911 420.602"/>
+      <path id="south-block-bottom" class="minor-road" d="M551 479L648 598"/>
+      <path id="southern-diagonal-road" class="minor-road" d="M487 607L658.183 461.495"/>
+      <!-- This southeast branch begins on the cross street; it must not duplicate the central diagonal above the junction. -->
+      <path id="southern-long-road" class="minor-road" d="M630 485.45L714 581 769 647"/>
+      <path id="south-grid-street-1" class="local-road" d="M566.125 497.555L637.758 438.152"/>
+      <path id="south-grid-street-2" class="local-road" d="M608.369 549.380L571 581"/>
+      <path id="south-grid-street-3" class="local-road" d="M619.683 563.261L586 591"/>
+      <path id="central-valley-road" class="minor-road" d="M646 447.571Q661 441 672 406L682 379Q687 364 708 348L797 273 827 242"/>
+      <path id="central-valley-bottom" class="minor-road" d="M677 483L741.238 480"/>
+      <path id="middle-eastern-spine" class="minor-road" d="M797 273Q826 301 837 344L851 380Q877 424 893 475L912.24 493.50"/>
+      <path id="valley-loop" class="local-road" d="M821.468 304.696L816 350Q812 377 795 392L763 418Q753 426 755 441L753 461 740 482Q728 502 741 519L802 593"/>
+      <path id="valley-south-branch" class="local-road" d="M766 415Q809 445 824 477L841 510Q878 550 917 565L960 578"/>
+      <path id="eastern-main-road" class="main-road" d="M884 211Q917 205 946 199L967 195Q983 191 1000 171L1034 138Q1055 121 1073 120L1097 120Q1113 118 1127 104L1160 68Q1172 55 1189 57Q1207 56 1224 66L1238 74 1250 76"/>
+      <path id="eastern-main-continuation" class="main-road" d="M1250 76Q1268 100 1285 110L1296 116 1315 116Q1329 117 1335 128Q1345 148 1376 147"/>
+      <path id="northern-east-loop" class="minor-road" d="M1250 76L1272 43Q1280 31 1289 36Q1295 39 1300 55L1307 72Q1310 77 1320 79L1348 82 1376 92"/>
+      <path id="eastern-upper-left-branch" class="local-road" d="M1198 58Q1207 75 1214 96Q1224 116 1208 128L1191 145Q1182 153 1187 170L1197 238"/>
+      <path id="eastern-upper-short-link" class="local-road" d="M1208 128L1240 144"/>
+      <path id="northeastern-long-loop" class="minor-road" d="M1187 170L1247 180 1296 207Q1317 217 1315 228L1313 266 1320 299 1339 319Q1355 327 1360 350L1375 390"/>
+      <path id="northeastern-spine" class="minor-road" d="M1114 114.17L1127 212 1135 264Q1138 291 1119 311L1094 332Q1081 344 1091 362.44"/>
+      <path id="eastern-central-loop" class="minor-road" d="M1007 318L1091 258 1131 237Q1149 228 1164 235L1235 242Q1252 246 1256 263Q1260 280 1245 292L1227 309Q1218 321 1219 335V351"/>
+      <path id="eastern-west-branch" class="minor-road" d="M1122.349 177L1031 222Q1013 230 1008 246L1003 276Q998 301 1007 318Q1026 343 1028 372"/>
+      <path id="eastern-valley-road" class="minor-road" d="M917 213Q931 232 939 253Q946 273 935 295L927 315Q916 343 939 360L958 374Q975 382 971 401L951 448"/>
+      <!-- The northern end of this lane is a cul-de-sac in the source; only its southern end joins the diagonal road. -->
+      <path id="eastern-park-long-loop" class="local-road" d="M983 215Q975 230 970 247L963 280 964 308 983 338Q993 357 999 380L1003 392 1012.44 399.27"/>
+      <path id="eastern-lower-collector" class="minor-road" d="M1028 372L1140 355 1165 357 1219 351"/>
+      <path id="eastern-lower-loop" class="minor-road" d="M1251 382L1229 360 1219 351M1233 363L1274 319Q1290 296 1301 296H1320"/>
+      <path id="eastern-lower-return" class="minor-road" d="M1320 299Q1320 327 1303 343Q1284 365 1251 382L1238 428"/>
+      <path id="eastern-bottom-link" class="minor-road" d="M1339 319L1317.42 319"/>
+      <path id="eastern-bottom-main" class="main-road" d="M818 609L882 529 951 448Q955 461 979 455L1031 443 1088 436 1142 435Q1168 437 1195 432L1239 428 1271 430Q1281 431 1288 448L1341 591"/>
+      <path id="eastern-diagonal-bottom" class="main-road" d="M951 448L1007 404Q1030 385 1028 372"/>
+      <path id="eastern-bottom-local" class="minor-road" d="M960 566Q974 539 1000 531L1096 516 1182 507Q1218 505 1235 521Q1255 539 1269 581"/>
+      <path id="far-east-crossroad" class="minor-road" d="M1281.91 436.94L1375 395"/>
+      <path id="far-east-bottom-spine" class="minor-road" d="M1320 407L1346 468 1359 512 1378 539"/>
+    </g>
+    <!-- Narrow paths and park trails remain below the routing overlays. -->
+    <g id="park-paths">
+      <path class="trail" d="M176 20L189 75 171 90 187 125 217 139 242 109 229 88 206 87 202 52 242 42 269 59 266 88 284 96 293 81 316 86"/>
+      <path class="trail" d="M192 25L228 24 247 54 291 42 309 68M211 60L225 80 246 75M242 109L263 121 278 109M185 46L168 54 158 89 168 105"/>
+      <path class="trail" d="M1032 44L1071 49 1090 39 1127 45 1149 36 1172 25 1194 51 1213 23"/>
+      <path class="trail" d="M172 440L351 488M301 532L426 565M1090 366L1095 437"/>
+      <path d="M891 261L893 285 886 319 894 351 914 396" fill="none" stroke="#a0aaa0" stroke-width="2.6"/>
+    </g>
+    <!-- The route has rounded joins but retains the source's angular turns. -->
+    <path id="shortest-path" d="M165 407L184 360 201 349 218 358 228 391 250 421 273 381 269 365 254 333 288 236 377 258 387 214 465 237 493 237 599 265 636 296 647 298 658 294 679 265 741 206 797 263 827 241 918 211 928 158 941 127" fill="none" stroke="#10110f" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Pins stop exactly at the route endpoints; their pale centers are holes represented by vector circles. -->
+    <g id="start-pin">
+      <path d="M165 407C160 397 151 389 153 381C155 369 169 366 176 375C184 384 174 395 165 407Z" fill="#fa4539" stroke="#dc5c44" stroke-width="1.7"/>
+      <circle cx="166" cy="382" r="5.5" fill="#e4e3c8"/>
+    </g>
+    <g id="end-pin">
+      <path d="M941 122C936 112 928 103 930 95C933 83 946 81 953 90C961 100 950 111 941 122Z" fill="#fa4539" stroke="#dc5c44" stroke-width="1.7"/>
+      <circle cx="942" cy="97" r="5.5" fill="#e4e3c8"/>
+    </g>
   </g>
+  <!-- Layer 3: street names above the map, followed by endpoint badges and source credit. -->
+  <g id="layer-3-text" inkscape:groupmode="layer" inkscape:label="3 — Text">
+    <!-- Street names are live text above the roads, with a pale halo. Labels align with the street centerlines; the fourth layer paints tile boundaries above them. -->
+    <g id="street-names" class="street-label">
+      <g id="street-label-vernon" aria-label="Vernon Street" data-road="west-diagonal-north"><text x="86.494" y="118.288" font-size="12" transform="rotate(-47.461 86.494 118.288)">Vernon Street</text></g>
+      <g id="street-label-grand-north" aria-label="Grand Avenue" data-road="central-arterial"><text x="421.199" y="74.876" font-size="12" transform="rotate(-74.692 421.199 74.876)">Grand Avenue</text></g>
+      <g id="street-label-grand-south" aria-label="Grand Avenue" data-road="central-arterial"><text x="355.190" y="359.967" font-size="12" transform="rotate(-77.005 355.190 359.967)">Grand Avenue</text></g>
+      <g id="street-label-wildwood-west" aria-label="Wildwood Avenue" data-road="north-central-main-street"><text x="483.151" y="131.012" font-size="12" transform="rotate(-35.519 483.151 131.012)">Wildwood Avenue</text></g>
+      <g id="street-label-wildwood-center" aria-label="Wildwood Avenue" data-road="north-woodland-street"><text x="681.729" y="108.265" font-size="12" transform="rotate(30.089 681.729 108.265)">Wildwood</text><text x="733.508" y="120.110" font-size="12" transform="rotate(-8.027 733.508 120.110)">Avenue</text></g>
+      <g id="street-label-wildwood-east" aria-label="Wildwood Avenue" data-road="eastern-main-road"><text x="1034.828" y="151.477" font-size="12" transform="rotate(-36.766 1034.828 151.477)">Wildwood Avenue</text></g>
+      <g id="street-label-sylvan" aria-label="Sylvan Way" data-road="upper-middle-sweep"><text x="554.918" y="149.243" font-size="12" transform="rotate(-24.316 554.918 149.243)">Sylvan Way</text></g>
+      <g id="street-label-palm" aria-label="Palm Drive" data-road="north-woodland-street"><text x="930.770" y="62.581" font-size="12" transform="rotate(-47.026 930.770 62.581)">Palm Drive</text></g>
+      <g id="street-label-walker" aria-label="Walker Avenue" data-road="southern-central-spine"><text x="437.002" y="374.765" font-size="12" transform="rotate(-75.730 437.002 374.765)">Walker Avenue</text></g>
+      <g id="street-label-fairbanks" aria-label="Fairbanks Avenue" data-road="central-diagonal"><text x="585.113" y="385.625" font-size="11.5" transform="rotate(47.726 585.113 385.625)">Fairbanks Avenue</text></g>
+      <g id="street-label-boulevard" aria-label="Boulevard Way" data-road="middle-eastern-spine"><text x="834.160" y="346.159" font-size="12" transform="rotate(68.476 834.160 346.159)">Boulevard Way</text></g>
+      <g id="street-label-alamo" aria-label="Alamo Avenue" data-road="eastern-bottom-local"><text x="1126.318" y="516.778" font-size="12" transform="rotate(-6.311 1126.318 516.778)">Alamo Avenue</text></g>
+      <g id="street-label-elwood" aria-label="Elwood Avenue" data-road="western-bottom-junction"><text x="166.014" y="551.507" font-size="12" transform="rotate(49.986 166.014 551.507)">Elwood Avenue</text></g>
+      <g id="street-label-santa-clara" aria-label="Santa Clara Avenue" data-road="western-lower-street"><text x="69.679" y="530.031" font-size="12" transform="rotate(67.333 69.679 530.031)">Santa Clara Avenue</text></g>
+      <g id="street-label-rosal" aria-label="Rosal Avenue" data-road="southern-long-road"><text x="682.215" y="550.448" font-size="12" transform="rotate(48.681 682.215 550.448)">Rosal Avenue</text></g>
+      <!-- The obscured Valle Vista Avenue name is confirmed by Oakland's street list: https://www.oaklandca.gov/Government/Oakland-Improvement-Projects/Paving-Plan/2019-3-Year-Paving-Plan -->
+      <g id="street-label-valle-vista" aria-label="Valle Vista Avenue" data-road="west-bottom-spine"><text x="227.290" y="522.647" font-size="11.5" transform="rotate(-74.189 227.290 522.647)">Valle Vista Avenue</text></g>
+    </g>
 
-  <!-- Endpoint labels remain readable at the 500 px display width used by the card. -->
-  <g id="start-point">
-    <use href="#pin-symbol" transform="translate(165 384) scale(.78)"/>
-    <rect x="104" y="401" width="52" height="27" rx="4" fill="#fff" stroke="#161616" stroke-width="1.5"/>
-    <text x="130" y="420" font-size="17" font-weight="700" text-anchor="middle">Start</text>
+    <g id="start-label">
+      <rect x="106" y="399" width="48" height="27" fill="#080808"/>
+      <text x="130" y="420" font-size="22" text-anchor="middle" fill="#fff">Start</text>
+    </g>
+    <g id="end-label">
+      <rect x="953" y="111" width="41" height="27" fill="#080808"/>
+      <text x="973.5" y="132" font-size="22" text-anchor="middle" fill="#fff">End</text>
+    </g>
+    <g id="map-attribution">
+      <rect x="776" y="570" width="594" height="22" fill="#080808"/>
+      <text x="779" y="586" font-size="15" fill="#f5f5f5">Map tiles by Stamen Design, under CC BY 3.0. Data © OpenStreetMap contributors.</text>
+    </g>
   </g>
-  <g id="end-point">
-    <use href="#pin-symbol" transform="translate(944 99) scale(.78)"/>
-    <rect x="954" y="110" width="45" height="27" rx="4" fill="#fff" stroke="#161616" stroke-width="1.5"/>
-    <text x="976.5" y="129" font-size="17" font-weight="700" text-anchor="middle">End</text>
-  </g>
+  <!-- Layer 4: stronger tile boundaries intentionally paint above all map geometry, route, pins and text. Keep this the final layer. -->
+  <g id="layer-4-tile-boundaries" inkscape:groupmode="layer" inkscape:label="4 — Green and red rectangles" clip-path="url(#map-extent)">
+    <!-- Coarse green routing tiles retain their original coordinates. -->
+    <g id="routing-tiles" class="tile-green">
+      <path id="coarse-tile-grid" d="M44 44H1067V494H44ZM215 44V494M385 44V494M555 44V494M725 44V494M896 44V494M44 270H1067"/>
+    </g>
+    <!-- Red subdivisions and finer green tiles preserve the source hierarchy. -->
+    <g id="refined-tiles" class="tile-red">
+      <path d="M220 46H297V155H220ZM303 46H379V155H303ZM220 160H297V267H220ZM303 160H379V267H303ZM220 273H297V380H220ZM303 273H379V380H303ZM220 384H297V492H220ZM303 384H379V492H303Z"/>
+      <path d="M732 46H808V155H732ZM813 46H890V155H813ZM732 160H808V267H732ZM813 160H890V267H813Z"/>
+    </g>
+    <g id="fine-tiles" class="tile-inner">
+      <!-- Each red parent contains four independent green tiles. Preserve the 4-unit gutters; adjacent tiles must not share a dividing stroke. -->
+      <g id="fine-tiles-left-upper-west">
+        <rect id="fine-left-upper-west-nw" x="225" y="162" width="32" height="48"/>
+        <rect id="fine-left-upper-west-ne" x="261" y="162" width="33" height="48"/>
+        <rect id="fine-left-upper-west-sw" x="225" y="214" width="32" height="49"/>
+        <rect id="fine-left-upper-west-se" x="261" y="214" width="33" height="49"/>
+      </g>
+      <g id="fine-tiles-left-upper-east">
+        <rect id="fine-left-upper-east-nw" x="306" y="162" width="32" height="48"/>
+        <rect id="fine-left-upper-east-ne" x="342" y="162" width="33" height="48"/>
+        <rect id="fine-left-upper-east-sw" x="306" y="214" width="32" height="49"/>
+        <rect id="fine-left-upper-east-se" x="342" y="214" width="33" height="49"/>
+      </g>
+      <!-- The lower-left parent is also a full 2×2 group, including the vertical gutter crossed by the route. -->
+      <g id="fine-tiles-left-lower">
+        <rect id="fine-left-lower-nw" x="225" y="275" width="32" height="49"/>
+        <rect id="fine-left-lower-ne" x="261" y="275" width="33" height="49"/>
+        <rect id="fine-left-lower-sw" x="225" y="328" width="32" height="49"/>
+        <rect id="fine-left-lower-se" x="261" y="328" width="33" height="49"/>
+      </g>
+      <g id="fine-tiles-right-west">
+        <rect id="fine-right-west-nw" x="737" y="162" width="31" height="48"/>
+        <rect id="fine-right-west-ne" x="772" y="162" width="33" height="48"/>
+        <rect id="fine-right-west-sw" x="737" y="214" width="31" height="49"/>
+        <rect id="fine-right-west-se" x="772" y="214" width="33" height="49"/>
+      </g>
+      <g id="fine-tiles-right-east">
+        <rect id="fine-right-east-nw" x="818" y="162" width="31" height="48"/>
+        <rect id="fine-right-east-ne" x="853" y="162" width="33" height="48"/>
+        <rect id="fine-right-east-sw" x="818" y="214" width="31" height="49"/>
+        <rect id="fine-right-east-se" x="853" y="214" width="33" height="49"/>
+      </g>
+    </g>
   </g>
 </svg>

@@ -67,7 +67,9 @@ Prices:
  * Bid - highest price a buyer is willing to pay for a stock
  * Ask - lowest price at which a seller is willing to sell a stock
 
-The US market has three tiers of price quotes - L1, L2, L3.
+#### **Market data levels**
+
+The US stock market has three tiers of price quotes: L1 (level 1), L2, and L3. L1 market data contains the best bid price, ask price, and quantities (Figure 2). Bid price refers to the highest price a buyer is willing to pay for a stock. Ask price refers to the lowest price a seller is willing to sell the stock.
 
 L1 market data contains best bid/ask prices and quantities:
 
@@ -87,15 +89,25 @@ L3 shows levels and queued quantity at each level:
     <img src="./images/l3-price.svg" alt="l3-price" width="500" />
 </div>
 
-A candlestick shows the market's open and close prices, as well as the highest and lowest prices in the given interval:
+#### **Candlestick chart**
+
+A candlestick chart represents the stock price for a certain period of time. A typical candlestick looks like this (Figure 5). A candlestick shows the market’s open, close, high, and low price for a time interval. The common time intervals are one-minute, five-minute, one-hour, one-day, one-week, and one-month.
 
 <div style="margin-left:3rem">
     <img src="./images/candlestick.svg" alt="candlestick" width="500" />
 </div>
 
+#### **FIX**
+
+FIX protocol, which stands for Financial Information eXchange protocol, was created in 1991. It is a vendor-neutral communications protocol for exchanging securities transaction information. See below for an example of a securities transaction encoded in FIX.
+
 FIX is a protocol for exchanging securities transaction information, used by most vendors. Example securities transaction:
 ```text
-8=FIX.4.2 | 9=176 | 35=8 | 49=PHLX | 56=PERS | 52=20071123-05:30:00.000 | 11=ATOMNOCCC9990900 | 20=3 | 150=E | 39=E | 55=MSFT | 167=CS | 54=1 | 38=15 | 40=2 | 44=15 | 58=PHLX EQUITY TESTING | 59=0 | 47=C | 32=0 | 31=0 | 151=15 | 14=0 | 6=0 | 10=128 |
+8=FIX.4.2 | 9=176 | 35=8 | 49=PHLX | 56=PERS |
+52=20071123-05:30:00.000 | 11=ATOMNOCCC9990900 |
+20=3 | 150=E | 39=E | 55=MSFT | 167=CS | 54=1 |
+38=15 | 40=2 | 44=15 | 58=PHLX EQUITY TESTING |
+59=0 | 47=C | 32=0 | 31=0 | 151=15 | 14=0 | 6=0 | 10=128 |
 ```
 
 ### **High-level design**

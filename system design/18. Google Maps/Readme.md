@@ -81,6 +81,8 @@ It depicts the world as a flattened surface and recursively subdivides it into f
     <img src="./images/geohashing.svg" alt="geohashing" width="500" />
 </div>
 
+Geohashing has many uses. In our design, we use geohashing for **map tiling**.
+
 #### Map rendering
 
 Map rendering happens via tiling. Instead of rendering the entire map as one big custom image, the world is broken up into smaller tiles.
@@ -116,7 +118,7 @@ This technique enables us to significantly reduce memory bandwidth and only load
 However, for larger routes, stitching together small, detailed routing tiles would still be time- and memory-consuming. Instead, there are routing tiles with different levels of detail, and the algorithm uses the appropriately detailed tiles based on the destination we're headed for:
 
 <div style="margin-left:3rem">
-    <img src="./images/map-routing-hierarchical.png" alt="map-routing-hierarchical" width="500" />
+    <img src="./images/map-routing-hierarchical.svg" alt="map-routing-hierarchical.svg" width="500" />
 </div>
 
 ### **Back-of-the-envelope estimation**
@@ -221,7 +223,7 @@ How should the map tiles be served to the client?
     <img src="./images/static-map-tiles.svg" alt="static-map-tiles" width="500" />
 </div>
 
-CDNs enable users to fetch map tiles from point-of-presence servers (POP) which are closest to users in order to minimize latency:
+CDNs enable users to fetch map tiles from **point-of-presence servers (POP)** which are closest to users in order to minimize latency:
 
 <div style="margin-left:3rem">
     <img src="./images/cdn-vs-no-cdn.svg" alt="cdn-vs-no-cdn" width="500" />
