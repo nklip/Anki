@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="1010" viewBox="0 0 1260 1010" role="img" aria-labelledby="title desc">
+  <title id="title">The G in WSGI and ASGI is not an API gateway</title>
+  <desc id="desc">The upper row separates three roles that are easy to confuse. WSGI and ASGI are a calling convention between a web server and Python code. An API gateway is a running component between clients and backend services. MCP, the Model Context Protocol, is a message protocol between an AI application and a tool server. The lower half shows one possible request path that uses all three: an AI application containing an MCP client sends MCP messages to an MCP server, which in Python is itself an ASGI application; the tool behind that server makes an HTTP request through an API gateway, which routes it to a WSGI or ASGI server; that server calls the Python orders application through the gateway interface. Boxes are running software and arrows show request direction only. None of the stages is mandatory. The G in WSGI and ASGI comes from CGI, the Common Gateway Interface, and means the hand-off from a web server to program code.</desc>
+
+  <!-- Purple marks the Python calling convention, amber the gateway component, blue the protocol. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .eyebrow { font-size: 14px; font-weight: 700; letter-spacing: 1.3px; fill: #475569; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .role-title { font-size: 21px; font-weight: 700; }
+      .copy { font-size: 18px; fill: #334155; }
+      .node-title { font-size: 21px; font-weight: 700; text-anchor: middle; }
+      .node-copy { font-size: 17px; fill: #334155; text-anchor: middle; }
+      .edge-label { font-size: 18px; font-weight: 700; text-anchor: middle; }
+      .edge-note { font-size: 16px; fill: #475569; text-anchor: middle; }
+      .shaft { stroke: #475569; stroke-width: 3; }
+    </style>
+  </defs>
+
+  <rect width="1260" height="1010" fill="#f8fafc"/>
+
+  <!-- State the naming trap first, then the three roles, then how they can be composed. -->
+  <g id="heading">
+    <text class="eyebrow" x="50" y="33">DIFFERENT BOUNDARIES · THEN ONE PATH THAT USES THEM ALL</text>
+    <text class="title" x="50" y="77">The G in WSGI and ASGI is not an API gateway</text>
+    <text class="subtitle" x="50" y="107">Gateway here means the hand-off from a web server to program code, a name inherited from CGI.</text>
+    <text class="subtitle" x="50" y="135">CGI = Common Gateway Interface · MCP = Model Context Protocol · API = Application Programming Interface</text>
+  </g>
+
+  <g id="roles">
+    <rect x="50" y="164" width="366" height="110" rx="15" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="role-title" x="74" y="200" style="fill:#6d28d9">WSGI / ASGI</text>
+    <text class="copy" x="74" y="228">A calling convention</text>
+    <text class="copy" x="74" y="254">Web server to Python code</text>
+
+    <rect x="446" y="164" width="366" height="110" rx="15" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+    <text class="role-title" x="470" y="200" style="fill:#92400e">API gateway</text>
+    <text class="copy" x="470" y="228">A running component</text>
+    <text class="copy" x="470" y="254">Clients to backend services</text>
+
+    <rect x="842" y="164" width="366" height="110" rx="15" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="role-title" x="866" y="200" style="fill:#1d4ed8">MCP</text>
+    <text class="copy" x="866" y="228">A message protocol</text>
+    <text class="copy" x="866" y="254">AI application to tool server</text>
+  </g>
+
+  <!-- Request path: left to right across the top row, then down and back to the left. -->
+  <g id="request-path">
+    <text class="eyebrow" x="50" y="312">ONE POSSIBLE REQUEST PATH · FOLLOW THE ARROWS</text>
+
+    <rect id="ai-application" x="50" y="336" width="280" height="160" rx="15" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="node-title" x="190" y="384">AI application</text>
+    <text class="node-copy" x="190" y="418">Contains an MCP client</text>
+    <text class="node-copy" x="190" y="448">Asks for an order tool</text>
+
+    <rect id="mcp-server" x="490" y="336" width="280" height="160" rx="15" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="node-title" x="630" y="384">MCP server</text>
+    <text class="node-copy" x="630" y="418">Offers tools and context</text>
+    <text class="node-copy" x="630" y="448">In Python, an ASGI app</text>
+
+    <rect id="api-gateway" x="930" y="336" width="280" height="160" rx="15" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+    <text class="node-title" x="1070" y="384">API gateway</text>
+    <text class="node-copy" x="1070" y="418">Routing, access control,</text>
+    <text class="node-copy" x="1070" y="448">rate limits (typical)</text>
+
+    <!-- Each shaft stops one unit inside its own triangle base so tips meet the node borders. -->
+    <text class="edge-label" x="410" y="392" style="fill:#1d4ed8">MCP messages</text>
+    <line class="shaft" data-connector="true" x1="332" y1="416" x2="473" y2="416"/>
+    <polygon points="489,416 472,407 472,425" fill="#475569"/>
+    <text class="edge-note" x="410" y="450">Tool call</text>
+
+    <text class="edge-label" x="850" y="392">HTTP request</text>
+    <line class="shaft" data-connector="true" x1="772" y1="416" x2="913" y2="416"/>
+    <polygon points="929,416 912,407 912,425" fill="#475569"/>
+    <text class="edge-note" x="850" y="450">Backend API call</text>
+  </g>
+
+  <!-- The shaded region groups only the server and application; it adds no software stage. -->
+  <g id="gateway-interface-region">
+    <rect x="470" y="560" width="740" height="230" rx="18" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+    <text class="eyebrow" x="494" y="589" style="fill:#6d28d9">WSGI OR ASGI: SERVER PLUS APPLICATION</text>
+
+    <rect id="python-server" x="930" y="610" width="260" height="150" rx="15" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="node-title" x="1060" y="656">WSGI or ASGI server</text>
+    <text class="node-copy" x="1060" y="690">Handles HTTP traffic</text>
+    <text class="node-copy" x="1060" y="720">Calls the Python app</text>
+
+    <rect id="python-orders-app" x="490" y="610" width="260" height="150" rx="15" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
+    <text class="node-title" x="620" y="656">Python orders app</text>
+    <text class="node-copy" x="620" y="690">Processes the request</text>
+    <text class="node-copy" x="620" y="720">Produces the response</text>
+
+    <text class="edge-label" x="840" y="660" style="fill:#6d28d9">Calls the app</text>
+    <line class="shaft" data-connector="true" x1="928" y1="684" x2="767" y2="684"/>
+    <polygon points="750,684 767,675 767,693" fill="#475569"/>
+    <text class="edge-note" x="840" y="714">Python interface</text>
+  </g>
+
+  <!-- The HTTP hop deliberately crosses the region border and ends on the server node. -->
+  <g id="gateway-to-server">
+    <line class="shaft" data-connector="true" x1="1060" y1="498" x2="1060" y2="593"/>
+    <polygon points="1060,609 1051,592 1069,592" fill="#475569"/>
+    <text class="edge-label" x="1112" y="550">HTTP</text>
+  </g>
+
+  <!-- The left column explains the notation without competing with the path itself. -->
+  <g id="reading-key">
+    <text class="eyebrow" x="50" y="589">HOW TO READ THIS PATH</text>
+    <text class="copy" x="50" y="625">Boxes = running software.</text>
+    <text class="copy" x="50" y="657">Arrows = calls or messages.</text>
+    <text class="copy" x="50" y="689">Only the request direction is shown.</text>
+    <text class="copy" x="50" y="735">None of these stages is mandatory.</text>
+  </g>
+
+  <!-- Closing band resolves the naming confusion that the title raises. -->
+  <g id="takeaway">
+    <rect x="50" y="812" width="1160" height="158" rx="15" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
+    <text x="76" y="849" font-size="23" font-weight="700">Three different jobs, and only one is a gateway in the network sense.</text>
+    <text class="copy" x="76" y="885">WSGI and ASGI: a calling convention inside one process. The G comes from CGI.</text>
+    <text class="copy" x="76" y="915">API gateway: a running service in front of backend APIs, doing routing, access control, rate limits.</text>
+    <text class="copy" x="76" y="945">MCP: a message protocol between an AI application and a server offering tools, resources and prompts.</text>
+  </g>
+</svg>

@@ -23,7 +23,7 @@ The cards cover modern Java syntax, collections, concurrency, the Java Memory Mo
 
 ## Python
 
-The [`python`](python/) folder contains Python cards, including [WSGI](python/WSGI.md). Local teaching diagrams live in [`python/svg`](python/svg/).
+The [`python`](python/) folder contains Python cards, including [WSGI and ASGI](python/WSGI%20and%20ASGI.md). Local teaching diagrams live in [`python/svg`](python/svg/).
 
 ## System design
 

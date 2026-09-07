@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="940" viewBox="0 0 1200 940" role="img" aria-labelledby="title desc">
+  <title id="title">One call per request, or a connection that stays open</title>
+  <desc id="desc">Two lanes compare the WSGI and ASGI conversation shapes between a web server and a Python application. In the WSGI lane the server makes one call carrying one request, the application hands back the whole response, and the exchange is then over, with one request occupying one worker from beginning to end. In the ASGI lane the server first opens a connection scope, then events arrive at the application, such as body pieces, messages and a disconnect, and events go back from the application, such as a response start, body pieces and messages. Those two steps repeat for as long as the connection lives, which may be a single HTTP request or a WebSocket open for minutes. ASGI covers everything WSGI covers plus connections that stay open, and only ASGI can carry WebSocket connections, streamed responses, and application startup and shutdown events. Adapters let a WSGI application run on an ASGI server without making its code asynchronous.</desc>
+
+  <!-- Purple marks the WSGI lane and teal the ASGI lane; the same pairing is drawn twice for comparison. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .eyebrow { font-size: 14px; font-weight: 700; letter-spacing: 1.3px; fill: #475569; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .lane-title { font-size: 23px; font-weight: 700; }
+      .node-title { font-size: 21px; font-weight: 700; text-anchor: middle; }
+      .node-copy { font-size: 17px; fill: #475569; text-anchor: middle; }
+      .flow-label { font-size: 18px; font-weight: 700; text-anchor: middle; }
+      .copy { font-size: 18px; fill: #334155; }
+      .shaft { stroke-width: 3; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="940" fill="#f8fafc"/>
+
+  <!-- Expand both abbreviations here so each lane can use the short names. -->
+  <g id="heading">
+    <text class="eyebrow" x="50" y="33">READ EACH LANE LEFT TO RIGHT · WHAT ASGI ADDED</text>
+    <text class="title" x="50" y="77">One call per request, or a connection that stays open</text>
+    <text class="subtitle" x="50" y="107">WSGI = Web Server Gateway Interface · ASGI = Asynchronous Server Gateway Interface</text>
+    <text class="subtitle" x="50" y="135">Both are agreements between a web server and Python code · HTTP = Hypertext Transfer Protocol</text>
+  </g>
+
+  <!-- WSGI lane: exactly two arrows, because the exchange cannot continue after the call returns. -->
+  <g id="wsgi-lane">
+    <rect x="50" y="160" width="1100" height="272" rx="18" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+    <text class="lane-title" x="74" y="196" style="fill:#6d28d9">WSGI: the server makes one call and waits for it to finish</text>
+
+    <rect id="wsgi-server" x="74" y="216" width="250" height="120" rx="15" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="node-title" x="199" y="254">Web server</text>
+    <text class="node-copy" x="199" y="283">Handles the socket</text>
+    <text class="node-copy" x="199" y="308">and makes the call</text>
+
+    <rect id="wsgi-application" x="876" y="216" width="250" height="120" rx="15" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="node-title" x="1001" y="254">Python application</text>
+    <text class="node-copy" x="1001" y="283">Your framework</text>
+    <text class="node-copy" x="1001" y="308">or handler code</text>
+
+    <!-- Each shaft stops one unit inside its own triangle base; tips meet the node borders. -->
+    <text class="flow-label" x="600" y="250" style="fill:#6d28d9">1 · Here is one request</text>
+    <line class="shaft" data-connector="true" x1="326" y1="268" x2="859" y2="268" stroke="#7c3aed"/>
+    <polygon points="875,268 858,259 858,277" fill="#7c3aed"/>
+
+    <text class="flow-label" x="600" y="306" style="fill:#15803d">2 · Here is the whole response</text>
+    <line class="shaft" data-connector="true" x1="874" y1="324" x2="343" y2="324" stroke="#15803d"/>
+    <polygon points="326,324 343,315 343,333" fill="#15803d"/>
+
+    <text class="copy" x="74" y="372">The call returns and the exchange is over. Nothing can arrive afterwards.</text>
+    <text class="copy" x="74" y="402">One request occupies one worker from beginning to end.</text>
+  </g>
+
+  <!-- ASGI lane: three arrows, because the scope outlives any single message exchange. -->
+  <g id="asgi-lane">
+    <rect x="50" y="452" width="1100" height="320" rx="18" fill="#ecfeff" stroke="#67e8f9" stroke-width="2"/>
+    <text class="lane-title" x="74" y="488" style="fill:#155e75">ASGI: the server opens a connection and both sides keep sending events</text>
+
+    <rect id="asgi-server" x="74" y="508" width="250" height="200" rx="15" fill="#ffffff" stroke="#0891b2" stroke-width="2"/>
+    <text class="node-title" x="199" y="575">Web server</text>
+    <text class="node-copy" x="199" y="607">Handles the socket</text>
+    <text class="node-copy" x="199" y="635">and the event loop</text>
+
+    <rect id="asgi-application" x="876" y="508" width="250" height="200" rx="15" fill="#ffffff" stroke="#0891b2" stroke-width="2"/>
+    <text class="node-title" x="1001" y="575">Python application</text>
+    <text class="node-copy" x="1001" y="607">Awaits events and</text>
+    <text class="node-copy" x="1001" y="635">sends events back</text>
+
+    <!-- Step 1 happens once per connection; steps 2 and 3 repeat until the connection closes. -->
+    <text class="flow-label" x="600" y="542" style="fill:#155e75">1 · Open a connection scope</text>
+    <line class="shaft" data-connector="true" x1="326" y1="560" x2="859" y2="560" stroke="#0891b2"/>
+    <polygon points="875,560 858,551 858,569" fill="#0891b2"/>
+
+    <text class="flow-label" x="600" y="602" style="fill:#155e75">2 · Events arrive: body pieces, messages, disconnect</text>
+    <line class="shaft" data-connector="true" x1="326" y1="620" x2="859" y2="620" stroke="#0891b2"/>
+    <polygon points="875,620 858,611 858,629" fill="#0891b2"/>
+
+    <text class="flow-label" x="600" y="662" style="fill:#15803d">3 · Events go back: response start, body, messages</text>
+    <line class="shaft" data-connector="true" x1="874" y1="680" x2="343" y2="680" stroke="#15803d"/>
+    <polygon points="326,680 343,671 343,689" fill="#15803d"/>
+
+    <text class="copy" x="74" y="748">Steps 2 and 3 repeat while the connection lives: one HTTP request, or a WebSocket open for minutes.</text>
+  </g>
+
+  <!-- The takeaway states the superset relationship and the limit of the compatibility adapters. -->
+  <g id="takeaway">
+    <rect x="50" y="792" width="1100" height="124" rx="15" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
+    <text x="76" y="831" font-size="23" font-weight="700">ASGI covers everything WSGI covers, plus connections that stay open.</text>
+    <text class="copy" x="76" y="867">Only ASGI can carry WebSocket connections, streamed responses, and startup and shutdown events.</text>
+    <text class="copy" x="76" y="897">Adapters run a WSGI application on an ASGI server, but that does not make its code asynchronous.</text>
+  </g>
+</svg>

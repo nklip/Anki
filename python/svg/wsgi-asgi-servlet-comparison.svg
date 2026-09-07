@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1020" viewBox="0 0 1200 1020" role="img" aria-labelledby="title desc">
+  <title id="title">Python gateway interfaces and the Java Servlet API</title>
+  <desc id="desc">The upper half compares the same boundary in two languages. In Python a WSGI or ASGI server, such as Gunicorn or Uvicorn, calls a Python application containing framework code. In Java a servlet container, such as Tomcat or Jetty, calls a servlet instance containing handler code. The lower half compares how each ecosystem answered the question of connections that stay open. Python moved from WSGI in 2003, carrying one request and one response, to ASGI 3.0 in 2019, whose single interface also carries WebSocket connections. Java added asynchronous request processing in Servlet 3.0 in 2009 and then defined the Java API for WebSocket in 2013 as a separate specification. Both approaches keep application code independent of the server that runs it, but the Servlet API also standardizes lifecycle, filters and sessions, while WSGI and ASGI standardize only the call.</desc>
+
+  <!-- Purple marks the Python lane, blue the Java lane; the same geometry makes equivalent roles line up. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .eyebrow { font-size: 14px; font-weight: 700; letter-spacing: 1.3px; fill: #475569; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .lane-title { font-size: 23px; font-weight: 700; }
+      .node-title { font-size: 21px; font-weight: 700; text-anchor: middle; }
+      .node-copy { font-size: 17px; fill: #475569; text-anchor: middle; }
+      .flow-label { font-size: 18px; font-weight: 700; text-anchor: middle; }
+      .row-label { font-size: 20px; font-weight: 700; }
+      .chip-label { font-size: 18px; font-weight: 700; text-anchor: middle; }
+      .chip-note { font-size: 16px; fill: #475569; text-anchor: middle; }
+      .copy { font-size: 18px; fill: #334155; }
+      .shaft { stroke-width: 3; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="1020" fill="#f8fafc"/>
+
+  <g id="heading">
+    <text class="eyebrow" x="50" y="33">SAME BOUNDARY, TWO LANGUAGES · THEN COMPARE HOW EACH GREW</text>
+    <text class="title" x="50" y="77">Python gateway interfaces and the Java Servlet API</text>
+    <text class="subtitle" x="50" y="107">Both let a runtime call application code through a standard interface.</text>
+    <text class="subtitle" x="50" y="135">WSGI = Web Server Gateway Interface · ASGI = Asynchronous Server Gateway Interface</text>
+  </g>
+
+  <!-- Python lane: the arrow labels the call itself, which is all these interfaces define. -->
+  <g id="python-lane">
+    <rect x="50" y="160" width="1100" height="192" rx="18" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+    <text class="lane-title" x="74" y="196" style="fill:#6d28d9">Python: WSGI and ASGI</text>
+
+    <rect id="python-runtime" x="74" y="216" width="300" height="90" rx="15" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="node-title" x="224" y="250">WSGI or ASGI server</text>
+    <text class="node-copy" x="224" y="278">e.g. Gunicorn, Uvicorn</text>
+
+    <rect id="python-application" x="846" y="216" width="280" height="90" rx="15" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="node-title" x="986" y="250">Python application</text>
+    <text class="node-copy" x="986" y="278">your framework code</text>
+
+    <!-- Shaft stops one unit inside the triangle base; the tip meets the application border. -->
+    <text class="flow-label" x="610" y="248" style="fill:#6d28d9">The server calls your code</text>
+    <line class="shaft" data-connector="true" x1="376" y1="266" x2="829" y2="266" stroke="#7c3aed"/>
+    <polygon points="845,266 828,257 828,275" fill="#7c3aed"/>
+
+    <text class="copy" x="74" y="330">One agreed interface, so the server and the framework can be chosen separately.</text>
+  </g>
+
+  <!-- Java lane: identical geometry, so only the labels differ between the two ecosystems. -->
+  <g id="java-lane">
+    <rect x="50" y="372" width="1100" height="192" rx="18" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+    <text class="lane-title" x="74" y="408" style="fill:#1d4ed8">Java: the Servlet API (application programming interface)</text>
+
+    <rect id="servlet-container" x="74" y="428" width="300" height="90" rx="15" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+    <text class="node-title" x="224" y="462">Servlet container</text>
+    <text class="node-copy" x="224" y="490">e.g. Tomcat, Jetty</text>
+
+    <rect id="servlet-instance" x="846" y="428" width="280" height="90" rx="15" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+    <text class="node-title" x="986" y="462">Servlet instance</text>
+    <text class="node-copy" x="986" y="490">your handler code</text>
+
+    <text class="flow-label" x="610" y="460" style="fill:#1d4ed8">The container calls your code</text>
+    <line class="shaft" data-connector="true" x1="376" y1="478" x2="829" y2="478" stroke="#2563eb"/>
+    <polygon points="845,478 828,469 828,487" fill="#2563eb"/>
+
+    <text class="copy" x="74" y="542">The container also manages lifecycle, filters and sessions. WSGI and ASGI leave that to frameworks.</text>
+  </g>
+
+  <!-- Milestone chips are placed on a shared x-grid so the two answers can be read as a pair. -->
+  <g id="parallel-history">
+    <rect x="50" y="584" width="1100" height="300" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="eyebrow" x="74" y="617">BOTH THEN FACED THE SAME QUESTION: WHAT ABOUT CONNECTIONS THAT STAY OPEN?</text>
+
+    <text class="row-label" x="74" y="682" style="fill:#6d28d9">Python</text>
+    <rect x="200" y="644" width="380" height="70" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/>
+    <text class="chip-label" x="390" y="672" style="fill:#6d28d9">2003 · WSGI</text>
+    <text class="chip-note" x="390" y="696">one request, one response</text>
+    <rect x="620" y="644" width="380" height="70" rx="12" fill="#ecfeff" stroke="#0891b2" stroke-width="1.5"/>
+    <text class="chip-label" x="810" y="672" style="fill:#155e75">2019 · ASGI 3.0</text>
+    <text class="chip-note" x="810" y="696">one interface also carries WebSocket</text>
+
+    <text class="row-label" x="74" y="772" style="fill:#1d4ed8">Java</text>
+    <rect x="200" y="734" width="380" height="70" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+    <text class="chip-label" x="390" y="762" style="fill:#1d4ed8">2009 · Servlet 3.0</text>
+    <text class="chip-note" x="390" y="786">asynchronous request processing</text>
+    <rect x="620" y="734" width="380" height="70" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+    <text class="chip-label" x="810" y="762" style="fill:#1d4ed8">2013 · Java API for WebSocket</text>
+    <text class="chip-note" x="810" y="786">a separate specification</text>
+
+    <text class="copy" x="74" y="838">Python widened the gateway interface itself, so one interface now carries both.</text>
+    <text class="copy" x="74" y="866">Java extended the container API and put WebSocket into a separate specification.</text>
+  </g>
+
+  <!-- The takeaway keeps the analogy structural and names the difference in scope. -->
+  <g id="takeaway">
+    <rect x="50" y="904" width="1100" height="100" rx="15" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
+    <text x="76" y="941" font-size="23" font-weight="700">Same role: keep application code independent of the server that runs it.</text>
+    <text class="copy" x="76" y="975">The Servlet API also standardizes lifecycle, filters and sessions; WSGI and ASGI standardize the call.</text>
+  </g>
+</svg>

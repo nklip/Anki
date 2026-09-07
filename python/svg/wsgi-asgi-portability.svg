@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="710" viewBox="0 0 1200 710" role="img" aria-labelledby="title desc">
+  <title id="title">Why WSGI and ASGI exist: portable Python web applications</title>
+  <desc id="desc">A schematic comparison with two web servers and two Python applications or frameworks. On the left, without a shared interface, each server and application pairing needs its own glue code, so a server choice can constrain the framework choice. On the right, every pairing uses the same agreed interface, either WSGI, the Web Server Gateway Interface, or ASGI, the Asynchronous Server Gateway Interface, so server and framework can be chosen independently. WSGI, published in 2003, carries one request in and one response out. ASGI, whose current version dates from 2019, widens the same idea to connections that stay open. Neither is a server; each is an agreement about how a server calls Python code. The matrix illustrates compatibility and is not a historical count of integrations.</desc>
+
+  <!-- Shared light palette matches adjacent Python and Computer Science teaching diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .eyebrow { font-size: 14px; font-weight: 700; letter-spacing: 1.4px; fill: #475569; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .panel-title { font-size: 25px; font-weight: 700; }
+      .copy { font-size: 18px; fill: #334155; }
+      .column-label { font-size: 17px; font-weight: 700; text-anchor: middle; }
+      .row-label { font-size: 18px; font-weight: 700; }
+      .cell-label { font-size: 18px; font-weight: 700; text-anchor: middle; }
+      .cell-note { font-size: 16px; fill: #475569; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="710" fill="#f8fafc"/>
+
+  <!-- Name both interfaces before the comparison so the panels need no outside prose. -->
+  <g id="heading">
+    <text class="eyebrow" x="50" y="33">READ LEFT TO RIGHT · WHY STANDARDIZE?</text>
+    <text class="title" x="50" y="77">Why WSGI and ASGI exist: portable Python web applications</text>
+    <text class="subtitle" x="50" y="107">WSGI = Web Server Gateway Interface · ASGI = Asynchronous Server Gateway Interface</text>
+  </g>
+
+  <!-- Matrices show compatibility, not a runtime pipeline or an extra network component. -->
+  <g id="separate-integrations">
+    <rect x="50" y="160" width="532" height="330" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="panel-title" x="74" y="199">1  Separate integrations</text>
+    <text class="copy" x="74" y="230">Every pairing needs its own glue code.</text>
+
+    <text class="column-label" x="287" y="269">App / framework X</text>
+    <text class="column-label" x="469" y="269">App / framework Y</text>
+    <text class="row-label" x="74" y="328">Server A</text>
+    <text class="row-label" x="74" y="408">Server B</text>
+
+    <rect x="202" y="289" width="170" height="64" rx="12" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+    <text class="cell-label" x="287" y="316">A + X</text>
+    <text class="cell-note" x="287" y="340">Its own glue code</text>
+    <rect x="384" y="289" width="170" height="64" rx="12" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+    <text class="cell-label" x="469" y="316">A + Y</text>
+    <text class="cell-note" x="469" y="340">Its own glue code</text>
+    <rect x="202" y="369" width="170" height="64" rx="12" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+    <text class="cell-label" x="287" y="396">B + X</text>
+    <text class="cell-note" x="287" y="420">Its own glue code</text>
+    <rect x="384" y="369" width="170" height="64" rx="12" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+    <text class="cell-label" x="469" y="396">B + Y</text>
+    <text class="cell-note" x="469" y="420">Its own glue code</text>
+    <text class="copy" x="74" y="468">A server choice can constrain the framework choice.</text>
+  </g>
+
+  <!-- Identical cells mean one agreement covers every pairing; the note names the two versions. -->
+  <g id="shared-contract">
+    <rect x="618" y="160" width="532" height="330" rx="18" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+    <text class="panel-title" x="642" y="199">2  One shared interface</text>
+    <text class="copy" x="642" y="230">Both sides follow the same agreement instead.</text>
+
+    <text class="column-label" x="855" y="269">App / framework X</text>
+    <text class="column-label" x="1037" y="269">App / framework Y</text>
+    <text class="row-label" x="642" y="328">Server A</text>
+    <text class="row-label" x="642" y="408">Server B</text>
+
+    <rect x="770" y="289" width="170" height="64" rx="12" fill="#ffffff" stroke="#7c3aed" stroke-width="1.5"/>
+    <text class="cell-label" x="855" y="316" style="fill:#6d28d9">Same interface</text>
+    <text class="cell-note" x="855" y="340">WSGI or ASGI</text>
+    <rect x="952" y="289" width="170" height="64" rx="12" fill="#ffffff" stroke="#7c3aed" stroke-width="1.5"/>
+    <text class="cell-label" x="1037" y="316" style="fill:#6d28d9">Same interface</text>
+    <text class="cell-note" x="1037" y="340">WSGI or ASGI</text>
+    <rect x="770" y="369" width="170" height="64" rx="12" fill="#ffffff" stroke="#7c3aed" stroke-width="1.5"/>
+    <text class="cell-label" x="855" y="396" style="fill:#6d28d9">Same interface</text>
+    <text class="cell-note" x="855" y="420">WSGI or ASGI</text>
+    <rect x="952" y="369" width="170" height="64" rx="12" fill="#ffffff" stroke="#7c3aed" stroke-width="1.5"/>
+    <text class="cell-label" x="1037" y="396" style="fill:#6d28d9">Same interface</text>
+    <text class="cell-note" x="1037" y="420">WSGI or ASGI</text>
+    <text class="copy" x="642" y="468">Pick a compatible server and framework freely.</text>
+  </g>
+
+  <!-- The takeaway separates the shared purpose from what each of the two versions covers. -->
+  <g id="takeaway">
+    <rect x="50" y="512" width="1100" height="152" rx="15" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
+    <text x="76" y="549" font-size="23" font-weight="700">Implement the agreed interface, then choose any compatible server.</text>
+    <text class="copy" x="76" y="585">WSGI (2003): one request arrives, one response goes back.</text>
+    <text class="copy" x="76" y="615">ASGI (current version 2019): the same idea, widened to connections that stay open.</text>
+    <text class="copy" x="76" y="645">Neither one is a server. Each is an agreement about how a server calls your Python code.</text>
+  </g>
+
+  <text class="subtitle" x="50" y="692">Schematic compatibility example; not a historical count of integrations.</text>
+</svg>
