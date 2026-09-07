@@ -81,7 +81,7 @@ The system comprises two parts: a location-based service (LBS) and a business-re
 ### **Option 1: Two-Dimensional Search (Naive Approach)**
 
 <div style="margin-left:3rem">
-    <img src="./images/2d-search.svg" alt="2D" width="250" />
+    <img src="./images/2d-search.svg" alt="2d-search.svg" width="250" />
 </div>
 
 The most intuitive way is to draw a circle with a predefined radius and find all the businesses within the circle.
@@ -106,14 +106,14 @@ A potential improvement is to build indexes on the longitude and latitude column
   - Tree: Quadtree, Google S2, RTree
 
   <div style="margin-left:3rem">
-    <img src="./images/geospatial-index-types.svg" alt="geospatial-index-types" width="500" />
+    <img src="./images/geospatial-index-types.svg" alt="geospatial-index-types.svg" width="500" />
   </div>
 
 
 ### **Option 2: Evenly Divided Grid**
 
   <div style="margin-left:3rem">
-    <img src="./images/even-grid.svg" alt="even-grid" width="400" />
+    <img src="./images/even-grid.svg" alt="even-grid.svg" width="400" />
   </div>
 
 - **Divides the world into fixed-size grids**.
@@ -125,8 +125,8 @@ A potential improvement is to build indexes on the longitude and latitude column
 - Repeat this subdivision.
 
   <div style="margin-left:3rem">
-    <img src="./images/geohash-0.svg" alt="geohash-0" width="300" />
-    <img src="./images/geohash-1.svg" alt="geohash-1" width="285" />
+    <img src="./images/geohash-0.svg" alt="geohash-0.svg" width="300" />
+    <img src="./images/geohash-1.svg" alt="geohash-1.svg" width="285" />
   </div>
 
 
@@ -134,13 +134,13 @@ A potential improvement is to build indexes on the longitude and latitude column
 - **Hierarchical grid structure** allows for efficient searching.
 - The right precision is chosen by using the minimal geohash length according to the table.
   <div style="margin-left:3rem">
-    <img src="./images/geohash-radius-mapping.svg" alt="geohash-radius-mapping" width="400" />
+    <img src="./images/geohash-radius-mapping.svg" alt="geohash-radius-mapping.svg" width="400" />
   </div>
 - Geohash guarantees that the longer a shared prefix is between two geohashes, the closer they are.
 
 - **Challenges**:
   <div style="margin-left:3rem">
-    <img src="./images/boundary-issue.svg" alt="boundary-issue" width="300" />
+    <img src="./images/boundary-issue.svg" alt="boundary-issue.svg" width="300" />
   </div>
 
   - **Boundary issues** (businesses close to grid edges may get excluded).
@@ -161,7 +161,7 @@ A potential improvement is to build indexes on the longitude and latitude column
   - The root node is recursively broken down into 4 quadrants until no nodes are left with more than x number of businesses (100 in this case).
 
   <div style="margin-left:3rem">
-    <img src="./images/building-quadtree.svg" alt="Building Quadtree" width="500" />
+    <img src="./images/building-quadtree.svg" alt="building-quadtree.svg" width="500" />
   </div>
 
 - The quadtree index doesn't take too much memory (typically in GBs) and can easily fit on one server.
@@ -169,7 +169,7 @@ A potential improvement is to build indexes on the longitude and latitude column
 - **Efficient for k-nearest search queries** (e.g., find the closest gas station).
 
   <div style="margin-left:3rem">
-    <img src="./images/realworld-quadtree.png" alt="Real World Quadtree" width="400" />
+    <img src="./images/realworld-quadtree.svg" alt="realworld-quadtree.svg" width="400" />
   </div>
 
 #### Operational considerations
@@ -183,8 +183,8 @@ It maps a sphere to a 1D index based on a Hilbert curve. Two points that are clo
 
 
   <div style="margin-left:3rem">
-    <img src="./images/hilbert-curve.svg" alt="Hilbert curve" width="300" />
-    <img src="./images/geofence.svg" alt="Geofence" width="355" />
+    <img src="./images/hilbert-curve.svg" alt="hilbert-curve.svg" width="300" />
+    <img src="./images/geofence.svg" alt="geofence.svg" width="355" />
   </div>
 
 - **Divides the earth into small cells using a Hilbert curve**.
@@ -251,7 +251,7 @@ The most obvious cache key choice is the location coordinate, however it has a f
 ### **Final System Architecture**
 
   <div style="margin-left:3rem">
-    <img src="./images/final-design.svg" alt="Final Design" width="500" />
+    <img src="./images/final-design.svg" alt="final-design.svg" width="500" />
   </div>
 
 

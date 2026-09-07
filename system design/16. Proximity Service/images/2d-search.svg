@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="922" height="912" viewBox="0 0 922 912" role="img" aria-labelledby="title desc">
   <title id="title">Two-dimensional search for nearby businesses</title>
-  <desc id="desc">A labeled city map centers a dashed circular search radius on a blue user marker. Three restaurant symbols and two cafe symbols fall inside the search area.</desc>
-  <metadata>Map geometry adapted from tiles by Stamen Design under CC BY 3.0, using OpenStreetMap data.</metadata>
+  <desc id="desc">A labeled city map centers a dashed circular search radius on a blue user marker. Three black crossed-fork-and-knife restaurant symbols and two cafe symbols fall inside the search area. Black street names with white halos follow the roads.</desc>
+  <metadata>Map geometry adapted from tiles by Stamen Design under CC BY 3.0, using OpenStreetMap data. Crossed-cutlery icon redrawn from Cutlery Crossed 76022 by Magnific, Flaticon, https://www.flaticon.com/free-icon/cutlery-crossed_76022 (Flaticon License; attribution required).</metadata>
 
   <!-- Shared clipping and reusable business symbols. -->
   <defs>
@@ -14,14 +14,13 @@
         <path d="M418 -24L943 260M92 -24L943 436M-25 144L947 661M-25 337L947 859M-25 526L704 921M-25 714L354 921" stroke-width="24"/>
       </g>
     </mask>
-    <symbol id="restaurant" viewBox="0 0 32 32">
-      <!-- A knife and spoon retain the compact crossed-utensil footprint of the PNG reference. -->
-      <g transform="rotate(-45 16 16)">
-        <path d="M18.7 2V13.3C18.7 14.4 18.1 15.3 17.1 16V30H14V16H12.8C13.8 9.8 15.8 5.1 18.7 2Z" fill="#000"/>
-      </g>
-      <g transform="rotate(45 16 16)">
-        <path d="M16 9V30" fill="none" stroke="#000" stroke-width="3.2" stroke-linecap="round"/>
-        <ellipse cx="16" cy="5.5" rx="4.2" ry="5" fill="#000"/>
+    <symbol id="restaurant" viewBox="0 0 512 512">
+      <!-- Native recreation of the selected square icon; the broad knife crosses in front of a three-tine fork. -->
+      <g id="crossed-cutlery" fill="#000">
+        <path id="restaurant-knife" d="M22 54C39 38 61 37 78 54L418 395C433 411 435 432 421 446C407 460 383 459 369 442L197 250C174 269 145 267 128 245L19 109C5 90 6 69 22 54Z"/>
+        <!-- Separate fork silhouettes leave transparent clearance at the crossing. -->
+        <path id="restaurant-fork-head" d="M273 214L287 200C278 172 282 148 300 126L391 35C398 28 407 28 414 35C422 42 422 51 414 59L336 138Q333 141 336 144L347 155Q350 158 353 155L433 77C440 70 450 69 457 76C465 83 465 94 457 102L379 180Q376 183 379 186L390 198Q393 201 396 198L475 119C482 112 493 111 500 118C507 125 506 135 499 142L416 225C393 249 365 256 333 247L319 260Z"/>
+        <path id="restaurant-fork-handle" d="M199 289L242 337L119 460C107 472 85 472 73 459C60 446 62 426 75 413Z"/>
       </g>
     </symbol>
     <symbol id="cafe" viewBox="0 0 32 32">
@@ -35,7 +34,8 @@
       .buildings path{fill:#ccc;stroke:#b8b8b8;stroke-width:.7;vector-effect:non-scaling-stroke}
       .road{fill:none;stroke:#999;stroke-linecap:butt;stroke-linejoin:round}
       .search{fill:none;stroke:#050505;stroke-width:2.7;stroke-dasharray:11 7}
-      .street{font-family:"DejaVu Sans",Arial,Helvetica,sans-serif;font-size:16.5px;font-weight:500;fill:#fff;text-anchor:middle;dominant-baseline:middle}
+      /* Match boundary-issue.svg: black glyphs over a centered 4 px white stroke. */
+      .street{fill:#000;stroke:#fff;stroke-width:4px;paint-order:stroke fill;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;font-family:Arial,Helvetica,sans-serif;font-size:17px;font-weight:400;letter-spacing:.15px;text-anchor:middle;dominant-baseline:central}
     </style>
   </defs>
 
@@ -734,18 +734,18 @@ l-27 14 -26 -37z M7458 415 c-6 -13 -18 -26 -27 -28 -9 -3 -4 -5 11 -6 26 -1
       <path d="M464 389V393M464 409V413M452 401H456M472 401H476" fill="none" stroke="#315f8c" stroke-width="2" stroke-linecap="round"/>
     </g>
 
-    <!-- Street names use one white text pass centered on each road. -->
-    <g id="street-labels" class="street">
-      <text x="256" y="99" transform="rotate(-61.4 256 99)">5th Avenue</text>
-      <text x="467" y="179" transform="rotate(28.4 467 179)">East 58th Street</text>
-      <text x="842" y="205" transform="rotate(28.4 842 205)">East 59th Street</text>
-      <text x="331" y="333" transform="rotate(28 331 333)">East 57th Street</text>
-      <text x="548" y="241" transform="rotate(-61.7 548 241)">Madison Avenue</text>
-      <text x="825" y="372" transform="rotate(28.4 825 372)">East 58th Street</text>
-      <text x="759" y="474" transform="rotate(-61.9 759 474)">Park Avenue</text>
-      <text x="588" y="666" transform="rotate(28.2 588 666)">East 56th Street</text>
-      <text x="288" y="696" transform="rotate(28.4 288 696)">East 55th Street</text>
-      <text x="77" y="770" transform="rotate(28.7 77 770)">East 54th Street</text>
+    <!-- Labels follow the road centerlines and paint above map geometry; their positions avoid the radius and intersections. -->
+    <g id="street-labels" class="street" aria-label="Street names">
+      <text x="210" y="183.06" transform="rotate(-61.377 210 183.06)">5th Avenue</text>
+      <text x="372" y="127.35" transform="rotate(28.393 372 127.35)">East 58th Street</text>
+      <text x="792" y="178.32" transform="rotate(28.411 792 178.32)">East 59th Street</text>
+      <text x="331" y="333.35" transform="rotate(28.008 331 333.35)">East 57th Street</text>
+      <text x="527" y="279.88" transform="rotate(-61.645 527 279.88)">Madison Avenue</text>
+      <text x="784" y="350.05" transform="rotate(28.393 784 350.05)">East 58th Street</text>
+      <text x="759" y="473.71" transform="rotate(-61.937 759 473.71)">Park Avenue</text>
+      <text x="588" y="666.20" transform="rotate(28.237 588 666.20)">East 56th Street</text>
+      <text x="252" y="676.09" transform="rotate(28.451 252 676.09)">East 55th Street</text>
+      <text x="105" y="785" transform="rotate(28.642 105 785)">East 54th Street</text>
     </g>
 
     <!-- Business icons are pure overlays; the map objects beneath them remain unchanged. -->
