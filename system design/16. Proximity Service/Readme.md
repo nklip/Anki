@@ -250,40 +250,21 @@ The most obvious cache key choice is the location coordinate, however it has a f
 
 ### **Final System Architecture**
 
-  <div style="margin-left:3rem">
-    <img src="./images/final-design.svg" alt="final-design.svg" width="500" />
-  </div>
+<div style="margin-left:3rem">
+  <img src="./images/final-design.svg" alt="final-design.svg" width="500" />
+</div>
 
+**Get Nearby Businesses**:
 
-This final algorithm looks like this:
-
-## Steps to Retrieve Nearby Businesses
-1. **User Request:**
-   - A user searches for restaurants within **500 meters**.
-   - The client sends **latitude (37.776720), longitude (-122.416730), and radius (500m)** to the **load balancer**.
-
-2. **Request Forwarding:**
-   - The **load balancer (LB)** forwards the request to the **Location-Based Service (LBS)**.
-
-3. **Geohash Calculation:**
-   - LBS determines the **geohash length** matching the radius.
-   - Using a reference table, **500m corresponds to geohash length = 6**.
-
-4. **Fetching Neighboring Geohashes:**
-   - LBS calculates **neighboring geohashes** to include nearby areas.
-   - The result is a list:
-     ```text
-     [my_geohash, neighbor1_geohash, neighbor2_geohash, ..., neighbor8_geohash]
+1. You try to find restaurants within 500 meters on Yelp. The client sends the user location (latitude = 37.776720, longitude = -122.416730) and radius (500m) to the **Load Balancer (LB)**.
+2. The LB forwards the request to the **Location-Based Service (LBS)**.
+3. Based on the user location and radius info, the LBS finds the geohash length that matches the search.
+4. LBS calculates neighboring geohashes and adds them to the list. The result looks like this:
+    ```text
+     list_of_geohashes = [my_geohash, neighbor1_geohash, neighbor2_geohash, …, neighbor8_geohash]
      ```
-
-5. **Fetching Business IDs from Redis:**
-   - For each geohash in the list, LBS queries the **Geohash Redis server** to fetch **business IDs**.
-   - Parallel queries are used to minimize latency.
-
-6. **Retrieving & Ranking Businesses:**
-   - LBS fetches **full business details** from the **Business Info Redis server**.
-   - Businesses are **sorted by distance** from the user’s location.
-   - The **ranked results** are sent back to the client.
+5. For each geohash in `list_of_geohashes`, LBS calls the **Geohash Redis server** to fetch corresponding business IDs. Calls to fetch business IDs for each geohash can be made in parallel to reduce latency.
+6. Based on the list of business IDs returned, LBS fetches fully hydrated business information from the **Business Info Redis server**, then calculates distances between a user and businesses, ranks them, and returns the result to the client.
 
 ## Key Optimizations
 - **Parallel Redis Calls**: Reduces response time.
