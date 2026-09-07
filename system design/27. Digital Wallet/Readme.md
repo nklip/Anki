@@ -97,7 +97,7 @@ One approach for handling transactions is to use the two-phase commit protocol o
     <img src="./images/distributed-transactions-relational-dbs.svg" alt="distributed-transactions-relational-dbs" width="500" />
 </div>
 
-Here's how the two-phase commit (2PC) protocol works:
+Here's how the **two-phase commit (2PC)** protocol works:
 
 <div style="margin-left:3rem">
     <img src="./images/2pc-protocol.svg" alt="2pc-protocol" width="500" />
@@ -288,12 +288,15 @@ Here's the full picture:
     <img src="./images/wallet-service-state-machine.svg" alt="wallet-service-state-machine" width="500" />
 </div>
 
- * The state machine reads commands from the command queue.
- * The balance state is read from the database.
- * The command is validated. If valid, one event for each account is generated.
- * The next event is read and applied by updating the balance (state) in the database.
+1. Read Command from the Command queue.
+2. Read balance State from the database.
+3. Validate the Command. If it is valid, generate two events for each of the accounts.
+4. Read the next Event.
+5. Apply the Event by updating the balance in the database.
 
-The main advantage of using event sourcing is its reproducibility. In this design, all state update operations are saved as immutable history of all balance changes.
+#### **Reproducibility**
+
+The main advantage of using event sourcing is its **reproducibility**. In this design, all state update operations are saved as immutable history of all balance changes.
 
 Historical balances can always be reconstructed by replaying events from the beginning.
 Because the event list is immutable and the state machine is deterministic, we are guaranteed to succeed in replaying any of the intermediate states.
