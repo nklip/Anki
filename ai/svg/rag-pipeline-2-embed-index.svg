@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Step 2 of the RAG pipeline: embedding each chunk and building the vector and keyword indexes</title>
+  <desc id="desc">A left-to-right flow shows chunks entering one embedding model and leaving as fixed-length vectors. Two downward arrows feed the two indexes built from the same chunks: a keyword index that matches exact words and a vector index that matches meaning through approximate nearest-neighbour search. A closing bar states that an unindexed chunk can never be retrieved.</desc>
+
+  <!-- Shared visual system for the seven RAG pipeline diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .eyebrow { font-size: 16px; font-weight: 700; letter-spacing: 2px; fill: #0e7490; }
+      .title { font-size: 36px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .kicker { font-size: 14px; font-weight: 700; letter-spacing: 1.3px; fill: #64748b; }
+      .panel-title { font-size: 19px; font-weight: 700; }
+      .panel-copy { font-size: 16px; fill: #334155; }
+      .chip { font-size: 14px; fill: #334155; }
+      .vec { font-size: 15px; fill: #334155; }
+      .note { font-size: 14px; fill: #64748b; }
+      .callout-label { font-size: 15px; font-weight: 700; letter-spacing: 1.2px; }
+      .callout-copy { font-size: 18px; fill: #1e293b; }
+      .shaft { stroke: #64748b; stroke-width: 3; fill: none; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" fill="#f8fafc"/>
+
+  <g id="heading">
+    <text class="eyebrow" x="50" y="38">STEP 2 OF 6 — EMBED AND INDEX</text>
+    <text class="title" x="50" y="82">Turn every chunk into something searchable</text>
+    <text class="subtitle" x="50" y="110">An embedding model places text in a shared space where nearness stands for similar meaning.</text>
+  </g>
+
+  <!-- Row 1: chunks in, one embedding model, fixed-length vectors out. -->
+  <g id="chunks">
+    <rect x="50" y="160" width="280" height="240" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="kicker" x="72" y="190">CHUNKS</text>
+    <rect x="72" y="208" width="236" height="50" rx="10" fill="#ecfeff" stroke="#0891b2" stroke-width="2"/>
+    <text class="chip" x="92" y="239">Chunk 1 · retry cap</text>
+    <rect x="72" y="268" width="236" height="50" rx="10" fill="#ecfeff" stroke="#0891b2" stroke-width="2"/>
+    <text class="chip" x="92" y="299">Chunk 2 · HTTP 429</text>
+    <rect x="72" y="328" width="236" height="50" rx="10" fill="#ecfeff" stroke="#0891b2" stroke-width="2"/>
+    <text class="chip" x="92" y="359">Chunk 3 · back-off rule</text>
+  </g>
+
+  <line class="shaft" data-connector="true" x1="336" y1="280" x2="372" y2="280"/>
+  <polygon points="390,280 372,270 372,290" fill="#64748b"/>
+
+  <g id="embedder">
+    <rect x="400" y="160" width="300" height="240" rx="16" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="kicker" x="418" y="190" fill="#6d28d9">EMBEDDING MODEL</text>
+    <text class="panel-title" x="418" y="224">One model, one space</text>
+    <text class="panel-copy" x="418" y="254">
+      <tspan x="418" dy="0">Reads one chunk and returns a</tspan>
+      <tspan x="418" dy="22">fixed-length list of numbers, the</tspan>
+      <tspan x="418" dy="22">same length for every chunk.</tspan>
+    </text>
+    <!-- The pairing rule that beginners most often break; keep it visually attached to the model. -->
+    <rect x="418" y="318" width="264" height="64" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="2"/>
+    <text class="chip" x="436" y="344" fill="#4c1d95">
+      <tspan x="436" dy="0">The question must be embedded</tspan>
+      <tspan x="436" dy="20">into this same space later.</tspan>
+    </text>
+  </g>
+
+  <line class="shaft" data-connector="true" x1="706" y1="280" x2="742" y2="280"/>
+  <polygon points="760,280 742,270 742,290" fill="#64748b"/>
+
+  <g id="vectors">
+    <rect x="770" y="160" width="380" height="240" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="kicker" x="792" y="190">CHUNK VECTORS</text>
+    <rect x="792" y="210" width="336" height="44" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="vec" x="812" y="238">c1 [ 0.02, -0.31, 0.77, 0.11, ... ]</text>
+    <rect x="792" y="264" width="336" height="44" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="vec" x="812" y="292">c2 [ 0.05, -0.28, 0.71, 0.19, ... ]</text>
+    <rect x="792" y="318" width="336" height="44" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="vec" x="812" y="346">c3 [ -0.44, 0.09, 0.12, 0.63, ... ]</text>
+    <text class="note" x="792" y="386">Same length for every chunk, e.g. 768 numbers.</text>
+  </g>
+
+  <!-- Both indexes are built from the same chunk set; the two drops make that shared origin visible. -->
+  <line class="shaft" data-connector="true" x1="190" y1="400" x2="190" y2="420"/>
+  <polygon points="190,430 181,418 199,418" fill="#64748b"/>
+  <line class="shaft" data-connector="true" x1="960" y1="400" x2="960" y2="420"/>
+  <polygon points="960,430 951,418 969,418" fill="#64748b"/>
+
+  <g id="indexes">
+    <rect x="50" y="430" width="530" height="170" rx="16" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+    <text class="kicker" x="76" y="460" fill="#92400e">KEYWORD INDEX — BM25</text>
+    <text class="panel-title" x="76" y="492">Matches the exact words</text>
+    <text class="panel-copy" x="76" y="522">
+      <tspan x="76" dy="0">Scores a chunk by how often the question's words</tspan>
+      <tspan x="76" dy="22">occur in it. Each repeat counts for less than the last,</tspan>
+      <tspan x="76" dy="22">and long chunks are discounted.</tspan>
+    </text>
+
+    <rect x="620" y="430" width="530" height="170" rx="16" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="kicker" x="646" y="460" fill="#6d28d9">VECTOR INDEX — NEAREST NEIGHBOURS</text>
+    <text class="panel-title" x="646" y="492">Matches the meaning</text>
+    <text class="panel-copy" x="646" y="522">
+      <tspan x="646" dy="0">Finds the chunk vectors closest to a question vector.</tspan>
+      <tspan x="646" dy="22">The search is approximate: fast over millions of</tspan>
+      <tspan x="646" dy="22">chunks, but it can miss a true nearest neighbour.</tspan>
+    </text>
+  </g>
+
+  <!-- Closing rule; keep inside the bottom safe area. -->
+  <g id="closing">
+    <rect x="50" y="630" width="1100" height="80" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="50" y="630" width="10" height="80" rx="5" fill="#d92d20"/>
+    <text class="callout-label" x="82" y="676" fill="#b42318">BUILT ONCE, USED EVERY TIME</text>
+    <text class="callout-copy" x="380" y="676">A chunk that was never indexed can never be retrieved.</text>
+  </g>
+</svg>

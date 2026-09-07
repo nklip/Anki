@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">RAG pipeline overview: an offline indexing phase and an online query phase joined by one shared index</title>
+  <desc id="desc">Two labelled rows. The top row runs when documents change: source documents become chunks, then chunk vectors in an index. An elbow connector carries that index down into the bottom row, which runs for every question: question, retrieve, rerank, assemble prompt, generate cited answer.</desc>
+
+  <!-- Shared visual system for the seven RAG pipeline diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .eyebrow { font-size: 16px; font-weight: 700; letter-spacing: 2px; fill: #7c3aed; }
+      .title { font-size: 36px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .phase-label { font-size: 15px; font-weight: 700; letter-spacing: 1.6px; fill: #334155; }
+      .phase-note { font-size: 15px; fill: #64748b; }
+      .kicker { font-size: 13px; font-weight: 700; letter-spacing: 1.2px; fill: #64748b; }
+      .node-title { font-size: 20px; font-weight: 700; }
+      .node-copy { font-size: 16px; fill: #334155; }
+      .small-title { font-size: 17px; font-weight: 700; }
+      .small-copy { font-size: 14px; fill: #334155; }
+      .callout-label { font-size: 15px; font-weight: 700; letter-spacing: 1.2px; }
+      .callout-copy { font-size: 18px; fill: #1e293b; }
+      .shaft { stroke: #64748b; stroke-width: 3; fill: none; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" fill="#f8fafc"/>
+
+  <!-- Heading states the single lesson: two phases, one shared artifact. -->
+  <g id="heading">
+    <text class="eyebrow" x="50" y="38">RAG PIPELINE — OVERVIEW</text>
+    <text class="title" x="50" y="82">Two phases joined by one index</text>
+    <text class="subtitle" x="50" y="110">Indexing decides what can ever be found. Query decides what is found this time.</text>
+  </g>
+
+  <!-- Phase A: offline indexing. Right-aligned note keeps the left corridor free for the connector. -->
+  <g id="phase-a">
+    <text class="phase-label" x="50" y="152">PHASE A · INDEXING</text>
+    <text class="phase-note" x="1150" y="152" text-anchor="end">runs when the documents change</text>
+
+    <rect x="50" y="178" width="330" height="132" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="kicker" x="76" y="206">INPUT</text>
+    <text class="node-title" x="76" y="240">Source documents</text>
+    <text class="node-copy" x="76" y="268">
+      <tspan x="76" dy="0">Manuals, wiki pages, tickets,</tspan>
+      <tspan x="76" dy="22">transcripts, code.</tspan>
+    </text>
+
+    <line class="shaft" data-connector="true" x1="386" y1="244" x2="412" y2="244"/>
+    <polygon points="430,244 412,236 412,252" fill="#64748b"/>
+
+    <rect x="435" y="178" width="330" height="132" rx="16" fill="#ecfeff" stroke="#0891b2" stroke-width="2"/>
+    <text class="kicker" x="461" y="206" fill="#0e7490">STEP 1</text>
+    <text class="node-title" x="461" y="240">Chunks</text>
+    <text class="node-copy" x="461" y="268">
+      <tspan x="461" dy="0">Passages small enough to</tspan>
+      <tspan x="461" dy="22">retrieve and read on their own.</tspan>
+    </text>
+
+    <line class="shaft" data-connector="true" x1="771" y1="244" x2="797" y2="244"/>
+    <polygon points="815,244 797,236 797,252" fill="#64748b"/>
+
+    <rect x="820" y="178" width="330" height="132" rx="16" fill="#ecfeff" stroke="#0891b2" stroke-width="2"/>
+    <text class="kicker" x="846" y="206" fill="#0e7490">STEP 2</text>
+    <text class="node-title" x="846" y="240">Embed and index</text>
+    <text class="node-copy" x="846" y="268">
+      <tspan x="846" dy="0">Every chunk becomes a vector</tspan>
+      <tspan x="846" dy="22">plus a keyword entry.</tspan>
+    </text>
+  </g>
+
+  <!-- The index is the only artifact shared by both phases; this elbow carries it from Phase A to Step 3. -->
+  <g id="index-handover">
+    <path class="shaft" data-connector="true" d="M985 310 V352 H372 V406"/>
+    <polygon points="372,416 363,404 381,404" fill="#64748b"/>
+    <text class="phase-note" x="400" y="376" fill="#0e7490">the built index is the hand-over between the phases</text>
+  </g>
+
+  <!-- Phase B: online query. Same left margin as Phase A so the two rows read as one pipeline. -->
+  <g id="phase-b">
+    <text class="phase-label" x="50" y="400">PHASE B · QUERY</text>
+    <text class="phase-note" x="1150" y="400" text-anchor="end">runs for every question</text>
+
+    <rect x="50" y="416" width="190" height="150" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="kicker" x="70" y="444">INPUT</text>
+    <text class="small-title" x="70" y="472">Question</text>
+    <text class="small-copy" x="70" y="500">
+      <tspan x="70" dy="0">What the user is</tspan>
+      <tspan x="70" dy="20">asking, right now.</tspan>
+    </text>
+
+    <line class="shaft" data-connector="true" x1="246" y1="491" x2="262" y2="491"/>
+    <polygon points="275,491 262,484 262,498" fill="#64748b"/>
+
+    <rect x="277" y="416" width="190" height="150" rx="16" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="kicker" x="297" y="444" fill="#6d28d9">STEP 3</text>
+    <text class="small-title" x="297" y="472">Retrieve</text>
+    <text class="small-copy" x="297" y="500">
+      <tspan x="297" dy="0">Search returns a</tspan>
+      <tspan x="297" dy="20">wide candidate set</tspan>
+      <tspan x="297" dy="20">of chunks.</tspan>
+    </text>
+
+    <line class="shaft" data-connector="true" x1="473" y1="491" x2="489" y2="491"/>
+    <polygon points="502,491 489,484 489,498" fill="#64748b"/>
+
+    <rect x="504" y="416" width="190" height="150" rx="16" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="kicker" x="524" y="444" fill="#6d28d9">STEP 4</text>
+    <text class="small-title" x="524" y="472">Rerank</text>
+    <text class="small-copy" x="524" y="500">
+      <tspan x="524" dy="0">A slower scorer</tspan>
+      <tspan x="524" dy="20">keeps only the</tspan>
+      <tspan x="524" dy="20">best few.</tspan>
+    </text>
+
+    <line class="shaft" data-connector="true" x1="700" y1="491" x2="716" y2="491"/>
+    <polygon points="729,491 716,484 716,498" fill="#64748b"/>
+
+    <rect x="731" y="416" width="190" height="150" rx="16" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="kicker" x="751" y="444" fill="#6d28d9">STEP 5</text>
+    <text class="small-title" x="751" y="472">Assemble</text>
+    <text class="small-copy" x="751" y="500">
+      <tspan x="751" dy="0">Chunks, question</tspan>
+      <tspan x="751" dy="20">and rules become</tspan>
+      <tspan x="751" dy="20">one prompt.</tspan>
+    </text>
+
+    <line class="shaft" data-connector="true" x1="927" y1="491" x2="943" y2="491"/>
+    <polygon points="956,491 943,484 943,498" fill="#64748b"/>
+
+    <rect x="958" y="416" width="190" height="150" rx="16" fill="#ecfdf5" stroke="#137a4b" stroke-width="2"/>
+    <text class="kicker" x="978" y="444" fill="#0f6b43">STEP 6</text>
+    <text class="small-title" x="978" y="472">Generate</text>
+    <text class="small-copy" x="978" y="500">
+      <tspan x="978" dy="0">The model answers</tspan>
+      <tspan x="978" dy="20">and cites the</tspan>
+      <tspan x="978" dy="20">chunks it used.</tspan>
+    </text>
+  </g>
+
+  <!-- Closing callout; keep both rules inside the bottom safe area. -->
+  <g id="closing">
+    <rect x="50" y="596" width="1100" height="114" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="50" y="596" width="10" height="57" rx="5" fill="#0891b2"/>
+    <text class="callout-label" x="82" y="629" fill="#0e7490">WHAT IS SHARED</text>
+    <text class="callout-copy" x="270" y="629">The index is the only thing both phases touch.</text>
+    <line x1="82" y1="653" x2="1118" y2="653" stroke="#e2e8f0" stroke-width="2"/>
+    <rect x="50" y="653" width="10" height="57" rx="5" fill="#d92d20"/>
+    <text class="callout-label" x="82" y="686" fill="#b42318">THE HARD LIMIT</text>
+    <text class="callout-copy" x="270" y="686">No later step can recover a fact that retrieval never returned.</text>
+  </g>
+</svg>

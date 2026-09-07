@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Step 4 of the RAG pipeline: reranking the candidates by scoring each one together with the question</title>
+  <desc id="desc">The left panel shows retrieval scoring the question and a chunk in two separate encoder passes and comparing the resulting vectors. The right panel shows a reranker reading the question and one chunk as a single joint input to produce a relevance score. Below, a funnel narrows about fifty fused candidates to the five chunks that reach the prompt.</desc>
+
+  <!-- Shared visual system for the seven RAG pipeline diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .eyebrow { font-size: 16px; font-weight: 700; letter-spacing: 2px; fill: #6d28d9; }
+      .title { font-size: 36px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .kicker { font-size: 14px; font-weight: 700; letter-spacing: 1.3px; fill: #64748b; }
+      .node { font-size: 16px; fill: #1e293b; }
+      .node-strong { font-size: 16px; font-weight: 700; fill: #1e293b; }
+      .stage-title { font-size: 22px; font-weight: 700; }
+      .big { font-size: 40px; font-weight: 700; }
+      .stage-copy { font-size: 15px; fill: #334155; }
+      .note { font-size: 14px; fill: #64748b; }
+      .shaft { stroke: #64748b; stroke-width: 3; fill: none; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" fill="#f8fafc"/>
+
+  <g id="heading">
+    <text class="eyebrow" x="50" y="38">STEP 4 OF 6 — RERANK</text>
+    <text class="title" x="50" y="82">Score the survivors against the question</text>
+    <text class="subtitle" x="50" y="110">Retrieval scored question and chunk apart. A reranker reads them together: more accurate, far more expensive.</text>
+  </g>
+
+  <!-- Left: the two-pass scoring that retrieval uses. Its chunk vector predates the question. -->
+  <g id="separate-passes">
+    <rect x="50" y="160" width="530" height="290" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="kicker" x="76" y="190">HOW RETRIEVAL SCORED — TWO SEPARATE PASSES</text>
+
+    <rect x="76" y="212" width="130" height="50" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="node" x="141" y="243" text-anchor="middle">Question</text>
+    <line class="shaft" data-connector="true" x1="212" y1="237" x2="224" y2="237"/>
+    <polygon points="234,237 224,230 224,244" fill="#64748b"/>
+    <rect x="240" y="212" width="130" height="50" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="node" x="305" y="243" text-anchor="middle">Encoder</text>
+    <line class="shaft" data-connector="true" x1="376" y1="237" x2="388" y2="237"/>
+    <polygon points="398,237 388,230 388,244" fill="#64748b"/>
+    <rect x="404" y="212" width="130" height="50" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="node" x="469" y="243" text-anchor="middle">vector</text>
+
+    <rect x="76" y="278" width="130" height="50" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="node" x="141" y="309" text-anchor="middle">Chunk</text>
+    <line class="shaft" data-connector="true" x1="212" y1="303" x2="224" y2="303"/>
+    <polygon points="234,303 224,296 224,310" fill="#64748b"/>
+    <rect x="240" y="278" width="130" height="50" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="node" x="305" y="309" text-anchor="middle">Encoder</text>
+    <line class="shaft" data-connector="true" x1="376" y1="303" x2="388" y2="303"/>
+    <polygon points="398,303 388,296 388,310" fill="#64748b"/>
+    <rect x="404" y="278" width="130" height="50" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="node" x="469" y="309" text-anchor="middle">vector</text>
+
+    <rect x="76" y="348" width="458" height="50" rx="10" fill="#ecfeff" stroke="#0891b2" stroke-width="2"/>
+    <text class="node-strong" x="305" y="379" text-anchor="middle">compare the two vectors</text>
+
+    <text class="note" x="76" y="428">The chunk's vector was computed before the question existed.</text>
+  </g>
+
+  <!-- Right: the joint pass. Nothing is reusable, so it can only run on a short list. -->
+  <g id="joint-pass">
+    <rect x="620" y="160" width="530" height="290" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="kicker" x="646" y="190">HOW THE RERANKER SCORES — ONE JOINT PASS</text>
+
+    <rect x="646" y="212" width="458" height="46" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="node" x="875" y="241" text-anchor="middle">question + one chunk, as a single input</text>
+    <line class="shaft" data-connector="true" x1="875" y1="262" x2="875" y2="274"/>
+    <polygon points="875,284 867,272 883,272" fill="#64748b"/>
+
+    <rect x="646" y="286" width="458" height="46" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="node" x="875" y="315" text-anchor="middle">a model that reads both halves at once</text>
+    <line class="shaft" data-connector="true" x1="875" y1="336" x2="875" y2="348"/>
+    <polygon points="875,358 867,346 883,346" fill="#64748b"/>
+
+    <rect x="646" y="360" width="458" height="46" rx="10" fill="#ecfdf5" stroke="#137a4b" stroke-width="2"/>
+    <text class="node-strong" x="875" y="389" text-anchor="middle">one relevance score for this pair</text>
+
+    <text class="note" x="646" y="434">Nothing can be prepared in advance, so it runs once per candidate.</text>
+  </g>
+
+  <!-- The funnel makes the cost argument concrete: rerank a short list, not the corpus. -->
+  <g id="funnel">
+    <rect x="50" y="480" width="1100" height="230" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="kicker" x="76" y="510">WHAT SURVIVES — TYPICAL NUMBERS</text>
+
+    <rect x="100" y="534" width="300" height="140" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="kicker" x="250" y="562" text-anchor="middle">FROM STEP 3</text>
+    <text class="big" x="250" y="616" text-anchor="middle">50</text>
+    <text class="stage-copy" x="250" y="648" text-anchor="middle">fused candidate chunks</text>
+
+    <line class="shaft" data-connector="true" x1="406" y1="604" x2="428" y2="604"/>
+    <polygon points="446,604 428,595 428,613" fill="#64748b"/>
+
+    <rect x="450" y="534" width="300" height="140" rx="14" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="kicker" x="600" y="562" text-anchor="middle" fill="#6d28d9">STEP 4</text>
+    <text class="stage-title" x="600" y="608" text-anchor="middle">Reranker</text>
+    <text class="stage-copy" x="600" y="640" text-anchor="middle">50 joint passes, one per</text>
+    <text class="stage-copy" x="600" y="660" text-anchor="middle">candidate chunk</text>
+
+    <line class="shaft" data-connector="true" x1="756" y1="604" x2="778" y2="604"/>
+    <polygon points="796,604 778,595 778,613" fill="#64748b"/>
+
+    <rect x="800" y="534" width="300" height="140" rx="14" fill="#ecfdf5" stroke="#137a4b" stroke-width="2"/>
+    <text class="kicker" x="950" y="562" text-anchor="middle" fill="#0f6b43">KEPT</text>
+    <text class="big" x="950" y="616" text-anchor="middle">5</text>
+    <text class="stage-copy" x="950" y="648" text-anchor="middle">chunks that reach the prompt</text>
+
+    <text class="note" x="600" y="698" text-anchor="middle">This is why retrieval casts a wide net first: the reranker is too expensive to run over the whole corpus.</text>
+  </g>
+</svg>

@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Step 6 of the RAG pipeline: generating an answer whose every claim points back to a retrieved passage</title>
+  <desc id="desc">Three retrieved passages on the left are linked by curved connectors to an answer on the right, where each sentence ends with the identifier of the passage it came from. A panel notes what the passages do not say, and three closing cards describe checking the cited span, spotting an uncited claim, and the limit of grounding.</desc>
+
+  <!-- Shared visual system for the seven RAG pipeline diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .eyebrow { font-size: 16px; font-weight: 700; letter-spacing: 2px; fill: #0f6b43; }
+      .title { font-size: 36px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .kicker { font-size: 14px; font-weight: 700; letter-spacing: 1.3px; fill: #64748b; }
+      .cid { font-size: 15px; font-weight: 700; fill: #0e7490; }
+      .passage { font-size: 14px; fill: #334155; }
+      .answer { font-size: 15px; fill: #1e293b; }
+      .gap-copy { font-size: 14px; fill: #334155; }
+      .card-label { font-size: 14px; font-weight: 700; letter-spacing: 1.2px; }
+      .card-copy { font-size: 14px; fill: #334155; }
+      .cite-link { stroke: #0891b2; stroke-width: 2.5; fill: none; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" fill="#f8fafc"/>
+
+  <g id="heading">
+    <text class="eyebrow" x="50" y="38">STEP 6 OF 6 — GENERATE AND CITE</text>
+    <text class="title" x="50" y="82">Answer, and leave a trail back to the text</text>
+    <text class="subtitle" x="50" y="110">A citation turns an answer into something a reader can check. It is a pointer to a passage, not evidence that the claim is true.</text>
+  </g>
+
+  <!-- The passages that survived Step 4; the connectors below land on their right edge. -->
+  <g id="passages">
+    <rect x="50" y="160" width="360" height="380" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="kicker" x="72" y="190">PASSAGES IN THE PROMPT</text>
+
+    <rect x="72" y="208" width="316" height="110" rx="12" fill="#ecfeff" stroke="#0891b2" stroke-width="2"/>
+    <text class="cid" x="92" y="236">c1</text>
+    <text class="passage" x="92" y="260">
+      <tspan x="92" dy="0">Each payment is retried up to</tspan>
+      <tspan x="92" dy="20">five times. The retry cap is</tspan>
+      <tspan x="92" dy="20">counted per merchant.</tspan>
+    </text>
+
+    <rect x="72" y="332" width="316" height="90" rx="12" fill="#ecfeff" stroke="#0891b2" stroke-width="2"/>
+    <text class="cid" x="92" y="360">c2</text>
+    <text class="passage" x="92" y="384">
+      <tspan x="92" dy="0">Going over it returns HTTP 429</tspan>
+      <tspan x="92" dy="20">and a reset time.</tspan>
+    </text>
+
+    <rect x="72" y="436" width="316" height="90" rx="12" fill="#ecfeff" stroke="#0891b2" stroke-width="2"/>
+    <text class="cid" x="92" y="464">c3</text>
+    <text class="passage" x="92" y="488">
+      <tspan x="92" dy="0">Clients must wait for that time</tspan>
+      <tspan x="92" dy="20">before retrying.</tspan>
+    </text>
+  </g>
+
+  <!-- Each connector runs from the answer back to the passage it cites; heads stop at the card border. -->
+  <g id="citation-links">
+    <path class="cite-link" data-connector="true" d="M540 250 C486 250 452 263 404 263"/>
+    <polygon points="392,263 405,256 405,270" fill="#0891b2"/>
+    <path class="cite-link" data-connector="true" d="M540 300 C486 300 452 377 404 377"/>
+    <polygon points="392,377 405,370 405,384" fill="#0891b2"/>
+    <path class="cite-link" data-connector="true" d="M540 350 C486 350 452 481 404 481"/>
+    <polygon points="392,481 405,474 405,488" fill="#0891b2"/>
+  </g>
+
+  <!-- The answer. Ids are coloured so the trail is visible without reading the prose. -->
+  <g id="answer">
+    <rect x="540" y="160" width="610" height="380" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="kicker" x="562" y="190" fill="#0f6b43">THE ANSWER — EVERY CLAIM CARRIES ITS SOURCE</text>
+
+    <rect x="562" y="208" width="566" height="176" rx="12" fill="#ecfdf5" stroke="#137a4b" stroke-width="2"/>
+    <text class="answer" x="586" y="246">Your payment stopped after five attempts because the</text>
+    <text class="answer" x="586" y="272">retry cap is counted per merchant. <tspan class="cid">[c1]</tspan></text>
+    <text class="answer" x="586" y="316">Going past the cap returns HTTP 429 with a reset time, <tspan class="cid">[c2]</tspan></text>
+    <text class="answer" x="586" y="342">and the client must wait for it before retrying. <tspan class="cid">[c3]</tspan></text>
+
+    <rect x="562" y="406" width="566" height="104" rx="12" fill="#fff1f0" stroke="#d92d20" stroke-width="2"/>
+    <text class="card-label" x="586" y="434" fill="#b42318">WHAT THE PASSAGES DO NOT SAY</text>
+    <text class="gap-copy" x="586" y="462">
+      <tspan x="586" dy="0">They never state whether the cap can be raised, so the answer</tspan>
+      <tspan x="586" dy="22">reports that gap instead of filling it.</tspan>
+    </text>
+  </g>
+
+  <!-- Closing checks; keep inside the bottom safe area. -->
+  <g id="checks">
+    <rect x="50" y="570" width="353" height="140" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="card-label" x="76" y="600" fill="#0e7490">CHECK THE SPAN</text>
+    <text class="card-copy" x="76" y="628">
+      <tspan x="76" dy="0">Open the cited passage and confirm</tspan>
+      <tspan x="76" dy="22">it really says the claim. A citation is</tspan>
+      <tspan x="76" dy="22">a pointer, not a proof.</tspan>
+    </text>
+
+    <rect x="423" y="570" width="353" height="140" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="card-label" x="449" y="600" fill="#92400e">CHECK THE GAPS</text>
+    <text class="card-copy" x="449" y="628">
+      <tspan x="449" dy="0">A sentence with no id is ungrounded:</tspan>
+      <tspan x="449" dy="22">either retrieval missed the passage or</tspan>
+      <tspan x="449" dy="22">the model supplied the claim itself.</tspan>
+    </text>
+
+    <rect x="796" y="570" width="353" height="140" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="card-label" x="822" y="600" fill="#b42318">GROUNDING IS NOT A GUARANTEE</text>
+    <text class="card-copy" x="822" y="628">
+      <tspan x="822" dy="0">Retrieval measurably reduces</tspan>
+      <tspan x="822" dy="22">hallucination in evaluated systems.</tspan>
+      <tspan x="822" dy="22">It does not remove it.</tspan>
+    </text>
+  </g>
+</svg>

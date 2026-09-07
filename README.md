@@ -6,7 +6,7 @@ This repository contains Anki-ready study materials and teaching diagrams for ar
 
 The [`ai`](ai/) folder contains Markdown cards about artificial-intelligence concepts and reusable SVG teaching diagrams in [`ai/svg`](ai/svg/).
 
-Current material includes the [Cosine Similarity](ai/Cosine%20similarity.md) card, with diagrams covering its geometry, calculation, and role in retrieval-augmented generation (RAG). The SVG folder also contains visuals for embeddings, vector search, lexical and semantic retrieval, reciprocal rank fusion, large language model processing, Model Context Protocol (MCP), streaming, temperature, and related topics.
+Current material includes the [RAG pipeline](ai/RAG%20pipeline.md) card, which walks the six stages from chunking to cited generation, and the [Cosine Similarity](ai/Cosine%20similarity.md) card, with diagrams covering its geometry, calculation, and role in retrieval-augmented generation (RAG). The SVG folder also contains visuals for embeddings, vector search, lexical and semantic retrieval, reciprocal rank fusion, large language model processing, Model Context Protocol (MCP), streaming, temperature, and related topics.
 
 ## Computer science
 

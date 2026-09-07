@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Step 3 of the RAG pipeline: running vector and keyword search and fusing the two rankings</title>
+  <desc id="desc">One question fans out into a vector search and a keyword search, each returning its own ranked list of chunks. The two lists are merged into one candidate list by reciprocal rank fusion, where a chunk both searches ranked well outranks a chunk that only one search placed first.</desc>
+
+  <!-- Shared visual system for the seven RAG pipeline diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .eyebrow { font-size: 16px; font-weight: 700; letter-spacing: 2px; fill: #6d28d9; }
+      .title { font-size: 36px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .kicker { font-size: 14px; font-weight: 700; letter-spacing: 1.3px; fill: #64748b; }
+      .panel-title { font-size: 19px; font-weight: 700; }
+      .ask { font-size: 17px; font-weight: 700; fill: #1e293b; }
+      .note { font-size: 14px; fill: #64748b; }
+      .rank { font-size: 15px; font-weight: 700; fill: #64748b; }
+      .row-copy { font-size: 15px; fill: #334155; }
+      .row-sub { font-size: 13px; fill: #64748b; }
+      .formula { font-size: 17px; font-weight: 700; fill: #4c1d95; }
+      .callout-label { font-size: 15px; font-weight: 700; letter-spacing: 1.2px; }
+      .callout-copy { font-size: 18px; fill: #1e293b; }
+      .shaft { stroke: #64748b; stroke-width: 3; fill: none; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" fill="#f8fafc"/>
+
+  <g id="heading">
+    <text class="eyebrow" x="50" y="38">STEP 3 OF 6 — RETRIEVE</text>
+    <text class="title" x="50" y="82">Search twice, then merge the rankings</text>
+    <text class="subtitle" x="50" y="110">Vector search finds meaning, keyword search finds exact terms. Fusing their ranks recovers what either alone misses.</text>
+  </g>
+
+  <!-- The question, embedded by the model from Step 2, fans out into both searches. -->
+  <g id="question">
+    <rect x="50" y="310" width="250" height="160" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="kicker" x="72" y="340">QUESTION</text>
+    <text class="ask" x="72" y="370">
+      <tspan x="72" dy="0">"Why did my payment</tspan>
+      <tspan x="72" dy="24">stop retrying?"</tspan>
+    </text>
+    <text class="note" x="72" y="428">
+      <tspan x="72" dy="0">Embedded into the same</tspan>
+      <tspan x="72" dy="18">space as the index.</tspan>
+    </text>
+  </g>
+
+  <!-- Fan-out: one shared vertical corridor feeds both search panels. -->
+  <g id="fan-out">
+    <path class="shaft" data-connector="true" d="M300 390 H325 V275 H332"/>
+    <polygon points="345,275 332,267 332,283" fill="#64748b"/>
+    <path class="shaft" data-connector="true" d="M300 390 H325 V505 H332"/>
+    <polygon points="345,505 332,497 332,513" fill="#64748b"/>
+  </g>
+
+  <g id="vector-search">
+    <rect x="350" y="170" width="360" height="210" rx="16" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="kicker" x="372" y="200" fill="#6d28d9">VECTOR SEARCH — RANKED</text>
+    <rect x="372" y="218" width="316" height="44" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="rank" x="392" y="246">#1</text>
+    <text class="row-copy" x="428" y="246">c3 · back-off rule</text>
+    <rect x="372" y="268" width="316" height="44" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="rank" x="392" y="296">#2</text>
+    <text class="row-copy" x="428" y="296">c2 · HTTP 429 and reset</text>
+    <rect x="372" y="318" width="316" height="44" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="rank" x="392" y="346">#3</text>
+    <text class="row-copy" x="428" y="346">c1 · retry cap per merchant</text>
+  </g>
+
+  <g id="keyword-search">
+    <rect x="350" y="400" width="360" height="210" rx="16" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+    <text class="kicker" x="372" y="430" fill="#92400e">KEYWORD SEARCH — RANKED</text>
+    <rect x="372" y="448" width="316" height="44" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="rank" x="392" y="476">#1</text>
+    <text class="row-copy" x="428" y="476">c1 · retry cap per merchant</text>
+    <rect x="372" y="498" width="316" height="44" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="rank" x="392" y="526">#2</text>
+    <text class="row-copy" x="428" y="526">c9 · glossary entry "retry"</text>
+    <rect x="372" y="548" width="316" height="44" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="rank" x="392" y="576">#3</text>
+    <text class="row-copy" x="428" y="576">c2 · HTTP 429 and reset</text>
+  </g>
+
+  <!-- Both ranked lists feed the same fusion step. -->
+  <line class="shaft" data-connector="true" x1="716" y1="275" x2="737" y2="275"/>
+  <polygon points="755,275 737,266 737,284" fill="#64748b"/>
+  <line class="shaft" data-connector="true" x1="716" y1="505" x2="737" y2="505"/>
+  <polygon points="755,505 737,496 737,514" fill="#64748b"/>
+
+  <!-- Fused list: the score line under each row shows exactly where the order came from. -->
+  <g id="fused">
+    <rect x="760" y="170" width="390" height="440" rx="16" fill="#ecfeff" stroke="#0891b2" stroke-width="2"/>
+    <text class="kicker" x="782" y="200" fill="#0e7490">FUSED CANDIDATES</text>
+
+    <rect x="782" y="222" width="346" height="60" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="rank" x="802" y="248">#1</text>
+    <text class="row-copy" x="838" y="248">c1 · retry cap per merchant</text>
+    <text class="row-sub" x="838" y="270">vector #3 + keyword #1  =  0.0323</text>
+
+    <rect x="782" y="292" width="346" height="60" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="rank" x="802" y="318">#2</text>
+    <text class="row-copy" x="838" y="318">c2 · HTTP 429 and reset</text>
+    <text class="row-sub" x="838" y="340">vector #2 + keyword #3  =  0.0320</text>
+
+    <rect x="782" y="362" width="346" height="60" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="rank" x="802" y="388">#3</text>
+    <text class="row-copy" x="838" y="388">c3 · back-off rule</text>
+    <text class="row-sub" x="838" y="410">vector #1 only  =  0.0164</text>
+
+    <rect x="782" y="432" width="346" height="60" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="rank" x="802" y="458">#4</text>
+    <text class="row-copy" x="838" y="458">c9 · glossary entry "retry"</text>
+    <text class="row-sub" x="838" y="480">keyword #2 only  =  0.0161</text>
+
+    <rect x="782" y="510" width="346" height="80" rx="10" fill="#cffafe" stroke="#0891b2" stroke-width="2"/>
+    <text class="formula" x="802" y="540" fill="#0e7490">score = sum of 1 / (60 + rank)</text>
+    <text class="note" x="802" y="566" fill="#155e75">A list that never returned the chunk adds nothing.</text>
+  </g>
+
+  <!-- Closing rule; keep inside the bottom safe area. -->
+  <g id="closing">
+    <rect x="50" y="640" width="1100" height="70" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="50" y="640" width="10" height="70" rx="5" fill="#0891b2"/>
+    <text class="callout-label" x="82" y="681" fill="#0e7490">WHY FUSE</text>
+    <text class="callout-copy" x="240" y="681">A chunk both searches liked outranks a chunk only one of them put first.</text>
+  </g>
+</svg>

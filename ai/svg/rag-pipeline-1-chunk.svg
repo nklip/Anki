@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Step 1 of the RAG pipeline: splitting a source document into overlapping chunks</title>
+  <desc id="desc">On the left, one runbook document whose text lines include a single fact spread over two sentences. An arrow labelled split leads to three chunk cards on the right, where the sentence at each boundary is repeated in amber in the following chunk. A closing strip compares chunks that are too small, too large, and the benefit of overlap.</desc>
+
+  <!-- Shared visual system for the seven RAG pipeline diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .eyebrow { font-size: 16px; font-weight: 700; letter-spacing: 2px; fill: #0e7490; }
+      .title { font-size: 36px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .kicker { font-size: 14px; font-weight: 700; letter-spacing: 1.3px; fill: #64748b; }
+      .legend { font-size: 14px; fill: #64748b; }
+      .doc-title { font-size: 15px; font-weight: 700; fill: #334155; }
+      .chunk-name { font-size: 14px; font-weight: 700; letter-spacing: 1.2px; fill: #0e7490; }
+      .chunk-copy { font-size: 15px; fill: #334155; }
+      .chunk-shared { font-size: 15px; font-weight: 700; fill: #b45309; }
+      .note { font-size: 14px; fill: #b45309; }
+      .card-label { font-size: 14px; font-weight: 700; letter-spacing: 1.2px; }
+      .card-copy { font-size: 14px; fill: #334155; }
+      .shaft { stroke: #64748b; stroke-width: 3; fill: none; }
+      .line-bar { fill: #e2e8f0; }
+      .line-bar-hit { fill: #fde68a; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" fill="#f8fafc"/>
+
+  <g id="heading">
+    <text class="eyebrow" x="50" y="38">STEP 1 OF 6 — CHUNKING</text>
+    <text class="title" x="50" y="82">Cut documents into retrievable passages</text>
+    <text class="subtitle" x="50" y="110">The chunk is the unit that gets scored, returned, and read. Its size decides what an answer can contain.</text>
+  </g>
+
+  <!-- Before: one continuous document. The amber lines are a single fact that spans a sentence boundary. -->
+  <g id="before">
+    <rect x="50" y="150" width="400" height="396" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="kicker" x="76" y="180">BEFORE — ONE DOCUMENT</text>
+
+    <rect x="76" y="198" width="348" height="326" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="doc-title" x="96" y="226">Runbook — payments service</text>
+    <rect class="line-bar" x="96" y="246" width="308" height="10" rx="5"/>
+    <rect class="line-bar" x="96" y="272" width="290" height="10" rx="5"/>
+    <rect class="line-bar" x="96" y="298" width="308" height="10" rx="5"/>
+    <rect class="line-bar-hit" x="96" y="324" width="300" height="10" rx="5"/>
+    <rect class="line-bar-hit" x="96" y="350" width="256" height="10" rx="5"/>
+    <rect class="line-bar" x="96" y="376" width="308" height="10" rx="5"/>
+    <rect class="line-bar" x="96" y="402" width="268" height="10" rx="5"/>
+    <rect class="line-bar" x="96" y="428" width="308" height="10" rx="5"/>
+    <rect class="line-bar" x="96" y="454" width="240" height="10" rx="5"/>
+    <text class="note" x="96" y="496">
+      <tspan x="96" dy="0">The amber lines are one fact carried</tspan>
+      <tspan x="96" dy="20">across two sentences.</tspan>
+    </text>
+  </g>
+
+  <!-- The split arrow; the label sits well above the shaft so no text is crossed. -->
+  <g id="split-arrow">
+    <text class="kicker" x="493" y="330" text-anchor="middle">SPLIT</text>
+    <line class="shaft" data-connector="true" x1="462" y1="348" x2="506" y2="348"/>
+    <polygon points="524,348 506,338 506,358" fill="#64748b"/>
+  </g>
+
+  <!-- After: chunks that overlap by one sentence, shown as the amber line repeated in the next chunk. -->
+  <g id="after">
+    <rect x="540" y="150" width="610" height="396" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="kicker" x="566" y="180">AFTER — CHUNKS WITH OVERLAP</text>
+    <text class="legend" x="1124" y="180" text-anchor="end">amber text = repeated in the neighbour</text>
+
+    <rect x="566" y="198" width="558" height="100" rx="12" fill="#ecfeff" stroke="#0891b2" stroke-width="2"/>
+    <text class="chunk-name" x="586" y="226">CHUNK 1</text>
+    <text class="chunk-copy" x="586" y="254">Each payment is retried up to five times.</text>
+    <text class="chunk-shared" x="586" y="278">The retry cap is counted per merchant.</text>
+
+    <rect x="566" y="312" width="558" height="100" rx="12" fill="#ecfeff" stroke="#0891b2" stroke-width="2"/>
+    <text class="chunk-name" x="586" y="340">CHUNK 2</text>
+    <text class="chunk-shared" x="586" y="368">The retry cap is counted per merchant.</text>
+    <text class="chunk-copy" x="586" y="392">Going over it returns HTTP 429 and a reset time.</text>
+
+    <rect x="566" y="426" width="558" height="100" rx="12" fill="#ecfeff" stroke="#0891b2" stroke-width="2"/>
+    <text class="chunk-name" x="586" y="454">CHUNK 3</text>
+    <text class="chunk-shared" x="586" y="482">Going over it returns HTTP 429 and a reset time.</text>
+    <text class="chunk-copy" x="586" y="506">Clients must wait for that time before retrying.</text>
+  </g>
+
+  <!-- Closing strip: the two failure directions and what overlap buys. Keep inside the bottom safe area. -->
+  <g id="tradeoffs">
+    <rect x="50" y="576" width="353" height="134" rx="16" fill="#fff1f0" stroke="#d92d20" stroke-width="2"/>
+    <text class="card-label" x="76" y="606" fill="#b42318">TOO SMALL</text>
+    <text class="card-copy" x="76" y="634">
+      <tspan x="76" dy="0">The chunk loses what made it</tspan>
+      <tspan x="76" dy="22">answerable: the heading, the table</tspan>
+      <tspan x="76" dy="22">column, the thing "it" referred to.</tspan>
+    </text>
+
+    <rect x="423" y="576" width="353" height="134" rx="16" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+    <text class="card-label" x="449" y="606" fill="#92400e">TOO LARGE</text>
+    <text class="card-copy" x="449" y="634">
+      <tspan x="449" dy="0">Most of the chunk is not about the</tspan>
+      <tspan x="449" dy="22">question. That blurs its vector and</tspan>
+      <tspan x="449" dy="22">crowds the prompt later.</tspan>
+    </text>
+
+    <rect x="796" y="576" width="353" height="134" rx="16" fill="#ecfdf5" stroke="#137a4b" stroke-width="2"/>
+    <text class="card-label" x="822" y="606" fill="#0f6b43">OVERLAP HELPS</text>
+    <text class="card-copy" x="822" y="634">
+      <tspan x="822" dy="0">Repeating the boundary sentence</tspan>
+      <tspan x="822" dy="22">keeps a fact that straddles the cut</tspan>
+      <tspan x="822" dy="22">whole inside at least one chunk.</tspan>
+    </text>
+  </g>
+</svg>
