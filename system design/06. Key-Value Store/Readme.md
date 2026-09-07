@@ -37,7 +37,7 @@ A **distributed key-value store** partitions data across multiple servers and mu
 **Trade-off:** According to the CAP theorem, only two of the three guarantees can be achieved.
 
 <p align="center">
-  <img src="./images/cap.svg" alt="CAP" width="400">
+  <img src="./images/cap.svg" alt="cap.svg" width="400">
 </p>
 
 #### System Types:
@@ -45,19 +45,19 @@ A **distributed key-value store** partitions data across multiple servers and mu
 - **AP Systems:** Availability and partition tolerance while sacrificing consistency (e.g., eventual consistency).
 - **CA Systems:** Consistency and availability while sacrificing partition tolerance.
 
-    **Since network failure is unavoidable, a distributed system must tolerate network partition. Thus, a CA system cannot exist in real-world applications.**
+    **Since network failure is unavoidable, a distributed system must tolerate network partitions. Thus, a CA system cannot exist in real-world applications.**
 
     In a distributed system, partitions are inevitable. When a partition occurs, we must choose between consistency and availability. For example, if node n3 goes down,
     any data written to nodes n1 or n2 cannot be propagated to n3. Conversely, if data is written to n3 but not yet propagated to n1 and n2, nodes n1 and n2 will have stale data.
 
     <p align="center">
-    <img src="./images/server-down.svg" alt="Server down" width="400">
+    <img src="./images/server-down.svg" alt="server-down.svg" width="400">
     </p>
 
 - If we choose a CP system, we must block all write operations to n1 and n2 to avoid data inconsistency.
 - If we choose an AP system, the system keeps accepting reads, even though it might return stale data.
-For writes, n1 and n2 keep accepting writes,
-and data will be synced to n3 when the network partition is resolved.
+    For writes, n1 and n2 keep accepting writes,
+    and data will be synced to n3 when the network partition is resolved.
 
 ---
 
@@ -66,14 +66,14 @@ and data will be synced to n3 when the network partition is resolved.
 - **Technique:** Consistent hashing is used to distribute data across multiple servers evenly.
 - **Advantages:**
   - Automatic scaling with server addition/removal.
-  - Heterogeneity through virtual nodes. The number of virtual nodes for a server is proportional to the server capacity.
+  - Heterogeneity through virtual nodes. The number of virtual nodes for a server is proportional to the server’s capacity.
 
 ### 2. Data Replication
 - Replicate data across `N` servers for high availability.
 - The N servers are chosen by walking clockwise from the server position and choosing the first N servers on the ring to store data copies. Place replicas in distinct data centers to improve reliability in case of virtual nodes.
 
     <p align="center">
-    <img src="./images/data-replication.svg" alt="Data replication" width="300">
+    <img src="./images/data-replication.svg" alt="data-replication.svg" width="300">
     </p>
 
 ### 3. Consistency
@@ -83,18 +83,18 @@ Since data is replicated at multiple nodes, it must be synchronized across repli
   - `W`: Write quorum size. For a write to be considered successful, it must be acknowledged by W replicas.
   - `R`: Read quorum size. For a read to be considered successful, it must wait for responses from at least R replicas.
   - **Rule:** `W + R > N` ensures strong consistency.
-  - The configuration of W, R and N is a typical tradeoff between latency and consistency.
+  - The configuration of W, R, and N is a typical tradeoff between latency and consistency.
 
     <p align="center">
-    <img src="./images/quorum-consensus.svg" alt="Quorum consensus" width="400">
+    <img src="./images/quorum-consensus.svg" alt="quorum-consensus.svg" width="400">
     </p>
 
     - If R = 1 and W = N, the system is optimized for a fast read.
-    - If W = 1 and R = N, the system is optimized for fast write.
-    - If W + R > N, strong consistency is guaranteed (Usually N = 3, W = R = 2).
+    - If W = 1 and R = N, the system is optimized for a fast write.
+    - If W + R > N, strong consistency is guaranteed (usually N = 3, W = R = 2).
     - If W + R <= N, strong consistency is not guaranteed.
 
-- **Models**:
+- **Models:**
   - **Strong Consistency:** A read operation returns a value corresponding to the result of the most updated write data item.
   - **Weak Consistency:** Subsequent read operations may not see the most updated value.
   - **Eventual Consistency:** Given enough time, all updates are propagated, and all replicas are consistent.
@@ -106,14 +106,14 @@ vector clocks are used to solve inconsistency problems.
     - Use **vector clocks** to track data versions and resolve conflicts.
     - Versioning means treating each data modification as a new immutable version of data.
         <div>
-        <img src="./images/consistent-server.svg" alt="Consistent hashing" width="400">
-        <img src="./images/inconsistent-server.svg" alt="Inconsistent server" height="230">
+        <img src="./images/consistent-server.svg" alt="consistent-server.svg" width="400">
+        <img src="./images/inconsistent-server.svg" alt="inconsistent-server.svg" height="230">
         </div>
 
-    - Server 1 changes the name, and server 2 also changes the name. These two changes are performed simultaneously. Now, we have conflicting values, called versions v1 and v2.
+    - Server 1 changes the name, and Server 2 also changes the name. These two changes are performed simultaneously. Now, we have conflicting values, called versions v1 and v2.
 
 - **Vector Clock**
-    1. **Setup**: A vector clock is a [server, version] pair associated with a data item. It can be used to check
+    1. **Setup:** A vector clock is a [server, version] pair associated with a data item. It can be used to check
         whether one version precedes, succeeds, or conflicts with others.
         - Assume a vector clock represented by D([S1, v1], [S2, v2], …, [Sn, vn]). If data item D is written to server
         Si, the system must perform one of the following tasks.
@@ -124,13 +124,13 @@ vector clocks are used to solve inconsistency problems.
         - Otherwise, a new entry is added to the vector clock.
 
     3. **Conflict Detection:**
-        - **No Conflict:** A version X is an ancestor of version Y if all counters in X are less than or equal to those in Y.
+        - **No Conflict:** Version X is an ancestor of version Y if all counters in X are less than or equal to those in Y.
         - **Conflict Exists:** Two versions are siblings if there is at least one counter in Y that is less than its counterpart in X.
 
     4. **Conflict Resolution:** When conflicts are detected (sibling versions), the system relies on application-specific logic or client intervention to reconcile the data.
 
         <p align="center">
-        <img src="./images/vector-clock.svg" alt="Server hashing" width="500">
+        <img src="./images/vector-clock.svg" alt="vector-clock.svg" width="500">
         </p>
 
 - **Challenges:**
@@ -143,23 +143,23 @@ vector clocks are used to solve inconsistency problems.
 It is insufficient to believe that a server is down because another server says so. Usually, it requires at least two independent sources of information to mark a server down.
 - **Gossip Protocol:**
     <div style="margin-left:3rem">
-        <img src="./images/gossip-protocol.svg" alt="Gossip protocol" width="600">
+        <img src="./images/gossip-protocol.svg" alt="gossip-protocol.svg" width="600">
     </div>
 
     - Each node maintains member IDs and heartbeat counters.
     - Each node periodically increments its heartbeat counter.
     - Each node periodically sends heartbeats to a set of random nodes.
-    - If the heartbeat has not increased for more than predefined periods, the member is
+    - If the heartbeat has not increased for more than a predefined period, the member is
     considered offline.
 
 #### b. Temporary Failures
 - **Sloppy Quorum:** Use healthy nodes to maintain operations temporarily.
         <p align="center">
-        <img src="./images/sloppy-quorum.svg" alt="Sloppy Quorum" width="400">
+        <img src="./images/sloppy-quorum.svg" alt="sloppy-quorum.svg" width="400">
         </p>
 
     - After detecting failures, the system needs to deploy certain mechanisms to ensure availability.
-    - Instead of enforcing the quorum requirement, the system chooses the first W healthy servers for writes and first R
+    - Instead of enforcing the quorum requirement, the system chooses the first W healthy servers for writes and the first R
     healthy servers for reads on the hash ring.
     - Offline servers are ignored. If a server is unavailable, another server will process requests temporarily.
 
@@ -171,7 +171,7 @@ It is insufficient to believe that a server is down because another server says 
 - Use **Merkle Trees** for efficient synchronization between replicas.
     A **Merkle Tree** (or hash tree) is a data structure to efficiently detect and resolve inconsistencies between replicas during permanent failures.
 
-- Working
+- **Working:**
     1. **Structure:**
         - **Leaf Nodes** store the hash of individual data blocks.
         - **Non-Leaf Nodes** store the hash of their child nodes.
@@ -180,19 +180,19 @@ It is insufficient to believe that a server is down because another server says 
     2. **Building a Merkle Tree:**
         - **Step 1:** Divide the key space into buckets.
 
-            <img src="./images/key-bucket.svg" alt="Key Bucket" width="500">
+            <img src="./images/key-bucket.svg" alt="key-bucket.svg" width="500">
 
         - **Step 2:** Hash each key in a bucket using uniform hashing.
 
-            <img src="./images/hash-key-bucket.svg" alt="Hash Key Bucket" width="500">
+            <img src="./images/hash-key-bucket.svg" alt="hash-key-bucket.svg" width="500">
 
         - **Step 3:** Create a single hash for each bucket.
 
-            <img src="./images/hash-bucket.svg" alt="Hash Bucket" width="500">
+            <img src="./images/hash-bucket.svg" alt="hash-bucket.svg" width="500">
 
         - **Step 4:** Combine hashes of buckets to compute higher-level hashes, culminating in the root hash.
 
-            <img src="./images/merkel-tree.svg" alt="Merkel Tree" width="500">
+            <img src="./images/merkle-tree.svg" alt="merkle-tree.svg" width="500">
 
     3. **Synchronization:**
         - To synchronize two replicas:
@@ -201,7 +201,7 @@ It is insufficient to believe that a server is down because another server says 
             - If the root hashes differ, compare child hashes recursively to identify inconsistent buckets.
         - Only the inconsistent data is synchronized.
 
-- Advantages
+- **Advantages:**
     - **Efficiency:** Only inconsistent data is synchronized, reducing data transfer.
     - **Scalability:** Effective for large datasets with minimal synchronization overhead.
     - **Reliability:** Ensures data consistency across replicas.
@@ -211,42 +211,64 @@ It is insufficient to believe that a server is down because another server says 
 
 ---
 
-## Write and Read Paths
-### 1. Write Path (Based on Cassandra architecture)
-
-<div style="margin-left:3rem">
-    <img src="./images/write-path.svg" alt="Hash Bucket" width="500">
-</div>
-
-- Persist the write in a **commit log**.
-- Save data to a **memory cache**.
-- Flush data to **SSTable** (Sorted String Table) on disk when cache is full.
-
-### 2. Read Path
-<div style="margin-left:3rem">
-    <img src="./images/read-path.svg" alt="Hash Bucket" width="500">
-    <img src="./images/read-path-without-cache.svg" alt="Hash Bucket" width="500">
-</div>
-
-- Check **memory cache** for the data.
-- If absent, use a **Bloom Filter** to locate the data in SSTables.
-- Retrieve and return the data.
-
----
-
-## Final Architecture
+## System Architecture
 
 <p align="center">
-<img src="./images/final-architecture.svg" alt="Hash Bucket" width="500">
+<img src="./images/system-architecture.svg" alt="system-architecture.svg" width="500">
 </p>
 
 - Clients communicate with the key-value store through simple APIs: get(key) and put(key,
 value).
 - A coordinator is a node that acts as a proxy between the client and the key-value store.
 - Nodes are distributed on a ring using consistent hashing.
-- The system is completely decentralized so adding and moving nodes can be automatic.
+- The system is completely decentralized, so adding and moving nodes can be automatic.
 - Data is replicated at multiple nodes.
 - There is no single point of failure as every node has the same set of responsibilities.
+
+## Node
+
+As the design is decentralized, each node performs many tasks as presented in the image below.
+
+<p align="center">
+    <img src="./images/node.svg" alt="node.svg" width="500">
+</p>
+
+
+### Write Path
+
+The image below explains what happens after a write request is directed to a specific node.
+
+Please note the proposed designs for write/read paths are primarily based on the architecture of **Cassandra**.
+
+<div style="margin-left:3rem">
+    <img src="./images/write-path.svg" alt="write-path.svg" width="500">
+</div>
+
+1. The write request is persisted on a **commit log** file. 
+2. Data is saved in the **memory cache**.
+3. When the memory cache is full or reaches a predefined threshold, data is flushed to an **SSTable** [9] on disk.
+
+Note: A sorted-string table (SSTable) is a sorted list of <key, value> pairs.
+
+### Read Path
+
+After a read request is directed to a specific node, it first checks if data is in the memory cache. If so, the data is returned to the client as shown in the image below.
+
+<div style="margin-left:3rem">
+    <img src="./images/read-path.svg" alt="read-path.svg" width="500">
+</div>
+
+If the data is not in memory, it will be retrieved from the disk instead. We need an efficient way to find out which SSTable contains the key. A Bloom filter [10] is commonly used to solve this problem. The read path is shown in the image below when data is not in memory.
+
+<div style="margin-left:3rem">
+    <img src="./images/read-path-without-cache.svg" alt="read-path-without-cache.svg" width="500">
+</div>
+
+1. The system first checks if data is in **memory cache**. If not, go to step 2.
+2. If data is not in memory, the system checks the **Bloom Filter**.
+3. The **Bloom Filter** is used to figure out which SSTables might contain the key.
+4. SSTables return the result of the data set.
+5. The result of the data set is returned to the client.
 
 ## Reference materials
 
@@ -258,5 +280,5 @@ value).
 6. [Bigtable: A Distributed Storage System for Structured Data](https://static.googleusercontent.com/media/research.google.com/en//archive/bigtable-osdi06.pdf)
 7. [Merkle tree](https://en.wikipedia.org/wiki/Merkle_tree)
 8. [Cassandra architecture](https://cassandra.apache.org/doc/latest/architecture/)
-9. [SStable](https://www.igvita.com/2012/02/06/sstable-and-log-structured-storage-leveldb/)
+9. [SSTable](https://www.igvita.com/2012/02/06/sstable-and-log-structured-storage-leveldb/)
 10. [Bloom filter](https://en.wikipedia.org/wiki/Bloom_filter)
