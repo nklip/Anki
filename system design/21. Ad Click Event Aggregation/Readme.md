@@ -37,12 +37,12 @@ Based on ad-click event aggregations, advertisers can make decisions such as adj
 
 ### **Functional requirements**
  - Aggregate the number of clicks of `ad_id` in the last Y minutes
- - Return top 100 most clicked `ad_id` every minute
+ - Return top 100 most-clicked `ad_id` every minute
  - Support aggregation filtering by different attributes
  - Dataset volume is at Facebook or Google scale
 
 ### **Non-functional requirements**
- - Correctness of the aggregation result is important as it's used for RTB and ads billing
+ - Correctness of the aggregation result is important as it's used for RTB and ad billing
  - Properly handle delayed or duplicate events
  - Robustness - system should be resilient to partial failures
  - Latency - a few minutes of e2e latency at most
@@ -51,21 +51,21 @@ Based on ad-click event aggregations, advertisers can make decisions such as adj
  - 1 billion DAU
  - Assuming a user clicks 1 ad per day -> 1 billion ad clicks per day
  - Ad click QPS = 10,000
- - Peak QPS is 5 times the number = 50,000
+ - Peak QPS is 5 times that number = 50,000
  - A single ad click occupies 0.1 KB of storage. The daily storage requirement is 100 GB.
  - Monthly storage = 3 TB.
 
 ---
 
 ## Step 2: Propose High-Level Design and Get Buy-In
-In this section, we discuss query API design, data model and high-level design.
+In this section, we discuss the query API design, data model and high-level design.
 
 ### **Query API Design**
 The API is a contract between the client and the server. In our case, the client is the dashboard user - data scientist/analyst, advertiser, etc.
 
 Here are our functional requirements:
  - Aggregate the number of clicks of `ad_id` in the last Y minutes
- - Return top N most clicked `ad_id` in the last M minutes
+ - Return top N most-clicked `ad_id` in the last M minutes
  - Support aggregation filtering by different attributes
 
 We need two endpoints to achieve those requirements. Filtering can be done via query parameters on one of them.
@@ -92,7 +92,7 @@ GET /v1/ads/popular_ads
 ```
 
 Query parameters:
- - count - top N most clicked ads
+ - count - top N most-clicked ads
  - window - aggregation window size in minutes
  - filter - identifier for different filtering strategies
 
@@ -153,11 +153,11 @@ When it comes to the database, there are several factors to take into considerat
  - Are transactions needed?
  - Do the queries rely on OLAP functions like SUM and COUNT?
 
-For the raw data, we can see that the average QPS is 10k and peak QPS is 50k, so the system is write-heavy.
+For the raw data, we can see that the average QPS is 10k and the peak QPS is 50k, so the system is write-heavy.
 On the other hand, read traffic is low as raw data is mostly used as backup if anything goes wrong.
 
 Relational databases can do the job, but it can be challenging to scale the writes.
-Alternatively, we can use Cassandra or InfluxDB which have better native support for heavy write loads.
+Alternatively, we can use Cassandra or InfluxDB, which have better native support for heavy write loads.
 
 Another option is to use Amazon S3 with a columnar data format like ORC, Parquet or AVRO. Since this setup is unfamiliar, we'll stick to Cassandra.
 
@@ -166,7 +166,7 @@ It is also write-heavy as data is aggregated and written every minute by the agg
 Hence, we'll use the same data store (Cassandra) here as well.
 
 ### **High-level design**
-Here's how our system looks like:
+Here's what our system looks like:
 
 <div style="margin-left:3rem">
     <img src="./images/high-level-design-1.svg" alt="high-level-design-1" width="500" />
@@ -185,7 +185,7 @@ The first message queue stores ad click event data:
 | ad_id | click_timestamp | user_id | ip | country |
 |-------|-----------------|---------|----|---------|
 
-The second message queue contains ad click counts, aggregated per-minute:
+The second message queue contains ad click counts aggregated per minute:
 | ad_id | click_minute | count |
 |-------|--------------|-------|
 
@@ -225,7 +225,7 @@ However, the mapping node enables us to sanitize or transform the data before su
 Another reason might be that we don't have control over how data is produced,
 so events related to the same `ad_id` might go on different partitions.
 
-The aggregate node counts ad click events by `ad_id` in-memory every minute.
+The aggregate node counts ad click events by `ad_id` in memory every minute.
 
 The reduce node collects aggregated results from aggregate nodes and produces the final result:
 
@@ -235,7 +235,7 @@ The reduce node collects aggregated results from aggregate nodes and produces th
 
 This DAG model uses the MapReduce paradigm. It takes big data and leverages parallel distributed computing to turn it into regular-sized data.
 
-In the DAG model, intermediate data is stored in-memory and different nodes communicate with each other using TCP or shared memory.
+In the DAG model, intermediate data is stored in memory and different nodes communicate with each other using TCP or shared memory.
 
 Let's explore how this model can now help us achieve our various use cases.
 
@@ -247,7 +247,7 @@ Let's explore how this model can now help us achieve our various use cases.
 
  - Ads are partitioned using `ad_id % 3`
 
-**Use-case 2 - return top N most clicked ads**:
+**Use-case 2 - return top N most-clicked ads**:
 
 <div style="margin-left:3rem">
     <img src="./images/use-case-2.svg" alt="use-case-2" width="500" />
@@ -261,10 +261,10 @@ To support fast data filtering, we can predefine filtering criteria and pre-aggr
 | ad_id | click_minute | country | count |
 |-------|--------------|---------|-------|
 | ad001 | 202101010001 | USA     | 100   |
-| ad001 | 202101010001 | GPB     | 200   |
+| ad001 | 202101010001 | GBP     | 200   |
 | ad001 | 202101010001 | others  | 3000  |
 | ad002 | 202101010001 | USA     | 10    |
-| ad002 | 202101010001 | GPB     | 25    |
+| ad002 | 202101010001 | GBP     | 25    |
 | ad002 | 202101010001 | others  | 12    |
 
 This technique is called the **star schema** and is widely used in data warehouses.
@@ -316,7 +316,7 @@ Kappa architecture:
     <img src="./images/kappa-architecture.svg" alt="kappa-architecture" width="500" />
 </div>
 
-Our high-level design uses Kappa architecture as reprocessing of historical data also goes through the aggregation service.
+Our high-level design uses the Kappa architecture as reprocessing of historical data also goes through the aggregation service.
 
 Whenever we have to recalculate aggregated data due to, e.g., a major bug in aggregation logic, we can recalculate the aggregation from the raw data we store.
  - Recalculation service retrieves data from raw storage. This is a batch job.
@@ -336,11 +336,11 @@ Due to the use of asynchronous processing (message queues) and network delays, t
  - If we use processing time, aggregation results can be inaccurate
  - If we use event time, we have to deal with delayed events
 
-There is no perfect solution, we need to consider trade-offs:
+There is no perfect solution; we need to consider trade-offs:
 |                 | Pros                                  | Cons                                                                                 |
 |-----------------|---------------------------------------|--------------------------------------------------------------------------------------|
 | Event time      | Aggregation results are more accurate | Clients might have the wrong time or timestamp might be generated by malicious users |
-| Processing time | Server timestamp is more reliable     | The timestamp is not accurate if event is late                                       |
+| Processing time | Server timestamp is more reliable     | The timestamp is not accurate if the event is late                                   |
 
 Since data accuracy is important, we'll use the event time for aggregation.
 
@@ -359,7 +359,7 @@ The extended part of a window is called a "watermark":
     <img src="./images/watermark-2.svg" alt="watermark-2" width="500" />
 </div>
 
- - A short watermark increases the likelihood of missed events but reduces latency.
+ - A shorter watermark increases the likelihood of missed events but reduces latency.
  - A longer watermark reduces the likelihood of missed events but increases latency.
 
 There is always a likelihood of missed events, regardless of the watermark's size. But there is no use in optimizing for such low-probability events.
@@ -392,9 +392,9 @@ Hence, we need to discuss:
  - How to avoid processing duplicate events
  - How to ensure all events are processed
 
-There are three delivery guarantees we can use - at-most-once, at-least-once and exactly once.
+There are three delivery guarantees we can use - at-most-once, at-least-once and exactly-once.
 
-In most circumstances, at-least-once is sufficient when a small amount of duplicates is acceptable.
+In most circumstances, at-least-once is sufficient when a small number of duplicates is acceptable.
 This is not the case for our system, though, as a small percentage difference can result in millions of dollars of discrepancy.
 Hence, we'll need to use exactly-once delivery semantics.
 
@@ -408,18 +408,18 @@ It can come from a wide range of sources:
 Here's an example of data duplication occurring due to failure to acknowledge an event on the last hop:
 
 <div style="margin-left:3rem">
-    <img src="./images/data-duplication-example.svg" alt="data-duplication-example" width="500" />
+    <img src="./images/data-duplication-example-1.svg" alt="data-duplication-example-1" width="500" />
 </div>
 
 In this example, offset 100 will be processed and sent downstream multiple times.
 
-One option to try and mitigate this is to store the last seen offset in HDFS/S3, but this risks the result never reaching downstream:
+One option to try to mitigate this is to store the last seen offset in HDFS/S3, but this risks the result never reaching downstream:
 
 <div style="margin-left:3rem">
     <img src="./images/data-duplication-example-2.svg" alt="data-duplication-example-2" width="500" />
 </div>
 
-Finally, we can store the offset while interacting with downstream atomically. To achieve this, we need to implement a distributed transaction:
+Finally, we can atomically store the offset while interacting with downstream. To achieve this, we need to implement a distributed transaction:
 
 <div style="margin-left:3rem">
     <img src="./images/data-duplication-example-3.svg" alt="data-duplication-example-3" width="500" />
@@ -430,10 +430,10 @@ Finally, we can store the offset while interacting with downstream atomically. T
 ### **Scale the system**
 Let's discuss how we scale the system as it grows.
 
-We have three independent components - message queue, aggregation service and database.
+We have three independent components - the message queue, aggregation service and database.
 Since they are decoupled, we can scale them independently.
 
-How do we scale the message queue:
+How do we scale the message queue?
  - We don't put a limit on producers, so they can be scaled easily
  - Consumers can be scaled by assigning them to consumer groups and increasing the number of consumers.
  - For this to work, we also need to ensure there are enough partitions created preemptively
@@ -444,14 +444,14 @@ How do we scale the message queue:
     <img src="./images/scale-consumers.svg" alt="scale-consumers" width="500" />
 </div>
 
-How do we scale the aggregation service:
+How do we scale the aggregation service?
 
 <div style="margin-left:3rem">
     <img src="./images/aggregation-service-scaling.svg" alt="aggregation-service-scaling" width="500" />
 </div>
 
  - The map-reduce nodes can easily be scaled by adding more nodes
- - The throughput of the aggregation service can be scaled by utilizing multithreading.
+ - The throughput of the aggregation service can be scaled by utilizing multi-threading.
  - Alternatively, we can leverage resource providers such as Apache YARN to utilize multi-processing
  - Option 1 is easier, but option 2 is more widely used in practice as it's more scalable
  - Here's the multi-threading example:
@@ -460,7 +460,7 @@ How do we scale the aggregation service:
     <img src="./images/multi-threading-example.svg" alt="multi-threading-example" width="500" />
 </div>
 
-How do we scale the database:
+How do we scale the database?
  - If we use Cassandra, it natively supports horizontal scaling utilizing consistent hashing
  - If a new node is added to the cluster, data automatically gets rebalanced across all (virtual) nodes
  - With this approach, no manual (re)sharding is required
@@ -475,22 +475,22 @@ Another scalability issue to consider is the hotspot issue - what if an ad is mo
     <img src="./images/hotspot-issue.svg" alt="hotspot-issue" width="500" />
 </div>
 
- - In the above example, aggregation service nodes can apply for extra resources via the resource manager
- - The resource manager allocates more resources, so the original node isn't overloaded
- - The original node splits the events into 3 groups and each of the aggregation nodes handles 100 events
- - Result is written back to the original aggregation node
+1. Since there are 300 events in the aggregation node (beyond the capacity a node can handle), it applies for extra resources through the resource manager.
+2. The resource manager allocates more resources (for example, adding two more aggregation nodes) so the original aggregation node isn't overloaded.
+3. The original aggregation node splits events into 3 groups, and each aggregation node handles 100 events.
+4. The result is written back to the original aggregate node.
 
 Alternative, more sophisticated ways to handle the hotspot problem:
  - Global-Local Aggregation
  - Split Distinct Aggregation
 
 ### **Fault Tolerance**
-Within the aggregation nodes, we are processing data in-memory. If a node goes down, the processed data is lost.
+Within the aggregation nodes, we are processing data in memory. If a node goes down, the processed data is lost.
 
 We can leverage consumer offsets in Kafka to continue from where we left off once another node picks up the slack.
 However, there is additional intermediary state we need to maintain, as we're aggregating the top N ads in M minutes.
 
-We can make snapshots at a particular minute for the on-going aggregation:
+We can make snapshots at a particular minute for the ongoing aggregation:
 
 <div style="margin-left:3rem">
     <img src="./images/fault-tolerance-example.svg" alt="fault-tolerance-example" width="500" />
@@ -510,7 +510,7 @@ Some metrics we might want to monitor:
  - **Message queue size**: If there is a sudden increase in queue size, we need to add more aggregation nodes. As Kafka is implemented via a distributed commit log, we need to keep track of records-lag metrics instead.
  - **System resources on aggregation nodes**: CPU, disk, JVM, etc.
 
-We also need to implement a reconciliation flow which is a batch job, running at the end of the day.
+We also need to implement a reconciliation flow, which is a batch job running at the end of the day.
 It calculates the aggregated results from the raw data and compares them against the actual data stored in the aggregation database:
 
 <div style="margin-left:3rem">
@@ -534,7 +534,7 @@ Aggregation is typically done in OLAP databases such as ClickHouse or Druid.
 
 ## Step 4: Wrap up
 Things we covered:
- - Data model and API Design
+ - Data model and API design
  - Using MapReduce to aggregate ad click events
  - Scaling the message queue, aggregation service and database
  - Mitigating the hotspot issue
@@ -542,9 +542,9 @@ Things we covered:
  - Using reconciliation to ensure correctness
  - Fault tolerance
 
-The ad click event aggregation is a typical big data processing system.
+Ad click event aggregation is a typical big data processing system.
 
-It would be easier to understand and design it if you have prior knowledge of related technologies:
+It would be easier to understand and design if you had prior knowledge of related technologies:
  - Apache Kafka
  - Apache Spark
  - Apache Flink
