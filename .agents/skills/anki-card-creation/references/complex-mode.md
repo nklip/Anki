@@ -1,22 +1,50 @@
 # Complex mode (also called article mode)
 
-Use complex mode, also called article mode, for comprehensive explanations, mechanisms with multiple stages, or explicit step-by-step teaching. Both names select the same requirements; record `complex` in card metadata and validate with `--mode complex`.
+Use complex mode, also called article mode, for comprehensive explanations, mechanisms with multiple stages, or explicit step-by-step teaching. Both names select the same requirements. For revisions, follow the shared mode-selection rule: legacy `## Front`/`## Back` headings still indicate simple content requiring migration. Use `--mode complex` for explicit validation.
 
 ## Outcome
 
-Create a layered card that starts with the core mental model and then expands into the details a beginner needs.
+Create an article that starts with the core mental model and then expands into the details a beginner needs.
 
 Requirements:
 
-- Follow the shared order: title, one standalone upward navigation line without a list marker, `<!-- Card mode: complex. Validate with --mode complex. -->`, then `# Front`, separated by blank lines with no other intervening content.
+- Follow the shared order: title, one standalone upward navigation line without a list marker, then teaching content, separated by blank lines with no other intervening content. Omit `# Front` and `# Back`; end with `# Sources`. Do not generate HTML comments in article prose, including mode metadata comments. Fenced code examples and XML comments in separate SVG assets are unaffected.
 - There is no character limit, but every section must contribute to understanding or prevent a material misconception.
 - Include at least **two** local SVGs or images with different teaching purposes, such as structure plus behavior, or before-state plus after-state.
-- If the Back teaches a step-by-step process, every numbered or named step must have its own local `.svg` diagram immediately under that step's heading. A general overview image does not replace step-specific SVGs.
-- Begin the Back with the direct answer and a short roadmap of the explanation. For a versioned feature, its first line must follow the shared bold feature-and-release rule and pass `--require-version-lead`.
+- If the article teaches a step-by-step process, every numbered or named step must have its own local `.svg` diagram immediately under that step's heading. A general overview image does not replace step-specific SVGs.
+- Begin the teaching content immediately after the navigation line with the direct answer and a short roadmap of the explanation. For a versioned feature, the first nonblank line after navigation must follow the shared bold feature-and-release rule and pass `--require-version-lead`.
 - Introduce terminology and the static model before describing state changes or edge cases.
 - Prefer this teaching order when it fits: core idea → vocabulary → structure → process → example → limitations or misconceptions → concise summary.
 
-For a process card, each step should state:
+Use this structure, adapting the navigation link to the article's location:
+
+```markdown
+# Clear topic title
+
+<sub>[Back to System Design](../Readme.md#content)</sub>
+
+**For a versioned feature: official feature name + lifecycle event + release/version.**
+
+The core answer and a short roadmap of the explanation.
+
+## Structure
+
+Explain the model and how to read the visual.
+
+![topic-structure.svg](svg/topic-structure.svg)
+
+## Behavior
+
+Explain what changes and why it matters.
+
+![topic-behavior.svg](svg/topic-behavior.svg)
+
+# Sources
+
+- [Descriptive source title](https://example.com/source)
+```
+
+For a process article, each step should state:
 
 1. The state before the step.
 2. The trigger.

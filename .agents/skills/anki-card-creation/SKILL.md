@@ -9,10 +9,11 @@ Create a self-contained Markdown card that teaches someone who does not already 
 
 ## Select a mode
 
-- Use **simple mode** by default. Read [references/simple-mode.md](references/simple-mode.md).
-- Use **complex mode**, also called **article mode**, when the user requests either name or explicitly asks for comprehensive, multi-stage, or step-by-step treatment. Read [references/complex-mode.md](references/complex-mode.md). Both names select the same mode; use `complex` in card metadata and `--mode complex` for validation.
+- Default new cards to **simple mode**. Read [references/simple-mode.md](references/simple-mode.md).
+- Use **complex mode**, also called **article mode**, when the user requests either name or explicitly asks for comprehensive, multi-stage, or step-by-step treatment. Read [references/complex-mode.md](references/complex-mode.md). Both names select the same mode; use `--mode complex` for explicit validation.
+- When revising, follow the user's selected mode or infer it from the existing structure: any exact `Front` or `Back` heading at level one or legacy level two, outside fenced code and HTML comments, indicates simple mode; none indicates complex/article mode. A single heading or a mixed-level pair is still simple content requiring repair. Promote legacy `## Front`/`## Back` to `# Front`/`# Back` and add any missing boundary; mode comments do not select the mode.
 
-Do not silently relax simple mode's 3,000-character limit, which counts the Back only — `# Front` and `# Sources` are excluded. Narrow the card to its core lesson or use complex mode only when the user's request selects it.
+Do not silently relax simple mode's 3,000-character limit, which counts the Back only — `# Front` and `# Sources` are excluded. Narrow a simple-mode card to its core lesson instead of changing its mode merely to exceed the limit.
 
 ## Research before drafting
 
@@ -27,7 +28,7 @@ Put all citations in the final `# Sources` section. Do not scatter citations thr
 
 ## Lead sentence for versioned features
 
-When the card is about a feature that was added, previewed, finalized, or made generally available in a particular release, make the first nonblank line under `# Back` a standalone bold sentence that states:
+When the card is about a feature that was added, previewed, finalized, or made generally available in a particular release, make the first nonblank line of the teaching content a standalone bold sentence. This is under `# Back` in simple mode and immediately after the navigation line in complex/article mode. The sentence states:
 
 1. The feature's official name.
 2. The exact lifecycle event, using wording such as **introduced**, **first previewed**, **became final**, or **became generally available**.
@@ -40,7 +41,7 @@ For example:
 **Compact source files and instance `main` methods became final in JDK 25 with JEP 512.**
 ```
 
-Use the lifecycle wording from the authoritative source. Do not describe a preview release as final or present a later refinement as the feature's first introduction. If the topic is not a versioned feature, do not invent a release history; start the Back with the ordinary direct answer instead.
+Use the lifecycle wording from the authoritative source. Do not describe a preview release as final or present a later refinement as the feature's first introduction. If the topic is not a versioned feature, do not invent a release history; start the teaching content with the ordinary direct answer instead.
 
 ## Output location and files
 
@@ -53,23 +54,16 @@ Use the lifecycle wording from the authoritative source. Do not describe a previ
 
 Immediately after the level-one title, add exactly one standalone upward navigation line containing a `Back to …` link wrapped in `<sub>`, without a leading list marker, as shown in the template below. Link to the subject's root/index README, such as `system design/Readme.md`, using the real subject name in the label, the target's actual filename case, and a path relative to the card's directory. Include `#content` only when the target has a `Content` anchor; otherwise use the correct existing anchor or omit the fragment. If the subject has no index README, link to the repository's `README.md` with the label `Back to Anki Flashcards`.
 
-After the navigation line, add one HTML comment recording the selected mode and matching validation flag, followed by `# Front`. Separate the title, navigation line, comment, and `# Front` with blank lines; allow no other intervening content. Use exactly one of these comment forms:
+Separate the title, navigation line, and following content with blank lines; allow no other content between the title and navigation line. In simple mode, `# Front` follows the navigation line with no intervening content. In complex/article mode, the teaching content follows the navigation line directly, without `# Front` or `# Back`.
 
-```markdown
-<!-- Card mode: simple. Validate with --mode simple. -->
-<!-- Card mode: complex. Validate with --mode complex. -->
-```
+Add or update the navigation link whenever creating or revising a card. Neither mode may contain HTML comments in Markdown prose, including mode metadata; remove legacy comments when revising. Fenced code examples and XML comments in separate SVG assets are unaffected. The navigation line does not count toward the simple-mode character limit.
 
-Add or update the navigation link and mode comment whenever creating or revising a card. Both are metadata and do not count toward the simple-mode character limit.
-
-Use this order, adapting the navigation label and target to the card's location. This example is for a card one directory below `system design/Readme.md`:
+Use this simple-mode order, adapting the navigation label and target to the card's location. This example is for a card one directory below `system design/Readme.md`; the article template is in [references/complex-mode.md](references/complex-mode.md):
 
 ```markdown
 # Clear topic title
 
 <sub>[Back to System Design](../Readme.md#content)</sub>
-
-<!-- Card mode: simple. Validate with --mode simple. -->
 
 # Front
 
@@ -96,14 +90,14 @@ An example or qualification needed to understand the core answer.
 - [Descriptive source title](https://example.com/source)
 ```
 
-Use level-one headings for `# Front`, `# Back`, and `# Sources`. The `# Sources` section must be the final section. Keep the Front concise; put teaching content on the Back.
+Use level-one headings for simple mode's `# Front` and `# Back`, and for both modes' final `# Sources` section. Keep the simple-mode Front concise and put its teaching content on the Back.
 
 ## Writing and formatting
 
 - Define a term before using it to explain another term. Expand abbreviations on first use.
 - Prefer short sentences, concrete examples, and explicit cause-and-effect language.
 - Explain both **what happens** and **why it matters**. State common misconceptions only when they help prevent a likely error.
-- Use level-two headings (`##`) for teaching sections within the Back, including process steps, and level-three headings (`###`) for subsections. When updating the previous hierarchy, shift `###` to `##` and `####` to `###`. Keep bold text for emphasis and the required version lead. Use lists for sequences or sets, and tables only when rows genuinely make comparison easier.
+- Use level-two headings (`##`) for teaching sections within the Back or article body, including process steps, and level-three headings (`###`) for subsections. When updating the previous hierarchy, shift `###` to `##` and `####` to `###`. Keep bold text for emphasis and the required version lead. Use lists for sequences or sets, and tables only when rows genuinely make comparison easier.
 - Use inline code for identifiers, options, values, and short expressions.
 - Give every fenced block an appropriate language tag. Java source must use lowercase `java`; shell commands should use `bash`; plain output or conceptual pseudocode should use `text`.
 - Compile or run Java examples when practical with a JDK version appropriate to the topic. If code is intentionally incomplete or conceptual, label it clearly instead of presenting it as compilable Java.
@@ -121,9 +115,10 @@ Place each visual immediately after the paragraph or heading that introduces wha
 
 ## Final validation
 
-Run the validator from this skill directory with the `--mode` recorded in the card comment. The validator requires the comment and checks that its declared mode and flag match the selected validation mode. Fenced code examples do not count as headings, navigation, mode metadata, sources, or teaching visuals; their text still counts toward the Back's character budget. Local navigation checks verify the exact case of each path component and the existence of the README fragment, including heading anchors and explicit HTML anchors:
+Run the validator from this skill directory. Its default `--mode auto` follows the shared mode-selection rule, including legacy level-two boundaries; use `--mode simple` or `--mode complex` to check a selected format explicitly. Heading recognition accepts LF and CRLF line endings. HTML comments outside fenced code are invalid in both modes, including mode metadata. Fenced code examples do not count as headings, navigation, comments, sources, or teaching visuals; their text still counts toward a simple-mode Back's character budget. Local navigation checks verify the exact case of each path component and the existence of the README fragment, including heading anchors and explicit HTML anchors:
 
 ```bash
+python3 scripts/check_anki_card.py path/to/card.md
 python3 scripts/check_anki_card.py --mode simple path/to/card.md
 python3 scripts/check_anki_card.py --mode complex path/to/card.md
 python3 scripts/check_anki_card.py --mode simple --require-version-lead path/to/versioned-feature-card.md
@@ -140,10 +135,11 @@ The README fragment checker supports standalone ATX (`## Heading`) and Setext he
 
 Also verify:
 
-- The title, exactly one standalone navigation line without a list marker, mode comment, and `# Front` appear in that order, separated by blank lines with no other intervening content. The comment matches the mode used to create or revise the card.
+- The title and exactly one standalone navigation line without a list marker appear first, separated by blank lines. The navigation line is followed by simple mode's `# Front` or the article body, with a blank line and no intervening metadata.
 - The navigation label names the actual subject or repository, and the destination is the intended subject index or repository README.
-- The card uses `# Front`, `# Back`, and final `# Sources`, with `##` teaching sections and `###` subsections.
-- The opening Back paragraph answers the Front directly.
+- Simple mode uses `# Front` and `# Back`; complex/article mode omits both. Both modes have final `# Sources`, `##` teaching sections, and `###` subsections.
+- Neither mode contains HTML comments outside fenced code, including mode metadata.
+- The opening teaching paragraph states the core answer; in simple mode it answers the Front directly.
 - A versioned feature card starts with the required bold feature-and-release sentence and passes `--require-version-lead`.
 - Every factual statement is supported by the chosen evidence path.
 - Every visual is referenced, rendered, inspected, and easy for a novice to interpret.

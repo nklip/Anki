@@ -1,6 +1,6 @@
 # Simple mode
 
-Use simple mode unless the user selects complex mode (also called article mode).
+Use simple mode for new cards unless the user selects complex mode (also called article mode). For revisions, follow the shared mode-selection rule.
 
 ## Outcome
 
@@ -8,10 +8,10 @@ Create one focused card that teaches a single core idea without assuming prior k
 
 Requirements:
 
-- Follow the shared order: title, one standalone upward navigation line without a list marker, `<!-- Card mode: simple. Validate with --mode simple. -->`, then `# Front`, separated by blank lines with no other intervening content.
+- Follow the shared order: title, one standalone upward navigation line without a list marker, then `# Front`, separated by blank lines with no other intervening content. Use `# Back` for teaching content and final `# Sources` for citations. Do not generate HTML comments in Markdown prose, including mode metadata; fenced code examples are unaffected.
 - The teaching content must contain **at most 3,000 Unicode characters**. The `# Front` and
   `# Sources` sections are excluded from that count: the Front is a prompt rather than teaching,
-  and a card must never have to drop a citation to stay in budget. The navigation line and mode comment are also excluded. Everything else — the Back,
+  and a card must never have to drop a citation to stay in budget. The navigation line is also excluded. Everything else — the Back,
   its headings, tables, code, and image links — counts. Measure it with the bundled validator;
   do not treat bytes or words as characters.
 - Include at least **one** local SVG or image. Prefer one purpose-built SVG that carries the central explanation.
