@@ -1,5 +1,7 @@
 # JPA. Inheritance mapping
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 How does JPA store an entity inheritance hierarchy?
@@ -24,55 +26,7 @@ Start with the domain model, then choose the database shape that best matches th
 - **Discriminator:** a column value such as `CARD` that identifies which subtype a row represents.
 - **Polymorphic query:** a query of a base entity type that includes instances of its entity subclasses.
 
-The examples use one abstract root and two concrete payment types:
-
-Each `public` class below belongs in its own `.java` file; they are grouped only to show the hierarchy together.
-
-```java
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE) // change per strategy
-public abstract class Payment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
-
-    @Column(nullable = false)
-    private BigDecimal amount;
-
-    protected Payment() {
-    }
-
-    protected Payment(BigDecimal amount) {
-        this.amount = amount;
-    }
-}
-
-@Entity
-public class CardPayment extends Payment {
-    private String cardLast4;
-
-    protected CardPayment() {
-    }
-
-    public CardPayment(BigDecimal amount, String cardLast4) {
-        super(amount);
-        this.cardLast4 = cardLast4;
-    }
-}
-
-@Entity
-public class WirePayment extends Payment {
-    private String bankCode;
-
-    protected WirePayment() {
-    }
-
-    public WirePayment(BigDecimal amount, String bankCode) {
-        super(amount);
-        this.bankCode = bankCode;
-    }
-}
-```
+The examples use an abstract `Payment` root with `id` and `amount`, plus two concrete subtypes: `CardPayment` with `cardLast4` and `WirePayment` with `bankCode`.
 
 The root owns `id`; entity subclasses inherit it. Put `@Inheritance` on `Payment`, not on every subtype. If the annotation or its `strategy` is omitted, JPA defaults to `SINGLE_TABLE`.
 
@@ -80,7 +34,7 @@ The root owns `id`; entity subclasses inherit it. Put `@Inheritance` on `Payment
 
 All root and subtype fields become columns of one table. Each object uses exactly one row. The discriminator tells JPA whether that row is a `CardPayment` or `WirePayment`.
 
-![Single-table inheritance stores every subtype in one table and distinguishes rows with a discriminator](svg/jpa-inheritance-single-table.svg)
+![jpa-inheritance-single-table.svg](svg/jpa-inheritance-single-table.svg)
 
 ```java
 @Entity
@@ -122,7 +76,7 @@ Costs:
 
 The root table stores inherited fields. Each subtype table stores its own fields, and its primary key is also a foreign key to the corresponding root row. A `CardPayment` therefore occupies one `payment` row **and** one `card_payment` row.
 
-![Joined inheritance stores one object across a root row and a subtype row linked by the same identifier](svg/jpa-inheritance-joined.svg)
+![jpa-inheritance-joined.svg](svg/jpa-inheritance-joined.svg)
 
 ```java
 @Entity
@@ -165,7 +119,7 @@ Costs:
 
 Every concrete subtype has its own table containing both inherited and subtype-specific columns. With an abstract `Payment`, there is no `payment` row shared by the two concrete types.
 
-![Table-per-class inheritance duplicates inherited columns and combines concrete tables for a polymorphic query](svg/jpa-inheritance-table-per-class.svg)
+![jpa-inheritance-table-per-class.svg](svg/jpa-inheritance-table-per-class.svg)
 
 ```java
 @Entity
@@ -265,6 +219,27 @@ Use an **abstract entity root** when you need root queries or associations such 
 | Mostly concrete-type reads; small hierarchy; verified provider support | `TABLE_PER_CLASS` |
 | Field/mapping reuse without root queries or root associations | `@MappedSuperclass` |
 
+#### Popularity: what the evidence supports
+
+**There is no verified industry-wide winner between `SINGLE_TABLE` and `JOINED` in the evidence reviewed.** `SINGLE_TABLE` is the JPA default, which does not establish that it is the most used. Hibernate's 7.4 Short Guide describes `TABLE_PER_CLASS` as "not very popular"; this is a qualitative assessment, without adoption percentages.
+
+#### Production examples, ranked by project popularity
+
+The following open-source Java systems use Hibernate. Rank is by **GitHub stars retrieved on 2026-09-08**, among the verified examples below. Stars measure project interest, not installations or the frequency of a mapping strategy. Each example was checked in a released version for an actual mapped hierarchy and Hibernate integration; tutorials and provider tests were excluded. Source links pin the inspected revisions, and Hibernate versions vary by project.
+
+| Rank | System and purpose | GitHub stars | Verified mapping | Concrete example and database shape |
+|---|---|---:|---|---|
+| 1 | Apollo 2.5.2 — configuration management | 29,802 | `@MappedSuperclass` | `BaseEntity` → `App`: shared ID and audit mappings become columns in `App`'s table; `BaseEntity` is not an entity root. |
+| 2 | ThingsBoard 4.3.1.4 — Internet of Things platform | 22,383 | `@MappedSuperclass` | `AbstractDeviceEntity` → `DeviceEntity`: the device table receives inherited device fields without a parent-entity table. |
+| 3 | Broadleaf Commerce 7.0.7-GA — e-commerce | 1,920 | `JOINED` | `OrderItemImpl` → `DiscreteOrderItemImpl`: a product line item uses a `BLC_ORDER_ITEM` row plus a `BLC_DISCRETE_ORDER_ITEM` row containing prices and the required product-variant reference (`SKU_ID`). |
+| 4 | OpenMRS 2.7.6 — medical records | 1,909 | `JOINED` | `Order` → `DrugOrder`: common order data lives in `orders`; medication-specific data lives in `drug_order`, linked by `order_id`. This release declares the hierarchy with Hibernate XML `<joined-subclass>`. |
+| 5 | OpenRemote 1.30.0 — Internet of Things platform | 1,894 | `SINGLE_TABLE` | `Asset` → `ThingAsset`: asset subtypes share `ASSET`; the `TYPE` discriminator selects the Java subtype. |
+| 6 | Axelor Open Suite 9.1.7 — business management | 970 | `TABLE_PER_CLASS` | `BankStatementLine` → `BankStatementLineAFB120` / `BankStatementLineCAMT53`: statement-format subtypes have their own complete tables. Axelor's domain-model setting `strategy="CLASS"` generates `@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)`. |
+
+Apollo also places `@Inheritance(TABLE_PER_CLASS)` on its non-entity `BaseEntity`; this does not turn the mapped superclass into a `TABLE_PER_CLASS` entity hierarchy. Inspect the entity root, not just a matching annotation.
+
+Among the candidates verified in this research, use **OpenRemote** as the `SINGLE_TABLE` reference, **Broadleaf** as the highest-ranked `JOINED` reference, **Axelor** for `TABLE_PER_CLASS`, and **Apollo** for mapping reuse. These examples show how the strategies appear in real application domains; the ranking is not an exhaustive census of Java systems.
+
 Before choosing:
 
 1. Confirm the relationship is truly **is-a**; otherwise prefer composition or associations.
@@ -283,4 +258,13 @@ Before choosing:
 - [Jakarta Persistence 3.2 API — `InheritanceType`](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/inheritancetype)
 - [Jakarta Persistence 3.2 API — `DiscriminatorColumn`](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/discriminatorcolumn)
 - [Jakarta Persistence 3.2 API — `MappedSuperclass`](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/mappedsuperclass)
-- [Hibernate ORM 7.2 User Guide — inheritance](https://docs.hibernate.org/orm/7.2/userguide/html_single/#entity-inheritance)
+- [Hibernate ORM 7.4 User Guide — inheritance](https://docs.hibernate.org/orm/7.4/userguide/html_single/#entity-inheritance)
+- [Hibernate ORM 7.4 Short Guide — strategy selection and qualitative popularity assessment](https://docs.hibernate.org/orm/7.4/introduction/html_single/#mapping-inheritance)
+- Apollo 2.5.2: [mapped superclass](https://github.com/apolloconfig/apollo/blob/ed9785c87b390c22efece9ea7ec7eeab2d20a042/apollo-common/src/main/java/com/ctrip/framework/apollo/common/entity/BaseEntity.java#L39-L61), [App entity](https://github.com/apolloconfig/apollo/blob/ed9785c87b390c22efece9ea7ec7eeab2d20a042/apollo-common/src/main/java/com/ctrip/framework/apollo/common/entity/App.java#L31-L37), [Hibernate configuration](https://github.com/apolloconfig/apollo/blob/ed9785c87b390c22efece9ea7ec7eeab2d20a042/apollo-portal/src/main/resources/application.yml#L19-L24), [Hibernate metadata integration](https://github.com/apolloconfig/apollo/blob/ed9785c87b390c22efece9ea7ec7eeab2d20a042/apollo-common/src/main/java/com/ctrip/framework/apollo/common/jpa/SqlFunctionsMetadataBuilderContributor.java#L19-L32).
+- ThingsBoard 4.3.1.4: [mapped superclass](https://github.com/thingsboard/thingsboard/blob/a488a4c138971c0264bf7fdc879871f68eead1e4/dao/src/main/java/org/thingsboard/server/dao/model/sql/AbstractDeviceEntity.java#L43-L56), [DeviceEntity](https://github.com/thingsboard/thingsboard/blob/a488a4c138971c0264bf7fdc879871f68eead1e4/dao/src/main/java/org/thingsboard/server/dao/model/sql/DeviceEntity.java#L27-L29), [Hibernate Session usage](https://github.com/thingsboard/thingsboard/blob/a488a4c138971c0264bf7fdc879871f68eead1e4/dao/src/main/java/org/thingsboard/server/dao/sql/JpaAbstractDao.java#L128-L132).
+- Broadleaf Commerce 7.0.7-GA: [OrderItemImpl root](https://github.com/BroadleafCommerce/BroadleafCommerce/blob/179117fddfb05a9bb302dc63cda07291f4fed781/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/order/domain/OrderItemImpl.java#L94-L104), [DiscreteOrderItemImpl subtype](https://github.com/BroadleafCommerce/BroadleafCommerce/blob/179117fddfb05a9bb302dc63cda07291f4fed781/core/broadleaf-framework/src/main/java/org/broadleafcommerce/core/order/domain/DiscreteOrderItemImpl.java#L67-L89), [Hibernate configuration](https://github.com/BroadleafCommerce/BroadleafCommerce/blob/179117fddfb05a9bb302dc63cda07291f4fed781/common/src/main/java/org/broadleafcommerce/common/config/BroadleafCommonConfig.java#L59-L66).
+- OpenMRS 2.7.6: [Order root mapping](https://github.com/openmrs/openmrs-core/blob/d8057a05f2796c8286bbba914350cce45793736c/api/src/main/resources/org/openmrs/api/db/hibernate/Order.hbm.xml#L19-L24), [DrugOrder joined-subclass mapping](https://github.com/openmrs/openmrs-core/blob/d8057a05f2796c8286bbba914350cce45793736c/api/src/main/resources/org/openmrs/api/db/hibernate/Order.hbm.xml#L103-L110), [mapping registration](https://github.com/openmrs/openmrs-core/blob/d8057a05f2796c8286bbba914350cce45793736c/api/src/main/resources/hibernate.cfg.xml#L66), [Hibernate session-factory configuration](https://github.com/openmrs/openmrs-core/blob/d8057a05f2796c8286bbba914350cce45793736c/api/src/main/resources/applicationContext-service.xml#L572-L575).
+- OpenRemote 1.30.0: [Asset root and discriminator](https://github.com/openremote/openremote/blob/bf6ea01acd63552bfc9eaae07d44d10dd4000424/model/src/main/java/org/openremote/model/asset/Asset.java#L245-L248), [ThingAsset subtype](https://github.com/openremote/openremote/blob/bf6ea01acd63552bfc9eaae07d44d10dd4000424/model/src/main/java/org/openremote/model/asset/impl/ThingAsset.java#L25-L30), [Hibernate provider](https://github.com/openremote/openremote/blob/bf6ea01acd63552bfc9eaae07d44d10dd4000424/container/src/main/java/org/openremote/container/persistence/PersistenceService.java#L119-L121), [entity registration](https://github.com/openremote/openremote/blob/bf6ea01acd63552bfc9eaae07d44d10dd4000424/container/src/main/java/org/openremote/container/persistence/PersistenceService.java#L374-L408).
+- Axelor Open Suite 9.1.7: [BankStatementLine root](https://github.com/axelor/axelor-open-suite/blob/d83c5402faf5abf801a9299e000e16441035ee36/axelor-bank-payment/src/main/resources/domains/BankStatementLine.xml#L8-L15), [AFB120 subtype](https://github.com/axelor/axelor-open-suite/blob/d83c5402faf5abf801a9299e000e16441035ee36/axelor-bank-payment/src/main/resources/domains/BankStatementLineAFB120.xml#L8-L13), [CAMT53 subtype](https://github.com/axelor/axelor-open-suite/blob/d83c5402faf5abf801a9299e000e16441035ee36/axelor-bank-payment/src/main/resources/domains/BankStatementLineCAMT53.xml#L8-L12), [Open Platform integration](https://github.com/axelor/axelor-open-suite/blob/d83c5402faf5abf801a9299e000e16441035ee36/README.md#L17).
+- Axelor Open Platform 8.2.3: [generator translates CLASS to TABLE_PER_CLASS](https://github.com/axelor/axelor-open-platform/blob/1c4f31a16f876d2ce3e1a0bb26dc0e8f445eaebd/axelor-tools/src/main/java/com/axelor/tools/code/entity/model/Entity.java#L616-L624), [Hibernate dependency](https://github.com/axelor/axelor-open-platform/blob/1c4f31a16f876d2ce3e1a0bb26dc0e8f445eaebd/gradle/libs.gradle#L115-L120), [Hibernate JPA setup](https://github.com/axelor/axelor-open-platform/blob/1c4f31a16f876d2ce3e1a0bb26dc0e8f445eaebd/axelor-core/src/main/java/com/axelor/db/JpaModule.java#L29-L45).
+- GitHub repository API — star-count snapshot retrieved 2026-09-08: [Apollo](https://api.github.com/repos/apolloconfig/apollo), [ThingsBoard](https://api.github.com/repos/thingsboard/thingsboard), [Broadleaf](https://api.github.com/repos/BroadleafCommerce/BroadleafCommerce), [OpenMRS](https://api.github.com/repos/openmrs/openmrs-core), [OpenRemote](https://api.github.com/repos/openremote/openremote), [Axelor Open Suite](https://api.github.com/repos/axelor/axelor-open-suite).
