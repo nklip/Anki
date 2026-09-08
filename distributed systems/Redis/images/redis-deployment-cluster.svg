@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="416" height="300" viewBox="0 25 416 300" role="img" aria-labelledby="title desc">
+<title id="title">Redis Cluster deployment</title><desc id="desc">Three primary servers, Primary 1, Primary 2, and Primary 3, each hold a shard and asynchronously copy it to the corresponding Replica 1, Replica 2, or Replica 3. Cluster-aware clients route reads and writes to the primary owning the key; optional replica reads can lag. Dashed cross-node lines illustrate cluster communication, including gossip, while solid primary-to-replica arrows show data replication.</desc>
+<!-- Adapted role names and captions retain the hand-drawn deployment style. -->
+<defs><style>text { font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; fill: #273443; } .line {fill:none;stroke:#273443;stroke-linecap:round;stroke-linejoin:round}</style>
+<!-- Redis mark copied from system design/16. Proximity Service/images/final-design.svg.
+     Exact geometry from the MIT-licensed Devicon redis-original icon
+     (github.com/devicons/devicon, icons/redis/redis-original.svg).
+     Red preserves the source palette; yellow identifies replicas and grey identifies Sentinels.
+     The native artwork viewBox and aspect ratio are preserved in every instance. -->
+<symbol id="redis-red" viewBox="1.2 10.2 125.6 107.6">
+      <path fill="#b30001" d="M121.8 93.1c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.9-11.5 3.8-17.3 1S13 98.1 6.3 94.9c-3.3-1.6-5-2.9-5-4.2V78s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c0 1.3-1.5 2.7-4.9 4.4z"/>
+      <path fill="#ec0000" d="M121.8 80.5C115.1 84 80.4 98.2 73 102.1c-7.4 3.9-11.5 3.8-17.3 1-5.8-2.8-42.7-17.7-49.4-20.9C-.3 79-.5 76.8 6 74.3c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#b30001" d="M121.8 72.5C115.1 76 80.4 90.2 73 94.1c-7.4 3.8-11.5 3.8-17.3 1C49.9 92.3 13 77.4 6.3 74.2c-3.3-1.6-5-2.9-5-4.2V57.3s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9V68c0 1.3-1.5 2.7-4.9 4.5z"/>
+      <path fill="#ec0000" d="M121.8 59.8c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 79.6 13 64.7 6.3 61.5s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#b30001" d="M121.8 51c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 70.9 13 56 6.3 52.8c-3.3-1.6-5.1-2.9-5.1-4.2V35.9s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c.1 1.3-1.4 2.6-4.8 4.4z"/>
+      <path fill="#ec0000" d="M121.8 38.3C115.1 41.8 80.4 56 73 59.9c-7.4 3.8-11.5 3.8-17.3 1S13 43.3 6.3 40.1s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.8z"/>
+      <!-- Top face: white star, white wedge, white ellipse, and the recessed dark corner. -->
+      <path fill="#fff" d="M80.4 26.1l-10.8 1.2-2.5 5.8-3.9-6.5-12.5-1.1 9.3-3.4-2.8-5.2 8.8 3.4 8.2-2.7L72 23z"/>
+      <path fill="#fff" d="M66.5 54.5l-20.3-8.4 29.1-4.4z"/>
+      <ellipse fill="#fff" cx="38.4" cy="35.4" rx="15.5" ry="6"/>
+      <path fill="#870000" d="M93.3 27.7l17.2 6.8-17.2 6.8z"/>
+      <path fill="#a20304" d="M74.3 35.3l19-7.6v13.6l-1.9.8z"/>
+    </symbol>
+<symbol id="redis-yellow" viewBox="1.2 10.2 125.6 107.6">
+      <path fill="#b9892b" d="M121.8 93.1c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.9-11.5 3.8-17.3 1S13 98.1 6.3 94.9c-3.3-1.6-5-2.9-5-4.2V78s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c0 1.3-1.5 2.7-4.9 4.4z"/>
+      <path fill="#e8b344" d="M121.8 80.5C115.1 84 80.4 98.2 73 102.1c-7.4 3.9-11.5 3.8-17.3 1-5.8-2.8-42.7-17.7-49.4-20.9C-.3 79-.5 76.8 6 74.3c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#b9892b" d="M121.8 72.5C115.1 76 80.4 90.2 73 94.1c-7.4 3.8-11.5 3.8-17.3 1C49.9 92.3 13 77.4 6.3 74.2c-3.3-1.6-5-2.9-5-4.2V57.3s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9V68c0 1.3-1.5 2.7-4.9 4.5z"/>
+      <path fill="#e8b344" d="M121.8 59.8c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 79.6 13 64.7 6.3 61.5s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#b9892b" d="M121.8 51c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 70.9 13 56 6.3 52.8c-3.3-1.6-5.1-2.9-5.1-4.2V35.9s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c.1 1.3-1.4 2.6-4.8 4.4z"/>
+      <path fill="#e8b344" d="M121.8 38.3C115.1 41.8 80.4 56 73 59.9c-7.4 3.8-11.5 3.8-17.3 1S13 43.3 6.3 40.1s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.8z"/>
+      <!-- Top face: white star, white wedge, white ellipse, and the recessed dark corner. -->
+      <path fill="#fff" d="M80.4 26.1l-10.8 1.2-2.5 5.8-3.9-6.5-12.5-1.1 9.3-3.4-2.8-5.2 8.8 3.4 8.2-2.7L72 23z"/>
+      <path fill="#fff" d="M66.5 54.5l-20.3-8.4 29.1-4.4z"/>
+      <ellipse fill="#fff" cx="38.4" cy="35.4" rx="15.5" ry="6"/>
+      <path fill="#806018" d="M93.3 27.7l17.2 6.8-17.2 6.8z"/>
+      <path fill="#a57923" d="M74.3 35.3l19-7.6v13.6l-1.9.8z"/>
+    </symbol>
+</defs>
+<rect y="25" width="416" height="300" fill="#ffffff"/>
+<g transform="translate(198 0) scale(.86 1)"><text x="0" y="62" font-size="21" text-anchor="middle" class="" >Redis Cluster</text>
+</g><text x="91" y="79" font-size="12" text-anchor="middle" class="" >read/write</text>
+<text x="220" y="84" font-size="11" text-anchor="middle" class="" >async replication</text>
+<text x="331" y="78" font-size="11" text-anchor="middle" class="" >optional reads</text>
+<!-- Clients sit in hand-drawn grouping panels on both sides. -->
+<path class="line" d="M9 107 Q37 104 60 107 Q59 136 62 190 Q64 227 61 270 Q35 270 9 272 Q8 235 9 194 Q8 144 9 107Z" stroke-width="1.5"/>
+<path class="line" d="M353 105 Q379 102 403 106 Q401 144 404 210 Q406 238 403 268 L352 269 Q351 216 352 174 Q351 135 353 105Z" stroke-width="1.5"/>
+<g id="left-client-0" stroke="#273443" stroke-width="1.2"><circle cx="31" cy="127" r="5.3" fill="white"/><path d="M23 143 Q23 133 31 133 Q39 133 39 143Z" fill="#e8b341"/></g><g id="left-client-1" stroke="#273443" stroke-width="1.2"><circle cx="31" cy="154" r="5.3" fill="white"/><path d="M23 170 Q23 160 31 160 Q39 160 39 170Z" fill="#e8b341"/></g><g id="left-client-2" stroke="#273443" stroke-width="1.2"><circle cx="31" cy="206" r="5.3" fill="white"/><path d="M23 222 Q23 212 31 212 Q39 212 39 222Z" fill="#e8b341"/></g><g id="left-client-3" stroke="#273443" stroke-width="1.2"><circle cx="31" cy="236" r="5.3" fill="white"/><path d="M23 252 Q23 242 31 242 Q39 242 39 252Z" fill="#e8b341"/></g><g id="right-client-0" stroke="#273443" stroke-width="1.2"><circle cx="374" cy="125" r="5.3" fill="white"/><path d="M366 141 Q366 131 374 131 Q382 131 382 141Z" fill="#e8b341"/></g><g id="right-client-1" stroke="#273443" stroke-width="1.2"><circle cx="374" cy="152" r="5.3" fill="white"/><path d="M366 168 Q366 158 374 158 Q382 158 382 168Z" fill="#e8b341"/></g><g id="right-client-2" stroke="#273443" stroke-width="1.2"><circle cx="374" cy="204" r="5.3" fill="white"/><path d="M366 220 Q366 210 374 210 Q382 210 382 220Z" fill="#e8b341"/></g><g id="right-client-3" stroke="#273443" stroke-width="1.2"><circle cx="374" cy="234" r="5.3" fill="white"/><path d="M366 250 Q366 240 374 240 Q382 240 382 250Z" fill="#e8b341"/></g><text x="34" y="190" font-size="14" text-anchor="middle" class="" >Clients</text>
+<text x="375" y="188" font-size="14" text-anchor="middle" class="" >Clients</text>
+<!-- Bidirectional request-response paths stop short of client boxes and server icons. -->
+<path id="left-client-exchange-0" class="line" data-connector="true" d="M67 132 Q90 133 111 131" stroke-width="2"/><path id="left-exchange-start-0" class="line" d="M74 128 L67 132 L74 135" stroke-width="2"/><path id="left-exchange-end-0" class="line" d="M104 127 L112 131 L105 135" stroke-width="2"/><path id="left-client-exchange-1" class="line" data-connector="true" d="M67 185 Q90 186 111 184" stroke-width="2"/><path id="left-exchange-start-1" class="line" d="M74 181 L67 185 L74 188" stroke-width="2"/><path id="left-exchange-end-1" class="line" d="M104 180 L112 184 L105 188" stroke-width="2"/><path id="left-client-exchange-2" class="line" data-connector="true" d="M67 237 Q90 238 111 236" stroke-width="2"/><path id="left-exchange-start-2" class="line" d="M74 233 L67 237 L74 240" stroke-width="2"/><path id="left-exchange-end-2" class="line" d="M104 232 L112 236 L105 240" stroke-width="2"/><path id="right-client-exchange-0" class="line" data-connector="true" d="M299 131 Q322 132 343 130" stroke-width="2"/><path id="right-exchange-start-0" class="line" d="M306 127 L299 131 L306 134" stroke-width="2"/><path id="right-exchange-end-0" class="line" d="M336 126 L344 130 L337 134" stroke-width="2"/><path id="right-client-exchange-1" class="line" data-connector="true" d="M299 184 Q322 185 343 183" stroke-width="2"/><path id="right-exchange-start-1" class="line" d="M306 180 L299 184 L306 187" stroke-width="2"/><path id="right-exchange-end-1" class="line" d="M336 179 L344 183 L337 187" stroke-width="2"/><path id="right-client-exchange-2" class="line" data-connector="true" d="M299 236 Q322 237 343 235" stroke-width="2"/><path id="right-exchange-start-2" class="line" d="M306 232 L299 236 L306 239" stroke-width="2"/><path id="right-exchange-end-2" class="line" d="M336 231 L344 235 L337 239" stroke-width="2"/><!-- Annotation arrows are separate from traffic paths. -->
+<path id="write-annotation" class="line" data-connector="true" d="M99 87 Q105 101 92 116" stroke-width="2.2"/><path id="write-annotation-head" class="line" d="M92 108 L92 117 L99 112" stroke-width="2.2"/><path id="replication-annotation" class="line" data-connector="true" d="M208 92 Q216 105 207 121" stroke-width="2.2"/><path id="replication-annotation-head" class="line" d="M207 113 L207 121 L212 116" stroke-width="2.2"/><path id="read-annotation" class="line" data-connector="true" d="M328 87 Q338 99 332 116" stroke-width="2.2"/><path id="read-annotation-head" class="line" d="M331 108 L332 117 L338 111" stroke-width="2.2"/><!-- Faint dashed cross-links retain the source’s gossip/network-mesh depiction, behind data replication. Endpoints stop short of solid arrowheads to preserve their clearance. -->
+<path id="gossip-cross-link-0" class="line" data-connector="true" d="M173 133 L239 176" stroke-width="1.15" stroke-dasharray="2 5"/><path id="gossip-cross-link-1" class="line" data-connector="true" d="M176 138 L238 219" stroke-width="1.15" stroke-dasharray="2 5"/><path id="gossip-cross-link-2" class="line" data-connector="true" d="M177 176 L240 133" stroke-width="1.15" stroke-dasharray="2 5"/><path id="gossip-cross-link-3" class="line" data-connector="true" d="M173 195 L240 220" stroke-width="1.15" stroke-dasharray="2 5"/><path id="gossip-cross-link-4" class="line" data-connector="true" d="M174 224 L240 196" stroke-width="1.15" stroke-dasharray="2 5"/><path id="gossip-cross-link-5" class="line" data-connector="true" d="M172 229 L240 137" stroke-width="1.15" stroke-dasharray="2 5"/><!-- Primary-to-replica arrows sit above the dashed mesh. -->
+<path id="shard-replication-0" class="line" data-connector="true" d="M172 128 Q200 125 240 125" stroke-width="2.4"/><path id="shard-head-0" class="line" d="M231 121 L240 125 L231 129" stroke-width="2.4"/><path id="shard-replication-1" class="line" data-connector="true" d="M172 187 Q200 184 240 184" stroke-width="2.4"/><path id="shard-head-1" class="line" d="M231 180 L240 184 L231 188" stroke-width="2.4"/><path id="shard-replication-2" class="line" data-connector="true" d="M172 233 Q200 230 240 230" stroke-width="2.4"/><path id="shard-head-2" class="line" d="M231 226 L240 230 L231 234" stroke-width="2.4"/><!-- Reused Redis marks; primaries are red and replicas are yellow. -->
+<use id="primary-1" href="#redis-red" x="124" y="112" width="42" height="35.9809"/>
+<text id="primary-1-label" x="145" y="158" font-size="11" text-anchor="middle">Primary 1</text>
+<use id="primary-2" href="#redis-red" x="124" y="166" width="42" height="35.9809"/>
+<text id="primary-2-label" x="145" y="212" font-size="11" text-anchor="middle">Primary 2</text>
+<use id="primary-3" href="#redis-red" x="124" y="218" width="42" height="35.9809"/>
+<text id="primary-3-label" x="145" y="265" font-size="11" text-anchor="middle">Primary 3</text>
+<use id="replica-1" href="#redis-yellow" x="248" y="112" width="42" height="35.9809"/>
+<text id="replica-1-label" x="269" y="158" font-size="11" text-anchor="middle">Replica 1</text>
+<use id="replica-2" href="#redis-yellow" x="248" y="166" width="42" height="35.9809"/>
+<text id="replica-2-label" x="269" y="212" font-size="11" text-anchor="middle">Replica 2</text>
+<use id="replica-3" href="#redis-yellow" x="248" y="218" width="42" height="35.9809"/>
+<text id="replica-3-label" x="269" y="265" font-size="11" text-anchor="middle">Replica 3</text>
+<!-- Gossip annotation crosses only non-text mesh geometry, as in the source. -->
+<path id="gossip-annotation" class="line" data-connector="true" d="M189 216 L232 271" stroke-width="1.6"/><path id="gossip-annotation-head" class="line" d="M227 269 L232 271 L232 266" stroke-width="1.6"/><text x="245" y="280" font-size="12" text-anchor="start" class="" >gossip</text>
+<!-- One numbered pair is one shard; replica reads trade freshness for read capacity. -->
+<text id="shard-note" x="208" y="301" font-size="12" text-anchor="middle">One shard per primary; its replica holds a copy.</text>
+<text id="replica-read-note" x="208" y="318" font-size="12" text-anchor="middle">Replica reads can lag.</text>
+</svg>

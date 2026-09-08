@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="175" viewBox="0 30 320 175" role="img" aria-labelledby="title desc">
+<title id="title">Redis primary and replica</title>
+<desc id="desc">A Redis primary asynchronously copies its dataset to a replica. The arrow points from primary to replica. Replication alone does not provide automatic failover.</desc>
+<!-- Shared typography and Redis symbols for the compact, borderless replication diagram. -->
+<defs>
+<style>text { fill: #24313e; font-family: "Comic Sans MS", "Chalkboard", sans-serif; }</style>
+<!-- Redis mark copied from system design/16. Proximity Service/images/final-design.svg.
+     Geometry is the MIT-licensed Devicon redis-original icon (github.com/devicons/devicon,
+     icons/redis/redis-original.svg). Preserve its native aspect ratio; colors distinguish
+     red primaries from yellow replicas. Each diagram embeds its own complete symbols. -->
+<symbol id="redis-red" viewBox="1.2 10.2 125.6 107.6">
+      <path fill="#b30001" d="M121.8 93.1c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.9-11.5 3.8-17.3 1S13 98.1 6.3 94.9c-3.3-1.6-5-2.9-5-4.2V78s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c0 1.3-1.5 2.7-4.9 4.4z"/>
+      <path fill="#ec0000" d="M121.8 80.5C115.1 84 80.4 98.2 73 102.1c-7.4 3.9-11.5 3.8-17.3 1-5.8-2.8-42.7-17.7-49.4-20.9C-.3 79-.5 76.8 6 74.3c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#b30001" d="M121.8 72.5C115.1 76 80.4 90.2 73 94.1c-7.4 3.8-11.5 3.8-17.3 1C49.9 92.3 13 77.4 6.3 74.2c-3.3-1.6-5-2.9-5-4.2V57.3s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9V68c0 1.3-1.5 2.7-4.9 4.5z"/>
+      <path fill="#ec0000" d="M121.8 59.8c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 79.6 13 64.7 6.3 61.5s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#b30001" d="M121.8 51c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 70.9 13 56 6.3 52.8c-3.3-1.6-5.1-2.9-5.1-4.2V35.9s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c.1 1.3-1.4 2.6-4.8 4.4z"/>
+      <path fill="#ec0000" d="M121.8 38.3C115.1 41.8 80.4 56 73 59.9c-7.4 3.8-11.5 3.8-17.3 1S13 43.3 6.3 40.1s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.8z"/>
+      <!-- Top face: white star, white wedge, white ellipse, and the recessed dark corner. -->
+      <path fill="#fff" d="M80.4 26.1l-10.8 1.2-2.5 5.8-3.9-6.5-12.5-1.1 9.3-3.4-2.8-5.2 8.8 3.4 8.2-2.7L72 23z"/>
+      <path fill="#fff" d="M66.5 54.5l-20.3-8.4 29.1-4.4z"/>
+      <ellipse fill="#fff" cx="38.4" cy="35.4" rx="15.5" ry="6"/>
+      <path fill="#870000" d="M93.3 27.7l17.2 6.8-17.2 6.8z"/>
+      <path fill="#a20304" d="M74.3 35.3l19-7.6v13.6l-1.9.8z"/>
+    </symbol>
+<symbol id="redis-yellow" viewBox="1.2 10.2 125.6 107.6">
+      <path fill="#b9892b" d="M121.8 93.1c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.9-11.5 3.8-17.3 1S13 98.1 6.3 94.9c-3.3-1.6-5-2.9-5-4.2V78s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c0 1.3-1.5 2.7-4.9 4.4z"/>
+      <path fill="#e8b344" d="M121.8 80.5C115.1 84 80.4 98.2 73 102.1c-7.4 3.9-11.5 3.8-17.3 1-5.8-2.8-42.7-17.7-49.4-20.9C-.3 79-.5 76.8 6 74.3c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#b9892b" d="M121.8 72.5C115.1 76 80.4 90.2 73 94.1c-7.4 3.8-11.5 3.8-17.3 1C49.9 92.3 13 77.4 6.3 74.2c-3.3-1.6-5-2.9-5-4.2V57.3s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9V68c0 1.3-1.5 2.7-4.9 4.5z"/>
+      <path fill="#e8b344" d="M121.8 59.8c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 79.6 13 64.7 6.3 61.5s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#b9892b" d="M121.8 51c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 70.9 13 56 6.3 52.8c-3.3-1.6-5.1-2.9-5.1-4.2V35.9s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c.1 1.3-1.4 2.6-4.8 4.4z"/>
+      <path fill="#e8b344" d="M121.8 38.3C115.1 41.8 80.4 56 73 59.9c-7.4 3.8-11.5 3.8-17.3 1S13 43.3 6.3 40.1s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.8z"/>
+      <!-- Top face: white star, white wedge, white ellipse, and the recessed dark corner. -->
+      <path fill="#fff" d="M80.4 26.1l-10.8 1.2-2.5 5.8-3.9-6.5-12.5-1.1 9.3-3.4-2.8-5.2 8.8 3.4 8.2-2.7L72 23z"/>
+      <path fill="#fff" d="M66.5 54.5l-20.3-8.4 29.1-4.4z"/>
+      <ellipse fill="#fff" cx="38.4" cy="35.4" rx="15.5" ry="6"/>
+      <path fill="#806018" d="M93.3 27.7l17.2 6.8-17.2 6.8z"/>
+      <path fill="#a57923" d="M74.3 35.3l19-7.6v13.6l-1.9.8z"/>
+    </symbol>
+
+</defs>
+<rect y="30" width="320" height="175" fill="#fff"/>
+
+<!-- Adapted title names replication without implying automatic failover. -->
+<text id="replica-title" x="160" y="64" font-size="22" text-anchor="middle">Redis: primary + replica</text>
+<!-- Primary and replica share identical Redis geometry; face and side colors identify their roles. -->
+<use id="primary-redis" href="#redis-red" x="38" y="86.5" width="74.5" height="63.823"/>
+<use id="replica-redis" href="#redis-yellow" x="197" y="85.5" width="74.5" height="63.823"/>
+<!-- Primary-to-replica replication arrow; its open hand-drawn head joins the shaft cleanly. -->
+<path id="replication-arrow" data-connector="true" d="M130 117.7 Q154 118.6 179.7 116.8" fill="none" stroke="#293949" stroke-width="3.3" stroke-linecap="round"/>
+<path id="replication-arrowhead" d="M172.2 112.6 L179.7 116.8 L173.2 121.8" fill="none" stroke="#293949" stroke-width="3.3" stroke-linecap="round" stroke-linejoin="round"/>
+<!-- Direct arrow caption keeps the longer role names clear below their icons. -->
+<text id="replication-label" x="155" y="101" font-size="12" text-anchor="middle">async copy</text>
+<text id="primary-label" x="75" y="174" font-size="22" text-anchor="middle">Primary</text>
+<text id="replica-label" x="234" y="174" font-size="22" text-anchor="middle">Replica</text>
+<!-- The deployment limitation belongs to the diagram itself. -->
+<text id="failover-note" x="160" y="196" font-size="12" text-anchor="middle">No automatic failover</text>
+</svg>

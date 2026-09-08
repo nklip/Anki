@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="472" viewBox="0 0 1100 472" role="img" aria-labelledby="title desc">
+<title id="title">Inside one Redis instance</title><desc id="desc">Backend connections enter an event loop. Core commands execute serially and access keys with typed values in random-access memory. A long command delays other commands on this instance; network and background work may use other threads.</desc>
+<!-- Redis icon geometry is the MIT-licensed Devicon redis-original icon,
+     reused from the neighboring deployment diagrams. -->
+<defs>
+<symbol id="redis-red" viewBox="1.2 10.2 125.6 107.6">
+      <path fill="#b30001" d="M121.8 93.1c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.9-11.5 3.8-17.3 1S13 98.1 6.3 94.9c-3.3-1.6-5-2.9-5-4.2V78s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c0 1.3-1.5 2.7-4.9 4.4z"/>
+      <path fill="#ec0000" d="M121.8 80.5C115.1 84 80.4 98.2 73 102.1c-7.4 3.9-11.5 3.8-17.3 1-5.8-2.8-42.7-17.7-49.4-20.9C-.3 79-.5 76.8 6 74.3c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#b30001" d="M121.8 72.5C115.1 76 80.4 90.2 73 94.1c-7.4 3.8-11.5 3.8-17.3 1C49.9 92.3 13 77.4 6.3 74.2c-3.3-1.6-5-2.9-5-4.2V57.3s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9V68c0 1.3-1.5 2.7-4.9 4.5z"/>
+      <path fill="#ec0000" d="M121.8 59.8c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 79.6 13 64.7 6.3 61.5s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#b30001" d="M121.8 51c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 70.9 13 56 6.3 52.8c-3.3-1.6-5.1-2.9-5.1-4.2V35.9s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c.1 1.3-1.4 2.6-4.8 4.4z"/>
+      <path fill="#ec0000" d="M121.8 38.3C115.1 41.8 80.4 56 73 59.9c-7.4 3.8-11.5 3.8-17.3 1S13 43.3 6.3 40.1s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.8z"/>
+      <!-- Top face: white star, white wedge, white ellipse, and the recessed dark corner. -->
+      <path fill="#fff" d="M80.4 26.1l-10.8 1.2-2.5 5.8-3.9-6.5-12.5-1.1 9.3-3.4-2.8-5.2 8.8 3.4 8.2-2.7L72 23z"/>
+      <path fill="#fff" d="M66.5 54.5l-20.3-8.4 29.1-4.4z"/>
+      <ellipse fill="#fff" cx="38.4" cy="35.4" rx="15.5" ry="6"/>
+      <path fill="#870000" d="M93.3 27.7l17.2 6.8-17.2 6.8z"/>
+      <path fill="#a20304" d="M74.3 35.3l19-7.6v13.6l-1.9.8z"/>
+    </symbol>
+<!-- A 2.5-unit nose inset covers the 1.8-unit shaft; connector endpoints compensate for it. -->
+<marker id="arrow" markerWidth="10" markerHeight="10" viewBox="0 0 10 10" refX="7.5" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="#111"/></marker>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#111}.box{fill:#fff;stroke:#111;stroke-width:1.8}.flow{fill:none;stroke:#111;stroke-width:1.8;stroke-linejoin:round;marker-end:url(#arrow)}.plain{fill:none;stroke:#111;stroke-width:1.8}</style>
+</defs>
+<rect width="1100" height="472" fill="#fff"/>
+<!-- Scope: one instance and its command path; recovery mechanisms are taught separately. -->
+<text x="550" y="40" font-size="26" text-anchor="middle" font-weight="700">Inside one Redis instance</text>
+<text x="550" y="73" font-size="18" text-anchor="middle">Many connections share one command executor and typed values in memory.</text>
+<!-- The enclosure marks the Redis instance; all key operations execute within it. -->
+<rect id="redis-process-boundary" class="box" x="285" y="104" width="790" height="280"/>
+<use id="instance-redis-icon" href="#redis-red" x="312" y="124" width="66" height="56.5414"/>
+<text x="404" y="160" font-size="22" text-anchor="start">Redis instance · normal command path</text>
+<!-- backend-connections: application service -->
+<rect id="backend-connections" class="box" x="22" y="221" width="190" height="128"/>
+<text x="117.0" y="252" font-size="22" text-anchor="middle">Backend clients</text>
+<text x="117.0" y="279" font-size="17" text-anchor="middle">App servers A, B, C</text>
+<text x="117.0" y="302" font-size="17" text-anchor="middle">GET product:42</text>
+<text x="117.0" y="325" font-size="17" text-anchor="middle">INCR views:42</text>
+<!-- event-loop: application service -->
+<rect id="event-loop" class="box" x="310" y="218" width="182" height="136"/>
+<text x="401.0" y="249" font-size="22" text-anchor="middle">Event loop</text>
+<text x="401.0" y="276" font-size="17" text-anchor="middle">Serve ready</text>
+<text x="401.0" y="299" font-size="17" text-anchor="middle">connections</text>
+<!-- serial-command-execution: application service -->
+<rect id="serial-command-execution" class="box" x="564" y="218" width="190" height="136"/>
+<text x="659.0" y="249" font-size="22" text-anchor="middle">Core execution</text>
+<text x="659.0" y="276" font-size="17" text-anchor="middle">One command</text>
+<text x="659.0" y="299" font-size="17" text-anchor="middle">at a time</text>
+<!-- ram-key-dictionary: application service -->
+<rect id="ram-key-dictionary" class="box" x="834" y="218" width="222" height="136"/>
+<text x="945.0" y="249" font-size="22" text-anchor="middle">RAM dictionary</text>
+<text x="945.0" y="276" font-size="17" text-anchor="middle">Keys → typed values</text>
+<text x="945.0" y="299" font-size="17" text-anchor="middle">product:42 → string</text>
+<text x="945.0" y="322" font-size="17" text-anchor="middle">views:42 → integer string</text>
+<!-- All normal-path arrows point into the next processing step; labels stay in reserved gutters. -->
+<path id="backend-to-event-loop" class="flow" d="M212 290 L307.5 290"/>
+<text x="261" y="274" font-size="18" text-anchor="middle">send</text>
+<path id="event-loop-dispatch" class="flow" d="M492 290 L561.5 290"/>
+<text x="528" y="274" font-size="16" text-anchor="middle">dispatch</text>
+<path id="command-key-lookup" class="flow" d="M754 290 L831.5 290"/>
+<text x="794" y="274" font-size="16" text-anchor="middle">lookup</text>
+<!-- Compact capacity notes stay below the process boundary and clear of all connectors. -->
+<text x="550" y="418" font-size="18" text-anchor="middle">RAM = random-access memory. A long command delays other commands on this instance.</text>
+<text x="550" y="448" font-size="17" text-anchor="middle">Core execution is mostly serial; networking and background work may use other threads.</text>
+</svg>

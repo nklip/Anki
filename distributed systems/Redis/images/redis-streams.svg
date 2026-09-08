@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="755" viewBox="0 0 1000 755" role="img" aria-labelledby="title desc">
+<title id="title">Streams: background exports</title><desc id="desc">A user requests an export. The API adds a small job entry to a Redis Stream. A worker group processes the job, saves the outcome and report, and acknowledges only after success. The user gets an authorized download through a CDN.</desc>
+<!-- Shared system-design icons: Redis geometry copied from redis-deployment-sentinel.svg,
+     originally the MIT-licensed Devicon redis-original icon. Person and database symbols
+     are copied from system design/16. Proximity Service/images/final-design.svg. -->
+<defs>
+<symbol id="redis-red" viewBox="1.2 10.2 125.6 107.6">
+      <path fill="#b30001" d="M121.8 93.1c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.9-11.5 3.8-17.3 1S13 98.1 6.3 94.9c-3.3-1.6-5-2.9-5-4.2V78s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c0 1.3-1.5 2.7-4.9 4.4z"/>
+      <path fill="#ec0000" d="M121.8 80.5C115.1 84 80.4 98.2 73 102.1c-7.4 3.9-11.5 3.8-17.3 1-5.8-2.8-42.7-17.7-49.4-20.9C-.3 79-.5 76.8 6 74.3c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#b30001" d="M121.8 72.5C115.1 76 80.4 90.2 73 94.1c-7.4 3.8-11.5 3.8-17.3 1C49.9 92.3 13 77.4 6.3 74.2c-3.3-1.6-5-2.9-5-4.2V57.3s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9V68c0 1.3-1.5 2.7-4.9 4.5z"/>
+      <path fill="#ec0000" d="M121.8 59.8c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 79.6 13 64.7 6.3 61.5s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#b30001" d="M121.8 51c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 70.9 13 56 6.3 52.8c-3.3-1.6-5.1-2.9-5.1-4.2V35.9s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c.1 1.3-1.4 2.6-4.8 4.4z"/>
+      <path fill="#ec0000" d="M121.8 38.3C115.1 41.8 80.4 56 73 59.9c-7.4 3.8-11.5 3.8-17.3 1S13 43.3 6.3 40.1s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.8z"/>
+      <!-- Top face: white star, white wedge, white ellipse, and the recessed dark corner. -->
+      <path fill="#fff" d="M80.4 26.1l-10.8 1.2-2.5 5.8-3.9-6.5-12.5-1.1 9.3-3.4-2.8-5.2 8.8 3.4 8.2-2.7L72 23z"/>
+      <path fill="#fff" d="M66.5 54.5l-20.3-8.4 29.1-4.4z"/>
+      <ellipse fill="#fff" cx="38.4" cy="35.4" rx="15.5" ry="6"/>
+      <path fill="#870000" d="M93.3 27.7l17.2 6.8-17.2 6.8z"/>
+      <path fill="#a20304" d="M74.3 35.3l19-7.6v13.6l-1.9.8z"/>
+    </symbol>
+<symbol id="redis-yellow" viewBox="1.2 10.2 125.6 107.6">
+      <path fill="#b9892b" d="M121.8 93.1c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.9-11.5 3.8-17.3 1S13 98.1 6.3 94.9c-3.3-1.6-5-2.9-5-4.2V78s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c0 1.3-1.5 2.7-4.9 4.4z"/>
+      <path fill="#e8b344" d="M121.8 80.5C115.1 84 80.4 98.2 73 102.1c-7.4 3.9-11.5 3.8-17.3 1-5.8-2.8-42.7-17.7-49.4-20.9C-.3 79-.5 76.8 6 74.3c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#b9892b" d="M121.8 72.5C115.1 76 80.4 90.2 73 94.1c-7.4 3.8-11.5 3.8-17.3 1C49.9 92.3 13 77.4 6.3 74.2c-3.3-1.6-5-2.9-5-4.2V57.3s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9V68c0 1.3-1.5 2.7-4.9 4.5z"/>
+      <path fill="#e8b344" d="M121.8 59.8c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 79.6 13 64.7 6.3 61.5s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#b9892b" d="M121.8 51c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 70.9 13 56 6.3 52.8c-3.3-1.6-5.1-2.9-5.1-4.2V35.9s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c.1 1.3-1.4 2.6-4.8 4.4z"/>
+      <path fill="#e8b344" d="M121.8 38.3C115.1 41.8 80.4 56 73 59.9c-7.4 3.8-11.5 3.8-17.3 1S13 43.3 6.3 40.1s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.8z"/>
+      <!-- Top face: white star, white wedge, white ellipse, and the recessed dark corner. -->
+      <path fill="#fff" d="M80.4 26.1l-10.8 1.2-2.5 5.8-3.9-6.5-12.5-1.1 9.3-3.4-2.8-5.2 8.8 3.4 8.2-2.7L72 23z"/>
+      <path fill="#fff" d="M66.5 54.5l-20.3-8.4 29.1-4.4z"/>
+      <ellipse fill="#fff" cx="38.4" cy="35.4" rx="15.5" ry="6"/>
+      <path fill="#806018" d="M93.3 27.7l17.2 6.8-17.2 6.8z"/>
+      <path fill="#a57923" d="M74.3 35.3l19-7.6v13.6l-1.9.8z"/>
+    </symbol>
+<symbol id="redis-grey" viewBox="1.2 10.2 125.6 107.6">
+      <path fill="#484b53" d="M121.8 93.1c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.9-11.5 3.8-17.3 1S13 98.1 6.3 94.9c-3.3-1.6-5-2.9-5-4.2V78s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c0 1.3-1.5 2.7-4.9 4.4z"/>
+      <path fill="#686b73" d="M121.8 80.5C115.1 84 80.4 98.2 73 102.1c-7.4 3.9-11.5 3.8-17.3 1-5.8-2.8-42.7-17.7-49.4-20.9C-.3 79-.5 76.8 6 74.3c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#484b53" d="M121.8 72.5C115.1 76 80.4 90.2 73 94.1c-7.4 3.8-11.5 3.8-17.3 1C49.9 92.3 13 77.4 6.3 74.2c-3.3-1.6-5-2.9-5-4.2V57.3s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9V68c0 1.3-1.5 2.7-4.9 4.5z"/>
+      <path fill="#686b73" d="M121.8 59.8c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 79.6 13 64.7 6.3 61.5s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#484b53" d="M121.8 51c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 70.9 13 56 6.3 52.8c-3.3-1.6-5.1-2.9-5.1-4.2V35.9s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c.1 1.3-1.4 2.6-4.8 4.4z"/>
+      <path fill="#686b73" d="M121.8 38.3C115.1 41.8 80.4 56 73 59.9c-7.4 3.8-11.5 3.8-17.3 1S13 43.3 6.3 40.1s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.8z"/>
+      <!-- Top face: white star, white wedge, white ellipse, and the recessed dark corner. -->
+      <path fill="#fff" d="M80.4 26.1l-10.8 1.2-2.5 5.8-3.9-6.5-12.5-1.1 9.3-3.4-2.8-5.2 8.8 3.4 8.2-2.7L72 23z"/>
+      <path fill="#fff" d="M66.5 54.5l-20.3-8.4 29.1-4.4z"/>
+      <ellipse fill="#fff" cx="38.4" cy="35.4" rx="15.5" ry="6"/>
+      <path fill="#2f3137" d="M93.3 27.7l17.2 6.8-17.2 6.8z"/>
+      <path fill="#3e4149" d="M74.3 35.3l19-7.6v13.6l-1.9.8z"/>
+    </symbol>
+<symbol id="person" viewBox="0 0 54 54"><circle cx="27" cy="12" r="11"/><path d="M3 49V41C3 29 51 29 51 41V49Z"/></symbol>
+<symbol id="database" viewBox="0 0 88 93">
+      <path d="M0.9 13.75A43.1 8.75 0 0 1 87.1 13.75V82.25A43.1 8.75 0 0 1 0.9 82.25Z" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+      <ellipse cx="44" cy="13.75" rx="43.1" ry="8.75" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+    </symbol>
+<!-- A 2.5-unit nose inset covers the 1.8-unit shaft; connector endpoints compensate for it. -->
+<marker id="arrow" markerWidth="10" markerHeight="10" viewBox="0 0 10 10" refX="7.5" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="#111"/></marker>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#111}.box{fill:#fff;stroke:#111;stroke-width:1.8}.flow{fill:none;stroke:#111;stroke-width:1.8;stroke-linejoin:round;marker-end:url(#arrow)}.plain{fill:none;stroke:#111;stroke-width:1.8}</style>
+</defs>
+<rect width="1000" height="755" fill="#fff"/>
+<!-- Title and reading cue; topology starts with the user at the left. -->
+<text x="500" y="40" font-size="26" text-anchor="middle" font-weight="bold">Streams: background exports</text>
+<text x="500" y="70" font-size="18" text-anchor="middle">Redis holds small job entries; durable storage holds job outcomes and report bytes.</text>
+<!-- User request and stream append. -->
+<use id="export-user" href="#person" x="72" y="135" width="68" height="68.0000"/>
+<text x="106" y="230" font-size="22" text-anchor="middle">User</text>
+<!-- export-api: application service -->
+<rect id="export-api" class="box" x="350" y="125" width="240" height="100"/>
+<text x="470.0" y="156" font-size="22" text-anchor="middle">Export API</text>
+<text x="470.0" y="183" font-size="17" text-anchor="middle">Return job ID + status</text>
+<text x="470.0" y="206" font-size="17" text-anchor="middle">Authorize download URL</text>
+<use id="export-stream" href="#redis-red" x="817" y="128" width="76" height="65.1083"/>
+<text x="855" y="230" font-size="22" text-anchor="middle">Redis Stream</text>
+<text x="855" y="255" font-size="17" text-anchor="middle">jobs:exports</text>
+<text x="855" y="278" font-size="17" text-anchor="middle">jobId:42, inputRef:obj7</text>
+<text x="855" y="301" font-size="17" text-anchor="middle">pending deliveries tracked</text>
+<path id="request-export" class="flow" d="M145 165 L347.5 165"/>
+<text x="247" y="140" font-size="17" text-anchor="middle">request / poll status</text>
+<path id="return-job-status-link" class="flow" d="M350 197 L147.5 197"/>
+<text x="247" y="223" font-size="17" text-anchor="middle">job ID / download link</text>
+<path id="append-job" class="flow" d="M590 165 L812.5 165"/>
+<text x="702" y="144" font-size="18" text-anchor="middle">XADD job 42</text>
+<!-- Stream delivery bends around the labels; acknowledgement uses the outer corridor. -->
+<!-- export-workers: application service -->
+<rect id="export-workers" class="box" x="735" y="395" width="240" height="115"/>
+<text x="855.0" y="426" font-size="22" text-anchor="middle">Worker group</text>
+<text x="855.0" y="453" font-size="17" text-anchor="middle">export-workers</text>
+<text x="855.0" y="476" font-size="17" text-anchor="middle">Process job, then XACK</text>
+<path id="read-group-job" class="flow" d="M817 178 L735 178 L735 340 L850 340 L850 392.5"/>
+<text x="640" y="305" font-size="17" text-anchor="middle">XREADGROUP</text>
+<text x="640" y="328" font-size="17" text-anchor="middle">delivers a job</text>
+<path id="ack-after-success" class="flow" d="M975 440 L987 440 L987 168 L897.5 168"/>
+<text x="925" y="343" font-size="16" text-anchor="middle">XACK</text>
+<text x="925" y="366" font-size="16" text-anchor="middle">after success</text>
+<!-- The database owns the durable request and business outcome. -->
+<use id="job-database" href="#database" x="412" y="390" width="76" height="80.3182" color="#fff"/>
+<text x="450" y="503" font-size="22" text-anchor="middle">Job database</text>
+<text x="450" y="527" font-size="17" text-anchor="middle">request + job 42 = ready</text>
+<path id="save-request-read-status" class="flow" d="M450 225 L450 386.5"/>
+<text x="360" y="300" font-size="17" text-anchor="middle">save request</text>
+<text x="360" y="323" font-size="17" text-anchor="middle">read status</text>
+<path id="record-outcome" class="flow" d="M735 440 L492.5 440"/>
+<text x="610" y="419" font-size="18" text-anchor="middle">record outcome</text>
+<!-- Large report bytes move from workers to object storage and through the CDN. -->
+<use id="report-storage" href="#database" x="817" y="574" width="76" height="80.3182" color="#fff"/>
+<text x="855" y="680" font-size="22" text-anchor="middle">Object storage</text>
+<path id="write-report" class="flow" d="M855 510 L855 571.5"/>
+<text x="915" y="549" font-size="17" text-anchor="middle">report.pdf</text>
+<!-- report-cdn: application service -->
+<rect id="report-cdn" class="box" x="350" y="578" width="240" height="80"/>
+<text x="470.0" y="609" font-size="22" text-anchor="middle">CDN</text>
+<text x="470.0" y="636" font-size="17" text-anchor="middle">Authorized report download</text>
+<use id="download-user" href="#person" x="72" y="586" width="68" height="68.0000"/>
+<text x="106" y="681" font-size="22" text-anchor="middle">User</text>
+<path id="fetch-report-bytes" class="flow" d="M815 615 L592.5 615"/>
+<text x="702" y="595" font-size="18" text-anchor="middle">file bytes</text>
+<path id="signed-download" class="flow" d="M350 615 L147.5 615"/>
+<text x="247" y="593" font-size="18" text-anchor="middle">report bytes</text>
+<!-- Pending-work semantics and durability remain visible beneath the data path. -->
+<text x="500" y="715" font-size="16" text-anchor="middle">A crash before XACK can repeat work: reclaim pending jobs and make effects idempotent.</text>
+<text x="500" y="739" font-size="16" text-anchor="middle">XACK clears pending status, not the stream entry. Define retention and persistence deliberately.</text>
+</svg>

@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="670" viewBox="0 0 1000 670" role="img" aria-labelledby="title desc">
+<title id="title">Redis and CDN serve different parts of a request</title><desc id="desc">A browser requests a public asset through a CDN, whose miss is served by an object origin. Private API requests reach a backend, which reads shared Redis state and authoritative database records. Replies return along the same routes.</desc>
+<!-- Shared system-design icons: Redis geometry copied from redis-deployment-sentinel.svg,
+     originally the MIT-licensed Devicon redis-original icon. Person and database symbols
+     are copied from system design/16. Proximity Service/images/final-design.svg. -->
+<defs>
+<symbol id="redis-red" viewBox="1.2 10.2 125.6 107.6">
+      <path fill="#b30001" d="M121.8 93.1c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.9-11.5 3.8-17.3 1S13 98.1 6.3 94.9c-3.3-1.6-5-2.9-5-4.2V78s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c0 1.3-1.5 2.7-4.9 4.4z"/>
+      <path fill="#ec0000" d="M121.8 80.5C115.1 84 80.4 98.2 73 102.1c-7.4 3.9-11.5 3.8-17.3 1-5.8-2.8-42.7-17.7-49.4-20.9C-.3 79-.5 76.8 6 74.3c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#b30001" d="M121.8 72.5C115.1 76 80.4 90.2 73 94.1c-7.4 3.8-11.5 3.8-17.3 1C49.9 92.3 13 77.4 6.3 74.2c-3.3-1.6-5-2.9-5-4.2V57.3s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9V68c0 1.3-1.5 2.7-4.9 4.5z"/>
+      <path fill="#ec0000" d="M121.8 59.8c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 79.6 13 64.7 6.3 61.5s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#b30001" d="M121.8 51c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 70.9 13 56 6.3 52.8c-3.3-1.6-5.1-2.9-5.1-4.2V35.9s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c.1 1.3-1.4 2.6-4.8 4.4z"/>
+      <path fill="#ec0000" d="M121.8 38.3C115.1 41.8 80.4 56 73 59.9c-7.4 3.8-11.5 3.8-17.3 1S13 43.3 6.3 40.1s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.8z"/>
+      <!-- Top face: white star, white wedge, white ellipse, and the recessed dark corner. -->
+      <path fill="#fff" d="M80.4 26.1l-10.8 1.2-2.5 5.8-3.9-6.5-12.5-1.1 9.3-3.4-2.8-5.2 8.8 3.4 8.2-2.7L72 23z"/>
+      <path fill="#fff" d="M66.5 54.5l-20.3-8.4 29.1-4.4z"/>
+      <ellipse fill="#fff" cx="38.4" cy="35.4" rx="15.5" ry="6"/>
+      <path fill="#870000" d="M93.3 27.7l17.2 6.8-17.2 6.8z"/>
+      <path fill="#a20304" d="M74.3 35.3l19-7.6v13.6l-1.9.8z"/>
+    </symbol>
+<symbol id="redis-yellow" viewBox="1.2 10.2 125.6 107.6">
+      <path fill="#b9892b" d="M121.8 93.1c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.9-11.5 3.8-17.3 1S13 98.1 6.3 94.9c-3.3-1.6-5-2.9-5-4.2V78s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c0 1.3-1.5 2.7-4.9 4.4z"/>
+      <path fill="#e8b344" d="M121.8 80.5C115.1 84 80.4 98.2 73 102.1c-7.4 3.9-11.5 3.8-17.3 1-5.8-2.8-42.7-17.7-49.4-20.9C-.3 79-.5 76.8 6 74.3c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#b9892b" d="M121.8 72.5C115.1 76 80.4 90.2 73 94.1c-7.4 3.8-11.5 3.8-17.3 1C49.9 92.3 13 77.4 6.3 74.2c-3.3-1.6-5-2.9-5-4.2V57.3s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9V68c0 1.3-1.5 2.7-4.9 4.5z"/>
+      <path fill="#e8b344" d="M121.8 59.8c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 79.6 13 64.7 6.3 61.5s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#b9892b" d="M121.8 51c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 70.9 13 56 6.3 52.8c-3.3-1.6-5.1-2.9-5.1-4.2V35.9s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c.1 1.3-1.4 2.6-4.8 4.4z"/>
+      <path fill="#e8b344" d="M121.8 38.3C115.1 41.8 80.4 56 73 59.9c-7.4 3.8-11.5 3.8-17.3 1S13 43.3 6.3 40.1s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.8z"/>
+      <!-- Top face: white star, white wedge, white ellipse, and the recessed dark corner. -->
+      <path fill="#fff" d="M80.4 26.1l-10.8 1.2-2.5 5.8-3.9-6.5-12.5-1.1 9.3-3.4-2.8-5.2 8.8 3.4 8.2-2.7L72 23z"/>
+      <path fill="#fff" d="M66.5 54.5l-20.3-8.4 29.1-4.4z"/>
+      <ellipse fill="#fff" cx="38.4" cy="35.4" rx="15.5" ry="6"/>
+      <path fill="#806018" d="M93.3 27.7l17.2 6.8-17.2 6.8z"/>
+      <path fill="#a57923" d="M74.3 35.3l19-7.6v13.6l-1.9.8z"/>
+    </symbol>
+<symbol id="redis-grey" viewBox="1.2 10.2 125.6 107.6">
+      <path fill="#484b53" d="M121.8 93.1c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.9-11.5 3.8-17.3 1S13 98.1 6.3 94.9c-3.3-1.6-5-2.9-5-4.2V78s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c0 1.3-1.5 2.7-4.9 4.4z"/>
+      <path fill="#686b73" d="M121.8 80.5C115.1 84 80.4 98.2 73 102.1c-7.4 3.9-11.5 3.8-17.3 1-5.8-2.8-42.7-17.7-49.4-20.9C-.3 79-.5 76.8 6 74.3c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#484b53" d="M121.8 72.5C115.1 76 80.4 90.2 73 94.1c-7.4 3.8-11.5 3.8-17.3 1C49.9 92.3 13 77.4 6.3 74.2c-3.3-1.6-5-2.9-5-4.2V57.3s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9V68c0 1.3-1.5 2.7-4.9 4.5z"/>
+      <path fill="#686b73" d="M121.8 59.8c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 79.6 13 64.7 6.3 61.5s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
+      <path fill="#484b53" d="M121.8 51c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.8-11.5 3.8-17.3 1C49.9 70.9 13 56 6.3 52.8c-3.3-1.6-5.1-2.9-5.1-4.2V35.9s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c.1 1.3-1.4 2.6-4.8 4.4z"/>
+      <path fill="#686b73" d="M121.8 38.3C115.1 41.8 80.4 56 73 59.9c-7.4 3.8-11.5 3.8-17.3 1S13 43.3 6.3 40.1s-6.8-5.4-.3-7.9c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.8z"/>
+      <!-- Top face: white star, white wedge, white ellipse, and the recessed dark corner. -->
+      <path fill="#fff" d="M80.4 26.1l-10.8 1.2-2.5 5.8-3.9-6.5-12.5-1.1 9.3-3.4-2.8-5.2 8.8 3.4 8.2-2.7L72 23z"/>
+      <path fill="#fff" d="M66.5 54.5l-20.3-8.4 29.1-4.4z"/>
+      <ellipse fill="#fff" cx="38.4" cy="35.4" rx="15.5" ry="6"/>
+      <path fill="#2f3137" d="M93.3 27.7l17.2 6.8-17.2 6.8z"/>
+      <path fill="#3e4149" d="M74.3 35.3l19-7.6v13.6l-1.9.8z"/>
+    </symbol>
+<symbol id="person" viewBox="0 0 54 54"><circle cx="27" cy="12" r="11"/><path d="M3 49V41C3 29 51 29 51 41V49Z"/></symbol>
+<symbol id="database" viewBox="0 0 88 93">
+      <path d="M0.9 13.75A43.1 8.75 0 0 1 87.1 13.75V82.25A43.1 8.75 0 0 1 0.9 82.25Z" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+      <ellipse cx="44" cy="13.75" rx="43.1" ry="8.75" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+    </symbol>
+<!-- A 2.5-unit nose inset covers the 1.8-unit shaft; connector endpoints compensate for it. -->
+<marker id="arrow" markerWidth="10" markerHeight="10" viewBox="0 0 10 10" refX="7.5" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="#111"/></marker>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#111}.box{fill:#fff;stroke:#111;stroke-width:1.8}.flow{fill:none;stroke:#111;stroke-width:1.8;stroke-linejoin:round;marker-end:url(#arrow)}.plain{fill:none;stroke:#111;stroke-width:1.8}</style>
+</defs>
+<rect width="1000" height="670" fill="#fff"/>
+<!-- Two user request paths separate public asset delivery from backend application-state access. -->
+<text x="500" y="35" font-size="26" text-anchor="middle" font-weight="700">Redis and CDN serve different parts of a request</text>
+<text x="500" y="65" font-size="17" text-anchor="middle">Request and lookup paths are shown; replies return along the same routes.</text>
+<use id="browser-user" href="#person" x="76" y="230" width="48" height="48.0000"/>
+<text x="100" y="309" font-size="22" text-anchor="middle">User</text>
+<text x="100" y="335" font-size="17" text-anchor="middle">Browser / app</text>
+<!-- cdn: application service -->
+<rect id="cdn" class="box" x="345" y="112" width="210" height="100"/>
+<text x="450.0" y="143" font-size="22" text-anchor="middle">CDN edge</text>
+<text x="450.0" y="170" font-size="17" text-anchor="middle">Public HTTP responses</text>
+<text x="450.0" y="193" font-size="17" text-anchor="middle">JS, CSS, images, video</text>
+<path id="asset-request" class="flow" d="M100 230 L100 162 L342.5 162"/>
+<text x="228" y="144" font-size="18" text-anchor="middle">/app.4f2.js</text>
+<use id="object-origin" href="#database" x="810" y="119" width="72" height="76.0909" color="#fff"/>
+<text x="846" y="233" font-size="22" text-anchor="middle">Object origin</text>
+<text x="846" y="258" font-size="17" text-anchor="middle">Original asset files</text>
+<text x="846" y="282" font-size="17" text-anchor="middle">Persistent storage</text>
+<path id="cdn-miss" class="flow" d="M555 162 L797.5 162"/>
+<text x="680" y="144" font-size="18" text-anchor="middle">on cache miss</text>
+<!-- backend: application service -->
+<rect id="backend" class="box" x="345" y="330" width="210" height="100"/>
+<text x="450.0" y="361" font-size="22" text-anchor="middle">Backend API</text>
+<text x="450.0" y="388" font-size="17" text-anchor="middle">Authenticate the user</text>
+<text x="450.0" y="411" font-size="17" text-anchor="middle">Build the cart response</text>
+<path id="api-request" class="flow" d="M124 253 L200 253 L200 380 L342.5 380"/>
+<text x="271" y="362" font-size="18" text-anchor="middle">/api/cart</text>
+<use id="redis-app-state" href="#redis-red" x="810" y="353" width="72" height="61.6815"/>
+<text x="846" y="451" font-size="22" text-anchor="middle">Redis</text>
+<text x="846" y="477" font-size="17" text-anchor="middle">cart:42 · session:abc</text>
+<path id="redis-lookup" class="flow" d="M555 384 L797.5 384"/>
+<text x="680" y="366" font-size="18" text-anchor="middle">GET cart / session</text>
+<use id="durable-database" href="#database" x="810" y="513" width="72" height="76.0909" color="#fff"/>
+<text x="846" y="617" font-size="22" text-anchor="middle">Database</text>
+<text x="846" y="642" font-size="17" text-anchor="middle">Accounts, orders, payments</text>
+<path id="durable-read-write" class="flow" d="M455 430 L455 553 L797.5 553"/>
+<text x="641" y="535" font-size="17" text-anchor="middle">authoritative read / write</text>
+<!-- Placement guidance stays next to the system paths without a decorative panel. -->
+<text x="40" y="475" font-size="17" text-anchor="start">Redis: small, mutable backend state.</text>
+<text x="40" y="501" font-size="17" text-anchor="start">CDN: reusable HTTP responses / files.</text>
+<text x="40" y="527" font-size="17" text-anchor="start">Private responses need cache controls.</text>
+<text x="40" y="594" font-size="17" text-anchor="start">CDN = content delivery network.</text>
+<text x="40" y="620" font-size="17" text-anchor="start">The API accesses Redis; the browser does not.</text>
+</svg>
