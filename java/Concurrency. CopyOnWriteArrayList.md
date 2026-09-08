@@ -1,5 +1,7 @@
 # Concurrency. CopyOnWriteArrayList
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 How does `CopyOnWriteArrayList` work?
@@ -20,7 +22,7 @@ The trade-off is deliberate:
 
 The first diagram explains a write. A later diagram contrasts a frozen snapshot iterator with a weakly consistent iterator.
 
-![A writer copies, changes, and publishes a replacement backing array](svg/concurrency-copy-on-write-array-replacement.svg)
+![concurrency-copy-on-write-array-replacement.svg](svg/concurrency-copy-on-write-array-replacement.svg)
 
 ## Core mental model
 
@@ -108,7 +110,7 @@ Every copied array temporarily adds allocation pressure. An old array can remain
 
 `iterator()` captures the list's state **when the iterator is created**. Later list changes do not alter that iterator's view.
 
-![Snapshot iteration compared with weakly consistent iteration](svg/iteration-snapshot-vs-weakly-consistent.svg)
+![iteration-snapshot-vs-weakly-consistent.svg](svg/iteration-snapshot-vs-weakly-consistent.svg)
 
 The left panel is `CopyOnWriteArrayList`: its iterator stays on the old array. The right panel represents a different family of concurrent iterators that traverse a live structure and may observe some overlapping changes. “Snapshot” and “weakly consistent” are not synonyms.
 

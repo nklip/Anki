@@ -1,5 +1,7 @@
 # Concurrency. ThreadLocal
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 How does `ThreadLocal` give each thread a separate value, how should it be cleaned up safely, and when should modern Java use `ScopedValue` instead?
@@ -21,7 +23,7 @@ The core rules are:
 
 The first diagram separates the shared key from the per-thread values.
 
-![One ThreadLocal key resolving to separate values in two threads](svg/concurrency-threadlocal-per-thread-values.svg)
+![concurrency-threadlocal-per-thread-values.svg](svg/concurrency-threadlocal-per-thread-values.svg)
 
 ## Mental model
 
@@ -82,7 +84,7 @@ Two details matter:
 
 Platform-thread pools normally reuse a small set of long-lived worker threads for many unrelated tasks. A `ThreadLocal` value follows the worker, not the logical request.
 
-![Unsafe ThreadLocal reuse compared with remove in finally](svg/concurrency-threadlocal-pool-cleanup.svg)
+![concurrency-threadlocal-pool-cleanup.svg](svg/concurrency-threadlocal-pool-cleanup.svg)
 
 If Task A sets `TENANT` and returns without removing it, Task B may later run on the same worker and read A's tenant. This is both a correctness and security risk: request identity, authorization data, tracing metadata, or other context can cross task boundaries.
 
@@ -176,7 +178,7 @@ This is a diagnostic aid, not a switch that disables `ThreadLocal`.
 
 `ScopedValue<T>` is designed for context that a caller binds, distant callees read, and callees should not mutate through the context key. The binding exists only while a chosen `run()` or `call()` operation executes.
 
-![ThreadLocal manual lifecycle compared with ScopedValue bounded lifecycle](svg/concurrency-threadlocal-vs-scoped-value.svg)
+![concurrency-threadlocal-vs-scoped-value.svg](svg/concurrency-threadlocal-vs-scoped-value.svg)
 
 JDK 25 example:
 

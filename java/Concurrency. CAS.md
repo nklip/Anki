@@ -1,5 +1,7 @@
 # Compare-and-set (CAS) in Java
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 What is **Compare-And-Set (CAS)** in Java, how does a CAS retry loop work, what memory guarantees does it provide, and what are its main limitations?
@@ -10,7 +12,7 @@ What is **Compare-And-Set (CAS)** in Java, how does a CAS retry loop work, what 
 
 It is the primitive behind many Java atomic updates. A failed CAS tells an optimistic retry loop that its earlier observation is stale. The first diagram explains success, failure, and retry; the second shows why an unchanged-looking value can still hide the ABA problem.
 
-![Compare-and-set success, failure, and retry](svg/concurrency-cas-success-failure-retry.svg)
+![concurrency-cas-success-failure-retry.svg](svg/concurrency-cas-success-failure-retry.svg)
 
 The operation can be modeled as:
 
@@ -268,7 +270,7 @@ Use the standard `compareAndSet()` unless lower-level code has a measured reason
 
 ### The ABA problem
 
-![The ABA problem compared with stamped-reference protection](svg/concurrency-cas-aba-and-stamp.svg)
+![concurrency-cas-aba-and-stamp.svg](svg/concurrency-cas-aba-and-stamp.svg)
 
 CAS checks only whether the current value equals the expected value at comparison time. It cannot detect that the value changed and later returned to the same value:
 

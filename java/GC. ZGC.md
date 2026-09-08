@@ -1,5 +1,7 @@
 # GC. ZGC
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 How does modern ZGC keep garbage-collection pauses short?
@@ -50,7 +52,7 @@ ZGC is not HotSpot's general default collector; `-XX:+UseZGC` opts into it. Do n
 
 Modern ZGC divides the heap into young and old generations because most new objects die quickly. It can collect young objects frequently without repeatedly tracing all long-lived objects.
 
-![Modern ZGC organizes young and old objects as dynamic sets of pages and distinguishes virtual reservation from committed memory](svg/gc-zgc-memory-organization.svg)
+![gc-zgc-memory-organization.svg](svg/gc-zgc-memory-organization.svg)
 
 Read the diagram from top to bottom:
 
@@ -78,7 +80,7 @@ Generational ZGC may also allocate large objects in young pages. A short-lived l
 
 The following timeline is simplified; generation-specific cycles can overlap and exact internal phase details may evolve. The essential idea is stable: pauses establish phase boundaries, while heap-scale work runs concurrently.
 
-![ZGC collection timeline with brief coordination pauses around concurrent marking, preparation, and relocation](svg/gc-zgc-collection-cycle.svg)
+![gc-zgc-collection-cycle.svg](svg/gc-zgc-collection-cycle.svg)
 
 A typical cycle alternates three brief coordination boundaries with longer concurrent spans. **Mark Start** establishes marking, then concurrent marking traces reachable objects while the application changes references. **Mark End** completes marking coordination. ZGC next performs generation-appropriate preparation and chooses pages whose relocation will reclaim useful space. **Relocate Start** begins relocation coordination, after which live objects move concurrently and evacuated pages become reusable.
 
@@ -97,7 +99,7 @@ field ──▶ old address of A
 
 ZGC uses colored pointers plus load and store barriers so the application still reaches the current object.
 
-![ZGC uses colored heap pointers, load barriers, and store barriers to preserve correct references during concurrent marking and relocation](svg/gc-zgc-colored-pointers-and-barriers.svg)
+![gc-zgc-colored-pointers-and-barriers.svg](svg/gc-zgc-colored-pointers-and-barriers.svg)
 
 #### Colored pointers
 

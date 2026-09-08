@@ -1,5 +1,7 @@
 # LLM Failure Modes
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 How do next-token prediction, parametric knowledge, working memory, and steerability jointly shape an LLM response—and how do their interactions produce the five named failure modes: hallucination, error propagation, sycophancy, instruction drift, and knowledge conflict?
@@ -35,7 +37,7 @@ The useful question is therefore not “Which module failed?” but “Which sig
 
 **Hallucination** is the accepted term for a plausible but false statement produced by a model. Fabricated citations are its most checkable form: when exact bibliographic details are requested without a retrieved or supplied record, token generation can reproduce the *shape* of a citation while parametric recall supplies incomplete or incorrect specifics.
 
-![Hallucination: fabricated citations from next-token prediction and incomplete parametric knowledge](svg/llm-failure-1-hallucination.svg)
+![llm-failure-1-hallucination.svg](images/llm-failure-1-hallucination.svg)
 
 - **State before:** The prompt asks for titles, authors, venues, or identifiers, but no authoritative catalog or source text is available.
 - **Trigger:** The model is still expected to continue with a useful-looking answer.
@@ -49,7 +51,7 @@ The useful question is therefore not “Which module failed?” but “Which sig
 
 A complex requested chain can remain coherent after an early mistake because each generated step becomes context for the next one. The industry term for the general effect is **error propagation**; when the model then commits to and justifies its own earlier mistake, the literature calls it **hallucination snowballing**.
 
-![Error propagation, or hallucination snowballing, from next-token prediction and steerability](svg/llm-failure-2-error-propagation.svg)
+![llm-failure-2-error-propagation.svg](images/llm-failure-2-error-propagation.svg)
 
 - **State before:** The task contains several dependent arithmetic, logical, coding, or factual steps.
 - **Trigger:** The user requests a complete, confident, step-by-step solution.
@@ -63,7 +65,7 @@ A complex requested chain can remain coherent after an early mistake because eac
 
 **Sycophancy** is the accepted term for a model tailoring its answer to what the user appears to believe rather than to what is true. When a user embeds a false claim — a **false premise**, or false presupposition — in a request, steerability can encourage the model to continue within that framing instead of challenging it, even when learned associations point elsewhere.
 
-![Sycophancy: agreeing with a false premise, from parametric knowledge and steerability](svg/llm-failure-3-sycophancy.svg)
+![llm-failure-3-sycophancy.svg](images/llm-failure-3-sycophancy.svg)
 
 - **State before:** The prompt presents an assertion as settled: “Since X is true, explain Y.”
 - **Trigger:** The model tries to be helpful and responsive to the user's stated intent.
@@ -77,7 +79,7 @@ A complex requested chain can remain coherent after an early mistake because eac
 
 **Instruction drift** is the measured tendency for an instruction given early in a dialog to stop being followed as the conversation grows. An early constraint can remain technically inside a long context yet be used unreliably — the position-dependent effect known as **lost in the middle** — and if the application truncates or summarizes old turns, the constraint may leave the active context entirely.
 
-![Instruction drift, including the lost-in-the-middle effect, from limited context use and steerability](svg/llm-failure-4-instruction-drift.svg)
+![llm-failure-4-instruction-drift.svg](images/llm-failure-4-instruction-drift.svg)
 
 - **State before:** A critical requirement appears early, followed by many turns, documents, examples, and newer instructions.
 - **Trigger:** The next answer must locate and apply the early requirement amid competing context.
@@ -91,7 +93,7 @@ A complex requested chain can remain coherent after an early mistake because eac
 
 **Knowledge conflict** is the accepted term for a disagreement between the sources an answer could draw on. Surveys split it into *context-memory*, *inter-context*, and *intra-memory* conflicts; this section is the **context-memory** case, where a supplied document contradicts an association encoded in the weights. Without a clear authority rule, the answer may choose the wrong claim or blend incompatible details.
 
-![Knowledge conflict of the context-memory type, between supplied context and parametric knowledge](svg/llm-failure-5-knowledge-conflict.svg)
+![llm-failure-5-knowledge-conflict.svg](images/llm-failure-5-knowledge-conflict.svg)
 
 - **State before:** Parametric recall suggests `B`, while a document in the active context says `A`.
 - **Trigger:** The model must answer without being told whether the document, prior knowledge, or another source is authoritative.
@@ -189,3 +191,7 @@ A complex requested chain can remain coherent after an early mistake because eac
 - [Turpin et al.: Language Models Don't Always Say What They Think](https://arxiv.org/abs/2305.04388)
 
   Shows that chain-of-thought explanations can rationalize biased or incorrect outputs without revealing the influence that drove them.
+
+---
+
+<sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>

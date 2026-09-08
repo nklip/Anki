@@ -1,5 +1,7 @@
 # ConcurrentLinkedQueue
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 How does `ConcurrentLinkedQueue` work, what guarantees does it provide, and when should it be used?
@@ -54,7 +56,7 @@ Because the queue is unbounded, `offer(e)` returns `true`; `offer(null)` throws 
 
 ## Linked-node organization
 
-![ConcurrentLinkedQueue linked-node organization](svg/concurrentlinkedqueue-structure.svg)
+![concurrentlinkedqueue-structure.svg](svg/concurrentlinkedqueue-structure.svg)
 
 Conceptually, live elements occupy a singly linked chain:
 
@@ -97,7 +99,7 @@ A failed CAS means the observed state changed before this thread could update it
 
 ## How `offer()` and `poll()` take effect
 
-![ConcurrentLinkedQueue offer and poll CAS workflows](svg/concurrentlinkedqueue-offer-poll.svg)
+![concurrentlinkedqueue-offer-poll.svg](svg/concurrentlinkedqueue-offer-poll.svg)
 
 In the current OpenJDK implementation, `offer(element)`:
 

@@ -1,5 +1,7 @@
 # Syntax. Compact Source Files and Instance Main Methods
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What changed with compact source files and instance `main` methods in Java 25?
@@ -10,7 +12,7 @@ What changed with compact source files and instance `main` methods in Java 25?
 
 **Java 25 lets a small program omit an explicit class declaration and use `void main()` as its entry point.** The compiler still creates a class, and the launcher creates an object before calling an instance `main` method. This feature is final in Java 25, not preview.
 
-![How a compact source file becomes an implicitly declared class and starts](svg/syntax-compact-source-files-instance-main.svg)
+![syntax-compact-source-files-instance-main.svg](svg/syntax-compact-source-files-instance-main.svg)
 
 `HelloWorld.java` can contain fields and methods directly, without a wrapper:
 

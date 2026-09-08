@@ -1,5 +1,7 @@
 # JVM Memory Organization: Heap, Stacks, Metaspace, and Native Memory
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 How does a modern HotSpot JVM organize memory, and how are stack variables, heap objects, G1 or ZGC heap layouts, Metaspace, code cache, garbage collection, and common memory failures connected?
@@ -10,7 +12,7 @@ A JVM process does **not** use one memory pool. The Java Virtual Machine Specifi
 
 Read this card from the overall map to stack-to-heap references, stack frames, collector-specific heap layouts, garbage-collection reachability, and finally diagnosis.
 
-![Modern HotSpot JVM memory organization](svg/jvm-memory-organization.svg)
+![jvm-memory-organization.svg](svg/jvm-memory-organization.svg)
 
 ## Specification model vs. HotSpot implementation
 
@@ -30,7 +32,7 @@ This distinction prevents a common mistake: **the JVMS method area and HotSpot M
 
 A local variable can contain a primitive value such as `int`, or a reference value that identifies an object. The reference is in the frame; the object is in the heap. Two frames—even frames owned by different threads—can contain references to the same object.
 
-![Stack variables referring to shared heap objects](svg/jvm-stack-to-heap-references.svg)
+![jvm-stack-to-heap-references.svg](svg/jvm-stack-to-heap-references.svg)
 
 In the diagram:
 
@@ -61,7 +63,7 @@ Two size words matter in diagnostics:
 
 Every JVM thread has a private JVM stack. A new **frame** is created for each method invocation. The current method's frame is active; calling another method creates a new current frame, and completing a method removes its frame.
 
-![JVM stack area and the contents of stack frames](svg/jvm-thread-stack-frames.svg)
+![jvm-thread-stack-frames.svg](svg/jvm-thread-stack-frames.svg)
 
 Each frame has at least these logical parts:
 
@@ -95,7 +97,7 @@ The JVMS does not prescribe generations, regions, pages, compaction, or a partic
 
 Garbage-First (G1) is a generational, region-based collector. It divides the heap into many **equal-sized regions**. A region can be free or assigned a role such as Eden, Survivor, Old, or Humongous; young and old regions are usually non-contiguous.
 
-![G1 heap divided into regions](svg/gc-g1-memory-organization.svg)
+![gc-g1-memory-organization.svg](svg/gc-g1-memory-organization.svg)
 
 Key points:
 
@@ -109,7 +111,7 @@ Key points:
 
 In current HotSpot releases, ZGC is a **generational low-latency collector**. JDK 24 removed its non-generational mode. It separates young and old objects logically, uses internal heap pages (`ZPage` objects), and performs expensive work concurrently so application pauses stay very short.
 
-![Generational ZGC memory organization](svg/gc-zgc-memory-organization.svg)
+![gc-zgc-memory-organization.svg](svg/gc-zgc-memory-organization.svg)
 
 Key points:
 
@@ -164,7 +166,7 @@ This is why increasing `-Xmx` can worsen a process-level memory problem: a large
 
 GC starts from known **roots** and follows reference paths. An object reachable through a strong path is live. An unreachable object is eligible for reclamation; “eligible” does not promise immediate collection.
 
-![GC roots, heap reachability, and class unloading](svg/jvm-gc-roots-and-reclamation.svg)
+![jvm-gc-roots-and-reclamation.svg](svg/jvm-gc-roots-and-reclamation.svg)
 
 Typical root sources include active platform-thread execution state, static references associated with loaded classes, JNI handles, and JVM or collector runtime structures. References inside ordinary heap objects extend the reachable graph.
 

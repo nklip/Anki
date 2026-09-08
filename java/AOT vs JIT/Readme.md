@@ -1,5 +1,7 @@
 # AOT vs. JIT in Modern Java
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 How do **Just-in-Time (JIT)** compilation, **GraalVM Native Image AOT**, and **Project Leyden's AOT-assisted HotSpot** differ?

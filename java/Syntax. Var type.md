@@ -1,5 +1,7 @@
 # Syntax. `var` Type
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What does `var` do in Java, where can it be used, and does it make a variable dynamically typed?
@@ -10,7 +12,7 @@ What does `var` do in Java, where can it be used, and does it make a variable dy
 
 `var` tells the compiler to infer a local variable's **static type** from its initializer. Only the type spelling is omitted; Java remains statically typed, and the inferred type is fixed for that variable.
 
-![How var becomes a fixed static type at compile time](svg/syntax-var-type.svg)
+![syntax-var-type.svg](svg/syntax-var-type.svg)
 
 ```java
 import java.util.ArrayList;

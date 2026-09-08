@@ -1,5 +1,7 @@
 # Concurrency. LongAdder
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 How does `LongAdder` reduce counter contention, why is `sum()` not an atomic snapshot, and when should `AtomicLong` or a higher-level synchronizer be used instead?
@@ -40,7 +42,7 @@ The public behavior does not require a particular layout. Current OpenJDK implem
 - padded `Cell` objects whose values can be updated independently;
 - a small `cellsBusy` CAS guard used only while creating or resizing the array and installing cells.
 
-![LongAdder moving from one base value to striped cells and combining them in sum](svg/longadder-striped-cells.svg)
+![longadder-striped-cells.svg](svg/longadder-striped-cells.svg)
 
 Conceptually, the total is:
 
@@ -95,7 +97,7 @@ Several threads can pass the check together. Use a `Semaphore`, lock, bounded qu
 
 ## `AtomicLong` versus `LongAdder`
 
-![AtomicLong single-value updates compared with LongAdder striped updates](svg/longadder-vs-atomiclong.svg)
+![longadder-vs-atomiclong.svg](svg/longadder-vs-atomiclong.svg)
 
 | Requirement | Better fit | Reason |
 |---|---|---|

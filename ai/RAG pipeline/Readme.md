@@ -23,7 +23,7 @@ RAG was introduced in 2020 as a way to combine two different stores of knowledge
 
 The original paper demonstrated exactly that: it built its index from a 2016 Wikipedia dump, swapped in a 2018 dump, and the system's answers followed the new index. Knowledge was updated at test time, with no retraining.
 
-![rag-pipeline-overview.svg](svg/rag-pipeline-overview.svg)
+![rag-pipeline-overview.svg](images/rag-pipeline-overview.svg)
 
 Read the diagram as two rows. The top row runs offline and ends by producing an index. The bottom row runs online and starts by querying that index. The elbow connector between them is the whole relationship: **the index is the only artifact the two phases share**. That is also where the pipeline's hardest limit comes from — no step after retrieval can recover a fact that retrieval never returned.
 
@@ -44,7 +44,7 @@ Define these before reading the steps; each one is used later without further ex
 
 ### Step 1 — Split the documents into chunks
 
-![rag-pipeline-1-chunk.svg](svg/rag-pipeline-1-chunk.svg)
+![rag-pipeline-1-chunk.svg](images/rag-pipeline-1-chunk.svg)
 
 - **State before:** whole documents of arbitrary length — a runbook, a policy PDF, a support thread.
 - **Trigger:** the documents are added or updated.
@@ -58,7 +58,7 @@ Chunk size is a real trade-off, not a default to accept. **Too small** and the c
 
 ### Step 2 — Embed the chunks and build the indexes
 
-![rag-pipeline-2-embed-index.svg](svg/rag-pipeline-2-embed-index.svg)
+![rag-pipeline-2-embed-index.svg](images/rag-pipeline-2-embed-index.svg)
 
 - **State before:** a list of plain-text chunks.
 - **Trigger:** the chunk list is ready, or a chunk changed.
@@ -78,7 +78,7 @@ Keeping a keyword index alongside the vector index is standard practice because 
 
 ### Step 3 — Retrieve candidates for the question
 
-![rag-pipeline-3-retrieve.svg](svg/rag-pipeline-3-retrieve.svg)
+![rag-pipeline-3-retrieve.svg](images/rag-pipeline-3-retrieve.svg)
 
 - **State before:** a built index and a question that has just arrived.
 - **Trigger:** the user asks something.
@@ -105,7 +105,7 @@ So `c1` wins. That is the point of the constant: `k = 60` flattens the top of ea
 
 ### Step 4 — Rerank and select the final context
 
-![rag-pipeline-4-rerank.svg](svg/rag-pipeline-4-rerank.svg)
+![rag-pipeline-4-rerank.svg](images/rag-pipeline-4-rerank.svg)
 
 - **State before:** a wide candidate list, ordered by a cheap score.
 - **Trigger:** candidates are back and the prompt has limited room.
@@ -123,7 +123,7 @@ In one published evaluation, adding a reranking stage on top of contextual hybri
 
 ### Step 5 — Assemble the grounded prompt
 
-![rag-pipeline-5-assemble-prompt.svg](svg/rag-pipeline-5-assemble-prompt.svg)
+![rag-pipeline-5-assemble-prompt.svg](images/rag-pipeline-5-assemble-prompt.svg)
 
 - **State before:** the selected chunks, the question, and no instructions.
 - **Trigger:** the context set is final.
@@ -143,7 +143,7 @@ Three decisions carry real weight.
 
 ### Step 6 — Generate the answer and check its citations
 
-![rag-pipeline-6-generate-cite.svg](svg/rag-pipeline-6-generate-cite.svg)
+![rag-pipeline-6-generate-cite.svg](images/rag-pipeline-6-generate-cite.svg)
 
 - **State before:** one assembled prompt.
 - **Trigger:** the prompt is sent.
@@ -228,3 +228,7 @@ RAG turns a question into an answer through six changes of state: a document bec
 - [Anthropic: Citations](https://platform.claude.com/docs/en/build-with-claude/citations)
 
   Example of citations returned as structured spans — the quoted text plus its document index and character or page location — described as guaranteed valid pointers into the provided documents.
+
+---
+
+<sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>

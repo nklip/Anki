@@ -1,5 +1,7 @@
 # Syntax. Sealed Classes
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 How does a sealed hierarchy control inheritance, and what do `final`, `sealed`, and `non-sealed` mean for each permitted branch?
@@ -10,7 +12,7 @@ How does a sealed hierarchy control inheritance, and what do `final`, `sealed`, 
 
 A `sealed` class or interface names the types allowed to **directly** extend or implement it. This is useful when a domain has a controlled set of alternatives.
 
-![How final, sealed, and non-sealed continue a sealed hierarchy](svg/syntax-sealed-classes.svg)
+![syntax-sealed-classes.svg](svg/syntax-sealed-classes.svg)
 
 ### `Shape.java`
 

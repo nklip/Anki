@@ -1,5 +1,7 @@
 # Cosine Similarity
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 What is cosine similarity, how is it calculated and interpreted, where does it appear in a RAG pipeline, and which limitations matter when using it for vector search?
@@ -12,7 +14,7 @@ What is cosine similarity, how is it calculated and interpreted, where does it a
 
 Read the three panels from left to right. Parallel vectors have score `1`, perpendicular vectors have score `0`, and opposite vectors have score `-1`. The first panel also shows that multiplying a vector by a positive number changes its length but not its direction or cosine similarity.
 
-![Cosine similarity for same, perpendicular, and opposite vector directions](svg/cosine-similarity-geometry.svg)
+![cosine-similarity-geometry.svg](images/cosine-similarity-geometry.svg)
 
 For real, nonzero vectors, cosine similarity is between `-1` and `1`:
 
@@ -60,7 +62,7 @@ The first expression returns radians unless the calculation tool converts the re
 
 The diagram separates the calculation into the dot product, the two lengths, and the final division. The vectors are neither parallel nor perpendicular, so the result must fall strictly between `0` and `1`.
 
-![Worked cosine-similarity calculation for A equals 1 comma 2 and B equals 2 comma 1](svg/cosine-similarity-calculation.svg)
+![cosine-similarity-calculation.svg](images/cosine-similarity-calculation.svg)
 
 The arithmetic is:
 
@@ -98,7 +100,7 @@ cosine_similarity(A, -B) = -cosine_similarity(A, B)
 - **Indexing:** split source documents into chunks, embed each chunk, and store its vector together with the original text and metadata in a vector index.
 - **Query time:** embed the user's question in the compatible vector space, compare that query vector with indexed chunk vectors, rank the chunks, and pass the top `k` chunks to the language model as context.
 
-![Cosine similarity in the retrieval stage of a RAG pipeline](svg/cosine-similarity-rag-retrieval.svg)
+![cosine-similarity-rag-retrieval.svg](images/cosine-similarity-rag-retrieval.svg)
 
 For example, using the vectors from the audited schema:
 
@@ -195,3 +197,7 @@ In production, use a tested vector library for batching, sparse vectors, numeric
 - [NIST Dataplot: Cosine distance and cosine similarity](https://www.itl.nist.gov/div898/software/dataplot/refman2/auxillar/cosdist.htm)
 
   Gives the similarity and distance formulas and notes that the simple cosine-distance form is not a proper distance metric.
+
+---
+
+<sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>

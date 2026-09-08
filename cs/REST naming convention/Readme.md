@@ -16,7 +16,7 @@ A **resource** is something a client can address, such as an order or a collecti
 
 Read the diagram from left to right: the method requests an action, the path identifies customer 42's orders, and the query selects paid orders.
 
-![rest-naming-convention.svg](svg/rest-naming-convention.svg)
+![rest-naming-convention.svg](images/rest-naming-convention.svg)
 
 ### Seven practical conventions
 
@@ -49,3 +49,7 @@ These are a consistent design style, not universal REST requirements.
 - [OpenAPI — Path parameter names and template placeholders](https://spec.openapis.org/oas/v3.1.0.html#parameter-object)
 - [RFC 3986 — Characters, percent-encoding, paths, and queries, §§2–3](https://www.rfc-editor.org/rfc/rfc3986.html#section-2)
 - [RFC 9110 — Requesting response formats with Accept, §12.5.1](https://www.rfc-editor.org/rfc/rfc9110.html#section-12.5.1)
+
+---
+
+<sub>[Back to Computer Science](../Readme.md#content)</sub>

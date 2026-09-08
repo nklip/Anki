@@ -1,5 +1,7 @@
 # Concurrency. Virtual Threads
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 What are virtual threads, how do mounting and pinning work, and when should they be used?
@@ -16,7 +18,7 @@ The diagrams build the practical model: how virtual threads borrow carriers, how
 
 The upper half shows the M:N structure; the lower half follows one virtual thread as it blocks and later resumes.
 
-![Many virtual threads mount on a smaller carrier set, and one virtual thread unmounts during blocking before resuming](svg/concurrency-virtual-thread-mounting.svg)
+![concurrency-virtual-thread-mounting.svg](svg/concurrency-virtual-thread-mounting.svg)
 
 | Term | Meaning |
 |---|---|
@@ -82,7 +84,7 @@ Use `Thread.ofVirtual().name("request-", 0).start(task)` when you need builder c
 
 Virtual threads are meant to represent tasks. If a database, remote service, or other dependency has limited capacity, restrict access to **that resource**, not the total number of virtual threads.
 
-![Many task-specific virtual threads pass through a semaphore that limits calls to a capacity-three service](svg/concurrency-virtual-thread-resource-limit.svg)
+![concurrency-virtual-thread-resource-limit.svg](svg/concurrency-virtual-thread-resource-limit.svg)
 
 ```java
 import java.util.concurrent.Semaphore;
@@ -123,7 +125,7 @@ Virtual threads improve scale when the application has enough waiting work to ov
 
 **JEP 491 changed the JVM in JDK 24 so virtual threads can unmount while holding, entering, or waiting on `synchronized` monitors.** Therefore, `synchronized` is no longer a routine reason to replace monitor-based code merely for virtual-thread scalability.
 
-![JDK 24 synchronized blocking releases a carrier, while native or foreign execution can still pin it](svg/concurrency-virtual-thread-pinning-jdk24.svg)
+![concurrency-virtual-thread-pinning-jdk24.svg](svg/concurrency-virtual-thread-pinning-jdk24.svg)
 
 Pinning is a **scalability** concern, not a correctness failure. Short or rare pinning is usually unimportant; frequent long blocking while pinned can occupy many carriers and reduce throughput.
 

@@ -1,5 +1,7 @@
 # Collections: `HashMap`
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 How does Java's `HashMap` store, find, update, and resize mappings, and which key, complexity, iteration, and concurrency rules matter in practice?
@@ -50,7 +52,7 @@ The exact arrays, hash spreading, power-of-two capacities, tree thresholds, and 
 
 The image shows the static model: a map object points to an array, and each array position leads to zero or more entry nodes.
 
-![HashMap internal bucket-array organization](svg/hashmap-internal-organization.svg)
+![hashmap-internal-organization.svg](svg/hashmap-internal-organization.svg)
 
 - **Mapping:** one key-value association.
 - **Size:** number of mappings.
@@ -68,7 +70,7 @@ The default constructor reports initial capacity 16 and load factor `0.75`. In c
 
 Read the lookup diagram from left to right: hash the incoming key, spread its high bits, select one bucket, then search only that bucket.
 
-![HashMap hash spreading, bucket selection, and lookup](svg/hashmap-bucket-lookup.svg)
+![hashmap-bucket-lookup.svg](svg/hashmap-bucket-lookup.svg)
 
 The current index calculation is conceptually:
 
@@ -122,7 +124,7 @@ Tree bins reduce the harm of severe collisions and may use `Comparable` ordering
 
 When a new mapping makes `size > threshold`, current OpenJDK normally doubles the table. The diagram follows one list bin from capacity 8 to 16.
 
-![HashMap bucket split during resize](svg/hashmap-resize-split.svg)
+![hashmap-resize-split.svg](svg/hashmap-resize-split.svg)
 
 After doubling, a node formerly in bucket `j` can only:
 

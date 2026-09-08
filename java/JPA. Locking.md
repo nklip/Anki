@@ -1,5 +1,7 @@
 # JPA. Locking
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 How do optimistic and pessimistic locking work in JPA, what does each `LockModeType` mean, and when should each strategy be used?
@@ -10,7 +12,7 @@ How do optimistic and pessimistic locking work in JPA, what does each `LockModeT
 
 This card builds the mental model first, then covers version checks, explicit lock modes, timeouts, lock scope, exceptions, and selection rules.
 
-![Mental model for JPA optimistic and pessimistic locking](svg/jpa-locking-mental-model.svg)
+![jpa-locking-mental-model.svg](svg/jpa-locking-mental-model.svg)
 
 ### Vocabulary
 
@@ -67,7 +69,7 @@ WHERE id = 42 AND version = 5;
 
 The exact SQL is not specified by JPA. The important rule is the conditional version check.
 
-![Two transactions and a rejected stale version](svg/jpa-optimistic-version-conflict.svg)
+![jpa-optimistic-version-conflict.svg](svg/jpa-optimistic-version-conflict.svg)
 
 If another transaction already changed version `5` to `6`, the stale update cannot match the current row. The provider throws `OptimisticLockException` and marks the transaction for rollback.
 
@@ -169,7 +171,7 @@ Product product = em.createQuery(
 
 `em.lock(entity, mode)` requires an already-managed entity. Prefer requesting a pessimistic mode during `find()` or the query when the read itself must be protected; loading first and locking later leaves a concurrency window between those operations.
 
-![Lifecycle and outcomes of a pessimistic write lock](svg/jpa-pessimistic-lock-lifecycle.svg)
+![jpa-pessimistic-lock-lifecycle.svg](svg/jpa-pessimistic-lock-lifecycle.svg)
 
 ### Timeouts and lock exceptions
 

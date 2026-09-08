@@ -1,5 +1,7 @@
 # Concurrency. Volatile
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 What does `volatile` guarantee in Java, how can it safely publish state, and why does it not make `count++` thread-safe?
@@ -26,7 +28,7 @@ The three diagrams build the idea in order: the memory-model rule, safe publicat
 
 ### The happens-before rule
 
-![A writer publishes ordinary state through a volatile flag, and a reader acquires that state by reading the same flag](svg/concurrency-volatile-happens-before.svg)
+![concurrency-volatile-happens-before.svg](svg/concurrency-volatile-happens-before.svg)
 
 A write to a volatile field **happens-before every subsequent read of that same field**. The write acts as a **release**; the matching read acts as an **acquire**.
 
@@ -61,7 +63,7 @@ The edge must go through the **same volatile field**. Writing one volatile field
 
 ### Safely publishing an immutable snapshot
 
-![A fully constructed immutable object is published through a volatile reference and then read with its initialized state visible](svg/concurrency-volatile-reference-publication.svg)
+![concurrency-volatile-reference-publication.svg](svg/concurrency-volatile-reference-publication.svg)
 
 The volatile field may be a reference. Construct a complete object first, then place its reference in the volatile field. A thread that later reads that reference acquires the state written before publication.
 
@@ -95,7 +97,7 @@ Here, reads and writes of `values` are volatile, but `values[0]` is still an ord
 
 ### Why `count++` still loses updates
 
-![Two threads read the same volatile counter value, both calculate the same next value, and one increment is lost](svg/concurrency-volatile-lost-update.svg)
+![concurrency-volatile-lost-update.svg](svg/concurrency-volatile-lost-update.svg)
 
 ```java
 final class VolatileCounter {

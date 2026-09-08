@@ -1,5 +1,7 @@
 # Docker Best Practices for Java Applications
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 What practices make a Dockerized Java service secure, reproducible, fast to rebuild, correctly resource-sized, and safe to replace in production?
@@ -19,7 +21,7 @@ Everything else in this card supports one of those contracts.
 
 The build should progressively narrow what enters the final image. A `.dockerignore` filters the input; a tool-rich build stage compiles and tests; a smaller runtime stage receives only the tested artifact.
 
-![Docker build context, cache order, temporary mounts, and multi-stage runtime output](svg/docker-build-best-practices.svg)
+![docker-build-best-practices.svg](svg/docker-build-best-practices.svg)
 
 Read the upper flow from left to right. The lower row explains cache order: stable dependency descriptors come before frequently changing source code, so editing one class does not force every dependency to download again.
 
@@ -173,7 +175,7 @@ The secret is available to that build instruction but is not copied into the fin
 
 The image supplies application code. The deployment supplies configuration, secrets, writable mounts, resource limits, networking, and lifecycle. The container emits logs and health state, while durable data lives outside its disposable filesystem.
 
-![Docker runtime inputs, least-privilege boundary, signals, health, logs, durable state, and Java memory budget](svg/docker-runtime-best-practices.svg)
+![docker-runtime-best-practices.svg](svg/docker-runtime-best-practices.svg)
 
 The centre box is the security and resource boundary. Connector arrows show what crosses it deliberately. The lower bar prevents a common Java mistake: the heap is only one part of total container memory.
 

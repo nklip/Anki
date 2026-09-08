@@ -1,5 +1,7 @@
 # Syntax. Switch Expression
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 How does a Java `switch` expression produce a value, and when are `yield` and exhaustive cases required?
@@ -10,7 +12,7 @@ How does a Java `switch` expression produce a value, and when are `yield` and ex
 
 A `switch` expression selects one arm and produces one value. That value can be assigned, returned, or passed to another expression.
 
-![How a switch expression selects one arm and produces one result](svg/syntax-switch-expression.svg)
+![syntax-switch-expression.svg](svg/syntax-switch-expression.svg)
 
 ```java
 enum Status { NEW, RUNNING, DONE }

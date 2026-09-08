@@ -1,5 +1,7 @@
 # Syntax. Ternary operator
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What does Java's `? :` operator evaluate to, and why can `cond ? a : b` throw a `NullPointerException` or hand back a value whose type you never wrote?
@@ -8,7 +10,7 @@ What does Java's `? :` operator evaluate to, and why can `cond ? a : b` throw a 
 
 **`? :` is the conditional operator — Java's only ternary operator, and an expression rather than a shorthand `if`.** It evaluates exactly one arm, but the compiler decides the type of the whole expression from **both** arms. That split explains every surprise it produces.
 
-![One arm runs at run time while both arms decide the type at compile time](svg/syntax-ternary-operator.svg)
+![syntax-ternary-operator.svg](svg/syntax-ternary-operator.svg)
 
 ```java
 int abs = n < 0 ? -n : n;               // produces a value, so it can be assigned

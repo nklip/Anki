@@ -1,5 +1,7 @@
 # Syntax. Unnamed Variables and Patterns
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What does `_` mean in Java unnamed variables and patterns, where is it allowed, and can its value be read?
@@ -10,7 +12,7 @@ What does `_` mean in Java unnamed variables and patterns, where is it allowed, 
 
 `_` means: “the syntax requires this slot, but its value is intentionally unused.” It creates no usable name, so later code cannot read or assign `_`.
 
-![How underscore ignores a required value without creating a name](svg/syntax-unnamed-variables-patterns.svg)
+![syntax-unnamed-variables-patterns.svg](svg/syntax-unnamed-variables-patterns.svg)
 
 ```java
 import java.util.List;

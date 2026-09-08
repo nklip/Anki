@@ -1,5 +1,7 @@
 # Dependency Injection vs. Inversion of Control
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What is the difference between **Inversion of Control (IoC)** and **Dependency Injection (DI)**?
@@ -10,7 +12,7 @@ What is the difference between **Inversion of Control (IoC)** and **Dependency I
 
 **DI is a specific way to apply it to object dependencies.**
 
-![IoC as the broad principle and DI as external dependency wiring](svg/dependency-injection-vs-ioc.svg)
+![dependency-injection-vs-ioc.svg](svg/dependency-injection-vs-ioc.svg)
 
 | Concept | Meaning | Memory question |
 |---|---|---|

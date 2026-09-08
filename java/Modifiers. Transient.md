@@ -1,5 +1,7 @@
 # Modifiers. `transient`
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What does `transient` do during Java object serialization, and what value does the field have after deserialization?
@@ -8,7 +10,7 @@ What does `transient` do during Java object serialization, and what value does t
 
 `transient` excludes a field from Java's **default object-serialization field set**. The live object still contains the value; the default serialized form does not.
 
-![How a transient field is skipped and receives a default value](svg/modifiers-transient-serialization.svg)
+![modifiers-transient-serialization.svg](svg/modifiers-transient-serialization.svg)
 
 Serialization converts an object's state into a byte stream. Deserialization creates an object from that stream.
 

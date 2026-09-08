@@ -1,5 +1,7 @@
 # Syntax. Pattern Matching
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What mental model unifies Java pattern matching, and how do type, record, and `switch` patterns differ?
@@ -12,7 +14,7 @@ What mental model unifies Java pattern matching, and how do type, record, and `s
 
 A pattern combines a **test** with zero or more variables that are initialized only when the test succeeds. This removes separate casts and makes extracted values safe to use.
 
-![How matching tests a value and conditionally extracts variables](svg/syntax-pattern-matching.svg)
+![syntax-pattern-matching.svg](svg/syntax-pattern-matching.svg)
 
 ## Core forms
 

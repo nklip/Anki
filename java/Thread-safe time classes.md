@@ -1,5 +1,7 @@
 # Thread-Safe Time Classes
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 Which Java date-and-time objects can be shared between threads, and which ones need protection?
@@ -10,7 +12,7 @@ Anything in `java.time` is safe to share as a constant; anything in `java.util` 
 
 `DateTimeFormatter` is also thread-safe, so the same instance may be shared. Legacy mutable objects such as `SimpleDateFormat` must not be used concurrently without protection.
 
-![Which Java time objects can be shared between threads](svg/thread-safe-time-classes.svg)
+![thread-safe-time-classes.svg](svg/thread-safe-time-classes.svg)
 
 **Immutable** means an object's state cannot change after creation. Methods such as `plusDays` return a new value instead of changing the original, so threads cannot race to update that state.
 

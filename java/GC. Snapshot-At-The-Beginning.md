@@ -1,5 +1,7 @@
 # GC. Snapshot-At-The-Beginning (SATB)
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 What is **Snapshot-At-The-Beginning (SATB)** marking, and how does its pre-write barrier let a garbage collector mark objects while application threads keep changing references?
@@ -51,7 +53,7 @@ B → C        // no longer reachable in the current graph
 
 `B` and `C` were reachable at the beginning, so SATB must still account for them. Otherwise, the marker could lose part of the graph that its logical snapshot promised to preserve.
 
-![A SATB pre-write barrier saves B before A.next is changed to D](svg/gc-satb-pre-write-barrier.svg)
+![gc-satb-pre-write-barrier.svg](svg/gc-satb-pre-write-barrier.svg)
 
 Conceptually, the write behaves like this:
 
@@ -68,7 +70,7 @@ Application code does not call this barrier. HotSpot inserts the required machin
 
 ### The complete marking timeline
 
-![SATB timeline from the starting snapshot through concurrent marking and Remark](svg/gc-satb-marking-timeline.svg)
+![gc-satb-marking-timeline.svg](svg/gc-satb-marking-timeline.svg)
 
 For G1, a **Concurrent Start** stop-the-world pause establishes the logical starting point. GC threads then trace concurrently with the application. Reference overwrites can add old values to SATB buffers while this work is active.
 

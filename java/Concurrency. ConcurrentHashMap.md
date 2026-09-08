@@ -1,5 +1,7 @@
 # ConcurrentHashMap
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 How does `ConcurrentHashMap` work in modern Java, which operations are atomic, what visibility and iteration guarantees does it provide, and when should it be used?
@@ -53,7 +55,7 @@ Important properties:
 
 ## Internal organization
 
-![ConcurrentHashMap internal structure](svg/concurrenthashmap-internal-structure.svg)
+![concurrenthashmap-internal-structure.svg](svg/concurrenthashmap-internal-structure.svg)
 
 The JDK 7 implementation used a fixed `Segment[]` array. Since Java 8, OpenJDK uses one table of bins instead; the old segment-shaped serialized fields remain only for compatibility.
 
@@ -193,7 +195,7 @@ Tree bins reduce the damage caused by severe hash collisions. Good `hashCode()` 
 
 ## Atomic operations
 
-![ConcurrentHashMap atomic operations](svg/concurrenthashmap-atomic-operations.svg)
+![concurrenthashmap-atomic-operations.svg](svg/concurrenthashmap-atomic-operations.svg)
 
 Thread safety of individual methods does not make an arbitrary sequence of calls atomic.
 
@@ -498,7 +500,7 @@ For small maps or cheap functions, parallel overhead may be greater than the sav
 
 ## Cooperative resizing
 
-![ConcurrentHashMap cooperative resize](svg/concurrenthashmap-cooperative-resize.svg)
+![concurrenthashmap-cooperative-resize.svg](svg/concurrenthashmap-cooperative-resize.svg)
 
 The table is normally resized when its occupancy crosses an internal threshold corresponding roughly to a 0.75 load factor.
 

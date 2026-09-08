@@ -1,5 +1,7 @@
 # Concurrency. Word Tearing
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What is **word tearing**, and why are adjacent Java array elements protected from it?
@@ -8,7 +10,7 @@ What is **word tearing**, and why are adjacent Java array elements protected fro
 
 **Word tearing means that writing one variable accidentally changes a different, nearby variable; Java forbids it.** Every field and every array element is distinct, even when adjacent values share one hardware machine word.
 
-![Java preserves independent writes to adjacent array elements](svg/concurrency-word-tearing.svg)
+![concurrency-word-tearing.svg](svg/concurrency-word-tearing.svg)
 
 ### Why the array matters
 

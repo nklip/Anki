@@ -1,5 +1,7 @@
 # GC. Garbage-First (G1)
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 How does the **Garbage-First (G1) garbage collector** organize the heap, reclaim young and old objects, and pursue a pause-time goal?
@@ -39,7 +41,7 @@ java -XX:+UseG1GC -jar application.jar
 
 G1 splits the Java heap into many equal-sized regions. A region's role can change after collection, so Eden, Survivor, and Old are **logical sets of regions**, not three permanently contiguous memory areas.
 
-![G1 heap regions, remembered-set tracking, and humongous allocation](svg/gc-g1-memory-organization.svg)
+![gc-g1-memory-organization.svg](svg/gc-g1-memory-organization.svg)
 
 Read the top grid as physical heap order. Its scattered colours show that regions belonging to the same generation need not be adjacent. The lower-left panel shows how a card records a cross-region reference; the lower-right panel shows why a humongous object needs contiguous regions.
 
@@ -142,7 +144,7 @@ G1 needs both. They may both run around a reference update, but they solve diffe
 
 At the highest level, G1 alternates between a **Young-Only phase** and a **Space-Reclamation phase**. Concurrent marking forms the transition by discovering which Old regions contain reclaimable space.
 
-![G1 Young-Only, concurrent-marking, Mixed collection, and evacuation cycle](svg/gc-g1-collection-cycle.svg)
+![gc-g1-collection-cycle.svg](svg/gc-g1-collection-cycle.svg)
 
 The upper half is the time sequence. The lower half zooms into one evacuation pause: green live objects move to compact destinations, dead objects remain behind, and successfully evacuated source regions become Free.
 

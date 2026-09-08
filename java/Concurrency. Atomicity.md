@@ -1,5 +1,7 @@
 # Atomicity in Java
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What does **atomicity** mean in Java concurrency, and why is `count++` unsafe when threads share a counter?
@@ -10,7 +12,7 @@ What does **atomicity** mean in Java concurrency, and why is `count++` unsafe wh
 
 The diagram follows two threads that each increment the same counter once.
 
-![Atomic and non-atomic increments compared](svg/concurrency-atomicity-lost-update.svg)
+![concurrency-atomicity-lost-update.svg](svg/concurrency-atomicity-lost-update.svg)
 
 ### Why `count++` can lose an update
 

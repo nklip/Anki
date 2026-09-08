@@ -1,5 +1,7 @@
 # Collections: `SequencedCollection`
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What does `SequencedCollection` add to Java collections, and what does `reversed()` return?
@@ -14,7 +16,7 @@ What does `SequencedCollection` add to Java collections, and what does `reversed
 
 The diagram shows how the same elements are seen from the original and reversed directions.
 
-![SequencedCollection encounter order and reversed view](svg/sequenced-collection-order-and-reversed-view.svg)
+![sequenced-collection-order-and-reversed-view.svg](svg/sequenced-collection-order-and-reversed-view.svg)
 
 ### Core operations
 

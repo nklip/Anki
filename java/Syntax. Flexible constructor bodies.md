@@ -1,5 +1,7 @@
 # Syntax. Flexible Constructor Bodies
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What may a Java constructor do before `super(...)` or `this(...)`, and what remains forbidden?
@@ -10,7 +12,7 @@ What may a Java constructor do before `super(...)` or `this(...)`, and what rema
 
 They allow safe statements before an explicit `super(...)` or `this(...)` call. This first phase is the **prologue**; statements after the constructor invocation form the **epilogue**.
 
-![Allowed and forbidden operations in a flexible constructor body](svg/syntax-flexible-constructor-bodies.svg)
+![syntax-flexible-constructor-bodies.svg](svg/syntax-flexible-constructor-bodies.svg)
 
 ```java
 class Person {

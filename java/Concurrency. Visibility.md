@@ -1,5 +1,7 @@
 # Concurrency. Visibility
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What does **visibility** mean in Java concurrency, and how is it guaranteed between threads?
@@ -8,7 +10,7 @@ What does **visibility** mean in Java concurrency, and how is it guaranteed betw
 
 **Visibility means that a write performed by one thread is guaranteed to be observable by another thread when the two actions are connected by a happens-before relationship.**
 
-![Unsynchronized access compared with publishing state through a volatile happens-before edge](svg/concurrency-visibility-happens-before.svg)
+![concurrency-visibility-happens-before.svg](svg/concurrency-visibility-happens-before.svg)
 
 Read the diagram from left to right. In the upper case, wall-clock order is not enough: Thread B has no synchronization edge telling the Java Memory Model that it must observe Thread A's ordinary write. In the lower case, the volatile write and read form that edge.
 

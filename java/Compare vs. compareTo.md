@@ -1,5 +1,7 @@
 # `compare` vs. `compareTo`
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What is the difference between `Comparator.compare` and `Comparable.compareTo`, and when should each be used?
@@ -8,7 +10,7 @@ What is the difference between `Comparator.compare` and `Comparable.compareTo`, 
 
 **`compareTo` defines a type's natural ordering; `compare` applies a separate ordering strategy.**
 
-![Comparable compareTo versus Comparator compare](svg/compare-vs-compareto.svg)
+![compare-vs-compareto.svg](svg/compare-vs-compareto.svg)
 
 | Method | Owner and call | Use |
 |---|---|---|

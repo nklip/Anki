@@ -1,5 +1,7 @@
 # Collections. Fail-Fast vs. “Fail-Safe” Iteration
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 What is the difference between **fail-fast**, **snapshot**, and **weakly consistent** iteration in Java? How can a collection be modified safely during traversal?
@@ -30,7 +32,7 @@ weakly consistent  = changing concurrent view
 
 ## Fail-fast: expose incorrect interference
 
-![How fail-fast and weakly consistent iteration react to a modification](svg/iteration-fail-fast-vs-weakly-consistent.svg)
+![iteration-fail-fast-vs-weakly-consistent.svg](svg/iteration-fail-fast-vs-weakly-consistent.svg)
 
 An ordinary collection iterator expects the collection's traversal structure to remain compatible with it. Implementations such as `ArrayList` maintain a structural-modification count, commonly named `modCount`. The iterator remembers the expected value:
 
@@ -142,7 +144,7 @@ If several threads access a collection and at least one thread modifies it, use 
 
 ## Snapshot: a stable old version
 
-![Snapshot iteration compared with weakly consistent live iteration](svg/iteration-snapshot-vs-weakly-consistent.svg)
+![iteration-snapshot-vs-weakly-consistent.svg](svg/iteration-snapshot-vs-weakly-consistent.svg)
 
 `CopyOnWriteArrayList` creates a fresh array for every mutation. An iterator retains the array version that existed when it was created:
 

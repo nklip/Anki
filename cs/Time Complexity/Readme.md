@@ -14,7 +14,7 @@ How does time complexity describe an algorithm's growth as input size increases?
 
 Read **Data Input** as `n` and **Time** as growth in work. These schematic curves compare growth rates; their positions and crossings are not measured timings.
 
-![complexity.svg](svg/complexity.svg)
+![complexity.svg](images/complexity.svg)
 
 ### Recognize common growth patterns
 
@@ -47,3 +47,7 @@ A slower-growing bound helps assess scaling, but constants, hardware, and implem
 - [Cornell CS 2110 — Sorting Algorithms: merge sort and expected runtime](https://courses.cis.cornell.edu/courses/cs2110/2026sp/lectures/lec07/)
 - [Princeton Algorithms — Analysis of Algorithms: cost models, loops, and practical limits](https://algs4.cs.princeton.edu/14analysis/)
 - [Indiana University South Bend — Combinatorial Object Generation: subsets and permutations](https://www.cs.iusb.edu/~danav/teach/b424/b424_25_combin.html)
+
+---
+
+<sub>[Back to Computer Science](../Readme.md#content)</sub>

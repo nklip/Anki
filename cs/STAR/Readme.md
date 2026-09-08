@@ -27,7 +27,7 @@ The four diagrams use **one fictional software-interview example** about a **tes
 
 ## Step 1 — S: Situation
 
-![star-situation.svg](svg/star-situation.svg)
+![star-situation.svg](images/star-situation.svg)
 
 **Set the scene and explain the stakes.** Give enough context for someone unfamiliar with your project to understand the problem.
 
@@ -39,7 +39,7 @@ The interviewer does not need the project's entire history, every team member's 
 
 ## Step 2 — T: Task
 
-![star-task.svg](svg/star-task.svg)
+![star-task.svg](images/star-task.svg)
 
 **State the goal you owned and what success would mean.** Explain your role, whether the work was assigned to you or you took the initiative, and any meaningful constraint.
 
@@ -51,7 +51,7 @@ Here, the personal objective is to bring the runtime below 15 minutes without re
 
 ## Step 3 — A: Action
 
-![star-action.svg](svg/star-action.svg)
+![star-action.svg](images/star-action.svg)
 
 **Explain what you personally did, how you did it, and why you chose that approach.** This is where the interviewer can examine your judgment, rather than only the project's success.
 
@@ -67,7 +67,7 @@ Use **“I” for your actions and “we” for shared work or outcomes**. For e
 
 ## Step 4 — R: Result
 
-![star-result.svg](svg/star-result.svg)
+![star-result.svg](images/star-result.svg)
 
 **Finish with the actual consequence, then useful learning.** Connect the outcome to the original objective.
 
@@ -112,3 +112,7 @@ Before practicing an answer, check:
 - [UCL Careers — How to shine like a STAR: concise setup, Action word-count guidance, and explaining what, how, and why](https://www.ucl.ac.uk/study/blog-posts/how-shine-star-your-next-application)
 - [Harvard Mignone Center for Career Success — Interviewing: practice, accountability, and learning from mistakes](https://careerservices.fas.harvard.edu/resources/interviewing/)
 - [Amazon — Common interview mistakes: personal contribution and quantitative or qualitative evidence](https://www.aboutamazon.com/news/workplace/amazon-jobs-interview-mistakes)
+
+---
+
+<sub>[Back to Computer Science](../Readme.md#content)</sub>

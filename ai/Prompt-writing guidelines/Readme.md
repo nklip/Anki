@@ -1,5 +1,7 @@
 # Prompt-writing guidelines
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 Name the six habits that make a single prompt work, ordered by leverage. Which two are not named prompting techniques, and which two techniques can no single prompt reach?
@@ -8,7 +10,7 @@ Name the six habits that make a single prompt work, ordered by leverage. Which t
 
 **Ordered by leverage: give context, specify constraints, ask it to think first, break the task into steps, show examples, set role or tone.** The order matters more than the list — and the two highest-leverage habits are not techniques at all, just writing a clear specification.
 
-![Six guidelines for one prompt ordered by leverage, and the two techniques that need extra model calls](svg/prompt-writing-guidelines.svg)
+![prompt-writing-guidelines.svg](images/prompt-writing-guidelines.svg)
 
 | # | Guideline | What to write | Technique | Skip it when |
 |---|---|---|---|---|
@@ -60,3 +62,7 @@ None of the six is a one-shot ritual. Write the prompt, run it, find the *specif
 - [Zheng et al.: When "A Helpful Assistant" Is Not Really Helpful](https://arxiv.org/abs/2311.10054)
 
   Finds that persona system prompts do not reliably improve model performance on objective tasks.
+
+---
+
+<sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>

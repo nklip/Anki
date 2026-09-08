@@ -1,5 +1,7 @@
 # ArrayList in Modern Java
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 How does `ArrayList` work internally in modern Java?
@@ -54,7 +56,7 @@ public final class ArrayListBasics {
 
 ## Internal storage model
 
-![ArrayList memory layout](svg/arraylist-memory-layout.svg)
+![arraylist-memory-layout.svg](svg/arraylist-memory-layout.svg)
 
 Conceptually, an `ArrayList` contains:
 
@@ -147,7 +149,7 @@ The new list has its own backing storage, but it contains the same element refer
 
 ## Capacity growth
 
-![ArrayList capacity growth](svg/arraylist-growth.svg)
+![arraylist-growth.svg](svg/arraylist-growth.svg)
 
 When an insertion would exceed capacity, `ArrayList` conceptually:
 
@@ -213,7 +215,7 @@ Removing elements does **not normally shrink capacity automatically**.
 
 ## Middle insertion and removal
 
-![ArrayList insertion and removal](svg/arraylist-insert-remove.svg)
+![arraylist-insert-remove.svg](svg/arraylist-insert-remove.svg)
 
 ### Insertion
 

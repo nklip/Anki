@@ -1,5 +1,7 @@
 # Modifiers. Types of Modifiers
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What are Java modifiers, what are their two practical categories, and why can the same modifier not be used on every declaration?
@@ -8,7 +10,7 @@ What are Java modifiers, what are their two practical categories, and why can th
 
 Java modifiers appear before a declaration and answer one of two practical questions: **who may access it?** or **how must it behave?**
 
-![Access and behavior modifiers allowed for different Java declarations](svg/modifiers-types-overview.svg)
+![modifiers-types-overview.svg](svg/modifiers-types-overview.svg)
 
 ### 1. Access modifiers — who may use it?
 

@@ -1,5 +1,7 @@
 # Concurrency. Ordering
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What does ordering mean in Java concurrency, and how does *happens-before* make cross-thread observations predictable?
@@ -16,7 +18,7 @@ The Java Memory Model uses three related ideas:
 
 The diagram shows how one volatile flag safely publishes earlier ordinary writes:
 
-![Program-order and volatile edges forming a happens-before chain](svg/concurrency-volatile-happens-before.svg)
+![concurrency-volatile-happens-before.svg](svg/concurrency-volatile-happens-before.svg)
 
 ```java
 final class Publication {

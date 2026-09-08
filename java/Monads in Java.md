@@ -1,5 +1,7 @@
 # Monads in Java
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What is a monad, and how does Java's `Optional` demonstrate the pattern?
@@ -8,7 +10,7 @@ What is a monad, and how does Java's `Optional` demonstrate the pattern?
 
 A **monad** is a composable context `M<T>` for sequencing dependent computations while preserving the context's rule. With `Optional<T>`, the rule is: if no value exists, later transformations are skipped and the result stays empty.
 
-![How Optional uses flatMap to chain a context-producing operation](svg/java-monad-optional.svg)
+![java-monad-optional.svg](svg/java-monad-optional.svg)
 
 A monad provides:
 

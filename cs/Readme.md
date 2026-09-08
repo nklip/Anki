@@ -1,0 +1,12 @@
+# Computer Science
+<sub>[Back to Anki Flashcards](../README.md)</sub>
+
+Anki-ready cards on general computer-science and interview-preparation topics, each with its own teaching diagrams.
+
+Every card lives in its own folder as `Readme.md`, with its diagrams in a sibling `images/` directory.
+
+## Content
+ * [REST naming convention](./REST%20naming%20convention/Readme.md) - how to name resources, collections, and actions in an HTTP API
+ * [SOLID](./SOLID/Readme.md) - the five design principles, the problem each one solves, and how to spot a violation
+ * [STAR](./STAR/Readme.md) - the situation, task, action, and result structure for behavioural interview answers
+ * [Time Complexity](./Time%20Complexity/Readme.md) - how growth rates compare and what each one costs at scale

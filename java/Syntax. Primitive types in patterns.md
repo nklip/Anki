@@ -1,5 +1,7 @@
 # Syntax. Primitive Types in Patterns
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 How do primitive patterns prevent lossy conversions, how do they expand `switch`, and are they final in JDK 26?
@@ -10,7 +12,7 @@ How do primitive patterns prevent lossy conversions, how do they expand `switch`
 
 It allows primitive types in pattern contexts, extends `instanceof` to test primitive conversions, and lets `switch` use every primitive selector type. It is **not final**.
 
-![Exact and inexact primitive pattern conversions](svg/syntax-primitive-types-in-patterns.svg)
+![syntax-primitive-types-in-patterns.svg](svg/syntax-primitive-types-in-patterns.svg)
 
 ## Exact conversion decides the match
 

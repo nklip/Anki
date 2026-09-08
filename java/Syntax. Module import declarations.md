@@ -1,5 +1,7 @@
 # Syntax. Module Import Declarations
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What does `import module` do in Java, and how is it different from an ordinary import or `requires`?
@@ -10,7 +12,7 @@ What does `import module` do in Java, and how is it different from an ordinary i
 
 A module import makes the accessible API of a named module available by simple type names in one compilation unit—a source file being compiled.
 
-![How a module import exposes exported API types and differs from requires](svg/syntax-module-import-declarations.svg)
+![syntax-module-import-declarations.svg](svg/syntax-module-import-declarations.svg)
 
 ```java
 import module java.base;

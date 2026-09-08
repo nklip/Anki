@@ -1,5 +1,7 @@
 # Concurrency. Double-checked locking
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 What is **double-checked locking** in Java?
@@ -26,7 +28,7 @@ construct completely before publishing
 
 The first diagram shows the control flow. The second visual later explains why the `volatile` publication makes the constructed state visible to other threads.
 
-![Fast and initialization paths through double-checked locking](svg/concurrency-double-checked-locking-flow.svg)
+![concurrency-double-checked-locking-flow.svg](svg/concurrency-double-checked-locking-flow.svg)
 
 ## Correct implementation
 
@@ -186,7 +188,7 @@ reader uses the Service
 
 Happens-before is transitive. Therefore, a thread that obtains the published reference through the volatile read is guaranteed to observe state written before the volatile publication.
 
-![How a volatile reference safely publishes earlier object state](svg/concurrency-volatile-reference-publication.svg)
+![concurrency-volatile-reference-publication.svg](svg/concurrency-volatile-reference-publication.svg)
 
 Read the visual from left to right. Construction finishes before the release write. A subsequent acquire read of the same volatile reference receives the earlier state.
 

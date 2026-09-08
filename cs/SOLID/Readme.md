@@ -32,7 +32,7 @@ A **module** is a unit of code, such as a class or package. A **client** is code
 
 Read the diagram by actor: each row connects a source of change to the corresponding behavior, then to a separate module.
 
-![solid-single-responsibility.svg](svg/solid-single-responsibility.svg)
+![solid-single-responsibility.svg](images/solid-single-responsibility.svg)
 
 **Improvement:** Give pay calculations to `PayrollCalculator`, reporting to `HoursReporter`, and persistence to `EmployeeRepository`. They can work with the same employee data while their rules change separately.
 
@@ -48,7 +48,7 @@ Read the diagram by actor: each row connects a source of change to the correspon
 
 In the diagram, `Checkout` depends on `DiscountPolicy`. Existing and new policies implement the same contract; adding a seasonal policy extends the system through that boundary.
 
-![solid-open-closed.svg](svg/solid-open-closed.svg)
+![solid-open-closed.svg](images/solid-open-closed.svg)
 
 **Improvement:** Make `Checkout` use the supplied policy. In this example, `discountFor(total)` returns a discount amount between zero and the total. The following is conceptual pseudocode, not a complete program:
 
@@ -71,7 +71,7 @@ Checkout.totalAfterDiscount(total, policy: DiscountPolicy):
 
 The diagram applies the same client operations to both objects. The expected result follows from the independent-setter contract, not merely from the word “rectangle.”
 
-![solid-liskov-substitution.svg](svg/solid-liskov-substitution.svg)
+![solid-liskov-substitution.svg](images/solid-liskov-substitution.svg)
 
 Conceptual client code:
 
@@ -103,7 +103,7 @@ For a behavioral contract, check:
 
 Read the diagram from the client to its contract. After the split, `PrintJob` depends on `Printer`; scanning and faxing have separate interfaces.
 
-![solid-interface-segregation.svg](svg/solid-interface-segregation.svg)
+![solid-interface-segregation.svg](images/solid-interface-segregation.svg)
 
 **Improvement:** Introduce client-focused `Printer`, `Scanner`, and `Fax` contracts. `BasicPrinter` implements `Printer`; an `AllInOne` device can implement several contracts. A print job receives the printer view of either device.
 
@@ -121,7 +121,7 @@ ISP and LSP can expose different aspects of the same problem: ISP questions why 
 
 The diagram's arrows show **source-code dependencies**, meaning which types or interfaces the code knows about. After the redesign, both arrows point toward the business-facing `OrderRepository` contract.
 
-![solid-dependency-inversion.svg](svg/solid-dependency-inversion.svg)
+![solid-dependency-inversion.svg](images/solid-dependency-inversion.svg)
 
 **Improvement:** Define `OrderRepository` around the service's needs, for example `save(order)`. `OrderService` uses that interface; `SqlOrderRepository` implements it. Keep database-specific connection and result types out of the business-facing contract.
 
@@ -161,3 +161,7 @@ Treat SOLID as design guidance. An interface is useful when it clarifies a contr
 - [Robert C. Martin — SOLID Relevance: modern scope and common misunderstandings](https://blog.cleancoder.com/uncle-bob/2020/10/18/Solid-Relevance.html)
 - [Robert C. Martin — The Clean Architecture: source dependencies versus flow of control](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
 - [Martin Fowler — Inversion of Control Containers and the Dependency Injection pattern: construction, configuration, and use](https://martinfowler.com/articles/injection.html)
+
+---
+
+<sub>[Back to Computer Science](../Readme.md#content)</sub>

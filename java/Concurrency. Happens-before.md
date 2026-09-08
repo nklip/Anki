@@ -1,5 +1,7 @@
 # Concurrency. Happens-before
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 What does *happens-before* mean in the Java Memory Model, how is a cross-thread path created, and why does it guarantee visibility without automatically guaranteeing atomicity?
@@ -31,7 +33,7 @@ program order + synchronizes-with edges + transitivity
 
 The diagram maps the most common language-level and library-level bridges:
 
-![Core Java and java.util.concurrent operations that create happens-before bridges](svg/concurrency-happens-before-edge-map.svg)
+![concurrency-happens-before-edge-map.svg](svg/concurrency-happens-before-edge-map.svg)
 
 ## Core Java Memory Model rules
 
@@ -51,7 +53,7 @@ The same identity matters. Unlocking one monitor does not publish to a lock on a
 
 Here the volatile `ready` flag publishes an earlier ordinary write to `answer`:
 
-![Ordinary writes connected to a reader through a volatile happens-before chain](svg/concurrency-volatile-happens-before.svg)
+![concurrency-volatile-happens-before.svg](svg/concurrency-volatile-happens-before.svg)
 
 ```java
 final class PublishedData {

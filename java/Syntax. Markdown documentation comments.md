@@ -1,5 +1,7 @@
 # Syntax. Markdown Documentation Comments
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 How do Markdown documentation comments work, and what rule keeps one comment together?
@@ -10,7 +12,7 @@ How do Markdown documentation comments work, and what rule keeps one comment tog
 
 They let the standard `javadoc` tool read Markdown from consecutive lines beginning with `///` and turn it into API documentation.
 
-![From triple-slash source to generated API documentation](svg/syntax-markdown-documentation-comments.svg)
+![syntax-markdown-documentation-comments.svg](svg/syntax-markdown-documentation-comments.svg)
 
 ```java
 public final class NumberTools {

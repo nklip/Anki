@@ -1,5 +1,7 @@
 # Syntax. Text Block
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What does a Java text block produce, and how do its delimiters, indentation, final newline, and escapes affect the result?
@@ -10,7 +12,7 @@ What does a Java text block produce, and how do its delimiters, indentation, fin
 
 A text block is a multiline spelling of an ordinary `String`. It starts with `"""` followed by a required line terminator; content cannot begin on the opening delimiter's line.
 
-![How Java turns text block source into a runtime String](svg/syntax-text-block.svg)
+![syntax-text-block.svg](svg/syntax-text-block.svg)
 
 ```java
 public class TextBlockDemo {

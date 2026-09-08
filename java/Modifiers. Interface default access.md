@@ -1,5 +1,7 @@
 # Modifiers. Interface Default Access Modifier
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What access is implied when an interface or one of its members has no access modifier, and what changed in Java 9?
@@ -10,7 +12,7 @@ What access is implied when an interface or one of its members has no access mod
 
 A top-level interface and the members inside it use different defaults: the interface itself has **package access** when `public` is omitted, but its fields, methods, and member types are implicitly **public** when they have no access modifier.
 
-![Default access for a top-level interface and its members from Java 9 onward](svg/modifiers-interface-default-access.svg)
+![modifiers-interface-default-access.svg](svg/modifiers-interface-default-access.svg)
 
 `default` is **not** an access modifier. It means that an interface instance method supplies an implementation; that method is still public unless declared `private`—and a private method cannot be `default`.
 

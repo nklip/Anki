@@ -1,5 +1,7 @@
 # Syntax. Record Classes
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What is a Java record class, what does its header generate, and why is a record only shallowly immutable?
@@ -10,7 +12,7 @@ What is a Java record class, what does its header generate, and why is a record 
 
 A record is a restricted class for representing a fixed set of values with little boilerplate. Its header is both the complete state description and the basis of its public API.
 
-![How a record header becomes fields, accessors, and value-oriented methods](svg/syntax-record-classes.svg)
+![syntax-record-classes.svg](svg/syntax-record-classes.svg)
 
 ```java
 record Point(int x, int y) {}

@@ -1,5 +1,7 @@
 # Spring. Scopes
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 What does a Spring bean's scope control, what do the six built-in scopes mean, and for each web scope: what is it tied to, when should you reach for it, and what breaks if you use it wrong?
@@ -8,7 +10,7 @@ What does a Spring bean's scope control, what do the six built-in scopes mean, a
 
 A bean's **scope** controls how many instances Spring creates and how long each instance is reused. `singleton` is the default: one instance **per bean definition per container** — unlike the Gang of Four singleton, which is one instance per class loader.
 
-![How Spring bean scopes choose a sharing boundary](svg/spring-bean-scopes.svg)
+![spring-bean-scopes.svg](svg/spring-bean-scopes.svg)
 
 The card covers the two general scopes, the trap you hit when you mix lifetimes, then each web scope in turn.
 
@@ -117,7 +119,7 @@ class ReportService {
 
 The diagram groups beans by their sharing boundary. HTTP sessions and WebSocket sessions have separate lifetimes; either can end first.
 
-![What each Spring web scope is tied to and what each is for](svg/spring-web-scopes-lifecycle.svg)
+![spring-web-scopes-lifecycle.svg](svg/spring-web-scopes-lifecycle.svg)
 
 These web scopes require different supporting context:
 

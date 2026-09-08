@@ -1,5 +1,7 @@
 # Autoboxing and Unboxing
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What do autoboxing and unboxing do, and which `null` and equality mistakes can they cause?
@@ -10,7 +12,7 @@ What do autoboxing and unboxing do, and which `null` and equality mistakes can t
 
 **Autoboxing** converts a primitive value to its corresponding wrapper reference; **unboxing** converts a wrapper reference back to its primitive value.
 
-![Primitive-to-wrapper boxing, wrapper-to-primitive unboxing, and the null failure](svg/autoboxing-unboxing-flow.svg)
+![autoboxing-unboxing-flow.svg](svg/autoboxing-unboxing-flow.svg)
 
 Common pairs include `int` ↔ `Integer`, `long` ↔ `Long`, `double` ↔ `Double`, and `boolean` ↔ `Boolean`. Every primitive type has a wrapper.
 

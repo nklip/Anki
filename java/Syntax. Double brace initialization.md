@@ -1,5 +1,7 @@
 # Syntax. Double-Brace Initialization
 
+<!-- Card mode: simple. Validate with --mode simple. -->
+
 ## Front
 
 What is double-brace initialization in Java, why is it discouraged, and what should replace it?
@@ -8,7 +10,7 @@ What is double-brace initialization in Java, why is it discouraged, and what sho
 
 **Double-brace initialization is an idiom—not a collection literal—and should usually be avoided.** It creates an anonymous subclass and runs an instance initializer while constructing that subclass.
 
-![How double-brace initialization creates an anonymous subclass](svg/syntax-double-brace-initialization.svg)
+![syntax-double-brace-initialization.svg](svg/syntax-double-brace-initialization.svg)
 
 Inside a method, it may look like concise data initialization:
 

@@ -1,5 +1,7 @@
 # Optimistic vs. Pessimistic Locking
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 How do optimistic and pessimistic locking differ in Java memory and Jakarta Persistence, what failures do they cause, and how should you choose between them?
@@ -12,7 +14,7 @@ How do optimistic and pessimistic locking differ in Java memory and Jakarta Pers
 
 Optimistic control favors rare conflicts and cheap retries. Pessimistic control favors costly or frequent conflicts, but makes contenders wait.
 
-![Where optimistic and pessimistic locking coordinate](svg/locking-strategies-overview.svg)
+![locking-strategies-overview.svg](svg/locking-strategies-overview.svg)
 
 Neither name identifies one Java class. They describe **when coordination happens**:
 
@@ -36,7 +38,7 @@ Neither name identifies one Java class. They describe **when coordination happen
 
 Both strategies can prevent a lost update, but the loser discovers the conflict at a different time.
 
-![Two transactions colliding under optimistic and pessimistic locking](svg/locking-conflict-timeline.svg)
+![locking-conflict-timeline.svg](svg/locking-conflict-timeline.svg)
 
 Optimistic control allows both participants to start. Exactly one conditional update wins; the loser must reload, merge, retry, or report a conflict. Pessimistic control serializes the protected section: the second participant cannot perform the conflicting update until the first releases its lock.
 

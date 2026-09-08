@@ -1,5 +1,7 @@
 # Concurrency. Obstruction-Free vs. Lock-Free vs. Wait-Free
 
+<!-- Card mode: complex. Validate with --mode complex. -->
+
 ## Front
 
 How do **obstruction-free**, **lock-free**, and **wait-free** algorithms differ, and what do these progress guarantees mean for Java code?
@@ -23,7 +25,7 @@ wait-free ⇒ lock-free ⇒ obstruction-free
 
 Here, `A ⇒ B` means every algorithm satisfying guarantee A also satisfies guarantee B. Thus every wait-free algorithm is lock-free, but a lock-free algorithm is not necessarily wait-free. The first diagram shows why the guarantees are nested; the rest of the card explains how to recognize each one.
 
-![Nested hierarchy of obstruction-free, lock-free, and wait-free progress guarantees](svg/concurrency-progress-guarantees-hierarchy.svg)
+![concurrency-progress-guarantees-hierarchy.svg](svg/concurrency-progress-guarantees-hierarchy.svg)
 
 ### The comparison in one table
 
@@ -149,7 +151,7 @@ Helping can turn system-wide progress into per-operation progress, but it adds s
 
 Read each row from left to right. Red blocks are failed attempts; green blocks are completed operations.
 
-![Execution timelines showing who completes under each progress guarantee](svg/concurrency-progress-guarantees-timeline.svg)
+![concurrency-progress-guarantees-timeline.svg](svg/concurrency-progress-guarantees-timeline.svg)
 
 - **Obstruction-free:** completion appears only after T1 gets an isolation window.
 - **Lock-free:** T2 and T3 complete while T1 may retry forever.

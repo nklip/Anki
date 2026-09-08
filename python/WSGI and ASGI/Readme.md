@@ -24,7 +24,7 @@ A Python web application needs the same kind of agreement. Somebody has to accep
 
 Without a shared agreement, every server and every framework pairing needs its own glue code, and picking one side limits your choice on the other. With a shared agreement, both sides write to the same interface and the pairings stop mattering.
 
-![wsgi-asgi-portability.svg](svg/wsgi-asgi-portability.svg)
+![wsgi-asgi-portability.svg](images/wsgi-asgi-portability.svg)
 
 Read the diagram left to right. Panel 1 is the situation the standards were written to fix: four pairings, four pieces of glue. Panel 2 is the fix: the same interface in every cell, so a server and a framework can be chosen independently. The green band names the two versions of that interface and the difference between them.
 
@@ -84,7 +84,7 @@ The ASGI documentation states the verdict plainly: a single-callable interface i
 
 Because the application awaits events instead of returning once, the connection can stay open and either side can speak again later.
 
-![wsgi-asgi-connection-model.svg](svg/wsgi-asgi-connection-model.svg)
+![wsgi-asgi-connection-model.svg](images/wsgi-asgi-connection-model.svg)
 
 Compare the two lanes. The WSGI lane has exactly two arrows and then stops; that is the whole protocol. The ASGI lane opens a scope first, and its event arrows repeat for as long as the connection lives. The green band states the relationship between them: ASGI is a superset, so anything WSGI can express, ASGI can express too.
 
@@ -124,7 +124,7 @@ A few things worth knowing about the current landscape:
 
 A **servlet** is a Java component that handles a request and produces a response. A **servlet container**, such as Tomcat or Jetty, loads servlets and calls them. The **Servlet API** is the agreement between the two. That is structurally the same boundary WSGI and ASGI draw, which is exactly why PEP 333 cited it.
 
-![wsgi-asgi-servlet-comparison.svg](svg/wsgi-asgi-servlet-comparison.svg)
+![wsgi-asgi-servlet-comparison.svg](images/wsgi-asgi-servlet-comparison.svg)
 
 The upper half of the diagram shows the same shape twice: a runtime on the left calling application code on the right. The lower half shows something more interesting — both ecosystems later had to answer the same question about connections that stay open, and they answered it differently.
 
@@ -148,7 +148,7 @@ These are role mappings, not interchangeable signatures. A servlet handler write
 
 Three names sound related and are not the same kind of thing. Sorting them by *what kind of thing they are* dissolves most of the confusion.
 
-![wsgi-asgi-api-gateway-mcp.svg](svg/wsgi-asgi-api-gateway-mcp.svg)
+![wsgi-asgi-api-gateway-mcp.svg](images/wsgi-asgi-api-gateway-mcp.svg)
 
 The top row of the diagram separates the three roles; the lower half shows one way they can appear in a single system.
 
@@ -231,3 +231,7 @@ None of these stages is mandatory. A Python web application can run with no gate
 - [MCP — Specification overview: hosts, clients, servers, and JSON-RPC](https://modelcontextprotocol.io/specification/latest)
 - [MCP — Transports: stdio and Streamable HTTP](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports)
 - [MCP Python SDK — Serving an MCP server from an ASGI application](https://py.sdk.modelcontextprotocol.io/run/asgi/)
+
+---
+
+<sub>[Back to Python](../Readme.md#content)</sub>
