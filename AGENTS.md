@@ -23,7 +23,7 @@ Entry point: [`.agents/skills/anki-card-creation/SKILL.md`](.agents/skills/anki-
 
 Use this skill when creating or revising Anki-ready Markdown cards in this repository. It covers research quality, beginner-friendly teaching structure, simple and complex modes, source placement, code examples, local visuals, and final card validation.
 
-- Use simple mode by default; use complex mode only when the user selects or clearly requests comprehensive treatment.
+- Use simple mode by default; use complex mode (also called article mode) when the user selects either name or clearly requests comprehensive treatment.
 - Keep the required `Front`, `Back`, and final `Sources` structure.
 - Verify factual claims using authoritative sources, or the fallback evidence rule defined by the skill.
 - Use local teaching visuals and link them with relative paths.
@@ -34,6 +34,13 @@ Validate from the repository root with the appropriate mode:
 ```bash
 python3 .agents/skills/anki-card-creation/scripts/check_anki_card.py --mode simple path/to/card.md
 python3 .agents/skills/anki-card-creation/scripts/check_anki_card.py --mode complex path/to/card.md
+```
+
+For validator changes, run both the built-in self-test and regression suite:
+
+```bash
+python3 .agents/skills/anki-card-creation/scripts/check_anki_card.py --self-test
+python3 -m unittest discover -s .agents/skills/anki-card-creation/scripts/tests
 ```
 
 For cards about versioned features, follow the skill's version-lead rule and add `--require-version-lead` to validation.
