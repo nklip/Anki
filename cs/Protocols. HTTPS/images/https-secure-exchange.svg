@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="2180" viewBox="0 0 1160 2180" role="img" aria-labelledby="title desc">
+  <title id="title">HTTPS: a detailed TLS 1.3 handshake</title>
+  <desc id="desc">Read top to bottom. This example is a full, new, server-authenticated TLS 1.3 connection using ephemeral elliptic-curve Diffie-Hellman key agreement over an already established TCP connection, without Encrypted ClientHello. ClientHello and ServerHello are sent openly with temporary public key shares A and B. Each endpoint combines its own temporary private key with the other endpoint's public share to calculate the same shared secret, then derives handshake traffic keys. Private keys, the shared secret, and traffic keys are never sent. The server encrypts EncryptedExtensions, Certificate, CertificateVerify, and Finished with handshake keys. The certificate chain carries its identity public key, which is distinct from temporary share B; CertificateVerify is a signature made with its identity private key. The browser checks the hostname, certificate chain, signature, and Finished. Application traffic keys are derived using the handshake through the server Finished, separately from handshake traffic keys. The browser sends its Finished encrypted with handshake keys, then its HTTP request encrypted with application keys. The response is also encrypted with application keys. Endpoints can read HTTP contents, while network observers can still see IP addresses, traffic sizes, and timing, and may learn the hostname from unencrypted DNS or the ClientHello server-name field. Resumption, early data, client certificates, and retry are outside this example.</desc>
+
+  <!-- Laptop and green server symbols are copied without shape or palette changes
+       from cs/Protocols. HTTP/images/http-request-response.svg. They also appear
+       in SOAP, FTP, and SSH diagrams; their original source is
+       system design/01. Scaling/images/single-server.svg.
+       Arial, cyan endpoint frames, blue client traffic, and purple server traffic
+       preserve the neighboring protocol diagrams' visual language. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+      .title { font-size: 34px; font-weight: 700; }
+      .subtitle { font-size: 22px; fill: #475569; }
+      .definitions { font-size: 20px; fill: #475569; }
+      .node-label { font-size: 25px; font-weight: 700; text-anchor: middle; }
+      .small { font-size: 21px; fill: #475569; text-anchor: middle; }
+      .domain { font-size: 20px; fill: #475569; text-anchor: middle; }
+      .step-title { font-size: 24px; font-weight: 700; }
+      .body { font-size: 21px; }
+      .example { font-family: Menlo, Consolas, monospace; font-size: 23px; }
+      .note { font-size: 21px; fill: #475569; }
+      .frame { fill: #fff; stroke: #08b7d1; stroke-width: 3; }
+      .lifeline { fill: none; stroke: #08b7d1; stroke-width: 3; }
+      .client-shaft { fill: none; stroke: #0b78b5; stroke-width: 3; }
+      .server-shaft { fill: none; stroke: #7c3aed; stroke-width: 3; }
+      .client-title { font-size: 24px; font-weight: 700; fill: #0b78b5; }
+      .server-title { font-size: 24px; font-weight: 700; fill: #7c3aed; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 110 70">
+      <rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/>
+      <path d="M7 58H103L96 66H14Z" fill="#111"/>
+      <rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/>
+    </symbol>
+    <symbol id="server" viewBox="0 0 64 112">
+      <rect width="64" height="112" rx="7" fill="#63c51b"/>
+      <path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/>
+    </symbol>
+  </defs>
+
+  <!-- State the protocol version and reading order, and expand the abbreviations. -->
+  <rect id="background" width="1160" height="2180" fill="#fff"/>
+  <text class="title" x="30" y="48">HTTPS: a detailed TLS 1.3 handshake</text>
+  <text class="subtitle" x="30" y="85">HTTPS = Hypertext Transfer Protocol Secure · TLS = Transport Layer Security</text>
+  <text class="note" x="30" y="118">Example: temporary Diffie–Hellman key agreement over an established TCP connection.</text>
+  <text class="definitions" x="30" y="148">HTTP = Hypertext Transfer Protocol · TCP = Transmission Control Protocol</text>
+
+  <!-- Participant headers are compact. Vertical lines continue their
+       identities down the sequence without introducing new participants. -->
+  <g id="participants">
+    <rect id="client-frame" class="frame" x="30" y="178" width="215" height="168" rx="22"/>
+    <text class="node-label" x="137.5" y="214">Browser</text>
+    <use href="#laptop" x="82.5" y="231" width="110" height="70"/>
+    <text class="small" x="137.5" y="330">Client</text>
+
+    <rect id="server-frame" class="frame" x="915" y="178" width="215" height="168" rx="22"/>
+    <text class="node-label" x="1022.5" y="214">Server</text>
+    <use href="#server" x="998.5" y="226" width="48" height="84"/>
+    <text class="domain" x="1022.5" y="332">api.example.com</text>
+
+    <path id="client-lifeline" class="lifeline" d="M137.5 347.5V1867"/>
+    <path id="server-lifeline" class="lifeline" d="M1022.5 347.5V1867"/>
+  </g>
+
+  <!-- Soft panels group one stage at a time. Arrow shafts intentionally cross
+       the empty bottom corridor of each message panel, clear of all text.
+       All tips meet only the near edge of a participant lifeline. The shaft
+       terminates two units inside its own triangle base to hide the join. -->
+  <g id="hello-messages">
+    <rect id="clienthello-panel" x="195" y="370" width="770" height="128" rx="18" fill="#eff8fc"/>
+    <text class="client-title" x="220" y="407">1 · ClientHello — sent openly</text>
+    <text class="body" x="220" y="441">Browser offers algorithms and a fresh public key share A.</text>
+    <path id="clienthello-shaft" class="client-shaft" data-connector="true" d="M139 475H1007"/>
+    <polygon id="clienthello-head" points="1021,475 1005,466 1005,484" fill="#0b78b5"/>
+
+    <rect id="serverhello-panel" x="195" y="515" width="770" height="128" rx="18" fill="#f5f1fc"/>
+    <text class="server-title" x="220" y="552">2 · ServerHello — sent openly</text>
+    <text class="body" x="220" y="586">Server selects algorithms and sends its fresh public share B.</text>
+    <path id="serverhello-shaft" class="server-shaft" data-connector="true" d="M1021 620H153"/>
+    <polygon id="serverhello-head" points="139,620 155,611 155,629" fill="#7c3aed"/>
+  </g>
+
+  <!-- Local computation has no network arrow: secret keys do not travel. -->
+  <g id="local-handshake-key-derivation">
+    <rect id="shared-secret-panel" x="195" y="660" width="770" height="158" rx="18" fill="#f1f5f9"/>
+    <text class="step-title" x="220" y="697">3 · Each endpoint calculates the same shared secret</text>
+    <text class="body" x="220" y="731">Its temporary private key + the other endpoint’s public share</text>
+    <text class="body" x="220" y="762">→ shared secret → handshake traffic keys (one per direction).</text>
+    <text class="note" x="220" y="793">Private keys, the shared secret, and traffic keys are never sent.</text>
+  </g>
+
+  <!-- After ServerHello, these server handshake messages are encrypted with
+       handshake traffic keys. The certificate identity key is distinct from B. -->
+  <g id="encrypted-server-authentication">
+    <rect id="authentication-panel" x="195" y="842" width="770" height="266" rx="18" fill="#f5f1fc"/>
+    <text class="server-title" x="220" y="879">4 · Server authentication — encrypted with handshake keys</text>
+    <text class="body" x="220" y="918"><tspan font-weight="700">EncryptedExtensions:</tspan> agreed connection settings.</text>
+    <text class="body" x="220" y="950"><tspan font-weight="700">Certificate:</tspan> chain with the server’s identity public key.</text>
+    <text class="body" x="220" y="982"><tspan font-weight="700">CertificateVerify:</tspan> signature using its identity private key.</text>
+    <text class="body" x="220" y="1014"><tspan font-weight="700">Finished:</tspan> checks handshake history using a derived secret key.</text>
+    <text class="note" x="220" y="1046">The certificate’s identity key is different from temporary share B.</text>
+    <path id="authentication-shaft" class="server-shaft" data-connector="true" d="M1021 1084H153"/>
+    <polygon id="authentication-head" points="139,1084 155,1075 155,1093" fill="#7c3aed"/>
+  </g>
+
+  <!-- Verification belongs to the browser. Receiving a public share alone does
+       not authenticate the server; the certificate and signature checks do. -->
+  <g id="browser-verification">
+    <rect id="verification-panel" x="195" y="1125" width="770" height="153" rx="18" fill="#f1f5f9"/>
+    <text class="step-title" x="220" y="1162">5 · Browser checks the server</text>
+    <text class="body" x="220" y="1197">Hostname + trusted certificate chain + signature + Finished.</text>
+    <text class="body" x="220" y="1229">The certificate supplies the public key for checking the signature.</text>
+    <text class="note" x="220" y="1261">A failed check stops the connection.</text>
+  </g>
+
+  <!-- Application keys depend on the transcript through server Finished; do not
+       move their derivation after client Finished or reuse the handshake keys. -->
+  <g id="local-application-key-derivation">
+    <rect id="application-keys-panel" x="195" y="1295" width="770" height="119" rx="18" fill="#f1f5f9"/>
+    <text class="step-title" x="220" y="1332">6 · Derive separate keys for HTTP messages</text>
+    <text class="body" x="220" y="1366">Both endpoints can derive application traffic keys</text>
+    <text class="body" x="220" y="1397">after the server’s Finished. These differ from handshake keys.</text>
+  </g>
+
+  <!-- Client Finished still uses handshake keys. The HTTP request follows it. -->
+  <g id="encrypted-client-finished">
+    <rect id="client-finished-panel" x="195" y="1431" width="770" height="130" rx="18" fill="#eff8fc"/>
+    <text class="client-title" x="220" y="1468">7 · Client Finished — encrypted with handshake keys</text>
+    <text class="body" x="220" y="1502">Browser confirms the handshake; server verifies this message.</text>
+    <path id="client-finished-shaft" class="client-shaft" data-connector="true" d="M139 1537H1007"/>
+    <polygon id="client-finished-head" points="1021,1537 1005,1528 1005,1546" fill="#0b78b5"/>
+  </g>
+
+  <!-- HTTP examples show decrypted endpoint content; only ciphertext crosses
+       the network. Application traffic keys are separate for each direction. -->
+  <g id="encrypted-http-exchange">
+    <rect id="request-panel" x="195" y="1578" width="770" height="131" rx="18" fill="#eff8fc"/>
+    <text class="client-title" x="220" y="1615">8 · Encrypted HTTP request — application keys</text>
+    <text class="example" x="220" y="1650">GET /books/42</text>
+    <text class="body" x="437" y="1650">— fetch book 42</text>
+    <path id="request-shaft" class="client-shaft" data-connector="true" d="M139 1685H1007"/>
+    <polygon id="request-head" points="1021,1685 1005,1676 1005,1694" fill="#0b78b5"/>
+
+    <rect id="response-panel" x="195" y="1726" width="770" height="131" rx="18" fill="#f5f1fc"/>
+    <text class="server-title" x="220" y="1763">9 · Encrypted HTTP response — application keys</text>
+    <text class="example" x="220" y="1798">200 OK</text>
+    <text class="body" x="337" y="1798">— success + book data</text>
+    <path id="response-shaft" class="server-shaft" data-connector="true" d="M1021 1833H153"/>
+    <polygon id="response-head" points="139,1833 155,1824 155,1842" fill="#7c3aed"/>
+  </g>
+
+  <!-- Visibility is bounded to network observers; encryption does not hide the
+       HTTP contents from an endpoint or make the website's operator trustworthy. -->
+  <g id="visibility-and-scope">
+    <text class="step-title" x="30" y="1908">What encryption protects — and what remains visible</text>
+    <text class="note" x="30" y="1945">HTTP paths, query parameters, headers, and bodies are encrypted; endpoints can read them.</text>
+    <text class="note" x="30" y="1978">Network observers still see IP addresses, traffic sizes, and timing.</text>
+    <text class="note" x="30" y="2011">Unencrypted DNS or the ClientHello’s server-name field can reveal the hostname.</text>
+    <text class="definitions" x="30" y="2042">DNS = Domain Name System · IP = Internet Protocol</text>
+    <text class="note" x="30" y="2077">A valid certificate does not guarantee that the website or its operator is trustworthy.</text>
+    <text class="note" x="30" y="2124">Scope: a full handshake without Encrypted ClientHello, resumption, early data,</text>
+    <text class="note" x="30" y="2155">a client certificate, or a retry. Message details are abbreviated.</text>
+  </g>
+</svg>

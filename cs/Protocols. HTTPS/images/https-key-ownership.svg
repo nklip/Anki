@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="1140" viewBox="0 0 1160 1140" role="img" aria-labelledby="title desc">
+  <title id="title">TLS 1.3 keys: three jobs, different keys</title>
+  <desc id="desc">Key ownership in a fresh certificate-authenticated TLS 1.3 connection using temporary Diffie–Hellman keys. Public keys may be shared; private keys stay secret. The server creates an identity key pair, keeps the private signing key, and sends a certificate containing the public identity key, encrypted with handshake keys after key exchange. The panels group key roles rather than message order. The browser checks the certificate chain using its already configured trusted roots, checks the domain, and uses the certificate public key to verify the server's handshake signature. Separately, browser and server each create a temporary exchange key pair, called private a and public A for the browser and private b and public B for the server. They send only public A and B. Each combines its own private key with the other endpoint's public key to compute the same shared secret locally. The shared secret and handshake transcript feed local key derivation for separate handshake and application traffic key sets. Each set has a key for each direction; both endpoints hold both directional keys. Browser software receives public keys and creates or derives its secret keys automatically. No private key, shared secret, or traffic key is sent.</desc>
+
+  <!-- Laptop and green server symbols are copied without shape or palette changes
+       from cs/Protocols. HTTP/images/http-request-response.svg. Their original
+       source is system design/01. Scaling/images/single-server.svg.
+       Arial, cyan frames, blue client traffic, and purple server traffic match HTTP.
+       Panels describe key roles, not the order of handshake messages. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+      .title { font-size: 34px; font-weight: 700; }
+      .subtitle { font-size: 21px; fill: #475569; }
+      .section { font-size: 25px; font-weight: 700; }
+      .endpoint { font-size: 24px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .note { font-size: 19px; fill: #475569; }
+      .center { text-anchor: middle; }
+      .strong { font-weight: 700; }
+      .blue { fill: #0b78b5; }
+      .purple { fill: #7c3aed; }
+      .frame { fill: #fff; stroke: #08b7d1; stroke-width: 3; }
+      .blue-shaft { fill: none; stroke: #0b78b5; stroke-width: 3; }
+      .purple-shaft { fill: none; stroke: #7c3aed; stroke-width: 3; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 110 70">
+      <rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/>
+      <path d="M7 58H103L96 66H14Z" fill="#111"/>
+      <rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/>
+    </symbol>
+    <symbol id="server" viewBox="0 0 64 112">
+      <rect width="64" height="112" rx="7" fill="#63c51b"/>
+      <path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/>
+    </symbol>
+  </defs>
+
+  <!-- The lead defines public/private before the three purpose-specific panels. -->
+  <rect id="background" width="1160" height="1140" fill="#fff"/>
+  <text class="title" x="30" y="48">TLS 1.3 keys: three jobs, different keys</text>
+  <text class="subtitle" x="30" y="84">Public key: may be shared · Private key: kept secret · Fresh connection, with a server certificate</text>
+
+  <!-- Identity panel groups key roles, not wire order. The certificate travels
+       encrypted after key exchange; its private signing key stays right.
+       Keep the arrow corridor clear below the three-line certificate label. -->
+  <g id="server-identity-keys">
+    <rect id="identity-frame" class="frame" x="30" y="115" width="1100" height="310" rx="20"/>
+    <text class="section" x="50" y="154">Server identity: prove which server you reached</text>
+    <use href="#laptop" x="50" y="179" width="90" height="57.3"/>
+    <text class="endpoint blue" x="158" y="212">Browser</text>
+    <text class="endpoint purple" x="810" y="212">Server</text>
+    <use href="#server" x="1064" y="171" width="36" height="63"/>
+
+    <text class="body" x="50" y="267">Receives the server certificate</text>
+    <text class="body" x="50" y="295">Checks its chain with trusted</text>
+    <text class="body" x="50" y="323">roots; also checks the domain</text>
+    <text class="note" x="50" y="372">Trust roots are already configured</text>
+    <text class="note" x="50" y="398">in the browser / operating system.</text>
+
+    <text class="body strong center purple" x="580" y="200">CA-signed certificate</text>
+    <text class="body center" x="580" y="228">contains server public key</text>
+    <text class="note center purple" x="580" y="256">Encrypted with handshake keys</text>
+    <!-- Shaft stops under its triangle base; the tip is clear of the browser text. -->
+    <path id="certificate-shaft" class="purple-shaft" data-connector="true" d="M782 281H393"/>
+    <polygon id="certificate-head" points="379,281 395,272 395,290" fill="#7c3aed"/>
+    <text class="body center" x="580" y="323">Browser uses that public key</text>
+    <text class="body center" x="580" y="351">to verify the server's signature.</text>
+    <text class="note center" x="580" y="398">CA = certificate authority</text>
+
+    <text class="body" x="810" y="267">Creates long-lived identity pair</text>
+    <text class="body strong" x="810" y="295">Keeps private signing key</text>
+    <text class="body" x="810" y="323">Puts public key in certificate</text>
+    <text class="note" x="810" y="372">Private key signs the handshake</text>
+    <text class="note" x="810" y="398">to prove the server owns it.</text>
+  </g>
+
+  <!-- Exchange panel: private a/b never leave their endpoint. Blue A goes right;
+       purple B goes left. Result boxes show local computation, not key transport. -->
+  <g id="temporary-exchange-keys">
+    <rect id="exchange-frame" class="frame" x="30" y="445" width="1100" height="320" rx="20"/>
+    <text class="section" x="50" y="484">Temporary Diffie–Hellman keys: agree on a shared secret</text>
+    <text class="endpoint blue" x="50" y="528">Browser creates its own pair</text>
+    <text class="endpoint purple" x="810" y="528">Server creates its own pair</text>
+    <text class="body" x="50" y="569">Private a + public A</text>
+    <text class="body strong" x="50" y="599">Keeps a; sends only A</text>
+    <text class="body" x="810" y="569">Private b + public B</text>
+    <text class="body strong" x="810" y="599">Keeps b; sends only B</text>
+
+    <text class="body strong center blue" x="580" y="548">Public share A</text>
+    <!-- Both arrow shafts end inside their own triangular bases, never at tips. -->
+    <path id="public-a-shaft" class="blue-shaft" data-connector="true" d="M379 570H768"/>
+    <polygon id="public-a-head" points="782,570 766,561 766,579" fill="#0b78b5"/>
+    <text class="body strong center purple" x="580" y="610">Public share B</text>
+    <path id="public-b-shaft" class="purple-shaft" data-connector="true" d="M782 632H393"/>
+    <polygon id="public-b-head" points="379,632 395,623 395,641" fill="#7c3aed"/>
+
+    <rect id="browser-local-secret" x="50" y="635" width="310" height="85" rx="12" fill="#eff8fc"/>
+    <text class="body strong center blue" x="205" y="665">Combine a with received B</text>
+    <text class="body center" x="205" y="695">Compute shared secret locally</text>
+    <rect id="server-local-secret" x="800" y="635" width="310" height="85" rx="12" fill="#f5f1fc"/>
+    <text class="body strong center purple" x="955" y="665">Combine b with received A</text>
+    <text class="body center" x="955" y="695">Compute shared secret locally</text>
+    <text class="body strong center" x="580" y="683">Both compute the same secret.</text>
+    <text class="note center" x="580" y="711">The secret is never sent.</text>
+    <text class="note" x="50" y="749">A and B are temporary public keys, separate from the server's identity key. a and b stay secret.</text>
+  </g>
+
+  <!-- Derived keys are a distinct symmetric role. Handshake/application boxes
+       group their uses; neither box implies that a secret key is transmitted. -->
+  <g id="derived-symmetric-keys">
+    <rect id="traffic-frame" class="frame" x="30" y="785" width="1100" height="246" rx="20"/>
+    <text class="section" x="50" y="824">Symmetric keys: the same key encrypts and decrypts</text>
+    <text class="body" x="50" y="865">Shared secret + handshake transcript → each endpoint derives encryption keys locally.</text>
+    <rect id="handshake-key-use" x="50" y="887" width="515" height="79" rx="12" fill="#f1f5f9"/>
+    <text class="body strong" x="70" y="916">Handshake keys</text>
+    <text class="body" x="70" y="946">Encrypt the protected handshake messages.</text>
+    <rect id="application-key-use" x="585" y="887" width="525" height="79" rx="12" fill="#f1f5f9"/>
+    <text class="body strong" x="605" y="916">Separate application traffic keys</text>
+    <text class="body" x="605" y="946">Encrypt HTTP requests and responses.</text>
+    <text class="note" x="50" y="995">Each set has a key for browser → server and a different key for server → browser; both ends hold both.</text>
+    <text class="note" x="50" y="1020">Handshake transcript = the handshake messages exchanged so far.</text>
+  </g>
+
+  <!-- Explicitly answer which keys the user gets without requiring the prose card. -->
+  <g id="browser-automatic-key-summary">
+    <text class="body strong" x="30" y="1070">Your browser receives public keys and creates or derives its secret keys automatically.</text>
+    <text class="body" x="30" y="1103">No private key, shared secret, or traffic key is sent. The server's private key stays on the server.</text>
+  </g>
+</svg>
