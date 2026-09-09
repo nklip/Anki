@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="652" viewBox="0 0 1160 652" role="img" aria-labelledby="title desc">
+  <title id="title">SOAP: XML messages between applications</title>
+  <desc id="desc">A SOAP client sends an XML request envelope to a service. XML means Extensible Markup Language. The envelope contains an optional Header for message metadata, followed by a required Body for application data. The example Body asks GetPrice for productId 42. The service returns a SOAP response envelope, with its optional Header omitted here. The response Body contains either the result 19.99 USD or a SOAP Fault with error details. The arrows show the request moving right and the response returning left. SOAP 1.2 over HTTP or HTTPS is the example transport binding; SOAP can use other transports.</desc>
+
+  <!-- Laptop and green server symbols are copied without shape or palette changes
+       from cs/Protocols. SSH/images/ssh-secure-session.svg. Their original source is
+       system design/01. Scaling/images/single-server.svg. Cyan participant frames,
+       blue message arrows, purple response accents, and Arial follow protocol SVGs. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+      .title { font-size: 34px; font-weight: 700; }
+      .subtitle { font-size: 22px; fill: #475569; }
+      .node-label { font-size: 25px; font-weight: 700; text-anchor: middle; }
+      .small { font-size: 20px; fill: #475569; text-anchor: middle; }
+      .message-title { font-size: 24px; font-weight: 700; fill: #0b78b5; }
+      .part-label { font-size: 22px; }
+      .example { font-family: Menlo, Consolas, monospace; font-size: 22px; }
+      .frame { fill: #fff; stroke: #08b7d1; stroke-width: 3; }
+      .request-shaft { fill: none; stroke: #0b78b5; stroke-width: 3; }
+      .response-shaft { fill: none; stroke: #7c3aed; stroke-width: 3; }
+      .footer { font-size: 21px; fill: #475569; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 110 70">
+      <rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/>
+      <path d="M7 58H103L96 66H14Z" fill="#111"/>
+      <rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/>
+    </symbol>
+    <symbol id="server" viewBox="0 0 64 112">
+      <rect width="64" height="112" rx="7" fill="#63c51b"/>
+      <path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/>
+    </symbol>
+  </defs>
+
+  <!-- The title states the lesson, and the subtitle defines the message notation. -->
+  <rect id="background" width="1160" height="652" fill="#fff"/>
+  <text class="title" x="30" y="48">SOAP: XML messages between applications</text>
+  <text class="subtitle" x="30" y="85">One request and one response · XML = Extensible Markup Language</text>
+
+  <!-- Both request and response connect these same two applications. -->
+  <g id="participants">
+    <rect id="client-frame" class="frame" x="30" y="130" width="205" height="244" rx="22"/>
+    <text class="node-label" x="132.5" y="169">SOAP client</text>
+    <use href="#laptop" x="72.5" y="194" width="120" height="77"/>
+    <text class="small" x="132.5" y="312">Sends a request</text>
+    <text class="small" x="132.5" y="344">Reads the response</text>
+
+    <rect id="service-frame" class="frame" x="925" y="130" width="205" height="244" rx="22"/>
+    <text class="node-label" x="1027.5" y="169">SOAP service</text>
+    <use href="#server" x="995.5" y="189" width="64" height="112"/>
+    <text class="small" x="1027.5" y="341">Runs GetPrice</text>
+  </g>
+
+  <!-- The nested request parts visibly belong to ONE envelope. Header precedes
+       Body; optional and required are written out rather than conveyed by color. -->
+  <g id="request-envelope">
+    <rect id="request-envelope-frame" x="280" y="130" width="600" height="244" rx="18" fill="#eff8fc" stroke="#0b78b5" stroke-width="2"/>
+    <text class="message-title" x="300" y="168">1 · Request envelope (XML)</text>
+    <rect id="request-header" x="300" y="187" width="560" height="69" rx="10" fill="#fff" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 5"/>
+    <text class="part-label" x="320" y="229"><tspan font-weight="700">Header (optional)</tspan> · message metadata</text>
+    <rect id="request-body" x="300" y="270" width="560" height="87" rx="10" fill="#fff" stroke="#0b78b5" stroke-width="1.5"/>
+    <text class="part-label" x="320" y="304"><tspan font-weight="700">Body (required)</tspan> · application data</text>
+    <text class="example" x="320" y="337">GetPrice(productId=42)</text>
+  </g>
+
+  <!-- Request arrows enter and leave the envelope as a whole. Shafts end just
+       inside triangle bases; tips meet outer frame strokes without penetrating. -->
+  <g id="request-flow">
+    <path id="client-request-shaft" class="request-shaft" data-connector="true" d="M236.5 263H265"/>
+    <polygon id="client-request-head" points="279,263 263,254 263,272" fill="#0b78b5"/>
+    <path id="service-request-shaft" class="request-shaft" data-connector="true" d="M881 263H909.5"/>
+    <polygon id="service-request-head" points="923.5,263 907.5,254 907.5,272" fill="#0b78b5"/>
+  </g>
+
+  <!-- A response uses the same envelope structure. The optional Header is omitted
+       in this example, and the two possible Body contents are explicitly alternatives. -->
+  <g id="response-envelope">
+    <rect id="response-envelope-frame" x="280" y="411" width="600" height="155" rx="18" fill="#f5f1fc" stroke="#7c3aed" stroke-width="2"/>
+    <text class="message-title" x="300" y="449" style="fill:#7c3aed">2 · Response envelope (XML)</text>
+    <rect id="response-body" x="300" y="465" width="560" height="84" rx="10" fill="#fff" stroke="#7c3aed" stroke-width="1.5"/>
+    <text class="part-label" x="320" y="497"><tspan font-weight="700">Body (required)</tspan> · result or error</text>
+    <text class="part-label" x="320" y="530">19.99 USD   OR   Fault (error details)</text>
+  </g>
+
+  <!-- The return route starts at the service and ends at the client. Orthogonal
+       shafts occupy the side gutters; all bends and heads remain clear of text. -->
+  <g id="response-flow">
+    <path id="service-response-shaft" class="response-shaft" data-connector="true" d="M1027.5 375.5V489H895"/>
+    <polygon id="service-response-head" points="881,489 897,480 897,498" fill="#7c3aed"/>
+    <path id="client-response-shaft" class="response-shaft" data-connector="true" d="M279 489H132.5V389.5"/>
+    <polygon id="client-response-head" points="132.5,375.5 123.5,391.5 141.5,391.5" fill="#7c3aed"/>
+  </g>
+
+  <!-- These notes explain the omitted optional element and delimit the transport example. -->
+  <g id="notes">
+    <text class="footer" x="30" y="604">The response omits Header here. Every SOAP envelope has a Body.</text>
+    <text class="footer" x="30" y="637">Example: SOAP 1.2 over HTTP or HTTPS. SOAP can use other transports.</text>
+  </g>
+</svg>
