@@ -1,14 +1,6 @@
 # Java Memory Model
 
-<!-- Card mode: complex. Validate with --mode complex. -->
-
-## Front
-
-What does the **Java Memory Model (JMM)** specify, and how does it differ from JVM memory structure?
-
-Explain how visibility, ordering, atomicity, and happens-before fit together; how Java constructs provide these guarantees; and whether virtual threads change the rules.
-
-## Back
+<sub>[Back to Java](../Readme.md#content)</sub>
 
 The **Java Memory Model (JMM)** specifies which values a thread is allowed to observe when threads read and write shared memory. It gives Java programs rules for reasoning about communication between threads, while allowing compilers and processors to optimize execution within those rules.
 
@@ -321,7 +313,7 @@ To reason about correctness, identify the shared variables, the operations on th
 
 The **JMM describes allowed shared-memory behavior**; JVM memory structure describes runtime storage areas. Visibility, ordering, and atomicity are distinct guarantees. Happens-before connects actions through program order, synchronization, and transitivity. Java language constructs and library operations provide specific ways to establish those guarantees. Final fields have special initialization semantics, and virtual threads follow the same rules as platform threads. The compiler and hardware retain freedom to optimize within the JMM's constraints.
 
-## Sources
+# Sources
 
 - [Aleksey Shipilëv — Java Memory Model Pragmatics: Happens-Before quiz (setter excerpt and adapted box example)](https://shipilev.net/blog/2014/jmm-pragmatics/#_happens_before_test_your_understanding)
 - [Java SE 25 JLS §8.3.1.4 — Volatile fields and their distinction from locking](https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.3.1.4)

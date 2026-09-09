@@ -1,12 +1,6 @@
 # Concurrency. Parallel Stream Internals
 
-<!-- Card mode: complex. Validate with --mode complex. -->
-
-## Front
-
-You call `orders.parallelStream()`. Explain what the JDK actually does: how the source becomes chunks, what runs those chunks, how the pipeline stages execute inside one chunk, and how partial results become one answer. Which of those details does the Stream API guarantee, and which are only today's implementation?
-
-## Back
+<sub>[Back to Java](../Readme.md#content)</sub>
 
 **The Stream API, including parallel streams, was introduced in Java 8 under JSR 335.**
 
@@ -20,9 +14,9 @@ Three things follow from that sentence, and they are what interviews probe:
 
 ![concurrency-parallel-stream-execution-pipeline.svg](images/concurrency-parallel-stream-execution-pipeline.svg)
 
-### Vocabulary, before anything else
+## Vocabulary, before anything else
 
-These six words carry the whole card. Each one is defined properly at the level named on its right; the table is only so that no term appears before you have met it.
+These six words carry the whole article. Each one is defined properly at the level named on its right; the table is only so that no term appears before you have met it.
 
 | Term | What it means | Taught in |
 |---|---|---|
@@ -33,7 +27,7 @@ These six words carry the whole card. Each one is defined properly at the level 
 | **Sink** | One pipeline stage at run time, wired to the stage after it | Level 4 |
 | **Fork/join** | The scheduler that runs leaf tasks on a shared pool of threads | Level 5 |
 
-### How this card is organised
+## How this article is organised
 
 Each level answers one question and assumes only the levels above it.
 
@@ -714,7 +708,7 @@ Here the downstream is `summingLong`, which does not care about order, so the sw
 
 > A parallel stream is one lazy pipeline run over many `Spliterator` chunks, scheduled by fork/join, with the terminal operation deciding how the partial results become the single answer you see.
 
-## Sources
+# Sources
 
 - [Java SE 26 `java.util.stream` package specification](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/stream/package-summary.html)
 

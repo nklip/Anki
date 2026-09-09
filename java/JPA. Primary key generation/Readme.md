@@ -1,12 +1,6 @@
 # JPA. Primary key generation
 
-<!-- Card mode: complex. Validate with --mode complex. -->
-
-## Front
-
-How does JPA generate a primary key, and how should you choose between `AUTO`, `IDENTITY`, `SEQUENCE`, `TABLE`, `UUID`, and an application-assigned ID?
-
-## Back
+<sub>[Back to Java](../Readme.md#content)</sub>
 
 **Java Persistence API (JPA) primary-key generation** uses `@GeneratedValue` for a simple entity ID. Jakarta Persistence 3.2 defines five strategies; `GenerationType.UUID` was introduced in Jakarta Persistence 3.1.
 
@@ -14,17 +8,17 @@ The Hibernate-specific behavior and examples below target **Hibernate ORM 7.4.7.
 
 The main question is: **who allocates the value, and is it known before the entity’s `INSERT`?**
 
-This card first builds that mental model, then compares timing, Hibernate batching, sequence pooling, mappings, and common mistakes. The overview below groups the five generated strategies by who allocates the ID.
+This article first builds that mental model, then compares timing, Hibernate batching, sequence pooling, mappings, and common mistakes. The overview below groups the five generated strategies by who allocates the ID.
 
 ![jpa-primary-key-strategy-map.svg](images/jpa-primary-key-strategy-map.svg)
 
-### Basic annotations
+## Basic annotations
 
 `@Id` marks the attribute that identifies an entity. `@GeneratedValue` tells the **persistence provider**—for example, Hibernate—to generate it.
 
 Portable JPA support is required only for **simple primary keys**. Do not expect `@GeneratedValue` to generate one part of an `@EmbeddedId`, an `@IdClass`, or a derived ID.
 
-### Strategy comparison
+## Strategy comparison
 
 | Choice | Who allocates the ID? | Portable Java ID types | ID known relative to entity `INSERT` | Hibernate insert batching |
 |---|---|---|---|---|
@@ -39,7 +33,7 @@ Portable JPA support is required only for **simple primary keys**. Do not expect
 
 ![jpa-primary-key-timing.svg](images/jpa-primary-key-timing.svg)
 
-### Database support for each real choice
+## Database support for each real choice
 
 Database support has two layers: the engine must have the needed physical capability, and the persistence provider must know how to use it. The table covers common current engines—PostgreSQL 18, MySQL 8.4, current MariaDB, Oracle AI Database 26, SQL Server, H2 2.x, and SQLite 3. It is a capability comparison, not a provider certification list.
 
@@ -52,7 +46,7 @@ Database support has two layers: the engine must have the needed physical capabi
 | `UUID` | All listed databases: JPA requires the provider to generate the UUID, so no database-side UUID generator or native UUID column type is required. | None of the listed databases is excluded; the provider maps the `UUID` or `String` ID to an appropriate column representation. |
 | Assigned | All listed databases, because application code supplies the value before `persist()`. | None; uniqueness is the application’s responsibility. |
 
-### `AUTO`: portable request, provider-specific result
+## `AUTO`: portable request, provider-specific result
 
 A bare `@GeneratedValue` uses `AUTO`.
 
@@ -71,7 +65,7 @@ The exact physical mechanism is provider-specific. In Hibernate ORM 7.4, numeric
 
 Use `AUTO` when provider choice is acceptable. Name the strategy explicitly when schema behavior, batching, or migration scripts depend on it.
 
-### `IDENTITY`: the database generates the key during `INSERT`
+## `IDENTITY`: the database generates the key during `INSERT`
 
 An **identity column** is a database column whose numeric value the **database generates automatically when a row is inserted**. It is commonly used for an `id`.
 
@@ -118,7 +112,7 @@ That timing has an important Hibernate consequence: Hibernate cannot use JDBC in
 
 **One row per transaction is not a requirement.** `IDENTITY` also works when a transaction inserts many rows, but Hibernate executes those entity inserts individually. For bulk entity insertion, prefer `SEQUENCE` when the database supports it, so Hibernate can batch compatible inserts when batching is enabled.
 
-### `SEQUENCE`: get an ID before the entity row is inserted
+## `SEQUENCE`: get an ID before the entity row is inserted
 
 A **database sequence** is a database object that returns the next number whenever an application asks for it. It exists separately from the entity rows, so the application can obtain an ID **before inserting a row**.
 
@@ -173,7 +167,7 @@ Pooling supplies **five entity IDs per sequence query**. Each entity still needs
 
 Do not treat generated IDs as gapless serial numbers. A rollback, a stopped application, or an unused pool can leave holes. The purpose of a primary key is stable uniqueness, not consecutive numbering.
 
-### `TABLE`: emulate a sequence with a normal table
+## `TABLE`: emulate a sequence with a normal table
 
 **`TABLE` generates IDs using a shared counter stored in a row of an ordinary database table.** Hibernate locks that row, reads the counter, and updates it to reserve IDs. The generator table is separate from the table containing the entities; no native database sequence object is needed.
 
@@ -239,7 +233,7 @@ M2 waits for M1's **allocation commit**, not for M1 to insert all five books or 
 
 Use it mainly when sequence-like behavior is required but a native sequence is unavailable. Remember that Hibernate may choose a table-backed allocator for numeric `AUTO` on such a database.
 
-### `UUID`: provider-generated, database-independent identity
+## `UUID`: provider-generated, database-independent identity
 
 **A universally unique identifier (UUID) is a 128-bit identifier. `GenerationType.UUID` makes the persistence provider responsible for creating it.** With Hibernate, generation happens in the Java process before the entity's `INSERT`; it needs no database sequence, auto-increment column, or database UUID function.
 
@@ -274,7 +268,7 @@ private UUID id;
 
 Use the version 7 mapping only when depending on Hibernate ORM 7.4 and its incubating API is acceptable. Prefer a native UUID or 16-byte database type when available instead of storing the textual 36-character form merely for display convenience.
 
-#### **Production example: Apache Airflow 3 (outside Java)**
+### **Production example: Apache Airflow 3 (outside Java)**
 
 This example uses **Python/SQLAlchemy**. In **Airflow 3.0.0**, `DagVersion` stores versions of workflow definitions. Its SQLAlchemy mapping contains this Python field declaration:
 
@@ -286,7 +280,7 @@ id = Column(UUIDType(binary=False), primary_key=True, default=uuid6.uuid7)
 
 This demonstrates **provider-generated, database-independent UUID identity outside JPA**: SQLAlchemy performs generation in the Python process, with no database-side UUID function or sequence. The database still stores and enforces the primary key. This example uses Python/SQLAlchemy rather than Java's `GenerationType.UUID` annotation.
 
-### Application-assigned IDs
+## Application-assigned IDs
 
 **Application-assigned means application code supplies the ID before `persist()`.** The value can still be a UUID; the difference is who creates it and when it becomes available. Omit `@GeneratedValue` for this mapping.
 
@@ -315,7 +309,7 @@ The cost is that the application owns uniqueness. That means either a key wide e
 
 **The three Java systems below store entities in relational databases and assign the key before the `INSERT`.** Keycloak maps them with JPA; Camunda and ShardingSphere use their own persistence layers, but the decision is the same one this section teaches.
 
-#### **Production example: Keycloak 26.0.0 — assigned IDs through JPA**
+### **Production example: Keycloak 26.0.0 — assigned IDs through JPA**
 
 **Keycloak** is an identity provider that persists realms, clients, and users through Hibernate. Its `RealmEntity` maps the key with no generator, shown here without the annotations that do not concern identity:
 
@@ -327,19 +321,19 @@ protected String id;
 
 `JpaRealmProvider.createRealm(String name)` calls `KeycloakModelUtils.generateId()`, which returns `UUID.randomUUID().toString()`. It then calls `realm.setId(id)` before `em.persist(realm)`. That is exactly the mapping this section teaches: `@Id` without `@GeneratedValue`. One code path serves every database Keycloak supports, and the realm's ID is already available for the creation event published in the same method.
 
-#### **Production example: Camunda 7.22.0 — every row keyed before the flush**
+### **Production example: Camunda 7.22.0 — every row keyed before the flush**
 
 **Camunda** is a workflow engine that keeps its state only in relational databases. `DbEntityManager.insert()` calls `ensureHasId()`, which assigns `idGenerator.getNextId()` to any entity that still has no ID, before the row is queued for writing. The default `DbIdGenerator` serves IDs from a block it reserved earlier, so no individual row waits for a database round trip. That block comes from a counter row in Camunda's own schema, which `GetNextIdBlockCmd` reads and advances: this is the `TABLE` idea run by the application, and the engine rather than a persistence provider decides each entity's key.
 
 This matters because one API call creates a graph of rows: a process instance, its executions, its tasks, its variables, and its history entries. Those rows reference each other by ID, so every ID must exist before any of them is written. The engine can then flush the whole graph as batched inserts.
 
-#### **Production example: Apache ShardingSphere 5.5.1 — a key no single database can assign**
+### **Production example: Apache ShardingSphere 5.5.1 — a key no single database can assign**
 
 **ShardingSphere** spreads one logical table across many physical databases. Its `SnowflakeKeyGenerateAlgorithm` returns `Long` keys built in the JVM from a timestamp, a worker ID, and a per-millisecond sequence.
 
 Per-shard `AUTO_INCREMENT` would hand out the same numbers on every shard, so no single database can own the key. The key must also exist **before routing**, because the sharding rule may use it to choose the target database. The 64-bit result is half the width of a UUID and increases over time, so new rows append to one end of the index instead of scattering across it.
 
-### How to choose
+## How to choose
 
 - Choose `SEQUENCE` when the database supports sequences and write-behind or batch inserts matter.
 - Choose `IDENTITY` when mapping identity or auto-increment columns and the loss of Hibernate insert batching is acceptable for the workload.
@@ -347,7 +341,7 @@ Per-shard `AUTO_INCREMENT` would hand out the same numbers on every shard, so no
 - Choose `TABLE` only when you need a database-coordinated numeric allocator without native sequence support.
 - Choose `AUTO` only when letting the provider and database decide is genuinely acceptable.
 
-### Common mistakes
+## Common mistakes
 
 - Assuming `AUTO` has the same physical behavior on every provider and database.
 - Expecting Hibernate to batch entity inserts that use `IDENTITY`.
@@ -357,7 +351,7 @@ Per-shard `AUTO_INCREMENT` would hand out the same numbers on every shard, so no
 - Assuming `GenerationType.UUID` promises UUIDv4 or UUIDv7.
 - Applying `@GeneratedValue` to a composite or derived key and expecting portable behavior.
 
-## Sources
+# Sources
 
 - [Jakarta Persistence 3.1 — introduction of UUID generation](https://jakarta.ee/specifications/persistence/3.1/)
 - [Jakarta Persistence 3.2 — `GeneratedValue`](https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/generatedvalue)

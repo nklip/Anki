@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="660" viewBox="0 0 1200 660" role="img" aria-labelledby="title description">
+  <title id="title">Safe publication through a volatile reference</title>
+  <desc id="description">A writer constructs a configuration object, writes it to a volatile reference, and a reader reads that reference. The reader sees state written before publication. Volatile does not make later mutations of the referenced object safe.</desc>
+
+  <!-- Background and title -->
+  <rect width="1200" height="660" fill="#ffffff"/>
+  <text x="600" y="43" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="bold" fill="#202124">Safe publication through a volatile reference</text>
+
+  <!-- Pipeline headings -->
+  <text x="219" y="88" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold" fill="#356eb3">Writer thread</text>
+  <text x="833" y="88" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold" fill="#34834b">Reader thread</text>
+
+  <!-- Step 1: construct object -->
+  <rect x="30" y="115" width="195" height="135" rx="8" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <text x="127.5" y="150" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#202124">Construct object</text>
+  <text x="127.5" y="181" text-anchor="middle" font-family="Courier New, monospace" font-size="16" fill="#202124">Config next =</text>
+  <text x="127.5" y="205" text-anchor="middle" font-family="Courier New, monospace" font-size="16" fill="#202124">new Config(...);</text>
+  <text x="127.5" y="232" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#5f6368">ordinary writes</text>
+
+  <!-- Arrow 1 -->
+  <line x1="225" y1="182" x2="248" y2="182" stroke="#356eb3" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="240,172 261,182 240,192" fill="#356eb3"/>
+
+  <!-- Step 2: initialized fields -->
+  <rect x="261" y="115" width="195" height="135" rx="8" fill="#e8f0fe" stroke="#356eb3" stroke-width="2"/>
+  <text x="358.5" y="150" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#202124">Config object</text>
+  <text x="358.5" y="181" text-anchor="middle" font-family="Courier New, monospace" font-size="16" fill="#202124">host = "api"</text>
+  <text x="358.5" y="207" text-anchor="middle" font-family="Courier New, monospace" font-size="16" fill="#202124">timeout = 30</text>
+  <text x="358.5" y="232" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#5f6368">fully initialized first</text>
+
+  <!-- Arrow 2 -->
+  <line x1="456" y1="182" x2="479" y2="182" stroke="#356eb3" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="471,172 492,182 471,192" fill="#356eb3"/>
+
+  <!-- Step 3: release publication -->
+  <rect x="492" y="115" width="210" height="135" rx="8" fill="#fce8e6" stroke="#d93025" stroke-width="2.5"/>
+  <text x="597" y="150" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#d93025">Volatile release</text>
+  <text x="597" y="187" text-anchor="middle" font-family="Courier New, monospace" font-size="17" font-weight="bold" fill="#202124">current = next;</text>
+  <text x="597" y="216" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#5f6368">volatile reference write</text>
+
+  <!-- Release/acquire edge -->
+  <line x1="702" y1="182" x2="740" y2="182" stroke="#7b1fa2" stroke-width="6" stroke-linecap="round"/>
+  <polygon points="730,170 754,182 730,194" fill="#7b1fa2"/>
+  <text x="728" y="151" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="bold" fill="#7b1fa2">HB</text>
+
+  <!-- Step 4: acquire read -->
+  <rect x="754" y="115" width="210" height="135" rx="8" fill="#e6f4ea" stroke="#34834b" stroke-width="2.5"/>
+  <text x="859" y="150" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#34834b">Volatile acquire</text>
+  <text x="859" y="187" text-anchor="middle" font-family="Courier New, monospace" font-size="16" font-weight="bold" fill="#202124">local = current;</text>
+  <text x="859" y="216" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#5f6368">volatile reference read</text>
+
+  <!-- Arrow 4 -->
+  <line x1="964" y1="182" x2="987" y2="182" stroke="#34834b" stroke-width="5" stroke-linecap="round"/>
+  <polygon points="979,172 1000,182 979,192" fill="#34834b"/>
+
+  <!-- Step 5: safe observation -->
+  <rect x="1000" y="115" width="170" height="135" rx="8" fill="#e6f4ea" stroke="#34834b" stroke-width="2"/>
+  <text x="1085" y="150" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="bold" fill="#202124">Reader sees</text>
+  <text x="1085" y="181" text-anchor="middle" font-family="Courier New, monospace" font-size="15" fill="#202124">host == "api"</text>
+  <text x="1085" y="207" text-anchor="middle" font-family="Courier New, monospace" font-size="15" fill="#202124">timeout == 30</text>
+  <text x="1085" y="232" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" fill="#5f6368">earlier state visible</text>
+
+  <!-- Recommended immutable-snapshot pattern -->
+  <rect x="70" y="335" width="500" height="220" rx="9" fill="#e6f4ea" stroke="#34834b" stroke-width="2"/>
+  <text x="320" y="374" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#34834b">Recommended: replace an immutable snapshot</text>
+  <text x="105" y="414" font-family="Courier New, monospace" font-size="16" fill="#202124">private volatile Config current;</text>
+  <text x="105" y="447" font-family="Courier New, monospace" font-size="16" fill="#202124">void reload() {</text>
+  <text x="130" y="473" font-family="Courier New, monospace" font-size="16" fill="#202124">current = loadNewConfig();</text>
+  <text x="105" y="499" font-family="Courier New, monospace" font-size="16" fill="#202124">}</text>
+  <text x="320" y="535" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6368">Readers obtain one consistent object version.</text>
+
+  <!-- Warning: volatile reference is not deep volatility -->
+  <rect x="630" y="335" width="500" height="220" rx="9" fill="#fff4ce" stroke="#b7791f" stroke-width="2"/>
+  <text x="880" y="374" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#7a5412">Not guaranteed: later mutation of the same object</text>
+  <text x="665" y="414" font-family="Courier New, monospace" font-size="16" fill="#202124">Config shared = current;</text>
+  <text x="665" y="447" font-family="Courier New, monospace" font-size="16" fill="#202124">shared.timeout = 60;</text>
+  <text x="665" y="481" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6368">The field inside Config is not volatile merely</text>
+  <text x="665" y="504" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6368">because the reference named current is volatile.</text>
+  <text x="880" y="535" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#7a5412">Use immutable state or synchronize later mutations.</text>
+
+  <!-- Final takeaway -->
+  <text x="600" y="611" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="bold" fill="#202124">A volatile reference safely publishes state written before the reference write.</text>
+  <text x="600" y="638" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="15" fill="#5f6368">It does not recursively make the referenced object or its fields volatile.</text>
+</svg>

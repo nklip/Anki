@@ -1,18 +1,10 @@
 # AOT vs. JIT in Modern Java
 
-<!-- Card mode: complex. Validate with --mode complex. -->
-
-## Front
-
-How do **Just-in-Time (JIT)** compilation, **GraalVM Native Image AOT**, and **Project Leyden's AOT-assisted HotSpot** differ?
-
-Explain when machine code is produced, why profiling matters, what runs in production, and what JDK 24–26 added.
-
-## Back
+<sub>[Back to Java](../Readme.md#content)</sub>
 
 **JIT and AOT describe when compilation or preparation happens; they are not two mutually exclusive ways that every Java program must choose between.** Standard HotSpot compiles hot code during a JVM run, GraalVM Native Image creates a native executable before deployment, and Project Leyden moves repeatable work ahead of time while retaining HotSpot and its adaptive JIT.
 
-This card first compares the models, then explains HotSpot warmup, full native AOT, profile-guided optimization, and Leyden's hybrid approach.
+This article first compares the models, then explains HotSpot warmup, full native AOT, profile-guided optimization, and Leyden's hybrid approach.
 
 ![aot_vs_jit.svg](images/aot_vs_jit.svg)
 
@@ -146,7 +138,7 @@ The production run still gathers fresh profiles. If its workload differs from tr
 
 **HotSpot JIT learns now; Native Image AOT commits before deployment; Leyden remembers earlier work and then keeps learning.** That distinction explains why modern Java can use AOT techniques without giving up the JVM or JIT compilation.
 
-## Sources
+# Sources
 
 - [Oracle Java 26 documentation — Java HotSpot Virtual Machine Performance Enhancements](https://docs.oracle.com/en/java/javase/26/vm/java-hotspot-virtual-machine-performance-enhancements.html)
 - [GraalVM Native Image — Build a Native Executable](https://www.graalvm.org/latest/reference-manual/native-image/basics/)
