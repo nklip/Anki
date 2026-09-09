@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="590" viewBox="0 0 1160 590" role="img" aria-labelledby="title desc">
+  <title id="title">FTP: separate control and data connections</title>
+  <desc id="desc">FTP means File Transfer Protocol and TCP means Transmission Control Protocol. In this passive-mode download, the FTP client opens two TCP connections to the FTP server. The control connection goes to server port 21 and carries client commands to the server and server replies to the client. A separate data connection goes to a server-selected port and carries the report.pdf file from server to client. The arrows show application traffic after connection setup, not which side opens the connections.</desc>
+
+  <!-- Device and server symbols follow the system-design and neighboring protocol
+       diagrams. Blue and purple distinguish the two explicitly named connections. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+      .title { font-size: 34px; font-weight: 700; }
+      .subtitle { font-size: 22px; fill: #475569; }
+      .node-label { font-size: 25px; font-weight: 700; text-anchor: middle; }
+      .small { font-size: 20px; fill: #475569; text-anchor: middle; }
+      .control-label { font-size: 23px; fill: #0b78b5; text-anchor: middle; }
+      .data-label { font-size: 23px; fill: #7c3aed; text-anchor: middle; }
+      .frame { fill: #fff; stroke: #08b7d1; stroke-width: 3; }
+      .control-shaft { fill: none; stroke: #0b78b5; stroke-width: 3; }
+      .data-shaft { fill: none; stroke: #7c3aed; stroke-width: 3; }
+      .footnote { font-size: 22px; fill: #475569; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 110 70">
+      <rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/>
+      <path d="M7 58H103L96 66H14Z" fill="#111"/>
+      <rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/>
+    </symbol>
+    <symbol id="server" viewBox="0 0 64 112">
+      <rect width="64" height="112" rx="7" fill="#63c51b"/>
+      <path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/>
+    </symbol>
+    <symbol id="file" viewBox="0 0 48 60">
+      <path d="M5 3H30L43 16V56H5Z" fill="#fff" stroke="#7c3aed" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M30 3V16H43M13 29H34M13 38H34M13 47H29" fill="none" stroke="#7c3aed" stroke-width="3" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="folder" viewBox="0 0 72 56">
+      <path d="M4 13V5H29L37 13H68V51H4Z" fill="#fff" stroke="#555" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M4 19H68" fill="none" stroke="#555" stroke-width="3"/>
+    </symbol>
+  </defs>
+
+  <!-- State the two-connection lesson first and expand both abbreviations. -->
+  <rect id="background" width="1160" height="590" fill="#fff"/>
+  <text class="title" x="30" y="48">FTP: two TCP connections for one file transfer</text>
+  <text class="subtitle" x="30" y="85">FTP = File Transfer Protocol · TCP = Transmission Control Protocol</text>
+
+  <!-- Soft lane backgrounds group traffic without adding a third participant.
+       Each shaft intentionally crosses its lane background and touches only its
+       endpoint frame; labels remain above every route. -->
+  <g id="connection-lanes">
+    <rect id="control-lane" x="252" y="130" width="656" height="185" rx="18" fill="#eff8fc"/>
+    <rect id="data-lane" x="252" y="332" width="656" height="146" rx="18" fill="#f5f1fc"/>
+  </g>
+
+  <!-- Both connections terminate on the same client and the same server.
+       The file and folder icons reinforce the download's local and remote ends. -->
+  <g id="participants">
+    <rect id="client-frame" class="frame" x="30" y="130" width="205" height="348" rx="22"/>
+    <text class="node-label" x="132.5" y="169">FTP client</text>
+    <use href="#laptop" x="72.5" y="219" width="120" height="77"/>
+    <text class="small" x="132.5" y="331">Your computer</text>
+    <use href="#file" x="108.5" y="370" width="48" height="60"/>
+    <text class="small" x="132.5" y="459">Downloaded file</text>
+
+    <rect id="server-frame" class="frame" x="925" y="130" width="205" height="348" rx="22"/>
+    <text class="node-label" x="1027.5" y="169">FTP server</text>
+    <use href="#server" x="995.5" y="194" width="64" height="112"/>
+    <text class="small" x="1027.5" y="331">Remote computer</text>
+    <use href="#folder" x="991.5" y="378" width="72" height="56"/>
+    <text class="small" x="1027.5" y="459">Stored files</text>
+  </g>
+
+  <!-- One control connection carries two directions of application traffic.
+       Shafts stop just inside their own triangle bases. Tips meet the outer
+       frame stroke, keeping both the head and the endpoint icons unobscured. -->
+  <g id="control-connection">
+    <text class="control-label" x="580" y="166" font-weight="700">1 · Control connection · server port 21</text>
+    <text class="control-label" x="580" y="211">Download command: RETR report.pdf</text>
+    <path id="commands-shaft" class="control-shaft" data-connector="true" d="M236.5 234H909.5"/>
+    <polygon id="commands-head" points="923.5,234 907.5,225 907.5,243" fill="#0b78b5"/>
+
+    <text class="control-label" x="580" y="268">Replies</text>
+    <path id="replies-shaft" class="control-shaft" data-connector="true" d="M923.5 291H250.5"/>
+    <polygon id="replies-head" points="236.5,291 252.5,282 252.5,300" fill="#0b78b5"/>
+  </g>
+
+  <!-- File bytes move toward the client on the separate data connection.
+       The file symbol is placed above the route, never over its shaft. -->
+  <g id="data-connection">
+    <text class="data-label" x="580" y="367" font-weight="700">2 · Data connection · server-selected port</text>
+    <use href="#file" x="488" y="383" width="34" height="43"/>
+    <text class="data-label" x="599" y="412">report.pdf</text>
+    <path id="download-shaft" class="data-shaft" data-connector="true" d="M923.5 451H250.5"/>
+    <polygon id="download-head" points="236.5,451 252.5,442 252.5,460" fill="#7c3aed"/>
+  </g>
+
+  <!-- The setup note prevents interpreting traffic arrows as connection initiation. -->
+  <g id="passive-mode-note">
+    <text class="footnote" x="30" y="529"><tspan font-weight="700">Passive mode:</tspan> the client opens both TCP connections to the server.</text>
+    <text class="footnote" x="30" y="565">Arrows show commands, replies, and file data after connection setup.</text>
+  </g>
+</svg>

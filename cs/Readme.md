@@ -6,6 +6,7 @@ Anki-ready cards on general computer-science and interview-preparation topics, e
 Every card lives in its own folder as `Readme.md`, with its diagrams in a sibling `images/` directory.
 
 ## Content
+ * [Protocols. FTP](./Protocols.%20FTP/Readme.md) - separate control and data connections, active/passive modes, and encryption
  * [Protocols. POP3 vs IMAP](./Protocols.%20POP3%20vs%20IMAP/Readme.md) - downloaded mail copies versus a shared mailbox synchronized across devices
  * [Protocols. SMTP](./Protocols.%20SMTP/Readme.md) - how email is submitted, relayed, and accepted for delivery
  * [REST naming convention](./REST%20naming%20convention/Readme.md) - how to name resources, collections, and actions in an HTTP API
