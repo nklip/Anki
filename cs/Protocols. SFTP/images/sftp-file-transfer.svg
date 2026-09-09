@@ -1,0 +1,164 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="1322" viewBox="0 0 1160 1322" role="img" aria-labelledby="title desc">
+  <title id="title">SFTP: uploading and downloading files</title>
+  <desc id="desc">SFTP means SSH File Transfer Protocol; SSH means Secure Shell. These are two independent examples, each using one protected SSH connection after server verification, encryption, user authentication, and SFTP initialization. Read each example top to bottom. Upload: the client is the local source and the server is the remote destination. The client opens a remote file for writing, receives a handle, writes chunks and receives status replies, then closes the handle and receives close status. Download: the server is the remote source and the client saves the file locally. The client opens a remote file for reading, receives a handle, requests chunks and receives data or an end-of-file status, then closes the handle and receives close status. Chunk exchanges repeat until all data is transferred. The local put and get commands trigger these exchanges; they are not wire messages. These are simplified successful, sequential exchanges; real clients can have multiple outstanding requests. Closing a file does not close SSH.</desc>
+
+  <!-- Preserve the unchanged laptop/server symbols from the SSH protocol diagram
+       and system design/01. Scaling/images/single-server.svg, plus file/folder
+       symbols from the FTP protocol diagram. All uses have explicit dimensions. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+      .title { font-size: 34px; font-weight: 700; }
+      .subtitle { font-size: 22px; fill: #475569; }
+      .node-label { font-size: 25px; font-weight: 700; text-anchor: middle; }
+      .small { font-size: 20px; fill: #475569; text-anchor: middle; }
+      .port-label { font-size: 18px; fill: #475569; text-anchor: middle; }
+      .connection-label { font-size: 24px; fill: #0b78b5; text-anchor: middle; font-weight: 700; }
+      .section-label { font-size: 24px; fill: #111; text-anchor: middle; font-weight: 700; }
+      .traffic-label { font-size: 22px; fill: #0b78b5; text-anchor: middle; }
+      .repeat-label { font-size: 19px; fill: #475569; text-anchor: middle; }
+      .footnote { font-size: 21px; fill: #475569; }
+      .frame { fill: #fff; stroke: #08b7d1; stroke-width: 3; }
+      .traffic-shaft { fill: none; stroke: #0b78b5; stroke-width: 3; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 110 70">
+      <rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/>
+      <path d="M7 58H103L96 66H14Z" fill="#111"/>
+      <rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/>
+    </symbol>
+    <symbol id="server" viewBox="0 0 64 112">
+      <rect width="64" height="112" rx="7" fill="#63c51b"/>
+      <path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/>
+    </symbol>
+    <symbol id="file" viewBox="0 0 48 60">
+      <path d="M5 3H30L43 16V56H5Z" fill="#fff" stroke="#7c3aed" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M30 3V16H43M13 29H34M13 38H34M13 47H29" fill="none" stroke="#7c3aed" stroke-width="3" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="folder" viewBox="0 0 72 56">
+      <path d="M4 13V5H29L37 13H68V51H4Z" fill="#fff" stroke="#555" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M4 19H68" fill="none" stroke="#555" stroke-width="3"/>
+    </symbol>
+  </defs>
+
+  <!-- Establish prerequisites before showing either file operation. -->
+  <rect id="background" width="1160" height="1322" fill="#fff"/>
+  <text class="title" x="30" y="48">SFTP: uploading and downloading files</text>
+  <text class="subtitle" x="30" y="85">SFTP = SSH File Transfer Protocol · SSH = Secure Shell</text>
+  <text class="subtitle" x="30" y="124">First verify the server, establish encryption, log in, and start SFTP.</text>
+
+  <!-- The background groups two independent examples, not one continuous trace.
+       Keep the independence note beside the per-example connection statement.
+       All arrow shafts intentionally cross this non-text grouping background. -->
+  <rect id="connection-region" x="252" y="155" width="656" height="1047" rx="20" fill="#e4f4fb"/>
+  <text id="independent-examples-label" class="section-label" x="580" y="188">Two independent examples · read top to bottom</text>
+  <text class="connection-label" x="580" y="220">Each uses one encrypted SSH connection</text>
+  <text class="small" x="580" y="251">Handle = ID for an open file · Chunk = part of its data</text>
+
+  <!-- Upload is an independent example, not a required next step.
+       The local put command is separate from the protocol messages below. -->
+  <g id="upload-example" transform="translate(0 32)">
+    <text class="section-label" x="580" y="250">Upload · local command: put report.csv</text>
+
+    <!-- Same client/server roles; files may travel in either direction. -->
+    <rect id="upload-client-frame" class="frame" x="30" y="270" width="205" height="410" rx="22"/>
+    <text class="node-label" x="132.5" y="308">SFTP client</text>
+    <use href="#laptop" x="72.5" y="358" width="120" height="77"/>
+    <text class="small" x="132.5" y="476">Your computer</text>
+    <use href="#file" x="108.5" y="515" width="48" height="60"/>
+    <text class="small" x="132.5" y="599">report.csv</text>
+    <text class="small" x="132.5" y="649">Local source</text>
+
+    <rect id="upload-server-frame" class="frame" x="925" y="270" width="205" height="410" rx="22"/>
+    <text class="node-label" x="1027.5" y="308">SFTP server</text>
+    <use href="#server" x="995.5" y="333" width="64" height="112"/>
+    <text class="small" x="1027.5" y="476">Remote computer</text>
+    <use href="#folder" x="991.5" y="513" width="72" height="56"/>
+    <text class="small" x="1027.5" y="599">report.csv</text>
+    <text id="upload-server-role" class="small" x="1027.5" y="629">Remote destination</text>
+    <text class="port-label" x="1027.5" y="661">Default port: 22</text>
+
+    <!-- The repeat band groups only the request/reply chunk pair. The open
+         operation must return a handle before any read or write can use it. -->
+    <rect id="upload-chunk-repeat" x="267" y="390" width="626" height="138" rx="12" fill="#cdeaf8"/>
+    <text class="repeat-label" x="580" y="413">Repeat steps 3–4 for every chunk</text>
+
+    <!-- Shafts stop within triangle bases; noses touch only frame boundaries.
+         Numbered rows are a valid sequential example, not a ban on concurrency. -->
+    <text class="traffic-label" x="580" y="304">1 · OPEN: open remote file for writing</text>
+    <path id="upload-open-shaft" class="traffic-shaft" data-connector="true" d="M236.5 325H909.5"/>
+    <polygon id="upload-open-head" points="923.5,325 907.5,316 907.5,334" fill="#0b78b5"/>
+    <text class="traffic-label" x="580" y="358">2 · HANDLE: return the open file’s ID</text>
+    <path id="upload-handle-shaft" class="traffic-shaft" data-connector="true" d="M923.5 379H250.5"/>
+    <polygon id="upload-handle-head" points="236.5,379 252.5,370 252.5,388" fill="#0b78b5"/>
+    <text class="traffic-label" x="580" y="440">3 · WRITE: send a file chunk</text>
+    <path id="upload-chunk-request-shaft" class="traffic-shaft" data-connector="true" d="M236.5 461H909.5"/>
+    <polygon id="upload-chunk-request-head" points="923.5,461 907.5,452 907.5,470" fill="#0b78b5"/>
+    <text class="traffic-label" x="580" y="494">4 · STATUS: confirm the write</text>
+    <path id="upload-chunk-response-shaft" class="traffic-shaft" data-connector="true" d="M923.5 515H250.5"/>
+    <polygon id="upload-chunk-response-head" points="236.5,515 252.5,506 252.5,524" fill="#0b78b5"/>
+    <text class="traffic-label" x="580" y="578">5 · CLOSE: close the file handle</text>
+    <path id="upload-close-shaft" class="traffic-shaft" data-connector="true" d="M236.5 599H909.5"/>
+    <polygon id="upload-close-head" points="923.5,599 907.5,590 907.5,608" fill="#0b78b5"/>
+    <text class="traffic-label" x="580" y="632">6 · STATUS: confirm the close</text>
+    <path id="upload-close-status-shaft" class="traffic-shaft" data-connector="true" d="M923.5 653H250.5"/>
+    <polygon id="upload-close-status-head" points="236.5,653 252.5,644 252.5,662" fill="#0b78b5"/>
+    <text class="repeat-label" x="580" y="553">After all writes succeed</text>
+  </g>
+
+  <!-- Download is an independent example, not a required next step.
+       The local get command is separate from the protocol messages below. -->
+  <g id="download-example" transform="translate(0 32)">
+    <text class="section-label" x="580" y="715">Download · local command: get archive.zip</text>
+
+    <!-- Same client/server roles; files may travel in either direction. -->
+    <rect id="download-client-frame" class="frame" x="30" y="735" width="205" height="410" rx="22"/>
+    <text class="node-label" x="132.5" y="773">SFTP client</text>
+    <use href="#laptop" x="72.5" y="823" width="120" height="77"/>
+    <text class="small" x="132.5" y="941">Your computer</text>
+    <use href="#file" x="108.5" y="980" width="48" height="60"/>
+    <text class="small" x="132.5" y="1064">archive.zip</text>
+    <text class="small" x="132.5" y="1114">Saved locally</text>
+
+    <rect id="download-server-frame" class="frame" x="925" y="735" width="205" height="410" rx="22"/>
+    <text class="node-label" x="1027.5" y="773">SFTP server</text>
+    <use href="#server" x="995.5" y="798" width="64" height="112"/>
+    <text class="small" x="1027.5" y="941">Remote computer</text>
+    <use href="#folder" x="991.5" y="978" width="72" height="56"/>
+    <text class="small" x="1027.5" y="1064">archive.zip</text>
+    <text id="download-server-role" class="small" x="1027.5" y="1094">Remote source</text>
+    <text class="port-label" x="1027.5" y="1126">Default port: 22</text>
+
+    <!-- The repeat band groups only the request/reply chunk pair. The open
+         operation must return a handle before any read or write can use it. -->
+    <rect id="download-chunk-repeat" x="267" y="855" width="626" height="138" rx="12" fill="#cdeaf8"/>
+    <text class="repeat-label" x="580" y="878">Repeat steps 3–4 until the file is fully read</text>
+
+    <!-- Shafts stop within triangle bases; noses touch only frame boundaries.
+         Numbered rows are a valid sequential example, not a ban on concurrency. -->
+    <text class="traffic-label" x="580" y="769">1 · OPEN: open remote file for reading</text>
+    <path id="download-open-shaft" class="traffic-shaft" data-connector="true" d="M236.5 790H909.5"/>
+    <polygon id="download-open-head" points="923.5,790 907.5,781 907.5,799" fill="#0b78b5"/>
+    <text class="traffic-label" x="580" y="823">2 · HANDLE: return the open file’s ID</text>
+    <path id="download-handle-shaft" class="traffic-shaft" data-connector="true" d="M923.5 844H250.5"/>
+    <polygon id="download-handle-head" points="236.5,844 252.5,835 252.5,853" fill="#0b78b5"/>
+    <text class="traffic-label" x="580" y="905">3 · READ: request a file chunk</text>
+    <path id="download-chunk-request-shaft" class="traffic-shaft" data-connector="true" d="M236.5 926H909.5"/>
+    <polygon id="download-chunk-request-head" points="923.5,926 907.5,917 907.5,935" fill="#0b78b5"/>
+    <text class="traffic-label" x="580" y="959">4 · DATA: file chunk, or STATUS: end of file</text>
+    <path id="download-chunk-response-shaft" class="traffic-shaft" data-connector="true" d="M923.5 980H250.5"/>
+    <polygon id="download-chunk-response-head" points="236.5,980 252.5,971 252.5,989" fill="#0b78b5"/>
+    <text class="traffic-label" x="580" y="1043">5 · CLOSE: close the file handle</text>
+    <path id="download-close-shaft" class="traffic-shaft" data-connector="true" d="M236.5 1064H909.5"/>
+    <polygon id="download-close-head" points="923.5,1064 907.5,1055 907.5,1073" fill="#0b78b5"/>
+    <text class="traffic-label" x="580" y="1097">6 · STATUS: confirm the close</text>
+    <path id="download-close-status-shaft" class="traffic-shaft" data-connector="true" d="M923.5 1118H250.5"/>
+    <polygon id="download-close-status-head" points="236.5,1118 252.5,1109 252.5,1127" fill="#0b78b5"/>
+    <text class="repeat-label" x="580" y="1018">After all requested data is received</text>
+  </g>
+
+  <!-- Explicit scope: either operation is possible, file close is not SSH close,
+       and sequential drawing does not imply only one outstanding request. -->
+  <text class="footnote" x="30" y="1235">Closing a file keeps its SSH connection open for further operations.</text>
+  <text class="footnote" x="30" y="1267">Successful exchanges shown. Clients may send several requests before replies arrive.</text>
+  <text class="footnote" x="30" y="1299">Labels show readable contents; encryption hides them and integrity checks detect tampering.</text>
+</svg>
