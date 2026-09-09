@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1560" height="640" viewBox="0 0 1560 640" role="img" aria-labelledby="title desc">
+  <title id="title">Email delivery: client, sending server, DNS, receiving server, and receiver</title>
+  <desc id="desc">In this simplified example, Alice uses alice@outlook.com and Bob uses bob@gmail.com, with mail apps configured for SMTP and IMAP or POP3. The Internet-services box contains Outlook.com's sending service, DNS, and Gmail's receiving service and mailbox storage. Alice's app submits mail to Outlook.com; DNS lookup identifies the destination; SMTP relays the message to Gmail. Bob's app accesses his stored messages. Both user apps connect to these services over the Internet. DNS is a directory lookup, not a mail relay.</desc>
+
+  <!-- Device, green server, and DNS artwork reuse the source-native symbols from
+       system design/01. Scaling/images/single-server.svg; frames match load-balancer.svg. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+      .title { font-size: 34px; font-weight: 700; }
+      .subtitle { font-size: 23px; fill: #475569; }
+      .label { font-size: 23px; text-anchor: middle; }
+      .small { font-size: 19px; fill: #475569; text-anchor: middle; }
+      .step { font-size: 22px; font-weight: 700; fill: #0b78b5; text-anchor: middle; }
+      .frame { fill: #fff; stroke: #08b7d1; stroke-width: 3; }
+      .mail-shaft { fill: none; stroke: #0b78b5; stroke-width: 3; }
+      .dns-shaft { fill: none; stroke: #555; stroke-width: 2.5; stroke-dasharray: 8 6; }
+      .footnote { font-size: 19px; fill: #475569; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 110 70">
+      <rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/>
+      <path d="M7 58H103L96 66H14Z" fill="#111"/>
+      <rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/>
+    </symbol>
+    <symbol id="phone" viewBox="0 0 54 96">
+      <rect x="5" y="2" width="44" height="90" rx="7" fill="white" stroke="#333" stroke-width="5"/>
+      <path d="M19 11H35M23 82H31" stroke="#333" stroke-width="3"/>
+    </symbol>
+    <symbol id="server" viewBox="0 0 64 112">
+      <rect width="64" height="112" rx="7" fill="#63c51b"/>
+      <path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/>
+    </symbol>
+    <symbol id="dns-globe" viewBox="0 0 120 120">
+      <circle cx="60" cy="60" r="54" fill="white" stroke="#555" stroke-width="7"/>
+      <path d="M60 6C36 24 36 96 60 114M60 6C84 24 84 96 60 114" fill="none" stroke="#555" stroke-width="5"/>
+      <path d="M14 38Q60 20 106 38M14 82Q60 100 106 82" fill="none" stroke="#555" stroke-width="5"/>
+      <rect x="15" y="42" width="90" height="36" rx="9" fill="white"/>
+      <text x="60" y="70" text-anchor="middle" font-size="32" font-weight="700" fill="#0b78b5">DNS</text>
+    </symbol>
+    <symbol id="envelope" viewBox="0 0 60 42">
+      <rect x="2" y="2" width="56" height="38" rx="3" fill="#fff" stroke="#0b78b5" stroke-width="3"/>
+      <path d="M3 4L30 23L57 4" fill="none" stroke="#0b78b5" stroke-width="3"/>
+    </symbol>
+    <symbol id="mailbox-storage" viewBox="0 0 64 58">
+      <path d="M2 10V47C2 59 62 59 62 47V10" fill="#fff" stroke="#333" stroke-width="2.5"/>
+      <ellipse cx="32" cy="10" rx="30" ry="8" fill="#fff" stroke="#333" stroke-width="2.5"/>
+    </symbol>
+  </defs>
+
+  <!-- Title and protocol expansion precede the numbered sequence. -->
+  <rect id="background" width="1560" height="640" fill="#fff"/>
+  <text class="title" x="30" y="48">Email delivery: send, find, relay, read</text>
+  <text class="subtitle" x="30" y="85">SMTP = Simple Mail Transfer Protocol</text>
+
+  <!-- Internet services include BOTH mail providers and DNS. User devices are drawn
+       separately as clients, not as disconnected from the Internet. Keep 25-unit side
+       padding around the provider boxes. Openings protect client traffic at left y=408
+       and right y=408,449; DNS lookup and SMTP relay now stay inside this boundary. -->
+  <g id="internet-region">
+    <rect id="internet-background" x="305" y="118" width="915" height="417" rx="25" fill="#f8fafc"/>
+    <g id="internet-border" fill="none" stroke="#555" stroke-width="2" stroke-dasharray="9 7">
+      <path id="internet-border-top" d="M305 400V143A25 25 0 0 1 330 118H1195A25 25 0 0 1 1220 143V400"/>
+      <path id="internet-border-between-access-routes" d="M1220 416V441"/>
+      <path id="internet-border-bottom" d="M305 416V510A25 25 0 0 0 330 535H1195A25 25 0 0 0 1220 510V457"/>
+    </g>
+    <text class="label" x="762.5" y="148" font-weight="700">Internet services</text>
+    <rect id="dns-node" x="722" y="166" width="186" height="158" rx="16" fill="#fff" stroke="#555" stroke-width="2"/>
+    <use href="#dns-globe" x="776" y="177" width="78" height="78"/>
+    <text class="small" x="815" y="282">Domain Name</text>
+    <text class="small" x="815" y="308">System</text>
+    <use href="#envelope" x="785" y="351" width="60" height="42"/>
+    <text class="step" x="815" y="452">3. SMTP relay</text>
+    <text class="small" x="815" y="481">Transfer the message</text>
+  </g>
+
+  <!-- Endpoint frames keep protocol arrows separate from icon and label geometry. -->
+  <g id="mail-participants">
+    <text class="small" x="110" y="301" style="font-size:16px">alice@outlook.com</text>
+    <rect id="client-frame" class="frame" x="30" y="320" width="160" height="195" rx="22"/>
+    <use href="#laptop" x="55" y="359" width="110" height="70"/>
+    <text class="label" x="110" y="470">Client</text>
+    <text class="small" x="110" y="499">Alice's mail app</text>
+
+    <rect id="sending-server-frame" class="frame" x="330" y="320" width="180" height="195" rx="22"/>
+    <use href="#server" x="388" y="339" width="64" height="112"/>
+    <text class="label" x="420" y="478">Sending server</text>
+    <text class="small" x="420" y="502">Outlook.com</text>
+
+    <rect id="receiving-server-frame" class="frame" x="1015" y="320" width="180" height="195" rx="22"/>
+    <use href="#server" x="1041" y="340" width="57" height="100"/>
+    <use href="#mailbox-storage" x="1110" y="380" width="64" height="58"/>
+    <text class="label" x="1105" y="478" style="font-size:20px">Receiving server</text>
+    <text class="small" x="1105" y="502">Gmail · mailbox</text>
+
+    <text class="small" x="1450" y="301" style="font-size:16px">bob@gmail.com</text>
+    <rect id="receiver-frame" class="frame" x="1370" y="320" width="160" height="195" rx="22"/>
+    <use href="#phone" x="1423" y="341" width="54" height="96"/>
+    <text class="label" x="1450" y="478">Receiver</text>
+    <text class="small" x="1450" y="502">Bob's mail app</text>
+  </g>
+
+  <!-- DNS is a request/response branch. Shafts end under their own triangle bases;
+       tips touch the target's outer stroke, never the icon or label inside it. -->
+  <g id="destination-lookup">
+    <path id="dns-query-shaft" class="dns-shaft" data-connector="true" d="M405 318.5V212H707"/>
+    <!-- Solid terminal joins prevent dash gaps at the triangular bases. -->
+    <path id="dns-query-terminal-shaft" data-connector="true" d="M696 212H707" fill="none" stroke="#555" stroke-width="2.5"/>
+    <polygon id="dns-query-head" points="721,212 705,204 705,220" fill="#555"/>
+    <text class="small" x="576" y="190">2. MX lookup</text>
+
+    <path id="dns-answer-shaft" class="dns-shaft" data-connector="true" d="M721 280H450V304"/>
+    <path id="dns-answer-terminal-shaft" data-connector="true" d="M450 293V304" fill="none" stroke="#555" stroke-width="2.5"/>
+    <polygon id="dns-answer-head" points="450,318.5 442,302.5 458,302.5" fill="#555"/>
+    <text class="small" x="583" y="260">Server address</text>
+  </g>
+
+  <!-- Solid SMTP arrows show message movement. DNS remains above the relay route. -->
+  <g id="smtp-message-flow">
+    <text class="step" x="250" y="377" style="font-size:20px">1. SMTP</text>
+    <path id="submission-shaft" class="mail-shaft" data-connector="true" d="M191.5 408H314.5"/>
+    <polygon id="submission-head" points="328.5,408 312.5,399 312.5,417" fill="#0b78b5"/>
+    <text class="small" x="260" y="446">Submit</text>
+
+    <path id="relay-shaft" class="mail-shaft" data-connector="true" d="M511.5 408H999.5"/>
+    <polygon id="relay-head" points="1013.5,408 997.5,399 997.5,417" fill="#0b78b5"/>
+  </g>
+
+  <!-- IMAP/POP3 is mailbox access. Bob initiates the lower request; the upper
+       arrow carries returned messages, so the diagram does not imply SMTP push to his app. -->
+  <g id="mailbox-access">
+    <text class="step" x="1295" y="347" style="font-size:18px">4. IMAP/POP3</text>
+    <text class="small" x="1295" y="390">Messages</text>
+    <path id="messages-shaft" class="mail-shaft" data-connector="true" d="M1196.5 408H1354.5"/>
+    <polygon id="messages-head" points="1368.5,408 1352.5,399 1352.5,417" fill="#0b78b5"/>
+    <path id="read-request-shaft" class="mail-shaft" data-connector="true" d="M1368.5 449H1210.5"/>
+    <polygon id="read-request-head" points="1196.5,449 1212.5,440 1212.5,458" fill="#0b78b5"/>
+    <text class="small" x="1295" y="479">Read request</text>
+  </g>
+
+  <!-- Compact legend defines line styles and the remaining protocol abbreviations. -->
+  <g id="legend">
+    <path id="lookup-legend-line" class="dns-shaft" d="M30 561H90"/>
+    <text class="footnote" x="104" y="567">DNS lookup</text>
+    <path id="mail-legend-line" class="mail-shaft" d="M300 561H360"/>
+    <text class="footnote" x="374" y="567">Mail transfer / mailbox access</text>
+    <text class="footnote" x="770" y="567">User apps connect over the Internet.</text>
+    <text class="footnote" x="30" y="598">MX = Mail Exchange: identifies a domain's mail server; its hostname is then resolved to an address.</text>
+    <text class="footnote" x="30" y="625">IMAP = Internet Message Access Protocol · POP3 = Post Office Protocol version 3</text>
+  </g>
+</svg>

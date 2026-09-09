@@ -6,6 +6,7 @@ Anki-ready cards on general computer-science and interview-preparation topics, e
 Every card lives in its own folder as `Readme.md`, with its diagrams in a sibling `images/` directory.
 
 ## Content
+ * [Protocols. SMTP](./Protocols.%20SMTP/Readme.md) - how email is submitted, relayed, and accepted for delivery
  * [REST naming convention](./REST%20naming%20convention/Readme.md) - how to name resources, collections, and actions in an HTTP API
  * [SOLID](./SOLID/Readme.md) - the five design principles, the problem each one solves, and how to spot a violation
  * [STAR](./STAR/Readme.md) - the situation, task, action, and result structure for behavioural interview answers
