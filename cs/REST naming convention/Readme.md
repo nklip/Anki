@@ -1,24 +1,24 @@
 # REST naming convention
 
-<!-- Card mode: simple. Validate with --mode simple. -->
+<sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-## Front
+# Front
 
 Which seven naming conventions make REST resource paths clear and consistent?
 
-## Back
+# Back
+
+Use clear resource names, show relationships in paths, and put filters in query parameters. Express actions with HTTP (Hypertext Transfer Protocol) methods, such as `GET` or `POST`.
 
 **REST (Representational State Transfer) is an architectural style**.
 
 A **resource** is something a client can address, such as an order or a collection of orders.
 
-**Summary**: Use clear resource names, show relationships in paths, and put filters in query parameters. Express actions with HTTP (Hypertext Transfer Protocol) methods, such as `GET` or `POST`.
-
 Read the diagram from left to right: the method requests an action, the path identifies customer 42's orders, and the query selects paid orders.
 
 ![rest-naming-convention.svg](images/rest-naming-convention.svg)
 
-### Seven practical conventions
+## Seven practical conventions
 
 These are a consistent design style, not universal REST requirements.
 
@@ -36,12 +36,12 @@ These are a consistent design style, not universal REST requirements.
 
 7. **Omit trailing slashes consistently.** Prefer `/users/42` over `/users/42/` when defining this style.
 
-### Two important distinctions
+## Two important distinctions
 
 - **Placeholders are documentation:** `/users/{userId}` becomes `/users/42`. Placeholder names follow the service's style; `{user-id}` is not inherently wrong. Preserve the spelling of actual identifier values.
 - **An identifier is not a filter:** `/locations/USA` can identify one resource named `USA`; `/locations?country=USA` selects a collection by country. Choose according to the intended meaning.
 
-## Sources
+# Sources
 
 - [Microsoft — REST resource naming, methods, relationships, and queries](https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design)
 - [Zalando — Path naming, identifiers, and trailing slashes](https://opensource.zalando.com/restful-api-guidelines/)
@@ -49,7 +49,3 @@ These are a consistent design style, not universal REST requirements.
 - [OpenAPI — Path parameter names and template placeholders](https://spec.openapis.org/oas/v3.1.0.html#parameter-object)
 - [RFC 3986 — Characters, percent-encoding, paths, and queries, §§2–3](https://www.rfc-editor.org/rfc/rfc3986.html#section-2)
 - [RFC 9110 — Requesting response formats with Accept, §12.5.1](https://www.rfc-editor.org/rfc/rfc9110.html#section-12.5.1)
-
----
-
-<sub>[Back to Computer Science](../Readme.md#content)</sub>

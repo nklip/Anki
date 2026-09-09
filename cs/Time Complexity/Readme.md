@@ -1,12 +1,12 @@
 # Time Complexity
 
-<!-- Card mode: simple. Validate with --mode simple. -->
+<sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-## Front
+# Front
 
 How does time complexity describe an algorithm's growth as input size increases?
 
-## Back
+# Back
 
 **Time complexity** describes how the number of basic operations an algorithm performs grows with input size `n`. For an array, `n` usually means its number of elements. Here, assume each array access or comparison takes constant time.
 
@@ -16,7 +16,7 @@ Read **Data Input** as `n` and **Time** as growth in work. These schematic curve
 
 ![complexity.svg](images/complexity.svg)
 
-### Recognize common growth patterns
+## Recognize common growth patterns
 
 The examples below use worst-case bounds where the input affects the work.
 
@@ -31,7 +31,7 @@ The examples below use worst-case bounds where the input affects the work.
 
 The chart also shows **exponential** `O(2ⁿ)` and **factorial** `O(n!)` growth. There are `2ⁿ` subsets of `n` distinct items and `n! = n × (n−1) × … × 1` orderings. Exploring them can be expensive; constructing or checking each candidate adds its own cost.
 
-### Count work, not just loops
+## Count work, not just loops
 
 Two consecutive full scans do `n + n = 2n` work: `O(n)`. Two nested full scans do `n × n = n²` work: `O(n²)`. Doubling `n` doubles the first count and quadruples the second. Count actual iterations and the cost of the body; nesting alone does not prove quadratic time.
 
@@ -39,7 +39,7 @@ Two consecutive full scans do `n + n = 2n` work: `O(n)`. Two nested full scans d
 
 A slower-growing bound helps assess scaling, but constants, hardware, and implementation still affect actual speed, especially for small inputs.
 
-## Sources
+# Sources
 
 - [Cornell CS 2110 — Analyzing Complexity: operation counts, growth classes, and search](https://courses.cis.cornell.edu/courses/cs2110/2026sp/lectures/lec05/)
 - [NIST — Big-O notation: asymptotic upper bounds](https://xlinux.nist.gov/dads/HTML/bigOnotation.html)
@@ -47,7 +47,3 @@ A slower-growing bound helps assess scaling, but constants, hardware, and implem
 - [Cornell CS 2110 — Sorting Algorithms: merge sort and expected runtime](https://courses.cis.cornell.edu/courses/cs2110/2026sp/lectures/lec07/)
 - [Princeton Algorithms — Analysis of Algorithms: cost models, loops, and practical limits](https://algs4.cs.princeton.edu/14analysis/)
 - [Indiana University South Bend — Combinatorial Object Generation: subsets and permutations](https://www.cs.iusb.edu/~danav/teach/b424/b424_25_combin.html)
-
----
-
-<sub>[Back to Computer Science](../Readme.md#content)</sub>
