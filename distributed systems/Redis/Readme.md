@@ -263,15 +263,17 @@ Here `s-maxage` controls shared caches; `max-age=0` makes the browser's cached r
 
 ## 6. Patterns
 
-Group the examples by the job Redis performs and the consequence of losing its state: **disposable copies**, **state held for a while**, **messaging**, and **coordination**. Apply the placement rule from the previous section to each design: identify the authority, then decide what Redis holds and what the CDN may deliver.
+This section presents **eight pattern examples organized into four groups** by the job Redis performs and the consequence of losing its state. **Disposable copies**, **state held for a while**, **messaging**, and **coordination** are group names; the concrete patterns are numbered **1–8** beneath them. These groups organize the examples in this article, rather than define an exhaustive Redis pattern catalog.
+
+Apply the placement rule from the previous section to each design: identify the authority, then decide what Redis holds and what the CDN may deliver.
 
 In every diagram the user reaches an API or gateway; the trusted backend issues Redis commands. Database and Redis updates are separate operations unless an explicit mechanism coordinates them.
 
-### Disposable copies
+### 6.1. Group: Disposable copies
 
 A missing copy can be rebuilt from its authority. Freshness and the load created by rebuilding are the main concerns.
 
-**Cache-aside: accelerate repeated reads**
+#### **Pattern 1. Cache-aside: accelerate repeated reads**
 
 ![redis-cache-aside.svg](images/redis-cache-aside.svg)
 
@@ -285,11 +287,11 @@ A missing copy can be rebuilt from its authority. Freshness and the load created
 
 A **cache stampede** occurs when many requests miss the same popular key together. Coalesce equivalent loads and consider TTL jitter or early refresh. Cache unavailability should trigger a bounded fallback, since sending every request directly to the database can overload it.
 
-### State Redis holds for a while
+### 6.2. Group: State Redis holds for a while
 
 Sessions and quotas are active operational state; a leaderboard is a derived view maintained over a season. Their useful lifetime is bounded by the application, but they are not equally disposable: losing a session may log someone out, losing a quota counter may admit extra requests, and a ranking needs source events to be rebuilt.
 
-**Shared sessions: any application instance can recognize the user**
+#### **Pattern 2. Shared sessions: any application instance can recognize the user**
 
 ![redis-sessions.svg](images/redis-sessions.svg)
 
@@ -301,7 +303,7 @@ Sessions and quotas are active operational state; a leaderboard is a derived vie
 
 **Main trap.** A session is not always a rebuildable cache entry. Losing it may log a user out; losing a logout deletion during failover can undermine revocation. Choose persistence and failover behavior to match that consequence, and verify security-sensitive authority when needed. Concurrent session updates also need atomic field changes or concurrency control.
 
-**Rate limiting: share a quota across gateways**
+#### **Pattern 3. Rate limiting: share a quota across gateways**
 
 ![redis-rate-limiting.svg](images/redis-rate-limiting.svg)
 
@@ -313,7 +315,7 @@ Sessions and quotas are active operational state; a leaderboard is a derived vie
 
 **Main trap.** Fixed windows allow bursts around a window boundary. Also decide what happens when Redis is unavailable: fail open to preserve access, fail closed to enforce the restriction, or use a conservative local fallback. Lost counter updates during failover can loosen enforcement, so a Redis quota alone is not a billing ledger.
 
-**Leaderboards and counters: maintain a fast derived view**
+#### **Pattern 4. Derived views: leaderboards and counters**
 
 ![redis-leaderboard.svg](images/redis-leaderboard.svg)
 
@@ -332,11 +334,11 @@ The second command returns up to ten members from highest score to lowest, inclu
 
 **Main trap.** A database commit and a Redis update are not atomic together. A **transactional outbox** can store a pending update event in the same database transaction, then let a worker apply it to Redis. Handle retries and out-of-order events; replaying an increment twice inflates a score. One enormous leaderboard is still one Redis key on one shard.
 
-### Messaging
+### 6.3. Group: Messaging
 
 Choose whether a message is only a live notification or retained work that consumers must recover and acknowledge.
 
-**Pub/Sub: deliver live notifications to connected subscribers**
+#### **Pattern 5. Pub/Sub: deliver live notifications to connected subscribers**
 
 ![redis-pubsub.svg](images/redis-pubsub.svg)
 
@@ -348,7 +350,7 @@ Choose whether a message is only a live notification or retained work that consu
 
 **Main trap.** Pub/Sub is suitable for live hints when clients can recover current state; it is not a reliable job queue. Persisting history and publishing are separate operations, so use an outbox if reliable eventual publication matters. A successful `PUBLISH` does not mean a user's device received or displayed the message. In Redis Cluster, ordinary `PUBLISH` propagates each message to every node over the cluster bus, so adding shards does not limit that broadcast cost. **Sharded Pub/Sub**, introduced in **Redis 7.0**, uses `SSUBSCRIBE` and `SPUBLISH` with channels mapped to hash slots, restricting propagation to the owning shard's primary and replicas while retaining Pub/Sub's at-most-once delivery.
 
-**Streams and consumer groups: process background work**
+#### **Pattern 6. Streams and consumer groups: process background work**
 
 ![redis-streams.svg](images/redis-streams.svg)
 
@@ -362,11 +364,11 @@ Choose whether a message is only a live notification or retained work that consu
 
 `XACK` removes pending-delivery bookkeeping, not the stream entry itself. Define trimming, retention, retry limits, and failed-job handling. Persistence, replication, and eviction choices still determine whether the stream survives failures. Avoid evicting queues that contain required work.
 
-### Coordination
+### 6.4. Group: Coordination
 
 Use shared state to recognize retries or reduce overlapping work. Decide where the business effect is made authoritative; a Redis claim alone cannot commit an external operation.
 
-**Idempotency: make repeated API requests safe**
+#### **Pattern 7. Idempotency: make repeated API requests safe**
 
 ![redis-idempotency.svg](images/redis-idempotency.svg)
 
@@ -378,7 +380,7 @@ Use shared state to recognize retries or reduce overlapping work. Decide where t
 
 **Main trap.** `SET ... NX EX ...` in Redis followed by an unrelated database write leaves crash windows. The Redis key can expire or disappear after the order succeeds. Use Redis as an accelerator; make the durable uniqueness rule the authority. Define how long retries are recognized. External payments need their own idempotency contract because the database transaction cannot atomically include the payment provider.
 
-**Short-lived locks: reduce duplicate recomputation**
+#### **Pattern 8. Short-lived locks: reduce duplicate recomputation**
 
 ![redis-locks.svg](images/redis-locks.svg)
 
