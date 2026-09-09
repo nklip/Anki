@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="985" viewBox="0 0 1280 985" role="img" aria-labelledby="title desc">
+  <title id="title">POP3 versus IMAP: local copies or a synchronized mailbox</title>
+  <desc id="desc">After SMTP delivers a message to Bob's Gmail mailbox, his apps can access it using POP3 or IMAP. These two rows compare alternatives. In each row Gmail's server and mailbox are inside the Internet-services boundary; Bob's laptop and phone connect to them as clients. Grey arrows show client requests or actions; blue arrows show server responses carrying mail or state. In the POP3 example each device independently requests mail in step 1 and downloads a copy in step 2; the server retains its copy. Reading the laptop's copy does not change the phone's local read status. POP3 also allows server messages to be deleted. In the IMAP example the laptop already has the message: step 1 marks it read on the server, step 2 is the phone's synchronization request, and step 3 returns mail and state to the phone. IMAP synchronizes mailbox folders and message flags and also permits local caching for offline access.</desc>
+
+  <!-- Symbols and palette are adapted from Protocols. SMTP/images/smtp-mail-flow.svg,
+       whose device and green server artwork follows the system-design diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+      .title { font-size: 34px; font-weight: 700; }
+      .subtitle { font-size: 23px; fill: #475569; }
+      .section-title { font-size: 28px; font-weight: 700; }
+      .expansion { font-size: 20px; fill: #475569; }
+      .label { font-size: 21px; text-anchor: middle; }
+      .small { font-size: 19px; fill: #475569; text-anchor: middle; }
+      .state { font-size: 20px; font-weight: 700; text-anchor: middle; }
+      .route-label { font-size: 20px; fill: #0b78b5; text-anchor: middle; }
+      .frame { fill: #fff; stroke: #08b7d1; stroke-width: 3; }
+      .mail-shaft { fill: none; stroke: #0b78b5; stroke-width: 3; }
+      .request-shaft { fill: none; stroke: #555; stroke-width: 2.5; }
+      .footnote { font-size: 20px; fill: #475569; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 110 70">
+      <rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/>
+      <path d="M7 58H103L96 66H14Z" fill="#111"/>
+      <rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/>
+    </symbol>
+    <symbol id="phone" viewBox="0 0 54 96">
+      <rect x="5" y="2" width="44" height="90" rx="7" fill="white" stroke="#333" stroke-width="5"/>
+      <path d="M19 11H35M23 82H31" stroke="#333" stroke-width="3"/>
+    </symbol>
+    <symbol id="server" viewBox="0 0 64 112">
+      <rect width="64" height="112" rx="7" fill="#63c51b"/>
+      <path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/>
+    </symbol>
+    <symbol id="envelope" viewBox="0 0 60 42">
+      <rect x="2" y="2" width="56" height="38" rx="3" fill="#fff" stroke="#0b78b5" stroke-width="3"/>
+      <path d="M3 4L30 23L57 4" fill="none" stroke="#0b78b5" stroke-width="3"/>
+    </symbol>
+    <symbol id="mailbox-storage" viewBox="0 0 64 58">
+      <path d="M2 10V47C2 59 62 59 62 47V10" fill="#fff" stroke="#333" stroke-width="2.5"/>
+      <ellipse cx="32" cy="10" rx="30" ry="8" fill="#fff" stroke="#333" stroke-width="2.5"/>
+    </symbol>
+  </defs>
+
+  <!-- One already-delivered message is the shared starting point for both alternatives. -->
+  <rect id="background" width="1280" height="985" fill="#fff"/>
+  <text class="title" x="30" y="46">POP3 vs IMAP: how Bob reads his email</text>
+  <text class="subtitle" x="30" y="82">SMTP (Simple Mail Transfer Protocol) delivered the email. Now Bob's apps access his mailbox.</text>
+
+  <!-- POP3 comparison row. Internet-border openings keep both access routes clear;
+       the provider server and storage are entirely inside the Internet-services box. -->
+  <g id="pop3-row">
+    <text class="section-title" x="30" y="136">POP3 · Download separate local copies</text>
+    <text class="expansion" x="30" y="168">Post Office Protocol version 3</text>
+    <rect id="pop3-internet-background" x="470" y="190" width="340" height="250" rx="25" fill="#f8fafc"/>
+    <g id="pop3-internet-border" fill="none" stroke="#555" stroke-width="2" stroke-dasharray="9 7">
+      <path d="M470 286V215A25 25 0 0 1 495 190H785A25 25 0 0 1 810 215V286"/>
+      <path d="M470 308V358M810 308V358"/>
+      <path d="M470 380V415A25 25 0 0 0 495 440H785A25 25 0 0 0 810 415V380"/>
+    </g>
+    <text class="label" x="640" y="219" font-weight="700">Internet services</text>
+
+    <!-- Provider and client frames repeat between rows to isolate the protocol difference. -->
+    <rect id="pop3-mailbox-frame" class="frame" x="500" y="240" width="280" height="186" rx="22"/>
+    <use href="#server" x="553" y="253" width="52" height="91"/>
+    <use href="#mailbox-storage" x="636" y="293" width="64" height="58"/>
+    <use href="#envelope" x="644" y="251" width="48" height="34"/>
+    <text class="label" x="640" y="378">Gmail · Bob's mailbox</text>
+    <text class="small" x="640" y="409">Copy kept in this example</text>
+
+    <rect id="pop3-laptop-frame" class="frame" x="30" y="240" width="210" height="186" rx="22"/>
+    <use href="#laptop" x="80" y="270" width="110" height="70"/>
+    <text class="label" x="135" y="378">Bob's laptop</text>
+    <text class="state" x="135" y="409">Local copy: read</text>
+
+    <rect id="pop3-phone-frame" class="frame" x="1040" y="240" width="210" height="186" rx="22"/>
+    <use href="#phone" x="1118" y="252" width="54" height="96"/>
+    <text class="label" x="1145" y="378">Bob's phone</text>
+    <text class="state" x="1145" y="409">Local copy: unread</text>
+
+    <!-- Requests at 297 and responses at 369 are inset 57 units from frame borders
+         at 240 and 426; all label baselines sit 27 units above their own arrows.
+         Shafts stop just inside triangle bases, and tips meet outer frame strokes. -->
+    <text class="small" x="365" y="270">1. Request</text>
+    <path id="pop3-laptop-request-shaft" class="request-shaft" data-connector="true" d="M241.5 297H484.5"/>
+    <polygon id="pop3-laptop-request-head" points="498.5,297 482.5,289 482.5,305" fill="#555"/>
+    <text class="route-label" x="365" y="342">2. Download mail</text>
+    <path id="pop3-laptop-mail-shaft" class="mail-shaft" data-connector="true" d="M498.5 369H255.5"/>
+    <polygon id="pop3-laptop-mail-head" points="241.5,369 257.5,360 257.5,378" fill="#0b78b5"/>
+
+    <text class="small" x="915" y="270">1. Request</text>
+    <path id="pop3-phone-request-shaft" class="request-shaft" data-connector="true" d="M1038.5 297H795.5"/>
+    <polygon id="pop3-phone-request-head" points="781.5,297 797.5,289 797.5,305" fill="#555"/>
+    <text class="route-label" x="915" y="342">2. Download mail</text>
+    <path id="pop3-phone-mail-shaft" class="mail-shaft" data-connector="true" d="M781.5 369H1024.5"/>
+    <polygon id="pop3-phone-mail-head" points="1038.5,369 1022.5,360 1022.5,378" fill="#0b78b5"/>
+
+    <text class="footnote" x="30" y="475">Server copies may be kept or deleted. Reading one local copy does not update the other.</text>
+  </g>
+
+  <!-- Thin divider separates alternative access models, rather than successive steps. -->
+  <path id="comparison-divider" d="M30 503H1250" stroke="#cbd5e1" stroke-width="1.5"/>
+
+  <!-- IMAP row keeps the same participants and demonstrates a shared read flag. -->
+  <g id="imap-row">
+    <text class="section-title" x="30" y="547">IMAP · Synchronize one server mailbox</text>
+    <text class="expansion" x="30" y="579">Internet Message Access Protocol · Laptop already has the message</text>
+    <rect id="imap-internet-background" x="470" y="601" width="340" height="250" rx="25" fill="#f8fafc"/>
+    <g id="imap-internet-border" fill="none" stroke="#555" stroke-width="2" stroke-dasharray="9 7">
+      <path d="M470 697V626A25 25 0 0 1 495 601H785A25 25 0 0 1 810 626V697"/>
+      <path d="M810 719V769"/>
+      <path d="M470 719V826A25 25 0 0 0 495 851H785A25 25 0 0 0 810 826V791"/>
+    </g>
+    <text class="label" x="640" y="630" font-weight="700">Internet services</text>
+
+    <rect id="imap-mailbox-frame" class="frame" x="500" y="651" width="280" height="186" rx="22"/>
+    <use href="#server" x="553" y="664" width="52" height="91"/>
+    <use href="#mailbox-storage" x="636" y="704" width="64" height="58"/>
+    <use href="#envelope" x="644" y="662" width="48" height="34"/>
+    <text class="label" x="640" y="789">Gmail · Bob's mailbox</text>
+    <text class="state" x="640" y="820">Server state: read</text>
+
+    <rect id="imap-laptop-frame" class="frame" x="30" y="651" width="210" height="186" rx="22"/>
+    <use href="#laptop" x="80" y="681" width="110" height="70"/>
+    <text class="label" x="135" y="789">Bob's laptop</text>
+    <text class="state" x="135" y="820">Marked as read</text>
+
+    <rect id="imap-phone-frame" class="frame" x="1040" y="651" width="210" height="186" rx="22"/>
+    <use href="#phone" x="1118" y="663" width="54" height="96"/>
+    <text class="label" x="1145" y="789">Bob's phone</text>
+    <text class="state" x="1145" y="820">Read after sync</text>
+
+    <!-- Read steps 1 and 2 across the upper row, then step 3 below. Requests at 708
+         and the response at 780 are inset 57 units from frame borders at 651 and 837. -->
+    <text class="small" x="365" y="681">1. Mark read</text>
+    <path id="imap-read-update-shaft" class="request-shaft" data-connector="true" d="M241.5 708H484.5"/>
+    <polygon id="imap-read-update-head" points="498.5,708 482.5,700 482.5,716" fill="#555"/>
+
+    <text class="small" x="915" y="681">2. Sync request</text>
+    <path id="imap-phone-request-shaft" class="request-shaft" data-connector="true" d="M1038.5 708H795.5"/>
+    <polygon id="imap-phone-request-head" points="781.5,708 797.5,700 797.5,716" fill="#555"/>
+    <text class="route-label" x="915" y="753">3. Mail + state</text>
+    <path id="imap-phone-mail-shaft" class="mail-shaft" data-connector="true" d="M781.5 780H1024.5"/>
+    <polygon id="imap-phone-mail-head" points="1038.5,780 1022.5,771 1022.5,789" fill="#0b78b5"/>
+
+    <text class="footnote" x="30" y="886">Folders and read flags stay in sync. Apps can also cache downloaded mail for offline reading.</text>
+  </g>
+
+  <!-- Clarify that client frames outside the services box still use the Internet. -->
+  <text class="footnote" x="30" y="930" style="font-size:18px">Bob's apps connect over the Internet. The two rows show alternative ways to access the same account.</text>
+
+  <!-- Shared reading key defines colors and the independent POP3 numbering. -->
+  <text id="arrow-key" class="footnote" x="30" y="962" style="font-size:18px">Grey = client action; blue = server response. Read across, then down (POP3: 1–2 per device).</text>
+</svg>
