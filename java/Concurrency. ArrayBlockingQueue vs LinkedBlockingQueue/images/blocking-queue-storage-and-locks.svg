@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="825" viewBox="0 0 1440 825" role="img" aria-labelledby="title description">
+  <title id="title">ArrayBlockingQueue and LinkedBlockingQueue: storage and locks</title>
+  <desc id="description">OpenJDK 25 implementation comparison. ArrayBlockingQueue reuses a fixed array of references and one lock. LinkedBlockingQueue links nodes and uses separate put and take locks with a shared atomic count. Both preserve FIFO element order and can have a fixed capacity.</desc>
+  <!-- Shared typography and colors; all labels remain editable SVG text. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #253344; }
+      .title { font-size: 32px; font-weight: 700; }
+      .heading { font-size: 24px; font-weight: 700; }
+      .body { font-size: 19px; }
+      .note { font-size: 17px; fill: #4d5c6c; }
+      .code { font-family: monospace; font-size: 21px; font-weight: 700; }
+      .element { font-family: monospace; font-size: 31px; font-weight: 700; }
+    </style>
+  </defs>
+  <!-- Canvas and reading introduction. -->
+  <rect width="1440" height="825" fill="#ffffff"/>
+  <text x="720" y="48" class="title" text-anchor="middle">Same queue behavior, different storage and locks</text>
+  <text x="720" y="82" class="body" text-anchor="middle">OpenJDK 25 implementation details · A is the oldest queued element</text>
+  <!-- Array-based queue: one shared lock and four preallocated reference slots. -->
+  <rect x="40" y="115" width="660" height="607" rx="8" fill="#f3f8fc" stroke="#2f6fad" stroke-width="2"/>
+  <text x="70" y="158" class="heading" text-anchor="start" style="fill:#1d4f82">ArrayBlockingQueue</text>
+  <text x="70" y="191" class="body" text-anchor="start">Example: capacity 4, two queued elements</text>
+  <rect x="140" y="223" width="460" height="66" rx="8" fill="#e0eefb" stroke="#2f6fad" stroke-width="2"/>
+  <text x="370" y="253" class="code" text-anchor="middle" style="fill:#1d4f82">One ReentrantLock</text>
+  <text x="370" y="278" class="note" text-anchor="middle">put() and take() share this lock</text>
+  <text x="370" y="329" class="body" text-anchor="middle">Changes at both ends use the same lock.</text>
+  <text x="180" y="372" class="note" text-anchor="middle">takeIndex = 0</text>
+  <text x="420" y="372" class="note" text-anchor="middle">putIndex = 2</text>
+  <!-- Index arrows stop at the slot boundary; their shafts end under the heads. -->
+  <path id="take-index-arrow" data-connector="true" d="M180 384V410" fill="none" stroke="#526579" stroke-width="3"/>
+  <polygon points="180,423 172,409 188,409" fill="#526579"/>
+  <path id="put-index-arrow" data-connector="true" d="M420 384V410" fill="none" stroke="#526579" stroke-width="3"/>
+  <polygon points="420,423 412,409 428,409" fill="#526579"/>
+  <rect x="125" y="425" width="110" height="76" rx="3" fill="#dcebf8" stroke="#2f6fad" stroke-width="2"/>
+  <text x="180" y="474" class="element" text-anchor="middle" style="fill:#1d4f82">A</text>
+  <text x="180" y="529" class="note" text-anchor="middle">0</text>
+  <rect x="245" y="425" width="110" height="76" rx="3" fill="#dcebf8" stroke="#2f6fad" stroke-width="2"/>
+  <text x="300" y="474" class="element" text-anchor="middle" style="fill:#1d4f82">B</text>
+  <text x="300" y="529" class="note" text-anchor="middle">1</text>
+  <rect x="365" y="425" width="110" height="76" rx="3" fill="#ffffff" stroke="#2f6fad" stroke-width="2"/>
+  <text x="420" y="474" class="body" text-anchor="middle" style="fill:#718092">empty</text>
+  <text x="420" y="529" class="note" text-anchor="middle">2</text>
+  <rect x="485" y="425" width="110" height="76" rx="3" fill="#ffffff" stroke="#2f6fad" stroke-width="2"/>
+  <text x="540" y="474" class="body" text-anchor="middle" style="fill:#718092">empty</text>
+  <text x="540" y="529" class="note" text-anchor="middle">3</text>
+  <text x="370" y="569" class="body" text-anchor="middle">Circular array: each index wraps from 3 to 0.</text>
+  <text x="70" y="620" class="body" text-anchor="start">The array is allocated when the queue is created.</text>
+  <text x="70" y="654" class="body" text-anchor="start">Its slots store references to A and B; slots are reused.</text>
+  <text x="70" y="688" class="note" text-anchor="start">A normal take clears one slot and advances the index.</text>
+  <!-- Linked queue: ordinary puts and takes use different locks but share count. -->
+  <rect x="740" y="115" width="660" height="607" rx="8" fill="#f2f8f3" stroke="#4d8758" stroke-width="2"/>
+  <text x="770" y="158" class="heading" text-anchor="start" style="fill:#35623e">LinkedBlockingQueue</text>
+  <text x="770" y="191" class="body" text-anchor="start">Example: capacity 4, two queued elements</text>
+  <rect x="775" y="223" width="235" height="66" rx="8" fill="#e3f0e5" stroke="#4d8758" stroke-width="2"/>
+  <rect x="1130" y="223" width="235" height="66" rx="8" fill="#e3f0e5" stroke="#4d8758" stroke-width="2"/>
+  <text x="892" y="253" class="code" text-anchor="middle" style="fill:#35623e">takeLock</text>
+  <text x="892" y="278" class="note" text-anchor="middle">take() / poll()</text>
+  <text x="1247" y="253" class="code" text-anchor="middle" style="fill:#35623e">putLock</text>
+  <text x="1247" y="278" class="note" text-anchor="middle">put() / offer()</text>
+  <!-- Elbows connect both locks to shared count without crossing labels. -->
+  <path id="take-count-connector" data-connector="true" d="M892 291V310H1000V324" fill="none" stroke="#4d8758" stroke-width="3"/>
+  <polygon points="1000,337 992,323 1008,323" fill="#4d8758"/>
+  <path id="put-count-connector" data-connector="true" d="M1247 291V310H1140V324" fill="none" stroke="#4d8758" stroke-width="3"/>
+  <polygon points="1140,337 1132,323 1148,323" fill="#4d8758"/>
+  <rect x="865" y="339" width="410" height="48" rx="8" fill="#ffffff" stroke="#4d8758" stroke-width="2"/>
+  <text x="1070" y="370" class="body" text-anchor="middle">Shared AtomicInteger count = 2</text>
+  <!-- Simplified linked nodes: dummy head has no queued value and is not counted. -->
+  <rect x="795" y="444" width="120" height="74" rx="5" fill="#f1f2f4" stroke="#7c8792" stroke-width="2"/>
+  <text x="855" y="489" class="body" text-anchor="middle">dummy</text>
+  <rect x="985" y="444" width="120" height="74" rx="5" fill="#e3f0e5" stroke="#4d8758" stroke-width="2"/>
+  <text x="1045" y="489" class="element" text-anchor="middle">A</text>
+  <rect x="1175" y="444" width="120" height="74" rx="5" fill="#e3f0e5" stroke="#4d8758" stroke-width="2"/>
+  <text x="1235" y="489" class="element" text-anchor="middle">B</text>
+  <text x="855" y="427" class="note" text-anchor="middle">head</text>
+  <text x="1235" y="427" class="note" text-anchor="middle">last</text>
+  <path id="dummy-next-arrow" data-connector="true" d="M917 481H970" fill="none" stroke="#4d8758" stroke-width="3"/>
+  <polygon points="983,481 969,473 969,489" fill="#4d8758"/>
+  <path id="a-next-arrow" data-connector="true" d="M1107 481H1160" fill="none" stroke="#4d8758" stroke-width="3"/>
+  <polygon points="1173,481 1159,473 1159,489" fill="#4d8758"/>
+  <text x="950" y="457" class="note" text-anchor="middle">next</text>
+  <text x="1140" y="457" class="note" text-anchor="middle">next</text>
+  <text x="1070" y="551" class="note" text-anchor="middle">A leaves from the head side; new nodes join at last.</text>
+  <text x="770" y="592" class="body" text-anchor="start">Each insertion links a node holding an element reference.</text>
+  <text x="770" y="623" class="body" text-anchor="start">The dummy head holds no queued element.</text>
+  <text x="770" y="660" class="note" text-anchor="start">A put and a take can overlap; both coordinate via count.</text>
+  <text x="770" y="691" class="note" text-anchor="start">Signaling and some operations also need the other lock.</text>
+  <!-- Shared public behavior is distinct from version-specific implementation. -->
+  <rect x="40" y="747" width="1360" height="52" rx="8" fill="#fafafa" stroke="#bac6d3" stroke-width="2"/>
+  <text x="720" y="780" class="body" text-anchor="middle">Both: FIFO = first in, first out · A is removed before B · An explicit capacity bounds either queue</text>
+</svg>

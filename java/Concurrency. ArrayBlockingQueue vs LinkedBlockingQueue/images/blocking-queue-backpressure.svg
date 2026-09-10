@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="903" viewBox="0 0 1440 903" role="img" aria-labelledby="title description">
+  <title id="title">Bounded blocking queues wait for space or data</title>
+  <desc id="description">With capacity two, a full queue containing A and B makes put(C) wait. A consumer takes A, releasing capacity, then the producer appends C to leave B and C. Separately, take waits on an empty queue until D is inserted. After take returns D, both queue slots are empty and the consumer holds D outside the queue frame. This is one possible producer and consumer execution.</desc>
+  <!-- Shared typography and colors; all labels remain editable SVG text. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #253344; }
+      .title { font-size: 32px; font-weight: 700; }
+      .heading { font-size: 24px; font-weight: 700; }
+      .body { font-size: 19px; }
+      .note { font-size: 17px; fill: #4d5c6c; }
+      .code { font-family: monospace; font-size: 21px; font-weight: 700; }
+      .element { font-family: monospace; font-size: 31px; font-weight: 700; }
+    </style>
+  </defs>
+  <!-- Canvas and reading introduction. -->
+  <rect width="1440" height="903" fill="#ffffff"/>
+  <text x="720" y="49" class="title" text-anchor="middle">A bounded queue waits for space or data</text>
+  <text x="720" y="83" class="body" text-anchor="middle">Both classes · Capacity = 2 · One producer and one consumer · Logical queue order: oldest first</text>
+  <!-- Full-queue sequence reads left to right in three numbered states. -->
+  <rect x="40" y="116" width="1360" height="325" rx="8" fill="#fffaf0" stroke="#a47a20" stroke-width="2"/>
+  <text x="70" y="155" class="heading" text-anchor="start" style="fill:#795b1a">Full queue: put(C) waits for a free slot</text>
+  <rect x="75" y="181" width="350" height="224" rx="8" fill="#ffffff" stroke="#d6c59a" stroke-width="2"/>
+  <text x="250" y="215" class="body" text-anchor="middle">1 · Full</text>
+  <rect x="140" y="242" width="100" height="72" rx="4" fill="#e8f2fb" stroke="#7c8d9f" stroke-width="2"/>
+  <text x="190" y="287" class="element" text-anchor="middle">A</text>
+  <rect x="260" y="242" width="100" height="72" rx="4" fill="#e8f2fb" stroke="#7c8d9f" stroke-width="2"/>
+  <text x="310" y="287" class="element" text-anchor="middle">B</text>
+  <text x="250" y="352" class="body" text-anchor="middle">put(C) is waiting.</text>
+  <text x="250" y="381" class="note" text-anchor="middle">C is not in the queue yet.</text>
+  <rect x="545" y="181" width="350" height="224" rx="8" fill="#ffffff" stroke="#d6c59a" stroke-width="2"/>
+  <text x="720" y="215" class="body" text-anchor="middle">2 · Consumer takes A</text>
+  <rect x="610" y="242" width="100" height="72" rx="4" fill="#e8f2fb" stroke="#7c8d9f" stroke-width="2"/>
+  <text x="660" y="287" class="element" text-anchor="middle">B</text>
+  <rect x="730" y="242" width="100" height="72" rx="4" fill="#f3f4f6" stroke="#7c8d9f" stroke-width="2"/>
+  <text x="780" y="287" class="body" text-anchor="middle">empty</text>
+  <text x="720" y="352" class="body" text-anchor="middle">take() returns A.</text>
+  <text x="720" y="381" class="note" text-anchor="middle">One slot becomes available.</text>
+  <rect x="1015" y="181" width="350" height="224" rx="8" fill="#ffffff" stroke="#d6c59a" stroke-width="2"/>
+  <text x="1190" y="215" class="body" text-anchor="middle">3 · Producer appends C</text>
+  <rect x="1080" y="242" width="100" height="72" rx="4" fill="#e8f2fb" stroke="#7c8d9f" stroke-width="2"/>
+  <text x="1130" y="287" class="element" text-anchor="middle">B</text>
+  <rect x="1200" y="242" width="100" height="72" rx="4" fill="#e8f2fb" stroke="#7c8d9f" stroke-width="2"/>
+  <text x="1250" y="287" class="element" text-anchor="middle">C</text>
+  <text x="1190" y="352" class="body" text-anchor="middle">put(C) can complete.</text>
+  <text x="1190" y="381" class="note" text-anchor="middle">B is now the oldest element.</text>
+  <!-- State arrows run only through open corridors between panels. -->
+  <path id="full-to-space-flow" data-connector="true" d="M435 281H522" fill="none" stroke="#526579" stroke-width="3"/>
+  <polygon points="535,281 521,273 521,289" fill="#526579"/>
+  <path id="space-to-insert-flow" data-connector="true" d="M905 281H992" fill="none" stroke="#526579" stroke-width="3"/>
+  <polygon points="1005,281 991,273 991,289" fill="#526579"/>
+  <!-- Empty-queue sequence uses the same positions and direction. -->
+  <rect x="40" y="465" width="1360" height="352" rx="8" fill="#f2f8f3" stroke="#4d8758" stroke-width="2"/>
+  <text x="70" y="505" class="heading" text-anchor="start" style="fill:#35623e">Empty queue: take() waits for an element</text>
+  <rect x="75" y="531" width="350" height="256" rx="8" fill="#ffffff" stroke="#a5c1ab" stroke-width="2"/>
+  <text x="250" y="565" class="body" text-anchor="middle">1 · Empty</text>
+  <rect x="140" y="587" width="100" height="59" rx="4" fill="#f3f4f6" stroke="#7c8d9f" stroke-width="2"/>
+  <text x="190" y="625" class="body" text-anchor="middle">empty</text>
+  <rect x="260" y="587" width="100" height="59" rx="4" fill="#f3f4f6" stroke="#7c8d9f" stroke-width="2"/>
+  <text x="310" y="625" class="body" text-anchor="middle">empty</text>
+  <text x="250" y="686" class="note" text-anchor="middle">take() is waiting.</text>
+  <rect x="545" y="531" width="350" height="256" rx="8" fill="#ffffff" stroke="#a5c1ab" stroke-width="2"/>
+  <text x="720" y="565" class="body" text-anchor="middle">2 · Producer inserts D</text>
+  <rect x="610" y="587" width="100" height="59" rx="4" fill="#e3f0e5" stroke="#7c8d9f" stroke-width="2"/>
+  <text x="660" y="625" class="element" text-anchor="middle">D</text>
+  <rect x="730" y="587" width="100" height="59" rx="4" fill="#f3f4f6" stroke="#7c8d9f" stroke-width="2"/>
+  <text x="780" y="625" class="body" text-anchor="middle">empty</text>
+  <text x="720" y="686" class="note" text-anchor="middle">put(D) makes data available.</text>
+  <rect x="1015" y="531" width="350" height="256" rx="8" fill="#ffffff" stroke="#a5c1ab" stroke-width="2"/>
+  <text x="1190" y="565" class="body" text-anchor="middle">3 · Consumer receives D</text>
+  <!-- Keep the original two queue slots empty; the consumer's D sits below their frame. -->
+  <rect id="empty-queue-frame" x="1068" y="578" width="244" height="78" rx="6" fill="none" stroke="#7c8d9f" stroke-width="2"/>
+  <rect x="1080" y="587" width="100" height="59" rx="4" fill="#f3f4f6" stroke="#7c8d9f" stroke-width="2"/>
+  <text x="1130" y="625" class="body" text-anchor="middle">empty</text>
+  <rect x="1200" y="587" width="100" height="59" rx="4" fill="#f3f4f6" stroke="#7c8d9f" stroke-width="2"/>
+  <text x="1250" y="625" class="body" text-anchor="middle">empty</text>
+  <!-- The outbound arrow starts below the queue frame and stops at the consumer-held item. -->
+  <path id="queue-to-held-item-arrow" data-connector="true" d="M1130 658V675" fill="none" stroke="#4d8758" stroke-width="3"/>
+  <polygon points="1130,688 1122,674 1138,674" fill="#4d8758"/>
+  <rect id="consumer-held-item" x="1105" y="690" width="50" height="47" rx="6" fill="#e3f0e5" stroke="#4d8758" stroke-width="2"/>
+  <text x="1130" y="723" class="element" text-anchor="middle">D</text>
+  <text x="1170" y="721" class="note" text-anchor="start">consumer holds D</text>
+  <text x="1190" y="765" class="note" text-anchor="middle">take() returns D; queue is empty.</text>
+  <path id="empty-to-data-flow" data-connector="true" d="M435 616H522" fill="none" stroke="#4d8758" stroke-width="3"/>
+  <polygon points="535,616 521,608 521,624" fill="#4d8758"/>
+  <path id="data-to-consumer-flow" data-connector="true" d="M905 616H992" fill="none" stroke="#4d8758" stroke-width="3"/>
+  <polygon points="1005,616 991,608 991,624" fill="#4d8758"/>
+  <!-- Scheduling qualification prevents reading notification as immediate execution. -->
+  <text x="720" y="853" class="body" text-anchor="middle">Waiting releases the relevant lock so another thread can change the queue.</text>
+  <text x="720" y="883" class="note" text-anchor="middle">A signal enables progress; the waiting thread must run, reacquire the lock, and check again.</text>
+</svg>
