@@ -1,68 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="730" viewBox="0 0 1200 730" role="img" aria-labelledby="title description">
   <title id="title">HashMap bucket selection and lookup</title>
-  <desc id="description">The incoming key hash code is spread, masked using the power-of-two table length, and used to select a bucket. Nodes are then checked by cached hash and key equality.</desc>
+  <desc id="description">A non-null key provides a raw hash code, which is spread and masked to choose a bucket. Two unequal keys with spread hashes 2 and 10 both select bucket 2 at capacity 8. Finding a mapping requires both a matching cached hash and a matching key.</desc>
+  <!-- Reusable text styles preserve the neighboring diagrams' palette and typography. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #202124; }
+      .title { font-size: 28px; font-weight: bold; }
+      .heading { font-size: 19px; font-weight: bold; }
+      .body { font-size: 17px; }
+      .note { font-size: 16px; fill: #5f6368; }
+      .code { font-family: Menlo, Consolas, monospace; font-size: 18px; }
+    </style>
+  </defs>
+  <!-- Background and reading order. -->
+  <rect width="1200" height="730" fill="#ffffff"/>
 
-  <!-- Background and title -->
-  <rect width="1200" height="620" fill="#ffffff"/>
-  <text x="600" y="42" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="bold" fill="#202124">How HashMap finds a bucket</text>
-
-  <!-- Main lookup pipeline -->
-  <g font-family="Arial, Helvetica, sans-serif" text-anchor="middle">
-    <rect x="30" y="105" width="150" height="96" rx="9" fill="#e8f0fe" stroke="#356eb3" stroke-width="3"/>
-    <text x="105" y="145" font-size="19" font-weight="bold" fill="#202124">Incoming key</text>
-    <text x="105" y="175" font-size="16" fill="#5f6368">non-null</text>
-
-    <rect x="225" y="105" width="180" height="96" rx="9" fill="#e8f0fe" stroke="#356eb3" stroke-width="3"/>
-    <text x="315" y="145" font-size="18" font-weight="bold" fill="#202124">key.hashCode()</text>
-    <text x="315" y="175" font-size="16" fill="#5f6368">raw hash h</text>
-
-    <rect x="450" y="105" width="220" height="96" rx="9" fill="#e6f4ea" stroke="#34834b" stroke-width="3"/>
-    <text x="560" y="140" font-size="18" font-weight="bold" fill="#202124">Spread high bits</text>
-    <text x="560" y="174" font-family="Menlo, Consolas, monospace" font-size="18" fill="#202124">h ^ (h &gt;&gt;&gt; 16)</text>
-
-    <rect x="715" y="105" width="210" height="96" rx="9" fill="#fff4ce" stroke="#b7791f" stroke-width="3"/>
-    <text x="820" y="140" font-size="18" font-weight="bold" fill="#202124">Mask by capacity</text>
-    <text x="820" y="174" font-family="Menlo, Consolas, monospace" font-size="18" fill="#202124">(n - 1) &amp; hash</text>
-
-    <rect x="970" y="105" width="200" height="96" rx="9" fill="#f3e8fd" stroke="#7b1fa2" stroke-width="3"/>
-    <text x="1070" y="141" font-size="19" font-weight="bold" fill="#202124">table[index]</text>
-    <text x="1070" y="175" font-size="16" fill="#5f6368">selected bucket</text>
-  </g>
-
-  <!-- Pipeline arrows. Lines extend under the arrowheads so no gap is visible. -->
-  <g stroke="#356eb3" stroke-width="5" stroke-linecap="round">
-    <line x1="180" y1="153" x2="216" y2="153"/>
-    <line x1="405" y1="153" x2="441" y2="153"/>
-    <line x1="670" y1="153" x2="706" y2="153"/>
-    <line x1="925" y1="153" x2="961" y2="153"/>
-  </g>
-  <g fill="#356eb3">
-    <polygon points="205,142 228,153 205,164"/>
-    <polygon points="430,142 453,153 430,164"/>
-    <polygon points="695,142 718,153 695,164"/>
-    <polygon points="950,142 973,153 950,164"/>
-  </g>
-
-  <!-- Traverse the selected list or tree bin -->
-  <line x1="1070" y1="201" x2="1070" y2="267" stroke="#7b1fa2" stroke-width="5" stroke-linecap="round"/>
-  <polygon points="1058,254 1070,280 1082,254" fill="#7b1fa2"/>
-  <rect x="705" y="280" width="465" height="177" rx="10" fill="#f8f9fa" stroke="#5f6368" stroke-width="3"/>
-  <text x="937.5" y="316" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#202124">Search the selected list or tree bin</text>
-  <text x="735" y="354" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#202124">1. Match the node's cached hash to the incoming hash.</text>
-  <text x="735" y="389" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#202124">2. Match the same reference or key.equals(storedKey).</text>
-  <text x="735" y="424" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#202124">3. Continue through the bin; return value on a match.</text>
-
-  <!-- Important distinction between incoming and stored hashes -->
-  <rect x="30" y="280" width="625" height="177" rx="10" fill="#fff8e1" stroke="#b7791f" stroke-width="3"/>
-  <text x="342.5" y="316" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="bold" fill="#202124">Which hash is recomputed?</text>
-  <text x="57" y="355" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#202124">• Each operation calls hashCode() on the incoming lookup key.</text>
-  <text x="57" y="390" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#202124">• A stored node keeps its spread hash in a final hash field.</text>
-  <text x="57" y="425" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#202124">• Resize therefore does not call hashCode() on stored keys.</text>
-
-  <!-- Null-key special path -->
-  <rect x="30" y="500" width="1140" height="80" rx="9" fill="#fce8e6" stroke="#d93025" stroke-width="2"/>
-  <text x="62" y="534" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="bold" fill="#202124">Null key:</text>
-  <text x="162" y="534" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#202124">HashMap assigns spread hash 0, so the null key is searched in bucket 0.</text>
-  <text x="62" y="561" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#5f6368">A non-null key whose spread hash is 0 can share that bucket; equality still distinguishes the keys.</text>
+  <text x="600" y="42" text-anchor="middle" class="title" >How HashMap finds a bucket</text>
+  <text x="600" y="76" text-anchor="middle" class="body" >1. Choose a bucket   →   2. Search inside it</text>
+  <!-- Hash pipeline; all arrow tips meet, but do not enter, the next box. -->
+  <rect id="incoming-key" x="30" y="105" width="150" height="96" rx="9" fill="#e8f0fe" stroke="#356eb3" stroke-width="3"/>
+  <rect id="raw-hash" x="225" y="105" width="180" height="96" rx="9" fill="#e8f0fe" stroke="#356eb3" stroke-width="3"/>
+  <rect id="spread-hash" x="450" y="105" width="220" height="96" rx="9" fill="#e6f4ea" stroke="#34834b" stroke-width="3"/>
+  <rect id="capacity-mask" x="715" y="105" width="210" height="96" rx="9" fill="#fff4ce" stroke="#b7791f" stroke-width="3"/>
+  <rect id="selected-bucket" x="970" y="105" width="200" height="96" rx="9" fill="#f3e8fd" stroke="#7b1fa2" stroke-width="3"/>
+  <text x="105" y="145" text-anchor="middle" class="heading" >Incoming key</text>
+  <text x="105" y="176" text-anchor="middle" class="note" >non-null</text>
+  <text x="315" y="145" text-anchor="middle" class="body" font-weight="bold">key.hashCode()</text>
+  <text x="315" y="176" text-anchor="middle" class="note" >raw hash h</text>
+  <text x="560" y="140" text-anchor="middle" class="body" font-weight="bold">Mix high bits down</text>
+  <text x="560" y="174" text-anchor="middle" class="code" >h ^ (h &gt;&gt;&gt; 16)</text>
+  <text x="820" y="140" text-anchor="middle" class="body" font-weight="bold">Mask by capacity</text>
+  <text x="820" y="174" text-anchor="middle" class="code" >(n - 1) &amp; hash</text>
+  <text x="1070" y="141" text-anchor="middle" class="heading" >table[index]</text>
+  <text x="1070" y="176" text-anchor="middle" class="note" >selected bucket</text>
+  <g id="pipeline-arrow-1"><line data-connector="true" x1="181.5" y1="153" x2="206.50" y2="153.00" stroke="#356eb3" stroke-width="4"/><polygon points="203.50,162.00 223.50,153.00 203.50,144.00" fill="#356eb3"/></g>
+  <g id="pipeline-arrow-2"><line data-connector="true" x1="406.5" y1="153" x2="431.50" y2="153.00" stroke="#356eb3" stroke-width="4"/><polygon points="428.50,162.00 448.50,153.00 428.50,144.00" fill="#356eb3"/></g>
+  <g id="pipeline-arrow-3"><line data-connector="true" x1="671.5" y1="153" x2="696.50" y2="153.00" stroke="#356eb3" stroke-width="4"/><polygon points="693.50,162.00 713.50,153.00 693.50,144.00" fill="#356eb3"/></g>
+  <g id="pipeline-arrow-4"><line data-connector="true" x1="926.5" y1="153" x2="951.50" y2="153.00" stroke="#356eb3" stroke-width="4"/><polygon points="948.50,162.00 968.50,153.00 948.50,144.00" fill="#356eb3"/></g>
+  <!-- Operator legend defines the formulas without requiring surrounding prose. -->
+  <text x="40" y="235" text-anchor="start" class="body" >&gt;&gt;&gt; 16: shift right 16 bits, filling with zeros.   ^ (XOR): a result bit is 1 when the input bits differ.</text>
+  <text x="40" y="264" text-anchor="start" class="body" >n = capacity (number of buckets).   &amp; (AND): keep a 1 only where both input bits are 1.</text>
+  <!-- Worked example: both unequal keys choose index 2. All omitted higher bits are zero. -->
+  <rect id="binary-bucket-example" x="30" y="295" width="625" height="225" rx="9" fill="#fff8e1" stroke="#b7791f" stroke-width="3"/>
+  <text x="342.5" y="332" text-anchor="middle" class="heading" >1. Two unequal keys, one bucket</text>
+  <text x="57" y="367" text-anchor="start" class="body" >n = 8 → mask = n − 1 = 7 = 0111 (binary)</text>
+  <text x="57" y="403" text-anchor="start" class="code" >A: 0010 &amp; 0111 = 0010 → index 2</text>
+  <text x="57" y="437" text-anchor="start" class="code" >B: 1010 &amp; 0111 = 0010 → index 2</text>
+  <text x="57" y="477" text-anchor="start" class="body" >Spread hashes: A = 2, B = 10 (decimal).</text>
+  <text x="57" y="503" text-anchor="start" class="note" >Four-digit strings are binary; all higher bits are zero.</text>
+  <!-- Search is a separate step: sharing a bucket does not mean the keys are equal. -->
+  <rect id="bucket-search" x="705" y="295" width="465" height="225" rx="9" fill="#f8f9fa" stroke="#5f6368" stroke-width="3"/>
+  <g id="selected-bucket-to-search"><line data-connector="true" x1="1070" y1="202.5" x2="1070.00" y2="276.50" stroke="#7b1fa2" stroke-width="4"/><polygon points="1061.00,273.50 1070.00,293.50 1079.00,273.50" fill="#7b1fa2"/></g>
+  <text x="937.5" y="332" text-anchor="middle" class="heading" >2. Search the selected list or tree</text>
+  <text x="729" y="369" text-anchor="start" class="body" >1. Does the cached spread hash match?</text>
+  <text x="729" y="402" text-anchor="start" class="body" >2. Same object, or key.equals(storedKey)?</text>
+  <text x="729" y="437" text-anchor="start" class="body" >Both pass → return the stored value.</text>
+  <text x="729" y="469" text-anchor="start" class="body" >Either fails → keep searching.</text>
+  <text x="729" y="501" text-anchor="start" class="body" >No matching key → return null.</text>
+  <!-- Cached hashes explain why resize can reuse the calculation. -->
+  <rect id="cached-hash-note" x="30" y="548" width="1140" height="64" rx="9" fill="#e8f0fe" stroke="#356eb3" stroke-width="3"/>
+  <text x="54" y="576" text-anchor="start" class="body" >The lookup key supplies a fresh hash; each stored node keeps its spread hash.</text>
+  <text x="54" y="601" text-anchor="start" class="note" >Resize reuses these stored hashes, so it does not call hashCode() again on the stored keys.</text>
+  <!-- Null keys bypass hashCode(), then follow the same bucket-search rule. -->
+  <rect id="null-key-note" x="30" y="638" width="1140" height="65" rx="9" fill="#fce8e6" stroke="#d93025" stroke-width="3"/>
+  <text x="54" y="666" text-anchor="start" class="body" font-weight="bold">Null key: use spread hash 0 and search bucket 0.</text>
+  <text x="54" y="692" text-anchor="start" class="note" >Other keys can share bucket 0; the hash and key checks still distinguish the mappings.</text>
 </svg>

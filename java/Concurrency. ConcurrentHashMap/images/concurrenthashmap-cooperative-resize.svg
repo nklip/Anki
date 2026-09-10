@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1500" height="950" viewBox="0 0 1500 950" role="img" aria-labelledby="title description">
   <title id="title">ConcurrentHashMap cooperative resizing</title>
-  <desc id="description">During a resize, several threads can claim ranges of old bins and transfer them into a table with double capacity. Transferred old bins contain forwarding nodes, and operations encountering one continue in the new table.</desc>
+  <desc id="description">During a resize, several threads can claim ranges of old bins and transfer them into a table with double capacity. Transferred old bins contain forwarding nodes, and operations encountering one continue in the new table. Worker ranges are schematic; actual transfer chunks are larger.</desc>
 
   <!-- Background and title -->
   <rect width="1500" height="950" fill="white"/>
@@ -38,6 +38,9 @@
   <text x="1162" y="250" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">points to nextTable</text>
   <text x="1327" y="227" text-anchor="middle" font-family="sans-serif" font-size="15" font-weight="bold" fill="#65417d">[7] ForwardingNode</text>
   <text x="1327" y="250" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">points to nextTable</text>
+
+  <!-- Range notation follows the descending traversal order; endpoints are inclusive. -->
+  <text x="750" y="287" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">Ranges descend: [1..0] means bin 1 then bin 0, both included.</text>
 
   <!-- Worker range claims -->
   <rect x="100" y="300" width="350" height="72" rx="5" fill="#fff7df" stroke="#b88b22" stroke-width="2"/>
@@ -144,12 +147,12 @@
   <text x="260" y="859" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">Traversals can move between old and new tables.</text>
   <text x="260" y="883" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">No whole-map read lock is required.</text>
   <text x="750" y="833" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#1d4f82">Writers can help</text>
-  <text x="750" y="859" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">Threads claim disjoint ranges through transferIndex.</text>
-  <text x="750" y="883" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">Cooperation shortens aggregate resize time.</text>
+  <text x="750" y="859" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">transferIndex marks the unclaimed-bin boundary.</text>
+  <text x="750" y="883" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">A thread lowers it atomically to claim a range.</text>
   <text x="1240" y="833" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#6b500f">Resizing still costs work</text>
   <text x="1240" y="859" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">Bin transfer consumes CPU and may affect latency.</text>
   <text x="1240" y="883" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">Use initialCapacity when size is predictable.</text>
 
-  <!-- Footer -->
-  <text x="750" y="935" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#555">Simplified implementation model — colors show claimed ranges, not permanent ownership.</text>
+  <!-- Schematic ranges keep the example compact; real OpenJDK transfer chunks have a minimum stride of 16 bins. -->
+  <text x="750" y="935" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#555">Worker ranges are schematic; actual chunks are larger. Colors indicate temporary work assignments.</text>
 </svg>

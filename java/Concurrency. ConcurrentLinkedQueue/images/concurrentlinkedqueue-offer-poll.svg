@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1500" height="920" viewBox="0 0 1500 920" role="img" aria-labelledby="title description">
   <title id="title">ConcurrentLinkedQueue offer and poll operations</title>
-  <desc id="description">Side-by-side CAS workflows. Offer first prepares a candidate link, then atomically links a new node through the last node's next field. Poll changes the first live node's item to null. Failed CAS operations retry without a global lock.</desc>
+  <desc id="description">Side-by-side compare-and-set workflows. Offer atomically links a new node through the last node's next field. A successful poll logically removes an element by changing its item to null, then optionally advances head before returning the element. An empty poll returns null without waiting for an element; no successful item CAS is needed. Failed link or item CAS operations retry without a global lock.</desc>
 
   <!-- Background and title -->
   <rect width="1500" height="920" fill="white"/>
   <text x="750" y="52" text-anchor="middle" font-family="sans-serif" font-size="34" font-weight="bold" fill="black">Lock-free offer() and poll()</text>
-  <text x="750" y="83" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#444">The successful CAS is the instant at which each operation logically takes effect</text>
+  <text x="750" y="83" text-anchor="middle" font-family="sans-serif" font-size="18" fill="#444">CAS (compare-and-set) atomically updates a field only if it still holds the expected value</text>
 
   <!-- offer panel -->
   <rect x="40" y="110" width="690" height="575" rx="8" fill="#eef6fc" stroke="#2f6fad" stroke-width="2"/>
@@ -31,12 +31,12 @@
   <text x="82" y="401" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="white">2</text>
   <text x="120" y="400" font-family="sans-serif" font-size="19" font-weight="bold" fill="#1d4f82">CAS B.next: null → new Node(C)</text>
   <!-- Dashed candidate link belongs to discovery; the CAS in item 2 makes it real. -->
-  <path d="M300 286H402" fill="none" stroke="#6b7f91" stroke-width="4" stroke-dasharray="8 6"/>
-  <polygon points="418,286 402,277 402,295" fill="#6b7f91"/>
+  <path data-connector="true" d="M300 286H402" fill="none" stroke="#6b7f91" stroke-width="4" stroke-dasharray="8 6"/>
+  <polygon points="419,286 402,277 402,295" fill="#6b7f91"/>
   <text x="360" y="272" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="bold" fill="#536779">candidate link</text>
 
   <rect x="155" y="430" width="460" height="62" rx="6" fill="#dcefdc" stroke="#4d8758" stroke-width="2"/>
-  <text x="385" y="456" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#35623e">Linearization point</text>
+  <text x="385" y="456" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#35623e">Linearization point (logical effect)</text>
   <text x="385" y="479" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">C is now reachable from the queue's linked chain</text>
 
   <!-- offer step 3 -->
@@ -64,8 +64,12 @@
   <text x="940" y="306" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">first live node</text>
   <text x="1240" y="281" text-anchor="middle" font-family="monospace" font-size="19" font-weight="bold" fill="#1d4f82">item = B</text>
   <text x="1240" y="306" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">next live node</text>
-  <path d="M1030 286H1132" fill="none" stroke="#555" stroke-width="4"/>
-  <polygon points="1148,286 1132,277 1132,295" fill="#555"/>
+  <path data-connector="true" d="M1030 286H1132" fill="none" stroke="#555" stroke-width="4"/>
+  <polygon points="1149,286 1132,277 1132,295" fill="#555"/>
+
+  <!-- Empty traversal can return null after earlier lost CAS attempts. -->
+  <text x="850" y="346" font-family="sans-serif" font-size="15" fill="#8c3c1f">Empty path: no live item and no next node → return null.</text>
+  <text x="850" y="368" font-family="sans-serif" font-size="15" fill="#555">No waiting; no successful item CAS needed.</text>
 
   <!-- poll step 2 -->
   <circle cx="812" cy="394" r="22" fill="#b35b34"/>
@@ -73,20 +77,20 @@
   <text x="850" y="400" font-family="sans-serif" font-size="19" font-weight="bold" fill="#8c3c1f">CAS A.item: A → null</text>
 
   <rect x="885" y="430" width="460" height="62" rx="6" fill="#dcefdc" stroke="#4d8758" stroke-width="2"/>
-  <text x="1115" y="456" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#35623e">Linearization point</text>
-  <text x="1115" y="479" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">A is logically removed and returned to the caller</text>
+  <text x="1115" y="456" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="bold" fill="#35623e">Linearization point (logical effect)</text>
+  <text x="1115" y="479" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#444">A is logically removed; poll() returns it in step 3</text>
 
   <!-- poll step 3 -->
   <circle cx="812" cy="546" r="22" fill="#b35b34"/>
   <text x="812" y="553" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="white">3</text>
-  <text x="850" y="552" font-family="sans-serif" font-size="19" font-weight="bold" fill="#8c3c1f">Advance head and skip consumed nodes</text>
+  <text x="850" y="552" font-family="sans-serif" font-size="19" font-weight="bold" fill="#8c3c1f">Optionally advance head, then return A</text>
   <rect x="850" y="585" width="500" height="62" rx="6" fill="white" stroke="#b35b34" stroke-width="2"/>
-  <text x="1100" y="611" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">The old node may remain briefly with item = null.</text>
-  <text x="1100" y="634" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">Traversal helps unlink or bypass obsolete nodes.</text>
+  <text x="1100" y="611" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">Returning A happens after any head update attempt.</text>
+  <text x="1100" y="634" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#555">Later traversals skip nodes whose item is null.</text>
 
   <!-- Shared CAS behavior -->
   <rect x="40" y="720" width="1420" height="160" rx="8" fill="#fafafa" stroke="#777" stroke-width="2"/>
-  <text x="70" y="760" font-family="sans-serif" font-size="23" font-weight="bold" fill="#333">What happens when CAS fails?</text>
+  <text x="70" y="760" font-family="sans-serif" font-size="23" font-weight="bold" fill="#333">What if the link or item CAS fails?</text>
 
   <rect x="80" y="792" width="330" height="58" rx="5" fill="white" stroke="#777"/>
   <rect x="455" y="792" width="330" height="58" rx="5" fill="white" stroke="#777"/>
@@ -101,11 +105,11 @@
   <text x="1312" y="816" text-anchor="middle" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1d4f82">Lock-free</text>
   <text x="1312" y="838" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">not wait-free</text>
 
-  <!-- Bottom arrows -->
-  <path d="M410 821H437" fill="none" stroke="#555" stroke-width="3"/>
-  <polygon points="453,821 437,812 437,830" fill="#555"/>
-  <path d="M785 821H812" fill="none" stroke="#555" stroke-width="3"/>
-  <polygon points="828,821 812,812 812,830" fill="#555"/>
-  <path d="M1160 821H1187" fill="none" stroke="#555" stroke-width="3"/>
-  <polygon points="1203,821 1187,812 1187,830" fill="#555"/>
+  <!-- Bottom arrows; tips meet outer box borders, with shafts hidden under the head bases. -->
+  <path data-connector="true" d="M410 821H437" fill="none" stroke="#555" stroke-width="3"/>
+  <polygon points="454.5,821 437,812 437,830" fill="#555"/>
+  <path data-connector="true" d="M785 821H812" fill="none" stroke="#555" stroke-width="3"/>
+  <polygon points="829.5,821 812,812 812,830" fill="#555"/>
+  <path data-connector="true" d="M1160 821H1187" fill="none" stroke="#555" stroke-width="3"/>
+  <polygon points="1204.5,821 1187,812 1187,830" fill="#555"/>
 </svg>
