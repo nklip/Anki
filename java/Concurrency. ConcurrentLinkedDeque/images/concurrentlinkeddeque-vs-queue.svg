@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="665" viewBox="0 0 1400 665" role="img" aria-labelledby="diagram-title diagram-description">
+  <title id="diagram-title">ConcurrentLinkedDeque adds operations at both ends</title>
+  <desc id="diagram-description">Two independent examples start with A, B, C ordered from front or head on the left to back or tail on the right. ConcurrentLinkedQueue offers D at the back and polls A from the front. ConcurrentLinkedDeque can offer D at either end, poll A from the front, or poll C from the back. Blue inward arrows indicate insertion; orange outward arrows indicate removal. Each arrow describes a separate operation on the pictured starting contents. Using First for both insertion and removal gives stack behavior: last-in, first-out.</desc>
+
+  <!-- Shared typography and semantic colors; arrows use separate shafts and heads. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #333; }
+      .title { font-size: 32px; font-weight: bold; }
+      .subtitle { font-size: 19px; fill: #555; }
+      .panel-title { font-size: 25px; font-weight: bold; fill: #1d4f82; }
+      .end-label { font-size: 18px; font-weight: bold; fill: #555; }
+      .element { font-size: 29px; font-weight: bold; fill: #1d4f82; }
+      .operation { font-family: monospace; font-size: 21px; font-weight: bold; }
+      .insert { fill: #2f6fad; }
+      .remove { fill: #b35b34; }
+      .note { font-size: 18px; fill: #555; }
+      .stack-note { font-size: 17px; font-weight: bold; fill: #1d4f82; }
+      .insert-shaft { stroke: #2f6fad; stroke-width: 4; fill: none; }
+      .remove-shaft { stroke: #b35b34; stroke-width: 4; fill: none; }
+    </style>
+  </defs>
+
+  <!-- Canvas and primary lesson. -->
+  <rect id="canvas" width="1400" height="665" fill="white"/>
+  <text x="700" y="44" text-anchor="middle" class="title">ConcurrentLinkedDeque: choose either end</text>
+  <text x="700" y="76" text-anchor="middle" class="subtitle">First = front / head · Last = back / tail</text>
+
+  <!-- Queue baseline: standard queue operations insert at the back and remove at the front. -->
+  <g id="queue-panel">
+    <rect x="40" y="101" width="1320" height="222" rx="8" fill="#fafafa" stroke="#888" stroke-width="2"/>
+    <text x="70" y="140" class="panel-title">ConcurrentLinkedQueue</text>
+    <text x="1330" y="140" text-anchor="end" class="note">Queue operations</text>
+    <text x="580" y="181" text-anchor="middle" class="end-label">front / head</text>
+    <text x="780" y="181" text-anchor="middle" class="end-label">back / tail</text>
+
+    <!-- Logical element order only; these boxes do not represent internal node fields. -->
+    <g id="queue-elements">
+      <rect x="540" y="199" width="80" height="90" rx="6" fill="#e8f2fb" stroke="#2f6fad" stroke-width="2"/>
+      <rect x="640" y="199" width="80" height="90" rx="6" fill="#e8f2fb" stroke="#2f6fad" stroke-width="2"/>
+      <rect x="740" y="199" width="80" height="90" rx="6" fill="#e8f2fb" stroke="#2f6fad" stroke-width="2"/>
+      <text x="580" y="254" text-anchor="middle" class="element">A</text>
+      <text x="680" y="254" text-anchor="middle" class="element">B</text>
+      <text x="780" y="254" text-anchor="middle" class="element">C</text>
+    </g>
+
+    <!-- Shaft endpoints sit inside their own head bases; tips stay outside element borders. -->
+    <text x="335" y="220" text-anchor="middle" class="operation remove">poll() returns A</text>
+    <path id="queue-poll-arrow" data-connector="true" d="M539 251H233" class="remove-shaft"/>
+    <polygon points="216,251 235,241 235,261" fill="#b35b34"/>
+    <text x="1040" y="220" text-anchor="middle" class="operation insert">offer(D)</text>
+    <path id="queue-offer-arrow" data-connector="true" d="M1190 251H838" class="insert-shaft"/>
+    <polygon points="821,251 840,241 840,261" fill="#2f6fad"/>
+  </g>
+
+  <!-- Deque contrast: independent insertion and removal lanes at each end. -->
+  <g id="deque-panel">
+    <rect x="40" y="348" width="1320" height="244" rx="8" fill="#eef6fc" stroke="#2f6fad" stroke-width="2"/>
+    <text x="70" y="388" class="panel-title">ConcurrentLinkedDeque</text>
+    <text x="1330" y="388" text-anchor="end" class="note">Deque = double-ended queue</text>
+    <text x="580" y="429" text-anchor="middle" class="end-label">First</text>
+    <text x="780" y="429" text-anchor="middle" class="end-label">Last</text>
+
+    <!-- Matching starting contents make the extra endpoint choices directly comparable. -->
+    <g id="deque-elements">
+      <rect x="540" y="447" width="80" height="112" rx="6" fill="white" stroke="#2f6fad" stroke-width="2"/>
+      <rect x="640" y="447" width="80" height="112" rx="6" fill="white" stroke="#2f6fad" stroke-width="2"/>
+      <rect x="740" y="447" width="80" height="112" rx="6" fill="white" stroke="#2f6fad" stroke-width="2"/>
+      <text x="580" y="514" text-anchor="middle" class="element">A</text>
+      <text x="680" y="514" text-anchor="middle" class="element">B</text>
+      <text x="780" y="514" text-anchor="middle" class="element">C</text>
+    </g>
+
+    <!-- Insert arrows point inward; remove arrows point outward, clear of all labels. -->
+    <text x="335" y="452" text-anchor="middle" class="operation insert">offerFirst(D)</text>
+    <path id="deque-offer-first-arrow" data-connector="true" d="M216 480H522" class="insert-shaft"/>
+    <polygon points="539,480 520,470 520,490" fill="#2f6fad"/>
+    <text x="335" y="518" text-anchor="middle" class="operation remove">pollFirst() returns A</text>
+    <path id="deque-poll-first-arrow" data-connector="true" d="M539 547H233" class="remove-shaft"/>
+    <polygon points="216,547 235,537 235,557" fill="#b35b34"/>
+
+    <text x="1040" y="452" text-anchor="middle" class="operation insert">offerLast(D)</text>
+    <path id="deque-offer-last-arrow" data-connector="true" d="M1190 480H838" class="insert-shaft"/>
+    <polygon points="821,480 840,470 840,490" fill="#2f6fad"/>
+    <text x="1040" y="518" text-anchor="middle" class="operation remove">pollLast() returns C</text>
+    <path id="deque-poll-last-arrow" data-connector="true" d="M821 547H1173" class="remove-shaft"/>
+    <polygon points="1190,547 1171,537 1171,557" fill="#b35b34"/>
+
+    <!-- Same-end stack rule occupies the lower band, clear of element boxes and remove arrows. -->
+    <text id="deque-stack-rule" x="700" y="581" text-anchor="middle" class="stack-note">Insert + remove at First = stack (last-in, first-out)</text>
+  </g>
+
+  <!-- Legend and reading rule prevent interpreting the separate arrows as a sequence. -->
+  <text x="700" y="624" text-anchor="middle" class="note">Read contents left to right: A, B, C. Each arrow is a separate operation on this starting state.</text>
+  <text x="700" y="652" text-anchor="middle" class="note">Blue inward arrows insert D. Orange outward arrows remove and return an end element.</text>
+</svg>
