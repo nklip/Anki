@@ -70,9 +70,9 @@ Every topic lives in its own folder as `Readme.md`, with its teaching diagrams i
 | [Concurrency. Double checked locking](./Concurrency.%20Double%20checked%20locking/Readme.md) | Article |
 | [Concurrency. Happens-before](./Concurrency.%20Happens-before/Readme.md) | Article |
 | [Concurrency. LongAdder](./Concurrency.%20LongAdder/Readme.md) | Article |
-| [Concurrency. Obstruction-Free vs. Lock-Free vs. Wait-Free](./Concurrency.%20Obstruction-Free%20vs.%20Lock-Free%20vs.%20Wait-Free/Readme.md) | Article |
 | [Concurrency. Ordering](./Concurrency.%20Ordering/Readme.md) | Simple card |
 | [Concurrency. Parallel Stream Internals](./Concurrency.%20Parallel%20Stream%20Internals/Readme.md) | Article |
+| [Concurrency. Progress Guarantees](./Concurrency.%20Progress%20Guarantees/Readme.md) | Article |
 | [Concurrency. ThreadLocal](./Concurrency.%20ThreadLocal/Readme.md) | Article |
 | [Concurrency. VarHandle](./Concurrency.%20VarHandle/Readme.md) | Article |
 | [Concurrency. Virtual Threads](./Concurrency.%20Virtual%20Threads/Readme.md) | Article |

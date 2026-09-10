@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="815" viewBox="0 0 1500 815" role="img" aria-labelledby="title description">
+  <title id="title">Deadlock-free protects group progress; starvation-free protects each requester</title>
+  <desc id="description">Three lock examples distinguish deadlock from starvation. First, T1 holds lock A and waits for lock B, while T2 holds B and waits for A: neither continues. Second, a deadlock-free lock can repeatedly admit T2 and T3 while T1 is bypassed forever. Third, a conceptual FIFO lock serves requests in arrival order, so every persistent requester eventually enters. The progress guarantees assume eligible threads keep being scheduled and holders eventually release. Even a fair lock remains blocking when its owner pauses.</desc>
+
+  <!-- Shared styles: use the neighboring diagrams' typography and semantic colors. -->
+  <defs>
+    <style>
+      text { font-family: sans-serif; fill: #333; }
+      .panel-title { font-size: 28px; font-weight: bold; text-anchor: middle; }
+      .subtitle { font-size: 19px; text-anchor: middle; }
+      .label { font-size: 20px; text-anchor: middle; }
+      .small { font-size: 18px; text-anchor: middle; }
+      .outcome { font-size: 21px; font-weight: bold; text-anchor: middle; }
+      .thread { font-size: 24px; font-weight: bold; text-anchor: middle; }
+      .red { fill: #982b25; }
+      .blue { fill: #234f7c; }
+      .green { fill: #315e38; }
+    </style>
+  </defs>
+
+  <!-- Reading order and definitions used by all three examples. -->
+  <rect width="1500" height="815" fill="white"/>
+  <text x="750" y="54" text-anchor="middle" font-size="38" font-weight="bold" fill="#111">Does someone get in — or does everyone?</text>
+  <text x="750" y="92" text-anchor="middle" font-size="20" fill="#444">Lock progress: T1, T2 and T3 are threads; “get in” means acquire the lock and enter its protected code.</text>
+
+  <!-- Panel 1: waiting arrows point to the thread that holds the needed lock. -->
+  <g id="deadlock-example">
+    <rect x="45" y="125" width="455" height="500" rx="9" fill="#fff5f3" stroke="#c63d32" stroke-width="3"/>
+    <text x="272" y="171" class="panel-title red">DEADLOCK</text>
+    <text x="272" y="205" class="subtitle">Two locks: A and B</text>
+
+    <text x="272" y="258" class="label red">T1 waits for B</text>
+    <path id="t1-waits-for-b-shaft" data-connector="true" d="M160 330V285H385V319" fill="none" stroke="#c63d32" stroke-width="3"/>
+    <!-- The shaft ends inside its own head; the nose meets T2's top border. -->
+    <polygon points="385,330 377,316 393,316" fill="#c63d32"/>
+
+    <rect id="thread-t1-holds-a" x="80" y="330" width="160" height="74" rx="7" fill="white" stroke="#c63d32" stroke-width="2"/>
+    <text x="160" y="361" class="thread red">T1</text>
+    <text x="160" y="389" class="label">holds A</text>
+    <rect id="thread-t2-holds-b" x="305" y="330" width="160" height="74" rx="7" fill="white" stroke="#c63d32" stroke-width="2"/>
+    <text x="385" y="361" class="thread red">T2</text>
+    <text x="385" y="389" class="label">holds B</text>
+
+    <path id="t2-waits-for-a-shaft" data-connector="true" d="M385 404V455H160V415" fill="none" stroke="#c63d32" stroke-width="3"/>
+    <!-- Matching upward head stops at T1's bottom border. -->
+    <polygon points="160,404 152,418 168,418" fill="#c63d32"/>
+    <text x="272" y="490" class="label red">T2 waits for A</text>
+
+    <rect x="70" y="525" width="405" height="76" rx="7" fill="#fde1dc"/>
+    <text x="272" y="557" class="outcome red">Neither can continue.</text>
+    <text x="272" y="585" class="small red">Each needs what the other holds.</text>
+  </g>
+
+  <!-- Panel 2: a permitted infinite repetition, not a proof from a finite trace. -->
+  <g id="deadlock-free-starvation-example">
+    <rect x="525" y="125" width="450" height="500" rx="9" fill="#f3f8fd" stroke="#356da8" stroke-width="3"/>
+    <text x="750" y="171" class="panel-title blue">DEADLOCK-FREE</text>
+    <text x="750" y="205" class="subtitle">Someone eventually gets in</text>
+
+    <rect id="persistent-request-t1" x="550" y="235" width="400" height="68" rx="7" fill="#fde1dc" stroke="#c63d32" stroke-width="2"/>
+    <text x="750" y="263" class="label red">T1 keeps requesting this lock</text>
+    <text x="750" y="289" class="small red">but is repeatedly passed over</text>
+    <text x="750" y="342" class="small blue">Other threads acquire, then release:</text>
+
+    <rect x="554" y="365" width="70" height="60" rx="6" fill="#d4edd8" stroke="#43804c" stroke-width="2"/>
+    <rect x="653" y="365" width="70" height="60" rx="6" fill="#d4edd8" stroke="#43804c" stroke-width="2"/>
+    <rect x="752" y="365" width="70" height="60" rx="6" fill="#d4edd8" stroke="#43804c" stroke-width="2"/>
+    <rect x="851" y="365" width="70" height="60" rx="6" fill="#d4edd8" stroke="#43804c" stroke-width="2"/>
+    <text x="589" y="404" class="thread green">T2</text>
+    <text x="688" y="404" class="thread green">T3</text>
+    <text x="787" y="404" class="thread green">T2</text>
+    <text x="886" y="404" class="thread green">T3</text>
+    <!-- Admission arrows use a short clear gap; noses stop before the next box. -->
+    <path id="repeating-admission-shafts" data-connector="true" d="M629 395H637 M728 395H736 M827 395H835" fill="none" stroke="#356da8" stroke-width="3"/>
+    <polygon points="648,395 635,388 635,402" fill="#356da8"/>
+    <polygon points="747,395 734,388 734,402" fill="#356da8"/>
+    <polygon points="846,395 833,388 833,402" fill="#356da8"/>
+    <text x="750" y="466" class="label red">This pattern may repeat forever.</text>
+    <text x="750" y="493" class="small">Progress for others can hide starvation.</text>
+
+    <rect x="550" y="525" width="400" height="76" rx="7" fill="#dfebf8"/>
+    <text x="750" y="557" class="outcome blue">The group makes progress.</text>
+    <text x="750" y="585" class="small red">T1 may never get in.</text>
+  </g>
+
+  <!-- Panel 3: FIFO is an illustrative rule, not the definition of starvation freedom. -->
+  <g id="starvation-free-fifo-example">
+    <rect x="1000" y="125" width="455" height="500" rx="9" fill="#f3fbf4" stroke="#43804c" stroke-width="3"/>
+    <text x="1227" y="171" class="panel-title green">STARVATION-FREE</text>
+    <text x="1227" y="205" class="subtitle">Every persistent requester gets in</text>
+
+    <text x="1227" y="253" class="label green">One possible rule: FIFO</text>
+    <text x="1227" y="282" class="small">First in, first out — serve arrival order.</text>
+    <text x="1227" y="342" class="small green">Requests arrive: T1, then T2, then T3</text>
+    <rect x="1040" y="365" width="100" height="60" rx="6" fill="#d4edd8" stroke="#43804c" stroke-width="2"/>
+    <rect x="1177" y="365" width="100" height="60" rx="6" fill="#d4edd8" stroke="#43804c" stroke-width="2"/>
+    <rect x="1314" y="365" width="100" height="60" rx="6" fill="#d4edd8" stroke="#43804c" stroke-width="2"/>
+    <text x="1090" y="404" class="thread green">T1</text>
+    <text x="1227" y="404" class="thread green">T2</text>
+    <text x="1364" y="404" class="thread green">T3</text>
+    <!-- The order is left to right; arrowheads remain clear of every request box. -->
+    <path id="fifo-admission-shafts" data-connector="true" d="M1145 395H1160 M1282 395H1297" fill="none" stroke="#43804c" stroke-width="3"/>
+    <polygon points="1172,395 1158,388 1158,402" fill="#43804c"/>
+    <polygon points="1309,395 1295,388 1295,402" fill="#43804c"/>
+    <text x="1227" y="466" class="label green">Later arrivals cannot jump the queue.</text>
+    <text x="1227" y="493" class="small">Each admitted thread eventually releases.</text>
+
+    <rect x="1025" y="525" width="405" height="76" rx="7" fill="#d4edd8"/>
+    <text x="1227" y="557" class="outcome green">Every request eventually succeeds.</text>
+    <text x="1227" y="585" class="small">No requester is bypassed forever.</text>
+  </g>
+
+  <!-- Shared assumptions prevent fairness from being mistaken for wait freedom. -->
+  <g id="lock-progress-assumptions">
+    <rect x="45" y="650" width="1410" height="120" rx="9" fill="#f3f3f3" stroke="#777" stroke-width="2"/>
+    <text x="75" y="683" font-size="21" font-weight="bold">For these lock guarantees to apply:</text>
+    <text x="75" y="713" font-size="20">Eligible threads keep being scheduled, and lock holders eventually release the lock.</text>
+    <text x="75" y="747" font-size="20" font-weight="bold" fill="#982b25">A fair lock is still blocking: if its owner pauses, waiting threads may have to wait for that owner.</text>
+  </g>
+  <text x="750" y="802" text-anchor="middle" font-size="19" fill="#444">Starvation-free implies deadlock-free under the same assumptions; eventual success is not a time deadline.</text>
+</svg>

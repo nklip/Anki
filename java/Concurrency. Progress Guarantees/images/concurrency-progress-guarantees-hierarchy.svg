@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="735" viewBox="0 0 1500 735" role="img" aria-labelledby="title description">
+  <title id="title">Hierarchy of non-blocking progress guarantees</title>
+  <desc id="description">Nested algorithm sets become smaller from left to right as their progress guarantees become stronger. Every wait-free algorithm is also lock-free and obstruction-free. Every lock-free algorithm is also obstruction-free. Wait freedom means each continuing operation completes after a finite number of its own steps, regardless of other threads; it does not itself state a uniform step limit across all executions.</desc>
+
+  <!-- Shared typography and semantic colors follow the neighboring teaching diagrams. -->
+  <defs>
+    <style>
+      text { font-family: sans-serif; text-anchor: middle; }
+      .heading { font-size: 31px; font-weight: bold; }
+      .explanation { font-size: 19px; }
+      .card-heading { font-size: 18px; font-weight: bold; }
+      .card-line { font-size: 16px; fill: #333; }
+      .note { font-size: 15px; fill: #555; }
+      .warning { font-size: 15px; fill: #a32e29; }
+    </style>
+  </defs>
+
+  <!-- Title states the algorithm-set interpretation of the nested boxes. -->
+  <rect width="1500" height="735" fill="white"/>
+  <text x="750" y="55" font-size="38" font-weight="bold" fill="#111">Non-blocking progress guarantees</text>
+  <text x="750" y="91" font-size="20" fill="#444">An algorithm in an inner box also provides every guarantee outside it.</text>
+
+  <!-- Outermost algorithm set; the tighter vertical nesting removes the old empty lower region. -->
+  <rect id="obstruction-free-set" x="45" y="125" width="1410" height="440" rx="12" fill="#fff8eb" stroke="#bd7823" stroke-width="4"/>
+  <text x="255" y="179" font-size="28" font-weight="bold" fill="#7b4d16">OBSTRUCTION-FREE</text>
+  <text x="255" y="216" class="explanation" fill="#553c22">An operation completes</text>
+  <text x="255" y="244" class="explanation" fill="#553c22">after running alone long enough</text>
+
+  <rect x="85" y="270" width="340" height="135" rx="7" fill="white" stroke="#bd7823" stroke-width="2"/>
+  <text x="255" y="303" class="card-heading" fill="#7b4d16">Guarantee</text>
+  <text x="255" y="333" class="card-line">progress guaranteed after</text>
+  <text x="255" y="359" class="card-line">sufficient isolation</text>
+  <text x="255" y="387" class="warning">all threads may livelock</text>
+
+  <text x="255" y="445" font-size="16" font-weight="bold" fill="#7b4d16">Contention can prevent</text>
+  <text x="255" y="471" class="card-line">every completion.</text>
+  <text x="255" y="509" class="note">Backoff or a contention manager</text>
+  <text x="255" y="533" class="note">can improve practical behavior.</text>
+
+  <!-- Lock-free algorithms form a subset of the outer set, with a stronger group guarantee. -->
+  <rect id="lock-free-set" x="470" y="165" width="935" height="360" rx="12" fill="#eef5fc" stroke="#356da8" stroke-width="4"/>
+  <text x="677" y="221" class="heading" fill="#234f7c">LOCK-FREE</text>
+  <text x="677" y="257" class="explanation" fill="#294b6c">The system keeps</text>
+  <text x="677" y="283" class="explanation" fill="#294b6c">completing operations</text>
+
+  <rect x="505" y="310" width="345" height="130" rx="7" fill="white" stroke="#356da8" stroke-width="2"/>
+  <text x="677" y="343" class="card-heading" fill="#234f7c">Guarantee</text>
+  <text x="677" y="371" class="card-line">some operation</text>
+  <text x="677" y="397" class="card-line">must complete</text>
+  <text x="677" y="425" class="warning">one thread may starve</text>
+  <text x="677" y="477" font-size="16" font-weight="bold" fill="#234f7c">Other threads can complete</text>
+  <text x="677" y="504" class="card-line">while one keeps retrying.</text>
+
+  <!-- Wait-free algorithms are the innermost subset; finite does not assert a uniform bound. -->
+  <rect id="wait-free-set" x="890" y="205" width="465" height="280" rx="12" fill="#edf8ef" stroke="#43804c" stroke-width="4"/>
+  <text x="1122" y="259" class="heading" fill="#315e38">WAIT-FREE</text>
+  <text x="1122" y="294" font-size="18" fill="#315e38">Every continuing operation completes</text>
+
+  <rect x="920" y="318" width="405" height="134" rx="7" fill="white" stroke="#43804c" stroke-width="2"/>
+  <text x="1122" y="350" class="card-heading" fill="#315e38">Per-operation guarantee</text>
+  <text x="1122" y="377" class="card-line">finite number of its own steps</text>
+  <text x="1122" y="404" class="card-line">regardless of other threads</text>
+  <text x="1122" y="432" font-size="15" fill="#315e38">no algorithmic starvation</text>
+
+  <!-- Strength follows left-to-right deeper nesting; shaft ends inside its own triangular head. -->
+  <text x="750" y="603" font-size="19" font-weight="bold" fill="#444">Stronger guarantees toward the inner boxes</text>
+  <path id="stronger-guarantees-shaft" data-connector="true" d="M150 628H1327" fill="none" stroke="#444" stroke-width="5"/>
+  <polygon id="stronger-guarantees-head" points="1355,628 1325,614 1325,642" fill="#444"/>
+
+  <!-- Logical implication is labeled separately from the direction of increasing strength. -->
+  <rect x="250" y="667" width="1000" height="48" rx="6" fill="#f3f3f3" stroke="#777" stroke-width="2"/>
+  <text x="750" y="698" font-size="22" font-weight="bold" fill="#222">Implication: wait-free  ⇒  lock-free  ⇒  obstruction-free</text>
+</svg>
