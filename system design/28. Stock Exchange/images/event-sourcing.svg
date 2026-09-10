@@ -23,16 +23,14 @@
     <circle cx="500.5" cy="93" r="54"/>
   </g>
 
-  <!-- The connector is split around its centered label; both halves share one angle. -->
-  <g class="event-link">
-    <path id="state-transition-left" d="M189 64 L235.5 44.5"/>
-    <path id="state-transition-right" d="M400.5 44.5 L447 63.5"/>
-  </g>
-  <!-- Tip lands on the second circle; the shaft ends inside this etalon-sized head. -->
-  <path d="M454.5 66 L441 64.5 L444.5 56.5 Z" fill="#000"/>
+  <!-- Direct state transition; the shaft starts at the first circle's outer edge. -->
+  <path class="event-link" id="state-transition-connector" data-connector="true"
+        d="M197.5 93 H436"/>
+  <!-- Shaft ends inside the head; its tip meets the second circle's outer edge. -->
+  <path id="state-transition-arrowhead" d="M446 93 L435 88.5 L435 97.5 Z" fill="#000"/>
 
   <g class="label">
-    <text x="319" y="39.5">OrderFilledEvent</text>
+    <text id="state-transition-label" x="321.75" y="79">OrderFilledEvent</text>
     <text x="143" y="82">Order V1</text>
     <text x="143" y="128">New</text>
     <text x="500.5" y="82">Order V2</text>

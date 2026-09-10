@@ -59,7 +59,7 @@ At a high level, we'd want to establish effective message passing between peers.
 A more practical approach is to use a shared backend as a fan-out mechanism towards friends you want to reach:
 
 <div style="margin-left:3rem">
-    <img src="./images/fan-out-backend.svg" alt="fan-out-backend" width="500" />
+    <img src="./images/fan-out-backend.svg" alt="fan-out-backend" width="1000" />
 </div>
 
 What does the backend do?
@@ -72,7 +72,7 @@ This sounds simple but the challenge is to design the system for the scale we're
 We'll start with a simpler design at first and discuss a more advanced approach in the deep dive:
 
 <div style="margin-left:3rem">
-    <img src="./images/simple-high-level-design.svg" alt="simple-high-level-design" width="500" />
+    <img src="./images/simple-high-level-design.svg" alt="simple-high-level-design" width="1000" />
 </div>
 
 - **Load balancer**: spreads traffic across REST API servers as well as bidirectional WebSocket servers.
@@ -84,7 +84,7 @@ We'll start with a simpler design at first and discuss a more advanced approach 
 - **Redis Pub/Sub**: used as a lightweight message bus that enables different topics for each user channel for location updates.
 
 <div style="margin-left:3rem">
-    <img src="./images/redis-pubsub-usage.svg" alt="redis-pubsub-usage" width="500" />
+    <img src="./images/redis-pubsub-usage.svg" alt="redis-pubsub-usage" width="1000" />
 </div>
 
 In the above example, WebSocket servers subscribe to channels for the users who are connected to them and forward location updates to the appropriate users whenever they receive them.
@@ -94,7 +94,7 @@ In the above example, WebSocket servers subscribe to channels for the users who 
 Here's how the periodic location update flow works:
 
 <div style="margin-left:3rem">
-    <img src="./images/periodic-location-update.svg" alt="periodic-location-update" width="500" />
+    <img src="./images/periodic-location-update.svg" alt="periodic-location-update" width="1000" />
 </div>
 
  * Mobile client sends a location update to the load balancer
@@ -108,7 +108,7 @@ Here's how the periodic location update flow works:
 Here's a more detailed version of the same flow:
 
 <div style="margin-left:3rem">
-    <img src="./images/detailed-periodic-location-update.svg" alt="detailed-periodic-location-update" width="500" />
+    <img src="./images/detailed-periodic-location-update.svg" alt="detailed-periodic-location-update" width="1000" />
 </div>
 
 On average, there are going to be 40 location updates to forward, as a user has 400 friends on average and 10% of them are online at a time.
@@ -157,7 +157,7 @@ In order to support a distributed redis cluster, we'll need to utilize a service
 What we need to encode in the service discovery component is this data:
 
 <div style="margin-left:3rem">
-    <img src="./images/channel-distribution-data.svg" alt="channel-distribution-data" width="500" />
+    <img src="./images/channel-distribution-data.svg" alt="channel-distribution-data" width="1000" />
 </div>
 
 WebSocket servers use that encoded data, fetched from ZooKeeper, to determine where a particular channel lives. For efficiency, the hash-ring data can be cached in memory on each WebSocket server.
@@ -172,7 +172,7 @@ We have to be mindful of some potential issues during scaling operations:
  * We can leverage consistent hashing to minimize the number of channels moved when adding or removing servers.
 
 <div style="margin-left:3rem">
-    <img src="./images/consistent-hashing.svg" alt="consistent-hashing" width="500" />
+    <img src="./images/consistent-hashing.svg" alt="consistent-hashing" width="1000" />
 </div>
 
 ### **Adding/removing friends**
@@ -194,19 +194,19 @@ What if the interviewer wants to update the design to include a feature where we
 One way to handle this is to define a pool of pubsub channels, based on geohash:
 
 <div style="margin-left:3rem">
-    <img src="./images/geohash-pubsub.svg" alt="geohash-pubsub" width="500" />
+    <img src="./images/geohash-pubsub.svg" alt="geohash-pubsub" width="1000" />
 </div>
 
 Anyone within the geohash subscribes to the appropriate channel to receive location updates for random users:
 
 <div style="margin-left:3rem">
-    <img src="./images/location-updates-geohash.svg" alt="location-updates-geohash" width="500" />
+    <img src="./images/location-updates-geohash.svg" alt="location-updates-geohash" width="1000" />
 </div>
 
 We could also subscribe to several geohashes to handle cases where someone is close but in a bordering geohash:
 
 <div style="margin-left:3rem">
-    <img src="./images/geohash-borders.svg" alt="geohash-borders" width="500" />
+    <img src="./images/geohash-borders.svg" alt="geohash-borders" width="1000" />
 </div>
 
 ### **Alternative to Redis pub/sub**

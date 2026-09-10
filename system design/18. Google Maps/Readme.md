@@ -48,7 +48,7 @@ Before jumping into the design, there are some map-related concepts we should un
 The world is a sphere rotating on its axis. Positions are defined by latitude (how far north/south you are) and longitude (how far east/west you are):
 
 <div style="margin-left:3rem">
-    <img src="./images/partitioning-system.svg" alt="partitioning-system" width="500" />
+    <img src="./images/partitioning-system.svg" alt="partitioning-system" width="1000" />
 </div>
 
 #### Going from 3D to 2D
@@ -58,7 +58,7 @@ The process of translating points from 3D to a 2D plane is called "map projectio
 There are different ways to do it and each comes with its pros and cons. Almost all distort the actual geometry.
 
 <div style="margin-left:3rem">
-    <img src="./images/map-projections.svg" alt="map-projections" width="500" />
+    <img src="./images/map-projections.svg" alt="map-projections" width="1000" />
 </div>
 
 Google Maps selected a modified version of the Mercator projection called "Web Mercator."
@@ -78,7 +78,7 @@ Geohashing is an encoding system that encodes a geographic area into a string of
 It depicts the world as a flattened surface and recursively subdivides it into four quadrants:
 
 <div style="margin-left:3rem">
-    <img src="./images/geohashing.svg" alt="geohashing" width="500" />
+    <img src="./images/geohashing.svg" alt="geohashing" width="1000" />
 </div>
 
 Geohashing has many uses. In our design, we use geohashing for **map tiling**.
@@ -98,7 +98,7 @@ E.g., zooming out to the entire world would download only a single 256x256 tile 
 In most routing algorithms, intersections are represented as nodes and roads are represented as edges:
 
 <div style="margin-left:3rem">
-    <img src="./images/road-representation.svg" alt="road-representation" width="500" />
+    <img src="./images/road-representation.svg" alt="road-representation" width="1000" />
 </div>
 
 Most navigation algorithms use a modified version of Dijkstra's or A* algorithm.
@@ -110,7 +110,7 @@ Instead, we use a technique similar to tiling - we subdivide the world into smal
 Routing tiles hold references to neighboring tiles and algorithms can stitch together a bigger road graph as it traverses interconnected tiles:
 
 <div style="margin-left:3rem">
-    <img src="./images/routing-tiles.svg" alt="routing-tiles" width="500" />
+    <img src="./images/routing-tiles.svg" alt="routing-tiles" width="1000" />
 </div>
 
 This technique enables us to significantly reduce memory bandwidth and only load the tiles we need for the given source/destination pair.
@@ -118,7 +118,7 @@ This technique enables us to significantly reduce memory bandwidth and only load
 However, for larger routes, stitching together small, detailed routing tiles would still be time- and memory-consuming. Instead, there are routing tiles with different levels of detail, and the algorithm uses the appropriately detailed tiles based on the destination we're headed for:
 
 <div style="margin-left:3rem">
-    <img src="./images/map-routing-hierarchical.svg" alt="map-routing-hierarchical.svg" width="500" />
+    <img src="./images/map-routing-hierarchical.svg" alt="map-routing-hierarchical.svg" width="1000" />
 </div>
 
 ### **Back-of-the-envelope estimation**
@@ -136,13 +136,13 @@ Assuming GPS update requests are batched, we arrive at 200k QPS and 1 million QP
 ## Step 2: Propose High-Level Design and Get Buy-In
 
 <div style="margin-left:3rem">
-    <img src="./images/high-level-design.svg" alt="high-level-design" width="500" />
+    <img src="./images/high-level-design.svg" alt="high-level-design" width="1000" />
 </div>
 
 ### **Location service**
 
 <div style="margin-left:3rem">
-    <img src="./images/location-service.svg" alt="location-service" width="500" />
+    <img src="./images/location-service.svg" alt="location-service" width="1000" />
 </div>
 
 It is responsible for recording a user's location updates:
@@ -152,7 +152,7 @@ It is responsible for recording a user's location updates:
 Instead of sending location updates to the server all the time, we can batch the updates on the client-side and send batches instead:
 
 <div style="margin-left:3rem">
-    <img src="./images/location-update-batches.svg" alt="location-update-batches" width="500" />
+    <img src="./images/location-update-batches.svg" alt="location-update-batches" width="1000" />
 </div>
 
 Despite this optimization, for a system of Google Maps scale, load will still be significant. Therefore, we can leverage a database, optimized for heavy writes such as Cassandra.
@@ -220,13 +220,13 @@ How should the map tiles be served to the client?
  * Map tiles are served statically, based on their geohash, which a client can calculate. They can be statically stored & served from a CDN
 
 <div style="margin-left:3rem">
-    <img src="./images/static-map-tiles.svg" alt="static-map-tiles" width="500" />
+    <img src="./images/static-map-tiles.svg" alt="static-map-tiles" width="1000" />
 </div>
 
 CDNs enable users to fetch map tiles from **point-of-presence servers (POP)** which are closest to users in order to minimize latency:
 
 <div style="margin-left:3rem">
-    <img src="./images/cdn-vs-no-cdn.svg" alt="cdn-vs-no-cdn" width="500" />
+    <img src="./images/cdn-vs-no-cdn.svg" alt="cdn-vs-no-cdn" width="1000" />
 </div>
 
 Options to consider for determining map tiles:
@@ -234,7 +234,7 @@ Options to consider for determining map tiles:
  * Alternatively, we can have a simple API that calculates the map-tile URLs on behalf of clients at the cost of an additional API call.
 
 <div style="margin-left:3rem">
-    <img src="./images/map-tile-url-calculation.svg" alt="map-tile-url-calculation" width="500" />
+    <img src="./images/map-tile-url-calculation.svg" alt="map-tile-url-calculation" width="1000" />
 </div>
 
 ---
@@ -264,7 +264,7 @@ We can use Cassandra for storing this kind of data as its nature is to be write-
 Example row:
 
 <div style="margin-left:3rem">
-    <img src="./images/user-location-data-torw.svg" alt="user-location-data-row" width="500" />
+    <img src="./images/user-location-data-torw.svg" alt="user-location-data-row" width="1000" />
 </div>
 
 #### Geocoding database
@@ -278,7 +278,7 @@ We can use Redis for its fast read access speed, as we have frequent read and in
 As we discussed, we will precompute map tiling images and store them in CDN.
 
 <div style="margin-left:3rem">
-    <img src="./images/precomputed-map-tile-image.svg" alt="precomputed-map-tile-image" width="500" />
+    <img src="./images/precomputed-map-tile-image.svg" alt="precomputed-map-tile-image" width="1000" />
 </div>
 
 ### **Services**
@@ -288,7 +288,7 @@ As we discussed, we will precompute map tiling images and store them in CDN.
 Let's focus on the database design and how user location is stored in detail for this service.
 
 <div style="margin-left:3rem">
-    <img src="./images/location-service-diagram.svg" alt="location-service-diagram" width="500" />
+    <img src="./images/location-service-diagram.svg" alt="location-service-diagram" width="1000" />
 </div>
 
 We can use a NoSQL database to facilitate the heavy write load we have on location updates. We prioritize availability over consistency as user location data often changes and becomes stale as new updates arrive.
@@ -298,7 +298,7 @@ We'll choose Cassandra as our database choice as it nicely fits all our requirem
 Example row we're going to store:
 
 <div style="margin-left:3rem">
-    <img src="./images/user-location-row-example.svg" alt="user-location-row-example" width="500" />
+    <img src="./images/user-location-row-example.svg" alt="user-location-row-example" width="1000" />
 </div>
 
  * `user_id` is the partition key in order to quickly access all location updates for a particular user
@@ -307,7 +307,7 @@ Example row we're going to store:
 We also leverage Kafka to stream location updates to various other services that need them for various purposes:
 
 <div style="margin-left:3rem">
-    <img src="./images/location-update-streaming.svg" alt="location-update-streaming" width="500" />
+    <img src="./images/location-update-streaming.svg" alt="location-update-streaming" width="1000" />
 </div>
 
 #### Rendering map
@@ -317,7 +317,7 @@ Map tiles are stored at various zoom levels. At the lowest zoom level, the entir
 As zoom levels increase, the number of map tiles quadruples:
 
 <div style="margin-left:3rem">
-    <img src="./images/zoom-level-increases.svg" alt="zoom-level-increases" width="500" />
+    <img src="./images/zoom-level-increases.svg" alt="zoom-level-increases" width="1000" />
 </div>
 
 One optimization we can use is to not send the entire image information over the network, but instead represent tiles as vectors (paths & polygons) and let the client render the tiles dynamically.
@@ -329,7 +329,7 @@ This will have substantial bandwidth savings.
 This service is responsible for finding the fastest routes:
 
 <div style="margin-left:3rem">
-    <img src="./images/navigation-service.svg" alt="navigation-service" width="500" />
+    <img src="./images/navigation-service.svg" alt="navigation-service" width="1000" />
 </div>
 
 Let's go through each component in this sub-system.
@@ -385,7 +385,7 @@ The shortest-path service runs a variation of the A* algorithm against the routi
  * The algorithm starts from the initial routing tile and starts traversing it until a good enough path is found to the destination tile
 
 <div style="margin-left:3rem">
-    <img src="./images/shortest-path-service.svg" alt="shortest-path-service" width="500" />
+    <img src="./images/shortest-path-service.svg" alt="shortest-path-service" width="1000" />
 </div>
 
 The ETA service is called by the route planner to get estimated time based on machine learning algorithms, predicting ETA based on traffic data.
@@ -419,7 +419,7 @@ user_1, r_1, super(r_1), super(super(r_1)), ...
 ```
 
 <div style="margin-left:3rem">
-    <img src="./images/adaptive-eta-data-storage.svg" alt="adaptive-eta-data-storage" width="500" />
+    <img src="./images/adaptive-eta-data-storage.svg" alt="adaptive-eta-data-storage" width="1000" />
 </div>
 
 Using this, we only need to check whether the final tile of a user includes the traffic-accident tile to see whether the user is impacted.
@@ -440,7 +440,7 @@ We have several options, which enable us to proactively push data to clients fro
 This is our final design:
 
 <div style="margin-left:3rem">
-    <img src="./images/final-design.svg" alt="final-design" width="500" />
+    <img src="./images/final-design.svg" alt="final-design" width="1000" />
 </div>
 
 One additional feature we could provide is multi-stop navigation, which can be sold to enterprise customers such as Uber or Lyft to determine the optimal path for visiting a set of locations.

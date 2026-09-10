@@ -36,7 +36,7 @@ At a high level, the system is broken down into two services:
 
 ### Data Gathering Service
 <div style="margin-left:3rem">
-    <img src="./images/data-gathering.svg" alt="Data Gathering" width="600">
+    <img src="./images/data-gathering.svg" alt="Data Gathering" width="1000">
 </div>
 
 - Aggregates query data from analytics logs and updates the frequency table.
@@ -44,8 +44,8 @@ At a high level, the system is broken down into two services:
 
 ### Query Service
 <div style="margin-left:3rem">
-    <img src="./images/frequency-table.svg" alt="Frequency Table" width="400">
-    <img src="./images/basic-search-suggestions.svg" alt="Search Suggestions" width="360">
+    <img src="./images/frequency-table.svg" alt="Frequency Table" width="1000">
+    <img src="./images/basic-search-suggestions.svg" alt="Search Suggestions" width="1000">
 </div>
 
 - Uses the frequency table from the data gathering service.
@@ -67,7 +67,7 @@ The **trie** is a tree-like data structure used to store and retrieve query stri
 
 3. **Steps to Get the Top-k Most Searched Queries**
    <div style="margin-left:3rem">
-      <img src="./images/trie-structure.svg" alt="Trie Structure" width="500">
+      <img src="./images/trie-structure.svg" alt="Trie Structure" width="1000">
    </div>
 
     - Find the prefix.
@@ -78,7 +78,7 @@ The **trie** is a tree-like data structure used to store and retrieve query stri
 4. **Optimizations:**
    - Cache top-k queries at each node to speed up retrieval and avoid traversing the whole trie.
 
-        <img src="./images/cached-trie.svg" alt="Cached Trie" width="600">
+        <img src="./images/cached-trie.svg" alt="Cached Trie" width="1000">
 
    - Limit prefix length to reduce the search space, as users rarely type a long search query (e.g., 50 characters).
 
@@ -89,7 +89,7 @@ The **trie** is a tree-like data structure used to store and retrieve query stri
 2. **Update:** Rarely updated in real-time; weekly updates replace old data.
 3. **Delete:**
       <div style="margin-left:3rem">
-         <img src="./images/delete-kv.svg" alt="Delete KV" width="500">
+         <img src="./images/delete-kv.svg" alt="Delete KV" width="1000">
       </div>
 
     - Filters remove unwanted or harmful suggestions (e.g., hate speech).
@@ -131,7 +131,7 @@ In the high-level design, whenever a user types a search query, data is updated 
 #### Updated Design
 
 <div style="margin-left:3rem">
-   <img src="./images/data-gathering-flow.svg" alt="Updated Data Gathering Flow" width="600">
+   <img src="./images/data-gathering-flow.svg" alt="Updated Data Gathering Flow" width="1000">
 </div>
 
 1. **Analytics Logs:**
@@ -152,7 +152,7 @@ In the high-level design, whenever a user types a search query, data is updated 
             - Every prefix in the trie is mapped to a key in a hash table.
             - Data on each trie node is mapped to a value in a hash table.
 
-                <img src="./images/trie-db.svg" alt="Trie DB" width="600">
+                <img src="./images/trie-db.svg" alt="Trie DB" width="1000">
 ---
 
 ### Scalability
@@ -161,7 +161,7 @@ In the high-level design, whenever a user types a search query, data is updated 
    - Further shard within prefixes to balance uneven distributions (e.g., `aa-ag`, `ah-an`).
 2. **Load Balancing:**
    <div style="margin-left:3rem">
-      <img src="./images/sharding.svg" alt="Sharding" width="400">
+      <img src="./images/sharding.svg" alt="Sharding" width="1000">
    </div>
 
    - Use a shard map manager to route requests to the appropriate server.

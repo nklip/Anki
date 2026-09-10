@@ -28,7 +28,7 @@ This chapter explores the design and implementation of a rate limiter—a system
 ## Step 2: High-Level Design
 ### Placement Options
 <div style="margin-left:2rem">
-    <img src="./images/rate_limiter_architecture.svg" alt="Rate Limiting Middleware Architecture" width="550">
+    <img src="./images/rate_limiter_architecture.svg" alt="Rate Limiting Middleware Architecture" width="1000">
 </div>
 
 1. **Client-Side Implementation:** Unreliable due to potential misuse.
@@ -45,7 +45,7 @@ This chapter explores the design and implementation of a rate limiter—a system
 ## Step 3: Rate Limiting Algorithms
 ### 1. Token Bucket
 <div style="margin-left:2rem">
-  <img src="./images/token-bucket.svg" alt="Token Bucket Algorithm" width="550">
+  <img src="./images/token-bucket.svg" alt="Token Bucket Algorithm" width="1000">
 </div>
 
 - **Description:** Tokens are added to a bucket at a fixed rate; each request consumes a token.
@@ -57,7 +57,7 @@ This chapter explores the design and implementation of a rate limiter—a system
 
 ### 2. Leaking Bucket
 <div style="margin-left:2rem">
-  <img src="./images/leaking-bucket.svg" alt="Leaking Bucket Algorithm" width="550">
+  <img src="./images/leaking-bucket.svg" alt="Leaking Bucket Algorithm" width="1000">
 </div>
 
 - **Description:** Processes requests at a fixed rate using a FIFO queue.
@@ -71,7 +71,7 @@ This chapter explores the design and implementation of a rate limiter—a system
 
 ### 3. Fixed Window Counter
 <div style="margin-left:2rem">
-  <img src="./images/fixed-window-counter.svg" alt="Fixed Window Counter" width="550">
+  <img src="./images/fixed-window-counter.svg" alt="Fixed Window Counter" width="1000">
 </div>
 
 - **Description:** Divides time into fixed intervals and uses counters to limit requests.
@@ -81,12 +81,12 @@ This chapter explores the design and implementation of a rate limiter—a system
 - A sudden burst of traffic at the edges of time windows
 could allow more requests than the allotted quota.
 
-  <img src="./images/fixed-window-issue.svg" alt="Fixed Window Issue" width="550">
+  <img src="./images/fixed-window-issue.svg" alt="Fixed Window Issue" width="1000">
 
 
 ### 4. Sliding Window Log
 <div style="margin-left:2rem">
-  <img src="./images/sliding-window-log.svg" alt="Sliding Window Log" width="550">
+  <img src="./images/sliding-window-log.svg" alt="Sliding Window Log" width="1000">
 </div>
 
 - **Description:** Tracks timestamps to allow a rolling time window.
@@ -97,7 +97,7 @@ could allow more requests than the allotted quota.
 
 ### 5. Sliding Window Counter
 <div style="margin-left:2rem">
-  <img src="./images/sliding-window-counter.svg" alt="Fixed Window Counter" width="550">
+  <img src="./images/sliding-window-counter.svg" alt="Fixed Window Counter" width="1000">
 </div>
 
 - **Description:** Combines fixed window and sliding log methods for smoothing spikes.
@@ -109,7 +109,7 @@ could allow more requests than the allotted quota.
 
 ## High-Level Architecture
 <div style="margin-left:2rem">
-  <img src="./images/architecture.svg" style="margin-left: 40px; margin-top: 40px; margin-bottom: 20px;" alt="Architecture" width="550">
+  <img src="./images/architecture.svg" style="margin-left: 40px; margin-top: 40px; margin-bottom: 20px;" alt="Architecture" width="1000">
 </div>
 
 - **Data Storage:** Use in-memory caching (e.g., Redis) for fast counter operations.

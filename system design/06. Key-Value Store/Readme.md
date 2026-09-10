@@ -37,7 +37,7 @@ A **distributed key-value store** partitions data across multiple servers and mu
 **Trade-off:** According to the CAP theorem, only two of the three guarantees can be achieved.
 
 <p align="center">
-  <img src="./images/cap.svg" alt="cap.svg" width="400">
+  <img src="./images/cap.svg" alt="cap.svg" width="1000">
 </p>
 
 #### System Types:
@@ -51,7 +51,7 @@ A **distributed key-value store** partitions data across multiple servers and mu
     any data written to nodes n1 or n2 cannot be propagated to n3. Conversely, if data is written to n3 but not yet propagated to n1 and n2, nodes n1 and n2 will have stale data.
 
     <p align="center">
-    <img src="./images/server-down.svg" alt="server-down.svg" width="400">
+    <img src="./images/server-down.svg" alt="server-down.svg" width="1000">
     </p>
 
 - If we choose a CP system, we must block all write operations to n1 and n2 to avoid data inconsistency.
@@ -73,7 +73,7 @@ A **distributed key-value store** partitions data across multiple servers and mu
 - The N servers are chosen by walking clockwise from the server position and choosing the first N servers on the ring to store data copies. Place replicas in distinct data centers to improve reliability in case of virtual nodes.
 
     <p align="center">
-    <img src="./images/data-replication.svg" alt="data-replication.svg" width="300">
+    <img src="./images/data-replication.svg" alt="data-replication.svg" width="1000">
     </p>
 
 ### 3. Consistency
@@ -86,7 +86,7 @@ Since data is replicated at multiple nodes, it must be synchronized across repli
   - The configuration of W, R, and N is a typical tradeoff between latency and consistency.
 
     <p align="center">
-    <img src="./images/quorum-consensus.svg" alt="quorum-consensus.svg" width="400">
+    <img src="./images/quorum-consensus.svg" alt="quorum-consensus.svg" width="1000">
     </p>
 
     - If R = 1 and W = N, the system is optimized for a fast read.
@@ -106,8 +106,8 @@ vector clocks are used to solve inconsistency problems.
     - Use **vector clocks** to track data versions and resolve conflicts.
     - Versioning means treating each data modification as a new immutable version of data.
         <div>
-        <img src="./images/consistent-server.svg" alt="consistent-server.svg" width="400">
-        <img src="./images/inconsistent-server.svg" alt="inconsistent-server.svg" height="230">
+        <img src="./images/consistent-server.svg" alt="consistent-server.svg" width="1000">
+        <img width="1000" src="./images/inconsistent-server.svg" alt="inconsistent-server.svg">
         </div>
 
     - Server 1 changes the name, and Server 2 also changes the name. These two changes are performed simultaneously. Now, we have conflicting values, called versions v1 and v2.
@@ -130,7 +130,7 @@ vector clocks are used to solve inconsistency problems.
     4. **Conflict Resolution:** When conflicts are detected (sibling versions), the system relies on application-specific logic or client intervention to reconcile the data.
 
         <p align="center">
-        <img src="./images/vector-clock.svg" alt="vector-clock.svg" width="500">
+        <img src="./images/vector-clock.svg" alt="vector-clock.svg" width="1000">
         </p>
 
 - **Challenges:**
@@ -143,7 +143,7 @@ vector clocks are used to solve inconsistency problems.
 It is insufficient to believe that a server is down because another server says so. Usually, it requires at least two independent sources of information to mark a server down.
 - **Gossip Protocol:**
     <div style="margin-left:3rem">
-        <img src="./images/gossip-protocol.svg" alt="gossip-protocol.svg" width="600">
+        <img src="./images/gossip-protocol.svg" alt="gossip-protocol.svg" width="1000">
     </div>
 
     - Each node maintains member IDs and heartbeat counters.
@@ -155,7 +155,7 @@ It is insufficient to believe that a server is down because another server says 
 #### b. Temporary Failures
 - **Sloppy Quorum:** Use healthy nodes to maintain operations temporarily.
         <p align="center">
-        <img src="./images/sloppy-quorum.svg" alt="sloppy-quorum.svg" width="400">
+        <img src="./images/sloppy-quorum.svg" alt="sloppy-quorum.svg" width="1000">
         </p>
 
     - After detecting failures, the system needs to deploy certain mechanisms to ensure availability.
@@ -180,19 +180,19 @@ It is insufficient to believe that a server is down because another server says 
     2. **Building a Merkle Tree:**
         - **Step 1:** Divide the key space into buckets.
 
-            <img src="./images/key-bucket.svg" alt="key-bucket.svg" width="500">
+            <img src="./images/key-bucket.svg" alt="key-bucket.svg" width="1000">
 
         - **Step 2:** Hash each key in a bucket using uniform hashing.
 
-            <img src="./images/hash-key-bucket.svg" alt="hash-key-bucket.svg" width="500">
+            <img src="./images/hash-key-bucket.svg" alt="hash-key-bucket.svg" width="1000">
 
         - **Step 3:** Create a single hash for each bucket.
 
-            <img src="./images/hash-bucket.svg" alt="hash-bucket.svg" width="500">
+            <img src="./images/hash-bucket.svg" alt="hash-bucket.svg" width="1000">
 
         - **Step 4:** Combine hashes of buckets to compute higher-level hashes, culminating in the root hash.
 
-            <img src="./images/merkle-tree.svg" alt="merkle-tree.svg" width="500">
+            <img src="./images/merkle-tree.svg" alt="merkle-tree.svg" width="1000">
 
     3. **Synchronization:**
         - To synchronize two replicas:
@@ -214,7 +214,7 @@ It is insufficient to believe that a server is down because another server says 
 ## System Architecture
 
 <p align="center">
-<img src="./images/system-architecture.svg" alt="system-architecture.svg" width="500">
+<img src="./images/system-architecture.svg" alt="system-architecture.svg" width="1000">
 </p>
 
 - Clients communicate with the key-value store through simple APIs: get(key) and put(key,
@@ -230,7 +230,7 @@ value).
 As the design is decentralized, each node performs many tasks as presented in the image below.
 
 <p align="center">
-    <img src="./images/node.svg" alt="node.svg" width="500">
+    <img src="./images/node.svg" alt="node.svg" width="1000">
 </p>
 
 
@@ -241,7 +241,7 @@ The image below explains what happens after a write request is directed to a spe
 Please note the proposed designs for write/read paths are primarily based on the architecture of **Cassandra**.
 
 <div style="margin-left:3rem">
-    <img src="./images/write-path.svg" alt="write-path.svg" width="500">
+    <img src="./images/write-path.svg" alt="write-path.svg" width="1000">
 </div>
 
 1. The write request is persisted on a **commit log** file. 
@@ -255,13 +255,13 @@ Note: A sorted-string table (SSTable) is a sorted list of <key, value> pairs.
 After a read request is directed to a specific node, it first checks if data is in the memory cache. If so, the data is returned to the client as shown in the image below.
 
 <div style="margin-left:3rem">
-    <img src="./images/read-path.svg" alt="read-path.svg" width="500">
+    <img src="./images/read-path.svg" alt="read-path.svg" width="1000">
 </div>
 
 If the data is not in memory, it will be retrieved from the disk instead. We need an efficient way to find out which SSTable contains the key. A Bloom filter [10] is commonly used to solve this problem. The read path is shown in the image below when data is not in memory.
 
 <div style="margin-left:3rem">
-    <img src="./images/read-path-without-cache.svg" alt="read-path-without-cache.svg" width="500">
+    <img src="./images/read-path-without-cache.svg" alt="read-path-without-cache.svg" width="1000">
 </div>
 
 1. The system first checks if data is in **memory cache**. If not, go to step 2.

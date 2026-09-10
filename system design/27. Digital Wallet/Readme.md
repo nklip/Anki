@@ -7,7 +7,7 @@
 You can also use it to pay for goods & services or transfer money to other users, who use the **digital wallet** service. That can be faster and cheaper than doing it via normal payment rails.
 
 <div style="margin-left:3rem">
-    <img src="./images/digital-wallet.svg" alt="digital-wallet" width="500" />
+    <img src="./images/digital-wallet.svg" alt="digital-wallet" width="1000" />
 </div>
 
 ---
@@ -85,7 +85,7 @@ ZooKeeper can be used to store the number of partitions and addresses of Redis n
 Finally, a wallet service is a stateless service responsible for carrying out transfer operations. It can easily scale horizontally:
 
 <div style="margin-left:3rem">
-    <img src="./images/wallet-service.svg" alt="wallet-service" width="500" />
+    <img src="./images/wallet-service.svg" alt="wallet-service" width="1000" />
 </div>
 
 Although this solution addresses scalability concerns, it doesn't allow us to execute balance transfers atomically.
@@ -94,13 +94,13 @@ Although this solution addresses scalability concerns, it doesn't allow us to ex
 One approach for handling transactions is to use the two-phase commit protocol on top of standard, sharded relational databases:
 
 <div style="margin-left:3rem">
-    <img src="./images/distributed-transactions-relational-dbs.svg" alt="distributed-transactions-relational-dbs" width="500" />
+    <img src="./images/distributed-transactions-relational-dbs.svg" alt="distributed-transactions-relational-dbs" width="1000" />
 </div>
 
 Here's how the **two-phase commit (2PC)** protocol works:
 
 <div style="margin-left:3rem">
-    <img src="./images/2pc-protocol.svg" alt="2pc-protocol" width="500" />
+    <img src="./images/2pc-protocol.svg" alt="2pc-protocol" width="1000" />
 </div>
 
  * The coordinator (wallet service) performs read and write operations on multiple databases as normal.
@@ -113,7 +113,7 @@ Downsides to the 2PC approach:
  * The coordinator is a single point of failure
 
 <div style="margin-left:3rem">
-    <img src="./images/coordinator-crashes.svg" alt="coordinator-crashes" width="500" />
+    <img src="./images/coordinator-crashes.svg" alt="coordinator-crashes" width="1000" />
 </div>
 
 ### **Distributed transaction: Try-Confirm/Cancel (TC/C)**
@@ -134,7 +134,7 @@ Here's how TC/C works in phases:
 #### **Phase 1 - Try:**
 
 <div style="margin-left:3rem">
-    <img src="./images/tcc-try-phase.svg" alt="try-phase" width="500" />
+    <img src="./images/tcc-try-phase.svg" alt="try-phase" width="1000" />
 </div>
 
  * The coordinator starts a local transaction in A's DB to reduce A's balance by $1.
@@ -143,7 +143,7 @@ Here's how TC/C works in phases:
 #### **Phase 2a - Confirm:**
 
 <div style="margin-left:3rem">
-    <img src="./images/tcc-confirm-phase.svg" alt="confirm-phase" width="500" />
+    <img src="./images/tcc-confirm-phase.svg" alt="confirm-phase" width="1000" />
 </div>
 
  * If both DBs replied with "yes," the confirm phase starts.
@@ -152,7 +152,7 @@ Here's how TC/C works in phases:
 #### **Phase 2b - Cancel:**
 
 <div style="margin-left:3rem">
-    <img src="./images/tcc-cancel-phase.svg" alt="cancel-phase" width="500" />
+    <img src="./images/tcc-cancel-phase.svg" alt="cancel-phase" width="1000" />
 </div>
 
  * If any of the operations in phase 1 fails, the cancel phase starts.
@@ -176,7 +176,7 @@ If the coordinator dies mid-flight, it needs to recover its intermediary state.
 That can be done by maintaining phase status tables, atomically updated within the database shards:
 
 <div style="margin-left:3rem">
-    <img src="./images/phase-status-tables.svg" alt="phase-status-tables" width="500" />
+    <img src="./images/phase-status-tables.svg" alt="phase-status-tables" width="1000" />
 </div>
 
 What does that table contain?
@@ -189,7 +189,7 @@ What does that table contain?
 One caveat when using TC/C is that there is a brief moment where the account states are inconsistent with each other while a distributed transaction is in-flight:
 
 <div style="margin-left:3rem">
-    <img src="./images/unbalanced-state.svg" alt="unbalanced-state" width="500" />
+    <img src="./images/unbalanced-state.svg" alt="unbalanced-state" width="1000" />
 </div>
 
 This is fine as long as we always recover from this state and users cannot use the intermediate state to, e.g., spend it.
@@ -206,7 +206,7 @@ Note that choice 3 from table above is invalid because we cannot guarantee atomi
 One edge case to address is out-of-order execution:
 
 <div style="margin-left:3rem">
-    <img src="./images/out-of-order-execution.svg" alt="out-of-order-execution" width="500" />
+    <img src="./images/out-of-order-execution.svg" alt="out-of-order-execution" width="1000" />
 </div>
 
 It is possible that a database receives a cancel operation before receiving a try. This edge case can be handled by adding an out-of-order flag to our phase-status table.
@@ -221,7 +221,7 @@ Here's how it works:
 3. When an operation has failed, the entire process starts to roll back from the current operation to the first operation in reverse order, using compensating transactions. So if a distributed transaction has operations, we need to prepare operations: for the normal case and another for the compensating transaction during rollback.
 
 <div style="margin-left:3rem">
-    <img src="./images/saga.svg" alt="saga" width="500" />
+    <img src="./images/saga.svg" alt="saga" width="1000" />
 </div>
 
 How do we coordinate the workflow? There are two approaches we can take:
@@ -267,25 +267,25 @@ It consists of four concepts:
    * the state machine should be deterministic; hence, it shouldn't read external I/O or rely on randomness.
 
 <div style="margin-left:3rem">
-    <img src="./images/event-sourcing.svg" alt="event-sourcing" width="500" />
+    <img src="./images/event-sourcing.svg" alt="event-sourcing" width="1000" />
 </div>
 
 Here's a dynamic view of event sourcing:
 
 <div style="margin-left:3rem">
-    <img src="./images/dynamic-event-sourcing.svg" alt="dynamic-event-sourcing" width="500" />
+    <img src="./images/dynamic-event-sourcing.svg" alt="dynamic-event-sourcing" width="1000" />
 </div>
 
 For our wallet service, the commands are balance transfer requests. We can put them in a FIFO queue, such as Kafka:
 
 <div style="margin-left:3rem">
-    <img src="./images/command-queue.svg" alt="command-queue" width="500" />
+    <img src="./images/command-queue.svg" alt="command-queue" width="1000" />
 </div>
 
 Here's the full picture:
 
 <div style="margin-left:3rem">
-    <img src="./images/wallet-service-state-machine.svg" alt="wallet-service-state-machine" width="500" />
+    <img src="./images/wallet-service-state-machine.svg" alt="wallet-service-state-machine" width="1000" />
 </div>
 
 1. Read Command from the Command queue.
@@ -302,7 +302,7 @@ Historical balances can always be reconstructed by replaying events from the beg
 Because the event list is immutable and the state machine is deterministic, we are guaranteed to succeed in replaying any of the intermediate states.
 
 <div style="margin-left:3rem">
-    <img src="./images/historical-states.svg" alt="historical-states" width="500" />
+    <img src="./images/historical-states.svg" alt="historical-states" width="1000" />
 </div>
 
 All audit-related questions asked in the beginning of the section can be addressed by relying on event sourcing:
@@ -313,7 +313,7 @@ All audit-related questions asked in the beginning of the section can be address
 Answering client queries about their balance can be addressed using the CQRS architecture - there can be multiple read-only state machines which are responsible for querying the historical state, based on the immutable events list:
 
 <div style="margin-left:3rem">
-    <img src="./images/cqrs-architecture.svg" alt="cqrs-architecture" width="500" />
+    <img src="./images/cqrs-architecture.svg" alt="cqrs-architecture" width="1000" />
 </div>
 
 ---
@@ -331,7 +331,7 @@ The next optimization is to cache recent commands and events in-memory in order 
 At a low level, we can achieve the aforementioned optimizations by leveraging a command called mmap, which stores data on local disk and caches it in memory:
 
 <div style="margin-left:3rem">
-    <img src="./images/mmap-optimization.svg" alt="mmap-optimization" width="500" />
+    <img src="./images/mmap-optimization.svg" alt="mmap-optimization" width="1000" />
 </div>
 
 The next optimization is to store state in the local file system using SQLite, a file-based local relational database. RocksDB is another good option.
@@ -340,13 +340,13 @@ For our purposes, we'll choose RocksDB because it uses a log-structured merge-tr
 Read performance is optimized via caching.
 
 <div style="margin-left:3rem">
-    <img src="./images/rocks-db-approach.svg" alt="rocks-db-approach" width="500" />
+    <img src="./images/rocks-db-approach.svg" alt="rocks-db-approach" width="1000" />
 </div>
 
 To optimize replay performance, we can periodically save snapshots to disk so that we don't have to reproduce a given state from the very beginning every time. We could store snapshots as large binary files in distributed file storage, e.g., HDFS:
 
 <div style="margin-left:3rem">
-    <img src="./images/snapshot-approach.svg" alt="snapshot-approach" width="500" />
+    <img src="./images/snapshot-approach.svg" alt="snapshot-approach" width="1000" />
 </div>
 
 ### **Reliable high-performance event sourcing**
@@ -366,7 +366,7 @@ To achieve this, we can employ a consensus algorithm, such as **Raft**.
 The Raft algorithm guarantees that as long as more than half of the nodes are online, the append-only lists on them have the same data. For example, if we have 5 nodes and use the Raft algorithm to synchronize their data, as long as at least 3 (more than half) of the nodes are up, the system can still work properly as a whole.
 
 <div style="margin-left:3rem">
-    <img src="./images/raft-three-nodes-up.svg" alt="raft-three-nodes-up" width="500" />
+    <img src="./images/raft-three-nodes-up.svg" alt="raft-three-nodes-up" width="1000" />
 </div>
 
 A node can have three different roles in the Raft algorithm.
@@ -381,7 +381,7 @@ With the Raft algorithm, the system is reliable as long as the majority of the n
 For example, if there are 3 nodes in the cluster, it could tolerate the failure of 1 node, and if there are 5 nodes, it can tolerate the failure of 2 nodes.
 
 <div style="margin-left:3rem">
-    <img src="./images/raft-replication.svg" alt="raft-replication" width="500" />
+    <img src="./images/raft-replication.svg" alt="raft-replication" width="1000" />
 </div>
 
 With this approach, all nodes update the state, based on the events list. Raft ensures leader and followers have the same events list.
@@ -396,13 +396,13 @@ Some limitations we have to tackle:
 Polling is not real-time, hence, it can take a while for a user to learn about an update in their balance. Also, it can overload the query services if the polling frequency is too high:
 
 <div style="margin-left:3rem">
-    <img src="./images/polling-approach.svg" alt="polling-approach" width="500" />
+    <img src="./images/polling-approach.svg" alt="polling-approach" width="1000" />
 </div>
 
 To mitigate the system load, we can introduce a reverse proxy, which sends commands on behalf of the user and polls for response on their behalf:
 
 <div style="margin-left:3rem">
-    <img src="./images/reverse-proxy.svg" alt="reverse-proxy" width="500" />
+    <img src="./images/reverse-proxy.svg" alt="reverse-proxy" width="1000" />
 </div>
 
 This alleviates the system load as we could fetch data for multiple users using a single request, but it still doesn't solve the real-time receipt requirement.
@@ -410,13 +410,13 @@ This alleviates the system load as we could fetch data for multiple users using 
 One final change we could make is to have the read-only state machines push responses back to the reverse proxy once they're available. This can give the user the sense that updates happen in real time:
 
 <div style="margin-left:3rem">
-    <img src="./images/push-state-machines.svg" alt="push-state-machines" width="500" />
+    <img src="./images/push-state-machines.svg" alt="push-state-machines" width="1000" />
 </div>
 
 Finally, to scale the system even further, we can shard the system into multiple Raft groups, where we implement distributed transactions on top of them using an orchestrator via either TC/C or Saga:
 
 <div style="margin-left:3rem">
-    <img src="./images/sharded-raft-groups.svg" alt="sharded-raft-groups" width="500" />
+    <img src="./images/sharded-raft-groups.svg" alt="sharded-raft-groups" width="1000" />
 </div>
 
 Here's an example lifecycle of a balance transfer request in our final system:

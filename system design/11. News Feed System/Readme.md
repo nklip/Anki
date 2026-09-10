@@ -44,7 +44,7 @@ The design includes two main flows:
 ### Feed Publishing
 
    <div style="margin-left:3rem">
-      <img src="./images/feed-publishing.svg" alt="Feed Publishing" width="400">
+      <img src="./images/feed-publishing.svg" alt="Feed Publishing" width="1000">
    </div>
 
 1. **User Interaction:** The user publishes a post via the feed publishing API.
@@ -59,7 +59,7 @@ The design includes two main flows:
 ### News Feed Building
 
    <div style="margin-left:3rem">
-      <img src="./images/news-feed-building.svg" alt="News Feed Building" width="400">
+      <img src="./images/news-feed-building.svg" alt="News Feed Building" width="1000">
    </div>
 
 1. **User Interaction:** The user requests their news feed via the retrieval API.
@@ -85,7 +85,7 @@ The design includes two main flows:
      - **Cons:** Slower feed retrieval.
    - **Hybrid Approach:** Use a push model for most users and a pull model for high-connection users (e.g., celebrities).
 
-        <img src="./images/feed-publishing-deep-dive.svg" alt="Feed Publishing Deep Dive" width="500">
+        <img src="./images/feed-publishing-deep-dive.svg" alt="Feed Publishing Deep Dive" width="1000">
 
     The **fanout service** works as follows:
 
@@ -95,7 +95,7 @@ The design includes two main flows:
     4. **Fanout Workers:** Workers retrieve data from the message queue and update the news feed cache. The cache stores `<post_id, user_id>` mappings instead of full user and post objects to save memory.
     5. **Store in News Feed Cache:** Append new post IDs to the friends’ news feed cache. A configurable limit ensures that only recent posts are stored, as most users focus on the latest content, keeping cache memory consumption manageable.
 
-        <img src="./images/fanout-service.svg" alt="Fanout Service" width="500">
+        <img src="./images/fanout-service.svg" alt="Fanout Service" width="1000">
 
 ## News Feed Retrieval Deep Dive
 
@@ -107,7 +107,7 @@ The cache is divided into five layers:
 4. **Action Cache:** Tracks user actions (likes, replies, shares).
 5. **Counter Cache:** Maintains counts for likes, replies, followers, etc.
 
-    <img src="./images/cache-architecture.svg" alt="Cache Architecture" width="500">
+    <img src="./images/cache-architecture.svg" alt="Cache Architecture" width="1000">
 ---
 
 ## Key Optimizations

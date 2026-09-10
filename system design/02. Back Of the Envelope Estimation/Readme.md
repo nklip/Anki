@@ -13,7 +13,7 @@ This chapter covers key concepts, methodologies, and examples to build proficien
 ### Power of Two
 Understanding data volume in terms of powers of two is fundamental:
 
-<img src="./images/power-of-two.svg" alt="power-of-two" width="500" />
+<img src="./images/power-of-two.svg" alt="power-of-two" width="1000" />
 
 This knowledge helps in performing accurate storage and bandwidth calculations.
 

@@ -10,11 +10,11 @@ In traditional hashing methods, such as `serverIndex = hash(key) % N`, data redi
 - Removing a server causes most keys to be reassigned, leading to cache misses.
 - Adding a server results in unnecessary key redistributions.
 
-  <img src="./images/server-hashing.svg" alt="Server hashing" width="450">
+  <img src="./images/server-hashing.svg" alt="Server hashing" width="1000">
 
 - This approach works well when the size of the server pool is fixed. However, problems arise when new servers are added, or existing servers are removed.
 
-  <img src="./images/server-hashing-miss.svg" alt="Server hashing Miss" width="450">
+  <img src="./images/server-hashing-miss.svg" alt="Server hashing Miss" width="1000">
 
 ### Key Issue
 Redistribution of most keys when server count changes causes inefficiency and overload.
@@ -26,33 +26,33 @@ Consistent hashing ensures that only a fraction of keys are remapped when server
 ### Key Concepts
 1. **Hash Space and Ring:** The hash space forms a continuous ring, with hash values distributed from `0` to `2^160-1` (e.g., using a hash function like SHA-1). By connecting both ends, we get a ring.
     <p align="center">
-    <img src="./images/hash-ring.svg" alt="Hash Ring" width="450">
+    <img src="./images/hash-ring.svg" alt="Hash Ring" width="1000">
     </p>
 
 - Using the same hash function f, we map servers based on server IP or name onto the ring.
 
     <p align="center">
-    <img src="./images/server-ring.svg" alt="Server Ring" width="450">
+    <img src="./images/server-ring.svg" alt="Server Ring" width="1000">
     </p>
 
 1. **Server Lookup**
 - A key's server is determined by traversing clockwise on the ring until a server is found.
 
   <p align="center">
-  <img src="./images/server-lookup.svg" alt="Server Lookup" width="450">
+  <img src="./images/server-lookup.svg" alt="Server Lookup" width="1000">
   </p>
 
 2. **Adding and Removing Servers**
 - Adding a server redistributes only nearby keys. Only a fraction of keys are redistributed to the new server.
 
   <p align="center">
-  <img src="./images/adding-server.svg" alt="Adding Server" width="450">
+  <img src="./images/adding-server.svg" alt="Adding Server" width="1000">
   </p>
 
 - Removing a server affects only the keys in its range. Only keys from the removed server are reassigned to the next server clockwise.
 
   <p align="center">
-  <img src="./images/removing-server.svg" alt="Removing Server" width="450">
+  <img src="./images/removing-server.svg" alt="Removing Server" width="1000">
   </p>
 
 ## Challenges and Solutions
@@ -65,7 +65,7 @@ Consistent hashing ensures that only a fraction of keys are remapped when server
 - Virtual nodes improve key distribution and balance load. As the number of virtual nodes increases, the distribution of keys becomes more balanced. This is because the standard deviation gets smaller with more virtual nodes, leading to balanced data distribution.
 
   <p align="center">
-  <img src="./images/virtual-nodes.svg" alt="Virtual Nodes" width="450">
+  <img src="./images/virtual-nodes.svg" alt="Virtual Nodes" width="1000">
   </p>
 
 ## Affected Keys
@@ -76,14 +76,14 @@ When servers are added or removed:
   located between s3 and s4 need to be redistributed to s4.
 
   <p align="center">
-  <img src="./images/server-addition.svg" alt="Server Addition" width="450">
+  <img src="./images/server-addition.svg" alt="Server Addition" width="1000">
   </p>
 
 - **Removed Server:** Affected keys are those between the removed server and its predecessor. In the following example, when a server (s1) is removed, the affected range starts from s1
 (removed node) and moves anticlockwise around the ring until a server is found (s0). Thus, keys located between s0 and s1 must be redistributed to s2.
 
   <p align="center">
-  <img src="./images/server-removed.svg" alt="Server Removed" width="450">
+  <img src="./images/server-removed.svg" alt="Server Removed" width="1000">
   </p>
 
 ## Benefits of Consistent Hashing

@@ -25,7 +25,7 @@ This chapter discusses the design of a URL shortening service like TinyURL. The 
    - Returns: `longURL` for redirection.
 
     <p align="center">
-    <img src="./images/url-redirection.svg" alt="URL Redirection" width="600">
+    <img src="./images/url-redirection.svg" alt="URL Redirection" width="1000">
     </p>
 
 ### URL Redirection
@@ -35,7 +35,7 @@ subsequent requests for the same URL will not be sent to the URL shortening serv
 
 ### URL Shortening
 <p align="center">
-    <img src="./images/url-shortening.svg" alt="URL Shortening" width="400">
+    <img src="./images/url-shortening.svg" alt="URL Shortening" width="1000">
 </p>
 
 - Use a **hash function** to generate a short URL, mapping long URLs to unique shortened versions.
@@ -53,7 +53,7 @@ Store `<shortURL, longURL>` mappings in a relational database to optimize memory
 - `shortURL`,
 - `longURL`.
 
-    <img src="./images/table-schema.svg" alt="Table Schema" width="300">
+    <img src="./images/table-schema.svg" alt="Table Schema" width="1000">
 
 ### Hash Function
 #### 1. Base 62 Conversion:
@@ -69,14 +69,14 @@ Convert ID `2009215674938` to Base 62:
 #### 2. Hash + Collision Resolution:
 - Use hash functions like CRC32, MD5, or SHA-1.
 
-    <img src="./images/hash-function.svg" alt="Hash Function" width="500">
+    <img src="./images/hash-function.svg" alt="Hash Function" width="1000">
 
 - One approach is to collect the first 7 characters of a hash value; however, this method can lead to hash collisions.
 - To resolve collisions, recursively append a new predefined string until there are no more collisions, but this can be expensive.
 - Resolve collisions with **Bloom Filters** for efficient lookup.
 
     <p align="center">
-    <img src="./images/url-lookup.svg" alt="URL Lookup" width="500">
+    <img src="./images/url-lookup.svg" alt="URL Lookup" width="1000">
     </p>
 
 ### Comparison
@@ -98,7 +98,7 @@ Convert ID `2009215674938` to Base 62:
 ### URL Shortening Flow
 
 <p align="center">
-    <img src="./images/url-shortening-flow.svg" alt="URL Shortening" width="500">
+    <img src="./images/url-shortening-flow.svg" alt="URL Shortening" width="1000">
 </p>
 
 1. Check if `longURL` exists in the database.
@@ -112,7 +112,7 @@ Convert ID `2009215674938` to Base 62:
 
 ### URL Redirecting Flow
 <p align="center">
-    <img src="./images/url-redirecting-flow.svg" alt="URL Shortening" width="600">
+    <img src="./images/url-redirecting-flow.svg" alt="URL Shortening" width="1000">
 </p>
 
 1. User clicks a `shortURL`.

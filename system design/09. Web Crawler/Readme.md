@@ -6,7 +6,7 @@ A **web crawler**, also known as a spider or robot, is used to discover and coll
 
 Visual example of the crawl process:
 <p align="center">
-<img src="./images/visual-process.svg" alt="visial example of the crawl process" width="700">
+<img src="./images/visual-process.svg" alt="visial example of the crawl process" width="1000">
 </p>
 
 ### Applications of Web Crawlers
@@ -54,7 +54,7 @@ Here's a set of potential questions between Candidate and Interviewer:
 
 ### Components
 <p align="center">
-<img src="./images/web-crawler-architecture.svg" alt="Web Crawler Architecture" width="700">
+<img src="./images/web-crawler-architecture.svg" alt="Web Crawler Architecture" width="1000">
 </p>
 
 1. **Seed URLs:** Starting points for the crawler.
@@ -90,7 +90,7 @@ Here's a set of potential questions between Candidate and Interviewer:
 ### Workflow
 
 <p align="center">
-<img src="./images/web-crawler-workflow.svg" alt="Web Crawler Workflow" width="700">
+<img src="./images/web-crawler-workflow.svg" alt="Web Crawler Workflow" width="1000">
 </p>
 
 1. Add **Seed URLs** to the **URL Frontier**
@@ -122,7 +122,7 @@ Here's a set of potential questions between Candidate and Interviewer:
     - Use a mapping from hostnames to queues and worker (download) threads.
     - Each downloader thread has a separate FIFO queue and only downloads URLs from that queue.
 
-        <img src="./images/politeness.svg" alt="Politeness" width="500">
+        <img src="./images/politeness.svg" alt="Politeness" width="1000">
 
     - **Queue router:** Ensures that each queue (b1, b2, … bn) only contains URLs from the same host.
     - **Mapping table:** It maps each host to a queue.
@@ -132,7 +132,7 @@ Here's a set of potential questions between Candidate and Interviewer:
 - **Priority:**
     - Assign higher priority to important pages (e.g., by PageRank or update frequency).
 
-        <img src="./images/prioritizer.svg" alt="Prioritizer" width="500">
+        <img src="./images/prioritizer.svg" alt="Prioritizer" width="1000">
 
     - **Prioritizer:** It takes URLs as input and computes the priorities.
     - **Queue f1 to fn:** Each queue has an assigned priority. Queues with high priority are selected with higher probability.
@@ -160,7 +160,7 @@ Here's a set of potential questions between Candidate and Interviewer:
 - Add modules for new content types (e.g., PNG downloader, web monitor).
 - Example: Plug in a module to monitor web content for copyright violations.
 
-    <img src="./images/extensibility.svg" alt="Extensibility" width="600">
+    <img src="./images/extensibility.svg" alt="Extensibility" width="1000">
 ---
 
 ### Avoiding Problematic Content

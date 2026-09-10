@@ -22,7 +22,7 @@ There is no hierarchical directory structure; all data is stored as objects in a
 It is relatively slow compared to other storage types. Most cloud providers have an object storage offering - Amazon S3, Google GCS, etc.
 
 <div style="margin-left:3rem">
-    <img src="./images/storage-comparison.svg" alt="storage-comparison" width="500" />
+    <img src="./images/storage-comparison.svg" alt="storage-comparison" width="1000" />
 </div>
 
 |                 | Block Storage                    | File Storage                            | Object Storage                 |
@@ -98,19 +98,19 @@ When accessing a file, we first fetch its metadata from the inode, prior to fetc
 Object storage works similarly - metadata store is used for file information, but contents are stored on disk:
 
 <div style="margin-left:3rem">
-    <img src="./images/compare-object-store-vs-unix-file.svg" alt="compare-object-store-vs-unix-file" width="500" />
+    <img src="./images/compare-object-store-vs-unix-file.svg" alt="compare-object-store-vs-unix-file" width="1000" />
 </div>
 
 By separating metadata from file contents, we can scale the different stores independently:
 
 <div style="margin-left:3rem">
-    <img src="./images/bucket-and-object.svg" alt="bucket-and-object" width="500" />
+    <img src="./images/bucket-and-object.svg" alt="bucket-and-object" width="1000" />
 </div>
 
 ### **High-level design**
 
 <div style="margin-left:3rem">
-    <img src="./images/high-level-design.svg" alt="high-level-design" width="500" />
+    <img src="./images/high-level-design.svg" alt="high-level-design" width="1000" />
 </div>
 
 - **Load balancer** - distributes API requests across service replicas
@@ -122,7 +122,7 @@ By separating metadata from file contents, we can scale the different stores ind
 ### **Uploading an object**
 
 <div style="margin-left:3rem">
-    <img src="./images/object-uploading.svg" alt="object-uploading" width="500" />
+    <img src="./images/object-uploading.svg" alt="object-uploading" width="1000" />
 </div>
 
 1. Create a bucket named "bucket-to-share" via HTTP PUT request
@@ -161,7 +161,7 @@ Authorization: authorization string
 ```
 
 <div style="margin-left:3rem">
-    <img src="./images/object-downloading.svg" alt="object-downloading" width="500" />
+    <img src="./images/object-downloading.svg" alt="object-downloading" width="1000" />
 </div>
 
 1. The client sends an HTTP GET request to the load balancer, i.e., `GET /bucket-to-share/script.txt`.
@@ -179,13 +179,13 @@ Authorization: authorization string
 Here's how the API service interacts with the data store:
 
 <div style="margin-left:3rem">
-    <img src="./images/data-store-interactions.svg" alt="data-store-interactions" width="500" />
+    <img src="./images/data-store-interactions.svg" alt="data-store-interactions" width="1000" />
 </div>
 
 The data store's main components:
 
 <div style="margin-left:3rem">
-    <img src="./images/data-store-main-components.svg" alt="data-store-main-components" width="500" />
+    <img src="./images/data-store-main-components.svg" alt="data-store-main-components" width="1000" />
 </div>
 
 The data routing service provides a RESTful or gRPC API to access the data node cluster.
@@ -200,7 +200,7 @@ The placement service determines which data nodes should store an object.
 It maintains a virtual cluster map, which determines the physical topology of a cluster.
 
 <div style="margin-left:3rem">
-    <img src="./images/virtual-cluster-map.svg" alt="virtual-cluster-map" width="500" />
+    <img src="./images/virtual-cluster-map.svg" alt="virtual-cluster-map" width="1000" />
 </div>
 
 The service also sends heartbeats to all data nodes to determine if they should be removed from the virtual cluster.
@@ -220,7 +220,7 @@ The heartbeat includes:
 #### Data persistence flow
 
 <div style="margin-left:3rem">
-    <img src="./images/data-persistence-flow.svg" alt="data-persistence-flow" width="500" />
+    <img src="./images/data-persistence-flow.svg" alt="data-persistence-flow" width="1000" />
 </div>
 
 1. The API service forwards the object data to the data store.
@@ -234,7 +234,7 @@ Caveats:
 - In step 4, the primary data node replicates the object data before returning a response. This favors strong consistency over higher latency.
 
 <div style="margin-left:3rem">
-    <img src="./images/consistency-vs-latency.svg" alt="consistency-vs-latency" width="500" />
+    <img src="./images/consistency-vs-latency.svg" alt="consistency-vs-latency" width="1000" />
 </div>
 
 #### How data is organized
@@ -248,7 +248,7 @@ This works, but is not performant with many small files in a file system:
 These issues can be addressed by merging many small files into bigger ones via a write-ahead log (WAL). Once the file reaches its capacity (typically a few GB), a new file is created:
 
 <div style="margin-left:3rem">
-    <img src="./images/wal-optimization.svg" alt="wal-optimization" width="500" />
+    <img src="./images/wal-optimization.svg" alt="wal-optimization" width="1000" />
 </div>
 
 The downside of this approach is that write access to the file needs to be serialized. Multiple cores accessing the same file must wait for each other.
@@ -280,7 +280,7 @@ SQLite is a good option as it's a lightweight file-based relational database.
 #### Updated data persistence flow
 
 <div style="margin-left:3rem">
-    <img src="./images/updated-data-persistence-flow.svg" alt="updated-data-persistence-flow" width="500" />
+    <img src="./images/updated-data-persistence-flow.svg" alt="updated-data-persistence-flow" width="1000" />
 </div>
 
 1. The API service sends a request to save a new object named “object 4”.
@@ -297,7 +297,7 @@ But in addition to that, we also ought to replicate across different failure dom
 A critical event can cause multiple hardware failures within the same domain:
 
 <div style="margin-left:3rem">
-    <img src="./images/failure-domain-isolation.svg" alt="failure-domain-isolation" width="500" />
+    <img src="./images/failure-domain-isolation.svg" alt="failure-domain-isolation" width="1000" />
 </div>
 
 Assuming annual failure rate of a typical HDD is 0.81%, making three copies gives us 6 nines of durability.
@@ -307,7 +307,7 @@ Replicating the data nodes like that grants us the durability we want, but we co
 Erasure coding enables us to use parity bits, which allow us to reconstruct lost bits in the event of a failure:
 
 <div style="margin-left:3rem">
-    <img src="./images/erasure-coding.svg" alt="erasure-coding" width="500" />
+    <img src="./images/erasure-coding.svg" alt="erasure-coding" width="1000" />
 </div>
 
 Imagine those bits are data nodes. If two of them go down, they can be recovered using the remaining four ones.
@@ -315,13 +315,13 @@ Imagine those bits are data nodes. If two of them go down, they can be recovered
 There are different erasure coding schemes. In our case, we could use 8+4 erasure coding, split across different failure domains to maximize reliability:
 
 <div style="margin-left:3rem">
-    <img src="./images/erasure-coding-across-failure-domains.svg" alt="erasure-coding-across-failure-domains" width="500" />
+    <img src="./images/erasure-coding-across-failure-domains.svg" alt="erasure-coding-across-failure-domains" width="1000" />
 </div>
 
 Erasure coding enables us to achieve a much lower storage cost (50% improvement) at the expense of access speed due to the data routing service having to collect data from multiple locations:
 
 <div style="margin-left:3rem">
-    <img src="./images/erasure-coding-vs-replication.svg" alt="erasure-coding-vs-replication" width="500" />
+    <img src="./images/erasure-coding-vs-replication.svg" alt="erasure-coding-vs-replication" width="1000" />
 </div>
 
 Other caveats:
@@ -341,7 +341,7 @@ To detect this, we can use checksums - a hash of the file contents, which can be
 In our case, we'll store checksums for each file and each object:
 
 <div style="margin-left:3rem">
-    <img src="./images/checksums-for-correctness.svg" alt="checksums-for-correctness" width="500" />
+    <img src="./images/checksums-for-correctness.svg" alt="checksums-for-correctness" width="1000" />
 </div>
 
 In the case of erasure coding (8+4), we'll need to fetch each of the 8 pieces of data separately and verify each of their checksums.
@@ -351,7 +351,7 @@ In the case of erasure coding (8+4), we'll need to fetch each of the 8 pieces of
 Table schemas:
 
 <div style="margin-left:3rem">
-    <img src="./images/metadata-data-model.svg" alt="metadata-data-model" width="500" />
+    <img src="./images/metadata-data-model.svg" alt="metadata-data-model" width="1000" />
 </div>
 
 Queries we need to support:
@@ -389,7 +389,7 @@ That would make our listing query sufficiently fast as it's isolated to a single
 Versioning is a feature that keeps multiple versions of an object in a bucket. With versioning, we can restore objects that are accidentally deleted or overwritten.
 
 <div style="margin-left:3rem">
-    <img src="./images/object-versioning.svg" alt="object-versioning" width="500" />
+    <img src="./images/object-versioning.svg" alt="object-versioning" width="1000" />
 </div>
 
 1. The client sends an HTTP PUT request to upload an object named “script.txt”.
@@ -401,13 +401,13 @@ Versioning is a feature that keeps multiple versions of an object in a bucket. W
 Each new version produces a new `object_id`:
 
 <div style="margin-left:3rem">
-    <img src="./images/versioned-metadata.svg" alt="versioned-metadata" width="500" />
+    <img src="./images/versioned-metadata.svg" alt="versioned-metadata" width="1000" />
 </div>
 
 Deleting an object creates a new version with a special `object_id` indicating that the object was deleted. Queries for it return 404:
 
 <div style="margin-left:3rem">
-    <img src="./images/deleting-versioned-object.svg" alt="deleting-versioned-object" width="500" />
+    <img src="./images/deleting-versioned-object.svg" alt="deleting-versioned-object" width="1000" />
 </div>
 
 ### **Optimizing uploads of large files**
@@ -415,7 +415,7 @@ Deleting an object creates a new version with a special `object_id` indicating t
 Uploading large files can be optimized by using multipart uploads - splitting a big file into several chunks, uploaded independently:
 
 <div style="margin-left:3rem">
-    <img src="./images/multipart-upload.svg" alt="multipart-upload" width="500" />
+    <img src="./images/multipart-upload.svg" alt="multipart-upload" width="1000" />
 </div>
 
 1. Client calls service to initiate a multipart upload
@@ -443,7 +443,7 @@ To facilitate the deletion, we'll use a process called compaction:
 - To avoid making too many small files, compaction is done on files which grow beyond a certain threshold
 
 <div style="margin-left:3rem">
-    <img src="./images/compaction.svg" alt="compaction" width="500" />
+    <img src="./images/compaction.svg" alt="compaction" width="1000" />
 </div>
 
 ---

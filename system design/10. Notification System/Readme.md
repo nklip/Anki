@@ -37,7 +37,7 @@ The chapter focuses on designing a scalable system capable of sending millions o
 
 2. **Contact Info Gathering:**
    <div style="margin-left:3rem">
-      <img src="./images/contact-info-gathering.svg" alt="Contact Info Gathering" width="500">
+      <img src="./images/contact-info-gathering.svg" alt="Contact Info Gathering" width="1000">
    </div>
 
    - Collect device tokens, phone numbers, or email addresses during app installation or signup.
@@ -49,7 +49,7 @@ The chapter focuses on designing a scalable system capable of sending millions o
 3. **Notification Sending Flow:**
 
    <div style="margin-left:3rem">
-      <img src="./images/high-level-design.svg" alt="High Level Design" width="500">
+      <img src="./images/high-level-design.svg" alt="High Level Design" width="1000">
    </div>
 
    - **Trigger Services:**
@@ -69,7 +69,7 @@ The chapter focuses on designing a scalable system capable of sending millions o
 ### Improved Design
 
    <div style="margin-left:3rem">
-      <img src="./images/improved-design.svg" alt="Improved Design" width="500">
+      <img src="./images/improved-design.svg" alt="Improved Design" width="1000">
    </div>
 
 - Move databases and caches out of the notification server.
@@ -85,7 +85,7 @@ The chapter focuses on designing a scalable system capable of sending millions o
 ### Reliability
 1. **Prevent Data Loss:**
    <div style="margin-left:3rem">
-   <img src="./images/data-loss.svg" alt="Data Loss" width="400">
+   <img src="./images/data-loss.svg" alt="Data Loss" width="1000">
    </div>
 
    - Persist notification data in a database and implement a retry mechanism.
@@ -100,7 +100,7 @@ If it has been seen before, discard it; otherwise, send out the notification.
 
 ### Additional Components
    <div style="margin-left:3rem">
-   <img src="./images/events-tracking.svg" alt="Events Tracking" width="400">
+   <img src="./images/events-tracking.svg" alt="Events Tracking" width="1000">
    </div>
 
 1. **Notification Templates:** Preformatted templates for consistent and efficient notifications.
@@ -119,7 +119,7 @@ If it has been seen before, discard it; otherwise, send out the notification.
 ### Notification Flow
 
    <div style="margin-left:3rem">
-   <img src="./images/updated-design.svg" alt="Updated Design" width="500">
+   <img src="./images/updated-design.svg" alt="Updated Design" width="1000">
    </div>
 
 1. Trigger services call APIs to send notifications.

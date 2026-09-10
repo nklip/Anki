@@ -33,7 +33,7 @@ The system targets **50 million daily active users (DAU)** and stores chat histo
 1. **Sender Side:** HTTP for sending messages, leveraging persistent connections for efficiency.
 
       <div style="margin-left:2rem">
-      <img src="./images/basic-design.svg" alt="Basic Design" width="500">
+      <img src="./images/basic-design.svg" alt="Basic Design" width="1000">
       </div>
 
 2. **Receiver Side:**
@@ -41,27 +41,27 @@ The system targets **50 million daily active users (DAU)** and stores chat histo
       - Client periodically asks the server if there are messages available.
       - Inefficient due to frequent, redundant requests.
 
-         <img src="./images/polling.svg" alt="Polling" width="400">
+         <img src="./images/polling.svg" alt="Polling" width="1000">
 
    - **Long Polling:**
       - Keeps the connection open until messages arrive.
       - Inefficient for inactive users.
 
-         <img src="./images/long-polling.svg" alt="Long Polling" width="400">
+         <img src="./images/long-polling.svg" alt="Long Polling" width="1000">
 
    - **WebSocket:**
       - A bi-directional, persistent connection for real-time communication, chosen for both sending and receiving messages.
       - Uses the WebSocket (`ws`) protocol for sending and receiving messages.
 
-         <img src="./images/websocket.svg" alt="Websocket" width="400" >
+         <img src="./images/websocket.svg" alt="Websocket" width="1000" >
 
 ---
 
 ### Components
 
 <div style="margin-left:5rem">
-   <img src="./images/high-level-stateless-arch.svg" alt="High Level Architecture" height="350">
-   <img src="./images/high-level-statefull-arch.svg" alt="High Level Architecture" height="350" width="550">
+   <img width="1000" src="./images/high-level-stateless-arch.svg" alt="High Level Architecture">
+   <img src="./images/high-level-statefull-arch.svg" alt="High Level Architecture" width="1000">
 </div>
 
 1. **Stateless Services:**
@@ -80,7 +80,7 @@ The system targets **50 million daily active users (DAU)** and stores chat histo
 The client maintains a persistent WebSocket connection to a chat server for real-time messaging.
 
 <div style="margin-left:3rem">
-      <img src="./images/high-level-design.svg" alt="High Level Design" width="450">
+      <img src="./images/high-level-design.svg" alt="High Level Design" width="1000">
 </div>
 
 - Chat servers facilitate message sending/receiving.
@@ -103,8 +103,8 @@ The following are the data models for one-to-one chat and group chat.
       - A better approach is to use a local sequence number generator. Local means IDs are only unique within a group.
       - The reason why local IDs work is that maintaining message sequence within one-on-one channel or a group channel is sufficient.
 
-      <img src="./images/one-to-one-chat.svg" alt="One to one chat design" width="300">
-      <img src="./images/group-chat.svg" alt="Group chat design" width="300">
+      <img src="./images/one-to-one-chat.svg" alt="One to one chat design" width="1000">
+      <img src="./images/group-chat.svg" alt="Group chat design" width="1000">
 
 
 ## Step 3: Design Deep Dive
@@ -112,7 +112,7 @@ The following are the data models for one-to-one chat and group chat.
 ### Service Discovery
 
 <div style="margin-left:3rem">
-   <img src="./images/zookeeper.svg" alt="Zookeeper" width="400">
+   <img src="./images/zookeeper.svg" alt="Zookeeper" width="1000">
 </div>
 
 - The primary role of service discovery is to recommend the best chat server for a client based
@@ -135,7 +135,7 @@ on criteria such as geographical location and server capacity.
 #### Group Chat
 
 <div style="margin-left:3rem">
-   <img src="./images/group-chat-flow.svg" alt="Group Chat Flow" width="400">
+   <img src="./images/group-chat-flow.svg" alt="Group Chat Flow" width="1000">
 </div>
 
 - Messages are copied to individual inboxes for each recipient in the group.
@@ -153,7 +153,7 @@ message ID on the device. Messages that satisfy the following two conditions are
 as new messages:
 
 <div style="margin-left:3rem">
-   <img src="./images/message-synchronization.svg" alt="Message Synchronization" width="400">
+   <img src="./images/message-synchronization.svg" alt="Message Synchronization" width="1000">
 </div>
 
 - The recipient ID is equal to the currently logged-in user ID.
@@ -164,7 +164,7 @@ as new messages:
 ### Online Presence
 1. **Heartbeat Mechanism:**
    <div style="margin-left:3rem">
-      <img src="./images/heartbeat-mechanism.svg" alt="Heartbeat Mechanism" width="400">
+      <img src="./images/heartbeat-mechanism.svg" alt="Heartbeat Mechanism" width="1000">
    </div>
 
    - Clients send periodic heartbeats to presence servers to indicate they are online.
@@ -174,7 +174,7 @@ as new messages:
 2. **Fanout Model:**
 
    <div style="margin-left:3rem">
-      <img src="./images/fanout-presence.svg" alt="Fanout Presence" width="400">
+      <img src="./images/fanout-presence.svg" alt="Fanout Presence" width="1000">
    </div>
 
    - Presence updates are pushed to friends using a publish-subscribe model in which each friend pair maintains a channel.
