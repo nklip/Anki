@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="675" viewBox="0 0 1000 675" role="img" aria-labelledby="title desc">
+<title id="title">Kafka buffers a temporary ingestion burst while a sink catches up</title>
+<desc id="desc">Example constant rates: for thirty seconds a producer appends six thousand records per second and a sink processes two thousand per second, adding one hundred twenty thousand unread records. After the burst, one thousand records arrive per second and the sink still processes two thousand, draining the backlog in one hundred twenty seconds. Retention can delete unread records, and sustained input at least as large as output prevents an existing backlog from draining.</desc>
+<!-- Shared typography and semantic panels; backlog means unread records, not all stored records. -->
+<defs><style>text{font-family:Arial,Helvetica,sans-serif;fill:#111}.title{font-size:26px;font-weight:bold}.label{font-size:20px}.small{font-size:17px}.box{fill:#fff;stroke:#111;stroke-width:1.8}.blue{fill:#eaf3fb;stroke:#111;stroke-width:1.8}.amber{fill:#fff4db;stroke:#111;stroke-width:1.8}.shaft{fill:none;stroke:#111;stroke-width:1.8}</style></defs>
+<rect width="1000" height="675" fill="#fff"/>
+<!-- The data path separates the producer's pace from the sink's pace. -->
+<text x="500" y="40" class="title" text-anchor="middle">Kafka buffers bursts while a sink catches up</text>
+<text x="500" y="70" class="small" text-anchor="middle">Records can wait in the retained log when the producer temporarily outruns the sink.</text>
+<rect id="producer" class="box" x="30" y="135" width="210" height="105"/>
+<text x="135" y="171" class="label" font-weight="bold" text-anchor="middle">Producer</text>
+<text x="135" y="206" class="small" text-anchor="middle">Append records</text>
+<rect id="buffered-log" class="blue" x="365" y="110" width="285" height="145"/>
+<text x="507" y="143" class="label" font-weight="bold" text-anchor="middle">Kafka retained log</text>
+<text x="507" y="181" class="label" text-anchor="middle">Unread backlog</text>
+<text x="507" y="212" class="small" text-anchor="middle">Records waiting for this sink</text>
+<text x="507" y="239" class="small" text-anchor="middle">Reading advances its progress</text>
+<rect id="sink" class="box" x="785" y="135" width="185" height="105"/>
+<text x="877" y="171" class="label" font-weight="bold" text-anchor="middle">Sink</text>
+<text x="877" y="206" class="small" text-anchor="middle">Process records</text>
+<!-- Arrow shafts stop beneath their triangular bases, with noses on the target borders. -->
+<path id="append-shaft" class="shaft" data-connector="true" d="M240 188 H353"/>
+<path id="append-head" d="M351 181 L365 188 L351 195Z" fill="#111"/>
+<text x="302" y="162" class="small" text-anchor="middle">append</text>
+<path id="consume-shaft" class="shaft" data-connector="true" d="M650 188 H773"/>
+<path id="consume-head" d="M771 181 L785 188 L771 195Z" fill="#111"/>
+<text x="717" y="162" class="small" text-anchor="middle">read</text>
+<text x="500" y="284" class="small" text-anchor="middle">Backlog counts unread records. Consuming them does not delete them from Kafka.</text>
+<!-- Phase panels make the rate difference and duration explicit. -->
+<rect id="burst-phase" class="amber" x="30" y="310" width="450" height="190"/>
+<text x="53" y="344" class="label" font-weight="bold">1. A 30-second burst</text>
+<text x="53" y="379" class="small">In: 6,000 records/s | Out: 2,000 records/s</text>
+<text x="53" y="410" class="small">Growth: 6,000 − 2,000 = 4,000 records/s</text>
+<text x="53" y="446" class="label">4,000 × 30 = 120,000 unread records</text>
+<text x="53" y="478" class="small">Starting with zero backlog</text>
+<rect id="drain-phase" class="blue" x="520" y="310" width="450" height="190"/>
+<text x="543" y="344" class="label" font-weight="bold">2. After the burst</text>
+<text x="543" y="379" class="small">In: 1,000 records/s | Out: 2,000 records/s</text>
+<text x="543" y="410" class="small">Net drain: 2,000 − 1,000 = 1,000 records/s</text>
+<text x="543" y="446" class="label">120,000 ÷ 1,000 = 120 s to catch up</text>
+<text x="543" y="478" class="small">New records keep arriving during recovery</text>
+<!-- Storage and rate limits state when buffering will fail to protect the sink. -->
+<rect id="buffer-limits" class="amber" x="30" y="540" width="940" height="85"/>
+<text x="500" y="573" class="small" text-anchor="middle">Retention can remove unread records before a slow sink reaches them.</text>
+<text x="500" y="604" class="small" text-anchor="middle">With sustained inflow ≥ outflow, an existing backlog cannot drain.</text>
+<text x="500" y="656" class="small" text-anchor="middle">Illustrative steady rates; assumes enough storage, available sink capacity, and no added overhead.</text>
+</svg>

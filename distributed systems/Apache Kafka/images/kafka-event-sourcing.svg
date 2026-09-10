@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="775" viewBox="0 0 1000 775" role="img" aria-labelledby="title desc">
+<title id="title">Event sourcing: accepted events define state and support replay</title>
+<desc id="desc">Commands request an order change. Business-rule validation produces accepted facts in an authoritative ordered event stream. Deterministic updates derive current state and query views. A snapshot of state through position one hundred plus retained events one hundred one and one hundred two restores the later state. Replay must not repeat external effects such as payments or emails. Unlike a database outbox copy, this event log owns the facts.</desc>
+<!-- Shared typography and manual arrows. Positions refer to this one ordered event stream. -->
+<defs><style>text{font-family:Arial,Helvetica,sans-serif;fill:#111}.title{font-size:26px;font-weight:bold}.label{font-size:20px}.small{font-size:17px}.box{fill:#fff;stroke:#111;stroke-width:1.8}.blue{fill:#eaf3fb;stroke:#111;stroke-width:1.8}.amber{fill:#fff4db;stroke:#111;stroke-width:1.8}.shaft{fill:none;stroke:#111;stroke-width:1.8}</style></defs>
+<rect width="1000" height="775" fill="#fff"/>
+<!-- Start at a requested change; only an accepted business fact enters the event history. -->
+<text x="500" y="40" class="title" text-anchor="middle">Event sourcing: accepted events define the state</text>
+<text x="500" y="68" class="small" text-anchor="middle">Commands = requested changes. Events = accepted facts. Views are derived from those facts.</text>
+<text x="500" y="95" class="small" text-anchor="middle">This example follows one ordered event stream; positions are within that stream.</text>
+<rect id="commands" class="box" x="30" y="145" width="215" height="105"/>
+<text x="137" y="180" class="label" font-weight="bold" text-anchor="middle">Order commands</text>
+<text x="137" y="211" class="small" text-anchor="middle">Change order 42</text>
+<text x="137" y="237" class="small" text-anchor="middle">An intent can be rejected</text>
+<rect id="business-rules" class="box" x="365" y="145" width="225" height="105"/>
+<text x="477" y="180" class="label" font-weight="bold" text-anchor="middle">Validate order rules</text>
+<text x="477" y="211" class="small" text-anchor="middle">Check order state</text>
+<text x="477" y="237" class="small" text-anchor="middle">Accept a valid change</text>
+<rect id="authoritative-events" class="blue" x="710" y="120" width="260" height="175"/>
+<text x="840" y="152" class="label" font-weight="bold" text-anchor="middle">Authoritative event log</text>
+<text x="840" y="189" class="small" text-anchor="middle">100  OrderCreated(42)</text>
+<text x="840" y="222" class="small" text-anchor="middle">101  ItemAdded(42)</text>
+<text x="840" y="255" class="small" text-anchor="middle">102  OrderConfirmed(42)</text>
+<!-- Shafts stop beneath triangular bases; arrow noses meet target borders. -->
+<path id="submit-command-shaft" class="shaft" data-connector="true" d="M245 198 H353"/>
+<path id="submit-command-head" d="M351 191 L365 198 L351 205Z" fill="#111"/>
+<text x="305" y="172" class="small" text-anchor="middle">submit</text>
+<path id="append-fact-shaft" class="shaft" data-connector="true" d="M590 198 H698"/>
+<path id="append-fact-head" d="M696 191 L710 198 L696 205Z" fill="#111"/>
+<text x="650" y="172" class="small" text-anchor="middle">append fact</text>
+<!-- Deterministic state transition is reusable for live updates and later replay. -->
+<rect id="state-update" class="box" x="710" y="360" width="260" height="110"/>
+<text x="840" y="392" class="label" font-weight="bold" text-anchor="middle">Deterministic update</text>
+<text x="840" y="423" class="small" text-anchor="middle">Same state + same event</text>
+<text x="840" y="450" class="small" text-anchor="middle">produce the same next state</text>
+<path id="apply-event-shaft" class="shaft" data-connector="true" d="M840 295 V348"/>
+<path id="apply-event-head" d="M833 346 L840 360 L847 346Z" fill="#111"/>
+<text x="712" y="334" class="small" text-anchor="middle">accepted events</text>
+<rect id="derived-state" class="blue" x="370" y="360" width="245" height="110"/>
+<text x="492" y="392" class="label" font-weight="bold" text-anchor="middle">State + query view</text>
+<text x="492" y="423" class="small" text-anchor="middle">order 42 = confirmed</text>
+<text x="492" y="450" class="small" text-anchor="middle">Derived from event history</text>
+<path id="derive-view-shaft" class="shaft" data-connector="true" d="M710 418 H627"/>
+<path id="derive-view-head" d="M629 411 L615 418 L629 425Z" fill="#111"/>
+<text x="662" y="393" class="small" text-anchor="middle">derive</text>
+<!-- Ownership note distinguishes event sourcing from copying database-owned facts. -->
+<text x="30" y="374" class="label" font-weight="bold">What owns the facts?</text>
+<text x="30" y="405" class="small">Here: the accepted-event log.</text>
+<text x="30" y="436" class="small">A database outbox instead publishes</text>
+<text x="30" y="461" class="small">facts owned by its database.</text>
+<!-- Recovery combines a snapshot at a recorded stream position with its retained tail. -->
+<rect id="recovery-panel" x="30" y="510" width="940" height="175" fill="#fafafa" stroke="#ccc"/>
+<text x="50" y="541" class="label" font-weight="bold">Recovery: restore a snapshot, then replay the later retained events</text>
+<rect id="snapshot" class="blue" x="50" y="559" width="235" height="102"/>
+<text x="167" y="588" class="label" font-weight="bold" text-anchor="middle">Snapshot</text>
+<text x="167" y="619" class="small" text-anchor="middle">State through position 100</text>
+<text x="167" y="645" class="small" text-anchor="middle">order 42 = created</text>
+<text x="323" y="622" font-size="30" text-anchor="middle">+</text>
+<rect id="retained-tail" class="box" x="365" y="559" width="260" height="102"/>
+<text x="495" y="588" class="label" font-weight="bold" text-anchor="middle">Later retained events</text>
+<text x="495" y="619" class="small" text-anchor="middle">101  ItemAdded(42)</text>
+<text x="495" y="645" class="small" text-anchor="middle">102  OrderConfirmed(42)</text>
+<rect id="restored-state" class="blue" x="745" y="559" width="205" height="102"/>
+<text x="847" y="588" class="label" font-weight="bold" text-anchor="middle">Restored state</text>
+<text x="847" y="622" class="small" text-anchor="middle">order 42 = confirmed</text>
+<path id="replay-tail-shaft" class="shaft" data-connector="true" d="M625 616 H733"/>
+<path id="replay-tail-head" d="M731 609 L745 616 L731 623Z" fill="#111"/>
+<text x="685" y="590" class="small" text-anchor="middle">replay</text>
+<!-- Replaying pure state changes must not reissue externally visible business actions. -->
+<rect id="replay-effects-note" class="amber" x="30" y="713" width="940" height="42"/>
+<text x="500" y="740" class="small" text-anchor="middle">Replay rebuilds state. Do not repeat payments, emails, or other external effects during replay.</text>
+</svg>

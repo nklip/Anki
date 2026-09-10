@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="695" viewBox="0 0 1000 695" role="img" aria-labelledby="title desc">
+<title id="title">Two watermarks measure different kinds of progress</title>
+<desc id="desc">The left panel shows a Kafka broker high watermark of 43. In this non-transactional partition example, records at offsets 41 and 42 are readable while 43 and 44 are held back. This replication visibility boundary is an offset, not the consumer group's committed offset. The right panel shows a generic stream processor event-time watermark at 12:01, an estimate of progress in event time. An event with timestamp 12:00:30 can still arrive afterward and requires the processor's late-event policy; the watermark says nothing about replication. Kafka Streams uses per-task stream time, the maximum observed record timestamp, with a window-specific grace period for additional acceptance after the window end. Grace changes late-event acceptance without extending which event timestamps belong to that window.</desc>
+<!-- Shared typography and arrow geometry. The marker tip projects 2.5 units beyond compensated path endpoints. -->
+<defs>
+<marker id="arrow" markerWidth="10" markerHeight="10" viewBox="0 0 10 10" refX="7.5" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="#111"/></marker>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#111}.panel{fill:#f7f7f7;stroke:#888;stroke-width:1.5}.box{fill:#fff;stroke:#111;stroke-width:1.8}.blue{fill:#eaf3ff;stroke:#2868a6;stroke-width:1.8}.amber{fill:#fff3da;stroke:#a56a0b;stroke-width:1.8}.flow{fill:none;stroke:#111;stroke-width:1.8;marker-end:url(#arrow)}.plain{fill:none;stroke:#111;stroke-width:1.8}.boundary{fill:none;stroke:#2868a6;stroke-width:3}</style>
+</defs>
+<rect width="1000" height="695" fill="#fff"/>
+<!-- The title introduces the difference before comparing two independent scales. -->
+<text x="500" y="40" font-size="26" font-weight="bold" text-anchor="middle">Two watermarks measure different kinds of progress</text>
+<text x="500" y="72" font-size="18" text-anchor="middle">Broker replication uses offsets; event-time processing uses timestamps.</text>
+<!-- Offset ruler: HW 43 lies between record 42 and record 43, never through either record. -->
+<rect id="broker-panel" class="panel" x="25" y="112" width="460" height="348"/>
+<text x="255" y="145" font-size="21" font-weight="bold" text-anchor="middle">Broker high watermark (HW)</text>
+<text x="255" y="176" font-size="16" text-anchor="middle">Partition offsets; non-transactional example</text>
+<text x="250" y="211" font-size="18" font-weight="bold" text-anchor="middle">HW = 43</text>
+<path id="hw-offset-boundary" class="boundary" d="M250 225 V313"/>
+<rect id="offset-41" class="blue" x="65" y="238" width="80" height="61"/>
+<text x="105" y="262" font-size="16" text-anchor="middle">offset</text>
+<text x="105" y="287" font-size="22" font-weight="bold" text-anchor="middle">41</text>
+<rect id="offset-42" class="blue" x="155" y="238" width="80" height="61"/>
+<text x="195" y="262" font-size="16" text-anchor="middle">offset</text>
+<text x="195" y="287" font-size="22" font-weight="bold" text-anchor="middle">42</text>
+<rect id="offset-43" class="amber" x="265" y="238" width="80" height="61"/>
+<text x="305" y="262" font-size="16" text-anchor="middle">offset</text>
+<text x="305" y="287" font-size="22" font-weight="bold" text-anchor="middle">43</text>
+<rect id="offset-44" class="amber" x="355" y="238" width="80" height="61"/>
+<text x="395" y="262" font-size="16" text-anchor="middle">offset</text>
+<text x="395" y="287" font-size="22" font-weight="bold" text-anchor="middle">44</text>
+<text x="150" y="329" font-size="18" font-weight="bold" text-anchor="middle">Readable</text>
+<text x="350" y="329" font-size="18" font-weight="bold" text-anchor="middle">Held back</text>
+<text x="255" y="375" font-size="18" text-anchor="middle">HW = 43 exposes offsets &lt; 43.</text>
+<text x="255" y="405" font-size="17" text-anchor="middle">This is a replication boundary,</text>
+<text x="255" y="432" font-size="17" text-anchor="middle">not a consumer group's saved offset.</text>
+<!-- Time ruler: watermark T is a progress estimate; late data is still possible. Tick crossings are intentional. -->
+<rect id="event-time-panel" class="panel" x="515" y="112" width="460" height="348"/>
+<text x="745" y="145" font-size="21" font-weight="bold" text-anchor="middle">Event-time watermark</text>
+<text x="745" y="176" font-size="17" text-anchor="middle">Stream processor's progress estimate</text>
+<text x="745" y="211" font-size="18" font-weight="bold" text-anchor="middle">T = 12:01</text>
+<path id="event-time-axis" class="flow" d="M545 245 H944.5"/>
+<path id="event-time-ticks" class="plain" d="M567 237 V253 M923 237 V253"/>
+<path id="event-time-watermark-boundary" class="boundary" d="M745 224 V260"/>
+<text x="567" y="285" font-size="17" text-anchor="middle">12:00</text>
+<text x="745" y="285" font-size="17" text-anchor="middle">12:01</text>
+<text x="923" y="285" font-size="17" text-anchor="middle">12:02</text>
+<!-- Arrival order is deliberately distinct from the event's timestamp. The arrow applies a policy, not replication. -->
+<rect id="late-arrival" class="amber" x="540" y="319" width="227" height="65"/>
+<text x="653.5" y="345" font-size="17" text-anchor="middle">An event arrives now</text>
+<text x="653.5" y="370" font-size="16" text-anchor="middle">event time = 12:00:30</text>
+<path id="late-arrival-policy-flow" class="flow" d="M767 351 H787.5"/>
+<rect id="late-event-policy" class="box" x="790" y="319" width="160" height="65"/>
+<text x="870" y="345" font-size="18" font-weight="bold" text-anchor="middle">Late event</text>
+<text x="870" y="370" font-size="16" text-anchor="middle">apply policy</text>
+<text x="745" y="415" font-size="17" text-anchor="middle">Later arrival of earlier data is possible.</text>
+<text x="745" y="442" font-size="17" text-anchor="middle">This says nothing about replication.</text>
+<!-- Kafka Streams terminology: grace is an acceptance period, not a larger membership window or a broker setting. -->
+<rect id="kafka-streams-terms" class="blue" x="25" y="485" width="950" height="185"/>
+<text x="500" y="516" font-size="21" font-weight="bold" text-anchor="middle">Kafka Streams uses stream time and a window's grace period</text>
+<text x="500" y="547" font-size="17" text-anchor="middle">Stream time = largest observed record timestamp per task (event-time timestamps here).</text>
+<text x="500" y="576" font-size="17" text-anchor="middle">Grace permits extra acceptance after the window end, measured by stream-time progress.</text>
+<text x="500" y="605" font-size="17" text-anchor="middle">It does not extend window membership or create a wall-clock waiting timer.</text>
+<text x="500" y="641" font-size="17" text-anchor="middle">Choose grace in the windowing API; there is no global Kafka “watermark” setting.</text>
+</svg>

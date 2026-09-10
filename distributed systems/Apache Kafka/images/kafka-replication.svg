@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="650" viewBox="0 0 1000 650" role="img" aria-labelledby="title desc">
+<title id="title">Kafka replication: all means all current in-sync replicas</title>
+<desc id="desc">Partition P0 has a leader on broker A and followers on brokers B and C: replication factor three includes the leader. With acks=all and min.insync.replicas=2, all three current in-sync replicas acknowledge; two in-sync replicas still permit writes; one rejects writes.</desc>
+<!-- Shared typography and exact manual-arrow geometry. -->
+<defs><style>text{font-family:Arial,Helvetica,sans-serif;fill:#111}.title{font-size:26px;font-weight:bold}.label{font-size:20px}.small{font-size:17px}.box{fill:#fff;stroke:#111;stroke-width:1.8}.blue{fill:#eaf3fb;stroke:#111;stroke-width:1.8}.amber{fill:#fff4db;stroke:#111;stroke-width:1.8}.shaft{fill:none;stroke:#111;stroke-width:1.8;stroke-linejoin:round}</style></defs>
+<rect width="1000" height="650" fill="#fff"/>
+<!-- Reading starts at the producer; every broker stores the same partition. -->
+<text x="500" y="40" class="title" text-anchor="middle">Replication: one partition, three copies</text>
+<text x="500" y="67" class="small" text-anchor="middle">Replication factor = 3 counts the leader plus two followers.</text>
+<text x="500" y="92" class="small" text-anchor="middle">ISR (in-sync replicas) = the leader and the followers keeping up with it.</text>
+<rect id="producer" class="box" x="30" y="175" width="160" height="100"/>
+<text x="110" y="208" class="label" text-anchor="middle">Producer</text>
+<text x="110" y="238" class="small" text-anchor="middle">acks=all</text>
+<rect id="broker-a" class="blue" x="330" y="175" width="230" height="100"/>
+<text x="445" y="204" class="label" text-anchor="middle">Broker A: leader</text>
+<text x="445" y="235" class="small" text-anchor="middle">P0: … 40, 41, 42</text>
+<rect id="broker-b" class="box" x="745" y="115" width="230" height="100"/>
+<text x="860" y="145" class="label" text-anchor="middle">Broker B: follower</text>
+<text x="860" y="176" class="small" text-anchor="middle">P0: … 40, 41, 42</text>
+<rect id="broker-c" class="box" x="745" y="280" width="230" height="100"/>
+<text x="860" y="310" class="label" text-anchor="middle">Broker C: follower</text>
+<text x="860" y="341" class="small" text-anchor="middle">P0: … 40, 41, 42</text>
+<!-- Arrow shafts stop beneath triangular bases; noses meet the target boundaries. -->
+<path id="produce-shaft" class="shaft" data-connector="true" d="M190 205 H318"/>
+<path id="produce-head" d="M316 199 L330 205 L316 211Z" fill="#111"/>
+<text x="260" y="183" class="small" text-anchor="middle">append 42</text>
+<path id="ack-shaft" class="shaft" data-connector="true" d="M330 252 H202"/>
+<path id="ack-head" d="M204 246 L190 252 L204 258Z" fill="#111"/>
+<text x="260" y="282" class="small" text-anchor="middle">success*</text>
+<path id="replicate-b-shaft" class="shaft" data-connector="true" d="M560 205 H630 V165 H733"/>
+<path id="replicate-b-head" d="M731 159 L745 165 L731 171Z" fill="#111"/>
+<text x="682" y="140" class="small" text-anchor="middle">copy</text>
+<path id="replicate-c-shaft" class="shaft" data-connector="true" d="M560 252 H630 V330 H733"/>
+<path id="replicate-c-head" d="M731 324 L745 330 L731 336Z" fill="#111"/>
+<text x="682" y="308" class="small" text-anchor="middle">copy</text>
+<!-- The acknowledgement condition is separate from the replica-count threshold. -->
+<text x="40" y="330" class="small">*With ISR = {A, B, C}, success waits</text>
+<text x="40" y="355" class="small">until A, B and C have the record.</text>
+<text x="500" y="421" class="label" font-weight="bold" text-anchor="middle">Example rule: min.insync.replicas=2 and acks=all</text>
+<!-- Compact state table shows which replicas must receive a record in each case. -->
+<rect id="all-replicas-row" x="30" y="445" width="940" height="48" fill="#eaf3fb"/>
+<text x="50" y="476" class="label">ISR = {A, B, C}</text>
+<text x="380" y="476" class="small">Write can succeed after all 3 receive the record.</text>
+<rect id="two-replicas-row" x="30" y="501" width="940" height="48" fill="#f4f4f4"/>
+<text x="50" y="532" class="label">ISR = {A, B}</text>
+<text x="380" y="532" class="small">Write can succeed after both receive the record.</text>
+<rect id="one-replica-row" x="30" y="557" width="940" height="48" fill="#fff4db"/>
+<text x="50" y="588" class="label">ISR = {A}</text>
+<text x="380" y="588" class="small">Write is rejected: only 1 in-sync replica remains.</text>
+<text x="500" y="633" class="small" text-anchor="middle">The minimum is a safety threshold; it does not reduce “all” to a fixed count of two.</text>
+</svg>

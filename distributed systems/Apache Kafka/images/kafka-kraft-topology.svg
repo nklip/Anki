@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="675" viewBox="0 0 1000 675" role="img" aria-labelledby="title desc">
+<title id="title">KRaft controllers manage metadata; brokers store records</title>
+<desc id="desc">Three separate controllers form a metadata quorum with one active and two standby controllers. A majority of two is needed. Three brokers lead P0, P1, and P2 respectively and each follows the other partitions. Every shown partition has three data copies, an independent choice from controller count. Clients exchange application records directly with partition leaders on brokers. Dashed paths indicate metadata coordination only.</desc>
+<!-- Shared typography and arrows: marker tips project 2.5 units past the compensated endpoints. -->
+<defs>
+<marker id="arrow" markerWidth="10" markerHeight="10" viewBox="0 0 10 10" refX="7.5" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="#111"/></marker>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#111}.box{fill:#fff;stroke:#111;stroke-width:1.8}.panel{fill:#f7f7f7;stroke:#888;stroke-width:1.5}.blue{fill:#eaf3ff;stroke:#2868a6;stroke-width:1.8}.amber{fill:#fff3da;stroke:#a56a0b;stroke-width:1.8}.flow{fill:none;stroke:#111;stroke-width:1.8;stroke-linejoin:round;marker-end:url(#arrow)}.metadata{fill:none;stroke:#111;stroke-width:1.8;stroke-dasharray:7 5;stroke-linejoin:round;marker-end:url(#arrow)}.coordination{fill:none;stroke:#111;stroke-width:1.8;stroke-dasharray:7 5;stroke-linejoin:round}.boundary{fill:#fafcff;stroke:#2868a6;stroke-width:1.8;stroke-dasharray:8 5}</style>
+</defs>
+<rect width="1000" height="675" fill="#fff"/>
+<!-- Title and lesson. -->
+<text x="500" y="40" font-size="26" text-anchor="middle" font-weight="bold">KRaft controllers manage metadata; brokers store records</text>
+<text x="500" y="72" font-size="18" text-anchor="middle">Two roles with separate replication decisions</text>
+<!-- Controller group: all three participate in the metadata log, with one active controller. -->
+<rect id="metadata-quorum" class="panel" x="150" y="105" width="700" height="183"/>
+<text x="500" y="137" font-size="21" text-anchor="middle" font-weight="bold">Metadata quorum: a majority is 2 of these 3 controllers</text>
+<rect id="controller-1" class="blue" x="175" y="161" width="190" height="83"/>
+<text x="270" y="192" font-size="20" text-anchor="middle" font-weight="bold">Controller 1</text>
+<text x="270" y="220" font-size="18" text-anchor="middle">active</text>
+<rect id="controller-2" class="box" x="405" y="161" width="190" height="83"/>
+<text x="500" y="192" font-size="20" text-anchor="middle" font-weight="bold">Controller 2</text>
+<text x="500" y="220" font-size="18" text-anchor="middle">standby</text>
+<rect id="controller-3" class="box" x="635" y="161" width="190" height="83"/>
+<text x="730" y="192" font-size="20" text-anchor="middle" font-weight="bold">Controller 3</text>
+<text x="730" y="220" font-size="18" text-anchor="middle">standby</text>
+<text x="535" y="273" font-size="17" text-anchor="middle">Metadata: topics, replica placement, partition leaders</text>
+<!-- Dashed coordination leaves the active controller through a clear left-side corridor, then branches to brokers. -->
+<path id="metadata-coordination-bus" class="coordination" d="M270 244 V322 H730"/>
+<text x="500" y="310" font-size="17" text-anchor="middle">metadata coordination</text>
+<path id="metadata-to-broker-1" class="metadata" d="M270 322 V367.5"/>
+<path id="metadata-to-broker-2" class="metadata" d="M500 322 V367.5"/>
+<path id="metadata-to-broker-3" class="metadata" d="M730 322 V367.5"/>
+<!-- Brokers store application records. Leadership is spread across brokers; followers are copies. -->
+<rect id="broker-1" class="box" x="175" y="370" width="190" height="181"/>
+<text x="270" y="401" font-size="21" text-anchor="middle" font-weight="bold">Broker 1</text>
+<rect id="broker-1-leader" class="blue" x="190" y="416" width="160" height="39"/>
+<text x="270" y="442" font-size="19" text-anchor="middle" font-weight="bold">P0 leader</text>
+<text x="270" y="487" font-size="18" text-anchor="middle">P1 follower</text>
+<text x="270" y="520" font-size="18" text-anchor="middle">P2 follower</text>
+<rect id="broker-2" class="box" x="405" y="370" width="190" height="181"/>
+<text x="500" y="401" font-size="21" text-anchor="middle" font-weight="bold">Broker 2</text>
+<rect id="broker-2-leader" class="blue" x="420" y="416" width="160" height="39"/>
+<text x="500" y="442" font-size="19" text-anchor="middle" font-weight="bold">P1 leader</text>
+<text x="500" y="487" font-size="18" text-anchor="middle">P0 follower</text>
+<text x="500" y="520" font-size="18" text-anchor="middle">P2 follower</text>
+<rect id="broker-3" class="box" x="635" y="370" width="190" height="181"/>
+<text x="730" y="401" font-size="21" text-anchor="middle" font-weight="bold">Broker 3</text>
+<rect id="broker-3-leader" class="blue" x="650" y="416" width="160" height="39"/>
+<text x="730" y="442" font-size="19" text-anchor="middle" font-weight="bold">P2 leader</text>
+<text x="730" y="487" font-size="18" text-anchor="middle">P0 follower</text>
+<text x="730" y="520" font-size="18" text-anchor="middle">P1 follower</text>
+<!-- Example client data paths go directly to the relevant broker; no record path enters the controller row. -->
+<rect id="producer" class="box" x="20" y="413" width="120" height="105"/>
+<text x="80" y="445" font-size="20" text-anchor="middle" font-weight="bold">Producer</text>
+<text x="80" y="474" font-size="17" text-anchor="middle">writes P0</text>
+<text x="80" y="500" font-size="15" text-anchor="middle">example</text>
+<path id="producer-to-p0" class="flow" d="M140 457 L172.5 457"/>
+<rect id="consumer" class="box" x="860" y="413" width="120" height="105"/>
+<text x="920" y="445" font-size="20" text-anchor="middle" font-weight="bold">Consumer</text>
+<text x="920" y="474" font-size="17" text-anchor="middle">reads P2</text>
+<text x="920" y="500" font-size="15" text-anchor="middle">example</text>
+<path id="p2-to-consumer" class="flow" d="M825 457 L857.5 457"/>
+<!-- Compact legend and the independent-count lesson. -->
+<text x="500" y="590" font-size="18" text-anchor="middle">Every partition shown has 3 broker copies: one leader and two followers.</text>
+<text x="500" y="620" font-size="18" text-anchor="middle" font-weight="bold">Controller quorum size and topic replication factor are independent settings.</text>
+<text x="500" y="650" font-size="17" text-anchor="middle">Solid arrows: application records. Dashed paths: metadata coordination. P = partition.</text>
+</svg>

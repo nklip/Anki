@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="565" viewBox="0 0 1000 565" role="img" aria-labelledby="title desc">
+<title id="title">A topic is several ordered logs</title>
+<desc id="desc">A producer writes keyed events to the orders topic. This example maps both A and B to P0, C to P1, and D to P2. P0 contains A, B, then A, showing that different keys can share a partition while repeated A records stay together. Each partition has its own offsets and an append-only sequence. Consumers fetch records from partition leaders; replicas are omitted.</desc>
+<!-- Shared typography, semantic colors, and arrows. The marker tip projects 2.5 units beyond each compensated path endpoint. -->
+<defs>
+<marker id="arrow" markerWidth="10" markerHeight="10" viewBox="0 0 10 10" refX="7.5" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="#111"/></marker>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#111}.box{fill:#fff;stroke:#111;stroke-width:1.8}.panel{fill:#f7f7f7;stroke:#888;stroke-width:1.5}.blue{fill:#eaf3ff;stroke:#2868a6;stroke-width:1.8}.amber{fill:#fff3da;stroke:#a56a0b;stroke-width:1.8}.flow{fill:none;stroke:#111;stroke-width:1.8;stroke-linejoin:round;marker-end:url(#arrow)}</style>
+</defs>
+<rect width="1000" height="565" fill="#fff"/>
+<!-- Title and reading cue. -->
+<text x="500" y="39" font-size="26" text-anchor="middle" font-weight="bold">A topic is several ordered logs</text>
+<text x="500" y="70" font-size="18" text-anchor="middle">Producer writes → partition leader appends → consumer fetches</text>
+<!-- Logical topic view: P0 holds A, B, A to avoid a one-key-per-partition implication. Physical brokers and replicas are omitted. -->
+<rect id="topic" class="panel" x="300" y="105" width="405" height="339"/>
+<text x="502" y="136" font-size="22" text-anchor="middle" font-weight="bold">Topic: orders</text>
+<text x="502" y="164" font-size="17" text-anchor="middle">Leader logs • older records on the left</text>
+<text x="320" y="215" font-size="19" text-anchor="start" font-weight="bold">P0</text>
+<rect id="p0-offset0" class="blue" x="365" y="185" width="95" height="58"/>
+<text x="412.5" y="208" font-size="17" text-anchor="middle">offset 0</text>
+<text x="412.5" y="231" font-size="16" text-anchor="middle">key = A</text>
+<rect id="p0-offset1" class="amber" x="469" y="185" width="95" height="58"/>
+<text x="516.5" y="208" font-size="17" text-anchor="middle">offset 1</text>
+<text x="516.5" y="231" font-size="16" text-anchor="middle">key = B</text>
+<rect id="p0-offset2" class="blue" x="573" y="185" width="95" height="58"/>
+<text x="620.5" y="208" font-size="17" text-anchor="middle">offset 2</text>
+<text x="620.5" y="231" font-size="16" text-anchor="middle">key = A</text>
+<text x="320" y="294" font-size="19" text-anchor="start" font-weight="bold">P1</text>
+<rect id="p1-offset0" class="box" x="365" y="264" width="95" height="58"/>
+<text x="412.5" y="287" font-size="17" text-anchor="middle">offset 0</text>
+<text x="412.5" y="310" font-size="16" text-anchor="middle">key = C</text>
+<rect id="p1-offset1" class="box" x="469" y="264" width="95" height="58"/>
+<text x="516.5" y="287" font-size="17" text-anchor="middle">offset 1</text>
+<text x="516.5" y="310" font-size="16" text-anchor="middle">key = C</text>
+<rect id="p1-offset2" class="box" x="573" y="264" width="95" height="58"/>
+<text x="620.5" y="287" font-size="17" text-anchor="middle">offset 2</text>
+<text x="620.5" y="310" font-size="16" text-anchor="middle">key = C</text>
+<text x="320" y="373" font-size="19" text-anchor="start" font-weight="bold">P2</text>
+<rect id="p2-offset0" class="box" x="365" y="343" width="95" height="58"/>
+<text x="412.5" y="366" font-size="17" text-anchor="middle">offset 0</text>
+<text x="412.5" y="389" font-size="16" text-anchor="middle">key = D</text>
+<rect id="p2-offset1" class="box" x="469" y="343" width="95" height="58"/>
+<text x="516.5" y="366" font-size="17" text-anchor="middle">offset 1</text>
+<text x="516.5" y="389" font-size="16" text-anchor="middle">key = D</text>
+<rect id="p2-offset2" class="box" x="573" y="343" width="95" height="58"/>
+<text x="620.5" y="366" font-size="17" text-anchor="middle">offset 2</text>
+<text x="620.5" y="389" font-size="16" text-anchor="middle">key = D</text>
+<text x="502" y="431" font-size="16" text-anchor="middle">P = partition; each box = one record</text>
+<!-- The producer selects a partition before sending the record to its leader. -->
+<rect id="producer" class="box" x="25" y="205" width="185" height="113"/>
+<text x="117.5" y="238" font-size="22" text-anchor="middle" font-weight="bold">Producer</text>
+<text x="117.5" y="266" font-size="17" text-anchor="middle">keys: A, B, C, D</text>
+<text x="117.5" y="294" font-size="16" text-anchor="middle">partition selection</text>
+<path id="write-to-partition-leader" class="flow" d="M210 261 L297.5 261"/>
+<text x="255" y="240" font-size="17" text-anchor="middle">write</text>
+<!-- Arrow shows returned record data; consumers initiate fetch requests. -->
+<rect id="consumer" class="box" x="805" y="205" width="170" height="113"/>
+<text x="890" y="238" font-size="22" text-anchor="middle" font-weight="bold">Consumer</text>
+<text x="890" y="266" font-size="17" text-anchor="middle">Fetch records</text>
+<text x="890" y="294" font-size="17" text-anchor="middle">Track progress</text>
+<path id="records-to-consumer" class="flow" d="M705 261 L802.5 261"/>
+<text x="755" y="240" font-size="17" text-anchor="middle">records</text>
+<!-- Explicit boundaries prevent a global-order or unconditional-key-routing interpretation. -->
+<text x="500" y="480" font-size="18" text-anchor="middle">Offsets are local: P0 offset 2 and P1 offset 2 identify different records.</text>
+<text x="500" y="510" font-size="17" text-anchor="middle">Example routing: A and B → P0; C → P1; D → P2. Different keys can share a partition.</text>
+<text x="500" y="540" font-size="16" text-anchor="middle">Same-key routing requires a stable keyed partitioner and partition count. Replicas are omitted.</text>
+</svg>
