@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1060" viewBox="0 0 1500 1060" role="img" aria-labelledby="title description">
+  <title id="title">Deadlock, livelock, and starvation: who makes progress?</title>
+  <desc id="description">Three illustrative indefinite patterns. In deadlock, T1 holds lock A and waits for lock B while T2 holds B and waits for A. In livelock, both threads repeatedly acquire one lock, fail to get the other, and release to retry together; neither completes. In starvation, other threads repeatedly complete work while T1 keeps waiting for admission.</desc>
+
+  <!-- Shared typography; text states the meaning of each color. -->
+  <defs>
+    <style>
+      .title { font: 700 36px sans-serif; fill: #111827; }
+      .subtitle { font: 20px sans-serif; fill: #4b5563; }
+      .heading { font: 700 26px sans-serif; fill: #273444; }
+      .body { font: 20px sans-serif; fill: #273444; }
+      .label { font: 700 21px sans-serif; fill: #273444; }
+      .small { font: 18px sans-serif; fill: #4b5563; }
+      .red { fill: #9b352f; }
+      .green { fill: #315e38; }
+    </style>
+  </defs>
+
+  <!-- Lesson and notation appear before the top-to-bottom comparison. -->
+  <rect width="1500" height="1060" fill="#ffffff"/>
+  <text x="750" y="50" text-anchor="middle" class="title">Deadlock, livelock, starvation: who makes progress?</text>
+  <text x="750" y="87" text-anchor="middle" class="subtitle">T1, T2 and T3 are threads. A and B are exclusive locks: only one thread can hold each lock.</text>
+
+  <!-- Deadlock: each directional dependency points to the thread holding the needed lock. -->
+  <g id="deadlock-panel">
+    <rect x="40" y="120" width="1420" height="260" rx="16" fill="#fff3f1" stroke="#b34a42" stroke-width="2"/>
+    <text x="70" y="162" class="heading">1. Deadlock — a circular wait</text>
+    <text x="1425" y="160" text-anchor="end" class="small">The involved threads cannot proceed.</text>
+    <rect x="300" y="210" width="300" height="86" rx="10" fill="#ffffff" stroke="#b34a42" stroke-width="2"/>
+    <text x="450" y="244" text-anchor="middle" class="label">T1</text>
+    <text x="450" y="276" text-anchor="middle" class="body">holds A</text>
+    <rect x="900" y="210" width="300" height="86" rx="10" fill="#ffffff" stroke="#b34a42" stroke-width="2"/>
+    <text x="1050" y="244" text-anchor="middle" class="label">T2</text>
+    <text x="1050" y="276" text-anchor="middle" class="body">holds B</text>
+    <!-- Separate heads hide the shaft ends and stop 2 px before the target borders. -->
+    <path id="deadlock-waits-for-b-arrow" d="M604 230 H883" fill="none" stroke="#b34a42" stroke-width="4"/>
+    <polygon points="898,230 882,222 882,238" fill="#b34a42"/>
+    <text x="750" y="206" text-anchor="middle" class="body red">T1 waits for B</text>
+    <path id="deadlock-waits-for-a-arrow" d="M896 275 H617" fill="none" stroke="#b34a42" stroke-width="4"/>
+    <polygon points="602,275 618,267 618,283" fill="#b34a42"/>
+    <text x="750" y="314" text-anchor="middle" class="body red">T2 waits for A</text>
+    <text x="750" y="352" text-anchor="middle" class="label red">Neither can reach the code that releases its first lock.</text>
+  </g>
+
+  <!-- Livelock: read left to right, then follow the lower loop back to acquisition. -->
+  <g id="livelock-panel">
+    <rect x="40" y="405" width="1420" height="295" rx="16" fill="#fff8eb" stroke="#bd7823" stroke-width="2"/>
+    <text x="70" y="448" class="heading">2. Livelock — repeated reactions</text>
+    <text x="1425" y="446" text-anchor="end" class="small">Both keep acting, but neither completes.</text>
+    <rect x="95" y="489" width="370" height="113" rx="10" fill="#ffffff" stroke="#bd7823" stroke-width="2"/>
+    <text x="280" y="522" text-anchor="middle" class="label">Acquire one lock</text>
+    <text x="280" y="551" text-anchor="middle" class="body">T1 takes A</text>
+    <text x="280" y="579" text-anchor="middle" class="body">T2 takes B</text>
+    <rect x="545" y="489" width="410" height="113" rx="10" fill="#ffffff" stroke="#bd7823" stroke-width="2"/>
+    <text x="750" y="522" text-anchor="middle" class="label">Other lock unavailable</text>
+    <text x="750" y="551" text-anchor="middle" class="body">T1 fails to get B</text>
+    <text x="750" y="579" text-anchor="middle" class="body">T2 fails to get A</text>
+    <rect x="1035" y="489" width="370" height="113" rx="10" fill="#ffffff" stroke="#bd7823" stroke-width="2"/>
+    <text x="1220" y="522" text-anchor="middle" class="label">Release and retry</text>
+    <text x="1220" y="551" text-anchor="middle" class="body">T1 releases A</text>
+    <text x="1220" y="579" text-anchor="middle" class="body">T2 releases B</text>
+    <path id="livelock-attempt-arrow" d="M469 546 H528" fill="none" stroke="#bd7823" stroke-width="4"/>
+    <polygon points="543,546 527,538 527,554" fill="#bd7823"/>
+    <path id="livelock-release-arrow" d="M959 546 H1018" fill="none" stroke="#bd7823" stroke-width="4"/>
+    <polygon points="1033,546 1017,538 1017,554" fill="#bd7823"/>
+    <!-- Retry route stays below the nodes; upward head meets the first node from below. -->
+    <path id="livelock-retry-arrow" d="M1220 606 V643 H280 V619" fill="none" stroke="#bd7823" stroke-width="4"/>
+    <polygon points="280,604 272,620 288,620" fill="#bd7823"/>
+    <text x="750" y="679" text-anchor="middle" class="label">They repeat together indefinitely: activity without completion.</text>
+  </g>
+
+  <!-- Starvation: compare the two rows over the same left-to-right sequence. -->
+  <g id="starvation-panel">
+    <rect x="40" y="725" width="1420" height="255" rx="16" fill="#f8fafc" stroke="#8493a5" stroke-width="2"/>
+    <text x="70" y="768" class="heading">3. Starvation — one thread keeps losing access</text>
+    <text x="1425" y="766" text-anchor="end" class="small">Others continue to finish.</text>
+    <text x="85" y="827" class="label">Other threads</text>
+    <text x="85" y="904" class="label">T1</text>
+    <rect x="325" y="793" width="250" height="53" rx="8" fill="#edf8ef" stroke="#43804c" stroke-width="2"/>
+    <text x="450" y="827" text-anchor="middle" class="body green">T2 completes</text>
+    <rect x="650" y="793" width="250" height="53" rx="8" fill="#edf8ef" stroke="#43804c" stroke-width="2"/>
+    <text x="775" y="827" text-anchor="middle" class="body green">T3 completes</text>
+    <rect x="975" y="793" width="250" height="53" rx="8" fill="#edf8ef" stroke="#43804c" stroke-width="2"/>
+    <text x="1100" y="827" text-anchor="middle" class="body green">T2 completes</text>
+    <rect x="325" y="870" width="250" height="53" rx="8" fill="#fff3f1" stroke="#b34a42" stroke-width="2"/>
+    <text x="450" y="904" text-anchor="middle" class="body red">still waiting</text>
+    <rect x="650" y="870" width="250" height="53" rx="8" fill="#fff3f1" stroke="#b34a42" stroke-width="2"/>
+    <text x="775" y="904" text-anchor="middle" class="body red">still waiting</text>
+    <rect x="975" y="870" width="250" height="53" rx="8" fill="#fff3f1" stroke="#b34a42" stroke-width="2"/>
+    <text x="1100" y="904" text-anchor="middle" class="body red">still waiting</text>
+    <!-- Parallel time arrows use clear gutters between cells. -->
+    <path id="starvation-others-arrow-1" d="M579 819 H633" fill="none" stroke="#43804c" stroke-width="4"/>
+    <polygon points="648,819 632,811 632,827" fill="#43804c"/>
+    <path id="starvation-others-arrow-2" d="M904 819 H958" fill="none" stroke="#43804c" stroke-width="4"/>
+    <polygon points="973,819 957,811 957,827" fill="#43804c"/>
+    <path id="starvation-waiter-arrow-1" d="M579 896 H633" fill="none" stroke="#b34a42" stroke-width="4"/>
+    <polygon points="648,896 632,888 632,904" fill="#b34a42"/>
+    <path id="starvation-waiter-arrow-2" d="M904 896 H958" fill="none" stroke="#b34a42" stroke-width="4"/>
+    <polygon points="973,896 957,888 957,904" fill="#b34a42"/>
+    <text x="1320" y="827" text-anchor="middle" class="body green">…</text>
+    <text x="1320" y="904" text-anchor="middle" class="body red">…</text>
+    <text x="750" y="956" text-anchor="middle" class="small">Time moves right: repeated successful admissions never include T1.</text>
+  </g>
+
+  <!-- Limits of the illustration: finite observations alone do not establish indefinite failure. -->
+  <text x="750" y="1023" text-anchor="middle" class="small">These are illustrative indefinite patterns. A few retries or a long wait alone do not establish livelock or starvation.</text>
+</svg>

@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="825" viewBox="0 0 1500 825" role="img" aria-labelledby="title description">
+  <title id="title">A shared lock order prevents circular wait through those locks</title>
+  <desc id="description">Before: T1 acquires A then B, while T2 acquires B then A. If both obtain their first lock, each waits for the other. After: both threads acquire A before B. If T1 holds A, T2 must wait for A while holding neither lock. T1 can acquire B and finish, so these lock acquisitions cannot form a cycle. Every code path using these locks must obey the order; fairness is a separate property.</desc>
+
+  <!-- Shared typography matches the companion progress-failures diagram. -->
+  <defs>
+    <style>
+      .title { font: 700 36px sans-serif; fill: #111827; }
+      .subtitle { font: 20px sans-serif; fill: #4b5563; }
+      .heading { font: 700 26px sans-serif; fill: #273444; }
+      .label { font: 700 22px sans-serif; fill: #273444; }
+      .body { font: 20px sans-serif; fill: #273444; }
+      .small { font: 18px sans-serif; fill: #4b5563; }
+      .tiny { font: 16px sans-serif; fill: #9b352f; }
+      .red { fill: #9b352f; }
+      .green { fill: #315e38; }
+    </style>
+  </defs>
+
+  <!-- Read each panel top to bottom: acquisition rule, possible state, consequence. -->
+  <rect width="1500" height="825" fill="#ffffff"/>
+  <text x="750" y="50" text-anchor="middle" class="title">A shared lock order removes a circular wait</text>
+  <text x="750" y="88" text-anchor="middle" class="subtitle">Each thread needs exclusive locks A and B. Read each acquisition sequence from left to right.</text>
+
+  <!-- Before: opposing lock acquisition orders allow each thread to hold what the other needs. -->
+  <g id="opposing-orders-panel">
+    <rect x="40" y="120" width="680" height="638" rx="16" fill="#fff3f1" stroke="#b34a42" stroke-width="2"/>
+    <text x="75" y="165" class="heading">Before: opposing orders</text>
+    <text x="85" y="242" class="label">T1</text>
+    <rect x="170" y="205" width="170" height="58" rx="9" fill="#ffffff" stroke="#b34a42" stroke-width="2"/>
+    <text x="255" y="242" text-anchor="middle" class="label">1. Acquire A</text>
+    <rect x="460" y="205" width="170" height="58" rx="9" fill="#ffffff" stroke="#b34a42" stroke-width="2"/>
+    <text x="545" y="242" text-anchor="middle" class="label">2. Acquire B</text>
+    <text x="85" y="328" class="label">T2</text>
+    <rect x="170" y="291" width="170" height="58" rx="9" fill="#ffffff" stroke="#b34a42" stroke-width="2"/>
+    <text x="255" y="328" text-anchor="middle" class="label">1. Acquire B</text>
+    <rect x="460" y="291" width="170" height="58" rx="9" fill="#ffffff" stroke="#b34a42" stroke-width="2"/>
+    <text x="545" y="328" text-anchor="middle" class="label">2. Acquire A</text>
+    <!-- Separate arrowheads cover the shaft ends and remain clear of the destination borders. -->
+    <path id="opposing-t1-order-arrow" d="M344 234 H443" fill="none" stroke="#b34a42" stroke-width="4"/>
+    <polygon points="458,234 442,226 442,242" fill="#b34a42"/>
+    <path id="opposing-t2-order-arrow" d="M344 320 H443" fill="none" stroke="#b34a42" stroke-width="4"/>
+    <polygon points="458,320 442,312 442,328" fill="#b34a42"/>
+    <text x="85" y="398" class="label">If each gets its first lock:</text>
+    <rect x="80" y="435" width="240" height="113" rx="9" fill="#ffffff" stroke="#b34a42" stroke-width="2"/>
+    <text x="200" y="468" text-anchor="middle" class="label">T1</text>
+    <text x="200" y="496" text-anchor="middle" class="body">holds A</text>
+    <text x="200" y="524" text-anchor="middle" class="body red">waits for B</text>
+    <rect x="435" y="435" width="240" height="113" rx="9" fill="#ffffff" stroke="#b34a42" stroke-width="2"/>
+    <text x="555" y="468" text-anchor="middle" class="label">T2</text>
+    <text x="555" y="496" text-anchor="middle" class="body">holds B</text>
+    <text x="555" y="524" text-anchor="middle" class="body red">waits for A</text>
+    <!-- Parallel dependencies form a visible two-thread wait cycle. -->
+    <path id="opposing-t1-wait-arrow" d="M324 466 H418" fill="none" stroke="#b34a42" stroke-width="4"/>
+    <polygon points="433,466 417,458 417,474" fill="#b34a42"/>
+    <path id="opposing-t2-wait-arrow" d="M431 520 H337" fill="none" stroke="#b34a42" stroke-width="4"/>
+    <polygon points="322,520 338,512 338,528" fill="#b34a42"/>
+    <text x="377" y="498" text-anchor="middle" class="tiny">wait cycle</text>
+    <text x="380" y="589" text-anchor="middle" class="small">Each holds the lock that the other needs.</text>
+    <rect x="80" y="626" width="595" height="99" rx="10" fill="#ffffff" stroke="#b34a42" stroke-width="2"/>
+    <text x="377" y="663" text-anchor="middle" class="label red">Deadlock is possible.</text>
+    <text x="377" y="698" text-anchor="middle" class="body">Neither can finish and release its first lock.</text>
+  </g>
+
+  <!-- After: the first lock serializes admission before anyone can hold the second. -->
+  <g id="consistent-order-panel">
+    <rect x="755" y="120" width="705" height="638" rx="16" fill="#edf8ef" stroke="#43804c" stroke-width="2"/>
+    <text x="790" y="165" class="heading">After: everyone acquires A before B</text>
+    <text x="800" y="242" class="label">T1</text>
+    <rect x="885" y="205" width="170" height="58" rx="9" fill="#ffffff" stroke="#43804c" stroke-width="2"/>
+    <text x="970" y="242" text-anchor="middle" class="label">1. Acquire A</text>
+    <rect x="1175" y="205" width="170" height="58" rx="9" fill="#ffffff" stroke="#43804c" stroke-width="2"/>
+    <text x="1260" y="242" text-anchor="middle" class="label">2. Acquire B</text>
+    <text x="800" y="328" class="label">T2</text>
+    <rect x="885" y="291" width="170" height="58" rx="9" fill="#ffffff" stroke="#43804c" stroke-width="2"/>
+    <text x="970" y="328" text-anchor="middle" class="label">1. Acquire A</text>
+    <rect x="1175" y="291" width="170" height="58" rx="9" fill="#ffffff" stroke="#43804c" stroke-width="2"/>
+    <text x="1260" y="328" text-anchor="middle" class="label">2. Acquire B</text>
+    <path id="consistent-t1-order-arrow" d="M1059 234 H1158" fill="none" stroke="#43804c" stroke-width="4"/>
+    <polygon points="1173,234 1157,226 1157,242" fill="#43804c"/>
+    <path id="consistent-t2-order-arrow" d="M1059 320 H1158" fill="none" stroke="#43804c" stroke-width="4"/>
+    <polygon points="1173,320 1157,312 1157,328" fill="#43804c"/>
+    <text x="800" y="398" class="label">If T1 gets A first:</text>
+    <rect x="800" y="435" width="620" height="74" rx="9" fill="#ffffff" stroke="#43804c" stroke-width="2"/>
+    <text x="1110" y="465" text-anchor="middle" class="label">T1 holds A; B is free.</text>
+    <text x="1110" y="495" text-anchor="middle" class="body green">T1 can acquire B and finish.</text>
+    <rect x="800" y="540" width="620" height="74" rx="9" fill="#ffffff" stroke="#8493a5" stroke-width="2"/>
+    <text x="1110" y="570" text-anchor="middle" class="label">T2 waits for A, holding neither lock.</text>
+    <text x="1110" y="600" text-anchor="middle" class="body">T2 cannot hold B while waiting for A.</text>
+    <rect x="800" y="640" width="620" height="85" rx="10" fill="#ffffff" stroke="#43804c" stroke-width="2"/>
+    <text x="1110" y="674" text-anchor="middle" class="label green">No circular wait through A and B.</text>
+    <text x="1110" y="705" text-anchor="middle" class="body">T1 can release both; T2 can then acquire A.</text>
+  </g>
+
+  <!-- Scope: this ordering argument applies to these locks and does not establish fairness. -->
+  <text x="750" y="799" text-anchor="middle" class="small">Every code path using these locks must follow the order. Lock ordering alone does not guarantee fairness.</text>
+</svg>
