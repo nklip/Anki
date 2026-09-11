@@ -304,11 +304,16 @@ Assuming annual failure rate of a typical HDD is 0.81%, making three copies give
 
 Replicating the data nodes like that grants us the durability we want, but we could also leverage erasure coding to reduce storage costs.
 
-Erasure coding enables us to use parity bits, which allow us to reconstruct lost bits in the event of a failure:
+**Erasure coding** enables us to use parity bits, which allow us to reconstruct lost bits in the event of a failure:
 
 <div style="margin-left:3rem">
     <img src="./images/erasure-coding.svg" alt="erasure-coding" width="1000" />
 </div>
+
+1. Data is broken up into four even-sized data chunks d1, d2, d3, and d4.
+2. The mathematical formula behind Reed–Solomon coding [[23]](#ref-23) is used to calculate the parities p1 and p2. To give a much simplified example, p1 = d1 + 2 × d2 - d3 + 4 × d4 and p2 = -d1 + 5 × d2 + d3 - 3 × d4 [[24]](#ref-24).
+3. Data d3 and d4 are lost due to node crashes.
+4. The mathematical formula is used to reconstruct lost data d3 and d4, using the known values of d1, d2, p1, and p2.
 
 Imagine those bits are data nodes. If two of them go down, they can be recovered using the remaining four ones.
 
@@ -369,7 +374,23 @@ The object table will probably not fit into a single database server, though. He
 
 Even with this sharding scheme, though, listing objects in a bucket will be slow.
 
-### **Listing objects in a bucket**
+#### **Scale the `bucket` table**
+
+Since there is usually a limit on the number of buckets a user can create, the size of the bucket table is small. Let’s assume we have 1 million customers, each customer owns 10 buckets and each record takes 1 KB. That means we need 10 GB (1 million x 10 x 1KB) of storage space. The whole table can easily fit in a modern database server. However, a single database server might not have enough CPU or network bandwidth to handle all read requests. If so, we can spread the read load among multiple database replicas.
+
+#### **Scale the `object` table**
+
+The object table holds the object metadata. The dataset at our design scale will likely not fit in a single database instance. We can scale the object table by sharding.
+
+One option is to shard by the bucket_id so all the objects under the same bucket are stored in one shard. This doesn’t work because it causes hotspot shards as a bucket might contain billions of objects.
+
+Another option is to shard by object_id. The benefit of this sharding scheme is that it evenly distributes the load. But we will not be able to execute query 1 and query 2 efficiently because those two queries are based on the URI.
+
+We choose to shard by a combination of bucket_name and object_name. This is because most of the metadata operations are based on the object URI, for example, finding the object ID by URI or uploading an object via URI. To evenly distribute the data, we can use the hash of the (bucket_name, object_name) as the sharding key.
+
+With this sharding scheme, it is straightforward to support the first two queries, but the last query is less obvious. Let’s take a look.
+
+#### **Listing objects in a bucket**
 
 In a single database, listing an object based on its prefix (looks like a directory) works like this:
 
@@ -383,6 +404,26 @@ This makes pagination challenging, though, since different shards contain differ
 We can leverage the fact that typically object stores are not optimized for listing objects, so we can sacrifice listing performance.
 We can also create a denormalized table for listing objects, sharded by bucket ID.
 That would make our listing query sufficiently fast as it's isolated to a single database instance.
+
+#### **Distributed databases**
+
+To return pages of listing with 10 objects for each page, the SELECT query would start with this:
+
+```sql
+SELECT * FROM object WHERE bucket_id = "123" AND object_name LIKE 'a/b/%' ORDER BY object_name OFFSET 0 LIMIT 10
+```
+
+The OFFSET and LIMIT would restrict the results to the first 10 objects. In the next call, the user sends the request with a hint to the server, so it knows to construct the query for the second page with an OFFSET of 10. This hint is usually done with a cursor that the server returns with each page to the client. The offset information is encoded in the cursor. The client would include the cursor in the request for the next page. The server decodes the cursor and uses the offset information embedded in it to construct the query for the next page.
+
+To continue with the example above, the query for the second page looks like this:
+
+```sql
+SELECT * FROM metadata WHERE bucket_id = "123" AND object_name LIKE 'a/b/%' ORDER BY object_name OFFSET 10 LIMIT 10
+```
+
+Now, let’s explore why it’s complicated to support paging for sharded databases. Since the objects are distributed across shards, the shards would likely return a varying number of results. Some shards would contain a full page of 10 objects, while others would be partial or empty. The application code would receive results from every shard, aggregate and sort them, and return only a page of 10 in our example. The objects that don’t get included in the current round must be considered again for the next round. This means that each shard would likely have a different offset. The server must track the offsets for all the shards and associate those offsets with the cursor. If there are hundreds of shards, there will be hundreds of offsets to track.
+
+We have a solution that can solve the problem, but there are some tradeoffs. Since object storage is tuned for vast scale and high durability, object listing performance is rarely a priority. In fact, all commercial object storage supports object listing with sub-optimal performance. To take advantage of this, we could denormalize the listing data into a separate table sharded by bucket ID. This table is only used for listing objects. With this setup, even buckets with billions of objects would offer acceptable performance. This isolates the listing query to a single database which greatly simplifies the implementation.
 
 ### **Object versioning**
 
@@ -480,8 +521,8 @@ Things we covered:
 20. [Data Durability Calculation](https://www.backblaze.com/blog/cloud-storage-durability/)
 21. [Rack](https://en.wikipedia.org/wiki/19-inch_rack)
 22. [Erasure Coding](https://en.wikipedia.org/wiki/Erasure_code)
-23. [Reed–Solomon error correction](https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction)
-24. [Erasure Coding Demystified](https://www.youtube.com/watch?v=Q5kVuM7zEUI)
+23. <a id="ref-23"></a>[Reed–Solomon error correction](https://en.wikipedia.org/wiki/Reed%E2%80%93Solomon_error_correction)
+24. <a id="ref-24"></a>[Erasure Coding Demystified](https://www.youtube.com/watch?v=Q5kVuM7zEUI)
 25. [Checksum](https://en.wikipedia.org/wiki/Checksum)
 26. [Md5](https://en.wikipedia.org/wiki/MD5)
 27. [Sha1](https://en.wikipedia.org/wiki/SHA-1)
