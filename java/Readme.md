@@ -15,7 +15,7 @@ Every topic lives in its own folder as `Readme.md`, with its teaching diagrams i
 | Topic | Format |
 | --- | --- |
 | [Autoboxing and Unboxing](./Autoboxing%20and%20Unboxing/Readme.md) | Simple card |
-| [Compare vs. compareTo](./Compare%20vs.%20compareTo/Readme.md) | Simple card |
+| [Compare vs compareTo](./Compare%20vs%20compareTo/Readme.md) | Simple card |
 | [Monads in Java](./Monads%20in%20Java/Readme.md) | Simple card |
 | [Thread-safe time classes](./Thread-safe%20time%20classes/Readme.md) | Simple card |
 
