@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="620" viewBox="0 0 1160 620" role="img" aria-labelledby="title desc">
+  <title id="title">One row is stored as a chain of versions</title>
+  <desc id="desc">A single logical row of the accounts table, identified by id 7, exists on disk as three physical versions. Version 1 holds balance 100 and carries the stamps xmin 700 and xmax 750. Transaction 750 runs an UPDATE, which does not overwrite version 1: it writes version 2 with balance 80 and stamps version 1 with xmax 750 to record that transaction 750 superseded it. Version 2 carries xmin 750 and xmax 770. Transaction 770 runs a second UPDATE and creates version 3 with balance 60, xmin 770, and an xmax of 0. Versions 1 and 2 are dead because a newer committed version supersedes them; version 3 is the live current version. The legend explains that xmin names the transaction that created a version, xmax names the transaction that superseded or deleted it, an xmax of 0 means the version is still current, and that because nothing is overwritten a reader can still find the older version its own snapshot needs.</desc>
+
+  <!-- Establishes the static model for the MVCC article: a logical row equals a
+       chain of stored versions. Behaviour (which version a snapshot picks) is
+       taught by snapshot-visibility.svg; keep the version numbers, balances, and
+       transaction ids identical across the two files. -->
+  <!-- Palette shared by this card: orange marks a write, grey a dead version,
+       green the live version. Arial and the title/subtitle sizes follow the
+       neighbouring cs diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+      .title { font-size: 34px; font-weight: 700; }
+      .subtitle { font-size: 21px; fill: #475569; }
+      .section { font-size: 25px; font-weight: 700; }
+      .value { font-size: 23px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .note { font-size: 19px; fill: #475569; }
+      .center { text-anchor: middle; }
+      .head { font-size: 20px; font-weight: 700; fill: #fff; }
+      .write { fill: #c2410c; font-weight: 700; }
+      .box { fill: #fff; stroke: #334155; stroke-width: 2; }
+      .strip-dead { fill: #94a3b8; }
+      .strip-live { fill: #16a34a; }
+      .rule { stroke: #cbd5e1; stroke-width: 2; }
+      .shaft { fill: none; stroke: #c2410c; stroke-width: 3; }
+      .panel { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 2; }
+    </style>
+    <!-- The tip at x=18 projects 2 units past the shaft endpoint at refX=16,
+         so each shaft stops 2 units short of the box it points at. -->
+    <marker id="write-head" markerWidth="18" markerHeight="16" viewBox="0 0 18 16"
+            refX="16" refY="8" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L18 8 L0 16 Z" fill="#c2410c"/>
+    </marker>
+  </defs>
+
+  <rect id="background" width="1160" height="620" fill="#fff"/>
+  <text class="title" x="30" y="44">One row is stored as a chain of versions</text>
+  <text class="subtitle" x="30" y="78">An UPDATE never overwrites a row: it writes a new version and stamps the old one.</text>
+  <text class="subtitle" x="30" y="106">Stamp names are PostgreSQL's; transaction ids are assigned in increasing order.</text>
+  <text class="section" x="30" y="162">Logical row: accounts, id = 7</text>
+
+  <!-- Version 1: created by transaction 700, superseded by transaction 750. -->
+  <g aria-label="version 1, dead">
+    <rect class="box" x="35" y="188" width="290" height="200" rx="6"/>
+    <rect class="strip-dead" x="36" y="189" width="288" height="40" rx="5"/>
+    <text class="head center" x="180" y="217">version 1</text>
+    <text class="value center" x="180" y="271">balance = 100</text>
+    <path class="rule" d="M60 291h240"/>
+    <text class="body center" x="180" y="325">xmin = 700</text>
+    <text class="body center" x="180" y="361">xmax = 750</text>
+    <text class="note center" x="180" y="417">dead: superseded</text>
+  </g>
+
+  <!-- Version 2: created by transaction 750, superseded by transaction 770. -->
+  <g aria-label="version 2, dead">
+    <rect class="box" x="435" y="188" width="290" height="200" rx="6"/>
+    <rect class="strip-dead" x="436" y="189" width="288" height="40" rx="5"/>
+    <text class="head center" x="580" y="217">version 2</text>
+    <text class="value center" x="580" y="271">balance = 80</text>
+    <path class="rule" d="M460 291h240"/>
+    <text class="body center" x="580" y="325">xmin = 750</text>
+    <text class="body center" x="580" y="361">xmax = 770</text>
+    <text class="note center" x="580" y="417">dead: superseded</text>
+  </g>
+
+  <!-- Version 3: created by transaction 770, xmax still 0, so it is current.
+       Transaction ids start at 700 so they cannot be mistaken for the balances. -->
+  <g aria-label="version 3, live">
+    <rect class="box" x="835" y="188" width="290" height="200" rx="6"/>
+    <rect class="strip-live" x="836" y="189" width="288" height="40" rx="5"/>
+    <text class="head center" x="980" y="217">version 3</text>
+    <text class="value center" x="980" y="271">balance = 60</text>
+    <path class="rule" d="M860 291h240"/>
+    <text class="body center" x="980" y="325">xmin = 770</text>
+    <text class="body center" x="980" y="361">xmax = 0</text>
+    <text class="note center" x="980" y="417">live: current version</text>
+  </g>
+
+  <!-- Write arrows sit below their two-line labels so no head touches text. -->
+  <g aria-label="updates that create each new version">
+    <text class="body center write" x="380" y="253">txn 750</text>
+    <text class="body center write" x="380" y="275">UPDATE</text>
+    <path class="shaft" d="M337 298h96" marker-end="url(#write-head)"/>
+    <text class="body center write" x="780" y="253">txn 770</text>
+    <text class="body center write" x="780" y="275">UPDATE</text>
+    <path class="shaft" d="M737 298h96" marker-end="url(#write-head)"/>
+  </g>
+
+  <!-- Legend; keep each line inside x=1100 when rewording. -->
+  <g aria-label="how to read the stamps">
+    <rect class="panel" x="35" y="444" width="1090" height="158" rx="8"/>
+    <text class="section" x="60" y="484">Reading the stamps</text>
+    <text class="body" x="60" y="522">xmin — the transaction that created this version.</text>
+    <text class="body" x="60" y="554">xmax — the transaction that superseded or deleted it; 0 means still current.</text>
+    <text class="body" x="60" y="586">Nothing is overwritten, so a reader can still find the older version its own snapshot needs.</text>
+  </g>
+</svg>

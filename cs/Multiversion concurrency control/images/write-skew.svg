@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="892" viewBox="0 0 1160 892" role="img" aria-labelledby="title desc">
+  <title id="title">MVCC alone does not stop write skew</title>
+  <desc id="desc">The overdraft example from the PostgreSQL SSI documentation. The rule is that kevin's savings plus checking must never go below zero, and both accounts start at 500, so the total is 1000. Two sessions run concurrently, shown as two columns with four aligned steps. In step 1 each session reads both accounts from its own snapshot and sees 500 plus 500. In step 2 each checks that 1000 minus 900 is at least zero and allows the withdrawal. In step 3 session 1 withdraws 900 from savings, taking it from 500 to minus 400, while session 2 withdraws 900 from checking, taking it from 500 to minus 400. In step 4 both commit. At REPEATABLE READ, that is snapshot isolation, both commits succeed and the total becomes minus 800: each snapshot said the rule held, and neither write touched the row the other wrote, so MVCC saw no conflict. This anomaly is called write skew. Under SERIALIZABLE, PostgreSQL's serializable snapshot isolation tracks the read-write dependency between the two transactions and aborts one of them with the error could not serialize access due to read slash write dependencies among transactions.</desc>
+
+  <!-- Fourth diagram of the MVCC article: the limit of the mechanism the first
+       three diagrams build up. The example is the "Overdraft Protection" case
+       from the PostgreSQL SSI wiki page cited in the article's sources.
+       Session colours match the reader colours in snapshot-visibility.svg. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+      .title { font-size: 34px; font-weight: 700; }
+      .subtitle { font-size: 21px; fill: #475569; }
+      .panel-head { font-size: 22px; font-weight: 700; fill: #fff; }
+      .body { font-size: 20px; }
+      .strong { font-weight: 700; }
+      .note { font-size: 19px; fill: #475569; }
+      .center { text-anchor: middle; }
+      .rule-box { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 2; }
+      .col { fill: #fff; stroke: #334155; stroke-width: 2; }
+      .strip-a { fill: #0b78b5; }
+      .strip-b { fill: #7c3aed; }
+      .step { fill: #f8fafc; stroke: #94a3b8; stroke-width: 2; }
+      .step-write { fill: #fff7ed; stroke: #c2410c; stroke-width: 2; }
+      .bad { fill: #fef2f2; stroke: #dc2626; stroke-width: 3; }
+      .bad-text { fill: #b91c1c; }
+      .good { fill: #f0fdf4; stroke: #16a34a; stroke-width: 3; }
+      .good-text { fill: #15803d; }
+    </style>
+  </defs>
+
+  <rect id="background" width="1160" height="892" fill="#fff"/>
+  <text class="title" x="30" y="44">MVCC alone does not stop write skew</text>
+  <text class="subtitle" x="30" y="78">Two transactions read the same data, then each writes a different row.</text>
+  <text class="subtitle" x="30" y="106">Neither write touches what the other wrote, so MVCC sees no conflict.</text>
+
+  <!-- The invariant both sessions believe they are protecting. -->
+  <g aria-label="business rule">
+    <rect class="rule-box" x="30" y="140" width="1100" height="72" rx="8"/>
+    <text class="body strong" x="55" y="172">Rule: savings + checking must never go below zero.</text>
+    <text class="body" x="55" y="198">Start: savings = 500, checking = 500, total = 1000.</text>
+  </g>
+
+  <!-- Step numbers in the left gutter; the two columns run the same four steps
+       at the same time, which is what makes the outcome surprising. -->
+  <g aria-label="step numbers">
+    <text class="note center" x="65" y="333">step 1</text>
+    <text class="note center" x="65" y="411">step 2</text>
+    <text class="note center" x="65" y="489">step 3</text>
+    <text class="note center" x="65" y="567">step 4</text>
+  </g>
+
+  <!-- Session 1 withdraws from savings. -->
+  <g aria-label="session 1">
+    <rect class="col" x="115" y="232" width="500" height="390" rx="8"/>
+    <path class="strip-a" d="M116 241a8 8 0 0 1 8-8h482a8 8 0 0 1 8 8v42H116Z"/>
+    <text class="panel-head center" x="365" y="274">session 1 · txn A</text>
+    <rect class="step" x="140" y="300" width="450" height="66" rx="4"/>
+    <text class="body center" x="365" y="340">reads both accounts: 500 + 500</text>
+    <rect class="step" x="140" y="378" width="450" height="66" rx="4"/>
+    <text class="body center" x="365" y="418">1000 − 900 ≥ 0, so allow it</text>
+    <rect class="step-write" x="140" y="456" width="450" height="66" rx="4"/>
+    <text class="body center" x="365" y="480">withdraw 900 from savings</text>
+    <text class="body center strong" x="365" y="506">savings: 500 → −400</text>
+    <rect class="step" x="140" y="534" width="450" height="66" rx="4"/>
+    <text class="body center" x="365" y="574">COMMIT</text>
+  </g>
+
+  <!-- Session 2 withdraws from checking: a different row, so no write conflict. -->
+  <g aria-label="session 2">
+    <rect class="col" x="630" y="232" width="500" height="390" rx="8"/>
+    <path class="strip-b" d="M631 241a8 8 0 0 1 8-8h482a8 8 0 0 1 8 8v42H631Z"/>
+    <text class="panel-head center" x="880" y="274">session 2 · txn B</text>
+    <rect class="step" x="655" y="300" width="450" height="66" rx="4"/>
+    <text class="body center" x="880" y="340">reads both accounts: 500 + 500</text>
+    <rect class="step" x="655" y="378" width="450" height="66" rx="4"/>
+    <text class="body center" x="880" y="418">1000 − 900 ≥ 0, so allow it</text>
+    <rect class="step-write" x="655" y="456" width="450" height="66" rx="4"/>
+    <text class="body center" x="880" y="480">withdraw 900 from checking</text>
+    <text class="body center strong" x="880" y="506">checking: 500 → −400</text>
+    <rect class="step" x="655" y="534" width="450" height="66" rx="4"/>
+    <text class="body center" x="880" y="574">COMMIT</text>
+  </g>
+
+  <!-- Outcome under snapshot isolation: the rule holds in both snapshots and
+       fails in the database. -->
+  <g aria-label="result at repeatable read">
+    <rect class="bad" x="30" y="642" width="1100" height="100" rx="8"/>
+    <text class="body strong bad-text" x="55" y="680">Result at REPEATABLE READ: both commit, and the total is −800.</text>
+    <text class="body" x="55" y="712">Each snapshot said the rule held, and no two writes touched the same row.</text>
+  </g>
+
+  <!-- What actually prevents it. -->
+  <g aria-label="what prevents write skew">
+    <rect class="good" x="30" y="762" width="1100" height="100" rx="8"/>
+    <text class="body strong good-text" x="55" y="800">SERIALIZABLE tracks the read-write dependency and aborts one transaction.</text>
+    <text class="body" x="55" y="832">PostgreSQL: could not serialize access due to read/write dependencies among transactions</text>
+  </g>
+</svg>

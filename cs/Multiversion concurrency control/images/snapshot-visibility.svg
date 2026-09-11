@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="740" viewBox="0 0 1160 740" role="img" aria-labelledby="title desc">
+  <title id="title">A snapshot decides which version you see</title>
+  <desc id="desc">A time band across the top shows the stored versions of the accounts row with id 7. From the left, version 1 holds balance 100 until transaction 750 commits and changes it to 80; version 2 holds balance 80 until transaction 770 commits and changes it to 60; version 3 holds balance 60 and is the current version. Three readers take snapshots at different instants, and a dashed arrow drops from each snapshot instant on the band to that reader's result. Reader A took its snapshot before transaction 750 committed, so it resolves to version 1 and reads balance 100; it is still running and still pins that oldest version. Reader B took its snapshot between the two commits, so it resolves to version 2, reads balance 80, and keeps reading 80 even after transaction 770 commits. Reader C took its snapshot after transaction 770 committed, so it resolves to version 3 and reads balance 60. The rule panel states that a version is visible to a snapshot when its xmin committed before the snapshot was taken and its xmax is either 0 or belongs to a transaction that had not committed by then, that a transaction always sees its own uncommitted changes, and that all three answers are correct because each reader sees the whole database frozen at its own snapshot.</desc>
+
+  <!-- Teaches the behaviour half of MVCC; row-version-chain.svg teaches the
+       structure. The version numbers, balances, and transaction ids are shared
+       between the two diagrams on purpose — change them in both or in neither.
+       Reader A is deliberately still running: it is the long-running transaction
+       the article's cleanup section refers back to. -->
+  <!-- Palette: orange marks a write/commit; blue, purple, and teal are the three
+       readers; the green tint marks the version that is still current. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+      .title { font-size: 34px; font-weight: 700; }
+      .subtitle { font-size: 21px; fill: #475569; }
+      .section { font-size: 25px; font-weight: 700; }
+      .seg-label { font-size: 21px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .note { font-size: 19px; fill: #475569; }
+      .center { text-anchor: middle; }
+      .right { text-anchor: end; }
+      .commit { font-size: 19px; font-weight: 700; fill: #c2410c; }
+      .card-name { font-size: 21px; font-weight: 700; }
+      .card-value { font-size: 26px; font-weight: 700; }
+      .a { fill: #0b78b5; }
+      .b { fill: #7c3aed; }
+      .c { fill: #0f766e; }
+      .seg-old { fill: #e2e8f0; stroke: #334155; stroke-width: 2; }
+      .seg-now { fill: #dcfce7; stroke: #334155; stroke-width: 2; }
+      .card-a { fill: #eff6ff; stroke: #0b78b5; stroke-width: 3; }
+      .card-b { fill: #f5f3ff; stroke: #7c3aed; stroke-width: 3; }
+      .card-c { fill: #f0fdfa; stroke: #0f766e; stroke-width: 3; }
+      .shaft-a { fill: none; stroke: #0b78b5; stroke-width: 3; stroke-dasharray: 8 6; }
+      .shaft-b { fill: none; stroke: #7c3aed; stroke-width: 3; stroke-dasharray: 8 6; }
+      .shaft-c { fill: none; stroke: #0f766e; stroke-width: 3; stroke-dasharray: 8 6; }
+      .panel { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 2; }
+    </style>
+    <!-- Each head projects 2 units past its shaft endpoint, so every shaft ends
+         at y=318 and the visible tip lands on the card border at y=320. -->
+    <marker id="snap-head-a" markerWidth="18" markerHeight="16" viewBox="0 0 18 16"
+            refX="16" refY="8" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L18 8 L0 16 Z" fill="#0b78b5"/>
+    </marker>
+    <marker id="snap-head-b" markerWidth="18" markerHeight="16" viewBox="0 0 18 16"
+            refX="16" refY="8" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L18 8 L0 16 Z" fill="#7c3aed"/>
+    </marker>
+    <marker id="snap-head-c" markerWidth="18" markerHeight="16" viewBox="0 0 18 16"
+            refX="16" refY="8" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L18 8 L0 16 Z" fill="#0f766e"/>
+    </marker>
+  </defs>
+
+  <rect id="background" width="1160" height="740" fill="#fff"/>
+  <text class="title" x="30" y="44">A snapshot decides which version you see</text>
+  <text class="subtitle" x="30" y="78">Same row, same instant, three readers — three different answers, all of them correct.</text>
+  <text class="subtitle" x="30" y="106">Same accounts row, id = 7, as the version chain above.</text>
+
+  <!-- Commit labels sit above the band boundary they explain. -->
+  <text class="commit center" x="400" y="152">txn 750 commits</text>
+  <text class="commit center" x="400" y="173">balance 100 → 80</text>
+  <text class="commit center" x="780" y="152">txn 770 commits</text>
+  <text class="commit center" x="780" y="173">balance 80 → 60</text>
+
+  <!-- Time band: each segment is the stretch during which that version is the
+       newest committed one. The shared edges at x=400 and x=780 are the commits. -->
+  <g aria-label="stored versions over time">
+    <rect class="seg-old" x="30" y="190" width="370" height="60"/>
+    <rect class="seg-old" x="400" y="190" width="380" height="60"/>
+    <rect class="seg-now" x="780" y="190" width="350" height="60"/>
+    <text class="seg-label center" x="215" y="228">version 1 — balance 100</text>
+    <text class="seg-label center" x="590" y="228">version 2 — balance 80</text>
+    <text class="seg-label center" x="955" y="228">version 3 — balance 60</text>
+  </g>
+  <text class="note right" x="1130" y="278">time →</text>
+
+  <!-- Each connector starts at that reader's snapshot instant on the band and
+       drops to its result card; dashes mark them as reads, not writes. -->
+  <path class="shaft-a" d="M205 256V318" marker-end="url(#snap-head-a)"/>
+  <path class="shaft-b" d="M580 256V318" marker-end="url(#snap-head-b)"/>
+  <path class="shaft-c" d="M955 256V318" marker-end="url(#snap-head-c)"/>
+
+  <!-- Reader A snapshotted before the first commit and is still running. -->
+  <g aria-label="reader A result">
+    <rect class="card-a" x="30" y="320" width="350" height="130" rx="8"/>
+    <text class="card-name center a" x="205" y="356">reader A</text>
+    <text class="note center" x="205" y="390">resolves to version 1</text>
+    <text class="card-value center" x="205" y="428">balance = 100</text>
+    <text class="note center" x="205" y="482">still running, still pins version 1</text>
+  </g>
+
+  <!-- Reader B snapshotted between the two commits, so it resolves to version 2. -->
+  <g aria-label="reader B result">
+    <rect class="card-b" x="405" y="320" width="350" height="130" rx="8"/>
+    <text class="card-name center b" x="580" y="356">reader B</text>
+    <text class="note center" x="580" y="390">resolves to version 2</text>
+    <text class="card-value center" x="580" y="428">balance = 80</text>
+    <text class="note center" x="580" y="482">still reads 80 after txn 770 commits</text>
+  </g>
+
+  <!-- Reader C snapshotted after the second commit, so it resolves to version 3. -->
+  <g aria-label="reader C result">
+    <rect class="card-c" x="780" y="320" width="350" height="130" rx="8"/>
+    <text class="card-name center c" x="955" y="356">reader C</text>
+    <text class="note center" x="955" y="390">resolves to version 3</text>
+    <text class="card-value center" x="955" y="428">balance = 60</text>
+    <text class="note center" x="955" y="482">snapshot taken after that commit</text>
+  </g>
+
+  <!-- Visibility rule; keep each line inside x=1100 when rewording. -->
+  <g aria-label="visibility rule">
+    <rect class="panel" x="30" y="506" width="1100" height="206" rx="8"/>
+    <text class="section" x="60" y="544">When is a version visible to your snapshot?</text>
+    <text class="body" x="60" y="580">Its xmin committed before your snapshot was taken, and</text>
+    <text class="body" x="60" y="610">its xmax is 0, or belongs to a transaction that had not committed by then.</text>
+    <text class="body" x="60" y="640">Exception: your own uncommitted changes are always visible to you.</text>
+    <text class="body" x="60" y="678">All three answers are correct: each reader sees the whole database frozen at its own snapshot.</text>
+  </g>
+</svg>

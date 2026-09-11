@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="780" viewBox="0 0 1160 780" role="img" aria-labelledby="title desc">
+  <title id="title">Two places to keep the old versions</title>
+  <desc id="desc">A side-by-side comparison of where a database keeps superseded row versions. The left panel, PostgreSQL, shows one table page holding all three versions of the row: version 1 with balance 100 and version 2 with balance 80 are dead, and version 3 with balance 60 is live. A reader walks the page and keeps the version its snapshot allows. The right panel, InnoDB and Oracle, shows a table page holding only version 3, balance 60, together with its hidden fields DB_TRX_ID 770 and DB_ROLL_PTR. A roll pointer arrow leads from that page down to a separate undo log, also called a rollback segment, holding two records: balance was 80, and balance was 100. A reader applies those undo records to rebuild the version it needs. The footer compares cleanup and cost: PostgreSQL uses VACUUM, which marks the space held by dead versions reusable, and pays by letting the table bloat until VACUUM runs; InnoDB and Oracle use purge, which discards undo records no snapshot needs, and pay when an old reader fails because its undo is already gone.</desc>
+
+  <!-- Third diagram of the MVCC article. It answers "where do the old versions
+       physically live", which the first two diagrams deliberately leave open.
+       Balances and transaction ids match row-version-chain.svg. -->
+  <!-- Palette: grey is a dead version, green tint the live one, amber the undo
+       log and its roll pointer. Keep both panels the same width and bottom edge
+       so the comparison stays readable. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+      .title { font-size: 34px; font-weight: 700; }
+      .subtitle { font-size: 21px; fill: #475569; }
+      .panel-head { font-size: 22px; font-weight: 700; fill: #fff; }
+      .caption { font-size: 19px; fill: #475569; }
+      .row-label { font-size: 20px; font-weight: 700; }
+      .hidden-cols { font-size: 18px; fill: #475569; }
+      .body { font-size: 20px; }
+      .strong { font-weight: 700; }
+      .note { font-size: 19px; fill: #475569; }
+      .center { text-anchor: middle; }
+      .panel { fill: #fff; stroke: #334155; stroke-width: 2; }
+      .panel-strip { fill: #334155; }
+      .page { fill: #fff; stroke: #334155; stroke-width: 2; }
+      .row-dead { fill: #e2e8f0; stroke: #94a3b8; stroke-width: 2; }
+      .row-live { fill: #dcfce7; stroke: #16a34a; stroke-width: 2; }
+      .undo-box { fill: #fffbeb; stroke: #d97706; stroke-width: 2; }
+      .undo-rec { fill: #fef3c7; stroke: #d97706; stroke-width: 2; }
+      .shaft { fill: none; stroke: #d97706; stroke-width: 3; }
+      .footer { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 2; }
+      .divider { stroke: #cbd5e1; stroke-width: 2; }
+      .dead-text { fill: #475569; }
+    </style>
+    <!-- The tip at x=18 projects 2 units past the shaft endpoint at refX=16, so
+         the shaft ends at y=368 and the visible tip meets the undo box at 370. -->
+    <marker id="ptr-head" markerWidth="18" markerHeight="16" viewBox="0 0 18 16"
+            refX="16" refY="8" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L18 8 L0 16 Z" fill="#d97706"/>
+    </marker>
+  </defs>
+
+  <rect id="background" width="1160" height="780" fill="#fff"/>
+  <text class="title" x="30" y="44">Two places to keep the old versions</text>
+  <text class="subtitle" x="30" y="78">Every MVCC engine must store the versions a running snapshot might still need.</text>
+  <text class="subtitle" x="30" y="106">They differ in where those versions live, and in how the space is reclaimed.</text>
+
+  <!-- Left panel: PostgreSQL keeps every version in the table itself. -->
+  <g aria-label="PostgreSQL storage">
+    <rect class="panel" x="30" y="140" width="540" height="460" rx="8"/>
+    <path class="panel-strip" d="M31 149a8 8 0 0 1 8-8h522a8 8 0 0 1 8 8v42H31Z"/>
+    <text class="panel-head center" x="300" y="174">PostgreSQL: all versions in the table</text>
+
+    <rect class="page" x="55" y="212" width="490" height="220" rx="6"/>
+    <text class="caption center" x="300" y="240">table page</text>
+    <rect class="row-dead" x="75" y="256" width="450" height="48" rx="4"/>
+    <text class="row-label center dead-text" x="300" y="286">version 1 · balance 100 · dead</text>
+    <rect class="row-dead" x="75" y="308" width="450" height="48" rx="4"/>
+    <text class="row-label center dead-text" x="300" y="338">version 2 · balance 80 · dead</text>
+    <rect class="row-live" x="75" y="360" width="450" height="48" rx="4"/>
+    <text class="row-label center" x="300" y="390">version 3 · balance 60 · live</text>
+
+    <text class="body" x="55" y="522">A reader walks the page and keeps</text>
+    <text class="body" x="55" y="548">the version its snapshot allows.</text>
+  </g>
+
+  <!-- Right panel: the page holds only the newest version; older ones are
+       rebuilt from the undo log the roll pointer leads to. -->
+  <g aria-label="InnoDB and Oracle storage">
+    <rect class="panel" x="590" y="140" width="540" height="460" rx="8"/>
+    <path class="panel-strip" d="M591 149a8 8 0 0 1 8-8h522a8 8 0 0 1 8 8v42H591Z"/>
+    <text class="panel-head center" x="860" y="174">InnoDB, Oracle: old versions in undo</text>
+
+    <rect class="page" x="615" y="212" width="490" height="118" rx="6"/>
+    <text class="caption center" x="860" y="240">table page</text>
+    <rect class="row-live" x="635" y="256" width="450" height="58" rx="4"/>
+    <text class="row-label center" x="860" y="282">version 3 · balance 60</text>
+    <text class="hidden-cols center" x="860" y="306">DB_TRX_ID 770 · DB_ROLL_PTR</text>
+
+    <!-- Roll pointer leaves the page and lands on the undo log's top edge. -->
+    <path class="shaft" d="M860 336V368" marker-end="url(#ptr-head)"/>
+    <text class="note" x="880" y="358">roll pointer</text>
+
+    <rect class="undo-box" x="615" y="370" width="490" height="130" rx="6"/>
+    <text class="caption center" x="860" y="398">undo log (rollback segment)</text>
+    <rect class="undo-rec" x="635" y="412" width="450" height="40" rx="4"/>
+    <text class="row-label center" x="860" y="439">undo: balance was 80</text>
+    <rect class="undo-rec" x="635" y="456" width="450" height="40" rx="4"/>
+    <text class="row-label center" x="860" y="483">undo: balance was 100</text>
+
+    <text class="body" x="615" y="522">A reader applies undo records to</text>
+    <text class="body" x="615" y="548">rebuild the version it needs.</text>
+  </g>
+
+  <!-- Footer compares cleanup and cost; columns line up with the panels above. -->
+  <g aria-label="cleanup and cost comparison">
+    <rect class="footer" x="30" y="620" width="1100" height="128" rx="8"/>
+    <path class="divider" d="M580 632V736"/>
+    <text class="body strong" x="55" y="660">Cleanup: VACUUM</text>
+    <text class="body" x="55" y="692">marks the space dead versions hold reusable.</text>
+    <text class="body" x="55" y="724">Cost: the table bloats until VACUUM runs.</text>
+    <text class="body strong" x="615" y="660">Cleanup: purge</text>
+    <text class="body" x="615" y="692">discards undo records no snapshot needs.</text>
+    <text class="body" x="615" y="724">Cost: an old reader fails if its undo is gone.</text>
+  </g>
+</svg>
