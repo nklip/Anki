@@ -13,13 +13,19 @@ python3 scripts/check_svg.py --strict images/example.svg
 Point to a differently named etalon explicitly:
 
 ```bash
-python3 scripts/check_svg.py --strict --reference images/original.png svg/example.svg
+python3 scripts/check_svg.py --strict --reference images/original.png images/example.svg
 ```
 
-Require every SVG in a batch to have a same-stem reference:
+Require every SVG in an `images/` folder to have a same-stem reference:
 
 ```bash
-python3 scripts/check_svg.py --strict --reference-mode required --reference-dir images svg/
+python3 scripts/check_svg.py --strict --reference-mode required images/
+```
+
+Add `--reference-dir` only when the etalons are kept outside the asset folder, for example in a scratch directory. Do not create a separate `svg/` folder to hold the sources:
+
+```bash
+python3 scripts/check_svg.py --strict --reference-mode required --reference-dir /tmp/example-etalons images/
 ```
 
 The reference must be a readable PNG. The checker fails rather than silently skipping comparison when `--reference-mode required` is active or an explicit reference cannot be read.

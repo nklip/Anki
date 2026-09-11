@@ -1,6 +1,6 @@
 ---
 name: svg-creation
-description: Create or edit source-native, novice-friendly diagrams in the relevant existing svg/ or images/ asset directory when precise layout, compact composition, readable text, reliable arrows, accessible metadata, repair-friendly XML comments, and strict comparison with a supplied PNG etalon matter. Use for standalone .svg illustrations and technical diagrams, not raster artwork or established code-generated icon systems.
+description: Create or edit source-native, novice-friendly diagrams for Anki simple cards and articles in the relevant existing images/ asset directory when precise layout, compact composition, readable text, reliable arrows, accessible metadata, repair-friendly XML comments, and strict comparison with a supplied PNG etalon matter. Use for standalone .svg illustrations and technical diagrams, not raster artwork or established code-generated icon systems.
 ---
 
 # SVG Creation
@@ -11,10 +11,10 @@ Before running the validator outside the bundled Codex environment, install the 
 
 ## Prepare
 
-- Resolve the output folder before creating directories. If the current working directory itself is named `svg` or `images`, use it directly. If the user names an existing SVG or a PNG etalon, place the SVG in that file's containing `svg/` or `images/` directory unless the user requests another location. Otherwise, find the domain-relevant existing directory named `svg` or `images` at or below the current directory.
-- Treat `svg/` and `images/` as equivalent asset-directory boundaries. Never create an asset directory inside one that is already selected: in particular, do not create `svg/svg/`, `svg/images/`, `images/svg/`, or `images/images/`. Keep a recreated SVG beside its PNG etalon when practical so same-stem validation works automatically.
-- If several candidate asset directories exist, infer the intended one from the referenced source, named topic, repository convention, or surrounding task. Ask only when those signals do not identify one safely. If none exists, create `<topic>/svg/` or `<topic>/images/` only when the topic and local repository convention make the choice clear.
-- Inspect a few SVGs in the selected folder before choosing dimensions, typography, colors, or arrow conventions. Read [references/svg-folder-style.md](references/svg-folder-style.md) when matching or establishing its visual system.
+- Resolve the output folder before creating directories. Every diagram belongs in the `images/` directory beside the `Readme.md` of the card or article that links it. If the current working directory itself is named `images`, use it directly. If the user names an existing SVG or a PNG etalon, place the SVG in that file's containing `images/` directory unless the user requests another location. Otherwise, find the domain-relevant existing directory named `images` at or below the current directory.
+- Each card and article owns exactly one `images/` directory, holding that topic's diagrams directly. A new card or article gets its own `images/`; never nest an asset directory inside another, so `images/images/` must never exist. This repository no longer uses an `svg/` folder. Keep a recreated SVG beside its PNG etalon when practical so same-stem validation works automatically.
+- If several candidate `images/` directories exist, infer the intended one from the referenced source, named topic, repository convention, or surrounding task. Ask only when those signals do not identify one safely. If the topic has none, create its own `<topic>/images/` beside its `Readme.md` rather than reusing another topic's folder or adding a subfolder to one.
+- Inspect a few SVGs in the selected `images/` folder before choosing dimensions, typography, colors, or arrow conventions. Read [references/svg-folder-style.md](references/svg-folder-style.md) when matching or establishing its visual system.
 - Establish a positive `viewBox`, a visible reading order, and a compact layout grid before placing detailed content. Reserve margins for titles, legends, labels, and arrowheads without creating a dominant unused region.
 
 ## Author maintainable SVG

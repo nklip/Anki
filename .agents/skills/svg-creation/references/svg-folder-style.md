@@ -1,13 +1,13 @@
 # SVG asset-folder conventions
 
-Read this reference when creating or substantially editing diagrams in the selected `svg/` or `images/` folder.
+Read this reference when creating or substantially editing diagrams in the selected `images/` folder.
 
 ## Location and neighboring files
 
-- Treat the current working directory as the output boundary when it is already named `svg` or `images`; do not add another asset-directory layer beneath it.
-- Otherwise, use the nearest relevant existing `svg/` or `images/` folder at or below the current working directory. Never create nested combinations such as `svg/svg/`, `svg/images/`, `images/svg/`, or `images/images/`.
-- When an existing SVG or PNG etalon is the source or reference, use its containing asset folder for the new or revised SVG. Keeping same-stem SVG and PNG files together enables automatic reference comparison.
-- Inspect nearby SVGs before introducing a new canvas size, font family, palette, component shape, or connector convention. Prefer a coherent folder over a one-off visual style.
+- Every card and article keeps its diagrams in its own `images/` folder beside its `Readme.md`; this repository no longer uses an `svg/` folder. Treat the current working directory as the output boundary when it is already named `images`; never add another asset-directory layer beneath it, so `images/images/` must never exist.
+- Otherwise, use the nearest relevant existing `images/` folder at or below the current working directory. A new topic gets its own `images/` folder, never a subfolder inside another topic's.
+- When an existing SVG or PNG etalon is the source or reference, use its containing `images/` folder for the new or revised SVG. Keeping same-stem SVG and PNG files together enables automatic reference comparison.
+- Inspect nearby SVGs in the same `images/` folder before introducing a new canvas size, font family, palette, component shape, or connector convention. Prefer a coherent folder over a one-off visual style.
 - Preserve accessible metadata and useful XML comments found in well-maintained neighbors. Do not copy omissions from older or minimal examples.
 
 ## Visual language

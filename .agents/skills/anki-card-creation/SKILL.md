@@ -46,7 +46,7 @@ Use the lifecycle wording from the authoritative source. Do not describe a previ
 ## Output location and files
 
 - Write the `.md` file in the topic directory selected by the user. If none is specified, infer the best existing topic directory from the current repository and nearby cards.
-- Store local visuals in the sibling `svg/` directory when the output is an SVG; use lowercase hyphenated filenames.
+- Store local visuals in the card's own sibling `images/` directory, for both simple cards and articles; use lowercase hyphenated filenames. Every card and article has exactly one `images/` folder with its diagrams directly inside it: no nested `images/images/`, and no `svg/` directory.
 - Link visuals with a relative path. The Markdown image alt text must contain the linked file's exact filename, including its extension, without requiring the directory path. Prefer the filename alone, for example: `![jpa-sequence-allocation.svg](images/jpa-sequence-allocation.svg)`. Put the teaching description in the surrounding prose; additional descriptive alt text is allowed when it also includes the filename.
 - Do not modify unrelated cards or diagrams. Preserve an existing card's filename unless the user asks to rename it.
 
@@ -79,7 +79,7 @@ For other topics: the direct answer and most important fact first.
 
 Beginner-friendly explanation that introduces the visual model.
 
-![descriptive-name.svg](svg/descriptive-name.svg)
+![descriptive-name.svg](images/descriptive-name.svg)
 
 ### Important limit
 

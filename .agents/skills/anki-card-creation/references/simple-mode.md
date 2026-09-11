@@ -14,7 +14,7 @@ Requirements:
   and a card must never have to drop a citation to stay in budget. The navigation line is also excluded. Everything else — the Back,
   its headings, tables, code, and image links — counts. Measure it with the bundled validator;
   do not treat bytes or words as characters.
-- Include at least **one** local SVG or image. Prefer one purpose-built SVG that carries the central explanation.
+- Include at least **one** local SVG or image from the sibling `images/` directory. Prefer one purpose-built SVG that carries the central explanation.
 - Ask one focused question on the Front.
 - Begin the Back with a direct answer in one short paragraph. For a versioned feature, its first line must follow the shared bold feature-and-release rule and pass `--require-version-lead`.
 - Include only the definitions, example, limitation, or warning needed to make that answer understandable.

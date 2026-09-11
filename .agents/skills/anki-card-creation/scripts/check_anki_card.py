@@ -336,7 +336,7 @@ What is an atomic update?
 
 An atomic update is observed as one indivisible action.
 
-![atomic-update.svg](svg/atomic-update.svg)
+![atomic-update.svg](images/atomic-update.svg)
 
 ```java
 counter.incrementAndGet();
@@ -347,8 +347,8 @@ counter.incrementAndGet();
 - [Java API](https://example.com/api)
 """
     complex_card = simple.replace(
-        "![atomic-update.svg](svg/atomic-update.svg)",
-        "![before.svg](svg/before.svg)\n\n![after.svg](svg/after.svg)",
+        "![atomic-update.svg](images/atomic-update.svg)",
+        "![before.svg](images/before.svg)\n\n![after.svg](images/after.svg)",
     ).replace("# Front\n\nWhat is an atomic update?\n\n# Back\n\n", "")
     assert not validate_text(simple, Path("card.md"), "simple", check_local_files=False)
     assert not validate_text(complex_card, Path("card.md"), "complex", check_local_files=False)
@@ -378,7 +378,7 @@ counter.incrementAndGet();
     with TemporaryDirectory() as directory:
         root = Path(directory)
         card_path = root / "subject" / "topic" / "card.md"
-        image_path = card_path.parent / "svg" / "atomic-update.svg"
+        image_path = card_path.parent / "images" / "atomic-update.svg"
         image_path.parent.mkdir(parents=True)
         image_path.write_text('<svg xmlns="http://www.w3.org/2000/svg"/>', encoding="utf-8")
         index = root / "subject" / "Readme.md"
@@ -473,7 +473,7 @@ counter.incrementAndGet();
     assert not validate_text(
         descriptive_alt, Path("card.md"), "simple", check_local_files=False
     )
-    nested_image = simple.replace("svg/atomic-update.svg", "images/steps/atomic-update.svg")
+    nested_image = simple.replace("images/atomic-update.svg", "images/steps/atomic-update.svg")
     assert not validate_text(
         nested_image, Path("card.md"), "simple", check_local_files=False
     )
@@ -519,17 +519,17 @@ counter.incrementAndGet();
 
     process_card = complex_card.replace(
         "# Sources",
-        "## Step 1 — Read\n\n![read.svg](svg/read.svg)\n\n"
-        "## Step 2 — Write\n\n![write.svg](svg/write.svg)\n\n# Sources",
+        "## Step 1 — Read\n\n![read.svg](images/read.svg)\n\n"
+        "## Step 2 — Write\n\n![write.svg](images/write.svg)\n\n# Sources",
     )
     assert not validate_text(process_card, Path("card.md"), "complex", check_local_files=False)
 
-    missing_step_svg = process_card.replace("![write.svg](svg/write.svg)", "Step explanation")
+    missing_step_svg = process_card.replace("![write.svg](images/write.svg)", "Step explanation")
     assert any("requires its own local .svg" in error for error in validate_text(
         missing_step_svg, Path("card.md"), "complex", check_local_files=False
     ))
 
-    no_image = simple.replace("![atomic-update.svg](svg/atomic-update.svg)\n\n", "")
+    no_image = simple.replace("![atomic-update.svg](images/atomic-update.svg)\n\n", "")
     assert any("requires at least" in error for error in validate_text(
         no_image, Path("card.md"), "simple", check_local_files=False
     ))

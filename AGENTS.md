@@ -26,7 +26,7 @@ Use this skill when creating or revising Anki-ready Markdown cards in this repos
 - Default new cards to simple mode; use complex mode (also called article mode) when the user selects either name or clearly requests comprehensive treatment. When revising, infer the mode from the existing structure unless the user selects a mode.
 - Simple mode uses `# Front` and `# Back`; complex/article mode omits both. Neither mode generates HTML comments in Markdown prose, including mode metadata. Both modes end with `# Sources`.
 - Verify factual claims using authoritative sources, or the fallback evidence rule defined by the skill.
-- Use local teaching visuals and link them with relative paths.
+- Use local teaching visuals from the card's sibling `images/` directory and link them with relative paths.
 - Do not use this skill for exporting `.apkg` decks or other Anki package formats.
 
 Validate from the repository root. The default mode is `auto`: any exact `Front` or `Back` heading at level one or legacy level two, outside fenced code and HTML comments, indicates simple mode; none indicates complex/article mode. A single heading or mixed-level pair remains simple content requiring repair: promote legacy headings to `# Front`/`# Back` and add any missing boundary. Mode comments do not select the mode. Explicit mode flags check the selected format:
@@ -53,7 +53,7 @@ Runtime requirements: [`.agents/skills/svg-creation/README.md`](.agents/skills/s
 
 Use this skill when creating, recreating, comparing, or repairing standalone SVG teaching diagrams and technical illustrations. It covers source-native SVG structure, layout, text clearance, connectors and arrowheads, accessibility metadata, PNG-etalon comparison, and visual review.
 
-- Use an existing `svg/` or `images/` directory as the asset boundary, including when it is the current working directory; never create another `svg/` or `images/` directory inside it.
+- Use the card's or article's own `images/` directory as the asset boundary, including when it is the current working directory; never nest an asset directory inside it, so no `images/images/`. Each new card or article gets its own `images/`; the repository no longer uses an `svg/` folder for new or revised visuals.
 - Keep diagrams editable and source-native; never embed the PNG etalon with `<image>`.
 - Preserve the etalon's canvas, content, colors, labels, connector routing, and arrowheads when recreating a PNG.
 - A same-stem PNG beside an SVG is discovered automatically by the checker.

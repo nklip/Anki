@@ -11,7 +11,7 @@ Requirements:
 - Follow the shared order: title, one standalone upward navigation line without a list marker, then teaching content, separated by blank lines with no other intervening content. Omit `# Front` and `# Back`; end with `# Sources`. Do not generate HTML comments in article prose, including mode metadata comments. Fenced code examples and XML comments in separate SVG assets are unaffected.
 - There is no character limit, but every section must contribute to understanding or prevent a material misconception.
 - Include at least **two** local SVGs or images with different teaching purposes, such as structure plus behavior, or before-state plus after-state.
-- If the article teaches a step-by-step process, every numbered or named step must have its own local `.svg` diagram immediately under that step's heading. A general overview image does not replace step-specific SVGs.
+- If the article teaches a step-by-step process, every numbered or named step must have its own local `.svg` diagram in the sibling `images/` directory, linked immediately under that step's heading. A general overview image does not replace step-specific SVGs.
 - Begin the teaching content immediately after the navigation line with the direct answer and a short roadmap of the explanation. For a versioned feature, the first nonblank line after navigation must follow the shared bold feature-and-release rule and pass `--require-version-lead`.
 - Introduce terminology and the static model before describing state changes or edge cases.
 - Prefer this teaching order when it fits: core idea → vocabulary → structure → process → example → limitations or misconceptions → concise summary.
@@ -31,13 +31,13 @@ The core answer and a short roadmap of the explanation.
 
 Explain the model and how to read the visual.
 
-![topic-structure.svg](svg/topic-structure.svg)
+![topic-structure.svg](images/topic-structure.svg)
 
 ## Behavior
 
 Explain what changes and why it matters.
 
-![topic-behavior.svg](svg/topic-behavior.svg)
+![topic-behavior.svg](images/topic-behavior.svg)
 
 # Sources
 

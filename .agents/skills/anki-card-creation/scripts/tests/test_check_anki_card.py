@@ -25,7 +25,7 @@ class CardValidationTests(unittest.TestCase):
         self.addCleanup(self.temporary_directory.cleanup)
         self.root = Path(self.temporary_directory.name)
         self.card_path = self.root / "Subject" / "topic" / "card.md"
-        image_directory = self.card_path.parent / "svg"
+        image_directory = self.card_path.parent / "images"
         image_directory.mkdir(parents=True)
         for filename in ("overview.svg", "comparison.svg", "step.svg"):
             (image_directory / filename).write_text(
@@ -43,8 +43,8 @@ class CardValidationTests(unittest.TestCase):
         return (
             f"# A teaching topic\n\n{self.navigation}\n\n"
             f"{boundaries}The operation changes the stored state.\n\n"
-            "![overview.svg](svg/overview.svg)\n\n"
-            "![comparison.svg](svg/comparison.svg)\n\n"
+            "![overview.svg](images/overview.svg)\n\n"
+            "![comparison.svg](images/comparison.svg)\n\n"
             f"{body}\n\n# Sources\n\n"
             "- [Official reference](https://example.com/reference)\n"
         )
@@ -123,7 +123,7 @@ class CardValidationTests(unittest.TestCase):
             for comment in ("", "<!-- Card mode: simple. Validate with --mode simple. -->"):
                 with self.subTest(front=front, back=back, comment=comment):
                     text = self.card(comment, mode="simple").replace(
-                        "![comparison.svg](svg/comparison.svg)\n\n", "", 1
+                        "![comparison.svg](images/comparison.svg)\n\n", "", 1
                     )
                     for name, level in (("Front", front), ("Back", back)):
                         text = text.replace(f"# {name}\n", f"{level} {name}\n" if level else "", 1)
@@ -166,7 +166,7 @@ class CardValidationTests(unittest.TestCase):
         for mode in ("simple", "complex"):
             with self.subTest(mode=mode):
                 text = self.card(mode=mode).replace(
-                    "![comparison.svg](svg/comparison.svg)\n\n", "", 1
+                    "![comparison.svg](images/comparison.svg)\n\n", "", 1
                 )
                 if mode == "simple":
                     self.assertEqual([], self.errors(text))
@@ -203,7 +203,7 @@ class CardValidationTests(unittest.TestCase):
         self.assertFalse(any("missing required heading" in error for error in errors), errors)
 
     def test_comments_cannot_supply_visuals_or_sources(self) -> None:
-        images = "![overview.svg](svg/overview.svg)\n\n![comparison.svg](svg/comparison.svg)"
+        images = "![overview.svg](images/overview.svg)\n\n![comparison.svg](images/comparison.svg)"
         source = "- [Official reference](https://example.com/reference)"
         text = self.card().replace(images, f"<!--\n{images}\n-->")
         text = text.replace(source, f"<!--\n{source}\n-->")
@@ -254,7 +254,7 @@ class CardValidationTests(unittest.TestCase):
 
     def test_cli_routes_legacy_card_to_simple_migration_without_an_extra_visual(self) -> None:
         text = self.card(mode="simple").replace(
-            "![comparison.svg](svg/comparison.svg)\n\n", "", 1
+            "![comparison.svg](images/comparison.svg)\n\n", "", 1
         )
         for heading in ("# Front", "# Back", "# Sources"):
             text = text.replace(heading, "#" + heading, 1)
@@ -284,7 +284,7 @@ class CardValidationTests(unittest.TestCase):
             with self.subTest(level=level):
                 text = self.card(
                     f"{'#' * level} Step 1 — Read\n\nRead the value.\n\n"
-                    "## Example\n\n![step.svg](svg/step.svg)"
+                    "## Example\n\n![step.svg](images/step.svg)"
                 )
                 errors = self.errors(text)
                 self.assert_error(errors, "Step 1", "own local .svg")
@@ -294,16 +294,16 @@ class CardValidationTests(unittest.TestCase):
         for level in range(3, 7):
             with self.subTest(level=level):
                 errors = self.errors(self.card(
-                    f"{'#' * level} Step 1 — Read\n\n![step.svg](svg/step.svg)"
+                    f"{'#' * level} Step 1 — Read\n\n![step.svg](images/step.svg)"
                 ))
                 self.assert_error(errors, "Step 1", "##")
                 self.assertFalse(any("own local .svg" in error for error in errors))
 
     def test_migrated_steps_with_diagrams_pass(self) -> None:
         body = (
-            "## Step 1 — Read\n\n![step.svg](svg/step.svg)\n\n"
+            "## Step 1 — Read\n\n![step.svg](images/step.svg)\n\n"
             "### Detail\n\nObserve the value.\n\n"
-            "## Step 2 — Write\n\n![step.svg](svg/step.svg)"
+            "## Step 2 — Write\n\n![step.svg](images/step.svg)"
         )
         self.assertEqual([], self.errors(self.card(body)))
 
@@ -312,7 +312,7 @@ class CardValidationTests(unittest.TestCase):
             with self.subTest(first_level=first_level, second_level=second_level):
                 errors = self.errors(self.card(
                     f"{'#' * first_level} Step 1 — Read\n\nNo diagram here.\n\n"
-                    f"{'#' * second_level} Step 2 — Write\n\n![step.svg](svg/step.svg)"
+                    f"{'#' * second_level} Step 2 — Write\n\n![step.svg](images/step.svg)"
                 ))
                 self.assert_error(errors, "Step 1", "own local .svg")
                 self.assertFalse(any("Step 2" in error and "own local .svg" in error for error in errors))
@@ -320,7 +320,7 @@ class CardValidationTests(unittest.TestCase):
     def test_non_step_sibling_diagram_cannot_satisfy_previous_step(self) -> None:
         errors = self.errors(self.card(
             "## Step 1 — Read\n\nNo diagram here.\n\n"
-            "## Comparison\n\n![step.svg](svg/step.svg)"
+            "## Comparison\n\n![step.svg](images/step.svg)"
         ))
         self.assert_error(errors, "Step 1", "own local .svg")
 
@@ -332,13 +332,13 @@ class CardValidationTests(unittest.TestCase):
                 self.assertFalse(any("Step" in error for error in errors), errors)
 
     def test_fenced_diagram_cannot_satisfy_a_real_step(self) -> None:
-        for name, example in self.fenced_examples("![step.svg](svg/step.svg)").items():
+        for name, example in self.fenced_examples("![step.svg](images/step.svg)").items():
             with self.subTest(fence=name):
                 errors = self.errors(self.card(f"## Step 1 — Read\n\n{example}"))
                 self.assert_error(errors, "Step 1", "own local .svg")
 
     def test_fenced_images_do_not_satisfy_global_visual_minimum(self) -> None:
-        images = "![overview.svg](svg/overview.svg)\n\n![comparison.svg](svg/comparison.svg)"
+        images = "![overview.svg](images/overview.svg)\n\n![comparison.svg](images/comparison.svg)"
         for name, example in self.fenced_examples(images).items():
             with self.subTest(fence=name):
                 text = self.card(example).replace(images + "\n\n", "", 1)
