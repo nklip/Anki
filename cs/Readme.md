@@ -6,6 +6,7 @@ Anki-ready cards on general computer-science and interview-preparation topics, e
 Every card lives in its own folder as `Readme.md`, with its diagrams in a sibling `images/` directory.
 
 ## Content
+ * [Data structures. Merkle tree](./Data%20structures.%20Merkle%20tree/Readme.md) - how a root hash summarizes a data set, isolates the one block two replicas disagree on, and proves a single block with an audit path
  * [Protocols. FTP](./Protocols.%20FTP/Readme.md) - separate control and data connections, active/passive modes, and encryption
  * [Protocols. HTTP](./Protocols.%20HTTP/Readme.md) - requests, responses, status codes, statelessness, HTTPS, and protocol versions
  * [Protocols. HTTPS](./Protocols.%20HTTPS/Readme.md) - TLS handshakes, public/private and traffic keys, encrypted HTTP, and visible metadata

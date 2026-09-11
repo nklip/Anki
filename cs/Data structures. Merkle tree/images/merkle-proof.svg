@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1300" height="660" viewBox="0 0 1300 660" role="img" aria-labelledby="title desc">
+  <title id="title">A Merkle proof checks one block with three sibling hashes</title>
+  <desc id="desc">A Merkle tree over eight blocks. To prove block 5 belongs, a verifier is given the three highlighted sibling hashes h4, h67 and h0123, recombines them upward through h45 and h4567, and compares the result with the known root hash.</desc>
+
+  <!-- Palette follows the sibling diagrams in this folder: white nodes with grey strokes,
+       amber for the block under proof, cs-blue #0b78b5 for the proof path. -->
+  <defs>
+    <style>
+      .heading { font: 27px Georgia, serif; fill: #111; text-anchor: middle; }
+      .sub { font: 20px Arial, sans-serif; fill: #475569; text-anchor: middle; }
+      .node { fill: #fff; stroke: #555; stroke-width: 2.5; }
+      .node-given { fill: #eff8fc; stroke: #0b78b5; stroke-width: 3.5; }
+      .node-recomputed { fill: #fff; stroke: #0b78b5; stroke-width: 3.5; stroke-dasharray: 7 5; }
+      .node-target { fill: #f59e0b; stroke: #555; stroke-width: 2.5; }
+      .edge { stroke: #555; stroke-width: 2; fill: none; }
+      .edge-path { stroke: #0b78b5; stroke-width: 3.5; fill: none; }
+      .text { font: 17px Arial, sans-serif; fill: #222; text-anchor: middle; dominant-baseline: middle; }
+      .note { font: 19px Arial, sans-serif; fill: #475569; }
+      .note-box { fill: #f8fafc; stroke: #64748b; stroke-width: 2; }
+      .badge { fill: #0b78b5; }
+      .badge-text { font: bold 17px Arial, sans-serif; fill: #fff; text-anchor: middle; dominant-baseline: middle; }
+      .legend-text { font: 18px Arial, sans-serif; fill: #334155; dominant-baseline: middle; }
+    </style>
+  </defs>
+
+  <rect width="1300" height="660" fill="#fff"/>
+
+  <!-- Lesson statement. -->
+  <text class="heading" x="650" y="42">Proving block 5 is in the tree costs three hashes, not eight blocks</text>
+  <text class="sub" x="650" y="76">every parent = hash(left child + right child)</text>
+
+  <!-- Cost callout fills the space left of the root. -->
+  <rect class="note-box" x="40" y="100" width="310" height="66" rx="10"/>
+  <text class="note" x="56" y="131">8 leaves -&gt; 3 sibling hashes</text>
+  <text class="note" x="56" y="158">n leaves -&gt; about log2 n</text>
+
+  <!-- Tree edges, drawn first so every node box paints over their endpoints.
+       Columns: leaves at x = 125 + 150k; parents sit at each pair's midpoint. -->
+  <g aria-label="tree edges off the proof path">
+    <path class="edge" d="M125 455L200 384"/><path class="edge" d="M275 455L200 384"/>
+    <path class="edge" d="M425 455L500 384"/><path class="edge" d="M575 455L500 384"/>
+    <path class="edge" d="M1025 455L1100 384"/><path class="edge" d="M1175 455L1100 384"/>
+    <path class="edge" d="M200 340L350 269"/><path class="edge" d="M500 340L350 269"/>
+    <path class="edge" d="M125 550V495"/><path class="edge" d="M275 550V495"/>
+    <path class="edge" d="M425 550V495"/><path class="edge" d="M575 550V495"/>
+    <path class="edge" d="M725 550V495"/><path class="edge" d="M1025 550V495"/>
+    <path class="edge" d="M1175 550V495"/>
+  </g>
+
+  <!-- The six edges the verifier actually walks, leaf 5 up to the root. -->
+  <g aria-label="proof path edges">
+    <path class="edge-path" d="M725 455L800 384"/><path class="edge-path" d="M875 455L800 384"/>
+    <path class="edge-path" d="M800 340L950 269"/><path class="edge-path" d="M1100 340L950 269"/>
+    <path class="edge-path" d="M350 225L650 154"/><path class="edge-path" d="M950 225L650 154"/>
+    <path class="edge-path" d="M875 550V495"/>
+  </g>
+
+  <!-- Root: recomputed by the verifier, then compared with the root it already trusts. -->
+  <rect class="node-recomputed" x="585" y="110" width="130" height="44" rx="4"/>
+  <text class="text" x="650" y="132">root hash</text>
+
+  <!-- Level 1. h0123 is supplied to the verifier; h4567 is recomputed. -->
+  <rect class="node-given" x="290" y="225" width="120" height="44" rx="4"/>
+  <text class="text" x="350" y="247">h0123</text>
+  <rect class="node-recomputed" x="890" y="225" width="120" height="44" rx="4"/>
+  <text class="text" x="950" y="247">h4567</text>
+
+  <!-- Level 2. h67 is supplied; h45 is recomputed; h01 and h23 are never sent. -->
+  <rect class="node" x="145" y="340" width="110" height="44" rx="4"/>
+  <text class="text" x="200" y="362">h01</text>
+  <rect class="node" x="445" y="340" width="110" height="44" rx="4"/>
+  <text class="text" x="500" y="362">h23</text>
+  <rect class="node-recomputed" x="745" y="340" width="110" height="44" rx="4"/>
+  <text class="text" x="800" y="362">h45</text>
+  <rect class="node-given" x="1045" y="340" width="110" height="44" rx="4"/>
+  <text class="text" x="1100" y="362">h67</text>
+
+  <!-- Leaf hashes. h5 is the block under question; h4 is its supplied sibling. -->
+  <g aria-label="leaf hashes">
+    <rect class="node" x="73" y="455" width="104" height="40" rx="4"/><text class="text" x="125" y="475">h0</text>
+    <rect class="node" x="223" y="455" width="104" height="40" rx="4"/><text class="text" x="275" y="475">h1</text>
+    <rect class="node" x="373" y="455" width="104" height="40" rx="4"/><text class="text" x="425" y="475">h2</text>
+    <rect class="node" x="523" y="455" width="104" height="40" rx="4"/><text class="text" x="575" y="475">h3</text>
+    <rect class="node-given" x="673" y="455" width="104" height="40" rx="4"/><text class="text" x="725" y="475">h4</text>
+    <rect class="node-target" x="823" y="455" width="104" height="40" rx="4"/><text class="text" x="875" y="475">h5</text>
+    <rect class="node" x="973" y="455" width="104" height="40" rx="4"/><text class="text" x="1025" y="475">h6</text>
+    <rect class="node" x="1123" y="455" width="104" height="40" rx="4"/><text class="text" x="1175" y="475">h7</text>
+  </g>
+
+  <!-- Data blocks. Only block 5 travels with the proof; the rest stay where they are. -->
+  <g aria-label="data blocks">
+    <rect class="node" x="73" y="550" width="104" height="38" rx="4"/><text class="text" x="125" y="569">block 0</text>
+    <rect class="node" x="223" y="550" width="104" height="38" rx="4"/><text class="text" x="275" y="569">block 1</text>
+    <rect class="node" x="373" y="550" width="104" height="38" rx="4"/><text class="text" x="425" y="569">block 2</text>
+    <rect class="node" x="523" y="550" width="104" height="38" rx="4"/><text class="text" x="575" y="569">block 3</text>
+    <rect class="node" x="673" y="550" width="104" height="38" rx="4"/><text class="text" x="725" y="569">block 4</text>
+    <rect class="node-target" x="823" y="550" width="104" height="38" rx="4"/><text class="text" x="875" y="569">block 5</text>
+    <rect class="node" x="973" y="550" width="104" height="38" rx="4"/><text class="text" x="1025" y="569">block 6</text>
+    <rect class="node" x="1123" y="550" width="104" height="38" rx="4"/><text class="text" x="1175" y="569">block 7</text>
+  </g>
+
+  <!-- Recombination order, placed in the clear gap beside each recomputed node. -->
+  <circle class="badge" cx="880" cy="362" r="16"/><text class="badge-text" x="880" y="362">1</text>
+  <circle class="badge" cx="1045" cy="247" r="16"/><text class="badge-text" x="1045" y="247">2</text>
+  <circle class="badge" cx="750" cy="132" r="16"/><text class="badge-text" x="750" y="132">3</text>
+
+  <!-- Legend maps each fill to its role in the proof. -->
+  <g aria-label="legend">
+    <rect class="node-target" x="120" y="618" width="30" height="22" rx="3"/>
+    <text class="legend-text" x="162" y="629">the block being proved and its hash</text>
+    <rect class="node-given" x="490" y="618" width="30" height="22" rx="3"/>
+    <text class="legend-text" x="532" y="629">audit path: 3 given hashes</text>
+    <rect class="node-recomputed" x="850" y="618" width="30" height="22" rx="3"/>
+    <text class="legend-text" x="892" y="629">recomputed (1, 2, 3)</text>
+  </g>
+</svg>
