@@ -2,7 +2,9 @@
   <title id="optimistic-title">Optimistic locking with and without a version conflict</title>
   <desc id="optimistic-desc">The left panel shows sequential optimistic-locking updates: user 1 reads version 1 and writes version 2, then user 2 reads version 2 and writes version 3, so there is no conflict. The right panel shows both users reading version 1; after user 1 writes version 2, user 2 attempts another version 2 write and receives a conflict.</desc>
   <defs>
-    <marker id="head-flow" viewBox="0 0 22 17" refX="22" refY="8.5" markerWidth="22" markerHeight="17" markerUnits="userSpaceOnUse" orient="auto">
+    <marker id="head-flow" viewBox="0 0 22 17" refX="17" refY="8.5" markerWidth="22" markerHeight="17" markerUnits="userSpaceOnUse" orient="auto">
+      <!-- Tip sits at x=22, five units past refX, so every connector path ends five units
+           short of the visible point. The head is 2.3 units wider than the shaft there. -->
       <path d="M0 0 22 8.5 0 17Z" fill="#000"/>
     </marker>
     <style>
@@ -51,7 +53,7 @@
     <path class="shaft" d="M476.5 70V142"/>
     <path class="shaft" d="M476.5 218V484"/>
     <path class="shaft" d="M476.5 560V826"/>
-    <path id="leftVersionOutcomeArrow" class="flow" d="M476.5 902V1018"/>
+    <path id="leftVersionOutcomeArrow" class="flow" d="M476.5 902V1013"/>
     <circle class="version" cx="477" cy="180" r="38"/>
     <circle class="version" cx="477" cy="522" r="38"/>
     <circle class="version" cx="477" cy="864" r="38"/>
@@ -60,24 +62,27 @@
     <text x="457" y="879">v3</text>
   </g>
 
+  <!-- Each labelled operation is one straight source-to-target line drawn as two collinear
+       fragments, so a label can sit in the gap. Keep both fragments on the same line when
+       editing an endpoint; a slope change in one of them shows up as a visible kink. -->
   <!-- User 1 reads v1 and writes v2. Labels sit in deliberate connector gaps. -->
   <g id="left-user-1-operations">
-    <path class="shaft" d="M442 196 362 236"/>
+    <path class="shaft" d="M442.9 196.8 361.2 236.9"/>
     <text x="226" y="282">Read v1</text>
-    <path id="leftUser1ReadArrow" class="flow" d="M230 302 146 342"/>
-    <path class="shaft" d="M145 368 226 406"/>
-    <text x="227" y="451"><tspan x="227">Write</tspan><tspan x="342">v2</tspan></text>
-    <path id="leftUser1WriteArrow" class="flow" d="M397 474 441 505"/>
+    <path id="leftUser1ReadArrow" class="flow" d="M229.9 301.3 150.9 340.1"/>
+    <path class="shaft" d="M145 367.6 226.9 405.7"/>
+    <text x="227" y="451">Write v2</text>
+    <path id="leftUser1WriteArrow" class="flow" d="M366 470.4 437 503.4"/>
   </g>
 
   <!-- User 2 starts from v2, so the next write can advance safely to v3. -->
   <g id="left-user-2-operations">
-    <path class="shaft" d="M513 540 582 573"/>
+    <path class="shaft" d="M511 538.9 582.9 574.7"/>
     <text x="578" y="621"><tspan x="578">Read</tspan><tspan x="680">v2</tspan></text>
-    <path id="leftUser2ReadArrow" class="flow" d="M735 640 800 682"/>
-    <path class="shaft" d="M800 722 708 751"/>
+    <path id="leftUser2ReadArrow" class="flow" d="M712.1 639.3 794 680.2"/>
+    <path class="shaft" d="M800.5 705.4 707 751.6"/>
     <text x="570" y="800">Write v3</text>
-    <path id="leftUser2WriteArrow" class="flow" d="M575 817 513 848"/>
+    <path id="leftUser2WriteArrow" class="flow" d="M575.9 816.3 518.6 844.6"/>
   </g>
 
   <!-- Blue check and text reproduce the successful result callout. -->
@@ -91,7 +96,7 @@
     <path class="shaft" d="M1421.5 70V142"/>
     <path class="shaft" d="M1421.5 218V484"/>
     <path class="shaft" d="M1421.5 560V826"/>
-    <path id="rightVersionOutcomeArrow" class="flow" d="M1421.5 902V1018"/>
+    <path id="rightVersionOutcomeArrow" class="flow" d="M1421.5 902V1013"/>
     <circle class="version" cx="1422" cy="180" r="38"/>
     <circle class="version" cx="1422" cy="522" r="38"/>
     <circle class="version" cx="1422" cy="864" r="38"/>
@@ -102,29 +107,29 @@
 
   <!-- User 1 performs the winning v1-to-v2 update. -->
   <g id="right-user-1-operations">
-    <path class="shaft" d="M1387 196 1308 236"/>
+    <path class="shaft" d="M1388 197.1 1307.1 236.8"/>
     <text x="1172" y="282">Read v1</text>
-    <path id="rightUser1ReadArrow" class="flow" d="M1176 302 1092 342"/>
-    <path class="shaft" d="M1091 368 1172 406"/>
-    <text x="1173" y="451"><tspan x="1173">Write</tspan><tspan x="1288">v2</tspan></text>
-    <path id="rightUser1WriteArrow" class="flow" d="M1343 474 1387 505"/>
+    <path id="rightUser1ReadArrow" class="flow" d="M1175.9 301.2 1096.9 340"/>
+    <path class="shaft" d="M1091 367.7 1172.9 405.8"/>
+    <text x="1173" y="451">Write v2</text>
+    <path id="rightUser1WriteArrow" class="flow" d="M1312 470.5 1382.2 503.1"/>
   </g>
 
   <!-- User 2 also reads v1, but its later write is based on a stale version. -->
   <g id="right-user-2-operations">
-    <path class="shaft" d="M1458 195 1533 220"/>
+    <path class="shaft" d="M1458 192.3 1533.8 219.7"/>
     <text x="1545" y="262">Read v1</text>
-    <path id="rightUser2ReadArrow" class="flow" d="M1696 277 1787 312"/>
-    <path class="shaft" d="M1807 420 1647 601"/>
+    <path id="rightUser2ReadArrow" class="flow" d="M1695 277.9 1782.9 309.6"/>
+    <path class="shaft" d="M1807.3 412.3 1647.2 601.1"/>
     <text x="1550" y="647">Write v2</text>
-    <path id="rightUser2WriteArrow" class="flow" d="M1592 668 1450 837"/>
+    <path id="rightUser2WriteArrow" class="flow" d="M1591.5 666.7 1453 829.9"/>
   </g>
 
   <!-- The dashed return loop makes the rejected stale-version write explicit. -->
   <g id="version-conflict-loop">
     <path class="shaft" stroke-dasharray="10 8" d="M1388 846C1334 818 1290 772 1274 724"/>
     <text x="1204" y="705">Conflict</text>
-    <path id="versionConflictArrow" class="conflict-flow" d="M1275 654C1292 600 1330 565 1389 540"/>
+    <path id="versionConflictArrow" class="conflict-flow" d="M1275 654C1291.6 601.4 1328 566.8 1384.4 542"/>
   </g>
 
   <!-- Red X and text identify the rejected update. -->

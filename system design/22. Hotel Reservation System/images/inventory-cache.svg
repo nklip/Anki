@@ -2,7 +2,9 @@
   <title id="inventory-cache-title">Inventory cache for hotel reservations</title>
   <desc id="inventory-cache-desc">The reservation service queries an inventory cache and updates shard 15 of the inventory database. The database asynchronously refreshes the cache.</desc>
   <defs>
-    <marker id="head-flow" viewBox="0 0 21 17" refX="21" refY="8.5" markerWidth="21" markerHeight="17" markerUnits="userSpaceOnUse" orient="auto">
+    <marker id="head-flow" viewBox="0 0 21 17" refX="16" refY="8.5" markerWidth="21" markerHeight="17" markerUnits="userSpaceOnUse" orient="auto">
+      <!-- Tip sits at x=21, five units past refX, so every flow path ends five units short
+           of the visible point. The head is 1.9 units wider than the shaft there. -->
       <path d="M0 0 21 8.5 0 17Z" fill="#000"/>
     </marker>
     <style>
@@ -40,14 +42,14 @@
   <g id="query-inventory">
     <path class="line" d="M516.5 147 413.5 276.5"/>
     <text x="248" y="326">Query inventory</text>
-    <path id="queryInventoryArrow" class="flow" d="M357.5 348 248.5 484"/>
+    <path id="queryInventoryArrow" class="flow" d="M357.5 348 251.6 480.1"/>
   </g>
 
   <!-- Write path to the authoritative inventory shard. -->
   <g id="update-inventory">
     <path class="line" d="M612.5 147 720 277"/>
     <text x="601" y="326">Update inventory</text>
-    <path id="updateInventoryArrow" class="flow" d="M780 348 889.5 480.5"/>
+    <path id="updateInventoryArrow" class="flow" d="M780 348 886.3 476.6"/>
   </g>
 
   <!-- Inventory cache: official Redis mark from the shared redis-cube symbol, same footprint as the previous icon. -->
@@ -66,7 +68,7 @@
   <!-- Cache invalidation travels from the database back to Redis. -->
   <g id="async-cache-update">
     <path class="line" d="M874.5 544.5H765"/>
-    <path id="asyncUpdateCacheArrow" class="flow" d="M389 544.5H261"/>
+    <path id="asyncUpdateCacheArrow" class="flow" d="M389 544.5H266"/>
     <text x="400" y="558">Async update cache</text>
   </g>
 
