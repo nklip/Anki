@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="700" viewBox="0 0 1120 700" role="img" aria-labelledby="title desc">
+<title id="title">Parallel calls still wait for required results</title>
+<desc id="desc">Green server icons show page-service dispatch, three downstream services and page-service result merging. The profile, inventory and recommendations calls take 40, 50 and 180 milliseconds in this illustrative example.</desc>
+<!-- Source-native System Design icons are copied into defs for portable rendering. -->
+<defs>
+<!-- Icons reused verbatim; IDs are namespaced to keep each diagram self-contained. -->
+<!-- Source: system design/11. News Feed System/images/fanout-service.svg; symbol #server-rack. -->
+<symbol id="sd-server-rack" viewBox="0 0 30 50"><rect x="2" y="1" width="26" height="48" rx="1.5" fill="#65c515"/><path d="M6 9 H24 M6 37 H24 M6 44 H24" stroke="#fff" stroke-width="2"/></symbol>
+<style>
+text{font-family:Arial,Helvetica,sans-serif}
+.node{fill:#fff;stroke:#08b4cf;stroke-width:2}
+.panel{fill:#f7f9fc;stroke:#cad3df;stroke-width:1.5}
+.amber{fill:#fff7e9;stroke:#a56a0b;stroke-width:2}
+.blue{fill:#eaf3ff;stroke:#1677b8;stroke-width:1.7}
+.flow{fill:none;stroke:#1677b8;stroke-width:2.5;stroke-linejoin:round}
+</style></defs>
+<rect width="1120" height="700" fill="#fff"/>
+<!-- Title and reading direction. -->
+<text x="560.0" y="38" font-size="27" text-anchor="middle" fill="#142333" font-weight="bold">Parallel calls still wait for required results</text>
+<text x="560.0" y="72" font-size="18" text-anchor="middle" fill="#142333">Fanout sends calls outward; fan-in combines responses. All three are required here.</text>
+<!-- Page-service nodes share Inventory's centerline at y=325. Side ports are spaced 44 units apart. -->
+<rect id="dispatch" class="node" x="25" y="254" width="200" height="142" rx="12"/>
+<use id="dispatch-icon" href="#sd-server-rack" x="107.0" y="266" width="36" height="60"/>
+<text x="125.0" y="360" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Page service</text>
+<text x="125.0" y="385" font-size="18" text-anchor="middle" fill="#142333">dispatch calls</text>
+<rect id="merge" class="node" x="895" y="254" width="200" height="142" rx="12"/>
+<use id="merge-icon" href="#sd-server-rack" x="977.0" y="266" width="36" height="60"/>
+<text x="995.0" y="360" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Page service</text>
+<text x="995.0" y="385" font-size="18" text-anchor="middle" fill="#142333">merge results</text>
+<!-- Middle cards have equal 75-unit vertical gaps. Direct diagonal connectors have rotated heads; each shaft ends 10 units before its tip, beneath the 12-unit head. -->
+<rect id="profile" class="node" x="410" y="100" width="300" height="100" rx="12"/>
+<use id="profile-icon" href="#sd-server-rack" x="431" y="120" width="32" height="54"/>
+<text x="587" y="156" font-size="20" text-anchor="middle" fill="#142333" font-weight="bold">Profile</text>
+<path id="profile-request-shaft" data-connector="true" class="flow" d="M225 281 L401.839 155.779"/>
+<polygon id="profile-request-head" points="410,150 403.385,161.423 397.028,152.446" fill="#1677b8"/>
+<path id="profile-reply-shaft" data-connector="true" class="flow" d="M710 150 L886.839 275.221"/>
+<polygon id="profile-reply-head" points="895,281 882.028,278.554 888.385,269.577" fill="#1677b8"/>
+<rect id="inventory" class="node" x="410" y="275" width="300" height="100" rx="12"/>
+<use id="inventory-icon" href="#sd-server-rack" x="431" y="295" width="32" height="54"/>
+<text x="587" y="331" font-size="20" text-anchor="middle" fill="#142333" font-weight="bold">Inventory</text>
+<!-- Inventory enters and leaves on one uninterrupted horizontal centerline. -->
+<path id="inventory-request-shaft" data-connector="true" class="flow" d="M225 325 H400"/>
+<polygon id="inventory-request-head" points="410,325 398,330.5 398,319.5" fill="#1677b8"/>
+<path id="inventory-reply-shaft" data-connector="true" class="flow" d="M710 325 H885"/>
+<polygon id="inventory-reply-head" points="895,325 883,330.5 883,319.5" fill="#1677b8"/>
+<rect id="recommendations" class="amber" x="410" y="450" width="300" height="100" rx="12"/>
+<use id="recommendations-icon" href="#sd-server-rack" x="431" y="470" width="32" height="54"/>
+<text x="587" y="506" font-size="20" text-anchor="middle" fill="#142333" font-weight="bold">Recommendations</text>
+<path id="recommendations-request-shaft" data-connector="true" class="flow" d="M225 369 L401.839 494.221"/>
+<polygon id="recommendations-request-head" points="410,500 397.028,497.554 403.385,488.577" fill="#1677b8"/>
+<path id="recommendations-reply-shaft" data-connector="true" class="flow" d="M710 500 L886.839 374.779"/>
+<polygon id="recommendations-reply-head" points="895,369 888.385,380.423 882.028,371.446" fill="#1677b8"/>
+<!-- Timing strip: one start, constant scale, and no benchmark claim. -->
+<rect id="timing-panel" class="panel" x="25" y="580" width="1070" height="100" rx="12"/>
+<text x="48" y="609" font-size="18" text-anchor="start" fill="#142333" font-weight="bold">All start together</text>
+<text x="443" y="610" font-size="17" text-anchor="end" fill="#142333">Profile</text>
+<rect id="time-0" class="blue" x="465" y="594" width="80" height="20" rx="12"/>
+<text x="559" y="610" font-size="16" text-anchor="start" fill="#142333">40 ms</text>
+<text x="443" y="637" font-size="17" text-anchor="end" fill="#142333">Inventory</text>
+<rect id="time-1" class="blue" x="465" y="621" width="100" height="20" rx="12"/>
+<text x="579" y="637" font-size="16" text-anchor="start" fill="#142333">50 ms</text>
+<text x="443" y="664" font-size="17" text-anchor="end" fill="#142333">Recommendations</text>
+<rect id="time-2" class="amber" x="465" y="648" width="360" height="20" rx="12"/>
+<text x="839" y="664" font-size="16" text-anchor="start" fill="#142333">180 ms</text>
+<text x="978" y="617" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Wait ≥ 180 ms</text>
+<text x="978" y="644" font-size="16" text-anchor="middle" fill="#142333">plus coordination</text>
+<text x="978" y="666" font-size="16" text-anchor="middle" fill="#142333">overhead</text>
+</svg>

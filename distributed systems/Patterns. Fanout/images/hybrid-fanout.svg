@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="610" viewBox="0 0 1120 610" role="img" aria-labelledby="title desc">
+<title id="title">Hybrid: merge prepared entries with posts fetched on read</title>
+<desc id="desc">Both left-hand lanes show publication: modest-audience posts produce prepared home-feed IDs, while large-audience posts are stored in author timelines without per-follower feed entries. Later, at feed read, a green service fetches prepared IDs and recent timeline posts and merges both candidate sets. Laptops represent authors; blue cache and database icons represent the stored data.</desc>
+<!-- Source-native System Design icons are copied into defs for portable rendering. -->
+<defs>
+<!-- Icons reused verbatim; IDs are namespaced to keep each diagram self-contained. -->
+<!-- Source: system design/11. News Feed System/images/fanout-service.svg; symbol #cache-card. -->
+<symbol id="sd-cache-card" viewBox="0 0 120 110">
+      <rect x="3" y="4" width="58" height="59" rx="8" fill="#1677b8"/><text x="32" y="27" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#fff" text-anchor="middle">CACHE</text>
+      <rect x="31" y="25" width="58" height="59" rx="8" fill="#1677b8"/><text x="60" y="48" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#fff" text-anchor="middle">CACHE</text>
+      <rect x="59" y="46" width="58" height="59" rx="8" fill="#1677b8"/><text x="88" y="69" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#fff" text-anchor="middle">CACHE</text>
+    </symbol>
+<!-- Source: system design/11. News Feed System/images/fanout-service.svg; symbol #db-cluster. -->
+<symbol id="sd-db-cluster" viewBox="0 0 120 100">
+      <g fill="#1677b8" stroke="#fff" stroke-width="1.5">
+        <path d="M8 18 A25 8 0 0 1 58 18 V68 A25 8 0 0 1 8 68 Z"/><ellipse cx="33" cy="18" rx="25" ry="8"/>
+        <path d="M35 29 A25 8 0 0 1 85 29 V79 A25 8 0 0 1 35 79 Z"/><ellipse cx="60" cy="29" rx="25" ry="8"/>
+        <path d="M62 40 A25 8 0 0 1 112 40 V90 A25 8 0 0 1 62 90 Z"/><ellipse cx="87" cy="40" rx="25" ry="8"/>
+      </g>
+    </symbol>
+<!-- Source: system design/11. News Feed System/images/feed-publishing.svg; symbol #laptop. -->
+<symbol id="sd-laptop" viewBox="0 0 90 70"><rect x="17" y="5" width="56" height="45" rx="4" fill="none" stroke="#333" stroke-width="4"/><path d="M9 58 H81 L87 65 H3 Z" fill="#111"/><path d="M38 60 H52" stroke="#fff" stroke-width="3" stroke-linecap="round"/></symbol>
+<!-- Source: system design/11. News Feed System/images/fanout-service.svg; symbol #server-rack. -->
+<symbol id="sd-server-rack" viewBox="0 0 30 50"><rect x="2" y="1" width="26" height="48" rx="1.5" fill="#65c515"/><path d="M6 9 H24 M6 37 H24 M6 44 H24" stroke="#fff" stroke-width="2"/></symbol>
+<style>
+text{font-family:Arial,Helvetica,sans-serif}
+.node{fill:#fff;stroke:#08b4cf;stroke-width:2}
+.panel{fill:#f7f9fc;stroke:#cad3df;stroke-width:1.5}
+.amber{fill:#fff7e9;stroke:#a56a0b;stroke-width:2}
+.blue{fill:#eaf3ff;stroke:#1677b8;stroke-width:1.7}
+.flow{fill:none;stroke:#1677b8;stroke-width:2.5;stroke-linejoin:round}
+</style></defs>
+<rect width="1120" height="610" fill="#fff"/>
+<!-- Title and reading direction. -->
+<text x="560.0" y="38" font-size="27" text-anchor="middle" fill="#142333" font-weight="bold">Hybrid: merge prepared entries with posts fetched on read</text>
+<text x="560.0" y="72" font-size="18" text-anchor="middle" fill="#142333">Example policy: prepare modest-audience posts; fetch selected large-audience posts on read.</text>
+<!-- Both lanes show publication. Panels and source boxes share centers at y=222 and y=462, symmetric about y=342. Labels beside the outgoing connectors mark the later read-time fetches. -->
+<rect id="write-lane" class="panel" x="25" y="117" width="760" height="210" rx="12"/>
+<text x="49" y="140" font-size="19" text-anchor="start" fill="#142333" font-weight="bold">At publication: prepare readers’ feeds</text>
+<rect id="modest-authors" class="node" x="45" y="151" width="270" height="142" rx="12"/>
+<use id="modest-authors-icon" href="#sd-laptop" x="140.0" y="163" width="80" height="62"/>
+<text x="180.0" y="257" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Authors</text>
+<text x="180.0" y="282" font-size="18" text-anchor="middle" fill="#142333">modest audience</text>
+<rect id="prepared-feed" class="node" x="440" y="151" width="320" height="142" rx="12"/>
+<use id="prepared-feed-icon" href="#sd-cache-card" x="558.0" y="163" width="84" height="77"/>
+<text x="600.0" y="257" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Prepared home feed</text>
+<text x="600.0" y="282" font-size="18" text-anchor="middle" fill="#142333">cached post IDs</text>
+<path id="prepare-shaft" data-connector="true" class="flow" d="M315 222 L430 222"/>
+<polygon id="prepare-head" points="440,222 428,227.5 428,216.5" fill="#1677b8"/>
+<rect id="timeline-lane" class="panel" x="25" y="357" width="760" height="210" rx="12"/>
+<text x="49" y="380" font-size="19" text-anchor="start" fill="#142333" font-weight="bold">At publication: store authors’ posts</text>
+<rect id="large-authors" class="node" x="45" y="391" width="270" height="142" rx="12"/>
+<use id="large-authors-icon" href="#sd-laptop" x="140.0" y="403" width="80" height="62"/>
+<text x="180.0" y="497" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Authors</text>
+<text x="180.0" y="522" font-size="18" text-anchor="middle" fill="#142333">large audience</text>
+<rect id="timeline" class="node" x="440" y="391" width="320" height="142" rx="12"/>
+<use id="timeline-icon" href="#sd-db-cluster" x="557.0" y="403" width="86" height="72"/>
+<text x="600.0" y="497" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Author timelines</text>
+<text x="600.0" y="522" font-size="18" text-anchor="middle" fill="#142333">recent posts</text>
+<path id="store-timeline-shaft" data-connector="true" class="flow" d="M315 462 L430 462"/>
+<polygon id="store-timeline-head" points="440,462 428,467.5 428,456.5" fill="#1677b8"/>
+<rect id="merge" class="node" x="880" y="271" width="215" height="142" rx="12"/>
+<use id="merge-icon" href="#sd-server-rack" x="969.5" y="283" width="36" height="60"/>
+<text x="987.5" y="377" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">At feed read</text>
+<text x="987.5" y="402" font-size="18" text-anchor="middle" fill="#142333">merge + select</text>
+<!-- Merge ports at y=342 +/- 33 mirror the source centers at y=342 +/- 120. Direct arrows cross the lane boundaries intentionally; shafts end 10 units before their tips beneath rotated 12-unit heads. -->
+<path id="prepared-results-shaft" data-connector="true" class="flow" d="M760 222 L871.904 303.13"/>
+<polygon id="prepared-results-head" points="880,309 867.056,306.409 873.513,297.504" fill="#1677b8"/>
+<path id="on-demand-results-shaft" data-connector="true" class="flow" d="M760 462 L871.904 380.87"/>
+<polygon id="on-demand-results-head" points="880,375 873.513,386.496 867.056,377.591" fill="#1677b8"/>
+<!-- Fetch labels sit above and below the diagonal result paths, clear of the merge box and arrowheads. -->
+<text x="851" y="251" font-size="18" text-anchor="start" fill="#142333">fetch prepared IDs</text>
+<text x="851" y="446" font-size="18" text-anchor="start" fill="#142333">fetch recent posts</text>
+<text x="560" y="595" font-size="20" text-anchor="middle" fill="#142333" font-weight="bold">Fewer writes for large audiences; two retrieval paths to maintain.</text>
+</svg>

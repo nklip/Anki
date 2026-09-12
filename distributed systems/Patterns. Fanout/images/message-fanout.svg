@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="680" viewBox="0 0 1120 680" role="img" aria-labelledby="title desc">
+<title id="title">One event, three independent consumers</title>
+<desc id="desc">The order service sends OrderPlaced to a dispatcher. Blue envelope queue icons represent three separate queues. Green server icons represent the producer, dispatcher and consumers. Each queue receives the same event and feeds a different service.</desc>
+<!-- Source-native System Design icons are copied into defs for portable rendering. -->
+<defs>
+<!-- Icons reused verbatim; IDs are namespaced to keep each diagram self-contained. -->
+<!-- Source: system design/11. News Feed System/images/fanout-service.svg; symbol #message-queue. -->
+<symbol id="sd-message-queue" viewBox="0 0 276 82">
+      <path d="M2 2 H252 L274 41 L252 80 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="5" stroke-linejoin="round"/>
+      <g fill="none" stroke="#1677b8" stroke-width="5">
+        <rect x="16" y="15" width="68" height="48"/><path d="M16 16 L50 43 L84 16"/>
+        <rect x="94" y="15" width="68" height="48"/><path d="M94 16 L128 43 L162 16"/>
+        <rect x="172" y="15" width="68" height="48"/><path d="M172 16 L206 43 L240 16"/>
+      </g>
+    </symbol>
+<!-- Source: system design/11. News Feed System/images/fanout-service.svg; symbol #server-rack. -->
+<symbol id="sd-server-rack" viewBox="0 0 30 50"><rect x="2" y="1" width="26" height="48" rx="1.5" fill="#65c515"/><path d="M6 9 H24 M6 37 H24 M6 44 H24" stroke="#fff" stroke-width="2"/></symbol>
+<style>
+text{font-family:Arial,Helvetica,sans-serif}
+.node{fill:#fff;stroke:#08b4cf;stroke-width:2}
+.panel{fill:#f7f9fc;stroke:#cad3df;stroke-width:1.5}
+.amber{fill:#fff7e9;stroke:#a56a0b;stroke-width:2}
+.blue{fill:#eaf3ff;stroke:#1677b8;stroke-width:1.7}
+.flow{fill:none;stroke:#1677b8;stroke-width:2.5;stroke-linejoin:round}
+</style></defs>
+<rect width="1120" height="680" fill="#fff"/>
+<!-- Title and reading direction. -->
+<text x="560.0" y="38" font-size="27" text-anchor="middle" fill="#142333" font-weight="bold">One event, three independent consumers</text>
+<text x="560.0" y="72" font-size="18" text-anchor="middle" fill="#142333">Read left to right: each service needs the same event for its own work.</text>
+<!-- Three direct arrows share one origin on the dispatcher. Each rotated 12-unit head meets a queue boundary; its shaft stops 10 units before the tip. -->
+<rect id="producer" class="node" x="25" y="270" width="180" height="142" rx="12"/>
+<use id="producer-icon" href="#sd-server-rack" x="97.0" y="282" width="36" height="60"/>
+<text x="115.0" y="376" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Order service</text>
+<text x="115.0" y="401" font-size="18" text-anchor="middle" fill="#142333">OrderPlaced</text>
+<rect id="dispatcher" class="node" x="270" y="270" width="190" height="142" rx="12"/>
+<use id="dispatcher-icon" href="#sd-server-rack" x="347.0" y="282" width="36" height="60"/>
+<text x="365.0" y="376" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Dispatcher</text>
+<text x="365.0" y="401" font-size="18" text-anchor="middle" fill="#142333">select recipients</text>
+<path id="publish-shaft" data-connector="true" class="flow" d="M205 341 L260 341"/>
+<polygon id="publish-head" points="270,341 258,346.5 258,335.5" fill="#1677b8"/>
+<rect id="shipping-queue" class="node" x="570" y="100" width="220" height="142" rx="12"/>
+<use id="shipping-queue-icon" href="#sd-message-queue" x="599.0" y="112" width="162" height="48"/>
+<text x="680.0" y="206" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Shipping queue</text>
+<text x="680.0" y="231" font-size="18" text-anchor="middle" fill="#142333">OrderPlaced</text>
+<rect id="shipping-consumer" class="node" x="880" y="100" width="215" height="142" rx="12"/>
+<use id="shipping-consumer-icon" href="#sd-server-rack" x="969.5" y="112" width="36" height="60"/>
+<text x="987.5" y="208" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Ship the order</text>
+<path id="shipping-copy-shaft" data-connector="true" class="flow" d="M460 341 L564.567 179.396"/>
+<polygon id="shipping-copy-head" points="570,171 568.099,184.063 558.863,178.087" fill="#1677b8"/>
+<path id="shipping-delivery-shaft" data-connector="true" class="flow" d="M790 171 L870 171"/>
+<polygon id="shipping-delivery-head" points="880,171 868,176.5 868,165.5" fill="#1677b8"/>
+<rect id="email-queue" class="node" x="570" y="270" width="220" height="142" rx="12"/>
+<use id="email-queue-icon" href="#sd-message-queue" x="599.0" y="282" width="162" height="48"/>
+<text x="680.0" y="376" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Email queue</text>
+<text x="680.0" y="401" font-size="18" text-anchor="middle" fill="#142333">OrderPlaced</text>
+<rect id="email-consumer" class="node" x="880" y="270" width="215" height="142" rx="12"/>
+<use id="email-consumer-icon" href="#sd-server-rack" x="969.5" y="282" width="36" height="60"/>
+<text x="987.5" y="378" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Send receipt</text>
+<path id="email-copy-shaft" data-connector="true" class="flow" d="M460 341 L560 341"/>
+<polygon id="email-copy-head" points="570,341 558,346.5 558,335.5" fill="#1677b8"/>
+<path id="email-delivery-shaft" data-connector="true" class="flow" d="M790 341 L870 341"/>
+<polygon id="email-delivery-head" points="880,341 868,346.5 868,335.5" fill="#1677b8"/>
+<rect id="analytics-queue" class="node" x="570" y="440" width="220" height="142" rx="12"/>
+<use id="analytics-queue-icon" href="#sd-message-queue" x="599.0" y="452" width="162" height="48"/>
+<text x="680.0" y="546" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Analytics queue</text>
+<text x="680.0" y="571" font-size="18" text-anchor="middle" fill="#142333">OrderPlaced</text>
+<rect id="analytics-consumer" class="node" x="880" y="440" width="215" height="142" rx="12"/>
+<use id="analytics-consumer-icon" href="#sd-server-rack" x="969.5" y="452" width="36" height="60"/>
+<text x="987.5" y="548" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Update reports</text>
+<path id="analytics-copy-shaft" data-connector="true" class="flow" d="M460 341 L564.567 502.604"/>
+<polygon id="analytics-copy-head" points="570,511 558.863,503.913 568.099,497.937" fill="#1677b8"/>
+<path id="analytics-delivery-shaft" data-connector="true" class="flow" d="M790 511 L870 511"/>
+<polygon id="analytics-delivery-head" points="880,511 868,516.5 868,505.5" fill="#1677b8"/>
+<!-- Footer retains the distinction between fanout and competing workers. -->
+<rect id="work-sharing-note" class="panel" x="25" y="610" width="1070" height="50" rx="12"/>
+<text x="560" y="632" font-size="18" text-anchor="middle" fill="#142333" font-weight="bold">Separate queues: each service gets the event.</text>
+<text x="560" y="654" font-size="18" text-anchor="middle" fill="#142333">Several workers on one queue: workers share that queue’s deliveries.</text>
+</svg>

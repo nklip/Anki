@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="570" viewBox="0 0 1120 570" role="img" aria-labelledby="title desc">
+<title id="title">Fanout on write: prepare feeds when a post arrives</title>
+<desc id="desc">A laptop represents Alice publishing P42. Database cylinders represent the full post store. A queue and green worker prepare follower feed IDs in Bob and Cara caches.</desc>
+<!-- Source-native System Design icons are copied into defs for portable rendering. -->
+<defs>
+<!-- Icons reused verbatim; IDs are namespaced to keep each diagram self-contained. -->
+<!-- Source: system design/11. News Feed System/images/fanout-service.svg; symbol #cache-card. -->
+<symbol id="sd-cache-card" viewBox="0 0 120 110">
+      <rect x="3" y="4" width="58" height="59" rx="8" fill="#1677b8"/><text x="32" y="27" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#fff" text-anchor="middle">CACHE</text>
+      <rect x="31" y="25" width="58" height="59" rx="8" fill="#1677b8"/><text x="60" y="48" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#fff" text-anchor="middle">CACHE</text>
+      <rect x="59" y="46" width="58" height="59" rx="8" fill="#1677b8"/><text x="88" y="69" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#fff" text-anchor="middle">CACHE</text>
+    </symbol>
+<!-- Source: system design/11. News Feed System/images/fanout-service.svg; symbol #db-cluster. -->
+<symbol id="sd-db-cluster" viewBox="0 0 120 100">
+      <g fill="#1677b8" stroke="#fff" stroke-width="1.5">
+        <path d="M8 18 A25 8 0 0 1 58 18 V68 A25 8 0 0 1 8 68 Z"/><ellipse cx="33" cy="18" rx="25" ry="8"/>
+        <path d="M35 29 A25 8 0 0 1 85 29 V79 A25 8 0 0 1 35 79 Z"/><ellipse cx="60" cy="29" rx="25" ry="8"/>
+        <path d="M62 40 A25 8 0 0 1 112 40 V90 A25 8 0 0 1 62 90 Z"/><ellipse cx="87" cy="40" rx="25" ry="8"/>
+      </g>
+    </symbol>
+<!-- Source: system design/11. News Feed System/images/feed-publishing.svg; symbol #laptop. -->
+<symbol id="sd-laptop" viewBox="0 0 90 70"><rect x="17" y="5" width="56" height="45" rx="4" fill="none" stroke="#333" stroke-width="4"/><path d="M9 58 H81 L87 65 H3 Z" fill="#111"/><path d="M38 60 H52" stroke="#fff" stroke-width="3" stroke-linecap="round"/></symbol>
+<!-- Source: system design/11. News Feed System/images/fanout-service.svg; symbol #message-queue. -->
+<symbol id="sd-message-queue" viewBox="0 0 276 82">
+      <path d="M2 2 H252 L274 41 L252 80 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="5" stroke-linejoin="round"/>
+      <g fill="none" stroke="#1677b8" stroke-width="5">
+        <rect x="16" y="15" width="68" height="48"/><path d="M16 16 L50 43 L84 16"/>
+        <rect x="94" y="15" width="68" height="48"/><path d="M94 16 L128 43 L162 16"/>
+        <rect x="172" y="15" width="68" height="48"/><path d="M172 16 L206 43 L240 16"/>
+      </g>
+    </symbol>
+<!-- Source: system design/11. News Feed System/images/fanout-service.svg; symbol #server-rack. -->
+<symbol id="sd-server-rack" viewBox="0 0 30 50"><rect x="2" y="1" width="26" height="48" rx="1.5" fill="#65c515"/><path d="M6 9 H24 M6 37 H24 M6 44 H24" stroke="#fff" stroke-width="2"/></symbol>
+<style>
+text{font-family:Arial,Helvetica,sans-serif}
+.node{fill:#fff;stroke:#08b4cf;stroke-width:2}
+.panel{fill:#f7f9fc;stroke:#cad3df;stroke-width:1.5}
+.amber{fill:#fff7e9;stroke:#a56a0b;stroke-width:2}
+.blue{fill:#eaf3ff;stroke:#1677b8;stroke-width:1.7}
+.flow{fill:none;stroke:#1677b8;stroke-width:2.5;stroke-linejoin:round}
+</style></defs>
+<rect width="1120" height="570" fill="#fff"/>
+<!-- Title and reading direction. -->
+<text x="560.0" y="38" font-size="27" text-anchor="middle" fill="#142333" font-weight="bold">Fanout on write: prepare feeds when a post arrives</text>
+<text x="560.0" y="72" font-size="18" text-anchor="middle" fill="#142333">Illustrative design: post bodies live in the post store; prepared home feeds use a cache.</text>
+<!-- Publication path uses the original laptop, database, envelope queue, green server, and cache symbols. -->
+<rect id="alice" class="node" x="25" y="235" width="160" height="142" rx="12"/>
+<use id="alice-icon" href="#sd-laptop" x="65.0" y="247" width="80" height="62"/>
+<text x="105.0" y="341" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Alice posts</text>
+<text x="105.0" y="366" font-size="18" text-anchor="middle" fill="#142333">P42</text>
+<rect id="post-store" class="node" x="240" y="235" width="190" height="142" rx="12"/>
+<use id="post-store-icon" href="#sd-db-cluster" x="292.0" y="247" width="86" height="72"/>
+<text x="335.0" y="341" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Post store</text>
+<text x="335.0" y="366" font-size="18" text-anchor="middle" fill="#142333">P42 → full post</text>
+<rect id="workers" class="node" x="485" y="235" width="225" height="142" rx="12"/>
+<use id="workers-queue" href="#sd-message-queue" x="509.5" y="260" width="125" height="38"/>
+<use id="workers-worker" href="#sd-server-rack" x="644.5" y="249" width="30" height="50"/>
+<text x="597.5" y="341" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Queue + workers</text>
+<text x="597.5" y="366" font-size="18" text-anchor="middle" fill="#142333">prepare feed IDs</text>
+<path id="store-post-shaft" data-connector="true" class="flow" d="M185 306 L230 306"/>
+<polygon id="store-post-head" points="240,306 228,311.5 228,300.5" fill="#1677b8"/>
+<path id="schedule-shaft" data-connector="true" class="flow" d="M430 306 L475 306"/>
+<polygon id="schedule-head" points="485,306 473,311.5 473,300.5" fill="#1677b8"/>
+<!-- Equal feed boxes are centered 90 units above and below the workers' centerline at y=306. -->
+<rect id="bob-feed" class="node" x="870" y="145" width="225" height="142" rx="12"/>
+<use id="bob-feed-icon" href="#sd-cache-card" x="940.5" y="157" width="84" height="77"/>
+<text x="982.5" y="251" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Bob’s home feed</text>
+<text x="982.5" y="276" font-size="18" text-anchor="middle" fill="#142333">[P42, P30, …]</text>
+<rect id="cara-feed" class="node" x="870" y="325" width="225" height="142" rx="12"/>
+<use id="cara-feed-icon" href="#sd-cache-card" x="940.5" y="337" width="84" height="77"/>
+<text x="982.5" y="431" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Cara’s home feed</text>
+<text x="982.5" y="456" font-size="18" text-anchor="middle" fill="#142333">[P42, P18, …]</text>
+<!-- Ports at y=306 +/- 28 and tips at y=306 +/- 90 make the arrows mirror images. Shafts end 10 units before their tips beneath rotated 12-unit heads. -->
+<path id="write-bob-shaft" data-connector="true" class="flow" d="M710 278 L860.676 219.613"/>
+<polygon id="write-bob-head" points="870,216 860.798,225.464 856.823,215.207" fill="#1677b8"/>
+<path id="write-cara-shaft" data-connector="true" class="flow" d="M710 334 L860.676 392.387"/>
+<polygon id="write-cara-head" points="870,396 856.823,396.793 860.798,386.536" fill="#1677b8"/>
+<!-- The prepared ID list still needs post-detail retrieval when it is read. -->
+<rect id="later-read" class="panel" x="25" y="485" width="1070" height="62" rx="12"/>
+<text x="49" y="511" font-size="19" text-anchor="start" fill="#142333" font-weight="bold">Later: Bob opens his feed</text>
+<text x="49" y="536" font-size="18" text-anchor="start" fill="#142333">Read prepared IDs → load post details → display. More followers mean more feed writes.</text>
+</svg>

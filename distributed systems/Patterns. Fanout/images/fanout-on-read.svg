@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="570" viewBox="0 0 1120 570" role="img" aria-labelledby="title desc">
+<title id="title">Fanout on read: assemble a feed when it is requested</title>
+<desc id="desc">A laptop represents Bob reading his feed. The feed service, shown as a green server, queries Alice and Dan author timelines represented by database icons, then merges the results.</desc>
+<!-- Source-native System Design icons are copied into defs for portable rendering. -->
+<defs>
+<!-- Icons reused verbatim; IDs are namespaced to keep each diagram self-contained. -->
+<!-- Source: system design/11. News Feed System/images/fanout-service.svg; symbol #db-cluster. -->
+<symbol id="sd-db-cluster" viewBox="0 0 120 100">
+      <g fill="#1677b8" stroke="#fff" stroke-width="1.5">
+        <path d="M8 18 A25 8 0 0 1 58 18 V68 A25 8 0 0 1 8 68 Z"/><ellipse cx="33" cy="18" rx="25" ry="8"/>
+        <path d="M35 29 A25 8 0 0 1 85 29 V79 A25 8 0 0 1 35 79 Z"/><ellipse cx="60" cy="29" rx="25" ry="8"/>
+        <path d="M62 40 A25 8 0 0 1 112 40 V90 A25 8 0 0 1 62 90 Z"/><ellipse cx="87" cy="40" rx="25" ry="8"/>
+      </g>
+    </symbol>
+<!-- Source: system design/11. News Feed System/images/feed-publishing.svg; symbol #laptop. -->
+<symbol id="sd-laptop" viewBox="0 0 90 70"><rect x="17" y="5" width="56" height="45" rx="4" fill="none" stroke="#333" stroke-width="4"/><path d="M9 58 H81 L87 65 H3 Z" fill="#111"/><path d="M38 60 H52" stroke="#fff" stroke-width="3" stroke-linecap="round"/></symbol>
+<!-- Source: system design/11. News Feed System/images/fanout-service.svg; symbol #server-rack. -->
+<symbol id="sd-server-rack" viewBox="0 0 30 50"><rect x="2" y="1" width="26" height="48" rx="1.5" fill="#65c515"/><path d="M6 9 H24 M6 37 H24 M6 44 H24" stroke="#fff" stroke-width="2"/></symbol>
+<style>
+text{font-family:Arial,Helvetica,sans-serif}
+.node{fill:#fff;stroke:#08b4cf;stroke-width:2}
+.panel{fill:#f7f9fc;stroke:#cad3df;stroke-width:1.5}
+.amber{fill:#fff7e9;stroke:#a56a0b;stroke-width:2}
+.blue{fill:#eaf3ff;stroke:#1677b8;stroke-width:1.7}
+.flow{fill:none;stroke:#1677b8;stroke-width:2.5;stroke-linejoin:round}
+</style></defs>
+<rect width="1120" height="570" fill="#fff"/>
+<!-- Title and reading direction. -->
+<text x="560.0" y="38" font-size="27" text-anchor="middle" fill="#142333" font-weight="bold">Fanout on read: assemble a feed when it is requested</text>
+<text x="560.0" y="72" font-size="18" text-anchor="middle" fill="#142333">Illustrative design: Bob follows Alice and Dan. Arrows show the request and result flow.</text>
+<!-- Publication is separate from the later request; no reader cache is populated on this path. -->
+<rect id="publish-panel" class="panel" x="25" y="99" width="1070" height="52" rx="12"/>
+<text x="49" y="132" font-size="19" text-anchor="start" fill="#142333" font-weight="bold">At publication:</text>
+<text x="250" y="132" font-size="19" text-anchor="start" fill="#142333">store P42 in Alice’s timeline; no per-follower home-feed inserts.</text>
+<rect id="reader" class="node" x="25" y="273" width="160" height="142" rx="12"/>
+<use id="reader-icon" href="#sd-laptop" x="65.0" y="285" width="80" height="62"/>
+<text x="105.0" y="379" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Bob opens</text>
+<text x="105.0" y="404" font-size="18" text-anchor="middle" fill="#142333">his feed</text>
+<rect id="feed-service" class="node" x="240" y="273" width="205" height="142" rx="12"/>
+<use id="feed-service-icon" href="#sd-server-rack" x="324.5" y="285" width="36" height="60"/>
+<text x="342.5" y="379" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Feed service</text>
+<text x="342.5" y="404" font-size="18" text-anchor="middle" fill="#142333">fetch candidates</text>
+<path id="open-feed-shaft" data-connector="true" class="flow" d="M185 344 L230 344"/>
+<polygon id="open-feed-head" points="240,344 228,349.5 228,338.5" fill="#1677b8"/>
+<rect id="alice-timeline" class="node" x="560" y="184" width="235" height="142" rx="12"/>
+<use id="alice-timeline-icon" href="#sd-db-cluster" x="634.5" y="196" width="86" height="72"/>
+<text x="677.5" y="290" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Alice’s timeline</text>
+<text x="677.5" y="315" font-size="18" text-anchor="middle" fill="#142333">[P42, P31, …]</text>
+<rect id="dan-timeline" class="node" x="560" y="366" width="235" height="142" rx="12"/>
+<use id="dan-timeline-icon" href="#sd-db-cluster" x="634.5" y="378" width="86" height="72"/>
+<text x="677.5" y="472" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Dan’s timeline</text>
+<text x="677.5" y="497" font-size="18" text-anchor="middle" fill="#142333">[P40, P29, …]</text>
+<rect id="merge" class="node" x="900" y="273" width="195" height="142" rx="12"/>
+<use id="merge-icon" href="#sd-server-rack" x="979.5" y="285" width="36" height="60"/>
+<text x="997.5" y="379" font-size="19" text-anchor="middle" fill="#142333" font-weight="bold">Merge + select</text>
+<text x="997.5" y="404" font-size="18" text-anchor="middle" fill="#142333">[P42, P40, …]</text>
+<!-- Direct query and result arrows have rotated 12-unit heads; each shaft stops 10 units before its tip. -->
+<path id="query-alice-shaft" data-connector="true" class="flow" d="M445 310 L550.979 259.315"/>
+<polygon id="query-alice-head" points="560,255 551.547,265.139 546.801,255.216" fill="#1677b8"/>
+<path id="query-dan-shaft" data-connector="true" class="flow" d="M445 378 L551.103 432.435"/>
+<polygon id="query-dan-head" points="560,437 546.813,436.416 551.834,426.629" fill="#1677b8"/>
+<path id="alice-result-shaft" data-connector="true" class="flow" d="M795 255 L891.142 305.36"/>
+<polygon id="alice-result-head" points="900,310 886.818,309.304 891.922,299.56" fill="#1677b8"/>
+<path id="dan-result-shaft" data-connector="true" class="flow" d="M795 437 L891.282 382.899"/>
+<polygon id="dan-result-head" points="900,378 892.233,388.673 886.844,379.084" fill="#1677b8"/>
+<text x="560" y="545" font-size="19" text-anchor="middle" fill="#142333">Fetching and merging happen during the read; storage can batch requests for several authors.</text>
+</svg>
