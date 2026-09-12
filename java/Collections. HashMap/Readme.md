@@ -72,9 +72,11 @@ At capacity 16, the default threshold is `16 × 0.75 = 12`. All mappings count, 
 
 A hash code is a 32-bit integer. The calculation below uses three operators on its binary bits:
 
-- `>>> 16` shifts bits right by 16 positions, filling the left side with zeros.
-- `^` is bitwise exclusive OR (XOR): a result bit is `1` when the two input bits differ.
-- `&` is bitwise AND: a result bit is `1` only when both input bits are `1`. A **mask** uses this to keep selected bit positions.
+- **`>>>`** is Java's **unsigned right-shift operator** (also called logical right shift). In `rawHash >>> 16`, it moves the bits 16 positions to the right, fills the 16 vacated positions on the left with zeros, and discards bits that fall off the right edge. By comparison, `>>` fills the left side with copies of the sign bit: ones for a negative value, zeros for a nonnegative value.
+- **`^`** is **bitwise exclusive OR (XOR)**: a result bit is `1` when the two input bits differ.
+- **`&`** is **bitwise AND**: a result bit is `1` only when both input bits are `1`. A **mask** uses this to keep selected bit positions.
+
+**`16` is a fixed integer literal in OpenJDK's hash-spreading formula.** The shift distance stays 16 regardless of the map's size or capacity, including after resize. It is unrelated to the default capacity of 16 buckets. Java itself allows other shift distances, including a variable such as `rawHash >>> distance`; this implementation chooses 16.
 
 For the lookup and resize examples, we use capacity 8 to keep the binary arithmetic short. This is a smaller illustrative table, separate from the default capacity 16 and the structure diagram's capacity 64. Read the lookup diagram from left to right: hash the incoming key, spread its high bits, select one bucket, then search only that bucket.
 
@@ -88,7 +90,15 @@ hash    = rawHash ^ (rawHash >>> 16)
 index   = (capacity - 1) & hash
 ```
 
-The mask works because capacity is a power of two. Spreading mixes high bits into low bits, which are the bits used by a small table. It cannot rescue a `hashCode()` that returns the same or poorly distributed values for most keys.
+Shifting a 32-bit Java `int` by 16 moves its upper half into the lower half. XOR then mixes those original upper bits with the original lower bits. Each group below contains 16 bits:
+
+```text
+rawHash        = 0000000000000001 0000000000000010
+rawHash >>> 16 = 0000000000000000 0000000000000001
+XOR result     = 0000000000000001 0000000000000011
+```
+
+The mask works because capacity is a power of two. A small table uses only low bits to select a bucket, so spreading lets differences in the original high bits affect that choice too. It cannot rescue a `hashCode()` that returns the same or poorly distributed values for most keys.
 
 For a worked example, suppose unequal keys A and B return hash codes 2 and 10. Their high 16 bits are zero, so spreading leaves these small hashes unchanged. Only four low bits are shown below; all higher bits are zero.
 
@@ -183,9 +193,23 @@ For a bin with `m` mappings, search takes O(log m) when distinct hashes, or usab
 
 Equal-hash keys without usable ordering can force lookup to search both branches, taking O(m) in the worst case even though the tree is balanced. Thus tree bins improve many collision-heavy cases but do not guarantee logarithmic lookup for every key type. Application code must not depend on exact internal thresholds or tree shape.
 
-## Resizing and the one-bit split
+## Resizing, rehashing, and the one-bit split
 
-When `put` adds a new mapping that makes `size > threshold`, current OpenJDK normally doubles the table. This describes the growth check used by `put`; compound methods such as `computeIfAbsent` check at a different point. The diagram follows keys A and B in one list bin as capacity grows from 8 to 16; other buckets are omitted.
+**`HashMap` still performs rehashing when it grows:** it rebuilds the bucket organization for a larger capacity. The API calls this rehashing; modern OpenJDK reuses cached hashes instead of calling every stored key's `hashCode()` again. For entries that move: **The hash stays the same; the bucket changes.** Other entries can remain at the same bucket index, as shown below.
+
+### When rehashing happens
+
+In OpenJDK 26u, an allocated table can grow for these reasons:
+
+- **Load threshold exceeded:** `put` adds a mapping and makes `size > threshold`. At capacity 16 and the default load factor `0.75`, the 13th distinct mapping normally grows capacity to 32 and raises the threshold from 12 to 24. Replacing an existing value with `put` does not trigger this.
+- **Crowded bucket in a small table:** a tree-conversion attempt grows the table when capacity is below 64, as explained above. This can happen before the load threshold is exceeded.
+- **Bulk insertion:** `putAll` can grow an existing table in advance based on the source map's size, before inserting its mappings.
+
+Compound methods such as `computeIfAbsent` check `size > threshold` before their main lookup/insertion logic, so their growth timing differs from `put`. Growth stops at OpenJDK's maximum capacity of `1 << 30` buckets. The first table allocation also uses `resize()`, but there are no existing entries to redistribute yet.
+
+### How entries are redistributed
+
+Each growth through `resize()` doubles the bucket array and updates the threshold. The diagram follows keys A and B in one list bin as capacity grows from 8 to 16; other buckets are omitted.
 
 ![hashmap-resize-split.svg](images/hashmap-resize-split.svg)
 
@@ -205,7 +229,7 @@ After doubling, a node formerly in bucket `j` can only:
 - remain at `j` when `(node.hash & oldCapacity) == 0`; or
 - move to `j + oldCapacity` otherwise.
 
-Only one newly relevant hash bit is tested. Stored nodes already cache their spread hashes, so resize does not call `hashCode()` again on stored keys. Current OpenJDK preserves the relative order within each resulting low/high list. Tree bins are split by the same old-capacity bit and may become lists again when a side is small.
+Only one newly relevant hash bit is tested. **The cached spread hash stays unchanged; its bucket index may change.** The `rawHash ^ (rawHash >>> 16)` calculation is not repeated for stored nodes during resize. Current OpenJDK preserves the relative order within each resulting low/high list. Tree bins are split by the same old-capacity bit and may become lists again when a side is small.
 
 Ordinary list-bin resizing allocates a larger array, scans the old buckets, and redistributes their nodes: O(capacity + size) work. For normal growth at a fixed load factor, capacity is proportional to size, so this simplifies to O(size). Rebuilding tree bins can add work; O(size) is not an unconditional bound for every internal case.
 
