@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="565" viewBox="0 0 1000 565" role="img" aria-labelledby="title desc">
 <title id="title">A topic is several ordered logs</title>
-<desc id="desc">A producer writes keyed events to the orders topic. This example maps both A and B to P0, C to P1, and D to P2. P0 contains A, B, then A, showing that different keys can share a partition while repeated A records stay together. Each partition has its own offsets and an append-only sequence. Consumers fetch records from partition leaders; replicas are omitted.</desc>
+<desc id="desc">A producer writes keyed events to the orders topic. This example maps both A and B to P0, C to P1, and D to P2. P0 contains A, B, then A, showing that different keys can share a partition while repeated A records stay together. Dashed outlines group each partition's log: purple for P0, teal for P1, and orange for P2. Each partition has its own offsets and an append-only sequence. Consumers fetch records from partition leaders; replicas are omitted.</desc>
 <!-- Shared typography, semantic colors, and arrows. The marker tip projects 2.5 units beyond each compensated path endpoint. -->
 <defs>
 <marker id="arrow" markerWidth="10" markerHeight="10" viewBox="0 0 10 10" refX="7.5" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="#111"/></marker>
-<style>text{font-family:Arial,Helvetica,sans-serif;fill:#111}.box{fill:#fff;stroke:#111;stroke-width:1.8}.panel{fill:#f7f7f7;stroke:#888;stroke-width:1.5}.blue{fill:#eaf3ff;stroke:#2868a6;stroke-width:1.8}.amber{fill:#fff3da;stroke:#a56a0b;stroke-width:1.8}.flow{fill:none;stroke:#111;stroke-width:1.8;stroke-linejoin:round;marker-end:url(#arrow)}</style>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#111}.box{fill:#fff;stroke:#111;stroke-width:1.8}.panel{fill:#f7f7f7;stroke:#888;stroke-width:1.5}.blue{fill:#eaf3ff;stroke:#2868a6;stroke-width:1.8}.amber{fill:#fff3da;stroke:#a56a0b;stroke-width:1.8}.flow{fill:none;stroke:#111;stroke-width:1.8;stroke-linejoin:round;marker-end:url(#arrow)}.partition-log{fill:none;stroke-width:1.8;stroke-dasharray:12 7;stroke-linecap:round}</style>
 </defs>
 <rect width="1000" height="565" fill="#fff"/>
 <!-- Title and reading cue. -->
@@ -14,6 +14,12 @@
 <rect id="topic" class="panel" x="300" y="105" width="405" height="339"/>
 <text x="502" y="136" font-size="22" text-anchor="middle" font-weight="bold">Topic: orders</text>
 <text x="502" y="164" font-size="17" text-anchor="middle">Leader logs • older records on the left</text>
+<!-- Distinct colored dashes group each partition's records, with eight units of clearance around the row. -->
+<g id="partition-log-outlines">
+<rect id="p0-log-outline" class="partition-log" stroke="#7540a8" x="357" y="177" width="319" height="74" rx="4"/>
+<rect id="p1-log-outline" class="partition-log" stroke="#008577" x="357" y="256" width="319" height="74" rx="4"/>
+<rect id="p2-log-outline" class="partition-log" stroke="#bd4c26" x="357" y="335" width="319" height="74" rx="4"/>
+</g>
 <text x="320" y="215" font-size="19" text-anchor="start" font-weight="bold">P0</text>
 <rect id="p0-offset0" class="blue" x="365" y="185" width="95" height="58"/>
 <text x="412.5" y="208" font-size="17" text-anchor="middle">offset 0</text>

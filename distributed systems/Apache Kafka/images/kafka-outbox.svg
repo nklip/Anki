@@ -1,63 +1,73 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="710" viewBox="0 0 1000 710" role="img" aria-labelledby="title desc">
-<title id="title">Transactional outbox: commit an order and its event together</title>
-<desc id="desc">The order service atomically writes an order and an outbox event in its database transaction. Change data capture or a publishing relay sends committed outbox rows to Kafka. The consumer uses an event ID to deduplicate and commits its business change with the processed ID in its own database transaction. Delivery retries may repeat an event; database and Kafka writes are not automatically one transaction.</desc>
-<!-- Shared typography and manual arrows with protected text corridors. -->
-<defs><style>text{font-family:Arial,Helvetica,sans-serif;fill:#111}.title{font-size:26px;font-weight:bold}.label{font-size:20px}.small{font-size:17px}.box{fill:#fff;stroke:#111;stroke-width:1.8}.blue{fill:#eaf3fb;stroke:#111;stroke-width:1.8}.amber{fill:#fff4db;stroke:#111;stroke-width:1.8}.shaft{fill:none;stroke:#111;stroke-width:1.8;stroke-linejoin:round}</style></defs>
-<rect width="1000" height="710" fill="#fff"/>
-<!-- The first row is one local transaction; blue marks its atomic boundary. -->
-<text x="500" y="40" class="title" text-anchor="middle">Outbox: save the business change and the event together</text>
-<text x="500" y="70" class="small" text-anchor="middle">Then publish the committed event asynchronously and handle possible duplicate delivery.</text>
-<rect id="order-service" class="box" x="30" y="155" width="180" height="95"/>
-<text x="120" y="191" class="label" text-anchor="middle">Order service</text>
-<text x="120" y="221" class="small" text-anchor="middle">Create order 42</text>
-<rect id="source-transaction" class="blue" x="365" y="105" width="600" height="195"/>
-<text x="390" y="137" class="label" font-weight="bold">1. Order database: one atomic transaction</text>
-<rect id="orders-table" class="box" x="390" y="165" width="240" height="93"/>
-<text x="510" y="194" class="label" text-anchor="middle">orders table</text>
-<text x="510" y="226" class="small" text-anchor="middle">orderId=42, created</text>
-<rect id="outbox-table" class="box" x="655" y="165" width="285" height="93"/>
-<text x="797" y="194" class="label" text-anchor="middle">outbox table</text>
-<text x="797" y="223" class="small" text-anchor="middle">eventId=evt-901, orderId=42</text>
-<text x="797" y="247" class="small" text-anchor="middle">type=OrderCreated</text>
-<text x="665" y="285" class="small" text-anchor="middle">Both rows commit, or neither does.</text>
-<!-- The request targets the transaction boundary, never either row alone. -->
-<path id="transaction-shaft" class="shaft" data-connector="true" d="M210 205 H353"/>
-<path id="transaction-head" d="M351 198 L365 205 L351 212Z" fill="#111"/>
-<text x="282" y="181" class="small" text-anchor="middle">write both</text>
-<!-- Publishing is outside the local database transaction and proceeds right to left. -->
-<rect id="relay" class="box" x="705" y="370" width="260" height="105"/>
-<text x="835" y="400" class="label" text-anchor="middle">2. Change data capture</text>
-<text x="835" y="430" class="small" text-anchor="middle">or a publishing relay</text>
-<text x="835" y="455" class="small" text-anchor="middle">reads committed events</text>
-<path id="capture-shaft" class="shaft" data-connector="true" d="M835 300 V358"/>
-<path id="capture-head" d="M828 356 L835 370 L842 356Z" fill="#111"/>
-<text x="698" y="339" class="small" text-anchor="middle">after commit</text>
-<rect id="kafka" class="box" x="400" y="370" width="180" height="105"/>
-<text x="490" y="402" class="label" text-anchor="middle">Kafka topic</text>
-<text x="490" y="432" class="small" text-anchor="middle">orders</text>
-<text x="490" y="457" class="small" text-anchor="middle">eventId=evt-901</text>
-<path id="publish-shaft" class="shaft" data-connector="true" d="M705 425 H592"/>
-<path id="publish-head" d="M594 418 L580 425 L594 432Z" fill="#111"/>
-<text x="642" y="402" class="small" text-anchor="middle">publish</text>
-<rect id="consumer" class="box" x="30" y="370" width="235" height="105"/>
-<text x="147" y="402" class="label" text-anchor="middle">3. Consumer</text>
-<text x="147" y="432" class="small" text-anchor="middle">Apply order event</text>
-<text x="147" y="457" class="small" text-anchor="middle">once per event ID</text>
-<path id="consume-shaft" class="shaft" data-connector="true" d="M400 425 H277"/>
-<path id="consume-head" d="M279 418 L265 425 L279 432Z" fill="#111"/>
-<text x="332" y="402" class="small" text-anchor="middle">read</text>
-<!-- The second database transaction binds deduplication to the business side effect. -->
-<rect id="consumer-transaction" class="blue" x="30" y="555" width="560" height="112"/>
-<text x="52" y="586" class="label" font-weight="bold">Consumer database: one local transaction</text>
-<text x="52" y="617" class="small">Record processed ID evt-901 + update the business data.</text>
-<text x="52" y="644" class="small">Already processed evt-901? Skip the repeated effect.</text>
-<path id="apply-shaft" class="shaft" data-connector="true" d="M147 475 V543"/>
-<path id="apply-head" d="M140 541 L147 555 L154 541Z" fill="#111"/>
-<text x="430" y="519" class="small" text-anchor="middle">Save the effect, then commit the Kafka offset.</text>
-<!-- Retry caveat is adjacent to delivery, outside both transaction boundaries. -->
-<rect id="retry-note" class="amber" x="620" y="555" width="345" height="112"/>
-<text x="642" y="586" class="label" font-weight="bold">Retries can repeat evt-901</text>
-<text x="642" y="617" class="small">Database + Kafka do not share</text>
-<text x="642" y="644" class="small">one automatic transaction.</text>
-<text x="500" y="697" class="small" text-anchor="middle">Change data capture (CDC) reads database changes and turns them into events.</text>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1100" height="853" viewBox="0 0 1100 853" role="img" aria-labelledby="title desc">
+<title id="title">Outbox: commit the business change and its event together</title>
+<desc id="desc">The order service atomically saves order 42 and outbox event evt-901 in one database transaction. After commit, change data capture or a relay publishes the event to Kafka. The consumer records the processed event ID and its business effect in one local database transaction, skipping an already processed event. Save the effect before committing the Kafka offset. Retries can duplicate delivery; the database and Kafka do not automatically share a transaction.</desc>
+<!-- Shared system-design typography and native icons, matching kafka-data-placement.svg.
+     Icon sources: Proximity Service final-design.svg; Notification System improved-design.svg. -->
+<defs>
+<style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #171717; }
+.title { font-size: 28px; font-weight: 700; }
+.label { font-size: 20px; }
+.strong { font-size: 20px; font-weight: 700; }
+.detail { font-size: 17px; }
+.small { font-size: 16px; }
+.mono { font-family: Consolas, Menlo, monospace; font-size: 16px; }
+.panel { fill: #fff; stroke: #888; stroke-width: 1.6; }
+.blue { fill: #eaf3ff; stroke: #888; stroke-width: 1.6; }
+.note { fill: #fff4da; stroke: #888; stroke-width: 1.4; }
+.service { fill: #fff; stroke: #171717; stroke-width: 1.6; }
+</style>
+<symbol id="green-server" viewBox="0 0 30 60">
+      <rect x="8" y="1" width="14" height="9" rx="1" fill="#65c515"/>
+      <path d="M11 5 H19" stroke="#fff" stroke-width="1.5"/>
+      <rect x="3" y="12" width="24" height="46" rx="1.5" fill="#65c515"/>
+      <path d="M7 19 H23 M7 40 H23 M7 48 H23" stroke="#fff" stroke-width="2"/>
+    </symbol>
+<symbol id="channel-queue" viewBox="0 0 150 58">
+      <path d="M2 2 H135 L148 29 L135 56 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="4"/>
+      <g fill="none" stroke="#1677b8" stroke-width="4">
+        <rect x="10" y="12" width="36" height="33"/><path d="M10 13 L28 29 L46 13"/>
+        <rect x="54" y="12" width="36" height="33"/><path d="M54 13 L72 29 L90 13"/>
+        <rect x="98" y="12" width="36" height="33"/><path d="M98 13 L116 29 L134 13"/>
+      </g>
+    </symbol>
+<symbol id="db" viewBox="0 0 88 93">
+      <path d="M0.9 13.75A43.1 8.75 0 0 1 87.1 13.75V82.25A43.1 8.75 0 0 1 0.9 82.25Z" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+      <ellipse cx="44" cy="13.75" rx="43.1" ry="8.75" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+    </symbol>
+</defs>
+<!-- Canvas and lesson heading. -->
+<rect width="1100" height="853" fill="#fff"/>
+<text class="title" x="550.0" y="35" text-anchor="middle" >Outbox: commit the business change and its event together</text>
+<text class="detail" x="550.0" y="66" text-anchor="middle" >Publish committed events asynchronously, then handle possible duplicate delivery.</text>
+<!-- order-service -->
+<g id="order-service">
+<use href="#green-server" x="87" y="173" width="46" height="92"/><text class="strong" x="110" y="288" text-anchor="middle" >Order service</text><text class="detail" x="110" y="314" text-anchor="middle" >Create order 42</text><!-- write-both: shaft ends inside its separate arrowhead base. -->
+<path id="write-both-flow" data-connector="true" d="M148 220 L315 220" fill="none" stroke="#171717" stroke-width="2"/><path id="write-both-head" d="M313 226 L325 220 L313 214Z" fill="#171717"/><text class="detail" x="238" y="193" text-anchor="middle" >write both</text>
+</g><!-- Both table rows belong to the same database transaction; the pink cylinder identifies its owner. -->
+<g id="order-database-transaction">
+<rect class="blue" x="335" y="108" width="730" height="244" /><text class="strong" x="700" y="140" text-anchor="middle" >1. Order database: one atomic transaction</text><use href="#db" x="358" y="171" width="84" height="93" style="color:#eea6ed"/><text class="label" x="400" y="291" text-anchor="middle" >Order DB</text><rect class="panel" x="470" y="168" width="210" height="98" /><text class="label" x="575" y="195" text-anchor="middle" >orders table</text><text class="detail" x="575" y="229" text-anchor="middle" >orderId=42, created</text><rect class="panel" x="704" y="168" width="337" height="98" /><text class="label" x="872.5" y="195" text-anchor="middle" >outbox table</text><text class="detail" x="872.5" y="228" text-anchor="middle" >eventId=evt-901, orderId=42</text><text class="detail" x="872.5" y="251" text-anchor="middle" >type=OrderCreated</text><text class="label" x="700" y="324" text-anchor="middle" >Both rows commit, or neither does.</text>
+</g><!-- committed-event-publisher -->
+<g id="committed-event-publisher">
+<!-- after-commit: shaft ends inside its separate arrowhead base. -->
+<path id="after-commit-flow" data-connector="true" d="M920 352 L920 423" fill="none" stroke="#171717" stroke-width="2"/><path id="after-commit-head" d="M914 421 L920 433 L926 421Z" fill="#171717"/><text class="detail" x="834" y="404" text-anchor="middle" >after commit</text><use href="#green-server" x="897" y="445" width="46" height="92"/><text class="strong" x="920" y="568" text-anchor="middle" >2. CDC / relay</text><text class="detail" x="920" y="594" text-anchor="middle" >Read committed events</text><!-- publish-event: shaft ends inside its separate arrowhead base. -->
+<path id="publish-event-flow" data-connector="true" d="M882 490 L671 490" fill="none" stroke="#171717" stroke-width="2"/><path id="publish-event-head" d="M673 484 L661 490 L673 496Z" fill="#171717"/><text class="detail" x="772" y="465" text-anchor="middle" >publish</text>
+</g><!-- published-kafka-event -->
+<g id="published-kafka-event">
+<!-- Mirror the queue glyph to match the right-to-left event flow. --><g transform="translate(1070 0) scale(-1 1)"><use href="#channel-queue" x="420" y="445" width="230" height="92"/></g><text class="strong" x="535" y="568" text-anchor="middle" >Kafka topic: orders</text><text class="mono" x="535" y="595" text-anchor="middle" >eventId=evt-901</text><!-- read-event: shaft ends inside its separate arrowhead base. -->
+<path id="read-event-flow" data-connector="true" d="M410 490 L194 490" fill="none" stroke="#171717" stroke-width="2"/><path id="read-event-head" d="M196 484 L184 490 L196 496Z" fill="#171717"/><text class="detail" x="298" y="465" text-anchor="middle" >read</text>
+</g><!-- deduplicating-consumer -->
+<g id="deduplicating-consumer">
+<use href="#green-server" x="122" y="445" width="46" height="92"/><text class="strong" x="145" y="568" text-anchor="middle" >3. Consumer</text><text class="detail" x="145" y="595" text-anchor="middle" >Apply once per event ID</text><!-- save-effect: shaft ends inside its separate arrowhead base. -->
+<path id="save-effect-flow" data-connector="true" d="M145 609 L145 649.2" fill="none" stroke="#171717" stroke-width="2"/><path id="save-effect-head" d="M139 647.2 L145 659.2 L151 647.2Z" fill="#171717"/>
+</g><!-- Deduplication records and business effects commit together in the consumer database. -->
+<g id="consumer-database-transaction">
+<rect class="blue" x="30" y="660" width="700" height="134" /><use href="#db" x="61" y="695" width="70" height="76" style="color:#fff"/><text class="strong" x="430" y="690" text-anchor="middle" >Consumer DB: one local transaction</text><text class="detail" x="430" y="720" text-anchor="middle" >Record processed evt-901 + update business data.</text><text class="detail" x="430" y="746" text-anchor="middle" >Already processed? Skip the repeated effect.</text><text class="small" x="430" y="777" text-anchor="middle" >Save the effect, then commit the Kafka offset.</text>
+</g><!-- duplicate-delivery-warning -->
+<g id="duplicate-delivery-warning">
+<rect class="note" x="760" y="660" width="305" height="134" /><text class="strong" x="912.5" y="690" text-anchor="middle" >Retries can repeat evt-901</text><text class="detail" x="912.5" y="724" text-anchor="middle" >Database + Kafka do not share<tspan x="912.5" dy="24">one automatic transaction.</tspan></text>
+</g><!-- cdc-definition -->
+<g id="cdc-definition">
+<text class="detail" x="550" y="832" text-anchor="middle" >Change data capture (CDC) reads database changes and turns them into events.</text>
+</g>
 </svg>

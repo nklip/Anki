@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1100" height="1240" viewBox="0 0 1100 1240" role="img" aria-labelledby="title desc">
+<title id="title">Kafka transaction: from producer to completed commit</title>
+<desc id="desc">After configuring transactional.id and initializing transactions, the producer begins a transaction and sends records. Kafka enrolls participating partitions before appending their transactional records. commitTransaction flushes pending sends and waits for successful record acknowledgments, then sends EndTxn COMMIT. The transaction coordinator replicates PREPARE_COMMIT in __transaction_state. It sends success to the producer and propagates COMMIT markers; the client may return before markers finish. Markers are replicated in every participating partition. After all marker acknowledgments, the coordinator replicates COMPLETE_COMMIT. Read-committed visibility is independently governed by each partition marker and last stable offset, and can precede the final coordinator state or be delayed by earlier open transactions. Completion does not imply consumer processing or external side effects. The successful output-record path is shown; consumed offsets are omitted.</desc>
+<!-- Shared system-design typography and native icons, matching kafka-data-placement.svg.
+     Icon sources: Proximity Service final-design.svg; Notification System improved-design.svg. -->
+<defs>
+<style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #171717; }
+.title { font-size: 28px; font-weight: 700; }
+.label { font-size: 20px; }
+.strong { font-size: 20px; font-weight: 700; }
+.detail { font-size: 17px; }
+.small { font-size: 16px; }
+.mono { font-family: Consolas, Menlo, monospace; font-size: 16px; }
+.panel { fill: #fff; stroke: #888; stroke-width: 1.6; }
+.blue { fill: #eaf3ff; stroke: #888; stroke-width: 1.6; }
+.note { fill: #fff4da; stroke: #888; stroke-width: 1.4; }
+.service { fill: #fff; stroke: #171717; stroke-width: 1.6; }
+</style>
+<symbol id="green-server" viewBox="0 0 30 60">
+      <rect x="8" y="1" width="14" height="9" rx="1" fill="#65c515"/>
+      <path d="M11 5 H19" stroke="#fff" stroke-width="1.5"/>
+      <rect x="3" y="12" width="24" height="46" rx="1.5" fill="#65c515"/>
+      <path d="M7 19 H23 M7 40 H23 M7 48 H23" stroke="#fff" stroke-width="2"/>
+    </symbol>
+</defs>
+<!-- Canvas and lesson heading. -->
+<rect width="1100" height="1240" fill="#fff"/>
+<text class="title" x="550.0" y="35" text-anchor="middle" >Kafka transaction: from producer to completed commit</text>
+<text class="detail" x="550.0" y="66" text-anchor="middle" >Kafka 4.3 successful path • time flows downward • producer success and visibility are separate</text>
+<!-- transaction-setup -->
+<g id="transaction-setup">
+<text class="small" x="550" y="94" text-anchor="middle" >Setup: configure transactional.id and call initTransactions() before starting the first transaction.</text>
+</g><!-- Time runs downward. Gray lifelines show roles, not necessarily separate physical machines. -->
+<g id="actor-lifelines">
+<path id="producer-lifeline" d="M170 224V884" fill="none" stroke="#aaa" stroke-width="1.4" stroke-dasharray="5 6"/><path id="coordinator-lifeline" d="M550 224V1053" fill="none" stroke="#aaa" stroke-width="1.4" stroke-dasharray="5 6"/><path id="partitions-lifeline" d="M935 224V954" fill="none" stroke="#aaa" stroke-width="1.4" stroke-dasharray="5 6"/>
+</g><!-- Actor columns use fixed box widths and center axes: producer 170, coordinator 550, partitions 935. -->
+<g id="actor-headers">
+<rect class="panel" x="30" y="115" width="280" height="109" /><use href="#green-server" x="158" y="124" width="24" height="48"/><text class="strong" x="170" y="193" text-anchor="middle" >Producer client</text><text class="mono" x="170" y="216" text-anchor="middle" >KafkaProducer</text><rect class="panel" x="390" y="115" width="320" height="109" /><use href="#green-server" x="538" y="124" width="24" height="48"/><text class="strong" x="550" y="193" text-anchor="middle" >Transaction coordinator</text><text class="small" x="550" y="216" text-anchor="middle" >Broker role; tracks transaction state</text><rect class="panel" x="780" y="115" width="310" height="109" /><use href="#green-server" x="923" y="124" width="24" height="48"/><text class="strong" x="935" y="193" text-anchor="middle" >Partition leaders</text><text class="small" x="935" y="216" text-anchor="middle" >Store the output records</text>
+</g><!-- begin-transaction -->
+<g id="begin-transaction">
+<rect class="panel" x="30" y="245" width="280" height="64" /><text class="mono" x="170" y="273" text-anchor="middle" >1. beginTransaction()</text><text class="detail" x="170" y="297" text-anchor="middle" >Start local transaction state.</text>
+</g><!-- send-transaction-records -->
+<g id="send-transaction-records">
+<!-- produce-records: shaft ends inside its separate arrowhead base. -->
+<path id="produce-records-flow" data-connector="true" d="M170 346 L925 346" fill="none" stroke="#171717" stroke-width="2"/><path id="produce-records-head" d="M923 352 L935 346 L923 340Z" fill="#171717"/><text class="mono" x="350" y="326" text-anchor="middle" >2. send(records)</text><text class="detail" x="750" y="326" text-anchor="middle" >Transactional batches</text>
+</g><!-- Enrollment precedes log append, not necessarily the producer send: newer protocols enroll from the broker. -->
+<g id="flush-and-enroll">
+<rect class="panel" x="30" y="379" width="280" height="91" /><text class="mono" x="170" y="407" text-anchor="middle" >3. commitTransaction()</text><text class="detail" x="170" y="434" text-anchor="middle" >Flush pending sends;<tspan x="170" dy="23">wait for acknowledgments.</tspan></text><rect class="panel" x="635" y="379" width="430" height="91" /><text class="detail" x="850" y="405" text-anchor="middle" >Kafka enrolls each touched partition<tspan x="850" dy="23">before appending its transactional records.</tspan><tspan x="850" dy="23">The writes are still uncommitted.</tspan></text>
+</g><!-- records-acknowledged -->
+<g id="records-acknowledged">
+<!-- Reply dash phase keeps the final dash joined to the arrowhead. --><!-- record-acknowledgments: shaft ends inside its separate arrowhead base. -->
+<path id="record-acknowledgments-flow" data-connector="true" d="M935 520 L180 520" fill="none" stroke="#171717" stroke-width="2" stroke-dasharray="7 5" stroke-dashoffset="6"/><path id="record-acknowledgments-head" d="M182 514 L170 520 L182 526Z" fill="#171717"/><text class="small" x="355" y="501" text-anchor="middle" >All transactional writes acknowledged</text>
+</g><!-- request-transaction-commit -->
+<g id="request-transaction-commit">
+<!-- end-transaction: shaft ends inside its separate arrowhead base. -->
+<path id="end-transaction-flow" data-connector="true" d="M170 582 L540 582" fill="none" stroke="#171717" stroke-width="2"/><path id="end-transaction-head" d="M538 588 L550 582 L538 576Z" fill="#171717"/><text class="small" x="355" y="562" text-anchor="middle" >EndTxn(COMMIT): request commit</text>
+</g><!-- Replicated PREPARE_COMMIT fixes the outcome before the success response and marker propagation. -->
+<g id="durable-commit-decision">
+<rect class="blue" x="390" y="608" width="320" height="96" /><text class="strong" x="550" y="635" text-anchor="middle" >4. Durable commit decision</text><text class="mono" x="550" y="662" text-anchor="middle" >Replicate PREPARE_COMMIT</text><text class="mono" x="550" y="688" text-anchor="middle" >in __transaction_state</text>
+</g><!-- Two branches leave the decision. Response arrival can overlap marker work; producer success does not wait for all markers. -->
+<g id="success-and-marker-propagation">
+<!-- Reply dash phase keeps the final dash joined to the arrowhead. --><!-- end-transaction-success: shaft ends inside its separate arrowhead base. -->
+<path id="end-transaction-success-flow" data-connector="true" d="M550 760 L180 760" fill="none" stroke="#171717" stroke-width="2" stroke-dasharray="7 5" stroke-dashoffset="7"/><path id="end-transaction-success-head" d="M182 754 L170 760 L182 766Z" fill="#171717"/><text class="detail" x="355" y="739" text-anchor="middle" >EndTxn success response</text><!-- write-commit-markers: shaft ends inside its separate arrowhead base. -->
+<path id="write-commit-markers-flow" data-connector="true" d="M550 760 L925 760" fill="none" stroke="#171717" stroke-width="2"/><path id="write-commit-markers-head" d="M923 766 L935 760 L923 754Z" fill="#171717"/><text class="mono" x="744" y="739" text-anchor="middle" >WriteTxnMarkers(COMMIT)</text><circle cx="550" cy="760" r="3" fill="#171717"/><rect class="blue" x="30" y="785" width="280" height="98" /><text class="strong" x="170" y="810" text-anchor="middle" >Producer success</text><text class="mono" x="170" y="836" text-anchor="middle" >commitTransaction()</text><text class="small" x="170" y="862" text-anchor="middle" >can return before markers finish.</text><rect class="panel" x="780" y="785" width="310" height="98" /><text class="strong" x="935" y="810" text-anchor="middle" >5. Append COMMIT markers</text><text class="detail" x="935" y="836" text-anchor="middle" >Replicate in all participating<tspan x="935" dy="24">partitions; retry failures.</tspan></text>
+</g><!-- all-markers-acknowledged -->
+<g id="all-markers-acknowledged">
+<!-- Reply dash phase keeps the final dash joined to the arrowhead. --><!-- marker-acknowledgments: shaft ends inside its separate arrowhead base. -->
+<path id="marker-acknowledgments-flow" data-connector="true" d="M935 929 L560 929" fill="none" stroke="#171717" stroke-width="2" stroke-dasharray="7 5" stroke-dashoffset="2"/><path id="marker-acknowledgments-head" d="M562 923 L550 929 L562 935Z" fill="#171717"/><text class="detail" x="744" y="909" text-anchor="middle" >All marker writes acknowledged</text>
+</g><!-- The final coordinator state is written only after every participating partition has acknowledged its marker. -->
+<g id="coordinator-completion">
+<rect class="blue" x="390" y="955" width="320" height="98" /><text class="strong" x="550" y="982" text-anchor="middle" >6. Coordinator completion</text><text class="mono" x="550" y="1009" text-anchor="middle" >Replicate COMPLETE_COMMIT</text><text class="mono" x="550" y="1036" text-anchor="middle" >in __transaction_state</text>
+</g><!-- This note is an independent condition, not a step after COMPLETE_COMMIT: visibility follows each partition log and LSO. -->
+<g id="partition-read-visibility">
+<rect class="panel" x="780" y="955" width="310" height="148" /><text class="strong" x="935" y="982" text-anchor="middle" >Read visibility</text><text class="detail" x="935" y="1009" text-anchor="middle" >Per partition: marker replicated<tspan x="935" dy="24">and last stable offset permits reads.</tspan></text><text class="small" x="935" y="1064" text-anchor="middle" >Can precede coordinator completion;<tspan x="935" dy="22">earlier open transactions can delay it.</tspan></text>
+</g><!-- sequence-key -->
+<g id="sequence-key">
+<rect class="panel" x="30" y="955" width="280" height="148" /><text class="strong" x="170" y="982" text-anchor="middle" >Sequence key</text><!-- key-request: shaft ends inside its separate arrowhead base. -->
+<path id="key-request-flow" data-connector="true" d="M55 1013 L101 1013" fill="none" stroke="#171717" stroke-width="2"/><path id="key-request-head" d="M99 1019 L111 1013 L99 1007Z" fill="#171717"/><text class="small" x="126" y="1019" text-anchor="start" >Request / work</text><!-- Reply dash phase keeps the final dash joined to the arrowhead. --><!-- key-reply: shaft ends inside its separate arrowhead base. -->
+<path id="key-reply-flow" data-connector="true" d="M55 1050 L101 1050" fill="none" stroke="#171717" stroke-width="2" stroke-dasharray="7 5" stroke-dashoffset="7"/><path id="key-reply-head" d="M99 1056 L111 1050 L99 1044Z" fill="#171717"/><text class="small" x="126" y="1056" text-anchor="start" >Reply</text><text class="small" x="170" y="1085" text-anchor="middle" >Gray dashes: actor lifelines.</text>
+</g><!-- business-boundary -->
+<g id="business-boundary">
+<rect class="note" x="30" y="1130" width="1040" height="64" /><text class="detail" x="550" y="1157" text-anchor="middle" >Kafka commit does not mean a consumer has processed the records<tspan x="550" dy="23">or that an external database, email, or payment was completed.</tspan></text>
+</g><!-- diagram-scope -->
+<g id="diagram-scope">
+<text class="small" x="550" y="1219" text-anchor="middle" >Successful output-record path; optional consumed offsets and failure branches are omitted.</text>
+</g>
+</svg>

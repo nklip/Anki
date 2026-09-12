@@ -1,47 +1,68 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="675" viewBox="0 0 1000 675" role="img" aria-labelledby="title desc">
-<title id="title">Kafka buffers a temporary ingestion burst while a sink catches up</title>
-<desc id="desc">Example constant rates: for thirty seconds a producer appends six thousand records per second and a sink processes two thousand per second, adding one hundred twenty thousand unread records. After the burst, one thousand records arrive per second and the sink still processes two thousand, draining the backlog in one hundred twenty seconds. Retention can delete unread records, and sustained input at least as large as output prevents an existing backlog from draining.</desc>
-<!-- Shared typography and semantic panels; backlog means unread records, not all stored records. -->
-<defs><style>text{font-family:Arial,Helvetica,sans-serif;fill:#111}.title{font-size:26px;font-weight:bold}.label{font-size:20px}.small{font-size:17px}.box{fill:#fff;stroke:#111;stroke-width:1.8}.blue{fill:#eaf3fb;stroke:#111;stroke-width:1.8}.amber{fill:#fff4db;stroke:#111;stroke-width:1.8}.shaft{fill:none;stroke:#111;stroke-width:1.8}</style></defs>
-<rect width="1000" height="675" fill="#fff"/>
-<!-- The data path separates the producer's pace from the sink's pace. -->
-<text x="500" y="40" class="title" text-anchor="middle">Kafka buffers bursts while a sink catches up</text>
-<text x="500" y="70" class="small" text-anchor="middle">Records can wait in the retained log when the producer temporarily outruns the sink.</text>
-<rect id="producer" class="box" x="30" y="135" width="210" height="105"/>
-<text x="135" y="171" class="label" font-weight="bold" text-anchor="middle">Producer</text>
-<text x="135" y="206" class="small" text-anchor="middle">Append records</text>
-<rect id="buffered-log" class="blue" x="365" y="110" width="285" height="145"/>
-<text x="507" y="143" class="label" font-weight="bold" text-anchor="middle">Kafka retained log</text>
-<text x="507" y="181" class="label" text-anchor="middle">Unread backlog</text>
-<text x="507" y="212" class="small" text-anchor="middle">Records waiting for this sink</text>
-<text x="507" y="239" class="small" text-anchor="middle">Reading advances its progress</text>
-<rect id="sink" class="box" x="785" y="135" width="185" height="105"/>
-<text x="877" y="171" class="label" font-weight="bold" text-anchor="middle">Sink</text>
-<text x="877" y="206" class="small" text-anchor="middle">Process records</text>
-<!-- Arrow shafts stop beneath their triangular bases, with noses on the target borders. -->
-<path id="append-shaft" class="shaft" data-connector="true" d="M240 188 H353"/>
-<path id="append-head" d="M351 181 L365 188 L351 195Z" fill="#111"/>
-<text x="302" y="162" class="small" text-anchor="middle">append</text>
-<path id="consume-shaft" class="shaft" data-connector="true" d="M650 188 H773"/>
-<path id="consume-head" d="M771 181 L785 188 L771 195Z" fill="#111"/>
-<text x="717" y="162" class="small" text-anchor="middle">read</text>
-<text x="500" y="284" class="small" text-anchor="middle">Backlog counts unread records. Consuming them does not delete them from Kafka.</text>
-<!-- Phase panels make the rate difference and duration explicit. -->
-<rect id="burst-phase" class="amber" x="30" y="310" width="450" height="190"/>
-<text x="53" y="344" class="label" font-weight="bold">1. A 30-second burst</text>
-<text x="53" y="379" class="small">In: 6,000 records/s | Out: 2,000 records/s</text>
-<text x="53" y="410" class="small">Growth: 6,000 − 2,000 = 4,000 records/s</text>
-<text x="53" y="446" class="label">4,000 × 30 = 120,000 unread records</text>
-<text x="53" y="478" class="small">Starting with zero backlog</text>
-<rect id="drain-phase" class="blue" x="520" y="310" width="450" height="190"/>
-<text x="543" y="344" class="label" font-weight="bold">2. After the burst</text>
-<text x="543" y="379" class="small">In: 1,000 records/s | Out: 2,000 records/s</text>
-<text x="543" y="410" class="small">Net drain: 2,000 − 1,000 = 1,000 records/s</text>
-<text x="543" y="446" class="label">120,000 ÷ 1,000 = 120 s to catch up</text>
-<text x="543" y="478" class="small">New records keep arriving during recovery</text>
-<!-- Storage and rate limits state when buffering will fail to protect the sink. -->
-<rect id="buffer-limits" class="amber" x="30" y="540" width="940" height="85"/>
-<text x="500" y="573" class="small" text-anchor="middle">Retention can remove unread records before a slow sink reaches them.</text>
-<text x="500" y="604" class="small" text-anchor="middle">With sustained inflow ≥ outflow, an existing backlog cannot drain.</text>
-<text x="500" y="656" class="small" text-anchor="middle">Illustrative steady rates; assumes enough storage, available sink capacity, and no added overhead.</text>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1100" height="713" viewBox="0 0 1100 713" role="img" aria-labelledby="title desc">
+<title id="title">Kafka buffers a burst while the sink catches up</title>
+<desc id="desc">An ingestion producer appends measurements to Kafka; a consumer writes them to a time-series database. Starting with zero backlog, a 30-second burst at 6,000 records per second in and 2,000 out adds 120,000 unread records. Then 1,000 in and 2,000 out clears that backlog in 120 seconds. Consumption does not delete retained records. Retention can remove unread records; sustained inflow at least as high as outflow prevents a backlog from draining. The example assumes comparable records, adequate storage, sustained sink capacity, and no added overhead.</desc>
+<!-- Shared system-design typography and native icons, matching kafka-data-placement.svg.
+     Icon sources: Proximity Service final-design.svg; Notification System improved-design.svg. -->
+<defs>
+<style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #171717; }
+.title { font-size: 28px; font-weight: 700; }
+.label { font-size: 20px; }
+.strong { font-size: 20px; font-weight: 700; }
+.detail { font-size: 17px; }
+.small { font-size: 16px; }
+.mono { font-family: Consolas, Menlo, monospace; font-size: 16px; }
+.panel { fill: #fff; stroke: #888; stroke-width: 1.6; }
+.blue { fill: #eaf3ff; stroke: #888; stroke-width: 1.6; }
+.note { fill: #fff4da; stroke: #888; stroke-width: 1.4; }
+.service { fill: #fff; stroke: #171717; stroke-width: 1.6; }
+</style>
+<symbol id="green-server" viewBox="0 0 30 60">
+      <rect x="8" y="1" width="14" height="9" rx="1" fill="#65c515"/>
+      <path d="M11 5 H19" stroke="#fff" stroke-width="1.5"/>
+      <rect x="3" y="12" width="24" height="46" rx="1.5" fill="#65c515"/>
+      <path d="M7 19 H23 M7 40 H23 M7 48 H23" stroke="#fff" stroke-width="2"/>
+    </symbol>
+<symbol id="channel-queue" viewBox="0 0 150 58">
+      <path d="M2 2 H135 L148 29 L135 56 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="4"/>
+      <g fill="none" stroke="#1677b8" stroke-width="4">
+        <rect x="10" y="12" width="36" height="33"/><path d="M10 13 L28 29 L46 13"/>
+        <rect x="54" y="12" width="36" height="33"/><path d="M54 13 L72 29 L90 13"/>
+        <rect x="98" y="12" width="36" height="33"/><path d="M98 13 L116 29 L134 13"/>
+      </g>
+    </symbol>
+<symbol id="db" viewBox="0 0 88 93">
+      <path d="M0.9 13.75A43.1 8.75 0 0 1 87.1 13.75V82.25A43.1 8.75 0 0 1 0.9 82.25Z" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+      <ellipse cx="44" cy="13.75" rx="43.1" ry="8.75" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+    </symbol>
+</defs>
+<!-- Canvas and lesson heading. -->
+<rect width="1100" height="713" fill="#fff"/>
+<text class="title" x="550.0" y="35" text-anchor="middle" >Kafka buffers a burst while the sink catches up</text>
+<text class="detail" x="550.0" y="66" text-anchor="middle" >A temporary gap between arrival and processing rates becomes unread work in the retained log.</text>
+<!-- ingestion-producer -->
+<g id="ingestion-producer">
+<use href="#green-server" x="117" y="135" width="46" height="92"/><text class="strong" x="140" y="255" text-anchor="middle" >Ingestion producer</text><text class="detail" x="140" y="282" text-anchor="middle" >Append measurements</text>
+</g><!-- The queue icon denotes a retained log, not delete-on-read messaging. -->
+<g id="retained-measurements">
+<use href="#channel-queue" x="375" y="139" width="230" height="92"/><text class="strong" x="490" y="255" text-anchor="middle" >Kafka measurements topic</text><text class="detail" x="490" y="282" text-anchor="middle" >Retained input; independent of the sink</text>
+</g><!-- sink-processing -->
+<g id="sink-processing">
+<rect class="panel" x="755" y="108" width="315" height="199" /><text class="strong" x="912.5" y="138" text-anchor="middle" >Sink processing</text><use href="#green-server" x="795" y="155" width="40" height="80"/><use href="#db" x="960" y="150" width="80" height="88" style="color:#fff"/><!-- write-measurements: shaft ends inside its separate arrowhead base. -->
+<path id="write-measurements-flow" data-connector="true" d="M850 195 L941 195" fill="none" stroke="#171717" stroke-width="2"/><path id="write-measurements-head" d="M939 201 L951 195 L939 189Z" fill="#171717"/><text class="detail" x="901" y="176" text-anchor="middle" >write</text><text class="label" x="815" y="265" text-anchor="middle" >Consumer</text><text class="detail" x="1000" y="265" text-anchor="middle" >Time-series DB</text><text class="detail" x="912.5" y="290" text-anchor="middle" >Destination processes at its own pace</text>
+</g><!-- independent-rates -->
+<g id="independent-rates">
+<!-- append-records: shaft ends inside its separate arrowhead base. -->
+<path id="append-records-flow" data-connector="true" d="M177 187 L356 187" fill="none" stroke="#171717" stroke-width="2"/><path id="append-records-head" d="M354 193 L366 187 L354 181Z" fill="#171717"/><text class="detail" x="270" y="164" text-anchor="middle" >append</text><!-- read-records: shaft ends inside its separate arrowhead base. -->
+<path id="read-records-flow" data-connector="true" d="M614 187 L744.2 187" fill="none" stroke="#171717" stroke-width="2"/><path id="read-records-head" d="M742.2 193 L754.2 187 L742.2 181Z" fill="#171717"/><text class="detail" x="685" y="164" text-anchor="middle" >read</text><text class="detail" x="550" y="333" text-anchor="middle" >Backlog = records this sink has not read. Reading does not delete their retained Kafka copies.</text>
+</g><!-- burst-phase -->
+<g id="burst-phase">
+<rect class="panel" x="30" y="359" width="500" height="196" /><text class="strong" x="55" y="392" text-anchor="start" >1. A 30-second burst</text><text class="detail" x="55" y="424" text-anchor="start" >In: 6,000 records/s   |   Out: 2,000 records/s</text><text class="detail" x="55" y="454" text-anchor="start" >Growth: 6,000 − 2,000 = 4,000 records/s</text><text class="strong" x="55" y="492" text-anchor="start" >4,000 × 30 = 120,000 unread records</text><text class="detail" x="55" y="527" text-anchor="start" >Starting with zero backlog</text>
+</g><!-- drain-phase -->
+<g id="drain-phase">
+<rect class="panel" x="570" y="359" width="500" height="196" /><text class="strong" x="595" y="392" text-anchor="start" >2. After the burst</text><text class="detail" x="595" y="424" text-anchor="start" >In: 1,000 records/s   |   Out: 2,000 records/s</text><text class="detail" x="595" y="454" text-anchor="start" >Net drain: 2,000 − 1,000 = 1,000 records/s</text><text class="strong" x="595" y="492" text-anchor="start" >120,000 ÷ 1,000 = 120 s to catch up</text><text class="detail" x="595" y="527" text-anchor="start" >New records keep arriving during recovery</text>
+</g><!-- buffer-limits -->
+<g id="buffer-limits">
+<rect class="note" x="30" y="582" width="1040" height="80" /><text class="detail" x="550" y="611" text-anchor="middle" >Retention can remove unread records before a slow sink reaches them.</text><text class="detail" x="550" y="642" text-anchor="middle" >With sustained inflow ≥ outflow, an existing backlog cannot drain.</text><text class="small" x="550" y="690" text-anchor="middle" >Illustrative steady rates: enough storage, sustained sink capacity, comparable records, no added overhead.</text>
+</g>
 </svg>

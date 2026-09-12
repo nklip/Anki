@@ -115,6 +115,20 @@ Automatic commits do not inspect whether a database operation or background task
 
 `auto.offset.reset` applies when no usable offset exists. `earliest` starts at the earliest retained position; `latest` starts at the end; `none` reports the missing position as an error. It is not a command to rewind a group with valid committed offsets on every restart.
 
+### Publishing without Kafka transactions
+
+**Kafka transactions are optional. An application can publish records with ordinary `send()` calls without calling `initTransactions()`, `beginTransaction()`, or `commitTransaction()`.** Leave `transactional.id` unset for this mode. The producer sends batches to partition leaders, and each send completes according to its acknowledgment policy. There is no transaction commit decision or commit marker for these records.
+
+Nontransactional does not mean unreplicated or unreliable. You can still use `acks=all` for replication acknowledgments and **producer idempotence**, which prevents the producer's internal retries from appending duplicate copies of a send. This retry protection does not make several application sends one atomic operation. Consumers using `read_committed` also receive nontransactional records, subject to the partition's visibility boundary.
+
+| Aspect | Advantage of ordinary publishing | Limit to account for |
+|---|---|---|
+| Application code | No transaction lifecycle or transaction-ID management | Several sends have no shared commit or abort boundary |
+| Latency and coordination | Avoids transaction-coordinator writes and commit-marker work | This removes one source of overhead; actual latency still depends on batching, replication, and load |
+| Partial failure | Independent events can succeed independently | If publishing an order succeeds but publishing its audit event fails, the order remains published |
+| Reliability | Replication acknowledgments and idempotent producer retries remain available | Application retries and consumer reprocessing can still repeat business events or effects |
+| Consumer progress | Suitable when each event can be handled independently | Output records and consumed offsets cannot commit together as one Kafka transaction |
+
 ### Producer idempotence: retrying an append
 
 An operation is **idempotent** when repeating it has the same intended effect as doing it once. Kafka's idempotent producer prevents its internal retries from appending duplicate copies of the same send. Enable it explicitly when it is part of the application's required contract:
@@ -128,15 +142,157 @@ The Java producer also requires positive retries and at most five in-flight requ
 
 This mechanism does not deduplicate two application calls that independently publish `evt-901`. A restarted application can publish the same business event again. Keep a stable event ID when downstream effects must recognize such duplicates. Also distinguish producer retry order from business event time: correct transport does not repair an application's incorrectly ordered events.
 
+### Java example: publishing without transactions
+
+This small Java program uses the `org.apache.kafka:kafka-clients` library and an existing `orders` topic on `localhost:9092`. The string serializer converts the key and JSON text to bytes. Save it as `PlainProducer.java`; authentication and topic creation are outside this example.
+
+```java
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringSerializer;
+
+public class PlainProducer {
+    public static void main(String[] args) throws Exception {
+        var properties = new Properties();
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+                StringSerializer.class.getName());
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                StringSerializer.class.getName());
+        properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
+        properties.put(ProducerConfig.ACKS_CONFIG, "all");
+        // No transactional.id: these are ordinary, idempotent sends.
+
+        try (var producer = new KafkaProducer<String, String>(properties)) {
+            var record = new ProducerRecord<>("orders", "order-42",
+                    "{\"eventId\":\"evt-901\",\"eventType\":\"OrderCreated\"}");
+            var metadata = producer.send(record).get(10, TimeUnit.SECONDS);
+            System.out.printf("Written to %s-%d at offset %d%n",
+                    metadata.topic(), metadata.partition(), metadata.offset());
+        }
+    }
+}
+```
+
+`send()` returns a future; `get()` waits here so the example reports an acknowledgment or propagates an error. Success means the configured write acknowledgment was received, not that a consumer completed its work. A wait timeout does not cancel the send or prove it failed; do not blindly publish another copy. Keep a stable event ID and a recovery policy. A service normally reuses its producer and observes asynchronous callbacks or futures instead of creating a producer and blocking for every request.
+
+In Spring Boot, an ordinary, nontransactional `KafkaTemplate` provides the same publishing mode through `kafkaTemplate.send(topic, key, payload)`. Its `CompletableFuture` reports the send outcome. Leave the producer's transaction-ID configuration unset when choosing this mode; the Spring transaction example below explains how that same `send()` call behaves when transactions are enabled.
+
 ### Kafka transactions: coordinating Kafka output and input progress
 
 A **Kafka transaction** can atomically commit output records across Kafka partitions together with consumed offsets. A processor can read an order, produce an enriched order, and commit its input progress as one Kafka transaction. Aborted output is hidden from consumers using `isolation.level=read_committed`; these consumers still receive nontransactional records.
 
 The transactional producer uses a `transactional.id`; each concurrently active logical producer needs its own identity. Applications must handle aborts and recovery correctly, including returning input consumption to the right position. Kafka Streams can manage this protocol for supported processing pipelines.
 
+The **transaction coordinator** is a broker role that tracks the transaction in the replicated internal topic `__transaction_state`. A **commit marker** is a control record that records the committed outcome in a participating partition. A `read_committed` consumer can read only records below the partition's **last stable offset (LSO)**, a boundary held back by unresolved transactions. Read the following sequence from top to bottom; it follows a successful transaction that writes output records.
+
+![kafka-transaction-sequence.svg](images/kafka-transaction-sequence.svg)
+
+Distinguish three meanings of completion:
+
+1. **Producer success.** `commitTransaction()` flushes pending sends and waits for successful record acknowledgments before requesting the commit. Once the coordinator has replicated `PREPARE_COMMIT`, it can send success to the producer. The call can return while commit markers are still propagating; a record acknowledgment alone was not a transaction commit.
+2. **Read visibility.** Each partition's replicated commit marker allows the committed records to become eligible for `read_committed` consumers, subject to its LSO. An earlier open transaction can still hold reads back. This is not a simultaneous visibility switch across all partitions.
+3. **Coordinator completion.** After all participating partitions acknowledge their markers, the coordinator replicates `COMPLETE_COMMIT`. Its commit protocol is finished. Readers do not wait directly for this final coordinator record, and none of these points means a consumer has finished the business work.
+
+For a consume–transform–produce transaction, call `sendOffsetsToTransaction()` with the next offsets to process and the consumer's group metadata before `commitTransaction()`. Those offsets commit with the output; the relevant `__consumer_offsets` partitions also participate. Their group-coordinator interactions are omitted from the sequence.
+
+The diagram assumes success. A timeout from `commitTransaction()` does not prove an abort: the commit may still be completing. The Java producer permits retrying the same commit call; do not switch to an abort merely because the commit call timed out.
+
 An **application programming interface (API)** is the interface through which one program requests another component's services. **A Kafka transaction does not automatically include an external database, email server, or payment API.** Re-executing processor code is possible even when its committed Kafka results appear once. For a database effect, atomically record the event ID and the business change in that database, protected by a uniqueness constraint. A separate service call needs that service's own idempotency contract.
 
 A **saga** coordinates a business workflow through a sequence of local transactions, with **compensating transactions** to counteract completed work when a later step fails. For example, reserve inventory, request payment, and release the reservation if payment is rejected. Kafka can carry the commands and outcome events; application logic tracks the workflow. Compensation is a new business action, not an atomic rollback across services: intermediate states can be visible, and compensation can itself fail and need retries. Sagas therefore still need idempotency and recovery rules.
+
+### Starting and handling a transaction in Spring Boot
+
+`KafkaProducer` is a Java client running inside the application process. Spring's `KafkaTemplate` wraps that client; Spring can manage its transaction lifecycle for the application. The following producer-only example commits an order event and an audit event together. It does not consume records or update a database.
+
+Use a Spring Boot 4.1 application with `org.springframework.boot:spring-boot-starter-kafka`, and let Boot manage dependency versions. Boot 4.1's managed Kafka client version can differ from the broker version; these APIs do not require overriding it to match the article's Kafka 4.3 broker discussion. Assume `orders` and `order-audit` already exist. In `application.properties`:
+
+```properties
+spring.kafka.bootstrap-servers=localhost:9092
+spring.kafka.producer.key-serializer=org.apache.kafka.common.serialization.StringSerializer
+spring.kafka.producer.value-serializer=org.apache.kafka.common.serialization.StringSerializer
+spring.kafka.producer.transaction-id-prefix=orders-${INSTANCE_ID}-
+spring.kafka.producer.acks=all
+spring.kafka.producer.properties[enable.idempotence]=true
+```
+
+The broker cluster must also support the internal transaction-state topic. Its defaults require three brokers (`transaction.state.log.replication.factor=3`, `transaction.state.log.min.isr=2`). For a disposable single-broker learning setup, both broker settings can be `1`; that setup has no replica redundancy.
+
+Supply `INSTANCE_ID` with a different value for every concurrently running application instance, such as `orders-1` and `orders-2`. Spring adds a suffix for each transactional producer. Setting the prefix makes the producer factory transaction-capable; Boot also auto-configures a `KafkaTransactionManager`. It does **not** wrap every standalone `send()` call in a new transaction.
+
+Put this service in the application's component-scan package. Both payload arguments are already serialized JSON strings; the example waits for both send results to make asynchronous failures explicit.
+
+```java
+import java.util.concurrent.CompletableFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
+
+@Service
+public class OrderPublisher {
+    private static final Logger log = LoggerFactory.getLogger(OrderPublisher.class);
+    private final KafkaTemplate<String, String> kafkaTemplate;
+
+    public OrderPublisher(KafkaTemplate<String, String> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
+
+    public void publishOrderAndAudit(String orderId, String orderJson,
+                                    String auditJson) {
+        try {
+            kafkaTemplate.executeInTransaction(tx -> {
+                var orderSend = tx.send("orders", orderId, orderJson);
+                var auditSend = tx.send("order-audit", orderId, auditJson);
+                CompletableFuture.allOf(orderSend, auditSend).join();
+                return null;
+            });
+        } catch (RuntimeException failure) {
+            log.error("Kafka publication did not report success for {}", orderId, failure);
+            throw failure;
+        }
+    }
+}
+```
+
+`executeInTransaction()` begins a transaction before invoking the callback. Successful callback completion leads to a commit. A callback exception, including a failed send surfaced by `join()`, causes Spring to attempt an abort and propagate the failure. The catch is outside the transaction boundary: it reports the error and leaves recovery to the caller. Catching an error inside the callback and returning normally could instead allow a commit.
+
+The successful send futures only confirm record writes; the transaction has not committed at `join()`. Successful return from `executeInTransaction()` is the producer's transaction-success signal. A failure during commit can leave an uncertain outcome, so the catch does not claim that the transaction aborted and does not automatically start a replacement transaction. Keep durable business-event identities and make recovery safe against duplicate effects.
+
+Every downstream consumer that must hide aborted output needs `isolation.level=read_committed`; in a Spring Boot consumer application, set:
+
+```properties
+spring.kafka.consumer.properties[isolation.level]=read_committed
+```
+
+An alternative is a public service method annotated with `@Transactional(transactionManager = "kafkaTransactionManager", rollbackFor = Exception.class)` that performs the sends directly. Call it through the Spring-managed bean from another bean so the transaction interceptor runs; a same-object method call bypasses the usual proxy. The explicit rollback rule includes checked exceptions, which do not trigger rollback by default. Choose this method boundary or `executeInTransaction()` for the operation: the latter starts its own separate transaction even if a Spring-managed transaction is already active. Nesting one `executeInTransaction()` call inside another is rejected.
+
+| Context of `kafkaTemplate.send(...)` | Behavior |
+|---|---|
+| Nontransactional producer factory | Ordinary asynchronous publication |
+| Transaction-capable template inside an active Kafka transaction | Sends participate; Spring commits or aborts at the surrounding boundary |
+| Transaction-capable template outside a transaction | `IllegalStateException` by default; `allowNonTransactional=true` explicitly permits an ordinary send |
+| Transaction-capable template inside a supported Spring database transaction | Spring can synchronize a Kafka transaction with it, but their commits remain separate |
+
+For a Kafka listener that consumes and produces, prefer the container's transaction support when input offsets and output must commit together. A container configured with `KafkaTransactionManager` begins before the listener, includes its template sends, and adds consumed offsets before commit. Listener failure rolls back and permits redelivery. A local `executeInTransaction()` alone does not include listener offsets. Likewise, synchronizing a database transaction and a Kafka transaction leaves a failure window between their commits; use the outbox pattern in §6 when the database change must reliably lead to publication.
+
+### Industry practice: choose the required guarantee
+
+**There is no single transaction setting that every Kafka application should use.** The following is a practical selection guide derived from the documented guarantees, not a claim about measured adoption. Ordinary publishing is a first-class Kafka mode. Current compatible producer defaults enable idempotence, while Kafka Streams defaults to `at_least_once` processing; transactions and `exactly_once_v2` are deliberate choices.
+
+| Workload or requirement | Practical starting point | Why |
+|---|---|---|
+| Independent events, telemetry, logs, or notifications | Ordinary publishing; enable idempotence and use `acks=all` where replication acknowledgment matters | Avoid a transaction boundary when records do not need to commit together; choose suitable replication and minimum ISR as described in §3 |
+| Several Kafka outputs must share one commit outcome | Kafka transaction plus downstream `read_committed` | Prevents consumers from treating an aborted partial publication as committed output |
+| Kafka input → processing → Kafka output, with atomic output and input progress | Kafka Streams `processing.guarantee=exactly_once_v2` or Spring container-managed transactions | The framework coordinates output and consumed offsets; processing code can still run again after failure |
+| Database update must eventually publish an event | Transactional outbox plus a relay or change data capture, and duplicate-safe consumers | The database atomically saves its change and publication obligation; a Kafka-only transaction cannot do that |
+| Consumer writes to a database or calls an external service | Safe offset commits, durable deduplication, and an idempotency contract for the effect | Kafka transactions alone cannot make external work happen exactly once |
+
+For independent business events, a useful baseline is **idempotent publishing, replication acknowledgments, at-least-once processing, and duplicate-safe business effects**. Add Kafka transactions when there is a concrete need for atomic Kafka outputs or output-plus-offset commits. Their benefit is that atomic boundary; their costs include coordinator and marker work, transaction-ID management, failure recovery, and possible delays for `read_committed` readers while transactions remain unresolved. Keep transactions short and measure the tradeoff with the real workload; no fixed throughput penalty applies to every deployment.
 
 ## 3. Storage and durability
 
@@ -409,6 +565,10 @@ Try answering without looking back at the article, then check the answer key:
 
 Primary documentation checked on 2026-09-10. The order-system designs, capacity calculation, and placement recommendations are examples derived from these mechanisms. Configuration and API behavior follow the linked Kafka 4.3 documentation.
 
+The transaction sequence was checked on 2026-09-12 against Kafka 4.3 documentation and the versioned Kafka 4.3.0 implementation.
+
+The ordinary-publishing guidance, Java and Spring examples, and guarantee-selection recommendations were checked on 2026-09-12 against the linked Kafka, Spring Boot 4.1, and Spring Kafka 4.1 documentation. The selection guide is an engineering recommendation based on those mechanisms, not an industry adoption survey.
+
 - [Apache Kafka introduction: events, topics, partitions, and the platform](https://kafka.apache.org/43/getting-started/introduction/)
 - [Apache Kafka use cases: editorial descriptions of messaging, buffering, processing, and event sourcing](https://kafka.apache.org/uses/)
 - [Confluent's 2017 Kafka community survey: historical, overlapping pipeline, processing, and integration categories](https://www.confluent.io/blog/2017-apache-kafka-survey-streaming-data-on-the-rise/)
@@ -417,6 +577,22 @@ Primary documentation checked on 2026-09-10. The order-system designs, capacity 
 - [ConsumerRecord API: topic, partition, offset, key, and value](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/consumer/ConsumerRecord.html)
 - [Kafka design: log storage, pull consumption, replication, transactions, share groups, and compaction](https://kafka.apache.org/43/design/design/)
 - [KafkaProducer API: asynchronous sends, retry idempotence, and transactions](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/producer/KafkaProducer.html)
+- [Spring Boot Kafka support: template and transaction-manager auto-configuration](https://docs.spring.io/spring-boot/reference/messaging/kafka.html)
+- [Spring Boot managed dependencies: compatible Spring Kafka and Kafka client versions](https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html)
+- [Spring Kafka sending: asynchronous template results and error handling](https://docs.spring.io/spring-kafka/reference/kafka/sending-messages.html)
+- [Spring Kafka transactions: local transactions, transaction IDs, synchronization, and nontransactional sends](https://docs.spring.io/spring-kafka/reference/kafka/transactions.html)
+- [Spring Kafka 4.1.1 implementation: callback failures, abort attempts, and commit-error propagation](https://github.com/spring-projects/spring-kafka/blob/v4.1.1/spring-kafka/src/main/java/org/springframework/kafka/core/KafkaTemplate.java#L679-L722)
+- [Spring Kafka exactly-once semantics: listener transactions, output, offsets, and rollback](https://docs.spring.io/spring-kafka/reference/kafka/exactly-once.html)
+- [Spring transaction annotations: transaction-manager selection and proxy boundaries](https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html)
+- [Spring rollback rules: unchecked exceptions by default and explicit checked-exception rules](https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/rolling-back.html)
+- [Kafka transaction protocol: partition enrollment and protocol-version differences](https://kafka.apache.org/43/operations/transaction-protocol/)
+- [Kafka 4.3.0 producer transaction manager: beginTransaction changes local client state](https://github.com/apache/kafka/blob/4.3.0/clients/src/main/java/org/apache/kafka/clients/producer/internals/TransactionManager.java#L348-L353)
+- [Kafka 4.3.0 transaction coordinator: durable commit decision, success response, and marker propagation](https://github.com/apache/kafka/blob/4.3.0/core/src/main/scala/kafka/coordinator/transaction/TransactionCoordinator.scala#L851-L1001)
+- [Kafka 4.3.0 transaction state manager: replicated state-log writes](https://github.com/apache/kafka/blob/4.3.0/core/src/main/scala/kafka/coordinator/transaction/TransactionStateManager.scala#L668-L816)
+- [Kafka 4.3.0 marker manager: record completion after all partition acknowledgments](https://github.com/apache/kafka/blob/4.3.0/core/src/main/scala/kafka/coordinator/transaction/TransactionMarkerChannelManager.scala#L336-L380)
+- [Kafka 4.3.0 broker request handling: commit markers for data and consumer-offset partitions](https://github.com/apache/kafka/blob/4.3.0/core/src/main/scala/kafka/server/KafkaApis.scala#L1794-L1845)
+- [Kafka 4.3.0 partition transaction state: marker replication and unresolved transactions](https://github.com/apache/kafka/blob/4.3.0/storage/src/main/java/org/apache/kafka/storage/internals/log/ProducerStateManager.java#L241-L265)
+- [Kafka 4.3.0 partition log: last stable offset and read-committed visibility](https://github.com/apache/kafka/blob/4.3.0/storage/src/main/java/org/apache/kafka/storage/internals/log/UnifiedLog.java#L671-L685)
 - [Producer configuration: acknowledgments, batching, partitioning, and idempotence](https://kafka.apache.org/43/configuration/producer-configs/)
 - [KafkaConsumer API: group assignments, position, committed offsets, and processing](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html)
 - [Kafka distribution: group coordinators and compacted offset storage](https://kafka.apache.org/43/implementation/distribution/)

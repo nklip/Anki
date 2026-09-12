@@ -1,62 +1,80 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="665" viewBox="0 0 1000 665" role="img" aria-labelledby="title desc">
-<title id="title">Kafka Connect moves product changes from a database to a search view</title>
-<desc id="desc">A merchant updates a product in its authoritative database. A source connector task in a Connect worker imports the change into the products topic on Kafka brokers. A sink connector task in a Connect worker reads the topic and writes a derived search view. Workers are separate processes from brokers. The view may lag, and delivery guarantees depend on the connectors and destination.</desc>
-<!-- Shared typography and process boundaries; task boxes sit within worker boxes. -->
-<defs><style>text{font-family:Arial,Helvetica,sans-serif;fill:#111}.title{font-size:26px;font-weight:bold}.label{font-size:20px}.task{font-size:19px;font-weight:bold}.small{font-size:17px}.box{fill:#fff;stroke:#111;stroke-width:1.8}.blue{fill:#eaf3fb;stroke:#111;stroke-width:1.8}.amber{fill:#fff4db;stroke:#111;stroke-width:1.8}.shaft{fill:none;stroke:#111;stroke-width:1.8;stroke-linejoin:round}</style></defs>
-<rect width="1000" height="665" fill="#fff"/>
-<!-- Read clockwise: merchant, database, source task, Kafka topic, sink task, search view. -->
-<text x="500" y="40" class="title" text-anchor="middle">Kafka Connect: move a product change into a search view</text>
-<text x="500" y="70" class="small" text-anchor="middle">Source = import into Kafka. Sink = export from Kafka to another system.</text>
-<rect id="merchant" class="box" x="30" y="155" width="190" height="100"/>
-<text x="125" y="191" class="label" font-weight="bold" text-anchor="middle">Merchant</text>
-<text x="125" y="224" class="small" text-anchor="middle">Change product 7</text>
-<rect id="product-database" class="blue" x="330" y="145" width="240" height="120"/>
-<text x="450" y="178" class="label" font-weight="bold" text-anchor="middle">Product database</text>
-<text x="450" y="210" class="small" text-anchor="middle">Authoritative state</text>
-<text x="450" y="240" class="small" text-anchor="middle">product 7 = updated</text>
-<!-- Source worker is a runtime process separate from the brokers below it. -->
-<rect id="source-worker" class="blue" x="690" y="110" width="280" height="175"/>
-<text x="830" y="140" class="label" font-weight="bold" text-anchor="middle">Connect worker A</text>
-<rect id="source-task" class="box" x="710" y="159" width="240" height="101"/>
-<text x="830" y="189" class="task" text-anchor="middle">Source connector task</text>
-<text x="830" y="220" class="small" text-anchor="middle">Read database changes</text>
-<text x="830" y="245" class="small" text-anchor="middle">Publish product events</text>
-<!-- Manual shafts stop under their triangular bases; arrow noses meet target borders. -->
-<path id="merchant-update-shaft" class="shaft" data-connector="true" d="M220 205 H318"/>
-<path id="merchant-update-head" d="M316 198 L330 205 L316 212Z" fill="#111"/>
-<text x="275" y="183" class="small" text-anchor="middle">update</text>
-<path id="source-read-shaft" class="shaft" data-connector="true" d="M570 205 H678"/>
-<path id="source-read-head" d="M676 198 L690 205 L676 212Z" fill="#111"/>
-<text x="630" y="183" class="small" text-anchor="middle">changes</text>
-<!-- The topic belongs to Kafka brokers, not to either Connect worker. -->
-<rect id="brokers" x="735" y="360" width="235" height="150" fill="#f4f4f4" stroke="#111" stroke-width="1.8"/>
-<text x="852" y="390" class="label" font-weight="bold" text-anchor="middle">Kafka brokers</text>
-<rect id="products-topic" class="box" x="755" y="406" width="195" height="81"/>
-<text x="852" y="435" class="label" text-anchor="middle">products topic</text>
-<text x="852" y="465" class="small" text-anchor="middle">ProductUpdated(7)</text>
-<path id="source-publish-shaft" class="shaft" data-connector="true" d="M852 285 V348"/>
-<path id="source-publish-head" d="M845 346 L852 360 L859 346Z" fill="#111"/>
-<text x="748" y="326" class="small" text-anchor="middle">into Kafka</text>
-<!-- Sink task exports retained events into a queryable destination. -->
-<rect id="sink-worker" class="blue" x="375" y="340" width="280" height="175"/>
-<text x="515" y="372" class="label" font-weight="bold" text-anchor="middle">Connect worker B</text>
-<rect id="sink-task" class="box" x="395" y="391" width="240" height="101"/>
-<text x="515" y="421" class="task" text-anchor="middle">Sink connector task</text>
-<text x="515" y="452" class="small" text-anchor="middle">Read product events</text>
-<text x="515" y="477" class="small" text-anchor="middle">Write search documents</text>
-<path id="sink-read-shaft" class="shaft" data-connector="true" d="M735 443 H667"/>
-<path id="sink-read-head" d="M669 436 L655 443 L669 450Z" fill="#111"/>
-<text x="695" y="419" class="small" text-anchor="middle">read</text>
-<rect id="search-view" class="box" x="30" y="375" width="235" height="115"/>
-<text x="147" y="407" class="label" font-weight="bold" text-anchor="middle">Search view</text>
-<text x="147" y="438" class="small" text-anchor="middle">Derived product state</text>
-<text x="147" y="467" class="small" text-anchor="middle">May lag behind the update</text>
-<path id="sink-write-shaft" class="shaft" data-connector="true" d="M375 443 H277"/>
-<path id="sink-write-head" d="M279 436 L265 443 L279 450Z" fill="#111"/>
-<text x="320" y="419" class="small" text-anchor="middle">write</text>
-<!-- Runtime and delivery caveats keep the product roles explicit. -->
-<text x="500" y="550" class="small" text-anchor="middle">Connect workers run tasks; Kafka brokers store the topic. They are separate processes.</text>
-<rect id="delivery-note" class="amber" x="30" y="575" width="940" height="65"/>
-<text x="500" y="602" class="small" text-anchor="middle">Delivery and recovery depend on the connectors and the destination’s write behavior.</text>
-<text x="500" y="627" class="small" text-anchor="middle">Using Connect alone does not promise exactly-once effects in every destination.</text>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1100" height="800" viewBox="0 0 1100 800" role="img" aria-labelledby="title desc">
+<title id="title">Kafka Connect: database changes become a search view</title>
+<desc id="desc">Read left to right, then downward and left: a merchant updates product 7 in the authoritative product database. A source connector task uses change data capture to import database changes into the products topic on Kafka brokers. A sink connector task reads product events and writes derived search documents, which may lag behind the database. Both tasks run in separate Connect worker processes, outside the brokers. Delivery and recovery depend on the connectors and destination write behavior; Connect alone does not guarantee exactly-once external effects.</desc>
+<!-- Shared system-design typography and native icons, matching kafka-data-placement.svg.
+     Icon sources: Proximity Service final-design.svg; Notification System improved-design.svg. -->
+<defs>
+<style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #171717; }
+.title { font-size: 28px; font-weight: 700; }
+.label { font-size: 20px; }
+.strong { font-size: 20px; font-weight: 700; }
+.detail { font-size: 17px; }
+.small { font-size: 16px; }
+.mono { font-family: Consolas, Menlo, monospace; font-size: 16px; }
+.panel { fill: #fff; stroke: #888; stroke-width: 1.6; }
+.blue { fill: #eaf3ff; stroke: #888; stroke-width: 1.6; }
+.note { fill: #fff4da; stroke: #888; stroke-width: 1.4; }
+.service { fill: #fff; stroke: #171717; stroke-width: 1.6; }
+</style>
+<symbol id="user" viewBox="0 0 54 54"><circle cx="27" cy="12" r="11"/><path d="M3 49V41C3 29 51 29 51 41V49Z"/></symbol>
+<symbol id="green-server" viewBox="0 0 30 60">
+      <rect x="8" y="1" width="14" height="9" rx="1" fill="#65c515"/>
+      <path d="M11 5 H19" stroke="#fff" stroke-width="1.5"/>
+      <rect x="3" y="12" width="24" height="46" rx="1.5" fill="#65c515"/>
+      <path d="M7 19 H23 M7 40 H23 M7 48 H23" stroke="#fff" stroke-width="2"/>
+    </symbol>
+<symbol id="channel-queue" viewBox="0 0 150 58">
+      <path d="M2 2 H135 L148 29 L135 56 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="4"/>
+      <g fill="none" stroke="#1677b8" stroke-width="4">
+        <rect x="10" y="12" width="36" height="33"/><path d="M10 13 L28 29 L46 13"/>
+        <rect x="54" y="12" width="36" height="33"/><path d="M54 13 L72 29 L90 13"/>
+        <rect x="98" y="12" width="36" height="33"/><path d="M98 13 L116 29 L134 13"/>
+      </g>
+    </symbol>
+<symbol id="db" viewBox="0 0 88 93">
+      <path d="M0.9 13.75A43.1 8.75 0 0 1 87.1 13.75V82.25A43.1 8.75 0 0 1 0.9 82.25Z" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+      <ellipse cx="44" cy="13.75" rx="43.1" ry="8.75" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+    </symbol>
+</defs>
+<!-- Canvas and lesson heading. -->
+<rect width="1100" height="800" fill="#fff"/>
+<text class="title" x="550.0" y="35" text-anchor="middle" >Kafka Connect: database changes become a search view</text>
+<text class="detail" x="550.0" y="66" text-anchor="middle" >Source imports data into Kafka; sink exports Kafka data to another system.</text>
+<!-- authoritative-product-store -->
+<g id="authoritative-product-store">
+<rect class="panel" x="30" y="117" width="345" height="230" /><text class="strong" x="202.5" y="148" text-anchor="middle" >Authoritative product state</text><use href="#user" x="63" y="181" width="54" height="54"/><use href="#db" x="239" y="167" width="82" height="92" style="color:#eea6ed"/><!-- merchant-update: shaft ends inside its separate arrowhead base. -->
+<path id="merchant-update-flow" data-connector="true" d="M125 211 L220 211" fill="none" stroke="#171717" stroke-width="2"/><path id="merchant-update-head" d="M218 217 L230 211 L218 205Z" fill="#171717"/><text class="detail" x="178" y="185" text-anchor="middle" >update</text><text class="label" x="90" y="283" text-anchor="middle" >Merchant</text><text class="label" x="280" y="283" text-anchor="middle" >Product DB</text><text class="detail" x="202.5" y="319" text-anchor="middle" >product 7 = updated</text>
+</g><!-- The source connector task runs inside a worker process; CDC is expanded in the footer. -->
+<g id="source-worker">
+<rect class="panel" x="465" y="117" width="265" height="230" /><text class="strong" x="597.5" y="148" text-anchor="middle" >Connect worker A</text><use href="#green-server" x="574.5" y="166" width="46" height="92"/><rect class="service" x="482" y="266" width="231" height="61" /><text class="strong" x="597.5" y="291" text-anchor="middle" >Source connector task</text><text class="detail" x="597.5" y="315" text-anchor="middle" >CDC: database changes</text>
+</g><!-- products-topic -->
+<g id="products-topic">
+<use href="#channel-queue" x="815" y="167" width="230" height="92"/><text class="strong" x="930" y="290" text-anchor="middle" >Kafka brokers</text><text class="label" x="930" y="316" text-anchor="middle" >products topic</text><text class="detail" x="930" y="339" text-anchor="middle" >ProductUpdated(7)</text>
+</g><!-- source-import-flow -->
+<g id="source-import-flow">
+<!-- database-changes: shaft ends inside its separate arrowhead base. -->
+<path id="database-changes-flow" data-connector="true" d="M375 211 L454.2 211" fill="none" stroke="#171717" stroke-width="2"/><path id="database-changes-head" d="M452.2 217 L464.2 211 L452.2 205Z" fill="#171717"/><text class="detail" x="420" y="185" text-anchor="middle" >changes</text><!-- source-publish: shaft ends inside its separate arrowhead base. -->
+<path id="source-publish-flow" data-connector="true" d="M730 211 L796 211" fill="none" stroke="#171717" stroke-width="2"/><path id="source-publish-head" d="M794 217 L806 211 L794 205Z" fill="#171717"/><text class="detail" x="768" y="185" text-anchor="middle" >publish</text>
+</g><!-- Sink task and server icon share one explicit Connect worker boundary, outside Kafka brokers. -->
+<g id="sink-worker">
+<rect class="panel" x="770" y="430" width="300" height="202" /><text class="strong" x="920" y="462" text-anchor="middle" >Connect worker B</text><use href="#green-server" x="795" y="492" width="42" height="84"/><rect class="service" x="862" y="485" width="192" height="123" /><text class="strong" x="958" y="513" text-anchor="middle" >Sink connector<tspan x="958" dy="23">task</tspan></text><text class="small" x="958" y="567" text-anchor="middle" >Read product events<tspan x="958" dy="24">Write search documents</tspan></text>
+</g><!-- sink-export-flow -->
+<g id="sink-export-flow">
+<!-- sink-read: shaft ends inside its separate arrowhead base. -->
+<path id="sink-read-flow" data-connector="true" d="M930 357 L930 419.2" fill="none" stroke="#171717" stroke-width="2"/><path id="sink-read-head" d="M924 417.2 L930 429.2 L936 417.2Z" fill="#171717"/><text class="detail" x="995" y="399" text-anchor="middle" >read</text><!-- search-write: shaft ends inside its separate arrowhead base. -->
+<path id="search-write-flow" data-connector="true" d="M770 540 L630.8 540" fill="none" stroke="#171717" stroke-width="2"/><path id="search-write-head" d="M632.8 534 L620.8 540 L632.8 546Z" fill="#171717"/><text class="detail" x="695" y="514" text-anchor="middle" >write</text>
+</g><!-- Caption the destination icon directly; keep the adjacent document details in one compact group. -->
+<g id="derived-search-view">
+<rect class="panel" x="30" y="430" width="590" height="202" />
+<text class="strong" x="325" y="462" text-anchor="middle">Derived search view</text>
+<use href="#db" x="98" y="487" width="88" height="93" style="color:#fff"/>
+<text id="search-store-caption" class="label" x="142" y="609" text-anchor="middle">Search store</text>
+<text class="strong" x="244" y="511" text-anchor="start">Search documents</text>
+<text class="detail" x="244" y="548" text-anchor="start">product 7 appears after catch-up</text>
+<text class="detail" x="244" y="585" text-anchor="start">The view may lag behind the DB</text>
+</g><!-- runtime-and-delivery-notes -->
+<g id="runtime-and-delivery-notes">
+<text class="detail" x="550" y="669" text-anchor="middle" >CDC = change data capture. Connect workers run tasks; Kafka brokers store the topic.</text><text class="detail" x="550" y="694" text-anchor="middle" >Workers and brokers are separate processes.</text><rect class="note" x="30" y="715" width="1040" height="64" /><text class="detail" x="550" y="742" text-anchor="middle" >Delivery and recovery depend on the connectors and the destination’s write behavior.</text><text class="detail" x="550" y="767" text-anchor="middle" >Using Connect alone does not promise exactly-once effects in every destination.</text>
+</g>
 </svg>
