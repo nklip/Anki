@@ -22,3 +22,4 @@ Every card lives in its own folder as `Readme.md`, with its diagrams in a siblin
  * [SOLID](./SOLID/Readme.md) - the five design principles, the problem each one solves, and how to spot a violation
  * [STAR](./STAR/Readme.md) - the situation, task, action, and result structure for behavioural interview answers
  * [Time Complexity](./Time%20Complexity/Readme.md) - how growth rates compare and what each one costs at scale
+ * [URI vs URL](./URI%20vs%20URL/Readme.md) - identification versus location, the URL subset, and concrete URL and URN examples

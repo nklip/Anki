@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="424" viewBox="0 0 1000 424" role="img" aria-labelledby="title desc">
+  <title id="title">Every URL is a URI, but not every URI is a URL</title>
+  <desc id="desc">In RFC 3986 terminology, the outer URI box contains identifiers. The inner URL box contains identifiers that also locate resources, illustrated by https://example.com/books/42. Outside the URL box, urn:isbn:9780134685991 names a book edition without giving its location. URI means Uniform Resource Identifier, URL means Uniform Resource Locator, and URN means Uniform Resource Name.</desc>
+
+  <!-- Shared typography and palette follow nearby Computer Science diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172033; }
+      .title { font-size: 30px; font-weight: 700; }
+      .label { font-size: 25px; font-weight: 700; }
+      .body { font-size: 21px; }
+      .muted { font-size: 20px; fill: #475569; }
+      .code { font-family: Menlo, Consolas, monospace; font-size: 20px; }
+    </style>
+  </defs>
+
+  <!-- Title establishes the set relationship; the subtitle scopes terminology. -->
+  <rect id="background" width="1000" height="424" fill="#fff"/>
+  <text class="title" x="28" y="44">Every URL is a URI, but not every URI is a URL</text>
+  <text class="muted" x="28" y="78">The RFC 3986 distinction: identification is the broader concept.</text>
+
+  <!-- Containment carries the lesson; no arrows or disjoint URN set are needed. -->
+  <g id="uri-set">
+    <rect x="28" y="108" width="944" height="288" rx="18" fill="#f8fafc" stroke="#08b7d1" stroke-width="3"/>
+    <text class="label" x="54" y="147">URI · Uniform Resource Identifier</text>
+    <text class="body" x="54" y="178">Identifies a resource</text>
+  </g>
+
+  <!-- The URL subset is visibly enclosed by the broader URI boundary. -->
+  <g id="url-subset">
+    <rect x="54" y="201" width="492" height="168" rx="14" fill="#eaf5fc" stroke="#0b78b5" stroke-width="2"/>
+    <text class="label" x="76" y="239" style="fill:#075985">URL · Uniform Resource Locator</text>
+    <text class="body" x="76" y="275">Identifies + tells how to access</text>
+    <text class="code" x="76" y="318">https://example.com/books/42</text>
+    <text class="muted" x="76" y="349">An address: scheme, host, and path</text>
+  </g>
+
+  <!-- This one name example lies outside the URL subset, still inside URI. -->
+  <g id="name-example">
+    <text class="label" x="581" y="238">A name without a location</text>
+    <text class="code" x="581" y="279">urn:isbn:9780134685991</text>
+    <text class="muted" x="581" y="313">URN = Uniform Resource Name</text>
+    <text class="body" x="581" y="347">Names a book edition</text>
+  </g>
+</svg>
