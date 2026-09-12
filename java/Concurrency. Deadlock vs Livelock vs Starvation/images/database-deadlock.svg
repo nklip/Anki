@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="660" viewBox="0 0 1200 660" role="img" aria-labelledby="title description">
+  <title id="title">Java SQL order can create a database deadlock</title>
+  <desc id="description">Two Java requests use separate connections. Request A transfers from account 1 to account 2; request B transfers in reverse. Transaction T1 holds the row lock for account 1 and needs account 2. Transaction T2 holds the row lock for account 2 and needs account 1. The red arrows form a wait cycle inside PostgreSQL. PostgreSQL breaks the cycle by aborting one transaction.</desc>
+
+  <!-- Typography and semantic colors match the article's other diagrams. -->
+  <defs>
+    <style>
+      .title { font: 700 36px sans-serif; fill: #111827; }
+      .subtitle { font: 20px sans-serif; fill: #4b5563; }
+      .heading { font: 700 26px sans-serif; fill: #273444; }
+      .label { font: 700 22px sans-serif; fill: #273444; }
+      .body { font: 20px sans-serif; fill: #273444; }
+      .small { font: 18px sans-serif; fill: #4b5563; }
+      .red { fill: #9b352f; }
+    </style>
+  </defs>
+
+  <!-- Start with two callers; follow each downward into its own transaction. -->
+  <rect width="1200" height="660" fill="#ffffff"/>
+  <text x="600" y="50" text-anchor="middle" class="title">Java SQL order can deadlock database transactions</text>
+  <text x="600" y="88" text-anchor="middle" class="subtitle">Possible state after each transaction updates its first account; neither has committed.</text>
+  <g id="java-requests">
+    <rect x="65" y="124" width="350" height="130" rx="12" fill="#f8fafc" stroke="#8493a5" stroke-width="2"/>
+    <text x="240" y="161" text-anchor="middle" class="heading">Java request A</text>
+    <text x="240" y="197" text-anchor="middle" class="body">Transfer: account 1 to account 2</text>
+    <text x="240" y="232" text-anchor="middle" class="small">Connection A; one transaction</text>
+    <rect x="785" y="124" width="350" height="130" rx="12" fill="#f8fafc" stroke="#8493a5" stroke-width="2"/>
+    <text x="960" y="161" text-anchor="middle" class="heading">Java request B</text>
+    <text x="960" y="197" text-anchor="middle" class="body">Transfer: account 2 to account 1</text>
+    <text x="960" y="232" text-anchor="middle" class="small">Connection B; one transaction</text>
+    <text x="600" y="171" text-anchor="middle" class="label">Separate connections</text>
+    <text x="600" y="207" text-anchor="middle" class="body">Same database rows</text>
+    <text x="600" y="242" text-anchor="middle" class="small">No Java lock is needed.</text>
+  </g>
+
+  <!-- The tinted boundary locates the lock cycle in the database, not the JVM. -->
+  <g id="database-transactions">
+    <rect x="40" y="294" width="1120" height="340" rx="16" fill="#fff3f1" stroke="#b34a42" stroke-width="2"/>
+    <text x="600" y="335" text-anchor="middle" class="heading">Inside PostgreSQL: row-lock wait cycle</text>
+    <rect x="65" y="366" width="350" height="160" rx="12" fill="#ffffff" stroke="#b34a42" stroke-width="2"/>
+    <text x="240" y="406" text-anchor="middle" class="heading">Transaction T1</text>
+    <text x="240" y="448" text-anchor="middle" class="body">Holds row lock: account 1</text>
+    <text x="240" y="490" text-anchor="middle" class="body red">Needs row lock: account 2</text>
+    <rect x="785" y="366" width="350" height="160" rx="12" fill="#ffffff" stroke="#b34a42" stroke-width="2"/>
+    <text x="960" y="406" text-anchor="middle" class="heading">Transaction T2</text>
+    <text x="960" y="448" text-anchor="middle" class="body">Holds row lock: account 2</text>
+    <text x="960" y="490" text-anchor="middle" class="body red">Needs row lock: account 1</text>
+    <!-- Heads hide their own shaft ends and stop outside target borders. -->
+    <path id="t1-waits-for-t2-arrow" d="M419 414 H768" fill="none" stroke="#b34a42" stroke-width="4"/>
+    <polygon points="783,414 767,406 767,422" fill="#b34a42"/>
+    <text x="600" y="389" text-anchor="middle" class="body red">T1 waits for T2</text>
+    <path id="t2-waits-for-t1-arrow" d="M781 493 H432" fill="none" stroke="#b34a42" stroke-width="4"/>
+    <polygon points="417,493 433,485 433,501" fill="#b34a42"/>
+    <text x="600" y="468" text-anchor="middle" class="body red">T2 waits for T1</text>
+    <text x="600" y="570" text-anchor="middle" class="label red">Each second update waits for the other transaction to release its first row lock.</text>
+    <text x="600" y="608" text-anchor="middle" class="body">PostgreSQL breaks the cycle by aborting one transaction; the other can proceed.</text>
+  </g>
+
+  <!-- These shafts intentionally cross the database boundary, away from its title. -->
+  <g id="request-to-transaction-arrows">
+    <path id="request-a-transaction-arrow" d="M240 258 V349" fill="none" stroke="#8493a5" stroke-width="4"/>
+    <polygon points="240,364 232,348 248,348" fill="#8493a5"/>
+    <path id="request-b-transaction-arrow" d="M960 258 V349" fill="none" stroke="#8493a5" stroke-width="4"/>
+    <polygon points="960,364 952,348 968,348" fill="#8493a5"/>
+  </g>
+</svg>

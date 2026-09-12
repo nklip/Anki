@@ -2,9 +2,13 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-**Deadlock means participants wait on one another indefinitely. Livelock means they keep reacting without completing useful work. Starvation means a particular participant keeps being denied the opportunity or resource it needs to progress.**
+**Deadlock** means participants wait on one another in a cycle they cannot resolve themselves.
 
-The distinction is about **why work does not finish**. We will compare the three failure patterns, examine Java locking examples, and connect each problem to prevention and diagnosis.
+**Livelock** means they keep reacting without completing useful work.
+
+**Starvation** means a particular participant keeps being denied the opportunity or resource it needs to progress.
+
+The distinction is about **why work does not finish**. We will compare the three failure patterns, examine Java locks and database transactions, and connect each problem to prevention and diagnosis.
 
 ## The vocabulary of progress
 
@@ -106,6 +110,92 @@ The reasoning generalizes: if each newly acquired distinct lock must come later 
 For dynamically chosen resources, use a stable, unique ordering key, such as an immutable account ID. “Lock the source, then the destination” is insufficient: transfers in opposite directions reverse that order. Another design option is one lock covering the whole operation, if the reduced concurrency is acceptable.
 
 This prevents cycles involving the ordered locks. It does not prove that the protected work terminates or that every waiting caller gets a turn.
+
+## Database deadlocks: Java requests can create the same cycle
+
+A **database transaction** groups database operations into one unit that commits or rolls back. A database deadlock occurs when transactions hold locks and wait for one another in a cycle. Java can cause this through the order of its SQL statements, even without `synchronized` or `ReentrantLock`.
+
+Use **PostgreSQL 18** as a concrete example. An `UPDATE` locks the row it changes; a competing update to that row must wait. In the transaction below, the lock remains held until commit or rollback, even after the statement finishes. `SELECT ... FOR UPDATE` can also lock rows before changing them; explicit locking is not required for a deadlock.
+
+### Java example: transfers in opposite directions
+
+**JDBC (Java Database Connectivity)** lets Java execute SQL through a database connection. This compilable class demonstrates the locking mechanism; business validation is omitted. Assume an `accounts` table with `id BIGINT PRIMARY KEY` and `balance_cents BIGINT NOT NULL`, two existing distinct account IDs, and a positive amount. Each call obtains its own connection from a configured `DataSource`.
+
+```java
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import javax.sql.DataSource;
+
+final class DatabaseTransferRisk {
+    static void transfer(DataSource dataSource, long fromId, long toId,
+                         long cents) throws SQLException {
+        try (Connection c = dataSource.getConnection()) {
+            c.setAutoCommit(false);
+            try {
+                changeBalance(c, fromId, -cents); // Locks the source row.
+                changeBalance(c, toId, cents);   // May wait for another transaction.
+                c.commit();
+            } catch (SQLException e) {
+                try {
+                    c.rollback();
+                } catch (SQLException rollbackFailure) {
+                    e.addSuppressed(rollbackFailure);
+                }
+                throw e;
+            }
+        }
+    }
+
+    private static void changeBalance(Connection c, long id, long delta)
+            throws SQLException {
+        try (PreparedStatement statement = c.prepareStatement(
+                "UPDATE accounts SET balance_cents = balance_cents + ? WHERE id = ?")) {
+            statement.setLong(1, delta);
+            statement.setLong(2, id);
+            if (statement.executeUpdate() != 1) {
+                throw new SQLException("Account not found: " + id);
+            }
+        }
+    }
+}
+```
+
+`setAutoCommit(false)` makes both updates part of one transaction. Closing the `PreparedStatement` releases statement resources; it does not commit the transaction. Committing each update separately would destroy the transfer's all-or-nothing behavior.
+
+Suppose two request threads concurrently call `transfer(dataSource, 1, 2, 100)` and `transfer(dataSource, 2, 1, 100)`. Their transactions, T1 and T2, can interleave as follows:
+
+```text
+T1 updates account 1: holds its row lock.
+T2 updates account 2: holds its row lock.
+T1 tries to update account 2: waits for T2.
+T2 tries to update account 1: waits for T1. The cycle is complete.
+```
+
+Read downward from each Java request to its transaction. The red arrows point to the transaction holding the needed row lock. This is a possible schedule; another run may finish without a conflict.
+
+![database-deadlock.svg](images/database-deadlock.svg)
+
+The two requests could run in different Java virtual machines: they only need to reach the same database rows. Adding a Java monitor in one application instance therefore cannot coordinate every database client.
+
+### Prevent the cycle and recover from an aborted transaction
+
+Apply the earlier ordering rule to database access. For this example, replace the two `changeBalance` calls with the following fragment. Both directions update the smaller account ID first, while each amount still belongs to its original source or destination:
+
+```java
+long firstId = Math.min(fromId, toId);
+long secondId = Math.max(fromId, toId);
+changeBalance(c, firstId, firstId == fromId ? -cents : cents);
+changeBalance(c, secondId, secondId == fromId ? -cents : cents);
+```
+
+Every participating path must follow that order. This removes the illustrated cycle; additional tables or locks require a consistent order too. Keep transactions short so conflicting work spends less time waiting.
+
+PostgreSQL detects a deadlock and aborts one participant to break the cycle. The victim is not predictable. It is still a deadlock even though the database intervenes rather than letting the wait last forever.
+
+For PostgreSQL, SQLSTATE **`40P01`** means `deadlock_detected`; JDBC exposes SQLSTATE through `SQLException.getSQLState()`. After rollback, a caller can retry the **entire transfer in a new transaction**, including any reads and decisions that belong to it. Retrying only the second update would lose the first update that was rolled back.
+
+Put retries outside the failed transaction, limit attempts, and use randomized backoff as discussed below. Surface failure when the limit is reached. Restrict retries to recognized retryable errors. Also account for effects outside the database: rollback cannot undo an email already sent, so blindly repeating such an action can duplicate it.
 
 ## Livelock: the recovery behavior keeps recreating the conflict
 
@@ -229,6 +319,7 @@ The `-l` option includes information about `java.util.concurrent` locks. Compare
 | Evidence | What to investigate |
 | --- | --- |
 | A waits for B's lock while B waits for A's lock | A lock deadlock; follow ownership and acquisition dependencies |
+| A request stalls in JDBC or fails with a database deadlock error | Inspect database lock dependencies and the SQL order within each transaction |
 | Attempts keep increasing but the affected operations never complete | Livelock or another retry failure; inspect why each attempt restarts |
 | Overall completions increase while one request keeps waiting | Starvation or severe unfairness; inspect admission and resource access |
 
@@ -259,13 +350,16 @@ final class DeadlockProbe {
 
 In **JDK 25**, `findDeadlockedThreads()` detects cycles involving platform threads acquiring monitors or ownable synchronizers, such as the synchronization mechanism used by `ReentrantLock`. The fallback checks monitor cycles only.
 
-Cycles involving virtual threads are excluded. These methods also do not diagnose livelock, starvation, or arbitrary task dependencies such as the executor example. Consequently, a `null` result is not proof of application liveness.
+Cycles involving virtual threads are excluded. These methods also do not diagnose database lock cycles, livelock, starvation, or arbitrary task dependencies such as the executor example. Consequently, a `null` result is not proof of application liveness.
+
+For the database example, inspect the database's deadlock error details and correlate them with application requests and transaction boundaries. PostgreSQL's `pg_locks` view helps investigate current lock contention. Once the database aborts a victim, the original cycle is gone, so a later snapshot may no longer show it.
 
 ## Choose the remedy that addresses the cause
 
 | Cause | Design response | Remaining limit |
 | --- | --- | --- |
 | Circular lock dependencies | Establish and follow a consistent lock order, or use one lock | Protected work still needs to finish |
+| Database transactions acquire conflicting locks in opposite orders | Use consistent row/table access order and short transactions; retry an aborted transaction with a bounded policy | Ordering must cover all participating paths; retries must handle external effects safely |
 | Recurring conflicts during retries | Remove the conflict; otherwise use backoff and a bounded retry policy | Timing changes alone do not prove successful completion |
 | Repeatedly bypassed callers | Use an appropriate fair admission policy and shorten critical sections | Fairness does not control scheduling or fix multi-lock cycles |
 | Tasks consume the execution capacity their dependencies need | Restructure the task dependency and execution arrangement | More workers alone do not establish a progress guarantee |
@@ -293,6 +387,38 @@ For the formal distinction between progress for some caller and progress for eve
 - [Oracle Multithreaded Programming Guide — Avoiding Deadlock](https://docs.oracle.com/cd/E37838_01/html/E61057/guide-35930.html)
 
   Lock hierarchy and consistent acquisition order; its examples use POSIX threads.
+
+- [PostgreSQL 18 — Explicit Locking](https://www.postgresql.org/docs/18/explicit-locking.html#LOCKING-DEADLOCKS)
+
+  Row locks, implicit locking by updates, transaction deadlocks, and victim selection.
+
+- [PostgreSQL 18 — Serialization Failure Handling](https://www.postgresql.org/docs/18/mvcc-serialization-failure-handling.html)
+
+  Deadlock SQLSTATE `40P01` and retrying the complete transaction, including its decision logic.
+
+- [MySQL 8.4 Reference Manual — How to Minimize and Handle Deadlocks](https://dev.mysql.com/doc/refman/8.4/en/innodb-deadlocks-handling.html)
+
+  Consistent row/table access order and short transactions as general prevention techniques.
+
+- [Java SE 25 API — Connection](https://docs.oracle.com/en/java/javase/25/docs/api/java.sql/java/sql/Connection.html)
+
+  JDBC transaction boundaries, auto-commit, commit, and rollback.
+
+- [Java SE 25 API — PreparedStatement](https://docs.oracle.com/en/java/javase/25/docs/api/java.sql/java/sql/PreparedStatement.html)
+
+  Parameter binding and executing the example's updates.
+
+- [Java SE 25 API — Statement.close()](https://docs.oracle.com/en/java/javase/25/docs/api/java.sql/java/sql/Statement.html#close())
+
+  Statement resource cleanup, distinct from the connection's transaction boundary.
+
+- [Java SE 25 API — SQLException](https://docs.oracle.com/en/java/javase/25/docs/api/java.sql/java/sql/SQLException.html)
+
+  Accessing the SQLSTATE reported by the database.
+
+- [PostgreSQL 18 — Viewing Locks](https://www.postgresql.org/docs/18/monitoring-locks.html)
+
+  Investigating current contention using `pg_locks`.
 
 - [Charles E. Leiserson — A Simple Deterministic Algorithm for Guaranteeing the Forward Progress of Transactions (2015)](https://transact2015.cse.lehigh.edu/leiserson-transact-2015.pdf)
 
