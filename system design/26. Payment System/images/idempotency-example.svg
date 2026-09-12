@@ -18,9 +18,10 @@
       .side-label{font-size:36px;text-anchor:middle}
       .note{font-size:28px;text-anchor:middle}
     </style>
-    <!-- Curved response arrows use one auto-oriented, mathematically symmetric head. -->
+    <!-- With strokeWidth units, the 2.5-unit inset projects the nose 6.25 diagram units
+         beyond the shaft endpoint, keeping the full stroke inside the tapered head. -->
     <marker id="response-arrowhead" markerWidth="10" markerHeight="6"
-            viewBox="0 0 10 6" refX="10" refY="3"
+            viewBox="0 0 10 6" refX="7.5" refY="3"
             orient="auto" markerUnits="strokeWidth">
       <path d="M0 0 L10 3 L0 6 Z" fill="#000"/>
     </marker>
@@ -55,9 +56,9 @@
     <!-- Response arcs back to the client and stops at its boundary. -->
     <g id="first-response-connector">
       <path id="first-response-source-shaft" class="flow" data-connector="true" d="M1056 252 C975 280 900 300 820 310"/>
-      <!-- The marker rotates around the curve's final tangent and meets the client only at its tip. -->
+      <!-- Pull back along the final tangent so the projected nose meets the outer client border. -->
       <path id="first-response-target-shaft" class="flow" data-connector="true"
-            d="M496 310 C418 300 351 280 288 253"
+            d="M496 310 C418 300 351 280 294.9947 255.9977"
             marker-end="url(#response-arrowhead)"/>
       <text class="main-label" x="658" y="335">Charge succeeded</text>
     </g>
@@ -95,8 +96,9 @@
 
     <g id="retry-response-connector">
       <path id="retry-response-source-shaft" class="flow" data-connector="true" d="M1056 701 C995 721 935 739 871 749"/>
+      <!-- The retry head uses the same tangent setback and outer-border contact as the first response. -->
       <path id="retry-response-target-shaft" class="flow" data-connector="true"
-            d="M443 749 C391 738 346 723 288 702"
+            d="M443 749 C391 738 346 723 295.1267 704.5803"
             marker-end="url(#response-arrowhead)"/>
       <text class="main-label" x="657" y="785">Return previous message</text>
     </g>
