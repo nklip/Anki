@@ -30,9 +30,9 @@
       .mini-stroke{fill:none;stroke:#000;stroke-width:1.45;stroke-linecap:butt}
     </style>
 
-    <!-- The tip projects two pixels beyond refX; connector endpoints are pulled back accordingly. -->
+    <!-- Five-unit nose projection hides the full 2.5-unit shaft inside the taper; endpoints account for the target's outer stroke. -->
     <marker id="arrowhead" markerWidth="24" markerHeight="20" viewBox="0 0 24 20"
-            refX="22" refY="10" orient="auto" markerUnits="userSpaceOnUse">
+            refX="19" refY="10" orient="auto" markerUnits="userSpaceOnUse">
       <path d="M0 0 L24 10 L0 20 Z" fill="#000"/>
     </marker>
 
@@ -94,38 +94,39 @@
 
   <!-- Client input route and queue-to-event expansion. -->
   <g id="command-routes">
-    <path class="connector" data-connector="true" d="M188 170 H305" marker-end="url(#arrowhead)"/>
+    <path id="client-to-command" class="connector" data-connector="true" d="M188 170 H300.75" marker-end="url(#arrowhead)"/>
     <path class="connector" data-connector="true" d="M467 170 H499"/>
-    <path class="connector" data-connector="true" d="M555 170 H606.5" marker-end="url(#arrowhead)"/>
+    <path id="command-to-queue" class="connector" data-connector="true" d="M555 170 H602.25" marker-end="url(#arrowhead)"/>
 
-    <path class="dashed" data-connector="true" d="M718.5 210 L588.4 473.7" marker-end="url(#arrowhead)"/>
-    <path class="dashed" data-connector="true" d="M734.5 210 L715.2 473.5" marker-end="url(#arrowhead)"/>
-    <path class="dashed" data-connector="true" d="M916.5 210 L861.4 473.6" marker-end="url(#arrowhead)"/>
-    <path class="dashed" data-connector="true" d="M931.5 210 L988.6 473.6" marker-end="url(#arrowhead)"/>
+    <!-- The credit route's dash offset keeps its final dash joined to the head base. -->
+    <path id="command-c-to-debit" class="dashed" data-connector="true" d="M718.5 210 L590.3409 469.7660" marker-end="url(#arrowhead)"/>
+    <path id="command-c-to-credit" class="dashed" data-connector="true" stroke-dashoffset="7.0421" d="M734.5 210 L715.5103 469.2634" marker-end="url(#arrowhead)"/>
+    <path id="command-b-to-debit" class="dashed" data-connector="true" d="M916.5 210 L862.2872 469.3558" marker-end="url(#arrowhead)"/>
+    <path id="command-b-to-credit" class="dashed" data-connector="true" d="M931.5 210 L987.6823 469.3633" marker-end="url(#arrowhead)"/>
 
     <path class="step-spoke" d="M1131.5 210 L1162.3 259.8"/>
     <path class="step-spoke" d="M1176.6 284.1 L1181.5 293"/>
-    <path class="connector" data-connector="true" d="M1181.5 293 L1198.6 326.2" marker-end="url(#arrowhead)"/>
+    <path id="command-to-validator" class="connector" data-connector="true" d="M1181.5 293 L1198.7603 326.5111" marker-end="url(#arrowhead)"/>
 
     <path class="step-spoke" d="M1198 371 L1188 391"/>
     <path class="step-spoke" d="M1176.6 415.5 L1173.5 422.5"/>
-    <path class="connector" data-connector="true" d="M1173.5 422.5 L1153.8 473.6" marker-end="url(#arrowhead)"/>
+    <path id="validator-to-debit" class="connector" data-connector="true" d="M1173.5 422.5 L1155.3480 469.5847" marker-end="url(#arrowhead)"/>
     <path class="step-spoke" d="M1225 365 L1238 390.5"/>
-    <path class="connector" data-connector="true" d="M1250 415 L1275.5 473.6" marker-end="url(#arrowhead)"/>
+    <path id="validator-to-credit" class="connector" data-connector="true" d="M1250 415 L1273.7878 469.6653" marker-end="url(#arrowhead)"/>
   </g>
 
-  <!-- State validation, event application, and the final balance update. -->
+  <!-- State validation, event application, and balance update; tips meet the stroked gear or store boundary. -->
   <g id="state-machine-routes">
     <path class="leader" d="M1311 260 L1226 334"/>
 
     <path class="connector" data-connector="true" d="M1233 350 H1273"/>
-    <path class="connector" data-connector="true" d="M1400 350 H1454.5" marker-end="url(#arrowhead)"/>
+    <path id="validator-read-state" class="connector" data-connector="true" d="M1400 350 H1450.25" marker-end="url(#arrowhead)"/>
 
     <path class="connector" data-connector="true" d="M1295 536.5 L1352 633"/>
-    <path class="connector" data-connector="true" d="M1370 670 L1400.7 719.2" marker-end="url(#arrowhead)"/>
+    <path id="event-to-applier" class="connector" data-connector="true" d="M1370 670 L1398.5627 715.7748" marker-end="url(#arrowhead)"/>
 
     <path class="connector" data-connector="true" d="M1421 719 L1451 632"/>
-    <path class="connector" data-connector="true" d="M1464 589 L1505.3 466.2" marker-end="url(#arrowhead)"/>
+    <path id="applier-update-state" class="connector" data-connector="true" d="M1464 589 L1504.4180 468.8224" marker-end="url(#arrowhead)"/>
 
     <path class="leader" d="M1515 728 L1435 741"/>
   </g>

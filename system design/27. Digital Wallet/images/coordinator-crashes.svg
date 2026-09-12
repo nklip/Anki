@@ -50,23 +50,23 @@
     <path d="M811 281.5 L798 275.5 L798 287.5 Z" fill="#000"/>
   </g>
 
-  <!-- Initial writes and their successful acknowledgements reuse the split-label connector pattern. -->
+  <!-- Each split acknowledgement follows the line between its event centers; shaft endpoints include marker projection and circle clearance. -->
   <g id="initial-write-connectors">
     <path id="write-database-a" class="message-shaft" data-connector="true"
           d="M208 71 C219 104 233 142 244 166.5"
           marker-end="url(#message-arrowhead)"/>
 
-    <path id="database-a-ok-source" class="message-shaft" data-connector="true" d="M294 177 L305 141.5"/>
+    <path id="database-a-ok-source" class="message-shaft" data-connector="true" d="M294 176.5 L305.23 141.5"/>
     <path id="database-a-ok-target" class="message-shaft" data-connector="true"
-          d="M314 112.5 L324 81.5" marker-end="url(#message-arrowhead)"/>
+          d="M314.53 112.5 L323.98 83.04" marker-end="url(#message-arrowhead)"/>
 
     <path id="write-database-c" class="message-shaft" data-connector="true"
           d="M363 71 C370 134 381 223 388 269"
           marker-end="url(#message-arrowhead)"/>
 
-    <path id="database-c-ok-source" class="message-shaft" data-connector="true" d="M444 282 L471 141.5"/>
+    <path id="database-c-ok-source" class="message-shaft" data-connector="true" d="M444 281.5 L474.52 141.5"/>
     <path id="database-c-ok-target" class="message-shaft" data-connector="true"
-          d="M477 112.5 L484 82" marker-end="url(#message-arrowhead)"/>
+          d="M480.84 112.5 L487.19 83.37" marker-end="url(#message-arrowhead)"/>
   </g>
 
   <!-- Prepare requests reach both databases before the coordinator crashes. -->
@@ -79,16 +79,15 @@
           marker-end="url(#message-arrowhead)"/>
   </g>
 
-  <!-- Yes replies are split around their labels and terminate below the red failure marks. -->
+  <!-- Each yes reply follows one straight centerline from its event circle, with a label gap and arrowhead clearance below the failure mark. -->
   <g id="blocked-yes-replies">
-    <path id="database-a-yes-source" class="message-shaft" data-connector="true" d="M659 177 L670 160"/>
+    <path id="database-a-yes-source" class="message-shaft" data-connector="true" d="M659 176.5 L669.46 156"/>
     <path id="database-a-yes-target" class="message-shaft" data-connector="true"
-          d="M687 124 L696 104" marker-end="url(#message-arrowhead)"/>
+          d="M682.73 130 L694.98 106" marker-end="url(#message-arrowhead)"/>
 
-    <!-- Both pieces lie on the same centerline from the Database C event to the failure mark. -->
-    <path id="database-c-yes-source" class="message-shaft" data-connector="true" d="M672 282 L720 160"/>
+    <path id="database-c-yes-source" class="message-shaft" data-connector="true" d="M672 281.5 L721.49 156"/>
     <path id="database-c-yes-target" class="message-shaft" data-connector="true"
-          d="M733.75 125 L742 104" marker-end="url(#message-arrowhead)"/>
+          d="M731.75 130 L741.21 106" marker-end="url(#message-arrowhead)"/>
   </g>
 
   <!-- Event circles mask the timelines and connector starts for the same clean joins as 2pc-protocol.svg. -->

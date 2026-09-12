@@ -17,8 +17,9 @@
       .system-label{font-size:37px;text-anchor:middle}
       .table-label{font-size:28px;text-anchor:middle}
     </style>
+    <!-- Five-unit nose projection keeps the 2.5-unit shaft fully inside the tapered head. -->
     <marker id="arrowhead" markerWidth="24" markerHeight="18" viewBox="0 0 24 18"
-            refX="24" refY="9" orient="auto" markerUnits="userSpaceOnUse">
+            refX="19" refY="9" orient="auto" markerUnits="userSpaceOnUse">
       <path d="M0 0 L24 9 L0 18 Z" fill="#000"/>
     </marker>
   </defs>
@@ -55,35 +56,35 @@
     </g>
   </g>
 
-  <!-- Commands enter vertically; each head terminates on the wallet-service top edge. -->
+  <!-- Each shaft stops five units before the visible tip, which meets the outside of the wallet-service border. -->
   <g id="command-connectors">
-    <path class="connector" data-connector="true" d="M514 145 V351" marker-end="url(#arrowhead)"/>
-    <path class="connector" data-connector="true" d="M968 145 V351" marker-end="url(#arrowhead)"/>
+    <path id="left-transfer-command" class="connector" data-connector="true" d="M514 145 V345.25" marker-end="url(#arrowhead)"/>
+    <path id="right-transfer-command" class="connector" data-connector="true" d="M968 145 V345.25" marker-end="url(#arrowhead)"/>
   </g>
 
-  <!-- Every wallet worker can address every relational partition. -->
+  <!-- Every wallet worker can address every partition. Endpoints are pulled back five units along each route from the stroked ellipse boundary. -->
   <g id="database-connectors">
     <path id="left-wallet-to-a" class="connector" data-connector="true"
-          d="M477 478 L349 714" marker-end="url(#arrowhead)"/>
+          d="M477 478 L351.5186 709.3564" marker-end="url(#arrowhead)"/>
     <path id="left-wallet-to-b" class="connector" data-connector="true"
-          d="M550 478 L684 714" marker-end="url(#arrowhead)"/>
+          d="M550 478 L681.4215 709.4588" marker-end="url(#arrowhead)"/>
     <path id="left-wallet-to-c" class="connector" data-connector="true"
-          d="M620 478 L1042 728" marker-end="url(#arrowhead)"/>
+          d="M620 478 L1038.2910 725.8027" marker-end="url(#arrowhead)"/>
 
     <path id="right-wallet-to-a" class="connector" data-connector="true"
-          d="M860 478 L440 728" marker-end="url(#arrowhead)"/>
+          d="M860 478 L443.1929 726.0995" marker-end="url(#arrowhead)"/>
     <path id="right-wallet-to-b" class="connector" data-connector="true"
-          d="M931 478 L798 714" marker-end="url(#arrowhead)"/>
+          d="M931 478 L800.5321 709.5069" marker-end="url(#arrowhead)"/>
     <path id="right-wallet-to-c" class="connector" data-connector="true"
-          d="M1002 478 L1134 714" marker-end="url(#arrowhead)"/>
+          d="M1002 478 L1131.3608 709.2813" marker-end="url(#arrowhead)"/>
   </g>
 
-  <!-- Partition lookups: one curved route from the left worker and one horizontal route from the right. -->
+  <!-- Lookup tips meet the outside of Zookeeper's border; the curved endpoint is pulled back along its final tangent. -->
   <g id="zookeeper-connectors">
     <path id="left-wallet-to-zookeeper" class="connector" data-connector="true"
-          d="M661 359 C880 284 1120 258 1386 359" marker-end="url(#arrowhead)"/>
+          d="M661 359 C880 284 1120 258 1380.5756 356.9404" marker-end="url(#arrowhead)"/>
     <path id="right-wallet-to-zookeeper" class="connector" data-connector="true"
-          d="M1115 415 H1386" marker-end="url(#arrowhead)"/>
+          d="M1115 415 H1380.25" marker-end="url(#arrowhead)"/>
   </g>
 
   <!-- Two-row key/balance tables stay source-native and editable. -->

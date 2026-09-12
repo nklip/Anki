@@ -41,49 +41,51 @@
     <path class="timeline" d="M315 154.5 H1560"/>
     <path id="coordinator-time-head" d="M1584 154.5 L1560 144.5 L1560 164.5 Z" fill="#000"/>
 
-    <path class="timeline" d="M315 330.5 H1560"/>
-    <!-- First-phase progression on A: the shaft ends inside its separately painted triangular head. -->
+    <!-- Split the A timeline beneath the first-phase head so no track stroke protrudes past its nose. -->
+    <path class="timeline" d="M315 330.5 H727.2579 M761 330.5 H1560"/>
+    <!-- First-phase progression on A: both shafts end two units inside the head base. -->
     <path id="database-a-first-phase-arrow-shaft" class="message-shaft" data-connector="true"
-          d="M608 330.5 H727.26"/>
+          d="M608 330.5 H727.2579"/>
     <path id="database-a-time-head" d="M1584 330.5 L1560 320.5 L1560 340.5 Z" fill="#000"/>
 
     <path class="timeline" d="M315 506.5 H734 M804 506.5 H1560"/>
     <path id="database-c-time-head" d="M1584 506.5 L1560 496.5 L1560 516.5 Z" fill="#000"/>
   </g>
 
-  <!-- Each target shaft stops inside a separate head; the heads are painted later at exact circle tangencies. -->
+  <!-- Split messages follow the line between their event centers. Nodes mask the starts;
+       target shafts stop inside separate heads whose tips meet the outer circle stroke. -->
   <!-- First phase: Try reaches A, A fails, and the Try for C is delayed in flight. -->
   <g id="first-phase-messages">
-    <path id="try-a-source" class="message-shaft" data-connector="true" d="M395 164 L474 231"/>
+    <path id="try-a-source" class="message-shaft" data-connector="true" d="M384 155 L474.6818 231"/>
     <path id="try-a-target" class="message-shaft" data-connector="true"
-          d="M523 272 L568.04 309.43"/>
+          d="M527.1818 275 L568.1332 309.3212"/>
 
-    <path id="database-a-failed-source" class="message-shaft" data-connector="true" d="M768 318 L808 252"/>
+    <path id="database-a-failed-source" class="message-shaft" data-connector="true" d="M761 331 L805.8864 252"/>
     <path id="database-a-failed-target" class="message-shaft" data-connector="true"
-          d="M831 210 L844.84 184.63"/>
+          d="M829.75 210 L844.3272 184.3442"/>
 
-    <path id="delayed-try-source" class="message-shaft" data-connector="true" d="M397 160 L1219 441"/>
+    <path id="delayed-try-source" class="message-shaft" data-connector="true" d="M384 155 L1215.5199 440"/>
     <path id="delayed-try-target" class="message-shaft" data-connector="true"
-          d="M1271 460 L1379 496.26"/>
+          d="M1277.6651 461.3 L1379.0732 496.0572"/>
   </g>
 
   <!-- Second phase: Cancel is dispatched before the delayed Try reaches database C. -->
   <g id="cancel-phase-messages">
-    <path id="cancel-a-source" class="message-shaft" data-connector="true" d="M1007 165 L1061 212"/>
+    <path id="cancel-a-source" class="message-shaft" data-connector="true" d="M996 155 L1058.8295 212"/>
     <path id="cancel-a-target" class="message-shaft" data-connector="true"
-          d="M1113 261 L1165.03 308.3"/>
+          d="M1112.8409 261 L1165.0037 308.3230"/>
 
-    <path id="cancel-c-source" class="message-shaft" data-connector="true" d="M1003 168 L1046 271"/>
+    <path id="cancel-c-source" class="message-shaft" data-connector="true" d="M996 155 L1045.7614 271"/>
     <path id="cancel-c-target" class="message-shaft" data-connector="true"
-          d="M1068 320 L1133.87 475.91"/>
+          d="M1066.7812 320 L1133.6946 475.9834"/>
   </g>
 
-  <!-- Dashed callout shafts also stop inside separately painted, smaller heads. -->
+  <!-- Dashed callouts stay clear of the caption; dash offsets keep the last dash joined beneath each small head. -->
   <g id="caption-callouts">
-    <path id="cancel-callout" class="annotation-shaft" data-connector="true"
-          d="M1084 651 L1137.08 529.67"/>
-    <path id="try-callout" class="annotation-shaft" data-connector="true"
-          d="M1465 652 L1419.64 530.19"/>
+    <path id="cancel-callout" class="annotation-shaft" data-connector="true" stroke-dashoffset="5.3921"
+          d="M1085.5312 647.5 L1137.4806 528.7587"/>
+    <path id="try-callout" class="annotation-shaft" data-connector="true" stroke-dashoffset="8.8231"
+          d="M1463.3241 647.5 L1419.2887 529.2567"/>
   </g>
 
   <!-- Event circles mask the timeline and connector joins cleanly. -->
@@ -100,27 +102,28 @@
     <circle class="event" cx="1411" cy="507" r="14.5"/>
   </g>
 
-  <!-- Manual heads use a subtly flat nose tangent to the circle, avoiding both a thin tail and overlap. -->
+  <!-- Triangular noses meet the outside of each circle's 2.5-unit stroke.
+       The matching shaft stops two units inside the head base, leaving the tapered nose clear. -->
   <g id="message-arrowheads" fill="#000">
     <path id="database-a-first-phase-arrowhead"
-          d="M725.26 322.5 L745.26 328.7 L745.26 332.3 L725.26 338.5 Z"/>
+          d="M745.2579 330.5 L725.2579 338.5 L725.2579 322.5 Z"/>
     <path id="try-a-arrowhead"
-          d="M561.39 314.3 L580.74 322.32 L583.04 319.55 L571.62 302 Z"/>
+          d="M581.9288 320.8832 L561.4617 314.1679 L571.7391 301.9051 Z"/>
     <path id="database-a-failed-arrowhead"
-          d="M850.9 190.22 L855.04 169.69 L851.88 167.96 L836.86 182.55 Z"/>
+          d="M853.2194 168.6939 L850.2948 190.0351 L836.3835 182.1310 Z"/>
     <path id="delayed-try-arrowhead"
-          d="M1374.56 503.21 L1395.5 503.69 L1396.64 500.28 L1379.65 488.04 Z"/>
+          d="M1396.1008 501.8934 L1374.5874 502.9766 L1379.7751 487.8409 Z"/>
     <path id="cancel-a-arrowhead"
-          d="M1158.17 312.87 L1177.14 321.74 L1179.56 319.07 L1168.93 301.03 Z"/>
+          d="M1178.3351 320.4174 L1158.1472 312.9042 L1168.8978 301.0541 Z"/>
     <path id="cancel-c-arrowhead"
-          d="M1125.72 477.18 L1139.21 493.19 L1142.53 491.79 L1140.46 470.95 Z"/>
+          d="M1140.7908 492.5256 L1125.5540 477.2993 L1140.2582 470.9915 Z"/>
   </g>
 
   <g id="annotation-arrowheads" fill="#000">
     <path id="cancel-callout-arrowhead"
-          d="M1140.34 532.19 L1141.51 521.79 L1139.86 521.07 L1133.01 528.99 Z"/>
+          d="M1140.6871 521.4295 L1140.3435 532.1943 L1133.0143 528.9878 Z"/>
     <path id="try-callout-arrowhead"
-          d="M1423.74 529.73 L1417.34 521.45 L1415.65 522.07 L1416.24 532.53 Z"/>
+          d="M1416.4967 521.7597 L1423.7352 529.7349 L1416.2382 532.5269 Z"/>
   </g>
 
   <!-- Labels are painted last so connector shafts never cross through the words. -->

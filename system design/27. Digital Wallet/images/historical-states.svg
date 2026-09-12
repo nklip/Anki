@@ -5,6 +5,7 @@
   <title id="title">Historical states rebuilt from an event queue</title>
   <desc id="desc">Three debit commands produce paired debit and credit events. Replaying successive debit events reconstructs three historical wallet-state snapshots with balances of five, four, and three dollars.</desc>
 
+  <!-- Shared typography, strokes, and replay arrowhead geometry. -->
   <defs>
     <style>
       text{font-family:Helvetica,Arial,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
@@ -23,9 +24,9 @@
       .changed{fill:#fe2700}
     </style>
 
-    <!-- Broad source-matched head for both dashed expansions and snapshot transitions. -->
+    <!-- The nose projects five units beyond the shaft endpoint, hiding the stroke inside the tapered head. -->
     <marker id="arrowhead" markerWidth="24" markerHeight="20" viewBox="0 0 24 20"
-            refX="24" refY="10" orient="auto" markerUnits="userSpaceOnUse">
+            refX="19" refY="10" orient="auto" markerUnits="userSpaceOnUse">
       <path d="M0 0 L24 10 L0 20 Z" fill="#000"/>
     </marker>
   </defs>
@@ -68,21 +69,22 @@
     <rect class="outline green" x="1114" y="450" width="139" height="65"/>
   </g>
 
-  <!-- Dashed fan-out from each command to its two emitted events. -->
+  <!-- Dashed fan-out: shafts stop five units before tips on the outside of the event borders. -->
+  <!-- Offsets on the two nearly vertical routes keep a solid dash joined to the base of each head. -->
   <g id="command-expansion-routes">
-    <path class="dashed" data-connector="true" d="M577 163 L434 449" marker-end="url(#arrowhead)"/>
-    <path class="dashed" data-connector="true" d="M595 163 L575 449" marker-end="url(#arrowhead)"/>
-    <path class="dashed" data-connector="true" d="M790 163 L734 449" marker-end="url(#arrowhead)"/>
-    <path class="dashed" data-connector="true" d="M807 163 L868 449" marker-end="url(#arrowhead)"/>
-    <path class="dashed" data-connector="true" d="M1005 163 L1026 449" marker-end="url(#arrowhead)"/>
-    <path class="dashed" data-connector="true" d="M1024 163 L1166 449" marker-end="url(#arrowhead)"/>
+    <path id="command-c-to-debit" class="dashed" data-connector="true" d="M577 163 L436.3611 444.2779" marker-end="url(#arrowhead)"/>
+    <path id="command-c-to-credit" class="dashed" data-connector="true" stroke-dashoffset="7.5521" d="M595 163 L575.3663 443.7622" marker-end="url(#arrowhead)"/>
+    <path id="command-b-to-debit" class="dashed" data-connector="true" d="M790 163 L735.0097 443.8432" marker-end="url(#arrowhead)"/>
+    <path id="command-b-to-credit" class="dashed" data-connector="true" d="M807 163 L866.9037 443.86" marker-end="url(#arrowhead)"/>
+    <path id="command-d-to-debit" class="dashed" data-connector="true" stroke-dashoffset="7.4808" d="M1005 163 L1025.6155 443.7634" marker-end="url(#arrowhead)"/>
+    <path id="command-d-to-credit" class="dashed" data-connector="true" d="M1024 163 L1163.6523 444.2716" marker-end="url(#arrowhead)"/>
   </g>
 
-  <!-- Only the debit event for account A is replayed into each successive snapshot. -->
+  <!-- Replay tips meet the upper ellipse stroke; the shaft endpoints include the five-unit marker projection. -->
   <g id="event-to-snapshot-routes">
-    <path class="dashed" data-connector="true" d="M416.5 516 V699" marker-end="url(#arrowhead)"/>
-    <path class="dashed" data-connector="true" d="M723 516 V699" marker-end="url(#arrowhead)"/>
-    <path class="dashed" data-connector="true" d="M1030 516 V699" marker-end="url(#arrowhead)"/>
+    <path id="debit-to-state-one" class="dashed" data-connector="true" d="M416.5 516 V691.75" marker-end="url(#arrowhead)"/>
+    <path id="debit-to-state-two" class="dashed" data-connector="true" d="M723 516 V691.75" marker-end="url(#arrowhead)"/>
+    <path id="debit-to-state-three" class="dashed" data-connector="true" d="M1030 516 V691.75" marker-end="url(#arrowhead)"/>
   </g>
 
   <!-- Three source-native cylinders represent state after one, two, and three debit events. -->
@@ -101,12 +103,12 @@
     </g>
   </g>
 
-  <!-- Curved arrows carry the evolving A balance into the next historical snapshot. -->
+  <!-- Curved arrows link A balances; pulling back along each final tangent preserves the tip positions above the next account row. -->
   <g id="snapshot-progression">
-    <path class="connector" data-connector="true"
-          d="M460 779 C543 733 625 733 711 768" marker-end="url(#arrowhead)"/>
-    <path class="connector" data-connector="true"
-          d="M767 779 C850 733 932 733 1018 768" marker-end="url(#arrowhead)"/>
+    <path id="state-one-to-two" class="connector" data-connector="true"
+          d="M460 779 C543 733 625 733 706.3688 766.1152" marker-end="url(#arrowhead)"/>
+    <path id="state-two-to-three" class="connector" data-connector="true"
+          d="M767 779 C850 733 932 733 1013.3688 766.1152" marker-end="url(#arrowhead)"/>
   </g>
 
   <!-- Labels are painted last so the replay routes never obscure account values. -->
