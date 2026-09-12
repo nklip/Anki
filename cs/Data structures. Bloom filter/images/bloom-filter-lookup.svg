@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="465" viewBox="0 0 1100 465" role="img" aria-labelledby="title desc">
+  <title id="title">A Bloom filter saves unnecessary database reads</title>
+  <desc id="desc">An application server checks a Bloom filter before reading the database. Every stored key must already be represented in the filter. If any queried bit is zero, the key is absent and the server skips the database read. If all queried bits are one, the key is possibly present and the database must be checked for an exact answer. A false positive costs an extra read, not an incorrect final answer.</desc>
+
+  <!-- Server symbol copied unchanged from system design/01. Scaling/images/single-server.svg.
+       Database symbol copied unchanged from system design/16. Proximity Service/images/final-design.svg.
+       Keep both icons source-native and give every use explicit dimensions. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 21px; fill: #475569; }
+      .node { font-size: 24px; font-weight: 700; text-anchor: middle; }
+      .small { font-size: 20px; fill: #475569; text-anchor: middle; }
+      .label { font-size: 22px; }
+      .note { font-size: 20px; fill: #475569; }
+      .arrow-shaft { stroke: #111; stroke-width: 2.5; fill: none; }
+    </style>
+    <symbol id="server" viewBox="0 0 64 112">
+      <rect width="64" height="112" rx="7" fill="#63c51b"/>
+      <path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/>
+    </symbol>
+    <symbol id="db" viewBox="0 0 88 93">
+      <path d="M0.9 13.75A43.1 8.75 0 0 1 87.1 13.75V82.25A43.1 8.75 0 0 1 0.9 82.25Z" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+      <ellipse cx="44" cy="13.75" rx="43.1" ry="8.75" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+    </symbol>
+  </defs>
+
+  <!-- Establish the completeness requirement before the lookup branches. -->
+  <rect id="background" width="1100" height="465" fill="#fff"/>
+  <text class="title" x="30" y="46">Use “definitely absent” to skip an expensive read</text>
+  <text class="subtitle" x="30" y="83">Requirement: every stored key has already been added to the filter.</text>
+
+  <!-- The server icon represents the application making the membership check. -->
+  <g id="application">
+    <use href="#server" x="108" y="139" width="64" height="112"/>
+    <text class="node" x="140" y="289">Application</text>
+    <text class="small" x="140" y="319">Look up a key</text>
+  </g>
+
+  <!-- Shafts terminate inside their own triangle bases, leaving clean tapered noses.
+       Branch shafts stay outside the text; tips meet only the destination boundary. -->
+  <text class="label" x="225" y="169">Check first</text>
+  <path id="request-shaft" class="arrow-shaft" data-connector="true" d="M188 201H375"/>
+  <polygon id="request-head" points="389,201 373,193 373,209" fill="#111"/>
+
+  <!-- The in-memory bit strip matches the final array in bloom-filter-bits.svg. -->
+  <g id="filter">
+    <rect x="390" y="130" width="250" height="166" rx="16" fill="#fff9d7" stroke="#08b5d0" stroke-width="2"/>
+    <text class="node" x="515" y="169">Bloom filter</text>
+    <text class="small" x="515" y="198">In memory</text>
+    <rect x="405" y="219" width="220" height="48" rx="6" fill="#e4f4fb"/>
+    <text x="515" y="250" text-anchor="middle" font-family="monospace" font-size="22">0 1 1 0 1 0 1 1</text>
+  </g>
+
+  <!-- A possible match must reach the database for the exact result. -->
+  <text class="label" x="672" y="160">All queried bits = 1</text>
+  <text class="note" x="672" y="188">Possibly present</text>
+  <path id="possible-shaft" class="arrow-shaft" data-connector="true" d="M641 216H916"/>
+  <polygon id="possible-head" points="930,216 914,208 914,224" fill="#111"/>
+  <g id="database">
+    <use href="#db" x="940" y="163" width="88" height="93" color="#b9dff3"/>
+    <text class="node" x="984" y="289">Database</text>
+    <text class="small" x="984" y="319">Exact check</text>
+  </g>
+
+  <!-- A zero produces a final absent result; no database lookup follows. -->
+  <path id="absent-shaft" class="arrow-shaft" data-connector="true" d="M515 297V354"/>
+  <polygon id="absent-head" points="515,368 507,352 523,352" fill="#111"/>
+  <text class="label" x="542" y="333">Any queried bit = 0</text>
+  <rect id="skip-result" x="349" y="368" width="332" height="51" rx="10" fill="#e5f4ed"/>
+  <text class="node" x="515" y="401">Absent · skip the read</text>
+  <text class="note" x="30" y="450">A false positive costs an extra read. The database still supplies the exact answer.</text>
+</svg>

@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="735" viewBox="0 0 1100 735" role="img" aria-labelledby="title desc">
+  <title id="title">Bloom filter: shared bits make a positive answer uncertain</title>
+  <desc id="desc">A toy filter uses eight bits and three hash functions. Starting from all zeros, cat sets positions 1, 4, and 7. Dog sets positions 2, 4, and 6, leaving the shared bit 4 at one. The final array is 0, 1, 1, 0, 1, 0, 1, 1. Querying cat finds all ones, a true positive. Fox was never inserted but hashes to 1, 2, and 6, all ones, so it is a false positive. Owl hashes to 0, 4, and 7 and finds a zero, proving absence. Queries leave the array unchanged.</desc>
+
+  <!-- Shared cells and typography; blue always means a bit is set to 1. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 21px; fill: #475569; }
+      .section { font-size: 25px; font-weight: 700; }
+      .label { font-size: 23px; }
+      .note { font-size: 20px; fill: #475569; }
+      .index { font-size: 19px; fill: #475569; text-anchor: middle; }
+      .bit { font-size: 27px; text-anchor: middle; }
+      .set-bit { font-size: 27px; text-anchor: middle; fill: #fff; }
+      .query-title { font-size: 24px; font-weight: 700; }
+      .result { font-size: 23px; font-weight: 700; }
+      .arrow-shaft { stroke: #111; stroke-width: 2.5; fill: none; }
+    </style>
+    <symbol id="zero-cell" viewBox="0 0 60 50">
+      <rect x="1" y="1" width="58" height="48" rx="5" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+      <text class="bit" x="30" y="34">0</text>
+    </symbol>
+    <symbol id="one-cell" viewBox="0 0 60 50">
+      <rect x="1" y="1" width="58" height="48" rx="5" fill="#0b78b5" stroke="#0b78b5" stroke-width="2"/>
+      <text class="set-bit" x="30" y="34">1</text>
+    </symbol>
+  </defs>
+
+  <!-- Heading and the insertion sequence. Hash outputs are chosen for teaching. -->
+  <rect id="background" width="1100" height="735" fill="#fff"/>
+  <text class="title" x="30" y="46">Bloom filter: a positive answer can be wrong</text>
+  <text class="subtitle" x="30" y="82">Toy example: 8 bits · 3 hash functions · illustrative hash outputs</text>
+  <text class="section" x="30" y="131">1 · Insert cat, then dog</text>
+  <text class="note" x="30" y="170">Each hash chooses a bit position.</text>
+  <text class="index" x="510" y="173">0</text><text class="index" x="586" y="173">1</text>
+  <text class="index" x="662" y="173">2</text><text class="index" x="738" y="173">3</text>
+  <text class="index" x="814" y="173">4</text><text class="index" x="890" y="173">5</text>
+  <text class="index" x="966" y="173">6</text><text class="index" x="1042" y="173">7</text>
+
+  <!-- Row 0: the empty array. Keep cell x positions identical in all three rows. -->
+  <g id="empty-filter">
+    <text class="label" x="30" y="218">Start: all bits are 0</text>
+    <use href="#zero-cell" x="480" y="186" width="60" height="50"/><use href="#zero-cell" x="556" y="186" width="60" height="50"/>
+    <use href="#zero-cell" x="632" y="186" width="60" height="50"/><use href="#zero-cell" x="708" y="186" width="60" height="50"/>
+    <use href="#zero-cell" x="784" y="186" width="60" height="50"/><use href="#zero-cell" x="860" y="186" width="60" height="50"/>
+    <use href="#zero-cell" x="936" y="186" width="60" height="50"/><use href="#zero-cell" x="1012" y="186" width="60" height="50"/>
+  </g>
+
+  <!-- Row 1: cat sets three bits. Shafts end under triangle bases, before each tip. -->
+  <g id="insert-cat">
+    <text class="label" x="30" y="281">Insert cat</text>
+    <text class="note" x="30" y="311">Hash positions: 1, 4, 7</text>
+    <path class="arrow-shaft" data-connector="true" d="M354 289H457"/>
+    <polygon points="470,289 454,281 454,297" fill="#111"/>
+    <use href="#zero-cell" x="480" y="264" width="60" height="50"/><use href="#one-cell" x="556" y="264" width="60" height="50"/>
+    <use href="#zero-cell" x="632" y="264" width="60" height="50"/><use href="#zero-cell" x="708" y="264" width="60" height="50"/>
+    <use href="#one-cell" x="784" y="264" width="60" height="50"/><use href="#zero-cell" x="860" y="264" width="60" height="50"/>
+    <use href="#zero-cell" x="936" y="264" width="60" height="50"/><use href="#one-cell" x="1012" y="264" width="60" height="50"/>
+  </g>
+
+  <!-- Row 2: dog adds positions 2 and 6; shared position 4 remains set. -->
+  <g id="insert-dog">
+    <text class="label" x="30" y="359">Insert dog</text>
+    <text class="note" x="30" y="389">Hash positions: 2, 4, 6</text>
+    <path class="arrow-shaft" data-connector="true" d="M354 367H457"/>
+    <polygon points="470,367 454,359 454,375" fill="#111"/>
+    <use href="#zero-cell" x="480" y="342" width="60" height="50"/><use href="#one-cell" x="556" y="342" width="60" height="50"/>
+    <use href="#one-cell" x="632" y="342" width="60" height="50"/><use href="#zero-cell" x="708" y="342" width="60" height="50"/>
+    <use href="#one-cell" x="784" y="342" width="60" height="50"/><use href="#zero-cell" x="860" y="342" width="60" height="50"/>
+    <use href="#one-cell" x="936" y="342" width="60" height="50"/><use href="#one-cell" x="1012" y="342" width="60" height="50"/>
+    <text class="note" x="480" y="429">Final array · blue = 1 · shared bit 4 stays 1</text>
+  </g>
+
+  <!-- Three independent queries all read the final array without modifying it. -->
+  <text class="section" x="30" y="483">2 · Query the final array using the same hashes</text>
+  <g id="query-cat">
+    <rect x="30" y="506" width="334" height="181" rx="12" fill="#f1f7fb"/>
+    <text class="query-title" x="48" y="541">cat · inserted</text>
+    <text class="note" x="48" y="575">Positions 1, 4, 7 → bits 1, 1, 1</text>
+    <text class="result" x="48" y="620">Possibly present</text>
+    <text class="note" x="48" y="655">Correct positive answer</text>
+  </g>
+  <g id="query-fox">
+    <rect x="383" y="506" width="334" height="181" rx="12" fill="#fff4d6"/>
+    <text class="query-title" x="401" y="541">fox · never inserted</text>
+    <text class="note" x="401" y="575">Positions 1, 2, 6 → bits 1, 1, 1</text>
+    <text class="result" x="401" y="620">Possibly present</text>
+    <text class="note" x="401" y="655">False positive: other items' bits</text>
+  </g>
+  <g id="query-owl">
+    <rect x="736" y="506" width="334" height="181" rx="12" fill="#e5f4ed"/>
+    <text class="query-title" x="754" y="541">owl · never inserted</text>
+    <text class="note" x="754" y="575">Positions 0, 4, 7 → bits 0, 1, 1</text>
+    <text class="result" x="754" y="620">Definitely absent</text>
+    <text class="note" x="754" y="655">One 0 is enough to rule it out</text>
+  </g>
+  <text class="note" x="30" y="719">All 1s can be a coincidence. An inserted item's bits remain 1, so it cannot be reported absent.</text>
+</svg>
