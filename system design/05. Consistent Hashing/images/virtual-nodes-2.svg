@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1290" height="820" viewBox="0 0 1290 820" role="img" aria-labelledby="title desc">
+  <title id="title">Clockwise lookup assigns key k0 to virtual node s1_1</title>
+  <desc id="desc">Servers s0 and s1 each own three virtual nodes on the hash ring. Starting at key k0 and moving clockwise reaches s1_1 first, so server 1 stores the key. Purple nodes belong to server 0 and blue nodes belong to server 1.</desc>
+
+  <!-- Shared server colors and real-text labels, adapted from virtual-nodes-1.svg. -->
+  <defs>
+    <style>
+      .server-0 { fill: #c3abce; }
+      .server-1 { fill: #3bb4db; }
+      .node-label { font-family: Georgia, serif; font-size: 27px; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <!-- Match the reference canvas; ownership arcs from the first diagram are omitted. -->
+  <rect id="background" width="1290" height="820" fill="white"/>
+
+  <!-- Two physical-server legend entries retain the first diagram's structure. -->
+  <g id="server-legend">
+    <text x="15" y="137" font-family="Georgia,serif" font-size="30">Servers</text>
+    <g font-family="Arial,sans-serif" font-size="28" text-anchor="middle">
+      <rect x="11" y="176" width="116" height="116" rx="18" class="server-0"/>
+      <text x="69" y="244">server 0</text>
+      <rect x="11" y="333" width="116" height="115" rx="18" class="server-1"/>
+      <text x="69" y="401">server 1</text>
+    </g>
+  </g>
+
+  <!-- Base ring sits behind all six virtual nodes and the key marker. -->
+  <circle id="hash-ring" cx="661.5" cy="413" r="364" fill="none" stroke="#666" stroke-width="6.5"/>
+
+  <!-- Six virtual nodes, three for each physical server, in the original order. -->
+  <g id="virtual-nodes" class="node-label">
+    <g id="virtual-node-s0-2">
+      <circle cx="407" cy="156.5" r="34" class="server-0"/>
+      <text x="407" y="169">s0_2</text>
+    </g>
+    <g id="virtual-node-s1-0">
+      <circle cx="925" cy="158" r="34" class="server-1"/>
+      <text x="925" y="171">s1_0</text>
+    </g>
+    <g id="virtual-node-s0-0">
+      <circle cx="1009" cy="324.5" r="34" class="server-0"/>
+      <text x="1009" y="337">s0_0</text>
+    </g>
+    <g id="virtual-node-s1-1">
+      <circle cx="925" cy="672" r="34" class="server-1"/>
+      <text x="925" y="685">s1_1</text>
+    </g>
+    <g id="virtual-node-s0-1">
+      <circle cx="725" cy="772" r="34" class="server-0"/>
+      <text x="725" y="785">s0_1</text>
+    </g>
+    <g id="virtual-node-s1-2">
+      <circle cx="398.5" cy="672" r="34" class="server-1"/>
+      <text x="398.5" y="685">s1_2</text>
+    </g>
+  </g>
+
+  <!-- The clockwise arrow begins at the key boundary and bends outside the ring.
+       Its shaft ends at the inset of the filled head; the nose stays clear of s1_1. -->
+  <g id="clockwise-lookup">
+    <path id="lookup-arrow-shaft" d="M1040 554 C1060 558 1066 579 1066 612 C1066 653 1054 677 986 677" fill="none" stroke="black" stroke-width="4"/>
+    <path id="lookup-arrowhead" d="M994 663 L967 677 L994 691 L986 677 Z" fill="black"/>
+  </g>
+
+  <!-- White key marker covers the ring and the start of the lookup shaft. -->
+  <g id="key-k0" class="node-label">
+    <circle cx="1009" cy="538" r="34" fill="white" stroke="black" stroke-width="6.5"/>
+    <text x="1009" y="550" style="font-size: 28px">k0</text>
+  </g>
+
+  <!-- Physical-server notation repeats the same mapping as the colored legend. -->
+  <g id="server-notation" font-family="Arial,sans-serif" font-size="31">
+    <text x="1079" y="214">s0 = server 0</text>
+    <text x="1079" y="250">s1 = server 1</text>
+  </g>
+</svg>
