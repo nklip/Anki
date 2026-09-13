@@ -13,7 +13,7 @@ Create a self-contained Markdown card that teaches someone who does not already 
 - Use **complex mode**, also called **article mode**, when the user requests either name or explicitly asks for comprehensive, multi-stage, or step-by-step treatment. Read [references/complex-mode.md](references/complex-mode.md). Both names select the same mode; use `--mode complex` for explicit validation.
 - When revising, follow the user's selected mode or infer it from the existing structure: any exact `Front` or `Back` heading at level one or legacy level two, outside fenced code and HTML comments, indicates simple mode; none indicates complex/article mode. A single heading or a mixed-level pair is still simple content requiring repair. Promote legacy `## Front`/`## Back` to `# Front`/`# Back` and add any missing boundary; mode comments do not select the mode.
 
-Do not silently relax simple mode's 3,000-character limit, which counts the Back only — `# Front` and `# Sources` are excluded. Narrow a simple-mode card to its core lesson instead of changing its mode merely to exceed the limit.
+Do not silently relax simple mode's 3,500-character limit, which counts the Back only — `# Front` and `# Sources` are excluded. Narrow a simple-mode card to its core lesson instead of changing its mode merely to exceed the limit.
 
 ## Research before drafting
 

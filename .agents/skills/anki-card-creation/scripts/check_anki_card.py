@@ -28,7 +28,7 @@ VERSION_EVENT_RE = re.compile(
     re.IGNORECASE,
 )
 ALLOWED_IMAGE_SUFFIXES = {".svg", ".png", ".jpg", ".jpeg", ".webp", ".gif"}
-SIMPLE_CHARACTER_LIMIT = 3000
+SIMPLE_CHARACTER_LIMIT = 3500
 JAVA_HINTS = (
     "public class ",
     "static void main",
@@ -493,7 +493,7 @@ counter.incrementAndGet();
         at_simple_limit, Path("card.md"), "simple", check_local_files=False
     )
     above_simple_limit = at_simple_limit.replace("\n\n# Sources", "x\n\n# Sources")
-    assert any("allows at most 3000" in error for error in validate_text(
+    assert any(f"allows at most {SIMPLE_CHARACTER_LIMIT}" in error for error in validate_text(
         above_simple_limit, Path("card.md"), "simple", check_local_files=False
     ))
 
@@ -544,7 +544,7 @@ counter.incrementAndGet();
     fat_back_section = simple.replace(
         "An atomic update", "## Explanation\n\n" + "x" * 5000 + "\n\nAn atomic update"
     )
-    assert any("allows at most 3000" in error for error in validate_text(
+    assert any(f"allows at most {SIMPLE_CHARACTER_LIMIT}" in error for error in validate_text(
         fat_back_section, Path("card.md"), "simple", check_local_files=False,
     ))
     fat_sources = simple.replace(

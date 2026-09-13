@@ -176,9 +176,11 @@ class CardValidationTests(unittest.TestCase):
     def test_only_inferred_simple_mode_has_a_character_limit(self) -> None:
         for mode in ("simple", "complex"):
             with self.subTest(mode=mode):
-                errors = self.errors(self.card("x" * 3001, mode=mode))
+                oversized = "x" * (validator.SIMPLE_CHARACTER_LIMIT + 1)
+                errors = self.errors(self.card(oversized, mode=mode))
                 if mode == "simple":
-                    self.assert_error(errors, "allows at most 3000")
+                    limit = validator.SIMPLE_CHARACTER_LIMIT
+                    self.assert_error(errors, f"allows at most {limit}")
                 else:
                     self.assertEqual([], errors)
 

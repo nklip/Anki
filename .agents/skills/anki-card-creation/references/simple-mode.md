@@ -9,7 +9,7 @@ Create one focused card that teaches a single core idea without assuming prior k
 Requirements:
 
 - Follow the shared order: title, one standalone upward navigation line without a list marker, then `# Front`, separated by blank lines with no other intervening content. Use `# Back` for teaching content and final `# Sources` for citations. Do not generate HTML comments in Markdown prose, including mode metadata; fenced code examples are unaffected.
-- The teaching content must contain **at most 3,000 Unicode characters**. The `# Front` and
+- The teaching content must contain **at most 3,500 Unicode characters**. The `# Front` and
   `# Sources` sections are excluded from that count: the Front is a prompt rather than teaching,
   and a card must never have to drop a citation to stay in budget. The navigation line is also excluded. Everything else — the Back,
   its headings, tables, code, and image links — counts. Measure it with the bundled validator;
@@ -28,4 +28,4 @@ Before finishing, run:
 python3 scripts/check_anki_card.py --mode simple path/to/card.md
 ```
 
-Any result above 3,000 counted characters or without a valid local visual is a failure.
+Any result above 3,500 counted characters or without a valid local visual is a failure.
