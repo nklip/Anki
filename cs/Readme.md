@@ -8,6 +8,7 @@ Every card lives in its own folder as `Readme.md`, with its diagrams in a siblin
 ## Content
  * [Data structures. Bloom filter](./Data%20structures.%20Bloom%20filter/Readme.md) - bit arrays and hashing, false positives without false negatives, and avoiding unnecessary database reads
  * [Data structures. Merkle tree](./Data%20structures.%20Merkle%20tree/Readme.md) - how a root hash summarizes a data set, isolates the one block two replicas disagree on, and proves a single block with an audit path
+ * [Data structures. Ring buffer](./Data%20structures.%20Ring%20buffer/Readme.md) - fixed-array slot reuse, wraparound, queue operations, and full/empty handling
  * [Data structures. Trie](./Data%20structures.%20Trie/Readme.md) - what a trie is, word endings and prefix lookup, time and space complexity, and practical uses
  * [Multiversion concurrency control](./Multiversion%20concurrency%20control/Readme.md) - how one row becomes a chain of versions, how a snapshot picks the version a reader sees, where engines keep the old ones, and why write skew survives
  * [p50 vs p95](./p50%20vs%20p95/Readme.md) - typical and slow-tail request latency, percentile cutoffs, and automatic measurement with k6 and Prometheus

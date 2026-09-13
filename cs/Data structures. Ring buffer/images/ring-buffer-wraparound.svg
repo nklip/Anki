@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="540" viewBox="0 0 1000 540" role="img" aria-labelledby="title desc">
+  <title id="title">Ring buffer: the next index wraps back to zero</title>
+  <desc id="desc">A four-slot array contains C at index 0, D at index 1, an unused slot at index 2, and B at index 3. Read is 3, write is 2, and count is 3. The next index after 3 is 0, shown by a blue return arrow below the array. Starting at read gives the FIFO order B, C, D. The array stays in place; only its indices wrap.</desc>
+
+  <!-- Shared typography and arrowhead. A 4-unit nose projection covers the 2.5-unit shaft at its join. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 21px; fill: #475569; }
+      .label { font-size: 23px; font-weight: 700; }
+      .note { font-size: 20px; fill: #475569; }
+      .index { font-size: 18px; text-anchor: middle; }
+      .value { font-size: 32px; font-weight: 700; text-anchor: middle; }
+      .live { fill: #0b78b5; stroke: #0b78b5; stroke-width: 2; }
+      .unused { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 2; }
+      .light { fill: #fff; }
+      .arrow-shaft { fill: none; stroke: #0b78b5; stroke-width: 2.5; }
+    </style>
+    <marker id="wrap-arrowhead" markerWidth="18" markerHeight="16" viewBox="0 0 18 16" refX="14" refY="8" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0L18 8L0 16Z" fill="#0b78b5"/>
+    </marker>
+  </defs>
+
+  <!-- Heading and pointer definitions; pointer arrows stay clear of the two-line labels. -->
+  <rect id="background" width="1000" height="540" fill="#fff"/>
+  <text class="title" x="30" y="46">Ring buffer: after the last index, return to 0</text>
+  <text class="subtitle" x="30" y="82">The array stays in place. Its read and write indices move around it.</text>
+  <text class="label" x="90" y="144">4 slots · 3 stored items</text>
+  <text class="note" x="90" y="178">Blue = stored · gray = unused</text>
+  <g id="write-pointer">
+    <text class="label" x="605" y="139" text-anchor="middle">write = 2</text>
+    <text class="note" x="605" y="168" text-anchor="middle">next slot to fill</text>
+    <path class="arrow-shaft" data-connector="true" d="M605 181V205"/>
+    <polygon points="605,219 597,203 613,203" fill="#0b78b5"/>
+  </g>
+  <g id="read-pointer">
+    <text class="label" x="815" y="139" text-anchor="middle">read = 3</text>
+    <text class="note" x="815" y="168" text-anchor="middle">next item out</text>
+    <path class="arrow-shaft" data-connector="true" d="M815 181V205"/>
+    <polygon points="815,219 807,203 823,203" fill="#0b78b5"/>
+  </g>
+
+  <!-- Physical array. Slot indices and values remain real text with deliberate baselines. -->
+  <g id="physical-array">
+    <rect class="live" x="90" y="220" width="190" height="90" rx="8"/>
+    <rect class="live" x="300" y="220" width="190" height="90" rx="8"/>
+    <rect class="unused" x="510" y="220" width="190" height="90" rx="8"/>
+    <rect class="live" x="720" y="220" width="190" height="90" rx="8"/>
+    <text class="index light" x="185" y="246">index 0</text>
+    <text class="index light" x="395" y="246">index 1</text>
+    <text class="index" x="605" y="246">index 2</text>
+    <text class="index light" x="815" y="246">index 3</text>
+    <text class="value light" x="185" y="289">C</text>
+    <text class="value light" x="395" y="289">D</text>
+    <text class="value" x="605" y="289">—</text>
+    <text class="value light" x="815" y="289">B</text>
+  </g>
+
+  <!-- Return route connects index 3 to index 0. Its visible nose meets the left slot border. -->
+  <g id="wrap-route">
+    <path class="arrow-shaft" d="M911 265H946V378H54V265H85" marker-end="url(#wrap-arrowhead)"/>
+    <text class="label" x="500" y="353" text-anchor="middle">Next index: (3 + 1) % 4 = 0</text>
+  </g>
+
+  <!-- Logical queue order differs from physical array order after wrapping. -->
+  <g id="logical-queue">
+    <rect x="30" y="408" width="940" height="108" rx="12" fill="#f1f7fb"/>
+    <text class="label" x="50" y="448">Read order (first in, first out):</text>
+    <text class="value" x="692" y="450">B → C → D</text>
+    <text class="note" x="50" y="489">Start at read = 3, wrap to 0, stop before write = 2. No items move.</text>
+  </g>
+</svg>

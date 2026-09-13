@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="750" viewBox="0 0 1000 750" role="img" aria-labelledby="title desc">
+  <title id="title">Ring buffer operations: fill one slot, then free one slot</title>
+  <desc id="desc">Three states of the same four-slot buffer. Initially the physical array is C, D, unused, B, with read 3, write 2, count 3. Enqueue E writes index 2 and advances write to 3; read and write are both 3, but count 4 means full. Dequeue returns B from index 3 and advances read to 0. The final array is C, D, E, unused, with write 3 and count 3. The final queue order is C, D, E. C, D, and E do not shift.</desc>
+
+  <!-- Shared styles. Blue is stored data; yellow highlights the newly inserted E. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 21px; fill: #475569; }
+      .step { font-size: 25px; font-weight: 700; }
+      .note { font-size: 20px; fill: #475569; }
+      .status { font-size: 22px; }
+      .index { font-size: 18px; text-anchor: middle; }
+      .value { font-size: 30px; font-weight: 700; text-anchor: middle; }
+      .live { fill: #0b78b5; stroke: #0b78b5; stroke-width: 2; }
+      .unused { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 2; }
+      .new { fill: #fff4d6; stroke: #b7791f; stroke-width: 2; }
+      .light { fill: #fff; }
+      .arrow-shaft { fill: none; stroke: #111; stroke-width: 2.5; }
+    </style>
+  </defs>
+
+  <!-- Reading order is top to bottom; each operation points to its resulting state. -->
+  <rect id="background" width="1000" height="750" fill="#fff"/>
+  <text class="title" x="30" y="46">Fill one slot, then free one slot</text>
+  <text class="subtitle" x="30" y="82">Same 4-slot buffer · follow the states from top to bottom</text>
+  <text class="note" x="30" y="116">Blue = stored item · yellow = new item · — = unused slot</text>
+
+  <!-- State 1 matches the wraparound diagram exactly. -->
+  <g id="before">
+    <text class="step" x="30" y="198">1 · Before</text>
+    <text class="note" x="30" y="233">Queue order: B → C → D</text>
+    <rect class="live" x="420" y="166" width="120" height="88" rx="8"/>
+    <rect class="live" x="560" y="166" width="120" height="88" rx="8"/>
+    <rect class="unused" x="700" y="166" width="120" height="88" rx="8"/>
+    <rect class="live" x="840" y="166" width="120" height="88" rx="8"/>
+    <text class="index light" x="480" y="191">index 0</text>
+    <text class="index light" x="620" y="191">index 1</text>
+    <text class="index" x="760" y="191">index 2</text>
+    <text class="index light" x="900" y="191">index 3</text>
+    <text class="value light" x="480" y="234">C</text>
+    <text class="value light" x="620" y="234">D</text>
+    <text class="value" x="760" y="234">—</text>
+    <text class="value light" x="900" y="234">B</text>
+    <text class="status" x="420" y="288">read = 3 · write = 2 · count = 3</text>
+  </g>
+
+  <!-- Enqueue E writes only index 2. Each manual shaft ends beneath its own triangle base. -->
+  <g id="enqueue-e">
+    <text class="step" x="30" y="370">2 · Enqueue E</text>
+    <text class="note" x="30" y="405">Write E at index 2.</text>
+    <text class="note" x="30" y="435">write: 2 → 3</text>
+    <path class="arrow-shaft" data-connector="true" d="M333 383H392"/>
+    <polygon points="408,383 390,375 390,391" fill="#111"/>
+    <rect class="live" x="420" y="338" width="120" height="88" rx="8"/>
+    <rect class="live" x="560" y="338" width="120" height="88" rx="8"/>
+    <rect class="new" x="700" y="338" width="120" height="88" rx="8"/>
+    <rect class="live" x="840" y="338" width="120" height="88" rx="8"/>
+    <text class="index light" x="480" y="363">index 0</text>
+    <text class="index light" x="620" y="363">index 1</text>
+    <text class="index" x="760" y="363">index 2</text>
+    <text class="index light" x="900" y="363">index 3</text>
+    <text class="value light" x="480" y="406">C</text>
+    <text class="value light" x="620" y="406">D</text>
+    <text class="value" x="760" y="406">E</text>
+    <text class="value light" x="900" y="406">B</text>
+    <text class="status" x="420" y="460">read = 3 · write = 3 · count = 4 (full)</text>
+  </g>
+
+  <!-- Dequeue returns B; the read index wraps to zero and index 3 becomes unused. -->
+  <g id="dequeue-b">
+    <text class="step" x="30" y="542">3 · Dequeue → B</text>
+    <text class="note" x="30" y="577">Return B; advance read.</text>
+    <text class="note" x="30" y="607">read: 3 → 0 (wrap)</text>
+    <!-- Final order mirrors step 1; keep the note in the left column above the takeaway panel. -->
+    <text id="final-queue-order" class="note" x="30" y="637">Queue order: C → D → E</text>
+    <path class="arrow-shaft" data-connector="true" d="M333 555H392"/>
+    <polygon points="408,555 390,547 390,563" fill="#111"/>
+    <rect class="live" x="420" y="510" width="120" height="88" rx="8"/>
+    <rect class="live" x="560" y="510" width="120" height="88" rx="8"/>
+    <rect class="live" x="700" y="510" width="120" height="88" rx="8"/>
+    <rect class="unused" x="840" y="510" width="120" height="88" rx="8"/>
+    <text class="index light" x="480" y="535">index 0</text>
+    <text class="index light" x="620" y="535">index 1</text>
+    <text class="index light" x="760" y="535">index 2</text>
+    <text class="index" x="900" y="535">index 3</text>
+    <text class="value light" x="480" y="578">C</text>
+    <text class="value light" x="620" y="578">D</text>
+    <text class="value light" x="760" y="578">E</text>
+    <text class="value" x="900" y="578">—</text>
+    <text class="status" x="420" y="632">read = 0 · write = 3 · count = 3</text>
+  </g>
+
+  <!-- Count resolves coincident indices; the final note emphasizes constant work per item. -->
+  <g id="takeaway">
+    <rect x="30" y="658" width="940" height="72" rx="12" fill="#f1f7fb"/>
+    <text class="note" x="50" y="686">Step 2 is full even though read = write: count = 4.</text>
+    <text class="note" x="50" y="715">Removing B frees index 3; C, D and E do not move.</text>
+  </g>
+</svg>
