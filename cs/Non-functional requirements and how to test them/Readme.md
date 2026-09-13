@@ -8,7 +8,7 @@ This article distinguishes the two and turns quality goals into testable criteri
 
 Numerical targets outside those company examples are **illustrative requirements**, not industry defaults or those companies’ commitments.
 
-## Functional versus non-functional requirements
+## 1. Functional versus non-functional requirements
 
 A **functional requirement** describes an observable capability or rule: given an input and a situation, what result or state change must occur? For an online shop, examples include finding a product, calculating an order total, and rejecting a purchase when stock is exhausted.
 
@@ -29,7 +29,7 @@ Read the same product lookup in two ways: the functional test checks the returne
 
 **Latency** is the time an operation takes. “Use a cache” is an implementation choice unless the project explicitly mandates it. “Serve this workload within this latency limit” is the quality outcome the cache is supposed to help achieve.
 
-## Make the requirement measurable
+## 2. Make the requirement measurable
 
 “Fast,” “scalable,” and “highly available” do not define a pass condition. A useful requirement identifies the operation, conditions, measure, threshold, and observation window. Record who owns it and why the target matters.
 
@@ -59,7 +59,7 @@ For an illustrative window containing 1,000,000 eligible requests, a 99.9% objec
 
 Passing a 30-minute experiment supplies evidence about that experiment. It cannot establish compliance with a 30-day production SLO. Production measurements must continue after release.
 
-## Match the quality to the test
+## 3. Match the quality to the test
 
 NFR testing is broader than load testing. The following are example acceptance criteria to tailor to a product, with an experiment that can produce relevant evidence.
 
@@ -79,7 +79,7 @@ The numbers above are test proposals. Select them from user needs and failure co
 
 For security, an access matrix covers one part of the problem. Threat analysis, code review, dependency analysis, and targeted penetration testing address other failure modes. For accessibility, an automated scan alone cannot establish conformance; knowledgeable human evaluation is required.
 
-## Performance testing: choose the right workload
+## 4. Performance testing: choose the right workload
 
 In this test layout, the laptop icon represents a load generator. Its measurements describe requests, while service **telemetry** (operational measurements such as memory use and connection counts) helps explain the result. The load balancer distributes traffic across application instances; storage remains part of the tested request path.
 
@@ -164,7 +164,7 @@ Checks record assertion results. **Thresholds make the run pass or fail**, and a
 
 Inspect the time series as well as the aggregate report. A whole-run percentile can hide a short bad interval. Also inspect generator utilization, completed request count, application errors, database connections, and queue growth. A failed generator-capacity criterion means the intended workload was not demonstrated, even if the latency threshold passed.
 
-## Resilience testing: verify the customer outcome during failure
+## 5. Resilience testing: verify the customer outcome during failure
 
 A **fault injection** experiment deliberately introduces a specified failure, such as terminating an instance or delaying a dependency. **Failover** means transferring work to a surviving component.
 
@@ -178,7 +178,7 @@ Measure across the failure transition. Starting measurement only after failover 
 
 Use distinct experiments for process crashes, dependency timeouts, delayed responses, and loss of a site. One passing instance-termination test does not establish resilience to all of them. Likewise, adding a second application instance does not prove the storage dependency can survive failure.
 
-## Recovery testing: separate downtime from data loss
+## 6. Recovery testing: separate downtime from data loss
 
 **Recovery time objective (RTO)** is the maximum acceptable restoration time after disruption. **Recovery point objective (RPO)** is the maximum acceptable lost-data interval, measured backward from the disruption. RPO is a time interval, not a count of records.
 
@@ -190,11 +190,11 @@ Test restoration, not merely backup creation. Restore a real recovery copy into 
 
 For the agreed scenario, time the full recovery path, including detection, decisions, data restoration, and service validation. An application process becoming healthy is not the endpoint if users still cannot perform the required operation. A zero-data-loss requirement needs its own failure scope and evidence; a five-minute backup recovery target cannot satisfy it.
 
-## Production examples: what companies actually tested
+## 7. Production examples: what companies actually tested
 
 These are historical engineering reports. The quality goals below summarize the motivation and evidence in those reports; they do not imply unpublished numerical requirements or describe the companies’ current systems.
 
-### Netflix: dependency latency and customer engagement — 2015
+### 7.1. Netflix: dependency latency and customer engagement — 2015
 
 **Quality targeted:** resilience when a dependency becomes slow. Netflix measured its normal customer engagement through video plays starting per second and hypothesized that it would remain stable during the experiment.
 
@@ -204,7 +204,7 @@ These are historical engineering reports. The quality goals below summarize the 
 
 **Lesson to apply:** observe a meaningful customer outcome and repeat the experiment after a repair. The specific latency and traffic fraction define the evidence; this result does not prove resilience to every dependency failure.
 
-### Shopify: full-scale holiday rehearsals — report published January 2023
+### 7.2. Shopify: full-scale holiday rehearsals — report published January 2023
 
 **Quality targeted:** capacity and resilience for Black Friday/Cyber Monday (BFCM).
 
@@ -214,7 +214,7 @@ These are historical engineering reports. The quality goals below summarize the 
 
 **Lesson to apply:** rehearse the deployment size as well as the request rate. Shopify also documented limits in geographic traffic generation and caching realism. A successful synthetic exercise supplies evidence, while real traffic can still behave differently.
 
-### Cloudflare: an outage exposed gaps in recovery assumptions — November 2023
+### 7.3. Cloudflare: an outage exposed gaps in recovery assumptions — November 2023
 
 **Quality at issue:** control-plane availability and disaster recovery. The **control plane** manages configuration; it is distinct from the systems carrying customer traffic.
 
@@ -224,7 +224,7 @@ These are historical engineering reports. The quality goals below summarize the 
 
 **Lesson to apply:** define separate customer journeys and recovery objectives, then exercise the loss of their real dependencies. A high-availability architecture diagram alone does not validate those objectives.
 
-## Keep evidence useful after release
+## 8. Keep evidence useful after release
 
 Tie each requirement to its owner, test scenario, pass condition, and latest result. Preserve the workload, deployment revision, data assumptions, measurement window, and observed limitations with the report. A result without its conditions is difficult to reproduce or compare.
 
