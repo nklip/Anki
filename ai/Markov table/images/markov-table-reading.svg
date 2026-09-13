@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="388" viewBox="0 0 1000 388" role="img" aria-labelledby="title desc">
+  <title id="title">Each row answers: what can happen next?</title>
+  <desc id="desc">The Sunny row gives 0.7 for Sunny tomorrow and 0.3 for Rainy tomorrow. The Rainy row gives 0.4 and 0.6. Each row sums to one. The highlighted entry is conditional on being Sunny today.</desc>
+  <!-- Shared type and colors: blue marks the selected row or tea; orange marks coffee. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .title { font-size: 30px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 21px; }
+      .small { font-size: 18px; fill: #475569; }
+      .value { font-size: 27px; font-weight: 700; }
+      .mono { font-family: monospace; font-size: 21px; }
+      .blue { font-size: 22px; font-weight: 700; fill: #1d4ed8; }
+      .orange { font-size: 22px; font-weight: 700; fill: #9a3412; }
+    </style>
+  </defs>
+  <!-- Canvas and shared heading. -->
+  <rect width="1000" height="388" fill="#f8fafc"/>
+  <text x="32" y="47" class="title" text-anchor="start">Each row answers: what can happen next?</text>
+  <text x="32" y="80" class="small" text-anchor="start">Toy weather model • rows = today; columns = tomorrow</text>
+  <!-- Row and column labels establish the direction before the numbers. -->
+<g id="probability-table">
+<text x="58" y="130" class="small" text-anchor="start">TODAY</text>
+<text x="325" y="130" class="small" text-anchor="middle">TOMORROW</text>
+<text x="260" y="169" class="heading" text-anchor="middle">Sunny</text>
+<text x="425" y="169" class="heading" text-anchor="middle">Rainy</text>
+<rect x="32" y="192" width="490" height="62" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="58" y="233" class="heading" text-anchor="start">Sunny</text>
+<text x="260" y="233" class="value" text-anchor="middle">0.7</text>
+<rect x="377" y="202" width="96" height="42" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<text x="425" y="232" class="value" text-anchor="middle">0.3</text>
+<rect x="32" y="263" width="490" height="62" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+<text x="58" y="304" class="heading" text-anchor="start">Rainy</text>
+<text x="260" y="304" class="value" text-anchor="middle">0.4</text>
+<text x="425" y="304" class="value" text-anchor="middle">0.6</text>
+<text x="58" y="359" class="small" text-anchor="start">Every entry is ≥ 0. Each full row adds to 1.</text>
+</g>
+<!-- The callout translates a conditional probability into plain language. -->
+<g id="read-selected-cell">
+<rect x="558" y="116" width="410" height="209" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+<text x="582" y="152" class="heading" text-anchor="start">Read the highlighted cell</text>
+<text x="582" y="197" class="body" text-anchor="start">Sunny today → Rainy tomorrow</text>
+<text x="582" y="241" class="blue" text-anchor="start">P(Rainy | Sunny) = 0.3</text>
+<text x="582" y="279" class="small" text-anchor="start">The bar | means “given”.</text>
+<text x="582" y="309" class="small" text-anchor="start">This is a 30% chance in this model.</text>
+<text x="568" y="359" class="small" text-anchor="start">The reverse direction is 0.4, not 0.3.</text>
+</g>
+</svg>

@@ -11,5 +11,6 @@ Model Context Protocol (MCP), streaming, and temperature.
 ## Content
  * [Cosine Similarity](./Cosine%20similarity/Readme.md) - the geometry behind similarity scores and its role in retrieval
  * [LLM Failure Modes](./LLM%20Failure%20Modes/Readme.md) - hallucination, error propagation, sycophancy, instruction drift, and knowledge conflict
+ * [Markov table](./Markov%20table/Readme.md) - transition probabilities, n-gram models, and a worked text generator
  * [Prompt-writing guidelines](./Prompt-writing%20guidelines/Readme.md) - what makes a prompt specific, testable, and stable
  * [RAG pipeline](./RAG%20pipeline/Readme.md) - the six stages from chunking to cited generation

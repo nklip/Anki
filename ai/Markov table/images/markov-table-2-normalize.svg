@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="388" viewBox="0 0 1000 388" role="img" aria-labelledby="title desc">
+  <title id="title">Divide each count by its own row total</title>
+  <desc id="desc">Two tea transitions and one coffee transition become probabilities two thirds and one third. A bar assigns twice as much space to tea as to coffee. The probabilities sum to one.</desc>
+  <!-- Shared type and colors: blue marks the selected row or tea; orange marks coffee. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .title { font-size: 30px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 21px; }
+      .small { font-size: 18px; fill: #475569; }
+      .value { font-size: 27px; font-weight: 700; }
+      .mono { font-family: monospace; font-size: 21px; }
+      .blue { font-size: 22px; font-weight: 700; fill: #1d4ed8; }
+      .orange { font-size: 22px; font-weight: 700; fill: #9a3412; }
+    </style>
+  </defs>
+  <!-- Canvas and shared heading. -->
+  <rect width="1000" height="388" fill="#f8fafc"/>
+  <text x="32" y="47" class="title" text-anchor="start">Divide each count by its own row total</text>
+  <text x="32" y="80" class="small" text-anchor="start">Step 2 • the “like” row has 2 + 1 = 3 outgoing transitions</text>
+  <!-- The denominator belongs to this context, not to the whole corpus. -->
+<g id="raw-counts">
+<rect x="32" y="116" width="305" height="215" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+<text x="56" y="156" class="heading" text-anchor="start">Before: counts</text>
+<text x="56" y="205" class="blue" text-anchor="start">like → tea</text>
+<text x="307" y="205" class="value" text-anchor="end">2</text>
+<text x="56" y="255" class="orange" text-anchor="start">like → coffee</text>
+<text x="307" y="255" class="value" text-anchor="end">1</text>
+<text x="56" y="303" class="heading" text-anchor="start">Row total = 3</text>
+</g>
+<text x="414" y="189" class="value" text-anchor="middle">÷ 3</text>
+<!-- normalize-row: shaft ends under the head base; tip stays in the routing gap. -->
+<path id="normalize-row-arrow" d="M357 226 H458" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<path id="normalize-row-head" d="M456 219 L470 226 L456 233 Z" fill="#64748b"/>
+<!-- The proportional bar is secondary to the exact fractional labels. -->
+<g id="normalized-row">
+<rect x="490" y="116" width="478" height="215" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+<text x="514" y="156" class="heading" text-anchor="start">After: probabilities</text>
+<text x="514" y="205" class="blue" text-anchor="start">P(tea | like) = 2/3</text>
+<text x="514" y="250" class="orange" text-anchor="start">P(coffee | like) = 1/3</text>
+<rect x="514" y="277" width="280" height="28" rx="0" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+<rect x="794" y="277" width="140" height="28" rx="0" fill="#ffedd5" stroke="#c2410c" stroke-width="2"/>
+</g>
+<!-- The final equation checks the normalized row. -->
+<g id="row-rule">
+<text x="500" y="366" class="body" text-anchor="middle">2/3 + 1/3 = 1    •    Normalize every nonempty row separately.</text>
+</g>
+</svg>
