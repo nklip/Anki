@@ -1,0 +1,220 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1196" height="1300" viewBox="0 0 1196 1300" role="img" aria-labelledby="title desc">
+  <title id="title">Kafka high watermark: new records become readable</title>
+  <desc id="desc">Two snapshots of one partition with a leader on the left and two followers on the right. The log start stays at 13, there are no transactions, and all three replicas remain in the in-sync replica set, with the minimum ISR requirement satisfied. Before followers catch up, the leader has appended records 16 through 18 after existing records 13 through 15. Its log end is 19, but followers still have log end 16. The high watermark is 16, so only records 13 through 15 are readable. Dashed slots labeled absent show records the followers have not yet fetched. Followers copy the new records in fetch responses, then report their new fetch positions to the leader. After the leader learns every follower has log end 19, the high watermark advances to 19, making records 13 through 18 readable. The blue vertical line on the leader marks the exclusive high watermark boundary. Visible means available to consumers, not already consumed. Consumer reads and commits do not move this watermark.</desc>
+  <!-- Editable log-cell layout follows kafka-low-watermark-deletion.svg and the supplied in-sync-replicas-example.svg. -->
+  <!-- Shared styles and manual connector geometry, with no external images or fonts. -->
+  <defs><style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #171717; }
+    .title { font-size: 28px; font-weight: 700; }
+    .state-title { font-size: 25px; font-weight: 700; }
+    .label { font-size: 21px; }
+    .detail { font-size: 18px; }
+    .offset { font-size: 24px; }
+    .cell-note { font-size: 13px; }
+    .boundary-label { font-size: 17px; font-weight: 700; fill: #1677b8; }
+    .result-text { font-size: 23px; font-weight: 700; }
+    .panel { fill: #fff; stroke: #888; stroke-width: 1.6; }
+    .visible { fill: #eaf3ff; stroke: #888; stroke-width: 1.8; }
+    .held { fill: #fffdb5; stroke: #888; stroke-width: 1.8; }
+    .new-visible { fill: #bdf7bd; stroke: #888; stroke-width: 1.8; }
+    .absent { fill: #f5f5f5; stroke: #aaa; stroke-width: 1.5; stroke-dasharray: 6 5; }
+    .result { fill: #eaf3ff; stroke: #888; stroke-width: 1.6; }
+    .shaft { fill: none; stroke: #171717; stroke-width: 2; stroke-linejoin: round; }
+  </style></defs>
+  <!-- Overview fixes the ISR membership and defines both offset boundaries used in the calculation. -->
+  <rect id="background" width="1196" height="1300" fill="#fff"/>
+    <text class="title" x="598" y="39" text-anchor="middle">Kafka high watermark: new records become readable</text>
+    <text class="detail" x="598" y="70" text-anchor="middle">All three replicas stay in the ISR (in-sync replica set); log start stays 13.</text>
+    <text class="detail" x="598" y="96" text-anchor="middle">Log end = next append offset. HW = high watermark; consumer reads need offset &lt; HW.</text>
+  <!-- Before snapshot: same leader-left and two-followers-right layout as the deletion diagram. -->
+  <g id="before-replication" transform="translate(0 110)">
+    <rect class="panel" x="20" y="0" width="1156" height="480"/>
+    <text class="state-title" x="44" y="34">Before followers catch up</text>
+    <text class="detail" x="44" y="63">The leader has appended 16–18; its followers still have only 13–15.</text>
+    <!-- before replica-1: dashed slots are missing records, not retained history. -->
+    <g id="before-replica-1">
+    <text class="label" x="62" y="172">replica-1 (leader)</text>
+    <text class="detail" x="62" y="197">log end = 19</text>
+      <rect id="before-r1-offset-13" class="visible" x="62" y="214" width="52" height="80"/>
+    <text class="offset" x="88" y="245" text-anchor="middle">13</text>
+    <text class="cell-note" x="88" y="275" text-anchor="middle">visible</text>
+      <rect id="before-r1-offset-14" class="visible" x="114" y="214" width="52" height="80"/>
+    <text class="offset" x="140" y="245" text-anchor="middle">14</text>
+    <text class="cell-note" x="140" y="275" text-anchor="middle">visible</text>
+      <rect id="before-r1-offset-15" class="visible" x="166" y="214" width="52" height="80"/>
+    <text class="offset" x="192" y="245" text-anchor="middle">15</text>
+    <text class="cell-note" x="192" y="275" text-anchor="middle">visible</text>
+      <rect id="before-r1-offset-16" class="held" x="218" y="214" width="52" height="80"/>
+    <text class="offset" x="244" y="245" text-anchor="middle">16</text>
+    <text class="cell-note" x="244" y="275" text-anchor="middle">held</text>
+      <rect id="before-r1-offset-17" class="held" x="270" y="214" width="52" height="80"/>
+    <text class="offset" x="296" y="245" text-anchor="middle">17</text>
+    <text class="cell-note" x="296" y="275" text-anchor="middle">held</text>
+      <rect id="before-r1-offset-18" class="held" x="322" y="214" width="52" height="80"/>
+    <text class="offset" x="348" y="245" text-anchor="middle">18</text>
+    <text class="cell-note" x="348" y="275" text-anchor="middle">held</text>
+      <path id="before-leader-high-watermark" d="M218 209 V299" fill="none" stroke="#1677b8" stroke-width="3"/>
+    <text class="boundary-label" x="218" y="324" text-anchor="middle">HW = 16</text>
+    </g>
+    <!-- before replica-2: dashed slots are missing records, not retained history. -->
+    <g id="before-replica-2">
+    <text class="label" x="814" y="82">replica-2 (follower)</text>
+    <text class="detail" x="814" y="107">log end = 16</text>
+      <rect id="before-r2-offset-13" class="visible" x="814" y="124" width="52" height="80"/>
+    <text class="offset" x="840" y="155" text-anchor="middle">13</text>
+    <text class="cell-note" x="840" y="185" text-anchor="middle">visible</text>
+      <rect id="before-r2-offset-14" class="visible" x="866" y="124" width="52" height="80"/>
+    <text class="offset" x="892" y="155" text-anchor="middle">14</text>
+    <text class="cell-note" x="892" y="185" text-anchor="middle">visible</text>
+      <rect id="before-r2-offset-15" class="visible" x="918" y="124" width="52" height="80"/>
+    <text class="offset" x="944" y="155" text-anchor="middle">15</text>
+    <text class="cell-note" x="944" y="185" text-anchor="middle">visible</text>
+      <rect id="before-r2-offset-16" class="absent" x="970" y="124" width="52" height="80"/>
+    <text class="offset" x="996" y="155" text-anchor="middle">16</text>
+    <text class="cell-note" x="996" y="185" text-anchor="middle">absent</text>
+      <rect id="before-r2-offset-17" class="absent" x="1022" y="124" width="52" height="80"/>
+    <text class="offset" x="1048" y="155" text-anchor="middle">17</text>
+    <text class="cell-note" x="1048" y="185" text-anchor="middle">absent</text>
+      <rect id="before-r2-offset-18" class="absent" x="1074" y="124" width="52" height="80"/>
+    <text class="offset" x="1100" y="155" text-anchor="middle">18</text>
+    <text class="cell-note" x="1100" y="185" text-anchor="middle">absent</text>
+    </g>
+    <!-- before replica-3: dashed slots are missing records, not retained history. -->
+    <g id="before-replica-3">
+    <text class="label" x="814" y="262">replica-3 (follower)</text>
+    <text class="detail" x="814" y="287">log end = 16</text>
+      <rect id="before-r3-offset-13" class="visible" x="814" y="304" width="52" height="80"/>
+    <text class="offset" x="840" y="335" text-anchor="middle">13</text>
+    <text class="cell-note" x="840" y="365" text-anchor="middle">visible</text>
+      <rect id="before-r3-offset-14" class="visible" x="866" y="304" width="52" height="80"/>
+    <text class="offset" x="892" y="335" text-anchor="middle">14</text>
+    <text class="cell-note" x="892" y="365" text-anchor="middle">visible</text>
+      <rect id="before-r3-offset-15" class="visible" x="918" y="304" width="52" height="80"/>
+    <text class="offset" x="944" y="335" text-anchor="middle">15</text>
+    <text class="cell-note" x="944" y="365" text-anchor="middle">visible</text>
+      <rect id="before-r3-offset-16" class="absent" x="970" y="304" width="52" height="80"/>
+    <text class="offset" x="996" y="335" text-anchor="middle">16</text>
+    <text class="cell-note" x="996" y="365" text-anchor="middle">absent</text>
+      <rect id="before-r3-offset-17" class="absent" x="1022" y="304" width="52" height="80"/>
+    <text class="offset" x="1048" y="335" text-anchor="middle">17</text>
+    <text class="cell-note" x="1048" y="365" text-anchor="middle">absent</text>
+      <rect id="before-r3-offset-18" class="absent" x="1074" y="304" width="52" height="80"/>
+    <text class="offset" x="1100" y="335" text-anchor="middle">18</text>
+    <text class="cell-note" x="1100" y="365" text-anchor="middle">absent</text>
+    </g>
+    <!-- Fetch-response arrows point to followers. Their later fetch requests report progress back to the leader. -->
+    <!-- Each shaft stops inside the triangle base, whose tip meets the target border without entering it. -->
+    <path id="before-fetch-r2-flow" class="shaft" data-connector="true" d="M374 254 H540 V164 H802"/>
+    <path id="before-fetch-r2-head" d="M800 158 L814 164 L800 170Z" fill="#171717"/>
+    <text class="detail" x="675" y="146" text-anchor="middle">fetch response</text>
+    <path id="before-fetch-r3-flow" class="shaft" data-connector="true" d="M374 254 H540 V344 H802"/>
+    <path id="before-fetch-r3-head" d="M800 338 L814 344 L800 350Z" fill="#171717"/>
+    <text class="detail" x="675" y="326" text-anchor="middle">fetch response</text>
+    <!-- Stable-ISR example: the result uses log ends known to the leader, not consumer positions. -->
+    <rect id="before-high-watermark" class="result" x="44" y="336" width="450" height="84"/>
+    <text class="result-text" x="269" y="367" text-anchor="middle">High watermark = 16</text>
+    <text class="label" x="269" y="398" text-anchor="middle">min(19, 16, 16)</text>
+    <text class="detail" x="44" y="443">Minimum known log end across this stable ISR.</text>
+    <text class="detail" x="44" y="466">Readable: 13–15. New records 16–18 are held back, even with acks=1.</text>
+  </g>
+  <!-- The transition includes both fetching data and reporting the advanced fetch offset to the leader. -->
+    <text class="label" x="598" y="624" text-anchor="middle">Followers fetch 16–18, then request their next records from offset 19.</text>
+    <text class="detail" x="598" y="652" text-anchor="middle">Those later requests tell the leader that replication has reached log end 19.</text>
+  <path id="replication-transition-flow" class="shaft" data-connector="true" d="M598 668 V696"/>
+  <path id="replication-transition-head" d="M592 694 L598 708 L604 694Z" fill="#171717"/>
+  <!-- After snapshot: same leader-left and two-followers-right layout as the deletion diagram. -->
+  <g id="after-replication" transform="translate(0 708)">
+    <rect class="panel" x="20" y="0" width="1156" height="480"/>
+    <text class="state-title" x="44" y="34">After followers catch up</text>
+    <text class="detail" x="44" y="63">The leader now knows both followers have offsets 16–18.</text>
+    <!-- after replica-1: dashed slots are missing records, not retained history. -->
+    <g id="after-replica-1">
+    <text class="label" x="62" y="172">replica-1 (leader)</text>
+    <text class="detail" x="62" y="197">log end = 19</text>
+      <rect id="after-r1-offset-13" class="visible" x="62" y="214" width="52" height="80"/>
+    <text class="offset" x="88" y="245" text-anchor="middle">13</text>
+    <text class="cell-note" x="88" y="275" text-anchor="middle">visible</text>
+      <rect id="after-r1-offset-14" class="visible" x="114" y="214" width="52" height="80"/>
+    <text class="offset" x="140" y="245" text-anchor="middle">14</text>
+    <text class="cell-note" x="140" y="275" text-anchor="middle">visible</text>
+      <rect id="after-r1-offset-15" class="visible" x="166" y="214" width="52" height="80"/>
+    <text class="offset" x="192" y="245" text-anchor="middle">15</text>
+    <text class="cell-note" x="192" y="275" text-anchor="middle">visible</text>
+      <rect id="after-r1-offset-16" class="new-visible" x="218" y="214" width="52" height="80"/>
+    <text class="offset" x="244" y="245" text-anchor="middle">16</text>
+    <text class="cell-note" x="244" y="275" text-anchor="middle">visible</text>
+      <rect id="after-r1-offset-17" class="new-visible" x="270" y="214" width="52" height="80"/>
+    <text class="offset" x="296" y="245" text-anchor="middle">17</text>
+    <text class="cell-note" x="296" y="275" text-anchor="middle">visible</text>
+      <rect id="after-r1-offset-18" class="new-visible" x="322" y="214" width="52" height="80"/>
+    <text class="offset" x="348" y="245" text-anchor="middle">18</text>
+    <text class="cell-note" x="348" y="275" text-anchor="middle">visible</text>
+      <path id="after-leader-high-watermark" d="M374 209 V299" fill="none" stroke="#1677b8" stroke-width="3"/>
+    <text class="boundary-label" x="374" y="324" text-anchor="middle">HW = 19</text>
+    </g>
+    <!-- after replica-2: dashed slots are missing records, not retained history. -->
+    <g id="after-replica-2">
+    <text class="label" x="814" y="82">replica-2 (follower)</text>
+    <text class="detail" x="814" y="107">log end = 19</text>
+      <rect id="after-r2-offset-13" class="visible" x="814" y="124" width="52" height="80"/>
+    <text class="offset" x="840" y="155" text-anchor="middle">13</text>
+    <text class="cell-note" x="840" y="185" text-anchor="middle">visible</text>
+      <rect id="after-r2-offset-14" class="visible" x="866" y="124" width="52" height="80"/>
+    <text class="offset" x="892" y="155" text-anchor="middle">14</text>
+    <text class="cell-note" x="892" y="185" text-anchor="middle">visible</text>
+      <rect id="after-r2-offset-15" class="visible" x="918" y="124" width="52" height="80"/>
+    <text class="offset" x="944" y="155" text-anchor="middle">15</text>
+    <text class="cell-note" x="944" y="185" text-anchor="middle">visible</text>
+      <rect id="after-r2-offset-16" class="new-visible" x="970" y="124" width="52" height="80"/>
+    <text class="offset" x="996" y="155" text-anchor="middle">16</text>
+    <text class="cell-note" x="996" y="185" text-anchor="middle">visible</text>
+      <rect id="after-r2-offset-17" class="new-visible" x="1022" y="124" width="52" height="80"/>
+    <text class="offset" x="1048" y="155" text-anchor="middle">17</text>
+    <text class="cell-note" x="1048" y="185" text-anchor="middle">visible</text>
+      <rect id="after-r2-offset-18" class="new-visible" x="1074" y="124" width="52" height="80"/>
+    <text class="offset" x="1100" y="155" text-anchor="middle">18</text>
+    <text class="cell-note" x="1100" y="185" text-anchor="middle">visible</text>
+    </g>
+    <!-- after replica-3: dashed slots are missing records, not retained history. -->
+    <g id="after-replica-3">
+    <text class="label" x="814" y="262">replica-3 (follower)</text>
+    <text class="detail" x="814" y="287">log end = 19</text>
+      <rect id="after-r3-offset-13" class="visible" x="814" y="304" width="52" height="80"/>
+    <text class="offset" x="840" y="335" text-anchor="middle">13</text>
+    <text class="cell-note" x="840" y="365" text-anchor="middle">visible</text>
+      <rect id="after-r3-offset-14" class="visible" x="866" y="304" width="52" height="80"/>
+    <text class="offset" x="892" y="335" text-anchor="middle">14</text>
+    <text class="cell-note" x="892" y="365" text-anchor="middle">visible</text>
+      <rect id="after-r3-offset-15" class="visible" x="918" y="304" width="52" height="80"/>
+    <text class="offset" x="944" y="335" text-anchor="middle">15</text>
+    <text class="cell-note" x="944" y="365" text-anchor="middle">visible</text>
+      <rect id="after-r3-offset-16" class="new-visible" x="970" y="304" width="52" height="80"/>
+    <text class="offset" x="996" y="335" text-anchor="middle">16</text>
+    <text class="cell-note" x="996" y="365" text-anchor="middle">visible</text>
+      <rect id="after-r3-offset-17" class="new-visible" x="1022" y="304" width="52" height="80"/>
+    <text class="offset" x="1048" y="335" text-anchor="middle">17</text>
+    <text class="cell-note" x="1048" y="365" text-anchor="middle">visible</text>
+      <rect id="after-r3-offset-18" class="new-visible" x="1074" y="304" width="52" height="80"/>
+    <text class="offset" x="1100" y="335" text-anchor="middle">18</text>
+    <text class="cell-note" x="1100" y="365" text-anchor="middle">visible</text>
+    </g>
+    <!-- Fetch-response arrows point to followers. Their later fetch requests report progress back to the leader. -->
+    <!-- Each shaft stops inside the triangle base, whose tip meets the target border without entering it. -->
+    <path id="after-fetch-r2-flow" class="shaft" data-connector="true" d="M374 254 H540 V164 H802"/>
+    <path id="after-fetch-r2-head" d="M800 158 L814 164 L800 170Z" fill="#171717"/>
+    <text class="detail" x="675" y="146" text-anchor="middle">fetch response</text>
+    <path id="after-fetch-r3-flow" class="shaft" data-connector="true" d="M374 254 H540 V344 H802"/>
+    <path id="after-fetch-r3-head" d="M800 338 L814 344 L800 350Z" fill="#171717"/>
+    <text class="detail" x="675" y="326" text-anchor="middle">fetch response</text>
+    <!-- Stable-ISR example: the result uses log ends known to the leader, not consumer positions. -->
+    <rect id="after-high-watermark" class="result" x="44" y="336" width="450" height="84"/>
+    <text class="result-text" x="269" y="367" text-anchor="middle">High watermark = 19</text>
+    <text class="label" x="269" y="398" text-anchor="middle">min(19, 19, 19)</text>
+    <text class="detail" x="44" y="443">Minimum known log end across this stable ISR.</text>
+    <text class="detail" x="44" y="466">Readable: 13–18. The new records 16–18 have crossed the visibility boundary.</text>
+  </g>
+  <!-- Guard against confusing momentary replication lag with ISR removal, or visibility with consumption. -->
+    <text class="detail" x="598" y="1221" text-anchor="middle">Brief lag can occur within the ISR. This example has no ISR changes and meets the minimum ISR size.</text>
+    <text class="detail" x="598" y="1249" text-anchor="middle">Visible = available to consumers; it does not mean already consumed. No transactions are shown.</text>
+    <text class="detail" x="598" y="1277" text-anchor="middle">The blue line marks the leader’s high watermark. Consumer reads and commits do not move it.</text>
+</svg>

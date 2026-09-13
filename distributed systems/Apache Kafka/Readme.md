@@ -85,7 +85,7 @@ Use different group IDs for shipping and analytics when both need every event. G
 
 A **rebalance** changes assignments when membership or subscribed partitions change. The consumer protocol can move assignments incrementally; the disruption depends on the protocol and assignment strategy. Losing an assignment does not undo a database write a worker already made.
 
-A **group coordinator** is the broker handling a group's membership and offset commits. Consumers send it periodic **heartbeats**, messages indicating that they are still reachable. If heartbeats stop for the session timeout, the coordinator removes the member and its partitions can be reassigned. With the classic protocol, the client configures `heartbeat.interval.ms` and `session.timeout.ms`; with the consumer protocol, the broker controls `group.consumer.heartbeat.interval.ms` and `group.consumer.session.timeout.ms`. Heartbeats establish reachability, not successful business processing; §2 adds the polling-progress check.
+A **group coordinator** is the broker handling a group's membership and offset commits. Consumers send it periodic **heartbeats**, messages indicating that they are still reachable. If heartbeats stop for the session timeout, the coordinator removes the member and its partitions can be reassigned. With the classic protocol, the client configures `heartbeat.interval.ms` and `session.timeout.ms`; with the consumer protocol, the broker controls `group.consumer.heartbeat.interval.ms` and `group.consumer.session.timeout.ms`. Heartbeats establish reachability, not successful business processing; [§2](#position-is-different-from-committed-progress) adds the polling-progress check.
 
 **Share groups are a separate option.** They allow multiple consumers to share a partition's records and acknowledge records individually. Their concurrency is not capped by partition count in the same way. Do not transfer the standard group's ownership and ordering assumptions to a share consumer.
 
@@ -95,7 +95,7 @@ There are three separate questions: did Kafka accept the write, where will a con
 
 ### Position is different from committed progress
 
-A consumer's **position** advances as `poll()` returns records. Its **committed offset** is saved restart progress for a group and partition. With Kafka's built-in offset storage, the group coordinator records this progress in the internal, compacted `__consumer_offsets` topic, separately for each `(group, topic, partition)`. Compaction removes superseded commits; §3 explains that storage policy.
+A consumer's **position** advances as `poll()` returns records. Its **committed offset** is saved restart progress for a group and partition. With Kafka's built-in offset storage, the group coordinator records this progress in the internal, compacted `__consumer_offsets` topic, separately for each `(group, topic, partition)`. Compaction removes superseded commits; [§3](#retention-and-compaction) explains that storage policy.
 
 In the example below, committing `43` means resume at offset `43`, after completing record `42`.
 
@@ -113,7 +113,7 @@ These names describe failure semantics, not a promise that outages, expired rete
 
 Automatic commits do not inspect whether a database operation or background task succeeded. For explicit processing control, use `enable.auto.commit=false` and commit only safe progress. Separately, `max.poll.interval.ms` bounds the time between `poll()` calls: a worker can keep sending heartbeats while its processing is stuck. Exceeding this polling limit can trigger reassignment even without an initial heartbeat failure. Bound batch processing time accordingly; the precise reassignment timing depends on membership settings.
 
-`auto.offset.reset` applies when no usable offset exists. `earliest` starts at the earliest retained position; `latest` starts at the end; `none` reports the missing position as an error. It is not a command to rewind a group with valid committed offsets on every restart.
+`auto.offset.reset` applies when no usable offset exists. `earliest` starts at the earliest retained position, the **log start offset** explained in [§3](#log-start-offset-and-low-watermark-deletion-progress); `latest` starts at the end; `none` reports the missing position as an error. It is not a command to rewind a group with valid committed offsets on every restart.
 
 ### Publishing without Kafka transactions
 
@@ -278,7 +278,7 @@ An alternative is a public service method annotated with `@Transactional(transac
 | Transaction-capable template outside a transaction | `IllegalStateException` by default; `allowNonTransactional=true` explicitly permits an ordinary send |
 | Transaction-capable template inside a supported Spring database transaction | Spring can synchronize a Kafka transaction with it, but their commits remain separate |
 
-For a Kafka listener that consumes and produces, prefer the container's transaction support when input offsets and output must commit together. A container configured with `KafkaTransactionManager` begins before the listener, includes its template sends, and adds consumed offsets before commit. Listener failure rolls back and permits redelivery. A local `executeInTransaction()` alone does not include listener offsets. Likewise, synchronizing a database transaction and a Kafka transaction leaves a failure window between their commits; use the outbox pattern in §6 when the database change must reliably lead to publication.
+For a Kafka listener that consumes and produces, prefer the container's transaction support when input offsets and output must commit together. A container configured with `KafkaTransactionManager` begins before the listener, includes its template sends, and adds consumed offsets before commit. Listener failure rolls back and permits redelivery. A local `executeInTransaction()` alone does not include listener offsets. Likewise, synchronizing a database transaction and a Kafka transaction leaves a failure window between their commits; use the outbox pattern in [§6](#pattern-5-publish-database-changes-with-a-transactional-outbox) when the database change must reliably lead to publication.
 
 ### Industry practice: choose the required guarantee
 
@@ -286,7 +286,7 @@ For a Kafka listener that consumes and produces, prefer the container's transact
 
 | Workload or requirement | Practical starting point | Why |
 |---|---|---|
-| Independent events, telemetry, logs, or notifications | Ordinary publishing; enable idempotence and use `acks=all` where replication acknowledgment matters | Avoid a transaction boundary when records do not need to commit together; choose suitable replication and minimum ISR as described in §3 |
+| Independent events, telemetry, logs, or notifications | Ordinary publishing; enable idempotence and use `acks=all` where replication acknowledgment matters | Avoid a transaction boundary when records do not need to commit together; choose suitable replication and minimum ISR as described in [§3](#replication-acknowledgments-and-the-isr) |
 | Several Kafka outputs must share one commit outcome | Kafka transaction plus downstream `read_committed` | Prevents consumers from treating an aborted partial publication as committed output |
 | Kafka input → processing → Kafka output, with atomic output and input progress | Kafka Streams `processing.guarantee=exactly_once_v2` or Spring container-managed transactions | The framework coordinates output and consumed offsets; processing code can still run again after failure |
 | Database update must eventually publish an event | Transactional outbox plus a relay or change data capture, and duplicate-safe consumers | The database atomically saves its change and publication obligation; a Kafka-only transaction cannot do that |
@@ -296,7 +296,7 @@ For independent business events, a useful baseline is **idempotent publishing, r
 
 ## 3. Storage and durability
 
-Retention asks which records should remain. Replication asks where copies exist. Acknowledgments ask what the producer has learned about a write. Keep these policies separate.
+Retention asks which records should remain. Replication asks where copies exist. Acknowledgments ask what the producer has learned about a write. Keep these policies separate. The log start offset and high watermark bound consumer reads; the low watermark tracks deletion progress across live replicas.
 
 ### Retention and compaction
 
@@ -344,9 +344,39 @@ This creates three distinct logs with three copies each: nine partition replicas
 
 Replication acknowledgment is not a per-record `fsync` guarantee. **`fsync`** asks the operating system to synchronize file data to persistent storage. Kafka normally uses buffered file writes and replication; correlated failures of all copies still matter. A timeout can also leave the producer uncertain whether an append succeeded.
 
-The **high watermark** is the end boundary of the partition's replication-committed prefix: consumers can read records with offsets strictly below it. Suppose the leader has offset `42`, but a follower still in the ISR has only through `41`. With a high watermark of `42`, consumers cannot yet read record `42`, even if its producer received `acks=1`. Once replication advances the watermark to `43`, that record crosses the replication visibility boundary.
+### Log start offset and low watermark: deletion progress
 
-This boundary applies even to `read_uncommitted`; `read_committed` can stop earlier while transactions remain open and also filters out aborted records. The high watermark is shared partition state. A group's committed offset is its own restart progress, so these are two different meanings of “committed.”
+The **log start offset** is the lower boundary of a partition's available history. Consumers can obtain it with `beginningOffsets()`. Retention or explicit deletion can advance this boundary: if it becomes `13`, records below offset `13` are no longer available for replay. Advancing a consumer group's committed offset only saves that group's restart position; it does not move this storage boundary.
+
+If a consumer tries to fetch below the log start offset, its position is out of range. The `auto.offset.reset` policy from [§2](#position-is-different-from-committed-progress) decides what follows: `earliest` resumes at the log start offset, `latest` skips to the end, and `none` makes `poll()` throw `OffsetOutOfRangeException`. Automatic resetting cannot recover records that have already been deleted.
+
+Kafka's **low watermark** tracks deletion progress across a partition's live replicas. It is the minimum log start offset tracked across those replicas, including the leader. Here, **live** means the replica's broker is considered alive by Kafka's cluster metadata: an offline broker does not hold deletion back, but an alive follower that has fallen behind still can. The leader uses the low watermark to decide when an administrative `deleteRecords` request has completed, and the API returns it through `DeletedRecords.lowWatermark()`. A live follower still counts here even if it is outside the ISR; `acks=all` waits on the current ISR.
+
+The deletion cutoff is exclusive: in the example below, requesting deletion before offset `13` removes records `10–12` and keeps `13–15`. Use one partition with the same three-copy replication factor as above: its leader and two live followers initially start at `10`. In the middle state, the leader and replica-2 have advanced their log starts to `13`, but replica-3 still starts at `10`. The low watermark remains `min(13, 13, 10) = 10`, so deletion is incomplete even though the leader has already removed `10–12`. Once replica-3 advances to `13` and the leader learns its progress, the low watermark reaches `13` and the request completes. This tracks logical unavailability; reclaiming the underlying segment files can happen later.
+
+**Consumption and deletion are independent.** The diagram does not say whether records `13–15` have been consumed; they remain because this request only removes offsets below `13`. Records `10–12` can be deleted even if a consumer group has never read or processed them. Neither time/size retention nor `deleteRecords` waits for consumer groups to consume records or commit offsets, and consuming or committing a record does not delete it. The low watermark confirms deletion progress across broker replicas; it does not confirm that consumers finished processing the deleted records. A consumer that still needs those offsets faces the out-of-range behavior described above.
+
+Read the three states from top to bottom: before deletion, deletion in progress, and deletion complete. Each numbered cell is a record offset, the leader is on the left, and its two followers are on the right. Followers learn the leader's log start offset through fetch responses. Dashed slots labeled **gone** mark history unavailable on that replica; **pending** records on replica-3 explain why the low watermark can lag behind the leader's log start. Retained offsets keep their original numbers.
+
+![kafka-low-watermark-deletion.svg](images/kafka-low-watermark-deletion.svg)
+
+### High watermark: replication and consumer visibility
+
+The **high watermark (HW)** is the exclusive upper offset boundary of the history Kafka considers committed by replication. Brokers use it to limit consumer reads: a record's offset must be strictly below this boundary. This keeps consumers from seeing a write before replication has committed it.
+
+Continue the deletion example with log start offset `13` and retained records `13–15`. The leader now appends new records `16–18`. A replica's **log end offset** is the next append position: a replica holding records through `18` has log end `19`. This example keeps all three replicas in the ISR, satisfies `min.insync.replicas=2`, and has no transactions or further deletion. Briefly lagging behind the leader does not automatically remove a follower from the ISR.
+
+**Before the followers catch up**, the leader's log end is `19`, but each follower's is still `16`. The high watermark remains `16`, so consumers can read `13–15`; the new records `16–18` are held back, even if their producer received `acks=1`. **After the followers catch up**, they request their next records from offset `19`, telling the leader that they have copied through `18`. Once the leader has learned this progress from every follower in the ISR, the high watermark advances to `19`, and records `13–18` are readable. Offset `19` itself remains outside that exclusive boundary.
+
+Read the two states from top to bottom. The leader is on the left, and its two followers are on the right. Dashed slots labeled **absent** have not yet been copied to a follower; **held** records exist on the leader but are not yet readable by consumers. The vertical line on the leader marks the high watermark moving from `16` to `19`. **Visible** means available to consumers, whether or not any consumer has read the record. Consumer reads and committed offsets do not advance the high watermark; replication does. The log start offset stays at `13` throughout.
+
+![kafka-high-watermark-replication.svg](images/kafka-high-watermark-replication.svg)
+
+This boundary applies even to `read_uncommitted`. Under that isolation level, `endOffsets()` returns the high watermark. With `read_committed`, it returns the LSO from [§2](#kafka-transactions-coordinating-kafka-output-and-input-progress), which can stop earlier while transactions remain open; these consumers also filter out aborted records. The high watermark is shared partition state. A group's committed offset is its own restart progress, so these are two different meanings of “committed.”
+
+Together, the log start offset and high watermark bound ordinary consumer reads. In the final state above, log start `13` and high watermark `19` make records `13–18` readable. Records below `13` are unavailable; a later record at offset `19` must cross the replication boundary before consumers can read it. The deletion API's low watermark tracks the lower boundary across live replicas: the middle deletion state shows it still at `10` while the leader's log start is already `13`.
+
+The comparison diagram in [§6](#pattern-4-aggregate-streams-into-a-queryable-result) puts these broker offset boundaries beside event-time watermarks.
 
 When a leader fails, Kafka elects a suitable replacement and clients refresh their routing. Modern Kafka can track **eligible leader replicas (ELR)** outside the current ISR that are still safe election candidates. With ELR enabled, the strict minimum-ISR rule prevents the high watermark from advancing while the ISR is smaller than `min.insync.replicas`; this helps make those tracked replicas safe candidates. An unsafe, or **unclean**, election can instead lose acknowledged history. Keeping unsafe election disabled may leave a partition unavailable until a suitable copy returns.
 
@@ -427,7 +457,7 @@ Each pattern identifies the user-visible behavior, the Kafka data, its placement
 
 ### Pattern 1. Let services react independently
 
-The group diagram in §1 supplies this pattern: each service has its own progress through the same topic.
+The group diagram in [§1](#sharing-work-versus-independent-subscriptions) supplies this pattern: each service has its own progress through the same topic.
 
 **User interaction.** After an order is accepted, a shipping service arranges fulfillment and an analytics service updates demand statistics. Analytics can pause without making shipping wait for it.
 
@@ -475,13 +505,17 @@ The application below keeps an evolving count and publishes its result. Its proc
 
 **Kafka data.** An application reads `orders`, groups events by the desired key and time window, and publishes counts to `order-counts`. A **window** groups events into a time interval. Event time means when the event happened; processing time means when the application handles it. An event can arrive after newer events, so closing an event-time window needs a deliberate late-arrival policy.
 
-The word **watermark** has two distinct meanings. The broker's **high watermark** from §3 is an offset boundary for replicated records. An **event-time watermark** in stream processing estimates progress through event timestamps; an event arriving behind that estimate is late, and the processing policy decides whether it can still update a result. The estimate does not prove that older events can never arrive.
+The word **watermark** has three distinct meanings in this article. The broker's **high watermark** from [§3](#high-watermark-replication-and-consumer-visibility) limits reads by replication progress. An **event-time watermark** in stream processing estimates progress through event timestamps; an event arriving behind that estimate is late, and the processing policy decides whether it can still update a result. The estimate does not prove that older events can never arrive.
 
-Compare the units and the question each boundary answers:
-
-![kafka-watermarks.svg](images/kafka-watermarks.svg)
+The **low watermark** from [§3](#log-start-offset-and-low-watermark-deletion-progress) tracks deletion progress across live replicas.
 
 Kafka Streams uses **stream time**, the maximum record timestamp observed so far by each task, and a window's **grace period** to decide when to reject late records. For a one-minute window covering `12:00:00 ≤ event time < 12:01:00`, a 30-second grace permits late updates until stream time moves past `12:01:30`. An arriving event timestamped `12:00:50` still belongs to that original window; grace extends acceptance time, not window membership. Stream time advances with records, not merely with the wall clock. Longer grace can accept more late events, but requires retaining window state longer and postpones when the result can be considered final; intermediate results may be emitted earlier.
+
+Choose grace for each window in the Kafka Streams API, for example with `TimeWindows.ofSizeAndGrace(size, grace)`. There is no global Kafka broker `watermark` setting for this late-event policy.
+
+The comparison diagram below brings the three watermark meanings together. Its top row compares broker deletion and replication progress. In the upper-right panel, **Readable** contains records `41` and `42`, while **Held back** contains `43` and `44`. The bottom panel shows event-time progress owned by the stream processor, including Kafka Streams' stream time and grace period. Compare its timestamp units with the broker offset boundaries above it.
+
+![kafka-watermarks.svg](images/kafka-watermarks.svg)
 
 **Placement.** Streams tasks keep local state; Kafka changelog topics support restoration. A downstream service can maintain a queryable dashboard view. Repartition topics may move records to place the same aggregation key together.
 
@@ -505,7 +539,7 @@ Pattern 3 showed how changes reach Kafka. This pattern explains how to preserve 
 
 **User interaction.** A corrected search index or dashboard should include previously published events. A new consumer group or controlled offset reset can reread the required retained data.
 
-**Kafka data.** Use a full retained event log to reconstruct history, or a suitable compacted topic to reconstruct latest keyed state. The retention diagram in §3 shows why these are different inputs.
+**Kafka data.** Use a full retained event log to reconstruct history, or a suitable compacted topic to reconstruct latest keyed state. The retention diagram in [§3](#retention-and-compaction) shows why these are different inputs.
 
 **Placement.** Build into a separate destination, compare its results, then switch queries when it is ready. Replaying events that originally sent emails should rebuild state without unintentionally emailing users again.
 
@@ -534,7 +568,7 @@ Try answering without looking back at the article, then check the answer key:
 3. Shipping creates a shipment for `evt-901` at offset `42`, then crashes before committing `43`. Where is its saved progress stored, where can it resume, and what prevents another shipment?
 4. A worker keeps sending heartbeats but never returns to `poll()`. Which timeout detects this? What detects a worker that stops sending heartbeats altogether?
 5. Replication factor is three, `min.insync.replicas=2`, and `acks=all`. How many copies must acknowledge with an ISR of three? Of two? What happens with one?
-6. The leader has record `42`, but the high watermark is still `42`. Can `read_uncommitted` read it, or can the group's committed offset make it visible? How does this watermark differ from an event-time watermark? What does a Streams window's grace extend?
+6. The leader has record `16`, but the high watermark is still `16`. Can `read_uncommitted` read it, or can the group's committed offset make it visible? How does this watermark differ from an event-time watermark? What does a Streams window's grace extend?
 7. Can consuming a record protect it from deletion? Does compaction preserve every event, and does it renumber surviving offsets?
 8. Does a quorum of three KRaft controllers create three copies of every order record?
 9. In the product-to-search example, what does each Connect connector do, and where do its tasks run?
@@ -543,6 +577,7 @@ Try answering without looking back at the article, then check the answer key:
 12. How does an accepted-event log differ from a command log? What must accompany a snapshot, and which side effects should recovery avoid?
 13. Why can one partition per metric name become expensive even when most names have low traffic?
 14. Does moving old segments to Kafka's remote tier preserve an independent backup? How would you create an archive with separate retention?
+15. The leader and one live follower start at `13`, but a second live follower still starts at `10`. What is the low watermark, and is a request to delete records below `13` complete? Would being outside the ISR exclude that second live follower from the calculation?
 
 ### Answer key
 
@@ -551,7 +586,7 @@ Try answering without looking back at the article, then check the answer key:
 3. Kafka's built-in storage uses `__consumer_offsets`. If the saved next offset is still `42`, the replacement can replay `evt-901`. Atomically store that event ID with the shipment row and recognize it on replay; then commit safe progress.
 4. `max.poll.interval.ms` checks polling progress. Missing heartbeats are detected by the session timeout: client `session.timeout.ms` for the classic protocol, broker `group.consumer.session.timeout.ms` for the consumer protocol.
 5. All three, then both. With only one in-sync copy, the minimum is not met and these writes fail. The minimum does not reduce `all` to a fixed count of two.
-6. No: reads must stay below the high watermark. Replication must advance it beyond `42`; a group's committed offset cannot make unreplicated data visible. This is an offset boundary, whereas an event-time watermark estimates timestamp progress. Streams grace extends acceptance of late updates to an existing window, not that window's event-time membership.
+6. No: reads must stay below the high watermark. Replication must advance it beyond `16`; a group's committed offset cannot make unreplicated data visible. This is an offset boundary, whereas an event-time watermark estimates timestamp progress. Streams grace extends acceptance of late updates to an existing window, not that window's event-time membership.
 7. No. Cleanup is independent of consumption. Compaction can remove superseded events while retaining latest keyed state; surviving offsets keep their original numbers. A full-history rebuild needs the required history still retained.
 8. No. Controllers replicate metadata. Application-record copies depend on each topic's replication factor and broker placement.
 9. The source connector imports database changes into Kafka; the sink connector exports records to the search store. Their tasks run in Connect worker processes, outside the brokers.
@@ -560,6 +595,7 @@ Try answering without looking back at the article, then check the answer key:
 12. Commands request changes; accepted events record the resulting facts. A snapshot needs the exact stream position or per-partition positions represented by its state, so replay starts immediately afterward. Recovery should rebuild state without repeating external payments, emails, or other original side effects.
 13. Every replica adds logs, indexes, metadata, and operating-system resources, and more partitions add coordination and recovery work. Many metric-name keys can share a bounded partition count sized for measured capacity and parallelism.
 14. No. Kafka retention still governs remote segments. Export records and replay metadata to independently retained files, checkpoint durable exports, and test restoration; the archive's own storage policy must preserve the required history.
+15. The low watermark is `min(13, 13, 10) = 10`, so deletion below `13` is not complete. The leader uses it to track completion of administrative record deletion across live replicas. A live follower outside the ISR still counts; a follower on a broker no longer considered alive does not. This boundary is separate from a group's committed offset and the replication high watermark.
 
 # Sources
 
@@ -569,7 +605,9 @@ The transaction sequence was checked on 2026-09-12 against Kafka 4.3 documentati
 
 The ordinary-publishing guidance, Java and Spring examples, and guarantee-selection recommendations were checked on 2026-09-12 against the linked Kafka, Spring Boot 4.1, and Spring Kafka 4.1 documentation. The selection guide is an engineering recommendation based on those mechanisms, not an industry adoption survey.
 
-- [Apache Kafka introduction: events, topics, partitions, and the platform](https://kafka.apache.org/43/getting-started/introduction/)
+The high-watermark, low-watermark, and log-start-offset definitions were checked on 2026-09-13 against Kafka 4.3 API documentation, KIP-107, and the Kafka 4.3.0 broker implementation.
+
+- [Apache Kafka introduction: events, topics, partitions, and retention independent of consumption](https://kafka.apache.org/43/getting-started/introduction/)
 - [Apache Kafka use cases: editorial descriptions of messaging, buffering, processing, and event sourcing](https://kafka.apache.org/uses/)
 - [Confluent's 2017 Kafka community survey: historical, overlapping pipeline, processing, and integration categories](https://www.confluent.io/blog/2017-apache-kafka-survey-streaming-data-on-the-rise/)
 - [Stack Exchange tags API: tag popularity counts questions, not application deployments](https://api.stackexchange.com/docs/tags)
@@ -594,7 +632,11 @@ The ordinary-publishing guidance, Java and Spring examples, and guarantee-select
 - [Kafka 4.3.0 partition transaction state: marker replication and unresolved transactions](https://github.com/apache/kafka/blob/4.3.0/storage/src/main/java/org/apache/kafka/storage/internals/log/ProducerStateManager.java#L241-L265)
 - [Kafka 4.3.0 partition log: last stable offset and read-committed visibility](https://github.com/apache/kafka/blob/4.3.0/storage/src/main/java/org/apache/kafka/storage/internals/log/UnifiedLog.java#L671-L685)
 - [Producer configuration: acknowledgments, batching, partitioning, and idempotence](https://kafka.apache.org/43/configuration/producer-configs/)
-- [KafkaConsumer API: group assignments, position, committed offsets, and processing](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html)
+- [KafkaConsumer API: group assignments, committed offsets, out-of-range recovery, and beginning/end offsets](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html)
+- [Kafka Admin API: deleting records below an exclusive partition offset](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/admin/Admin.html#deleteRecords(java.util.Map))
+- [DeletedRecords API: the low watermark returned after deletion](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/admin/DeletedRecords.html)
+- [KIP-107: log start offsets, deletion progress across live replicas, and deferred physical cleanup](https://cwiki.apache.org/confluence/spaces/KAFKA/pages/67636826/KIP-107+Add+deleteRecordsBefore+API+in+AdminClient)
+- [Kafka 4.3.0 partition implementation: low watermark, live replicas, and completion of deletion requests](https://github.com/apache/kafka/blob/4.3.0/core/src/main/scala/kafka/cluster/Partition.scala#L1055-L1080)
 - [Kafka distribution: group coordinators and compacted offset storage](https://kafka.apache.org/43/implementation/distribution/)
 - [Consumer configuration: offset reset, automatic commits, polling, and isolation](https://kafka.apache.org/43/configuration/consumer-configs/)
 - [KafkaShareConsumer API: shared partitions and individual record acknowledgment](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/consumer/KafkaShareConsumer.html)

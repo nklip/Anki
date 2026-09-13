@@ -1,61 +1,145 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1100" height="815" viewBox="0 0 1100 815" role="img" aria-labelledby="title desc">
-<title id="title">Two watermarks measure different kinds of progress</title>
-<desc id="desc">In the left Kafka broker panel, high watermark 43 makes offsets 41 and 42 readable and holds back 43 and 44 in a non-transactional partition. This is a replication visibility boundary, not a consumer group’s saved offset. The right panel shows a stream processor’s event-time watermark of 12:01: an event with timestamp 12:00:30 can still arrive and requires a late-event policy. Kafka Streams uses per-task stream time, the largest observed record timestamp, and window-specific grace. Grace extends acceptance after window end without changing which event timestamps belong to the window, and does not create a wall-clock timer.</desc>
-<!-- Shared system-design typography and native icons, matching kafka-data-placement.svg.
-     Icon sources: Proximity Service final-design.svg; Notification System improved-design.svg. -->
-<defs>
-<style>
-text { font-family: Arial, Helvetica, sans-serif; fill: #171717; }
-.title { font-size: 28px; font-weight: 700; }
-.label { font-size: 20px; }
-.strong { font-size: 20px; font-weight: 700; }
-.detail { font-size: 17px; }
-.small { font-size: 16px; }
-.mono { font-family: Consolas, Menlo, monospace; font-size: 16px; }
-.panel { fill: #fff; stroke: #888; stroke-width: 1.6; }
-.blue { fill: #eaf3ff; stroke: #888; stroke-width: 1.6; }
-.note { fill: #fff4da; stroke: #888; stroke-width: 1.4; }
-.service { fill: #fff; stroke: #171717; stroke-width: 1.6; }
-</style>
-<symbol id="green-server" viewBox="0 0 30 60">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1040" viewBox="0 0 1100 1040" role="img" aria-labelledby="title desc">
+  <title id="title">Three watermarks measure different kinds of progress</title>
+  <desc id="desc">Read the top row from left to right, then the lower panel. The leader broker computes Kafka's low watermark to track deletion progress: for one partition with a leader log start offset of 20 and one live follower at 10, the minimum is 10, so deletion before offset 20 still waits. When both log start offsets reach 20, the low watermark becomes 20. Live followers count even when out of sync; offline brokers do not hold deletion back. Kafka brokers use the high watermark as an exclusive replication boundary: with HW 43, retained nontransactional records below offset 43 are readable, while offsets 43 and higher are held back. A leader log start offset of 20 and HW 43 allow reads of offsets 20 through 42 when there are no gaps. The bottom panel belongs to a stream processor and shows an event-time watermark of 12:01; an event timestamped 12:00:30 can still arrive and requires a late-event policy. Each Kafka Streams task tracks its stream time and applies window grace to manage late updates. A consumer group's saved restart offset is separate from broker watermarks.</desc>
+  <!-- Shared typography, semantic fills, and the native server icon match adjacent Kafka diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #171717; }
+      .title { font-size: 28px; font-weight: 700; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .strong { font-size: 19px; font-weight: 700; }
+      .detail { font-size: 17px; }
+      .small { font-size: 16px; }
+      .panel { fill: #fff; stroke: #888; stroke-width: 1.6; }
+      .blue { fill: #eaf3ff; stroke: #888; stroke-width: 1.6; }
+      .note { fill: #fff4da; stroke: #888; stroke-width: 1.6; }
+      .shaft { fill: none; stroke: #171717; stroke-width: 2; stroke-linejoin: round; }
+    </style>
+    <symbol id="green-server" viewBox="0 0 30 60">
       <rect x="8" y="1" width="14" height="9" rx="1" fill="#65c515"/>
       <path d="M11 5 H19" stroke="#fff" stroke-width="1.5"/>
       <rect x="3" y="12" width="24" height="46" rx="1.5" fill="#65c515"/>
       <path d="M7 19 H23 M7 40 H23 M7 48 H23" stroke="#fff" stroke-width="2"/>
     </symbol>
-</defs>
-<!-- Canvas and lesson heading. -->
-<rect width="1100" height="815" fill="#fff"/>
-<text class="title" x="550.0" y="35" text-anchor="middle" >Two watermarks measure different kinds of progress</text>
-<text class="detail" x="550.0" y="66" text-anchor="middle" >Broker replication uses offsets; event-time processing uses timestamps.</text>
-<!-- broker-high-watermark -->
-<g id="broker-high-watermark">
-<rect class="panel" x="30" y="105" width="500" height="438" /><text class="strong" x="280" y="139" text-anchor="middle" >Broker high watermark (HW)</text><use href="#green-server" x="81" y="163" width="42" height="84"/><text class="strong" x="303" y="192" text-anchor="middle" >Kafka broker</text><text class="small" x="303" y="220" text-anchor="middle" >Partition offsets; non-transactional</text><text class="strong" x="280" y="276" text-anchor="middle" >HW = 43</text><path id="hw-offset-boundary" d="M280 288 V374" fill="none" stroke="#1677b8" stroke-width="3"/>
-</g><!-- offset-41 -->
-<g id="offset-41">
-<rect x="70" y="305" width="85" height="61" fill="#eaf3ff" stroke="#888" stroke-width="1.6"/><text class="small" x="112.5" y="330" text-anchor="middle" >offset</text><text class="strong" x="112.5" y="356" text-anchor="middle" >41</text>
-</g><!-- offset-42 -->
-<g id="offset-42">
-<rect x="170" y="305" width="85" height="61" fill="#eaf3ff" stroke="#888" stroke-width="1.6"/><text class="small" x="212.5" y="330" text-anchor="middle" >offset</text><text class="strong" x="212.5" y="356" text-anchor="middle" >42</text>
-</g><!-- offset-43 -->
-<g id="offset-43">
-<rect x="305" y="305" width="85" height="61" fill="#fff4da" stroke="#888" stroke-width="1.6"/><text class="small" x="347.5" y="330" text-anchor="middle" >offset</text><text class="strong" x="347.5" y="356" text-anchor="middle" >43</text>
-</g><!-- offset-44 -->
-<g id="offset-44">
-<rect x="405" y="305" width="85" height="61" fill="#fff4da" stroke="#888" stroke-width="1.6"/><text class="small" x="447.5" y="330" text-anchor="middle" >offset</text><text class="strong" x="447.5" y="356" text-anchor="middle" >44</text>
-</g><!-- offset-boundary-meaning -->
-<g id="offset-boundary-meaning">
-<text class="strong" x="162.5" y="403" text-anchor="middle" >Readable</text><text class="strong" x="397.5" y="403" text-anchor="middle" >Held back</text><text class="detail" x="280" y="445" text-anchor="middle" >HW = 43 exposes offsets &lt; 43.</text><text class="detail" x="280" y="478" text-anchor="middle" >Replication visibility boundary,<tspan x="280" dy="27">not a consumer group’s saved offset.</tspan></text>
-</g><!-- The time-axis shaft intentionally meets its ticks and watermark boundary; all labels stay outside its corridor. -->
-<g id="event-time-watermark">
-<rect class="panel" x="570" y="105" width="500" height="438" /><text class="strong" x="820" y="139" text-anchor="middle" >Event-time watermark</text><use href="#green-server" x="614" y="163" width="42" height="84"/><text class="strong" x="860" y="192" text-anchor="middle" >Stream processor</text><text class="small" x="860" y="220" text-anchor="middle" >Progress estimate in event time</text><text class="strong" x="820" y="276" text-anchor="middle" >T = 12:01</text><!-- event-time-axis: shaft ends inside its separate arrowhead base. -->
-<path id="event-time-axis-flow" data-connector="true" d="M600 305 L1033 305" fill="none" stroke="#171717" stroke-width="2"/><path id="event-time-axis-head" d="M1031 311 L1043 305 L1031 299Z" fill="#171717"/><path id="event-time-ticks" d="M624 296 V314 M1018 296 V314" fill="none" stroke="#171717" stroke-width="1.6"/><path id="event-time-watermark-boundary" d="M820 289 V324" fill="none" stroke="#1677b8" stroke-width="3"/><text class="detail" x="624" y="348" text-anchor="middle" >12:00</text><text class="detail" x="820" y="348" text-anchor="middle" >12:01</text><text class="detail" x="1018" y="348" text-anchor="middle" >12:02</text>
-</g><!-- late-event-policy -->
-<g id="late-event-policy">
-<rect class="note" x="591" y="381" width="236" height="62" /><text class="detail" x="709" y="406" text-anchor="middle" >An event arrives now</text><text class="small" x="709" y="431" text-anchor="middle" >event time = 12:00:30</text><!-- apply-late-event-policy: shaft ends inside its separate arrowhead base. -->
-<path id="apply-late-event-policy-flow" data-connector="true" d="M827 412 L863 412" fill="none" stroke="#171717" stroke-width="2"/><path id="apply-late-event-policy-head" d="M861 418 L873 412 L861 406Z" fill="#171717"/><rect class="panel" x="873" y="381" width="174" height="62" /><text class="strong" x="960" y="406" text-anchor="middle" >Late event</text><text class="small" x="960" y="431" text-anchor="middle" >apply policy</text><text class="detail" x="820" y="478" text-anchor="middle" >Earlier data can still arrive later.<tspan x="820" dy="27">This says nothing about replication.</tspan></text>
-</g><!-- streams-time-and-grace -->
-<g id="streams-time-and-grace">
-<rect class="panel" x="30" y="570" width="1040" height="220" /><use href="#green-server" x="89" y="637" width="46" height="92"/><text class="detail" x="112" y="760" text-anchor="middle" >Streams task</text><text class="strong" x="655" y="603" text-anchor="middle" >Kafka Streams: stream time + a window’s grace period</text><text class="detail" x="655" y="639" text-anchor="middle" >Stream time = largest observed record timestamp per task.</text><text class="detail" x="655" y="673" text-anchor="middle" >Grace adds acceptance after the window end as stream time advances.</text><text class="detail" x="655" y="707" text-anchor="middle" >It does not extend window membership or use a wall-clock timer.</text><text class="small" x="655" y="755" text-anchor="middle" >Choose grace in the window API; no global Kafka “watermark” setting.</text>
-</g>
+  </defs>
+  <!-- Canvas and lesson heading; top row uses offsets, lower panel uses timestamps. -->
+  <rect width="1100" height="1040" fill="#fff"/>
+  <text class="title" x="550" y="38" text-anchor="middle">Three watermarks measure different kinds of progress</text>
+  <text class="detail" x="550" y="70" text-anchor="middle">Low and high watermarks use partition offsets; event-time watermarks use timestamps.</text>
+
+  <!-- Low watermark: two live replicas feed one minimum. Log start and low watermark remain distinct. -->
+  <g id="broker-low-watermark">
+    <rect class="panel" x="30" y="100" width="500" height="515"/>
+    <text class="heading" x="54" y="132">Kafka low watermark</text>
+    <text class="detail" x="54" y="162">How far has deletion progressed?</text>
+    <!-- Actor labels sit under each icon, clear of the explanatory text to the left. -->
+    <use href="#green-server" x="457" y="120" width="30" height="60"/>
+    <text id="low-watermark-owner" class="small" x="472" y="200" text-anchor="middle">Leader broker</text>
+    <text class="detail" x="54" y="195">Log start = first available offset.</text>
+    <text class="detail" x="54" y="219">Deletion request: remove offsets &lt; 20.</text>
+    <rect id="leader-log-start" class="blue" x="56" y="240" width="200" height="75"/>
+    <text class="strong" x="156" y="270" text-anchor="middle">Leader</text>
+    <text class="detail" x="156" y="299" text-anchor="middle">log start = 20</text>
+    <rect id="follower-log-start" class="note" x="304" y="240" width="200" height="75"/>
+    <text class="strong" x="404" y="270" text-anchor="middle">Live follower</text>
+    <text class="detail" x="404" y="299" text-anchor="middle">log start = 10</text>
+    <!-- Both branches merge in an empty corridor. The downward shaft ends inside its head base. -->
+    <path id="low-watermark-minimum-flow" class="shaft" data-connector="true" d="M156 315 V342 H280 V352"/>
+    <path id="follower-minimum-flow" class="shaft" data-connector="true" d="M404 315 V342 H280"/>
+    <path id="low-watermark-minimum-head" d="M274 350 L280 362 L286 350Z" fill="#171717"/>
+    <rect id="low-watermark-waiting" class="note" x="60" y="362" width="440" height="60"/>
+    <text class="strong" x="280" y="388" text-anchor="middle">Low watermark = min(20, 10) = 10</text>
+    <text class="small" x="280" y="411" text-anchor="middle">Minimum across live replicas; deletion still waits.</text>
+    <text class="detail" x="280" y="448" text-anchor="middle">After the follower's log start reaches 20:</text>
+    <rect id="low-watermark-complete" class="blue" x="60" y="465" width="440" height="45"/>
+    <text class="strong" x="280" y="494" text-anchor="middle">Low watermark = 20; deletion complete</text>
+    <text class="small" x="54" y="545">Live = broker considered alive by Kafka.</text>
+    <text class="small" x="54" y="569">Out-of-sync live followers still count.</text>
+    <text class="small" x="54" y="593">Offline brokers do not hold deletion back.</text>
+  </g>
+
+  <!-- High watermark: offset 43 is the first held-back record, not the last readable one. -->
+  <g id="broker-high-watermark">
+    <rect class="panel" x="570" y="100" width="500" height="515"/>
+    <text class="heading" x="594" y="132">Kafka high watermark (HW)</text>
+    <text class="detail" x="594" y="162">How far can consumers read?</text>
+    <use href="#green-server" x="997" y="120" width="30" height="60"/>
+    <text id="high-watermark-owner" class="small" x="1012" y="200" text-anchor="middle">Kafka broker</text>
+    <text class="detail" x="594" y="195">Replication commits a prefix of the log.</text>
+    <text class="detail" x="594" y="219">Below: retained, nontransactional records.</text>
+    <text class="strong" x="820" y="267" text-anchor="middle">HW = 43</text>
+    <path id="hw-offset-boundary" d="M820 279 V365" fill="none" stroke="#1677b8" stroke-width="3"/>
+    <g id="offset-41">
+      <rect class="blue" x="606" y="291" width="85" height="62"/>
+      <text class="small" x="648.5" y="316" text-anchor="middle">offset</text>
+      <text class="strong" x="648.5" y="343" text-anchor="middle">41</text>
+    </g>
+    <g id="offset-42">
+      <rect class="blue" x="706" y="291" width="85" height="62"/>
+      <text class="small" x="748.5" y="316" text-anchor="middle">offset</text>
+      <text class="strong" x="748.5" y="343" text-anchor="middle">42</text>
+    </g>
+    <g id="offset-43">
+      <rect class="note" x="849" y="291" width="85" height="62"/>
+      <text class="small" x="891.5" y="316" text-anchor="middle">offset</text>
+      <text class="strong" x="891.5" y="343" text-anchor="middle">43</text>
+    </g>
+    <g id="offset-44">
+      <rect class="note" x="949" y="291" width="85" height="62"/>
+      <text class="small" x="991.5" y="316" text-anchor="middle">offset</text>
+      <text class="strong" x="991.5" y="343" text-anchor="middle">44</text>
+    </g>
+    <text class="strong" x="698.5" y="394" text-anchor="middle">Readable</text>
+    <text class="strong" x="941.5" y="394" text-anchor="middle">Held back</text>
+    <text class="detail" x="820" y="430" text-anchor="middle">Consumer reads must stay below HW.</text>
+    <rect id="consumer-read-range" class="blue" x="594" y="455" width="452" height="60"/>
+    <text class="detail" x="820" y="480" text-anchor="middle">With log start = 20 and HW = 43:</text>
+    <text class="detail" x="820" y="504" text-anchor="middle">offsets 20–42 are readable (no gaps).</text>
+    <text class="small" x="594" y="545">endOffsets() = HW for read_uncommitted.</text>
+    <text class="small" x="594" y="569">acks=all waits for the in-sync replicas (ISR).</text>
+    <text class="small" x="594" y="593">read_committed can stop earlier.</text>
+  </g>
+
+  <!-- Event-time progress uses a timestamp axis; Kafka Streams details share the same lower panel. -->
+  <g id="event-time-watermark">
+    <rect class="panel" x="30" y="645" width="1040" height="345"/>
+    <text class="heading" x="54" y="677">Event-time watermark</text>
+    <text class="detail" x="54" y="705">How far have event timestamps progressed?</text>
+    <!-- The labeled application icon is separate from the Streams-task rules below. -->
+    <use href="#green-server" x="968" y="656" width="20" height="40"/>
+    <text id="event-time-watermark-owner" class="small" x="978" y="718" text-anchor="middle">Stream processor</text>
+    <text class="strong" x="296" y="744" text-anchor="middle">T = 12:01</text>
+    <!-- The axis intentionally crosses its ticks and timestamp boundary. Labels stay outside that corridor. -->
+    <path id="event-time-axis-flow" class="shaft" data-connector="true" d="M75 780 H536"/>
+    <path id="event-time-axis-head" d="M534 774 L546 780 L534 786Z" fill="#171717"/>
+    <path id="event-time-ticks" d="M96 771 V789 M496 771 V789" fill="none" stroke="#171717" stroke-width="1.6"/>
+    <path id="event-time-watermark-boundary" d="M296 764 V797" fill="none" stroke="#1677b8" stroke-width="3"/>
+    <text class="detail" x="96" y="821" text-anchor="middle">12:00</text>
+    <text class="detail" x="296" y="821" text-anchor="middle">12:01</text>
+    <text class="detail" x="496" y="821" text-anchor="middle">12:02</text>
+    <rect id="late-arriving-event" class="note" x="55" y="849" width="256" height="60"/>
+    <text class="detail" x="183" y="874" text-anchor="middle">Arrives now: event time</text>
+    <text class="strong" x="183" y="898" text-anchor="middle">12:00:30</text>
+    <!-- The horizontal shaft joins inside the head; its tip meets the late-policy box. -->
+    <path id="apply-late-event-policy-flow" class="shaft" data-connector="true" d="M311 879 H350"/>
+    <path id="apply-late-event-policy-head" d="M348 873 L360 879 L348 885Z" fill="#171717"/>
+    <rect id="late-event-policy" class="panel" x="360" y="849" width="185" height="60"/>
+    <text class="strong" x="452.5" y="874" text-anchor="middle">Late event</text>
+    <text class="detail" x="452.5" y="898" text-anchor="middle">apply policy</text>
+    <text class="detail" x="300" y="945" text-anchor="middle">Earlier events can still arrive.</text>
+    <text class="small" x="300" y="972" text-anchor="middle">This watermark estimates timestamp progress.</text>
+    <!-- Streams time and grace are supporting rules, not a fourth kind of broker watermark. -->
+    <g id="streams-time-and-grace">
+      <rect class="blue" x="574" y="730" width="472" height="239"/>
+      <text class="strong" x="810" y="760" text-anchor="middle">Kafka Streams task: stream time + grace</text>
+      <text class="detail" x="810" y="794" text-anchor="middle">Stream time = largest timestamp</text>
+      <text class="detail" x="810" y="819" text-anchor="middle">observed by each task.</text>
+      <text class="detail" x="810" y="855" text-anchor="middle">Window grace extends acceptance</text>
+      <text class="detail" x="810" y="880" text-anchor="middle">of late updates, not window membership.</text>
+      <text class="detail" x="810" y="916" text-anchor="middle">Time advances with records,</text>
+      <text class="detail" x="810" y="941" text-anchor="middle">not a wall-clock timer.</text>
+    </g>
+  </g>
+  <!-- Shared distinction from consumer-group progress. -->
+  <text class="small" x="550" y="1020" text-anchor="middle">Broker watermarks track offsets; a consumer group saves its own restart offset.</text>
 </svg>

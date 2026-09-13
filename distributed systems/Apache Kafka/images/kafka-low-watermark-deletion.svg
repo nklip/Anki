@@ -1,0 +1,309 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1196" height="1700" viewBox="0 0 1196 1700" role="img" aria-labelledby="title desc">
+  <title id="title">Kafka low watermark: deletion waits for live replicas</title>
+  <desc id="desc">Three snapshots of one partition with three live replicas: a leader on the left and two followers on the right. Initially every replica retains offsets 10 through 15 and has log start 10, so the low watermark is min(10, 10, 10), or 10. An administrative deletion request removes offsets below 13, keeping 13 itself. In the middle snapshot, the leader and replica-2 have advanced their log starts to 13, but live replica-3 still starts at 10. The low watermark remains min(13, 13, 10), or 10, and deletion is not complete even though the leader has already removed 10 through 12. In the final snapshot replica-3 also starts at 13, and the leader has learned this progress: the low watermark reaches 13 and deletion completes. Dashed slots labeled gone are unavailable history on the indicated replica. Blue vertical lines mark log starts. The low watermark tracks the minimum log start known to the leader across live replicas, not just the leader log start. Live followers count even outside the in-sync replica set. Consumer progress is independent of deletion, and physical segment reclamation can occur later.</desc>
+  <!-- Source-native log-cell layout follows the supplied in-sync-replicas-example.svg; three replicas match this article’s replication example. -->
+  <!-- Shared styles and manual arrow geometry; all text remains editable. -->
+  <defs><style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #171717; }
+    .title { font-size: 28px; font-weight: 700; }
+    .state-title { font-size: 25px; font-weight: 700; }
+    .label { font-size: 21px; }
+    .detail { font-size: 18px; }
+    .offset { font-size: 24px; }
+    .cell-note { font-size: 13px; }
+    .result-text { font-size: 23px; font-weight: 700; }
+    .panel { fill: #fff; stroke: #888; stroke-width: 1.6; }
+    .remove-next { fill: #fffdb5; stroke: #888; stroke-width: 1.8; }
+    .retained { fill: #bdf7bd; stroke: #888; stroke-width: 1.8; }
+    .removed { fill: #f5f5f5; stroke: #aaa; stroke-width: 1.5; stroke-dasharray: 6 5; }
+    .result { fill: #eaf3ff; stroke: #888; stroke-width: 1.6; }
+    .waiting-result { fill: #fff4db; stroke: #888; stroke-width: 1.6; }
+    .shaft { fill: none; stroke: #171717; stroke-width: 2; stroke-linejoin: round; }
+  </style></defs>
+  <!-- Overview defines both terms; blue lines mark per-replica starts, while the result box takes their minimum. -->
+  <rect id="background" width="1196" height="1700" fill="#fff"/>
+    <text class="title" x="598" y="39" text-anchor="middle">Kafka low watermark: deletion waits for live replicas</text>
+    <text class="detail" x="598" y="70" text-anchor="middle">One partition, three live replicas. Log start = first available offset, marked by a blue line.</text>
+    <text class="detail" x="598" y="96" text-anchor="middle">Low watermark = minimum log start known to the leader across the live replicas.</text>
+  <!-- Before snapshot: leader left and two live followers right; preserve these positions across all three states. -->
+  <g id="before-deletion" transform="translate(0 110)">
+    <rect class="panel" x="20" y="0" width="1156" height="450"/>
+    <text class="state-title" x="44" y="34">1. Before deletion</text>
+    <text class="detail" x="44" y="63">All three replicas retain offsets 10–15 and start at 10.</text>
+    <!-- before replica-1: log start 10; dashed slots mark history unavailable on this replica. -->
+    <g id="before-replica-1">
+    <text class="label" x="62" y="157">replica-1 (leader)</text>
+    <text class="detail" x="62" y="182">log start = 10</text>
+      <rect id="before-r1-offset-10" class="remove-next" x="62" y="199" width="52" height="80"/>
+    <text class="offset" x="88" y="230" text-anchor="middle">10</text>
+    <text class="cell-note" x="88" y="260" text-anchor="middle">remove</text>
+      <rect id="before-r1-offset-11" class="remove-next" x="114" y="199" width="52" height="80"/>
+    <text class="offset" x="140" y="230" text-anchor="middle">11</text>
+    <text class="cell-note" x="140" y="260" text-anchor="middle">remove</text>
+      <rect id="before-r1-offset-12" class="remove-next" x="166" y="199" width="52" height="80"/>
+    <text class="offset" x="192" y="230" text-anchor="middle">12</text>
+    <text class="cell-note" x="192" y="260" text-anchor="middle">remove</text>
+      <rect id="before-r1-offset-13" class="retained" x="218" y="199" width="52" height="80"/>
+    <text class="offset" x="244" y="230" text-anchor="middle">13</text>
+    <text class="cell-note" x="244" y="260" text-anchor="middle">kept</text>
+      <rect id="before-r1-offset-14" class="retained" x="270" y="199" width="52" height="80"/>
+    <text class="offset" x="296" y="230" text-anchor="middle">14</text>
+    <text class="cell-note" x="296" y="260" text-anchor="middle">kept</text>
+      <rect id="before-r1-offset-15" class="retained" x="322" y="199" width="52" height="80"/>
+    <text class="offset" x="348" y="230" text-anchor="middle">15</text>
+    <text class="cell-note" x="348" y="260" text-anchor="middle">kept</text>
+      <path id="before-r1-log-start" d="M62 194 V284" fill="none" stroke="#1677b8" stroke-width="3"/>
+    </g>
+    <!-- before replica-2: log start 10; dashed slots mark history unavailable on this replica. -->
+    <g id="before-replica-2">
+    <text class="label" x="814" y="82">replica-2 (follower)</text>
+    <text class="detail" x="814" y="107">log start = 10</text>
+      <rect id="before-r2-offset-10" class="remove-next" x="814" y="124" width="52" height="80"/>
+    <text class="offset" x="840" y="155" text-anchor="middle">10</text>
+    <text class="cell-note" x="840" y="185" text-anchor="middle">remove</text>
+      <rect id="before-r2-offset-11" class="remove-next" x="866" y="124" width="52" height="80"/>
+    <text class="offset" x="892" y="155" text-anchor="middle">11</text>
+    <text class="cell-note" x="892" y="185" text-anchor="middle">remove</text>
+      <rect id="before-r2-offset-12" class="remove-next" x="918" y="124" width="52" height="80"/>
+    <text class="offset" x="944" y="155" text-anchor="middle">12</text>
+    <text class="cell-note" x="944" y="185" text-anchor="middle">remove</text>
+      <rect id="before-r2-offset-13" class="retained" x="970" y="124" width="52" height="80"/>
+    <text class="offset" x="996" y="155" text-anchor="middle">13</text>
+    <text class="cell-note" x="996" y="185" text-anchor="middle">kept</text>
+      <rect id="before-r2-offset-14" class="retained" x="1022" y="124" width="52" height="80"/>
+    <text class="offset" x="1048" y="155" text-anchor="middle">14</text>
+    <text class="cell-note" x="1048" y="185" text-anchor="middle">kept</text>
+      <rect id="before-r2-offset-15" class="retained" x="1074" y="124" width="52" height="80"/>
+    <text class="offset" x="1100" y="155" text-anchor="middle">15</text>
+    <text class="cell-note" x="1100" y="185" text-anchor="middle">kept</text>
+      <path id="before-r2-log-start" d="M814 119 V209" fill="none" stroke="#1677b8" stroke-width="3"/>
+    </g>
+    <!-- before replica-3: log start 10; dashed slots mark history unavailable on this replica. -->
+    <g id="before-replica-3">
+    <text class="label" x="814" y="232">replica-3 (follower)</text>
+    <text class="detail" x="814" y="257">log start = 10</text>
+      <rect id="before-r3-offset-10" class="remove-next" x="814" y="274" width="52" height="80"/>
+    <text class="offset" x="840" y="305" text-anchor="middle">10</text>
+    <text class="cell-note" x="840" y="335" text-anchor="middle">remove</text>
+      <rect id="before-r3-offset-11" class="remove-next" x="866" y="274" width="52" height="80"/>
+    <text class="offset" x="892" y="305" text-anchor="middle">11</text>
+    <text class="cell-note" x="892" y="335" text-anchor="middle">remove</text>
+      <rect id="before-r3-offset-12" class="remove-next" x="918" y="274" width="52" height="80"/>
+    <text class="offset" x="944" y="305" text-anchor="middle">12</text>
+    <text class="cell-note" x="944" y="335" text-anchor="middle">remove</text>
+      <rect id="before-r3-offset-13" class="retained" x="970" y="274" width="52" height="80"/>
+    <text class="offset" x="996" y="305" text-anchor="middle">13</text>
+    <text class="cell-note" x="996" y="335" text-anchor="middle">kept</text>
+      <rect id="before-r3-offset-14" class="retained" x="1022" y="274" width="52" height="80"/>
+    <text class="offset" x="1048" y="305" text-anchor="middle">14</text>
+    <text class="cell-note" x="1048" y="335" text-anchor="middle">kept</text>
+      <rect id="before-r3-offset-15" class="retained" x="1074" y="274" width="52" height="80"/>
+    <text class="offset" x="1100" y="305" text-anchor="middle">15</text>
+    <text class="cell-note" x="1100" y="335" text-anchor="middle">kept</text>
+      <path id="before-r3-log-start" d="M814 269 V359" fill="none" stroke="#1677b8" stroke-width="3"/>
+    </g>
+    <!-- Fetch-response routes carry data and log-start metadata. Shafts end beneath head bases; tips meet cell borders. -->
+    <path id="before-fetch-r2-flow" class="shaft" data-connector="true" d="M374 239 H540 V164 H802"/>
+    <path id="before-fetch-r2-head" d="M800 158 L814 164 L800 170Z" fill="#171717"/>
+    <text class="detail" x="675" y="146" text-anchor="middle">fetch response</text>
+    <path id="before-fetch-r3-flow" class="shaft" data-connector="true" d="M374 239 H540 V314 H802"/>
+    <path id="before-fetch-r3-head" d="M800 308 L814 314 L800 320Z" fill="#171717"/>
+    <text class="detail" x="675" y="296" text-anchor="middle">fetch response</text>
+    <!-- The asymmetric middle minimum is the central lesson: replica-3 prevents completion after the leader advances. -->
+    <rect id="before-low-watermark" class="result" x="44" y="310" width="450" height="84"/>
+    <text class="result-text" x="269" y="341" text-anchor="middle">Low watermark = 10</text>
+    <text class="label" x="269" y="372" text-anchor="middle">min(10, 10, 10) = 10</text>
+    <text class="detail" x="44" y="427">The planned cutoff is 13: remove 10–12 and keep 13–15.</text>
+  </g>
+  <!-- request-deletion: state advances after the indicated deletion progress, independently of consumer offsets. -->
+    <text class="label" x="598" y="589" text-anchor="middle">Request: delete records with offsets &lt; 13.</text>
+  <path id="request-deletion-transition-flow" class="shaft" data-connector="true" d="M598 605 V628"/>
+  <path id="request-deletion-transition-head" d="M592 626 L598 640 L604 626Z" fill="#171717"/>
+  <!-- During snapshot: leader left and two live followers right; preserve these positions across all three states. -->
+  <g id="during-deletion" transform="translate(0 640)">
+    <rect class="panel" x="20" y="0" width="1156" height="450"/>
+    <text class="state-title" x="44" y="34">2. Deletion in progress</text>
+    <text class="detail" x="44" y="63">The leader and replica-2 start at 13; live replica-3 still starts at 10.</text>
+    <!-- during replica-1: log start 13; dashed slots mark history unavailable on this replica. -->
+    <g id="during-replica-1">
+    <text class="label" x="62" y="157">replica-1 (leader)</text>
+    <text class="detail" x="62" y="182">log start = 13</text>
+      <rect id="during-r1-offset-10" class="removed" x="62" y="199" width="52" height="80"/>
+    <text class="offset" x="88" y="230" text-anchor="middle">10</text>
+    <text class="cell-note" x="88" y="260" text-anchor="middle">gone</text>
+      <rect id="during-r1-offset-11" class="removed" x="114" y="199" width="52" height="80"/>
+    <text class="offset" x="140" y="230" text-anchor="middle">11</text>
+    <text class="cell-note" x="140" y="260" text-anchor="middle">gone</text>
+      <rect id="during-r1-offset-12" class="removed" x="166" y="199" width="52" height="80"/>
+    <text class="offset" x="192" y="230" text-anchor="middle">12</text>
+    <text class="cell-note" x="192" y="260" text-anchor="middle">gone</text>
+      <rect id="during-r1-offset-13" class="retained" x="218" y="199" width="52" height="80"/>
+    <text class="offset" x="244" y="230" text-anchor="middle">13</text>
+    <text class="cell-note" x="244" y="260" text-anchor="middle">kept</text>
+      <rect id="during-r1-offset-14" class="retained" x="270" y="199" width="52" height="80"/>
+    <text class="offset" x="296" y="230" text-anchor="middle">14</text>
+    <text class="cell-note" x="296" y="260" text-anchor="middle">kept</text>
+      <rect id="during-r1-offset-15" class="retained" x="322" y="199" width="52" height="80"/>
+    <text class="offset" x="348" y="230" text-anchor="middle">15</text>
+    <text class="cell-note" x="348" y="260" text-anchor="middle">kept</text>
+      <path id="during-r1-log-start" d="M218 194 V284" fill="none" stroke="#1677b8" stroke-width="3"/>
+    </g>
+    <!-- during replica-2: log start 13; dashed slots mark history unavailable on this replica. -->
+    <g id="during-replica-2">
+    <text class="label" x="814" y="82">replica-2 (follower)</text>
+    <text class="detail" x="814" y="107">log start = 13</text>
+      <rect id="during-r2-offset-10" class="removed" x="814" y="124" width="52" height="80"/>
+    <text class="offset" x="840" y="155" text-anchor="middle">10</text>
+    <text class="cell-note" x="840" y="185" text-anchor="middle">gone</text>
+      <rect id="during-r2-offset-11" class="removed" x="866" y="124" width="52" height="80"/>
+    <text class="offset" x="892" y="155" text-anchor="middle">11</text>
+    <text class="cell-note" x="892" y="185" text-anchor="middle">gone</text>
+      <rect id="during-r2-offset-12" class="removed" x="918" y="124" width="52" height="80"/>
+    <text class="offset" x="944" y="155" text-anchor="middle">12</text>
+    <text class="cell-note" x="944" y="185" text-anchor="middle">gone</text>
+      <rect id="during-r2-offset-13" class="retained" x="970" y="124" width="52" height="80"/>
+    <text class="offset" x="996" y="155" text-anchor="middle">13</text>
+    <text class="cell-note" x="996" y="185" text-anchor="middle">kept</text>
+      <rect id="during-r2-offset-14" class="retained" x="1022" y="124" width="52" height="80"/>
+    <text class="offset" x="1048" y="155" text-anchor="middle">14</text>
+    <text class="cell-note" x="1048" y="185" text-anchor="middle">kept</text>
+      <rect id="during-r2-offset-15" class="retained" x="1074" y="124" width="52" height="80"/>
+    <text class="offset" x="1100" y="155" text-anchor="middle">15</text>
+    <text class="cell-note" x="1100" y="185" text-anchor="middle">kept</text>
+      <path id="during-r2-log-start" d="M970 119 V209" fill="none" stroke="#1677b8" stroke-width="3"/>
+    </g>
+    <!-- during replica-3: log start 10; dashed slots mark history unavailable on this replica. -->
+    <g id="during-replica-3">
+    <text class="label" x="814" y="232">replica-3 (follower)</text>
+    <text class="detail" x="814" y="257">log start = 10</text>
+      <rect id="during-r3-offset-10" class="remove-next" x="814" y="274" width="52" height="80"/>
+    <text class="offset" x="840" y="305" text-anchor="middle">10</text>
+    <text class="cell-note" x="840" y="335" text-anchor="middle">pending</text>
+      <rect id="during-r3-offset-11" class="remove-next" x="866" y="274" width="52" height="80"/>
+    <text class="offset" x="892" y="305" text-anchor="middle">11</text>
+    <text class="cell-note" x="892" y="335" text-anchor="middle">pending</text>
+      <rect id="during-r3-offset-12" class="remove-next" x="918" y="274" width="52" height="80"/>
+    <text class="offset" x="944" y="305" text-anchor="middle">12</text>
+    <text class="cell-note" x="944" y="335" text-anchor="middle">pending</text>
+      <rect id="during-r3-offset-13" class="retained" x="970" y="274" width="52" height="80"/>
+    <text class="offset" x="996" y="305" text-anchor="middle">13</text>
+    <text class="cell-note" x="996" y="335" text-anchor="middle">kept</text>
+      <rect id="during-r3-offset-14" class="retained" x="1022" y="274" width="52" height="80"/>
+    <text class="offset" x="1048" y="305" text-anchor="middle">14</text>
+    <text class="cell-note" x="1048" y="335" text-anchor="middle">kept</text>
+      <rect id="during-r3-offset-15" class="retained" x="1074" y="274" width="52" height="80"/>
+    <text class="offset" x="1100" y="305" text-anchor="middle">15</text>
+    <text class="cell-note" x="1100" y="335" text-anchor="middle">kept</text>
+      <path id="during-r3-log-start" d="M814 269 V359" fill="none" stroke="#1677b8" stroke-width="3"/>
+    </g>
+    <!-- Fetch-response routes carry data and log-start metadata. Shafts end beneath head bases; tips meet cell borders. -->
+    <path id="during-fetch-r2-flow" class="shaft" data-connector="true" d="M374 239 H540 V164 H802"/>
+    <path id="during-fetch-r2-head" d="M800 158 L814 164 L800 170Z" fill="#171717"/>
+    <text class="detail" x="675" y="146" text-anchor="middle">fetch response</text>
+    <path id="during-fetch-r3-flow" class="shaft" data-connector="true" d="M374 239 H540 V314 H802"/>
+    <path id="during-fetch-r3-head" d="M800 308 L814 314 L800 320Z" fill="#171717"/>
+    <text class="detail" x="675" y="296" text-anchor="middle">fetch response</text>
+    <!-- The asymmetric middle minimum is the central lesson: replica-3 prevents completion after the leader advances. -->
+    <rect id="during-low-watermark" class="waiting-result" x="44" y="310" width="450" height="84"/>
+    <text class="result-text" x="269" y="341" text-anchor="middle">Low watermark = 10</text>
+    <text class="label" x="269" y="372" text-anchor="middle">min(13, 13, 10) = 10</text>
+    <text class="detail" x="44" y="427">Deletion incomplete: low watermark 10 still trails the leader’s log start 13.</text>
+  </g>
+  <!-- finish-deletion: state advances after the indicated deletion progress, independently of consumer offsets. -->
+    <text class="label" x="598" y="1119" text-anchor="middle">Replica-3 advances its log start to 13; the leader learns this progress.</text>
+  <path id="finish-deletion-transition-flow" class="shaft" data-connector="true" d="M598 1135 V1158"/>
+  <path id="finish-deletion-transition-head" d="M592 1156 L598 1170 L604 1156Z" fill="#171717"/>
+  <!-- After snapshot: leader left and two live followers right; preserve these positions across all three states. -->
+  <g id="after-deletion" transform="translate(0 1170)">
+    <rect class="panel" x="20" y="0" width="1156" height="450"/>
+    <text class="state-title" x="44" y="34">3. Deletion complete</text>
+    <text class="detail" x="44" y="63">All three replicas now start at 13; the leader has observed their progress.</text>
+    <!-- after replica-1: log start 13; dashed slots mark history unavailable on this replica. -->
+    <g id="after-replica-1">
+    <text class="label" x="62" y="157">replica-1 (leader)</text>
+    <text class="detail" x="62" y="182">log start = 13</text>
+      <rect id="after-r1-offset-10" class="removed" x="62" y="199" width="52" height="80"/>
+    <text class="offset" x="88" y="230" text-anchor="middle">10</text>
+    <text class="cell-note" x="88" y="260" text-anchor="middle">gone</text>
+      <rect id="after-r1-offset-11" class="removed" x="114" y="199" width="52" height="80"/>
+    <text class="offset" x="140" y="230" text-anchor="middle">11</text>
+    <text class="cell-note" x="140" y="260" text-anchor="middle">gone</text>
+      <rect id="after-r1-offset-12" class="removed" x="166" y="199" width="52" height="80"/>
+    <text class="offset" x="192" y="230" text-anchor="middle">12</text>
+    <text class="cell-note" x="192" y="260" text-anchor="middle">gone</text>
+      <rect id="after-r1-offset-13" class="retained" x="218" y="199" width="52" height="80"/>
+    <text class="offset" x="244" y="230" text-anchor="middle">13</text>
+    <text class="cell-note" x="244" y="260" text-anchor="middle">kept</text>
+      <rect id="after-r1-offset-14" class="retained" x="270" y="199" width="52" height="80"/>
+    <text class="offset" x="296" y="230" text-anchor="middle">14</text>
+    <text class="cell-note" x="296" y="260" text-anchor="middle">kept</text>
+      <rect id="after-r1-offset-15" class="retained" x="322" y="199" width="52" height="80"/>
+    <text class="offset" x="348" y="230" text-anchor="middle">15</text>
+    <text class="cell-note" x="348" y="260" text-anchor="middle">kept</text>
+      <path id="after-r1-log-start" d="M218 194 V284" fill="none" stroke="#1677b8" stroke-width="3"/>
+    </g>
+    <!-- after replica-2: log start 13; dashed slots mark history unavailable on this replica. -->
+    <g id="after-replica-2">
+    <text class="label" x="814" y="82">replica-2 (follower)</text>
+    <text class="detail" x="814" y="107">log start = 13</text>
+      <rect id="after-r2-offset-10" class="removed" x="814" y="124" width="52" height="80"/>
+    <text class="offset" x="840" y="155" text-anchor="middle">10</text>
+    <text class="cell-note" x="840" y="185" text-anchor="middle">gone</text>
+      <rect id="after-r2-offset-11" class="removed" x="866" y="124" width="52" height="80"/>
+    <text class="offset" x="892" y="155" text-anchor="middle">11</text>
+    <text class="cell-note" x="892" y="185" text-anchor="middle">gone</text>
+      <rect id="after-r2-offset-12" class="removed" x="918" y="124" width="52" height="80"/>
+    <text class="offset" x="944" y="155" text-anchor="middle">12</text>
+    <text class="cell-note" x="944" y="185" text-anchor="middle">gone</text>
+      <rect id="after-r2-offset-13" class="retained" x="970" y="124" width="52" height="80"/>
+    <text class="offset" x="996" y="155" text-anchor="middle">13</text>
+    <text class="cell-note" x="996" y="185" text-anchor="middle">kept</text>
+      <rect id="after-r2-offset-14" class="retained" x="1022" y="124" width="52" height="80"/>
+    <text class="offset" x="1048" y="155" text-anchor="middle">14</text>
+    <text class="cell-note" x="1048" y="185" text-anchor="middle">kept</text>
+      <rect id="after-r2-offset-15" class="retained" x="1074" y="124" width="52" height="80"/>
+    <text class="offset" x="1100" y="155" text-anchor="middle">15</text>
+    <text class="cell-note" x="1100" y="185" text-anchor="middle">kept</text>
+      <path id="after-r2-log-start" d="M970 119 V209" fill="none" stroke="#1677b8" stroke-width="3"/>
+    </g>
+    <!-- after replica-3: log start 13; dashed slots mark history unavailable on this replica. -->
+    <g id="after-replica-3">
+    <text class="label" x="814" y="232">replica-3 (follower)</text>
+    <text class="detail" x="814" y="257">log start = 13</text>
+      <rect id="after-r3-offset-10" class="removed" x="814" y="274" width="52" height="80"/>
+    <text class="offset" x="840" y="305" text-anchor="middle">10</text>
+    <text class="cell-note" x="840" y="335" text-anchor="middle">gone</text>
+      <rect id="after-r3-offset-11" class="removed" x="866" y="274" width="52" height="80"/>
+    <text class="offset" x="892" y="305" text-anchor="middle">11</text>
+    <text class="cell-note" x="892" y="335" text-anchor="middle">gone</text>
+      <rect id="after-r3-offset-12" class="removed" x="918" y="274" width="52" height="80"/>
+    <text class="offset" x="944" y="305" text-anchor="middle">12</text>
+    <text class="cell-note" x="944" y="335" text-anchor="middle">gone</text>
+      <rect id="after-r3-offset-13" class="retained" x="970" y="274" width="52" height="80"/>
+    <text class="offset" x="996" y="305" text-anchor="middle">13</text>
+    <text class="cell-note" x="996" y="335" text-anchor="middle">kept</text>
+      <rect id="after-r3-offset-14" class="retained" x="1022" y="274" width="52" height="80"/>
+    <text class="offset" x="1048" y="305" text-anchor="middle">14</text>
+    <text class="cell-note" x="1048" y="335" text-anchor="middle">kept</text>
+      <rect id="after-r3-offset-15" class="retained" x="1074" y="274" width="52" height="80"/>
+    <text class="offset" x="1100" y="305" text-anchor="middle">15</text>
+    <text class="cell-note" x="1100" y="335" text-anchor="middle">kept</text>
+      <path id="after-r3-log-start" d="M970 269 V359" fill="none" stroke="#1677b8" stroke-width="3"/>
+    </g>
+    <!-- Fetch-response routes carry data and log-start metadata. Shafts end beneath head bases; tips meet cell borders. -->
+    <path id="after-fetch-r2-flow" class="shaft" data-connector="true" d="M374 239 H540 V164 H802"/>
+    <path id="after-fetch-r2-head" d="M800 158 L814 164 L800 170Z" fill="#171717"/>
+    <text class="detail" x="675" y="146" text-anchor="middle">fetch response</text>
+    <path id="after-fetch-r3-flow" class="shaft" data-connector="true" d="M374 239 H540 V314 H802"/>
+    <path id="after-fetch-r3-head" d="M800 308 L814 314 L800 320Z" fill="#171717"/>
+    <text class="detail" x="675" y="296" text-anchor="middle">fetch response</text>
+    <!-- The asymmetric middle minimum is the central lesson: replica-3 prevents completion after the leader advances. -->
+    <rect id="after-low-watermark" class="result" x="44" y="310" width="450" height="84"/>
+    <text class="result-text" x="269" y="341" text-anchor="middle">Low watermark = 13</text>
+    <text class="label" x="269" y="372" text-anchor="middle">min(13, 13, 13) = 13</text>
+    <text class="detail" x="44" y="427">Low watermark reaches the requested cutoff 13: deletion is complete.</text>
+  </g>
+  <!-- Live-replica scope and logical removal are independent of consumer progress or disk-file reclamation. -->
+    <text class="detail" x="598" y="1650" text-anchor="middle">Live = broker considered alive by Kafka; a live follower outside the in-sync replica set (ISR) still counts.</text>
+    <text class="detail" x="598" y="1678" text-anchor="middle">Gone means logically unavailable. Consumer progress is independent; segment files may be reclaimed later.</text>
+</svg>
