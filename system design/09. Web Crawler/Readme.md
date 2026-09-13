@@ -110,13 +110,16 @@ Here's a set of potential questions between Candidate and Interviewer:
 ---
 
 ## Step 3: Deep Dive into Key Components
-### DFS/BFS
+### DFS / BFS
 - The web can be thought of as a directed graph where web pages are nodes and hyperlinks (URLs) are edges.
 - BFS is usually used for graph traversal because the depth can be very large; thus, DFS is not ideal.
 - Standard BFS does not take the priority of a URL into consideration. Not every page has the same level of quality and importance.
 
 
-### URL Frontier
+## URL Frontier
+
+URL frontier helps to address these problems. A URL frontier is a data structure that stores URLs to be downloaded. The URL frontier is an important component to ensure politeness, URL prioritization, and freshness. A few noteworthy papers on URL frontier are mentioned in the reference materials [[5]](#ref-5) [[9]](#ref-9). The findings from these papers are as follows:
+
 - **Politeness:**
     - Ensure only one request per host at a time. Add a delay between two download tasks.
     - Use a mapping from hostnames to queues and worker (download) threads.
@@ -142,14 +145,22 @@ Here's a set of potential questions between Candidate and Interviewer:
 
 - **Freshness:** Recrawl based on update history or importance.
 
+## HTML Downloader
 
-### HTML Downloader
-- **Robots.txt Compliance:** Respect rules in robots.txt files.
-- **Performance Optimizations:**
-  1. Distributed crawling using multiple servers.
-  2. Use a **DNS cache** to avoid repeated lookups.
-  3. Geographically distribute crawl servers for faster downloads.
-  4. Use a short timeout to avoid slow or unresponsive servers.
+The HTML Downloader downloads web pages from the internet using the HTTP protocol. Before discussing the HTML Downloader, we look at Robots Exclusion Protocol first.
+
+### Robots.txt
+
+Robots.txt, called `Robots Exclusion Protocol`, is a standard used by websites to communicate with crawlers. It specifies what pages crawlers are allowed to download. Before attempting to crawl a web site, a crawler should check its corresponding robots.txt first and follow its rules.
+
+To avoid repeat downloads of robots.txt file, we cache the results of the file. The file is downloaded and saved to cache periodically.
+
+
+### Performance Optimizations
+1. Distributed crawling using multiple servers.
+2. Use a **DNS cache** to avoid repeated lookups.
+3. Geographically distribute crawl servers for faster downloads.
+4. Use a short timeout to avoid slow or unresponsive servers.
 
 ### Robustness
 1. **Consistent Hashing:** Distribute load among servers effectively.
@@ -189,11 +200,11 @@ Here's a set of potential questions between Candidate and Interviewer:
 2. [EU Web Archive](http://data.europa.eu/webarchive)
 3. [Digimarc](https://www.digimarc.com/products/digimarc-services/piracy-intelligence)
 4. [Heydon A., Najork M. Mercator: A scalable, extensible web crawler World Wide Web, 2 (4) (1999), pp. 219-229](https://research.google/pubs/mercator-a-scalable-extensible-web-crawler/)
-5. [By Christopher Olston, Marc Najork: Web Crawling](http://infolab.stanford.edu/~olston/publications/crawling_survey.pdf)
+5. <a id="ref-5"></a>[By Christopher Olston, Marc Najork: Web Crawling](http://infolab.stanford.edu/~olston/publications/crawling_survey.pdf)
 6. [29% Of Sites Face Duplicate Content Issues](https://tinyurl.com/y6tmh55y)
 7. [Rabin M.O., et al. Fingerprinting by random polynomials Center for Research in Computing Techn., Aiken Computation Laboratory, Univ. (1981)](https://books.google.com/books/about/Fingerprinting_by_Random_Polynomials.html?id=Emu_tgAACAAJ)
 8. [B. H. Bloom, “Space/time trade-offs in hash coding with allowable errors,” Communications of the ACM, vol. 13, no. 7, pp. 422–426, 1970.](https://doi.org/10.1145/362686.362692)
-9. [Donald J. Patterson, Web Crawling](https://www.ics.uci.edu/~lopes/teaching/cs221W12/slides/Lecture05.pdf)
+9. <a id="ref-9"></a>[Donald J. Patterson, Web Crawling](https://www.ics.uci.edu/~lopes/teaching/cs221W12/slides/Lecture05.pdf)
 10. [L. Page, S. Brin, R. Motwani, and T. Winograd, “The PageRank Citation Ranking: Bringing Order to the Web,” Technical Report, Stanford University, 1998 (archived PDF).](https://gwern.net/doc/technology/google/1998-page.pdf)
 11. [Google Dynamic Rendering](https://developers.google.com/search/docs/guides/dynamic-rendering)
 12. [T. Urvoy, T. Lavergne, and P. Filoche, “Tracking web spam with hidden style similarity,” in Proceedings of the 2nd International Workshop on Adversarial Information Retrieval on the Web, 2006.](https://airweb.cse.lehigh.edu/2006/urvoy.pdf)
