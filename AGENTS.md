@@ -4,6 +4,13 @@ This repository contains Anki-ready Markdown study cards and their local teachin
 
 This file applies to the entire repository. More specific `AGENTS.md` files may add or override guidance for their own subdirectories if they are introduced later.
 
+## Subagent model selection
+
+- Use `gpt-5.6-luna` with `low` reasoning effort for straightforward read-only subtasks, such as reading files or URLs, and extracting facts.
+- Give each subagent a focused task with only the context it needs. Batch related files or URLs together.
+- Keep synthesis, decisions, and final verification with the main agent. Return ambiguous findings or work requiring deeper reasoning to the main agent.
+- The main agent must still read applicable repository instructions and required skills directly.
+
 ## Repository skills
 
 Repository-scoped skills live in `.agents/skills/`. Codex discovers these skills automatically when it runs inside this repository. A skill may be invoked explicitly by name or selected implicitly when its description matches the task.
