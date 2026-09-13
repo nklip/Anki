@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="790" viewBox="0 0 1200 790" role="img" aria-labelledby="title description">
+  <title id="title">Condition waiting releases the lock; signalling does not</title>
+  <desc id="description">Read downward through an example with one consumer A and one producer B. A finds an empty slot and awaits, releasing the shared lock. B acquires, fills the slot, and signals while still owning the lock. B unlocks. A reacquires, returns from await, checks the slot again, and consumes the item.</desc>
+
+  <!-- Match the ownership diagram: blue consumer, amber producer, green resumed work. -->
+  <defs>
+    <style>
+      .title { font: 700 32px Arial, Helvetica, sans-serif; fill: #172b45; }
+      .heading { font: 700 22px Arial, Helvetica, sans-serif; fill: #172b45; }
+      .body { font: 20px Arial, Helvetica, sans-serif; fill: #334155; }
+      .small { font: 18px Arial, Helvetica, sans-serif; fill: #475569; }
+      .code { font: 20px monospace; fill: #172b45; }
+      .owner { font: 700 21px Arial, Helvetica, sans-serif; fill: #172b45; }
+    </style>
+  </defs>
+
+  <!-- Explicit actors and starting state keep the scenario understandable on its own. -->
+  <rect width="1200" height="790" fill="#ffffff"/>
+  <text x="600" y="51" text-anchor="middle" class="title">await() releases the lock; signal() does not</text>
+  <text x="600" y="88" text-anchor="middle" class="body">Read downward · one consumer A, one producer B · the shared slot starts empty</text>
+  <text x="130" y="133" class="small">ACTING THREAD</text>
+  <text x="350" y="133" class="small">ACTION UNDER THE SHARED LOCK</text>
+  <text x="890" y="133" class="small">OWNERSHIP AFTERWARD</text>
+
+  <!-- Each row shows the triggering action and resulting ownership, not a separate lock. -->
+  <g id="consumer-awaits">
+    <rect x="110" y="151" width="1050" height="110" rx="12" fill="#edf5ff" stroke="#3776b8" stroke-width="2"/>
+    <text x="135" y="192" class="heading">A · consumer</text>
+    <text x="135" y="225" class="small">Finds the slot empty</text>
+    <text x="350" y="192" class="code">notEmpty.await()</text>
+    <text x="350" y="225" class="body">Atomically releases the lock and waits</text>
+    <text x="890" y="192" class="owner">No owner</text>
+    <text x="890" y="225" class="small">A waits on notEmpty</text>
+  </g>
+  <g id="producer-signals">
+    <rect x="110" y="291" width="1050" height="110" rx="12" fill="#fff6e7" stroke="#ba7b25" stroke-width="2"/>
+    <text x="135" y="332" class="heading">B · producer</text>
+    <text x="135" y="365" class="small">Acquires the lock</text>
+    <text x="350" y="332" class="code">item = next; notEmpty.signal()</text>
+    <text x="350" y="365" class="body">Makes A eligible to reacquire the lock</text>
+    <text x="890" y="332" class="owner">B still owns it</text>
+    <text x="890" y="365" class="small">A cannot return yet</text>
+  </g>
+  <g id="producer-unlocks">
+    <rect x="110" y="431" width="1050" height="110" rx="12" fill="#fff6e7" stroke="#ba7b25" stroke-width="2"/>
+    <text x="135" y="472" class="heading">B · producer</text>
+    <text x="135" y="505" class="small">Leaves put()</text>
+    <text x="350" y="472" class="code">lock.unlock()</text>
+    <text x="350" y="505" class="body">Fully releases the lock in finally</text>
+    <text x="890" y="472" class="owner">Lock is free</text>
+    <text x="890" y="505" class="small">A may now acquire it</text>
+  </g>
+  <g id="consumer-resumes">
+    <rect x="110" y="571" width="1050" height="110" rx="12" fill="#ecf8f1" stroke="#36835d" stroke-width="2"/>
+    <text x="135" y="612" class="heading">A · consumer</text>
+    <text x="135" y="645" class="small">Reacquires the lock</text>
+    <text x="350" y="612" class="code">await() returns; recheck item</text>
+    <text x="350" y="645" class="body">If present, remove it; otherwise await again</text>
+    <text x="890" y="612" class="owner">A owns it again</text>
+    <text x="890" y="645" class="small">Prior hold count restored</text>
+  </g>
+
+  <!-- Time arrows stay in the left gutter, away from every label and row boundary. -->
+  <g id="time-flow" fill="#64748b">
+    <path id="time-connector-one" d="M67 206 V330" fill="none" stroke="#64748b" stroke-width="3"/>
+    <path d="M59 328 L67 344 L75 328 Z"/>
+    <path id="time-connector-two" d="M67 354 V470" fill="none" stroke="#64748b" stroke-width="3"/>
+    <path d="M59 468 L67 484 L75 468 Z"/>
+    <path id="time-connector-three" d="M67 494 V610" fill="none" stroke="#64748b" stroke-width="3"/>
+    <path d="M59 608 L67 624 L75 608 Z"/>
+  </g>
+
+  <!-- Essential loop rule applies even when a real signal caused the wakeup. -->
+  <rect x="110" y="709" width="1050" height="51" rx="10" fill="#f2f5fa"/>
+  <text x="635" y="742" text-anchor="middle" class="body">Always recheck in a while loop: a wakeup does not guarantee that the slot still has an item.</text>
+</svg>

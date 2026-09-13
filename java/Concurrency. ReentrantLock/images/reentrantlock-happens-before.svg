@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="670" viewBox="0 0 1200 670" role="img" aria-labelledby="title description">
+  <title id="title">A full unlock publishes writes to a later lock acquisition</title>
+  <desc id="description">Thread A owns the shared ReentrantLock L, writes value equals 42, and fully releases L. Thread B later successfully acquires the same L and reads value while holding it. With no intervening writer, the read sees 42. Program order within each thread and the release-to-acquire edge form the happens-before chain.</desc>
+
+  <!-- Adapt the repository's volatile chain to explicit locking; match this article's typography. -->
+  <defs>
+    <style>
+      .title { font: 700 32px Arial, Helvetica, sans-serif; fill: #172b45; }
+      .heading { font: 700 22px Arial, Helvetica, sans-serif; fill: #172b45; }
+      .body { font: 20px Arial, Helvetica, sans-serif; fill: #334155; }
+      .small { font: 18px Arial, Helvetica, sans-serif; fill: #475569; }
+      .code { font: 22px monospace; fill: #172b45; }
+      .edge { font: 700 21px Arial, Helvetica, sans-serif; fill: #7645a8; }
+    </style>
+  </defs>
+
+  <!-- Reading order and actor headings: down the writer, across, then down the reader. -->
+  <rect width="1200" height="670" fill="#ffffff"/>
+  <text x="600" y="48" text-anchor="middle" class="title">Full unlock → later lock → visible writes</text>
+  <text x="600" y="82" text-anchor="middle" class="body">Follow the arrows. Both threads use the same ReentrantLock L.</text>
+  <rect x="50" y="108" width="420" height="48" rx="10" fill="#3776b8"/>
+  <text x="260" y="139" text-anchor="middle" style="font:700 22px Arial, Helvetica, sans-serif;fill:#ffffff">Thread A · writer</text>
+  <rect x="750" y="108" width="400" height="48" rx="10" fill="#36835d"/>
+  <text x="950" y="139" text-anchor="middle" style="font:700 22px Arial, Helvetica, sans-serif;fill:#ffffff">Thread B · reader</text>
+
+  <!-- The ordinary write occurs while A already owns L. -->
+  <g id="ordinary-write">
+    <rect x="50" y="180" width="420" height="95" rx="12" fill="#edf5ff" stroke="#3776b8" stroke-width="2"/>
+    <text x="260" y="215" text-anchor="middle" class="code">value = 42;</text>
+    <text x="260" y="249" text-anchor="middle" class="small">A has already acquired L</text>
+  </g>
+
+  <!-- Scenario premise occupies the reader's pre-acquisition area without implying another event. -->
+  <g id="scenario-premise">
+    <rect x="750" y="180" width="400" height="95" rx="12" fill="#f2f5fa"/>
+    <text x="950" y="215" text-anchor="middle" class="heading">Assume no intervening writer</text>
+    <text x="950" y="249" text-anchor="middle" class="small">All accesses to value use L</text>
+  </g>
+
+  <!-- A's full release, not an inner reentrant unlock, is the publication boundary. -->
+  <g id="full-release">
+    <rect x="50" y="353" width="420" height="95" rx="12" fill="#edf5ff" stroke="#3776b8" stroke-width="2"/>
+    <text x="260" y="388" text-anchor="middle" class="code">L.unlock();</text>
+    <text x="260" y="422" text-anchor="middle" class="small">Full release: hold count becomes 0</text>
+  </g>
+  <g id="subsequent-acquisition">
+    <rect x="750" y="353" width="400" height="95" rx="12" fill="#ecf8f1" stroke="#36835d" stroke-width="2"/>
+    <text x="950" y="388" text-anchor="middle" class="code">L.lock();</text>
+    <text x="950" y="422" text-anchor="middle" class="small">Returns after B acquires L</text>
+  </g>
+
+  <!-- Arrow shafts end beneath separate triangular heads; tips remain outside panel borders. -->
+  <g id="writer-program-order">
+    <path id="writer-order-connector" d="M260 277 V336" fill="none" stroke="#3776b8" stroke-width="3"/>
+    <path d="M252 334 L260 350 L268 334 Z" fill="#3776b8"/>
+    <text x="285" y="319" class="small">A's program order</text>
+  </g>
+  <g id="release-acquire-edge">
+    <path id="happens-before-connector" d="M472 400 H733" fill="none" stroke="#7645a8" stroke-width="3"/>
+    <path d="M731 392 L747 400 L731 408 Z" fill="#7645a8"/>
+    <text x="610" y="374" text-anchor="middle" class="edge">happens-before</text>
+    <text x="610" y="434" text-anchor="middle" class="small">same lock L</text>
+  </g>
+  <g id="reader-program-order">
+    <path id="reader-order-connector" d="M950 450 V493" fill="none" stroke="#36835d" stroke-width="3"/>
+    <path d="M942 491 L950 507 L958 491 Z" fill="#36835d"/>
+    <text x="725" y="486" class="small">B's program order</text>
+  </g>
+
+  <!-- Result and explanation tie the three arrows into a guarantee for the ordinary field. -->
+  <g id="ordinary-read">
+    <rect x="750" y="510" width="400" height="95" rx="12" fill="#ecf8f1" stroke="#36835d" stroke-width="2"/>
+    <text x="950" y="545" text-anchor="middle" class="code">read value → 42</text>
+    <text x="950" y="579" text-anchor="middle" class="small">B still owns L during this read</text>
+  </g>
+  <g id="chain-result">
+    <rect x="50" y="510" width="600" height="95" rx="12" fill="#f5f0fc"/>
+    <text x="350" y="545" text-anchor="middle" class="heading">A's write happens-before B's read</text>
+    <text x="350" y="579" text-anchor="middle" class="body">The ordering carries through all three arrows.</text>
+  </g>
+  <text x="600" y="647" text-anchor="middle" class="small">value need not be volatile when every access follows this locking rule.</text>
+</svg>
