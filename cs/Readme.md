@@ -11,6 +11,7 @@ Every card lives in its own folder as `Readme.md`, with its diagrams in a siblin
  * [Data structures. Ring buffer](./Data%20structures.%20Ring%20buffer/Readme.md) - fixed-array slot reuse, wraparound, queue operations, and full/empty handling
  * [Data structures. Trie](./Data%20structures.%20Trie/Readme.md) - what a trie is, word endings and prefix lookup, time and space complexity, and practical uses
  * [Multiversion concurrency control](./Multiversion%20concurrency%20control/Readme.md) - how one row becomes a chain of versions, how a snapshot picks the version a reader sees, where engines keep the old ones, and why write skew survives
+ * [Non-functional requirements and how to test them](./Non-functional%20requirements%20and%20how%20to%20test%20them/Readme.md) - functional versus quality requirements, measurable targets, testing methods, and production examples
  * [p50 vs p95](./p50%20vs%20p95/Readme.md) - typical and slow-tail request latency, percentile cutoffs, and automatic measurement with k6 and Prometheus
  * [Protocols. FTP](./Protocols.%20FTP/Readme.md) - separate control and data connections, active/passive modes, and encryption
  * [Protocols. HTTP](./Protocols.%20HTTP/Readme.md) - requests, responses, status codes, statelessness, HTTPS, and protocol versions
