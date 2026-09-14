@@ -4,8 +4,6 @@
 ## Introduction
 This chapter focuses on designing a highly scalable **metrics monitoring and alerting system**, which is critical for ensuring high availability and reliability.
 
----
-
 ## Step 1: Understand the Problem and Establish Design Scope
 A metrics monitoring system can mean many different things - e.g., you don't want to design a log-aggregation system when the interviewer is interested in infrastructure metrics only.
 
@@ -49,8 +47,6 @@ A variety of metrics can be monitored:
 What requirements are out of scope?
  - **Log monitoring**: the ELK stack is very popular for this use-case
  - **Distributed system tracing**: this refers to collecting data about a request lifecycle as it flows through multiple services within the system
-
----
 
 ## Step 2: Propose High-Level Design and Get Buy-In
 
@@ -163,8 +159,6 @@ It is critical, however, to keep the cardinality of labels low - i.e., not use t
  - **Alerting system**: Sends alert notifications to various alerting destinations.
  - **Visualization system**: Shows metrics in the form of graphs/charts.
 
----
-
 ## Step 3: Design Deep Dive
 Let's deep dive into several of the more interesting parts of the system.
 
@@ -175,7 +169,11 @@ For metrics collection, occasional data loss is not critical. It's acceptable fo
     <img src="./images/metrics-collection.svg" alt="metrics-collection" width="1000" />
 </div>
 
-There are two ways to implement metrics collection - pull or push.
+There are two ways to implement metrics collection:
+* pull
+* push
+
+#### **Pull model**
 
 Here's how the pull model might look like:
 
@@ -198,10 +196,9 @@ Here's a detailed explanation of the metrics collection flow:
     <img src="./images/metrics-collection-flow.svg" alt="metrics-collection-flow" width="1000" />
 </div>
 
- - Metrics collector fetches configuration metadata from service discovery. This includes pulling interval, IP addresses, timeout & retry params.
- - The metrics collector pulls metrics data via a predefined HTTP endpoint (e.g., `/metrics`). This is typically done by a client library.
- - Alternatively, the metrics collector can register a change event notification with the service discovery to be notified once the service endpoint changes.
- - Another option is for the metrics collector to periodically poll for metrics endpoint configuration changes.
+1. The metrics collector fetches configuration metadata of service endpoints from Service Discovery. Metadata include pulling interval, IP addresses, timeout and retries parameters, etc.
+2. The metrics collector pulls metrics data via a pre-defined HTTP endpoint (for example, `/metrics`). To expose the endpoint, a client library usually needs to be added to the service. In the image above, the service is Web Servers.
+3. Optionally, the metrics collector registers a change event notification with Service Discovery to receive an update whenever the service endpoints change. Alternatively, the metrics collector can poll for endpoint changes periodically.
 
 At our scale, a single metrics collector is not enough. There must be multiple instances.
 However, there must also be some kind of synchronization among them so that two collectors don't collect the same metrics twice.
@@ -211,6 +208,8 @@ One solution for this is to position collectors and servers on a consistent hash
 <div style="margin-left:3rem">
     <img src="./images/consistent-hash-ring.svg" alt="consistent-hash-ring" width="1000" />
 </div>
+
+#### **Push model**
 
 With the push model, on the other hand, services push their metrics to the metrics collector proactively:
 
@@ -229,6 +228,8 @@ With this model, we can potentially aggregate metrics before sending them to the
 
 On the flip side, metrics collector can reject push requests as it can't handle the load.
 It is important, hence, to add the collector to an auto-scaling group behind a load balancer.
+
+#### **Pull or push?**
 
 So which one is better? There are trade-offs between both approaches, and different systems use different approaches:
  - Prometheus uses a pull architecture
@@ -414,8 +415,6 @@ The visualization system shows metrics and alerts over a time period. Here's a d
 </div>
 
 A high-quality visualization system is very hard to build. It is hard to justify not using an off-the-shelf solution like Grafana.
-
----
 
 ## Step 4: Wrap up
 Here's our final design:
