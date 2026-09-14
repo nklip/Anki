@@ -98,20 +98,20 @@ Cancel reverses this transfer's effect, not the entire account history. For exam
 
 ## Durable progress makes coordinator recovery possible
 
-Chapter 27 places a **Phase Status Table** beside each partition's balance table. The diagram's wallet services coordinate transfers; its partition directory, labeled ZooKeeper, tells them where data lives. That routing choice is part of the chapter's architecture, not a requirement of TCC.
+Chapter 27 places a **Phase Status Table** beside each partition's balance table. The diagram's wallet services coordinate transfers. The cylinder labeled `Partition Info`, with the caption `ZooKeeper` beneath it, is the partition directory that tells them where data lives. That routing choice is part of the chapter's architecture, not a requirement of TCC.
 
 ![phase-status-tables.svg](images/phase-status-tables.svg)
 
-Two kinds of durable information serve different purposes:
+For this wallet, a **branch** is one participant's part of `tr-42`. Two kinds of durable information serve different purposes:
 
 | Record | What it needs to establish |
 | --- | --- |
 | Coordinator progress | Transfer ID and contents, participants, Try results, the chosen second phase, and which participants still need completion. |
 | Participant progress | This branch's reservation, whether it was confirmed or canceled, and the result needed to recognize repeated requests. |
 
-For this wallet, a **branch** is one participant's part of `tr-42`. Persist its state change together with its balance mutation. Otherwise a crash could leave a debit without the reservation needed to release it, or a confirmation record without the credit it claims to represent.
+Persist each branch's state change together with its balance mutation. Otherwise a crash could leave a debit without the reservation needed to release it, or a confirmation record without the credit it claims to represent.
 
-The coordinator must recover its chosen outcome and unfinished work after a crash. Record the decision before sending second-phase requests. A replacement worker resumes that decision; it must not independently choose the opposite outcome. Sending a request and receiving its successful result are separate progress states.
+The coordinator must recover its chosen outcome and unfinished work after a crash. Record the decision before sending second-phase requests. If it sends first and crashes before recording, participants may already have acted while the replacement worker has no durable decision to recover. Recording first lets the replacement worker resume the chosen decision; it must not independently choose the opposite outcome. Sending a request and receiving its successful result are separate progress states.
 
 Persisting tables alone does not perform recovery. The application needs workers that revisit unfinished transfers and surface cases they cannot resolve.
 
@@ -135,7 +135,7 @@ An **empty rollback** is Cancel with no successful Try to undo. It must not refu
 
 Record cancellation for the branch even when no reservation exists. A later Try checks that durable state and refuses to create the reservation. This prevents the stranded reservation that Seata calls **suspension** or **hanging**.
 
-For our sender branch, a conceptual state table makes the required behavior explicit. A **terminal state** is a completed outcome, here `CONFIRMED` or `CANCELED`. These state names are illustrative.
+The diagram shows reversed arrivals at C, whose Try has no balance effect. To make the reservation effects concrete, the table below applies the same ordering rule to **A's branch**, whose Try reserves the dollar when it succeeds. A **terminal state** is a completed outcome, here `CONFIRMED` or `CANCELED`. These state names are illustrative.
 
 | Stored state | Incoming operation | Business effect |
 | --- | --- | --- |
@@ -161,7 +161,7 @@ Thus, TCC aims for all-confirmed or all-canceled completion through reservations
 
 ## How TCC differs from database 2PC and Saga
 
-The table and subsections below compare TCC with database 2PC and Saga, explain balance reservation support in Oracle Database and PostgreSQL, and identify when TCC fits.
+The table and subsections below compare TCC with database 2PC and Saga, explain balance reservation support in Oracle Database and PostgreSQL, and identify when TCC fits. For full walkthroughs of the other protocols, see [Transactions. Two-phase commit](../Transactions.%20Two-phase%20commit/Readme.md) and [Transactions. Saga](../Transactions.%20Saga/Readme.md).
 
 | Approach | What exists before the final outcome? | How completion works |
 | --- | --- | --- |
@@ -211,7 +211,7 @@ For a transfer across independently committing services, the wallet design in th
 
 Oracle AI Database 26ai also provides a database Saga framework, including the `DBMS_SAGA` interface. When used with that framework, reservable-column journals can survive local commits and support automatic compensation of those updates if the Saga is canceled. This support covers eligible database changes; external purchases still require their own compensation logic.
 
-For TCC coordination, **Oracle MicroTx** is a separate product that calls participants' reservation, confirmation, and cancellation endpoints. The participating services still supply the business behavior. Distinguish this coordinator from Oracle Database's local transactions, reservable columns, and Saga support.
+For TCC coordination, **Oracle MicroTx** is a separate product. In its documented flow, the **transaction initiator** — the service that starts the transfer, not MicroTx — calls participants' `POST` endpoints to create reservations. Participants return reservation URIs (Uniform Resource Identifiers), which MicroTx client libraries propagate in headers up the call stack. After the initiator requests confirmation or cancellation from MicroTx, MicroTx calls `PUT` to confirm or `DELETE` to cancel on the reservation URIs the participants returned. The participating services implement the business behavior of all three operations. Distinguish this coordinator from Oracle Database's local transactions, reservable columns, and Saga support.
 
 ### When TCC fits
 
@@ -229,6 +229,8 @@ TCC fits operations with meaningful reservations, such as funds, seats, or inven
 8. What is the failure called when one participant confirms but another expires its reservation and cancels?
 9. Why is checking hotel availability during Try insufficient when the hotel cannot hold a room?
 10. How does the term distributed transaction differ from two-phase commit?
+11. Why must the coordinator record its chosen second phase before sending Confirm or Cancel requests?
+12. Why does an Oracle `RESERVABLE` column alone not implement the TCC hold used in this wallet?
 
 <details>
 <summary>Check your answers</summary>
@@ -243,6 +245,8 @@ TCC fits operations with meaningful reservations, such as funds, seats, or inven
 8. A heuristic mixed outcome: part confirmed, part canceled, violating the intended all-or-nothing outcome across participants. Jakarta Transactions uses `HeuristicMixedException` for the analogous committed/rolled-back split.
 9. Another customer can buy the last room before Confirm. A local pending record does not reserve the external hotel's inventory, so Try has not secured completion.
 10. Distributed transaction describes work spanning independent transactional resources; 2PC is one protocol for coordinating their commit-or-rollback outcome.
+11. Sending first and crashing before recording leaves the replacement worker without a durable decision, even though participants may already have acted. Recording first ensures the worker knows which second phase to finish after a crash.
+12. In an ordinary database transaction, the native reservation becomes a balance update at commit or is discarded at rollback. The wallet's TCC hold must survive Try's local commit as durable business state, with later Confirm and Cancel handlers; that application design can use either Oracle Database or PostgreSQL.
 
 </details>
 
@@ -250,7 +254,7 @@ TCC fits operations with meaningful reservations, such as funds, seats, or inven
 
 Primary sources checked on 2026-09-14. Transfer `tr-42`, the state table, the explicit pending-dollar interpretation, and the seat/hotel comparison are teaching examples derived from the reservation and recovery rules below.
 
-- [System Design — chapter 27, Digital Wallet](../../system%20design/27.%20Digital%20Wallet/Readme.md). Diagram provenance: [Try](../../system%20design/27.%20Digital%20Wallet/images/tcc-try-phase.svg), [Confirm](../../system%20design/27.%20Digital%20Wallet/images/tcc-confirm-phase.svg), [Cancel](../../system%20design/27.%20Digital%20Wallet/images/tcc-cancel-phase.svg), [phase-status tables](../../system%20design/27.%20Digital%20Wallet/images/phase-status-tables.svg), and [out-of-order execution](../../system%20design/27.%20Digital%20Wallet/images/out-of-order-execution.svg). Local copies preserve the chapter's flows and simplify the ordering caption. They also fix two errors: Confirm's `unlock A` label belongs to C and must read `unlock C`; Cancel's `lock C` label belongs to A and must read `lock A`. The linked chapter originals still contain these errors.
+- [System Design — chapter 27, Digital Wallet](../../system%20design/27.%20Digital%20Wallet/Readme.md). Diagram provenance: [Try](../../system%20design/27.%20Digital%20Wallet/images/tcc-try-phase.svg), [Confirm](../../system%20design/27.%20Digital%20Wallet/images/tcc-confirm-phase.svg), [Cancel](../../system%20design/27.%20Digital%20Wallet/images/tcc-cancel-phase.svg), [phase-status tables](../../system%20design/27.%20Digital%20Wallet/images/phase-status-tables.svg), and [out-of-order execution](../../system%20design/27.%20Digital%20Wallet/images/out-of-order-execution.svg). Local copies preserve the chapter's flows and simplify the ordering caption. They also fix two errors: Confirm's `unlock A` label belongs to C and must read `unlock C`; Cancel's `lock C` label belongs to A and must read `lock A`. The phase-status diagram also corrects the caption from `Zookeeper` to `ZooKeeper`. The linked chapter originals still contain these errors.
 - [Chapter 27 — two-phase commit timeline](../../system%20design/27.%20Digital%20Wallet/images/2pc-protocol.svg). The new lock comparison adapts this timeline and the chapter's Confirm timeline, places each 2PC unlock before its commit acknowledgement, and adds a separate TCC reservation span.
 - [Apache Seata — TCC mode: service-level operations and reservation semantics](https://seata.apache.org/docs/user/mode/tcc/)
 - [Apache Seata — Saga mode: local commits and compensating actions](https://seata.apache.org/docs/user/mode/saga/)
