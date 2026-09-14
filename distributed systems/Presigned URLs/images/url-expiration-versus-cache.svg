@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="616" viewBox="0 0 1200 616" role="img" aria-labelledby="title desc">
+<title id="title">URL expiration and cache freshness are separate</title>
+<desc id="desc">A CloudFront URL expires at 12:05 while a cached file stays fresh until 13:00. At 12:04 a valid request can use the cache. At 12:06 the old URL is rejected even if the copy is cached. At 12:07 a newly authorized URL can reuse that copy. Expiration does not erase downloaded bytes.</desc>
+<!-- Shared typography: blue for S3, purple for CloudFront, red for denial. -->
+<defs><style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #172033; }
+.title { font-size: 30px; font-weight: 700; }
+.section { font-size: 26px; font-weight: 700; }
+.label { font-size: 24px; font-weight: 700; }
+.body { font-size: 21px; }
+.note { font-size: 21px; fill: #475569; }
+.route { font-size: 20px; font-weight: 700; fill: #0369a1; }
+</style></defs>
+<!-- Canvas and introductory lesson. -->
+<rect width="1200" height="616" fill="#fff"/>
+<text class="title" x="28" y="44" text-anchor="start">URL expiration and cache freshness are separate</text>
+<text class="note" x="28" y="80" text-anchor="start">Example: one protected CloudFront file, with a fresh copy already in the edge cache.</text>
+<!-- url-deadline: keep labels padded inside the node. -->
+<g id="url-deadline"><rect x="28" y="112" width="558" height="102" rx="14" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+<text class="label" x="48" y="147" text-anchor="start">Viewer’s URL expires at 12:05</text>
+<text class="body" x="48" y="181" text-anchor="start">This deadline controls new requests.</text></g>
+<!-- cache-deadline: keep labels padded inside the node. -->
+<g id="cache-deadline"><rect x="614" y="112" width="558" height="102" rx="14" fill="#f0f9ff" stroke="#0284c7" stroke-width="2"/>
+<text class="label" x="634" y="147" text-anchor="start">Cached copy is fresh until 13:00</text>
+<text class="body" x="634" y="181" text-anchor="start">Assume it remains in the cache.</text></g>
+<!-- before-expiration: keep labels padded inside the node. -->
+<g id="before-expiration"><rect x="28" y="252" width="558" height="156" rx="14" fill="#f0fdf4" stroke="#15803d" stroke-width="2"/>
+<text class="label" x="48" y="287" text-anchor="start">12:04 · request with the original URL</text>
+<text class="body" x="48" y="321" text-anchor="start">URL is valid → CloudFront checks its cache.</text>
+<text class="body" x="48" y="349" text-anchor="start">It can serve the cached copy.</text>
+<text class="body" x="48" y="377" text-anchor="start">No origin request is needed.</text></g>
+<!-- after-expiration: keep labels padded inside the node. -->
+<g id="after-expiration"><rect x="614" y="252" width="558" height="156" rx="14" fill="#fff1f2" stroke="#be123c" stroke-width="2"/>
+<text class="label" x="634" y="287" text-anchor="start">12:06 · request with the original URL</text>
+<text class="body" x="634" y="321" text-anchor="start">URL is expired → CloudFront rejects access.</text>
+<text class="body" x="634" y="349" text-anchor="start">The file may still be cached.</text>
+<text class="body" x="634" y="377" text-anchor="start">Cached bytes do not extend permission.</text></g>
+<!-- renewal: keep labels padded inside the node. -->
+<g id="renewal"><rect x="28" y="446" width="1144" height="100" rx="14" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+<text class="label" x="48" y="481" text-anchor="start">12:07 · request with a newly authorized URL</text>
+<text class="body" x="48" y="515" text-anchor="start">If the backend grants access again, the new URL can use the same cached file.</text></g>
+<text class="note" x="28" y="588" text-anchor="start">Expiry does not erase files already downloaded, and a download begun before expiry may finish afterward.</text>
+</svg>

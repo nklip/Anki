@@ -9,6 +9,7 @@ Each topic has its own folder, with diagrams in its `images/` directory.
  * [Apache Kafka](./Apache%20Kafka/Readme.md) — partitioned logs, consumer groups, delivery guarantees, durability, deployments, and event-driven patterns.
  * [Apache Spark](./Apache%20Spark/Readme.md) — parallel execution, query planning, shuffles, recovery, streaming, real users, and practical benefits.
  * [Patterns. Fanout](./Patterns.%20Fanout/Readme.md) — message and request fanout, feed-generation strategies, capacity, and failure handling.
+ * [Presigned URLs](./Presigned%20URLs/Readme.md) — S3 versus CloudFront signatures, private origins, cache behavior, expiration, uploads, and revocation.
  * [Redis](./Redis/Readme.md) — internals, deployments, common patterns, and CDN data placement.
  * [Sticky Sessions](./Sticky%20Sessions/Readme.md) — pinning mechanisms, their costs, and the stateless alternative.
  * [Transactions. Saga](./Transactions.%20Saga/Readme.md) — local commits, wallet transfers, compensation, orchestration, choreography, and failure recovery.

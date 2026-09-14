@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="926" viewBox="0 0 1200 926" role="img" aria-labelledby="title desc">
+<title id="title">S3 presigned URL: the backend creates it</title>
+<desc id="desc">Read top to bottom. The client asks the backend for a download URL. The backend checks course access, then its SDK locally signs an S3 GET request with AWS role credentials. It returns the URL to the client. The client sends the GET directly to S3. S3 verifies the signature, expiration and AWS permissions before returning bytes directly to the client. Obtaining credentials and failure paths are omitted.</desc>
+<!-- Palette and typography match the article's other diagrams. -->
+<defs><style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #172033; }
+.title { font-size: 30px; font-weight: 700; }
+.label { font-size: 23px; font-weight: 700; }
+.body { font-size: 21px; }
+.small { font-size: 19px; }
+.note { font-size: 20px; fill: #475569; }
+</style></defs>
+<!-- White canvas; chronological reading direction is explicit. -->
+<rect width="1200" height="926" fill="#fff"/>
+<text class="title" x="28" y="44" text-anchor="start">S3 presigned URL: the backend creates it</text>
+<text class="note" x="28" y="79" text-anchor="start">Successful GET download · time flows downward · signing material is already available</text>
+<text class="small" x="28" y="111" text-anchor="start">Solid arrows: requests   ·   Dashed arrows: responses   ·   Boxes on a lifeline: local work</text>
+<!-- Lifelines are painted first. Notes and message labels mask them where needed.
+     A request crossing an intermediate timeline is not a message to that actor. -->
+<path id="client-lifeline" d="M150 215V767" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 7" fill="none"/>
+<path id="backend-lifeline" d="M585 215V539" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 7" fill="none"/>
+<path id="s3-lifeline" d="M1030 215V767" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 7" fill="none"/>
+<!-- Actor headers remain aligned on the same baseline. -->
+<!-- client-actor: a filled local-work box masks its own lifeline. -->
+<g id="client-actor"><rect x="32.5" y="137" width="235" height="78" rx="12" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+<text class="label" x="150.0" y="168" text-anchor="middle">Client</text>
+<text class="small" x="150.0" y="196" text-anchor="middle">Browser or app</text></g>
+<!-- backend-actor: a filled local-work box masks its own lifeline. -->
+<g id="backend-actor"><rect x="430.0" y="137" width="310" height="78" rx="12" fill="#f0f9ff" stroke="#0284c7" stroke-width="2"/>
+<text class="label" x="585.0" y="168" text-anchor="middle">Your backend</text>
+<text class="small" x="585.0" y="196" text-anchor="middle">Application code + SDK</text></g>
+<!-- s3-actor: a filled local-work box masks its own lifeline. -->
+<g id="s3-actor"><rect x="890.0" y="137" width="280" height="78" rx="12" fill="#f0f9ff" stroke="#0284c7" stroke-width="2"/>
+<text class="label" x="1030.0" y="168" text-anchor="middle">Amazon S3</text>
+<text class="small" x="1030.0" y="196" text-anchor="middle">Private object storage</text></g>
+<!-- ask-backend: tips stop clear of the destination lifeline; the shaft ends inside its head.
+     The white label plate hides any intermediate lifeline behind text, never the message arrow. -->
+<g id="ask-backend">
+<rect x="220.5" y="223" width="294" height="31" rx="4" fill="#fff"/>
+<text class="body" x="367.5" y="245" text-anchor="middle">Ask for a download URL</text>
+<path id="ask-backend-shaft" data-connector="true" d="M155 265H570" fill="none" stroke="#0369a1" stroke-width="3"/>
+<polygon id="ask-backend-head" points="580,265 566,257 566,273" fill="#0369a1"/>
+</g>
+<!-- backend-authorizes: a filled local-work box masks its own lifeline. -->
+<g id="backend-authorizes"><rect x="415" y="288" width="340" height="68" rx="12" fill="#f0f9ff" stroke="#0284c7" stroke-width="2"/>
+<text class="label" x="585.0" y="316" text-anchor="middle">Check user’s permission</text>
+<text class="small" x="585.0" y="341" text-anchor="middle">Course access is allowed</text></g>
+<!-- backend-presigns: a filled local-work box masks its own lifeline. -->
+<g id="backend-presigns"><rect x="385" y="377" width="400" height="101" rx="12" fill="#f0f9ff" stroke="#0284c7" stroke-width="2"/>
+<text class="label" x="585.0" y="407" text-anchor="middle">Create the URL locally</text>
+<text class="body" x="585.0" y="437" text-anchor="middle">SDK signs GET + object + expiry</text>
+<text class="body" x="585.0" y="463" text-anchor="middle">using AWS role credentials</text></g>
+<!-- return-presigned-url: tips stop clear of the destination lifeline; the shaft ends inside its head.
+     The white label plate hides any intermediate lifeline behind text, never the message arrow. -->
+<g id="return-presigned-url">
+<rect x="205.0" y="485" width="325" height="31" rx="4" fill="#fff"/>
+<text class="body" x="367.5" y="507" text-anchor="middle">Return the S3 presigned URL</text>
+<path id="return-presigned-url-shaft" data-connector="true" d="M580 527H165" fill="none" stroke="#0369a1" stroke-width="3" stroke-dasharray="8 6" stroke-dashoffset="9"/>
+<!-- A solid terminal segment keeps the dashed shaft joined beneath its arrowhead. -->
+<path id="return-presigned-url-head-join" data-connector="true" d="M183 527H165" fill="none" stroke="#0369a1" stroke-width="3"/>
+<polygon id="return-presigned-url-head" points="155,527 169,519 169,535" fill="#0369a1"/>
+</g>
+<!-- download-from-s3: tips stop clear of the destination lifeline; the shaft ends inside its head.
+     The white label plate hides any intermediate lifeline behind text, never the message arrow. -->
+<g id="download-from-s3">
+<rect x="422.5" y="555" width="335" height="31" rx="4" fill="#fff"/>
+<text class="body" x="590.0" y="577" text-anchor="middle">GET object using the S3 URL</text>
+<path id="download-from-s3-shaft" data-connector="true" d="M155 597H1015" fill="none" stroke="#0369a1" stroke-width="3"/>
+<polygon id="download-from-s3-head" points="1025,597 1011,589 1011,605" fill="#0369a1"/>
+</g>
+<!-- s3-validates: a filled local-work box masks its own lifeline. -->
+<g id="s3-validates"><rect x="864" y="620" width="326" height="89" rx="12" fill="#f0f9ff" stroke="#0284c7" stroke-width="2"/>
+<text class="label" x="1027.0" y="649" text-anchor="middle">Validate the request</text>
+<text class="body" x="1027.0" y="675" text-anchor="middle">Signature + expiry</text>
+<text class="body" x="1027.0" y="699" text-anchor="middle">Signer’s AWS permissions</text></g>
+<!-- s3-returns-bytes: tips stop clear of the destination lifeline; the shaft ends inside its head.
+     The white label plate hides any intermediate lifeline behind text, never the message arrow. -->
+<g id="s3-returns-bytes">
+<rect x="467.5" y="713" width="245" height="31" rx="4" fill="#fff"/>
+<text class="body" x="590.0" y="735" text-anchor="middle">200 OK + file bytes</text>
+<path id="s3-returns-bytes-shaft" data-connector="true" d="M1025 755H165" fill="none" stroke="#15803d" stroke-width="3" stroke-dasharray="8 6" stroke-dashoffset="12"/>
+<!-- A solid terminal segment keeps the dashed shaft joined beneath its arrowhead. -->
+<path id="s3-returns-bytes-head-join" data-connector="true" d="M183 755H165" fill="none" stroke="#15803d" stroke-width="3"/>
+<polygon id="s3-returns-bytes-head" points="155,755 169,747 169,763" fill="#15803d"/>
+</g>
+<!-- Teaching takeaway and abbreviation key; outside every lifeline. -->
+<!-- takeaway: a filled local-work box masks its own lifeline. -->
+<g id="takeaway"><rect x="28" y="796" width="1144" height="73" rx="12" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+<text class="label" x="600.0" y="825" text-anchor="middle">The backend creates the URL. S3 validates it and returns the file.</text>
+<text class="note" x="600.0" y="852" text-anchor="middle">The signing operation uses credentials already available to the backend.</text></g>
+<text class="note" x="28" y="902" text-anchor="start">SDK = software development kit. AWS = Amazon Web Services. GET requests a download.</text>
+</svg>

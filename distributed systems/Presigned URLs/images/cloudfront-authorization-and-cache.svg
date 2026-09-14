@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="784" viewBox="0 0 1200 784" role="img" aria-labelledby="title desc">
+<title id="title">CloudFront checks access before using its cache</title>
+<desc id="desc">A client sends a signed URL to a protected CloudFront path. Invalid signatures or expired policies are rejected. Valid requests reach the cache lookup. A hit returns a file without contacting S3. On a miss, CloudFront origin access control signs a separate SigV4 request to the private S3 origin. Its response returns through CloudFront.</desc>
+<!-- Shared typography: blue for S3, purple for CloudFront, red for denial. -->
+<defs><style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #172033; }
+.title { font-size: 30px; font-weight: 700; }
+.section { font-size: 26px; font-weight: 700; }
+.label { font-size: 24px; font-weight: 700; }
+.body { font-size: 21px; }
+.note { font-size: 21px; fill: #475569; }
+.route { font-size: 20px; font-weight: 700; fill: #0369a1; }
+</style></defs>
+<!-- Canvas and introductory lesson. -->
+<rect width="1200" height="784" fill="#fff"/>
+<text class="title" x="28" y="44" text-anchor="start">CloudFront checks access before using its cache</text>
+<text class="note" x="28" y="80" text-anchor="start">Assumption: this path requires a signed URL; the origin is a private S3 bucket.</text>
+<!-- viewer: keep labels padded inside the node. -->
+<g id="viewer"><rect x="36" y="140" width="230" height="124" rx="14" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+<text class="label" x="56" y="175" text-anchor="start">Client</text>
+<text class="body" x="56" y="209" text-anchor="start">Requests file</text>
+<text class="body" x="56" y="237" text-anchor="start">with signed URL</text></g>
+<!-- viewer-validation: keep labels padded inside the node. -->
+<g id="viewer-validation"><rect x="390" y="140" width="390" height="124" rx="14" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+<text class="label" x="410" y="175" text-anchor="start">Viewer authorization</text>
+<text class="body" x="410" y="209" text-anchor="start">Signature + resource + time</text>
+<text class="body" x="410" y="237" text-anchor="start">Use the trusted public key</text></g>
+<!-- denied: keep labels padded inside the node. -->
+<g id="denied"><rect x="932" y="140" width="232" height="124" rx="14" fill="#fff1f2" stroke="#be123c" stroke-width="2"/>
+<text class="label" x="952" y="175" text-anchor="start">Reject</text>
+<text class="body" x="952" y="209" text-anchor="start">Invalid or expired</text>
+<text class="body" x="952" y="237" text-anchor="start">No file is served</text></g>
+<!-- viewer-request: head is clear of node strokes; shaft joins under the head base. -->
+<g id="viewer-request"><path data-connector="true" d="M272 202H374" fill="none" stroke="#0369a1" stroke-width="3"/><polygon points="384,202 372,195 372,209" fill="#0369a1"/></g>
+<text class="route" x="328" y="181" text-anchor="middle">URL</text>
+<!-- invalid-request: head is clear of node strokes; shaft joins under the head base. -->
+<g id="invalid-request"><path data-connector="true" d="M786 202H916" fill="none" stroke="#be123c" stroke-width="3"/><polygon points="926,202 914,195 914,209" fill="#be123c"/></g>
+<text class="route" x="856" y="181" text-anchor="middle">Invalid</text>
+<!-- cache-lookup: keep labels padded inside the node. -->
+<g id="cache-lookup"><rect x="390" y="345" width="390" height="124" rx="14" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+<text class="label" x="410" y="380" text-anchor="start">Cache lookup</text>
+<text class="body" x="410" y="414" text-anchor="start">Is a fresh, reusable copy</text>
+<text class="body" x="410" y="442" text-anchor="start">available at the edge?</text></g>
+<!-- valid-request: head is clear of node strokes; shaft joins under the head base. -->
+<g id="valid-request"><path data-connector="true" d="M585 270V329" fill="none" stroke="#0369a1" stroke-width="3"/><polygon points="585,339 578,327 592,327" fill="#0369a1"/></g>
+<text class="route" x="608" y="309" text-anchor="start">Valid</text>
+<!-- cache-hit: keep labels padded inside the node. -->
+<g id="cache-hit"><rect x="36" y="345" width="230" height="124" rx="14" fill="#f0fdf4" stroke="#15803d" stroke-width="2"/>
+<text class="label" x="56" y="380" text-anchor="start">Return file</text>
+<text class="body" x="56" y="414" text-anchor="start">Send to the client</text>
+<text class="body" x="56" y="442" text-anchor="start">No S3 request</text></g>
+<!-- hit-response: head is clear of node strokes; shaft joins under the head base. -->
+<g id="hit-response"><path data-connector="true" d="M384 407H282" fill="none" stroke="#15803d" stroke-width="3"/><polygon points="272,407 284,400 284,414" fill="#15803d"/></g>
+<text class="route" x="328" y="386" text-anchor="middle">Hit</text>
+<!-- origin-authorization: keep labels padded inside the node. -->
+<g id="origin-authorization"><rect x="390" y="550" width="390" height="124" rx="14" fill="#f0f9ff" stroke="#0284c7" stroke-width="2"/>
+<text class="label" x="410" y="585" text-anchor="start">Origin access control (OAC)</text>
+<text class="body" x="410" y="619" text-anchor="start">CloudFront signs a separate</text>
+<text class="body" x="410" y="647" text-anchor="start">request to S3 using SigV4</text></g>
+<!-- cache-miss: head is clear of node strokes; shaft joins under the head base. -->
+<g id="cache-miss"><path data-connector="true" d="M585 475V534" fill="none" stroke="#0369a1" stroke-width="3"/><polygon points="585,544 578,532 592,532" fill="#0369a1"/></g>
+<text class="route" x="608" y="514" text-anchor="start">Miss</text>
+<!-- private-origin: keep labels padded inside the node. -->
+<g id="private-origin"><rect x="932" y="550" width="232" height="124" rx="14" fill="#f0f9ff" stroke="#0284c7" stroke-width="2"/>
+<text class="label" x="952" y="585" text-anchor="start">Private S3</text>
+<text class="body" x="952" y="619" text-anchor="start">Allows this</text>
+<text class="body" x="952" y="647" text-anchor="start">distribution</text></g>
+<!-- origin-fetch: head is clear of node strokes; shaft joins under the head base. -->
+<g id="origin-fetch"><path data-connector="true" d="M786 612H916" fill="none" stroke="#0369a1" stroke-width="3"/><polygon points="926,612 914,605 914,619" fill="#0369a1"/></g>
+<text class="route" x="856" y="591" text-anchor="middle">Fetch</text>
+<text class="note" x="28" y="720" text-anchor="start">The S3 response returns through CloudFront and can be cached. The client’s signature is for CloudFront.</text>
+<text class="note" x="28" y="754" text-anchor="start">SigV4 = AWS Signature Version 4. OAC authenticates CloudFront to S3; it does not authorize the viewer.</text>
+</svg>
