@@ -7,9 +7,10 @@
 
   <!-- Reusable infrastructure symbols keep the large architecture repairable. -->
   <defs>
-    <marker id="arrow-blue" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto"
+    <!-- Match retrieval arrows: the nose projects 2.5 units past each compensated shaft endpoint. -->
+    <marker id="arrow-blue" markerWidth="17" markerHeight="17" viewBox="0 0 17 17" refX="14.5" refY="8.5" orient="auto"
       markerUnits="userSpaceOnUse">
-      <path d="M0 0 L12 6 L0 12 Z" fill="#1677b8" />
+      <path d="M0 0 L17 8.5 L0 17 L5 8.5 Z" fill="#2a6999" />
     </marker>
     <symbol id="dns-globe" viewBox="0 0 100 100">
       <circle cx="50" cy="50" r="43" fill="#fff" stroke="#555" stroke-width="5" />
@@ -106,10 +107,8 @@
 
       .flow {
         fill: none;
-        stroke: #1677b8;
-        stroke-width: 3;
-        stroke-linecap: round;
-        stroke-linejoin: round;
+        stroke: #2a6999;
+        stroke-width: 2.5;
         marker-end: url(#arrow-blue);
       }
 
@@ -140,14 +139,14 @@
   <!-- User request entry. -->
   <g id="entry">
     <use href="#dns-globe" x="93" y="34" width="100" height="100" />
-    <path class="flow" d="M322 84 H193" />
+    <path class="flow" d="M320.5 84 H191" />
     <rect class="cyan-node" x="322" y="18" width="378" height="137" rx="21" />
     <text x="341" y="53" font-family="Arial, Helvetica, sans-serif" font-size="25" fill="#111">User</text>
     <use href="#laptop" x="397" y="48" width="72" height="56" />
-    <text class="label" x="433" y="125">Web browser</text>
+    <text class="label" x="433" y="135">Web browser</text>
     <use href="#phone" x="575" y="38" width="45" height="75" />
-    <text class="label" x="597.5" y="125">Mobile app</text>
-    <path class="flow" d="M511 155 V278" />
+    <text class="label" x="597.5" y="135">Mobile app</text>
+    <path class="flow" d="M511 156.5 V278.288" />
     <text x="520" y="181" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#111">v1/me/feed?</text>
     <text x="541" y="207" font-family="Arial, Helvetica, sans-serif" font-size="20"
       fill="#111">content=Hello&amp;</text>
@@ -155,7 +154,7 @@
       fill="#111">auth_token={auth_token}</text>
     <use href="#load-balancer" x="469" y="278" width="90" height="79" />
     <text x="562" y="325" font-family="Arial, Helvetica, sans-serif" font-size="26" fill="#111">Load balancer</text>
-    <path class="flow" d="M514 357 V403" />
+    <path class="flow" d="M514 353.282 V399" />
   </g>
 
   <!-- Authenticated web tier and immediate service calls. -->
@@ -172,27 +171,27 @@
     <text class="label" x="601" y="480" style="font-size:20px;">Authentication</text>
     <text class="label" x="601" y="517" style="font-size:20px;">Rate Limiting</text>
 
-    <path class="flow" d="M303 489 H219" />
+    <path class="flow" d="M301.5 489 H222.4" />
     <rect class="node" x="29" y="442" width="190" height="95" rx="14" />
     <text class="service-label" x="124" y="499">Post Service</text>
 
-    <path class="flow" d="M734 487 H863" />
+    <path class="flow" d="M735.5 487 H859.6" />
     <rect class="node" x="863" y="439" width="191" height="97" rx="14" />
     <text class="service-label" x="958.5" y="481">Notification</text>
     <text class="service-label" x="958.5" y="509">Service</text>
 
-    <path class="flow" d="M514 575 V649" />
+    <path class="flow" d="M514 576.5 V645.6" />
     <rect class="node" x="418" y="649" width="190" height="96" rx="14" />
     <text class="service-label" x="513" y="707">Fanout Service</text>
   </g>
 
   <!-- Post data is written through cache to database. -->
   <g id="post-storage">
-    <path class="flow" d="M124 537 V609" />
+    <path class="flow" d="M124 537.9 V605" />
     <rect class="cyan-node" x="41" y="609" width="168" height="169" rx="24" />
     <use href="#cache-card" x="65" y="620" width="120" height="110" />
     <text class="label" x="125" y="755">Post Cache</text>
-    <path class="flow" d="M125 778 V876" />
+    <path class="flow" d="M125 779.5 V872" />
     <rect class="cyan-node" x="41" y="876" width="168" height="169" rx="24" />
     <use href="#db-cluster" x="65" y="894" width="120" height="100" />
     <text class="label" x="125" y="1021">Post DB</text>
@@ -200,7 +199,7 @@
 
   <!-- Graph and user data reads performed by the fanout service. -->
   <g id="fanout-data">
-    <path class="flow" d="M608 697 H881" />
+    <path class="flow" d="M608.9 697 H877" />
     <circle class="step" cx="658" cy="670" r="15" /><text class="label" x="658" y="678" style="font-size:19px;">1</text>
     <rect x="676" y="654" width="150" height="29" fill="#fff" /><text class="service-label" x="751" y="678"
       style="font-size:21px;">get friend ids</text>
@@ -208,18 +207,18 @@
     <use href="#graph-db" x="906" y="624" width="120" height="120" />
     <text class="label" x="966" y="760">Graph DB</text>
 
-    <path class="flow" d="M608 705 L821 944" />
+    <path class="flow" d="M608.9 705 L817.841 940.447" />
     <circle class="step" cx="658" cy="800" r="15" />
     <text class="label" x="658" y="808" style="font-size:19px;">2</text>
-    <!-- The rotated lookup label stays above, rather than on, the diagonal route. -->
+    <!-- Keep the rotated lookup label clear of the diagonal route and the step-2 badge. -->
     <g transform="rotate(48 730 804)">
       <rect x="637" y="787" width="186" height="31" fill="#fff" />
-      <text class="service-label" x="775" y="860" style="font-size:21px;">get friends data</text>
+      <text class="service-label" x="787" y="860" style="font-size:21px;">get friends data</text>
     </g>
     <rect class="cyan-node" x="821" y="862" width="169" height="169" rx="24" />
     <use href="#cache-card" x="846" y="872" width="120" height="110" />
     <text class="label" x="905.5" y="1008">User Cache</text>
-    <path class="flow" d="M990 946 H1103" />
+    <path class="flow" d="M991.5 946 H1099" />
     <rect class="cyan-node" x="1103" y="862" width="169" height="169" rx="24" />
     <use href="#db-cluster" x="1128" y="879" width="120" height="100" />
     <text class="label" x="1187.5" y="1008">User DB</text>
@@ -227,11 +226,11 @@
 
   <!-- Message queue, workers, and the resulting per-user feed cache. -->
   <g id="fanout-pipeline">
-    <path class="flow" d="M514 745 V831" />
+    <path class="flow" d="M514 745.9 V828.5" />
     <circle class="step" cx="485" cy="793" r="15" /><text class="label" x="485" y="801" style="font-size:19px;">3</text>
     <use href="#message-queue" x="386" y="831" width="264" height="80" />
     <text class="label" x="518" y="944">Message Queue</text>
-    <path class="flow" d="M513 953 V1022" />
+    <path class="flow" d="M513 953 V1018" />
     <circle class="step" cx="483" cy="979" r="15" /><text class="label" x="483" y="987" style="font-size:19px;">4</text>
 
     <rect class="dashed-node" x="416" y="1022" width="194" height="160" rx="23" />
@@ -241,13 +240,13 @@
     <use href="#server-rack" x="481" y="1057" width="40" height="77" />
     <use href="#server-rack" x="521" y="1057" width="40" height="77" />
     <text class="label" x="513" y="1168">Fanout Workers</text>
-    <path class="flow" d="M513 1182 V1259" />
+    <path class="flow" d="M513 1183.5 V1255" />
     <circle class="step" cx="483" cy="1217" r="15" /><text class="label" x="483" y="1225"
       style="font-size:19px;">5</text>
 
     <rect class="cyan-node" x="421" y="1259" width="166" height="166" rx="24" />
     <use href="#cache-card" x="444" y="1268" width="120" height="110" />
-    <text class="label" x="504" y="1389">News Feed</text>
-    <text class="label" x="504" y="1415">Cache</text>
+    <text class="label" x="504" y="1394">News Feed</text>
+    <text class="label" x="504" y="1420">Cache</text>
   </g>
 </svg>

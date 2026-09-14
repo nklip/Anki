@@ -258,5 +258,5 @@ Quality goals can compete: redundancy costs resources, and stronger controls may
 - [Netflix TechBlog — Chaos Engineering Upgraded, September 25, 2015](https://netflixtechblog.com/chaos-engineering-upgraded-878d341f15fa)
 - [Shopify Engineering — Performance Testing At Scale—for BFCM and Beyond, January 27, 2023](https://shopify.engineering/scale-performance-testing)
 - [Cloudflare — Postmortem on the Control Plane and Analytics Outage, November 4, 2023](https://blog.cloudflare.com/post-mortem-on-cloudflare-control-plane-and-analytics-outage/)
-- Diagram icon provenance: editable laptop, server, and database shapes adapted from this repository’s [System Design — Scaling database diagram](../../system%20design/01.%20Scaling/images/database.svg), and the load balancer from [System Design — News feed building](../../system%20design/11.%20News%20Feed%20System/images/news-feed-building.svg).
+- Diagram icon provenance: editable laptop, server, and database shapes adapted from this repository’s [System Design — Scaling database diagram](../../system%20design/01.%20Scaling/images/database.svg), and the load balancer from [System Design — News feed building](../../system%20design/11.%20News%20Feed%20System/images/hld-news-feed-building.svg).
 - [Related CS card — p50 vs p95: percentile intuition and measurement with k6 and Prometheus](../p50%20vs%20p95/Readme.md)

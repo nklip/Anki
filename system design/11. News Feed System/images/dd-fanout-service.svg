@@ -4,8 +4,9 @@
 
   <!-- Reusable arrows, queue, storage, and server symbols. -->
   <defs>
-    <marker id="arrow-blue" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse">
-      <path d="M0 0 L12 6 L0 12 Z" fill="#1677b8"/>
+    <!-- Match retrieval arrows: the nose projects 2.5 units past each compensated shaft endpoint. -->
+    <marker id="arrow-blue" markerWidth="17" markerHeight="17" viewBox="0 0 17 17" refX="14.5" refY="8.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L17 8.5 L0 17 L5 8.5 Z" fill="#2a6999"/>
     </marker>
     <symbol id="cache-card" viewBox="0 0 120 110">
       <rect x="3" y="4" width="58" height="59" rx="8" fill="#1677b8"/><text x="32" y="27" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#fff" text-anchor="middle">CACHE</text>
@@ -33,7 +34,7 @@
       .node { fill: #fff; stroke: #111; stroke-width: 1.8; }
       .cyan-node { fill: #fff; stroke: #08b4cf; stroke-width: 3; }
       .dashed-node { fill: #fff; stroke: #08b4cf; stroke-width: 3; stroke-dasharray: 10 9; }
-      .flow { fill: none; stroke: #1677b8; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow-blue); }
+      .flow { fill: none; stroke: #2a6999; stroke-width: 2.5; marker-end: url(#arrow-blue); }
       .label { font-family: Arial, Helvetica, sans-serif; font-size: 22px; fill: #111; text-anchor: middle; }
       .service-label { font-family: Georgia, 'Times New Roman', serif; font-size: 25px; fill: #111; text-anchor: middle; }
       .step { fill: #fff; stroke: #111; stroke-width: 1.5; }
@@ -47,12 +48,12 @@
     <rect class="node" x="46" y="59" width="200" height="100" rx="15"/>
     <text class="service-label" x="146" y="119">Fanout Service</text>
 
-    <path class="flow" d="M246 109 H531"/>
+    <path class="flow" d="M246.9 109 H527"/>
     <circle class="step" cx="298" cy="82" r="15"/>
     <text class="label" x="298" y="90" style="font-size:19px;">1</text>
     <text class="service-label" x="385" y="90" style="font-size:22px;">get friend ids</text>
 
-    <path class="flow" d="M246 110 L470 374"/>
+    <path class="flow" d="M246.9 110 L466.886 370.322"/>
     <circle class="step" cx="298" cy="207" r="15"/><text class="label" x="298" y="215" style="font-size:19px;">2</text>
     <!-- Keep the diagonal lookup label parallel to, but visibly clear of, its route. -->
     <g transform="rotate(48 364 294)">
@@ -75,7 +76,7 @@
     <rect class="cyan-node" x="470" y="283" width="177" height="178" rx="24"/>
     <use href="#cache-card" x="489" y="292" width="120" height="110"/>
     <text class="label" x="558.5" y="438">User Cache</text>
-    <path class="flow" d="M647 371 H765"/>
+    <path class="flow" d="M648.5 371 H761"/>
 
     <rect class="cyan-node" x="765" y="283" width="177" height="178" rx="24"/>
     <use href="#db-cluster" x="793" y="302" width="120" height="100"/>
@@ -84,12 +85,12 @@
 
   <!-- Queue and worker pipeline writes one feed per friend. -->
   <g id="fanout-pipeline">
-    <path class="flow" d="M146 159 V251"/>
+    <path class="flow" d="M146 159.9 V247.5"/>
     <circle class="step" cx="116" cy="207" r="15"/><text class="label" x="116" y="215" style="font-size:19px;">3</text>
     <use href="#message-queue" x="12" y="250" width="276" height="82"/>
     <text class="label" x="150" y="364">Message Queue</text>
 
-    <path class="flow" d="M142 380 V454"/>
+    <path class="flow" d="M142 380 V450"/>
     <circle class="step" cx="112" cy="410" r="15"/><text class="label" x="112" y="418" style="font-size:19px;">4</text>
     <rect class="dashed-node" x="44" y="454" width="198" height="164" rx="23"/>
     <use href="#server-back" x="94" y="468" width="42" height="25"/>
@@ -99,7 +100,7 @@
     <use href="#server-rack" x="156" y="492" width="42" height="76"/>
     <text class="label" x="143" y="605">Fanout Workers</text>
 
-    <path class="flow" d="M140 618 V698"/>
+    <path class="flow" d="M140 619.5 V694"/>
     <circle class="step" cx="112" cy="655" r="15"/><text class="label" x="112" y="663" style="font-size:19px;">5</text>
     <rect class="cyan-node" x="50" y="698" width="174" height="176" rx="25"/>
     <use href="#cache-card" x="75" y="707" width="120" height="110"/>
