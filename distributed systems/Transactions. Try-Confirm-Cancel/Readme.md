@@ -22,6 +22,8 @@ A **participant** owns one part of the operation, such as an account and its tra
 
 The reservation is a business rule, not necessarily a database lock. A reserved seat can remain unavailable after the local database transaction has committed. Funds can similarly move out of an account's available balance while the transfer is pending.
 
+This is often called a **semantic lock**: application state restricts business operations. The reservation has observable effects even before Confirm; another customer can find fewer seats available. Hiding an unfinished booking from one screen does not give all services a common snapshot.
+
 Try must do more than check availability. If A has $1 and two transfers each merely read that balance, both might promise to spend it. In our wallet implementation, the funds check and reservation belong in one local transaction, with concurrent access controlled so both transfers cannot reserve the same dollar. Local atomicity keeps the debit and reservation record together; controlling concurrent access prevents double-spending.
 
 ## Transaction types and coordination protocols
@@ -65,6 +67,8 @@ Before this phase, A can spend $1 and C has $0. A transfer request, identified h
 A's participant validates the debit, reduces A's available balance by $1, and records the reservation for `tr-42` in the same local transaction. After it commits, A's database lock is released. The dollar remains reserved through the application state. C's balance stays unchanged.
 
 When every required Try succeeds, the coordinator can choose Confirm. If a required Try is rejected, it chooses Cancel. The successful Try state is **A = $0, C = $0, transfer pending**. The transfer has not yet delivered money to C.
+
+As a design inference from this rule, an application could overlap flight and hotel Try calls if they are independent and its coordinator supports concurrent calls. The coordinator must still collect every required successful Try before choosing Confirm. This scheduling choice depends on the implementation.
 
 ### What C's NOP leaves out
 
@@ -159,6 +163,12 @@ Expiry also needs an explicit contract. Some TCC implementations let reservation
 
 Thus, TCC aims for all-confirmed or all-canceled completion through reservations and recovery. That goal depends on participant behavior, durable records, and eventual ability to finish the chosen action; it is not an unconditional promise that every failure will repair itself.
 
+### Request timeouts, reservation expiry, and recovery deadlines
+
+These clocks serve different purposes. A **request timeout** stops a caller waiting, without proving whether the participant acted. A reservation's **time to live (TTL)** defines its lifetime under the reservation contract. A **recovery deadline** triggers investigation or escalation for work that remains unfinished.
+
+Use a background recovery process to find overdue reservations and incomplete Confirm or Cancel operations. It must apply the protocol's recorded outcome and expiry rules, retain the cancellation records that prevent **suspension** from late Try requests, and surface unresolved conflicts. Blindly deleting every old reservation can race with confirmation and recreate the mixed outcome described above. Exhausting automatic retries does not change a recorded Confirm into Cancel.
+
 ## How TCC differs from database 2PC and Saga
 
 The table and subsections below compare TCC with database 2PC and Saga, explain balance reservation support in Oracle Database and PostgreSQL, and identify when TCC fits. For full walkthroughs of the other protocols, see [Transactions. Two-phase commit](../Transactions.%20Two-phase%20commit/Readme.md) and [Transactions. Saga](../Transactions.%20Saga/Readme.md).
@@ -231,6 +241,8 @@ TCC fits operations with meaningful reservations, such as funds, seats, or inven
 10. How does the term distributed transaction differ from two-phase commit?
 11. Why must the coordinator record its chosen second phase before sending Confirm or Cancel requests?
 12. Why does an Oracle `RESERVABLE` column alone not implement the TCC hold used in this wallet?
+13. Why does a reservation remain visible even after its database lock is released?
+14. Does reaching a recovery deadline authorize Cancel after Confirm was chosen?
 
 <details>
 <summary>Check your answers</summary>
@@ -247,12 +259,16 @@ TCC fits operations with meaningful reservations, such as funds, seats, or inven
 10. Distributed transaction describes work spanning independent transactional resources; 2PC is one protocol for coordinating their commit-or-rollback outcome.
 11. Sending first and crashing before recording leaves the replacement worker without a durable decision, even though participants may already have acted. Recording first ensures the worker knows which second phase to finish after a crash.
 12. In an ordinary database transaction, the native reservation becomes a balance update at commit or is discarded at rollback. The wallet's TCC hold must survive Try's local commit as durable business state, with later Confirm and Cancel handlers; that application design can use either Oracle Database or PostgreSQL.
+13. The committed reservation reduces what competing operations can use. Short database lock duration does not make the held resource available or provide global isolation.
+14. No. Recover the chosen outcome and escalate unresolved work. A monitoring deadline is not permission to reverse a confirmation that may already have executed elsewhere.
 
 </details>
 
 # Sources
 
 Primary sources checked on 2026-09-14. Transfer `tr-42`, the state table, the explicit pending-dollar interpretation, and the seat/hotel comparison are teaching examples derived from the reservation and recovery rules below.
+
+Coverage review also used [Timofei Ivankov — Distributed transactions in microservices: from Saga to Two-Phase Commit (Habr, Russian)](https://habr.com/ru/articles/906484/). The visibility and expiry discussion retains the qualifications required by the primary protocol sources.
 
 - [System Design — chapter 27, Digital Wallet](../../system%20design/27.%20Digital%20Wallet/Readme.md). Diagram provenance: [Try](../../system%20design/27.%20Digital%20Wallet/images/tcc-try-phase.svg), [Confirm](../../system%20design/27.%20Digital%20Wallet/images/tcc-confirm-phase.svg), [Cancel](../../system%20design/27.%20Digital%20Wallet/images/tcc-cancel-phase.svg), [phase-status tables](../../system%20design/27.%20Digital%20Wallet/images/phase-status-tables.svg), and [out-of-order execution](../../system%20design/27.%20Digital%20Wallet/images/out-of-order-execution.svg). Local copies preserve the chapter's flows and simplify the ordering caption. They also fix two errors: Confirm's `unlock A` label belongs to C and must read `unlock C`; Cancel's `lock C` label belongs to A and must read `lock A`. The phase-status diagram also corrects the caption from `Zookeeper` to `ZooKeeper`. The linked chapter originals still contain these errors.
 - [Chapter 27 — two-phase commit timeline](../../system%20design/27.%20Digital%20Wallet/images/2pc-protocol.svg). The new lock comparison adapts this timeline and the chapter's Confirm timeline, places each 2PC unlock before its commit acknowledgement, and adds a separate TCC reservation span.
@@ -277,3 +293,5 @@ Primary sources checked on 2026-09-14. Transfer `tr-42`, the state table, the ex
 - [Oracle AI Database 26ai — Using Lock-Free Reservation: numeric columns, journals, and Saga compensation](https://docs.oracle.com/en/database/oracle/oracle-database/26/adfns/using-lock-free-reservation.html)
 - [Oracle AI Database 26ai — DBMS_SAGA: database Saga interfaces](https://docs.oracle.com/en/database/oracle/oracle-database/26/arpls/dbms_saga.html)
 - [Garcia-Molina and Salem — Sagas: local transactions, compensation, and Section 8 on parallel Sagas](https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf)
+- [Apache Seata — AT, TCC, and Saga: business-defined Try orchestration and second-phase recovery](https://seata.apache.org/blog/seata-at-tcc-saga/)
+- [Microsoft Azure — Retry pattern: retry scheduling and limits](https://learn.microsoft.com/en-us/azure/architecture/patterns/retry)

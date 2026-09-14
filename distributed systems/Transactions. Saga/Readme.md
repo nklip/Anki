@@ -54,6 +54,8 @@ Now A = $9 and C = $6. These are two commits followed by a workflow decision. Th
 
 A client can receive a transfer identifier while the operation is pending and query its status later. An accepted request must be distinguishable from a completed transfer; otherwise the interface hides precisely the failure window the Saga must manage.
 
+A short Saga can also finish while the original request waits. **Synchronous response timing and transaction guarantees are separate choices.** Waiting does not isolate intermediate commits, and a client timeout does not establish failure. Keep the same transfer identifier available for outcome lookup and retries even when the normal response reports completion.
+
 ## Step 3 — Compensate after a confirmed failure
 
 ![saga-step-3-compensate.svg](images/saga-step-3-compensate.svg)
@@ -111,15 +113,64 @@ If the service crashes after committing, the outbox record survives. If the rela
 
 Apply the same principle to an orchestrator's progress update and next command. Otherwise it can record “credit requested” without durably arranging delivery, or send a command and forget that it sent it.
 
-## Isolation, irreversible actions, and operational recovery
+### Inbox, publication order, and change data capture
+
+A **transactional inbox** records received message identities at the consumer. For a relational implementation, a unique key such as `(consumer, message_id)` prevents concurrent handlers from accepting the same message twice. Insert that identity, apply the business update, and write any next outbox message in one local transaction. Acknowledge delivery after commit. If the transaction rolls back, the identity must roll back too so redelivery can retry the work. A separate “already processed?” query followed by an unprotected update leaves a race.
+
+In this design, the credit command could carry `(tr-42, credit-c)` as its stable message identity on every delivery and retry; `consumer` identifies the receiving handler. The same durable record can then provide inbox deduplication and the business idempotency described earlier. Two separate tables are not required. If retries instead get new transport message IDs, the receiver must still recognize the stable operation key: checking only the new message ID would allow another credit.
+
+An outbox relay can poll pending rows or use **change data capture (CDC)** to read committed changes from the database's transaction log. Debezium provides an outbox event router that converts captured rows into messages. Its event ID supports deduplication; its entity key routes related events to the same Kafka partition for ordering. Configure and operate the connector as part of delivery, including recovery and retention.
+
+Preserve publication order where business events depend on it: an account's later update must not overtake its earlier update merely because two relay workers ran concurrently. Monitor the oldest unpublished record and clean up only when the delivery mechanism can safely retire it. A durable outbox preserves work to deliver; eventual delivery still needs a functioning relay and destination. **Outbox handles reliable handoff; Saga decides what the business workflow does next.**
+
+## Compensatable, pivot, and retryable work
+
+The **pivot** separates work the workflow may compensate from work it has committed to finishing.
+
+| Category | Recovery contract |
+| --- | --- |
+| Compensatable | Supply a business correction for an action already completed. |
+| Pivot | Its successful completion crosses the workflow's point of no return. |
+| Retryable | After the pivot, complete through idempotent retries instead of compensation. |
+
+Put checks that can reject the operation before that boundary. A post-pivot action that can permanently reject for business reasons has no guaranteed path to completion. Payment capture is not inherently a pivot: the available refund contract and business policy determine whether it can be compensated. A workflow cannot promise to undo a delivered physical item merely because it can reverse a database row.
+
+This also separates a completed transfer from optional follow-up work. If the business contract treats a receipt notification as independent, its outage should leave notification work pending rather than reverse the transfer. Retrying cannot guarantee that every external action will eventually become possible; permanent failures need an explicit resolution policy.
+
+## Isolation anomalies and countermeasures
 
 **Saga does not isolate the whole business operation.** Local transactions can commit correctly while concurrent workflows still interfere. In the wallet example, allowing C to spend a provisional credit can make a later reversal impossible. Restoring consistency requires rules for spendable balances and pending transfers, not just inverse arithmetic.
 
-Possible countermeasures include reservations, application-level pending states that block conflicting actions, and version checks that reject stale updates. These rules must be enforced by the participant that owns the data. A `PENDING` label alone protects nothing.
+| Anomaly | Example across local commits |
+| --- | --- |
+| Lost update | An order's delayed approval overwrites a concurrent cancellation. |
+| Saga-level dirty read | Loyalty awards a benefit for a payment that is later compensated. |
+| Nonrepeatable read | Repeated funds checks see different balances because another transfer commits between them. |
 
-A **pivot** is the workflow's point of no return. Before that point, the design may compensate; after it, the remaining actions must be designed for completion through safe retries. Put irreversible actions after necessary validation and reservations. A workflow cannot promise to undo a delivered physical item merely because it can reverse a database row.
+Here, “dirty” means **unfinished business work that has already committed locally**. SQL dirty reads instead mean reading another database transaction's uncommitted writes. A database can prevent SQL dirty reads while still exposing a Saga's intermediate committed state.
+
+Countermeasures address particular conflicts:
+
+| Technique | Responsibility |
+| --- | --- |
+| Semantic lock | Enforce a pending state that delays or rejects conflicting operations. |
+| Commutative updates | Use operations whose final result does not depend on their order. |
+| Pessimistic view (reorder steps) | Reorder the Saga so updates that could mislead other workflows occur in retryable transactions after the pivot. |
+| Reread and version check | Reject stale writes atomically with the update. |
+| Version file | Keep an operation history and enforce the required application order. |
+| Choice by business risk | Use stronger coordination where an incorrect intermediate result is unacceptable. |
+
+For **commutative updates**, an atomic `balance = balance + amount` preserves concurrent additive changes better than writing a saved total. It still needs deduplication and funds constraints: subtraction alone does not prevent overspending.
+
+For **reread and version check**, rereading and then writing in separate transactions leaves another race. Check the expected version and apply the update atomically. Each countermeasure needs enforcement by the owning participant; a `PENDING` label or a history table alone protects nothing.
+
+## Recovery deadlines and observability
 
 Persist enough information to resume both forward work and compensation after crashes. Useful operational records include the transfer identifier, current state, participant results, command identifiers, attempts, and last failure. Track aged pending transfers and failed compensations, and provide a reconciliation process that compares intended outcomes with participant records. Eventual consistency needs a functioning recovery process.
+
+Schedule transient failures with increasing retry delays instead of a tight loop. Define a recovery deadline or retry budget and an owner for escalation when automatic progress stops. Expiring that budget means **unresolved and needing attention**, not successfully compensated. Record the next attempt time so restarting a worker does not erase the schedule.
+
+Carry the transfer ID through commands, events, logs, and traces. It correlates the whole workflow; individual actions still need their own idempotency identities. A trace helps diagnose where progress stopped, while durable workflow and participant records establish what actually completed. Alerting for manual resolution preserves that distinction: opening a support case does not itself refund money.
 
 ## Saga and TCC
 
@@ -166,6 +217,10 @@ Try answering before revealing the explanations.
 4. How does the ordinary meaning of *saga* help you remember the pattern?
 5. What distinguishes TCC from a Saga that also uses reservations?
 6. Why can't a local `PENDING` record make an external purchase-only hotel service support TCC?
+7. Can a Saga-level dirty read occur when the databases prohibit SQL dirty reads?
+8. What must be true of actions after the pivot?
+9. How do an inbox and an outbox protect opposite ends of a message handoff?
+10. Does reaching a recovery deadline mean compensation succeeded?
 
 <details>
 <summary>Check your answers</summary>
@@ -176,12 +231,18 @@ Try answering before revealing the explanations.
 4. Think of one business operation as a story unfolding through smaller chapters: its independently committed local transactions. This is a memory aid; the original paper supplies no acronym expansion or explanation of the name's choice.
 5. TCC requires the explicit Try/Confirm/Cancel contract: secure completion's prerequisites, then finalize or release the reservation. A Saga can use reservations as business actions without requiring that contract for every participant.
 6. The record does not hold the hotel's inventory or prevent another customer from buying the last room. Try has not secured completion. A Saga can use an immediate purchase when its compensation and other recovery rules are acceptable.
+7. Yes. Other workflows can consume locally committed effects of a Saga that may later compensate them. No uncommitted database read is necessary.
+8. They need an idempotent path to completion, with business rejection conditions resolved before crossing the boundary. Permanent impossibility requires explicit recovery, not endless blind retries.
+9. The outbox commits an outgoing message with the sender's change. The inbox commits duplicate recognition with the receiver's change, preventing repeat deliveries from applying the business effect again.
+10. No. Preserve the unresolved state and escalate with the recorded outcomes; a deadline is not evidence of rollback or compensation.
 
 </details>
 
 # Sources
 
 Primary sources checked on 2026-09-14. The message names, wallet balances, and flight/hotel comparison are illustrative; diagram provenance is identified below.
+
+Coverage review also used [Timofei Ivankov — Distributed transactions in microservices: from Saga to Two-Phase Commit (Habr, Russian)](https://habr.com/ru/articles/906484/). Added concepts were checked against the primary sources below; its broad claims about Saga atomicity and synchronous APIs are qualified in the teaching text.
 
 - [System Design — Digital Wallet: Saga flow, coordination, and sharded account example](../../system%20design/27.%20Digital%20Wallet/Readme.md). Diagram provenance: [original saga.svg](../../system%20design/27.%20Digital%20Wallet/images/saga.svg) and [original sharded-raft-groups.svg](../../system%20design/27.%20Digital%20Wallet/images/sharded-raft-groups.svg). The local wallet diagrams are adaptations, with explicit commit outcomes and simplified architecture.
 - [System Design — Hotel Reservation System: data consistency among services](../../system%20design/22.%20Hotel%20Reservation%20System/Readme.md).
@@ -192,8 +253,8 @@ Primary sources checked on 2026-09-14. The message names, wallet balances, and f
 - [Garcia-Molina and Salem — Sagas, original research paper](https://www.cs.princeton.edu/techreports/1987/070.pdf)
 - [Princeton — Sagas publication record: authors and 1987 date](https://www.cs.princeton.edu/research/techreps/598)
 - [Merriam-Webster — saga: ordinary meaning and word history](https://www.merriam-webster.com/dictionary/saga)
-- [Chris Richardson — Saga pattern](https://microservices.io/patterns/data/saga.html)
-- [Microsoft Azure Architecture Center — Saga pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/saga)
+- [Chris Richardson — Saga pattern: local commits, compensation, and lack of isolation](https://microservices.io/patterns/data/saga.html)
+- [Microsoft Azure Architecture Center — Saga pattern: compensable/pivot/retryable categories, three isolation anomalies, and six countermeasures](https://learn.microsoft.com/en-us/azure/architecture/patterns/saga)
 - [Microsoft Azure Architecture Center — Compensating Transaction pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction)
 - [AWS Prescriptive Guidance — Saga orchestration](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/saga-orchestration.html)
 - [AWS Prescriptive Guidance — Saga choreography](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/saga-choreography.html)
@@ -201,3 +262,8 @@ Primary sources checked on 2026-09-14. The message names, wallet balances, and f
 - [Chris Richardson — Transactional outbox](https://microservices.io/patterns/data/transactional-outbox.html)
 - [PostgreSQL documentation — PREPARE TRANSACTION](https://www.postgresql.org/docs/current/sql-prepare-transaction.html)
 - [Raft — consensus and replicated state machines](https://raft.github.io/)
+- [Chris Richardson — Saga design: compensating business failures and semantic locks](https://microservices.io/post/microservices/2019/07/09/developing-sagas-part-1.html)
+- [Chris Richardson — Idempotent Consumer: processed-message identities in the local transaction](https://microservices.io/patterns/communication-style/idempotent-consumer.html)
+- [Debezium — Outbox event router: event IDs, entity keys, and routing](https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html)
+- [Microsoft Azure — Retry pattern: transient failures, backoff, and retry limits](https://learn.microsoft.com/en-us/azure/architecture/patterns/retry)
+- [PostgreSQL 18 — Transaction isolation: SQL anomalies and concurrent conditional updates](https://www.postgresql.org/docs/18/transaction-iso.html)
