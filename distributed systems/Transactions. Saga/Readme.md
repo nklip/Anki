@@ -4,7 +4,7 @@
 
 **A Saga coordinates a business operation as a sequence of independently committed local transactions.** If the operation cannot finish, it runs compensating transactions to repair the effects of completed work. Other operations can observe intermediate results, so a Saga does not provide the isolation or single atomic commit of one database transaction.
 
-This article uses the repository's Digital Wallet design: transfer **$1 from account A to account C**, held in different partitions. It explains the architecture, successful and failed transfers, coordination styles, and the recovery mechanisms that make the workflow reliable.
+This article uses the repository's Digital Wallet design: transfer **$1 from account A to account C**, held in different partitions. It explains the architecture, successful and failed transfers, coordination styles, recovery mechanisms, and how Saga differs from Try-Confirm/Cancel (TCC).
 
 ![saga.svg](images/saga.svg)
 
@@ -30,7 +30,7 @@ The architecture below simplifies the chapter's full design. A **coordinator**, 
 
 ![saga-wallet-architecture.svg](images/saga-wallet-architecture.svg)
 
-The durable progress store corresponds to the chapter's **Phase Status Table**. It records which actions are pending, completed, or being compensated. The full wallet diagram's separate read path and proxy routing are omitted here to keep the transaction boundaries visible. Raft and event sourcing—recording state changes as events—are choices in that wallet architecture, not requirements of Saga.
+The durable progress store corresponds to the chapter's **Phase Status Table**. It records which actions are pending, completed, or being compensated. Saga does not require a table with that particular name or schema; the implementation needs durable information sufficient to recover its workflow. The full wallet diagram's separate read path and proxy routing are omitted here to keep the transaction boundaries visible. Raft and event sourcing—recording state changes as events—are choices in that wallet architecture, not requirements of Saga.
 
 The **Hotel Reservation System** chapter also discusses Saga under data consistency across services. Its chosen design keeps dependent reservation and inventory updates in one relational database. An **invariant** is a rule that valid data must satisfy. That gives us a useful starting question: **can the invariant stay inside one local transaction?**
 
@@ -121,12 +121,35 @@ A **pivot** is the workflow's point of no return. Before that point, the design 
 
 Persist enough information to resume both forward work and compensation after crashes. Useful operational records include the transfer identifier, current state, participant results, command identifiers, attempts, and last failure. Track aged pending transfers and failed compensations, and provide a reconciliation process that compares intended outcomes with participant records. Eventual consistency needs a functioning recovery process.
 
+## Saga and TCC
+
+**Saga can coordinate completed business actions and their compensations; TCC requires an explicit reservation contract.** In Try-Confirm/Cancel, **Try** checks prerequisites and reserves the resources needed to finish. The second phase either **Confirms** those reservations or **Cancels** them. Confirm and Cancel are alternatives, not consecutive steps. Both patterns use local commits before the overall operation finishes, so local commits alone do not distinguish them.
+
+The distinction is the business state recorded by the wallet writes. In the Saga above, A's committed $1 debit is a completed action: A has $9, and a later definitive rejection from C triggers a separate refund.
+
+For the TCC comparison, **available balance** means the money A can still spend, excluding funds reserved for pending transfers. Starting from $10, Try commits a state of **$9 available and $1 reserved for this transfer**. The reserved dollar is a tracked hold awaiting a decision. Confirm finalizes the debit using that hold; Cancel releases it, returning A to $10 available if no other operations occurred.
+
+C's Try must also secure its ability to accept the credit, even if receiving money requires no funds reservation. TCC moves completion's prerequisites into Try; a Saga can discover a later business rejection after earlier actions have completed.
+
+A booking example makes the difference more visible. We now want both a flight seat and a hotel room. Holding the seat corresponds to reserving A's dollar; buying it corresponds to the Saga's completed debit.
+
+Two side-by-side panels compare TCC on the left with Saga on the right. Read each panel downward: a flight seat is held or purchased, then the hotel accepts or definitively rejects the request. The lower branches are alternative outcomes. Compare releasing the TCC flight hold with canceling the Saga's purchased flight under its refund policy.
+
+![tcc-versus-saga.svg](images/tcc-versus-saga.svg)
+
+The takeaway rows at the bottom of the panels name what recovery acts on: “Undo a committed reservation” in TCC and “Compensate a completed purchase” in this Saga example. The summary band beneath both panels identifies their shared requirements and limits, including how Saga can also use reservations.
+
+**A missing reservation API does not automatically rule out TCC.** If you control the resource, you can implement durable holds and make competing operations respect them. If an external hotel offers only immediate purchases, however, recording `PENDING` in your own database does not reserve its rooms. Checking availability during Try and buying during Confirm leaves time for another customer to buy the last room. That participant cannot safely join TCC unless it can secure completion and honor Confirm or Cancel. A Saga may instead purchase immediately if later cancellation is an acceptable compensation; fees and irreversible effects still matter.
+
+Apache Seata's Saga implementation, for example, can coordinate progress and retries. The participating services still supply the business actions and compensations: Seata cannot invent a refund policy. Likewise, a TCC coordinator cannot make an external service honor a reservation that the service does not support. An ordinary database balance update does not create either complete workflow automatically.
+
 ## Choosing the transaction boundary
 
 | Approach | Commit and recovery model | Main consideration |
 | --- | --- | --- |
 | One local transaction | Related writes commit or roll back within one transactional boundary. | Prefer this when the required invariant can stay together, as in the hotel design. |
 | Two-phase commit (2PC) | Participants prepare; a transaction manager coordinates a global commit or rollback decision. | Requires participant support and recovery machinery. Prepared PostgreSQL transactions retain locks until resolved. |
+| TCC | Participants commit reservations, then confirm or cancel them. | Requires participants to secure completion during Try and preserve the reservation contract. |
 | Saga | Participants commit independently; recovery continues forward or compensates committed effects. | Requires acceptable intermediate states and meaningful business recovery. |
 
 Two-phase commit concerns atomic commitment; it is not, by itself, a guarantee of every isolation property. Saga avoids holding one database transaction open for the entire business workflow, but shifts substantial correctness work into application logic.
@@ -141,6 +164,8 @@ Try answering before revealing the explanations.
 2. Why is immediately refunding A unsafe when C's credit request times out?
 3. Why does a transactional outbox still need idempotent receivers?
 4. How does the ordinary meaning of *saga* help you remember the pattern?
+5. What distinguishes TCC from a Saga that also uses reservations?
+6. Why can't a local `PENDING` record make an external purchase-only hotel service support TCC?
 
 <details>
 <summary>Check your answers</summary>
@@ -149,15 +174,21 @@ Try answering before revealing the explanations.
 2. C may have committed the credit and lost the reply. Refunding A would then leave A = $10 and C = $6, creating an extra dollar in the example. Resolve the outcome by querying durable status or retrying the same idempotent command. Refund A only when the recovery rules justify it, including preventing a delayed credit from executing after cancellation.
 3. The relay can publish a message and crash before recording delivery, then publish it again after restarting. The outbox preserves the outgoing message alongside the local change; the receiver's idempotent handling prevents repeated delivery from producing another business effect.
 4. Think of one business operation as a story unfolding through smaller chapters: its independently committed local transactions. This is a memory aid; the original paper supplies no acronym expansion or explanation of the name's choice.
+5. TCC requires the explicit Try/Confirm/Cancel contract: secure completion's prerequisites, then finalize or release the reservation. A Saga can use reservations as business actions without requiring that contract for every participant.
+6. The record does not hold the hotel's inventory or prevent another customer from buying the last room. Try has not secured completion. A Saga can use an immediate purchase when its compensation and other recovery rules are acceptable.
 
 </details>
 
 # Sources
 
-Primary sources checked on 2026-09-14. The message names and wallet balances are illustrative; diagram provenance is identified below.
+Primary sources checked on 2026-09-14. The message names, wallet balances, and flight/hotel comparison are illustrative; diagram provenance is identified below.
 
 - [System Design — Digital Wallet: Saga flow, coordination, and sharded account example](../../system%20design/27.%20Digital%20Wallet/Readme.md). Diagram provenance: [original saga.svg](../../system%20design/27.%20Digital%20Wallet/images/saga.svg) and [original sharded-raft-groups.svg](../../system%20design/27.%20Digital%20Wallet/images/sharded-raft-groups.svg). The local wallet diagrams are adaptations, with explicit commit outcomes and simplified architecture.
 - [System Design — Hotel Reservation System: data consistency among services](../../system%20design/22.%20Hotel%20Reservation%20System/Readme.md).
+- [Transactions. Try-Confirm/Cancel — companion article](../Transactions.%20Try-Confirm-Cancel/Readme.md). The local `tcc-versus-saga.svg` is reused from its [comparison diagram](../Transactions.%20Try-Confirm-Cancel/images/tcc-versus-saga.svg), with the accessible title aligned to the visible headline; the booking example applies the reservation and compensation rules in the sources below.
+- [Apache Seata — Saga mode: orchestration, retries, and application-defined compensation](https://seata.apache.org/docs/user/mode/saga/)
+- [Apache Seata — TCC mode: service-level operations and application-defined handlers](https://seata.apache.org/docs/user/mode/tcc/)
+- [Oracle MicroTx — Try-Confirm/Cancel: reservations and prerequisites for confirmation](https://docs.oracle.com/en/database/oracle/transaction-manager-for-microservices/24.2/tmmdg/tcc-transaction-model.html)
 - [Garcia-Molina and Salem — Sagas, original research paper](https://www.cs.princeton.edu/techreports/1987/070.pdf)
 - [Princeton — Sagas publication record: authors and 1987 date](https://www.cs.princeton.edu/research/techreps/598)
 - [Merriam-Webster — saga: ordinary meaning and word history](https://www.merriam-webster.com/dictionary/saga)

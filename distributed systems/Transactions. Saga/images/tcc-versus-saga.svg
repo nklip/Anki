@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1060" viewBox="0 0 1440 1060" role="img" aria-labelledby="title desc">
+  <title id="title">TCC vs Saga: holding a booking or buying it</title>
+  <desc id="desc">Two illustrative workflows book a flight and hotel. In TCC, Try commits a flight hold and attempts a hotel hold. If the hotel accepts, Confirm finalizes both bookings; if the hotel rejects, Cancel releases the flight hold. In the Saga example, the flight is purchased before the hotel booking is attempted. Success keeps both bookings. A definitive hotel rejection triggers compensation: cancel the purchased flight and refund according to its booking policy, possibly retaining a fee. Both use local database commits, durable progress, and safe retries. Saga may also use reservations; TCC is distinguished by its explicit Try, Confirm, and Cancel contract.</desc>
+
+  <!-- Match the wallet assets: Arial, square boxes, black outlines, and labeled blue/red outcomes. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#111827}
+      .panel{fill:#fff;stroke:#cbd2da;stroke-width:1.5}
+      .operation{fill:#fff;stroke:#111827;stroke-width:2.2}
+      .held{fill:#f1f7fd;stroke:#111827;stroke-width:2.2}
+      .success{fill:#f0f7ff;stroke:#0066b3;stroke-width:2.2}
+      .cancellation{fill:#fff5f1;stroke:#c5351c;stroke-width:2.2}
+      .heading{font-size:28px;font-weight:700}
+      .operation-title{font-size:24px;font-weight:700}
+      .body{font-size:21px}
+      .label{font-size:20px}
+      .outcome-title{font-size:20px;font-weight:700}
+      .takeaway{font-size:23px;font-weight:700}
+      .connector{fill:none;stroke:#111827;stroke-width:2.5;stroke-linejoin:round}
+    </style>
+  </defs>
+
+  <rect width="1440" height="1060" fill="#fff"/>
+
+  <!-- Shared premise and reading direction apply to both example workflows. -->
+  <g id="shared-introduction">
+    <text x="32" y="50" font-size="34" font-weight="700">TCC vs Saga: holding a booking or buying it</text>
+    <text x="32" y="87" class="body">Same goal: book a flight and hotel. Read each example downward.</text>
+  </g>
+
+  <!-- Parallel panels share identical node heights so differences in committed business state stand out. -->
+  <rect id="tcc-panel" class="panel" x="32" y="116" width="672" height="792"/>
+  <rect id="saga-panel" class="panel" x="736" y="116" width="672" height="792"/>
+  <g id="panel-headings">
+    <text x="60" y="164" class="heading">TCC · Try-Confirm/Cancel</text>
+    <text x="60" y="202" class="body">Phase 1: Try. Phase 2: Confirm or Cancel.</text>
+    <text x="764" y="164" class="heading">Saga</text>
+    <text x="764" y="202" class="body">Complete actions; compensate if needed.</text>
+  </g>
+
+  <!-- TCC phase one commits holds. The hotel rejection branch has no hotel hold to release. -->
+  <g id="tcc-try-operations">
+    <rect id="try-flight" class="held" x="60" y="244" width="616" height="102"/>
+    <text x="84" y="282" class="operation-title">Try: reserve a flight seat</text>
+    <text x="84" y="317" class="body">Local commit: flight HELD, not purchased.</text>
+    <rect id="try-hotel" class="held" x="60" y="392" width="616" height="116"/>
+    <text x="84" y="432" class="operation-title">Try: reserve a hotel room</text>
+    <text x="84" y="472" class="body">Accepted: room HELD. Rejected: no hold.</text>
+  </g>
+
+  <!-- Saga's forward work buys the flight before attempting the hotel; this is an example contract. -->
+  <g id="saga-forward-operations">
+    <rect id="purchase-flight" class="operation" x="764" y="244" width="616" height="102"/>
+    <text x="788" y="282" class="operation-title">Purchase a flight seat</text>
+    <text x="788" y="317" class="body">Local commit: flight PURCHASED.</text>
+    <rect id="book-hotel" class="operation" x="764" y="392" width="616" height="116"/>
+    <text x="788" y="432" class="operation-title">Attempt to book a hotel room</text>
+    <text x="788" y="472" class="body">Accepted: room BOOKED. Rejected: no booking.</text>
+  </g>
+
+  <!-- The two phase-two outcomes are alternatives, never a Confirm-then-Cancel sequence. -->
+  <g id="tcc-outcomes">
+    <rect id="confirm-both" class="success" x="60" y="608" width="284" height="172"/>
+    <text x="84" y="643" class="outcome-title">Phase 2a: CONFIRM</text>
+    <text x="84" y="681" class="body">Purchase flight.</text>
+    <text x="84" y="711" class="body">Finalize hotel hold.</text>
+    <text x="84" y="753" class="outcome-title">Both finalized.</text>
+    <rect id="cancel-hold" class="cancellation" x="392" y="608" width="284" height="172"/>
+    <text x="416" y="643" class="outcome-title">Phase 2b: CANCEL</text>
+    <text x="416" y="681" class="body">Release flight hold.</text>
+    <text x="416" y="711" class="body">No hotel to release.</text>
+    <text x="416" y="753" class="outcome-title">Nothing purchased.</text>
+  </g>
+
+  <!-- Saga compensation is a new business action on the completed flight purchase. -->
+  <g id="saga-outcomes">
+    <rect id="saga-completed" class="success" x="764" y="608" width="284" height="172"/>
+    <text x="788" y="643" class="outcome-title">SUCCESS</text>
+    <text x="788" y="681" class="body">Flight already bought.</text>
+    <text x="788" y="711" class="body">Hotel now booked.</text>
+    <text x="788" y="753" class="outcome-title">Keep both bookings.</text>
+    <rect id="compensate-flight" class="cancellation" x="1096" y="608" width="284" height="172"/>
+    <text x="1120" y="643" class="outcome-title">COMPENSATE</text>
+    <text x="1120" y="681" class="body">Cancel bought flight.</text>
+    <text x="1120" y="711" class="body">Refund follows policy;</text>
+    <text x="1120" y="753" class="outcome-title">a fee may remain.</text>
+  </g>
+
+  <!-- Manual shafts end three units inside their triangle bases. Tips meet the outer 2.2-unit box stroke. -->
+  <g id="workflow-connectors">
+    <path id="tcc-next-shaft" class="connector" data-connector="true" d="M368 347.1 V377.9"/>
+    <path id="tcc-next-arrowhead" d="M368 390.9 L360 374.9 L376 374.9 Z" fill="#111827"/>
+    <path id="saga-next-shaft" class="connector" data-connector="true" d="M1072 347.1 V377.9"/>
+    <path id="saga-next-arrowhead" d="M1072 390.9 L1064 374.9 L1080 374.9 Z" fill="#111827"/>
+
+    <!-- A single stem joins two labeled alternatives; branch labels sit above the horizontal shafts. -->
+    <path id="tcc-decision-stem" class="connector" data-connector="true" d="M368 509.1 V564"/>
+    <path id="tcc-confirm-shaft" class="connector" data-connector="true" style="stroke:#0066b3" d="M368 564 H202 V593.9"/>
+    <path id="tcc-confirm-arrowhead" d="M202 606.9 L194 590.9 L210 590.9 Z" fill="#0066b3"/>
+    <path id="tcc-cancel-shaft" class="connector" data-connector="true" style="stroke:#c5351c" d="M368 564 H534 V593.9"/>
+    <path id="tcc-cancel-arrowhead" d="M534 606.9 L526 590.9 L542 590.9 Z" fill="#c5351c"/>
+
+    <path id="saga-decision-stem" class="connector" data-connector="true" d="M1072 509.1 V564"/>
+    <path id="saga-success-shaft" class="connector" data-connector="true" style="stroke:#0066b3" d="M1072 564 H906 V593.9"/>
+    <path id="saga-success-arrowhead" d="M906 606.9 L898 590.9 L914 590.9 Z" fill="#0066b3"/>
+    <path id="saga-compensation-shaft" class="connector" data-connector="true" style="stroke:#c5351c" d="M1072 564 H1238 V593.9"/>
+    <path id="saga-compensation-arrowhead" d="M1238 606.9 L1230 590.9 L1246 590.9 Z" fill="#c5351c"/>
+  </g>
+
+  <!-- Labels make acceptance and definitive rejection understandable without relying on color. -->
+  <g id="branch-labels" class="label" text-anchor="middle">
+    <text x="202" y="546">Hotel accepted</text>
+    <text x="534" y="546">Hotel rejected</text>
+    <text x="906" y="546">Hotel accepted</text>
+    <text x="1238" y="546">Hotel rejected</text>
+  </g>
+
+  <!-- A paired takeaway names the business effect that is undone on each failure path. -->
+  <g id="comparison-takeaways">
+    <text x="60" y="830" class="takeaway">Undo a committed reservation.</text>
+    <text x="60" y="867" class="body">The flight was held, not yet purchased.</text>
+    <text x="764" y="830" class="takeaway">Compensate a completed purchase.</text>
+    <text x="764" y="867" class="body">A new business action applies the refund rules.</text>
+  </g>
+
+  <!-- Shared guarantees and scope prevent an absolute reservation-versus-compensation dichotomy. -->
+  <g id="shared-context">
+    <rect x="32" y="928" width="1376" height="112" fill="#f3f5f7"/>
+    <text x="60" y="958" class="label">Each service commits its own changes; no database transaction spans this whole workflow.</text>
+    <text x="60" y="987" class="label">Both need durable progress and retries that do not repeat effects. Neither automatically provides global isolation.</text>
+    <text x="60" y="1016" class="label">Saga may also use reservations; TCC requires the explicit Try/Confirm/Cancel contract.</text>
+  </g>
+</svg>
