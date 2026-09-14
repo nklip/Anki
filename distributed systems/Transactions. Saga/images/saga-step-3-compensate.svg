@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="726" viewBox="0 0 1120 726" role="img" aria-labelledby="title desc">
+<title id="title">Step 3 · Compensate only effects that actually committed</title>
+<desc id="desc">Top row: A debit committed and C durably rejected credit, including delayed duplicates. Refund A in a new local transaction linked to the original debit, then mark the transfer compensated. Bottom row: when both committed and cancellation is allowed, reverse C before refunding A, then record cancellation. A timeout alone is insufficient to choose either branch. Crossed terminal circles denote a compensated or canceled transfer, not a successful transfer.</desc>
+<!-- Visual style and arrowhead reused from system design/27. Digital Wallet/images/saga.svg. -->
+<defs><style>text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}.step,.state{fill:#fff;stroke:#000;stroke-width:2.5}.connector{fill:none;stroke:#000;stroke-width:2.5}</style>
+<!-- The marker projects 3.5 units beyond the shaft endpoint; every path is shortened by that amount. -->
+<marker id="arrowhead" markerWidth="22" markerHeight="18"
+            viewBox="0 0 22 18" refX="18.5" refY="9"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L22 9 L0 18 Z" fill="#000"/>
+    </marker>
+</defs>
+<rect width="1120" height="726" fill="#fff"/>
+<!-- Title and explicit reading order; labels do not depend on color. -->
+<text x="32" y="43" font-size="28" text-anchor="start">Step 3 · Compensate only effects that actually committed</text>
+<text x="32" y="77" font-size="18" text-anchor="start">Read each row left to right. Top: rejected credit. Bottom: allowed cancellation after both commits.</text>
+<!-- Primary failure: the rejected credit has no effect to reverse; only the committed A debit is refunded. -->
+<text x="32" y="117" font-size="28" text-anchor="start">C rejected the credit; A’s debit committed</text>
+<text x="32" y="151" font-size="20" text-anchor="start">Delayed credit duplicates are rejected.</text>
+<circle id="credit-rejected" class="state" cx="145" cy="239" r="20"/>
+<text x="145" y="316" font-size="22" text-anchor="middle">A = $9 · C = $5</text>
+<rect id="refund-a" class="step" x="405" y="183" width="215" height="112"/>
+<text x="512.5" y="253.0" font-size="40" text-anchor="middle">A + $1</text>
+<text x="512.5" y="172" font-size="24" text-anchor="middle">Refund A</text>
+<text x="512.5" y="316" font-size="22" text-anchor="middle">New local transaction</text>
+<circle id="compensated" class="state" cx="840" cy="239" r="20"/>
+<path id="compensated-cross" d="M829 228 L851 250 M851 228 L829 250" fill="none" stroke="#ff2600" stroke-width="4" stroke-linecap="round"/>
+<text x="878" y="249" font-size="30" text-anchor="start">Compensated</text>
+<text x="840" y="316" font-size="22" text-anchor="middle">A = $10 · C = $5</text>
+<path id="request-refund" class="connector" data-connector="true" d="M165 239 L401.5 239" marker-end="url(#arrowhead)"/>
+<path id="refund-committed" class="connector" data-connector="true" d="M620 239 L816.5 239" marker-end="url(#arrowhead)"/>
+<text x="32" y="365" font-size="22" text-anchor="start">Mark COMPENSATED after the refund commits; link the correction to the original debit.</text>
+<!-- Allowed cancellation after both commits reverses C first, then refunds A; every box is a new local commit. -->
+<text x="32" y="419" font-size="28" text-anchor="start">Both committed; cancellation is allowed</text>
+<circle id="both-committed" class="state" cx="100" cy="513" r="20"/>
+<text x="145" y="600" font-size="22" text-anchor="middle">A = $9 · C = $6</text>
+<rect id="reverse-c" class="step" x="295" y="463" width="180" height="100"/>
+<text x="385.0" y="527.0" font-size="40" text-anchor="middle">C − $1</text>
+<text x="385" y="450" font-size="24" text-anchor="middle">Reverse credit</text>
+<text x="385" y="600" font-size="22" text-anchor="middle">C reversal commits</text>
+<rect id="then-refund-a" class="step" x="610" y="463" width="180" height="100"/>
+<text x="700.0" y="527.0" font-size="40" text-anchor="middle">A + $1</text>
+<text x="700" y="450" font-size="24" text-anchor="middle">Then refund A</text>
+<text x="700" y="600" font-size="22" text-anchor="middle">A refund commits</text>
+<circle id="correction-recorded" class="state" cx="900" cy="513" r="20"/>
+<path id="correction-recorded-cross" d="M889 502 L911 524 M911 502 L889 524" fill="none" stroke="#ff2600" stroke-width="4" stroke-linecap="round"/>
+<text x="937" y="505" font-size="24" text-anchor="start">Correction</text>
+<text x="937" y="535" font-size="24" text-anchor="start">recorded</text>
+<text x="930" y="600" font-size="22" text-anchor="middle">A = $10 · C = $5</text>
+<path id="cancel-credit" class="connector" data-connector="true" d="M120 513 L291.5 513" marker-end="url(#arrowhead)"/>
+<path id="reverse-then-refund" class="connector" data-connector="true" d="M475 513 L606.5 513" marker-end="url(#arrowhead)"/>
+<path id="correction-complete" class="connector" data-connector="true" d="M790 513 L876.5 513" marker-end="url(#arrowhead)"/>
+<!-- Outcome resolution and recovery constraints remain explicit and do not rely on a color legend. -->
+<text x="32" y="658" font-size="22" text-anchor="start">A timeout is not a rejection: resolve the outcome before choosing compensation.</text>
+<text x="32" y="702" font-size="20" text-anchor="start">Compensation can fail. Keep its state and retry safely; wait for its commit before reporting completion.</text>
+</svg>

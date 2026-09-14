@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1370" height="858" viewBox="0 0 1370 858"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Saga transaction with compensating wallet actions</title>
+  <desc id="desc">The saga debits one dollar from account A and credits one dollar to account C. Success ends the flow. An error after the debit compensates by crediting A; an error after the credit compensates by debiting C and then crediting A. Both compensation paths end in an error state.</desc>
+
+  <!-- Shared source-matched typography, node borders, and shaft-safe arrowhead. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .step{fill:#fff;stroke:#000;stroke-width:2.5}
+      .state{fill:#fff;stroke:#000;stroke-width:2.5}
+      .connector{fill:none;stroke:#000;stroke-width:2.5}
+      .main-label{font-size:40px}
+      .step-label{font-size:40px;text-anchor:middle}
+      .branch-label{font-size:40px;text-anchor:middle}
+      .status-label{font-size:40px}
+    </style>
+
+    <!-- The 3.5-unit projection hides the full 2.5-unit shaft under the tapered head. -->
+    <marker id="arrowhead" markerWidth="22" markerHeight="18"
+            viewBox="0 0 22 18" refX="18.5" refY="9"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L22 9 L0 18 Z" fill="#000"/>
+    </marker>
+  </defs>
+
+  <rect width="1370" height="858" fill="#fff"/>
+
+  <!-- Forward saga: start → debit A → credit C → success. -->
+  <g id="forward-saga">
+    <path id="start-to-debit" class="connector" data-connector="true"
+          d="M194 92 H363.5" marker-end="url(#arrowhead)"/>
+    <path id="debit-to-credit" class="connector" data-connector="true"
+          d="M562 92 H739.5" marker-end="url(#arrowhead)"/>
+    <path id="credit-to-success" class="connector" data-connector="true"
+          d="M939 92 H1100.5" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Compensation after the debit; shafts are split around the Error label. -->
+  <g id="debit-compensation-flow">
+    <path id="debit-error-before-label" class="connector" data-connector="true" d="M464.5 146 V168"/>
+    <path id="debit-error-after-label" class="connector" data-connector="true"
+          d="M464.5 237 V275.5" marker-end="url(#arrowhead)"/>
+    <path id="refund-a-to-error" class="connector" data-connector="true"
+          d="M464.5 388 V558.5" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Compensation after the credit: debit C, then refund A, then terminate with error. -->
+  <g id="credit-compensation-flow">
+    <path id="credit-error-before-label" class="connector" data-connector="true" d="M841 146 V168"/>
+    <path id="credit-error-after-label" class="connector" data-connector="true"
+          d="M841 237 V275.5" marker-end="url(#arrowhead)"/>
+    <path id="reverse-c-to-refund-a" class="connector" data-connector="true"
+          d="M841 388 V517.5" marker-end="url(#arrowhead)"/>
+    <path id="refund-a-to-final-error" class="connector" data-connector="true"
+          d="M841 630 V734.5" marker-end="url(#arrowhead)"/>
+  </g>
+
+  <!-- Forward and compensating transaction steps. -->
+  <g id="transaction-steps">
+    <rect id="debit-a" class="step" x="367" y="38" width="195" height="108"/>
+    <rect id="credit-c" class="step" x="743" y="38" width="196" height="108"/>
+    <rect id="refund-a-early" class="step" x="367" y="279" width="195" height="109"/>
+    <rect id="reverse-credit-c" class="step" x="743" y="279" width="196" height="109"/>
+    <rect id="refund-a-late" class="step" x="743" y="521" width="196" height="109"/>
+  </g>
+
+  <!-- Start, success, and error states are source-native circles with editable status marks. -->
+  <g id="saga-states">
+    <circle id="start-state" class="state" cx="174" cy="92" r="20"/>
+
+    <g id="success-state">
+      <circle class="state" cx="1124" cy="92" r="20"/>
+      <path d="M1112 93 L1120 103 L1135 78" fill="none" stroke="#0797f9"
+            stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <g id="early-error-state">
+      <circle class="state" cx="464.5" cy="582" r="20"/>
+      <path d="M453 570 L476 594 M476 570 L453 594" fill="none" stroke="#ff2600"
+            stroke-width="4" stroke-linecap="round"/>
+    </g>
+
+    <g id="final-error-state">
+      <circle class="state" cx="841" cy="758" r="20"/>
+      <path d="M829.5 746 L852.5 770 M852.5 746 L829.5 770" fill="none" stroke="#ff2600"
+            stroke-width="4" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <!-- Labels are last so no connector crosses text. -->
+  <g id="labels">
+    <text class="main-label" x="64" y="106">Start</text>
+    <text class="step-label" x="464.5" y="106">A-$1</text>
+    <text class="step-label" x="841" y="106">C+$1</text>
+    <text class="status-label" x="1164" y="106">Success</text>
+
+    <text class="branch-label" x="464.5" y="215">Error</text>
+    <text class="branch-label" x="841" y="215">Error</text>
+    <text class="step-label" x="464.5" y="347">A+$1</text>
+    <text class="step-label" x="841" y="347">C-$1</text>
+    <text class="step-label" x="841" y="589">A+$1</text>
+
+    <text class="branch-label" x="464.5" y="640">Error</text>
+    <text class="branch-label" x="841" y="815">Error</text>
+  </g>
+</svg>

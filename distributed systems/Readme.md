@@ -11,3 +11,4 @@ Each topic has its own folder, with diagrams in its `images/` directory.
  * [Patterns. Fanout](./Patterns.%20Fanout/Readme.md) — message and request fanout, feed-generation strategies, capacity, and failure handling.
  * [Redis](./Redis/Readme.md) — internals, deployments, common patterns, and CDN data placement.
  * [Sticky Sessions](./Sticky%20Sessions/Readme.md) — pinning mechanisms, their costs, and the stateless alternative.
+ * [Transactions. Saga](./Transactions.%20Saga/Readme.md) — local commits, wallet transfers, compensation, orchestration, choreography, and failure recovery.

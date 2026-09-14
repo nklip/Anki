@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="360" viewBox="0 0 1120 360" role="img" aria-labelledby="title desc">
+<title id="title">Step 1 · A commits the debit; the transfer stays pending</title>
+<desc id="desc">A starts with $10 and C with $5. A local transaction commits A minus $1 and saves its outcome. A has $9 and C still has $5; the transfer remains pending.</desc>
+<!-- Visual style and arrowhead reused from system design/27. Digital Wallet/images/saga.svg. -->
+<defs><style>text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}.step,.state{fill:#fff;stroke:#000;stroke-width:2.5}.connector{fill:none;stroke:#000;stroke-width:2.5}</style>
+<!-- The marker projects 3.5 units beyond the shaft endpoint; every path is shortened by that amount. -->
+<marker id="arrowhead" markerWidth="22" markerHeight="18"
+            viewBox="0 0 22 18" refX="18.5" refY="9"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L22 9 L0 18 Z" fill="#000"/>
+    </marker>
+</defs>
+<rect width="1120" height="360" fill="#fff"/>
+<!-- Title and explicit reading order; labels do not depend on color. -->
+<text x="32" y="43" font-size="28" text-anchor="start">Step 1 · A commits the debit; the transfer stays pending</text>
+<text x="32" y="77" font-size="18" text-anchor="start">Transfer tr-42: $1 from A to C. Read left to right; assume no concurrent transfers.</text>
+<!-- The source flowchart circle and large operation box replace the former colored panels. -->
+<circle id="before" class="state" cx="145" cy="195" r="20"/>
+<text x="145" y="143" font-size="24" text-anchor="middle">Start: PENDING</text>
+<text x="145" y="278" font-size="22" text-anchor="middle">A = $10 · C = $5</text>
+<rect id="local-transaction" class="step" x="405" y="139" width="215" height="112"/>
+<text x="512.5" y="209.0" font-size="40" text-anchor="middle">A − $1</text>
+<text x="512.5" y="116" font-size="24" text-anchor="middle">A’s local transaction</text>
+<text x="512.5" y="278" font-size="22" text-anchor="middle">Save debit outcome</text>
+<circle id="after" class="state" cx="840" cy="195" r="20"/>
+<text x="878" y="205" font-size="30" text-anchor="start">Pending</text>
+<text x="840" y="278" font-size="22" text-anchor="middle">A = $9 · C = $5</text>
+<!-- Each visible arrow nose meets its target boundary; neither arrow enters a node. -->
+<path id="begin-action" class="connector" data-connector="true" d="M165 195 L401.5 195" marker-end="url(#arrowhead)"/>
+<path id="commit-action" class="connector" data-connector="true" d="M620 195 L816.5 195" marker-end="url(#arrowhead)"/>
+<text x="32" y="333" font-size="22" text-anchor="start">Only A changed. C’s credit still needs a separate commit.</text>
+</svg>

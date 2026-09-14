@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="660" viewBox="0 0 1120 660" role="img" aria-labelledby="title desc">
+<title id="title">Saga coordinates partitions; Raft replicates each partition</title><desc id="desc">A client asks a durable Saga coordinator to debit A and credit C. Separate partitions each contain a leader and two followers. Labeled solid arrows carry commands; dashed arrows return commit results. The coordinator stores progress separately.</desc>
+<!-- Visual style follows system design/27. Digital Wallet/images/saga.svg: regular Arial, white square boxes, black 2.5-unit outlines and connectors. -->
+<defs><style>text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000}.outline{fill:#fff;stroke:#000;stroke-width:2.5}</style>
+<!-- Database symbol reused from system design/27. Digital Wallet/images/sharded-raft-groups.svg. -->
+<symbol id="database-store" viewBox="0 0 82 66">
+      <path class="outline" d="M1 8 V57 C1 62 19 65 41 65 C63 65 81 62 81 57 V8 Z"/>
+      <ellipse class="outline" cx="41" cy="8" rx="40" ry="7"/>
+    </symbol>
+</defs>
+<rect width="1120" height="660" fill="#fff"/>
+<!-- Adapted from the Digital Wallet sharded-raft-groups.svg: same coordinator, status store, two partitions, and distinct command/result routes; read projections omitted. -->
+<!-- Title, reading direction, and lesson. -->
+<text x="32" y="43" font-size="28" text-anchor="start" font-weight="400" style="fill:#000">Saga coordinates partitions; Raft replicates each partition</text>
+<text x="32" y="77" font-size="18" text-anchor="start" font-weight="400" style="fill:#000">Read from the client to the coordinator, then to the two independent account partitions.</text>
+<!-- Client and coordinator; progress is durable rather than worker-local memory. -->
+<rect id="client" x="32" y="220" width="145" height="95" rx="0" fill="#fff" stroke="#000" stroke-width="2.5"/>
+<text x="104.5" y="260.0" font-size="20" text-anchor="middle" font-weight="400" style="fill:#000">Client</text>
+<text x="104.5" y="289.0" font-size="20" text-anchor="middle" font-weight="400" style="fill:#000">transfer $1</text>
+<rect id="coordinator" x="252" y="210" width="246" height="125" rx="0" fill="#fff" stroke="#000" stroke-width="2.5"/>
+<text x="375.0" y="250.5" font-size="20" text-anchor="middle" font-weight="400" style="fill:#000">Saga coordinator</text>
+<text x="375.0" y="279.5" font-size="20" text-anchor="middle" font-weight="400" style="fill:#000">chooses next action</text>
+<text x="375.0" y="308.5" font-size="20" text-anchor="middle" font-weight="400" style="fill:#000">records outcomes</text>
+<path id="client-request-shaft" data-connector="true" d="M177 267 L243 267" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon id="client-request-head" points="252,267 240,272.5 240,261.5" fill="#000"/>
+<rect id="progress" x="252" y="414" width="246" height="126" rx="0" fill="#fff" stroke="#000" stroke-width="2.5"/>
+<use id="progress-icon" href="#database-store" x="270" y="434" width="72" height="60"/>
+<text x="412" y="451" font-size="19" text-anchor="middle" font-weight="400" style="fill:#000">Durable</text>
+<text x="412" y="478" font-size="19" text-anchor="middle" font-weight="400" style="fill:#000">progress</text>
+<text x="375" y="520" font-size="18" text-anchor="middle" font-weight="400" style="fill:#000">tr-42 · current state</text>
+<path id="persist-progress-shaft" data-connector="true" d="M375 335 L375 405" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon id="persist-progress-head" points="375,414 369.5,402 380.5,402" fill="#000"/>
+<text x="394" y="381" font-size="18" text-anchor="start" font-weight="400" style="fill:#000">save / recover</text>
+<!-- Each dashed panel is one participant; the Saga arrows meet its boundary. -->
+<rect id="partition-a" x="735" y="112" width="350" height="201" rx="0" fill="#fff" stroke="#000" stroke-width="2.5" stroke-dasharray="7 5"/>
+<text x="910" y="143" font-size="21" text-anchor="middle" font-weight="400" style="fill:#000">Partition 1 · account A</text>
+<rect id="leader-a" x="761" y="178" width="110" height="55" rx="0" fill="#fff" stroke="#000" stroke-width="2.5"/>
+<text x="816.0" y="212.5" font-size="19" text-anchor="middle" font-weight="400" style="fill:#000">Leader</text>
+<rect id="follower-a-1" x="944" y="170" width="117" height="48" rx="0" fill="#fff" stroke="#000" stroke-width="2.5"/>
+<text x="1002.5" y="201.0" font-size="18" text-anchor="middle" font-weight="400" style="fill:#000">Follower</text>
+<rect id="follower-a-2" x="944" y="236" width="117" height="48" rx="0" fill="#fff" stroke="#000" stroke-width="2.5"/>
+<text x="1002.5" y="267.0" font-size="18" text-anchor="middle" font-weight="400" style="fill:#000">Follower</text>
+<path id="replicate-a-1-shaft" data-connector="true" d="M871 195 L908 195 L935.003 194.25" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon id="replicate-a-1-head" points="944,194 932.157,199.831 931.852,188.835" fill="#000"/>
+<path id="replicate-a-2-shaft" data-connector="true" d="M871 214 L908 214 L908 260 L935 260" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon id="replicate-a-2-head" points="944,260 932,265.5 932,254.5" fill="#000"/>
+<text x="813" y="285" font-size="17" text-anchor="middle" font-weight="400" style="fill:#000">Raft replicas</text>
+<rect id="partition-c" x="735" y="361" width="350" height="201" rx="0" fill="#fff" stroke="#000" stroke-width="2.5" stroke-dasharray="7 5"/>
+<text x="910" y="392" font-size="21" text-anchor="middle" font-weight="400" style="fill:#000">Partition 2 · account C</text>
+<rect id="leader-c" x="761" y="427" width="110" height="55" rx="0" fill="#fff" stroke="#000" stroke-width="2.5"/>
+<text x="816.0" y="461.5" font-size="19" text-anchor="middle" font-weight="400" style="fill:#000">Leader</text>
+<rect id="follower-c-1" x="944" y="419" width="117" height="48" rx="0" fill="#fff" stroke="#000" stroke-width="2.5"/>
+<text x="1002.5" y="450.0" font-size="18" text-anchor="middle" font-weight="400" style="fill:#000">Follower</text>
+<rect id="follower-c-2" x="944" y="485" width="117" height="48" rx="0" fill="#fff" stroke="#000" stroke-width="2.5"/>
+<text x="1002.5" y="516.0" font-size="18" text-anchor="middle" font-weight="400" style="fill:#000">Follower</text>
+<path id="replicate-c-1-shaft" data-connector="true" d="M871 444 L908 444 L935.003 443.25" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon id="replicate-c-1-head" points="944,443 932.157,448.831 931.852,437.835" fill="#000"/>
+<path id="replicate-c-2-shaft" data-connector="true" d="M871 463 L908 463 L908 509 L935 509" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon id="replicate-c-2-head" points="944,509 932,514.5 932,503.5" fill="#000"/>
+<text x="813" y="534" font-size="17" text-anchor="middle" font-weight="400" style="fill:#000">Raft replicas</text>
+<!-- Commands and results occupy separate lanes. Solid final join segments prevent a dash gap beneath either dashed result arrowhead; arrow tips meet flat target borders. -->
+<path id="debit-command-shaft" data-connector="true" d="M498 237 L550 237 L550 173 L726 173" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon id="debit-command-head" points="735,173 723,178.5 723,167.5" fill="#000"/>
+<text x="635" y="152" font-size="18" text-anchor="middle" font-weight="400" style="fill:#000">Debit A − $1</text>
+<path id="debit-result-shaft" data-connector="true" d="M735 268 H507" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="7 5"/>
+<path id="debit-result-join" data-connector="true" d="M514 268 L507 268" fill="none" stroke="#000" stroke-width="2.5"/>
+<polygon id="debit-result-head" points="498,268 510,262.5 510,273.5" fill="#000"/>
+<text x="641" y="252" font-size="18" text-anchor="middle" font-weight="400" style="fill:#000">Commit result</text>
+<path id="credit-command-shaft" data-connector="true" d="M498 307 L605 307 L605 423 L726 423" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon id="credit-command-head" points="735,423 723,428.5 723,417.5" fill="#000"/>
+<text x="668" y="401" font-size="18" text-anchor="middle" font-weight="400" style="fill:#000">Credit C + $1</text>
+<path id="credit-result-shaft" data-connector="true" d="M735 517 L575 517 L575 319 L507 319" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="7 5"/>
+<path id="credit-result-join" data-connector="true" d="M514 319 L507 319" fill="none" stroke="#000" stroke-width="2.5"/>
+<polygon id="credit-result-head" points="498,319 510,313.5 510,324.5" fill="#000"/>
+<text x="658" y="497" font-size="18" text-anchor="middle" font-weight="400" style="fill:#000">Commit result</text>
+<!-- Visible legend and central lesson, without requiring surrounding prose. -->
+<text x="32" y="591" font-size="18" text-anchor="start" font-weight="400" style="fill:#000">Dashed arrows = commit results. Other connections are labeled by their purpose.</text>
+<text x="32" y="630" font-size="21" text-anchor="start" font-weight="400" style="fill:#000">Each partition commits locally. Replication within a partition does not commit the other partition.</text>
+</svg>

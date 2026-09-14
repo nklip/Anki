@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="360" viewBox="0 0 1120 360" role="img" aria-labelledby="title desc">
+<title id="title">Step 2 · C commits the credit; the transfer can complete</title>
+<desc id="desc">A has $9 and C has $5 after the confirmed debit. C commits a local credit of $1 and saves the outcome. Once both outcomes are confirmed, the coordinator marks the transfer completed with A at $9 and C at $6.</desc>
+<!-- Visual style and arrowhead reused from system design/27. Digital Wallet/images/saga.svg. -->
+<defs><style>text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}.step,.state{fill:#fff;stroke:#000;stroke-width:2.5}.connector{fill:none;stroke:#000;stroke-width:2.5}</style>
+<!-- The marker projects 3.5 units beyond the shaft endpoint; every path is shortened by that amount. -->
+<marker id="arrowhead" markerWidth="22" markerHeight="18"
+            viewBox="0 0 22 18" refX="18.5" refY="9"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L22 9 L0 18 Z" fill="#000"/>
+    </marker>
+</defs>
+<rect width="1120" height="360" fill="#fff"/>
+<!-- Title and explicit reading order; labels do not depend on color. -->
+<text x="32" y="43" font-size="28" text-anchor="start">Step 2 · C commits the credit; the transfer can complete</text>
+<text x="32" y="77" font-size="18" text-anchor="start">Start after A’s debit is confirmed. Read left to right; success needs both durable outcomes.</text>
+<!-- The source flowchart circle and large operation box replace the former colored panels. -->
+<circle id="before" class="state" cx="145" cy="195" r="20"/>
+<text x="145" y="143" font-size="24" text-anchor="middle">Debit committed</text>
+<text x="145" y="278" font-size="22" text-anchor="middle">A = $9 · C = $5</text>
+<rect id="local-transaction" class="step" x="405" y="139" width="215" height="112"/>
+<text x="512.5" y="209.0" font-size="40" text-anchor="middle">C + $1</text>
+<text x="512.5" y="116" font-size="24" text-anchor="middle">C’s local transaction</text>
+<text x="512.5" y="278" font-size="22" text-anchor="middle">Save credit outcome</text>
+<circle id="after" class="state" cx="840" cy="195" r="20"/>
+<path id="after-check" d="M828 196 L836 206 L851 181" fill="none" stroke="#0797f9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="878" y="205" font-size="30" text-anchor="start">Completed</text>
+<text x="840" y="278" font-size="22" text-anchor="middle">A = $9 · C = $6</text>
+<!-- Each visible arrow nose meets its target boundary; neither arrow enters a node. -->
+<path id="begin-action" class="connector" data-connector="true" d="M165 195 L401.5 195" marker-end="url(#arrowhead)"/>
+<path id="commit-action" class="connector" data-connector="true" d="M620 195 L816.5 195" marker-end="url(#arrowhead)"/>
+<text x="32" y="333" font-size="22" text-anchor="start">Mark COMPLETED after both commits are confirmed; they remain separate transactions.</text>
+</svg>

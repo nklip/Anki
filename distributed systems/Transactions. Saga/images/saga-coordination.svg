@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="648" viewBox="0 0 1120 648" role="img" aria-labelledby="title desc">
+<title id="title">Two ways to decide what happens after the debit</title><desc id="desc">Orchestration: A returns a DebitCommitted reply to the coordinator, which sends a CreditC command to C. Choreography: A publishes an ADebited event through a broker, and C reacts with a credit. The reply and event report the same committed debit to different recipients. Recovery logic resides in the coordinator or in participant event handlers.</desc>
+<!-- Visual style follows system design/27. Digital Wallet/images/saga.svg: regular Arial, white square boxes, black 2.5-unit outlines and connectors. -->
+<defs><style>text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000}.outline{fill:#fff;stroke:#000;stroke-width:2.5}</style>
+</defs>
+<rect width="1120" height="648" fill="#fff"/>
+<!-- Title, reading direction, and lesson. -->
+<text x="32" y="43" font-size="28" text-anchor="start" font-weight="400" style="fill:#000">Two ways to decide what happens after the debit</text>
+<text x="32" y="77" font-size="18" text-anchor="start" font-weight="400" style="fill:#000">Both examples transfer $1 from A to C. A broker carries messages; it does not decide the workflow.</text>
+<!-- Upper lane identifies the reply and command above their names; keep both label lines clear of shafts. -->
+<text x="32" y="120" font-size="21" text-anchor="start" font-weight="400" style="fill:#000">ORCHESTRATION · the coordinator chooses</text>
+<rect id="orchestrated-a" x="32" y="157" width="235" height="112" rx="0" fill="#fff" stroke="#000" stroke-width="2.5"/>
+<text x="149.5" y="205.5" font-size="20" text-anchor="middle" font-weight="400" style="fill:#000">A participant</text>
+<text x="149.5" y="234.5" font-size="20" text-anchor="middle" font-weight="400" style="fill:#000">Debit committed</text>
+<rect id="orchestrator" x="438" y="157" width="245" height="112" rx="0" fill="#fff" stroke="#000" stroke-width="2.5"/>
+<text x="560.5" y="205.5" font-size="20" text-anchor="middle" font-weight="400" style="fill:#000">Coordinator</text>
+<text x="560.5" y="234.5" font-size="20" text-anchor="middle" font-weight="400" style="fill:#000">Reads durable state</text>
+<rect id="orchestrated-c" x="854" y="157" width="234" height="112" rx="0" fill="#fff" stroke="#000" stroke-width="2.5"/>
+<text x="971.0" y="205.5" font-size="20" text-anchor="middle" font-weight="400" style="fill:#000">C participant</text>
+<text x="971.0" y="234.5" font-size="20" text-anchor="middle" font-weight="400" style="fill:#000">Handles CreditC</text>
+<path id="report-debit-shaft" data-connector="true" d="M267 225 L429 225" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon id="report-debit-head" points="438,225 426,230.5 426,219.5" fill="#000"/>
+<text x="352" y="180" font-size="18" text-anchor="middle" font-weight="400" style="fill:#000">Reply</text>
+<text x="352" y="204" font-size="18" text-anchor="middle" font-weight="400" style="fill:#000">DebitCommitted</text>
+<path id="instruct-credit-shaft" data-connector="true" d="M683 225 L845 225" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon id="instruct-credit-head" points="854,225 842,230.5 842,219.5" fill="#000"/>
+<text x="768" y="180" font-size="18" text-anchor="middle" font-weight="400" style="fill:#000">Command</text>
+<text x="768" y="204" font-size="18" text-anchor="middle" font-weight="400" style="fill:#000">CreditC</text>
+<text x="32" y="310" font-size="19" text-anchor="start" font-weight="400" style="fill:#000">On failure, the coordinator chooses compensation and records its progress.</text>
+<!-- Lower lane shows an event-driven handoff with distributed workflow decisions. -->
+<text x="32" y="372" font-size="21" text-anchor="start" font-weight="400" style="fill:#000">CHOREOGRAPHY · each participant reacts</text>
+<rect id="choreographed-a" x="32" y="408" width="235" height="112" rx="0" fill="#fff" stroke="#000" stroke-width="2.5"/>
+<text x="149.5" y="456.5" font-size="20" text-anchor="middle" font-weight="400" style="fill:#000">A participant</text>
+<text x="149.5" y="485.5" font-size="20" text-anchor="middle" font-weight="400" style="fill:#000">Debit committed</text>
+<rect id="event-broker" x="438" y="408" width="245" height="112" rx="0" fill="#fff" stroke="#000" stroke-width="2.5"/>
+<text x="560.5" y="456.5" font-size="19" text-anchor="middle" font-weight="400" style="fill:#000">Message broker</text>
+<text x="560.5" y="485.5" font-size="19" text-anchor="middle" font-weight="400" style="fill:#000">Routes events</text>
+<rect id="choreographed-c" x="854" y="408" width="234" height="112" rx="0" fill="#fff" stroke="#000" stroke-width="2.5"/>
+<text x="971.0" y="456.5" font-size="20" text-anchor="middle" font-weight="400" style="fill:#000">C participant</text>
+<text x="971.0" y="485.5" font-size="20" text-anchor="middle" font-weight="400" style="fill:#000">Reacts: credit C</text>
+<path id="publish-debit-event-shaft" data-connector="true" d="M267 476 L429 476" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon id="publish-debit-event-head" points="438,476 426,481.5 426,470.5" fill="#000"/>
+<text x="352" y="431" font-size="18" text-anchor="middle" font-weight="400" style="fill:#000">Event</text>
+<text x="352" y="455" font-size="18" text-anchor="middle" font-weight="400" style="fill:#000">ADebited</text>
+<path id="deliver-debit-event-shaft" data-connector="true" d="M683 476 L845 476" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/>
+<polygon id="deliver-debit-event-head" points="854,476 842,481.5 842,470.5" fill="#000"/>
+<text x="768" y="431" font-size="18" text-anchor="middle" font-weight="400" style="fill:#000">Event</text>
+<text x="768" y="455" font-size="18" text-anchor="middle" font-weight="400" style="fill:#000">ADebited</text>
+<text x="32" y="562" font-size="19" text-anchor="start" font-weight="400" style="fill:#000">On CreditRejected, A’s subscribed handler can refund A; failure routes need explicit design.</text>
+<text x="32" y="609" font-size="21" text-anchor="start" font-weight="400" style="fill:#000">Command: request an action. Reply: return its outcome. Event: announce a fact.</text>
+</svg>
