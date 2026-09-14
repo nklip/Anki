@@ -21,7 +21,11 @@ The diagram follows two threads that each increment the same counter once.
 count++;
 ```
 
-One statement is not necessarily one atomic operation. `count++` reads the old value, adds `1`, then writes the result. Two threads can both read `0` and both write `1`; the final value is `1` instead of `2`. This is a **lost update**.
+**Post-increment (or postfix increment)** is not one atomic operation:
+* `count++` reads the old value, adds `1`, then writes the result
+* Two threads can both read `0` and both write `1`
+* The final value is `1` instead of `2`
+* This is a **lost update**
 
 Declaring the counter `volatile` improves visibility and ordering, but still leaves this read–modify–write sequence non-atomic.
 
