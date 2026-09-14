@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1932" height="820" viewBox="0 0 1932 820" role="img" aria-labelledby="title desc">
+  <title id="title">Phase 2 · Commit the prepared work</title>
+  <desc id="desc">Both databases start prepared and retain their row locks. The coordinator records a durable commit decision, then sends commit to both. Each commits its existing branch, releases its own lock, and acknowledges. Final balances are A zero dollars and C one dollar.</desc>
+  <!-- Match 2pc-protocol.svg: Arial, three timelines, open events, dashed phases, and red balance-row locks. -->
+  <defs>
+    <style>
+text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+.timeline{fill:none;stroke:#000;stroke-width:2.5}
+.phase-boundary{fill:none;stroke:#000;stroke-width:2.5;stroke-dasharray:10 9}
+.lock-span{fill:none;stroke:#fe2700;stroke-width:6}
+.event{fill:#fff;stroke:#000;stroke-width:2.5}
+.message-shaft{fill:none;stroke:#000;stroke-width:2.5}
+.annotation-shaft{fill:none;stroke:#000;stroke-width:1.7}
+</style>
+    <!-- A 4-unit nose projection covers the 2.5-unit shaft. Message endpoints also clear the target event's outer radius. -->
+    <marker id="message-arrowhead" markerWidth="20" markerHeight="16" viewBox="0 0 20 16" refX="16" refY="8" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L20 8 L0 16 Z" fill="#000" />
+    </marker>
+    <!-- Callouts use the reference's smaller head and a 3-unit endpoint inset. -->
+    <marker id="annotation-arrowhead" markerWidth="11" markerHeight="9" viewBox="0 0 11 9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L11 4.5 L0 9 Z" fill="#000" />
+    </marker>
+  </defs>
+  <rect width="1932" height="820" fill="#fff" />
+  <!-- Visible lesson and reading guide. -->
+  <!-- Dashed boundaries and split direction bars locate each displayed stage; arrow tips stay 4 units inside the dividers. -->
+  <path class="phase-boundary" d="M350 190 V725" />
+  <path class="phase-boundary" d="M850 190 V725" />
+  <path class="phase-boundary" d="M1790 190 V725" />
+  <path id="phase-1-bar" class="timeline" data-connector="true" d="M377 204 H492.0 M708.0 204 H823" />
+  <path d="M354 204 L377 195 L377 213 Z M846 204 L823 195 L823 213 Z" fill="#000" />
+  <path id="phase-2-bar" class="timeline" data-connector="true" d="M877 204 H1237.0 M1403.0 204 H1763" />
+  <path d="M854 204 L877 195 L877 213 Z M1786 204 L1763 195 L1763 213 Z" fill="#000" />
+  <!-- Time flows left to right on all three rows; event circles are painted last over shafts. -->
+  <path id="coordinator-timeline" class="timeline" data-connector="true" d="M320 280 H1868" />
+  <path d="M1890 280 L1868 271 L1868 289 Z" fill="#000" />
+  <path id="database-a-timeline" class="timeline" data-connector="true" d="M320 450 H1868" />
+  <path d="M1890 450 L1868 441 L1868 459 Z" fill="#000" />
+  <path id="database-c-timeline" class="timeline" data-connector="true" d="M320 620 H1868" />
+  <path d="M1890 620 L1868 611 L1868 629 Z" fill="#000" />
+  <!-- Locks were acquired before this phase; their endpoints mark local commit, before acknowledgement. -->
+  <path id="database-a-lock-span" class="lock-span" data-connector="true" d="M320 450 H1280" />
+  <path class="timeline" d="M1280 429 V471" />
+  <path id="database-c-lock-span" class="lock-span" data-connector="true" d="M320 620 H1380" />
+  <path class="timeline" d="M1380 599 V641" />
+  <!-- The durable decision event precedes the event that sends COMMIT to participants. -->
+  <path id="commit-a" class="message-shaft" data-connector="true" d="M965 280 L1116.941 436.545" marker-end="url(#message-arrowhead)" />
+  <path id="commit-c" class="message-shaft" data-connector="true" d="M965 280 L1150.672 603.735" marker-end="url(#message-arrowhead)" />
+  <path id="commit-a-ok-source" class="message-shaft" data-connector="true" d="M1330 450 L1397.059 390" />
+  <path id="commit-a-ok-target" class="message-shaft" data-connector="true" d="M1464.118 330 L1506.027 292.502" marker-end="url(#message-arrowhead)" />
+  <path id="commit-c-ok-source" class="message-shaft" data-connector="true" d="M1440 620 L1588.824 390" />
+  <path id="commit-c-ok-target" class="message-shaft" data-connector="true" d="M1627.647 330 L1649.814 295.742" marker-end="url(#message-arrowhead)" />
+  <path id="unlock-a-callout" class="annotation-shaft" data-connector="true" d="M1255 510 L1278.381 473.526" marker-end="url(#annotation-arrowhead)" />
+  <path id="unlock-c-callout" class="annotation-shaft" data-connector="true" d="M1402 677 L1381.564 643.560" marker-end="url(#annotation-arrowhead)" />
+  <!-- White event circles mask only their own source joins and the horizontal timeline, keeping every incoming arrowhead outside the circle. -->
+  <circle id="event-1" class="event" cx="570" cy="280" r="13.5" />
+  <circle id="event-2" class="event" cx="965" cy="280" r="13.5" />
+  <circle id="event-3" class="event" cx="1130" cy="450" r="13.5" />
+  <circle id="event-4" class="event" cx="1160" cy="620" r="13.5" />
+  <circle id="event-5" class="event" cx="1330" cy="450" r="13.5" />
+  <circle id="event-6" class="event" cx="1440" cy="620" r="13.5" />
+  <circle id="event-7" class="event" cx="1520" cy="280" r="13.5" />
+  <circle id="event-8" class="event" cx="1660" cy="280" r="13.5" />
+  <!-- All labels have reserved clearance from message paths, lock ticks, and phase dividers. -->
+  <text x="40" y="50" font-size="38" text-anchor="start" style="font-weight:700">Phase 2 · Commit the prepared work</text>
+  <text x="40" y="93" font-size="28" text-anchor="start">Transfer tr-42: all required YES votes received. Record COMMIT before notifying either database.</text>
+  <text x="600.0" y="169" font-size="38" text-anchor="middle">Durable decision</text>
+  <text x="600.0" y="216" font-size="34" text-anchor="middle">log first</text>
+  <text x="1320.0" y="169" font-size="38" text-anchor="middle">Commit</text>
+  <text x="1320.0" y="216" font-size="34" text-anchor="middle">phase 2</text>
+  <text x="50" y="292" font-size="38" text-anchor="start">Coordinator</text>
+  <text x="50" y="331" font-size="30" text-anchor="start">(Wallet Service)</text>
+  <text x="50" y="462" font-size="38" text-anchor="start">Database A</text>
+  <text x="50" y="632" font-size="38" text-anchor="start">Database C</text>
+  <text x="1820" y="251" font-size="38" text-anchor="start">time</text>
+  <text x="570" y="254" font-size="32" text-anchor="middle">record COMMIT</text>
+  <text x="980" y="254" font-size="32" text-anchor="middle">send COMMIT</text>
+  <text x="580" y="418" font-size="28" text-anchor="middle">PREPARED</text>
+  <text x="580" y="500" font-size="28" text-anchor="middle">A−$1 pending</text>
+  <text x="580" y="588" font-size="28" text-anchor="middle">PREPARED</text>
+  <text x="580" y="670" font-size="28" text-anchor="middle">C+$1 pending</text>
+  <text x="1430.5882352941176" y="371" font-size="30" text-anchor="middle">ok</text>
+  <text x="1608.235294117647" y="371" font-size="30" text-anchor="middle">ok</text>
+  <text x="1210" y="417" font-size="28" text-anchor="middle">commit A</text>
+  <text x="1270" y="588" font-size="28" text-anchor="middle">commit C</text>
+  <text x="1185" y="548" font-size="28" text-anchor="start">unlock A</text>
+  <text x="1360" y="713" font-size="28" text-anchor="start">unlock C</text>
+  <text x="1690" y="418" font-size="28" text-anchor="middle">COMMITTED</text>
+  <text x="1690" y="500" font-size="30" text-anchor="middle">A = $0</text>
+  <text x="1690" y="588" font-size="28" text-anchor="middle">COMMITTED</text>
+  <text x="1690" y="670" font-size="30" text-anchor="middle">C = $1</text>
+  <!-- Outcome and lock legend make the isolated phase understandable without the article. -->
+  <text x="40" y="768" font-size="26" text-anchor="start">Red spans = balance-row locks. Each database unlocks at its own local COMMIT, then acknowledges.</text>
+  <text x="40" y="803" font-size="26" text-anchor="start">A lost acknowledgement does not undo the decision: keep completing COMMIT.</text>
+</svg>

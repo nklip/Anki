@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1932" height="820" viewBox="0 0 1932 820" role="img" aria-labelledby="title desc">
+  <title id="title">Two-phase commit: a successful $1 transfer from A to C</title>
+  <desc id="desc">Success timeline adapted from Digital Wallet chapter 27 and the TCC comparison. Time moves left to right. Both database updates remain uncommitted through prepare. Red lock spans end when each database commits locally, before it sends its acknowledgement.</desc>
+  <!-- Definitions and timeline reused from the corrected upper panel of tcc-versus-2pc-locks.svg. -->
+  <defs>
+    <style>text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}</style>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .pc-timeline{fill:none;stroke:#000;stroke-width:2.5}
+      .pc-phase-boundary{fill:none;stroke:#000;stroke-width:2.5;stroke-dasharray:10 9}
+      .pc-lock-span{fill:none;stroke:#fe2700;stroke-width:6}
+      .pc-event{fill:#fff;stroke:#000;stroke-width:2.5}
+      .pc-message-shaft{fill:none;stroke:#000;stroke-width:2.5}
+      .pc-annotation-shaft{fill:none;stroke:#000;stroke-width:1.7}
+      .pc-participant{font-size:38px}
+      .pc-participant-note{font-size:30px}
+      .pc-phase-title{font-size:38px;text-anchor:middle}
+      .pc-phase-label{font-size:34px;text-anchor:middle}
+      .pc-message-label{font-size:36px}
+      .pc-status-label{font-size:30px}
+      .pc-annotation-label{font-size:28px}
+      .pc-time-label{font-size:38px}
+    </style>
+    <!-- Four-unit projection gives the 2.5-unit shaft full taper coverage at its endpoint. -->
+    <marker id="pc-message-arrowhead" markerWidth="20" markerHeight="16" viewBox="0 0 20 16" refX="16" refY="8" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L20 8 L0 16 Z" fill="#000" />
+    </marker>
+    <!-- The smaller callout head projects three units for the 1.7-unit annotation shaft. -->
+    <marker id="pc-annotation-arrowhead" markerWidth="11" markerHeight="9" viewBox="0 0 11 9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L11 4.5 L0 9 Z" fill="#000" />
+    </marker>
+    <!-- Four-unit projection gives the 2.5-unit shaft full taper coverage at its endpoint. -->
+    <!-- The smaller callout head projects three units for the 1.7-unit annotation shaft. -->
+  </defs>
+  <rect width="1932" height="820" fill="#fff" />
+  <!-- Visible lesson and reading guide precede the original timeline. -->
+  <text font-size="38" style="font-weight:700" x="40" y="50">Two-phase commit: a successful $1 transfer from A to C</text>
+  <text font-size="28" x="40" y="93">Read left to right. Initial writes stay uncommitted; both YES votes are required before COMMIT.</text>
+  <g id="pc-panel" transform="translate(40 120)">
+    <!--A and C release their locks before the local events that send commit acknowledgements; the coordinator can receive them later.-->
+    <!-- Shared etalon-matched typography, strokes, and auto-oriented arrowheads. -->
+    <rect width="1852" height="646" fill="#fff" />
+    <!-- Phase boundaries divide the initial writes, prepare phase, and commit phase. -->
+    <g id="pc-phase-boundaries">
+      <path class="pc-phase-boundary" d="M317.5 99.5 V604" />
+      <path class="pc-phase-boundary" d="M807.5 99.5 V604" />
+      <path class="pc-phase-boundary" d="M1276.5 99.5 V604" />
+      <path class="pc-phase-boundary" d="M1678.5 99.5 V604" />
+    </g>
+    <!-- Horizontal participant timelines and the time arrow. -->
+    <g id="pc-participant-timelines">
+      <path class="pc-timeline" d="M290 171.5 H1726" />
+      <path d="M1748 171.5 L1726 162.5 L1726 180.5 Z" fill="#000" />
+      <path class="pc-timeline" d="M290 329.5 H1726" />
+      <path d="M1748 329.5 L1726 320.5 L1726 338.5 Z" fill="#000" />
+      <path class="pc-timeline" d="M290 485.5 H1726" />
+      <path d="M1748 485.5 L1726 476.5 L1726 494.5 Z" fill="#000" />
+    </g>
+    <!-- Red spans show how long each database record remains locked. -->
+    <g id="pc-database-lock-spans">
+      <path id="pc-database-a-lock-span" class="pc-lock-span" d="M441 329.5 H1468" />
+      <path id="pc-database-c-lock-span" class="pc-lock-span" d="M655 485.5 H1512" />
+      <path class="pc-timeline" d="M441 309 V350" />
+      <path class="pc-timeline" d="M655 465 V506" />
+      <path class="pc-timeline" d="M1468 309 V350" />
+      <path class="pc-timeline" d="M1512 465 V506" />
+    </g>
+    <!-- Initial writes and database acknowledgements. Each split return shaft lies on one source-to-target vector around its label gap. -->
+    <g id="pc-initial-write-connectors">
+      <path id="pc-write-database-a" class="pc-message-shaft" data-connector="true" d="M358 172 C375 221 395 277 409.48 312.30" marker-end="url(#pc-message-arrowhead)" />
+      <path id="pc-database-a-ok-source" class="pc-message-shaft" data-connector="true" d="M486 329.5 L502.35 278" />
+      <path id="pc-database-a-ok-target" class="pc-message-shaft" data-connector="true" d="M516 235 L530.71 188.68" marker-end="url(#pc-message-arrowhead)" />
+      <path id="pc-write-database-c" class="pc-message-shaft" data-connector="true" d="M588 172 C598 266 614 400 625.34 468.05" marker-end="url(#pc-message-arrowhead)" />
+      <path id="pc-database-c-ok-source" class="pc-message-shaft" data-connector="true" d="M708 485.5 L752.35 278" />
+      <path id="pc-database-c-ok-target" class="pc-message-shaft" data-connector="true" d="M761.54 235 L771.34 189.11" marker-end="url(#pc-message-arrowhead)" />
+    </g>
+    <!-- Prepare requests fan out; both yes votes return to the coordinator. -->
+    <g id="pc-prepare-connectors">
+      <path id="pc-prepare-database-a" class="pc-message-shaft" data-connector="true" d="M849 172 C878 221 913 279 938.63 313.78" marker-end="url(#pc-message-arrowhead)" />
+      <path id="pc-prepare-database-c" class="pc-message-shaft" data-connector="true" d="M849 172 C872 269 906 409 924.79 468.19" marker-end="url(#pc-message-arrowhead)" />
+      <path id="pc-database-a-yes-source" class="pc-message-shaft" data-connector="true" d="M1026 329.5 L1050.20 278" />
+      <path id="pc-database-a-yes-target" class="pc-message-shaft" data-connector="true" d="M1070.40 235 L1092.56 187.84" marker-end="url(#pc-message-arrowhead)" />
+      <path id="pc-database-c-yes-source" class="pc-message-shaft" data-connector="true" d="M1045 485.5 L1144.28 278" />
+      <path id="pc-database-c-yes-target" class="pc-message-shaft" data-connector="true" d="M1164.86 235 L1187.45 187.78" marker-end="url(#pc-message-arrowhead)" />
+    </g>
+    <!-- Commit requests fan out; successful commits are acknowledged by both databases. -->
+    <g id="pc-commit-connectors">
+      <path id="pc-commit-database-a" class="pc-message-shaft" data-connector="true" d="M1327 172 C1355 220 1392 278 1419.56 313.83" marker-end="url(#pc-message-arrowhead)" />
+      <path id="pc-commit-database-c" class="pc-message-shaft" data-connector="true" d="M1327 172 C1348 268 1378 409 1393.02 468.12" marker-end="url(#pc-message-arrowhead)" />
+      <path id="pc-database-a-commit-ok-source" class="pc-message-shaft" data-connector="true" d="M1498 329.5 L1509.12 278" />
+      <path id="pc-database-a-commit-ok-target" class="pc-message-shaft" data-connector="true" d="M1518.40 235 L1528.31 189.11" marker-end="url(#pc-message-arrowhead)" />
+      <path id="pc-database-c-commit-ok-source" class="pc-message-shaft" data-connector="true" d="M1542 485.5 L1599.58 278" />
+      <path id="pc-database-c-commit-ok-target" class="pc-message-shaft" data-connector="true" d="M1611.52 235 L1624.32 188.86" marker-end="url(#pc-message-arrowhead)" />
+    </g>
+    <!-- Event circles mask the timeline and connector starts for clean joins. -->
+    <g id="pc-event-points">
+      <g id="pc-coordinator-events">
+        <circle class="pc-event" cx="358" cy="172" r="13.5" />
+        <circle class="pc-event" cx="536" cy="172" r="13.5" />
+        <circle class="pc-event" cx="588" cy="172" r="13.5" />
+        <circle class="pc-event" cx="775" cy="172" r="13.5" />
+        <circle class="pc-event" cx="849" cy="172" r="13.5" />
+        <circle class="pc-event" cx="1100" cy="172" r="13.5" />
+        <circle class="pc-event" cx="1195" cy="172" r="13.5" />
+        <circle class="pc-event" cx="1327" cy="172" r="13.5" />
+        <circle class="pc-event" cx="1532" cy="172" r="13.5" />
+        <circle class="pc-event" cx="1629" cy="172" r="13.5" />
+      </g>
+      <g id="pc-database-a-events">
+        <circle class="pc-event" cx="415" cy="329.5" r="13.5" />
+        <circle class="pc-event" cx="486" cy="329.5" r="13.5" />
+        <circle class="pc-event" cx="948" cy="329.5" r="13.5" />
+        <circle class="pc-event" cx="1026" cy="329.5" r="13.5" />
+        <circle class="pc-event" cx="1430" cy="329.5" r="13.5" />
+        <circle class="pc-event" cx="1498" cy="329.5" r="13.5" />
+      </g>
+      <g id="pc-database-c-events">
+        <circle class="pc-event" cx="628" cy="485.5" r="13.5" />
+        <circle class="pc-event" cx="708" cy="485.5" r="13.5" />
+        <circle class="pc-event" cx="929" cy="485.5" r="13.5" />
+        <circle class="pc-event" cx="1045" cy="485.5" r="13.5" />
+        <circle class="pc-event" cx="1397" cy="485.5" r="13.5" />
+        <circle class="pc-event" cx="1542" cy="485.5" r="13.5" />
+      </g>
+    </g>
+    <!-- Lock and unlock callouts use smaller heads and stay clear of the timelines. -->
+    <g id="pc-lock-annotations">
+      <!--Arrow tips meet the butt-capped tick endpoints exactly; marker tips project three units beyond shaft endpoints.-->
+      <path id="pc-lock-a-callout" class="pc-annotation-shaft" data-connector="true" d="M461 394 L442.2414 352.7311" marker-end="url(#pc-annotation-arrowhead)" />
+      <path id="pc-lock-c-callout" class="pc-annotation-shaft" data-connector="true" d="M680 544 L656.6488 508.5063" marker-end="url(#pc-annotation-arrowhead)" />
+      <path id="pc-unlock-a-callout" class="pc-annotation-shaft" data-connector="true" d="M1450 373 L1466.1511 352.3625" marker-end="url(#pc-annotation-arrowhead)" />
+      <path id="pc-unlock-c-callout" class="pc-annotation-shaft" data-connector="true" d="M1540 545 L1513.7496 508.4370" marker-end="url(#pc-annotation-arrowhead)" />
+    </g>
+    <!-- Participant, phase, message, status, and lock labels are painted above all geometry. -->
+    <g id="pc-labels">
+      <text class="pc-participant" x="67" y="179">Coordinator</text>
+      <text class="pc-participant-note" x="68" y="221">(Wallet Service)</text>
+      <text class="pc-participant" x="70" y="340">Database A</text>
+      <text class="pc-participant" x="70" y="500">Database C</text>
+      <text class="pc-phase-title" x="1042" y="84">Prepare</text>
+      <text class="pc-phase-label" x="1042" y="132">phase 1</text>
+      <text class="pc-phase-title" x="1477" y="84">Commit</text>
+      <text class="pc-phase-label" x="1477" y="132">phase 2</text>
+      <text class="pc-time-label" x="1720" y="149">time</text>
+      <text class="pc-message-label" x="368" y="159">A−$1</text>
+      <text class="pc-message-label" x="607" y="159">C+$1</text>
+      <text class="pc-status-label" x="495" y="265">ok</text>
+      <text class="pc-status-label" x="743" y="265">ok</text>
+      <text class="pc-status-label" x="1039" y="265">yes</text>
+      <text class="pc-status-label" x="1135" y="265">yes</text>
+      <text class="pc-status-label" x="1498" y="266">ok</text>
+      <text class="pc-status-label" x="1590" y="266">ok</text>
+      <text class="pc-annotation-label" x="428" y="423">lock A</text>
+      <text class="pc-annotation-label" x="640" y="572">lock C</text>
+      <text class="pc-annotation-label" x="1418" y="403">unlock A</text>
+      <text class="pc-annotation-label" x="1548" y="573">unlock C</text>
+    </g>
+    <!-- Phase direction bars are split around their labels so no line crosses text. -->
+    <g id="pc-phase-direction-bars">
+      <path class="pc-timeline" data-connector="true" d="M830 120 H975 M1106 120 H1254" />
+      <path d="M807 120 L830 111 L830 129 Z" fill="#000" />
+      <path d="M1277 120 L1254 111 L1254 129 Z" fill="#000" />
+      <path class="pc-timeline" data-connector="true" d="M1300 120 H1409 M1543 120 H1655" />
+      <path d="M1277 120 L1300 111 L1300 129 Z" fill="#000" />
+      <path d="M1678 120 L1655 111 L1655 129 Z" fill="#000" />
+    </g>
+  </g>
+  <!-- Red spans identify retained locks, not the coordinator decision time. -->
+  <text font-size="26" x="40" y="797">Red spans = balance-row locks. Each database unlocks at its own COMMIT; acknowledgements can arrive later.</text>
+</svg>
