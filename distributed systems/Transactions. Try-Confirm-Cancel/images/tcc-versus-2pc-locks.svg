@@ -1,0 +1,347 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="1800" viewBox="0 0 2000 1800" role="img" aria-labelledby="title desc">
+  <title id="title">Database 2PC versus TCC: lock lifetimes during a wallet transfer</title>
+  <desc id="desc">Two stacked panels adapt chapter 27 wallet timelines. Both show a successful one-dollar transfer from account A in Database A to account C in Database C. Time moves left to right in each panel. The upper database two-phase commit panel shows both account balance row locks surviving prepare and ending when each database commits its prepared transaction, before its acknowledgement is sent. The lower Try-Confirm/Cancel panel shows A locked only during its Try local transaction and C locked only during its Confirm local transaction. A blue span separately shows the committed business reservation remaining pending between A's Try commit and A's Confirm completion. Only balance row locks are illustrated; phase and reservation records can require other brief local locks. NOP means no balance change. This is a success path; rollback also releases a prepared transaction's locks, while TCC Cancel uses a new local transaction.</desc>
+  <!--Reused chapter 27 timeline geometry, event circles, dashed dividers, and arrow conventions. Each panel has namespaced definitions to remain editable.-->
+  <defs>
+    <style>text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}</style>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .pc-timeline{fill:none;stroke:#000;stroke-width:2.5}
+      .pc-phase-boundary{fill:none;stroke:#000;stroke-width:2.5;stroke-dasharray:10 9}
+      .pc-lock-span{fill:none;stroke:#fe2700;stroke-width:6}
+      .pc-event{fill:#fff;stroke:#000;stroke-width:2.5}
+      .pc-message-shaft{fill:none;stroke:#000;stroke-width:2.5}
+      .pc-annotation-shaft{fill:none;stroke:#000;stroke-width:1.7}
+      .pc-participant{font-size:38px}
+      .pc-participant-note{font-size:30px}
+      .pc-phase-title{font-size:38px;text-anchor:middle}
+      .pc-phase-label{font-size:34px;text-anchor:middle}
+      .pc-message-label{font-size:36px}
+      .pc-status-label{font-size:30px}
+      .pc-annotation-label{font-size:28px}
+      .pc-time-label{font-size:38px}
+    </style>
+    <!-- Four-unit projection gives the 2.5-unit shaft full taper coverage at its endpoint. -->
+    <marker id="pc-message-arrowhead" markerWidth="20" markerHeight="16" viewBox="0 0 20 16" refX="16" refY="8" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L20 8 L0 16 Z" fill="#000" />
+    </marker>
+    <!-- The smaller callout head projects three units for the 1.7-unit annotation shaft. -->
+    <marker id="pc-annotation-arrowhead" markerWidth="11" markerHeight="9" viewBox="0 0 11 9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L11 4.5 L0 9 Z" fill="#000" />
+    </marker>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .tcc-timeline{fill:none;stroke:#000;stroke-width:2.5}
+      .tcc-phase-boundary{fill:none;stroke:#000;stroke-width:2.5;stroke-dasharray:10 9}
+      .tcc-lock-span{fill:none;stroke:#fe2700;stroke-width:6}
+      .tcc-event{fill:#fff;stroke:#000;stroke-width:2.5}
+      .tcc-message-shaft{fill:none;stroke:#000;stroke-width:2.5}
+      .tcc-annotation-shaft{fill:none;stroke:#000;stroke-width:1.7}
+      .tcc-participant{font-size:38px}
+      .tcc-participant-note{font-size:30px}
+      .tcc-phase-title{font-size:36px;text-anchor:middle}
+      .tcc-action-label{font-size:28px}
+      .tcc-operation-label{font-size:28px}
+      .tcc-state-label{font-size:24px;text-anchor:middle}
+      .tcc-sql-label{font-family:"Times New Roman",Times,serif;font-size:28px}
+      .tcc-status-label{font-size:28px}
+    </style>
+    <!-- Four-unit projection gives the 2.5-unit shaft full taper coverage at its endpoint. -->
+    <marker id="tcc-message-arrowhead" markerWidth="20" markerHeight="16" viewBox="0 0 20 16" refX="16" refY="8" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L20 8 L0 16 Z" fill="#000" />
+    </marker>
+    <!-- The smaller callout head projects three units for the 1.7-unit annotation shaft. -->
+    <marker id="tcc-annotation-arrowhead" markerWidth="11" markerHeight="9" viewBox="0 0 11 9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L11 4.5 L0 9 Z" fill="#000" />
+    </marker>
+    <path id="tcc-success-checkmark-shape" d="M0 15 L6 21 L18 0 H22 L7 28 L0 20 Z" />
+  </defs>
+  <rect width="2000" height="1800" fill="#fff" />
+  <!--Shared reading instructions and explicit labels make both line colors understandable.-->
+  <text x="40" y="54" font-size="40" style="font-weight:700">Database 2PC vs TCC: when do the database locks end?</text>
+  <text x="40" y="94" font-size="28">Successful $1 transfer: A to C. Read both timelines left to right; durations are illustrative.</text>
+  <path d="M40 136 H140" fill="none" stroke="#fe2700" stroke-width="6" />
+  <text x="160" y="145" font-size="26">Balance-row lock (lock / unlock ticks)</text>
+  <path d="M920 136 H1020" fill="none" stroke="#0066b3" stroke-width="8" />
+  <text x="1040" y="145" font-size="26">Business reservation (separate from a DB lock)</text>
+  <!--Upper panel: the acquired row locks survive phase one. Resolution is local to each prepared database transaction.-->
+  <text x="40" y="199" font-size="34" style="font-weight:700">Database 2PC — prepared updates keep their locks</text>
+  <text x="40" y="238" font-size="26">Updates stay uncommitted through Prepare. Each database unlocks when its own COMMIT completes.</text>
+  <g id="pc-panel" transform="translate(74 250)">
+    <!--A and C release their locks before the local events that send commit acknowledgements; the coordinator can receive them later.-->
+    <!-- Shared etalon-matched typography, strokes, and auto-oriented arrowheads. -->
+    <rect width="1852" height="646" fill="#fff" />
+    <!-- Phase boundaries divide the initial writes, prepare phase, and commit phase. -->
+    <g id="pc-phase-boundaries">
+      <path class="pc-phase-boundary" d="M317.5 99.5 V604" />
+      <path class="pc-phase-boundary" d="M807.5 99.5 V604" />
+      <path class="pc-phase-boundary" d="M1276.5 99.5 V604" />
+      <path class="pc-phase-boundary" d="M1678.5 99.5 V604" />
+    </g>
+    <!-- Horizontal participant timelines and the time arrow. -->
+    <g id="pc-participant-timelines">
+      <path class="pc-timeline" d="M290 171.5 H1726" />
+      <path d="M1748 171.5 L1726 162.5 L1726 180.5 Z" fill="#000" />
+      <path class="pc-timeline" d="M290 329.5 H1726" />
+      <path d="M1748 329.5 L1726 320.5 L1726 338.5 Z" fill="#000" />
+      <path class="pc-timeline" d="M290 485.5 H1726" />
+      <path d="M1748 485.5 L1726 476.5 L1726 494.5 Z" fill="#000" />
+    </g>
+    <!-- Red spans show how long each database record remains locked. -->
+    <g id="pc-database-lock-spans">
+      <path id="pc-database-a-lock-span" class="pc-lock-span" d="M441 329.5 H1468" />
+      <path id="pc-database-c-lock-span" class="pc-lock-span" d="M655 485.5 H1512" />
+      <path class="pc-timeline" d="M441 309 V350" />
+      <path class="pc-timeline" d="M655 465 V506" />
+      <path class="pc-timeline" d="M1468 309 V350" />
+      <path class="pc-timeline" d="M1512 465 V506" />
+    </g>
+    <!-- Initial writes and database acknowledgements. Each split return shaft lies on one source-to-target vector around its label gap. -->
+    <g id="pc-initial-write-connectors">
+      <path id="pc-write-database-a" class="pc-message-shaft" data-connector="true" d="M358 172 C375 221 395 277 409.48 312.30" marker-end="url(#pc-message-arrowhead)" />
+      <path id="pc-database-a-ok-source" class="pc-message-shaft" data-connector="true" d="M486 329.5 L502.35 278" />
+      <path id="pc-database-a-ok-target" class="pc-message-shaft" data-connector="true" d="M516 235 L530.71 188.68" marker-end="url(#pc-message-arrowhead)" />
+      <path id="pc-write-database-c" class="pc-message-shaft" data-connector="true" d="M588 172 C598 266 614 400 625.34 468.05" marker-end="url(#pc-message-arrowhead)" />
+      <path id="pc-database-c-ok-source" class="pc-message-shaft" data-connector="true" d="M708 485.5 L752.35 278" />
+      <path id="pc-database-c-ok-target" class="pc-message-shaft" data-connector="true" d="M761.54 235 L771.34 189.11" marker-end="url(#pc-message-arrowhead)" />
+    </g>
+    <!-- Prepare requests fan out; both yes votes return to the coordinator. -->
+    <g id="pc-prepare-connectors">
+      <path id="pc-prepare-database-a" class="pc-message-shaft" data-connector="true" d="M849 172 C878 221 913 279 938.63 313.78" marker-end="url(#pc-message-arrowhead)" />
+      <path id="pc-prepare-database-c" class="pc-message-shaft" data-connector="true" d="M849 172 C872 269 906 409 924.79 468.19" marker-end="url(#pc-message-arrowhead)" />
+      <path id="pc-database-a-yes-source" class="pc-message-shaft" data-connector="true" d="M1026 329.5 L1050.20 278" />
+      <path id="pc-database-a-yes-target" class="pc-message-shaft" data-connector="true" d="M1070.40 235 L1092.56 187.84" marker-end="url(#pc-message-arrowhead)" />
+      <path id="pc-database-c-yes-source" class="pc-message-shaft" data-connector="true" d="M1045 485.5 L1144.28 278" />
+      <path id="pc-database-c-yes-target" class="pc-message-shaft" data-connector="true" d="M1164.86 235 L1187.45 187.78" marker-end="url(#pc-message-arrowhead)" />
+    </g>
+    <!-- Commit requests fan out; successful commits are acknowledged by both databases. -->
+    <g id="pc-commit-connectors">
+      <path id="pc-commit-database-a" class="pc-message-shaft" data-connector="true" d="M1327 172 C1355 220 1392 278 1419.56 313.83" marker-end="url(#pc-message-arrowhead)" />
+      <path id="pc-commit-database-c" class="pc-message-shaft" data-connector="true" d="M1327 172 C1348 268 1378 409 1393.02 468.12" marker-end="url(#pc-message-arrowhead)" />
+      <path id="pc-database-a-commit-ok-source" class="pc-message-shaft" data-connector="true" d="M1498 329.5 L1509.12 278" />
+      <path id="pc-database-a-commit-ok-target" class="pc-message-shaft" data-connector="true" d="M1518.40 235 L1528.31 189.11" marker-end="url(#pc-message-arrowhead)" />
+      <path id="pc-database-c-commit-ok-source" class="pc-message-shaft" data-connector="true" d="M1542 485.5 L1599.58 278" />
+      <path id="pc-database-c-commit-ok-target" class="pc-message-shaft" data-connector="true" d="M1611.52 235 L1624.32 188.86" marker-end="url(#pc-message-arrowhead)" />
+    </g>
+    <!-- Event circles mask the timeline and connector starts for clean joins. -->
+    <g id="pc-event-points">
+      <g id="pc-coordinator-events">
+        <circle class="pc-event" cx="358" cy="172" r="13.5" />
+        <circle class="pc-event" cx="536" cy="172" r="13.5" />
+        <circle class="pc-event" cx="588" cy="172" r="13.5" />
+        <circle class="pc-event" cx="775" cy="172" r="13.5" />
+        <circle class="pc-event" cx="849" cy="172" r="13.5" />
+        <circle class="pc-event" cx="1100" cy="172" r="13.5" />
+        <circle class="pc-event" cx="1195" cy="172" r="13.5" />
+        <circle class="pc-event" cx="1327" cy="172" r="13.5" />
+        <circle class="pc-event" cx="1532" cy="172" r="13.5" />
+        <circle class="pc-event" cx="1629" cy="172" r="13.5" />
+      </g>
+      <g id="pc-database-a-events">
+        <circle class="pc-event" cx="415" cy="329.5" r="13.5" />
+        <circle class="pc-event" cx="486" cy="329.5" r="13.5" />
+        <circle class="pc-event" cx="948" cy="329.5" r="13.5" />
+        <circle class="pc-event" cx="1026" cy="329.5" r="13.5" />
+        <circle class="pc-event" cx="1430" cy="329.5" r="13.5" />
+        <circle class="pc-event" cx="1498" cy="329.5" r="13.5" />
+      </g>
+      <g id="pc-database-c-events">
+        <circle class="pc-event" cx="628" cy="485.5" r="13.5" />
+        <circle class="pc-event" cx="708" cy="485.5" r="13.5" />
+        <circle class="pc-event" cx="929" cy="485.5" r="13.5" />
+        <circle class="pc-event" cx="1045" cy="485.5" r="13.5" />
+        <circle class="pc-event" cx="1397" cy="485.5" r="13.5" />
+        <circle class="pc-event" cx="1542" cy="485.5" r="13.5" />
+      </g>
+    </g>
+    <!-- Lock and unlock callouts use smaller heads and stay clear of the timelines. -->
+    <g id="pc-lock-annotations">
+      <!--Arrow tips meet the butt-capped tick endpoints exactly; marker tips project three units beyond shaft endpoints.-->
+      <path id="pc-lock-a-callout" class="pc-annotation-shaft" data-connector="true" d="M461 394 L442.2414 352.7311" marker-end="url(#pc-annotation-arrowhead)" />
+      <path id="pc-lock-c-callout" class="pc-annotation-shaft" data-connector="true" d="M680 544 L656.6488 508.5063" marker-end="url(#pc-annotation-arrowhead)" />
+      <path id="pc-unlock-a-callout" class="pc-annotation-shaft" data-connector="true" d="M1450 373 L1466.1511 352.3625" marker-end="url(#pc-annotation-arrowhead)" />
+      <path id="pc-unlock-c-callout" class="pc-annotation-shaft" data-connector="true" d="M1540 545 L1513.7496 508.4370" marker-end="url(#pc-annotation-arrowhead)" />
+    </g>
+    <!-- Participant, phase, message, status, and lock labels are painted above all geometry. -->
+    <g id="pc-labels">
+      <text class="pc-participant" x="67" y="179">Coordinator</text>
+      <text class="pc-participant-note" x="68" y="221">(Wallet Service)</text>
+      <text class="pc-participant" x="70" y="340">Database A</text>
+      <text class="pc-participant" x="70" y="500">Database C</text>
+      <text class="pc-phase-title" x="1042" y="84">Prepare</text>
+      <text class="pc-phase-label" x="1042" y="132">phase 1</text>
+      <text class="pc-phase-title" x="1477" y="84">Commit</text>
+      <text class="pc-phase-label" x="1477" y="132">phase 2</text>
+      <text class="pc-time-label" x="1720" y="149">time</text>
+      <text class="pc-message-label" x="368" y="159">A−$1</text>
+      <text class="pc-message-label" x="607" y="159">C+$1</text>
+      <text class="pc-status-label" x="495" y="265">ok</text>
+      <text class="pc-status-label" x="743" y="265">ok</text>
+      <text class="pc-status-label" x="1039" y="265">yes</text>
+      <text class="pc-status-label" x="1135" y="265">yes</text>
+      <text class="pc-status-label" x="1498" y="266">ok</text>
+      <text class="pc-status-label" x="1590" y="266">ok</text>
+      <text class="pc-annotation-label" x="428" y="423">lock A</text>
+      <text class="pc-annotation-label" x="640" y="572">lock C</text>
+      <text class="pc-annotation-label" x="1418" y="403">unlock A</text>
+      <text class="pc-annotation-label" x="1548" y="573">unlock C</text>
+    </g>
+    <!-- Phase direction bars are split around their labels so no line crosses text. -->
+    <g id="pc-phase-direction-bars">
+      <path class="pc-timeline" data-connector="true" d="M830 120 H975 M1106 120 H1254" />
+      <path d="M807 120 L830 111 L830 129 Z" fill="#000" />
+      <path d="M1277 120 L1254 111 L1254 129 Z" fill="#000" />
+      <path class="pc-timeline" data-connector="true" d="M1300 120 H1409 M1543 120 H1655" />
+      <path d="M1277 120 L1300 111 L1300 129 Z" fill="#000" />
+      <path d="M1678 120 L1655 111 L1655 129 Z" fill="#000" />
+    </g>
+  </g>
+  <!--Lower panel: reuse the article copy of the chapter Confirm timeline, including its corrected unlock C label.-->
+  <text x="40" y="934" font-size="34" style="font-weight:700">TCC — local commits release locks between phases</text>
+  <text x="40" y="974" font-size="26">Try commits a reservation; Confirm uses new local transactions to finish the transfer.</text>
+  <g id="tcc-panel" transform="translate(0 995)">
+    <!-- Shared styles and reusable, auto-oriented arrowheads. -->
+    <rect width="2000" height="724" fill="#fff" />
+    <!-- Dashed dividers frame the first phase and its successful confirmation. -->
+    <g id="tcc-phase-boundaries">
+      <path class="tcc-phase-boundary" d="M340.5 35.5 V554" />
+      <path class="tcc-phase-boundary" d="M1224.5 35.5 V554" />
+      <path class="tcc-phase-boundary" d="M1883.5 35.5 V554" />
+    </g>
+    <!-- Participant timelines; inline NOP labels occupy deliberate gaps. -->
+    <g id="tcc-participant-timelines">
+      <!--Interrupt the shafts beneath tapered intermediate noses; resume at the far event-circle boundary.-->
+      <path class="tcc-timeline" d="M307 145.5 H1908" />
+      <path id="tcc-coordinator-time-head" d="M1931 145.5 L1908 136.5 L1908 154.5 Z" fill="#000" />
+      <path class="tcc-timeline" d="M307 310.5 H960 M1007.75 310.5 H1491 M1556 310.5 H1908" />
+      <!-- Intermediate noses meet each event circle's outer stroke: center minus radius 13.5 and half-stroke 1.25. -->
+      <path id="tcc-database-a-first-time-head" d="M978.25 310.5 L957 301.5 L957 319.5 Z" fill="#000" />
+      <path id="tcc-database-a-final-time-head" d="M1931 310.5 L1908 301.5 L1908 319.5 Z" fill="#000" />
+      <path class="tcc-timeline" d="M307 475.5 H699 M765 475.5 H1002 M1049.75 475.5 H1908" />
+      <path id="tcc-database-c-first-time-head" d="M1020.25 475.5 L999 466.5 L999 484.5 Z" fill="#000" />
+      <path id="tcc-database-c-final-time-head" d="M1931 475.5 L1908 466.5 L1908 484.5 Z" fill="#000" />
+    </g>
+    <!-- Red spans show the debit lock on A and the confirmation lock on C. -->
+    <g id="tcc-database-locks">
+      <path id="tcc-database-a-lock-span" class="tcc-lock-span" d="M608 310.5 H941" />
+      <path id="tcc-database-c-lock-span" class="tcc-lock-span" d="M1381 475.5 H1709" />
+      <path class="tcc-timeline" d="M608 289 V332" />
+      <path class="tcc-timeline" d="M941 289 V332" />
+      <path class="tcc-timeline" d="M1381 454 V497" />
+      <path class="tcc-timeline" d="M1709 454 V497" />
+    </g>
+    <!-- First phase requests: debit A and perform no operation on C. -->
+    <g id="tcc-first-phase-requests">
+      <path id="tcc-try-a-source" class="tcc-message-shaft" data-connector="true" d="M372 146 L450.4 212" />
+      <path id="tcc-try-a-target" class="tcc-message-shaft" data-connector="true" d="M505.02 258 L554.61 299.72" marker-end="url(#tcc-message-arrowhead)" />
+      <path id="tcc-first-nop-source" class="tcc-message-shaft" data-connector="true" d="M372 146 L481.5 365" />
+      <path id="tcc-first-nop-target" class="tcc-message-shaft" data-connector="true" d="M502.30 409 L527.22 459.32" marker-end="url(#tcc-message-arrowhead)" />
+    </g>
+    <!-- First phase responses: both return arrows stay collinear through their Done-label gaps. -->
+    <g id="tcc-first-phase-responses">
+      <path id="tcc-database-a-done-source" class="tcc-message-shaft" data-connector="true" d="M993 311 L1029.55 244" />
+      <path id="tcc-database-a-done-target" class="tcc-message-shaft" data-connector="true" d="M1053.5 200 L1074.58 161.36" marker-end="url(#tcc-message-arrowhead)" />
+      <path id="tcc-database-c-done-source" class="tcc-message-shaft" data-connector="true" d="M1035 475 L1056.03 423" />
+      <path id="tcc-database-c-done-target" class="tcc-message-shaft" data-connector="true" d="M1074.22 378 L1161.44 162.23" marker-end="url(#tcc-message-arrowhead)" />
+    </g>
+    <!-- Confirm phase requests: A receives NOP while C is credited one dollar. -->
+    <g id="tcc-confirm-phase-requests">
+      <path id="tcc-confirm-a-nop-source" class="tcc-message-shaft" data-connector="true" d="M1265 146 L1319.40 212" />
+      <path id="tcc-confirm-a-nop-target" class="tcc-message-shaft" data-connector="true" d="M1357.29 258 L1389.86 297.49" marker-end="url(#tcc-message-arrowhead)" />
+      <path id="tcc-confirm-c-source" class="tcc-message-shaft" data-connector="true" d="M1265 146 L1315.2 369" />
+      <path id="tcc-confirm-c-target" class="tcc-message-shaft" data-connector="true" d="M1325.05 413 L1335.09 457.93" marker-end="url(#tcc-message-arrowhead)" />
+    </g>
+    <!-- Confirm phase responses: A and C both report completion. -->
+    <g id="tcc-confirm-phase-responses">
+      <path id="tcc-confirm-a-done-source" class="tcc-message-shaft" data-connector="true" d="M1632 311 L1652.8 259" />
+      <path id="tcc-confirm-a-done-target" class="tcc-message-shaft" data-connector="true" d="M1670.8 214 L1691.50 162.24" marker-end="url(#tcc-message-arrowhead)" />
+      <path id="tcc-confirm-c-done-source" class="tcc-message-shaft" data-connector="true" d="M1757 475 L1773.05 415" />
+      <path id="tcc-confirm-c-done-target" class="tcc-message-shaft" data-connector="true" d="M1785.36 369 L1840.48 162.92" marker-end="url(#tcc-message-arrowhead)" />
+    </g>
+    <!-- Event circles mask timelines and connector starts for clean joins. -->
+    <g id="tcc-event-points">
+      <g id="tcc-coordinator-events">
+        <circle class="tcc-event" cx="372" cy="146" r="13.5" />
+        <circle class="tcc-event" cx="1083" cy="146" r="13.5" />
+        <circle class="tcc-event" cx="1168" cy="146" r="13.5" />
+        <circle class="tcc-event" cx="1265" cy="146" r="13.5" />
+        <circle class="tcc-event" cx="1698" cy="146" r="13.5" />
+        <circle class="tcc-event" cx="1845" cy="146" r="13.5" />
+      </g>
+      <g id="tcc-database-a-events">
+        <circle class="tcc-event" cx="568" cy="311" r="13.5" />
+        <circle class="tcc-event" cx="993" cy="311" r="13.5" />
+        <circle class="tcc-event" cx="1401" cy="311" r="13.5" />
+        <circle class="tcc-event" cx="1632" cy="311" r="13.5" />
+      </g>
+      <g id="tcc-database-c-events">
+        <circle class="tcc-event" cx="535" cy="475.5" r="13.5" />
+        <circle class="tcc-event" cx="1035" cy="475.5" r="13.5" />
+        <circle class="tcc-event" cx="1339" cy="475.5" r="13.5" />
+        <circle class="tcc-event" cx="1757" cy="475.5" r="13.5" />
+      </g>
+    </g>
+    <!-- Small callouts identify lock boundaries and SQL application points. -->
+    <g id="tcc-annotations">
+      <path id="tcc-first-lock-callout" class="tcc-annotation-shaft" data-connector="true" d="M621 371 L608.9487 334.8460" marker-end="url(#tcc-annotation-arrowhead)" />
+      <path id="tcc-first-unlock-callout" class="tcc-annotation-shaft" data-connector="true" d="M920 370 L939.5489 334.6257" marker-end="url(#tcc-annotation-arrowhead)" />
+      <path id="tcc-confirm-lock-callout" class="tcc-annotation-shaft" data-connector="true" d="M1389 526 L1381.7978 499.8920" marker-end="url(#tcc-annotation-arrowhead)" />
+      <path id="tcc-confirm-unlock-callout" class="tcc-annotation-shaft" data-connector="true" d="M1687 526 L1707.1868 499.3901" marker-end="url(#tcc-annotation-arrowhead)" />
+      <path id="tcc-first-sql-callout" class="tcc-annotation-shaft" data-connector="true" d="M773 283 V304.5" marker-end="url(#tcc-annotation-arrowhead)" />
+    </g>
+    <!-- All labels are painted last and remain clear of connector lanes. -->
+    <g id="tcc-labels">
+      <text class="tcc-participant" x="83" y="158">Coordinator</text>
+      <text class="tcc-participant-note" x="84" y="201">(Wallet Service)</text>
+      <text class="tcc-participant" x="88" y="322">Database A</text>
+      <text class="tcc-participant" x="86" y="488">Database C</text>
+      <text class="tcc-phase-title" x="773" y="80">Phase 1: Try</text>
+      <text class="tcc-phase-title" x="1554" y="80">Phase 2: Confirm</text>
+      <text class="tcc-action-label" x="433" y="246">Try: A−$1</text>
+      <text class="tcc-action-label" x="457" y="397">NOP</text>
+      <text class="tcc-operation-label" x="701" y="486">NOP</text>
+      <text class="tcc-action-label" x="1310" y="246">NOP</text>
+      <text class="tcc-action-label" x="1247" y="401">Confirm: C+$1</text>
+      <text class="tcc-operation-label" x="1495" y="321">NOP</text>
+      <text class="tcc-operation-label" x="591" y="403">lock A</text>
+      <text class="tcc-operation-label" x="848" y="403">unlock A</text>
+      <text class="tcc-operation-label" x="1352" y="558">lock C</text>
+      <text class="tcc-operation-label" x="1630" y="558">unlock C</text>
+      <text class="tcc-state-label" x="568" y="346">A=$1</text>
+      <text class="tcc-state-label" x="993" y="346">A=$0</text>
+      <text class="tcc-state-label" x="535" y="511">C=$0</text>
+      <text class="tcc-state-label" x="1035" y="511">C=$0</text>
+      <text class="tcc-state-label" x="1401" y="346">A=$0</text>
+      <text class="tcc-state-label" x="1339" y="511">C=$0</text>
+      <text class="tcc-state-label" x="1632" y="346">A=$0</text>
+      <text class="tcc-state-label" x="1757" y="511">C=$1</text>
+      <use id="tcc-first-a-success-mark" href="#tcc-success-checkmark-shape" transform="translate(993 210)" fill="#0096ff" />
+      <text class="tcc-status-label" x="1023" y="232">Done</text>
+      <use id="tcc-first-c-success-mark" href="#tcc-success-checkmark-shape" transform="translate(1008 389)" fill="#0096ff" />
+      <text class="tcc-status-label" x="1039" y="411">Done</text>
+      <use id="tcc-confirm-a-success-mark" href="#tcc-success-checkmark-shape" transform="translate(1607 224)" fill="#0096ff" />
+      <text class="tcc-status-label" x="1638" y="248">Done</text>
+      <use id="tcc-confirm-c-success-mark" href="#tcc-success-checkmark-shape" transform="translate(1722 381)" fill="#0096ff" />
+      <text class="tcc-status-label" x="1752" y="403">Done</text>
+    </g>
+    <g id="tcc-local-commit-labels">
+      <!--The debit and its pending record commit together; the existing callout points at the local processing span.-->
+      <text x="626" y="212" font-size="28">A: reserve $1</text>
+      <text x="626" y="249" font-size="28">balance + pending record</text>
+      <text x="815" y="439" font-size="25">Try committed</text>
+      <text x="1580" y="594" font-size="25">Confirm committed</text>
+    </g>
+    <!--A separate blue row maps A's business reservation to the same horizontal timeline: Try unlock at x941 to A Confirm completion at x1632.-->
+    <g id="tcc-business-reservation">
+      <text x="1286.5" y="599" font-size="28" text-anchor="middle">A's $1 remains reserved</text>
+      <path id="tcc-business-reservation-span" d="M941 625 H1632" fill="none" stroke="#0066b3" stroke-width="8" />
+      <path d="M941 610 V640 M1632 610 V640" fill="none" stroke="#0066b3" stroke-width="2.5" />
+      <text x="941" y="676" font-size="25" text-anchor="middle">A: Try committed</text>
+      <text x="1632" y="676" font-size="25" text-anchor="middle">A: Confirm finalized</text>
+    </g>
+  </g>
+  <!--Scope note avoids interpreting NOP as no protocol work or the red spans as every lock a database can acquire.-->
+  <text x="40" y="1738" font-size="24">Red spans show account balance row locks. Phase records may need other brief locks. NOP = no balance change.</text>
+  <text x="40" y="1773" font-size="24">Abort path: 2PC unlocks on ROLLBACK of the prepared transaction; TCC Cancel releases its hold in a new local transaction.</text>
+</svg>

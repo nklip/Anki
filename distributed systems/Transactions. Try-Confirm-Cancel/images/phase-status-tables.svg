@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1474" height="800" viewBox="0 0 1474 800"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Wallet services coordinate phase-status tables across database partitions</title>
+  <desc id="desc">Two transfer commands enter two wallet-service instances. Both services read partition information from ZooKeeper and route transaction work to three database partitions. Every partition stores a highlighted phase-status table beside its balance table.</desc>
+
+  <!-- Shared etalon-matched typography, strokes, colors, and arrowhead geometry. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}
+      .outline{fill:#fff;stroke:#000;stroke-width:2}
+      .connector{fill:none;stroke:#000;stroke-width:2}
+      .command-label{font-size:32px;text-anchor:middle}
+      .service-label{font-size:32px;text-anchor:middle}
+      .partition-label{font-size:34px;text-anchor:middle}
+      .zookeeper-label{font-size:32px;text-anchor:middle}
+      .table-label{font-size:24px;text-anchor:middle}
+    </style>
+    <!-- Every tip sits 2 px beyond its shaft endpoint so the shaft remains hidden inside the nose. -->
+    <marker id="flow-arrowhead" markerWidth="18" markerHeight="16"
+            viewBox="0 0 18 16" refX="16" refY="8"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L18 8 L0 16 Z" fill="#000"/>
+    </marker>
+  </defs>
+
+  <rect width="1474" height="800" fill="#fff"/>
+
+  <!-- Transfer commands enter their corresponding wallet-service instances. -->
+  <g id="transfer-command-inputs">
+    <text class="command-label" x="408" y="64">Transfer Command</text>
+    <circle class="outline" cx="408" cy="100" r="21"/>
+    <path id="left-command-flow" class="connector" data-connector="true"
+          d="M408 121 V293" marker-end="url(#flow-arrowhead)"/>
+
+    <text class="command-label" x="787" y="64">Transfer Command</text>
+    <circle class="outline" cx="787" cy="100" r="21"/>
+    <path id="right-command-flow" class="connector" data-connector="true"
+          d="M787 121 V293" marker-end="url(#flow-arrowhead)"/>
+  </g>
+
+  <!-- Cross-partition routes are painted before nodes so their starts remain clean. -->
+  <g id="partition-routing">
+    <path id="left-service-to-left-partition" class="connector" data-connector="true"
+          d="M379 402 L270 599" marker-end="url(#flow-arrowhead)"/>
+    <path id="left-service-to-middle-partition" class="connector" data-connector="true"
+          d="M437 402 L549 599" marker-end="url(#flow-arrowhead)"/>
+    <path id="left-service-to-right-partition" class="connector" data-connector="true"
+          d="M496 402 L848 611" marker-end="url(#flow-arrowhead)"/>
+
+    <!-- The diagonal crossings intentionally show that either service can reach every partition. -->
+    <path id="right-service-to-left-partition" class="connector" data-connector="true"
+          d="M698 402 L346 611" marker-end="url(#flow-arrowhead)"/>
+    <path id="right-service-to-middle-partition" class="connector" data-connector="true"
+          d="M757 402 L645 599" marker-end="url(#flow-arrowhead)"/>
+    <path id="right-service-to-right-partition" class="connector" data-connector="true"
+          d="M816 402 L925 599" marker-end="url(#flow-arrowhead)"/>
+  </g>
+
+  <!-- Wallet-service processes receive commands and coordinate all database partitions. -->
+  <g id="wallet-services">
+    <rect class="outline" x="284" y="295" width="247" height="107"/>
+    <text class="service-label" x="407.5" y="342">
+      <tspan x="407.5">Wallet</tspan>
+      <tspan x="407.5" dy="35">Service</tspan>
+    </text>
+
+    <rect class="outline" x="663" y="295" width="248" height="107"/>
+    <text class="service-label" x="787" y="342">
+      <tspan x="787">Wallet</tspan>
+      <tspan x="787" dy="35">Service</tspan>
+    </text>
+  </g>
+
+  <!-- Both services consult ZooKeeper for partition ownership and routing metadata. -->
+  <g id="partition-information-flows">
+    <path id="left-service-to-zookeeper" class="connector" data-connector="true"
+          d="M531 302 C744 218 929 226 1135.1 299.3"
+          marker-end="url(#flow-arrowhead)"/>
+    <path id="right-service-to-zookeeper" class="connector" data-connector="true"
+          d="M911 348 H1135" marker-end="url(#flow-arrowhead)"/>
+  </g>
+
+  <!-- ZooKeeper cylinder containing the partition-information registry. -->
+  <g id="zookeeper">
+    <path class="outline"
+          d="M1137 295 V402 C1137 411 1179 418 1232 418 C1285 418 1327 411 1327 402 V295 Z"/>
+    <ellipse class="outline" cx="1232" cy="295" rx="95" ry="16"/>
+    <text class="partition-label" x="1232" y="350">
+      <tspan x="1232">Partition</tspan>
+      <tspan x="1232" dy="37">Info</tspan>
+    </text>
+    <text class="zookeeper-label" x="1232" y="456">Zookeeper</text>
+  </g>
+
+  <!-- Each shard stores transaction phase state beside the account balance. -->
+  <g id="database-partitions">
+    <g id="left-database-partition">
+      <path class="outline"
+            d="M100 615 V748 C100 758 155 765 223 765 C291 765 346 758 346 748 V615 Z"/>
+      <ellipse class="outline" cx="223" cy="615" rx="123" ry="17"/>
+      <rect x="117" y="653" width="91" height="91" fill="#ffaafb" stroke="#000" stroke-width="2"/>
+      <rect class="outline" x="219" y="653" width="115" height="91"/>
+      <text class="table-label" x="162.5" y="678">
+        <tspan x="162.5">Phase</tspan>
+        <tspan x="162.5" dy="27">Status</tspan>
+        <tspan x="162.5" dy="27">Table</tspan>
+      </text>
+      <text class="table-label" x="276.5" y="692">
+        <tspan x="276.5">Balance</tspan>
+        <tspan x="276.5" dy="27">Table</tspan>
+      </text>
+    </g>
+
+    <g id="middle-database-partition">
+      <path class="outline"
+            d="M474 615 V748 C474 758 529 765 597 765 C665 765 720 758 720 748 V615 Z"/>
+      <ellipse class="outline" cx="597" cy="615" rx="123" ry="17"/>
+      <rect x="489" y="653" width="91" height="91" fill="#ffaafb" stroke="#000" stroke-width="2"/>
+      <rect class="outline" x="592" y="653" width="116" height="91"/>
+      <text class="table-label" x="534.5" y="678">
+        <tspan x="534.5">Phase</tspan>
+        <tspan x="534.5" dy="27">Status</tspan>
+        <tspan x="534.5" dy="27">Table</tspan>
+      </text>
+      <text class="table-label" x="650" y="692">
+        <tspan x="650">Balance</tspan>
+        <tspan x="650" dy="27">Table</tspan>
+      </text>
+    </g>
+
+    <g id="right-database-partition">
+      <path class="outline"
+            d="M848 615 V748 C848 758 903 765 971 765 C1039 765 1094 758 1094 748 V615 Z"/>
+      <ellipse class="outline" cx="971" cy="615" rx="123" ry="17"/>
+      <rect x="862" y="653" width="90" height="91" fill="#ffaafb" stroke="#000" stroke-width="2"/>
+      <rect class="outline" x="964" y="653" width="116" height="91"/>
+      <text class="table-label" x="907" y="678">
+        <tspan x="907">Phase</tspan>
+        <tspan x="907" dy="27">Status</tspan>
+        <tspan x="907" dy="27">Table</tspan>
+      </text>
+      <text class="table-label" x="1022" y="692">
+        <tspan x="1022">Balance</tspan>
+        <tspan x="1022" dy="27">Table</tspan>
+      </text>
+    </g>
+  </g>
+</svg>
