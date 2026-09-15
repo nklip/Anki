@@ -6,8 +6,6 @@
 
 This article uses the repository's Digital Wallet design: transfer **$1 from account A to account C**, held in different partitions. It explains the architecture, successful and failed transfers, coordination styles, recovery mechanisms, and how Saga differs from Try-Confirm/Cancel (TCC).
 
-![saga.svg](images/saga.svg)
-
 ## Saga in practice
 
 **Airbnb described a production example of compensation-based workflows in April 2026: Skipper, its embedded Java/Kotlin workflow engine.** Skipper records progress so work can resume after a crash. Its `@Compensate` annotation pairs an action with an operation that counteracts its effect. After a failure, the engine runs the applicable compensations in reverse order, such as releasing inventory or refunding a charge. This is **Saga-like behavior**; Airbnb's article describes the mechanism without naming it Saga.
@@ -29,6 +27,8 @@ A **local transaction** commits changes within one participant's transactional b
 Suppose A has $10 and C has $5. The business request wants A to have $9 and C to have $6. If these accounts belong to independent databases, committing A's debit does not commit C's credit. A crash between the two leaves unfinished work.
 
 A Saga makes that unfinished work explicit. Its **compensation** is another local transaction with a business-defined corrective effect: for example, refunding A after C definitively rejects the credit. **Eventual consistency** here means the workflow seeks a valid completed or compensated outcome through recovery; it does not promise an immediate result or a fixed completion time.
+
+![saga.svg](images/saga.svg)
 
 ## Where Saga appears in the System Design material
 
