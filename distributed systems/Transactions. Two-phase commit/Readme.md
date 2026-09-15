@@ -6,6 +6,14 @@
 
 This article follows chapter 27's wallet example: transfer **$1 from account A to account C**, stored in different databases. Using the chapter's diagrams and the other Transactions articles' visual language, we will follow preparation, completion, and crash recovery. Then we will separate atomic commit from isolation, examine PostgreSQL's participant commands and the XA interface, compare 2PC with Try-Confirm/Cancel (TCC) and Saga, and consider when its costs are justified.
 
+## 2PC in practice
+
+**Amazon DynamoDB, the managed database from Amazon Web Services (AWS), uses two-phase commit internally to coordinate transactions across storage nodes.** An application submits one transaction request. DynamoDB's transaction service identifies the participating nodes, prepares their work, and then coordinates commit or abort. The application does not send separate prepare and commit requests to those nodes.
+
+The reason for this choice is **atomic updates across several records**: all required changes succeed together, or none takes effect. For example, an application can make an order record and its inventory update part of the same database transaction. The database handles the shared outcome, so the application does not need a later compensation merely to repair a partially committed pair of database writes.
+
+In the documentation checked in **September 2026**, `TransactWriteItems` supports **up to 100 write actions per request**, affecting distinct items with a combined size of at most **4 MB**, across tables in the same AWS account and Region. This illustrates where 2PC fits: compatible resources managed within a database transaction boundary. An external airline booking or card-payment API remains outside that boundary.
+
 ## Why two independent commits are insufficient
 
 Start with **A = $1 and C = $0**. A successful transfer should end with **A = $0 and C = $1**. If the transfer is rejected, the balances should remain **A = $1 and C = $0**. Assume no other transfers in these examples.
@@ -268,6 +276,11 @@ Primary sources checked on 2026-09-14. Transfer `tr-42`, its branch identifiers,
 
 Coverage review also used [Timofei Ivankov — Distributed transactions in microservices: from Saga to Two-Phase Commit (Habr, Russian)](https://habr.com/ru/articles/906484/). Integration and availability examples were checked against the primary sources below; atomic commit remains distinct from isolation.
 
+The DynamoDB practice example and its sources were checked on 2026-09-16. The order/inventory pair is an illustrative application of its atomic-write API.
+
+- [AWS Database Blog — Optimize Amazon DynamoDB transaction resilience: internal two-phase commit coordination](https://aws.amazon.com/blogs/database/optimize-amazon-dynamodb-transaction-resilience/)
+- [Amazon DynamoDB — Managing complex workflows with transactions: atomic updates and prepare/commit operations](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/transactions.html)
+- [Amazon DynamoDB — Transactions: API limits, same-account/Region scope, and isolation guarantees](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/transaction-apis.html)
 - [System Design chapter 27: Digital Wallet](../../system%20design/27.%20Digital%20Wallet/Readme.md) — wallet example, database architecture, protocol timeline, and coordinator-crash SVG. The local `distributed-transactions-relational-dbs.svg` adapts the [chapter's architecture diagram](../../system%20design/27.%20Digital%20Wallet/images/distributed-transactions-relational-dbs.svg): C's starting balance changes from $1 to $0, and the partition-directory label is corrected from `Zookeeper` to `ZooKeeper`. The local SVG's accessible description and comments use the same corrected spelling.
 - [Transactions. Try-Confirm/Cancel](../Transactions.%20Try-Confirm-Cancel/Readme.md) and [Transactions. Saga](../Transactions.%20Saga/Readme.md) — reused comparison SVG, clarified lock endpoints, and step-diagram visual conventions.
 - [Microsoft Open Specifications: Two-Phase Commit Protocol](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-tpsod/e34079f0-22de-4c03-9cb8-84c2448a4613)

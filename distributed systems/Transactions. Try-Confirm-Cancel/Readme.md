@@ -8,6 +8,14 @@ There are **two phases**: **Try**, followed by **Confirm or Cancel**. The three 
 
 This article follows chapter 27's Digital Wallet example: move **$1 from account A to account C**, stored in separate database partitions. The chapter's SVGs explain the phases, durable progress, and message reordering. We will connect their simplified balance updates to the reservation and recovery rules needed for a reliable implementation.
 
+## TCC in practice
+
+**Ant Group is a Chinese financial technology company behind Alipay**, a digital wallet and payment platform used to pay merchants and access financial services.
+
+In a **July 2022 engineering case study**, Ant Group's overseas banking team described using **Seata TCC for account services** in a system built with Spring and Dubbo. Their design reserves the amount involved in a transfer, then confirms or releases it. This lets other transactions use the account's remaining available funds while the transfer is pending. The team chose TCC to protect funds under concurrent requests while keeping database transactions short. This documents a specific banking subsystem's design.
+
+For a sense of Alipay's scale, Alibaba reported **1.48 billion payment transactions during the November 11, 2017 Singles' Day shopping festival**, with a **peak of 256,000 payment transactions per second**. These are historical Alipay traffic figures, with no breakdown by transaction protocol.
+
 ## The model: reserve now, decide later
 
 A **participant** owns one part of the operation, such as an account and its transfer records. A **local transaction** groups related operations in one database so they can commit or roll back together. A **coordinator** tracks the participants and drives the overall outcome. A **reservation** sets aside a resource for one operation so competing operations cannot consume it.
@@ -270,6 +278,11 @@ Primary sources checked on 2026-09-14. Transfer `tr-42`, the state table, the ex
 
 Coverage review also used [Timofei Ivankov — Distributed transactions in microservices: from Saga to Two-Phase Commit (Habr, Russian)](https://habr.com/ru/articles/906484/). The visibility and expiry discussion retains the qualifications required by the primary protocol sources.
 
+The Ant Group example and its three sources below were checked on 2026-09-16.
+
+- [Ant Group / Alipay+ — April 2022 partnership announcement, “About Ant Group”: ownership and operation of Alipay](https://docs.alipayplus.com/alipayplus/alipayplus/news/2c2p_Ant_Group)
+- [Ant Group engineers / SOFAStack — Seata in overseas banking: TCC account services and balance reservations (July 26, 2022; Chinese)](https://www.sofastack.tech/blog/seata-in-practice-in-ant-international-banking/)
+- [Alibaba Group — 2017 11.11 results: 1.48 billion Alipay payments and 256,000 payments per second at peak (November 12, 2017)](https://www.alibabagroup.com/en-US/document-1491865679421243392)
 - [System Design — chapter 27, Digital Wallet](../../system%20design/27.%20Digital%20Wallet/Readme.md). Diagram provenance: [Try](../../system%20design/27.%20Digital%20Wallet/images/tcc-try-phase.svg), [Confirm](../../system%20design/27.%20Digital%20Wallet/images/tcc-confirm-phase.svg), [Cancel](../../system%20design/27.%20Digital%20Wallet/images/tcc-cancel-phase.svg), [phase-status tables](../../system%20design/27.%20Digital%20Wallet/images/phase-status-tables.svg), and [out-of-order execution](../../system%20design/27.%20Digital%20Wallet/images/out-of-order-execution.svg). Local copies preserve the chapter's flows and simplify the ordering caption. They also fix two errors: Confirm's `unlock A` label belongs to C and must read `unlock C`; Cancel's `lock C` label belongs to A and must read `lock A`. The phase-status diagram also corrects the caption from `Zookeeper` to `ZooKeeper`. The linked chapter originals still contain these errors.
 - [Chapter 27 — two-phase commit timeline](../../system%20design/27.%20Digital%20Wallet/images/2pc-protocol.svg). The new lock comparison adapts this timeline and the chapter's Confirm timeline, places each 2PC unlock before its commit acknowledgement, and adds a separate TCC reservation span.
 - [Apache Seata — TCC mode: service-level operations and reservation semantics](https://seata.apache.org/docs/user/mode/tcc/)

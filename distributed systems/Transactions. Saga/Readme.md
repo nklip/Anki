@@ -8,6 +8,14 @@ This article uses the repository's Digital Wallet design: transfer **$1 from acc
 
 ![saga.svg](images/saga.svg)
 
+## Saga in practice
+
+**Airbnb described a production example of compensation-based workflows in April 2026: Skipper, its embedded Java/Kotlin workflow engine.** Skipper records progress so work can resume after a crash. Its `@Compensate` annotation pairs an action with an operation that counteracts its effect. After a failure, the engine runs the applicable compensations in reverse order, such as releasing inventory or refunding a charge. This is **Saga-like behavior**; Airbnb's article describes the mechanism without naming it Saga.
+
+Airbnb chose to make compensation part of the engine so teams could stop repeatedly building custom cleanup and recovery logic. By that publication, Skipper had run in production for more than a year across **over 15 use cases**, including payments, insurance, and wallet workflows. Airbnb reported a **peak of 10,000 workflows per second on DynamoDB**. This is an engine throughput figure; the article gives no separate rate for payment workflows or those using compensation.
+
+For architectural preference, **Amazon Web Services (AWS), Microsoft Azure, and Google Cloud recommend considering Saga for business operations spanning independent services** when compensation and temporary inconsistency are acceptable. The reason is that each service can commit its own work while the workflow handles retries and recovery across service boundaries. AWS's service-selection guide, updated **September 4, 2026**, also lists Saga as an orchestration workload. These are published design recommendations; they do not establish which protocol Amazon.com's checkout uses internally.
+
 ## Why it is called Saga
 
 **Saga is a name; the original paper gives no acronym expansion for SAGA.** Hector Garcia-Molina and Kenneth Salem introduced the term in their 1987 paper *Sagas*. Its acknowledgments credit **Bruce Lindsay** with suggesting the name.
@@ -244,6 +252,12 @@ Primary sources checked on 2026-09-14. The message names, wallet balances, and f
 
 Coverage review also used [Timofei Ivankov — Distributed transactions in microservices: from Saga to Two-Phase Commit (Habr, Russian)](https://habr.com/ru/articles/906484/). Added concepts were checked against the primary sources below; its broad claims about Saga atomicity and synchronous APIs are qualified in the teaching text.
 
+The practice section and its sources were checked on 2026-09-16. Classifying Skipper's compensation mechanism as Saga-like is an interpretation of Airbnb's documented behavior, not terminology used in that article. Microsoft's Saga recommendation is covered by its Architecture Center source listed below.
+
+- [Airbnb Engineering — Skipper: Java/Kotlin workflows, compensation, production use, and throughput (April 28, 2026)](https://medium.com/airbnb-engineering/skipper-building-airbnbs-embedded-workflow-engine-f6c34552146f)
+- [AWS Prescriptive Guidance — Saga pattern: when to use it and the cost of compensation](https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-data-persistence/saga-pattern.html)
+- [AWS Decision Guides — Choosing a serverless service: Saga and orchestration (updated September 4, 2026)](https://docs.aws.amazon.com/decision-guides/latest/decision-guides/choosing-aws-serverless-service.html)
+- [Google Cloud — Workflows best practices: apply retries and the Saga pattern](https://docs.cloud.google.com/workflows/docs/best-practice#apply_retries_and_the_saga_pattern)
 - [System Design — Digital Wallet: Saga flow, coordination, and sharded account example](../../system%20design/27.%20Digital%20Wallet/Readme.md). Diagram provenance: [original saga.svg](../../system%20design/27.%20Digital%20Wallet/images/saga.svg) and [original sharded-raft-groups.svg](../../system%20design/27.%20Digital%20Wallet/images/sharded-raft-groups.svg). The local wallet diagrams are adaptations, with explicit commit outcomes and simplified architecture.
 - [System Design — Hotel Reservation System: data consistency among services](../../system%20design/22.%20Hotel%20Reservation%20System/Readme.md).
 - [Transactions. Try-Confirm/Cancel — companion article](../Transactions.%20Try-Confirm-Cancel/Readme.md). The local `tcc-versus-saga.svg` is reused from its [comparison diagram](../Transactions.%20Try-Confirm-Cancel/images/tcc-versus-saga.svg), with the accessible title aligned to the visible headline; the booking example applies the reservation and compensation rules in the sources below.
