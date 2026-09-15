@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400" role="img" aria-labelledby="replication-title replication-description">
+  <title id="replication-title">Synchronous and asynchronous transaction replication</title>
+  <desc id="replication-description">A recreation of the phoenixNAP sequence diagram on a transparent canvas. The left ACID panel shows synchronous replication: the client writes to the master, the master writes to its replica, and the replica acknowledges before the master acknowledges the client. The right BASE panel shows asynchronous replication: the master acknowledges the client before sending the write to its replica. These panel labels illustrate the source article's contrast; ACID and BASE do not themselves prescribe a replication mode.</desc>
+
+  <!-- Shared icon geometry and typography; all elements remain editable vector shapes. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #000; font-weight: 700; }
+      .panel-title { font-size: 28px; }
+      .node-label { font-size: 20px; }
+      .sequence-label { font-size: 16px; }
+      .lifeline { fill: none; stroke: #17202d; stroke-width: 1.8; stroke-dasharray: 5 3; }
+      .write-shaft { fill: none; stroke: #17202d; stroke-width: 5; stroke-linecap: round; }
+      .ack-shaft { fill: none; stroke: #6c968b; stroke-width: 5; stroke-linecap: round; }
+    </style>
+    <g id="database" fill="#6c968b" stroke="#334049" stroke-width="1.9" stroke-linejoin="round">
+      <path d="M0 7 V61 C0 70 62 70 62 61 V7 Z"/>
+      <path d="M0 25 C0 34 62 34 62 25 M0 44 C0 53 62 53 62 44" fill="none"/>
+      <ellipse cx="31" cy="7" rx="31" ry="6.5"/>
+      <g fill="#fa6396">
+        <circle cx="9" cy="20.5" r="3.6"/>
+        <circle cx="9" cy="39.3" r="3.6"/>
+        <circle cx="9" cy="58.2" r="3.6"/>
+      </g>
+      <path d="M36 23 C43 23 50 22 55 21.2 M36 42 C43 42 50 41 55 40.2 M36 60.8 C43 60.8 50 59.8 55 59" fill="none" stroke-linecap="round"/>
+    </g>
+    <g id="person" stroke="#28333d" stroke-width="2.2" stroke-linejoin="round">
+      <path d="M0 41 C-22 44 -36 56 -36 69 C-36 78 -31 79 -22 79 H22 C31 79 36 78 36 69 C36 56 22 44 0 41 Z" fill="currentColor"/>
+      <path d="M0 1 C-11 1 -16 7 -15 20 C-14 32 -10 41 0 44 C10 41 14 32 15 20 C16 7 11 1 0 1 Z" fill="#fab28e"/>
+      <path d="M-25 78 H25 V90 H-25 Z" fill="#fff"/>
+      <path d="M-30 49 H30 L25 85 H-25 Z" fill="#e7e7e9"/>
+      <circle cx="0" cy="67.5" r="6" fill="#f6c16c"/>
+    </g>
+  </defs>
+
+  <!-- Transparent canvas: both the pale-blue fill and decorative white network are omitted. -->
+  <path id="panel-frame" d="M.5 .5 H799.5 V399.5 H.5 Z M400.5 .5 V399.5" fill="none" stroke="#000" stroke-width="1"/>
+
+  <!-- Panel headings and the three participants in each replication sequence. -->
+  <g text-anchor="middle">
+    <text class="panel-title" x="211" y="37">ACID</text>
+    <text class="panel-title" x="603" y="36">BASE</text>
+    <text class="sequence-label" x="98" y="65"><tspan x="98">Synchronous</tspan><tspan x="98" dy="19">Replication</tspan></text>
+    <text class="sequence-label" x="491" y="66"><tspan x="491">Asynchronous</tspan><tspan x="491" dy="19">Replication</tspan></text>
+    <text class="node-label" x="211" y="103">Master</text>
+    <text class="node-label" x="326" y="104">Replica</text>
+    <text class="node-label" x="606" y="104">Master</text>
+    <text class="node-label" x="721" y="104">Replica</text>
+  </g>
+  <use href="#person" x="98" y="95" color="#8588d8"/>
+  <use href="#person" x="491" y="95" color="#e7515b"/>
+  <use href="#database" x="181.5" y="115"/>
+  <use href="#database" x="296.5" y="115"/>
+  <use href="#database" x="576.5" y="115"/>
+  <use href="#database" x="691.5" y="115"/>
+
+  <!-- Dashed time axes. Their separate heads join beneath the final dash. -->
+  <g id="participant-lifelines">
+    <path class="lifeline" d="M98 191 V358 M212 191 V358 M327 191 V358 M491 191 V358 M607 191 V358 M722 191 V358"/>
+    <!-- Solid final millimetres bridge the dash gap beneath each time-axis head. -->
+    <path d="M98 355 V358 M212 355 V358 M327 355 V358 M491 355 V358 M607 355 V358 M722 355 V358" fill="none" stroke="#17202d" stroke-width="1.8"/>
+    <path fill="#17202d" d="M95 357 L98 363 L101 357 Z M209 357 L212 363 L215 357 Z M324 357 L327 363 L330 357 Z M488 357 L491 363 L494 357 Z M604 357 L607 363 L610 357 Z M719 357 L722 363 L725 357 Z"/>
+  </g>
+
+  <!-- Synchronous sequence: client response follows the replica acknowledgement. -->
+  <g id="synchronous-sequence">
+    <!-- Horizontal shafts end inside their triangular heads; tips meet the time axes. -->
+    <path class="write-shaft" d="M100 246.5 H199 M214 276.5 H314"/>
+    <path fill="#17202d" d="M196.5 239 L212 246.5 L196.5 254 Z M311.5 269 L327 276.5 L311.5 284 Z"/>
+    <path class="ack-shaft" d="M324 314.5 H225 M209 349.5 H111"/>
+    <path fill="#6c968b" d="M227.5 307 L212 314.5 L227.5 322 Z M113.5 342 L98 349.5 L113.5 357 Z"/>
+    <g class="sequence-label" text-anchor="end">
+      <text x="83" y="251">Write</text>
+      <text x="198" y="281">Write</text>
+      <text x="191" y="319">OK</text>
+      <text x="76" y="354">OK</text>
+    </g>
+    <path id="synchronous-wait-bracket" d="M61 258.5 H69 M65 259 V334 M61 334.5 H69" fill="none" stroke="#fb535d" stroke-width="2.6" stroke-linecap="round"/>
+    <text class="sequence-label" x="20" y="300">Wait</text>
+  </g>
+
+  <!-- Asynchronous sequence: the client receives OK before replication begins. -->
+  <g id="asynchronous-sequence">
+    <path class="write-shaft" d="M493 238.5 H594 M610 305.5 H709"/>
+    <path fill="#17202d" d="M591.5 231 L607 238.5 L591.5 246 Z M706.5 298 L722 305.5 L706.5 313 Z"/>
+    <path class="ack-shaft" d="M603 276.5 H504 M719 346.5 H620"/>
+    <path fill="#6c968b" d="M506.5 269 L491 276.5 L506.5 284 Z M622.5 339 L607 346.5 L622.5 354 Z"/>
+    <g class="sequence-label" text-anchor="end">
+      <text x="477" y="243">Write</text>
+      <text x="469" y="281">OK</text>
+      <text x="593" y="312">Write</text>
+      <text x="585" y="351">OK</text>
+    </g>
+    <!-- Short client wait; keep its visible label left of the red bracket and below Write. -->
+    <path id="asynchronous-wait-bracket" d="M456 247.5 H464 M460 248 V262 M456 262.5 H464" fill="none" stroke="#fb535d" stroke-width="2.6" stroke-linecap="round"/>
+    <text id="asynchronous-wait-label" class="sequence-label" x="412" y="261">Wait</text>
+  </g>
+</svg>

@@ -6,6 +6,7 @@ Anki-ready cards on general computer-science and interview-preparation topics, e
 Every card lives in its own folder as `Readme.md`, with its diagrams in a sibling `images/` directory.
 
 ## Content
+ * [ACID vs BASE](./ACID%20vs%20BASE/Readme.md) — every ACID and BASE property, synchronous versus asynchronous replication, and the CAP theorem's partition trade-off.
  * [Data structures. Bloom filter](./Data%20structures.%20Bloom%20filter/Readme.md) - bit arrays and hashing, false positives without false negatives, and avoiding unnecessary database reads
  * [Data structures. Merkle tree](./Data%20structures.%20Merkle%20tree/Readme.md) - how a root hash summarizes a data set, isolates the one block two replicas disagree on, and proves a single block with an audit path
  * [Data structures. Ring buffer](./Data%20structures.%20Ring%20buffer/Readme.md) - fixed-array slot reuse, wraparound, queue operations, and full/empty handling
