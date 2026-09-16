@@ -7,8 +7,6 @@ This chapter focuses on designing a scalable backend for an application that ena
 
 The major difference with the proximity chapter is that in this problem, **locations constantly change**, whereas in that one, business addresses more or less stay the same.
 
----
-
 ## Step 1: Understand the Problem and Establish Design Scope
 
 Some questions to drive the interview:
@@ -46,8 +44,6 @@ Some estimations to determine potential scale:
  * App displays 20 nearby friends per page
  * **Location Update QPS** = 10 million / 30 = ~334,000 updates per second
 
----
-
 ## Step 2: Propose High-Level Design and Get Buy-In
 
 Before exploring API and data model design, we'll study the communication protocol we'll use, as it's less ubiquitous than the traditional request-response communication model.
@@ -59,7 +55,7 @@ At a high level, we'd want to establish effective message passing between peers.
 A more practical approach is to use a shared backend as a fan-out mechanism towards friends you want to reach:
 
 <div style="margin-left:3rem">
-    <img src="./images/fan-out-backend.svg" alt="fan-out-backend" width="1000" />
+    <img src="./images/fan-out-backend.svg" alt="fan-out-backend.svg" width="1000" />
 </div>
 
 What does the backend do?
@@ -72,7 +68,7 @@ This sounds simple but the challenge is to design the system for the scale we're
 We'll start with a simpler design at first and discuss a more advanced approach in the deep dive:
 
 <div style="margin-left:3rem">
-    <img src="./images/simple-high-level-design.svg" alt="simple-high-level-design" width="1000" />
+    <img src="./images/simple-high-level-design.svg" alt="simple-high-level-design.svg" width="1000" />
 </div>
 
 - **Load balancer**: spreads traffic across REST API servers as well as bidirectional WebSocket servers.
@@ -84,7 +80,7 @@ We'll start with a simpler design at first and discuss a more advanced approach 
 - **Redis Pub/Sub**: used as a lightweight message bus that enables different topics for each user channel for location updates.
 
 <div style="margin-left:3rem">
-    <img src="./images/redis-pubsub-usage.svg" alt="redis-pubsub-usage" width="1000" />
+    <img src="./images/redis-pubsub-usage.svg" alt="redis-pubsub-usage.svg" width="1000" />
 </div>
 
 In the above example, WebSocket servers subscribe to channels for the users who are connected to them and forward location updates to the appropriate users whenever they receive them.
@@ -94,24 +90,32 @@ In the above example, WebSocket servers subscribe to channels for the users who 
 Here's how the periodic location update flow works:
 
 <div style="margin-left:3rem">
-    <img src="./images/periodic-location-update.svg" alt="periodic-location-update" width="1000" />
+    <img src="./images/periodic-location-update.svg" alt="periodic-location-update.svg" width="1000" />
 </div>
 
- * Mobile client sends a location update to the load balancer
- * Load balancer forwards location update to the websocket server's persistent connection for that client
- * Websocket server saves location data to location history database
- * Location data is updated in location cache. Websocket server also saves location data in-memory for subsequent distance calculations for that user
- * The WebSocket server publishes location data in the user's channel via Redis Pub/Sub.
- * Redis Pub/Sub broadcasts the location update to all subscribers for that user channel, i.e., servers responsible for the friends of that user.
- * Subscribed WebSocket servers receive the location update, calculate which users it should be sent to, and send it.
+1. The mobile client sends a location update to the load balancer.
+2. The load balancer forwards the location update to the persistent connection on the WebSocket server for that client.
+3. The WebSocket server saves the location data to the location history database.
+4. The WebSocket server updates the new location in the location cache. The update refreshes the TTL. The WebSocket server saves the new location in a variable in the user’s WebSocket connection handler for subsequent distance calculations.
+5. The WebSocket server publishes the new location to the user’s channel in the Redis pub/sub server. Steps 3 to 5 can be executed in parallel.
+6. When Redis pub/sub receives a location update on a channel, it broadcasts the update to all the subscribers (WebSocket connection handlers). In this case, the subscribers are all the online friends of the user sending the update. For each subscriber (i.e., for each of the user’s friends), its WebSocket connection handler would receive the user location update.
+7. On receiving the message, the WebSocket server, on which the connection handler lives, computes the distance between the user sending the new location (the location data is in the message) and the subscriber (the location data is stored in a variable with the WebSocket connection handler for the subscriber).
+8. This step is not drawn on the diagram. If the distance does not exceed the search radius, the new location and the last updated timestamp are sent to the subscriber’s client. Otherwise, the update is dropped.
 
-Here's a more detailed version of the same flow:
+Since understanding this flow is extremely important, let’s examine it again with a concrete example, as shown in the below image. Before we start, let’s make a few assumptions.
+* User 1’s friends: user 2, user 3, and user 4.
+* User 5’s friends: user 4 and user 6.
 
 <div style="margin-left:3rem">
-    <img src="./images/detailed-periodic-location-update.svg" alt="detailed-periodic-location-update" width="1000" />
+    <img src="./images/detailed-periodic-location-update.svg" alt="detailed-periodic-location-update.svg" width="1000" />
 </div>
 
-On average, there are going to be 40 location updates to forward, as a user has 400 friends on average and 10% of them are online at a time.
+1. When user 1’s location changes, their location update is sent to the WebSocket server which holds user 1’s connection.
+2. The location is published to user 1’s channel in Redis pub/sub server.
+3. Redis pub/sub server broadcasts the location update to all subscribers. In this case, subscribers are WebSocket connection handlers (user 1’s friends).
+4. If the distance between the user sending the location (user 1) and the subscriber (user 2) doesn’t exceed the search radius, the new location is sent to the client (user 2).
+
+This computation is repeated for every subscriber to the channel. Since there are 400 friends on average, and we assume that 10% of those friends are online and nearby, there are about 40 location updates to forward for each user’s location update.
 
 ### **API Design**
 
@@ -129,7 +133,9 @@ HTTP API - traditional request/response payloads for auxiliary responsibilities.
  * The location cache will store a mapping between `user_id` and `lat, long, timestamp`. Redis is a great choice for this cache, as we only care about the current location, and it supports the TTL eviction that we need for our use case.
  * The location history table stores the same data but in a relational table with the four columns stated above. Cassandra can be used for this data, as it is optimized for write-heavy loads.
 
----
+### **Why don’t we use a database to store location data?**
+
+The “nearby friends” feature only cares about the current location of a user. Therefore, we only need to store one location per user. Redis is an excellent choice because it provides super-fast read and write operations. It supports TTL, which we use to auto-purge users from the cache who are no longer active. The current locations do not need to be durably stored. If the Redis instance goes down, we could replace it with an empty new instance and let the cache be filled as new location updates stream in. The active users could miss location updates from friends for an update cycle or two while the new cache warms. It is an acceptable tradeoff. In the deep dive section, we will discuss ways to lessen the impact on users when the cache gets replaced.
 
 ## Step 3: Design Deep Dive
 
@@ -157,7 +163,7 @@ In order to support a distributed redis cluster, we'll need to utilize a service
 What we need to encode in the service discovery component is this data:
 
 <div style="margin-left:3rem">
-    <img src="./images/channel-distribution-data.svg" alt="channel-distribution-data" width="1000" />
+    <img src="./images/channel-distribution-data.svg" alt="channel-distribution-data.svg" width="1000" />
 </div>
 
 WebSocket servers use that encoded data, fetched from ZooKeeper, to determine where a particular channel lives. For efficiency, the hash-ring data can be cached in memory on each WebSocket server.
@@ -172,7 +178,7 @@ We have to be mindful of some potential issues during scaling operations:
  * We can leverage consistent hashing to minimize the number of channels moved when adding or removing servers.
 
 <div style="margin-left:3rem">
-    <img src="./images/consistent-hashing.svg" alt="consistent-hashing" width="1000" />
+    <img src="./images/consistent-hashing.svg" alt="consistent-hashing.svg" width="1000" />
 </div>
 
 ### **Adding/removing friends**
@@ -194,19 +200,19 @@ What if the interviewer wants to update the design to include a feature where we
 One way to handle this is to define a pool of pubsub channels, based on geohash:
 
 <div style="margin-left:3rem">
-    <img src="./images/geohash-pubsub.svg" alt="geohash-pubsub" width="1000" />
+    <img src="./images/geohash-pubsub.svg" alt="geohash-pubsub.svg" width="1000" />
 </div>
 
 Anyone within the geohash subscribes to the appropriate channel to receive location updates for random users:
 
 <div style="margin-left:3rem">
-    <img src="./images/location-updates-geohash.svg" alt="location-updates-geohash" width="1000" />
+    <img src="./images/location-updates-geohash.svg" alt="location-updates-geohash.svg" width="1000" />
 </div>
 
 We could also subscribe to several geohashes to handle cases where someone is close but in a bordering geohash:
 
 <div style="margin-left:3rem">
-    <img src="./images/geohash-borders.svg" alt="geohash-borders" width="1000" />
+    <img src="./images/geohash-borders.svg" alt="geohash-borders.svg" width="1000" />
 </div>
 
 ### **Alternative to Redis pub/sub**
@@ -216,8 +222,6 @@ An alternative to using Redis for pub/sub is to leverage Erlang - a general prog
 With it, we can spawn millions of small Erlang processes that communicate with each other. We can handle both WebSocket connections and Pub/Sub channels within the distributed Erlang application.
 
 A challenge with using Erlang, though, is that it's a niche programming language, and it could be hard to source strong Erlang developers.
-
----
 
 ## Step 4: Wrap Up
 
