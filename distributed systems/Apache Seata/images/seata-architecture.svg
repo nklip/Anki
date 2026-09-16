@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="740" viewBox="0 0 1120 740" role="img" aria-labelledby="title desc">
+  <title id="title">AT architecture: one checkout, three branches</title>
+  <desc id="desc">The checkout transaction manager requests transaction boundaries from the Seata coordinator. The coordinator drives completion of resource managers in inventory, order, and account services. Each service accesses its own database. Business calls, omitted here, propagate the same global transaction identifier.</desc>
+  <!-- System Design icon palette: green application servers, violet coordinator, blue databases. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172b4d; }
+      .title { font-size: 28px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 19px; }
+      .small { font-size: 17px; }
+      .app { fill: #fff; stroke: #08b4cf; stroke-width: 2; }
+      .connector { fill: none; stroke: #49617f; stroke-width: 2.5; }
+    </style>
+    <!-- Reused from system design/01. Scaling/images/single-server.svg#server.
+         Geometry is unchanged; currentColor distinguishes application and coordinator roles. -->
+    <symbol id="system-design-server" viewBox="0 0 64 112">
+      <rect width="64" height="112" rx="7" fill="currentColor"/>
+      <path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/>
+    </symbol>
+    <!-- Adapted from system design/10. Notification System/images/improved-design.svg#db-cylinder.
+         Retain the white lower seam, but omit the outer top stroke so arrow tips meet visible blue ink. -->
+    <symbol id="system-design-database" viewBox="0 0 58 82">
+      <rect x="3" y="12" width="52" height="58" fill="#1677b8"/>
+      <ellipse cx="29" cy="12" rx="26" ry="10" fill="#1677b8"/>
+      <path d="M3 12 A26 10 0 0 0 55 12" fill="none" stroke="#fff" stroke-width="2"/>
+      <path d="M3 70 A26 10 0 0 0 55 70" fill="#1677b8"/>
+    </symbol>
+    <!-- The tip projects three units past the shaft endpoint, keeping the join covered. -->
+    <marker id="arrowhead" markerWidth="15" markerHeight="12" viewBox="0 0 15 12" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L15 6 L0 12 Z" fill="#49617f"/>
+    </marker>
+  </defs>
+  <!-- Title and scope keep this diagram specific to an AT deployment. -->
+  <rect width="1120" height="740" fill="#fff"/>
+  <text class="title" x="32" y="43">AT architecture: one checkout, three branches</text>
+  <text class="body" x="32" y="77">Seata coordinates completion; services access their own databases.</text>
+  <!-- The initiator defines boundaries; the coordinator holds transaction status. -->
+  <g id="transaction-manager">
+    <rect class="app" x="32" y="112" width="400" height="148" rx="12"/>
+    <use href="#system-design-server" x="54" y="137" width="44" height="77" color="#63c51b"/>
+    <text class="heading" x="116" y="148">Checkout application</text>
+    <text class="body" x="116" y="181">TM = Transaction Manager</text>
+    <text class="body" x="116" y="215">Defines the transaction boundary</text>
+    <text class="small" x="54" y="242">Calls services with the same XID</text>
+  </g>
+  <g id="transaction-coordinator">
+    <rect x="728" y="112" width="360" height="148" rx="12" fill="#fff" stroke="#7955ad" stroke-width="2"/>
+    <use href="#system-design-server" x="746" y="137" width="44" height="77" color="#7955ad"/>
+    <text class="heading" x="806" y="148">Seata server</text>
+    <text class="body" x="806" y="181">TC = Transaction Coordinator</text>
+    <text class="body" x="806" y="215">Tracks transaction status</text>
+    <text class="small" x="750" y="242">Drives commit or rollback</text>
+  </g>
+  <!-- Opposite arrows show boundary requests and the returned global identifier. -->
+  <g id="boundary-requests">
+    <path class="connector" d="M433 163 H724" marker-end="url(#arrowhead)"/>
+    <text class="small" x="580" y="146" text-anchor="middle">begin / commit / rollback</text>
+    <path class="connector" d="M727 228 H436" marker-end="url(#arrowhead)"/>
+    <text class="small" x="580" y="209" text-anchor="middle">XID returned on begin</text>
+  </g>
+  <!-- A shared bus carries coordinator completion commands; branch reports are omitted. -->
+  <g id="completion-commands">
+    <path class="connector" d="M908 261 V319 H192 V351" marker-end="url(#arrowhead)"/>
+    <path class="connector" d="M560 319 V351" marker-end="url(#arrowhead)"/>
+    <path class="connector" d="M908 319 H928 V351" marker-end="url(#arrowhead)"/>
+    <text class="body" x="470" y="299" text-anchor="middle">TC drives branch completion</text>
+  </g>
+  <!-- Each service has its own resource manager and one branch in this example. -->
+  <g id="service-branches">
+    <rect class="app" x="32" y="355" width="320" height="130" rx="12"/>
+    <rect class="app" x="400" y="355" width="320" height="130" rx="12"/>
+    <rect class="app" x="768" y="355" width="320" height="130" rx="12"/>
+    <use href="#system-design-server" x="54" y="379" width="44" height="77" color="#63c51b"/>
+    <use href="#system-design-server" x="422" y="379" width="44" height="77" color="#63c51b"/>
+    <use href="#system-design-server" x="790" y="379" width="44" height="77" color="#63c51b"/>
+    <text class="heading" x="116" y="389">Inventory service</text>
+    <text class="body" x="116" y="422">RM = Resource Manager</text>
+    <text class="small" x="116" y="458">Branch: reduce stock</text>
+    <text class="heading" x="484" y="389">Order service</text>
+    <text class="body" x="484" y="422">RM = Resource Manager</text>
+    <text class="small" x="484" y="458">Branch: create order</text>
+    <text class="heading" x="852" y="389">Account service</text>
+    <text class="body" x="852" y="422">RM = Resource Manager</text>
+    <text class="small" x="852" y="458">Branch: debit balance</text>
+  </g>
+  <!-- Each database icon's blue top begins at y=550; the arrow tip meets the visible boundary.
+       All three SQL paths use the same three-unit nose projection. -->
+  <g id="database-access">
+    <path class="connector" d="M192 486 V547" marker-end="url(#arrowhead)"/>
+    <path class="connector" d="M560 486 V547" marker-end="url(#arrowhead)"/>
+    <path class="connector" d="M928 486 V547" marker-end="url(#arrowhead)"/>
+    <text class="small" x="210" y="526">proxied SQL</text>
+    <text class="small" x="578" y="526">proxied SQL</text>
+    <text class="small" x="946" y="526">proxied SQL</text>
+    <use href="#system-design-database" x="163" y="548" width="58" height="82"/>
+    <use href="#system-design-database" x="531" y="548" width="58" height="82"/>
+    <use href="#system-design-database" x="899" y="548" width="58" height="82"/>
+    <text class="body" x="192" y="655" text-anchor="middle">Inventory DB + undo_log</text>
+    <text class="body" x="560" y="655" text-anchor="middle">Order DB + undo_log</text>
+    <text class="body" x="928" y="655" text-anchor="middle">Account DB + undo_log</text>
+  </g>
+  <!-- Scope note explains omitted traffic and the identifier without color dependence. -->
+  <text class="small" x="32" y="701">XID = global transaction identifier. Business calls and RM registration/status reports are omitted.</text>
+  <text class="small" x="32" y="727">Green servers: application roles. Violet: coordinator. Blue cylinders: separate databases (DBs).</text>
+</svg>

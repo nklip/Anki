@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="570" viewBox="0 0 1120 570" role="img" aria-labelledby="title desc">
+  <title id="title">AT recovery: a local commit can still need undo</title>
+  <desc id="desc">Before checkout, stock is ten, no order exists, and the balance is one hundred dollars. Inventory and order changes commit with undo records; the account debit is rejected, leaving stock nine and a saved order. Successful AT rollback uses the undo records to restore stock ten and remove the order. The middle state may be visible to ordinary reads.</desc>
+  <!-- Shared type and arrows match the architecture diagram. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172b4d; }
+      .title { font-size: 28px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 18px; }
+      .connector { fill: none; stroke: #49617f; stroke-width: 2.5; }
+    </style>
+    <!-- Reused unchanged from system design/10. Notification System/images/improved-design.svg#db-cylinder. -->
+    <symbol id="system-design-database" viewBox="0 0 58 82">
+      <rect x="3" y="12" width="52" height="58" fill="#1677b8"/>
+      <ellipse cx="29" cy="12" rx="26" ry="10" fill="#1677b8" stroke="#fff" stroke-width="2"/>
+      <path d="M3 70 A26 10 0 0 0 55 70" fill="#1677b8"/>
+    </symbol>
+    <!-- Reused unchanged from system design/26. Payment System/images/settlement-report.svg#document-icon.
+         Here a document denotes stored undo information, not a separate storage service. -->
+    <symbol id="system-design-document" viewBox="0 0 43 52">
+      <path d="M1.25 1.25 H31 L41.75 12 V50.75 H1.25 Z" fill="#fff" stroke="#111" stroke-width="2.5"/>
+      <path d="M31 1.25 V12 H41.75" fill="none" stroke="#111" stroke-width="2.5"/>
+    </symbol>
+    <!-- Three-unit nose projection covers the shaft; paths stop before destination borders. -->
+    <marker id="arrowhead" markerWidth="15" markerHeight="12" viewBox="0 0 15 12" refX="12" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L15 6 L0 12 Z" fill="#49617f"/>
+    </marker>
+  </defs>
+  <!-- Read from left to right; each panel is a snapshot across three separate databases. -->
+  <rect width="1120" height="570" fill="#fff"/>
+  <text class="title" x="32" y="43">AT recovery: a local commit can still need undo</text>
+  <text class="small" x="32" y="77">Checkout requests one item and a $20 debit. The account service rejects the debit.</text>
+  <g id="initial-state">
+    <rect x="32" y="115" width="308" height="318" rx="12" fill="#edf5ff" stroke="#3b6caa" stroke-width="2"/>
+    <text class="heading" x="54" y="154">Before checkout</text>
+    <use href="#system-design-database" x="54" y="181" width="29" height="41"/>
+    <use href="#system-design-database" x="54" y="228" width="29" height="41"/>
+    <use href="#system-design-database" x="54" y="275" width="29" height="41"/>
+    <text class="body" x="98" y="212">Stock: 10</text>
+    <text class="body" x="98" y="259">Order: absent</text>
+    <text class="body" x="98" y="306">Balance: $100</text>
+    <text class="small" x="54" y="370">No checkout effects</text>
+    <text class="small" x="54" y="400">have committed yet.</text>
+  </g>
+  <g id="pending-state">
+    <rect x="396" y="115" width="308" height="318" rx="12" fill="#fff4dd" stroke="#a77924" stroke-width="2"/>
+    <text class="heading" x="418" y="154">Local work committed</text>
+    <use href="#system-design-database" x="418" y="181" width="29" height="41"/>
+    <use href="#system-design-database" x="418" y="228" width="29" height="41"/>
+    <use href="#system-design-database" x="418" y="275" width="29" height="41"/>
+    <text class="body" x="462" y="212">Stock: 9</text>
+    <text class="body" x="462" y="259">Order: created</text>
+    <text class="body" x="462" y="306">Balance: $100</text>
+    <use href="#system-design-document" x="418" y="340" width="25.8" height="31.2"/>
+    <text class="small" x="458" y="350">Undo records stored</text>
+    <text class="small" x="458" y="378">for inventory + order.</text>
+    <text class="small" x="418" y="411" fill="#a33930" font-weight="700">Account debit failed.</text>
+  </g>
+  <g id="recovered-state">
+    <rect x="760" y="115" width="328" height="318" rx="12" fill="#eaf7ef" stroke="#3f7d59" stroke-width="2"/>
+    <text class="heading" x="782" y="154">Rollback completed</text>
+    <use href="#system-design-database" x="782" y="181" width="29" height="41"/>
+    <use href="#system-design-database" x="782" y="228" width="29" height="41"/>
+    <use href="#system-design-database" x="782" y="275" width="29" height="41"/>
+    <text class="body" x="826" y="212">Stock: 10</text>
+    <text class="body" x="826" y="259">Order: absent</text>
+    <text class="body" x="826" y="306">Balance: $100</text>
+    <use href="#system-design-document" x="782" y="356" width="25.8" height="31.2"/>
+    <text class="small" x="822" y="370">Seata used undo records</text>
+    <text class="small" x="822" y="400">to restore prior data.</text>
+  </g>
+  <!-- Short arrows join snapshots without crossing any state labels. -->
+  <g id="state-transitions">
+    <path class="connector" d="M341 260 H392" marker-end="url(#arrowhead)"/>
+    <path class="connector" d="M705 260 H756" marker-end="url(#arrowhead)"/>
+  </g>
+  <!-- The lesson separates local visibility from the eventual global outcome. -->
+  <text class="small" x="32" y="473" font-weight="700">Ordinary reads can observe the middle state before global completion.</text>
+  <text class="small" x="32" y="506">Simplified example: no competing writes, and rollback succeeds. Recovery can require retries.</text>
+  <text class="small" x="32" y="540">Blue cylinders: separate databases. Document icons: undo information stored in those databases.</text>
+</svg>
