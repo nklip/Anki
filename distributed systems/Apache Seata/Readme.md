@@ -4,6 +4,8 @@
 
 **Apache Seata is an open-source framework for coordinating transactions across services and databases.** It tracks a shared transaction and coordinates completion or recovery when only part of a business operation succeeds. It supports four transaction modes—**AT, TCC, Saga, and XA**—with different requirements and guarantees.
 
+Seata's main implementation is written in **Java**; the project also provides a **Go** implementation, **Seata-Go**.
+
 This article explains why Seata is needed, its architecture and four modes, and how AT recovers a failed checkout. It then covers the wider functionality, adoption requirements, and mode selection. The checkout example changes inventory, creates an order, and debits an internal account balance in separate databases.
 
 ## Why Seata exists
@@ -146,6 +148,8 @@ Official documentation consulted on September 16, 2026; the unversioned document
 - Diagram icon provenance: [Scaling — server icon](../../system%20design/01.%20Scaling/images/single-server.svg), [Notification System — database cylinder](../../system%20design/10.%20Notification%20System/images/improved-design.svg), and [Payment System — document icon](../../system%20design/26.%20Payment%20System/images/settlement-report.svg). Geometry is embedded as editable SVG symbols; the server icon is recolored for the coordinator role, and the architecture's database rim is adjusted for clear arrow endpoints.
 
 - [Apache Seata — What is Seata? Purpose, transaction modes, and AT isolation](https://seata.apache.org/docs/overview/what-is-seata/)
+- [Apache Software Foundation — Seata proposal: identifies the Java and Go codebases](https://cwiki.apache.org/confluence/spaces/INCUBATOR/pages/263430285/Seata%2BProposal)
+- [Apache Seata-Go — official repository for the Go implementation](https://github.com/apache/incubator-seata-go)
 - [Apache Seata — Terminology: TM, TC, and RM](https://seata.apache.org/docs/overview/terminology/)
 - [Apache Seata — AT mode: proxy integration and local commits](https://seata.apache.org/docs/user/mode/at/)
 - [Apache Seata — AT developer guide: global locks, before/after images, and rollback](https://seata.apache.org/docs/dev/mode/at-mode/)
