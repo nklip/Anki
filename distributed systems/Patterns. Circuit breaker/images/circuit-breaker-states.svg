@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="540" viewBox="0 0 1120 540" role="img" aria-labelledby="title desc">
+  <title id="title">Three states govern admission and recovery</title>
+  <desc id="desc">Start closed: allow normal calls. A failure threshold opens the circuit and new calls are rejected. After the waiting period and a trial trigger, half-open admits limited probes. A passing probe policy returns to closed; a failing probe policy returns to open. The checkmark represents normal admission, the cross represents rejection, and the envelope represents a limited trial request. The timer only enables testing and does not prove recovery.</desc>
+  <!-- Keep return paths outside the state boxes, with labels in separate routing corridors. -->
+  <defs>
+    <!-- Icon copied from system design/04. Rate Limiter/images/sliding-window-log.svg, symbol #check; geometry and colors preserved. -->
+    <symbol id="sd-check" viewBox="0 0 74 62"><path d="M8 31L27 50L66 8" fill="none" stroke="#4bc600" stroke-width="13" stroke-linecap="square" stroke-linejoin="miter"/></symbol>
+    <!-- Icon copied from system design/04. Rate Limiter/images/sliding-window-log.svg, symbol #cross; geometry and colors preserved. -->
+    <symbol id="sd-cross" viewBox="0 0 66 66"><path d="M12 12L54 54M54 12L12 54" stroke="#ff2e2e" stroke-width="15" stroke-linecap="square"/></symbol>
+    <!-- Icon copied from system design/04. Rate Limiter/images/architecture.svg, symbol #envelope; geometry and colors preserved. -->
+    <symbol id="sd-envelope" viewBox="0 0 58 40"><rect x="2" y="2" width="54" height="36" fill="white" stroke="#087bb5" stroke-width="4"/><path d="M3 4L29 25L55 4" fill="none" stroke="#087bb5" stroke-width="4"/></symbol>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#142333}
+      .title{font-size:27px;font-weight:bold}
+      .heading{font-size:23px;font-weight:bold}
+      .body{font-size:19px}
+      .label{font-size:17px}
+      .flow{fill:none;stroke:#1677b8;stroke-width:2.5;stroke-linejoin:round}
+    </style>
+  </defs>
+  <rect width="1120" height="540" fill="#fff"/>
+  <!-- Header makes the starting point and meaning of transitions explicit. -->
+  <text x="560" y="40" class="title" text-anchor="middle">Three states govern admission and recovery</text>
+  <text x="560" y="73" class="body" text-anchor="middle">Start CLOSED. Arrows describe changes in the breaker's state.</text>
+  <!-- Successful trial return: the downward nose meets the closed box's top border. -->
+  <text x="560" y="116" class="body" text-anchor="middle">Probe policy passes: resume normal calls</text>
+  <path id="recovery-shaft" class="flow" data-connector="true" d="M960 200 V140 H160 V190"/>
+  <polygon id="recovery-head" points="160,200 154,188 166,188" fill="#1677b8"/>
+  <!-- Main state row. Padding accommodates real text at the normal display size. -->
+  <rect id="closed-state" x="35" y="200" width="250" height="190" rx="12" fill="#edf8ee" stroke="#32834a" stroke-width="2"/>
+  <use id="closed-state-icon" href="#sd-check" x="128" y="218" width="64" height="54"/>
+  <text x="160" y="298" class="heading" text-anchor="middle">CLOSED</text>
+  <text x="160" y="334" class="body" text-anchor="middle">Normal calls allowed</text>
+  <text x="160" y="364" class="body" text-anchor="middle">Record outcomes</text>
+  <rect id="open-state" x="435" y="200" width="250" height="190" rx="12" fill="#fff0ef" stroke="#be4944" stroke-width="2"/>
+  <use id="open-state-icon" href="#sd-cross" x="533" y="218" width="54" height="54"/>
+  <text x="560" y="298" class="heading" text-anchor="middle">OPEN</text>
+  <text x="560" y="334" class="body" text-anchor="middle">New calls rejected</text>
+  <text x="560" y="364" class="body" text-anchor="middle">Wait before testing</text>
+  <rect id="half-open-state" x="835" y="200" width="250" height="190" rx="12" fill="#fff7e9" stroke="#a56a0b" stroke-width="2"/>
+  <use id="half-open-state-icon" href="#sd-envelope" x="927" y="226" width="66" height="46"/>
+  <text x="960" y="298" class="heading" text-anchor="middle">HALF-OPEN</text>
+  <text x="960" y="334" class="body" text-anchor="middle">Admit limited trials</text>
+  <text x="960" y="364" class="body" text-anchor="middle">Other calls rejected</text>
+  <!-- Trigger labels remain above each shaft and between node borders. -->
+  <text x="360" y="258" class="label" text-anchor="middle">Failure limit</text>
+  <text x="360" y="283" class="label" text-anchor="middle">reached</text>
+  <path id="trip-shaft" class="flow" data-connector="true" d="M285 308 H425"/>
+  <polygon id="trip-head" points="435,308 423,302 423,314" fill="#1677b8"/>
+  <text x="760" y="251" class="label" text-anchor="middle">Wait elapsed</text>
+  <text x="760" y="276" class="label" text-anchor="middle">+ trial trigger</text>
+  <path id="trial-shaft" class="flow" data-connector="true" d="M685 308 H825"/>
+  <polygon id="trial-head" points="835,308 823,302 823,314" fill="#1677b8"/>
+  <!-- Failed trial return stays below both boxes; upward nose stops at the open border. -->
+  <text x="760" y="424" class="body" text-anchor="middle">Probe policy fails: restart wait</text>
+  <path id="reopen-shaft" class="flow" data-connector="true" d="M960 390 V447 H560 V400"/>
+  <polygon id="reopen-head" points="560,390 554,402 566,402" fill="#1677b8"/>
+  <!-- Clarification prevents interpreting the wait as evidence of health. -->
+  <rect id="timer-note" x="35" y="483" width="1050" height="40" rx="10" fill="#f7f9fc" stroke="#cad3df"/>
+  <text x="560" y="510" class="body" text-anchor="middle">Elapsed time permits a test. Probe outcomes determine whether normal traffic can resume.</text>
+</svg>

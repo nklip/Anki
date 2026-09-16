@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="850" viewBox="0 0 1024 850" role="img" aria-labelledby="title desc">
+  <title id="title">Circuit breaker in a service call</title>
+  <desc id="desc">The order service, acting as a client on the left, checks a circuit breaker in the center before contacting the payment service on the right. The three boxes show alternative call paths for the current state, not transitions between states. Closed allows normal calls. Open rejects new attempts back to the caller without contacting payment. Half-open allows limited trial calls, represented by an envelope. The breaker can be a library inside the caller. It does not repair the dependency or undo earlier calls.</desc>
+  <!-- Composition adapted from the user-supplied reference: client, central breaker with states, and service.
+       Reference: https://miro.medium.com/v2/resize:fit:1400/format:webp/0*YRn0HSisPWr50Jh1
+       This is a teaching adaptation, not a pixel replica: correct fail-fast routing to Open, show Half-open fully,
+       and replace the reference's clipped nodes with the repository's System Design icons. -->
+  <defs>
+    <!-- System Design / 04. Rate Limiter / images/architecture.svg, symbol #server, preserved verbatim apart from ID. -->
+    <symbol id="sd-server" viewBox="0 0 58 94"><rect x="2" y="2" width="54" height="90" rx="5" fill="#58bd2b"/><path d="M13 18H45M13 69H45M13 82H45" stroke="white" stroke-width="5"/></symbol>
+    <!-- System Design / 04. Rate Limiter / images/architecture.svg, symbol #envelope. -->
+    <symbol id="sd-envelope" viewBox="0 0 58 40"><rect x="2" y="2" width="54" height="36" fill="white" stroke="#087bb5" stroke-width="4"/><path d="M3 4L29 25L55 4" fill="none" stroke="#087bb5" stroke-width="4"/></symbol>
+    <!-- System Design / 04. Rate Limiter / images/sliding-window-log.svg, symbols #check and #cross. -->
+    <symbol id="sd-check" viewBox="0 0 74 62"><path d="M8 31L27 50L66 8" fill="none" stroke="#4bc600" stroke-width="13" stroke-linecap="square" stroke-linejoin="miter"/></symbol>
+    <symbol id="sd-cross" viewBox="0 0 66 66"><path d="M12 12L54 54M54 12L12 54" stroke="#ff2e2e" stroke-width="15" stroke-linecap="square"/></symbol>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#142333}
+      .title{font-size:30px;font-weight:bold}
+      .heading{font-size:22px;font-weight:bold}
+      .body{font-size:19px}
+      .note{font-size:18px}
+      .flow{fill:none;stroke:#1677b8;stroke-width:2.5;stroke-linejoin:round}
+      .reject{fill:none;stroke:#be4944;stroke-width:2.5;stroke-linejoin:round}
+    </style>
+  </defs>
+  <rect width="1024" height="850" fill="#fff"/>
+  <!-- State boxes show alternative call routes; transitions belong to the separate state diagram. -->
+  <text x="512" y="50" class="title" text-anchor="middle">Circuit breaker in a service call</text>
+  <text x="512" y="88" class="body" text-anchor="middle">Read left to right for calls; the state boxes show alternative routes.</text>
+  <!-- Central container is a logical wrapper, not an extra deployment or a queue. -->
+  <rect id="breaker-container" x="350" y="135" width="324" height="570" rx="18" fill="#f7f9fc" stroke="#8b98a6" stroke-width="2"/>
+  <text x="512" y="186" font-size="26" font-weight="bold" text-anchor="middle">Circuit breaker</text>
+  <text x="512" y="219" class="body" text-anchor="middle">Check the current state</text>
+  <text x="512" y="251" class="note" text-anchor="middle">May run inside the caller</text>
+  <!-- Service endpoints reuse the repository's green server symbol. -->
+  <rect id="client-service" x="35" y="252" width="220" height="164" rx="12" fill="#fff" stroke="#08b4cf" stroke-width="2"/>
+  <use id="client-server-icon" href="#sd-server" x="125" y="270" width="40" height="65"/>
+  <text x="145" y="367" class="heading" text-anchor="middle">Order service</text>
+  <text x="145" y="395" class="body" text-anchor="middle">Client / caller</text>
+  <rect id="payment-service" x="775" y="252" width="214" height="164" rx="12" fill="#fff" stroke="#08b4cf" stroke-width="2"/>
+  <use id="payment-server-icon" href="#sd-server" x="862" y="270" width="40" height="65"/>
+  <text x="882" y="367" class="heading" text-anchor="middle">Payment service</text>
+  <text x="882" y="395" class="body" text-anchor="middle">Dependency</text>
+  <!-- Closed state and the ordinary outgoing call. Shaft crosses the enclosing wrapper intentionally. -->
+  <rect id="closed-state" x="382" y="283" width="260" height="110" rx="12" fill="#edf8ee" stroke="#32834a" stroke-width="2"/>
+  <use href="#sd-check" x="398" y="299" width="44" height="37"/>
+  <text x="463" y="326" class="heading">CLOSED</text>
+  <text x="512" y="365" class="body" text-anchor="middle">Normal calls allowed</text>
+  <text x="302" y="317" class="note" text-anchor="middle">Attempt</text>
+  <path id="caller-entry-shaft" class="flow" data-connector="true" d="M255 337 H340"/>
+  <polygon id="caller-entry-head" points="350,337 338,331 338,343" fill="#1677b8"/>
+  <text x="725" y="294" class="note" text-anchor="middle">Normal</text>
+  <text x="725" y="320" class="note" text-anchor="middle">call</text>
+  <path id="normal-call-shaft" class="flow" data-connector="true" d="M642 337 H765"/>
+  <polygon id="normal-call-head" points="775,337 763,331 763,343" fill="#1677b8"/>
+  <!-- Open rejects to the caller. This red path never reaches the payment service. -->
+  <rect id="open-state" x="382" y="425" width="260" height="110" rx="12" fill="#fff0ef" stroke="#be4944" stroke-width="2"/>
+  <use href="#sd-cross" x="400" y="440" width="40" height="40"/>
+  <text x="463" y="468" class="heading">OPEN</text>
+  <text x="512" y="507" class="body" text-anchor="middle">No remote call</text>
+  <text x="244" y="467" class="body" text-anchor="middle">Fail fast</text>
+  <path id="local-rejection-shaft" class="reject" data-connector="true" d="M382 490 H145 V426"/>
+  <polygon id="local-rejection-head" points="145,416 139,428 151,428" fill="#be4944"/>
+  <!-- Half-open's envelope denotes a trial request. Its route reaches the same dependency. -->
+  <rect id="half-open-state" x="382" y="567" width="260" height="110" rx="12" fill="#fff7e9" stroke="#a56a0b" stroke-width="2"/>
+  <use href="#sd-envelope" x="398" y="583" width="44" height="31"/>
+  <text x="459" y="610" class="heading">HALF-OPEN</text>
+  <text x="512" y="649" class="body" text-anchor="middle">Limited trial calls</text>
+  <text x="784" y="599" class="body" text-anchor="middle">Limited probes</text>
+  <path id="probe-call-shaft" class="flow" data-connector="true" d="M642 622 H882 V426"/>
+  <polygon id="probe-call-head" points="882,416 876,428 888,428" fill="#1677b8"/>
+  <!-- Consequences remain explicit: admission control is not dependency repair or rollback. -->
+  <rect id="protection-note" x="35" y="745" width="954" height="73" rx="12" fill="#f7f9fc" stroke="#cad3df"/>
+  <text x="512" y="774" class="body" text-anchor="middle">The dependency, infrastructure, or operators resolve the underlying fault.</text>
+  <text x="512" y="803" class="body" text-anchor="middle">The breaker controls new attempts; calls already sent may still finish.</text>
+</svg>

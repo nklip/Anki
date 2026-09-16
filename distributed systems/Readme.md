@@ -9,6 +9,7 @@ Each topic has its own folder, with diagrams in its `images/` directory.
  * [Apache Kafka](./Apache%20Kafka/Readme.md) — partitioned logs, consumer groups, delivery guarantees, durability, deployments, and event-driven patterns.
  * [Apache Seata](./Apache%20Seata/Readme.md) — purpose, coordinator architecture, AT/TCC/Saga/XA modes, integration, and recovery limits.
  * [Apache Spark](./Apache%20Spark/Readme.md) — parallel execution, query planning, shuffles, recovery, streaming, real users, and practical benefits.
+ * [Patterns. Circuit breaker](./Patterns.%20Circuit%20breaker/Readme.md) — closed/open/half-open states, failure thresholds, retries, timeouts, and transaction recovery limits.
  * [Patterns. Fanout](./Patterns.%20Fanout/Readme.md) — message and request fanout, feed-generation strategies, capacity, and failure handling.
  * [Presigned URLs](./Presigned%20URLs/Readme.md) — S3 versus CloudFront signatures, private origins, cache behavior, expiration, uploads, and revocation.
  * [Redis](./Redis/Readme.md) — internals, deployments, common patterns, and CDN data placement.

@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="710" viewBox="0 0 1080 710" role="img" aria-labelledby="title desc">
+  <title id="title">An open circuit cannot undo an earlier payment</title>
+  <desc id="desc">Read downward. The order service sends payment request pay-42 through a closed breaker. The payment commits but its reply is lost, so the order service times out with an unknown outcome. Later the breaker is open and rejects a new attempt before dispatch. Blue database icons represent the durable payment record. The earlier payment remains committed. Recovery must resolve pay-42 using durable status or an idempotent retry.</desc>
+  <!-- Three vertical lanes separate caller knowledge, admission, and durable remote state. -->
+  <defs>
+    <!-- Icon copied from system design/04. Rate Limiter/images/architecture.svg, symbol #server; geometry and colors preserved. -->
+    <symbol id="sd-server" viewBox="0 0 58 94"><rect x="2" y="2" width="54" height="90" rx="5" fill="#58bd2b"/><path d="M13 18H45M13 69H45M13 82H45" stroke="white" stroke-width="5"/></symbol>
+    <!-- Icon copied from system design/10. Notification System/images/updated-design.svg, symbol #db-cylinder; geometry and colors preserved. -->
+    <symbol id="sd-database" viewBox="0 0 58 82"><rect x="3" y="12" width="52" height="58" fill="#1677b8"/><ellipse cx="29" cy="12" rx="26" ry="10" fill="#1677b8" stroke="#fff" stroke-width="2"/><path d="M3 70 A26 10 0 0 0 55 70" fill="#1677b8"/></symbol>
+    <!-- Icon copied from system design/04. Rate Limiter/images/sliding-window-log.svg, symbol #cross; geometry and colors preserved. -->
+    <symbol id="sd-cross" viewBox="0 0 66 66"><path d="M12 12L54 54M54 12L12 54" stroke="#ff2e2e" stroke-width="15" stroke-linecap="square"/></symbol>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#142333}
+      .title{font-size:27px;font-weight:bold}
+      .heading{font-size:20px;font-weight:bold}
+      .body{font-size:19px}
+      .note{font-size:18px}
+      .flow{fill:none;stroke:#1677b8;stroke-width:2.5;stroke-linejoin:round}
+      .lane{stroke:#cad3df;stroke-width:2;stroke-dasharray:5 5}
+    </style>
+  </defs>
+  <rect width="1080" height="710" fill="#fff"/>
+  <!-- Header declares this is one possible outcome after a timeout, not a universal result. -->
+  <text x="540" y="40" class="title" text-anchor="middle">An open circuit cannot undo an earlier payment</text>
+  <text x="540" y="73" class="body" text-anchor="middle">One possible timeout scenario. Read downward; time moves from top to bottom.</text>
+  <!-- Lane headers and guides. Guides are painted before event labels and boxes. -->
+  <rect x="40" y="100" width="240" height="111" rx="10" fill="#fff" stroke="#08b4cf"/>
+  <!-- Middleware hexagon follows the Rate Limiter architecture; it denotes call admission. -->
+  <path d="M446 100 H634 L660 155.5 L634 211 H446 L420 155.5 Z" fill="#fff" stroke="#08b4cf" stroke-width="2"/>
+  <rect x="800" y="100" width="240" height="111" rx="10" fill="#fff" stroke="#08b4cf"/>
+  <use id="order-service-icon" href="#sd-server" x="142" y="111" width="36" height="58"/>
+  <use id="payment-service-icon" href="#sd-server" x="902" y="111" width="36" height="58"/>
+  <text x="160" y="193" class="heading" text-anchor="middle">Order service</text>
+  <text x="540" y="151" class="heading" text-anchor="middle">Circuit breaker</text>
+  <text x="540" y="181" class="note" text-anchor="middle">Call admission</text>
+  <text x="920" y="193" class="heading" text-anchor="middle">Payment service</text>
+  <path id="order-lane" class="lane" d="M160 211 V242 M160 274 V341 M160 432 V472 M160 509 V546"/>
+  <path id="breaker-lane" class="lane" d="M540 211 V242 M540 288 V310 M540 394 V430"/>
+  <path id="payment-lane" class="lane" d="M920 211 V242 M920 274 V298 M920 422 V450"/>
+  <!-- Earlier attempt passes the closed breaker. Each shaft joins beneath its own head. -->
+  <text x="350" y="240" class="note" text-anchor="middle">Send pay-42</text>
+  <rect id="admission-check" x="534" y="249" width="12" height="32" fill="#edf8ee" stroke="#32834a"/>
+  <path id="request-entry-shaft" class="flow" data-connector="true" d="M160 265 H524"/>
+  <polygon id="request-entry-head" points="534,265 522,259 522,271" fill="#1677b8"/>
+  <text x="730" y="240" class="note" text-anchor="middle">CLOSED: allow</text>
+  <path id="request-forward-shaft" class="flow" data-connector="true" d="M546 265 H910"/>
+  <polygon id="request-forward-head" points="920,265 908,259 908,271" fill="#1677b8"/>
+  <!-- Durable commit remains visible on the remote lane. -->
+  <rect id="payment-commit" x="800" y="298" width="240" height="118" rx="10" fill="#edf8ee" stroke="#32834a" stroke-width="2"/>
+  <use id="committed-record-icon" href="#sd-database" x="812" y="311" width="43" height="61"/>
+  <text x="949" y="333" class="heading" text-anchor="middle">pay-42</text>
+  <text x="949" y="363" class="heading" text-anchor="middle">COMMITTED</text>
+  <text x="920" y="397" class="note" text-anchor="middle">Payment took effect</text>
+  <!-- Lost response stops before the caller; a cross denotes loss, not successful delivery. -->
+  <text x="550" y="344" class="note" text-anchor="middle">Reply lost on the network</text>
+  <path id="lost-reply-shaft" class="flow" data-connector="true" stroke-dasharray="7 5" d="M800 370 H363"/>
+  <polygon id="lost-reply-head" points="353,370 365,364 365,376" fill="#1677b8"/>
+  <use id="reply-loss-symbol" href="#sd-cross" x="311" y="355" width="30" height="30"/>
+  <rect id="unknown-outcome" x="40" y="345" width="240" height="87" rx="10" fill="#fff7e9" stroke="#a56a0b" stroke-width="2"/>
+  <text x="160" y="381" class="heading" text-anchor="middle">Caller times out</text>
+  <text x="160" y="411" class="note" text-anchor="middle">Outcome unknown here</text>
+  <!-- Later rejection affects only the new attempt; no path leaves the open breaker. -->
+  <rect id="later-open-breaker" x="420" y="442" width="240" height="96" rx="10" fill="#fff0ef" stroke="#be4944" stroke-width="2"/>
+  <text x="540" y="479" class="heading" text-anchor="middle">Later: OPEN</text>
+  <text x="540" y="511" class="note" text-anchor="middle">Reject before dispatch</text>
+  <text x="255" y="466" class="note" text-anchor="middle">Another attempt</text>
+  <path id="later-attempt-shaft" class="flow" data-connector="true" d="M160 496 H410"/>
+  <polygon id="later-attempt-head" points="420,496 408,490 408,502" fill="#1677b8"/>
+  <rect id="unchanged-payment" x="800" y="450" width="240" height="104" rx="10" fill="#edf8ee" stroke="#32834a" stroke-width="2"/>
+  <use id="persisted-record-icon" href="#sd-database" x="812" y="471" width="43" height="61"/>
+  <text x="949" y="480" class="heading" text-anchor="middle">Still committed</text>
+  <text x="949" y="507" class="note" text-anchor="middle">No automatic</text>
+  <text x="949" y="530" class="note" text-anchor="middle">rollback</text>
+  <text x="730" y="480" class="note" text-anchor="middle">No new</text>
+  <text x="730" y="506" class="note" text-anchor="middle">call sent</text>
+  <!-- Recovery note links the uncertainty to the stable business-operation identity. -->
+  <rect id="recovery-note" x="40" y="577" width="1000" height="105" rx="12" fill="#f7f9fc" stroke="#cad3df"/>
+  <text x="540" y="610" class="heading" text-anchor="middle">Resolve the original operation's outcome</text>
+  <text x="540" y="640" class="body" text-anchor="middle">Query durable status or safely retry pay-42 under the receiver's idempotency contract.</text>
+  <text x="540" y="667" class="note" text-anchor="middle">An open-circuit error describes admission, not whether an earlier payment committed.</text>
+</svg>
