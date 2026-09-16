@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="850" viewBox="0 0 1000 850" role="img" aria-labelledby="title description">
+  <title id="title">Check-then-act sequence: two checks, one overwritten booking</title>
+  <desc id="description">Time moves downward through Thread A, the shared seats map, and Thread B. A and B each call containsKey for seat A1 and receive false. A puts Alice and receives null, then its reserve method returns true. B puts Bob and receives Alice as the previous value, then its reserve method also returns true. The final booking is Bob. Solid arrows are calls and dashed arrows are returned map values. The green footer introduces putIfAbsent as the atomic fix.</desc>
+
+  <!-- Shared typography; explicit colors distinguish calls, replies, and the overwrite. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172b4d; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #526078; }
+      .participant { font-size: 22px; font-weight: 700; }
+      .detail { font-size: 17px; fill: #526078; }
+      .message { font-size: 19px; }
+      .reply { font-size: 17px; fill: #526078; }
+      .note { font-size: 18px; font-weight: 700; }
+      .failure { font-size: 21px; font-weight: 700; fill: #b53a37; }
+      .lifeline { fill: none; stroke: #a1abba; stroke-width: 2px; stroke-dasharray: 6 6; }
+      .call { fill: none; stroke: #2563a6; stroke-width: 2px; }
+      .return { fill: none; stroke: #66768d; stroke-width: 2px; stroke-dasharray: 7 5; }
+      .overwrite { fill: none; stroke: #b53a37; stroke-width: 2px; }
+    </style>
+  </defs>
+
+  <!-- Reading guide and participant headers. Map state initially has no A1 entry. -->
+  <rect width="1000" height="850" fill="white"/>
+  <text x="32" y="42" class="title">Check-then-act: both checks pass</text>
+  <text x="32" y="75" class="subtitle">Seat A1 starts absent. Time moves downward through one possible execution.</text>
+  <text x="32" y="101" class="detail">Solid arrows: map calls. Dashed arrows: returned values. Vertical lines track each participant.</text>
+  <g id="participants" text-anchor="middle">
+    <rect x="25" y="122" width="230" height="60" rx="8" fill="#eef5ff" stroke="#9bbce0"/>
+    <text x="140" y="148" class="participant">Thread A</text>
+    <text x="140" y="172" class="detail">reserve A1 for Alice</text>
+    <rect x="350" y="122" width="300" height="60" rx="8" fill="#f4f6f9" stroke="#c5ccd6"/>
+    <text x="500" y="148" class="participant">Shared seats map</text>
+    <text x="500" y="172" class="detail">ConcurrentHashMap</text>
+    <rect x="745" y="122" width="230" height="60" rx="8" fill="#eef5ff" stroke="#9bbce0"/>
+    <text x="860" y="148" class="participant">Thread B</text>
+    <text x="860" y="172" class="detail">reserve A1 for Bob</text>
+  </g>
+
+  <!-- Lifelines stop at local result notes, then resume below them; no line crosses text. -->
+  <g id="lifelines">
+    <path class="lifeline" d="M140 182 V520 M140 560 V710"/>
+    <path class="lifeline" d="M500 182 V710"/>
+    <path class="lifeline" d="M860 182 V660 M860 700 V710"/>
+  </g>
+
+  <!-- Activity bars show each reserve call and the four separate map operations. -->
+  <g id="activity-bars" fill="#eef5ff" stroke="#9bbce0">
+    <rect x="132" y="207" width="16" height="303"/>
+    <rect x="852" y="310" width="16" height="340"/>
+    <rect x="492" y="227" width="16" height="61"/>
+    <rect x="492" y="332" width="16" height="61"/>
+    <rect x="492" y="447" width="16" height="61"/>
+    <rect x="492" y="587" width="16" height="61"/>
+  </g>
+
+  <!-- A checks. Manual heads touch activity-bar boundaries; shafts end under head bases. -->
+  <g id="a-check">
+    <text x="320" y="220" text-anchor="middle" class="message">containsKey("A1")</text>
+    <path id="a-check-arrow" class="call" d="M148 235 H481"/>
+    <polygon points="480,229 492,235 480,241" fill="#2563a6"/>
+    <text x="320" y="265" text-anchor="middle" class="reply">false — no booking</text>
+    <path id="a-check-return-arrow" class="return" d="M492 280 H164"/>
+    <path id="a-check-return-join" d="M164 280 H159" stroke="#66768d" stroke-width="2"/>
+    <polygon points="160,274 148,280 160,286" fill="#66768d"/>
+  </g>
+
+  <!-- B also checks before either write, so it sees the same missing key. -->
+  <g id="b-check">
+    <text x="680" y="325" text-anchor="middle" class="message">containsKey("A1")</text>
+    <path id="b-check-arrow" class="call" d="M852 340 H519"/>
+    <polygon points="520,334 508,340 520,346" fill="#2563a6"/>
+    <text x="680" y="370" text-anchor="middle" class="reply">false — no booking</text>
+    <path id="b-check-return-arrow" class="return" d="M508 385 H836"/>
+    <path id="b-check-return-join" d="M836 385 H841" stroke="#66768d" stroke-width="2"/>
+    <polygon points="840,379 852,385 840,391" fill="#66768d"/>
+  </g>
+
+  <!-- A writes and completes reserve. The map's null return is distinct from reserve's true. -->
+  <g id="a-write">
+    <text x="320" y="440" text-anchor="middle" class="message">put("A1", "Alice")</text>
+    <path id="a-write-arrow" class="call" d="M148 455 H481"/>
+    <polygon points="480,449 492,455 480,461" fill="#2563a6"/>
+    <rect x="530" y="437" width="174" height="36" rx="6" fill="#f4f6f9" stroke="#c5ccd6"/>
+    <text x="617" y="461" text-anchor="middle" class="note">A1 = Alice</text>
+    <text x="320" y="485" text-anchor="middle" class="reply">null — no previous value</text>
+    <path id="a-write-return-arrow" class="return" d="M492 500 H164"/>
+    <path id="a-write-return-join" d="M164 500 H159" stroke="#66768d" stroke-width="2"/>
+    <polygon points="160,494 148,500 160,506" fill="#66768d"/>
+    <rect x="35" y="520" width="210" height="40" rx="6" fill="#f4f6f9" stroke="#c5ccd6"/>
+    <text x="140" y="546" text-anchor="middle" class="note">reserve returns true</text>
+  </g>
+
+  <!-- B acts on its earlier check and overwrites Alice; put's return is ignored by reserve. -->
+  <g id="b-overwrite">
+    <text x="680" y="580" text-anchor="middle" class="message">put("A1", "Bob")</text>
+    <path id="b-write-arrow" class="overwrite" d="M852 595 H519"/>
+    <polygon points="520,589 508,595 520,601" fill="#b53a37"/>
+    <rect x="296" y="577" width="174" height="36" rx="6" fill="#fff0ed" stroke="#d58b85"/>
+    <text x="383" y="601" text-anchor="middle" class="note">A1 = Bob</text>
+    <text x="680" y="625" text-anchor="middle" class="reply">"Alice" — previous value</text>
+    <path id="b-write-return-arrow" class="return" d="M508 640 H836"/>
+    <path id="b-write-return-join" d="M836 640 H841" stroke="#66768d" stroke-width="2"/>
+    <polygon points="840,634 852,640 840,646" fill="#66768d"/>
+    <rect x="755" y="660" width="210" height="40" rx="6" fill="#fff0ed" stroke="#d58b85"/>
+    <text x="860" y="686" text-anchor="middle" class="note">reserve returns true</text>
+  </g>
+
+  <!-- Outcome and repair retain the card's explicitly introduced green fix band. -->
+  <text x="500" y="739" text-anchor="middle" class="failure">Both reserve calls report success, but A1 belongs to Bob.</text>
+  <rect x="32" y="760" width="936" height="66" rx="9" fill="#eaf7ef" stroke="#8cbea0"/>
+  <text x="52" y="787" font-size="20" font-weight="700">Fix: putIfAbsent combines the check and insertion.</text>
+  <text x="52" y="812" font-size="18">For two competing reservations, the first insertion wins; the other leaves it intact.</text>
+</svg>

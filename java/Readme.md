@@ -4,7 +4,7 @@
 
 Java study materials covering language features, collections, concurrency, the JVM, garbage collection, persistence, and application development.
 
-The 62 topics include **31 simple Anki cards** with Front and Back sections and **31 articles** for longer explanations. The Format column identifies each one.
+The 63 topics include **32 simple Anki cards** with Front and Back sections and **31 articles** for longer explanations. The Format column identifies each one.
 
 Every topic lives in its own folder as `Readme.md`, with its teaching diagrams in a sibling `images/` directory. Diagrams used by several topics are copied into each topic's own `images/` directory.
 
@@ -63,6 +63,7 @@ Every topic lives in its own folder as `Readme.md`, with its teaching diagrams i
 | [Concurrency. ArrayBlockingQueue vs LinkedBlockingQueue](./Concurrency.%20ArrayBlockingQueue%20vs%20LinkedBlockingQueue/Readme.md) | Article |
 | [Concurrency. Atomicity](./Concurrency.%20Atomicity/Readme.md) | Simple card |
 | [Concurrency. CAS](./Concurrency.%20CAS/Readme.md) | Article |
+| [Concurrency. Check-Then-Act](./Concurrency.%20Check-Then-Act/Readme.md) | Simple card |
 | [Concurrency. ConcurrentHashMap](./Concurrency.%20ConcurrentHashMap/Readme.md) | Article |
 | [Concurrency. ConcurrentLinkedDeque](./Concurrency.%20ConcurrentLinkedDeque/Readme.md) | Simple card |
 | [Concurrency. ConcurrentLinkedQueue](./Concurrency.%20ConcurrentLinkedQueue/Readme.md) | Article |
