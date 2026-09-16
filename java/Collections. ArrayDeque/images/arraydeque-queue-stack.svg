@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="596" viewBox="0 0 1040 596" role="img" aria-labelledby="diagram-title diagram-description">
+  <title id="diagram-title">ArrayDeque: one deque, two removal orders</title>
+  <desc id="diagram-description">Two independent examples start empty and insert A, then B, then C. Queue insertion uses addLast at the back, producing A, B, C; removeFirst returns A. Stack insertion uses push, which is addFirst, producing C, B, A; pop, which is removeFirst, returns C. Blue arrows show insertion and orange arrows show removal. Boxes show logical order before removal, not physical array positions.</desc>
+
+  <!-- Shared colors distinguish insertion from removal; each arrow uses a separate head. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #263746; }
+      .title { font-size: 29px; font-weight: bold; }
+      .subtitle { font-size: 18px; fill: #526170; }
+      .heading { font-size: 23px; font-weight: bold; }
+      .end { font-size: 17px; fill: #526170; font-weight: bold; }
+      .element { font-size: 28px; font-weight: bold; fill: #1d4f82; }
+      .method { font-family: monospace; font-size: 19px; font-weight: bold; }
+      .insert { fill: #2f6fad; }
+      .remove { fill: #ad5028; }
+      .insert-shaft { stroke: #2f6fad; stroke-width: 3; fill: none; }
+      .remove-shaft { stroke: #ad5028; stroke-width: 3; fill: none; }
+    </style>
+  </defs>
+
+  <!-- Reading rule: insertion order is fixed, so only the chosen ends change the outcome. -->
+  <rect id="canvas" width="1040" height="596" fill="#ffffff"/>
+  <text x="520" y="39" text-anchor="middle" class="title">ArrayDeque: one deque, two removal orders</text>
+  <text x="520" y="70" text-anchor="middle" class="subtitle">Start empty. Insert A, then B, then C. Boxes show the order before removal.</text>
+
+  <!-- Queue: logical contents run from First on the left to Last on the right. -->
+  <g id="queue-panel">
+    <rect x="24" y="93" width="992" height="206" rx="10" fill="#f6f9fc" stroke="#bacbd9"/>
+    <text x="48" y="128" class="heading">Queue · first-in, first-out (FIFO)</text>
+    <text x="480" y="162" text-anchor="middle" class="end">First</text>
+    <text x="656" y="162" text-anchor="middle" class="end">Last</text>
+    <rect x="444" y="178" width="72" height="98" rx="6" fill="#e8f2fb" stroke="#2f6fad" stroke-width="2"/>
+    <rect x="532" y="178" width="72" height="98" rx="6" fill="#e8f2fb" stroke="#2f6fad" stroke-width="2"/>
+    <rect x="620" y="178" width="72" height="98" rx="6" fill="#e8f2fb" stroke="#2f6fad" stroke-width="2"/>
+    <text x="480" y="237" text-anchor="middle" class="element">A</text>
+    <text x="568" y="237" text-anchor="middle" class="element">B</text>
+    <text x="656" y="237" text-anchor="middle" class="element">C</text>
+
+    <!-- The shafts end inside their own triangle bases; tips remain outside the boxes. -->
+    <text x="242" y="238" text-anchor="middle" class="method remove">removeFirst(): A</text>
+    <path id="queue-remove-arrow" data-connector="true" d="M443 261H97" class="remove-shaft"/>
+    <polygon points="80,261 99,252 99,270" fill="#ad5028"/>
+    <text x="846" y="174" text-anchor="middle" class="method insert">addLast(...)</text>
+    <path id="queue-insert-arrow" data-connector="true" d="M972 202H710" class="insert-shaft"/>
+    <polygon points="693,202 712,193 712,211" fill="#2f6fad"/>
+    <text x="846" y="242" text-anchor="middle" class="subtitle">Insert and remove</text>
+    <text x="846" y="269" text-anchor="middle" class="subtitle">at opposite ends.</text>
+  </g>
+
+  <!-- Stack: separate insertion/removal lanes make the same-end rule visible. -->
+  <g id="stack-panel">
+    <rect x="24" y="317" width="992" height="206" rx="10" fill="#f6f9fc" stroke="#bacbd9"/>
+    <text x="48" y="352" class="heading">Stack · last-in, first-out (LIFO)</text>
+    <text x="480" y="386" text-anchor="middle" class="end">First</text>
+    <text x="656" y="386" text-anchor="middle" class="end">Last</text>
+    <rect x="444" y="402" width="72" height="98" rx="6" fill="#e8f2fb" stroke="#2f6fad" stroke-width="2"/>
+    <rect x="532" y="402" width="72" height="98" rx="6" fill="#e8f2fb" stroke="#2f6fad" stroke-width="2"/>
+    <rect x="620" y="402" width="72" height="98" rx="6" fill="#e8f2fb" stroke="#2f6fad" stroke-width="2"/>
+    <text x="480" y="461" text-anchor="middle" class="element">C</text>
+    <text x="568" y="461" text-anchor="middle" class="element">B</text>
+    <text x="656" y="461" text-anchor="middle" class="element">A</text>
+
+    <!-- Inward push reaches First; outward pop leaves First on a lower, separate lane. -->
+    <text x="242" y="398" text-anchor="middle" class="method insert">push(...) = addFirst(...)</text>
+    <path id="stack-push-arrow" data-connector="true" d="M80 426H426" class="insert-shaft"/>
+    <polygon points="443,426 424,417 424,435" fill="#2f6fad"/>
+    <text x="242" y="462" text-anchor="middle" class="method remove">pop() = removeFirst(): C</text>
+    <path id="stack-pop-arrow" data-connector="true" d="M443 485H97" class="remove-shaft"/>
+    <polygon points="80,485 99,476 99,494" fill="#ad5028"/>
+    <text x="846" y="466" text-anchor="middle" class="subtitle">Insert and remove</text>
+    <text x="846" y="493" text-anchor="middle" class="subtitle">at the same end.</text>
+  </g>
+
+  <!-- Legend names both color meanings and the logical, rather than physical, layout. -->
+  <text x="520" y="553" text-anchor="middle" class="subtitle">Blue = insert · Orange = remove · First = front / head · Last = back / tail</text>
+  <text id="logical-order-note" x="520" y="580" text-anchor="middle" class="subtitle">Boxes show logical order before removal, not physical array positions.</text>
+</svg>

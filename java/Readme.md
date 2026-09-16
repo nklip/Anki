@@ -4,7 +4,7 @@
 
 Java study materials covering language features, collections, concurrency, the JVM, garbage collection, persistence, and application development.
 
-The 63 topics include **32 simple Anki cards** with Front and Back sections and **31 articles** for longer explanations. The Format column identifies each one.
+The 64 topics include **33 simple Anki cards** with Front and Back sections and **31 articles** for longer explanations. The Format column identifies each one.
 
 Every topic lives in its own folder as `Readme.md`, with its teaching diagrams in a sibling `images/` directory. Diagrams used by several topics are copied into each topic's own `images/` directory.
 
@@ -50,6 +50,7 @@ Every topic lives in its own folder as `Readme.md`, with its teaching diagrams i
 
 | Topic | Format |
 | --- | --- |
+| [Collections. ArrayDeque](./Collections.%20ArrayDeque/Readme.md) | Simple card |
 | [Collections. ArrayList](./Collections.%20ArrayList/Readme.md) | Article |
 | [Collections. Fail-fast vs fail-safe](./Collections.%20Fail-fast%20vs%20fail-safe/Readme.md) | Article |
 | [Collections. HashMap](./Collections.%20HashMap/Readme.md) | Article |
