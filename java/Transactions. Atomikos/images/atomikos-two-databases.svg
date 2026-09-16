@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="650" viewBox="0 0 1000 650" role="img" aria-labelledby="title description">
+  <title id="title">Atomikos coordinates two separate databases</title>
+  <desc id="description">A Spring Boot application contains the Atomikos transaction coordinator. Separate arrows lead to two distinct database panels: database 1 stores orders and is accessed through ordersJdbc; database 2 stores inventory and is accessed through stockJdbc. Both use XA. The coordinator asks each to prepare, then decides whether to commit both or roll back after a preparation failure. The diagram shows normal protocol completion; failures can require recovery.</desc>
+
+  <!-- Self-contained editable icons copied from the repository's System Design diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #182c40; }
+      .heading { font-size: 25px; font-weight: bold; }
+      .label { font-size: 20px; }
+      .note { font-size: 18px; fill: #40556a; }
+      .bean { font-family: monospace; font-size: 19px; fill: #2f6fad; }
+      .connector { fill: none; stroke: #1677b8; stroke-width: 3; stroke-linejoin: round; }
+    </style>
+
+    <!-- Icon source: system design/10. Notification System/images/improved-design.svg#db-cylinder. -->
+    <symbol id="db-cylinder" viewBox="0 0 58 82">
+      <rect x="3" y="12" width="52" height="58" fill="#1677b8"/>
+      <ellipse cx="29" cy="12" rx="26" ry="10" fill="#1677b8" stroke="#fff" stroke-width="2"/>
+      <path d="M3 70 A26 10 0 0 0 55 70" fill="#1677b8"/>
+    </symbol>
+
+    <!-- Icon source: system design/01. Scaling/images/single-server.svg#server. -->
+    <symbol id="application-server-icon" viewBox="0 0 64 112">
+      <rect width="64" height="112" rx="7" fill="#63c51b"/>
+      <path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/>
+    </symbol>
+  </defs>
+
+  <!-- Main lesson: two separate stores, with coordination inside the Java application. -->
+  <rect width="1000" height="650" fill="#ffffff"/>
+  <text x="500" y="42" text-anchor="middle" font-size="29" font-weight="bold">Two databases, one Atomikos coordinator</text>
+  <text x="500" y="74" text-anchor="middle" class="note">Checkout saves an order and reserves stock in separate stores.</text>
+
+  <!-- The server icon represents the application process, not a separate Atomikos server. -->
+  <g id="application-with-atomikos">
+    <rect x="310" y="100" width="380" height="110" rx="12" fill="#edf5fd" stroke="#2f6fad" stroke-width="2"/>
+    <use href="#application-server-icon" x="332" y="117" width="44" height="77"/>
+    <text x="404" y="130" class="label">Spring Boot application</text>
+    <text x="404" y="162" font-size="27" font-weight="bold">Atomikos</text>
+    <text x="404" y="190" class="note">transaction coordinator</text>
+  </g>
+
+  <!-- Each route terminates at its own database panel. Shaft ends hide under triangle bases. -->
+  <g id="independent-coordination-routes">
+    <path id="order-database-connector" class="connector" d="M375 212 V242 H240 V278"/>
+    <polygon points="240,292 231,276 249,276" fill="#1677b8"/>
+    <path id="stock-database-connector" class="connector" d="M625 212 V242 H760 V278"/>
+    <polygon points="760,292 751,276 769,276" fill="#1677b8"/>
+    <text x="500" y="271" text-anchor="middle" class="note">Prepare / commit / roll back</text>
+  </g>
+
+  <!-- Database 1 has its own cylinder, panel, access bean, and data responsibility. -->
+  <g id="order-database">
+    <rect x="30" y="296" width="420" height="196" rx="12" fill="#f3f7fb" stroke="#7891a9" stroke-width="2"/>
+    <use href="#db-cylinder" x="58" y="319" width="104.4" height="147.6"/>
+    <text x="187" y="326" font-size="16" font-weight="bold" fill="#40556a">DATABASE 1</text>
+    <text x="187" y="361" class="heading">Order database</text>
+    <text x="187" y="392" class="bean">ordersJdbc</text>
+    <text x="187" y="427" class="label">Save order</text>
+    <text x="187" y="459" class="note">XA enabled</text>
+  </g>
+
+  <!-- The central gutter and divider separate resource boundaries; no database-to-database link. -->
+  <path id="database-boundary-divider" d="M500 318 V470" fill="none" stroke="#c4cdd6" stroke-width="2" stroke-dasharray="5 7"/>
+
+  <!-- Database 2 uses a separate copy of the same System Design database icon. -->
+  <g id="stock-database">
+    <rect x="550" y="296" width="420" height="196" rx="12" fill="#f3f7fb" stroke="#7891a9" stroke-width="2"/>
+    <use href="#db-cylinder" x="578" y="319" width="104.4" height="147.6"/>
+    <text x="707" y="326" font-size="16" font-weight="bold" fill="#40556a">DATABASE 2</text>
+    <text x="707" y="361" class="heading">Stock database</text>
+    <text x="707" y="392" class="bean">stockJdbc</text>
+    <text x="707" y="427" class="label">Reserve stock</text>
+    <text x="707" y="459" class="note">XA enabled</text>
+  </g>
+
+  <!-- Read left to right: pending work is prepared before a shared completion decision. -->
+  <g id="two-phase-rule">
+    <rect x="30" y="522" width="455" height="88" rx="9" fill="#fff5df" stroke="#bf9236" stroke-width="1.5"/>
+    <text x="50" y="551" class="heading">1. Prepare</text>
+    <text x="50" y="579" class="note">Both confirm they can commit.</text>
+    <text x="50" y="601" class="note">Changes remain pending.</text>
+    <rect x="515" y="522" width="455" height="88" rx="9" fill="#eaf6ee" stroke="#518462" stroke-width="1.5"/>
+    <text x="535" y="551" class="heading">2. Complete</text>
+    <text x="535" y="579" class="note">Both ready: commit both.</text>
+    <text x="535" y="601" class="note">Preparation fails: roll back both.</text>
+  </g>
+
+  <!-- Define the shared interface while keeping the two resources visually separate. -->
+  <text x="500" y="638" text-anchor="middle" font-size="17" fill="#40556a">XA: a standard transaction interface supported by both databases and their drivers.</text>
+</svg>

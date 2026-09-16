@@ -4,7 +4,7 @@
 
 Java study materials covering language features, collections, concurrency, the JVM, garbage collection, persistence, and application development.
 
-The 61 topics include **30 simple Anki cards** with Front and Back sections and **31 articles** for longer explanations. The Format column identifies each one.
+The 62 topics include **31 simple Anki cards** with Front and Back sections and **31 articles** for longer explanations. The Format column identifies each one.
 
 Every topic lives in its own folder as `Readme.md`, with its teaching diagrams in a sibling `images/` directory. Diagrams used by several topics are copied into each topic's own `images/` directory.
 
@@ -94,7 +94,7 @@ Every topic lives in its own folder as `Readme.md`, with its teaching diagrams i
 | [JVM. Memory Organization](./JVM.%20Memory%20Organization/Readme.md) | Article |
 | [WORA](./WORA/Readme.md) | Simple card |
 
-### Persistence and locking
+### Persistence, transactions, and locking
 
 | Topic | Format |
 | --- | --- |
@@ -102,6 +102,7 @@ Every topic lives in its own folder as `Readme.md`, with its teaching diagrams i
 | [JPA. Locking](./JPA.%20Locking/Readme.md) | Article |
 | [JPA. Primary key generation](./JPA.%20Primary%20key%20generation/Readme.md) | Article |
 | [Optimistic vs Pessimistic Locking](./Optimistic%20vs%20Pessimistic%20Locking/Readme.md) | Article |
+| [Transactions. Atomikos](./Transactions.%20Atomikos/Readme.md) | Simple card |
 
 ### Spring and deployment
 
