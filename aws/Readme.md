@@ -2,7 +2,7 @@
 
 <sub>[Back to Anki Flashcards](../README.md)</sub>
 
-Articles extracted from the **AWS (sorting)** Anki deck on 2026-09-17. Original wording, links, and images are preserved, with formatting converted to Markdown.
+Study articles about Amazon Web Services (AWS), organized by service and concept.
 
 ## Content
 
@@ -16,3 +16,4 @@ Articles extracted from the **AWS (sorting)** Anki deck on 2026-09-17. Original 
 - [Amazon SQS](Amazon%20SQS/Readme.md)
 - [AWS Databases](AWS%20Databases/Readme.md)
 - [AWS Regions and Zones](AWS%20Regions%20and%20Zones/Readme.md)
+- [AWS Storage Gateway](AWS%20Storage%20Gateway/Readme.md)
