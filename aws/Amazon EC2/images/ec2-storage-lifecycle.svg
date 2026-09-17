@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="590" viewBox="0 0 1160 590" role="img" aria-labelledby="storage-title storage-desc">
+  <title id="storage-title">EC2 storage: what survives each instance action?</title>
+  <desc id="storage-desc">For an EBS-root EC2 instance, reboot keeps data on EBS and any instance-store disks. Stop and start keeps EBS data but loses instance-store data. Termination keeps an EBS volume only when DeleteOnTermination is false; the root volume is usually deleted by default. Termination loses instance-store data. A disk failure can also lose instance-store data.</desc>
+  <!-- Sources: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/RootDeviceStorage.html
+       https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-store-lifetime.html
+       https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/preserving-volumes-on-termination.html -->
+  <!-- Shared styles match the companion launch diagram. Words, not colors alone,
+       identify whether each storage kind retains or loses its data. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #162B42; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 20px; fill: #4B6074; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4B6074; }
+      .kept { font-size: 22px; font-weight: 700; fill: #286342; }
+      .lost { font-size: 22px; font-weight: 700; fill: #AA3737; }
+      .conditional { font-size: 22px; font-weight: 700; fill: #946219; }
+      .mono { font-family: 'Courier New', monospace; font-size: 19px; fill: #162B42; }
+    </style>
+  </defs>
+  <!-- Lesson and explicit scope: an EBS root volume contains the operating system. -->
+  <rect width="1160" height="590" rx="14" fill="#FFFFFF"/>
+  <text class="title" x="32" y="49">EC2 storage: what survives each instance action?</text>
+  <text class="subtitle" x="32" y="82">For an instance whose operating system starts from an EBS root volume.</text>
+  <!-- Table backgrounds: action at left, persistent EBS in the middle, optional
+       host-local instance storage at right. Column edges are x=306 and x=788. -->
+  <g id="storage-comparison-table">
+    <rect x="32" y="120" width="1096" height="393" rx="12" fill="#FFFFFF" stroke="#AEC0CE" stroke-width="1.5"/>
+    <path d="M44 120 H1116 Q1128 120 1128 132 V210 H32 V132 Q32 120 44 120 Z" fill="#EFF4F8"/>
+    <rect x="307" y="211" width="480" height="171" fill="#F2F8F3"/>
+    <rect x="789" y="211" width="338" height="85" fill="#F2F8F3"/>
+    <rect x="789" y="297" width="338" height="215" fill="#FCF2F2"/>
+    <rect x="307" y="383" width="480" height="129" fill="#FFF7E9"/>
+    <path d="M306 120 V513 M788 120 V513 M32 210 H1128 M32 296 H1128 M32 382 H1128" fill="none" stroke="#AEC0CE" stroke-width="1.5"/>
+    <!-- Column headings expand the storage abbreviation in the rendered image. -->
+    <text class="heading" x="54" y="160">Instance action</text>
+    <text class="heading" x="330" y="156">EBS</text>
+    <text class="small" x="330" y="186">Elastic Block Store — attached volumes</text>
+    <text class="heading" x="812" y="156">Instance store (optional)</text>
+    <text class="small" x="812" y="186">Temporary disks on the host</text>
+    <!-- Reboot changes neither storage lifetime; it restarts the operating system. -->
+    <g id="reboot-row">
+      <text class="heading" x="54" y="247">Reboot</text>
+      <text class="small" x="54" y="275">Restart the operating system</text>
+      <text class="kept" x="330" y="262">Data kept</text>
+      <text class="kept" x="812" y="262">Data kept</text>
+    </g>
+    <!-- Stop/start preserves attached EBS data but discards instance-store data. -->
+    <g id="stop-start-row">
+      <text class="heading" x="54" y="339">Stop → start</text>
+      <text class="kept" x="330" y="349">Data kept</text>
+      <text class="lost" x="812" y="349">Data lost</text>
+    </g>
+    <!-- Termination behavior is a per-volume EBS setting, not unconditional
+         persistence. The exact API attribute is deliberately shown as code. -->
+    <g id="terminate-row">
+      <text class="heading" x="54" y="428">Terminate</text>
+      <text class="small" x="54" y="456">Permanently delete instance</text>
+      <text class="conditional" x="330" y="413">Kept only if</text>
+      <text class="mono" x="330" y="442">DeleteOnTermination=false</text>
+      <text class="small" x="330" y="475">Root volume usually deleted by default.</text>
+      <text class="lost" x="812" y="450">Data lost</text>
+    </g>
+  </g>
+  <!-- Disk failure is an additional lifetime limit, separate from user actions. -->
+  <text class="body" x="32" y="554">Instance-store data can also be lost if its disk fails.</text>
+</svg>
