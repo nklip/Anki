@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="522" viewBox="0 0 1100 522" role="img" aria-labelledby="title desc">
+<title id="title">3 · Persist pages and establish a recovery boundary</title>
+<desc id="desc">Dirty A and B pages can be written after the necessary WAL is durable. A completed checkpoint records a redo starting position. Older WAL can be kept for replicas or archives.</desc>
+<!-- Shared visual definitions. Laptop, server, and database geometry is reused from system design/01. Scaling/images/database.svg. -->
+<!-- Log-cell styling follows system design/19. Distributed Message Queue/images/wal-example.svg: yellow buffered records, green persisted records. -->
+<defs>
+<style>text{font-family:Arial,Helvetica,sans-serif}</style>
+<symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
+<symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+<symbol id="database" viewBox="964 458 108 143">
+<path d="M970 482C970 470 992 462 1018 462S1066 470 1066 482V575C1066 587 1044 595 1018 595S970 587 970 575Z" fill="#0b78b5"/>
+<ellipse cx="1018" cy="482" rx="48" ry="15" fill="white" stroke="#0b78b5" stroke-width="6"/>
+<text x="1018" y="555" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="48" fill="white">DB</text>
+</symbol>
+</defs>
+<rect width="1100" height="522" fill="#fff"/>
+<!-- Lesson and reading direction. -->
+<text x="32" y="43" font-size="28" text-anchor="start" fill="#111" font-weight="700">3 · Persist pages and establish a recovery boundary</text>
+<text x="32" y="78" font-size="19" text-anchor="start" fill="#111" font-weight="400">This example writes pages after commit; background page writing can also happen earlier.</text>
+<!-- A guard in the middle expresses ordering, not copying the WAL into data files. -->
+<rect id="dirty" x="32" y="126" width="300" height="215" rx="10" fill="#f5f7f8" stroke="#81909a" stroke-width="2"/>
+<text x="182" y="168" font-size="23" text-anchor="middle" fill="#111" font-weight="400">Dirty data pages</text>
+<text x="182" y="222" font-size="26" text-anchor="middle" fill="#111" font-weight="400">A = 80</text>
+<text x="182" y="261" font-size="26" text-anchor="middle" fill="#111" font-weight="400">B = 70</text>
+<text x="182" y="310" font-size="18" text-anchor="middle" fill="#111" font-weight="400">working copies in memory</text>
+<rect id="guard" x="400" y="126" width="300" height="215" rx="10" fill="#edf8ed" stroke="#81909a" stroke-width="2"/>
+<text x="550" y="168" font-size="21" text-anchor="middle" fill="#111" font-weight="400">Before each page write</text>
+<text x="550" y="215" font-size="23" text-anchor="middle" fill="#111" font-weight="400">Required WAL</text>
+<text x="550" y="249" font-size="23" text-anchor="middle" fill="#111" font-weight="400">is already durable</text>
+<text x="550" y="310" font-size="18" text-anchor="middle" fill="#111" font-weight="400">the write-ahead rule</text>
+<rect id="files" x="768" y="126" width="300" height="215" rx="10" fill="#edf7fc" stroke="#81909a" stroke-width="2"/>
+<text x="918" y="168" font-size="22" text-anchor="middle" fill="#111" font-weight="400">Data files catch up</text>
+<use href="#database" x="802" y="201" width="64" height="88"/>
+<text x="953" y="225" font-size="23" text-anchor="middle" fill="#111" font-weight="400">A = 80</text>
+<text x="953" y="266" font-size="23" text-anchor="middle" fill="#111" font-weight="400">B = 70</text>
+<text x="918" y="310" font-size="18" text-anchor="middle" fill="#111" font-weight="400">updated pages on storage</text>
+<path id="page-guard-shaft" data-connector="true" d="M332 240 H391" fill="none" stroke="#147eae" stroke-width="2.5"/><polygon id="page-guard-head" points="400,240 387,234 387,246" fill="#147eae"/>
+<path id="page-write-shaft" data-connector="true" d="M700 240 H759" fill="none" stroke="#147eae" stroke-width="2.5"/><polygon id="page-write-head" points="768,240 755,234 755,246" fill="#147eae"/>
+<!-- A checkpoint is a recovery boundary, not a prerequisite for every commit. -->
+<rect id="checkpoint" x="32" y="375" width="1036" height="119" rx="10" fill="#fff" stroke="#81909a" stroke-width="2"/>
+<text x="56" y="411" font-size="22" text-anchor="start" fill="#111" font-weight="700">Completed checkpoint</text>
+<text x="56" y="447" font-size="20" text-anchor="start" fill="#111" font-weight="400">Records where REDO can begin; recovery can skip older persisted work.</text>
+<text x="56" y="478" font-size="19" text-anchor="start" fill="#111" font-weight="400">Keep older WAL if recovery, replicas, or archiving still need it.</text>
+</svg>

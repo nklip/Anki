@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="510" viewBox="0 0 1100 510" role="img" aria-labelledby="title desc">
+<title id="title">2 · Synchronize the commit, then report success</title>
+<desc id="desc">WAL records for A 80, B 70, and T1 COMMIT are synchronized to storage before the engine replies that commit succeeded. Data files can still contain the old balances.</desc>
+<!-- Shared visual definitions. Laptop, server, and database geometry is reused from system design/01. Scaling/images/database.svg. -->
+<!-- Log-cell styling follows system design/19. Distributed Message Queue/images/wal-example.svg: yellow buffered records, green persisted records. -->
+<defs>
+<style>text{font-family:Arial,Helvetica,sans-serif}</style>
+<symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
+<symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+<symbol id="database" viewBox="964 458 108 143">
+<path d="M970 482C970 470 992 462 1018 462S1066 470 1066 482V575C1066 587 1044 595 1018 595S970 587 970 575Z" fill="#0b78b5"/>
+<ellipse cx="1018" cy="482" rx="48" ry="15" fill="white" stroke="#0b78b5" stroke-width="6"/>
+<text x="1018" y="555" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="48" fill="white">DB</text>
+</symbol>
+</defs>
+<rect width="1100" height="510" fill="#fff"/>
+<!-- Lesson and reading direction. -->
+<text x="32" y="43" font-size="28" text-anchor="start" fill="#111" font-weight="700">2 · Synchronize the commit, then report success</text>
+<text x="32" y="78" font-size="19" text-anchor="start" fill="#111" font-weight="400">Synchronous local commit: change records and the commit record must all be durable.</text>
+<!-- WAL moves through the durability boundary before the client sees success. -->
+<rect id="buffer" x="32" y="126" width="300" height="231" rx="10" fill="#f5f7f8" stroke="#81909a" stroke-width="2"/>
+<text x="182" y="165" font-size="23" text-anchor="middle" fill="#111" font-weight="400">WAL buffer</text>
+<rect id="buffered-0" x="57.0" y="195" width="83.33333333333333" height="72" fill="#fffdb5" stroke="#888" stroke-width="1.5"/>
+<text x="98.66666666666666" y="224" font-size="17" text-anchor="middle" fill="#111" font-weight="400">A = 80</text>
+<text x="98.66666666666666" y="249" font-size="16" text-anchor="middle" fill="#111" font-weight="400">change</text>
+<rect id="buffered-1" x="140.33333333333331" y="195" width="83.33333333333333" height="72" fill="#fffdb5" stroke="#888" stroke-width="1.5"/>
+<text x="181.99999999999997" y="224" font-size="17" text-anchor="middle" fill="#111" font-weight="400">B = 70</text>
+<text x="181.99999999999997" y="249" font-size="16" text-anchor="middle" fill="#111" font-weight="400">change</text>
+<rect id="buffered-2" x="223.66666666666666" y="195" width="83.33333333333333" height="72" fill="#fffdb5" stroke="#888" stroke-width="1.5"/>
+<text x="265.3333333333333" y="224" font-size="17" text-anchor="middle" fill="#111" font-weight="400">COMMIT</text>
+<text x="265.3333333333333" y="249" font-size="16" text-anchor="middle" fill="#111" font-weight="400">T1</text>
+<text x="182" y="312" font-size="18" text-anchor="middle" fill="#111" font-weight="400">Yellow: buffered records</text>
+<rect id="durable" x="400" y="126" width="300" height="231" rx="10" fill="#edf8ed" stroke="#81909a" stroke-width="2"/>
+<text x="550" y="165" font-size="23" text-anchor="middle" fill="#111" font-weight="400">WAL on storage</text>
+<rect id="durable-0" x="425.0" y="195" width="83.33333333333333" height="72" fill="#bdf7bd" stroke="#888" stroke-width="1.5"/>
+<text x="466.6666666666667" y="224" font-size="17" text-anchor="middle" fill="#111" font-weight="400">A = 80</text>
+<text x="466.6666666666667" y="249" font-size="16" text-anchor="middle" fill="#111" font-weight="400">change</text>
+<rect id="durable-1" x="508.3333333333333" y="195" width="83.33333333333333" height="72" fill="#bdf7bd" stroke="#888" stroke-width="1.5"/>
+<text x="550.0" y="224" font-size="17" text-anchor="middle" fill="#111" font-weight="400">B = 70</text>
+<text x="550.0" y="249" font-size="16" text-anchor="middle" fill="#111" font-weight="400">change</text>
+<rect id="durable-2" x="591.6666666666666" y="195" width="83.33333333333333" height="72" fill="#bdf7bd" stroke="#888" stroke-width="1.5"/>
+<text x="633.3333333333333" y="224" font-size="17" text-anchor="middle" fill="#111" font-weight="400">COMMIT</text>
+<text x="633.3333333333333" y="249" font-size="16" text-anchor="middle" fill="#111" font-weight="400">T1</text>
+<text x="550" y="312" font-size="18" text-anchor="middle" fill="#111" font-weight="400">Green: all three durable</text>
+<rect id="reply" x="768" y="126" width="300" height="231" rx="10" fill="#fff" stroke="#81909a" stroke-width="2"/>
+<use href="#laptop" x="861" y="157" width="114" height="73"/>
+<text x="918" y="270" font-size="23" text-anchor="middle" fill="#111" font-weight="400">Commit succeeded</text>
+<text x="918" y="312" font-size="19" text-anchor="middle" fill="#111" font-weight="400">T1 survives a crash</text>
+<path id="wal-sync-shaft" data-connector="true" d="M332 242 H391" fill="none" stroke="#147eae" stroke-width="2.5"/><polygon id="wal-sync-head" points="400,242 387,236 387,248" fill="#147eae"/>
+<text x="366" y="214" font-size="18" text-anchor="middle" fill="#111" font-weight="400">sync</text>
+<path id="ack-shaft" data-connector="true" d="M700 242 H759" fill="none" stroke="#147eae" stroke-width="2.5"/><polygon id="ack-head" points="768,242 755,236 755,248" fill="#147eae"/>
+<text x="734" y="214" font-size="18" text-anchor="middle" fill="#111" font-weight="400">reply</text>
+<!-- The main data files are intentionally still behind after commit. -->
+<rect id="data-files" x="32" y="389" width="1036" height="91" rx="10" fill="#edf7fc" stroke="#81909a" stroke-width="2"/>
+<use href="#database" x="52" y="401" width="45" height="62"/>
+<text x="120" y="425" font-size="22" text-anchor="start" fill="#111" font-weight="400">Data files may still hold A = 100 and B = 50.</text>
+<text x="120" y="459" font-size="18" text-anchor="start" fill="#111" font-weight="400">The durable WAL is enough to recover T1. Labels show meaning, not actual WAL bytes.</text>
+</svg>

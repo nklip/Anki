@@ -18,3 +18,4 @@ Each topic has its own folder, with diagrams in its `images/` directory.
  * [Transactions. Saga](./Transactions.%20Saga/Readme.md) — local commits, wallet transfers, compensation, orchestration, choreography, and failure recovery.
  * [Transactions. Two-phase commit](./Transactions.%20Two-phase%20commit/Readme.md) — preparation, atomic commit, abort, blocking, crash recovery, and comparison with TCC and Saga.
  * [Transactions. Try-Confirm/Cancel](./Transactions.%20Try-Confirm-Cancel/Readme.md) — reservations, wallet transfer phases, idempotency, cancellation, and crash recovery.
+ * [Write-ahead log (WAL)](./Write-ahead%20log%20%28WAL%29/Readme.md) — durable commits, checkpoints, crash recovery, and storage guarantees.

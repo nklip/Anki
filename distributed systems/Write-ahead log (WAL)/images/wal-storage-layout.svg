@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="550" viewBox="0 0 1100 550" role="img" aria-labelledby="title desc">
+<title id="title">WAL separates durable history from data-page writes</title>
+<desc id="desc">Client requests reach a database engine. Memory contains WAL buffers and dirty data pages. The WAL must be synchronized before corresponding data pages are written to persistent storage.</desc>
+<!-- Shared visual definitions. Laptop, server, and database geometry is reused from system design/01. Scaling/images/database.svg. -->
+<!-- Log-cell styling follows system design/19. Distributed Message Queue/images/wal-example.svg: yellow buffered records, green persisted records. -->
+<defs>
+<style>text{font-family:Arial,Helvetica,sans-serif}</style>
+<symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
+<symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+<symbol id="database" viewBox="964 458 108 143">
+<path d="M970 482C970 470 992 462 1018 462S1066 470 1066 482V575C1066 587 1044 595 1018 595S970 587 970 575Z" fill="#0b78b5"/>
+<ellipse cx="1018" cy="482" rx="48" ry="15" fill="white" stroke="#0b78b5" stroke-width="6"/>
+<text x="1018" y="555" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="48" fill="white">DB</text>
+</symbol>
+</defs>
+<rect width="1100" height="550" fill="#fff"/>
+<!-- Lesson and reading direction. -->
+<text x="32" y="43" font-size="28" text-anchor="start" fill="#111" font-weight="700">WAL separates durable history from data-page writes</text>
+<text x="32" y="78" font-size="19" text-anchor="start" fill="#111" font-weight="400">Read from the client to memory, then down to persistent storage.</text>
+<!-- Request path and engine; icon geometry stays unchanged. -->
+<rect id="client" x="32" y="143" width="162" height="188" rx="10" fill="#fff" stroke="#81909a" stroke-width="2"/>
+<use href="#laptop" x="56" y="166" width="114" height="73"/>
+<text x="113" y="273" font-size="22" text-anchor="middle" fill="#111" font-weight="400">Client</text>
+<text x="113" y="304" font-size="18" text-anchor="middle" fill="#111" font-weight="400">transaction</text>
+<rect id="engine" x="274" y="143" width="184" height="188" rx="10" fill="#fff" stroke="#81909a" stroke-width="2"/>
+<use href="#server" x="338" y="162" width="56" height="98"/>
+<text x="366" y="298" font-size="20" text-anchor="middle" fill="#111" font-weight="400">Database engine</text>
+<path id="request-shaft" data-connector="true" d="M194 230 H265" fill="none" stroke="#147eae" stroke-width="2.5"/><polygon id="request-head" points="274,230 261,224 261,236" fill="#147eae"/>
+<text x="234" y="206" font-size="18" text-anchor="middle" fill="#111" font-weight="400">SQL</text>
+<!-- Volatile working state contains separate page and WAL buffers. -->
+<rect id="memory" x="530" y="118" width="538" height="206" rx="10" fill="#f5f7f8" stroke="#81909a" stroke-width="2"/>
+<text x="550" y="151" font-size="21" text-anchor="start" fill="#111" font-weight="400">Working memory · lost on a crash</text>
+<rect id="wal-buffer" x="550" y="176" width="232" height="119" rx="10" fill="#fffdb5" stroke="#81909a" stroke-width="2"/>
+<text x="666" y="211" font-size="22" text-anchor="middle" fill="#111" font-weight="400">WAL buffer</text>
+<text x="666" y="245" font-size="19" text-anchor="middle" fill="#111" font-weight="400">change records</text>
+<text x="666" y="274" font-size="18" text-anchor="middle" fill="#111" font-weight="400">not yet durable</text>
+<rect id="page-buffer" x="814" y="176" width="234" height="119" rx="10" fill="#fff" stroke="#81909a" stroke-width="2"/>
+<text x="931" y="211" font-size="22" text-anchor="middle" fill="#111" font-weight="400">Data-page buffers</text>
+<text x="931" y="245" font-size="19" text-anchor="middle" fill="#111" font-weight="400">dirty working copies</text>
+<text x="931" y="274" font-size="19" text-anchor="middle" fill="#111" font-weight="400">A = 80   B = 70</text>
+<path id="engine-work-shaft" data-connector="true" d="M458 230 H521" fill="none" stroke="#147eae" stroke-width="2.5"/><polygon id="engine-work-head" points="530,230 517,224 517,236" fill="#147eae"/>
+<!-- Persistence routes cross the memory-container border to show data leaving volatile memory; shafts stay clear of text. -->
+<path id="sync-log-shaft" data-connector="true" d="M666 295 V399" fill="none" stroke="#147eae" stroke-width="2.5"/><polygon id="sync-log-head" points="666,408 660,395 672,395" fill="#147eae"/>
+<text x="645" y="353" font-size="18" text-anchor="end" fill="#111" font-weight="400">sync</text>
+<path id="write-pages-shaft" data-connector="true" d="M931 295 V399" fill="none" stroke="#147eae" stroke-width="2.5"/><polygon id="write-pages-head" points="931,408 925,395 937,395" fill="#147eae"/>
+<text x="950" y="353" font-size="18" text-anchor="start" fill="#111" font-weight="400">write later</text>
+<!-- Persistent WAL and data files may live on the same physical device. -->
+<rect id="durable-wal" x="550" y="408" width="232" height="108" rx="10" fill="#e8f6e8" stroke="#81909a" stroke-width="2"/>
+<text x="666" y="445" font-size="21" text-anchor="middle" fill="#111" font-weight="400">WAL on storage</text>
+<text x="666" y="479" font-size="17" text-anchor="middle" fill="#111" font-weight="400">ordered recovery records</text>
+<rect id="data-files" x="814" y="408" width="234" height="108" rx="10" fill="#edf7fc" stroke="#81909a" stroke-width="2"/>
+<use href="#database" x="832" y="425" width="50" height="67"/>
+<text x="897" y="450" font-size="21" text-anchor="start" fill="#111" font-weight="400">Data files</text>
+<text x="897" y="482" font-size="17" text-anchor="start" fill="#111" font-weight="400">tables / indexes</text>
+<text x="32" y="392" font-size="21" text-anchor="start" fill="#111" font-weight="700">Persistent rule</text>
+<text x="32" y="426" font-size="19" text-anchor="start" fill="#111" font-weight="400">WAL must reach storage before</text>
+<text x="32" y="455" font-size="19" text-anchor="start" fill="#111" font-weight="400">the corresponding page write.</text>
+<text x="32" y="496" font-size="17" text-anchor="start" fill="#111" font-weight="400">The boxes show roles, not separate disks.</text>
+</svg>

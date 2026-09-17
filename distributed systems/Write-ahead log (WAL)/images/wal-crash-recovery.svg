@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="527" viewBox="0 0 1100 527" role="img" aria-labelledby="title desc">
+<title id="title">Crash recovery restores the committed result</title>
+<desc id="desc">After T1 commits, a crash leaves A 80 saved and B 50 still old. Durable WAL contains A 80, B 70, and T1 COMMIT. Recovery restores A 80 and B 70 without rerunning the application transfer.</desc>
+<!-- Shared visual definitions. Laptop, server, and database geometry is reused from system design/01. Scaling/images/database.svg. -->
+<!-- Log-cell styling follows system design/19. Distributed Message Queue/images/wal-example.svg: yellow buffered records, green persisted records. -->
+<defs>
+<style>text{font-family:Arial,Helvetica,sans-serif}</style>
+<symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
+<symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+<symbol id="database" viewBox="964 458 108 143">
+<path d="M970 482C970 470 992 462 1018 462S1066 470 1066 482V575C1066 587 1044 595 1018 595S970 587 970 575Z" fill="#0b78b5"/>
+<ellipse cx="1018" cy="482" rx="48" ry="15" fill="white" stroke="#0b78b5" stroke-width="6"/>
+<text x="1018" y="555" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="48" fill="white">DB</text>
+</symbol>
+</defs>
+<rect width="1100" height="527" fill="#fff"/>
+<!-- Lesson and reading direction. -->
+<text x="32" y="43" font-size="28" text-anchor="start" fill="#111" font-weight="700">Crash recovery restores the committed result</text>
+<text x="32" y="78" font-size="19" text-anchor="start" fill="#111" font-weight="400">The data files lag behind, but T1’s change records and commit record are durable.</text>
+<!-- The crash leaves one new data page and one old data page. -->
+<rect id="crash" x="32" y="126" width="300" height="298" rx="10" fill="#fff7ed" stroke="#81909a" stroke-width="2"/>
+<text x="182" y="164" font-size="23" text-anchor="middle" fill="#111" font-weight="400">At the crash</text>
+<use href="#database" x="150" y="184" width="64" height="88"/>
+<text x="182" y="305" font-size="20" text-anchor="middle" fill="#111" font-weight="400">A = 80 · already saved</text>
+<text x="182" y="341" font-size="20" text-anchor="middle" fill="#111" font-weight="400">B = 50 · still old</text>
+<text x="182" y="394" font-size="19" text-anchor="middle" fill="#111" font-weight="400">Memory is gone</text>
+<!-- Recovery consumes durable WAL, not the original application request. -->
+<rect id="recovery" x="400" y="126" width="300" height="298" rx="10" fill="#edf8ed" stroke="#81909a" stroke-width="2"/>
+<text x="550" y="164" font-size="23" text-anchor="middle" fill="#111" font-weight="400">Database recovery</text>
+<rect id="recovery-log-0" x="425.0" y="188" width="83.33333333333333" height="72" fill="#bdf7bd" stroke="#888" stroke-width="1.5"/>
+<text x="466.6666666666667" y="217" font-size="17" text-anchor="middle" fill="#111" font-weight="400">A = 80</text>
+<text x="466.6666666666667" y="242" font-size="16" text-anchor="middle" fill="#111" font-weight="400">change</text>
+<rect id="recovery-log-1" x="508.3333333333333" y="188" width="83.33333333333333" height="72" fill="#bdf7bd" stroke="#888" stroke-width="1.5"/>
+<text x="550.0" y="217" font-size="17" text-anchor="middle" fill="#111" font-weight="400">B = 70</text>
+<text x="550.0" y="242" font-size="16" text-anchor="middle" fill="#111" font-weight="400">change</text>
+<rect id="recovery-log-2" x="591.6666666666666" y="188" width="83.33333333333333" height="72" fill="#bdf7bd" stroke="#888" stroke-width="1.5"/>
+<text x="633.3333333333333" y="217" font-size="17" text-anchor="middle" fill="#111" font-weight="400">COMMIT</text>
+<text x="633.3333333333333" y="242" font-size="16" text-anchor="middle" fill="#111" font-weight="400">T1</text>
+<text x="550" y="302" font-size="20" text-anchor="middle" fill="#111" font-weight="400">T1 commit survives</text>
+<text x="550" y="339" font-size="20" text-anchor="middle" fill="#111" font-weight="400">REDO restores changes</text>
+<text x="550" y="394" font-size="18" text-anchor="middle" fill="#111" font-weight="400">from the recorded start</text>
+<path id="read-after-crash-shaft" data-connector="true" d="M332 278 H391" fill="none" stroke="#147eae" stroke-width="2.5"/><polygon id="read-after-crash-head" points="400,278 387,272 387,284" fill="#147eae"/>
+<rect id="restored" x="768" y="126" width="300" height="298" rx="10" fill="#edf7fc" stroke="#81909a" stroke-width="2"/>
+<text x="918" y="164" font-size="23" text-anchor="middle" fill="#111" font-weight="400">After recovery</text>
+<use href="#database" x="886" y="184" width="64" height="88"/>
+<text x="918" y="305" font-size="24" text-anchor="middle" fill="#111" font-weight="400">A = 80</text>
+<text x="918" y="341" font-size="24" text-anchor="middle" fill="#111" font-weight="400">B = 70</text>
+<text x="918" y="394" font-size="18" text-anchor="middle" fill="#111" font-weight="400">Committed transfer intact</text>
+<path id="restore-shaft" data-connector="true" d="M700 278 H759" fill="none" stroke="#147eae" stroke-width="2.5"/><polygon id="restore-head" points="768,278 755,272 755,284" fill="#147eae"/>
+<!-- Assumptions distinguish lagging pages from loss of the storage device. -->
+<text x="32" y="463" font-size="20" text-anchor="start" fill="#111" font-weight="400">Assumes the WAL survives and storage honors synchronization.</text>
+<text x="32" y="496" font-size="19" text-anchor="start" fill="#111" font-weight="400">A new application retry is a separate transfer unless the application deduplicates it.</text>
+</svg>

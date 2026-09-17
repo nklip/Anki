@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="523" viewBox="0 0 1100 523" role="img" aria-labelledby="title desc">
+<title id="title">1 · Change working pages and generate WAL</title>
+<desc id="desc">A client transfers 20 from A to B. The engine changes pages in memory to A 80 and B 70 and generates log records. The data files remain A 100 and B 50; the transaction has not committed.</desc>
+<!-- Shared visual definitions. Laptop, server, and database geometry is reused from system design/01. Scaling/images/database.svg. -->
+<!-- Log-cell styling follows system design/19. Distributed Message Queue/images/wal-example.svg: yellow buffered records, green persisted records. -->
+<defs>
+<style>text{font-family:Arial,Helvetica,sans-serif}</style>
+<symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
+<symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+<symbol id="database" viewBox="964 458 108 143">
+<path d="M970 482C970 470 992 462 1018 462S1066 470 1066 482V575C1066 587 1044 595 1018 595S970 587 970 575Z" fill="#0b78b5"/>
+<ellipse cx="1018" cy="482" rx="48" ry="15" fill="white" stroke="#0b78b5" stroke-width="6"/>
+<text x="1018" y="555" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="48" fill="white">DB</text>
+</symbol>
+</defs>
+<rect width="1100" height="523" fill="#fff"/>
+<!-- Lesson and reading direction. -->
+<text x="32" y="43" font-size="28" text-anchor="start" fill="#111" font-weight="700">1 · Change working pages and generate WAL</text>
+<text x="32" y="78" font-size="19" text-anchor="start" fill="#111" font-weight="400">The updates create two kinds of working state; neither memory copy is durable.</text>
+<!-- The transaction begins with old balances in the data files. -->
+<rect id="client" x="32" y="126" width="230" height="247" rx="10" fill="#fff" stroke="#81909a" stroke-width="2"/>
+<use href="#laptop" x="89" y="151" width="114" height="73"/>
+<text x="147" y="257" font-size="23" text-anchor="middle" fill="#111" font-weight="400">Transfer 20</text>
+<text x="147" y="289" font-size="22" text-anchor="middle" fill="#111" font-weight="400">A → B</text>
+<text x="147" y="335" font-size="19" text-anchor="middle" fill="#111" font-weight="400">transaction T1</text>
+<rect id="engine" x="362" y="126" width="280" height="247" rx="10" fill="#fff" stroke="#81909a" stroke-width="2"/>
+<use href="#server" x="475" y="146" width="54" height="95"/>
+<text x="502" y="274" font-size="22" text-anchor="middle" fill="#111" font-weight="400">Database engine</text>
+<text x="502" y="310" font-size="19" text-anchor="middle" fill="#111" font-weight="400">changes working pages</text>
+<text x="502" y="341" font-size="19" text-anchor="middle" fill="#111" font-weight="400">generates WAL records</text>
+<path id="update-shaft" data-connector="true" d="M262 244 H353" fill="none" stroke="#147eae" stroke-width="2.5"/><polygon id="update-head" points="362,244 349,238 349,250" fill="#147eae"/>
+<text x="312" y="216" font-size="18" text-anchor="middle" fill="#111" font-weight="400">update</text>
+<!-- Yellow marks buffered log information, not durability. -->
+<rect id="ram" x="742" y="126" width="326" height="247" rx="10" fill="#f5f7f8" stroke="#81909a" stroke-width="2"/>
+<text x="905" y="160" font-size="22" text-anchor="middle" fill="#111" font-weight="400">Working memory</text>
+<rect id="dirty-pages" x="766" y="183" width="278" height="71" rx="10" fill="#fff" stroke="#81909a" stroke-width="2"/>
+<text x="905" y="212" font-size="19" text-anchor="middle" fill="#111" font-weight="400">Dirty pages</text>
+<text x="905" y="240" font-size="20" text-anchor="middle" fill="#111" font-weight="400">A = 80     B = 70</text>
+<rect id="buffered-log" x="766" y="271" width="278" height="75" rx="10" fill="#fffdb5" stroke="#81909a" stroke-width="2"/>
+<text x="905" y="301" font-size="18" text-anchor="middle" fill="#111" font-weight="400">WAL: A change, B change</text>
+<text x="905" y="331" font-size="19" text-anchor="middle" fill="#111" font-weight="400">buffered ≠ durable</text>
+<path id="make-memory-shaft" data-connector="true" d="M642 244 H733" fill="none" stroke="#147eae" stroke-width="2.5"/><polygon id="make-memory-head" points="742,244 729,238 729,250" fill="#147eae"/>
+<text x="692" y="216" font-size="18" text-anchor="middle" fill="#111" font-weight="400">produce</text>
+<!-- Unchanged persistent state clarifies why memory alone is insufficient. -->
+<rect id="old-state" x="32" y="405" width="1036" height="90" rx="10" fill="#edf7fc" stroke="#81909a" stroke-width="2"/>
+<use href="#database" x="52" y="416" width="45" height="62"/>
+<text x="120" y="440" font-size="21" text-anchor="start" fill="#111" font-weight="400">Data files still hold A = 100 and B = 50 in this example.</text>
+<text x="120" y="475" font-size="19" text-anchor="start" fill="#111" font-weight="400">No successful commit response yet; memory alone cannot protect T1.</text>
+</svg>
