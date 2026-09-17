@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="748" height="405" viewBox="0 0 748 405" role="img" aria-labelledby="diagram-title diagram-desc">
+  <title id="diagram-title">Application access to DynamoDB through a DAX cluster</title>
+  <desc id="diagram-desc">Within an Amazon Virtual Private Cloud, an application on an EC2 instance uses a DAX client to access the DynamoDB Accelerator cache cluster. The DAX cluster communicates with Amazon DynamoDB outside the VPC boundary. Both connections show requests and responses.</desc>
+  <!-- Shared styles and reusable symbols. Both service icons embed the user-selected SVG artwork. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; font-size: 16px; fill: #000; }
+      .frame { fill: none; stroke: #000; stroke-width: 1; }
+      .connector { fill: none; stroke: #000; stroke-width: 1.4; }
+      .cache-label { font-family: 'Arial Narrow', Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #fff; }
+      .application-label { fill: #fff; }
+    </style>
+    <!-- DynamoDB icon supplied by the user: aws-dynamodb-svgrepo-com.svg.
+         Original file identifies SVG Repo (www.svgrepo.com) as its distributor.
+         All eight vector paths and their fills are reused without modification.
+         Preserve the source viewBox and uniform scale; its side margins align the visible icon to x=612. -->
+    <symbol id="aws-dynamodb-service-icon" viewBox="-16.5 0 289 289">
+      <path d="M165.258,288.501 L168.766,288.501 L226.027,259.867 L226.98,258.52 L226.98,29.964 L226.027,28.61 L168.766,0 L165.215,0 L165.258,288.501" fill="#5294CF"/>
+      <path d="M90.741,288.501 L87.184,288.501 L29.972,259.867 L28.811,257.87 L28.222,31.128 L29.972,28.61 L87.184,0 L90.785,0 L90.741,288.501" fill="#1F5B98"/>
+      <path d="M87.285,0 L168.711,0 L168.711,288.501 L87.285,288.501 L87.285,0 Z" fill="#2D72B8"/>
+      <path d="M256,137.769 L254.065,137.34 L226.437,134.764 L226.027,134.968 L168.715,132.676 L87.285,132.676 L29.972,134.968 L29.972,91.264 L29.912,91.296 L29.972,91.168 L87.285,77.888 L168.715,77.888 L226.027,91.168 L247.096,102.367 L247.096,95.167 L256,94.193 L255.078,92.395 L226.886,72.236 L226.027,72.515 L168.715,54.756 L87.285,54.756 L29.972,72.515 L29.972,28.61 L0,63.723 L0,94.389 L0.232,94.221 L8.904,95.167 L8.904,102.515 L0,107.28 L0,137.793 L0.232,137.769 L8.904,137.897 L8.904,150.704 L1.422,150.816 L0,150.68 L0,181.205 L8.904,185.993 L8.904,193.426 L0.373,194.368 L0,194.088 L0,224.749 L29.972,259.867 L29.972,215.966 L87.285,233.725 L168.715,233.725 L226.196,215.914 L226.96,216.249 L254.781,196.387 L256,194.408 L247.096,193.426 L247.096,186.142 L245.929,185.676 L226.886,195.941 L226.196,197.381 L168.715,210.584 L168.715,210.6 L87.285,210.6 L87.285,210.584 L29.972,197.325 L29.972,153.461 L87.285,155.745 L87.285,155.801 L168.715,155.801 L226.027,153.461 L227.332,154.061 L254.111,151.755 L256,150.832 L247.096,150.704 L247.096,137.897 L256,137.769" fill="#1A476F"/>
+      <path d="M226.027,215.966 L226.027,259.867 L256,224.749 L256,194.288 L226.2,215.914 L226.027,215.966" fill="#2D72B8"/>
+      <path d="M226.027,197.421 L226.2,197.381 L256,181.353 L256,150.704 L226.027,153.461 L226.027,197.421" fill="#2D72B8"/>
+      <path d="M226.2,91.208 L226.027,91.168 L226.027,134.968 L256,137.769 L256,107.135 L226.2,91.208" fill="#2D72B8"/>
+      <path d="M226.2,72.687 L256,94.193 L256,63.731 L226.027,28.61 L226.027,72.515 L226.2,72.575 L226.2,72.687" fill="#2D72B8"/>
+    </symbol>
+    <!-- VPC icon supplied by the user: icon-vpc.svg.
+         Reuse all nine paths and fills unchanged; preserve its native aspect ratio. -->
+    <symbol id="aws-vpc-service-icon" viewBox="0 0 2073 2474.6">
+      <path d="m1038.7 1239v-1235.7l1031 511.6 3.3 724h-135.3l3.3-478.6-595.3-170.5v644.8z" fill="#f58536"/>
+      <path d="m1038.7 0v1237.9h-548v-960.6zm-1035.4 1236.8v-726.3l294.9-140.8v867.1h-298.2" fill="#9d5024"/>
+      <path d="m298.2 369.7v867.1l192.6 1.1v-818.7z" fill="#f58536"/>
+      <path d="m1563.6 813.1v426.9h376.3l1.1-479.7z" fill="#9d5024"/>
+      <path d="m1345.7 589.8 595.3 170.5-376.3 52.8-219-47.3z" fill="#6b3918"/>
+      <path d="m8.8 1453.5 289.4 50.6v605.2l-294.9-149.6zm478.6 78.1v671.2l548 271.8v-861.5z" fill="#9d5024"/>
+      <path d="m2064.2 1453.5v511.6l-1028.8 509.4v-861.5z" fill="#f58536"/>
+      <path d="m1360 1416.1v49.5l-872.6 67.1v528.2l-189.3 48.4-1.1-616.2z" fill="#f58536"/>
+      <path d="m8.8 1453.5 1116.8-60.5 233.3 22-1064 92.4zm478.6 78.1 1042-104.5 529.3 27.5-1023.3 158.4z" fill="#fabe92"/>
+    </symbol>
+  </defs>
+  <!-- White canvas and VPC boundary. The VPC icon intentionally interrupts the upper-left border. -->
+  <rect width="748" height="405" fill="#fff"/>
+  <rect id="vpc-boundary" class="frame" x="99.5" y="81.5" width="432" height="252"/>
+  <!-- White backing clears the VPC boundary beneath the icon's transparent gaps. -->
+  <g id="vpc-icon">
+    <path fill="#fff" d="M72 30H134V103H72Z"/>
+    <use href="#aws-vpc-service-icon" x="73" y="31" width="60" height="72"/>
+  </g>
+  <text x="156" y="55">Amazon VPC<tspan x="156" dy="18">(Virtual Private Cloud)</tspan></text>
+  <!-- Application and cache boxes preserve the PNG's common top and bottom alignment. -->
+  <rect id="ec2-instance-frame" class="frame" x="126.5" y="117.5" width="153" height="153"/>
+  <rect id="dax-cluster-frame" class="frame" x="351.5" y="117.5" width="153" height="153"/>
+  <!-- All four heads are equal isosceles triangles: length 9, base 7, centered on the shaft.
+       Each shaft ends inside its head; opposing heads mirror one another horizontally. -->
+  <g id="application-dax-connection">
+    <path class="connector" d="M286.5 193.5H343.5"/>
+    <path d="M280.5 193.5L289.5 190V197Z M349.5 193.5L340.5 190V197Z"/>
+  </g>
+  <g id="dax-dynamodb-connection">
+    <path class="connector" d="M538.5 207.5H605.5"/>
+    <path d="M532.5 207.5L541.5 204V211Z M611.5 207.5L602.5 204V211Z"/>
+  </g>
+  <!-- Application panel: darker base is the original shallow shadow; labels stay above all shapes. -->
+  <g id="application-panel">
+    <rect x="143" y="136" width="119" height="120" rx="22" fill="#a65021"/>
+    <rect x="143" y="131" width="119" height="120" rx="22" fill="#ed7d35"/>
+    <rect x="153.5" y="141.5" width="99" height="47" fill="none" stroke="#fff"/>
+    <rect x="153.5" y="205.5" width="99" height="30" fill="none" stroke="#fff"/>
+    <text class="application-label" text-anchor="middle" x="202" y="162">Your<tspan x="202" dy="18">Application</tspan></text>
+    <!-- Capitalization intentionally corrected from the PNG's “Dax Client”. -->
+    <text class="application-label" text-anchor="middle" x="202" y="227">DAX Client</text>
+  </g>
+  <!-- Three overlapping cache nodes convey a DAX cluster; preserve rear-to-front paint order. -->
+  <g id="dax-cache-cluster">
+    <rect x="381" y="148" width="56" height="57" rx="10" fill="#254c76"/>
+    <rect x="381" y="146" width="56" height="57" rx="10" fill="#356aa5"/>
+    <text class="cache-label" text-anchor="middle" x="410" y="165">CACHE</text>
+    <rect x="400" y="167" width="56" height="57" rx="10" fill="#254c76"/>
+    <rect x="400" y="165" width="56" height="57" rx="10" fill="#356aa5"/>
+    <text class="cache-label" text-anchor="middle" x="429" y="184">CACHE</text>
+    <rect x="419" y="186" width="56" height="57" rx="10" fill="#254c76"/>
+    <rect x="419" y="184" width="56" height="57" rx="10" fill="#356aa5"/>
+    <text class="cache-label" text-anchor="middle" x="448" y="203">CACHE</text>
+  </g>
+  <!-- Service remains outside the VPC, aligned to the original bidirectional connector. -->
+  <use href="#aws-dynamodb-service-icon" x="607.875" y="171" width="72.25" height="72.25"/>
+  <!-- Entity captions mirror the original wording and line breaks. -->
+  <g id="entity-captions" text-anchor="middle">
+    <text x="202" y="303">Amazon EC2<tspan x="202" dy="18">Instance</tspan></text>
+    <text x="427" y="293">DAX<tspan x="427" dy="19">Cluster</tspan></text>
+    <text x="644" y="262">Amazon<tspan x="644" dy="19">DynamoDB</tspan></text>
+  </g>
+</svg>

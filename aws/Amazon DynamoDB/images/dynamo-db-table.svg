@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="501" height="257" viewBox="0 0 501 257" role="img" aria-labelledby="diagram-title diagram-desc">
+  <title id="diagram-title">DynamoDB table: items, attributes, and a composite primary key</title>
+  <desc id="diagram-desc">Four order items share the CustomerID partition key CUST-001 and have distinct OrderID sort keys ORD-001 through ORD-004. The partition key and sort key together identify each item. Other attributes are OrderValue, OrderDate, and OrderItems.</desc>
+  <!-- Shared typography and palette reproduce the PNG; all labels remain editable. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #000; font-size: 12px; }
+      .annotation { fill: #c60; font-size: 14px; }
+      .heading { font-weight: 700; }
+      .grid { fill: none; stroke: #000; stroke-width: 1; }
+      .connector { fill: none; stroke: #000; stroke-width: 1; }
+    </style>
+    <!-- Canonical isosceles head: tip (0,0), base center (-8,0), half-width 4.
+         Both sloping sides measure sqrt(80); rotation preserves symmetry.
+         Row heads use a uniform 0.875 scale to clear the dashed table boundary. -->
+    <path id="symmetric-arrowhead" d="M0 0L-8 -4L-8 4Z" fill="#000"/>
+  </defs>
+  <!-- Table boundary and cell fills; header and item grid retain the original spacing. -->
+  <rect width="501" height="257" fill="#fff"/>
+  <rect id="table-boundary" x="60.5" y="51.5" width="440" height="205" fill="none" stroke="#000" stroke-width="1" stroke-dasharray="3 3"/>
+  <rect x="70.5" y="66.5" width="80" height="30" fill="#d4e1f5"/>
+  <rect x="150.5" y="66.5" width="80" height="30" fill="#ffce9f"/>
+  <rect x="70.5" y="106.5" width="80" height="120" fill="#d4e1f5"/>
+  <rect x="150.5" y="106.5" width="80" height="120" fill="#ffce9f"/>
+  <path id="header-grid" class="grid" d="M70.5 66.5H470.5V96.5H70.5Z M150.5 66.5V96.5 M230.5 66.5V96.5 M310.5 66.5V96.5 M390.5 66.5V96.5"/>
+  <path id="item-grid" class="grid" d="M70.5 106.5H490.5V226.5H70.5Z M150.5 106.5V226.5 M230.5 106.5V226.5 M310.5 106.5V226.5 M390.5 106.5V226.5 M70.5 136.5H490.5 M70.5 166.5H490.5 M70.5 196.5H490.5"/>
+  <!-- Each head rotates by atan2(tip-start); its symmetry axis is the shaft centerline.
+       Shafts stop exactly 2 units behind their tips, under the filled heads, to hide joins.
+       All original start/tip positions are preserved; cell arrows meet the outer border edge. -->
+  <g id="attribute-connectors">
+    <path id="partition-shaft" class="connector" d="M110.5 35L110.5 64"/>
+    <use id="partition-head" href="#symmetric-arrowhead" transform="translate(110.5 66) rotate(90)"/>
+    <path id="sort-shaft" class="connector" d="M190.5 35L190.5 64"/>
+    <use id="sort-head" href="#symmetric-arrowhead" transform="translate(190.5 66) rotate(90)"/>
+    <path id="date-shaft" class="connector" d="M330.5 30L330.5 64"/>
+    <use id="date-head" href="#symmetric-arrowhead" transform="translate(330.5 66) rotate(90)"/>
+    <path id="value-shaft" class="connector" d="M315.3 30L278.457293314 64.630220384"/>
+    <use id="value-head" href="#symmetric-arrowhead" transform="translate(277 66) rotate(136.773058200791)"/>
+    <path id="items-shaft" class="connector" d="M351.4 30L408.295885085 64.953103465"/>
+    <use id="items-head" href="#symmetric-arrowhead" transform="translate(410 66) rotate(31.563840010835)"/>
+    <path id="table-shaft" class="connector" d="M460.7 30L462.042595029 47.006203703"/>
+    <use id="table-head" href="#symmetric-arrowhead" transform="translate(462.2 49) rotate(85.486011541999)"/>
+  </g>
+  <!-- Item shafts intentionally cross the dashed table boundary; symmetric heads remain clear. -->
+  <g id="item-connectors">
+    <path id="row-one-shaft" class="connector" d="M40 136.5L68.211145618 122.394427191"/>
+    <use id="row-one-head" href="#symmetric-arrowhead" transform="translate(70 121.5) rotate(-26.565051177078) scale(0.875)"/>
+    <path id="row-two-shaft" class="connector" d="M40 147.5L68.013473722 150.768238601"/>
+    <use id="row-two-head" href="#symmetric-arrowhead" transform="translate(70 151) rotate(6.654425046007) scale(0.875)"/>
+    <path id="row-three-shaft" class="connector" d="M34 157.5L68.335899411 180.390599608"/>
+    <use id="row-three-head" href="#symmetric-arrowhead" transform="translate(70 181.5) rotate(33.690067525980) scale(0.875)"/>
+    <path id="row-four-shaft" class="connector" d="M27.5 157.5L68.763071950 209.928373772"/>
+    <use id="row-four-head" href="#symmetric-arrowhead" transform="translate(70 211.5) rotate(51.795944016019) scale(0.875)"/>
+  </g>
+  <!-- Intentional correction: PNG says “Primary Key” above CustomerID. In this composite-key example it is the Partition Key; CustomerID + OrderID form the primary key. -->
+  <g id="annotations" text-anchor="middle">
+    <text class="annotation" x="110" y="14">Partition<tspan x="110" dy="15">Key</tspan></text>
+    <text class="annotation" x="190" y="14">Sort<tspan x="190" dy="15">Key</tspan></text>
+    <text class="annotation" x="330" y="22">Attributes</text>
+    <text class="annotation" x="460" y="22">Table</text>
+    <text class="annotation" x="19" y="152">Items</text>
+  </g>
+  <!-- Attribute names, left to right, align with the five data columns. -->
+  <g id="attribute-names" class="heading" text-anchor="middle">
+    <text x="110" y="86">CustomerID</text>
+    <text x="190" y="86">OrderID</text>
+    <text x="270" y="86">OrderValue</text>
+    <text x="350" y="86">OrderDate</text>
+    <text x="430" y="86">OrderItems</text>
+  </g>
+  <!-- The four original example items preserve their values and per-cell wrapping. -->
+  <g id="order-items" text-anchor="middle">
+    <text x="110" y="126">CUST-001</text><text x="190" y="126">ORD-001</text><text x="270" y="126">95.96</text><text x="350" y="126">13/05/2021</text>
+    <text x="440" y="118">[television,<tspan x="440" dy="15">washing machine]</tspan></text>
+    <text x="110" y="156">CUST-001</text><text x="190" y="156">ORD-002</text><text x="270" y="156">95.96</text><text x="350" y="156">13/05/2021</text>
+    <text x="440" y="148">[television,<tspan x="440" dy="15">computer]</tspan></text>
+    <text x="110" y="186">CUST-001</text><text x="190" y="186">ORD-003</text><text x="270" y="186">95.96</text><text x="350" y="186">13/05/2021</text>
+    <text x="440" y="186">[fruits, groceries]</text>
+    <text x="110" y="216">CUST-001</text><text x="190" y="216">ORD-004</text><text x="270" y="216">95.96</text><text x="350" y="216">13/05/2021</text>
+    <text x="440" y="208">[laptop,<tspan x="440" dy="15">stationary ]</tspan></text>
+  </g>
+</svg>
