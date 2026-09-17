@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="730" viewBox="0 0 920 730" role="img" aria-labelledby="title description">
+  <title id="title">AWS databases: match the workload — September 2026</title>
+  <desc id="description">Selected AWS databases and related search services, verified on September 17, 2026. Rows are sorted alphabetically by the Type / capability name. Relational workloads map to Amazon RDS and Amazon Aurora, with Amazon Aurora DSQL for serverless distributed relational workloads. Amazon Redshift supports data warehousing. Amazon DynamoDB supports key-value and document data, plus native vector search. Amazon ElastiCache is a cache; Amazon MemoryDB is a durable in-memory database. Amazon DocumentDB supports documents, Amazon Keyspaces wide-column data, Amazon Neptune graphs, and Amazon Timestream for InfluxDB time series. Amazon DynamoDB and Amazon OpenSearch Service are examples for vector search. Amazon Timestream for LiveAnalytics remains available to existing customers but closed to new customers on June 20, 2025.</desc>
+  <!-- Simplified teaching adaptation of ../../Amazon DynamoDB/images/databases.png.
+       This is an updated comparison, not a pixel-exact recreation: Amazon Redshift
+       has its own analytics row, and the chart uses current service names.
+       Snapshot verified 2026-09-17. Aurora DSQL and vector search are now explicit.
+       Official AWS sources and service availability notes are in ../Readme.md. -->
+  <!-- Shared typography; keep the three text anchors aligned when editing rows. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #263445; }
+      .type { font-size: 18px; font-weight: 700; fill: #1266a6; }
+      .need { font-size: 17px; }
+      .service { font-size: 18px; font-weight: 700; fill: #1266a6; }
+      .detail { font-size: 16px; fill: #526171; }
+      .heading { font-size: 16px; font-weight: 700; fill: #263445; }
+    </style>
+  </defs>
+
+  <rect width="920" height="730" fill="#fff"/>
+  <!-- Read from left to right. The three columns share fixed text anchors. -->
+  <text x="28" y="38" font-size="27" font-weight="700">AWS databases: match the workload</text>
+  <text x="28" y="66" class="detail">Start with the data and the way your application uses it.</text>
+  <rect x="720" y="47" width="176" height="28" rx="14" fill="#e8eff5"/>
+  <text x="808" y="66" font-size="15" font-weight="700" text-anchor="middle">September 2026</text>
+
+  <!-- Alternating backgrounds and rules; ten rows, each 56 units high. -->
+  <g id="table-backgrounds">
+    <rect x="24" y="84" width="872" height="40" rx="4" fill="#e8eff5"/>
+    <path d="M24 124H896V180H24Z M24 236H896V292H24Z M24 348H896V404H24Z M24 460H896V516H24Z M24 572H896V628H24Z" fill="#f5f8fb"/>
+    <path d="M24 180H896 M24 236H896 M24 292H896 M24 348H896 M24 404H896 M24 460H896 M24 516H896 M24 572H896 M24 628H896 M24 684H896" fill="none" stroke="#d5dee6" stroke-width="1"/>
+  </g>
+  <!-- Vector search is a cross-model capability, not an exclusive database type. -->
+  <g id="column-headings" class="heading">
+    <text x="40" y="110">TYPE / CAPABILITY</text>
+    <text x="250" y="110">TYPICAL NEED</text>
+    <text x="570" y="110">AWS SERVICE</text>
+  </g>
+
+  <!-- Rows are sorted A–Z by the visible Type / capability label; each is 56 units high. -->
+  <!-- Data warehousing supports analytics across large datasets. -->
+  <g id="warehouse-row">
+    <text x="40" y="158" class="type">Data warehouse</text>
+    <text x="250" y="148" class="need"><tspan x="250">Analyze large datasets</tspan><tspan x="250" dy="21" class="detail">Sales reports and analytics</tspan></text>
+    <text x="570" y="158" class="service">Amazon Redshift</text>
+  </g>
+  <!-- Keep the wrapped type and service qualifier in the same row. -->
+  <g id="distributed-relational-row">
+    <text x="40" y="204" class="type"><tspan x="40">Distributed</tspan><tspan x="40" dy="21">relational</tspan></text>
+    <text x="250" y="204" class="need"><tspan x="250">Distributed transactions</tspan><tspan x="250" dy="21" class="detail">Single-Region or multi-Region</tspan></text>
+    <text x="570" y="203" class="service"><tspan x="570">Amazon Aurora DSQL</tspan><tspan x="570" dy="22" class="detail" font-weight="400">Serverless; PostgreSQL-compatible</tspan></text>
+  </g>
+  <!-- The compatibility qualifier belongs to the service name. -->
+  <g id="document-row">
+    <text x="40" y="270" class="type">Document</text>
+    <text x="250" y="260" class="need"><tspan x="250">Documents with nested fields</tspan><tspan x="250" dy="21" class="detail">Product catalogs, user profiles</tspan></text>
+    <text x="570" y="259" class="service"><tspan x="570">Amazon DocumentDB</tspan><tspan x="570" dy="22" class="detail" font-weight="400">(with MongoDB compatibility)</tspan></text>
+  </g>
+  <!-- Graph workloads focus on relationships between entities. -->
+  <g id="graph-row">
+    <text x="40" y="326" class="type">Graph</text>
+    <text x="250" y="316" class="need"><tspan x="250">Follow relationships</tspan><tspan x="250" dy="21" class="detail">Fraud detection, recommendations</tspan></text>
+    <text x="570" y="326" class="service">Amazon Neptune</text>
+  </g>
+  <!-- Keep caching distinct from a durable primary in-memory database. -->
+  <g id="in-memory-row">
+    <text x="40" y="382" class="type">In-memory</text>
+    <text x="250" y="372" class="need"><tspan x="250">Fast access to data in memory</tspan><tspan x="250" dy="21" class="detail">Cached data or durable app data</tspan></text>
+    <text x="570" y="371" class="service"><tspan x="570">Amazon ElastiCache</tspan><tspan dx="6" class="detail" font-weight="400">— cache</tspan><tspan x="570" dy="22">Amazon MemoryDB</tspan><tspan dx="6" class="detail" font-weight="400">— durable</tspan></text>
+  </g>
+  <!-- The service qualifier acknowledges additional data models. -->
+  <g id="key-value-row">
+    <text x="40" y="438" class="type">Key-value</text>
+    <text x="250" y="428" class="need"><tspan x="250">Look up records by key</tspan><tspan x="250" dy="21" class="detail">Shopping carts, game state</tspan></text>
+    <text x="570" y="427" class="service"><tspan x="570">Amazon DynamoDB</tspan><tspan x="570" dy="22" class="detail" font-weight="400">Also documents and vector search</tspan></text>
+  </g>
+  <!-- Both relational service examples share this workload category. -->
+  <g id="relational-row">
+    <text x="40" y="494" class="type">Relational</text>
+    <text x="250" y="484" class="need"><tspan x="250">Related tables and transactions</tspan><tspan x="250" dy="21" class="detail">Orders, customers, payments</tspan></text>
+    <text x="570" y="494" class="service">Amazon RDS / Amazon Aurora</text>
+  </g>
+  <!-- Keep the two-line service name together. -->
+  <g id="time-series-row">
+    <text x="40" y="550" class="type">Time series</text>
+    <text x="250" y="540" class="need"><tspan x="250">Measurements over time</tspan><tspan x="250" dy="21" class="detail">Sensor readings, application metrics</tspan></text>
+    <text x="570" y="539" class="service"><tspan x="570">Amazon Timestream</tspan><tspan x="570" dy="22">for InfluxDB</tspan></text>
+  </g>
+  <!-- Vector search is a shared capability; these are service examples. -->
+  <g id="vector-search-row">
+    <text x="40" y="606" class="type">Vector search</text>
+    <text x="250" y="596" class="need"><tspan x="250">Find similar meaning or content</tspan><tspan x="250" dy="21" class="detail">Recommendations, AI context</tspan></text>
+    <text x="570" y="595" class="service"><tspan x="570">Amazon DynamoDB</tspan><tspan x="570" dy="22">Amazon OpenSearch Service</tspan></text>
+  </g>
+  <!-- Keep the Apache Cassandra qualifier with Amazon Keyspaces. -->
+  <g id="wide-column-row">
+    <text x="40" y="662" class="type">Wide-column</text>
+    <text x="250" y="652" class="need"><tspan x="250">Cassandra workloads</tspan><tspan x="250" dy="21" class="detail">High volumes of reads and writes</tspan></text>
+    <text x="570" y="651" class="service"><tspan x="570">Amazon Keyspaces</tspan><tspan x="570" dy="22" class="detail" font-weight="400">(for Apache Cassandra)</tspan></text>
+  </g>
+  <!-- Visible ordering and scope notes explain how to read the table. -->
+  <text x="28" y="708" class="detail">Sorted A–Z by type / capability. Categories overlap; the list is not exhaustive.</text>
+</svg>
