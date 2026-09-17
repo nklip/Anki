@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="640" viewBox="0 0 1100 640" role="img" aria-labelledby="title desc">
+<title id="title">3 · Recover d3 and d4 from the four surviving fragments</title>
+<desc id="desc">The original 4+2 stripe loses d3 and d4. The valid fragments d1, d2, p1 and p2 feed a decoder. Reconstructed d3 and d4 are written as replacements to restore redundancy.</desc>
+<!-- Shared styles match the source SVGs from system design/24. S3-like Object Storage/images/. -->
+<!-- Adapted from erasure-coding.svg: source data/parity cells are reused with new placements and non-overlapping connectors. -->
+<defs>
+<style>.chunk{fill:#fff;stroke:#000;stroke-width:2}.parity{fill:#f7c5fd;stroke:#000;stroke-width:2}.lost{fill:#fff;stroke:#000;stroke-width:2;stroke-dasharray:9 6}.source-fragment text{font-family:Arial,Helvetica,sans-serif;fill:#000;text-anchor:middle;font-size:30px}</style>
+</defs>
+<rect width="1100" height="640" fill="#fff"/>
+<!-- The visible title states the rule and establishes the reading direction. -->
+<text x="32" y="43" font-family="Arial,Helvetica,sans-serif" font-size="28" text-anchor="start" font-weight="700" fill="#000">3 · Recover d3 and d4 from the four surviving fragments</text>
+<text x="32" y="80" font-family="Arial,Helvetica,sans-serif" font-size="20" text-anchor="start" font-weight="400" fill="#000">Reading can reconstruct missing data; repair stores replacement fragments.</text>
+<!-- Surviving and missing source cells are extracted from the original crash stage. -->
+<g xmlns="http://www.w3.org/2000/svg" id="crash-d1" transform="translate(-770 -99)" class="source-fragment"><rect class="chunk" x="866" y="229" width="62" height="62.5" /><text x="897" y="272">d1</text></g>
+
+<g xmlns="http://www.w3.org/2000/svg" id="crash-d2" transform="translate(-770 -135)" class="source-fragment"><rect class="chunk" x="866" y="339" width="62" height="62.5" /><text x="897" y="381">d2</text></g>
+
+<g xmlns="http://www.w3.org/2000/svg" id="crash-d3" transform="translate(-770 -171)" class="source-fragment"><rect class="lost" x="866" y="449" width="62" height="62.5" /><text x="897" y="491">d3</text></g>
+
+<path id="lost-d3" d="M67 300 l15 20 M82 300 l-15 20" fill="none" stroke="#ee451d" stroke-width="4"/>
+<g xmlns="http://www.w3.org/2000/svg" id="crash-d4" transform="translate(-770 -206)" class="source-fragment"><rect class="lost" x="866" y="558" width="62" height="62.5" /><text x="897" y="601">d4</text></g>
+
+<path id="lost-d4" d="M67 374 l15 20 M82 374 l-15 20" fill="none" stroke="#ee451d" stroke-width="4"/>
+<g xmlns="http://www.w3.org/2000/svg" id="crash-p1" transform="translate(-770 -242)" class="source-fragment"><rect class="parity" x="866" y="668" width="62" height="62.5" /><text x="897" y="709">p1</text></g>
+
+<g xmlns="http://www.w3.org/2000/svg" id="crash-p2" transform="translate(-770 -278)" class="source-fragment"><rect class="parity" x="866" y="778" width="62" height="62.5" /><text x="897" y="819">p2</text></g>
+
+<!-- Separate input arrowheads identify four valid inputs without converging on each other. -->
+<rect id="decoder" x="420" y="184" width="250" height="294" fill="#fff" stroke="#000" stroke-width="2"/>
+<text x="545" y="229" font-family="Arial,Helvetica,sans-serif" font-size="23" text-anchor="middle" font-weight="400" fill="#000">4 valid survivors</text>
+<text x="545" y="275" font-family="Arial,Helvetica,sans-serif" font-size="21" text-anchor="middle" font-weight="400" fill="#000">d1, d2, p1, p2</text>
+<text x="545" y="332" font-family="Arial,Helvetica,sans-serif" font-size="25" text-anchor="middle" font-weight="400" fill="#000">Reed–Solomon</text>
+<text x="545" y="368" font-family="Arial,Helvetica,sans-serif" font-size="25" text-anchor="middle" font-weight="400" fill="#000">decoder</text>
+<text x="545" y="434" font-family="Arial,Helvetica,sans-serif" font-size="20" text-anchor="middle" font-weight="400" fill="#000">rebuilds d3 and d4</text>
+<path id="recovery-input-0-shaft" data-connector="true" d="M158 161.25 L411.506 250.025" fill="none" stroke="#000" stroke-width="2"/><polygon id="recovery-input-0-head" points="420,253 405.748,254.366 409.714,243.041" fill="#000"/>
+<path id="recovery-input-1-shaft" data-connector="true" d="M158 235.25 L411.287 300.747" fill="none" stroke="#000" stroke-width="2"/><polygon id="recovery-input-1-head" points="420,303 405.912,305.554 408.916,293.936" fill="#000"/>
+<path id="recovery-input-2-shaft" data-connector="true" d="M158 457.25 L411.638 356.327" fill="none" stroke="#000" stroke-width="2"/><polygon id="recovery-input-2-head" points="420,353 410.139,363.381 405.703,352.231" fill="#000"/>
+<path id="recovery-input-3-shaft" data-connector="true" d="M158 531.25 L411.917 406.957" fill="none" stroke="#000" stroke-width="2"/><polygon id="recovery-input-3-head" points="420,403 410.962,414.105 405.686,403.327" fill="#000"/>
+<!-- Reconstruction is followed by storing the recovered fragments to restore redundancy. -->
+<rect id="repaired" x="782" y="184" width="286" height="294" fill="#fff" stroke="#000" stroke-width="2"/>
+<text x="925" y="223" font-family="Arial,Helvetica,sans-serif" font-size="21" text-anchor="middle" font-weight="400" fill="#000">Reconstructed fragments</text>
+<g xmlns="http://www.w3.org/2000/svg" id="restored-d3" transform="translate(-309 -184)" class="source-fragment"><rect class="chunk" x="1131" y="449" width="62" height="62.5" /><text x="1162" y="491">d3</text></g>
+
+<g xmlns="http://www.w3.org/2000/svg" id="restored-d4" transform="translate(-169 -293)" class="source-fragment"><rect class="chunk" x="1131" y="558" width="62" height="62.5" /><text x="1162" y="601">d4</text></g>
+
+<text x="925" y="386" font-family="Arial,Helvetica,sans-serif" font-size="22" text-anchor="middle" font-weight="400" fill="#000">Write replacements</text>
+<text x="925" y="422" font-family="Arial,Helvetica,sans-serif" font-size="21" text-anchor="middle" font-weight="400" fill="#000">to restore redundancy</text>
+<path id="decode-output-shaft" data-connector="true" d="M670 331 L773.000 331.000" fill="none" stroke="#000" stroke-width="2"/><polygon id="decode-output-head" points="782,331 769.000,337.000 769.000,325.000" fill="#000"/>
+<text x="32" y="604" font-family="Arial,Helvetica,sans-serif" font-size="20" text-anchor="start" font-weight="400" fill="#000">Dashed cells and red crosses are missing fragments. Four valid survivors recover the stripe.</text>
+</svg>

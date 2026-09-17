@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="640" viewBox="0 0 1100 640" role="img" aria-labelledby="title desc">
+<title id="title">1 · Encode four data fragments plus two parity fragments</title>
+<desc id="desc">A one-gigabyte object is split into four data fragments. A Reed-Solomon encoder retains d1 through d4 and calculates p1 and p2. The resulting six fragments are each 0.25 GB.</desc>
+<!-- Shared styles match the source SVGs from system design/24. S3-like Object Storage/images/. -->
+<!-- Adapted from erasure-coding.svg: source data/parity cells are reused with new placements and non-overlapping connectors. -->
+<defs>
+<style>.chunk{fill:#fff;stroke:#000;stroke-width:2}.parity{fill:#f7c5fd;stroke:#000;stroke-width:2}.lost{fill:#fff;stroke:#000;stroke-width:2;stroke-dasharray:9 6}.source-fragment text{font-family:Arial,Helvetica,sans-serif;fill:#000;text-anchor:middle;font-size:30px}</style>
+</defs>
+<rect width="1100" height="640" fill="#fff"/>
+<!-- The visible title states the rule and establishes the reading direction. -->
+<text x="32" y="43" font-family="Arial,Helvetica,sans-serif" font-size="28" text-anchor="start" font-weight="700" fill="#000">1 · Encode four data fragments plus two parity fragments</text>
+<text x="32" y="80" font-family="Arial,Helvetica,sans-serif" font-size="20" text-anchor="start" font-weight="400" fill="#000">Read left to right: one original object becomes six fragments with a 4 + 2 code.</text>
+<!-- Original object glyph, split data cells, and parity cells are reused from the S3 diagram. -->
+<rect xmlns="http://www.w3.org/2000/svg" id="object" class="chunk" x="82" y="301" width="62" height="250" transform="translate(-12 -101)" />
+
+<text x="101" y="488" font-family="Arial,Helvetica,sans-serif" font-size="20" text-anchor="middle" font-weight="400" fill="#000">1 GB object</text>
+<g xmlns="http://www.w3.org/2000/svg" id="split-d1" transform="translate(-59 -89)" class="source-fragment"><rect class="chunk" x="339" y="229" width="62" height="62.5" /><text x="370" y="272">d1</text></g>
+
+<path id="split-0-shaft" data-connector="true" d="M132 291 L273.003 176.911" fill="none" stroke="#000" stroke-width="2"/><polygon id="split-0-head" points="280,171.25 273.668,184.092 266.120,174.763" fill="#000"/>
+<g xmlns="http://www.w3.org/2000/svg" id="split-d2" transform="translate(-59 -103)" class="source-fragment"><rect class="chunk" x="339" y="339" width="62" height="62.5" /><text x="370" y="381">d2</text></g>
+
+<path id="split-1-shaft" data-connector="true" d="M132 310 L271.353 269.748" fill="none" stroke="#000" stroke-width="2"/><polygon id="split-1-head" points="280,267.25 269.176,276.622 265.846,265.093" fill="#000"/>
+<g xmlns="http://www.w3.org/2000/svg" id="split-d3" transform="translate(-59 -117)" class="source-fragment"><rect class="chunk" x="339" y="449" width="62" height="62.5" /><text x="370" y="491">d3</text></g>
+
+<path id="split-2-shaft" data-connector="true" d="M132 329 L271.232 361.221" fill="none" stroke="#000" stroke-width="2"/><polygon id="split-2-head" points="280,363.25 265.982,366.165 268.687,354.474" fill="#000"/>
+<g xmlns="http://www.w3.org/2000/svg" id="split-d4" transform="translate(-59 -130)" class="source-fragment"><rect class="chunk" x="339" y="558" width="62" height="62.5" /><text x="370" y="601">d4</text></g>
+
+<path id="split-3-shaft" data-connector="true" d="M132 348 L272.806 453.842" fill="none" stroke="#000" stroke-width="2"/><polygon id="split-3-head" points="280,459.25 266.003,456.235 273.214,446.643" fill="#000"/>
+<text x="311" y="546" font-family="Arial,Helvetica,sans-serif" font-size="20" text-anchor="middle" font-weight="400" fill="#000">4 × 0.25 GB</text>
+<rect id="encoder" x="457" y="210" width="228" height="216" fill="#fff" stroke="#000" stroke-width="2"/>
+<text x="571" y="252" font-family="Arial,Helvetica,sans-serif" font-size="24" text-anchor="middle" font-weight="400" fill="#000">Reed–Solomon</text>
+<text x="571" y="287" font-family="Arial,Helvetica,sans-serif" font-size="24" text-anchor="middle" font-weight="400" fill="#000">encoder</text>
+<text x="571" y="335" font-family="Arial,Helvetica,sans-serif" font-size="20" text-anchor="middle" font-weight="400" fill="#000">keeps d1–d4</text>
+<text x="571" y="371" font-family="Arial,Helvetica,sans-serif" font-size="20" text-anchor="middle" font-weight="400" fill="#000">calculates p1 + p2</text>
+<path id="encode-input-0-shaft" data-connector="true" d="M342 171.25 L449.158 231.584" fill="none" stroke="#000" stroke-width="2"/><polygon id="encode-input-0-head" points="457,236 442.728,234.850 448.616,224.394" fill="#000"/>
+<path id="encode-input-1-shaft" data-connector="true" d="M342 267.25 L448.094 282.703" fill="none" stroke="#000" stroke-width="2"/><polygon id="encode-input-1-head" points="457,284 443.271,288.064 445.001,276.189" fill="#000"/>
+<path id="encode-input-2-shaft" data-connector="true" d="M342 363.25 L448.315 334.360" fill="none" stroke="#000" stroke-width="2"/><polygon id="encode-input-2-head" points="457,332 446.028,341.199 442.882,329.619" fill="#000"/>
+<path id="encode-input-3-shaft" data-connector="true" d="M342 459.25 L449.589 385.107" fill="none" stroke="#000" stroke-width="2"/><polygon id="encode-input-3-head" points="457,380 449.700,392.317 442.891,382.436" fill="#000"/>
+<!-- One arrow enters the output group; it represents the complete six-fragment result. -->
+<rect id="encoded-set" x="792" y="111" width="276" height="458" fill="#fff" stroke="#000" stroke-width="2"/>
+<path id="encoded-result-shaft" data-connector="true" d="M685 319 L783.000 319.000" fill="none" stroke="#000" stroke-width="2"/><polygon id="encoded-result-head" points="792,319 779.000,325.000 779.000,313.000" fill="#000"/>
+<g xmlns="http://www.w3.org/2000/svg" id="parity-d1" transform="translate(229 -100)" class="source-fragment"><rect class="chunk" x="596" y="229" width="62" height="62.5" /><text x="627" y="272">d1</text></g>
+
+<text x="978" y="170" font-family="Arial,Helvetica,sans-serif" font-size="22" text-anchor="middle" font-weight="400" fill="#000">0.25 GB</text>
+<g xmlns="http://www.w3.org/2000/svg" id="parity-d2" transform="translate(229 -138)" class="source-fragment"><rect class="chunk" x="596" y="339" width="62" height="62.5" /><text x="627" y="381">d2</text></g>
+
+<text x="978" y="242" font-family="Arial,Helvetica,sans-serif" font-size="22" text-anchor="middle" font-weight="400" fill="#000">0.25 GB</text>
+<g xmlns="http://www.w3.org/2000/svg" id="parity-d3" transform="translate(229 -176)" class="source-fragment"><rect class="chunk" x="596" y="449" width="62" height="62.5" /><text x="627" y="491">d3</text></g>
+
+<text x="978" y="314" font-family="Arial,Helvetica,sans-serif" font-size="22" text-anchor="middle" font-weight="400" fill="#000">0.25 GB</text>
+<g xmlns="http://www.w3.org/2000/svg" id="parity-d4" transform="translate(229 -213)" class="source-fragment"><rect class="chunk" x="596" y="558" width="62" height="62.5" /><text x="627" y="601">d4</text></g>
+
+<text x="978" y="386" font-family="Arial,Helvetica,sans-serif" font-size="22" text-anchor="middle" font-weight="400" fill="#000">0.25 GB</text>
+<g xmlns="http://www.w3.org/2000/svg" id="parity-p1" transform="translate(229 -251)" class="source-fragment"><rect class="parity" x="596" y="668" width="62" height="62.5" /><text x="627" y="709">p1</text></g>
+
+<text x="978" y="458" font-family="Arial,Helvetica,sans-serif" font-size="22" text-anchor="middle" font-weight="400" fill="#000">0.25 GB</text>
+<g xmlns="http://www.w3.org/2000/svg" id="parity-p2" transform="translate(229 -289)" class="source-fragment"><rect class="parity" x="596" y="778" width="62" height="62.5" /><text x="627" y="819">p2</text></g>
+
+<text x="978" y="530" font-family="Arial,Helvetica,sans-serif" font-size="22" text-anchor="middle" font-weight="400" fill="#000">0.25 GB</text>
+<text x="32" y="608" font-family="Arial,Helvetica,sans-serif" font-size="21" text-anchor="start" font-weight="400" fill="#000">Six fragments store 1.5 GB. Pink fragments contain calculated recovery information.</text>
+</svg>
