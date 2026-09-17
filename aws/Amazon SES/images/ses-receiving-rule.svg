@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="624" viewBox="0 0 1240 624" role="img" aria-labelledby="receiving-title receiving-desc">
+  <title id="receiving-title">Receiving: SES stores mail, then invokes Lambda</title>
+  <desc id="receiving-desc">For support@example.com, the SES receipt rule performs two ordered actions. Action one writes the full email to an S3 input bucket. Action two invokes Lambda directly from SES with metadata and headers. The function then uses GetObject to read the saved email. No S3 event notification invokes this function in the shown design, so writing to the bucket does not create a second trigger. Reading an object does not create an object.</desc>
+  <!-- Teaching sources: https://docs.aws.amazon.com/ses/latest/dg/receiving-email-concepts.html
+       https://docs.aws.amazon.com/ses/latest/dg/receiving-email-action-lambda.html
+       https://docs.aws.amazon.com/ses/latest/dg/receiving-email-action-s3.html
+       https://docs.aws.amazon.com/lambda/latest/dg/with-s3.html
+       Official icon source: https://aws.amazon.com/architecture/icons/
+       Download: https://d1.awsstatic.com/onedam/marketing-channels/website/public/shared/architecture-icon-release/Icon-package_07312026.5846e92413caa21490223536cc97f1269e44fa92.zip
+       Retrieved 2026-09-17. AWS artwork is embedded as native vectors, with original colors.
+       AWS general icons represent an application, mail server, or message, not extra services. -->
+  <!-- Shared typography and reusable official artwork. All symbol uses specify dimensions. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #162B42; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 20px; fill: #4B6074; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4B6074; }
+      .connector { fill: none; stroke: #496880; stroke-width: 2.5; }
+      .read-connector { fill: none; stroke: #267B80; stroke-width: 2.5; }
+    </style>
+    <!-- Official AWS artwork: Resource-Icons_07312026/Res_General-Icons/Res_48_Light/Res_Email_48_Light.svg -->
+    <symbol id="aws-email" viewBox="0 0 48 48"><g id="aws-email-Icon-Resource-General-Resource-Res_Email_48" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M31.4824,23.5332 L44.0004,13.2252 L44.0004,33.9642 L31.4824,23.5332 Z M18.0884,24.8272 L24.0004,29.6952 L29.9114,24.8272 L42.3584,35.2002 L5.6424,35.2002 L18.0884,24.8272 Z M16.5174,23.5332 L4.0004,33.9652 L4.0004,13.2242 L16.5174,23.5332 Z M24.0004,27.1042 L5.6594,12.0002 L42.3404,12.0002 L24.0004,27.1042 Z M2.0004,10.6462 L2.0004,36.5532 C2.0004,36.9102 2.2894,37.2002 2.6464,37.2002 L45.3534,37.2002 C45.7114,37.2002 46.0004,36.9102 46.0004,36.5532 L46.0004,10.6462 C46.0004,10.2892 45.7114,10.0002 45.3534,10.0002 L2.6464,10.0002 C2.2894,10.0002 2.0004,10.2892 2.0004,10.6462 L2.0004,10.6462 Z" id="aws-email-Amazon-Email_Resource-Icon_light-bg" fill="#242F3E" />
+    </g>
+</symbol>
+    <!-- Official AWS artwork: Architecture-Service-Icons_07312026/Arch_Business-Applications/64/Arch_Amazon-Simple-Email-Service_64.svg -->
+    <symbol id="aws-ses" viewBox="0 0 80 80"><g id="aws-ses-Icon-Architecture-64-Arch_Amazon-Simple-Email-Service_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="aws-ses-Icon-Architecture-BG-64-Business-Applications" fill="#DD344C">
+            <rect id="aws-ses-Rectangle" x="0" y="0" width="80" height="80" />
+        </g>
+        <path d="M57,60.999875 C57,59.373846 55.626,57.9998214 54,57.9998214 C52.374,57.9998214 51,59.373846 51,60.999875 C51,62.625904 52.374,63.9999286 54,63.9999286 C55.626,63.9999286 57,62.625904 57,60.999875 L57,60.999875 Z M40,59.9998571 C38.374,59.9998571 37,61.3738817 37,62.9999107 C37,64.6259397 38.374,65.9999643 40,65.9999643 C41.626,65.9999643 43,64.6259397 43,62.9999107 C43,61.3738817 41.626,59.9998571 40,59.9998571 L40,59.9998571 Z M26,57.9998214 C24.374,57.9998214 23,59.373846 23,60.999875 C23,62.625904 24.374,63.9999286 26,63.9999286 C27.626,63.9999286 29,62.625904 29,60.999875 C29,59.373846 27.626,57.9998214 26,57.9998214 L26,57.9998214 Z M28.605,42.9995536 L51.395,42.9995536 L43.739,36.1104305 L40.649,38.7584778 C40.463,38.9194807 40.23,38.9994821 39.999,38.9994821 C39.768,38.9994821 39.535,38.9194807 39.349,38.7584778 L36.26,36.1104305 L28.605,42.9995536 Z M27,28.1732888 L27,41.7545313 L34.729,34.7984071 L27,28.1732888 Z M51.297,26.9992678 L28.703,26.9992678 L39.999,36.6824408 L51.297,26.9992678 Z M53,41.7545313 L53,28.1732888 L45.271,34.7974071 L53,41.7545313 Z M59,60.999875 C59,63.7099234 56.71,65.9999643 54,65.9999643 C51.29,65.9999643 49,63.7099234 49,60.999875 C49,58.6308327 50.75,56.5837961 53,56.1057876 L53,52.9997321 L41,52.9997321 L41,58.1058233 C43.25,58.5838319 45,60.6308684 45,62.9999107 C45,65.7099591 42.71,68 40,68 C37.29,68 35,65.7099591 35,62.9999107 C35,60.6308684 36.75,58.5838319 39,58.1058233 L39,52.9997321 L27,52.9997321 L27,56.1057876 C29.25,56.5837961 31,58.6308327 31,60.999875 C31,63.7099234 28.71,65.9999643 26,65.9999643 C23.29,65.9999643 21,63.7099234 21,60.999875 C21,58.6308327 22.75,56.5837961 25,56.1057876 L25,51.9997143 C25,51.4477044 25.447,50.9996964 26,50.9996964 L39,50.9996964 L39,44.9995893 L26,44.9995893 C25.447,44.9995893 25,44.5515813 25,43.9995714 L25,25.99925 C25,25.4472401 25.447,24.9992321 26,24.9992321 L54,24.9992321 C54.553,24.9992321 55,25.4472401 55,25.99925 L55,43.9995714 C55,44.5515813 54.553,44.9995893 54,44.9995893 L41,44.9995893 L41,50.9996964 L54,50.9996964 C54.553,50.9996964 55,51.4477044 55,51.9997143 L55,56.1057876 C57.25,56.5837961 59,58.6308327 59,60.999875 L59,60.999875 Z M68,39.9995 C68,45.9066055 66.177,51.5597064 62.727,56.3447919 L61.104,55.174771 C64.307,50.7316916 66,45.4845979 66,39.9995 C66,25.664244 54.337,14.0000357 40.001,14.0000357 C25.664,14.0000357 14,25.664244 14,39.9995 C14,45.4845979 15.693,50.7316916 18.896,55.174771 L17.273,56.3447919 C13.823,51.5597064 12,45.9066055 12,39.9995 C12,24.5612243 24.561,12 39.999,12 C55.438,12 68,24.5612243 68,39.9995 L68,39.9995 Z" id="aws-ses-Amazon-Simple-Email-Service_Icon_64_Squid" fill="#FFFFFF" />
+    </g>
+</symbol>
+    <!-- Official AWS artwork: Architecture-Service-Icons_07312026/Arch_Storage/64/Arch_Amazon-Simple-Storage-Service_64.svg -->
+    <symbol id="aws-s3" viewBox="0 0 80 80"><g id="aws-s3-Icon-Architecture-64-Arch_Amazon-Simple-Storage-Service_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="aws-s3-Icon-Architecture-BG-64-Storage" fill="#7AA116">
+            <rect id="aws-s3-Rectangle" x="0" y="0" width="80" height="80" />
+        </g>
+        <g id="aws-s3-Icon-Service-64-Amazon-Simple-Storage-Service_64" transform="translate(12.999900, 11.999600)" fill="#FFFFFF">
+            <path d="M47.836,30.893 L48.22,28.189 C51.761,30.31 51.807,31.186 51.8060132,31.21 C51.8,31.215 51.196,31.719 47.836,30.893 L47.836,30.893 Z M45.893,30.353 C39.773,28.501 31.25,24.591 27.801,22.961 C27.801,22.947 27.805,22.934 27.805,22.92 C27.805,21.595 26.727,20.517 25.401,20.517 C24.077,20.517 22.999,21.595 22.999,22.92 C22.999,24.245 24.077,25.323 25.401,25.323 C25.983,25.323 26.511,25.106 26.928,24.761 C30.986,26.682 39.443,30.535 45.608,32.355 L43.17,49.561 C43.163,49.608 43.16,49.655 43.16,49.702 C43.16,51.217 36.453,54 25.494,54 C14.419,54 7.641,51.217 7.641,49.702 C7.641,49.656 7.638,49.611 7.632,49.566 L2.538,12.359 C6.947,15.394 16.43,17 25.5,17 C34.556,17 44.023,15.4 48.441,12.374 L45.893,30.353 Z M2,8.478 C2.072,7.162 9.634,2 25.5,2 C41.364,2 48.927,7.161 49,8.478 L49,8.927 C48.13,11.878 38.33,15 25.5,15 C12.648,15 2.843,11.868 2,8.913 L2,8.478 Z M51,8.5 C51,5.035 41.066,0 25.5,0 C9.934,0 0,5.035 0,8.5 L0.094,9.254 L5.642,49.778 C5.775,54.31 17.861,56 25.494,56 C34.966,56 45.029,53.822 45.159,49.781 L47.555,32.884 C48.888,33.203 49.985,33.366 50.866,33.366 C52.049,33.366 52.849,33.077 53.334,32.499 C53.732,32.025 53.884,31.451 53.77,30.84 C53.511,29.456 51.868,27.964 48.522,26.055 L50.898,9.293 L51,8.5 Z" id="aws-s3-Amazon-Simple-Storage-Service-Icon_64_Squid" />
+        </g>
+    </g>
+</symbol>
+    <!-- Official AWS artwork: Architecture-Service-Icons_07312026/Arch_Compute/64/Arch_AWS-Lambda_64.svg -->
+    <symbol id="aws-lambda" viewBox="0 0 80 80"><g id="aws-lambda-Icon-Architecture-64-Arch_AWS-Lambda_64" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="aws-lambda-Icon-Architecture-BG-64-Compute" fill="#ED7100">
+            <rect id="aws-lambda-Rectangle" x="0" y="0" width="80" height="80" />
+        </g>
+        <path d="M28.0075352,66 L15.5907274,66 L29.3235885,37.296 L35.5460249,50.106 L28.0075352,66 Z M30.2196674,34.553 C30.0512768,34.208 29.7004629,33.989 29.3175745,33.989 L29.3145676,33.989 C28.9286723,33.99 28.5778583,34.211 28.4124746,34.558 L13.097944,66.569 C12.9495999,66.879 12.9706487,67.243 13.1550766,67.534 C13.3374998,67.824 13.6582439,68 14.0020416,68 L28.6420072,68 C29.0299071,68 29.3817234,67.777 29.5481094,67.428 L37.563706,50.528 C37.693006,50.254 37.6920037,49.937 37.5586944,49.665 L30.2196674,34.553 Z M64.9953491,66 L52.6587274,66 L32.866809,24.57 C32.7014253,24.222 32.3486067,24 31.9617091,24 L23.8899822,24 L23.8990031,14 L39.7197081,14 L59.4204149,55.429 C59.5857986,55.777 59.9386172,56 60.3255148,56 L64.9953491,56 L64.9953491,66 Z M65.9976745,54 L60.9599868,54 L41.25928,12.571 C41.0938963,12.223 40.7410777,12 40.3531778,12 L22.89768,12 C22.3453987,12 21.8963569,12.447 21.8953545,12.999 L21.884329,24.999 C21.884329,25.265 21.9885708,25.519 22.1780103,25.707 C22.3654452,25.895 22.6200358,26 22.8866544,26 L31.3292417,26 L51.1221625,67.43 C51.2885485,67.778 51.6393624,68 52.02626,68 L65.9976745,68 C66.5519605,68 67,67.552 67,67 L67,55 C67,54.448 66.5519605,54 65.9976745,54 L65.9976745,54 Z" id="aws-lambda-AWS-Lambda_Icon_64_Squid" fill="#FFFFFF" />
+    </g>
+</symbol>
+  </defs>
+  <!-- Canvas and explicit trigger selection. The arrows originate at the service that calls. -->
+  <rect width="1240" height="624" fill="#FFFFFF"/>
+  <text class="title" x="36" y="48">Receiving: SES stores mail, then invokes Lambda</text>
+  <text class="subtitle" x="36" y="80">This design uses the SES receipt rule as the function's trigger.</text>
+  <!-- Message source; the SMTP connector enters SES without touching either label. -->
+  <rect id="incoming-node" x="36" y="270" width="210" height="182" rx="12" fill="#F5F8FB" stroke="#ADBFCF" stroke-width="1.5"/>
+  <use href="#aws-email" x="109" y="292" width="64" height="64"/>
+  <text class="heading" x="141" y="392" text-anchor="middle">Incoming email</text>
+  <text class="small" x="141" y="425" text-anchor="middle">Sent to your domain</text>
+  <path id="incoming-connector" class="connector" data-connector="true" d="M246 360 H313"/>
+  <path id="incoming-arrowhead" d="M311 352 L326 360 L311 368 Z" fill="#496880"/>
+  <text x="286" y="336" font-size="16" text-anchor="middle">SMTP</text>
+  <!-- SES owns both ordered actions; no line from S3 invokes Lambda. -->
+  <rect id="ses-receiving-node" x="326" y="204" width="300" height="282" rx="12" fill="#FFF4F5" stroke="#DD344C" stroke-width="1.5"/>
+  <use href="#aws-ses" x="444" y="236" width="64" height="64"/>
+  <text class="heading" x="476" y="340" text-anchor="middle">Amazon SES</text>
+  <text class="body" x="476" y="378" text-anchor="middle">Receipt rule for</text>
+  <text class="body" x="476" y="407" text-anchor="middle">support@example.com</text>
+  <text class="small" x="476" y="451" text-anchor="middle">Runs actions in order</text>
+  <!-- S3 stores incoming mail and has no notification configured to call this function. -->
+  <rect id="s3-node" x="866" y="128" width="338" height="208" rx="12" fill="#F5FAEC" stroke="#7AA116" stroke-width="1.5"/>
+  <use href="#aws-s3" x="888" y="150" width="56" height="56"/>
+  <text class="heading" x="960" y="184">S3 input bucket</text>
+  <text class="body" x="888" y="240">incoming/{messageId}</text>
+  <text class="small" x="888" y="270">Full email + attachments</text>
+  <text class="small" x="888" y="309">No notification to this Lambda</text>
+  <!-- The direct SES Lambda action provides metadata and headers. -->
+  <rect id="lambda-node" x="866" y="404" width="338" height="178" rx="12" fill="#FFF7EB" stroke="#ED8B23" stroke-width="1.5"/>
+  <use href="#aws-lambda" x="888" y="426" width="56" height="56"/>
+  <text class="heading" x="960" y="460">Lambda function</text>
+  <text class="small" x="888" y="516">SES event: metadata + headers</text>
+  <text class="body" x="888" y="553">GetObject reads the email</text>
+  <!-- Separate arrows prevent confusing action order with an S3 event notification. -->
+  <path id="store-connector" class="connector" data-connector="true" d="M626 250 H853"/>
+  <path id="store-arrowhead" d="M851 242 L866 250 L851 258 Z" fill="#496880"/>
+  <text class="body" x="746" y="224" text-anchor="middle">1. Store full message</text>
+  <path id="invoke-connector" class="connector" data-connector="true" d="M626 448 H853"/>
+  <path id="invoke-arrowhead" d="M851 440 L866 448 L851 456 Z" fill="#496880"/>
+  <text class="body" x="746" y="422" text-anchor="middle">2. Invoke directly</text>
+  <!-- GetObject is a read request from Lambda to S3, not a new write or invocation. -->
+  <path id="read-connector" class="read-connector" data-connector="true" d="M1035 404 V349"/>
+  <path id="read-arrowhead" d="M1027 351 L1035 336 L1043 351 Z" fill="#267B80"/>
+  <text class="small" x="1055" y="377">3. Read body</text>
+  <!-- The note states the configured behavior, not a global promise about S3 events. -->
+  <rect id="trigger-note" x="36" y="510" width="764" height="72" rx="10" fill="#F5F8FB"/>
+  <text x="56" y="540" font-size="20" font-weight="700">No S3-triggered invocation in this design.</text>
+  <text class="small" x="56" y="566">Reading an object does not create another object.</text>
+  <text class="small" x="36" y="609">S3 = Simple Storage Service · SMTP = Simple Mail Transfer Protocol · Numbers show execution order.</text>
+</svg>
