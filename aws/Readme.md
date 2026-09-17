@@ -13,3 +13,4 @@ Articles extracted from the **AWS (sorting)** Anki deck on 2026-09-17. Original 
 - [Amazon S3](Amazon%20S3/Readme.md)
 - [Amazon SES](Amazon%20SES/Readme.md)
 - [Amazon SNS](Amazon%20SNS/Readme.md)
+- [Amazon SQS](Amazon%20SQS/Readme.md)
