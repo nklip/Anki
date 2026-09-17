@@ -6,6 +6,7 @@ Anki-ready cards on **distributed systems**, each with its own teaching diagrams
 Each topic has its own folder, with diagrams in its `images/` directory.
 
 ## Content
+ * [Apache Flink](./Apache%20Flink/Readme.md) — stateful stream processing, event time, windows, checkpoints, parallelism, and recovery guarantees.
  * [Apache Kafka](./Apache%20Kafka/Readme.md) — partitioned logs, consumer groups, delivery guarantees, durability, deployments, and event-driven patterns.
  * [Apache Seata](./Apache%20Seata/Readme.md) — purpose, coordinator architecture, AT/TCC/Saga/XA modes, integration, and recovery limits.
  * [Apache Spark](./Apache%20Spark/Readme.md) — parallel execution, query planning, shuffles, recovery, streaming, real users, and practical benefits.

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="485" viewBox="0 0 1120 485" role="img" aria-labelledby="title desc">
+  <title id="title">Recovery restores state and replays from matching input positions</title>
+  <desc id="desc">A completed checkpoint stores total 10 and next offset 42. Record 42 adds 5, giving 15, but the worker then fails. Recovery restores total 10 and next offset 42, replays plus 5, and returns to 15. Repeated execution does not duplicate the effect in recovered state. External output requires its own compatible sink protocol.</desc>
+  <!-- Shared typography and System Design infrastructure icons. Each use has explicit dimensions. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 19px; fill: #536174; }
+      .value { font-size: 27px; font-weight: 700; }
+    </style>
+    <!-- Server and envelope: System Design/01. Scaling/images/message-queue.svg.
+         Laptop: System Design/01. Scaling/images/database.svg. Original geometry and colors retained. -->
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+<symbol id="envelope" viewBox="0 0 42 30"><rect x="1" y="1" width="40" height="28" rx="3" fill="white" stroke="#0b78b5" stroke-width="4"/><path d="M3 4L21 19L39 4" fill="none" stroke="#0b78b5" stroke-width="4"/></symbol>
+<symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
+    <!-- Database geometry copied from System Design/01. Scaling/images/database.svg; label omitted. -->
+    <symbol id="storage" viewBox="965 459 106 140">
+      <path d="M970 482C970 470 992 462 1018 462S1066 470 1066 482V575C1066 587 1044 595 1018 595S970 587 970 575Z" fill="#0b78b5"/>
+      <ellipse cx="1018" cy="482" rx="48" ry="15" fill="white" stroke="#0b78b5" stroke-width="6"/>
+    </symbol>
+  </defs>
+  <rect width="1120" height="485" fill="#fff"/>
+  <!-- Lesson heading. -->
+  <text x="28" y="43" class="title" text-anchor="start">Recovery restores state and replays from matching input positions</text>
+  <text x="28" y="77" class="sub" text-anchor="start">A running total for shop A; one source partition; no windows in this example.</text>
+  <!-- Three states make rollback explicit; the failed state is not used as the replay starting point. -->
+  <rect x="28" y="120" width="314" height="270" rx="12" fill="#f0f8fc" stroke="#b9c8d4" stroke-width="2"/>
+  <rect x="403" y="120" width="314" height="270" rx="12" fill="#fff5eb" stroke="#b9c8d4" stroke-width="2"/>
+  <rect x="778" y="120" width="314" height="270" rx="12" fill="#f3faed" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#storage" x="46" y="139" width="41" height="56"/>
+  <text x="105" y="151" class="heading" text-anchor="start">Completed</text>
+  <text x="105" y="183" class="heading" text-anchor="start">checkpoint</text>
+  <text x="49" y="235" class="value" text-anchor="start">A total = 10</text>
+  <text x="49" y="272" class="body" text-anchor="start">Next offset = 42</text>
+  <text x="49" y="313" class="small" text-anchor="start">State + source position</text>
+  <text x="49" y="346" class="small" text-anchor="start">saved together</text>
+  <use href="#server" x="423" y="141" width="31" height="54"/>
+  <text x="473" y="152" class="heading" text-anchor="start">After record 42</text>
+  <text x="473" y="184" class="heading" text-anchor="start" style="fill:#ad520f">Then failure</text>
+  <text x="424" y="235" class="value" text-anchor="start">10 + 5 = 15</text>
+  <text x="424" y="272" class="body" text-anchor="start">Not checkpointed yet</text>
+  <text x="424" y="313" class="small" text-anchor="start">Discard this attempt’s</text>
+  <text x="424" y="346" class="small" text-anchor="start">uncheckpointed state</text>
+  <use href="#server" x="799" y="141" width="31" height="54"/>
+  <text x="849" y="152" class="heading" text-anchor="start">Restore + replay</text>
+  <text x="849" y="184" class="small" text-anchor="start">Record 42 again</text>
+  <text x="799" y="235" class="value" text-anchor="start">10 + 5 = 15</text>
+  <text x="799" y="272" class="body" text-anchor="start">Start again from 10</text>
+  <text x="799" y="313" class="small" text-anchor="start">Repeated execution,</text>
+  <text x="799" y="346" class="small" text-anchor="start">one effect in state</text>
+  <path data-connector="true" d="M343.0 255.0L390.00 255.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="402.0,255.0 388.00,261.00 388.00,249.00" fill="#17212f"/>
+  <path data-connector="true" d="M718.0 255.0L765.00 255.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="777.0,255.0 763.00,261.00 763.00,249.00" fill="#17212f"/>
+  <text x="28" y="430" class="body" text-anchor="start">Exactly-once state does not automatically make an email or database write exactly once.</text>
+  <text x="28" y="464" class="small" text-anchor="start">End-to-end output needs a replayable source, durable snapshots, and a compatible sink.</text>
+</svg>

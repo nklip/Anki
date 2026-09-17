@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="390" viewBox="0 0 1120 390" role="img" aria-labelledby="title desc">
+  <title id="title">Flink computes between the event log and the serving layer</title>
+  <desc id="desc">A Kafka source feeds Flink operators with working state. Flink writes derived results to a serving database, which supplies a dashboard. The four stages have separate responsibilities.</desc>
+  <!-- Shared typography and System Design infrastructure icons. Each use has explicit dimensions. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 19px; fill: #536174; }
+      .value { font-size: 27px; font-weight: 700; }
+    </style>
+    <!-- Server and envelope: System Design/01. Scaling/images/message-queue.svg.
+         Laptop: System Design/01. Scaling/images/database.svg. Original geometry and colors retained. -->
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+<symbol id="envelope" viewBox="0 0 42 30"><rect x="1" y="1" width="40" height="28" rx="3" fill="white" stroke="#0b78b5" stroke-width="4"/><path d="M3 4L21 19L39 4" fill="none" stroke="#0b78b5" stroke-width="4"/></symbol>
+<symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
+    <!-- Database geometry copied from System Design/01. Scaling/images/database.svg; label omitted. -->
+    <symbol id="storage" viewBox="965 459 106 140">
+      <path d="M970 482C970 470 992 462 1018 462S1066 470 1066 482V575C1066 587 1044 595 1018 595S970 587 970 575Z" fill="#0b78b5"/>
+      <ellipse cx="1018" cy="482" rx="48" ry="15" fill="white" stroke="#0b78b5" stroke-width="6"/>
+    </symbol>
+  </defs>
+  <rect width="1120" height="390" fill="#fff"/>
+  <!-- Lesson heading. -->
+  <text x="28" y="43" class="title" text-anchor="start">Flink computes between the event log and the serving layer</text>
+  <text x="28" y="77" class="sub" text-anchor="start">Read left to right: retained events become continuously maintained results.</text>
+  <!-- Four stages; arrow corridors sit between node boundaries, above the captions. -->
+  <rect x="28" y="112" width="206" height="208" rx="12" fill="#f0f8fc" stroke="#b9c8d4" stroke-width="2"/>
+  <rect x="302" y="112" width="260" height="208" rx="12" fill="#f3faed" stroke="#b9c8d4" stroke-width="2"/>
+  <rect x="630" y="112" width="206" height="208" rx="12" fill="#f0f8fc" stroke="#b9c8d4" stroke-width="2"/>
+  <rect x="904" y="112" width="188" height="208" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#envelope" x="69" y="142" width="38" height="28"/>
+  <use href="#envelope" x="113" y="142" width="38" height="28"/>
+  <use href="#envelope" x="157" y="142" width="38" height="28"/>
+  <use href="#server" x="409" y="130" width="43" height="75"/>
+  <use href="#storage" x="706" y="128" width="55" height="78"/>
+  <use href="#laptop" x="945" y="143" width="107" height="68"/>
+  <text x="131" y="242" class="heading" text-anchor="middle">Kafka log</text>
+  <text x="131" y="275" class="small" text-anchor="middle">Retained payments</text>
+  <text x="131" y="300" class="small" text-anchor="middle">Source can replay</text>
+  <text x="432" y="242" class="heading" text-anchor="middle">Flink job</text>
+  <text x="432" y="275" class="small" text-anchor="middle">Group + sum + track time</text>
+  <text x="432" y="300" class="small" text-anchor="middle">Keep working state</text>
+  <text x="733" y="242" class="heading" text-anchor="middle">Serving database</text>
+  <text x="733" y="275" class="small" text-anchor="middle">Store derived results</text>
+  <text x="733" y="300" class="small" text-anchor="middle">Sink writes here</text>
+  <text x="998" y="242" class="heading" text-anchor="middle">Dashboard</text>
+  <text x="998" y="275" class="small" text-anchor="middle">Read current</text>
+  <text x="998" y="300" class="small" text-anchor="middle">sales results</text>
+  <path data-connector="true" d="M234.0 181.0L289.00 181.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="301.0,181.0 287.00,187.00 287.00,175.00" fill="#17212f"/>
+  <path data-connector="true" d="M562.0 181.0L617.00 181.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="629.0,181.0 615.00,187.00 615.00,175.00" fill="#17212f"/>
+  <path data-connector="true" d="M836.0 181.0L891.00 181.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="903.0,181.0 889.00,187.00 889.00,175.00" fill="#17212f"/>
+  <text x="28" y="360" class="body" text-anchor="start">Input retention, computation, and serving are distinct responsibilities.</text>
+</svg>

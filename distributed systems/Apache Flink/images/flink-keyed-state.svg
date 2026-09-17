@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="426" viewBox="0 0 1120 426" role="img" aria-labelledby="title desc">
+  <title id="title">One key has one state owner in a keyed operator</title>
+  <desc id="desc">Records A plus 10, B plus 7, and A plus 5 are partitioned by shop. Both A records update the same state to 15; B updates a separate state to 7. Windows are omitted so the diagram isolates keyed state.</desc>
+  <!-- Shared typography and System Design infrastructure icons. Each use has explicit dimensions. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 19px; fill: #536174; }
+      .value { font-size: 27px; font-weight: 700; }
+    </style>
+    <!-- Server and envelope: System Design/01. Scaling/images/message-queue.svg.
+         Laptop: System Design/01. Scaling/images/database.svg. Original geometry and colors retained. -->
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+<symbol id="envelope" viewBox="0 0 42 30"><rect x="1" y="1" width="40" height="28" rx="3" fill="white" stroke="#0b78b5" stroke-width="4"/><path d="M3 4L21 19L39 4" fill="none" stroke="#0b78b5" stroke-width="4"/></symbol>
+<symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
+    <!-- Database geometry copied from System Design/01. Scaling/images/database.svg; label omitted. -->
+    <symbol id="storage" viewBox="965 459 106 140">
+      <path d="M970 482C970 470 992 462 1018 462S1066 470 1066 482V575C1066 587 1044 595 1018 595S970 587 970 575Z" fill="#0b78b5"/>
+      <ellipse cx="1018" cy="482" rx="48" ry="15" fill="white" stroke="#0b78b5" stroke-width="6"/>
+    </symbol>
+  </defs>
+  <rect width="1120" height="426" fill="#fff"/>
+  <!-- Lesson heading. -->
+  <text x="28" y="43" class="title" text-anchor="start">One key has one state owner in a keyed operator</text>
+  <text x="28" y="77" class="sub" text-anchor="start">Interleaved payments are routed by shop; the worker assignment below is illustrative.</text>
+  <!-- Input records and partition rule. -->
+  <rect x="28" y="115" width="274" height="230" rx="12" fill="#f0f8fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="49" y="152" class="heading" text-anchor="start">Arriving records</text>
+  <use href="#envelope" x="50" y="184" width="35" height="25"/>
+  <text x="104" y="206" class="body" text-anchor="start">A  +10</text>
+  <use href="#envelope" x="50" y="232" width="35" height="25"/>
+  <text x="104" y="254" class="body" text-anchor="start">B  +7</text>
+  <use href="#envelope" x="50" y="280" width="35" height="25"/>
+  <text x="104" y="302" class="body" text-anchor="start">A  +5</text>
+  <rect x="358" y="179" width="222" height="102" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="469" y="218" class="heading" text-anchor="middle">keyBy(shop)</text>
+  <text x="469" y="253" class="small" text-anchor="middle">One owner per key</text>
+  <path data-connector="true" d="M303.0 230.0L345.00 230.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="357.0,230.0 343.00,236.00 343.00,224.00" fill="#17212f"/>
+  <!-- Separate key routes preserve room for labels and heads. -->
+  <path d="M581 211H621V170H666" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <path data-connector="true" d="M665.0 170.0L705.00 170.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="717.0,170.0 703.00,176.00 703.00,164.00" fill="#17212f"/>
+  <text x="647" y="145" class="heading" text-anchor="middle" style="fill:#2b7b23">A</text>
+  <path d="M581 249H621V291H666" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <path data-connector="true" d="M665.0 291.0L705.00 291.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="717.0,291.0 703.00,297.00 703.00,285.00" fill="#17212f"/>
+  <text x="647" y="321" class="heading" text-anchor="middle" style="fill:#0b78b5">B</text>
+  <rect x="718" y="116" width="374" height="108" rx="12" fill="#f3faed" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#server" x="734" y="136" width="32" height="56"/>
+  <text x="785" y="149" class="heading" text-anchor="start">Subtask 1 · key A</text>
+  <text x="785" y="192" class="value" text-anchor="start">State: 10 + 5 = 15</text>
+  <rect x="718" y="237" width="374" height="108" rx="12" fill="#f0f8fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#server" x="734" y="257" width="32" height="56"/>
+  <text x="785" y="270" class="heading" text-anchor="start">Subtask 2 · key B</text>
+  <text x="785" y="313" class="value" text-anchor="start">State: 7</text>
+  <text x="28" y="390" class="body" text-anchor="start">Many keys may share an owner. More workers do not automatically split one hot key.</text>
+</svg>
