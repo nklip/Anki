@@ -15,3 +15,4 @@ Articles extracted from the **AWS (sorting)** Anki deck on 2026-09-17. Original 
 - [Amazon SNS](Amazon%20SNS/Readme.md)
 - [Amazon SQS](Amazon%20SQS/Readme.md)
 - [AWS Databases](AWS%20Databases/Readme.md)
+- [AWS Regions and Zones](AWS%20Regions%20and%20Zones/Readme.md)
