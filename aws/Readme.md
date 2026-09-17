@@ -10,3 +10,4 @@ Articles extracted from the **AWS (sorting)** Anki deck on 2026-09-17. Original 
 - [Amazon DynamoDB](Amazon%20DynamoDB/Readme.md)
 - [Amazon EC2](Amazon%20EC2/Readme.md)
 - [Amazon RDS](Amazon%20RDS/Readme.md)
+- [Amazon S3](Amazon%20S3/Readme.md)
