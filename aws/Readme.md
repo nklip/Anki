@@ -1,0 +1,9 @@
+# AWS
+
+<sub>[Back to Anki Flashcards](../README.md)</sub>
+
+Articles extracted from the **AWS (sorting)** Anki deck on 2026-09-17. Original wording, links, and images are preserved, with formatting converted to Markdown.
+
+## Content
+
+- [AWS DocumentDB](AWS%20DocumentDB/Readme.md)

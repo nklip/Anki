@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="654" viewBox="0 0 1200 654" role="img" aria-labelledby="migration-title migration-desc">
+  <title id="migration-title">Migrate MongoDB to Amazon DocumentDB with AWS DMS</title>
+  <desc id="migration-desc">A MongoDB replica set supplies existing documents and its operations log to AWS Database Migration Service. A full load copies existing documents to Amazon DocumentDB; change data capture replicates ongoing changes. Before migration, assess application compatibility and prepare indexes, users, and network access. At cutover, pause source writes, wait for replication to catch up, validate the migrated data, then switch the application connection and resume writes on DocumentDB. Based on the AWS DocumentDB migration quick start and migration runbook, the AWS DMS MongoDB source guide, and AWS Prescriptive Guidance cutover-stage documentation.</desc>
+
+  <!-- Shared visual styles; real text remains editable and portable. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172b3a; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #4b5d6b; }
+      .label { font-size: 16px; font-weight: 700; letter-spacing: 1px; }
+      .node-title { font-size: 26px; font-weight: 700; }
+      .body { font-size: 19px; }
+      .small { font-size: 17px; fill: #4b5d6b; }
+      .step { font-size: 20px; font-weight: 700; }
+      .connector { fill: none; stroke: #526d80; stroke-width: 3; }
+      .arrow-head { fill: #526d80; }
+    </style>
+  </defs>
+
+  <!-- Title states the lesson; source-to-target reading order is left to right. -->
+  <rect width="1200" height="654" fill="#ffffff"/>
+  <text x="40" y="49" class="title">Migrate MongoDB to Amazon DocumentDB</text>
+  <text x="40" y="81" class="subtitle">Copy existing documents and keep changes flowing while the application uses MongoDB.</text>
+
+  <!-- Preparation is separate from the data flow: DMS does not imply feature equivalence. -->
+  <rect id="preparation" x="40" y="108" width="1120" height="58" rx="8" fill="#f1f5f7"/>
+  <text x="60" y="143" class="body" font-weight="700">Before migration:</text>
+  <text x="234" y="143" class="body">check app compatibility; prepare indexes, users and network access.</text>
+
+  <!-- Three nodes show the data path; no decorative cloud boundary implies extra deployment constraints. -->
+  <rect id="mongodb-source" x="40" y="193" width="280" height="239" rx="10" fill="#f1f8f4" stroke="#469167" stroke-width="2"/>
+  <text x="62" y="224" class="label" fill="#286742">SOURCE</text>
+  <text x="62" y="260" font-size="23" font-weight="700">MongoDB replica set</text>
+  <text x="62" y="290" class="small">Group of MongoDB nodes</text>
+  <text x="62" y="334" class="body" font-weight="700">Documents + oplog</text>
+  <text x="62" y="362" class="small">Oplog = operations log</text>
+  <text x="62" y="397" class="small">Retain changes throughout</text>
+  <text x="62" y="418" class="small">the full load.</text>
+
+  <rect id="aws-dms" x="432" y="193" width="336" height="239" rx="10" fill="#eff6fb" stroke="#477b9e" stroke-width="2"/>
+  <text x="454" y="229" class="node-title">AWS DMS</text>
+  <text x="454" y="256" class="small">Database Migration Service</text>
+  <text x="454" y="301" class="step">1. Full load</text>
+  <text x="454" y="328" class="body">Copies existing documents</text>
+  <text x="454" y="371" class="step">2. Change data capture (CDC)</text>
+  <text x="454" y="398" class="body">Replicates ongoing changes</text>
+
+  <rect id="documentdb-target" x="880" y="193" width="280" height="239" rx="10" fill="#f0f8fa" stroke="#34889b" stroke-width="2"/>
+  <text x="902" y="224" class="label" fill="#286d7c">TARGET</text>
+  <text x="902" y="260" font-size="23" font-weight="700">Amazon DocumentDB</text>
+  <text x="902" y="290" class="body">Cluster</text>
+  <text x="902" y="334" class="body">Receives documents</text>
+  <text x="902" y="362" class="body">and later changes</text>
+  <text x="902" y="407" class="small">Ready for validation</text>
+
+  <!-- Manual heads stop at node borders; shafts end under each triangle base. -->
+  <path id="source-to-dms-connector" class="connector" data-connector="true" d="M321 308 H416"/>
+  <path id="source-to-dms-arrowhead" class="arrow-head" d="M415 300 L431 308 L415 316 Z"/>
+  <path id="dms-to-target-connector" class="connector" data-connector="true" d="M769 308 H864"/>
+  <path id="dms-to-target-arrowhead" class="arrow-head" d="M863 300 L879 308 L863 316 Z"/>
+
+  <!-- Cutover is a brief separate phase after full load and replication, not an automatic DMS action. -->
+  <rect id="cutover-band" x="40" y="459" width="1120" height="142" rx="10" fill="#fff7e9" stroke="#d4a652" stroke-width="1.5"/>
+  <text x="60" y="490" class="label" fill="#7c571a">CUTOVER — MOVE THE APPLICATION</text>
+  <text x="60" y="533" class="step">Pause source writes</text>
+  <text x="60" y="563" class="small">Start the cutover window</text>
+  <text x="341" y="533" class="step">Wait for replication</text>
+  <text x="341" y="563" class="small">Apply all remaining changes</text>
+  <text x="623" y="533" class="step">Validate the data</text>
+  <text x="623" y="563" class="small">Compare source and target</text>
+  <text x="914" y="533" class="step">Switch the app</text>
+  <text x="914" y="563" class="small">Connect to DocumentDB;</text>
+  <text x="914" y="585" class="small">resume and test writes</text>
+
+  <!-- Cutover arrows use dedicated gaps between the text blocks. -->
+  <path id="pause-to-wait-connector" class="connector" data-connector="true" d="M291 526 H315"/>
+  <path id="pause-to-wait-arrowhead" class="arrow-head" d="M314 518 L330 526 L314 534 Z"/>
+  <path id="wait-to-validate-connector" class="connector" data-connector="true" d="M574 526 H598"/>
+  <path id="wait-to-validate-arrowhead" class="arrow-head" d="M597 518 L613 526 L597 534 Z"/>
+  <path id="validate-to-switch-connector" class="connector" data-connector="true" d="M861 526 H885"/>
+  <path id="validate-to-switch-arrowhead" class="arrow-head" d="M884 518 L900 526 L884 534 Z"/>
+
+  <!-- Source attribution is expanded into clickable documentation links in the accompanying article.
+       https://docs.aws.amazon.com/documentdb/latest/devguide/migration-quick-start.html
+       https://docs.aws.amazon.com/documentdb/latest/devguide/docdb-migration-runbook.html
+       https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Source.MongoDB.html
+       https://docs.aws.amazon.com/prescriptive-guidance/latest/best-practices-migration-cutover/cutover-stage.html -->
+  <text x="40" y="635" font-size="15" fill="#62727f">Based on official AWS DocumentDB, AWS DMS and AWS Prescriptive Guidance documentation.</text>
+</svg>

@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1487" height="864" viewBox="0 0 1487 864" role="img" aria-labelledby="diagram-title diagram-desc">
+  <title id="diagram-title">Amazon DocumentDB: instances and shared cluster storage</title>
+  <desc id="diagram-desc">Recreated from the official AWS how-it-works-01c diagram. A cluster endpoint points to a primary instance in Availability Zone 1. A reader endpoint points to replicas in Availability Zones 2 and 3. The primary writes to a shared cluster volume with six data copies across the three zones. All three instances read from this volume. Yellow arrows show writes and blue arrows show reads.</desc>
+
+  <!-- Native geometry and reusable AWS-style symbols; no raster image is embedded. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #202c3a; font-weight: 400; }
+      .endpoint { font-size: 30px; fill: #000; }
+      .zone-label { font-size: 26px; fill: #545b64; }
+      .instance-label { font-size: 26px; }
+      .flow-label { font-size: 26px; }
+      .copy-label { font-size: 25px; }
+      .region-border { fill: none; stroke: #879196; stroke-width: 2; stroke-dasharray: 8 6; }
+      .zone-border { fill: none; stroke: #545b64; stroke-width: 2; stroke-dasharray: 8 6; }
+      .write-shaft { fill: none; stroke: #ffc000; stroke-width: 4.5; }
+      .read-shaft { fill: none; stroke: #76d6ff; stroke-width: 4.5; }
+    </style>
+    <symbol id="documentdb-instance" viewBox="0 0 126 145">
+      <!-- Shared database cylinder, with document pages layered over its right side. -->
+      <path d="M7 22 C7 0 94 0 94 22 V117 C94 142 7 142 7 117 Z" fill="#fff" stroke="#232f3e" stroke-width="4.5"/>
+      <ellipse cx="50.5" cy="22" rx="43.5" ry="17.5" fill="#fff" stroke="#232f3e" stroke-width="4.5"/>
+      <path d="M7 54 C7 68 34 76 65 72 M7 87 C7 103 34 109 65 105" fill="none" stroke="#232f3e" stroke-width="4.5"/>
+      <path d="M69 43 H102 L110 52 V106 H69 Z" fill="#fff" stroke="#232f3e" stroke-width="4.5"/>
+      <path d="M77 53 H107 L123 69 V116 H77 Z" fill="#fff" stroke="#232f3e" stroke-width="4.5"/>
+      <path d="M106 54 V69 H122" fill="none" stroke="#232f3e" stroke-width="4.5"/>
+      <path d="M95 76 C87 78 94 85 86 90 C94 96 87 103 95 104 M107 76 C115 78 108 85 116 90 C108 96 115 103 107 104" fill="none" stroke="#232f3e" stroke-width="4.5"/>
+    </symbol>
+    <symbol id="availability-zone-icon" viewBox="0 0 56 56">
+      <rect width="56" height="56" fill="#545b64"/>
+      <circle cx="28" cy="28" r="19" fill="none" stroke="#ddd" stroke-width="1.5"/>
+      <path d="M28 16 C20 16 18 23 22 29 L28 39 L34 29 C38 23 36 16 28 16 Z" fill="none" stroke="#ddd" stroke-width="1.5"/>
+      <circle cx="28" cy="24" r="3.5" fill="none" stroke="#ddd" stroke-width="1.5"/>
+    </symbol>
+  </defs>
+
+  <!-- Region and zone frames share the original 1487 by 864 canvas. -->
+  <rect id="background" width="1487" height="864" fill="#fff"/>
+  <rect id="region" class="region-border" x="20.5" y="112" width="1444" height="732.5"/>
+  <rect x="20.5" y="112" width="56" height="56" fill="#879196"/>
+  <path d="M39.5 122 V159 M35 159 H44 M40 127 H64 L58 133 L64 140 H40" fill="none" stroke="#fff" stroke-width="1.5"/>
+  <circle cx="39.5" cy="122" r="2" fill="#fff"/>
+  <text x="94" y="150" font-size="22" fill="#879196" style="fill:#879196">AWS Region</text>
+  <rect id="zone-1" class="zone-border" x="93" y="183.5" width="360" height="617"/>
+  <rect id="zone-2" class="zone-border" x="560.5" y="183.5" width="359" height="617"/>
+  <rect id="zone-3" class="zone-border" x="1028.5" y="183.5" width="359" height="617"/>
+  <use href="#availability-zone-icon" x="93" y="183.5" width="56" height="56"/>
+  <use href="#availability-zone-icon" x="560.5" y="183.5" width="56" height="56"/>
+  <use href="#availability-zone-icon" x="1028.5" y="183.5" width="56" height="56"/>
+  <!-- Wrapped to keep the original endpoint route clear of the zone label. -->
+  <text x="282" y="210" font-size="22" style="fill:#545b64"><tspan x="282">Availability</tspan><tspan x="282" dy="25">Zone 1</tspan></text>
+  <text class="zone-label" x="634" y="225">Availability Zone 2</text>
+  <text class="zone-label" x="1102" y="225">Availability Zone 3</text>
+
+  <!-- Endpoints identify the primary and the replica group. Shafts stop inside their heads. -->
+  <text class="endpoint" x="335" y="41" text-anchor="middle">Cluster endpoint</text>
+  <text class="endpoint" x="1063" y="40" text-anchor="middle">Reader endpoint</text>
+  <circle cx="335.5" cy="57.5" r="6" fill="#7f7f7f"/>
+  <path id="cluster-endpoint-connector" d="M335.5 58 L260.5 232" fill="none" stroke="#7f7f7f" stroke-width="2"/>
+  <path d="M254 230 L266 234 L257 242 Z" fill="#7f7f7f"/>
+  <circle cx="1063" cy="56.5" r="6" fill="#7f7f7f"/>
+  <path id="reader-endpoint-connector" d="M1063 57 L980.3 232" fill="none" stroke="#7f7f7f" stroke-width="2"/>
+  <path d="M977 226 L987 230.7 L976 241 Z" fill="#7f7f7f"/>
+  <path id="primary-endpoint-bracket" d="M201 275 Q201 259 204 259 H251 Q257 259 257 254 V242 M257 254 Q257 259 263 259 H311 Q315 259 315 275" fill="none" stroke="#92d050" stroke-width="4.5"/>
+  <path id="reader-endpoint-bracket" d="M680 278 Q680 261 684 261 H970 Q976 261 976 254 V241 M976 254 Q976 261 982 261 H1268 Q1273 261 1273 278" fill="none" stroke="#92d050" stroke-width="4.5"/>
+
+  <!-- Compute instances; the storage below is shared by all instances. -->
+  <use href="#documentdb-instance" x="207" y="285" width="126" height="145"/>
+  <use href="#documentdb-instance" x="682" y="285" width="126" height="145"/>
+  <use href="#documentdb-instance" x="1147" y="285" width="126" height="145"/>
+  <text class="instance-label" x="385" y="295" text-anchor="middle"><tspan x="385">Instance</tspan><tspan x="385" dy="33">(primary)</tspan></text>
+  <text class="instance-label" x="862" y="295" text-anchor="middle"><tspan x="862">Instance</tspan><tspan x="862" dy="33">(replica)</tspan></text>
+  <text class="instance-label" x="1332" y="295" text-anchor="middle"><tspan x="1332">Instance</tspan><tspan x="1332" dy="33">(replica)</tspan></text>
+
+  <!-- The volume intentionally covers the lower zone-border segments, as in AWS's image. -->
+  <rect id="cluster-volume" x="119" y="615.5" width="1242" height="175" fill="#e7e6e6" stroke="#92d050" stroke-width="1.7"/>
+  <g id="data-copies" fill="#bfbfbf" stroke="#00c45b" stroke-width="2">
+    <rect x="197" y="640" width="61" height="60" rx="10"/>
+    <rect x="285" y="640" width="61" height="60" rx="10"/>
+    <rect x="660.5" y="637.5" width="61" height="59.5" rx="10"/>
+    <rect x="748.5" y="637.5" width="61" height="59.5" rx="10"/>
+    <rect x="1143" y="637.5" width="61" height="59.5" rx="10"/>
+    <rect x="1231.5" y="637.5" width="61" height="59.5" rx="10"/>
+  </g>
+  <text class="copy-label" x="273" y="734" text-anchor="middle">Data copies</text>
+  <text class="copy-label" x="744" y="734" text-anchor="middle">Data copies</text>
+  <text class="copy-label" x="1223" y="734" text-anchor="middle">Data copies</text>
+  <text x="740" y="782" text-anchor="middle" font-size="32" style="fill:#000">Cluster volume</text>
+
+  <!-- Yellow writes fan out from the primary to storage. The diagonal shafts
+       intentionally cross zone boundaries and read shafts, never their labels.
+       Every shaft ends inside its triangular head; tips meet the volume border.
+       Diagonal heads are long and narrow so their bases stay above the volume. -->
+  <path id="write-local-shaft" class="write-shaft" d="M277 423 V607"/>
+  <path d="M270 604 L284 604 L277 615.5 Z" fill="#ffc000"/>
+  <path id="write-zone-2-shaft" class="write-shaft" d="M277 423 L657.3 609.8"/>
+  <path d="M653.3 602.2 L648.8 611.2 L669 615.5 Z" fill="#ffc000"/>
+  <path id="write-zone-3-shaft" class="write-shaft" d="M277 423 L1092.4 611.9"/>
+  <path d="M1079.9 603.9 L1077.6 613.6 L1108 615.5 Z" fill="#ffc000"/>
+
+  <!-- Blue arrows represent reads from shared storage to each compute instance. -->
+  <path id="read-primary-shaft" class="read-shaft" d="M244 617 V433"/>
+  <path d="M237 436 L251 436 L244 422 Z" fill="#76d6ff"/>
+  <path id="read-replica-2-shaft" class="read-shaft" d="M739 619 V434"/>
+  <path d="M732 437 L746 437 L739 423 Z" fill="#76d6ff"/>
+  <path id="read-replica-3-shaft" class="read-shaft" d="M1204 615 V434.5"/>
+  <path d="M1197 437.5 L1211 437.5 L1204 423.5 Z" fill="#76d6ff"/>
+
+  <!-- Labels sit clear of all shafts. The middle read label is raised slightly
+       from the PNG to remove the original yellow-arrow/text collision. -->
+  <text class="flow-label" x="230" y="535" transform="rotate(-90 230 535)">reads</text>
+  <text class="flow-label" x="295" y="467" transform="rotate(90 295 467)">writes</text>
+  <text class="flow-label" x="376" y="508" transform="rotate(26.5 376 508)">writes</text>
+  <text class="flow-label" x="606" y="527" transform="rotate(13.1 606 527)">writes</text>
+  <text class="flow-label" x="725" y="504" transform="rotate(-90 725 504)">reads</text>
+  <text class="flow-label" x="1189" y="550" transform="rotate(-90 1189 550)">reads</text>
+</svg>
