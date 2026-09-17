@@ -6,4 +6,4 @@ Articles extracted from the **AWS (sorting)** Anki deck on 2026-09-17. Original 
 
 ## Content
 
-- [AWS DocumentDB](AWS%20DocumentDB/Readme.md)
+- [Amazon DocumentDB](Amazon%20DocumentDB/Readme.md)

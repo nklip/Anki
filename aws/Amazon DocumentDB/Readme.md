@@ -1,4 +1,4 @@
-# AWS DocumentDB
+# Amazon DocumentDB
 
 <sub>[Back to AWS](../Readme.md#content)</sub>
 
