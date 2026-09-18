@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-labelledby="title description">
+  <title id="title">Two ways to combine exclusion and condition waiting</title>
+  <desc id="description">An object's built-in monitor provides one reentrant exclusive lock and an associated wait set. An explicit ReentrantLock provides a separate reentrant exclusive lock and can have several Condition objects. Both require all accesses to protected state to use the same lock.</desc>
+
+  <!-- Shared typography and palette: blue for ownership, amber for condition waiting. -->
+  <defs>
+    <style>
+      .title { font: 700 32px Arial, Helvetica, sans-serif; fill: #172b45; }
+      .heading { font: 700 24px Arial, Helvetica, sans-serif; fill: #172b45; }
+      .body { font: 21px Arial, Helvetica, sans-serif; fill: #334155; }
+      .small { font: 19px Arial, Helvetica, sans-serif; fill: #475569; }
+      .code { font: 20px monospace; fill: #172b45; }
+    </style>
+  </defs>
+
+  <!-- Parallel columns compare logical facilities, not a JVM memory layout. -->
+  <rect width="1200" height="650" fill="#ffffff"/>
+  <text x="600" y="48" text-anchor="middle" class="title">Exclusion + condition waiting</text>
+  <text x="600" y="84" text-anchor="middle" class="body">A lock controls entry. A waiting mechanism lets a thread pause until state may have changed.</text>
+
+  <g id="intrinsic-monitor">
+    <rect x="40" y="116" width="540" height="422" rx="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="64" y="156" class="heading">Built-in monitor of object m</text>
+    <rect x="64" y="183" width="492" height="132" rx="12" fill="#edf5ff" stroke="#3776b8" stroke-width="2"/>
+    <text x="88" y="216" class="heading">One reentrant exclusive lock</text>
+    <text x="88" y="252" class="code">synchronized (m) { ... }</text>
+    <text x="88" y="287" class="small">Leaving the block releases its acquisition.</text>
+    <text x="88" y="350" class="body">m.wait() releases this lock while waiting.</text>
+    <rect x="64" y="377" width="492" height="132" rx="12" fill="#fff6e7" stroke="#ba7b25" stroke-width="2"/>
+    <text x="88" y="411" class="heading">One associated wait set</text>
+    <text x="88" y="449" class="code">m.wait() / m.notifyAll()</text>
+    <text x="88" y="483" class="small">Different condition predicates share this set.</text>
+  </g>
+
+  <g id="explicit-lock">
+    <rect x="620" y="116" width="540" height="422" rx="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="644" y="156" class="heading">Explicit ReentrantLock lock</text>
+    <rect x="644" y="183" width="492" height="132" rx="12" fill="#edf5ff" stroke="#3776b8" stroke-width="2"/>
+    <text x="668" y="216" class="heading">One reentrant exclusive lock</text>
+    <text x="668" y="252" class="code">lock.lock() / lock.unlock()</text>
+    <text x="668" y="287" class="small">Release in finally after successful acquisition.</text>
+    <text x="668" y="350" class="body">await() releases the associated lock.</text>
+    <rect x="644" y="377" width="236" height="132" rx="12" fill="#fff6e7" stroke="#ba7b25" stroke-width="2"/>
+    <text x="762" y="411" text-anchor="middle" class="heading">Condition A</text>
+    <text x="762" y="449" text-anchor="middle" class="code">notEmpty</text>
+    <text x="762" y="483" text-anchor="middle" class="small">Consumers wait</text>
+    <rect x="900" y="377" width="236" height="132" rx="12" fill="#fff6e7" stroke="#ba7b25" stroke-width="2"/>
+    <text x="1018" y="411" text-anchor="middle" class="heading">Condition B</text>
+    <text x="1018" y="449" text-anchor="middle" class="code">notFull</text>
+    <text x="1018" y="483" text-anchor="middle" class="small">Producers wait</text>
+  </g>
+
+  <!-- This footer states the shared safety rule instead of implying automatic field protection. -->
+  <rect x="40" y="564" width="1120" height="58" rx="10" fill="#ecf8f1"/>
+  <text x="600" y="601" text-anchor="middle" class="body">Both: every access relying on the protected state must follow the same locking rule.</text>
+</svg>

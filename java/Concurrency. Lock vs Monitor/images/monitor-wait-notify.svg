@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="682" viewBox="0 0 1200 682" role="img" aria-labelledby="title description">
+  <title id="title">Notification makes a waiter eligible; it does not transfer ownership</title>
+  <desc id="description">Read four snapshots from left to right. A owns monitor m and finds ready false. A calls wait, releases m, and joins its wait set. B acquires m, changes ready to true, and notifies A while keeping ownership. After B exits, A can reacquire m and test ready again. A thread trying to acquire a monitor is different from one in its wait set.</desc>
+
+  <!-- Consistent semantic colors: blue owns, amber waits, green can proceed. -->
+  <defs>
+    <style>
+      .title { font: 700 32px Arial, Helvetica, sans-serif; fill: #172b45; }
+      .heading { font: 700 23px Arial, Helvetica, sans-serif; fill: #172b45; }
+      .body { font: 20px Arial, Helvetica, sans-serif; fill: #334155; }
+      .small { font: 18px Arial, Helvetica, sans-serif; fill: #475569; }
+      .code { font: 19px monospace; fill: #172b45; }
+    </style>
+  </defs>
+
+  <!-- Each snapshot shows ownership and A's status separately. -->
+  <rect width="1200" height="682" fill="#ffffff"/>
+  <text x="600" y="49" text-anchor="middle" class="title">Notification does not hand over the lock</text>
+  <text x="600" y="85" text-anchor="middle" class="body">Two threads, one monitor m, one shared flag ready. Read left to right.</text>
+
+  <g id="check-state">
+    <rect x="32" y="121" width="254" height="350" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="52" y="160" class="heading">A checks the flag</text>
+    <rect x="50" y="183" width="218" height="68" rx="10" fill="#edf5ff"/>
+    <text x="159" y="226" text-anchor="middle" class="heading">Owner: A</text>
+    <text x="52" y="292" class="code">ready == false</text>
+    <text x="52" y="333" class="body">A cannot proceed.</text>
+    <text x="52" y="369" class="body">It must let another</text>
+    <text x="52" y="398" class="body">thread change ready.</text>
+    <text x="52" y="443" class="small">Wait set: empty</text>
+  </g>
+
+  <g id="release-and-wait">
+    <rect x="326" y="121" width="254" height="350" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="346" y="160" class="heading">A calls m.wait()</text>
+    <rect x="344" y="183" width="218" height="68" rx="10" fill="#fff6e7"/>
+    <text x="453" y="226" text-anchor="middle" class="heading">Owner: none</text>
+    <text x="346" y="292" class="body">A releases m and</text>
+    <text x="346" y="321" class="body">joins its wait set.</text>
+    <text x="346" y="369" class="body">B can now acquire m.</text>
+    <text x="346" y="443" class="small">Wait set: A</text>
+  </g>
+
+  <g id="notify-while-owning">
+    <rect x="620" y="121" width="254" height="350" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="640" y="160" class="heading">B changes the flag</text>
+    <rect x="638" y="183" width="218" height="68" rx="10" fill="#edf5ff"/>
+    <text x="747" y="226" text-anchor="middle" class="heading">Owner: B</text>
+    <text x="640" y="292" class="code">ready = true;</text>
+    <text x="640" y="321" class="code">m.notifyAll();</text>
+    <text x="640" y="369" class="body">A is eligible to</text>
+    <text x="640" y="398" class="body">reacquire; B still owns.</text>
+    <text x="640" y="443" class="small">Wait set: empty</text>
+  </g>
+
+  <g id="reacquire-and-recheck">
+    <rect x="914" y="121" width="254" height="350" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="934" y="160" class="heading">B exits; A returns</text>
+    <rect x="932" y="183" width="218" height="68" rx="10" fill="#ecf8f1"/>
+    <text x="1041" y="226" text-anchor="middle" class="heading">Owner: A</text>
+    <text x="934" y="292" class="body">A reacquires m</text>
+    <text x="934" y="321" class="body">before wait() returns.</text>
+    <text x="934" y="369" class="body">A tests ready again</text>
+    <text x="934" y="398" class="body">and can proceed.</text>
+    <text x="934" y="443" class="small">Wait set: empty</text>
+  </g>
+
+  <!-- Short connectors join only the ownership bands; each shaft ends under its head's base. -->
+  <g id="snapshot-flow" fill="#64748b">
+    <path id="flow-check-wait" d="M288 218 H309" stroke="#64748b" stroke-width="3" fill="none"/>
+    <path d="M307 210 L323 218 L307 226 Z"/>
+    <path id="flow-wait-notify" d="M582 218 H603" stroke="#64748b" stroke-width="3" fill="none"/>
+    <path d="M601 210 L617 218 L601 226 Z"/>
+    <path id="flow-notify-return" d="M876 218 H897" stroke="#64748b" stroke-width="3" fill="none"/>
+    <path d="M895 210 L911 218 L895 226 Z"/>
+  </g>
+
+  <!-- The two forms of waiting are the key conceptual distinction. -->
+  <rect x="32" y="500" width="1136" height="148" rx="12" fill="#f2f5fa"/>
+  <text x="56" y="535" class="heading">Waiting for the lock and waiting for a condition are different.</text>
+  <text x="56" y="572" class="body">A contender needs ownership. A wait-set member has called wait() and released ownership.</text>
+  <text x="56" y="607" class="body">For a ReentrantLock Condition: await() releases; signal() enables; reacquisition precedes return.</text>
+  <text x="56" y="633" class="small">Always recheck in a while loop: wakeups can be spurious, and state may change before reacquisition.</text>
+</svg>

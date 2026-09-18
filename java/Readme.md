@@ -4,7 +4,7 @@
 
 Java study materials covering language features, collections, concurrency, the JVM, garbage collection, persistence, and application development.
 
-The 65 topics include **33 simple Anki cards** with Front and Back sections and **32 articles** for longer explanations. The Format column identifies each one.
+The 66 topics include **33 simple Anki cards** with Front and Back sections and **33 articles** for longer explanations. The Format column identifies each one.
 
 Every topic lives in its own folder as `Readme.md`, with its teaching diagrams in a sibling `images/` directory. Diagrams used by several topics are copied into each topic's own `images/` directory.
 
@@ -73,6 +73,7 @@ Every topic lives in its own folder as `Readme.md`, with its teaching diagrams i
 | [Concurrency. Deadlock vs Livelock vs Starvation](./Concurrency.%20Deadlock%20vs%20Livelock%20vs%20Starvation/Readme.md) | Article |
 | [Concurrency. Double checked locking](./Concurrency.%20Double%20checked%20locking/Readme.md) | Article |
 | [Concurrency. Happens-before](./Concurrency.%20Happens-before/Readme.md) | Article |
+| [Concurrency. Lock vs Monitor](./Concurrency.%20Lock%20vs%20Monitor/Readme.md) | Article |
 | [Concurrency. LongAdder](./Concurrency.%20LongAdder/Readme.md) | Article |
 | [Concurrency. Ordering](./Concurrency.%20Ordering/Readme.md) | Simple card |
 | [Concurrency. Parallel Stream Internals](./Concurrency.%20Parallel%20Stream%20Internals/Readme.md) | Article |
