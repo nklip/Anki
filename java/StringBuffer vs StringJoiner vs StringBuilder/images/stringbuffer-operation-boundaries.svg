@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="815" viewBox="0 0 1200 815" role="img" aria-labelledby="title description">
+  <title id="title">StringBuffer synchronizes calls, but a whole record needs a shared lock boundary</title>
+  <desc id="description">Both timelines begin with an empty shared StringBuffer. On the left, four individually synchronized calls legally run in order: thread A appends A:, thread B appends B:, thread B appends 2;, thread A appends 1;. The result A:B:2;1; mixes records. On the right, both threads group their two calls in synchronized(buffer). A can finish its whole A:1; record before B begins B:2;, or B can finish first. The two records stay intact, but their order is not guaranteed.</desc>
+
+  <!-- Shared styles; blue identifies thread A, amber thread B, green complete records. -->
+  <defs>
+    <style>
+      .heading { font-family: Arial, Helvetica, sans-serif; font-weight: 700; fill: #202124; }
+      .body { font-family: Arial, Helvetica, sans-serif; fill: #303840; }
+      .muted { font-family: Arial, Helvetica, sans-serif; fill: #5f6872; }
+      .mono { font-family: Menlo, Consolas, "Liberation Mono", monospace; fill: #303840; }
+    </style>
+  </defs>
+
+  <!-- The same initial state and reading direction apply to both panels. -->
+  <rect id="background" width="1200" height="815" fill="#ffffff"/>
+  <text x="600" y="43" text-anchor="middle" class="heading" font-size="29">A synchronized call is smaller than a complete record</text>
+  <text x="600" y="77" text-anchor="middle" class="muted" font-size="18">Shared StringBuffer starts empty · Read each timeline from top to bottom</text>
+
+  <!-- Left: a legal serial order of synchronized methods still mixes multi-call records. -->
+  <g id="individual-call-timeline">
+    <rect x="30" y="109" width="555" height="610" rx="10" fill="#f8fafc" stroke="#a5afb9" stroke-width="1.5"/>
+    <text x="55" y="145" class="heading" font-size="23">Each append() locks separately</text>
+    <text x="55" y="175" class="body" font-size="17">One possible order; calls do not run simultaneously.</text>
+    <text x="60" y="210" class="muted" font-size="15">CALL</text>
+    <text x="363" y="210" class="muted" font-size="15">BUFFER AFTER CALL</text>
+
+    <rect id="a-first-call" x="55" y="226" width="505" height="66" rx="7" fill="#eef5ff" stroke="#356eb3" stroke-width="1.5"/>
+    <text x="75" y="252" class="heading" font-size="16">1 · Thread A</text>
+    <text x="75" y="277" class="mono" font-size="17">append("A:")</text>
+    <text x="363" y="266" class="mono" font-size="19">A:</text>
+    <!-- Short arrows occupy only the gaps between call boxes and never intersect labels. -->
+    <path id="call-one-to-two-arrow" d="M307 296V311" fill="none" stroke="#66727e" stroke-width="3"/>
+    <polygon points="300,311 307,322 314,311" fill="#66727e"/>
+
+    <rect id="b-first-call" x="55" y="328" width="505" height="66" rx="7" fill="#fff8e6" stroke="#b7791f" stroke-width="1.5"/>
+    <text x="75" y="354" class="heading" font-size="16">2 · Thread B</text>
+    <text x="75" y="379" class="mono" font-size="17">append("B:")</text>
+    <text x="363" y="368" class="mono" font-size="19">A:B:</text>
+    <path id="call-two-to-three-arrow" d="M307 398V413" fill="none" stroke="#66727e" stroke-width="3"/>
+    <polygon points="300,413 307,424 314,413" fill="#66727e"/>
+
+    <rect id="b-second-call" x="55" y="430" width="505" height="66" rx="7" fill="#fff8e6" stroke="#b7791f" stroke-width="1.5"/>
+    <text x="75" y="456" class="heading" font-size="16">3 · Thread B</text>
+    <text x="75" y="481" class="mono" font-size="17">append("2;")</text>
+    <text x="363" y="470" class="mono" font-size="19">A:B:2;</text>
+    <path id="call-three-to-four-arrow" d="M307 500V515" fill="none" stroke="#66727e" stroke-width="3"/>
+    <polygon points="300,515 307,526 314,515" fill="#66727e"/>
+
+    <rect id="a-second-call" x="55" y="532" width="505" height="66" rx="7" fill="#eef5ff" stroke="#356eb3" stroke-width="1.5"/>
+    <text x="75" y="558" class="heading" font-size="16">4 · Thread A</text>
+    <text x="75" y="583" class="mono" font-size="17">append("1;")</text>
+    <text x="363" y="572" class="mono" font-size="19">A:B:2;1;</text>
+
+    <text x="55" y="641" class="heading" font-size="20">Result: mixed records</text>
+    <text x="55" y="673" class="body" font-size="17">Each call is protected. The pair of calls is not.</text>
+    <text x="55" y="698" class="muted" font-size="16">A method chain does not change this boundary.</text>
+  </g>
+
+  <!-- Right: both writers use the same buffer monitor around their complete record. -->
+  <g id="whole-record-timeline">
+    <rect x="615" y="109" width="555" height="610" rx="10" fill="#f8fafc" stroke="#a5afb9" stroke-width="1.5"/>
+    <text x="640" y="145" class="heading" font-size="23">Lock around the whole record</text>
+    <text x="640" y="175" class="body" font-size="17">Both threads use synchronized(buffer).</text>
+    <text x="640" y="210" class="muted" font-size="15">EXAMPLE: A OBTAINS THE SHARED LOCK FIRST</text>
+
+    <rect id="a-complete-record" x="640" y="226" width="505" height="151" rx="7" fill="#eef5ff" stroke="#356eb3" stroke-width="2"/>
+    <text x="660" y="255" class="heading" font-size="18">Thread A · hold the lock for both calls</text>
+    <text x="660" y="285" class="mono" font-size="17">synchronized (buffer) {</text>
+    <text x="660" y="311" class="mono" font-size="17">  buffer.append("A:").append("1;");</text>
+    <text x="660" y="337" class="mono" font-size="17">}</text>
+    <text x="660" y="363" class="body" font-size="16">Release the lock · buffer now contains A:1;</text>
+
+    <!-- The next block can enter only after the previous complete record releases the monitor. -->
+    <path id="record-a-to-b-arrow" d="M892 383V410" fill="none" stroke="#66727e" stroke-width="3"/>
+    <polygon points="885,410 892,421 899,410" fill="#66727e"/>
+
+    <rect id="b-complete-record" x="640" y="430" width="505" height="151" rx="7" fill="#fff8e6" stroke="#b7791f" stroke-width="2"/>
+    <text x="660" y="459" class="heading" font-size="18">Thread B · now hold the same lock</text>
+    <text x="660" y="489" class="mono" font-size="17">synchronized (buffer) {</text>
+    <text x="660" y="515" class="mono" font-size="17">  buffer.append("B:").append("2;");</text>
+    <text x="660" y="541" class="mono" font-size="17">}</text>
+    <text x="660" y="567" class="body" font-size="16">Release the lock · buffer now contains A:1;B:2;</text>
+
+    <rect id="intact-results" x="640" y="606" width="505" height="90" rx="7" fill="#edf8f0" stroke="#34834b" stroke-width="1.5"/>
+    <text x="660" y="635" class="heading" font-size="19">Intact records; either order is possible</text>
+    <text x="660" y="667" class="mono" font-size="21">A:1;B:2;   or   B:2;A:1;</text>
+  </g>
+
+  <!-- Final rule makes the synchronization contract explicit instead of relying on color alone. -->
+  <text x="600" y="757" text-anchor="middle" class="heading" font-size="19">Choose the lock boundary to match the operation your program must keep together.</text>
+  <text x="600" y="787" text-anchor="middle" class="muted" font-size="17">All participating writers must follow the same locking rule; scheduling still decides which record comes first.</text>
+</svg>
