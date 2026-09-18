@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="585" viewBox="0 0 1120 585" role="img" aria-labelledby="title description">
+<title id="title">One monitor coordinates access and condition waiting</title>
+<desc id="description">A producer owns a private monitor. A consumer that called wait is in its wait set and does not own the monitor. Shared slot fields are guarded by that monitor. Other lock contenders are separate from the wait set.</desc>
+  <!-- Shared typography and semantic colors: blue owns, amber waits, green may compete. -->
+  <defs><style>
+    .title { font: 700 30px Arial, Helvetica, sans-serif; fill: #172b45; }
+    .heading { font: 700 23px Arial, Helvetica, sans-serif; fill: #172b45; }
+    .body { font: 20px Arial, Helvetica, sans-serif; fill: #334155; }
+    .small { font: 18px Arial, Helvetica, sans-serif; fill: #475569; }
+    .code { font: 19px monospace; fill: #172b45; }
+  </style></defs>
+<!-- Canvas and reading guide. -->
+<rect width="1120" height="585" fill="#ffffff"/>
+<text x="32" y="48" text-anchor="start" class="title">One monitor coordinates access and condition waiting</text>
+<text x="32" y="83" text-anchor="start" class="body">Example snapshot: a producer owns the lock; a consumer waits for a message.</text>
+<!-- The object associates ownership with a wait set; fields remain part of the slot. -->
+<rect x="32" y="113" width="680" height="323" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="56" y="150" text-anchor="start" class="heading">Private object: monitor</text>
+<rect x="56" y="175" width="302" height="147" rx="12" fill="#edf5ff" stroke="#b7d2f0" stroke-width="2"/>
+<text x="76" y="212" text-anchor="start" class="heading">Monitor owner</text>
+<text x="76" y="251" text-anchor="start" class="body">Producer thread</text>
+<text x="76" y="287" text-anchor="start" class="code">Inside synchronized</text>
+<rect x="382" y="175" width="306" height="147" rx="12" fill="#fff6e7" stroke="#edd6aa" stroke-width="2"/>
+<text x="402" y="212" text-anchor="start" class="heading">Wait set</text>
+<text x="402" y="251" text-anchor="start" class="body">Consumer thread</text>
+<text x="402" y="287" text-anchor="start" class="code">Called monitor.wait()</text>
+<text x="56" y="360" text-anchor="start" class="body">Only the owner should access the guarded fields.</text>
+<text x="56" y="394" text-anchor="start" class="body">A waiter has released this lock so another thread can enter.</text>
+<!-- Guarded state is separate from the private lock object. -->
+<rect x="756" y="113" width="332" height="148" rx="12" fill="#f2f5fa" stroke="#cbd5e1" stroke-width="2"/>
+<text x="780" y="150" text-anchor="start" class="heading">Slot fields</text>
+<text x="780" y="188" text-anchor="start" class="code">hasValue = false</text>
+<text x="780" y="225" text-anchor="start" class="body">value: no message yet</text>
+<!-- Shaft ends inside the separate arrowhead base; tip stays clear of the target. -->
+ <path id="flow-guards" d="M714 211 H740" fill="none" stroke="#64748b" stroke-width="3"/>
+ <path d="M738 203 L752 211 L738 219 Z" fill="#64748b"/>
+<rect x="756" y="287" width="332" height="149" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="780" y="324" text-anchor="start" class="heading">New lock contenders</text>
+<text x="780" y="362" text-anchor="start" class="body">Want to enter synchronized</text>
+<text x="780" y="400" text-anchor="start" class="body">Have not called wait().</text>
+<!-- Definitions distinguish the predicate from the wait set. -->
+<rect x="32" y="462" width="1056" height="95" rx="12" fill="#ecf8f1" stroke="#bbdfca" stroke-width="2"/>
+<text x="56" y="500" text-anchor="start" class="heading">Condition: hasValue must be true before the consumer can take a message.</text>
+<text x="56" y="534" text-anchor="start" class="body">The program checks this condition; the monitor does not understand it.</text>
+</svg>

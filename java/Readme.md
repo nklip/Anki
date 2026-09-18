@@ -4,7 +4,7 @@
 
 Java study materials covering language features, collections, concurrency, the JVM, garbage collection, persistence, and application development.
 
-The 66 topics include **33 simple Anki cards** with Front and Back sections and **33 articles** for longer explanations. The Format column identifies each one.
+The 67 topics include **33 simple Anki cards** with Front and Back sections and **34 articles** for longer explanations. The Format column identifies each one.
 
 Every topic lives in its own folder as `Readme.md`, with its teaching diagrams in a sibling `images/` directory. Diagrams used by several topics are copied into each topic's own `images/` directory.
 
@@ -84,6 +84,7 @@ Every topic lives in its own folder as `Readme.md`, with its teaching diagrams i
 | [Concurrency. Virtual Threads](./Concurrency.%20Virtual%20Threads/Readme.md) | Article |
 | [Concurrency. Visibility](./Concurrency.%20Visibility/Readme.md) | Simple card |
 | [Concurrency. Volatile](./Concurrency.%20Volatile/Readme.md) | Article |
+| [Concurrency. wait(), notify() and notifyAll()](./Concurrency.%20wait%20notify%20notifyAll/Readme.md) | Article |
 | [Concurrency. Word tearing](./Concurrency.%20Word%20tearing/Readme.md) | Simple card |
 | [Java Memory Model](./Java%20Memory%20Model/Readme.md) | Article |
 

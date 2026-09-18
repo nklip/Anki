@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="972" viewBox="0 0 640 972" role="img" aria-labelledby="title description">
+  <title id="title">notify() and notifyAll(): waiting, blocked, and owning the monitor</title>
+  <desc id="description">Two panels show snapshots of threads sharing one object's monitor. At the top, T1 calls notify and T3 is the arbitrary chosen waiter; T2 and T4 remain waiting. T3 blocks on reacquisition until T1 releases the monitor, then acquires it in the illustrated outcome. At the bottom, T1 calls notifyAll, making T2, T3, and T4 contend for the monitor. T2 acquires it after T1 releases in this example. Only one thread owns the monitor at a time; neither a lock handoff nor priority ordering is guaranteed. Red Lock badges mark monitor ownership. RUNNABLE is the Java thread state, including executing threads.</desc>
+  <!-- Based on the user's NotifyVsNotifyAll.png reference (640 x 972).
+       Preserve its two panels, thread positions, blue nodes, red locks, peach notes,
+       and branching routes. Correct its automatic-handoff and priority claims;
+       replace informal RUNNING labels with the Java RUNNABLE state.
+       Reference: https://i0.wp.com/vkd.pfs.mybluehost.me/website_6d0f205d//index.php/wp-content/uploads/2016/03/NotifyVsNotifyAll.png?w=1300 -->
+  <!-- Real SVG text and reusable styles keep this reconstruction editable. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #000000; }
+      .heading { font-size: 20px; font-weight: 700; }
+      .label { font-size: 14px; }
+      .note { font-size: 16px; }
+      .guide { font-size: 12px; }
+      .thread { fill: #b8cce4; stroke: #000000; stroke-width: 1; }
+      .lock { fill: #c00000; stroke: #000000; stroke-width: 1; }
+      .caption { fill: #fbd4b4; stroke: #000000; stroke-width: 1; }
+    </style>
+  </defs>
+  <!-- Canvas; the middle divider preserves the reference's panel split. -->
+  <rect width="640" height="972" fill="#ffffff"/>
+  <path d="M0 488.5 H639" stroke="#000000" fill="none"/>
+
+  <!-- Top panel: T3 is an example selection; T2 and T4 are untouched. -->
+  <text x="320" y="26" text-anchor="middle" class="heading">notify()</text>
+  <text x="320" y="47" text-anchor="middle" class="guide">One object, one monitor. Read the snapshots from left to right.</text>
+  <g id="notify-owner-t1">
+    <ellipse cx="60.5" cy="193.5" rx="52" ry="48.5" class="thread"/>
+  <text x="60.5" y="175.5" text-anchor="middle" class="label">T1</text>
+    <ellipse cx="60.5" cy="217.5" rx="25" ry="18" class="lock"/>
+  <text x="60.5" y="222.5" text-anchor="middle" class="label">Lock</text>
+  <text x="60.5" y="258.0" text-anchor="middle" class="label">[RUNNABLE]</text>
+  </g>
+  <g id="notify-waiting-t2">
+    <ellipse cx="251" cy="87.5" rx="36.5" ry="27" class="thread"/>
+  <text x="251" y="91.5" text-anchor="middle" class="label">T2</text>
+  <text x="251" y="130.5" text-anchor="middle" class="label">[WAITING]</text>
+  </g>
+  <g id="notify-waiting-t3">
+    <ellipse cx="251" cy="193.5" rx="36.5" ry="27" class="thread"/>
+  <text x="251" y="197.5" text-anchor="middle" class="label">T3</text>
+  <text x="251" y="236.5" text-anchor="middle" class="label">[WAITING]</text>
+  </g>
+  <g id="notify-waiting-t4">
+    <ellipse cx="254" cy="298.5" rx="36.5" ry="27" class="thread"/>
+  <text x="254" y="302.5" text-anchor="middle" class="label">T4</text>
+  <text x="254" y="341.5" text-anchor="middle" class="label">[WAITING]</text>
+  </g>
+  <g id="notify-blocked-t3">
+    <ellipse cx="403.5" cy="193.5" rx="36.5" ry="27" class="thread"/>
+  <text x="403.5" y="197.5" text-anchor="middle" class="label">T3</text>
+  <text x="403.5" y="236.5" text-anchor="middle" class="label">[BLOCKED]</text>
+  </g>
+  <g id="notify-next-owner-t3">
+    <ellipse cx="574.5" cy="193.5" rx="52" ry="48.5" class="thread"/>
+  <text x="574.5" y="175.5" text-anchor="middle" class="label">T3</text>
+    <ellipse cx="574.5" cy="217.5" rx="25" ry="18" class="lock"/>
+  <text x="574.5" y="222.5" text-anchor="middle" class="label">Lock</text>
+  <text x="574.5" y="258.0" text-anchor="middle" class="label">[RUNNABLE]</text>
+  </g>
+  <!-- Horizontal shafts and heads meet ellipse boundaries without entering text. -->
+  <path id="connector-notify-select" d="M113 193.5 L208.00 193.50" fill="none" stroke="#000000" stroke-width="2"/>
+  <path id="arrowhead-notify-select" d="M206.00 197.50 L214 193.5 L206.00 189.50 Z" fill="#000000"/>
+  <path id="connector-notify-reacquire" d="M288 193.5 L360.50 193.50" fill="none" stroke="#000000" stroke-width="2"/>
+  <path id="arrowhead-notify-reacquire" d="M358.50 197.50 L366.5 193.5 L358.50 189.50 Z" fill="#000000"/>
+  <path id="connector-notify-acquire" d="M440.5 193.5 L516.00 193.50" fill="none" stroke="#000000" stroke-width="2"/>
+  <path id="arrowhead-notify-acquire" d="M514.00 197.50 L522 193.5 L514.00 189.50 Z" fill="#000000"/>
+  <text x="161" y="181" text-anchor="middle" class="label">notify()</text>
+  <text x="480" y="177" text-anchor="middle" class="guide">T1 unlocks</text>
+  <!-- Corrected caption preserves the peach box of the original. -->
+  <rect x="110.5" y="385.5" width="412" height="81" class="caption"/>
+  <text x="121" y="408" text-anchor="start" class="note">One arbitrary waiter is notified (T3 here).</text>
+  <text x="121" y="431" text-anchor="start" class="note">It must reacquire after T1 releases the lock.</text>
+  <text x="121" y="454" text-anchor="start" class="note">Notification does not transfer ownership.</text>
+  <!-- Bottom panel: all three waiters leave the wait set and contend. -->
+  <text x="320" y="510" text-anchor="middle" class="heading">notifyAll()</text>
+  <g id="notify-all-owner-t1">
+    <ellipse cx="62" cy="679" rx="52" ry="48.5" class="thread"/>
+  <text x="62" y="661" text-anchor="middle" class="label">T1</text>
+    <ellipse cx="62" cy="703" rx="25" ry="18" class="lock"/>
+  <text x="62" y="708" text-anchor="middle" class="label">Lock</text>
+  <text x="62" y="743.5" text-anchor="middle" class="label">[RUNNABLE]</text>
+  </g>
+  <g id="notify-all-waiting-t2">
+    <ellipse cx="253" cy="572.5" rx="36.5" ry="27" class="thread"/>
+  <text x="253" y="576.5" text-anchor="middle" class="label">T2</text>
+  <text x="253" y="615.5" text-anchor="middle" class="label">[WAITING]</text>
+  </g>
+  <g id="notify-all-waiting-t3">
+    <ellipse cx="253" cy="679" rx="36.5" ry="27" class="thread"/>
+  <text x="253" y="683" text-anchor="middle" class="label">T3</text>
+  <text x="253" y="722" text-anchor="middle" class="label">[WAITING]</text>
+  </g>
+  <g id="notify-all-waiting-t4">
+    <ellipse cx="256" cy="784.5" rx="36.5" ry="27" class="thread"/>
+  <text x="256" y="788.5" text-anchor="middle" class="label">T4</text>
+  <text x="256" y="827.5" text-anchor="middle" class="label">[WAITING]</text>
+  </g>
+  <g id="notify-all-blocked-t2">
+    <ellipse cx="404.5" cy="572.5" rx="36.5" ry="27" class="thread"/>
+  <text x="404.5" y="576.5" text-anchor="middle" class="label">T2</text>
+  <text x="404.5" y="615.5" text-anchor="middle" class="label">[BLOCKED]</text>
+  </g>
+  <g id="notify-all-blocked-t3">
+    <ellipse cx="406" cy="679" rx="36.5" ry="27" class="thread"/>
+  <text x="406" y="683" text-anchor="middle" class="label">T3</text>
+  <text x="406" y="722" text-anchor="middle" class="label">[BLOCKED]</text>
+  </g>
+  <g id="notify-all-blocked-t4">
+    <ellipse cx="406" cy="784.5" rx="36.5" ry="27" class="thread"/>
+  <text x="406" y="788.5" text-anchor="middle" class="label">T4</text>
+  <text x="406" y="827.5" text-anchor="middle" class="label">[BLOCKED]</text>
+  </g>
+  <g id="notify-all-next-owner-t2">
+    <ellipse cx="577" cy="572.5" rx="52" ry="48.5" class="thread"/>
+  <text x="577" y="554.5" text-anchor="middle" class="label">T2</text>
+    <ellipse cx="577" cy="596.5" rx="25" ry="18" class="lock"/>
+  <text x="577" y="601.5" text-anchor="middle" class="label">Lock</text>
+  <text x="577" y="637.0" text-anchor="middle" class="label">[RUNNABLE]</text>
+  </g>
+  <!-- Fan-out is intentionally shared at the owner boundary. Each head ends at a waiter edge. -->
+  <path id="connector-all-select-t2" d="M114.5 679 L211.86 576.84" fill="none" stroke="#000000" stroke-width="2"/>
+  <path id="arrowhead-all-select-t2" d="M213.38 581.05 L216 572.5 L207.59 575.53 Z" fill="#000000"/>
+  <path id="connector-all-select-t3" d="M114.5 679 L210.00 679.00" fill="none" stroke="#000000" stroke-width="2"/>
+  <path id="arrowhead-all-select-t3" d="M208.00 683.00 L216 679 L208.00 675.00 Z" fill="#000000"/>
+  <path id="connector-all-select-t4" d="M114.5 679 L214.78 780.24" fill="none" stroke="#000000" stroke-width="2"/>
+  <path id="arrowhead-all-select-t4" d="M210.53 781.63 L219 784.5 L216.21 776.00 Z" fill="#000000"/>
+  <path id="connector-all-reacquire-t2" d="M290 572.5 L361.50 572.50" fill="none" stroke="#000000" stroke-width="2"/>
+  <path id="arrowhead-all-reacquire-t2" d="M359.50 576.50 L367.5 572.5 L359.50 568.50 Z" fill="#000000"/>
+  <path id="connector-all-reacquire-t3" d="M290 679 L363.00 679.00" fill="none" stroke="#000000" stroke-width="2"/>
+  <path id="arrowhead-all-reacquire-t3" d="M361.00 683.00 L369 679 L361.00 675.00 Z" fill="#000000"/>
+  <path id="connector-all-reacquire-t4" d="M293 784.5 L363.00 784.50" fill="none" stroke="#000000" stroke-width="2"/>
+  <path id="arrowhead-all-reacquire-t4" d="M361.00 788.50 L369 784.5 L361.00 780.50 Z" fill="#000000"/>
+  <path id="connector-all-acquire-t2" d="M441.5 572.5 L518.50 572.50" fill="none" stroke="#000000" stroke-width="2"/>
+  <path id="arrowhead-all-acquire-t2" d="M516.50 576.50 L524.5 572.5 L516.50 568.50 Z" fill="#000000"/>
+  <text x="180" y="669" text-anchor="middle" class="label">notifyAll()</text>
+  <text x="482" y="555" text-anchor="middle" class="guide">T1 unlocks</text>
+  <text x="577" y="651" text-anchor="middle" class="guide">Example winner</text>
+  <!-- Corrected note: arbitrary competition replaces the reference's priority claim. -->
+  <rect x="80.5" y="856.5" width="484" height="95" class="caption"/>
+  <text x="90" y="878" text-anchor="start" class="note">All current waiters are notified. After T1 unlocks,</text>
+  <text x="90" y="901" text-anchor="start" class="note">they compete; T2 wins in this example. Only one</text>
+  <text x="90" y="924" text-anchor="start" class="note">thread owns the lock at a time. No priority order</text>
+  <text x="90" y="945" text-anchor="start" class="note">is guaranteed. Each waiter must recheck its condition.</text>
+</svg>

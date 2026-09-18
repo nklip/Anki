@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="607" viewBox="0 0 1200 607" role="img" aria-labelledby="title description">
+<title id="title">Notification enables a retry; ownership comes later</title>
+<desc id="description">Three snapshots: consumer C checks an empty slot and calls wait, releasing the monitor. Producer P acquires it, fills the slot, and calls notifyAll while keeping ownership. After P releases and C reacquires, wait returns and C checks the predicate again. Other schedules are possible.</desc>
+  <!-- Shared typography and semantic colors: blue owns, amber waits, green may compete. -->
+  <defs><style>
+    .title { font: 700 30px Arial, Helvetica, sans-serif; fill: #172b45; }
+    .heading { font: 700 23px Arial, Helvetica, sans-serif; fill: #172b45; }
+    .body { font: 20px Arial, Helvetica, sans-serif; fill: #334155; }
+    .small { font: 18px Arial, Helvetica, sans-serif; fill: #475569; }
+    .code { font: 19px monospace; fill: #172b45; }
+  </style></defs>
+<!-- Canvas and reading guide. -->
+<rect width="1200" height="607" fill="#ffffff"/>
+<text x="32" y="48" text-anchor="start" class="title">Notification enables a retry; ownership comes later</text>
+<text x="32" y="84" text-anchor="start" class="body">Read left to right. C = consumer; P = producer. All calls use the same monitor.</text>
+<!-- Snapshot 1; the status band is also the connector alignment. -->
+<rect x="32" y="120" width="336" height="337" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="52" y="158" text-anchor="start" class="heading">C needs a message</text>
+<rect x="50" y="179" width="300" height="63" rx="12" fill="#fff6e7" stroke="#cbd5e1" stroke-width="2"/>
+<text x="200" y="220" text-anchor="middle" class="heading">Owner: C → none</text>
+<text x="52" y="279" text-anchor="start" class="code">hasValue == false</text>
+<text x="52" y="322" text-anchor="start" class="body">C calls wait().</text>
+<text x="52" y="351" text-anchor="start" class="body">It releases the monitor</text>
+<text x="52" y="380" text-anchor="start" class="body">and joins the wait set.</text>
+<text x="52" y="430" text-anchor="start" class="small">Wait set after call: C</text>
+<!-- Snapshot 2; the status band is also the connector alignment. -->
+<rect x="432" y="120" width="336" height="337" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="452" y="158" text-anchor="start" class="heading">P fills the slot</text>
+<rect x="450" y="179" width="300" height="63" rx="12" fill="#edf5ff" stroke="#cbd5e1" stroke-width="2"/>
+<text x="600" y="220" text-anchor="middle" class="heading">Owner: P</text>
+<text x="452" y="279" text-anchor="start" class="code">hasValue = true</text>
+<text x="452" y="322" text-anchor="start" class="body">P calls notifyAll().</text>
+<text x="452" y="351" text-anchor="start" class="body">C can try to reacquire.</text>
+<text x="452" y="380" text-anchor="start" class="body">P still holds the monitor.</text>
+<text x="452" y="430" text-anchor="start" class="small">Wait set after call: empty</text>
+<!-- Snapshot 3; the status band is also the connector alignment. -->
+<rect x="832" y="120" width="336" height="337" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="852" y="158" text-anchor="start" class="heading">P releases; C acquires</text>
+<rect x="850" y="179" width="300" height="63" rx="12" fill="#ecf8f1" stroke="#cbd5e1" stroke-width="2"/>
+<text x="1000" y="220" text-anchor="middle" class="heading">Owner: C</text>
+<text x="852" y="279" text-anchor="start" class="code">while (!hasValue)</text>
+<text x="852" y="322" text-anchor="start" class="body">wait() returns with the</text>
+<text x="852" y="351" text-anchor="start" class="body">monitor held. C rechecks</text>
+<text x="852" y="380" text-anchor="start" class="body">and takes the message.</text>
+<text x="852" y="430" text-anchor="start" class="small">Shown outcome: C proceeds</text>
+<!-- Shaft ends inside the separate arrowhead base; tip stays clear of the target. -->
+ <path id="flow-wait-publish" d="M372 211 H416" fill="none" stroke="#64748b" stroke-width="3"/>
+ <path d="M414 203 L428 211 L414 219 Z" fill="#64748b"/>
+<!-- Shaft ends inside the separate arrowhead base; tip stays clear of the target. -->
+ <path id="flow-publish-reacquire" d="M772 211 H816" fill="none" stroke="#64748b" stroke-width="3"/>
+ <path d="M814 203 L828 211 L814 219 Z" fill="#64748b"/>
+<rect x="32" y="484" width="1136" height="94" rx="12" fill="#f2f5fa" stroke="#cbd5e1" stroke-width="2"/>
+<text x="56" y="521" text-anchor="start" class="heading">A wakeup does not guarantee a message is still available.</text>
+<text x="56" y="555" text-anchor="start" class="body">Other threads can acquire first. Recheck the predicate in a while loop every time.</text>
+</svg>
