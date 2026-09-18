@@ -318,14 +318,18 @@ Kappa architecture:
 
 Our high-level design uses the Kappa architecture as reprocessing of historical data also goes through the aggregation service.
 
+### **Data recalculation**
+
 Whenever we have to recalculate aggregated data due to, e.g., a major bug in aggregation logic, we can recalculate the aggregation from the raw data we store.
- - Recalculation service retrieves data from raw storage. This is a batch job.
- - Retrieved data is sent to a dedicated aggregation service, so that the real-time processing aggregation service is not impacted.
- - Aggregated results are sent to the second message queue, after which we update the results in the aggregation database.
+1. The recalculation service retrieves data from raw data storage. This is a batched job.
+2. Retrieved data is sent to a dedicated aggregation service so that the real-time processing is not impacted by historical data replay.
+3. Aggregated results are sent to the second message queue, then updated in the aggregation database.
 
 <div style="margin-left:3rem">
     <img src="./images/recalculation-example.svg" alt="recalculation-example" width="1000" />
 </div>
+
+The recalculation process reuses the data aggregation service but uses a different data source (raw data).
 
 ### **Time**
 We need a timestamp to perform aggregation. It can be generated in two places:
