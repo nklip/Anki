@@ -1,14 +1,16 @@
 # Prompt-writing guidelines
 
-<!-- Card mode: simple. Validate with --mode simple. -->
+<sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-## Front
+# Front
 
-Name the six habits that make a single prompt work, ordered by leverage. Which two are not named prompting techniques, and which two techniques can no single prompt reach?
+Which six habits help you write a clear prompt, and how do they differ from methods that generate several outputs?
 
-## Back
+# Back
 
-**Ordered by leverage: give context, specify constraints, ask it to think first, break the task into steps, show examples, set role or tone.** The order matters more than the list — and the two highest-leverage habits are not techniques at all, just writing a clear specification.
+**Give context, specify constraints, ask it to think first, break into steps, show examples, and set role or tone.** These habits shape a message; methods that generate several outputs organize repeated generation.
+
+The diagram's left panel gives a suggested order, not a measured ranking; the right introduces Self-consistency (sample and vote) and Self-Refine (draft, critique, revise).
 
 ![prompt-writing-guidelines.svg](images/prompt-writing-guidelines.svg)
 
@@ -16,32 +18,32 @@ Name the six habits that make a single prompt work, ordered by leverage. Which t
 |---|---|---|---|---|
 | 1 | **Give context** | Goal, why, relevant background | specification | Never |
 | 2 | **Specify constraints** | Format, length, what to omit | specification | The output shape genuinely does not matter |
-| 3 | **Ask it to think first** | Room to reason before answering | chain-of-thought | The model already reasons internally; it costs latency |
+| 3 | **Ask it to think first** | Room to reason before answering | chain-of-thought | Tests on this task show no benefit from asking for intermediate steps |
 | 4 | **Break into steps** | Sub-tasks in solving order | decomposition | The task is genuinely single-step |
 | 5 | **Show examples** | A few worked input/output pairs | few-shot | Instructions already pin the format; examples cost tokens and can over-constrain |
-| 6 | **Set role or tone** | Audience and register | role prompting | You need accuracy — a persona steers style, not correctness |
+| 6 | **Set role or tone** | Audience and register | role prompting | The audience and style are already clear from the request |
 
-Ranking is by how often a habit applies multiplied by how much it changes the answer. It is a rule of thumb, not a measured order.
+Use this order as an authoring checklist. Measure its usefulness on representative tasks for the model you use.
 
-### What one prompt cannot do
+## Methods that generate several outputs
 
-Two proven techniques need **more than one model call**, so no amount of rewording substitutes for them:
+Two research methods use **multiple generated outputs** rather than one answer:
 
-- **Self-consistency** — answer the same question several times, keep the majority.
-- **Self-refine** — have the model critique its own draft, then revise it.
+- **Self-consistency** — sample several reasoning paths for the same question and select the most common final answer.
+- **Self-Refine** — generate a draft, generate feedback on it, and use that feedback to revise it; repeat as needed.
 
-That boundary is the useful distinction: guidelines shape *one* message; the wider technique taxonomy also covers orchestrating *several*.
+Polishing the wording alone cannot replace these sampling-and-voting or feedback-and-revision steps. The number of API calls depends on batching and orchestration. Neither method guarantees correctness.
 
-### Then iterate
+## Then iterate
 
 None of the six is a one-shot ritual. Write the prompt, run it, find the *specific* failure, and change the one thing that caused it. The guidelines tell you what to vary; only testing tells you when to stop.
 
-### Limits
+## Limits
 
 - **Role prompting mainly steers tone.** A systematic study of persona system prompts found no reliable accuracy gain on objective tasks.
-- **Context beats cleverness.** A specific, well-scoped request usually beats a keyword-stuffed one.
+- **Test the result.** Check whether the output meets your stated goal, format, and factual requirements.
 
-## Sources
+# Sources
 
 - [Schulhoff et al.: The Prompt Report](https://arxiv.org/abs/2406.06608)
 
@@ -59,10 +61,10 @@ None of the six is a one-shot ritual. Write the prompt, run it, find the *specif
 
   Samples several reasoning paths and takes the majority answer.
 
+- [Madaan et al.: Self-Refine — Iterative Refinement with Self-Feedback](https://arxiv.org/abs/2303.17651)
+
+  Defines the repeated draft, feedback, and refinement procedure.
+
 - [Zheng et al.: When "A Helpful Assistant" Is Not Really Helpful](https://arxiv.org/abs/2311.10054)
 
   Finds that persona system prompts do not reliably improve model performance on objective tasks.
-
----
-
-<sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
