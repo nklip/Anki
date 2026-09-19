@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1020" viewBox="0 0 1200 1020" role="img" aria-labelledby="title desc">
   <title id="title">Python gateway interfaces and the Java Servlet API</title>
-  <desc id="desc">The upper half compares the same boundary in two languages. In Python a WSGI or ASGI server, such as Gunicorn or Uvicorn, calls a Python application containing framework code. In Java a servlet container, such as Tomcat or Jetty, calls a servlet instance containing handler code. The lower half compares how each ecosystem answered the question of connections that stay open. Python moved from WSGI in 2003, carrying one request and one response, to ASGI 3.0 in 2019, whose single interface also carries WebSocket connections. Java added asynchronous request processing in Servlet 3.0 in 2009 and then defined the Java API for WebSocket in 2013 as a separate specification. Both approaches keep application code independent of the server that runs it, but the Servlet API also standardizes lifecycle, filters and sessions, while WSGI and ASGI standardize only the call.</desc>
+  <desc id="desc">The upper half compares the same boundary in two languages. In Python a WSGI or ASGI server, such as Gunicorn or Uvicorn, calls a Python application containing framework code. In Java a servlet container, such as Tomcat or Jetty, calls a servlet instance containing handler code. The lower half compares how each ecosystem answered the question of connections that stay open. Python moved from WSGI in 2003, carrying one request and one response, to ASGI 3.0 in 2019, whose single interface also carries WebSocket connections. Java added asynchronous request processing in Servlet 3.0 in 2009, non-blocking input and output in Servlet 3.1 in 2013, and the Java API for WebSocket in 2013 as a separate specification. Both approaches keep application code independent of the server that runs it, but the Servlet API also standardizes lifecycle, filters and sessions, while WSGI and ASGI focus on the application interface; ASGI also defines startup and shutdown events.</desc>
 
   <!-- Purple marks the Python lane, blue the Java lane; the same geometry makes equivalent roles line up. -->
   <defs>
@@ -30,7 +30,7 @@
     <text class="subtitle" x="50" y="135">WSGI = Web Server Gateway Interface · ASGI = Asynchronous Server Gateway Interface</text>
   </g>
 
-  <!-- Python lane: the arrow labels the call itself, which is all these interfaces define. -->
+  <!-- Python lane: the arrow labels the server-to-application interface. -->
   <g id="python-lane">
     <rect x="50" y="160" width="1100" height="192" rx="18" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
     <text class="lane-title" x="74" y="196" style="fill:#6d28d9">Python: WSGI and ASGI</text>
@@ -68,29 +68,32 @@
     <line class="shaft" data-connector="true" x1="376" y1="478" x2="829" y2="478" stroke="#2563eb"/>
     <polygon points="845,478 828,469 828,487" fill="#2563eb"/>
 
-    <text class="copy" x="74" y="542">The container also manages lifecycle, filters and sessions. WSGI and ASGI leave that to frameworks.</text>
+    <text class="copy" x="74" y="542">The container also manages servlet lifecycle, filters and sessions.</text>
   </g>
 
-  <!-- Milestone chips are placed on a shared x-grid so the two answers can be read as a pair. -->
+  <!-- Both history rows share their outer edges; Java has three chips so Servlet 3.1 stays distinct from WebSocket. -->
   <g id="parallel-history">
     <rect x="50" y="584" width="1100" height="300" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
     <text class="eyebrow" x="74" y="617">BOTH THEN FACED THE SAME QUESTION: WHAT ABOUT CONNECTIONS THAT STAY OPEN?</text>
 
     <text class="row-label" x="74" y="682" style="fill:#6d28d9">Python</text>
-    <rect x="200" y="644" width="380" height="70" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/>
-    <text class="chip-label" x="390" y="672" style="fill:#6d28d9">2003 · WSGI</text>
-    <text class="chip-note" x="390" y="696">one request, one response</text>
-    <rect x="620" y="644" width="380" height="70" rx="12" fill="#ecfeff" stroke="#0891b2" stroke-width="1.5"/>
-    <text class="chip-label" x="810" y="672" style="fill:#155e75">2019 · ASGI 3.0</text>
-    <text class="chip-note" x="810" y="696">one interface also carries WebSocket</text>
+    <rect x="200" y="644" width="450" height="70" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/>
+    <text class="chip-label" x="425" y="672" style="fill:#6d28d9">2003 · WSGI</text>
+    <text class="chip-note" x="425" y="696">one request, one response</text>
+    <rect x="676" y="644" width="450" height="70" rx="12" fill="#ecfeff" stroke="#0891b2" stroke-width="1.5"/>
+    <text class="chip-label" x="901" y="672" style="fill:#155e75">2019 · ASGI 3.0</text>
+    <text class="chip-note" x="901" y="696">one interface also carries WebSocket</text>
 
     <text class="row-label" x="74" y="772" style="fill:#1d4ed8">Java</text>
-    <rect x="200" y="734" width="380" height="70" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
-    <text class="chip-label" x="390" y="762" style="fill:#1d4ed8">2009 · Servlet 3.0</text>
-    <text class="chip-note" x="390" y="786">asynchronous request processing</text>
-    <rect x="620" y="734" width="380" height="70" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
-    <text class="chip-label" x="810" y="762" style="fill:#1d4ed8">2013 · Java API for WebSocket</text>
-    <text class="chip-note" x="810" y="786">a separate specification</text>
+    <rect id="servlet-3-0-milestone" x="200" y="734" width="290" height="70" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+    <text class="chip-label" x="345" y="762" style="fill:#1d4ed8">2009 · Servlet 3.0</text>
+    <text class="chip-note" x="345" y="786">asynchronous request processing</text>
+    <rect id="servlet-3-1-milestone" x="508" y="734" width="290" height="70" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+    <text class="chip-label" x="653" y="762" style="fill:#1d4ed8">2013 · Servlet 3.1</text>
+    <text class="chip-note" x="653" y="786">non-blocking input and output</text>
+    <rect id="websocket-milestone" x="816" y="734" width="310" height="70" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+    <text class="chip-label" x="971" y="762" style="fill:#1d4ed8">2013 · Java API for WebSocket</text>
+    <text class="chip-note" x="971" y="786">a separate specification</text>
 
     <text class="copy" x="74" y="838">Python widened the gateway interface itself, so one interface now carries both.</text>
     <text class="copy" x="74" y="866">Java extended the container API and put WebSocket into a separate specification.</text>
@@ -100,6 +103,6 @@
   <g id="takeaway">
     <rect x="50" y="904" width="1100" height="100" rx="15" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
     <text x="76" y="941" font-size="23" font-weight="700">Same role: keep application code independent of the server that runs it.</text>
-    <text class="copy" x="76" y="975">The Servlet API also standardizes lifecycle, filters and sessions; WSGI and ASGI standardize the call.</text>
+    <text class="copy" x="76" y="975">Servlet also covers filters and sessions; ASGI includes application startup and shutdown.</text>
   </g>
 </svg>

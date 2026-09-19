@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="940" viewBox="0 0 1200 940" role="img" aria-labelledby="title desc">
-  <title id="title">One call per request, or a connection that stays open</title>
-  <desc id="desc">Two lanes compare the WSGI and ASGI conversation shapes between a web server and a Python application. In the WSGI lane the server makes one call carrying one request, the application hands back the whole response, and the exchange is then over, with one request occupying one worker from beginning to end. In the ASGI lane the server first opens a connection scope, then events arrive at the application, such as body pieces, messages and a disconnect, and events go back from the application, such as a response start, body pieces and messages. Those two steps repeat for as long as the connection lives, which may be a single HTTP request or a WebSocket open for minutes. ASGI covers everything WSGI covers plus connections that stay open, and only ASGI can carry WebSocket connections, streamed responses, and application startup and shutdown events. Adapters let a WSGI application run on an ASGI server without making its code asynchronous.</desc>
+  <title id="title">Synchronous HTTP calls and asynchronous events</title>
+  <desc id="desc">Two lanes compare the WSGI and ASGI conversation shapes between a web server and a Python application. In the WSGI lane the server makes one call carrying one request. The application returns an iterable whose body chunks can be streamed over time. In a conventional worker deployment, one request occupies one worker until the response finishes. In the ASGI lane the server first opens a connection scope, then events arrive at the application, such as body pieces, messages and a disconnect, and events go back from the application, such as a response start, body pieces and messages. Those two steps repeat for as long as the connection lives, which may be a single HTTP request or a WebSocket open for minutes. Both interfaces can stream HTTP responses. ASGI also defines WebSocket events and application startup and shutdown events. Adapters let a WSGI application run on an ASGI server without making its code asynchronous.</desc>
 
   <!-- Purple marks the WSGI lane and teal the ASGI lane; the same pairing is drawn twice for comparison. -->
   <defs>
@@ -23,15 +23,15 @@
   <!-- Expand both abbreviations here so each lane can use the short names. -->
   <g id="heading">
     <text class="eyebrow" x="50" y="33">READ EACH LANE LEFT TO RIGHT · WHAT ASGI ADDED</text>
-    <text class="title" x="50" y="77">One call per request, or a connection that stays open</text>
+    <text class="title" x="50" y="77">Synchronous HTTP calls and asynchronous events</text>
     <text class="subtitle" x="50" y="107">WSGI = Web Server Gateway Interface · ASGI = Asynchronous Server Gateway Interface</text>
     <text class="subtitle" x="50" y="135">Both are agreements between a web server and Python code · HTTP = Hypertext Transfer Protocol</text>
   </g>
 
-  <!-- WSGI lane: exactly two arrows, because the exchange cannot continue after the call returns. -->
+  <!-- WSGI lane: the response arrow includes iteration over body chunks after the callable returns. -->
   <g id="wsgi-lane">
     <rect x="50" y="160" width="1100" height="272" rx="18" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
-    <text class="lane-title" x="74" y="196" style="fill:#6d28d9">WSGI: the server makes one call and waits for it to finish</text>
+    <text class="lane-title" x="74" y="196" style="fill:#6d28d9">WSGI: one synchronous call, then iterate the response body</text>
 
     <rect id="wsgi-server" x="74" y="216" width="250" height="120" rx="15" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
     <text class="node-title" x="199" y="254">Web server</text>
@@ -48,12 +48,12 @@
     <line class="shaft" data-connector="true" x1="326" y1="268" x2="859" y2="268" stroke="#7c3aed"/>
     <polygon points="875,268 858,259 858,277" fill="#7c3aed"/>
 
-    <text class="flow-label" x="600" y="306" style="fill:#15803d">2 · Here is the whole response</text>
+    <text class="flow-label" x="600" y="306" style="fill:#15803d">2 · Response body: yield chunks over time</text>
     <line class="shaft" data-connector="true" x1="874" y1="324" x2="343" y2="324" stroke="#15803d"/>
     <polygon points="326,324 343,315 343,333" fill="#15803d"/>
 
-    <text class="copy" x="74" y="372">The call returns and the exchange is over. Nothing can arrive afterwards.</text>
-    <text class="copy" x="74" y="402">One request occupies one worker from beginning to end.</text>
+    <text class="copy" x="74" y="372">The response iterable can stream body chunks, including server-sent events (SSE).</text>
+    <text class="copy" x="74" y="402">In a conventional worker setup, a request occupies a worker until its response ends.</text>
   </g>
 
   <!-- ASGI lane: three arrows, because the scope outlives any single message exchange. -->
@@ -90,8 +90,8 @@
   <!-- The takeaway states the superset relationship and the limit of the compatibility adapters. -->
   <g id="takeaway">
     <rect x="50" y="792" width="1100" height="124" rx="15" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
-    <text x="76" y="831" font-size="23" font-weight="700">ASGI covers everything WSGI covers, plus connections that stay open.</text>
-    <text class="copy" x="76" y="867">Only ASGI can carry WebSocket connections, streamed responses, and startup and shutdown events.</text>
+    <text x="76" y="831" font-size="23" font-weight="700">Both can stream HTTP responses; ASGI adds asynchronous events.</text>
+    <text class="copy" x="76" y="867">ASGI also defines WebSocket messages and application startup and shutdown events.</text>
     <text class="copy" x="76" y="897">Adapters run a WSGI application on an ASGI server, but that does not make its code asynchronous.</text>
   </g>
 </svg>

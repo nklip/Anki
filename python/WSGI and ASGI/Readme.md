@@ -1,22 +1,17 @@
 # WSGI and ASGI
 
-<!-- Card mode: complex. Validate with --mode complex. -->
-
-## Front
-
-Why do WSGI and ASGI exist, how did ASGI grow out of WSGI, where do both standards stand today, and how do they compare with Java servlets, an API gateway, and MCP?
-
-## Back
+<sub>[Back to Python](../Readme.md#content)</sub>
 
 **Web Server Gateway Interface (WSGI)** and the **Asynchronous Server Gateway Interface (ASGI)** are agreements about how a web server hands a request over to Python application code.
+
 - **WSGI** covers one request and one response.
-- **ASGI** keeps the same idea but also covers connections that stay open, such as WebSocket.
+- **ASGI** adds asynchronous events, including bidirectional WebSocket connections and application startup and shutdown.
 
 Neither one is a server, a library, or a network protocol. Each is a calling convention: a rule both sides agree to follow so that any compatible server can run any compatible application.
 
-This card explains where the names come from, why WSGI was written in 2003, what it could not do, how ASGI answered that, where both standards stand today, why the Java Servlet API (application programming interface) is their closest relative, and how an API gateway and the Model Context Protocol (MCP) fit into the same picture without being the same kind of thing.
+This article explains where the names come from, why WSGI was written in 2003, what it could not do, how ASGI answered that, where both standards stand today, why the Java Servlet API (application programming interface) is their closest relative, and how an API gateway and the Model Context Protocol (MCP) fit into the same picture without being the same kind of thing.
 
-### The one idea behind both names
+## The one idea behind both names
 
 Imagine a wall socket. Appliance makers and electricity suppliers never speak to each other, yet any lamp works in any socket, because both sides agreed on the shape of the plug in advance.
 
@@ -28,7 +23,7 @@ Without a shared agreement, every server and every framework pairing needs its o
 
 Read the diagram left to right. Panel 1 is the situation the standards were written to fix: four pairings, four pieces of glue. Panel 2 is the fix: the same interface in every cell, so a server and a framework can be chosen independently. The green band names the two versions of that interface and the difference between them.
 
-### Where the "G" comes from: CGI, not an API gateway
+## Where the "G" comes from: CGI, not an API gateway
 
 The **G** in both names stands for **Gateway**, and it is the single most misread letter in Python web terminology. It has nothing to do with an API gateway product.
 
@@ -38,13 +33,13 @@ WSGI inherited that vocabulary literally. Its specification describes servers th
 
 So in this family of names, **gateway means the hand-off point between a web server and program code**. It is a doorway inside one running process, not a piece of network infrastructure.
 
-### 2003: how WSGI appeared
+## 2003: how WSGI appeared
 
 **The problem.** By 2003 Python had many web frameworks and no agreement about how a server should call one. **PEP 333** (Python Enhancement Proposal 333) states the consequence directly: a developer's choice of web framework generally limited their choice of usable web server, and the choice of server limited the usable frameworks. Deciding how to write your application therefore quietly decided how you could deploy it.
 
 **The proposal.** Phillip J. Eby wrote PEP 333, created on 7 December 2003 and now marked Final. Its stated goal is a standard interface between web servers and Python applications so that applications become portable between servers.
 
-**The model it copied.** The rationale points directly at Java. It observes that although Java also has many web frameworks, Java's servlet interface lets an application written with any of them run in any server that supports that interface. WSGI set out to give Python the same property. That is why the servlet comparison later in this card is not a loose analogy: it is the design's acknowledged source.
+**The model it copied.** The rationale points directly at Java. It observes that although Java also has many web frameworks, Java's servlet interface lets an application written with any of them run in any server that supports that interface. WSGI set out to give Python the same property. That is why the servlet comparison later in this article is not a loose analogy: it is the design's acknowledged source.
 
 **What the agreement actually says.** A WSGI application is a Python *callable* — anything Python can call, such as a function. For each request, the server calls it with two things:
 
@@ -59,20 +54,20 @@ The application then returns an *iterable* of body chunks — an object the serv
 
 **What WSGI deliberately left out.** It does not standardize deployment. The specification says plainly that it does not define how a server finds or loads the application to invoke, because those are server-specific matters. That is why every WSGI server still has its own configuration and its own way of naming your application.
 
-### The wall WSGI hit
+## The wall WSGI hit
 
-WSGI's shape encodes one assumption: **a request arrives, the application is called once, the response comes back, and the exchange is finished.**
+WSGI's shape is **one synchronous application call per HTTP request, returning an iterable response body.** The server can transmit that body incrementally; it need not wait for the whole response to exist.
 
-That assumption held for a decade of ordinary web pages and then stopped holding:
+This shape has several limits:
 
-- **WebSocket** connections stay open and carry messages in both directions for as long as the user is on the page. A single call that must return the whole answer has nowhere to put "a message arrived four minutes later".
-- **Long-polling and streamed responses**, such as live dashboards, chat, and server-sent event feeds, want to keep pushing data over a connection that is still open.
+- **WebSocket** connections carry messages in both directions. WSGI defines no standard WebSocket event interface for receiving and sending those messages.
+- **Long-polling and streamed responses** can keep a worker occupied for a long time in a conventional WSGI deployment. WSGI supports streaming, including server-sent events (SSE), but deployment buffering and timeouts must allow the stream through.
 - **Concurrency costs.** Because the call is synchronous, each request occupies a worker from beginning to end. Flask's own documentation states this directly: each request still ties up one worker, even for an `async` view, so the number of requests the application can handle at once does not change.
 - **No startup and shutdown hook.** WSGI has no standard moment at which an application can open a database connection pool before serving and close it afterwards.
 
 The ASGI documentation states the verdict plainly: a single-callable interface is not suited to more involved web protocols such as WebSocket.
 
-### How ASGI appeared
+## How ASGI appeared
 
 **Where it came from.** The pressure came from the Django world. **Django Channels** is the Django project that added support for WebSocket and other long-lived protocols, and the ASGI documentation names Channels as the original driving force behind the ASGI project. ASGI is maintained as a specification in its own right rather than as a Django feature: Channels describes ASGI as the asynchronous server specification it is built on, designed like WSGI to let you choose between different servers and frameworks.
 
@@ -86,7 +81,7 @@ Because the application awaits events instead of returning once, the connection 
 
 ![wsgi-asgi-connection-model.svg](images/wsgi-asgi-connection-model.svg)
 
-Compare the two lanes. The WSGI lane has exactly two arrows and then stops; that is the whole protocol. The ASGI lane opens a scope first, and its event arrows repeat for as long as the connection lives. The green band states the relationship between them: ASGI is a superset, so anything WSGI can express, ASGI can express too.
+Compare the two lanes. The WSGI return arrow represents a response iterable whose chunks may be produced over time. The ASGI lane opens a scope first, then exchanges events for the lifetime of that scope. ASGI can represent WSGI-style HTTP exchanges and also defines WebSocket messages and application startup and shutdown events.
 
 **Its version history is short.** ASGI 2.0 (November 2017) used two callables; ASGI 3.0 (March 2019) simplified this to a single asynchronous callable taking the scope and the two event functions. Version 3.0 is still the current specification.
 
@@ -98,7 +93,7 @@ Compare the two lanes. The WSGI lane has exactly two arrows and then stops; that
 
 **Compatibility was designed in.** ASGI was written as a superset of WSGI with a defined translation between them, and adapters exist in both directions. Running an old WSGI application on an ASGI server works because the adapter executes the synchronous code in a thread pool. It does not make that code asynchronous, and it does not remove the one-worker-per-request cost.
 
-### Where the two standards stand today
+## Where the two standards stand today
 
 Both are current. Neither replaces the other on paper, and neither is deprecated.
 
@@ -118,9 +113,9 @@ A few things worth knowing about the current landscape:
 - **Flask remains a WSGI framework.** It can run `async` view functions, but it does so by starting an event loop in a worker thread per request. For a mainly asynchronous codebase its own documentation points to Quart, which it describes as a reimplementation of Flask on ASGI instead of WSGI.
 - **Servers now often speak both.** Gunicorn, historically the archetypal WSGI server, gained a native ASGI worker in version 24.0.0 (23 January 2026) and promoted it from beta to stable in 25.1.0 (13 February 2026), so a Gunicorn deployment can now serve an ASGI framework without an extra worker package. Hypercorn serves both ASGI and WSGI applications and supports HTTP/2; Uvicorn describes itself simply as an ASGI web server for Python, supporting HTTP/1.1 and WebSocket with experimental HTTP/2; Daphne is the ASGI reference server, maintained as part of Channels; Granian is a Rust server that speaks ASGI, WSGI, and its own **Rust Server Gateway Interface (RSGI)**.
 - **RSGI is a reminder, not a standard.** One server defining its own interface shows the pattern can repeat, but a convention only becomes useful when many independent servers and frameworks implement it. WSGI and ASGI are the two that cleared that bar.
-- **Choosing between them is still a real decision.** If the application is a conventional request-and-response service with synchronous database access, WSGI is not a legacy choice; it is the simpler one, with a smaller failure surface. ASGI earns its extra complexity when you need WebSocket, streaming, many slow outbound calls at once, or startup and shutdown hooks.
+- **Choosing between them is still a real decision.** If the application is a conventional request-and-response service with synchronous database access, WSGI is not a legacy choice; it is the simpler one, with a smaller failure surface. ASGI earns its extra complexity when you need WebSocket, streaming to many concurrent slow clients, many slow outbound calls at once, or startup and shutdown hooks.
 
-### The closest relative: the Java Servlet API
+## The closest relative: the Java Servlet API
 
 A **servlet** is a Java component that handles a request and produces a response. A **servlet container**, such as Tomcat or Jetty, loads servlets and calls them. The **Servlet API** is the agreement between the two. That is structurally the same boundary WSGI and ASGI draw, which is exactly why PEP 333 cited it.
 
@@ -138,13 +133,13 @@ The upper half of the diagram shows the same shape twice: a runtime on the left 
 
 Two differences matter.
 
-**Scope.** WSGI and ASGI standardize the call and stop there. The Servlet API standardizes much more: the servlet lifecycle, filters, sessions, and asynchronous request processing are all part of the specification. In Python those services come from frameworks and middleware rather than the interface. This is a deliberate trade: a small interface is easy for server authors to adopt, which is what WSGI wanted.
+**Scope.** WSGI and ASGI focus on the server-to-application interface; ASGI additionally defines protocol events and startup and shutdown through Lifespan. The Servlet API also standardizes a servlet lifecycle, filters, sessions, and asynchronous request processing. In Python, features such as sessions come from frameworks and middleware. WSGI deliberately kept its interface small to make adoption easier.
 
-**How each grew.** Java extended what it already had. Servlet 3.0, finalised on 10 December 2009, added asynchronous request processing and non-blocking input and output to the container. WebSocket then arrived in 2013 as the Java API for WebSocket — a *separate* specification alongside the servlet one, and still separate today as Jakarta WebSocket. Python took the other route: rather than bolting protocols onto WSGI, it defined a new gateway interface in which HTTP and WebSocket are carried by a single message specification. Same problem, two architectures.
+**How each grew.** Java extended what it already had. Servlet 3.0, finalised on 10 December 2009, added asynchronous request processing. Servlet 3.1 added non-blocking input and output in 2013. WebSocket also arrived in 2013 as the Java API for WebSocket — a *separate* specification alongside the servlet one, and still separate today as Jakarta WebSocket. Python took the other route: rather than bolting protocols onto WSGI, it defined a new gateway interface in which HTTP and WebSocket are carried by a single message specification. Same problem, two architectures.
 
 These are role mappings, not interchangeable signatures. A servlet handler writes through its response object and returns nothing, where a WSGI application returns a body iterable.
 
-### Neighbours that are easy to confuse
+## Neighbours that are easy to confuse
 
 Three names sound related and are not the same kind of thing. Sorting them by *what kind of thing they are* dissolves most of the confusion.
 
@@ -166,7 +161,7 @@ The top row of the diagram separates the three roles; the lower half shows one w
 
 Put plainly: **the Servlet API is WSGI's sibling, MCP is a cousin that shares the interoperability motive, and an API gateway shares only a word.**
 
-### How they can all appear in one system
+## How they can all appear in one system
 
 These are not competitors, so a single request can pass through all of them. Follow the lower half of the previous diagram.
 
@@ -174,12 +169,12 @@ An AI application wants to look up an order. Its MCP client asks an MCP server f
 
 Two links in that chain are worth pointing out, because they are concrete rather than metaphorical:
 
-- **An MCP server that talks HTTP is itself a web application.** MCP defines two standard transports: `stdio`, for a server the client launches as a subprocess, and **Streamable HTTP**, where each message is an HTTP POST to a single endpoint and replies come back either as a JSON object or as a stream of server-sent events. In Python, that is exactly an ASGI application. The official Python MCP SDK says so: a Starlette app is an ASGI app, so anything that hosts ASGI — Uvicorn, Hypercorn, another Starlette app, FastAPI — can host your MCP server.
-- **The streaming is why ASGI, not WSGI.** A request-scoped event stream that stays open while a tool runs is precisely the pattern WSGI's one-call-and-done shape cannot express. The same SDK also relies on ASGI's Lifespan sub-specification: when an MCP server is mounted inside a larger application, the outermost application must run the MCP session manager in its own lifespan, or the first request fails.
+- **An MCP server that talks HTTP is itself a web application.** MCP defines two standard transports: `stdio`, for a server the client launches as a subprocess, and **Streamable HTTP**, where client messages use HTTP POST to a single MCP endpoint and responses can use JSON or server-sent events. The official Python MCP SDK exposes its HTTP server as a Starlette ASGI application, so an ASGI server or a compatible parent application can host it. The MCP protocol itself does not require Python or ASGI.
+- **ASGI supports the SDK's asynchronous execution and lifecycle.** WSGI can stream an HTTP response, but it does not define asynchronous event calls or lifespan events. The Python MCP SDK uses ASGI and relies on its Lifespan sub-specification: when an MCP server is mounted inside a larger application, the outermost application must run the MCP session manager in its own lifespan. Otherwise, the first MCP request fails with `RuntimeError: Task group is not initialized. Make sure to use run().`
 
 None of these stages is mandatory. A Python web application can run with no gateway and no MCP anywhere near it, and an MCP server can be written in another language or read a database directly.
 
-### Misconceptions worth clearing
+## Misconceptions worth clearing
 
 - **"ASGI replaced WSGI."** No. Both specifications are current, and Django explicitly intends to support both for the foreseeable future.
 - **"Running my app under ASGI makes it faster."** No. An adapter runs synchronous code in a thread pool. Asynchronous execution helps when work is spent waiting on input and output, not on computation.
@@ -190,12 +185,13 @@ None of these stages is mandatory. A Python web application can run with no gate
 
 **Remember the shape of the answer: WSGI and ASGI are one language's agreement about how a server calls application code, the Servlet API is the same agreement in Java, an API gateway is a service that stands in front of your APIs, and MCP is a protocol that lets an AI application use tools — and a modern system can contain all four at once.**
 
-## Sources
+# Sources
 
 - [PEP 333 — Python Web Server Gateway Interface v1.0, created 7 December 2003](https://peps.python.org/pep-0333/)
 - [PEP 3333 — Python Web Server Gateway Interface v1.0.1, created 26 September 2010](https://peps.python.org/pep-3333/)
 - [PEP 3333 — Original Rationale and Goals, including the Java servlet comparison](https://peps.python.org/pep-3333/#original-rationale-and-goals-from-pep-333)
 - [PEP 3333 — The application callable, environ, and start_response](https://peps.python.org/pep-3333/#specification-details)
+- [PEP 3333 — Buffering and streaming response bodies](https://peps.python.org/pep-3333/#buffering-and-streaming)
 - [RFC 3875 — The Common Gateway Interface (CGI) Version 1.1](https://www.rfc-editor.org/rfc/rfc3875.html)
 - [Python documentation — wsgiref, the standard-library WSGI reference implementation](https://docs.python.org/3/library/wsgiref.html)
 - [ASGI — Introduction: relationship to WSGI, WebSocket limits, and backwards compatibility](https://asgi.readthedocs.io/en/latest/introduction.html)
@@ -209,6 +205,7 @@ None of these stages is mandatory. A Python web application can run with no gate
 - [Django 3.0 release notes — ASGI support added alongside WSGI](https://docs.djangoproject.com/en/stable/releases/3.0/)
 - [Django — How to deploy with ASGI](https://docs.djangoproject.com/en/stable/howto/deployment/asgi/)
 - [Django — How to deploy with WSGI](https://docs.djangoproject.com/en/stable/howto/deployment/wsgi/)
+- [Django — Streaming responses: worker occupancy under WSGI and concurrency under ASGI](https://docs.djangoproject.com/en/stable/ref/request-response/#django.http.StreamingHttpResponse)
 - [Flask — Using async and await, worker cost, and when to use Quart](https://flask.palletsprojects.com/en/stable/async-await/)
 - [Flask — Deploying to production with a WSGI server](https://flask.palletsprojects.com/en/stable/deploying/)
 - [Gunicorn — Native ASGI worker](https://gunicorn.org/asgi/)
@@ -222,6 +219,7 @@ None of these stages is mandatory. A Python web application can run with no gate
 - [uWSGI — Python and WSGI quickstart](https://uwsgi-docs.readthedocs.io/en/latest/WSGIquickstart.html)
 - [uWSGI — The uwsgi binary protocol, distinct from the WSGI interface](https://uwsgi-docs.readthedocs.io/en/latest/Protocol.html)
 - [JSR 315 — Java Servlet 3.0, final release 10 December 2009, adding asynchronous processing](https://jcp.org/en/jsr/detail?id=315)
+- [JSR 340 — Java Servlet 3.1, final release 28 May 2013, adding non-blocking I/O](https://jcp.org/en/jsr/detail?id=340)
 - [JSR 356 — Java API for WebSocket, final release 22 May 2013](https://jcp.org/en/jsr/detail?id=356)
 - [Jakarta WebSocket — A specification separate from Jakarta Servlet](https://jakarta.ee/specifications/websocket/)
 - [Jakarta Servlet specification — Containers, lifecycle, filters, sessions, and asynchronous processing](https://jakarta.ee/specifications/servlet/6.1/jakarta-servlet-spec-6.1)
@@ -231,7 +229,3 @@ None of these stages is mandatory. A Python web application can run with no gate
 - [MCP — Specification overview: hosts, clients, servers, and JSON-RPC](https://modelcontextprotocol.io/specification/latest)
 - [MCP — Transports: stdio and Streamable HTTP](https://modelcontextprotocol.io/specification/2026-07-28/basic/transports)
 - [MCP Python SDK — Serving an MCP server from an ASGI application](https://py.sdk.modelcontextprotocol.io/run/asgi/)
-
----
-
-<sub>[Back to Python](../Readme.md#content)</sub>
