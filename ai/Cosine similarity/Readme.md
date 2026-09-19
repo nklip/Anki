@@ -1,16 +1,10 @@
 # Cosine Similarity
 
-<!-- Card mode: complex. Validate with --mode complex. -->
+<sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-## Front
+**Cosine similarity measures how closely two nonzero vectors point in the same direction.** It is the dot product divided by both vector lengths, so it compares direction while removing positive differences in magnitude. This article builds the geometric intuition, defines the formula, calculates one example, shows where it sits in a retrieval-augmented generation (RAG) pipeline, and finishes with implementation rules and common traps.
 
-What is cosine similarity, how is it calculated and interpreted, where does it appear in a RAG pipeline, and which limitations matter when using it for vector search?
-
-## Back
-
-**Cosine similarity measures how closely two nonzero vectors point in the same direction.** It is the dot product divided by both vector lengths, so it compares direction while removing positive differences in magnitude. This card builds the geometric intuition, defines the formula, calculates one example, and finishes with implementation rules and common traps.
-
-### Core mental model: compare direction, not length
+## Core mental model: compare direction, not length
 
 Read the three panels from left to right. Parallel vectors have score `1`, perpendicular vectors have score `0`, and opposite vectors have score `-1`. The first panel also shows that multiplying a vector by a positive number changes its length but not its direction or cosine similarity.
 
@@ -28,7 +22,7 @@ For real, nonzero vectors, cosine similarity is between `-1` and `1`:
 
 When every component is nonnegative, as with many term-frequency vectors, negative scores cannot occur. Vectors with negative components can produce negative scores, so do not assume the range is always limited to `[0, 1]`.
 
-### Vocabulary and formula
+## Vocabulary and formula
 
 - A **vector** is an ordered list of numeric components, such as `A = (1, 2)`.
 - The **dot product** multiplies matching components and adds the products: `A · B = Σ AᵢBᵢ`.
@@ -58,7 +52,7 @@ cosine_distance(A, B)  = 1 - cosine_similarity(A, B)
 
 The first expression returns radians unless the calculation tool converts the result to degrees. The second expression is convenient for ranking from smallest to largest, but it should not automatically be assumed to satisfy every mathematical distance-metric property.
 
-### Worked example: `A = (1, 2)` and `B = (2, 1)`
+## Worked example: `A = (1, 2)` and `B = (2, 1)`
 
 The diagram separates the calculation into the dot product, the two lengths, and the final division. The vectors are neither parallel nor perpendicular, so the result must fall strictly between `0` and `1`.
 
@@ -75,7 +69,7 @@ similarity  = 4 / (√5 × √5) = 4 / 5 = 0.8
 
 The angle is `arccos(0.8) ≈ 36.87°`. A score of `0.8` therefore means the vectors are closer to the same direction than to a perpendicular direction; it does not mean that they are “80% identical.”
 
-### Why magnitude disappears
+## Why magnitude disappears
 
 For any positive scalar `c`:
 
@@ -93,9 +87,9 @@ A negative scalar reverses direction rather than merely changing length:
 cosine_similarity(A, -B) = -cosine_similarity(A, B)
 ```
 
-### Where cosine similarity appears in a RAG pipeline
+## Where cosine similarity appears in a RAG pipeline
 
-**Cosine similarity belongs to the retrieval stage, between embedding the query and selecting the top chunks.** A common retrieval-augmented generation (RAG) pipeline has two paths:
+**Cosine similarity belongs to the retrieval stage, between embedding the query and selecting the top chunks.** A common RAG pipeline has two paths:
 
 - **Indexing:** split source documents into chunks, embed each chunk, and store its vector together with the original text and metadata in a vector index.
 - **Query time:** embed the user's question in the compatible vector space, compare that query vector with indexed chunk vectors, rank the chunks, and pass the top `k` chunks to the language model as context.
@@ -114,7 +108,7 @@ The software chunk ranks above the medical chunk because `0.983 > 0.435`. Retrie
 
 Cosine similarity does not understand language, build embeddings, or judge the generated answer. The embedding model determines what direction means, while cosine only compares the resulting numbers. RAG also does **not** require cosine similarity: the original RAG system used maximum inner-product search (MIPS), and other systems may use dot product or another model-compatible metric. With L2-normalized embeddings, dot-product and cosine rankings are identical.
 
-### Minimal Python implementation
+## Minimal Python implementation
 
 This implementation accepts equal-length real vectors and rejects a zero vector because the mathematical formula would divide by zero.
 
@@ -150,7 +144,7 @@ print(f"{score:.3f}")
 
 In production, use a tested vector library for batching, sparse vectors, numerical stability, and hardware acceleration. If the library receives zero vectors, check its documented convention instead of assuming it matches the mathematical definition.
 
-### Common mistakes and limits
+## Common mistakes and limits
 
 - **Using a zero vector:** its norm is `0`, so the formula's denominator is `0` and its direction is undefined.
 - **Comparing incompatible coordinates:** vectors must have the same dimension and each coordinate must represent the same feature space. Equal length alone is insufficient.
@@ -160,11 +154,11 @@ In production, use a tested vector library for batching, sparse vectors, numeric
 - **Copying one universal threshold:** choose and test any cutoff on representative data from the actual retrieval task.
 - **Assuming cosine distance is automatically a metric:** libraries often define `cosine_distance = 1 - cosine_similarity`, but that quantity should not be assumed to satisfy every metric property.
 
-### One-sentence summary
+## One-sentence summary
 
 > Cosine similarity is the dot product of two L2-normalized, nonzero vectors: it measures directional alignment from `-1` to `1`, ignores positive magnitude, and can rank compatible query and chunk embeddings during RAG retrieval.
 
-## Sources
+# Sources
 
 - [scikit-learn: Cosine similarity user guide](https://scikit-learn.org/stable/modules/metrics.html#cosine-similarity)
 
@@ -197,7 +191,3 @@ In production, use a tested vector library for batching, sparse vectors, numeric
 - [NIST Dataplot: Cosine distance and cosine similarity](https://www.itl.nist.gov/div898/software/dataplot/refman2/auxillar/cosdist.htm)
 
   Gives the similarity and distance formulas and notes that the simple cosine-distance form is not a proper distance metric.
-
----
-
-<sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>

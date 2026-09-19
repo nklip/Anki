@@ -20,6 +20,9 @@
     </style>
   </defs>
 
+  <!-- Opaque canvas keeps dark labels legible in light and dark viewers. -->
+  <rect id="canvas-background" width="1200" height="720" fill="#ffffff"/>
+
   <!-- Overall title and scope. -->
   <text class="title" x="600" y="40" text-anchor="middle">Cosine similarity sits inside the RAG retriever</text>
   <text class="subtitle" x="600" y="68" text-anchor="middle">It ranks stored chunks before the language model generates an answer.</text>
@@ -109,8 +112,8 @@
     <text class="small" x="1090" y="431" text-anchor="middle">generate answer</text>
   </g>
 
-  <!-- The vector index feeds candidate embeddings into the query-time scorer. -->
-  <path class="index-flow" d="M995 196 V224 H700 V279"/>
+  <!-- The vector index feeds candidate embeddings into the scorer; route below the label with visible clearance. -->
+  <path id="candidate-vectors-connector" class="index-flow" d="M995 196 V240 H700 V279"/>
   <path d="M700 289 L693 279 L707 279 Z" fill="#64748b"/>
   <text class="small" x="845" y="218" text-anchor="middle">candidate chunk vectors</text>
 
