@@ -36,7 +36,7 @@ Use this skill when creating or revising Anki-ready Markdown cards in this repos
 - Use local teaching visuals from the card's sibling `images/` directory and link them with relative paths.
 - Do not use this skill for exporting `.apkg` decks or other Anki package formats.
 
-Validate from the repository root. The default mode is `auto`: any exact `Front` or `Back` heading at level one or legacy level two, outside fenced code and HTML comments, indicates simple mode; none indicates complex/article mode. A single heading or mixed-level pair remains simple content requiring repair: promote legacy headings to `# Front`/`# Back` and add any missing boundary. Mode comments do not select the mode. Explicit mode flags check the selected format:
+Validate from the repository root. The default mode is `auto`: any exact `Front` or `Back` heading at level one or two, outside fenced code and HTML comments, indicates simple mode; none indicates complex/article mode. Simple mode requires both `# Front` and `# Back`; a missing boundary or a level-two boundary is a formatting error. Mode comments do not select the mode. Explicit mode flags check the selected format:
 
 ```bash
 python3 .agents/skills/anki-card-creation/scripts/check_anki_card.py path/to/card.md

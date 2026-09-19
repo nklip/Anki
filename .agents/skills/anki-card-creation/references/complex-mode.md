@@ -1,6 +1,6 @@
 # Complex mode (also called article mode)
 
-Use complex mode, also called article mode, for comprehensive explanations, mechanisms with multiple stages, or explicit step-by-step teaching. Both names select the same requirements. For revisions, follow the shared mode-selection rule: legacy `## Front`/`## Back` headings still indicate simple content requiring migration. Use `--mode complex` for explicit validation.
+Use complex mode, also called article mode, for comprehensive explanations, mechanisms with multiple stages, or explicit step-by-step teaching. Both names select the same requirements. For revisions, follow the shared mode-selection rule. Use `--mode complex` for explicit validation.
 
 ## Outcome
 
@@ -52,7 +52,7 @@ For a process article, each step should state:
 4. The state after the step.
 5. Why the step matters.
 
-Name process sections `## Step 1 — Clear action`, `## Step 2 — Clear action`, and so on. This lets the validator confirm that every step section contains its own `.svg` reference. Use `###` subsections for details within each step.
+Name process sections `## Step 1 — Clear action`, `## Step 2 — Clear action`, and so on. This lets the validator confirm that every step section contains its own `.svg` reference. Use `###` subsections for details within each step; named sub-items within a subsection may use `#### **Named sub-item**`, following the shared heading rule. A `Use case:` prefix is optional. Numbered process steps remain at `##`, including steps with bold labels.
 
 Keep closely related details together. Do not hide the main flow beneath tuning options, historical notes, or implementation trivia.
 
@@ -62,4 +62,4 @@ Before finishing, run:
 python3 scripts/check_anki_card.py --mode complex path/to/card.md
 ```
 
-The validator confirms the minimum visual count and checks SVG presence in `## Step …` sections. It also recognizes legacy `### Step …` through `###### Step …` headings, reports that they must migrate to `##`, and still requires each step's SVG during migration. A fenced image example or an image in a later step or peer section does not satisfy that requirement. Manually confirm that every step diagram actually explains that step and sits immediately under its heading.
+The validator confirms the minimum visual count and checks SVG presence in `## Step …` sections. It reports numbered step headings at incorrect levels and requires each step's own SVG, including when its label is wrapped in `**` or `__`. A fenced image example or an image in a later step or peer section does not satisfy that requirement. Manually confirm that every step diagram actually explains that step and sits immediately under its heading.

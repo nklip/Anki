@@ -10,7 +10,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from urllib.parse import unquote, urlsplit
 
-from markdown_anchors import markdown_anchors
+from markdown_anchors import CODE_SPAN_RE, markdown_anchors
 from markdown_fences import mask_fenced_code, scan_fenced_code
 
 
@@ -22,7 +22,10 @@ NAVIGATION_RE = re.compile(
     r"^<sub>\[Back to ([^\]\n]+)\]\(([^)\s]+)\)</sub>[ \t]*(?:\r?\n|$)",
     re.MULTILINE,
 )
-STEP_HEADING_RE = re.compile(r"^ {0,3}(#{2,6})[ \t]+Step \d+\b[^\n]*$", re.MULTILINE)
+STEP_LABEL_RE = re.compile(r"^(?:\*\*|__)?Step[ \t]+\d+\b")
+BOLD_LABEL_RE = re.compile(
+    r"\*\*(?!\s)(?:(?!\*\*).)+(?<!\s)\*\*|__(?!\s)(?:(?!__).)+(?<!\s)__"
+)
 VERSION_EVENT_RE = re.compile(
     r"\b(?:added|introduced|previewed|released|finalized|became|available)\b",
     re.IGNORECASE,
@@ -52,13 +55,29 @@ def card_headings(text: str) -> list[re.Match[str]]:
     return list(HEADING_RE.finditer(mask_comments(mask_fenced_code(text))))
 
 
+def heading_label(heading: re.Match[str]) -> str:
+    """Remove an optional closing ATX sequence for checks and diagnostics."""
+    return re.sub(r"[ \t]+#+$", "", heading.group(2)).strip()
+
+
+def is_step_heading(heading: re.Match[str]) -> bool:
+    """Recognize numbered steps, including labels with leading bold markup."""
+    return len(heading.group(1)) >= 2 and bool(STEP_LABEL_RE.match(heading_label(heading)))
+
+
+def is_fully_bold_label(label: str) -> bool:
+    """Require one enclosing bold span; inline code contains literal markers."""
+    masked_label = CODE_SPAN_RE.sub("code", label)
+    return BOLD_LABEL_RE.fullmatch(masked_label) is not None
+
+
 def mask_comments(text: str) -> str:
     """Hide HTML comments without changing offsets or line boundaries."""
     return HTML_COMMENT_RE.sub(lambda match: re.sub(r"[^\r\n]", " ", match[0]), text)
 
 
 def detect_mode(text: str) -> str:
-    """Infer mode from card boundaries; legacy or incomplete pairs still need repair."""
+    """Infer mode from card boundaries, including incomplete or misleveled pairs."""
     return "simple" if any(
         match.groups() in {("#", "Front"), ("#", "Back"), ("##", "Front"), ("##", "Back")}
         for match in card_headings(text)
@@ -150,9 +169,17 @@ def validate_text(
         for heading in required
     ]
     positions = [match.start() if match else -1 for match in required_matches]
+    level_two_boundaries = {}
     for heading, position in zip(required, positions):
         if position < 0:
-            errors.append(f"missing required heading: {heading}")
+            level_two = next(
+                (match for match in headings if match.groups() == ("##", heading[2:])), None
+            )
+            if level_two is not None:
+                level_two_boundaries[heading] = level_two
+                errors.append(f"boundary {'#' + heading!r} must use {heading!r}")
+            else:
+                errors.append(f"missing required heading: {heading}")
     if all(position >= 0 for position in positions) and positions != sorted(positions):
         errors.append("required headings must appear in the order Front, Back, Sources")
     for heading in required:
@@ -198,7 +225,10 @@ def validate_text(
                     if unquote(url.fragment) not in anchors:
                         errors.append(f"navigation README anchor does not exist: {target}")
 
-    header_parts = (title, navigation, front) if mode == "simple" else (title, navigation)
+    # Check placement independently of level so a correctly placed ## Front
+    # gets only its boundary diagnostic, while real ordering errors remain visible.
+    header_front = front if front is not None else level_two_boundaries.get("# Front")
+    header_parts = (title, navigation, header_front) if mode == "simple" else (title, navigation)
     invalid_header = any(
         previous is not None and following is not None and (
             following.start() < previous.end()
@@ -206,8 +236,6 @@ def validate_text(
         )
         for previous, following in zip(header_parts, header_parts[1:])
     )
-    if mode == "simple" and front is None:
-        invalid_header = True
     if mode == "complex" and navigation is not None:
         remainder = text[navigation.end():]
         if not re.match(r"[ \t]*\r?\n", remainder) or not remainder.strip():
@@ -219,11 +247,31 @@ def validate_text(
             "with a blank line between each and no intervening content"
         )
 
+    parent_level = 0
     for heading in headings:
-        if len(heading.group(1)) >= 4:
+        level = len(heading.group(1))
+        label = heading_label(heading)
+        if level <= 3:
+            parent_level = level
+        if mode == "complex" and is_step_heading(heading):
+            # Step-level and diagram checks below take precedence over
+            # generic sub-item advice, even when the step label is bold.
+            continue
+        if level == 4:
+            if not is_fully_bold_label(label):
+                errors.append(
+                    f"level-four heading {label!r} must have fully bold text: "
+                    "use #### **Named sub-item**"
+                )
+            if parent_level != 3:
+                errors.append(
+                    f"level-four heading {label!r} must be nested within a ### subsection"
+                )
+        elif level >= 5:
             errors.append(
-                f"heading {heading.group(2)!r} is too deep: "
-                "use ## for teaching sections and ### for subsections"
+                f"heading {label!r} is too deep: "
+                "use ## for teaching sections, ### for subsections, "
+                "and bold #### headings for named sub-items within subsections"
             )
 
     first_level_headings = [match.group(2) for match in headings if match.group(1) == "#"]
@@ -289,21 +337,21 @@ def validate_text(
             errors.append(f"visual file does not exist: {target}")
 
     if mode == "complex":
-        step_matches = list(STEP_HEADING_RE.finditer(structural_text))
+        step_matches = [heading for heading in headings if is_step_heading(heading)]
         for step_match in step_matches:
-            heading = step_match.group(0).lstrip(" #").rstrip("\r")
+            heading = heading_label(step_match)
             if step_match.group(1) != "##":
                 errors.append(
-                    f"step heading {heading!r} must use ##; "
-                    f"migrate {step_match.group(1)} Step to ## Step"
+                    f"step heading {heading!r} must use ## Step N … "
+                    f"(found {step_match.group(1)})"
                 )
             section_start = step_match.end()
             # Stop at the next peer/parent section or any subsequent step,
-            # including a deeper legacy step during a partial migration.
+            # including a subsequent step at an incorrect, deeper level.
             boundary = next((match for match in headings
                              if match.start() > step_match.start()
                              and (len(match.group(1)) <= len(step_match.group(1))
-                                  or STEP_HEADING_RE.match(structural_text, match.start()))), None)
+                                  or is_step_heading(match))), None)
             section_end = boundary.start() if boundary else len(text)
             step_section = structural_text[section_start:section_end]
             step_images = IMAGE_RE.findall(step_section)
@@ -394,19 +442,26 @@ counter.incrementAndGet();
     # Valid card boundaries still require exact level-one headings.
     for heading in ("# Front", "# Back", "# Sources"):
         for replacement in ("#" + heading, heading + " details"):
-            assert any(f"missing required heading: {heading}" in error
-                       for error in validate_text(
-                           simple.replace(heading, replacement), Path("card.md"),
-                           "simple", check_local_files=False,
-                       ))
+            expected = (
+                f"boundary {replacement!r} must use {heading!r}"
+                if replacement == "#" + heading else f"missing required heading: {heading}"
+            )
+            assert expected in validate_text(
+                simple.replace(heading, replacement), Path("card.md"),
+                "simple", check_local_files=False,
+            )
 
-    # Teaching sections use ## and subsections use ###; code remains literal.
+    # Bold named sub-items may use #### within ### subsections; code remains literal.
     for mode, card in (("simple", simple), ("complex", complex_card)):
         with_sections = card.replace(
             "An atomic update", "## Explanation\n\n### Key detail\n\nAn atomic update"
         )
         assert not validate_text(with_sections, Path("card.md"), mode, check_local_files=False)
-        for level in range(4, 7):
+        with_use_case = with_sections.replace(
+            "### Key detail", "### Key detail\n\n#### **Use case: Updating a counter**"
+        )
+        assert not validate_text(with_use_case, Path("card.md"), mode, check_local_files=False)
+        for level in range(5, 7):
             with_deep_heading = with_sections.replace("### Key detail", "#" * level + " Key detail")
             assert any("is too deep" in error for error in validate_text(
                 with_deep_heading, Path("card.md"), mode, check_local_files=False,
@@ -453,12 +508,13 @@ counter.incrementAndGet();
         assert any(f"missing required heading: {heading}" in error for error in validate_text(
             incomplete, Path("card.md"), check_local_files=False,
         ))
-    legacy = simple.replace("# Front", "## Front").replace("# Back", "## Back")
-    assert detect_mode(legacy) == "simple"
-    legacy_errors = validate_text(legacy, Path("card.md"), check_local_files=False)
-    for heading in ("# Front", "# Back"):
-        assert f"missing required heading: {heading}" in legacy_errors
-    assert not any("local visual" in error for error in legacy_errors)
+    wrong_level_card = simple.replace("# Front", "## Front").replace("# Back", "## Back")
+    assert detect_mode(wrong_level_card) == "simple"
+    boundary_errors = validate_text(wrong_level_card, Path("card.md"), check_local_files=False)
+    assert boundary_errors == [
+        "boundary '## Front' must use '# Front'",
+        "boundary '## Back' must use '# Back'",
+    ]
     assert any("missing required heading: # Front" in error for error in validate_text(
         complex_card, Path("card.md"), "simple", check_local_files=False,
     ))

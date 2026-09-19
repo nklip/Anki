@@ -75,6 +75,92 @@ class CardValidationTests(unittest.TestCase):
             with self.subTest(mode=mode):
                 self.assertEqual([], self.errors(self.card(mode=mode), mode))
 
+    def test_bold_sub_items_within_subsections_are_allowed(self) -> None:
+        for mode in ("simple", "complex"):
+            for marker in ("**", "__"):
+                for suffix in ("", " ####"):
+                    with self.subTest(mode=mode, marker=marker, suffix=suffix):
+                        body = (
+                            "## Behavior\n\n### Retry handling\n\n"
+                            f"#### {marker}Use case: Retrying an update{marker}{suffix}\n\n"
+                            "Repeat the update after a failure.\n\n"
+                            "#### **Use case: Resuming after restart**\n\nResume the work."
+                        )
+                        text = self.card(body, mode=mode)
+                        self.assertEqual([], self.errors(text))
+                        self.assertEqual([], self.errors(text.replace("\n", "\r\n")))
+
+    def test_named_sub_items_need_no_prefix_and_may_include_inline_code(self) -> None:
+        for mode in ("simple", "complex"):
+            for label in (
+                "**Web Servers**", "**Pull model**", "**Service Failure**",
+                "**Scale the `bucket` table**", "**Use `__init__` in the ctor**",
+                "**Use `**init**` in the ctor**", "__Use `__init__` in the ctor__",
+                "**Use ``a ` ** b`` in the example**",
+            ):
+                with self.subTest(mode=mode, label=label):
+                    body = f"## Behavior\n\n### Details\n\n#### {label}"
+                    self.assertEqual([], self.errors(self.card(body, mode=mode)))
+
+    def test_level_four_requires_fully_bold_text(self) -> None:
+        for mode in ("simple", "complex"):
+            for label in (
+                "Use case: Retrying an update", "*Use case: Retrying an update*",
+                "**Use case:** Retrying an update", "**Use case: Retrying an update__",
+                "** **", "****", "** leading space**", "**trailing space **",
+                "**Use case:** plain **x**", "**A** and **B**", "**a**b**c**",
+                "__Use case:__ plain __x__", "__A__ and __B__", "__a__b__c__",
+                "**A** `plain` **B**", "`**Literal bold markers**`",
+            ):
+                with self.subTest(mode=mode, label=label):
+                    body = f"## Behavior\n\n### Retry handling\n\n#### {label}"
+                    self.assert_error(self.errors(self.card(body, mode=mode)), "fully bold")
+
+    def test_heading_diagnostics_omit_closing_atx_sequences(self) -> None:
+        for heading in (
+            "#### Plain label", "#### **Orphaned sub-item**", "##### **Deep sub-item**",
+            "#### Step 3 — Publish", "#### **Step 3 — Publish**",
+        ):
+            with self.subTest(heading=heading):
+                errors = self.errors(self.card(heading))
+                self.assertTrue(errors)
+                self.assertEqual(errors, self.errors(self.card(heading + " ####")))
+
+    def test_level_four_requires_a_current_subsection(self) -> None:
+        for mode in ("simple", "complex"):
+            for prefix in (
+                "", "## Behavior", "### Previous detail\n\n## New section",
+                "### Previous detail\n\n# New section",
+                "```markdown\n### Literal subsection\n```",
+            ):
+                with self.subTest(mode=mode, prefix=prefix):
+                    body = prefix + "\n\n#### **Use case: Retrying an update**"
+                    self.assert_error(
+                        self.errors(self.card(body, mode=mode)), "nested within a ### subsection"
+                    )
+
+    def test_levels_five_and_six_remain_invalid(self) -> None:
+        for mode in ("simple", "complex"):
+            for level in (5, 6):
+                with self.subTest(mode=mode, level=level):
+                    body = (
+                        "## Behavior\n\n### Retry handling\n\n"
+                        f"{'#' * level} **Use case: Retrying an update**"
+                    )
+                    self.assert_error(self.errors(self.card(body, mode=mode)), "too deep")
+
+    def test_fenced_heading_examples_do_not_affect_use_case_nesting(self) -> None:
+        for mode in ("simple", "complex"):
+            for name, example in self.fenced_examples(
+                "## Literal section\n#### Unbolded example\n###### Deep example"
+            ).items():
+                with self.subTest(mode=mode, fence=name):
+                    body = (
+                        f"## Behavior\n\n### Retry handling\n\n{example}\n\n"
+                        "#### **Use case: Retrying an update**"
+                    )
+                    self.assertEqual([], self.errors(self.card(body, mode=mode)))
+
     def test_auto_mode_accepts_both_structures_without_comments(self) -> None:
         for mode in ("simple", "complex"):
             with self.subTest(mode=mode):
@@ -118,7 +204,7 @@ class CardValidationTests(unittest.TestCase):
                 self.assertEqual("simple", validator.detect_mode(text))
                 self.assert_error(self.errors(text), "missing required heading", missing)
 
-    def test_legacy_boundaries_select_simple_mode_but_still_require_migration(self) -> None:
+    def test_level_two_boundaries_select_simple_mode_and_fail_validation(self) -> None:
         for front, back in (("##", "##"), ("##", "#"), ("#", "##"), ("##", ""), ("", "##")):
             for comment in ("", "<!-- Card mode: simple. Validate with --mode simple. -->"):
                 with self.subTest(front=front, back=back, comment=comment):
@@ -131,12 +217,29 @@ class CardValidationTests(unittest.TestCase):
                     errors = self.errors(text)
                     self.assertEqual(self.errors(text, "simple"), errors)
                     for name, level in (("Front", front), ("Back", back)):
-                        if level != "#":
-                            self.assert_error(errors, "missing required heading", f"# {name}")
+                        missing = f"missing required heading: # {name}"
+                        if level == "##":
+                            self.assertIn(f"boundary '## {name}' must use '# {name}'", errors)
+                            self.assertNotIn(missing, errors)
+                        elif not level:
+                            self.assertIn(missing, errors)
+                    self.assertFalse(any("header order" in error for error in errors), errors)
                     self.assertFalse(any("local visual" in error for error in errors), errors)
                     crlf = text.replace("\n", "\r\n")
                     self.assertEqual("simple", validator.detect_mode(crlf))
                     self.assertEqual(errors, self.errors(crlf))
+
+    def test_boundary_level_diagnostic_requires_an_exact_visible_heading(self) -> None:
+        for name in ("Front", "Back", "Sources"):
+            for replacement in (
+                f"## {name} details", f"```markdown\n## {name}\n```",
+                f"<!--\n## {name}\n-->",
+            ):
+                with self.subTest(name=name, replacement=replacement):
+                    text = self.card(mode="simple").replace(f"# {name}\n", replacement + "\n", 1)
+                    errors = self.errors(text)
+                    self.assertIn(f"missing required heading: # {name}", errors)
+                    self.assertNotIn(f"boundary '## {name}' must use '# {name}'", errors)
 
     def test_mode_detection_requires_exact_boundary_names_at_supported_levels(self) -> None:
         for heading in (
@@ -234,7 +337,8 @@ class CardValidationTests(unittest.TestCase):
 
     def test_cli_defaults_to_inferred_mode_and_accepts_explicit_auto(self) -> None:
         for mode in ("simple", "complex"):
-            self.card_path.write_text(self.card(mode=mode), encoding="utf-8")
+            body = "## Behavior\n\n### Retry handling\n\n#### **Use case: Retrying an update**"
+            self.card_path.write_text(self.card(body, mode=mode), encoding="utf-8")
             for flags in ([], ["--mode", "auto"]):
                 with self.subTest(mode=mode, flags=flags):
                     result = subprocess.run(
@@ -254,7 +358,7 @@ class CardValidationTests(unittest.TestCase):
         self.assertEqual(1, result.returncode)
         self.assertIn("missing required heading: # Back", result.stderr)
 
-    def test_cli_routes_legacy_card_to_simple_migration_without_an_extra_visual(self) -> None:
+    def test_cli_reports_level_two_boundaries_without_requiring_an_extra_visual(self) -> None:
         text = self.card(mode="simple").replace(
             "![comparison.svg](images/comparison.svg)\n\n", "", 1
         )
@@ -269,17 +373,27 @@ class CardValidationTests(unittest.TestCase):
                 )
                 self.assertEqual(1, result.returncode)
                 for heading in ("# Front", "# Back", "# Sources"):
-                    self.assertIn(f"missing required heading: {heading}", result.stderr)
+                    self.assertIn(f"boundary {'#' + heading!r} must use {heading!r}", result.stderr)
+                    self.assertNotIn(f"missing required heading: {heading}", result.stderr)
+                self.assertNotIn("header order", result.stderr)
                 self.assertNotIn("local visual", result.stderr)
 
     def test_every_supported_step_depth_still_requires_a_diagram(self) -> None:
         for level in range(2, 7):
-            with self.subTest(level=level):
-                errors = self.errors(self.card(f"{'#' * level} Step 1 — Read\n\nRead the value."))
-                self.assert_error(errors, "Step 1", "own local .svg")
-                self.assertFalse(any("requires at least" in error for error in errors))
-                if level != 2:
-                    self.assert_error(errors, "Step 1", "##")
+            for marker in ("", "**", "__"):
+                with self.subTest(level=level, marker=marker):
+                    body = (
+                        "## Behavior\n\n### Details\n\n"
+                        f"{'#' * level} {marker}Step 1 — Read{marker}\n\nRead the value."
+                    )
+                    text = self.card(body)
+                    errors = self.errors(text)
+                    self.assert_error(errors, "Step 1", "own local .svg")
+                    self.assertFalse(any("requires at least" in error for error in errors))
+                    if level != 2:
+                        self.assert_error(errors, "Step 1", "must use", "## Step")
+                    self.assertEqual(1 if level == 2 else 2, len(errors), errors)
+                    self.assertEqual(errors, self.errors(text.replace("\n", "\r\n")))
 
     def test_crlf_step_diagnostics_and_section_boundaries_match_lf(self) -> None:
         for level in (2, 3):
@@ -292,32 +406,41 @@ class CardValidationTests(unittest.TestCase):
                 self.assert_error(errors, "Step 1", "own local .svg")
                 self.assertEqual(errors, self.errors(text.replace("\n", "\r\n")))
 
-    def test_legacy_step_with_a_diagram_still_reports_migration(self) -> None:
+    def test_step_with_a_diagram_still_reports_incorrect_level(self) -> None:
         for level in range(3, 7):
-            with self.subTest(level=level):
-                errors = self.errors(self.card(
-                    f"{'#' * level} Step 1 — Read\n\n![step.svg](images/step.svg)"
-                ))
-                self.assert_error(errors, "Step 1", "##")
-                self.assertFalse(any("own local .svg" in error for error in errors))
+            for marker in ("", "**", "__"):
+                with self.subTest(level=level, marker=marker):
+                    errors = self.errors(self.card(
+                        f"{'#' * level} {marker}Step 1 — Read{marker}\n\n"
+                        "![step.svg](images/step.svg)"
+                    ))
+                    self.assert_error(errors, "Step 1", "must use", "## Step")
+                    self.assertEqual(1, len(errors), errors)
 
-    def test_migrated_steps_with_diagrams_pass(self) -> None:
+    def test_level_two_steps_with_diagrams_pass(self) -> None:
         body = (
             "## Step 1 — Read\n\n![step.svg](images/step.svg)\n\n"
             "### Detail\n\nObserve the value.\n\n"
             "## Step 2 — Write\n\n![step.svg](images/step.svg)"
         )
-        self.assertEqual([], self.errors(self.card(body)))
+        for marker in ("", "**", "__"):
+            with self.subTest(marker=marker):
+                formatted = body.replace("Step 1 — Read", f"{marker}Step 1 — Read{marker}")
+                formatted = formatted.replace("Step 2 — Write", f"{marker}Step 2 — Write{marker}")
+                self.assertEqual([], self.errors(self.card(formatted)))
 
     def test_mixed_depth_steps_cannot_borrow_the_next_step_diagram(self) -> None:
         for first_level, second_level in ((2, 3), (3, 2), (3, 4), (4, 3)):
-            with self.subTest(first_level=first_level, second_level=second_level):
-                errors = self.errors(self.card(
-                    f"{'#' * first_level} Step 1 — Read\n\nNo diagram here.\n\n"
-                    f"{'#' * second_level} Step 2 — Write\n\n![step.svg](images/step.svg)"
-                ))
-                self.assert_error(errors, "Step 1", "own local .svg")
-                self.assertFalse(any("Step 2" in error and "own local .svg" in error for error in errors))
+            for first_marker, second_marker in (("", ""), ("", "**"), ("**", "__"), ("__", "")):
+                with self.subTest(levels=(first_level, second_level), markers=(first_marker, second_marker)):
+                    errors = self.errors(self.card(
+                        f"{'#' * first_level} {first_marker}Step 1 — Read{first_marker}\n\n"
+                        "No diagram here.\n\n"
+                        f"{'#' * second_level} {second_marker}Step 2 — Write{second_marker}\n\n"
+                        "![step.svg](images/step.svg)"
+                    ))
+                    self.assert_error(errors, "Step 1", "own local .svg")
+                    self.assertFalse(any("Step 2" in error and "own local .svg" in error for error in errors))
 
     def test_non_step_sibling_diagram_cannot_satisfy_previous_step(self) -> None:
         errors = self.errors(self.card(
@@ -327,7 +450,10 @@ class CardValidationTests(unittest.TestCase):
         self.assert_error(errors, "Step 1", "own local .svg")
 
     def test_steps_inside_fences_are_literal_examples(self) -> None:
-        content = "\n\n".join(f"{'#' * level} Step {level} — Literal" for level in range(2, 7))
+        content = "\n\n".join(
+            f"{'#' * level} {marker}Step {level} — Literal{marker}"
+            for level in range(2, 7) for marker in ("", "**", "__")
+        )
         for name, example in self.fenced_examples(content).items():
             with self.subTest(fence=name):
                 errors = self.errors(self.card(example))
@@ -370,7 +496,7 @@ class CardValidationTests(unittest.TestCase):
                 self.assert_error(errors, "exactly one", "navigation")
                 self.assertFalse(any("header order" in error for error in errors), errors)
 
-    def test_header_order_diagnostic_survives_missing_or_legacy_front(self) -> None:
+    def test_header_order_diagnostic_survives_missing_or_level_two_front(self) -> None:
         for replacement in ("", "## Front"):
             with self.subTest(front=replacement):
                 text = self.card(mode="simple").replace("# Front", replacement)
@@ -379,7 +505,21 @@ class CardValidationTests(unittest.TestCase):
                     f"Intervening prose\n\n{self.navigation}\n\n",
                 )
                 errors = self.errors(text)
-                self.assert_error(errors, "missing required heading", "# Front")
+                expected = (
+                    "boundary '## Front' must use '# Front'" if replacement
+                    else "missing required heading: # Front"
+                )
+                self.assertIn(expected, errors)
+                self.assert_error(errors, "header order")
+
+    def test_level_two_front_still_requires_correct_navigation_spacing(self) -> None:
+        for separator in ("\n", "\n\nIntervening prose\n\n"):
+            with self.subTest(separator=separator):
+                text = self.card(mode="simple").replace(
+                    self.navigation + "\n\n# Front", self.navigation + separator + "## Front"
+                )
+                errors = self.errors(text)
+                self.assertIn("boundary '## Front' must use '# Front'", errors)
                 self.assert_error(errors, "header order")
 
     def test_missing_readme_diagnostic_excludes_fragment(self) -> None:
@@ -418,10 +558,10 @@ class CardValidationTests(unittest.TestCase):
         self.index.write_text(
             "# Subject\n\n## Content\n\n## Content\n\n"
             "## **Cache** and `Store`\n\n"
-            '<a id="custom-index"></a>\n\n<a name="legacy-index"></a>\n',
+            '<a id="custom-index"></a>\n\n<a name="named-index"></a>\n',
             encoding="utf-8",
         )
-        for anchor in ("content", "content-1", "cache-and-store", "custom-index", "legacy-index", "%63ontent"):
+        for anchor in ("content", "content-1", "cache-and-store", "custom-index", "named-index", "%63ontent"):
             with self.subTest(anchor=anchor):
                 self.assertEqual([], self.errors(self.card().replace("#content)", f"#{anchor})")))
 
