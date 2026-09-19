@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="690" viewBox="0 0 1160 690" role="img" aria-labelledby="title desc">
+  <title id="title">A CSRF token blocks the forged action</title>
+  <desc id="desc">The bank stores an unpredictable CSRF token in Alice’s session and includes it in its own page. The same-origin policy prevents the separate attacker page from reading that token, assuming no cross-site scripting or other token leakage. Compare two requests with a valid session cookie. The legitimate bank form supplies a matching token and passes the CSRF check. The attacker form has a missing or incorrect token and is rejected before any transfer. Passing CSRF validation does not replace authentication or authorization checks.</desc>
+  <!-- Reusable icons copied unchanged from system design/01. Scaling/images/single-server.svg.
+       Explicit use dimensions preserve their proportions. Styles follow nearby CS protocol diagrams. -->
+  <defs>
+    <style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+    .title { font-size: 32px; font-weight: 700; }
+    .subtitle { font-size: 20px; fill: #475569; }
+    .actor { font-size: 23px; font-weight: 700; text-anchor: middle; }
+    .domain { font-size: 20px; fill: #475569; text-anchor: middle; }
+    .label { font-size: 22px; font-weight: 700; }
+    .body { font-size: 21px; }
+    .note { font-size: 20px; fill: #475569; }
+    .code { font-size: 20px; font-family: Menlo, Consolas, monospace; }
+    .lifeline { fill: none; stroke: #cbd5e1; stroke-width: 2; stroke-dasharray: 7 7; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
+<symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+  </defs>
+  <!-- White canvas and reading guide. -->
+  <rect width="1160" height="690" fill="#fff"/>
+  <text x="32" y="46" class="title">A CSRF token blocks the forged action</text>
+  <text x="32" y="80" class="subtitle">Synchronizer token: an unpredictable secret tied to Alice’s server-side session.</text>
+  <!-- Establish token ownership before showing the two request outcomes. -->
+  <rect x="32" y="102" width="1096" height="68" rx="16" fill="#f1f5f9"/>
+  <text x="52" y="130" class="body">The bank page receives the token. The separate attacker page cannot normally read it.</text>
+  <text x="52" y="157" class="note">Both requests below carry Alice’s valid session cookie.</text>
+  <!-- Reuse the System Design browser and server icons above their comparison columns. -->
+  <use href="#laptop" x="195" y="185" width="110" height="70"/>
+  <use href="#server" x="673" y="180" width="44" height="77"/>
+  <text x="250" y="284" class="actor">Request from browser</text>
+  <text x="695" y="284" class="actor">Bank token check</text>
+  <text x="1000" y="284" class="actor">Outcome</text>
+  <!-- Upper comparison: a trusted form has the session token; shafts occupy a clear center corridor. -->
+  <rect x="32" y="308" width="1096" height="137" rx="16" fill="#f1f8ec"/>
+  <text x="57" y="350" class="label">Bank’s own form</text>
+  <text x="57" y="385" class="body">Cookie + correct token</text>
+  <!-- valid-token-request: shaft ends 2 units inside its triangle base; tip stops before the lifeline or box. -->
+  <path id="valid-token-request-shaft" data-connector="true" d="M400 383H529" fill="none" stroke="#318140" stroke-width="3"/>
+  <polygon id="valid-token-request-head" points="542,383 527,375 527,391" fill="#318140"/>
+  <rect x="558" y="328" width="274" height="97" rx="16" fill="#fff" stroke="#a3c89a" stroke-width="2"/>
+  <text x="695" y="367" class="body" text-anchor="middle">Compare with session</text>
+  <text x="695" y="398" class="label" text-anchor="middle" style="fill:#256b35">Token matches</text>
+  <!-- valid-token-decision: shaft ends 2 units inside its triangle base; tip stops before the lifeline or box. -->
+  <path id="valid-token-decision-shaft" data-connector="true" d="M837 383H884" fill="none" stroke="#318140" stroke-width="3"/>
+  <polygon id="valid-token-decision-head" points="897,383 882,375 882,391" fill="#318140"/>
+  <text x="920" y="363" class="label" style="fill:#256b35">Pass CSRF</text>
+  <text x="920" y="395" class="label" style="fill:#256b35">check</text>
+  <!-- Lower comparison: reject before mutation, even though authentication succeeds. -->
+  <rect x="32" y="465" width="1096" height="137" rx="16" fill="#fff1f2"/>
+  <text x="57" y="507" class="label">Attacker’s form</text>
+  <text x="57" y="542" class="body">Cookie + no valid token</text>
+  <!-- invalid-token-request: shaft ends 2 units inside its triangle base; tip stops before the lifeline or box. -->
+  <path id="invalid-token-request-shaft" data-connector="true" d="M400 540H529" fill="none" stroke="#b33c52" stroke-width="3"/>
+  <polygon id="invalid-token-request-head" points="542,540 527,532 527,548" fill="#b33c52"/>
+  <rect x="558" y="485" width="274" height="97" rx="16" fill="#fff" stroke="#e5a2ad" stroke-width="2"/>
+  <text x="695" y="524" class="body" text-anchor="middle">Compare with session</text>
+  <text x="695" y="555" class="label" text-anchor="middle" style="fill:#a32941">Missing or incorrect</text>
+  <!-- invalid-token-decision: shaft ends 2 units inside its triangle base; tip stops before the lifeline or box. -->
+  <path id="invalid-token-decision-shaft" data-connector="true" d="M837 540H884" fill="none" stroke="#b33c52" stroke-width="3"/>
+  <polygon id="invalid-token-decision-head" points="897,540 882,532 882,548" fill="#b33c52"/>
+  <text x="920" y="520" class="label" style="fill:#a32941">Reject</text>
+  <text x="920" y="552" class="body" style="fill:#a32941">No transfer</text>
+  <!-- The check establishes request legitimacy, not business authorization or actual human intent. -->
+  <text x="32" y="639" class="note">Validate before changing state. Authentication and authorization checks still apply.</text>
+  <text x="32" y="671" class="note">Assumes the attacker cannot read or steal the bank’s token.</text>
+</svg>

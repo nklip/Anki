@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="1080" viewBox="0 0 1240 1080" role="img" aria-labelledby="title desc">
+  <title id="title">CSRF attack: the browser sends the attacker’s request</title>
+  <desc id="desc">Cross-Site Request Forgery sequence, read from top to bottom. Preconditions: Alice is signed in to bank.example; browser cookie rules permit the bank session cookie on this cross-site POST; the bank has no effective CSRF defense. Alice visits evil.example. It returns an HTML form and an automatic submission script. Alice’s browser submits POST /transfer to bank.example with attacker-controlled fields and Alice’s real session cookie. The bank accepts the session and transfers 100 units to the attacker. The response returns to Alice’s browser. The attacker never receives the bank cookie and need not read the bank response.</desc>
+  <!-- Reusable icons copied unchanged from system design/01. Scaling/images/single-server.svg.
+       Explicit use dimensions preserve their proportions. Styles follow nearby CS protocol diagrams. -->
+  <defs>
+    <style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+    .title { font-size: 32px; font-weight: 700; }
+    .subtitle { font-size: 20px; fill: #475569; }
+    .actor { font-size: 23px; font-weight: 700; text-anchor: middle; }
+    .domain { font-size: 20px; fill: #475569; text-anchor: middle; }
+    .label { font-size: 22px; font-weight: 700; }
+    .body { font-size: 21px; }
+    .note { font-size: 20px; fill: #475569; }
+    .code { font-size: 20px; font-family: Menlo, Consolas, monospace; }
+    .lifeline { fill: none; stroke: #cbd5e1; stroke-width: 2; stroke-dasharray: 7 7; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
+<symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+  </defs>
+  <!-- White canvas and reading guide. -->
+  <rect width="1240" height="1080" fill="#fff"/>
+  <text x="32" y="46" class="title">2 · CSRF: the browser sends the attacker’s request</text>
+  <text x="32" y="80" class="subtitle">Cross-Site Request Forgery · Read downward; orange marks attacker-controlled content.</text>
+  <!-- The attacker server and bank server are distinct sites; the browser is the intermediary. -->
+  <rect x="30.0" y="112" width="240" height="160" rx="16" fill="#fff" stroke="#c45c17" stroke-width="2"/>
+  <text x="150" y="143" class="actor">Attacker site</text>
+  <use href="#server" x="128" y="156" width="44" height="77"/>
+  <text x="150" y="257" class="domain">evil.example</text>
+  <rect x="500.0" y="112" width="240" height="160" rx="16" fill="#fff" stroke="#08b7d1" stroke-width="2"/>
+  <text x="620" y="143" class="actor">Alice’s browser</text>
+  <use href="#laptop" x="565" y="159" width="110" height="70"/>
+  <text x="620" y="257" class="domain">Already signed in</text>
+  <rect x="970.0" y="112" width="240" height="160" rx="16" fill="#fff" stroke="#08b7d1" stroke-width="2"/>
+  <text x="1090" y="143" class="actor">Bank server</text>
+  <use href="#server" x="1068" y="156" width="44" height="77"/>
+  <text x="1090" y="257" class="domain">bank.example</text>
+  <!-- Preconditions distinguish this example from a blocked SameSite request. -->
+  <rect x="32" y="290" width="1176" height="72" rx="16" fill="#f1f5f9"/>
+  <text x="52" y="320" class="body">Assume: the bank cookie is allowed on this cross-site POST.</text>
+  <text x="52" y="348" class="note">The vulnerable bank checks the session but has no effective CSRF defense.</text>
+  <!-- Lifelines indicate participants over time. The bank line pauses around its local action box. -->
+  <path id="attacker-lifeline" class="lifeline" d="M150 372V950"/>
+  <path id="browser-lifeline" class="lifeline" d="M620 372V950"/>
+  <path id="bank-lifeline" class="lifeline" d="M1090 372V735M1090 877V950"/>
+  <text x="385" y="397" class="label" text-anchor="middle">A · Visit the decoy page</text>
+  <!-- visit-decoy: shaft ends 2 units inside its triangle base; tip stops before the lifeline or box. -->
+  <path id="visit-decoy-shaft" data-connector="true" d="M616 421H167" fill="none" stroke="#0b78b5" stroke-width="3"/>
+  <polygon id="visit-decoy-head" points="154,421 169,413 169,429" fill="#0b78b5"/>
+  <text x="385" y="469" class="label" text-anchor="middle" style="fill:#b45309">B · Form + auto-submit script</text>
+  <!-- serve-decoy: shaft ends 2 units inside its triangle base; tip stops before the lifeline or box. -->
+  <path id="serve-decoy-shaft" data-connector="true" d="M154 495H603" fill="none" stroke="#c45c17" stroke-width="3"/>
+  <polygon id="serve-decoy-head" points="616,495 601,487 601,503" fill="#c45c17"/>
+  <rect x="182" y="518" width="405" height="62" rx="16" fill="#fff6eb"/>
+  <text x="202" y="543" class="note">The bank cookie is never sent</text>
+  <text x="202" y="567" class="note">to this attacker server.</text>
+  <!-- The forged request travels from browser to bank, not directly from attacker to bank. -->
+  <text x="855" y="591" class="label" text-anchor="middle" style="fill:#b45309">C · Browser submits to bank</text>
+  <text x="855" y="623" class="code" text-anchor="middle">POST /transfer</text>
+  <text x="855" y="654" class="code" text-anchor="middle">to=attacker&amp;amount=100</text>
+  <text x="855" y="685" class="code" text-anchor="middle">Cookie: session=s123</text>
+  <!-- forged-transfer: shaft ends 2 units inside its triangle base; tip stops before the lifeline or box. -->
+  <path id="forged-transfer-shaft" data-connector="true" d="M624 712H1073" fill="none" stroke="#c45c17" stroke-width="3"/>
+  <polygon id="forged-transfer-head" points="1086,712 1071,704 1071,720" fill="#c45c17"/>
+  <rect x="182" y="610" width="405" height="116" rx="16" fill="#eff8fc"/>
+  <text x="202" y="641" class="body">Attacker chooses the form fields.</text>
+  <text x="202" y="679" class="body">Browser adds the bank cookie</text>
+  <text x="202" y="707" class="body">according to cookie rules.</text>
+  <!-- Local server action has no network arrow. Its missing CSRF check causes the state change. -->
+  <rect id="bank-mutation" x="892" y="745" width="316" height="120" rx="16" fill="#fff1f2" stroke="#e5a2ad" stroke-width="2"/>
+  <text x="912" y="775" class="label" style="fill:#a32941">D · Bank accepts</text>
+  <text x="912" y="805" class="body">Cookie identifies Alice.</text>
+  <text x="912" y="837" class="body">Transfers 100 to attacker.</text>
+  <text x="855" y="908" class="label" text-anchor="middle">E · Result goes to the browser</text>
+  <!-- bank-result: shaft ends 2 units inside its triangle base; tip stops before the lifeline or box. -->
+  <path id="bank-result-shaft" data-connector="true" d="M1086 935H637" fill="none" stroke="#64748b" stroke-width="3" stroke-dasharray="7 5"/>
+  <polygon id="bank-result-head" points="624,935 639,927 639,943" fill="#64748b"/>
+  <!-- Consequence and the critical read/write distinction. -->
+  <rect x="32" y="974" width="1176" height="82" rx="16" fill="#fff1f2"/>
+  <text x="52" y="1006" class="label" style="fill:#a32941">Outcome: Alice’s account changes without her approval.</text>
+  <text x="52" y="1037" class="body">The attacker needs neither the cookie’s value nor access to the bank’s response.</text>
+</svg>
