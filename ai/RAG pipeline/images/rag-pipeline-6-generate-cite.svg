@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
-  <title id="title">Step 6 of the RAG pipeline: generating an answer whose every claim points back to a retrieved passage</title>
-  <desc id="desc">Three retrieved passages on the left are linked by curved connectors to an answer on the right, where each sentence ends with the identifier of the passage it came from. A panel notes what the passages do not say, and three closing cards describe checking the cited span, spotting an uncited claim, and the limit of grounding.</desc>
+  <title id="title">Step 6 of the RAG pipeline: generating a cited answer and acknowledging missing evidence</title>
+  <desc id="desc">Three retrieved passages on the left are linked by curved connectors to an answer on the right. Its factual claims cite passage identifiers, followed by an explicit statement that the passages do not say whether the cap can be raised. A panel explains this evidence gap, and three closing cards describe checking cited spans, inspecting uncited factual claims, and the limit of grounding.</desc>
 
   <!-- Shared visual system for the seven RAG pipeline diagrams. -->
   <defs>
@@ -69,19 +69,20 @@
   <!-- The answer. Ids are coloured so the trail is visible without reading the prose. -->
   <g id="answer">
     <rect x="540" y="160" width="610" height="380" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
-    <text class="kicker" x="562" y="190" fill="#0f6b43">THE ANSWER — EVERY CLAIM CARRIES ITS SOURCE</text>
+    <text class="kicker" x="562" y="190" fill="#0f6b43">THE ANSWER — CITED FACTS AND AN EXPLICIT GAP</text>
 
-    <rect x="562" y="208" width="566" height="176" rx="12" fill="#ecfdf5" stroke="#137a4b" stroke-width="2"/>
-    <text class="answer" x="586" y="246">Your payment stopped after five attempts because the</text>
+    <rect x="562" y="208" width="566" height="192" rx="12" fill="#ecfdf5" stroke="#137a4b" stroke-width="2"/>
+    <text class="answer" x="586" y="246">The policy allows up to five retries and says the</text>
     <text class="answer" x="586" y="272">retry cap is counted per merchant. <tspan class="cid">[c1]</tspan></text>
     <text class="answer" x="586" y="316">Going past the cap returns HTTP 429 with a reset time, <tspan class="cid">[c2]</tspan></text>
     <text class="answer" x="586" y="342">and the client must wait for it before retrying. <tspan class="cid">[c3]</tspan></text>
+    <text class="answer" x="586" y="380">The passages do not say whether the cap can be raised.</text>
 
-    <rect x="562" y="406" width="566" height="104" rx="12" fill="#fff1f0" stroke="#d92d20" stroke-width="2"/>
-    <text class="card-label" x="586" y="434" fill="#b42318">WHAT THE PASSAGES DO NOT SAY</text>
-    <text class="gap-copy" x="586" y="462">
-      <tspan x="586" dy="0">They never state whether the cap can be raised, so the answer</tspan>
-      <tspan x="586" dy="22">reports that gap instead of filling it.</tspan>
+    <rect x="562" y="418" width="566" height="102" rx="12" fill="#fff1f0" stroke="#d92d20" stroke-width="2"/>
+    <text class="card-label" x="586" y="446" fill="#b42318">THE GAP IS PART OF THE ANSWER</text>
+    <text class="gap-copy" x="586" y="474">
+      <tspan x="586" dy="0">The final sentence states what is missing. It does not invent</tspan>
+      <tspan x="586" dy="22">a policy for raising the cap or attach a misleading citation.</tspan>
     </text>
   </g>
 
@@ -98,9 +99,9 @@
     <rect x="423" y="570" width="353" height="140" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
     <text class="card-label" x="449" y="600" fill="#92400e">CHECK THE GAPS</text>
     <text class="card-copy" x="449" y="628">
-      <tspan x="449" dy="0">A sentence with no id is ungrounded:</tspan>
-      <tspan x="449" dy="22">either retrieval missed the passage or</tspan>
-      <tspan x="449" dy="22">the model supplied the claim itself.</tspan>
+      <tspan x="449" dy="0">Inspect factual claims with no id.</tspan>
+      <tspan x="449" dy="22">Reporting missing evidence is different</tspan>
+      <tspan x="449" dy="22">from asserting an unsupported fact.</tspan>
     </text>
 
     <rect x="796" y="570" width="353" height="140" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>

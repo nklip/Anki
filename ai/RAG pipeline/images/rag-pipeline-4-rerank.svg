@@ -25,7 +25,7 @@
   <g id="heading">
     <text class="eyebrow" x="50" y="38">STEP 4 OF 6 — RERANK</text>
     <text class="title" x="50" y="82">Score the survivors against the question</text>
-    <text class="subtitle" x="50" y="110">Retrieval scored question and chunk apart. A reranker reads them together: more accurate, far more expensive.</text>
+    <text class="subtitle" x="50" y="110">A cross-encoder reranker reads the question and chunk together as one input to score their relevance.</text>
   </g>
 
   <!-- Left: the two-pass scoring that retrieval uses. Its chunk vector predates the question. -->
@@ -79,7 +79,7 @@
     <rect x="646" y="360" width="458" height="46" rx="10" fill="#ecfdf5" stroke="#137a4b" stroke-width="2"/>
     <text class="node-strong" x="875" y="389" text-anchor="middle">one relevance score for this pair</text>
 
-    <text class="note" x="646" y="434">Nothing can be prepared in advance, so it runs once per candidate.</text>
+    <text class="note" x="646" y="434">The joint score depends on the question: evaluate each candidate.</text>
   </g>
 
   <!-- The funnel makes the cost argument concrete: rerank a short list, not the corpus. -->

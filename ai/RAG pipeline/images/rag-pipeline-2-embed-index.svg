@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
   <title id="title">Step 2 of the RAG pipeline: embedding each chunk and building the vector and keyword indexes</title>
-  <desc id="desc">A left-to-right flow shows chunks entering one embedding model and leaving as fixed-length vectors. Two downward arrows feed the two indexes built from the same chunks: a keyword index that matches exact words and a vector index that matches meaning through approximate nearest-neighbour search. A closing bar states that an unindexed chunk can never be retrieved.</desc>
+  <desc id="desc">A left-to-right flow shows chunks entering one embedding model and leaving as fixed-length vectors. Two downward arrows feed the two indexes built from the same chunks: a keyword index that matches exact words and a vector index that finds nearby vectors. Vector search can be exact or approximate; approximate methods trade accuracy for speed. A closing bar states that a chunk must be indexed before this pipeline can retrieve it.</desc>
 
   <!-- Shared visual system for the seven RAG pipeline diagrams. -->
   <defs>
@@ -97,8 +97,8 @@
     <text class="panel-title" x="646" y="492">Matches the meaning</text>
     <text class="panel-copy" x="646" y="522">
       <tspan x="646" dy="0">Finds the chunk vectors closest to a question vector.</tspan>
-      <tspan x="646" dy="22">The search is approximate: fast over millions of</tspan>
-      <tspan x="646" dy="22">chunks, but it can miss a true nearest neighbour.</tspan>
+      <tspan x="646" dy="22">Exact search is possible. Approximate methods</tspan>
+      <tspan x="646" dy="22">gain speed but may miss true nearest neighbours.</tspan>
     </text>
   </g>
 
@@ -106,7 +106,7 @@
   <g id="closing">
     <rect x="50" y="630" width="1100" height="80" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
     <rect x="50" y="630" width="10" height="80" rx="5" fill="#d92d20"/>
-    <text class="callout-label" x="82" y="676" fill="#b42318">BUILT ONCE, USED EVERY TIME</text>
-    <text class="callout-copy" x="380" y="676">A chunk that was never indexed can never be retrieved.</text>
+    <text class="callout-label" x="82" y="676" fill="#b42318">INDEX BEFORE RETRIEVING</text>
+    <text class="callout-copy" x="380" y="676">This pipeline can retrieve a chunk only after it is indexed.</text>
   </g>
 </svg>

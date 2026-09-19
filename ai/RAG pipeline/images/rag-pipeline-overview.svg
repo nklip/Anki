@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
-  <title id="title">RAG pipeline overview: an offline indexing phase and an online query phase joined by one shared index</title>
-  <desc id="desc">Two labelled rows. The top row runs when documents change: source documents become chunks, then chunk vectors in an index. An elbow connector carries that index down into the bottom row, which runs for every question: question, retrieve, rerank, assemble prompt, generate cited answer.</desc>
+  <title id="title">RAG pipeline overview: indexing and query phases share indexes and a compatible embedding space</title>
+  <desc id="desc">Two labelled rows. The top row runs when documents change: source documents become chunks, then vector and keyword indexes. An elbow connector carries the indexes into the bottom row, which runs for every question: question, retrieve, rerank, assemble prompt, generate cited answer. The phases also need compatible embeddings. In this single pass, later steps select evidence only from retrieved candidates.</desc>
 
   <!-- Shared visual system for the seven RAG pipeline diagrams. -->
   <defs>
@@ -24,11 +24,11 @@
 
   <rect width="1200" height="760" fill="#f8fafc"/>
 
-  <!-- Heading states the single lesson: two phases, one shared artifact. -->
+  <!-- Heading names both the shared data and the embedding compatibility requirement. -->
   <g id="heading">
     <text class="eyebrow" x="50" y="38">RAG PIPELINE — OVERVIEW</text>
-    <text class="title" x="50" y="82">Two phases joined by one index</text>
-    <text class="subtitle" x="50" y="110">Indexing decides what can ever be found. Query decides what is found this time.</text>
+    <text class="title" x="50" y="82">Two phases share indexes and an embedding space</text>
+    <text class="subtitle" x="50" y="110">Indexing prepares searchable chunks. Each query selects evidence from them.</text>
   </g>
 
   <!-- Phase A: offline indexing. Right-aligned note keeps the left corridor free for the connector. -->
@@ -67,11 +67,11 @@
     </text>
   </g>
 
-  <!-- The index is the only artifact shared by both phases; this elbow carries it from Phase A to Step 3. -->
+  <!-- The indexes are shared data artifacts; the query must also use a compatible embedding space. -->
   <g id="index-handover">
     <path class="shaft" data-connector="true" d="M985 310 V352 H372 V406"/>
     <polygon points="372,416 363,404 381,404" fill="#64748b"/>
-    <text class="phase-note" x="400" y="376" fill="#0e7490">the built index is the hand-over between the phases</text>
+    <text class="phase-note" x="400" y="376" fill="#0e7490">the built indexes carry the chunks into the query phase</text>
   </g>
 
   <!-- Phase B: online query. Same left margin as Phase A so the two rows read as one pipeline. -->
@@ -141,10 +141,10 @@
     <rect x="50" y="596" width="1100" height="114" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
     <rect x="50" y="596" width="10" height="57" rx="5" fill="#0891b2"/>
     <text class="callout-label" x="82" y="629" fill="#0e7490">WHAT IS SHARED</text>
-    <text class="callout-copy" x="270" y="629">The index is the only thing both phases touch.</text>
+    <text class="callout-copy" x="270" y="629">Vector and keyword indexes; compatible embeddings.</text>
     <line x1="82" y1="653" x2="1118" y2="653" stroke="#e2e8f0" stroke-width="2"/>
     <rect x="50" y="653" width="10" height="57" rx="5" fill="#d92d20"/>
-    <text class="callout-label" x="82" y="686" fill="#b42318">THE HARD LIMIT</text>
-    <text class="callout-copy" x="270" y="686">No later step can recover a fact that retrieval never returned.</text>
+    <text class="callout-label" x="82" y="686" fill="#b42318">IN THIS PASS</text>
+    <text class="callout-copy" x="270" y="686">Later steps select evidence only from retrieved candidates.</text>
   </g>
 </svg>

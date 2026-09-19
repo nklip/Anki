@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
   <title id="title">Step 5 of the RAG pipeline: assembling instructions, labelled chunks and the question into one prompt</title>
-  <desc id="desc">Three ingredients on the left — instructions, the selected chunks with their identifiers, and the question — flow into one assembled prompt on the right, shown as the literal text the model receives. Two closing cards state the ordering rule and the need to name the passages as the authoritative source.</desc>
+  <desc id="desc">Three ingredients on the left — instructions, the selected chunks with their identifiers, and the question — flow into one assembled prompt on the right, shown as the literal text the model receives. Three closing cards explain identifier labels, evidence order, and the need to name the passages as the authoritative source.</desc>
 
   <!-- Shared visual system for the seven RAG pipeline diagrams. -->
   <defs>
@@ -71,7 +71,7 @@
     <text class="prompt-chunk" x="456" y="328">[c2] Going over it returns HTTP 429 and a reset time.</text>
     <text class="prompt-chunk" x="456" y="354">[c3] Clients must wait for that time before retrying.</text>
     <text class="prompt-ask" x="456" y="396">Question: Why did my payment stop retrying?</text>
-    <text class="prompt-rule" x="456" y="436">Cite the passage id behind every claim.</text>
+    <text class="prompt-rule" x="456" y="436">Cite the passage id behind each factual claim.</text>
     <text class="prompt-rule" x="456" y="458">If the passages do not answer it, say so instead of guessing.</text>
 
     <text class="note" x="432" y="518">
@@ -80,22 +80,33 @@
     </text>
   </g>
 
-  <!-- Two rules that decide whether the assembled prompt is actually used as intended. -->
+  <!-- Three decisions in article order: labels make citations traceable, order affects use, rules name authority. -->
   <g id="rules">
-    <rect x="50" y="590" width="540" height="120" rx="16" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
-    <text class="card-label" x="76" y="620" fill="#92400e">RULE 1 · ORDER</text>
-    <text class="card-title" x="76" y="650">Do not bury the best passage</text>
-    <text class="card-copy" x="76" y="676">
-      <tspan x="76" dy="0">Evidence placed in the middle of a long context is used less reliably</tspan>
-      <tspan x="76" dy="20">than the same evidence placed at its beginning or its end.</tspan>
+    <rect x="50" y="580" width="353" height="140" rx="16" fill="#ecfeff" stroke="#0891b2" stroke-width="2"/>
+    <text class="card-label" x="76" y="610" fill="#0e7490">RULE 1 · IDENTIFIERS</text>
+    <text class="card-title" x="76" y="638">Give each chunk an id</text>
+    <text class="card-copy" x="76" y="664">
+      <tspan x="76" dy="0">Labels such as [c1] let the answer</tspan>
+      <tspan x="76" dy="20">point to a specific passage so a reader</tspan>
+      <tspan x="76" dy="20">can check its support.</tspan>
     </text>
 
-    <rect x="610" y="590" width="540" height="120" rx="16" fill="#fff1f0" stroke="#d92d20" stroke-width="2"/>
-    <text class="card-label" x="636" y="620" fill="#b42318">RULE 2 · AUTHORITY</text>
-    <text class="card-title" x="636" y="650">Say which source wins</text>
-    <text class="card-copy" x="636" y="676">
-      <tspan x="636" dy="0">The model still carries its own trained associations. If the prompt does</tspan>
-      <tspan x="636" dy="20">not name the passages as authoritative, the two can blend silently.</tspan>
+    <rect x="423" y="580" width="353" height="140" rx="16" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+    <text class="card-label" x="449" y="610" fill="#92400e">RULE 2 · ORDER</text>
+    <text class="card-title" x="449" y="638">Do not bury the best passage</text>
+    <text class="card-copy" x="449" y="664">
+      <tspan x="449" dy="0">Evidence in the middle of a long</tspan>
+      <tspan x="449" dy="20">context is used less reliably than at</tspan>
+      <tspan x="449" dy="20">the beginning or end.</tspan>
+    </text>
+
+    <rect x="796" y="580" width="353" height="140" rx="16" fill="#fff1f0" stroke="#d92d20" stroke-width="2"/>
+    <text class="card-label" x="822" y="610" fill="#b42318">RULE 3 · AUTHORITY</text>
+    <text class="card-title" x="822" y="638">Say which source wins</text>
+    <text class="card-copy" x="822" y="664">
+      <tspan x="822" dy="0">Name the passages as authoritative.</tspan>
+      <tspan x="822" dy="20">Otherwise the model may blend them</tspan>
+      <tspan x="822" dy="20">with its trained knowledge.</tspan>
     </text>
   </g>
 </svg>
