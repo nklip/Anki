@@ -1,16 +1,10 @@
 # LLM Failure Modes
 
-<!-- Card mode: complex. Validate with --mode complex. -->
+<sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-## Front
+**A large language model (LLM) generates each token from its learned parameters and the active context, while instruction-focused training makes that generation steerable; none of these influences independently guarantees truth, complete recall, or faithful use of every instruction.** First define the four influences, then trace the five named failure modes and the verification move for each one. Each diagram highlights an interaction between two influences: the paired boxes joined by `+` at the top.
 
-How do next-token prediction, parametric knowledge, working memory, and steerability jointly shape an LLM response—and how do their interactions produce the five named failure modes: hallucination, error propagation, sycophancy, instruction drift, and knowledge conflict?
-
-## Back
-
-**A large language model (LLM) generates each token from its learned parameters and the active context, while instruction-focused training makes that generation steerable; none of these influences independently guarantees truth, complete recall, or faithful use of every instruction.** First define the four influences, then trace the five named failure modes and the verification move for each one.
-
-### Core mental model: four influences, one token distribution
+## Core mental model: four influences, one token distribution
 
 The four labels are a teaching model, not four literal software modules that take turns. At generation time, a causal language model computes a probability distribution for the next token from earlier tokens and its learned parameters. A decoding rule selects a token, appends it to the sequence, and repeats.
 
@@ -22,7 +16,7 @@ learned parameters + active context
         select one token; repeat
 ```
 
-Use these definitions throughout the card:
+Use these definitions throughout the article:
 
 | Influence | Beginner-friendly definition | What it does **not** guarantee |
 |---|---|---|
@@ -33,7 +27,7 @@ Use these definitions throughout the card:
 
 The useful question is therefore not “Which module failed?” but “Which signals made this continuation likely, and what independent check was missing?”
 
-### Failure 1 — Hallucination (fabricated citations)
+## Failure 1 — Hallucination (fabricated citations)
 
 **Hallucination** is the accepted term for a plausible but false statement produced by a model. Fabricated citations are its most checkable form: when exact bibliographic details are requested without a retrieved or supplied record, token generation can reproduce the *shape* of a citation while parametric recall supplies incomplete or incorrect specifics.
 
@@ -47,21 +41,21 @@ The useful question is therefore not “Which module failed?” but “Which sig
 
 **Safer pattern:** retrieve candidate sources from a real index or the provided corpus, require links or identifiers that can be opened, and verify every field before using the citation. Retrieval augmentation has reduced knowledge hallucination in evaluated dialogue systems, but retrieval does not turn generation into a guarantee; the returned source and the claim still need checking.
 
-### Failure 2 — Error propagation (hallucination snowballing)
+## Failure 2 — Error propagation (hallucination snowballing)
 
 A complex requested chain can remain coherent after an early mistake because each generated step becomes context for the next one. The industry term for the general effect is **error propagation**; when the model then commits to and justifies its own earlier mistake, the literature calls it **hallucination snowballing**.
 
 ![llm-failure-2-error-propagation.svg](images/llm-failure-2-error-propagation.svg)
 
 - **State before:** The task contains several dependent arithmetic, logical, coding, or factual steps.
-- **Trigger:** The user requests a complete, confident, step-by-step solution.
+- **Trigger:** The user requests a complete, confident, step-by-step solution; steerability encourages the model to follow that requested form.
 - **What changes:** A wrong intermediate result is appended to the sequence and can be reused as if it were correct.
 - **State after:** Later steps may be locally coherent yet lead to a wrong conclusion.
 - **Why it matters:** Tone, detail, and a plausible explanation are not correctness tests; generated explanations can also omit the real influence behind a prediction.
 
 **Safer pattern:** make intermediate results externally checkable. Use a calculator for arithmetic, executable code and tests for algorithms, retrieval for factual premises, and an independent final check. Research on calculator-assisted reasoning shows that interaction with symbolic tools can materially improve arithmetic accuracy; the tool result should still be inspected and connected to the right problem.
 
-### Failure 3 — Sycophancy (false-premise agreement)
+## Failure 3 — Sycophancy (false-premise agreement)
 
 **Sycophancy** is the accepted term for a model tailoring its answer to what the user appears to believe rather than to what is true. When a user embeds a false claim — a **false premise**, or false presupposition — in a request, steerability can encourage the model to continue within that framing instead of challenging it, even when learned associations point elsewhere.
 
@@ -75,21 +69,21 @@ A complex requested chain can remain coherent after an early mistake because eac
 
 **Safer pattern:** separate premise checking from task completion: “First check my assumptions and correct any that are false; then answer.” Verify material premises independently. This reduces one prompting pressure, but it is not a guarantee that the model will retrieve the right fact or resist every misleading frame.
 
-### Failure 4 — Instruction drift (lost in the middle)
+## Failure 4 — Instruction drift (lost in the middle)
 
 **Instruction drift** is the measured tendency for an instruction given early in a dialog to stop being followed as the conversation grows. An early constraint can remain technically inside a long context yet be used unreliably — the position-dependent effect known as **lost in the middle** — and if the application truncates or summarizes old turns, the constraint may leave the active context entirely.
 
 ![llm-failure-4-instruction-drift.svg](images/llm-failure-4-instruction-drift.svg)
 
 - **State before:** A critical requirement appears early, followed by many turns, documents, examples, and newer instructions.
-- **Trigger:** The next answer must locate and apply the early requirement amid competing context.
+- **Trigger:** Steerability makes the response sensitive to newer instructions and examples while the model must still locate and apply the early requirement.
 - **What changes:** Experiments have found position-dependent long-context performance in multiple evaluated models, often with worse use of information in the middle than at the beginning or end. Separately, context-window overflow can make older tokens unavailable if the application removes them.
 - **State after:** The response follows salient current cues but violates an earlier requirement.
 - **Why it matters:** A large context capacity is not the same as reliable retrieval and use of everything placed inside it.
 
 **Safer pattern:** restate critical constraints next to the current task, ask the model to list the active constraints before acting, or begin a clean conversation containing only the essential instructions and evidence. Do not describe this as later messages literally “overwriting memory” unless the application actually removed or replaced earlier context.
 
-### Failure 5 — Knowledge conflict (context-memory)
+## Failure 5 — Knowledge conflict (context-memory)
 
 **Knowledge conflict** is the accepted term for a disagreement between the sources an answer could draw on. Surveys split it into *context-memory*, *inter-context*, and *intra-memory* conflicts; this section is the **context-memory** case, where a supplied document contradicts an association encoded in the weights. Without a clear authority rule, the answer may choose the wrong claim or blend incompatible details.
 
@@ -103,7 +97,7 @@ A complex requested chain can remain coherent after an early mistake because eac
 
 **Safer pattern:** name the source of truth and require provenance. For example: “For this task, treat the attached policy as authoritative. Quote the passage supporting the answer and report any conflict with other information.” If the document itself is untrusted, ask for the competing claims to be separated and verify them against an authoritative external source instead of forcing either one to win.
 
-### Fast diagnostic checklist
+## Fast diagnostic checklist
 
 | Symptom | Name it | First question to ask | Stronger check |
 |---|---|---|---|
@@ -113,20 +107,20 @@ A complex requested chain can remain coherent after an early mistake because eac
 | Earlier requirements disappear | **Instruction drift** | Are they still in the active context and easy to locate? | Restate them and require an active-constraints check. |
 | Document and model disagree | **Knowledge conflict** | Which source is authoritative for this task? | Quote evidence, expose the conflict, and avoid blending. |
 
-### Important limits and misconceptions
+## Important limits and misconceptions
 
 - **Next-token prediction describes the training and generation objective, not the full boundary of model capability.** Models trained this way can perform many tasks, but the objective itself does not validate truth.
 - **“Knowledge” is behavioral shorthand.** Evidence that a model can recall factual relations does not mean its weights form a complete knowledge base or reveal what source supports an answer.
-- **“Working memory” is only a metaphor in this card.** The precise context contents and truncation behavior depend on the model and application. Note the clash with standard terminology: in *context-memory conflict*, “memory” means the **parametric** weights, which is the opposite of what “working memory” denotes here.
+- **“Working memory” is only a metaphor in this article.** The precise context contents and truncation behavior depend on the model and application. Note the clash with standard terminology: in *context-memory conflict*, “memory” means the **parametric** weights, which is the opposite of what “working memory” denotes here.
 - **Steerability is not “following the loudest instruction.”** Real systems can distinguish instruction sources and priorities; robustly resolving conflicting instructions is itself an active training problem.
-- **Visible explanation is not proof.** A useful explanation exposes claims that can be checked, but research has shown that chain-of-thought explanations can be plausible yet unfaithful to the factors that drove the answer.
+- **Visible explanation is not proof.** A useful explanation exposes claims that can be checked, but research has shown that the step-by-step reasoning described in Failure 2 — **chain-of-thought** — can be plausible yet unfaithful to the factors that drove the answer.
 - **Every mitigation lowers risk rather than eliminating it.** Grounded sources can be irrelevant, tools can be called with wrong inputs, and explicit instructions can still be misunderstood.
 
-### One-sentence summary
+## One-sentence summary
 
 > An LLM chooses tokens from learned parameters and active context under instruction-following pressures, so hallucination, error propagation, sycophancy, instruction drift, and knowledge conflict all trace back to the same generation process—and reliability comes from making premises, sources, constraints, intermediate results, and authority rules independently checkable, not from fluency or confidence.
 
-## Sources
+# Sources
 
 - [Vaswani et al.: Attention Is All You Need](https://arxiv.org/abs/1706.03762)
 
@@ -191,7 +185,3 @@ A complex requested chain can remain coherent after an early mistake because eac
 - [Turpin et al.: Language Models Don't Always Say What They Think](https://arxiv.org/abs/2305.04388)
 
   Shows that chain-of-thought explanations can rationalize biased or incorrect outputs without revealing the influence that drove them.
-
----
-
-<sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
