@@ -1,0 +1,208 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1650" height="1225" viewBox="0 0 1650 1225" role="img" aria-labelledby="title desc">
+<title id="title">Kafka transactions: successful consume, transform, and produce</title>
+<desc id="desc">Read downward through eight roles: inbound topic, service containing a consumer and producer, transaction coordinator, transaction-state log, two outbound Topic Partitions, consumer group coordinator, and consumer-offsets log. After one-time initialization, the service consumes records and begins a transaction locally. It sends transactional output and stages the next input offsets. Under transaction.version=2, brokers enroll partitions before appending; those enrollment calls and replication replies are summarized. commitTransaction flushes and waits for successful sends, then issues EndTxn COMMIT. Replicated PREPARE_COMMIT permits an early success reply. COMMIT markers go to both output partitions and the offsets partition. After all marker acknowledgments, the transaction coordinator persists COMPLETE_COMMIT. Output visibility depends on each partition's last stable offset, and external effects are outside the transaction.</desc>
+<!-- Source-native adaptation of the user-supplied eight-column PNG:
+https://cdn.prod.website-files.com/687e4d3574f64b1a223d933f/68bef2534e1ffc55d99f30aa_kafka-transactions-seq-happy-path.png
+Preserve its actor order, lavender headers, yellow notes, and downward sequence.
+Intentional modernization: taller canvas, local beginTransaction, broker enrollment,
+pending offsets, early EndTxn reply, offsets marker persistence, and completion gate. -->
+<!-- Shared styles. Manual heads meet actor edges; shafts stop inside their own triangle bases. -->
+<defs>
+<style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #202020; }
+.actor { font-size: 14px; }
+.actor-code { font-family: Menlo, Consolas, monospace; font-size: 13px; }
+.label { font-family: "Trebuchet MS", Arial, sans-serif; font-size: 16px; font-weight: 600; fill: #333333; }
+.small { font-size: 14px; }
+.tiny { font-size: 14px; }
+.title-label { font-size: 22px; font-weight: 700; }
+.code { font-family: Menlo, Consolas, monospace; font-size: 15px; }
+.header { fill: #ececff; stroke: #dacef3; stroke-width: 1; }
+.note { fill: #fff5ad; stroke: #aaaa33; stroke-width: 1; }
+.quiet { fill: #ffffff; stroke: #dacef3; stroke-width: 1; }
+.message-label-bg { fill: #ffffff; }
+.activation { fill: #f4f4f4; stroke: #666666; stroke-width: 1; }
+.lifeline { fill: none; stroke: #dacef3; stroke-width: 2; }
+.arrow { fill: none; stroke: #333333; stroke-width: 1.5; }
+.reply { stroke-dasharray: 3 3; }
+</style>
+</defs>
+<rect width="1650" height="1225" fill="#ffffff"/>
+<!-- Lifelines are temporal guides. Message shafts cross them intentionally; white label backings keep vertical guides clear of text. -->
+<g id="lifelines">
+<path id="lifeline-125" class="lifeline" d="M125 76 V1044"/>
+<path id="lifeline-325" class="lifeline" d="M325 76 V1044"/>
+<path id="lifeline-525" class="lifeline" d="M525 76 V1044"/>
+<path id="lifeline-725" class="lifeline" d="M725 76 V1044"/>
+<path id="lifeline-925" class="lifeline" d="M925 76 V1044"/>
+<path id="lifeline-1125" class="lifeline" d="M1125 76 V1044"/>
+<path id="lifeline-1325" class="lifeline" d="M1325 76 V1044"/>
+<path id="lifeline-1525" class="lifeline" d="M1525 76 V1044"/>
+</g>
+<!-- Eight actor columns retain the supplied reference order. Topic columns combine the leader and its log. -->
+<g id="actors">
+<rect class="header" x="35" y="10" width="180" height="66" rx="2"/>
+<text class="actor" x="125" y="35" text-anchor="middle">Kafka Inbound</text>
+<text class="actor" x="125" y="57" text-anchor="middle">Topic Partition</text>
+<rect class="header" x="235" y="10" width="180" height="66" rx="2"/>
+<text class="actor" x="325" y="35" text-anchor="middle">Service</text>
+<text class="actor" x="325" y="57" text-anchor="middle">Consumer + Producer</text>
+<rect class="header" x="435" y="10" width="180" height="66" rx="2"/>
+<text class="actor" x="525" y="35" text-anchor="middle">Transaction</text>
+<text class="actor" x="525" y="57" text-anchor="middle">Coordinator</text>
+<rect class="header" x="635" y="10" width="180" height="66" rx="2"/>
+<text class="actor" x="725" y="35" text-anchor="middle">Transaction Log</text>
+<text class="actor-code" x="725" y="57" text-anchor="middle">__transaction_state</text>
+<rect class="header" x="835" y="10" width="180" height="66" rx="2"/>
+<text class="actor" x="925" y="35" text-anchor="middle">Kafka Outbound</text>
+<text class="actor" x="925" y="57" text-anchor="middle">Topic 1 Partition</text>
+<rect class="header" x="1035" y="10" width="180" height="66" rx="2"/>
+<text class="actor" x="1125" y="35" text-anchor="middle">Kafka Outbound</text>
+<text class="actor" x="1125" y="57" text-anchor="middle">Topic 2 Partition</text>
+<rect class="header" x="1235" y="10" width="180" height="66" rx="2"/>
+<text class="actor" x="1325" y="35" text-anchor="middle">Kafka</text>
+<text class="actor" x="1325" y="57" text-anchor="middle">Group Coordinator</text>
+<rect class="header" x="1435" y="10" width="180" height="66" rx="2"/>
+<text class="actor" x="1525" y="35" text-anchor="middle">Consumer Offsets</text>
+<text class="actor-code" x="1525" y="57" text-anchor="middle">__consumer_offsets</text>
+<rect class="header" x="35" y="1044" width="180" height="66" rx="2"/>
+<text class="actor" x="125" y="1069" text-anchor="middle">Kafka Inbound</text>
+<text class="actor" x="125" y="1091" text-anchor="middle">Topic Partition</text>
+<rect class="header" x="235" y="1044" width="180" height="66" rx="2"/>
+<text class="actor" x="325" y="1069" text-anchor="middle">Service</text>
+<text class="actor" x="325" y="1091" text-anchor="middle">Consumer + Producer</text>
+<rect class="header" x="435" y="1044" width="180" height="66" rx="2"/>
+<text class="actor" x="525" y="1069" text-anchor="middle">Transaction</text>
+<text class="actor" x="525" y="1091" text-anchor="middle">Coordinator</text>
+<rect class="header" x="635" y="1044" width="180" height="66" rx="2"/>
+<text class="actor" x="725" y="1069" text-anchor="middle">Transaction Log</text>
+<text class="actor-code" x="725" y="1091" text-anchor="middle">__transaction_state</text>
+<rect class="header" x="835" y="1044" width="180" height="66" rx="2"/>
+<text class="actor" x="925" y="1069" text-anchor="middle">Kafka Outbound</text>
+<text class="actor" x="925" y="1091" text-anchor="middle">Topic 1 Partition</text>
+<rect class="header" x="1035" y="1044" width="180" height="66" rx="2"/>
+<text class="actor" x="1125" y="1069" text-anchor="middle">Kafka Outbound</text>
+<text class="actor" x="1125" y="1091" text-anchor="middle">Topic 2 Partition</text>
+<rect class="header" x="1235" y="1044" width="180" height="66" rx="2"/>
+<text class="actor" x="1325" y="1069" text-anchor="middle">Kafka</text>
+<text class="actor" x="1325" y="1091" text-anchor="middle">Group Coordinator</text>
+<rect class="header" x="1435" y="1044" width="180" height="66" rx="2"/>
+<text class="actor" x="1525" y="1069" text-anchor="middle">Consumer Offsets</text>
+<text class="actor-code" x="1525" y="1091" text-anchor="middle">__consumer_offsets</text>
+</g>
+<!-- Yellow title follows the reference; setup is explicitly outside the per-transaction sequence. -->
+<g id="heading-and-setup">
+<rect class="note" x="100" y="85" width="1450" height="36" rx="2"/>
+<text class="title-label" x="825" y="110" text-anchor="middle">Kafka transactions — happy path · Kafka 4.3 · consume → transform → produce</text>
+<rect class="quiet" x="50" y="133" width="1550" height="56" rx="2"/>
+<text class="small" x="825" y="155" text-anchor="middle">Setup once: configure transactional.id and call initTransactions(). The service contains both Kafka clients.</text>
+<text class="small" x="825" y="179" text-anchor="middle">Consumer: enable.auto.commit=false; use read_committed for transactional input. Read downward; roles may share a broker.</text>
+</g>
+<!-- Activation bars denote work intervals, without claiming separate machines. Arrow tips stop at their edges. -->
+<g id="active-roles">
+<rect class="activation" x="320" y="229" width="10" height="508" rx="0"/>
+<rect class="activation" x="520" y="305" width="10" height="718" rx="0"/>
+<rect class="activation" x="1320" y="488" width="10" height="48" rx="0"/>
+<rect class="activation" x="1320" y="881" width="10" height="48" rx="0"/>
+</g>
+<!-- Input is returned by poll; beginTransaction changes local producer state and is not an initialization network request. -->
+<g id="consume-and-begin">
+<path id="consume-shaft" data-connector="true" d="M125 229 H311.3" class="arrow reply"/>
+<path id="consume-join" data-connector="true" d="M307.3 229 H311.3" class="arrow"/>
+<path id="consume-head" d="M309.3 224 L319.5 229 L309.3 234 Z" fill="#333333"/>
+<text class="label" x="222.15" y="214" text-anchor="middle">records from poll()</text>
+<rect class="note" x="190" y="250" width="270" height="46" rx="2"/>
+<text class="code" x="325" y="269" text-anchor="middle">beginTransaction()</text>
+<text class="small" x="325" y="289" text-anchor="middle">Local producer state</text>
+</g>
+<!-- Enrollment before append: broker-side enrollment calls are summarized, then pending output is shown. -->
+<g id="produce-records">
+<path id="track-participants-shaft" data-connector="true" d="M530 331 H716.3" class="arrow"/>
+<path id="track-participants-head" d="M714.3 326 L724 331 L714.3 336 Z" fill="#333333"/>
+<text class="label" x="627.15" y="316" text-anchor="middle">ONGOING</text>
+<rect class="quiet" x="790" y="285" width="795" height="55" rx="2"/>
+<text class="small" x="1187.5" y="307" text-anchor="middle">With transaction.version=2, brokers enroll each partition before appending.</text>
+<text class="small" x="1187.5" y="329" text-anchor="middle">AddPartitionsToTxn calls and replication replies are summarized here.</text>
+<path id="produce-one-shaft" data-connector="true" d="M330 379 H916.3" class="arrow"/>
+<path id="produce-one-head" d="M914.3 374 L924 379 L914.3 384 Z" fill="#333333"/>
+<!-- Label backings clear lifelines and start beyond the coordinator activation. -->
+<rect id="produce-one-label-bg" class="message-label-bg" x="569" y="348" width="312" height="23"/>
+<text class="label" x="725" y="364" text-anchor="middle">produce (transactional; pending)</text>
+<path id="produce-two-shaft" data-connector="true" d="M330 427 H1116.3" class="arrow"/>
+<path id="produce-two-head" d="M1114.3 422 L1124 427 L1114.3 432 Z" fill="#333333"/>
+<rect id="produce-two-label-bg" class="message-label-bg" x="669" y="391" width="312" height="28"/>
+<text class="label" x="825" y="412" text-anchor="middle">produce (transactional; pending)</text>
+</g>
+<!-- Transactional offsets are staged through the group coordinator. Its offsets partition also enrolls in the transaction. -->
+<g id="stage-consumed-offsets">
+<path id="send-offsets-shaft" data-connector="true" d="M330 488 H1311.3" class="arrow"/>
+<path id="send-offsets-head" d="M1309.3 483 L1319.5 488 L1309.3 493 Z" fill="#333333"/>
+<!-- Start beyond the coordinator activation at x=530; backing clears the remaining lifelines without covering the bar. -->
+<rect id="send-offsets-label-bg" class="message-label-bg" x="542" y="455" width="700" height="26"/>
+<text id="send-offsets-label" class="label" x="550" y="473" text-anchor="start">sendOffsetsToTransaction(next input offsets, group metadata) → TxnOffsetCommit</text>
+<path id="append-pending-offsets-shaft" data-connector="true" d="M1330 536 H1516.3" class="arrow"/>
+<path id="append-pending-offsets-head" d="M1514.3 531 L1524 536 L1514.3 541 Z" fill="#333333"/>
+<text class="small" x="1427.15" y="521" text-anchor="middle">Store pending offsets</text>
+<rect class="quiet" x="790" y="552" width="795" height="64" rx="2"/>
+<text class="small" x="1187.5" y="575" text-anchor="middle">The offsets partition is also enrolled before its transactional write.</text>
+<text class="small" x="1187.5" y="599" text-anchor="middle">Saved offsets stay pending until the COMMIT marker is applied.</text>
+</g>
+<!-- commitTransaction waits for record sends before EndTxn. The yellow note is local application work, not a wire request. -->
+<g id="request-commit">
+<rect class="note" x="50" y="552" width="470" height="64" rx="2"/>
+<text class="code" x="285" y="575" text-anchor="middle">commitTransaction()</text>
+<text class="small" x="285" y="599" text-anchor="middle">Flush pending records; await successful sends.</text>
+<path id="end-txn-shaft" data-connector="true" d="M330 651 H511.3" class="arrow"/>
+<path id="end-txn-head" d="M509.3 646 L519.5 651 L509.3 656 Z" fill="#333333"/>
+<text class="code" x="424.65" y="636" text-anchor="middle">EndTxn(COMMIT)</text>
+<path id="prepare-commit-shaft" data-connector="true" d="M530 689 H716.3" class="arrow"/>
+<path id="prepare-commit-head" d="M714.3 684 L724 689 L714.3 694 Z" fill="#333333"/>
+<text class="code" x="627.15" y="674" text-anchor="middle">PREPARE_COMMIT</text>
+<rect class="quiet" x="790" y="649" width="795" height="56" rx="2"/>
+<text class="small" x="1187.5" y="672" text-anchor="middle">The transaction coordinator replicates the commit decision</text>
+<text class="small" x="1187.5" y="695" text-anchor="middle">in __transaction_state before replying and sending COMMIT markers.</text>
+</g>
+<!-- Producer success can precede marker completion. The dashed reply ends on the service activation boundary. -->
+<g id="early-producer-success">
+<path id="end-txn-success-shaft" data-connector="true" d="M520 737 H338.7" class="arrow reply"/>
+<path id="end-txn-success-join" data-connector="true" d="M342.7 737 H338.7" class="arrow"/>
+<path id="end-txn-success-head" d="M340.7 732 L330.5 737 L340.7 742 Z" fill="#333333"/>
+<text class="small" x="425.35" y="722" text-anchor="middle">Success reply</text>
+<rect class="note" x="50" y="759" width="380" height="73" rx="2"/>
+<text class="small" x="240" y="783" text-anchor="middle">commitTransaction() can return</text>
+<text class="small" x="240" y="806" text-anchor="middle">while markers are still propagating.</text>
+<text class="tiny" x="240" y="825" text-anchor="middle">Success is not consumer processing.</text>
+</g>
+<!-- Separate marker requests are drawn in a readable order but can execute in parallel. Each destination log replicates its marker. -->
+<g id="commit-markers">
+<path id="marker-topic-one-shaft" data-connector="true" d="M530 785 H916.3" class="arrow"/>
+<path id="marker-topic-one-head" d="M914.3 780 L924 785 L914.3 790 Z" fill="#333333"/>
+<rect id="marker-topic-one-label-bg" class="message-label-bg" x="617.15" y="750" width="220" height="27"/>
+<text class="small" x="727.15" y="770" text-anchor="middle">WriteTxnMarkers(COMMIT)</text>
+<path id="marker-topic-two-shaft" data-connector="true" d="M530 833 H1116.3" class="arrow"/>
+<path id="marker-topic-two-head" d="M1114.3 828 L1124 833 L1114.3 838 Z" fill="#333333"/>
+<rect id="marker-topic-two-label-bg" class="message-label-bg" x="717.15" y="798" width="220" height="27"/>
+<text class="small" x="827.15" y="818" text-anchor="middle">WriteTxnMarkers(COMMIT)</text>
+<path id="marker-offsets-broker-shaft" data-connector="true" d="M530 881 H1311.3" class="arrow"/>
+<path id="marker-offsets-broker-head" d="M1309.3 876 L1319.5 881 L1309.3 886 Z" fill="#333333"/>
+<rect id="marker-offsets-label-bg" class="message-label-bg" x="715.65" y="846" width="418" height="27"/>
+<text class="small" x="924.65" y="866" text-anchor="middle">WriteTxnMarkers(COMMIT) → offsets partition leader</text>
+<path id="persist-offsets-marker-shaft" data-connector="true" d="M1330 929 H1516.3" class="arrow"/>
+<path id="persist-offsets-marker-head" d="M1514.3 924 L1524 929 L1514.3 934 Z" fill="#333333"/>
+<text class="tiny" x="1427.15" y="914" text-anchor="middle">Persist COMMIT marker</text>
+</g>
+<!-- Completion is gated on successful replicated marker writes for every participant, including consumer offsets. -->
+<g id="complete-transaction">
+<rect class="quiet" x="790" y="949" width="795" height="43" rx="2"/>
+<text class="small" x="1187.5" y="976" text-anchor="middle">Markers may run in parallel; wait for ALL replicated marker acknowledgments.</text>
+<path id="complete-commit-shaft" data-connector="true" d="M530 1017 H716.3" class="arrow"/>
+<path id="complete-commit-head" d="M714.3 1012 L724 1017 L714.3 1022 Z" fill="#333333"/>
+<text class="code" x="627.15" y="1002" text-anchor="middle">COMPLETE_COMMIT</text>
+</g>
+<!-- Reading constraints and outcome remain visible without the article. Bottom notes are outside the temporal sequence. -->
+<g id="outcome-and-key">
+<text class="small" x="825" y="1141" text-anchor="middle">Visibility: read_committed output must be below each partition’s last stable offset; an earlier open transaction can delay it.</text>
+<text class="small" x="825" y="1169" text-anchor="middle">Atomic result: output records and input offsets share one transaction. External database writes and API calls are outside it.</text>
+<text class="small" x="825" y="1197" text-anchor="middle">Key: solid arrows = requests or log writes · dashed arrows = returned records or replies · gray bars = active work · topic columns show partition leaders/logs</text>
+</g>
+</svg>

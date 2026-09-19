@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1069" height="853" viewBox="0 0 1069 853" role="img" aria-labelledby="title desc">
+<title id="title">Manual Kafka offset commits: A service crashes before committing; another instance can replay records</title>
+<desc id="desc">Service Instance 1 waits for successful output acknowledgments and then crashes before committing its input offsets. After reassignment, Service Instance 2 resumes from the last committed offsets and may duplicate that output. Automatic commits are disabled. Each produce step waits for all output acknowledgments before the application commits the next input offsets to the consumer group coordinator. These operations are not in a transaction. Read downward.</desc>
+<!-- Corrected source-native adaptation of the supplied PNG. Participant order, sequence layout, and palette are retained; labels now explicitly teach application-controlled commits rather than automatic commits. -->
+<!-- Shared styles. White message-label backings separate text from the vertical time guides. -->
+<defs><style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #202020; text-anchor: middle; }
+.title-label { font-size: 22px; font-weight: 700; }
+.subtitle { font-size: 15px; }
+.rule, .actor-label, .note-label { font-size: 14px; }
+.message-label { font-family: "Trebuchet MS", Arial, sans-serif; font-size: 16px; font-weight: 600; fill: #333333; }
+.actor-box { fill: #ececff; stroke: #dacef3; stroke-width: 1; }
+.note-box { fill: #fff5ad; stroke: #aaaa33; stroke-width: 1; }
+.lifeline { fill: none; stroke: #dacef3; stroke-width: 2; }
+.activation { fill: #f4f4f4; stroke: #666666; stroke-width: 1; }
+.message-shaft { fill: none; stroke: #333333; stroke-width: 1.5; }
+.reply { stroke-dasharray: 3 3; }
+</style></defs>
+<rect width="1069" height="853" fill="#ffffff"/>
+<!-- The commit policy and acknowledgment requirement are visible without surrounding prose. -->
+<text class="title-label" x="534.5" y="28">Manual commits • enable.auto.commit=false</text>
+<text class="subtitle" x="534.5" y="50">A service crashes before committing; another instance can replay records</text>
+<text class="rule" x="534.5" y="72">Wait for all output writes to succeed, then commit next offsets. No transaction.</text>
+<g id="sequence" transform="translate(0 80)">
+<!-- Lifelines are temporal guides; message shafts intentionally cross intermediate participants. -->
+<g id="lifelines">
+<path class="lifeline" d="M125 75 V697"/>
+<path class="lifeline" d="M325 75 V697"/>
+<path class="lifeline" d="M525 75 V697"/>
+<path class="lifeline" d="M725 75 V697"/>
+<path class="lifeline" d="M934.5 75 V697"/>
+</g>
+<!-- Participant headers and footers use a 20-unit text line height. -->
+<g id="participants">
+<rect class="actor-box" x="50.0" y="10" width="150" height="65" rx="3"/>
+<text class="actor-label" x="125" y="36">Service</text>
+<text class="actor-label" x="125" y="56">Instance 1</text>
+<rect class="actor-box" x="250.0" y="10" width="150" height="65" rx="3"/>
+<text class="actor-label" x="325" y="36">Service</text>
+<text class="actor-label" x="325" y="56">Instance 2</text>
+<rect class="actor-box" x="450.0" y="10" width="150" height="65" rx="3"/>
+<text class="actor-label" x="525" y="36">Kafka</text>
+<text class="actor-label" x="525" y="56">Inbound Topic</text>
+<rect class="actor-box" x="650.0" y="10" width="150" height="65" rx="3"/>
+<text class="actor-label" x="725" y="36">Kafka</text>
+<text class="actor-label" x="725" y="56">Outbound Topic</text>
+<rect class="actor-box" x="850.0" y="10" width="169" height="65" rx="3"/>
+<text class="actor-label" x="934.5" y="36">Kafka</text>
+<text class="actor-label" x="934.5" y="56">Group Coordinator</text>
+<rect class="actor-box" x="50.0" y="697" width="150" height="65" rx="3"/>
+<text class="actor-label" x="125" y="723">Service</text>
+<text class="actor-label" x="125" y="743">Instance 1</text>
+<rect class="actor-box" x="250.0" y="697" width="150" height="65" rx="3"/>
+<text class="actor-label" x="325" y="723">Service</text>
+<text class="actor-label" x="325" y="743">Instance 2</text>
+<rect class="actor-box" x="450.0" y="697" width="150" height="65" rx="3"/>
+<text class="actor-label" x="525" y="723">Kafka</text>
+<text class="actor-label" x="525" y="743">Inbound Topic</text>
+<rect class="actor-box" x="650.0" y="697" width="150" height="65" rx="3"/>
+<text class="actor-label" x="725" y="723">Kafka</text>
+<text class="actor-label" x="725" y="743">Outbound Topic</text>
+<rect class="actor-box" x="850.0" y="697" width="169" height="65" rx="3"/>
+<text class="actor-label" x="934.5" y="723">Kafka</text>
+<text class="actor-label" x="934.5" y="743">Group Coordinator</text>
+</g>
+<!-- Activation bars end at the relevant failure, response, or manual commit. -->
+<g id="activations">
+<rect class="activation" x="120" y="75" width="10" height="154"/>
+<rect class="activation" x="320" y="403" width="10" height="274"/>
+<rect class="activation" x="520" y="123" width="10" height="48"/>
+<rect class="activation" x="520" y="451" width="10" height="48"/>
+</g>
+<!-- Heads meet the target boundary. Each shaft ends under its own triangle base, never through its nose; a short solid join anchors dashed replies to their heads. -->
+<g id="messages-and-notes">
+<path id="message-1-shaft" class="message-shaft" data-connector="true" d="M130 123 H511"/>
+<path id="message-1-head" d="M510 118 L520 123 L510 128 Z" fill="#333333"/>
+<rect x="284.0" y="94" width="82" height="23" fill="#ffffff"/>
+<text class="message-label" x="325.0" y="111">consume</text>
+<path id="message-2-shaft" class="message-shaft reply" data-connector="true" d="M520 171 H139"/>
+<path id="message-2-join" class="message-shaft" data-connector="true" d="M143 171 H139"/>
+<path id="message-2-head" d="M140 166 L130 171 L140 176 Z" fill="#333333"/>
+<rect x="284.0" y="142" width="82" height="23" fill="#ffffff"/>
+<text class="message-label" x="325.0" y="159">records</text>
+<path id="message-3-shaft" class="message-shaft" data-connector="true" d="M130 219 H715"/>
+<path id="message-3-head" d="M714 214 L724 219 L714 224 Z" fill="#333333"/>
+<rect x="327.5" y="190" width="199.0" height="23" fill="#ffffff"/>
+<text class="message-label" x="427.0" y="207">produce; await success</text>
+<rect id="note-4" class="note-box" x="30.0" y="229" width="190" height="36"/>
+<text class="note-label" x="125" y="252">Crash before commit</text>
+<rect id="note-5" class="note-box" x="100.0" y="281" width="250" height="56"/>
+<text class="note-label" x="225" y="304">Consumer group</text>
+<text class="note-label" x="225" y="324">rebalance</text>
+<rect id="note-6" class="note-box" x="235.0" y="347" width="180" height="56"/>
+<text class="note-label" x="325" y="370">Partition assigned</text>
+<text class="note-label" x="325" y="390">to Instance 2</text>
+<path id="message-7-shaft" class="message-shaft" data-connector="true" d="M330 451 H511"/>
+<path id="message-7-head" d="M510 446 L520 451 L510 456 Z" fill="#333333"/>
+<rect x="384.0" y="422" width="82" height="23" fill="#ffffff"/>
+<text class="message-label" x="425.0" y="439">consume</text>
+<path id="message-8-shaft" class="message-shaft reply" data-connector="true" d="M520 499 H339"/>
+<path id="message-8-join" class="message-shaft" data-connector="true" d="M343 499 H339"/>
+<path id="message-8-head" d="M340 494 L330 499 L340 504 Z" fill="#333333"/>
+<rect x="384.0" y="470" width="82" height="23" fill="#ffffff"/>
+<text class="message-label" x="425.0" y="487">records</text>
+<rect id="note-9" class="note-box" x="235.0" y="509" width="180" height="56"/>
+<text class="note-label" x="325" y="532">Records replayed</text>
+<text class="note-label" x="325" y="552">Output may repeat</text>
+<path id="message-10-shaft" class="message-shaft" data-connector="true" d="M330 629 H715"/>
+<path id="message-10-head" d="M714 624 L724 629 L714 634 Z" fill="#333333"/>
+<rect x="427.5" y="600" width="199.0" height="23" fill="#ffffff"/>
+<text class="message-label" x="527.0" y="617">produce; await success</text>
+<path id="message-11-shaft" class="message-shaft" data-connector="true" d="M330 677 H924.5"/>
+<path id="message-11-head" d="M923.5 672 L933.5 677 L923.5 682 Z" fill="#333333"/>
+<rect x="523.75" y="648" width="216.0" height="23" fill="#ffffff"/>
+<text class="message-label" x="631.75" y="665">commitSync(next offsets)</text>
+</g>
+</g>
+</svg>

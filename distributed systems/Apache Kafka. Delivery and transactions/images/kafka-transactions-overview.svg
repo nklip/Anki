@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1111" height="211" viewBox="0 0 1111 211" role="img" aria-labelledby="title desc">
+<title id="title">Kafka transactions: one transaction for output records and input progress</title><desc id="desc">A Service consumes from a Kafka Inbound Topic, runs Business Logic, and writes through a Kafka Producer to a Kafka Outbound Topic. Its stable transactional.id identifies the transactional producer. Output records and next input offsets commit atomically in Kafka. A downstream Service uses isolation.level=read_committed to hide aborted output; this does not prevent replay of its own processing.</desc>
+<!-- Reference PNG (corrected source-native adaptation):
+https://cdn.prod.website-files.com/687e4d3574f64b1a223d933f/68bef216abe62c9efcc13aea_kafka-transactions-once.drawio.png
+-->
+<!-- Shared source-native styles; the reference layout and black-and-white containers are retained. -->
+<defs><style>text {font-family: Arial, Helvetica, sans-serif; fill:#111; text-anchor:middle;} .label {font-size:14px;} .small {font-size:12px;} .tiny {font-size:11px;} .log-label {font-size:10px;} .left {text-anchor:start;} .heading {font-size:15px;} .container {fill:#fff;stroke:#111;stroke-width:1;} .shaft {fill:none;stroke:#111;stroke-width:1;} .muted {fill:#333;} .callout {fill:#e1d5e7;stroke:#9673a6;stroke-width:1;} .broker-callout {fill:#dae8fc;stroke:#6c8ebf;stroke-width:1;}</style></defs>
+<rect width="1111" height="211" fill="#fff"/>
+<!-- Main flow preserves the original participant order, dimensions, and routes. -->
+<rect id="inbound-topic" class="container" x="0.5" y="0.5" width="100" height="210" rx="16"/>
+<rect id="service-1" class="container" x="140.5" y="0.5" width="570" height="210" rx="30"/>
+<rect id="outbound-topic" class="container" x="750.5" y="0.5" width="100" height="210" rx="16"/>
+<rect id="service-2" class="container" x="890.5" y="0.5" width="220" height="210" rx="30"/>
+<rect id="kafka-consumer" class="container" x="160.5" y="70.5" width="150" height="100" rx="16"/>
+<rect id="business-logic" class="container" x="350.5" y="70.5" width="150" height="100" rx="16"/>
+<rect id="kafka-producer" class="container" x="540.5" y="70.5" width="150" height="100" rx="16"/>
+<rect id="downstream-consumer" class="container" x="920.5" y="70.5" width="150" height="100" rx="16"/>
+<!-- Simplified native Kafka mark: linked circles retain the source topic identity. -->
+<g transform="translate(47 10) scale(0.85)" fill="#fff" stroke="#231f20" stroke-width="5">
+<path d="M16 13 V62 M18 33 L38 24 M18 37 L38 48" fill="none"/><circle cx="16" cy="9" r="7"/><circle cx="16" cy="35" r="10"/><circle cx="16" cy="64" r="7"/><circle cx="40" cy="22" r="8"/><circle cx="40" cy="50" r="8"/></g>
+<!-- Simplified native Kafka mark: linked circles retain the source topic identity. -->
+<g transform="translate(797 10) scale(0.85)" fill="#fff" stroke="#231f20" stroke-width="5">
+<path d="M16 13 V62 M18 33 L38 24 M18 37 L38 48" fill="none"/><circle cx="16" cy="9" r="7"/><circle cx="16" cy="35" r="10"/><circle cx="16" cy="64" r="7"/><circle cx="40" cy="22" r="8"/><circle cx="40" cy="50" r="8"/></g>
+<text class="label" x="50.5" y="112">Kafka</text>
+<text class="label" x="50.5" y="130">Inbound</text>
+<text class="label" x="50.5" y="148">Topic</text>
+<text class="label" x="800.5" y="112">Kafka</text>
+<text class="label" x="800.5" y="130">Outbound</text>
+<text class="label" x="800.5" y="148">Topic</text>
+<text class="heading" x="425.5" y="27">Service 1</text>
+<text class="heading" x="1000.5" y="27">Service 2</text>
+<text class="label" x="235.5" y="117">Kafka</text>
+<text class="label" x="235.5" y="135">Consumer</text>
+<text class="label" x="425.5" y="117">Business</text>
+<text class="label" x="425.5" y="135">Logic</text>
+<text class="label" x="615.5" y="117">Kafka</text>
+<text class="label" x="615.5" y="135">Producer</text>
+<text class="label" x="995.5" y="117">Kafka</text>
+<text class="label" x="995.5" y="135">Consumer</text>
+<!-- Each separate shaft stops under its triangle base; tips meet but do not enter actor borders. -->
+<path id="flow-1-shaft" class="shaft" data-connector="true" d="M100.5 120.5 L154.5 120.5"/>
+<path id="flow-1-head" d="M153.5 123.79 L160.5 120.5 L153.5 117.21 Z" fill="#111"/>
+<path id="flow-2-shaft" class="shaft" data-connector="true" d="M310.5 120.5 L344.5 120.5"/>
+<path id="flow-2-head" d="M343.5 123.79 L350.5 120.5 L343.5 117.21 Z" fill="#111"/>
+<path id="flow-3-shaft" class="shaft" data-connector="true" d="M500.5 120.5 L534.5 120.5"/>
+<path id="flow-3-head" d="M533.5 123.79 L540.5 120.5 L533.5 117.21 Z" fill="#111"/>
+<path id="flow-4-shaft" class="shaft" data-connector="true" d="M690.5 120.5 L744.5 120.5"/>
+<path id="flow-4-head" d="M743.5 123.79 L750.5 120.5 L743.5 117.21 Z" fill="#111"/>
+<path id="flow-5-shaft" class="shaft" data-connector="true" d="M850.5 120.5 L914.5 120.5"/>
+<path id="flow-5-head" d="M913.5 123.79 L920.5 120.5 L913.5 117.21 Z" fill="#111"/>
+<text class="small" x="425.5" y="49">transactional.id=service-1</text>
+<text class="small" x="1000.5" y="49">isolation.level=read_committed</text>
+<!-- Added compact explanation corrects the scope without changing the reference flow. -->
+<text class="small" x="425.5" y="186">Output records + next input offsets: one Kafka transaction.</text>
+<text class="small" x="425.5" y="203">Commit both together, or abort both.</text>
+<text class="tiny" x="1000.5" y="186">Aborted output is hidden.</text>
+<text class="tiny" x="1000.5" y="203">Its own processing may still replay.</text>
+</svg>

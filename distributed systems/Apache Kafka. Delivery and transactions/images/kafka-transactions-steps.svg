@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1069" height="690" viewBox="0 0 1069 690" role="img" aria-labelledby="title desc">
+<title id="title">Kafka transactions: producer and coordinator steps</title>
+<desc id="desc">Read downward through producer steps P1, P2, and P3, then Transaction Coordinator steps C1, C2, and C3. The circle labels identify the two tracks independently of color. Initialize the producer once, begin each transaction locally, write Kafka output, send next input offsets, and request commit. The coordinator durably prepares the commit, distributes commit markers, and records completion after all marker acknowledgments. Each partition's read-committed visibility is constrained by its last stable offset and need not change simultaneously. The symbol a denotes pending transactional data, not an aborted record; c denotes a COMMIT marker.</desc>
+<!-- Source-native adaptation of Lydtech's numbered transaction explanation; preserve role colors and order while correcting initialization, offset mapping, and commit visibility. Reference: https://cdn.prod.website-files.com/687e4d3574f64b1a223d933f/68bef3e4785b66af52587585_Screenshot%202025-09-08%20at%2016.18.17.png -->
+<!-- Shared typography matches the neighboring §2 teaching diagrams. List circles retain the source's producer/coordinator distinction. -->
+<defs>
+<style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #202020; }
+.title-label { font-size: 22px; font-weight: 700; text-anchor: middle; }
+.subtitle { font-size: 15px; text-anchor: middle; }
+.section-label { font-family: "Trebuchet MS", Arial, sans-serif; font-size: 16px; font-weight: 600; fill: #333333; }
+.body-label { font-size: 14px; }
+.number-label { font-size: 14px; font-weight: 700; text-anchor: middle; }
+.symbol-label { font-size: 16px; font-weight: 700; text-anchor: middle; }
+.producer-number { fill: #e3d7eb; stroke: #ac90bf; stroke-width: 1; }
+.coordinator-number { fill: #dceaff; stroke: #86a6d1; stroke-width: 1; }
+.role-band { fill: #ececff; stroke: #dacef3; stroke-width: 1; }
+.legend-band { fill: #fff5ad; stroke: #aaaa33; stroke-width: 1; }
+</style>
+</defs>
+<rect width="1069" height="690" fill="#ffffff"/>
+<!-- Title and scenario: the diagram is explicitly about Kafka transactions, with no external-system atomicity implied. -->
+<text class="title-label" x="534.5" y="28">Kafka transactions: producer and coordinator steps</text>
+<text class="subtitle" x="534.5" y="51">Kafka 4.3 • One transaction joins Kafka output and next input offsets</text>
+<!-- Producer steps use the P1, P2, P3 track; the letter distinguishes it from coordinator steps independently of color. -->
+<g id="producer-steps">
+<rect class="role-band" x="26" y="72" width="1017" height="32" rx="3"/>
+<text class="section-label" x="42" y="94">Producer</text>
+<circle id="producer-step-1" class="producer-number" cx="43" cy="130" r="16"/>
+<text class="number-label" x="43" y="135">P1</text>
+<text class="body-label" x="77" y="126">initTransactions() runs once per producer: initialize, resolve prior attempts, and fence older</text>
+<text class="body-label" x="77" y="148">instances with the same transactional.id. beginTransaction() starts each transaction locally.</text>
+<circle id="producer-step-2" class="producer-number" cx="43" cy="188" r="16"/>
+<text class="number-label" x="43" y="193">P2</text>
+<text class="body-label" x="77" y="184">Write transactional records to the Kafka Outbound Topic.</text>
+<text class="body-label" x="77" y="206">Call sendOffsetsToTransaction(next input offsets, consumer.groupMetadata()).</text>
+<text class="body-label" x="77" y="228">The Group Coordinator stores input progress; offsets are not one per output record.</text>
+<circle id="producer-step-3" class="producer-number" cx="43" cy="268" r="16"/>
+<text class="number-label" x="43" y="273">P3</text>
+<text class="body-label" x="77" y="264">commitTransaction() flushes pending output and awaits successful sends,</text>
+<text class="body-label" x="77" y="286">then requests EndTxn(COMMIT) from the Transaction Coordinator.</text>
+</g>
+<!-- Coordinator steps distinguish the durable decision, per-partition markers, and final bookkeeping. No global simultaneous visibility switch is implied. -->
+<g id="coordinator-steps">
+<rect class="role-band" x="26" y="312" width="1017" height="32" rx="3"/>
+<text class="section-label" x="42" y="334">Transaction Coordinator</text>
+<circle id="coordinator-step-1" class="coordinator-number" cx="43" cy="370" r="16"/>
+<text class="number-label" x="43" y="375">C1</text>
+<text class="body-label" x="77" y="366">Replicate PREPARE_COMMIT in __transaction_state.</text>
+<text class="body-label" x="77" y="388">The commit decision is durable; the producer may receive success here.</text>
+<circle id="coordinator-step-2" class="coordinator-number" cx="43" cy="428" r="16"/>
+<text class="number-label" x="43" y="433">C2</text>
+<text class="body-label" x="77" y="424">Send COMMIT markers to every participating output and offsets partition.</text>
+<text class="body-label" x="77" y="446">After replication, read_committed visibility remains limited by each partition's last stable offset.</text>
+<text class="body-label" x="77" y="468">Visibility need not change simultaneously across partitions.</text>
+<circle id="coordinator-step-3" class="coordinator-number" cx="43" cy="508" r="16"/>
+<text class="number-label" x="43" y="513">C3</text>
+<text class="body-label" x="77" y="504">After all marker acknowledgments, replicate COMPLETE_COMMIT.</text>
+<text class="body-label" x="77" y="526">read_committed consumers do not wait directly for this final state.</text>
+</g>
+<!-- The original letter keys are retained and explicitly distinguished from Kafka protocol state names. -->
+<g id="record-marker-key">
+<rect class="legend-band" x="26" y="556" width="1017" height="108"/>
+<text class="section-label" x="42" y="580">Symbols used in the transaction diagrams</text>
+<circle id="pending-record-symbol" cx="54" cy="614" r="16" fill="#f9cfca" stroke="#d4514e" stroke-width="1"/>
+<text class="symbol-label" x="54" y="619">a</text>
+<text class="body-label" x="84" y="619">Pending transactional record (not an abort marker)</text>
+<circle id="commit-marker-symbol" cx="640" cy="614" r="16" fill="#d9ead3" stroke="#7ab65a" stroke-width="1"/>
+<text class="symbol-label" x="640" y="619">c</text>
+<text class="body-label" x="670" y="619">COMMIT marker</text>
+</g>
+</svg>

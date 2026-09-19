@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="510" viewBox="0 0 1000 510" role="img" aria-labelledby="title desc">
+<title id="title">A crash before offset commit can replay work</title>
+<desc id="desc">In a contiguous partition example, a consumer group has saved next offset 42. The consumer processes record 42 with event ID evt-901 and creates a shipment row, then crashes before saving next offset 43. A replacement resumes at 42 and can repeat the external effect. An idempotent sink records event ID evt-901 with the shipment row in one transaction, so replay recognizes the completed effect.</desc>
+<!-- Match the failure-sequence SVG: lavender structural boxes, yellow failure notes, Arial labels, and charcoal arrows. -->
+<defs>
+<style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #202020; text-anchor: middle; }
+.title-label { font-size: 22px; font-weight: 700; }
+.subtitle { font-size: 15px; }
+.rule, .body-label { font-size: 14px; }
+.message-label { font-family: "Trebuchet MS", Arial, sans-serif; font-size: 16px; font-weight: 600; fill: #333333; }
+.panel { fill: #ffffff; stroke: #dacef3; stroke-width: 1; }
+.actor-box { fill: #ececff; stroke: #dacef3; stroke-width: 1; }
+.note-box { fill: #fff5ad; stroke: #aaaa33; stroke-width: 1; }
+.message-shaft { fill: none; stroke: #333333; stroke-width: 1.5; }
+</style>
+</defs>
+<rect width="1000" height="510" fill="#ffffff"/>
+<!-- Title and reading cue. -->
+<text class="title-label" x="500" y="28">A crash before offset commit can replay work</text>
+<text class="subtitle" x="500" y="50">A committed offset is the NEXT record to read after a restart.</text>
+<text class="rule" x="500" y="72">One partition, one consumer group; example records have consecutive offsets.</text>
+<!-- Step 1: Process evt-901 and create its shipment row. -->
+<rect id="step-1" class="panel" x="30" y="98" width="280" height="268" rx="3"/>
+<rect id="step-1-header" class="actor-box" x="30" y="98" width="280" height="44" rx="3"/>
+<text class="message-label" x="170" y="124">1. Read and process</text>
+<text class="body-label" x="170" y="164">Saved next offset: 42</text>
+<rect id="first-read" class="actor-box" x="58" y="183" width="224" height="64" rx="3"/>
+<text class="message-label" x="170" y="208">Read record 42</text>
+<text class="body-label" x="170" y="230">eventId = evt-901</text>
+<text class="body-label" x="170" y="278">Write its external effect</text>
+<text class="body-label" x="170" y="300">e.g., create a shipment row</text>
+<text class="body-label" x="170" y="342">Processing succeeded.</text>
+<!-- Step 2: Crash before commit. -->
+<rect id="step-2" class="note-box" x="360" y="98" width="280" height="268"/>
+<text class="message-label" x="500" y="124">2. Crash before commit</text>
+<text class="body-label" x="500" y="164">Wanted next offset: 43</text>
+<text class="message-label" x="500" y="208">Process stops here</text>
+<text class="body-label" x="500" y="230">43 was never committed</text>
+<text class="body-label" x="500" y="278">Effect may already exist</text>
+<text class="body-label" x="500" y="300">in the external system.</text>
+<text class="body-label" x="500" y="342">Saved next offset stays 42.</text>
+<!-- Step 3: Restart and replay the same event, evt-901. -->
+<rect id="step-3" class="panel" x="690" y="98" width="280" height="268" rx="3"/>
+<rect id="step-3-header" class="actor-box" x="690" y="98" width="280" height="44" rx="3"/>
+<text class="message-label" x="830" y="124">3. Restart and replay</text>
+<text class="body-label" x="830" y="164">Resume from saved 42</text>
+<rect id="repeated-read" class="actor-box" x="718" y="183" width="224" height="64" rx="3"/>
+<text class="message-label" x="830" y="208">Read record 42 again</text>
+<text class="body-label" x="830" y="230">same eventId = evt-901</text>
+<text class="body-label" x="830" y="278">Blindly repeat the write?</text>
+<text class="body-label" x="830" y="300">The effect may duplicate.</text>
+<text class="body-label" x="830" y="342">The application must cope.</text>
+<!-- Flow arrows occupy only panel gaps. Each shaft joins beneath its triangle base; tips meet the target border without entering the panel. -->
+<path id="step1-to-step2" class="message-shaft" data-connector="true" d="M310.5 230 H350.5"/>
+<path id="step1-to-step2-head" d="M349.5 225 L359.5 230 L349.5 235 Z" fill="#333333"/>
+<path id="step2-to-step3" class="message-shaft" data-connector="true" d="M640.5 230 H680.5"/>
+<path id="step2-to-step3-head" d="M679.5 225 L689.5 230 L679.5 235 Z" fill="#333333"/>
+<!-- Idempotent business effect is distinct from Kafka offset storage. -->
+<rect id="idempotent-sink-rule" class="actor-box" x="30" y="396" width="940" height="92" rx="3"/>
+<text class="message-label" x="500" y="422">Use an idempotent sink: the same event produces the same final effect.</text>
+<text class="body-label" x="500" y="448">In one transaction, record eventId = evt-901 and the shipment row; skip it on replay.</text>
+<text class="body-label" x="500" y="472">After successful handling of record 42, commit 43 in this contiguous example.</text>
+</svg>

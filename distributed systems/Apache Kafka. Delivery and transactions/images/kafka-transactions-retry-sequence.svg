@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1050" height="1000" viewBox="0 0 1050 1000" role="img" aria-labelledby="title desc">
+<title id="title">Kafka transactions • service retry</title>
+<desc id="desc">Read downward. A producer initialized before the first attempt begins a local transaction and produces pending output. It crashes while its transaction is open, before any commit decision. A restarted service initializes a producer with the same stable transactional.id. Initialization fences the old producer and resolves the unfinished transaction by aborting it before returning. The consumer resumes from unchanged committed input offsets and replays the records in a new transaction. Consumers using read_committed skip the aborted output. This does not resume the old transaction; a previously decided commit has different recovery behavior.</desc>
+<!-- Reference PNG (corrected source-native adaptation):
+https://cdn.prod.website-files.com/687e4d3574f64b1a223d933f/68bef41106e92e1845a5c1f4_kafka-transactions-seq-retry.png
+-->
+<!-- Source-native adaptation of the Lydtech sequence: preserve the five columns, participant order, palette, and downward reading order. Corrected lifecycle steps need additional rows. -->
+<!-- Shared §2 styles; white label backings keep text clear of vertical time guides. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; fill: #202020; text-anchor: middle; }
+.actor-label, .note-label, .rule { font-size: 14px; }
+.message-label { font-family: "Trebuchet MS", Arial, sans-serif; font-size: 16px; font-weight: 600; fill: #333333; }
+.actor-box { fill: #ececff; stroke: #dacef3; stroke-width: 1; }
+.note-box { fill: #fff5ad; stroke: #aaaa33; stroke-width: 1; }
+.lifeline { fill: none; stroke: #dacef3; stroke-width: 2; }
+.activation { fill: #f4f4f4; stroke: #666666; stroke-width: 1; }
+.message-shaft { fill: none; stroke: #333333; stroke-width: 1.5; }
+.reply { stroke-dasharray: 3 3; }</style></defs>
+<rect width="1050" height="1000" fill="#ffffff"/>
+<!-- Lifelines are time guides; horizontal protocol arrows intentionally cross intermediate guides. -->
+<path class="lifeline" d="M125 75 V865"/>
+<path class="lifeline" d="M325 75 V865"/>
+<path class="lifeline" d="M525 75 V865"/>
+<path class="lifeline" d="M725 75 V865"/>
+<path class="lifeline" d="M925 75 V865"/>
+<!-- Participant headers and repeated footer labels. -->
+<rect class="actor-box" x="50" y="10" width="150" height="65" rx="3"/>
+<text class="actor-label" x="125" y="36">Kafka</text>
+<text class="actor-label" x="125" y="56">Inbound Topic</text>
+<rect class="actor-box" x="250" y="10" width="150" height="65" rx="3"/>
+<text class="actor-label" x="325" y="48">Service</text>
+<rect class="actor-box" x="450" y="10" width="150" height="65" rx="3"/>
+<text class="actor-label" x="525" y="36">Transaction</text>
+<text class="actor-label" x="525" y="56">Coordinator</text>
+<rect class="actor-box" x="650" y="10" width="150" height="65" rx="3"/>
+<text class="actor-label" x="725" y="36">Transaction Log</text>
+<text class="actor-label" x="725" y="56">(__transaction_state)</text>
+<rect class="actor-box" x="850" y="10" width="150" height="65" rx="3"/>
+<text class="actor-label" x="925" y="36">Kafka Outbound</text>
+<text class="actor-label" x="925" y="56">Topic 1</text>
+<rect class="actor-box" x="50" y="865" width="150" height="65" rx="3"/>
+<text class="actor-label" x="125" y="891">Kafka</text>
+<text class="actor-label" x="125" y="911">Inbound Topic</text>
+<rect class="actor-box" x="250" y="865" width="150" height="65" rx="3"/>
+<text class="actor-label" x="325" y="903">Service</text>
+<rect class="actor-box" x="450" y="865" width="150" height="65" rx="3"/>
+<text class="actor-label" x="525" y="891">Transaction</text>
+<text class="actor-label" x="525" y="911">Coordinator</text>
+<rect class="actor-box" x="650" y="865" width="150" height="65" rx="3"/>
+<text class="actor-label" x="725" y="891">Transaction Log</text>
+<text class="actor-label" x="725" y="911">(__transaction_state)</text>
+<rect class="actor-box" x="850" y="865" width="150" height="65" rx="3"/>
+<text class="actor-label" x="925" y="891">Kafka Outbound</text>
+<text class="actor-label" x="925" y="911">Topic 1</text>
+<rect id="sequence-title" class="note-box" x="100" y="85" width="850" height="36"/>
+<text class="note-label" x="525.0" y="108">Kafka transactions • service retry</text>
+<rect id="initialization-assumption" class="note-box" x="100" y="131" width="850" height="36"/>
+<text class="note-label" x="525.0" y="154">Initial attempt: initTransactions() has already completed; enable.auto.commit=false.</text>
+<!-- First attempt: only the records returned by poll are drawn, as in the source. beginTransaction is local; first-partition registration is summarized. -->
+<rect class="activation" x="320" y="211" width="10" height="168"/>
+<!-- initial-records: shaft ends inside its own triangle base, with its nose meeting the target boundary. -->
+<path id="initial-records-shaft" class="message-shaft reply" data-connector="true" d="M125 211 H310.5"/>
+<path id="initial-records-join" class="message-shaft" data-connector="true" d="M306.5 211 H310.5"/>
+<path id="initial-records-head" d="M309.5 206 L319.5 211 L309.5 216 Z" fill="#333333"/>
+<rect x="135.25" y="181" width="174" height="24" fill="#ffffff"/>
+<text class="message-label" x="222.25" y="199">records from poll()</text>
+<rect id="local-begin" class="note-box" x="215" y="221" width="220" height="56"/>
+<text class="note-label" x="325.0" y="244">beginTransaction()</text>
+<text class="note-label" x="325.0" y="264">Local producer state</text>
+<!-- ongoing-state: shaft ends inside its own triangle base, with its nose meeting the target boundary. -->
+<path id="ongoing-state-shaft" class="message-shaft" data-connector="true" d="M525 321 H715"/>
+<path id="ongoing-state-head" d="M714 316 L724 321 L714 326 Z" fill="#333333"/>
+<rect x="574.5" y="291" width="100" height="24" fill="#ffffff"/>
+<text class="message-label" x="624.5" y="309">ONGOING</text>
+<rect id="registration-scope" class="note-box" x="595" y="231" width="310" height="56"/>
+<text class="note-label" x="750.0" y="254">First participating partition is registered;</text>
+<text class="note-label" x="750.0" y="274">coordinator records the open transaction.</text>
+<!-- pending-output: shaft ends inside its own triangle base, with its nose meeting the target boundary. -->
+<path id="pending-output-shaft" class="message-shaft" data-connector="true" d="M330.5 369 H915"/>
+<path id="pending-output-head" d="M914 364 L924 369 L914 374 Z" fill="#333333"/>
+<rect x="487.25" y="339" width="280" height="24" fill="#ffffff"/>
+<text class="message-label" x="627.25" y="357">produce (transactional; pending)</text>
+<rect id="service-crash" class="note-box" x="230" y="379" width="190" height="36"/>
+<text class="note-label" x="325.0" y="402">Crash before commit</text>
+<!-- Recovery precedes replay: initialization with the same stable transactional.id resolves the old open transaction. The abort-marker exchange is summarized in the note, not presented as a new producer transaction. -->
+<rect id="service-restart" class="note-box" x="215" y="435" width="220" height="56"/>
+<text class="note-label" x="325.0" y="458">Restart service</text>
+<text class="note-label" x="325.0" y="478">Same stable transactional.id</text>
+<rect class="activation" x="320" y="491" width="10" height="374"/>
+<!-- restart-init: shaft ends inside its own triangle base, with its nose meeting the target boundary. -->
+<path id="restart-init-shaft" class="message-shaft" data-connector="true" d="M330.5 535 H515"/>
+<path id="restart-init-head" d="M514 530 L524 535 L514 540 Z" fill="#333333"/>
+<rect x="348.25" y="505" width="158" height="24" fill="#ffffff"/>
+<text class="message-label" x="427.25" y="523">initTransactions()</text>
+<rect id="recover-open-transaction" class="note-box" x="430" y="545" width="420" height="76"/>
+<text class="note-label" x="640.0" y="568">Previous producer is fenced.</text>
+<text class="note-label" x="640.0" y="588">Unfinished transaction is aborted.</text>
+<text class="note-label" x="640.0" y="608">Initialization waits for recovery to complete.</text>
+<!-- init-complete: shaft ends inside its own triangle base, with its nose meeting the target boundary. -->
+<path id="init-complete-shaft" class="message-shaft reply" data-connector="true" d="M524 665 H339.5"/>
+<path id="init-complete-join" class="message-shaft" data-connector="true" d="M343.5 665 H339.5"/>
+<path id="init-complete-head" d="M340.5 660 L330.5 665 L340.5 670 Z" fill="#333333"/>
+<rect x="332.25" y="635" width="190" height="24" fill="#ffffff"/>
+<text class="message-label" x="427.25" y="653">initialization completes</text>
+<!-- replayed-records: shaft ends inside its own triangle base, with its nose meeting the target boundary. -->
+<path id="replayed-records-shaft" class="message-shaft reply" data-connector="true" d="M125 713 H310.5"/>
+<path id="replayed-records-join" class="message-shaft" data-connector="true" d="M306.5 713 H310.5"/>
+<path id="replayed-records-head" d="M309.5 708 L319.5 713 L309.5 718 Z" fill="#333333"/>
+<rect x="108.25" y="683" width="228" height="24" fill="#ffffff"/>
+<text class="message-label" x="222.25" y="701">records replayed from poll()</text>
+<rect id="new-local-transaction" class="note-box" x="215" y="723" width="220" height="56"/>
+<text class="note-label" x="325.0" y="746">beginTransaction()</text>
+<text class="note-label" x="325.0" y="766">Begin a NEW transaction</text>
+<rect id="retry-continues" class="note-box" x="215" y="799" width="220" height="56"/>
+<text class="note-label" x="325.0" y="822">New attempt continues</text>
+<text class="note-label" x="325.0" y="842">via the happy path</text>
+<rect id="aborted-visibility" class="note-box" x="555" y="779" width="395" height="76"/>
+<text class="note-label" x="752.5" y="802">Previous output is aborted.</text>
+<text class="note-label" x="752.5" y="822">read_committed skips it.</text>
+<text class="note-label" x="752.5" y="842">Committed input offsets did not advance.</text>
+<!-- Limit the recovery claim to an open transaction, before Kafka has made a commit decision. -->
+<text class="rule" x="525" y="954">Crash shown before PREPARE_COMMIT. Recovery may finish a commit whose decision was already recorded.</text>
+<text class="rule" x="525" y="978">Abort protocol and additional partitions are summarized; this is not a resumption of the old transaction.</text>
+</svg>

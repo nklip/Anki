@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1050" height="914" viewBox="0 0 1050 914" role="img" aria-labelledby="title desc">
+<title id="title">Kafka transactions • transaction timeout</title>
+<desc id="desc">Read downward. A previously initialized producer begins a local transaction and writes transactional output that remains pending. It crashes with the transaction unfinished. When transaction.timeout.ms expires, the transaction coordinator appends PREPARE_ABORT to the transaction log, sends ABORT markers to participating partitions, waits for acknowledgments, and appends COMPLETE_ABORT. Consumers using read_committed skip the aborted output and the committed input offsets do not advance. One output partition is shown; additional output partitions and any staged input-offset partitions follow the same marker protocol. The requested producer timeout is capped by the broker transaction.max.timeout.ms.</desc>
+<!-- Reference PNG (corrected source-native adaptation):
+https://cdn.prod.website-files.com/687e4d3574f64b1a223d933f/68bef455f12493f4573ca9b4_kafka-transactions-seq-abort.png
+-->
+<!-- Source-native adaptation of the Lydtech sequence: preserve the five columns, participant order, palette, and downward reading order. Corrected lifecycle steps need additional rows. -->
+<!-- Shared §2 styles; white label backings keep text clear of vertical time guides. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; fill: #202020; text-anchor: middle; }
+.actor-label, .note-label, .rule { font-size: 14px; }
+.message-label { font-family: "Trebuchet MS", Arial, sans-serif; font-size: 16px; font-weight: 600; fill: #333333; }
+.actor-box { fill: #ececff; stroke: #dacef3; stroke-width: 1; }
+.note-box { fill: #fff5ad; stroke: #aaaa33; stroke-width: 1; }
+.lifeline { fill: none; stroke: #dacef3; stroke-width: 2; }
+.activation { fill: #f4f4f4; stroke: #666666; stroke-width: 1; }
+.message-shaft { fill: none; stroke: #333333; stroke-width: 1.5; }
+.reply { stroke-dasharray: 3 3; }</style></defs>
+<rect width="1050" height="914" fill="#ffffff"/>
+<!-- Lifelines are time guides; horizontal protocol arrows intentionally cross intermediate guides. -->
+<path class="lifeline" d="M125 75 V769"/>
+<path class="lifeline" d="M325 75 V769"/>
+<path class="lifeline" d="M525 75 V769"/>
+<path class="lifeline" d="M725 75 V769"/>
+<path class="lifeline" d="M925 75 V769"/>
+<!-- Participant headers and repeated footer labels. -->
+<rect class="actor-box" x="50" y="10" width="150" height="65" rx="3"/>
+<text class="actor-label" x="125" y="36">Kafka</text>
+<text class="actor-label" x="125" y="56">Inbound Topic</text>
+<rect class="actor-box" x="250" y="10" width="150" height="65" rx="3"/>
+<text class="actor-label" x="325" y="48">Service</text>
+<rect class="actor-box" x="450" y="10" width="150" height="65" rx="3"/>
+<text class="actor-label" x="525" y="36">Transaction</text>
+<text class="actor-label" x="525" y="56">Coordinator</text>
+<rect class="actor-box" x="650" y="10" width="150" height="65" rx="3"/>
+<text class="actor-label" x="725" y="36">Transaction Log</text>
+<text class="actor-label" x="725" y="56">(__transaction_state)</text>
+<rect class="actor-box" x="850" y="10" width="150" height="65" rx="3"/>
+<text class="actor-label" x="925" y="36">Kafka Outbound</text>
+<text class="actor-label" x="925" y="56">Topic 1</text>
+<rect class="actor-box" x="50" y="769" width="150" height="65" rx="3"/>
+<text class="actor-label" x="125" y="795">Kafka</text>
+<text class="actor-label" x="125" y="815">Inbound Topic</text>
+<rect class="actor-box" x="250" y="769" width="150" height="65" rx="3"/>
+<text class="actor-label" x="325" y="807">Service</text>
+<rect class="actor-box" x="450" y="769" width="150" height="65" rx="3"/>
+<text class="actor-label" x="525" y="795">Transaction</text>
+<text class="actor-label" x="525" y="815">Coordinator</text>
+<rect class="actor-box" x="650" y="769" width="150" height="65" rx="3"/>
+<text class="actor-label" x="725" y="795">Transaction Log</text>
+<text class="actor-label" x="725" y="815">(__transaction_state)</text>
+<rect class="actor-box" x="850" y="769" width="150" height="65" rx="3"/>
+<text class="actor-label" x="925" y="795">Kafka Outbound</text>
+<text class="actor-label" x="925" y="815">Topic 1</text>
+<rect id="sequence-title" class="note-box" x="100" y="85" width="850" height="36"/>
+<text class="note-label" x="525.0" y="108">Kafka transactions • transaction timeout</text>
+<rect id="initialization-assumption" class="note-box" x="100" y="131" width="850" height="36"/>
+<text class="note-label" x="525.0" y="154">Initial attempt: initTransactions() has already completed; enable.auto.commit=false.</text>
+<!-- First attempt: only the records returned by poll are drawn, as in the source. beginTransaction is local; first-partition registration is summarized. -->
+<rect class="activation" x="320" y="211" width="10" height="168"/>
+<!-- initial-records: shaft ends inside its own triangle base, with its nose meeting the target boundary. -->
+<path id="initial-records-shaft" class="message-shaft reply" data-connector="true" d="M125 211 H310.5"/>
+<path id="initial-records-join" class="message-shaft" data-connector="true" d="M306.5 211 H310.5"/>
+<path id="initial-records-head" d="M309.5 206 L319.5 211 L309.5 216 Z" fill="#333333"/>
+<rect x="135.25" y="181" width="174" height="24" fill="#ffffff"/>
+<text class="message-label" x="222.25" y="199">records from poll()</text>
+<rect id="local-begin" class="note-box" x="215" y="221" width="220" height="56"/>
+<text class="note-label" x="325.0" y="244">beginTransaction()</text>
+<text class="note-label" x="325.0" y="264">Local producer state</text>
+<!-- ongoing-state: shaft ends inside its own triangle base, with its nose meeting the target boundary. -->
+<path id="ongoing-state-shaft" class="message-shaft" data-connector="true" d="M525 321 H715"/>
+<path id="ongoing-state-head" d="M714 316 L724 321 L714 326 Z" fill="#333333"/>
+<rect x="574.5" y="291" width="100" height="24" fill="#ffffff"/>
+<text class="message-label" x="624.5" y="309">ONGOING</text>
+<rect id="registration-scope" class="note-box" x="595" y="231" width="310" height="56"/>
+<text class="note-label" x="750.0" y="254">First participating partition is registered;</text>
+<text class="note-label" x="750.0" y="274">coordinator records the open transaction.</text>
+<!-- pending-output: shaft ends inside its own triangle base, with its nose meeting the target boundary. -->
+<path id="pending-output-shaft" class="message-shaft" data-connector="true" d="M330.5 369 H915"/>
+<path id="pending-output-head" d="M914 364 L924 369 L914 374 Z" fill="#333333"/>
+<rect x="487.25" y="339" width="280" height="24" fill="#ffffff"/>
+<text class="message-label" x="627.25" y="357">produce (transactional; pending)</text>
+<rect id="service-crash" class="note-box" x="230" y="379" width="190" height="36"/>
+<text class="note-label" x="325.0" y="402">Crash before commit</text>
+<!-- The coordinator times out the unfinished transaction, independent of consumer max.poll.interval.ms. -->
+<rect id="timeout-expiry" class="note-box" x="397" y="425" width="256" height="56"/>
+<text class="note-label" x="525.0" y="448">transaction.timeout.ms</text>
+<text class="note-label" x="525.0" y="468">expires; transaction is unfinished</text>
+<rect class="activation" x="520" y="491" width="10" height="224"/>
+<!-- prepare-abort: shaft ends inside its own triangle base, with its nose meeting the target boundary. -->
+<path id="prepare-abort-shaft" class="message-shaft" data-connector="true" d="M530.5 525 H715"/>
+<path id="prepare-abort-head" d="M714 520 L724 525 L714 530 Z" fill="#333333"/>
+<rect x="549.25" y="495" width="156" height="24" fill="#ffffff"/>
+<text class="message-label" x="627.25" y="513">PREPARE_ABORT</text>
+<!-- abort-marker: shaft ends inside its own triangle base, with its nose meeting the target boundary. -->
+<path id="abort-marker-shaft" class="message-shaft" data-connector="true" d="M530.5 573 H915"/>
+<path id="abort-marker-head" d="M914 568 L924 573 L914 578 Z" fill="#333333"/>
+<rect x="661.25" y="543" width="132" height="24" fill="#ffffff"/>
+<text class="message-label" x="727.25" y="561">ABORT marker</text>
+<!-- marker-acknowledgment: shaft ends inside its own triangle base, with its nose meeting the target boundary. -->
+<path id="marker-acknowledgment-shaft" class="message-shaft reply" data-connector="true" d="M924 621 H539.5"/>
+<path id="marker-acknowledgment-join" class="message-shaft" data-connector="true" d="M543.5 621 H539.5"/>
+<path id="marker-acknowledgment-head" d="M540.5 616 L530.5 621 L540.5 626 Z" fill="#333333"/>
+<rect x="622.25" y="591" width="210" height="24" fill="#ffffff"/>
+<text class="message-label" x="727.25" y="609">marker acknowledgment</text>
+<!-- complete-abort: shaft ends inside its own triangle base, with its nose meeting the target boundary. -->
+<path id="complete-abort-shaft" class="message-shaft" data-connector="true" d="M530.5 669 H715"/>
+<path id="complete-abort-head" d="M714 664 L724 669 L714 674 Z" fill="#333333"/>
+<rect x="545.75" y="639" width="163" height="24" fill="#ffffff"/>
+<text class="message-label" x="627.25" y="657">COMPLETE_ABORT</text>
+<rect id="abort-outcome" class="note-box" x="435" y="687" width="485" height="56"/>
+<text class="note-label" x="677.5" y="710">read_committed skips aborted output.</text>
+<text class="note-label" x="677.5" y="730">Committed input offsets do not advance.</text>
+<!-- The timeout limit and collapsed partitions remain explicit without adding more source columns. -->
+<text class="rule" x="525" y="858">transaction.timeout.ms is requested by the producer; broker transaction.max.timeout.ms caps that value.</text>
+<text class="rule" x="525" y="884">One output partition is shown. Markers for other outputs and any staged input offsets are summarized.</text>
+</svg>
