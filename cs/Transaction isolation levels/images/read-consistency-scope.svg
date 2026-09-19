@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="510" viewBox="0 0 1080 510" role="img" aria-labelledby="title desc">
+  <title id="title">Oracle: how long does the read snapshot last?</title>
+  <desc id="desc">Two queries run in one reader transaction. The account balance is initially 100. Between the queries another transaction commits a change to 80. In Oracle Read Committed, the first query reads 100 and the second reads 80 because each query uses a fresh snapshot. In Oracle Serializable and Read Only, both queries read 100 from the transaction's starting view. The reader makes no changes of its own. A snapshot is a view of the data at a particular time.</desc>
+  <!-- Shared text and panel styles; values line up beneath the query headings. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .title { font-size: 31px; font-weight: 700; }
+      .body { font-size: 21px; }
+      .note { font-size: 19px; fill: #475569; }
+      .label { font-size: 23px; font-weight: 700; }
+      .value { font-size: 32px; font-weight: 700; }
+      .center { text-anchor: middle; }
+      .blue { fill: #1d4ed8; }
+      .teal { fill: #0f766e; }
+      .orange { fill: #c2410c; }
+    </style>
+  </defs>
+  <!-- Title and setup define both the transaction boundary and the initial value. -->
+  <rect width="1080" height="510" fill="#fff"/>
+  <text class="title" x="30" y="44">Oracle: how long does the read snapshot last?</text>
+  <text class="body" x="30" y="81">Both queries belong to one transaction. The reader makes no writes.</text>
+  <text class="note" x="30" y="111">Start: balance = 100. A snapshot is a view of data at a particular time.</text>
+  <!-- The middle heading is the intervening committed write, not a reader result. -->
+  <text class="label center" x="485" y="153">First query</text>
+  <text class="note center orange" x="708" y="147">Other transaction</text>
+  <text class="note center orange" x="708" y="169">commits 100 → 80</text>
+  <text class="label center" x="934" y="153">Second query</text>
+  <!-- Read Committed: independent statement views pick up the intervening commit. -->
+  <g id="statement-snapshots">
+    <rect x="30" y="185" width="1020" height="125" rx="10" fill="#eff6ff" stroke="#bfdbfe" stroke-width="2"/>
+    <text class="label blue" x="50" y="226">READ COMMITTED</text>
+    <text class="note" x="50" y="258">One snapshot per query</text>
+    <text class="value center blue" x="485" y="236">100</text>
+    <text class="note center" x="485" y="274">earlier snapshot</text>
+    <text class="note center" x="708" y="219">new snapshot</text>
+    <!-- Shaft stops under the triangle base; its tip stays in the empty corridor. -->
+    <path id="statement-arrow" d="M584 246 H815" fill="none" stroke="#1d4ed8" stroke-width="3"/>
+    <path d="M814 238 L828 246 L814 254 Z" fill="#1d4ed8"/>
+    <text class="value center blue" x="934" y="236">80</text>
+    <text class="note center" x="934" y="274">later snapshot</text>
+  </g>
+  <!-- Transaction scope keeps the same committed view across both queries. -->
+  <g id="transaction-snapshot">
+    <rect x="30" y="330" width="1020" height="125" rx="10" fill="#f0fdfa" stroke="#99f6e4" stroke-width="2"/>
+    <text class="label teal" x="50" y="371">SERIALIZABLE</text>
+    <text class="label teal" x="50" y="399">or READ ONLY</text>
+    <text class="note" x="50" y="432">One transaction view</text>
+    <text class="value center teal" x="485" y="381">100</text>
+    <text class="note center" x="485" y="419">starting snapshot</text>
+    <text class="note center" x="708" y="364">same snapshot</text>
+    <!-- This arrow has the same geometry and protected text clearance as above. -->
+    <path id="transaction-arrow" d="M584 391 H815" fill="none" stroke="#0f766e" stroke-width="3"/>
+    <path d="M814 383 L828 391 L814 399 Z" fill="#0f766e"/>
+    <text class="value center teal" x="934" y="381">100</text>
+    <text class="note center" x="934" y="419">starting snapshot</text>
+  </g>
+  <!-- Scope reminder prevents applying Oracle's mode names to every engine. -->
+  <text class="note" x="30" y="490">Oracle query visibility only; write-conflict rules are a separate part of isolation.</text>
+</svg>

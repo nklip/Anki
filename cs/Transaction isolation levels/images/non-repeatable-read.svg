@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="666" viewBox="0 0 1080 666" role="img" aria-labelledby="non-repeatable-read-title non-repeatable-read-desc">
+<title id="non-repeatable-read-title">Non-repeatable read: the same row changes</title>
+<desc id="non-repeatable-read-desc">Non-repeatable read shown as three steps from top to bottom. Account 7 initially has balance 100. Transaction A reads balance 100 and remains open. Transaction B updates account 7 to balance 80 and commits. A reads the same account again within the same transaction and sees 80. The same row has returned two different committed values.</desc>
+<!-- Shared typography and semantic colors; each event is an explicit chronological step. -->
+<defs>
+  <style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+    .title { font-size: 30px; font-weight: 700; }
+    .subtitle { font-size: 21px; fill: #475569; }
+    .initial { font-size: 22px; font-weight: 700; }
+    .lane { font-size: 25px; font-weight: 700; }
+    .lane-note { font-size: 18px; fill: #475569; }
+    .body { font-size: 23px; font-weight: 700; }
+    .detail { font-size: 20px; }
+    .step { font-size: 20px; font-weight: 700; fill: #ffffff; text-anchor: middle; }
+    .outcome { font-size: 25px; font-weight: 700; fill: #b91c1c; }
+    .explain { font-size: 21px; }
+    .correct { font-size: 23px; font-weight: 700; fill: #0f766e; }
+  </style>
+</defs>
+<!-- Canvas, lesson, and the state before either transaction acts. -->
+<rect width="1080" height="666" fill="#ffffff"/>
+
+<text x="32" y="48" class="title" >Non-repeatable read: the same row changes</text>
+<text x="32" y="82" class="subtitle" >A reads one row twice while its transaction remains open.</text>
+<rect x="32" y="105" width="1016" height="53" rx="10" fill="#f1f5f9"/>
+<text x="52" y="139" class="initial" >Starting row: account 7 · balance = 100</text>
+<!-- Lane labels distinguish the two transactions; time advances down the numbered rail. -->
+<text x="47" y="204" class="lane-note" text-anchor="middle">Time</text>
+<text x="124" y="194" class="lane" style="fill: #1d4ed8">Transaction A</text>
+<text x="124" y="218" class="lane-note" >One transaction</text>
+<text x="600" y="194" class="lane" style="fill: #c2410c">Transaction B</text>
+<text x="600" y="218" class="lane-note" >One transaction</text>
+<!-- Shaft gaps preserve complete clearance around the numbered circles and their labels. -->
+<path id="time-arrow-shaft" data-connector="true" d="M47 234 V253 M47 293 V353 M47 393 V453 M47 493 V508" stroke="#94a3b8" stroke-width="3" fill="none"/>
+<path id="time-arrow-head" d="M40 504 L47 516 L54 504 Z" fill="#94a3b8"/>
+<!-- Step 1: transaction A; all earlier numbered operations have already happened. -->
+<circle cx="47" cy="273" r="18" fill="#475569"/>
+<text x="47" y="280" class="step" >1</text>
+<rect id="step-1-event" x="106" y="234" width="440" height="78" rx="10" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="124" y="265" class="body" style="fill: #1d4ed8">Read account 7: balance = 100</text>
+<text x="124" y="294" class="detail" >A stays open after this first read.</text>
+<!-- Step 2: transaction B; all earlier numbered operations have already happened. -->
+<circle cx="47" cy="373" r="18" fill="#475569"/>
+<text x="47" y="380" class="step" >2</text>
+<rect id="step-2-event" x="582" y="334" width="440" height="78" rx="10" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
+<text x="600" y="365" class="body" style="fill: #c2410c">Set balance = 80; COMMIT</text>
+<text x="600" y="394" class="detail" >B updates account 7.</text>
+<!-- Step 3: transaction A; all earlier numbered operations have already happened. -->
+<circle cx="47" cy="473" r="18" fill="#475569"/>
+<text x="47" y="480" class="step" >3</text>
+<rect id="step-3-event" x="106" y="434" width="440" height="78" rx="10" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+<text x="124" y="465" class="body" style="fill: #1d4ed8">Read account 7: balance = 80</text>
+<text x="124" y="494" class="detail" >Second read in the same A transaction.</text>
+<!-- Outcome follows the final step; red names the anomaly, teal names a correct value where relevant. -->
+<rect id="outcome-panel" x="32" y="542" width="1016" height="87" rx="10" fill="#fef2f2"/>
+<text x="52" y="575" class="outcome" >Same row, different value: 100 → 80</text>
+<text x="52" y="607" class="explain" >B commits between A’s two reads.</text>
+<text x="32" y="651" class="lane-note" >Conceptual schedule · numbered steps run from top to bottom</text>
+</svg>
