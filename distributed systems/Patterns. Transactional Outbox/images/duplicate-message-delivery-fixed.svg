@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1152" height="1073" viewBox="0 0 1152 1073" role="img" aria-labelledby="title desc">
+  <title id="title">Duplicate message delivery with idempotency and an outbox</title>
+  <desc id="desc">Read the sequence from top to bottom. Kafka delivers the same message to a second consumer service instance after the polling interval is exceeded. The red oval marks the duplicate delivery. The first transaction records the message identifier and an outbox event; the competing insert waits for the lock, fails its uniqueness constraint after commit, and rolls back. Instance 1 left the group when it exceeded the poll interval, so its own offset commit is rejected and instance 2 records the progress. CDC publishes the committed event.</desc>
+  <!-- Provenance: Lydtech Figure 6, https://www.lydtechconsulting.com/blog/kafka-idempotent-consumer-transactional-outbox ; PNG etalon: https://cdn.prod.website-files.com/687e4d3574f64b1a223d933f/68bebe1e2f424ae26f0a44cf_06_duplicate-message-delivery-fixed-annotated.png ; local copy: duplicate-message-delivery-fixed.png. -->
+  <!-- Native shapes and editable text recreate the accompanying PNG; canvas and positions follow that etalon. -->
+  <!-- Content corrections against the etalon: instance 1 proactively left the group at max.poll.interval.ms, so only
+       active members may commit offsets and Kafka rejects its own commit (the dashed message-10-return). The wait note
+       (note-6) sits on the Database column, as in idempotent-consumer-flush-lock.svg. The canvas is 96 units taller
+       than the etalon: one row for that return, one for the wait note. -->
+  <defs>
+    <style>
+      .actor { fill: #ececff; stroke: #dacef3; stroke-width: 1; }
+      .actor-label { font-family: Arial, Helvetica, sans-serif; font-size: 14px; fill: #000; text-anchor: middle; }
+      .lifeline { stroke: #dacef3; stroke-width: 2; }
+      .activation { fill: #f4f4f4; stroke: #666; stroke-width: 1; }
+      /* Legacy Mermaid message labels use stroked regular glyphs rather than a bold font face. */
+      .message { font-family: "Trebuchet MS", Arial, sans-serif; font-size: 16px; font-weight: 400; fill: #333; stroke: #333; stroke-width: 0.75; text-anchor: middle; }
+      .note { fill: #fff5ad; stroke: #aaaa33; stroke-width: 1; }
+      .note-label { font-family: "Trebuchet MS", Arial, sans-serif; font-size: 14px; fill: #000; text-anchor: middle; }
+      .arrow-shaft { fill: none; stroke: #333; stroke-width: 1.5; }
+    </style>
+  </defs>
+  <rect width="1152" height="1073" fill="#fff"/>
+  <!-- Lifelines intentionally pass behind activation bars, notes, and message shafts. -->
+  <g id="participant-lifelines">
+    <line class="lifeline" x1="125" y1="75" x2="125" y2="997"/>
+    <line class="lifeline" x1="325" y1="75" x2="325" y2="997"/>
+    <line class="lifeline" x1="576" y1="75" x2="576" y2="997"/>
+    <line class="lifeline" x1="827" y1="75" x2="827" y2="997"/>
+    <line class="lifeline" x1="1027" y1="75" x2="1027" y2="997"/>
+  </g>
+  <!-- Activation bars show the first consumer continuing while the second receives the same event. -->
+  <g id="transaction-activations">
+    <rect class="activation" x="320" y="125" width="10" height="756"/>
+    <rect class="activation" x="822" y="457" width="10" height="520"/>
+    <rect class="activation" x="571" y="597" width="10" height="332"/>
+  </g>
+  <!-- Each shaft stops under its triangular head, keeping the nose clean at the target lifeline. -->
+  <g id="message-sequence">
+    <g id="message-1">
+      <path class="arrow-shaft" d="M125 123 H318"/>
+      <path d="M317 118.5 L326 123 L317 127.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="225.0" y="110">consume message</text>
+    </g>
+    <g id="message-2">
+      <path class="arrow-shaft" d="M330 217 H569"/>
+      <path d="M568 212.5 L577 217 L568 221.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="453.0" y="204">saveAndFlush(messageId)</text>
+    </g>
+    <g id="message-3">
+      <path class="arrow-shaft" d="M330 265 H1020"/>
+      <path d="M1019 260.5 L1028 265 L1019 269.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="678.5" y="252">REST POST request</text>
+    </g>
+    <g id="message-4">
+      <path class="arrow-shaft" d="M330 313 H569"/>
+      <path d="M568 308.5 L577 313 L568 317.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="453.0" y="300">write</text>
+    </g>
+    <g id="message-5">
+      <path class="arrow-shaft" d="M330 361 H569"/>
+      <path d="M568 356.5 L577 361 L568 365.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="453.0" y="348">write outbox event</text>
+    </g>
+    <g id="message-6">
+      <path class="arrow-shaft" d="M125 455 H820"/>
+      <path d="M819 450.5 L828 455 L819 459.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="476.0" y="442">consume message</text>
+    </g>
+    <g id="message-7">
+      <path class="arrow-shaft" d="M822 595 H583"/>
+      <path d="M584 590.5 L575 595 L584 599.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="699.0" y="582">saveAndFlush(messageId)</text>
+    </g>
+    <g id="message-8">
+      <path class="arrow-shaft" d="M330 691 H564"/>
+      <path d="M563 686.5 L572 691 L563 695.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="450.5" y="678">commit db transaction</text>
+    </g>
+    <g id="message-9">
+      <path class="arrow-shaft" d="M581 739 H815" stroke-dasharray="3 3"/>
+      <path d="M814 734.5 L823 739 L814 743.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="701.5" y="726">constraint violation</text>
+    </g>
+    <g id="message-10">
+      <path class="arrow-shaft" d="M320 833 H132"/>
+      <path d="M133 828.5 L124 833 L133 837.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="222.5" y="820">update offsets</text>
+    </g>
+    <!-- Kafka answers instance 1's offset commit with the failure the etalon leaves implicit. -->
+    <g id="message-10-return">
+      <path class="arrow-shaft" d="M125 881 H318" stroke-dasharray="3 3"/>
+      <path d="M317 876.5 L326 881 L317 885.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="222.5" y="868">CommitFailedException</text>
+    </g>
+    <g id="message-11">
+      <path class="arrow-shaft" d="M571 929 H132"/>
+      <path d="M133 924.5 L124 929 L133 933.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="348.0" y="916">CDC produce</text>
+    </g>
+    <g id="message-12">
+      <path class="arrow-shaft" d="M822 977 H132"/>
+      <path d="M133 972.5 L124 977 L133 981.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="473.5" y="964">update offsets</text>
+    </g>
+  </g>
+  <!-- Notes cover lifelines as in the reference, with padding around every editable label. -->
+  <g id="sequence-notes">
+    <g id="note-1"><rect class="note" x="250.0" y="133" width="150" height="36"/><text class="note-label" x="325" y="156">Begin DB transaction</text></g>
+    <g id="note-2"><rect class="note" x="217.5" y="371" width="215" height="36"/><text class="note-label" x="325" y="394">max.poll.interval.ms exceeded</text></g>
+    <g id="note-3"><rect class="note" x="725.5" y="465" width="203" height="36"/><text class="note-label" x="827" y="488">Duplicate message consumed</text></g>
+    <g id="note-4"><rect class="note" x="752.0" y="511" width="150" height="36"/><text class="note-label" x="827" y="534">Begin DB transaction</text></g>
+    <g id="note-5"><rect class="note" x="744.0" y="749" width="166" height="36"/><text class="note-label" x="827" y="772">Transaction rolled back</text></g>
+    <!-- The competing insert blocks here; same marker as idempotent-consumer-flush-lock.svg. -->
+    <g id="note-6"><rect class="note" x="501.0" y="605" width="150" height="36"/><text class="note-label" x="576" y="628">Wait to acquire lock</text></g>
+  </g>
+  <!-- The source oval highlights the duplicate-message note; its top intentionally overlays the delivery arrow as in the PNG. -->
+  <ellipse id="duplicate-delivery-highlight" cx="827.5" cy="480.5" rx="119.5" ry="27.5" fill="none" stroke="#ff2600" stroke-width="4"/>
+  <!-- Participant headers and footers preserve the source line breaks and 150 by 65 boxes. -->
+  <g id="participants">
+    <rect class="actor" x="50" y="10" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="125" y="48.0">Kafka</text>
+    <rect class="actor" x="50" y="997" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="125" y="1035.0">Kafka</text>
+    <rect class="actor" x="250" y="10" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="325" y="40.75">Consumer Service</text>
+    <text class="actor-label" x="325" y="55.25">Instance 1</text>
+    <rect class="actor" x="250" y="997" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="325" y="1027.75">Consumer Service</text>
+    <text class="actor-label" x="325" y="1042.25">Instance 1</text>
+    <rect class="actor" x="501" y="10" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="576" y="48.0">Database</text>
+    <rect class="actor" x="501" y="997" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="576" y="1035.0">Database</text>
+    <rect class="actor" x="752" y="10" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="827" y="40.75">Consumer Service</text>
+    <text class="actor-label" x="827" y="55.25">Instance 2</text>
+    <rect class="actor" x="752" y="997" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="827" y="1027.75">Consumer Service</text>
+    <text class="actor-label" x="827" y="1042.25">Instance 2</text>
+    <rect class="actor" x="952" y="10" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="1027" y="48.0">Third Party Service</text>
+    <rect class="actor" x="952" y="997" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="1027" y="1035.0">Third Party Service</text>
+  </g>
+</svg>

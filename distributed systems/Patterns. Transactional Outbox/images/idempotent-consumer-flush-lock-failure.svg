@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="767" height="757" viewBox="0 0 767 757" role="img" aria-labelledby="title desc">
+  <title id="title">Idempotent consumer: failure releases the database lock</title>
+  <desc id="desc">Read downward. Consumer instance 1 opens a transaction and flushes the message ID. Instance 2 tries to save the same ID and waits for a database lock. Instance 1 fails, so instance 2 acquires the lock, processes the event, and commits its transaction.</desc>
+  <!-- Recreated from idempotent-consumer-flush-lock-failure.png, from https://www.lydtechconsulting.com/blog/kafka-idempotent-consumer-transactional-outbox. -->
+  <!-- Shared original sequence-diagram colors and editable typography. -->
+  <defs><style>
+.actor { fill: #ececff; stroke: #dacef3; stroke-width: 1; }
+.actor-label { font-family: Arial, Helvetica, sans-serif; font-size: 14px; fill: #000; text-anchor: middle; }
+.note { fill: #fff5ad; stroke: #aaaa33; stroke-width: 1; }
+.note-label { font-family: "Trebuchet MS", sans-serif; font-size: 14px; fill: #000; text-anchor: middle; }
+.message { font-family: "Trebuchet MS", sans-serif; font-size: 16px; font-weight: 400; fill: #333; stroke: #333; stroke-width: .75; text-anchor: middle; }
+.lifeline { stroke: #dacef3; stroke-width: 2; }
+.activation { fill: #f4f4f4; stroke: #666; stroke-width: 1; }
+.shaft { fill: none; stroke: #333; stroke-width: 1.5; }
+  </style></defs>
+  <rect width="767" height="757" fill="#fff"/>
+  <!-- Lifelines run behind activation bars and transaction notes. -->
+  <path d="M127.5 75 V681" class="lifeline"/>
+  <path d="M378.5 75 V681" class="lifeline"/>
+  <path d="M629.5 75 V681" class="lifeline"/>
+  <!-- Activation bars preserve the wait and failure intervals from the PNG. -->
+  <rect x="122.5" y="77" width="10" height="368" class="activation"/>
+  <rect x="373.5" y="313" width="10" height="224" class="activation"/>
+  <rect x="624.5" y="77" width="10" height="549" class="activation"/>
+  <!-- Arrowheads meet the receiving lifeline or activation edge; shafts end under their heads. -->
+  <path id="save-instance-1-shaft" class="shaft" data-connector="true" d="M132.5 169 H370.5"/>
+  <path id="save-instance-1-head" d="M378.5 169 L368.5 164 L368.5 174 Z" fill="#333" stroke="#333" stroke-width=".5" stroke-linejoin="round"/>
+  <text x="255.0" y="156" class="message">saveAndFlush(messageId)</text>
+  <path id="write-instance-1-shaft" class="shaft" data-connector="true" d="M132.5 217 H370.5"/>
+  <path id="write-instance-1-head" d="M378.5 217 L368.5 212 L368.5 222 Z" fill="#333" stroke="#333" stroke-width=".5" stroke-linejoin="round"/>
+  <text x="255.0" y="204" class="message">write</text>
+  <path id="save-instance-2-shaft" class="shaft" data-connector="true" d="M624.5 311 H386.5"/>
+  <path id="save-instance-2-head" d="M378.5 311 L388.5 306 L388.5 316 Z" fill="#333" stroke="#333" stroke-width=".5" stroke-linejoin="round"/>
+  <text x="501.0" y="298" class="message">saveAndFlush(messageId)</text>
+  <path id="process-instance-1-shaft" class="shaft" data-connector="true" d="M132.5 405 C192.5 395 192.5 433 140.5 425"/>
+  <path id="process-instance-1-head" d="M132.5 425 L142.5 420 L142.5 430 Z" fill="#333" stroke="#333" stroke-width=".5" stroke-linejoin="round"/>
+  <text x="132.5" y="392" class="message">Other event processing</text>
+  <path id="lock-released-shaft" class="shaft" data-connector="true" d="M383.5 537 H617.5" stroke-dasharray="3 3"/>
+  <path id="lock-released-head" d="M625.5 537 L615.5 532 L615.5 542 Z" fill="#333" stroke="#333" stroke-width=".5" stroke-linejoin="round"/>
+  <path id="process-instance-2-shaft" class="shaft" data-connector="true" d="M634.5 585 C694.5 575 694.5 613 642.5 605"/>
+  <path id="process-instance-2-head" d="M634.5 605 L644.5 600 L644.5 610 Z" fill="#333" stroke="#333" stroke-width=".5" stroke-linejoin="round"/>
+  <text x="634.5" y="572" class="message">Other event processing</text>
+  <!-- Notes overlay lifelines exactly as in the original sequence. -->
+  <rect x="52.5" y="85" width="150" height="36" class="note"/>
+  <text x="127.5" y="108" class="note-label">Begin DB transaction</text>
+  <rect x="554.5" y="227" width="150" height="36" class="note"/>
+  <text x="629.5" y="250" class="note-label">Begin DB transaction</text>
+  <rect x="303.5" y="321" width="150" height="36" class="note"/>
+  <text x="378.5" y="344" class="note-label">Wait to acquire lock</text>
+  <rect x="52.5" y="445" width="150" height="36" class="note"/>
+  <text x="127.5" y="468" class="note-label">Failure</text>
+  <rect x="303.5" y="491" width="150" height="36" class="note"/>
+  <text x="378.5" y="514" class="note-label">Lock acquired</text>
+  <rect x="547.5" y="625" width="164" height="36" class="note"/>
+  <text x="629.5" y="648" class="note-label">Commit DB transaction</text>
+  <!-- Repeated participant boxes anchor the top-to-bottom reading order. -->
+  <rect x="52.5" y="10" width="150" height="65" rx="3" class="actor"/>
+  <text x="127.5" y="41" class="actor-label">Consumer Service</text>
+  <text x="127.5" y="56" class="actor-label">Instance 1</text>
+  <rect x="52.5" y="681" width="150" height="65" rx="3" class="actor"/>
+  <text x="127.5" y="712" class="actor-label">Consumer Service</text>
+  <text x="127.5" y="727" class="actor-label">Instance 1</text>
+  <rect x="303.5" y="10" width="150" height="65" rx="3" class="actor"/>
+  <text x="378.5" y="48.5" class="actor-label">Database</text>
+  <rect x="303.5" y="681" width="150" height="65" rx="3" class="actor"/>
+  <text x="378.5" y="719.5" class="actor-label">Database</text>
+  <rect x="554.5" y="10" width="150" height="65" rx="3" class="actor"/>
+  <text x="629.5" y="41" class="actor-label">Consumer Service</text>
+  <text x="629.5" y="56" class="actor-label">Instance 2</text>
+  <rect x="554.5" y="681" width="150" height="65" rx="3" class="actor"/>
+  <text x="629.5" y="712" class="actor-label">Consumer Service</text>
+  <text x="629.5" y="727" class="actor-label">Instance 2</text>
+</svg>

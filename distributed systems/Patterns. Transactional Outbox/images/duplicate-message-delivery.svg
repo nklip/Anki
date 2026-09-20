@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1055" height="1065" viewBox="0 0 1055 1065" role="img" aria-labelledby="title desc">
+  <title id="title">Duplicate message delivery</title>
+  <desc id="desc">Read the sequence from top to bottom. Kafka delivers the same message to a second consumer service instance after the polling interval is exceeded. The red oval marks the duplicate delivery; REST requests, outbound events, and database writes are repeated. Instance 1 left the group when it exceeded the poll interval, so its offset commit is rejected and only instance 2 records progress.</desc>
+  <!-- Provenance: Lydtech Figure 1, https://www.lydtechconsulting.com/blog/kafka-idempotent-consumer-transactional-outbox ; PNG etalon: https://cdn.prod.website-files.com/687e4d3574f64b1a223d933f/68bebd81f5bfc985e02a0d8e_01_duplicate-message-delivery-annotated.png ; local copy: duplicate-message-delivery.png. -->
+  <!-- Native shapes and editable text recreate the accompanying PNG; canvas and positions follow that etalon. -->
+  <!-- Content correction against the etalon: instance 1 proactively left the group at max.poll.interval.ms, so only
+       active members may commit offsets and its own commit is rejected. Marked by the dashed message-8-return; the etalon shows the commit unqualified. -->
+  <defs>
+    <style>
+      .actor { fill: #ececff; stroke: #dacef3; stroke-width: 1; }
+      .actor-label { font-family: Arial, Helvetica, sans-serif; font-size: 14px; fill: #000; text-anchor: middle; }
+      .lifeline { stroke: #dacef3; stroke-width: 2; }
+      .activation { fill: #f4f4f4; stroke: #666; stroke-width: 1; }
+      /* Legacy Mermaid message labels use stroked regular glyphs rather than a bold font face. */
+      .message { font-family: "Trebuchet MS", Arial, sans-serif; font-size: 16px; font-weight: 400; fill: #333; stroke: #333; stroke-width: 0.75; text-anchor: middle; }
+      .note { fill: #fff5ad; stroke: #aaaa33; stroke-width: 1; }
+      .note-label { font-family: "Trebuchet MS", Arial, sans-serif; font-size: 14px; fill: #000; text-anchor: middle; }
+      .arrow-shaft { fill: none; stroke: #333; stroke-width: 1.5; }
+    </style>
+  </defs>
+  <rect width="1055" height="1065" fill="#fff"/>
+  <!-- Lifelines intentionally pass behind activation bars, notes, and message shafts. -->
+  <g id="participant-lifelines">
+    <line class="lifeline" x1="125" y1="75" x2="125" y2="989"/>
+    <line class="lifeline" x1="325" y1="75" x2="325" y2="989"/>
+    <line class="lifeline" x1="525" y1="75" x2="525" y2="989"/>
+    <line class="lifeline" x1="725" y1="75" x2="725" y2="989"/>
+    <line class="lifeline" x1="930" y1="75" x2="930" y2="989"/>
+  </g>
+  <!-- Activation bars show the first consumer continuing while the second receives the same event. -->
+  <g id="transaction-activations">
+    <rect class="activation" x="320" y="125" width="10" height="658"/>
+    <rect class="activation" x="720" y="361" width="10" height="608"/>
+  </g>
+  <!-- Each shaft stops under its triangular head, keeping the nose clean at the target lifeline. -->
+  <g id="message-sequence">
+    <g id="message-1">
+      <path class="arrow-shaft" d="M125 123 H318"/>
+      <path d="M317 118.5 L326 123 L317 127.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="225.0" y="110">consume message</text>
+    </g>
+    <g id="message-2">
+      <path class="arrow-shaft" d="M330 217 H923"/>
+      <path d="M922 212.5 L931 217 L922 221.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="630.0" y="204">REST POST request</text>
+    </g>
+    <g id="message-3">
+      <path class="arrow-shaft" d="M330 265 H518"/>
+      <path d="M517 260.5 L526 265 L517 269.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="427.5" y="252">write</text>
+    </g>
+    <g id="message-4">
+      <path class="arrow-shaft" d="M125 359 H718"/>
+      <path d="M717 354.5 L726 359 L717 363.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="425.0" y="346">consume message</text>
+    </g>
+    <g id="message-5">
+      <path class="arrow-shaft" d="M730 545 H923"/>
+      <path d="M922 540.5 L931 545 L922 549.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="830.0" y="532">REST POST request</text>
+    </g>
+    <g id="message-6">
+      <path class="arrow-shaft" d="M720 593 H532"/>
+      <path d="M533 588.5 L524 593 L533 597.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="622.5" y="580">write</text>
+    </g>
+    <g id="message-7">
+      <path class="arrow-shaft" d="M320 641 H132"/>
+      <path d="M133 636.5 L124 641 L133 645.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="222.5" y="628">produce event</text>
+    </g>
+    <g id="message-8">
+      <path class="arrow-shaft" d="M320 735 H132"/>
+      <path d="M133 730.5 L124 735 L133 739.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="222.5" y="722">update offsets</text>
+    </g>
+    <!-- Kafka answers instance 1's offset commit with the failure the etalon leaves implicit. -->
+    <g id="message-8-return">
+      <path class="arrow-shaft" d="M125 783 H318" stroke-dasharray="3 3"/>
+      <path d="M317 778.5 L326 783 L317 787.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="222.5" y="770">CommitFailedException</text>
+    </g>
+    <g id="message-9">
+      <path class="arrow-shaft" d="M720 829 H132"/>
+      <path d="M133 824.5 L124 829 L133 833.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="422.5" y="816">produce event</text>
+    </g>
+    <g id="message-10">
+      <path class="arrow-shaft" d="M720 969 H132"/>
+      <path d="M133 964.5 L124 969 L133 973.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
+      <text class="message" x="422.5" y="956">update offsets</text>
+    </g>
+  </g>
+  <!-- Notes cover lifelines as in the reference, with padding around every editable label. -->
+  <g id="sequence-notes">
+    <g id="note-1"><rect class="note" x="250.0" y="133" width="150" height="36"/><text class="note-label" x="325" y="156">Begin DB transaction</text></g>
+    <g id="note-2"><rect class="note" x="217.5" y="275" width="215" height="36"/><text class="note-label" x="325" y="298">max.poll.interval.ms exceeded</text></g>
+    <g id="note-3"><rect class="note" x="623.5" y="369" width="203" height="36"/><text class="note-label" x="725" y="392">Duplicate message consumed</text></g>
+    <g id="note-4"><rect class="note" x="650.0" y="415" width="150" height="36"/><text class="note-label" x="725" y="438">Begin DB transaction</text></g>
+    <g id="note-5"><rect class="note" x="623.5" y="461" width="203" height="36"/><text class="note-label" x="725" y="484">REST requests are duplicated</text></g>
+    <g id="note-6"><rect class="note" x="243.0" y="651" width="164" height="36"/><text class="note-label" x="325" y="674">Commit DB transaction</text></g>
+    <g id="note-7"><rect class="note" x="614.0" y="745" width="222" height="36"/><text class="note-label" x="725" y="768">Outbound events are duplicated</text></g>
+    <g id="note-8"><rect class="note" x="637.5" y="839" width="175" height="36"/><text class="note-label" x="725" y="862">DB writes are duplicated</text></g>
+    <g id="note-9"><rect class="note" x="643.0" y="885" width="164" height="36"/><text class="note-label" x="725" y="908">Commit DB transaction</text></g>
+  </g>
+  <!-- The source oval highlights the duplicate-message note; its top intentionally overlays the delivery arrow as in the PNG. -->
+  <ellipse id="duplicate-delivery-highlight" cx="726.5" cy="386.5" rx="119.5" ry="27.5" fill="none" stroke="#ff2600" stroke-width="4"/>
+  <!-- Participant headers and footers preserve the source line breaks and 150 by 65 boxes. -->
+  <g id="participants">
+    <rect class="actor" x="50" y="10" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="125" y="48.0">Kafka</text>
+    <rect class="actor" x="50" y="989" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="125" y="1027.0">Kafka</text>
+    <rect class="actor" x="250" y="10" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="325" y="40.75">Consumer Service</text>
+    <text class="actor-label" x="325" y="55.25">Instance 1</text>
+    <rect class="actor" x="250" y="989" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="325" y="1019.75">Consumer Service</text>
+    <text class="actor-label" x="325" y="1034.25">Instance 1</text>
+    <rect class="actor" x="450" y="10" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="525" y="48.0">Database</text>
+    <rect class="actor" x="450" y="989" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="525" y="1027.0">Database</text>
+    <rect class="actor" x="650" y="10" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="725" y="40.75">Consumer Service</text>
+    <text class="actor-label" x="725" y="55.25">Instance 2</text>
+    <rect class="actor" x="650" y="989" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="725" y="1019.75">Consumer Service</text>
+    <text class="actor-label" x="725" y="1034.25">Instance 2</text>
+    <rect class="actor" x="855" y="10" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="930" y="48.0">Third Party Service</text>
+    <rect class="actor" x="855" y="989" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="930" y="1027.0">Third Party Service</text>
+  </g>
+</svg>

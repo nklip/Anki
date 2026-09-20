@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="701" height="553" viewBox="0 0 701 553" role="img" aria-labelledby="title desc">
+  <title id="title">Idempotent consumer and Transactional Outbox</title>
+  <desc id="desc">Read downward. Kafka delivers a message to a consumer. In one database transaction, the consumer saves the message ID, writes its state change and an outbox event, then commits. It updates Kafka offsets. Change data capture then publishes the committed outbox event to Kafka.</desc>
+  <!-- Recreated from idempotent-consumer-and-transactional-outbox.png, from https://www.lydtechconsulting.com/blog/kafka-idempotent-consumer-transactional-outbox. -->
+  <!-- Shared original sequence-diagram colors and editable typography. -->
+  <defs><style>
+.actor { fill: #ececff; stroke: #dacef3; stroke-width: 1; }
+.actor-label { font-family: Arial, Helvetica, sans-serif; font-size: 14px; fill: #000; text-anchor: middle; }
+.note { fill: #fff5ad; stroke: #aaaa33; stroke-width: 1; }
+.note-label { font-family: "Trebuchet MS", sans-serif; font-size: 14px; fill: #000; text-anchor: middle; }
+.message { font-family: "Trebuchet MS", sans-serif; font-size: 16px; font-weight: 400; fill: #333; stroke: #333; stroke-width: .75; text-anchor: middle; }
+.lifeline { stroke: #dacef3; stroke-width: 2; }
+.activation { fill: #f4f4f4; stroke: #666; stroke-width: 1; }
+.shaft { fill: none; stroke: #333; stroke-width: 1.5; }
+  </style></defs>
+  <rect width="701" height="553" fill="#fff"/>
+  <!-- Lifelines remain behind transaction activation bars. -->
+  <path d="M125 75 V477" class="lifeline"/>
+  <path d="M325 75 V477" class="lifeline"/>
+  <path d="M576 75 V477" class="lifeline"/>
+  <rect x="320" y="125" width="10" height="284" class="activation"/>
+  <rect x="571" y="363" width="10" height="94" class="activation"/>
+  <!-- Message shafts stop inside their separate heads; every label remains above its arrow. -->
+  <path id="consume-shaft" class="shaft" data-connector="true" d="M125 123 H318"/>
+  <path id="consume-head" d="M326 123 L316 118 L316 128 Z" fill="#333" stroke="#333" stroke-width=".5" stroke-linejoin="round"/>
+  <text x="225.0" y="110" class="message">consume message</text>
+  <path id="save-message-id-shaft" class="shaft" data-connector="true" d="M330 217 H568"/>
+  <path id="save-message-id-head" d="M576 217 L566 212 L566 222 Z" fill="#333" stroke="#333" stroke-width=".5" stroke-linejoin="round"/>
+  <text x="452.5" y="204" class="message">saveAndFlush(messageId)</text>
+  <path id="write-business-state-shaft" class="shaft" data-connector="true" d="M330 265 H568"/>
+  <path id="write-business-state-head" d="M576 265 L566 260 L566 270 Z" fill="#333" stroke="#333" stroke-width=".5" stroke-linejoin="round"/>
+  <text x="452.5" y="252" class="message">write</text>
+  <path id="write-outbox-event-shaft" class="shaft" data-connector="true" d="M330 313 H568"/>
+  <path id="write-outbox-event-head" d="M576 313 L566 308 L566 318 Z" fill="#333" stroke="#333" stroke-width=".5" stroke-linejoin="round"/>
+  <text x="452.5" y="300" class="message">write outbox event</text>
+  <path id="commit-shaft" class="shaft" data-connector="true" d="M330 361 H568"/>
+  <path id="commit-head" d="M576 361 L566 356 L566 366 Z" fill="#333" stroke="#333" stroke-width=".5" stroke-linejoin="round"/>
+  <text x="452.5" y="348" class="message">commit transaction</text>
+  <path id="update-offsets-shaft" class="shaft" data-connector="true" d="M320 409 H132"/>
+  <path id="update-offsets-head" d="M124 409 L134 404 L134 414 Z" fill="#333" stroke="#333" stroke-width=".5" stroke-linejoin="round"/>
+  <text x="221.5" y="396" class="message">update offsets</text>
+  <path id="cdc-publish-shaft" class="shaft" data-connector="true" d="M571 457 H132"/>
+  <path id="cdc-publish-head" d="M124 457 L134 452 L134 462 Z" fill="#333" stroke="#333" stroke-width=".5" stroke-linejoin="round"/>
+  <text x="347.0" y="444" class="message">CDC produce</text>
+  <!-- The transaction note intentionally covers the consumer lifeline. -->
+  <rect x="250.0" y="133" width="150" height="36" class="note"/>
+  <text x="325" y="156" class="note-label">Begin DB transaction</text>
+  <!-- The same participant labels appear at both ends of each lifeline. -->
+  <rect x="50" y="10" width="150" height="65" rx="3" class="actor"/>
+  <text x="125" y="48.5" class="actor-label">Kafka</text>
+  <rect x="50" y="477" width="150" height="65" rx="3" class="actor"/>
+  <text x="125" y="515.5" class="actor-label">Kafka</text>
+  <rect x="250" y="10" width="150" height="65" rx="3" class="actor"/>
+  <text x="325" y="41" class="actor-label">Consumer Service</text>
+  <text x="325" y="56" class="actor-label">Instance</text>
+  <rect x="250" y="477" width="150" height="65" rx="3" class="actor"/>
+  <text x="325" y="508" class="actor-label">Consumer Service</text>
+  <text x="325" y="523" class="actor-label">Instance</text>
+  <rect x="501" y="10" width="150" height="65" rx="3" class="actor"/>
+  <text x="576" y="48.5" class="actor-label">Database</text>
+  <rect x="501" y="477" width="150" height="65" rx="3" class="actor"/>
+  <text x="576" y="515.5" class="actor-label">Database</text>
+</svg>

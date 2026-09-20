@@ -113,7 +113,7 @@ Resolve ambiguous outcomes by querying durable status or retrying the same idemp
 
 ## Make state changes and messages recover together
 
-A second failure window exists after a participant commits its state but before it sends the next message. The **transactional outbox** addresses this: write the business change and an outgoing message record in the same local database transaction. A **relay**, a delivery worker, later publishes committed records.
+A second failure window exists after a participant commits its state but before it sends the next message. The **[transactional outbox](../Patterns.%20Transactional%20Outbox/Readme.md)** addresses this: write the business change and an outgoing message record in the same local database transaction. A **relay**, a delivery worker, later publishes committed records.
 
 ![saga-reliable-handoff.svg](images/saga-reliable-handoff.svg)
 

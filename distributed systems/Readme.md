@@ -14,6 +14,7 @@ Each topic has its own folder, with diagrams in its `images/` directory.
  * [Erasure coding](./Erasure%20coding/Readme.md) — data and parity fragments, storage overhead, failure domains, reconstruction, and repair.
  * [Patterns. Circuit breaker](./Patterns.%20Circuit%20breaker/Readme.md) — closed/open/half-open states, failure thresholds, retries, timeouts, and transaction recovery limits.
  * [Patterns. Fanout](./Patterns.%20Fanout/Readme.md) — message and request fanout, feed-generation strategies, capacity, and failure handling.
+ * [Patterns. Transactional Outbox](./Patterns.%20Transactional%20Outbox/Readme.md) — the outbox table and relay process, atomic local writes, consumer deduplication, flushing, relay recovery, and ordering boundaries.
  * [Presigned URLs](./Presigned%20URLs/Readme.md) — S3 versus CloudFront signatures, private origins, cache behavior, expiration, uploads, and revocation.
  * [Redis](./Redis/Readme.md) — internals, deployments, common patterns, and CDN data placement.
  * [Sticky Sessions](./Sticky%20Sessions/Readme.md) — pinning mechanisms, their costs, and the stateless alternative.

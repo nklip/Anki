@@ -317,7 +317,7 @@ The comparison diagram below brings the three watermark meanings together. Its t
 
 ### Pattern 5. Publish database changes with a transactional outbox
 
-Pattern 3 showed how changes reach Kafka. This pattern explains how to preserve the obligation to publish when a database commit and a Kafka send cannot happen atomically. The database boundary below contains both the business row and the pending event; publication follows that transaction's commit.
+Pattern 3 showed how changes reach Kafka. [Transactional Outbox](../Patterns.%20Transactional%20Outbox/Readme.md) preserves the obligation to publish when a database commit and a Kafka send cannot happen atomically. The database boundary below contains both the business row and the pending event; publication follows that transaction's commit.
 
 ![kafka-outbox.svg](images/kafka-outbox.svg)
 

@@ -1,0 +1,193 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1152" height="989" viewBox="0 0 1152 989" role="img" aria-labelledby="title desc">
+  <title id="title">Outbox lifecycle: commit first, publish afterwards</title>
+  <desc id="desc">Read the sequence from top to bottom. In the transaction phase the service begins one database transaction, writes order 42, writes outbox event evt-901, commits, and answers the client. In the publishing phase a separate relay process stays busy for the whole phase: it begins its own transaction, selects a batch of unsent events, and for each event publishes it to the messaging service, waits for the acknowledgement, marks the outbox row as sent or deletes it, and finally commits.</desc>
+  <!-- Adapted from the sequence diagram in https://www.npiontko.pro/2025/05/19/outbox-pattern -->
+  <!-- Example values follow this article's running order example rather than the source's user example. -->
+  <!-- Typography, palette and arrow construction follow the neighbouring sequence diagrams in this folder. -->
+  <defs>
+    <style>
+      .actor { fill: #ececff; stroke: #dacef3; stroke-width: 1; }
+      .actor-label { font-family: Arial, Helvetica, sans-serif; font-size: 14px; fill: #000; text-anchor: middle; }
+      .lifeline { stroke: #dacef3; stroke-width: 2; }
+      .activation { fill: #f4f4f4; stroke: #666; stroke-width: 1; }
+      /* Legacy Mermaid message labels use stroked regular glyphs rather than a bold font face. */
+      .message { font-family: "Trebuchet MS", Arial, sans-serif; font-size: 16px; font-weight: 400; fill: #333; stroke: #333; stroke-width: 0.75; text-anchor: middle; }
+      .note { fill: #fff5ad; stroke: #aaaa33; stroke-width: 1; }
+      .note-label { font-family: "Trebuchet MS", Arial, sans-serif; font-size: 14px; fill: #000; text-anchor: middle; }
+      .arrow-shaft { fill: none; stroke: #333; stroke-width: 1.5; }
+      .divider { stroke: #333; stroke-width: 2; }
+      .phase-box { fill: #333; }
+      .phase-label { font-family: Arial, Helvetica, sans-serif; font-size: 14px; font-weight: 700; fill: #fff; text-anchor: middle; }
+      .fragment { fill: none; stroke: #333; stroke-width: 1.5; }
+      .fragment-label { font-family: Arial, Helvetica, sans-serif; font-size: 14px; font-weight: 700; fill: #333; }
+    </style>
+  </defs>
+  <rect width="1152" height="989" fill="#fff"/>
+
+  <!-- Lifelines pass behind activation bars, notes, phase bars and the loop fragment. -->
+  <g id="participant-lifelines">
+    <line class="lifeline" x1="125" y1="75" x2="125" y2="914"/>
+    <line class="lifeline" x1="325" y1="75" x2="325" y2="914"/>
+    <line class="lifeline" x1="576" y1="75" x2="576" y2="914"/>
+    <line class="lifeline" x1="827" y1="75" x2="827" y2="914"/>
+    <line class="lifeline" x1="1027" y1="75" x2="1027" y2="914"/>
+  </g>
+
+  <!-- Every participant that drives calls carries a bar, including the relay across the whole publishing phase
+       (the source diagram omits the relay bar, which contradicts the legend the article gives for these bars). -->
+  <g id="activations">
+    <rect class="activation" x="320" y="150" width="10" height="240"/>
+    <rect class="activation" x="571" y="198" width="10" height="152"/>
+    <rect class="activation" x="571" y="490" width="10" height="398"/>
+    <rect class="activation" x="822" y="490" width="10" height="398"/>
+    <rect class="activation" x="1022" y="676" width="10" height="48"/>
+  </g>
+
+  <!-- Phase bars split the run into the request's transaction and the relay's later publication. -->
+  <!-- Each rule stops at the label box so no line runs beneath its text. -->
+  <g id="phase-transaction">
+    <line class="divider" x1="20" y1="100" x2="481" y2="100"/>
+    <line class="divider" x1="671" y1="100" x2="1132" y2="100"/>
+    <rect class="phase-box" x="481" y="86" width="190" height="28"/>
+    <text class="phase-label" x="576" y="105">Transaction phase</text>
+  </g>
+  <g id="phase-publishing">
+    <line class="divider" x1="20" y1="440" x2="481" y2="440"/>
+    <line class="divider" x1="671" y1="440" x2="1132" y2="440"/>
+    <rect class="phase-box" x="481" y="426" width="190" height="28"/>
+    <text class="phase-label" x="576" y="445">Publishing phase</text>
+  </g>
+
+  <!-- Every shaft stops 2 units inside its own triangular head; each tip rests on the target lifeline or activation edge. -->
+  <g id="transaction-messages">
+    <g id="message-request">
+      <path class="arrow-shaft" d="M125 150 H312"/>
+      <path d="M320 150 L310 145 L310 155 Z" fill="#333" stroke="#333" stroke-width="0.5" stroke-linejoin="round"/>
+      <text class="message" x="222.5" y="137">create order 42</text>
+    </g>
+    <g id="message-begin">
+      <path class="arrow-shaft" d="M330 198 H563"/>
+      <path d="M571 198 L561 193 L561 203 Z" fill="#333" stroke="#333" stroke-width="0.5" stroke-linejoin="round"/>
+      <text class="message" x="450.5" y="185">begin transaction</text>
+    </g>
+    <g id="message-write-order">
+      <path class="arrow-shaft" d="M330 246 H563"/>
+      <path d="M571 246 L561 241 L561 251 Z" fill="#333" stroke="#333" stroke-width="0.5" stroke-linejoin="round"/>
+      <text class="message" x="450.5" y="233">write order 42</text>
+    </g>
+    <g id="message-write-outbox">
+      <path class="arrow-shaft" d="M330 294 H563"/>
+      <path d="M571 294 L561 289 L561 299 Z" fill="#333" stroke="#333" stroke-width="0.5" stroke-linejoin="round"/>
+      <text class="message" x="450.5" y="281">write outbox event evt-901</text>
+    </g>
+    <g id="message-commit">
+      <path class="arrow-shaft" d="M330 342 H563"/>
+      <path d="M571 342 L561 337 L561 347 Z" fill="#333" stroke="#333" stroke-width="0.5" stroke-linejoin="round"/>
+      <text class="message" x="450.5" y="329">commit transaction</text>
+    </g>
+    <g id="message-response">
+      <path class="arrow-shaft" d="M320 390 H133" stroke-dasharray="3 3"/>
+      <path d="M125 390 L135 385 L135 395 Z" fill="#333" stroke="#333" stroke-width="0.5" stroke-linejoin="round"/>
+      <text class="message" x="222.5" y="377">response</text>
+    </g>
+  </g>
+
+  <!-- The atomicity note intentionally covers the relay lifeline; keep it clear of the message labels on its left. -->
+  <g id="note-atomic">
+    <rect class="note" x="650" y="222" width="340" height="64"/>
+    <text class="note-label" x="820" y="248">Both writes are in the same</text>
+    <text class="note-label" x="820" y="270">database transaction</text>
+  </g>
+
+  <!-- The second note fills the idle client and service columns with the reason they are idle. -->
+  <g id="note-relay-independent">
+    <rect class="note" x="80" y="520" width="380" height="64"/>
+    <text class="note-label" x="270" y="546">The relay runs on its own schedule.</text>
+    <text class="note-label" x="270" y="568">The client already has its response.</text>
+  </g>
+
+  <g id="publishing-messages">
+    <g id="message-relay-begin">
+      <path class="arrow-shaft" d="M822 490 H589"/>
+      <path d="M581 490 L591 485 L591 495 Z" fill="#333" stroke="#333" stroke-width="0.5" stroke-linejoin="round"/>
+      <text class="message" x="704" y="477">begin transaction</text>
+    </g>
+    <g id="message-select-batch">
+      <path class="arrow-shaft" d="M822 538 H589"/>
+      <path d="M581 538 L591 533 L591 543 Z" fill="#333" stroke="#333" stroke-width="0.5" stroke-linejoin="round"/>
+      <text class="message" x="704" y="525">select batch of unsent events</text>
+    </g>
+    <g id="message-return-batch">
+      <path class="arrow-shaft" d="M581 586 H814" stroke-dasharray="3 3"/>
+      <path d="M822 586 L812 581 L812 591 Z" fill="#333" stroke="#333" stroke-width="0.5" stroke-linejoin="round"/>
+      <text class="message" x="704" y="573">return batch of events</text>
+    </g>
+  </g>
+
+  <!-- Loop fragment: the tab is placed left of the database activation bar so its text stays on clear background. -->
+  <g id="loop-fragment">
+    <rect class="fragment" x="500" y="600" width="600" height="244"/>
+    <path class="fragment" d="M500 600 H600 V618 L588 630 H500 Z"/>
+    <text class="fragment-label" x="516" y="621">loop</text>
+    <text class="fragment-label" x="620" y="621">[for each event]</text>
+  </g>
+
+  <g id="loop-messages">
+    <g id="message-publish">
+      <path class="arrow-shaft" d="M832 676 H1014"/>
+      <path d="M1022 676 L1012 671 L1012 681 Z" fill="#333" stroke="#333" stroke-width="0.5" stroke-linejoin="round"/>
+      <text class="message" x="924.5" y="663">publish event</text>
+    </g>
+    <g id="message-acknowledge">
+      <path class="arrow-shaft" d="M1022 724 H840" stroke-dasharray="3 3"/>
+      <path d="M832 724 L842 719 L842 729 Z" fill="#333" stroke="#333" stroke-width="0.5" stroke-linejoin="round"/>
+      <text class="message" x="924.5" y="711">acknowledge</text>
+    </g>
+    <g id="message-mark-sent">
+      <path class="arrow-shaft" d="M822 772 H589"/>
+      <path d="M581 772 L591 767 L591 777 Z" fill="#333" stroke="#333" stroke-width="0.5" stroke-linejoin="round"/>
+      <text class="message" x="704" y="759">mark as sent or delete</text>
+    </g>
+    <g id="message-confirm">
+      <path class="arrow-shaft" d="M581 820 H814" stroke-dasharray="3 3"/>
+      <path d="M822 820 L812 815 L812 825 Z" fill="#333" stroke="#333" stroke-width="0.5" stroke-linejoin="round"/>
+      <text class="message" x="704" y="807">confirm update or delete</text>
+    </g>
+  </g>
+
+  <g id="message-relay-commit">
+    <path class="arrow-shaft" d="M822 880 H589"/>
+    <path d="M581 880 L591 875 L591 885 Z" fill="#333" stroke="#333" stroke-width="0.5" stroke-linejoin="round"/>
+    <text class="message" x="704" y="867">commit transaction</text>
+  </g>
+
+  <!-- The same participant labels appear at both ends of each lifeline. -->
+  <g id="participants-top">
+    <rect class="actor" x="50" y="10" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="125" y="48.5">Client</text>
+    <rect class="actor" x="250" y="10" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="325" y="48.5">Service</text>
+    <rect class="actor" x="501" y="10" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="576" y="48.5">Database</text>
+    <rect class="actor" x="752" y="10" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="827" y="41">Relay</text>
+    <text class="actor-label" x="827" y="56">Process</text>
+    <rect class="actor" x="952" y="10" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="1027" y="41">Messaging</text>
+    <text class="actor-label" x="1027" y="56">Service</text>
+  </g>
+  <g id="participants-bottom">
+    <rect class="actor" x="50" y="914" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="125" y="952.5">Client</text>
+    <rect class="actor" x="250" y="914" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="325" y="952.5">Service</text>
+    <rect class="actor" x="501" y="914" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="576" y="952.5">Database</text>
+    <rect class="actor" x="752" y="914" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="827" y="945">Relay</text>
+    <text class="actor-label" x="827" y="960">Process</text>
+    <rect class="actor" x="952" y="914" width="150" height="65" rx="3"/>
+    <text class="actor-label" x="1027" y="945">Messaging</text>
+    <text class="actor-label" x="1027" y="960">Service</text>
+  </g>
+</svg>

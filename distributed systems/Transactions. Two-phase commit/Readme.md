@@ -181,7 +181,7 @@ An XA-capable database and broker can join the same transaction manager's decisi
 | Kafka producer transactions | Kafka output records and included consumer offsets; an external database update is not automatically included. |
 | RabbitMQ AMQP 0-9-1 transactions | Broker publishing and acknowledgement operations, with documented limits; they do not enlist an external database. |
 
-When database and broker cannot share the required commit protocol, a **transactional outbox** stores the business change and outgoing message together in the database. A relay publishes later. This solves the local database/message handoff, while a Saga can coordinate the wider business workflow. The [Saga article](../Transactions.%20Saga/Readme.md) explains outbox delivery and consumer deduplication.
+When database and broker cannot share the required commit protocol, a **[transactional outbox](../Patterns.%20Transactional%20Outbox/Readme.md)** stores the business change and outgoing message together in the database. A relay publishes later. This solves the local database/message handoff, while a [Saga](../Transactions.%20Saga/Readme.md) can coordinate the wider business workflow.
 
 ## How 2PC differs from TCC and Saga
 

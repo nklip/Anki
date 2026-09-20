@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" role="img" aria-labelledby="title desc">
+  <title id="title">Transactional Outbox components: outbox table and relay process</title>
+  <desc id="desc">Read the five numbered steps in order. The service updates the domain tables in step 1 and inserts an event into the outbox table in step 2; both tables live in the same database and both writes commit together or neither does. The relay process polls the outbox table for unsent events in step 3, sends them to the messaging system in step 4, and marks the rows as sent or deletes them in step 5.</desc>
+  <!-- Adapted from the components diagram in https://www.npiontko.pro/2025/05/19/outbox-pattern -->
+  <!-- Restyled to the distributed-systems house palette used by the neighbouring diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #142333; }
+      .title { font-size: 28px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 19px; }
+      .small { font-size: 17px; }
+      .flow { fill: none; stroke: #1677b8; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <rect width="1200" height="640" fill="#fff"/>
+  <!-- Header names the two added components and the reading order. -->
+  <text x="600" y="40" class="title" text-anchor="middle">Transactional Outbox: an outbox table and a relay process</text>
+  <text x="600" y="72" class="body" text-anchor="middle">Follow the numbered steps. The service writes; the relay publishes what committed.</text>
+
+  <!-- Top row: the two active processes. They never call each other directly. -->
+  <g id="service">
+    <rect x="60" y="104" width="270" height="80" rx="12" fill="#f5f8fc" stroke="#9caec2" stroke-width="2"/>
+    <text x="195" y="140" class="heading" text-anchor="middle">Service</text>
+    <text x="195" y="167" class="small" text-anchor="middle">handles the request</text>
+  </g>
+  <g id="relay-process">
+    <rect x="760" y="104" width="300" height="80" rx="12" fill="#f5f8fc" stroke="#9caec2" stroke-width="2"/>
+    <text x="910" y="140" class="heading" text-anchor="middle">Relay process</text>
+    <text x="910" y="167" class="small" text-anchor="middle">background worker</text>
+  </g>
+
+  <!-- Bottom row: one database holding both tables, and the broker outside it. -->
+  <g id="database">
+    <rect x="30" y="392" width="660" height="228" rx="12" fill="#eaf3ff" stroke="#1677b8" stroke-width="2"/>
+    <text x="52" y="425" class="heading">Database</text>
+    <rect x="60" y="448" width="270" height="110" rx="6" fill="#fff" stroke="#9caec2"/>
+    <text x="195" y="489" class="body" text-anchor="middle">Domain tables</text>
+    <text x="195" y="519" class="small" text-anchor="middle">the service's business data</text>
+    <rect x="400" y="448" width="270" height="110" rx="6" fill="#fff" stroke="#9caec2"/>
+    <text x="535" y="489" class="body" text-anchor="middle">Outbox table</text>
+    <text x="535" y="519" class="small" text-anchor="middle">one row per unsent event</text>
+    <text x="360" y="594" class="body" text-anchor="middle">Steps 1 and 2 commit together, or neither does.</text>
+  </g>
+  <g id="messaging-system">
+    <rect x="860" y="448" width="300" height="110" rx="12" fill="#edf8ee" stroke="#32834a" stroke-width="2"/>
+    <text x="1010" y="489" class="body" text-anchor="middle">Messaging system</text>
+    <text x="1010" y="519" class="small" text-anchor="middle">broker or event bus</text>
+    <text x="1010" y="594" class="small" text-anchor="middle">Kafka, RabbitMQ, Azure Service Bus, …</text>
+  </g>
+
+  <!-- Every shaft stops 2 units inside its own head; each tip rests on the target border at y=448. -->
+  <!-- Shafts 1, 2, 3 and 5 intentionally cross the database container border to reach the table inside it. -->
+  <g id="step-1">
+    <path class="flow" data-connector="true" d="M195 184 L195 438"/>
+    <polygon points="195,448 189,436 201,436" fill="#1677b8"/>
+    <text x="120" y="250" class="small" text-anchor="middle">1. Update</text>
+    <text x="120" y="278" class="small" text-anchor="middle">domain data</text>
+  </g>
+  <g id="step-2">
+    <path class="flow" data-connector="true" d="M300 184 L494 440"/>
+    <polygon points="500,448 488,442.1 497.5,434.8" fill="#1677b8"/>
+    <text x="450" y="250" class="small" text-anchor="middle">2. Insert event</text>
+    <text x="450" y="278" class="small" text-anchor="middle">into outbox table</text>
+  </g>
+  <g id="step-3">
+    <path class="flow" data-connector="true" d="M800 184 L586.4 440.3"/>
+    <polygon points="580,448 583.1,434.9 592.3,442.6" fill="#1677b8"/>
+    <text x="660" y="250" class="small" text-anchor="middle">3. Poll for unsent</text>
+    <text x="660" y="278" class="small" text-anchor="middle">events</text>
+  </g>
+  <g id="step-4">
+    <path class="flow" data-connector="true" d="M1010 184 L1010 438"/>
+    <polygon points="1010,448 1004,436 1016,436" fill="#1677b8"/>
+    <text x="1080" y="250" class="small" text-anchor="middle">4. Send events</text>
+  </g>
+  <g id="step-5">
+    <path class="flow" data-connector="true" d="M880 184 L646.7 440.6"/>
+    <polygon points="640,448 643.6,435.1 652.5,443.2" fill="#1677b8"/>
+    <text x="900" y="250" class="small" text-anchor="middle">5. Mark as sent</text>
+    <text x="900" y="278" class="small" text-anchor="middle">or delete</text>
+  </g>
+</svg>
