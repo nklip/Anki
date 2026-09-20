@@ -63,10 +63,15 @@ That path is a mental model, not a mandatory journey. An object can be promoted 
 
 ### Region size
 
-G1 normally chooses region size from the maximum heap size, targeting roughly 2,048 regions. In JDK 26, the ergonomic size is capped at 32 MB. An explicit `G1HeapRegionSize` must be a power of two from 1 MB through 512 MB:
+G1 normally chooses region size from the maximum heap size, targeting roughly 2,048 regions (could be more, for example 128 GB / 32 MB = 4096 regions). In JDK 26, the ergonomic (automatic) size is capped at 32 MB. An explicit `G1HeapRegionSize` must be a power of two from 1 MB through 512 MB (if maximum heap is 16 GB then with 512 MB per region the maximum heap would span 32 regions):
 
 ```bash
 java -XX:+UseG1GC -XX:G1HeapRegionSize=8m -jar application.jar
+```
+
+Next start parameters would create 32 regions only
+```bash
+java -XX:+UseG1GC -Xmx16g -XX:G1HeapRegionSize=512m -jar app.jar
 ```
 
 Leave this ergonomic unless measurements show a specific problem. Region size changes evacuation granularity, metadata trade-offs, and the threshold for humongous objects.
