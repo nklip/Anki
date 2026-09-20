@@ -2,45 +2,86 @@
   <title id="title">Token bucket rate-limiting algorithm</title>
   <desc id="desc">A refiller adds tokens to a bucket. Each incoming request consumes a token; requests are forwarded when tokens remain and dropped when the bucket is empty.</desc>
 
-  <!-- Reusable connectors and request/token symbols. -->
+  <!-- Shared palette and editable coin relief, matching the PNG's gold tokens. -->
   <defs>
-    <marker id="arrow" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="0" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L13 7L0 13Z" fill="#111"/></marker>
-    <symbol id="token" viewBox="0 0 50 32"><ellipse cx="25" cy="16" rx="22" ry="13" fill="#ffc85a" stroke="#e59d22" stroke-width="3"/><ellipse cx="25" cy="14" rx="15" ry="8" fill="none" stroke="#ffe092" stroke-width="2"/><text x="25" y="20" text-anchor="middle" font-family="Arial, sans-serif" font-size="15" font-weight="bold" fill="#d78b16">T</text></symbol>
-    <symbol id="request" viewBox="0 0 62 42"><rect x="3" y="4" width="56" height="34" rx="4" fill="#99bee8"/></symbol>
+    <linearGradient id="coin-edge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f2d88d"/><stop offset="0.5" stop-color="#dfad4b"/><stop offset="1" stop-color="#c59035"/>
+    </linearGradient>
+    <linearGradient id="coin-face" x1="0" y1="0" x2="0.25" y2="1">
+      <stop offset="0" stop-color="#f2cb6b"/><stop offset="1" stop-color="#f8c65f"/>
+    </linearGradient>
+    <symbol id="token" viewBox="0 0 48 40">
+      <ellipse cx="24" cy="25" rx="22" ry="16" fill="#ddddcf" opacity="0.35"/>
+      <ellipse cx="24" cy="23" rx="21.5" ry="15.5" fill="#cbbb94" opacity="0.4"/>
+      <ellipse cx="24" cy="21" rx="21" ry="15.5" fill="url(#coin-edge)"/>
+      <ellipse cx="24" cy="18" rx="20" ry="14" fill="url(#coin-face)" stroke="#dcb567" stroke-width="1.5"/>
+      <ellipse cx="24" cy="18" rx="17.5" ry="11.5" fill="none" stroke="#ffe09a" stroke-width="1.7"/>
+      <path d="M20 9Q27 6 29 11L28 15Q27 17 29 18L30 23Q25 25 16 23L16 20Q20 16 19 14Z" fill="#f2c45f" stroke="#e2b754" stroke-width="1.2"/>
+      <path d="M20 9Q18 11 20 14L19 17L16 20V23Q22 25 29 23" fill="none" stroke="#fadd8b" stroke-width="1.5"/>
+    </symbol>
+    <symbol id="request" viewBox="0 0 58 39"><rect width="58" height="39" fill="#a0c4ec"/></symbol>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; font-size: 30px; fill: #000; }
+      .group-outline { fill: none; stroke: #000; stroke-width: 1.7; stroke-dasharray: 6 6; }
+      .flow-shaft { fill: none; stroke: #000; stroke-width: 4; }
+    </style>
   </defs>
 
-  <rect width="1344" height="1112" fill="white"/>
+  <!-- Preserve the reference canvas and its almost-white artwork area. -->
+  <rect width="1344" height="1112" fill="#fff"/>
+  <rect x="48" y="70" width="1178" height="1042" fill="#fefefe"/>
 
-  <!-- Token refiller feeds the bucket from above. -->
-  <path d="M607 42H675V258H702L641 314L580 258H607Z" fill="white" stroke="#111" stroke-width="4"/>
-  <use href="#token" x="616" y="76" width="50" height="32"/><use href="#token" x="616" y="136" width="50" height="32"/><use href="#token" x="616" y="196" width="50" height="32"/>
-  <text x="702" y="171" font-family="Arial, sans-serif" font-size="29">refiller</text>
+  <!-- Refiller; the outlined arrow nose meets the bucket enclosure's top edge. -->
+  <path id="refiller-arrow" d="M607.5 71.5H667V260.5H688L637 299.5L586 260.5H607.5Z" fill="none" stroke="#000" stroke-width="3.5" stroke-linejoin="round"/>
+  <use href="#token" x="613" y="101" width="48" height="40"/>
+  <use href="#token" x="615" y="158" width="48" height="40"/>
+  <use href="#token" x="615" y="210" width="48" height="40"/>
+  <text x="671" y="195">refiller</text>
 
-  <!-- Central token bucket and admission decision. -->
-  <rect x="470" y="305" width="340" height="518" rx="49" fill="#fbfbfb" stroke="#111" stroke-width="2" stroke-dasharray="8 7"/>
-  <g id="bucket" fill="white" stroke="#078a05" stroke-width="9">
-    <ellipse cx="640" cy="370" rx="106" ry="35"/>
-    <path d="M534 370L554 543Q640 580 726 543L746 370" fill="white"/>
-    <path d="M640 432L746 473" fill="none"/><circle cx="640" cy="432" r="8" fill="#078a05"/>
+  <!-- Bucket body first, then the full rim and the handle crossing its right wall. -->
+  <rect id="bucket-enclosure" class="group-outline" x="474" y="301" width="308" height="520" rx="48"/>
+  <g id="bucket" fill="none" stroke="#007500" stroke-width="9" stroke-linejoin="round">
+    <path id="bucket-body" d="M535.5 356L558 525C563 553 704 553 713 525L736 356"/>
+    <ellipse id="bucket-rim" cx="635.5" cy="355.5" rx="100" ry="30.5"/>
+    <path id="bucket-handle" d="M641 418C682 438 735 460 748 453C756 448 737 437 726 431" stroke-width="8" stroke-linecap="round"/>
+    <circle id="handle-rivet" cx="636" cy="415.5" r="6.5" stroke-width="7"/>
   </g>
-  <path d="M640 590L775 700L640 810L505 700Z" fill="white" stroke="#111" stroke-width="3"/>
-  <text x="640" y="710" text-anchor="middle" font-family="Arial, sans-serif" font-size="28">enough tokens?</text>
 
-  <!-- Incoming requests. -->
-  <rect x="48" y="595" width="230" height="198" rx="30" fill="#fbfbfb" stroke="#111" stroke-width="2" stroke-dasharray="8 7"/>
-  <use href="#request" x="78" y="646" width="62" height="42"/><use href="#request" x="158" y="620" width="62" height="42"/><use href="#request" x="158" y="674" width="62" height="42"/><use href="#request" x="78" y="708" width="62" height="42"/><use href="#request" x="158" y="728" width="62" height="42"/>
-  <text x="163" y="850" text-anchor="middle" font-family="Arial, sans-serif" font-size="28">requests</text>
-  <path id="incoming" d="M278 693H456" fill="none" stroke="#111" stroke-width="4" marker-end="url(#arrow)"/>
+  <!-- Admission decision within the dashed bucket enclosure. -->
+  <path id="admission-decision" d="M630 590L762 696L630 802L498 696Z" fill="none" stroke="#000" stroke-width="2"/>
+  <text x="630" y="705" text-anchor="middle">enough tokens?</text>
 
-  <!-- Admission and rejection branches use separate text corridors. -->
-  <path id="forward" d="M810 700H1110" fill="none" stroke="#111" stroke-width="4" marker-end="url(#arrow)"/>
-  <text x="956" y="646" text-anchor="middle" font-family="Arial, sans-serif" font-size="27">yes,</text>
-  <text x="956" y="680" text-anchor="middle" font-family="Arial, sans-serif" font-size="27">forward requests</text>
-  <rect x="1125" y="554" width="112" height="310" rx="26" fill="#fbfbfb" stroke="#111" stroke-width="2" stroke-dasharray="8 7"/>
-  <use href="#token" x="1156" y="579" width="50" height="32"/><use href="#request" x="1150" y="624" width="62" height="42"/><use href="#token" x="1156" y="675" width="50" height="32"/><use href="#request" x="1150" y="720" width="62" height="42"/><use href="#token" x="1156" y="771" width="50" height="32"/><use href="#request" x="1150" y="816" width="62" height="42"/>
-  <path id="drop" d="M640 823V1002" fill="none" stroke="#111" stroke-width="4" marker-end="url(#arrow)"/>
-  <text x="730" y="908" font-family="Arial, sans-serif" font-size="27">no,</text>
-  <text x="680" y="942" font-family="Arial, sans-serif" font-size="27">drop requests</text>
-  <rect x="540" y="1017" width="200" height="72" rx="20" fill="#fbfbfb" stroke="#111" stroke-width="2" stroke-dasharray="8 7"/>
-  <rect x="560" y="1035" width="65" height="36" fill="#c7c7c7"/><rect x="655" y="1035" width="65" height="36" fill="#c7c7c7"/>
+  <!-- Incoming request burst. -->
+  <rect id="incoming-requests" class="group-outline" x="49" y="596" width="232" height="193" rx="30"/>
+  <use href="#request" x="87.5" y="653.5" width="58" height="39"/>
+  <use href="#request" x="165" y="615" width="58" height="39"/>
+  <use href="#request" x="165" y="673" width="58" height="39"/>
+  <use href="#request" x="87.5" y="711.5" width="58" height="39"/>
+  <use href="#request" x="165" y="730.5" width="58" height="39"/>
+  <text x="164" y="843" text-anchor="middle">requests</text>
+  <!-- Each shaft ends beneath the broad part of its head, before the tapered nose. -->
+  <path id="incoming-flow" class="flow-shaft" d="M281 692H466"/>
+  <path id="incoming-arrowhead" d="M449 680L474 692L449 704L455 692Z" fill="#000"/>
+
+  <!-- Admitted requests are paired with consumed tokens. -->
+  <path id="forward-flow" class="flow-shaft" d="M782 696L1121 694"/>
+  <path id="forward-arrowhead" d="M1105 682L1129 694L1105 706L1111 694Z" fill="#000"/>
+  <text x="954" y="645" text-anchor="middle">yes,</text>
+  <text x="954" y="679" text-anchor="middle">forward requests</text>
+  <rect id="forwarded-requests" class="group-outline" x="1129" y="553" width="96" height="308" rx="18"/>
+  <use href="#token" x="1152" y="578" width="48" height="40"/>
+  <use href="#request" x="1148" y="617" width="58" height="39"/>
+  <use href="#token" x="1152" y="668" width="48" height="40"/>
+  <use href="#request" x="1148" y="707" width="58" height="39"/>
+  <use href="#token" x="1152" y="758" width="48" height="40"/>
+  <use href="#request" x="1148" y="796" width="58" height="39"/>
+
+  <!-- Empty-bucket rejection; the vertical arrow ends at the dropped-request group. -->
+  <path id="drop-flow" class="flow-shaft" d="M624 821V1008"/>
+  <path id="drop-arrowhead" d="M612 992L624 1016L636 992L624 998Z" fill="#000"/>
+  <text x="733" y="910" text-anchor="middle">no,</text>
+  <text x="733" y="945" text-anchor="middle">drop requests</text>
+  <rect id="dropped-requests" class="group-outline" x="537" y="1016" width="174" height="67" rx="13"/>
+  <rect x="551" y="1029.5" width="58" height="38.5" fill="#cecece"/>
+  <rect x="637.5" y="1029.5" width="58" height="38.5" fill="#cecece"/>
 </svg>
