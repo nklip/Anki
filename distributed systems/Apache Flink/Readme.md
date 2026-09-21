@@ -2,9 +2,21 @@
 
 <sub>[Back to Distributed Systems](../Readme.md#content)</sub>
 
-**Apache Flink is a distributed engine for computing over streams of events while remembering state between events.** It can continuously update results as new data arrives, and it also processes bounded datasets with a known end. This article connects its execution model to keyed state, event time, windows, and recovery, using a shop's sales totals as a running example.
+**Apache Flink is a distributed engine for computing over streams of events while remembering state between events.** It can continuously update results as new data arrives, and it also processes bounded datasets with a known end. This article opens with documented users, then connects its execution model to keyed state, event time, windows, and recovery, using a shop's sales totals as a running example.
 
 The technical baseline is **Flink 2.3**. The examples are teaching scenarios; connector configuration and operational choices depend on the deployment.
+
+## Who uses Flink, and for what?
+
+These are dated, documented deployments. They show what organizations achieved in particular systems, not a claim that every present-day workload has the same architecture.
+
+| Organization and source date | Documented use | Reported value |
+| --- | --- | --- |
+| Uber, 2025 | Replaced batch ingestion into its data lake with Flink jobs that read Kafka and write tables continuously, across thousands of datasets and hundreds of petabytes. | Reported **minutes-level freshness in place of hours, using 25% less compute** than the batch pipelines it replaced. |
+| Alibaba Cloud, 2020 | Ran stream and batch workloads on one Flink-based platform during the Double 11 shopping festival, supporting uses such as search ranking, recommendation, and fraud checks. | Reported a **peak of four billion records per second**. That figure covers the whole platform rather than one job, and Alibaba Cloud sells the managed service it describes. |
+| Shopify, 2021 | Rebuilt the Black Friday and Cyber Monday Live Map, which shows order arcs and per-minute sales metrics, replacing a home-grown streaming service. | Reported roughly **50,000 messages per second** across the 2021 weekend at full uptime. |
+
+One shape recurs across all three: work that used to be recomputed or reassembled on a schedule became a job that keeps its result current as events arrive. That is the property this article develops—the job remembers state between events, so it revises a result instead of rebuilding it. Such a job need not be written in Java: **Flink SQL**, the engine's SQL interface, expresses many of them as queries, and a later section works through one.
 
 ## Where does Flink fit in a system?
 
@@ -199,34 +211,92 @@ For the shop, success means correct minute totals available within an agreed del
 
 ## Self-check
 
-- Why does grouping by shop make state ownership important?
-- Can a record arrive out of order without being too late for its window?
-- Why can one idle input stop a window from producing a result?
-- Why does a sink for a non-windowed running sum need to handle updates?
-- If record 42 executes twice during recovery, why can the final total still be correct?
-- Why can the same recovery send an email twice?
-- What should you investigate when the sink is saturated and upstream tasks are backpressured?
-- Which state backend can hold working state larger than the available JVM heap?
-- Why would you take a savepoint before a planned job change?
+Try answering each question before expanding its answer. Use the shop's sales totals to make each explanation concrete.
 
-<details>
-<summary>Answer key</summary>
+1. Why does grouping by shop make state ownership important?
 
-- Related records must update the same keyed state; many different keys can be distributed across subtasks.
-- Yes. Arrival order and the window's cleanup threshold are different concepts.
-- Downstream event-time progress uses the minimum active-input watermark. A watermark strategy's `withIdleness(...)` marks inactive inputs idle so the remaining active inputs can advance.
-- The total for an existing key changes as payments arrive. The sink must apply revisions rather than treat every new total as an unrelated final result.
-- The failed attempt's uncheckpointed state is discarded. Restoring the earlier total and matching source position makes replay consistent.
-- An external email call is not automatically rolled back or deduplicated by a Flink checkpoint.
-- Check destination throughput, connector batching, and expensive writes; adding upstream workers does not remove a sink bottleneck.
-- `EmbeddedRocksDBStateBackend` can keep state on local disk with memory used for caching and buffering; the disk and memory budgets still need to be sized.
-- It provides an operator-managed snapshot from which a compatible changed job can restore its state.
+   <details>
+   <summary>Answer</summary>
 
-</details>
+   Related records must update the same keyed state; many different keys can be distributed across subtasks.
+
+   </details>
+
+2. Can a record arrive out of order without being too late for its window?
+
+   <details>
+   <summary>Answer</summary>
+
+   Yes. Arrival order and the window's cleanup threshold are different concepts.
+
+   </details>
+
+3. Why can one idle input stop a window from producing a result?
+
+   <details>
+   <summary>Answer</summary>
+
+   Downstream event-time progress uses the minimum active-input watermark. A watermark strategy's `withIdleness(...)` marks inactive inputs idle so the remaining active inputs can advance.
+
+   </details>
+
+4. Why does a sink for a non-windowed running sum need to handle updates?
+
+   <details>
+   <summary>Answer</summary>
+
+   The total for an existing key changes as payments arrive. The sink must apply revisions rather than treat every new total as an unrelated final result.
+
+   </details>
+
+5. If record 42 executes twice during recovery, why can the final total still be correct?
+
+   <details>
+   <summary>Answer</summary>
+
+   The failed attempt's uncheckpointed state is discarded. Restoring the earlier total and matching source position makes replay consistent.
+
+   </details>
+
+6. Why can the same recovery send an email twice?
+
+   <details>
+   <summary>Answer</summary>
+
+   An external email call is not automatically rolled back or deduplicated by a Flink checkpoint.
+
+   </details>
+
+7. What should you investigate when the sink is saturated and upstream tasks are backpressured?
+
+   <details>
+   <summary>Answer</summary>
+
+   Check destination throughput, connector batching, and expensive writes; adding upstream workers does not remove a sink bottleneck.
+
+   </details>
+
+8. Which state backend can hold working state larger than the available JVM heap?
+
+   <details>
+   <summary>Answer</summary>
+
+   `EmbeddedRocksDBStateBackend` can keep state on local disk with memory used for caching and buffering; the disk and memory budgets still need to be sized.
+
+   </details>
+
+9. Why would you take a savepoint before a planned job change?
+
+   <details>
+   <summary>Answer</summary>
+
+   It provides an operator-managed snapshot from which a compatible changed job can restore its state.
+
+   </details>
 
 # Sources
 
-Primary documentation checked on 2026-09-17 and pinned to Flink 2.3 where versioned. The shop, amounts, worker assignments, diagrams, and operational diagnoses are teaching examples or design inferences. The SQL fragment and query were checked against the documented syntax; they were not executed against a running Flink cluster.
+Primary documentation checked on 2026-09-17 and pinned to Flink 2.3 where versioned. The company deployment sources were checked on 2026-09-21 and keep their original dates and workload scope. The shop, amounts, worker assignments, diagrams, and operational diagnoses are teaching examples or design inferences. The SQL fragment and query were checked against the documented syntax; they were not executed against a running Flink cluster.
 
 - [Apache Flink: architecture and bounded/unbounded streams](https://flink.apache.org/what-is-flink/flink-architecture/)
 - [Flink 2.3 glossary](https://nightlies.apache.org/flink/flink-docs-release-2.3/docs/concepts/glossary/) — jobs, operators, subtasks, and parallelism.
@@ -247,5 +317,8 @@ Primary documentation checked on 2026-09-17 and pinned to Flink 2.3 where versio
 - [State backend implementation trade-offs](https://nightlies.apache.org/flink/flink-docs-release-2.3/docs/ops/state/state_backends/) — heap objects versus serialized RocksDB state, access costs, and memory/disk capacity.
 - [Checkpoints versus savepoints](https://nightlies.apache.org/flink/flink-docs-release-2.3/docs/ops/state/checkpoints_vs_savepoints/) and [savepoints](https://nightlies.apache.org/flink/flink-docs-release-2.3/docs/ops/state/savepoints/) — lifecycle and compatible restoration.
 - [Monitoring backpressure](https://nightlies.apache.org/flink/flink-docs-release-2.3/docs/ops/monitoring/back_pressure/) and [checkpointing under backpressure](https://nightlies.apache.org/flink/flink-docs-release-2.3/docs/ops/state/checkpointing_under_backpressure/) — diagnosis and unaligned checkpoints.
+- [Uber: from batch to streaming, accelerating data freshness in Uber's data lake](https://www.uber.com/us/en/blog/from-batch-to-streaming-accelerating-data-freshness-in-ubers-data-lake/) — 2025 migration scope, minutes-level freshness, and the 25% compute reduction.
+- [Alibaba Cloud: stream-batch unification during Double 11](https://www.alibabacloud.com/blog/four-billion-records-per-second-stream-batch-integration-implementation-of-alibaba-cloud-realtime-compute-for-apache-flink-during-double-11_596962) — 2020 platform-wide peak throughput, published by the vendor of the managed service it describes.
+- [Shopify: scaling the BFCM Live Map with an Apache Flink redesign](https://shopify.engineering/bfcm-live-map-2021-apache-flink-redesign) — 2021 rebuild, weekend throughput, and the home-grown service it replaced.
 - [Apache Flink use cases](https://flink.apache.org/what-is-flink/use-cases/) — event-driven applications, analytics, and data pipelines.
 - Local icon sources: [System Design: message queue](../../system%20design/01.%20Scaling/images/message-queue.svg) supplies the server and envelope symbols; [System Design: database](../../system%20design/01.%20Scaling/images/database.svg) supplies the laptop symbol and database geometry. They are copied as editable vector shapes into this article's diagrams, with the database label omitted so the same shape can identify checkpoint storage.
