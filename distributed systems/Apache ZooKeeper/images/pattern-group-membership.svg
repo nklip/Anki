@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="620" viewBox="0 0 1120 620" role="img" aria-labelledby="title desc">
+  <title id="title">Group membership: the roster is whatever ephemeral children exist</title>
+  <desc id="desc">Left: three workers each own one ephemeral child of slash workers, so getChildren returns three names. Right: worker 2's session ends, its child is deleted by the service, getChildren returns two names, and the remaining workers receive a child-watch event.</desc>
+  <!-- Server icon copied from System Design/01. Scaling/images/message-queue.svg. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 19px; fill: #536174; }
+      .node { stroke: #b9c8d4; stroke-width: 2; }
+    </style>
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+    <symbol id="server-dead" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#c9cfd6"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+  </defs>
+  <rect width="1120" height="620" fill="#fff"/>
+  <text x="28" y="43" class="title" text-anchor="start">Group membership: the roster is whatever children exist</text>
+  <text x="28" y="77" class="sub" text-anchor="start">Each worker owns one entry. Compare the two panels row by row.</text>
+  <!-- BEFORE: every worker owns one entry. -->
+  <rect x="28" y="110" width="520" height="420" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="150" class="heading" text-anchor="start">All three alive</text>
+  <use href="#server" x="56" y="184" width="30" height="52"/>
+  <text x="96" y="216" class="small" text-anchor="start">worker 1</text>
+  <path data-connector="true" d="M204.0 210.0L254.00 210.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="266.0,210.0 252.00,216.00 252.00,204.00" fill="#17212f"/>
+  <rect x="266" y="184" width="262" height="52" rx="10" class="node" fill="#f3faed"/>
+  <text x="282" y="216" class="small" text-anchor="start">/workers/w-0000000000</text>
+  <use href="#server" x="56" y="274" width="30" height="52"/>
+  <text x="96" y="306" class="small" text-anchor="start">worker 2</text>
+  <path data-connector="true" d="M204.0 300.0L254.00 300.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="266.0,300.0 252.00,306.00 252.00,294.00" fill="#17212f"/>
+  <rect x="266" y="274" width="262" height="52" rx="10" class="node" fill="#f3faed"/>
+  <text x="282" y="306" class="small" text-anchor="start">/workers/w-0000000001</text>
+  <use href="#server" x="56" y="364" width="30" height="52"/>
+  <text x="96" y="396" class="small" text-anchor="start">worker 3</text>
+  <path data-connector="true" d="M204.0 390.0L254.00 390.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="266.0,390.0 252.00,396.00 252.00,384.00" fill="#17212f"/>
+  <rect x="266" y="364" width="262" height="52" rx="10" class="node" fill="#f3faed"/>
+  <text x="282" y="396" class="small" text-anchor="start">/workers/w-0000000002</text>
+  <text x="48" y="470" class="body" text-anchor="start">getChildren("/workers") — 3 names</text>
+  <text x="48" y="502" class="small" text-anchor="start">each entry was created by the worker beside it</text>
+  <!-- AFTER: one session ends and the service removes that entry by itself. -->
+  <rect x="572" y="110" width="520" height="420" rx="12" fill="#f0f8fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="592" y="150" class="heading" text-anchor="start">Worker 2's session ends</text>
+  <use href="#server" x="600" y="184" width="30" height="52"/>
+  <text x="640" y="216" class="small" text-anchor="start">worker 1</text>
+  <path data-connector="true" d="M748.0 210.0L798.00 210.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="810.0,210.0 796.00,216.00 796.00,204.00" fill="#17212f"/>
+  <rect x="810" y="184" width="262" height="52" rx="10" class="node" fill="#f3faed"/>
+  <text x="826" y="216" class="small" text-anchor="start">/workers/w-0000000000</text>
+  <use href="#server-dead" x="600" y="274" width="30" height="52"/>
+  <text x="640" y="306" class="small" text-anchor="start">worker 2</text>
+  <!-- The broken link is cancelled by an explicit cross, not by colour alone. -->
+  <path data-connector="true" d="M748.0 300.0L798.00 300.00" fill="none" stroke="#c0392b" stroke-width="2.5" stroke-dasharray="7 6"/>
+  <path d="M765 292L781 308M781 292L765 308" fill="none" stroke="#c0392b" stroke-width="3"/>
+  <rect x="810" y="274" width="262" height="52" rx="10" class="node" fill="#fff" style="stroke:#c0392b"/>
+  <text x="826" y="306" class="small" text-anchor="start" style="fill:#c0392b">deleted by the service</text>
+  <use href="#server" x="600" y="364" width="30" height="52"/>
+  <text x="640" y="396" class="small" text-anchor="start">worker 3</text>
+  <path data-connector="true" d="M748.0 390.0L798.00 390.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="810.0,390.0 796.00,396.00 796.00,384.00" fill="#17212f"/>
+  <rect x="810" y="364" width="262" height="52" rx="10" class="node" fill="#f3faed"/>
+  <text x="826" y="396" class="small" text-anchor="start">/workers/w-0000000002</text>
+  <text x="592" y="470" class="body" text-anchor="start">getChildren("/workers") — 2 names</text>
+  <text x="592" y="502" class="small" text-anchor="start">workers 1 and 3 receive a child-watch event</text>
+  <text x="28" y="590" class="body" text-anchor="start">Nobody deletes the entry. The session ending is what removes it.</text>
+</svg>

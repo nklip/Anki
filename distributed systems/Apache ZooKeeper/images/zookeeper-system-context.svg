@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="660" viewBox="0 0 1120 660" role="img" aria-labelledby="title desc">
+  <title id="title">ZooKeeper holds coordination facts; payloads stay in bulk storage</title>
+  <desc id="desc">Three instances of one service talk to a three-server ZooKeeper ensemble for leadership, liveness and settings, and to a separate database or object store for report files and rows. A znode larger than about one megabyte is rejected.</desc>
+  <!-- Shared typography and System Design infrastructure icons. Each use has explicit dimensions. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 19px; fill: #536174; }
+    </style>
+    <!-- Server: System Design/01. Scaling/images/message-queue.svg.
+         Database geometry: System Design/01. Scaling/images/database.svg, label omitted. -->
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+    <symbol id="storage" viewBox="965 459 106 140">
+      <path d="M970 482C970 470 992 462 1018 462S1066 470 1066 482V575C1066 587 1044 595 1018 595S970 587 970 575Z" fill="#0b78b5"/>
+      <ellipse cx="1018" cy="482" rx="48" ry="15" fill="white" stroke="#0b78b5" stroke-width="6"/>
+    </symbol>
+  </defs>
+  <rect width="1120" height="660" fill="#fff"/>
+  <!-- Lesson heading. -->
+  <text x="28" y="43" class="title" text-anchor="start">ZooKeeper holds coordination facts, not payloads</text>
+  <text x="28" y="77" class="sub" text-anchor="start">One service, three instances. Read the two labelled arrows downward.</text>
+  <!-- The clients. All three run the same code and must agree on who does what. -->
+  <rect x="28" y="110" width="1064" height="132" rx="12" fill="#f3faed" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="146" class="heading" text-anchor="start">Application fleet — three instances of one service</text>
+  <use href="#server" x="160" y="170" width="26" height="46"/>
+  <text x="198" y="201" class="body" text-anchor="start">report-worker 1</text>
+  <use href="#server" x="470" y="170" width="26" height="46"/>
+  <text x="508" y="201" class="body" text-anchor="start">report-worker 2</text>
+  <use href="#server" x="780" y="170" width="26" height="46"/>
+  <text x="818" y="201" class="body" text-anchor="start">report-worker 3</text>
+  <!-- Left arrow: coordination traffic. Label sits right of the shaft, clear of it. -->
+  <path data-connector="true" d="M200.0 250.0L200.00 368.00" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <polygon points="200.0,380.0 194.00,366.00 206.00,366.00" fill="#0b78b5"/>
+  <text x="224" y="304" class="small" text-anchor="start" style="fill:#0b78b5">who leads, who is alive,</text>
+  <text x="224" y="330" class="small" text-anchor="start" style="fill:#0b78b5">which settings are current</text>
+  <!-- Right arrow: payload traffic. Label sits left of the shaft, clear of it. -->
+  <path data-connector="true" d="M920.0 250.0L920.00 368.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="920.0,380.0 914.00,366.00 926.00,366.00" fill="#17212f"/>
+  <text x="896" y="304" class="small" text-anchor="end">report rows and files,</text>
+  <text x="896" y="330" class="small" text-anchor="end">megabytes and up</text>
+  <!-- Coordination service. -->
+  <rect x="28" y="380" width="520" height="210" rx="12" fill="#f0f8fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="418" class="heading" text-anchor="start">ZooKeeper ensemble</text>
+  <text x="48" y="446" class="small" text-anchor="start">Three servers; any two of them are a majority</text>
+  <use href="#server" x="127" y="466" width="26" height="46"/>
+  <text x="140" y="538" class="small" text-anchor="middle">leader</text>
+  <use href="#server" x="275" y="466" width="26" height="46"/>
+  <text x="288" y="538" class="small" text-anchor="middle">follower</text>
+  <use href="#server" x="423" y="466" width="26" height="46"/>
+  <text x="436" y="538" class="small" text-anchor="middle">follower</text>
+  <text x="48" y="572" class="small" text-anchor="start">One replicated tree of small znodes, held in memory</text>
+  <!-- Bulk store. Kept visually separate to make the split the lesson. -->
+  <rect x="590" y="380" width="502" height="210" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="610" y="418" class="heading" text-anchor="start">Bulk storage</text>
+  <text x="610" y="446" class="small" text-anchor="start">Database, HDFS, or object store</text>
+  <use href="#storage" x="626" y="466" width="52" height="69"/>
+  <text x="706" y="494" class="body" text-anchor="start">Report rows and files,</text>
+  <text x="706" y="522" class="body" text-anchor="start">large payloads</text>
+  <text x="610" y="572" class="small" text-anchor="start">ZooKeeper may hold a pointer here, not the data</text>
+  <text x="28" y="636" class="body" text-anchor="start">Coordination facts go in ZooKeeper; payloads go elsewhere. A znode over about 1 MB is rejected.</text>
+</svg>

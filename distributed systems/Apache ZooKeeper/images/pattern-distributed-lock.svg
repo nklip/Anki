@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="560" viewBox="0 0 1120 560" role="img" aria-labelledby="title desc">
+  <title id="title">Distributed lock: the lowest entry holds it, the rest queue behind</title>
+  <desc id="desc">Three workers each create one ephemeral sequential child of slash lock. Worker 1 holds the lowest number and is the only one whose arrow reaches the protected database. Workers 2 and 3 wait, each watching the entry above it.</desc>
+  <!-- Server icon from System Design/01. Scaling/images/message-queue.svg; database geometry from database.svg, label omitted. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 19px; fill: #536174; }
+      .node { stroke: #b9c8d4; stroke-width: 2; }
+    </style>
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+    <symbol id="storage" viewBox="965 459 106 140">
+      <path d="M970 482C970 470 992 462 1018 462S1066 470 1066 482V575C1066 587 1044 595 1018 595S970 587 970 575Z" fill="#0b78b5"/>
+      <ellipse cx="1018" cy="482" rx="48" ry="15" fill="white" stroke="#0b78b5" stroke-width="6"/>
+    </symbol>
+  </defs>
+  <rect width="1120" height="560" fill="#fff"/>
+  <text x="28" y="43" class="title" text-anchor="start">Distributed lock: the lowest entry holds it</text>
+  <text x="28" y="77" class="sub" text-anchor="start">Only one arrow reaches the resource on the right. Follow it from worker 1.</text>
+  <!-- Contenders. -->
+  <rect x="28" y="110" width="250" height="330" rx="12" fill="#f3faed" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="150" class="heading" text-anchor="start">workers</text>
+  <use href="#server" x="56" y="184" width="30" height="52"/>
+  <text x="96" y="216" class="small" text-anchor="start">worker 1</text>
+  <use href="#server" x="56" y="274" width="30" height="52"/>
+  <text x="96" y="306" class="small" text-anchor="start">worker 2</text>
+  <use href="#server" x="56" y="364" width="30" height="52"/>
+  <text x="96" y="396" class="small" text-anchor="start">worker 3</text>
+  <path data-connector="true" d="M290.0 210.0L338.00 210.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="350.0,210.0 336.00,216.00 336.00,204.00" fill="#17212f"/>
+  <path data-connector="true" d="M290.0 300.0L338.00 300.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="350.0,300.0 336.00,306.00 336.00,294.00" fill="#17212f"/>
+  <path data-connector="true" d="M290.0 390.0L338.00 390.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="350.0,390.0 336.00,396.00 336.00,384.00" fill="#17212f"/>
+  <!-- The lock's children, in the order the server numbered them. -->
+  <rect x="350" y="110" width="400" height="330" rx="12" fill="#f0f8fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="370" y="150" class="heading" text-anchor="start">/lock</text>
+  <rect x="370" y="178" width="360" height="64" rx="10" class="node" fill="#f3faed"/>
+  <text x="386" y="206" class="small" text-anchor="start">lock-0000000000</text>
+  <text x="386" y="230" class="small" text-anchor="start">holds the lock</text>
+  <rect x="370" y="268" width="360" height="64" rx="10" class="node" fill="#fff"/>
+  <text x="386" y="296" class="small" text-anchor="start">lock-0000000001</text>
+  <text x="386" y="320" class="small" text-anchor="start">waits, watches the entry above</text>
+  <rect x="370" y="358" width="360" height="64" rx="10" class="node" fill="#fff"/>
+  <text x="386" y="386" class="small" text-anchor="start">lock-0000000002</text>
+  <text x="386" y="410" class="small" text-anchor="start">waits, watches the entry above</text>
+  <!-- Resource panel is painted first so the holder's connector can cross its border and stay visible. -->
+  <rect x="820" y="110" width="272" height="330" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="840" y="150" class="heading" text-anchor="start">protected resource</text>
+  <text x="840" y="196" class="small" text-anchor="start" style="fill:#0b78b5">only the holder writes</text>
+  <use href="#storage" x="918" y="240" width="76" height="100"/>
+  <text x="956" y="380" class="body" text-anchor="middle">one writer</text>
+  <!-- Only the holder's entry connects to the resource; the elbow keeps clear of the label above it. -->
+  <path d="M762 210H780V290" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <path data-connector="true" d="M780.0 290.0L906.00 290.00" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <polygon points="918.0,290.0 904.00,296.00 904.00,284.00" fill="#0b78b5"/>
+  <text x="28" y="510" class="body" text-anchor="start">Releasing the lock means deleting your entry — and crashing does exactly the same thing.</text>
+</svg>

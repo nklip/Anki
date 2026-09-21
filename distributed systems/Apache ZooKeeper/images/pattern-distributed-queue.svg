@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="540" viewBox="0 0 1120 540" role="img" aria-labelledby="title desc">
+  <title id="title">Distributed queue: the sequence number is the order</title>
+  <desc id="desc">Two producers create sequential children of slash queue. The children are listed oldest first, from queue-0000000007 to queue-0000000009. A consumer lists the children, sorts them and takes the lowest name.</desc>
+  <!-- Server and envelope icons copied from System Design/01. Scaling/images/message-queue.svg. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 19px; fill: #536174; }
+      .node { stroke: #b9c8d4; stroke-width: 2; }
+    </style>
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+    <symbol id="envelope" viewBox="0 0 42 30"><rect x="1" y="1" width="40" height="28" rx="3" fill="white" stroke="#0b78b5" stroke-width="4"/><path d="M3 4L21 19L39 4" fill="none" stroke="#0b78b5" stroke-width="4"/></symbol>
+  </defs>
+  <rect width="1120" height="540" fill="#fff"/>
+  <text x="28" y="43" class="title" text-anchor="start">Distributed queue: the sequence number is the order</text>
+  <text x="28" y="77" class="sub" text-anchor="start">Producers add on the left, the consumer takes from the top of the middle list.</text>
+  <!-- Producers. -->
+  <rect x="28" y="110" width="250" height="330" rx="12" fill="#f3faed" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="150" class="heading" text-anchor="start">producers</text>
+  <use href="#server" x="56" y="184" width="30" height="52"/>
+  <text x="96" y="216" class="small" text-anchor="start">producer 1</text>
+  <use href="#server" x="56" y="274" width="30" height="52"/>
+  <text x="96" y="306" class="small" text-anchor="start">producer 2</text>
+  <text x="48" y="390" class="small" text-anchor="start">create, never choosing</text>
+  <text x="48" y="414" class="small" text-anchor="start">their own number</text>
+  <path data-connector="true" d="M290.0 210.0L338.00 210.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="350.0,210.0 336.00,216.00 336.00,204.00" fill="#17212f"/>
+  <text x="314" y="192" class="small" text-anchor="middle">create</text>
+  <path data-connector="true" d="M290.0 300.0L338.00 300.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="350.0,300.0 336.00,306.00 336.00,294.00" fill="#17212f"/>
+  <!-- The queue: children sorted by the counter the server appended. -->
+  <rect x="350" y="110" width="440" height="330" rx="12" fill="#f0f8fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="370" y="150" class="heading" text-anchor="start">/queue</text>
+  <rect x="370" y="180" width="400" height="58" rx="10" class="node" fill="#fff"/>
+  <use href="#envelope" x="386" y="197" width="34" height="24"/>
+  <text x="436" y="216" class="small" text-anchor="start">queue-0000000007</text>
+  <text x="754" y="216" class="small" text-anchor="end">oldest</text>
+  <rect x="370" y="250" width="400" height="58" rx="10" class="node" fill="#fff"/>
+  <use href="#envelope" x="386" y="267" width="34" height="24"/>
+  <text x="436" y="286" class="small" text-anchor="start">queue-0000000008</text>
+  <rect x="370" y="320" width="400" height="58" rx="10" class="node" fill="#fff"/>
+  <use href="#envelope" x="386" y="337" width="34" height="24"/>
+  <text x="436" y="356" class="small" text-anchor="start">queue-0000000009</text>
+  <text x="754" y="356" class="small" text-anchor="end">newest</text>
+  <text x="370" y="414" class="small" text-anchor="start">the counter belongs to /queue</text>
+  <!-- Consumer takes from the head. -->
+  <path data-connector="true" d="M782.0 209.0L818.00 209.00" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <polygon points="830.0,209.0 816.00,215.00 816.00,203.00" fill="#0b78b5"/>
+  <text x="806" y="191" class="small" text-anchor="middle" style="fill:#0b78b5">take</text>
+  <rect x="830" y="110" width="262" height="330" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="850" y="150" class="heading" text-anchor="start">consumer</text>
+  <use href="#server" x="858" y="184" width="30" height="52"/>
+  <text x="898" y="216" class="small" text-anchor="start">worker</text>
+  <text x="850" y="296" class="small" text-anchor="start">getChildren, sort,</text>
+  <text x="850" y="322" class="small" text-anchor="start">take the lowest name</text>
+  <text x="28" y="500" class="body" text-anchor="start">The server appends the counter, so the names already sort into the order they arrived.</text>
+</svg>

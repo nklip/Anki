@@ -11,6 +11,7 @@ Each topic has its own folder, with diagrams in its `images/` directory.
  * [Apache Kafka. Delivery and transactions](./Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md) — offset commits, replay, idempotence, Kafka transactions, Spring integration, and recovery boundaries.
  * [Apache Seata](./Apache%20Seata/Readme.md) — purpose, coordinator architecture, AT/TCC/Saga/XA modes, integration, and recovery limits.
  * [Apache Spark](./Apache%20Spark/Readme.md) — parallel execution, query planning, shuffles, recovery, streaming, real users, and practical benefits.
+ * [Apache ZooKeeper](./Apache%20ZooKeeper/Readme.md) — coordination data, znodes, sessions, watches, quorums, the write and read paths, recipes, and operational limits.
  * [Erasure coding](./Erasure%20coding/Readme.md) — data and parity fragments, storage overhead, failure domains, reconstruction, and repair.
  * [Patterns. Circuit breaker](./Patterns.%20Circuit%20breaker/Readme.md) — closed/open/half-open states, failure thresholds, retries, timeouts, and transaction recovery limits.
  * [Patterns. Fanout](./Patterns.%20Fanout/Readme.md) — message and request fanout, feed-generation strategies, capacity, and failure handling.

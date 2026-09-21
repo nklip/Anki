@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="650" viewBox="0 0 1120 650" role="img" aria-labelledby="title desc">
+  <title id="title">One tree of znodes, each holding data and children</title>
+  <desc id="desc">Root slash branches to slash config, holding the value batchSize equals 500, and to slash workers, which holds no data and has three ephemeral sequential children named w-0000000000, w-0000000001 and w-0000000002, each holding a host and port.</desc>
+  <!-- Shared typography. Fill colour carries the znode kind; every box also names its kind in words. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 19px; fill: #536174; }
+      .node { stroke: #b9c8d4; stroke-width: 2; }
+    </style>
+  </defs>
+  <rect width="1120" height="650" fill="#fff"/>
+  <!-- Lesson heading. -->
+  <text x="28" y="43" class="title" text-anchor="start">One tree of znodes, each holding data and children</text>
+  <text x="28" y="77" class="sub" text-anchor="start">Read left to right: parent, then its children. Every path starts at the root.</text>
+  <!-- Root. -->
+  <rect x="60" y="120" width="110" height="74" rx="10" class="node" fill="#f7f8fa"/>
+  <text x="115" y="167" class="title" text-anchor="middle">/</text>
+  <!-- Root to /config. -->
+  <path data-connector="true" d="M171.0 157.0L237.00 157.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="249.0,157.0 235.00,163.00 235.00,151.00" fill="#17212f"/>
+  <!-- Root to /workers: drop below the root, then turn right into the child's left border. -->
+  <path d="M115 195V269H237" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="249.0,269.0 235.00,275.00 235.00,263.00" fill="#17212f"/>
+  <!-- Configuration znode: persistent, carries a small value. -->
+  <rect x="250" y="120" width="310" height="74" rx="10" class="node" fill="#f0f8fc"/>
+  <text x="270" y="154" class="heading" text-anchor="start">/config</text>
+  <text x="270" y="182" class="small" text-anchor="start">batchSize=500</text>
+  <text x="540" y="182" class="small" text-anchor="end">persistent</text>
+  <!-- Membership parent: no data of its own, only children. -->
+  <rect x="250" y="232" width="310" height="74" rx="10" class="node" fill="#f0f8fc"/>
+  <text x="270" y="266" class="heading" text-anchor="start">/workers</text>
+  <text x="270" y="294" class="small" text-anchor="start">(no data)</text>
+  <text x="540" y="294" class="small" text-anchor="end">persistent</text>
+  <!-- Spine carrying the three membership children; branches meet each left border. -->
+  <path d="M561 269H596V493" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <path data-connector="true" d="M596.0 269.0L627.00 269.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="639.0,269.0 625.00,275.00 625.00,263.00" fill="#17212f"/>
+  <path data-connector="true" d="M596.0 381.0L627.00 381.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="639.0,381.0 625.00,387.00 625.00,375.00" fill="#17212f"/>
+  <path data-connector="true" d="M596.0 493.0L627.00 493.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="639.0,493.0 625.00,499.00 625.00,487.00" fill="#17212f"/>
+  <!-- One child per live worker. The 10-digit suffix was appended by ZooKeeper, not by the client. -->
+  <rect x="640" y="232" width="380" height="74" rx="10" class="node" fill="#f3faed"/>
+  <text x="660" y="266" class="heading" text-anchor="start">/workers/w-0000000000</text>
+  <text x="660" y="294" class="small" text-anchor="start">host-a:8080</text>
+  <text x="1000" y="294" class="small" text-anchor="end">ephemeral + sequential</text>
+  <rect x="640" y="344" width="380" height="74" rx="10" class="node" fill="#f3faed"/>
+  <text x="660" y="378" class="heading" text-anchor="start">/workers/w-0000000001</text>
+  <text x="660" y="406" class="small" text-anchor="start">host-b:8080</text>
+  <text x="1000" y="406" class="small" text-anchor="end">ephemeral + sequential</text>
+  <rect x="640" y="456" width="380" height="74" rx="10" class="node" fill="#f3faed"/>
+  <text x="660" y="490" class="heading" text-anchor="start">/workers/w-0000000002</text>
+  <text x="660" y="518" class="small" text-anchor="start">host-c:8080</text>
+  <text x="1000" y="518" class="small" text-anchor="end">ephemeral + sequential</text>
+  <!-- Legend; keep within the bottom safe area when adding categories. -->
+  <rect x="28" y="552" width="26" height="26" rx="5" class="node" fill="#f0f8fc"/>
+  <text x="66" y="573" class="small" text-anchor="start">persistent — stays until someone deletes it</text>
+  <rect x="470" y="552" width="26" height="26" rx="5" class="node" fill="#f3faed"/>
+  <text x="508" y="573" class="small" text-anchor="start">ephemeral — deleted when its session ends</text>
+  <text x="28" y="622" class="body" text-anchor="start">A znode holds data and children at once. ZooKeeper appended each 10-digit suffix itself.</text>
+</svg>

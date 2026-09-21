@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="680" viewBox="0 0 1120 680" role="img" aria-labelledby="title desc">
+  <title id="title">Leader election: lowest number leads, each watches one neighbour</title>
+  <desc id="desc">Four workers each create one ephemeral sequential child of slash election. The lowest number leads and every other worker watches only the entry above it. When the leader's entry is deleted, one event reaches worker 2, which now leads; workers 3 and 4 are not notified.</desc>
+  <!-- Server icon copied from System Design/01. Scaling/images/message-queue.svg. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 19px; fill: #536174; }
+      .node { stroke: #b9c8d4; stroke-width: 2; }
+    </style>
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+    <symbol id="server-dead" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#c9cfd6"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+  </defs>
+  <rect width="1120" height="680" fill="#fff"/>
+  <text x="28" y="43" class="title" text-anchor="start">Leader election: lowest number leads, each watches one neighbour</text>
+  <text x="28" y="77" class="sub" text-anchor="start">Read each panel downward; the right panel is the same chain after one deletion.</text>
+  <!-- STEADY STATE. -->
+  <rect x="28" y="110" width="520" height="490" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="150" class="heading" text-anchor="start">Watch only your predecessor</text>
+  <use href="#server" x="56" y="176" width="30" height="52"/>
+  <text x="96" y="209" class="small" text-anchor="start">worker 1</text>
+  <rect x="214" y="170" width="314" height="64" rx="10" class="node" fill="#f3faed"/>
+  <text x="230" y="198" class="small" text-anchor="start">/election/n_0000000000</text>
+  <text x="230" y="222" class="small" text-anchor="start">leads</text>
+  <path data-connector="true" d="M290.0 268.0L290.00 246.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="290.0,234.0 284.00,248.00 296.00,248.00" fill="#17212f"/>
+  <text x="318" y="260" class="small" text-anchor="start">watches</text>
+  <use href="#server" x="56" y="278" width="30" height="52"/>
+  <text x="96" y="311" class="small" text-anchor="start">worker 2</text>
+  <rect x="214" y="272" width="314" height="64" rx="10" class="node" fill="#fff"/>
+  <text x="230" y="300" class="small" text-anchor="start">/election/n_0000000001</text>
+  <text x="230" y="324" class="small" text-anchor="start">waiting</text>
+  <path data-connector="true" d="M290.0 370.0L290.00 348.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="290.0,336.0 284.00,350.00 296.00,350.00" fill="#17212f"/>
+  <text x="318" y="362" class="small" text-anchor="start">watches</text>
+  <use href="#server" x="56" y="380" width="30" height="52"/>
+  <text x="96" y="413" class="small" text-anchor="start">worker 3</text>
+  <rect x="214" y="374" width="314" height="64" rx="10" class="node" fill="#fff"/>
+  <text x="230" y="402" class="small" text-anchor="start">/election/n_0000000002</text>
+  <text x="230" y="426" class="small" text-anchor="start">waiting</text>
+  <path data-connector="true" d="M290.0 472.0L290.00 450.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="290.0,438.0 284.00,452.00 296.00,452.00" fill="#17212f"/>
+  <text x="318" y="464" class="small" text-anchor="start">watches</text>
+  <use href="#server" x="56" y="482" width="30" height="52"/>
+  <text x="96" y="515" class="small" text-anchor="start">worker 4</text>
+  <rect x="214" y="476" width="314" height="64" rx="10" class="node" fill="#fff"/>
+  <text x="230" y="504" class="small" text-anchor="start">/election/n_0000000003</text>
+  <text x="230" y="528" class="small" text-anchor="start">waiting</text>
+  <text x="48" y="576" class="small" text-anchor="start">no candidate watches the whole parent znode</text>
+  <!-- AFTER THE DELETION. -->
+  <rect x="572" y="110" width="520" height="490" rx="12" fill="#f0f8fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="592" y="150" class="heading" text-anchor="start">When worker 1 disappears</text>
+  <use href="#server-dead" x="600" y="176" width="30" height="52"/>
+  <text x="640" y="209" class="small" text-anchor="start">worker 1</text>
+  <!-- Inline style, not a stroke attribute: the .node class rule would otherwise win. -->
+  <rect x="758" y="170" width="314" height="64" rx="10" class="node" fill="#fff" style="stroke:#c0392b"/>
+  <text x="774" y="198" class="small" text-anchor="start" style="fill:#c0392b">deleted by the service</text>
+  <text x="774" y="222" class="small" text-anchor="start">/election/n_0000000000</text>
+  <path data-connector="true" d="M834.0 238.0L834.00 260.00" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <polygon points="834.0,272.0 828.00,258.00 840.00,258.00" fill="#0b78b5"/>
+  <text x="862" y="260" class="small" text-anchor="start" style="fill:#0b78b5">one event</text>
+  <use href="#server" x="600" y="278" width="30" height="52"/>
+  <text x="640" y="311" class="small" text-anchor="start">worker 2</text>
+  <rect x="758" y="272" width="314" height="64" rx="10" class="node" fill="#f3faed"/>
+  <text x="774" y="300" class="small" text-anchor="start">/election/n_0000000001</text>
+  <text x="774" y="324" class="small" text-anchor="start">now leads</text>
+  <use href="#server" x="600" y="380" width="30" height="52"/>
+  <text x="640" y="413" class="small" text-anchor="start">worker 3</text>
+  <rect x="758" y="374" width="314" height="64" rx="10" class="node" fill="#fff"/>
+  <text x="774" y="402" class="small" text-anchor="start">/election/n_0000000002</text>
+  <text x="774" y="426" class="small" text-anchor="start">not notified</text>
+  <use href="#server" x="600" y="482" width="30" height="52"/>
+  <text x="640" y="515" class="small" text-anchor="start">worker 4</text>
+  <rect x="758" y="476" width="314" height="64" rx="10" class="node" fill="#fff"/>
+  <text x="774" y="504" class="small" text-anchor="start">/election/n_0000000003</text>
+  <text x="774" y="528" class="small" text-anchor="start">not notified</text>
+  <text x="592" y="576" class="small" text-anchor="start">so only one client re-reads the children</text>
+  <text x="28" y="650" class="body" text-anchor="start">One deletion wakes one client, so a leader change does not stampede the ensemble.</text>
+</svg>
