@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="660" viewBox="0 0 1280 660" role="img" aria-labelledby="title desc">
+  <title id="title">Fanning a message out to clients whose sockets live on different instances</title>
+  <desc id="desc">Six browsers sit in three pairs. Each pair has one open WebSocket to the instance below it: A and B to instance 1, C and D to instance 2, E and F to instance 3. Under all three instances runs one pub/sub broker. Each instance has a pair of arrows to the broker, one to publish and one to receive what it has subscribed to, so a message that arrives on instance 1 reaches the sockets held by instances 2 and 3.</desc>
+  <!-- Icons copied from System Design/12. Chat System: high-level-statefull-arch.svg (laptop) and System Design/15. Google Drive: high-level-design.svg (server rack, queue). -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 25px; font-weight: 700; }
+      .sub { font-size: 19px; fill: #536174; }
+      .node { font-size: 20px; font-weight: 700; }
+      .client { font-size: 21px; font-weight: 700; text-anchor: middle; }
+      .small { font-size: 17px; fill: #536174; }
+      .note { font-size: 18px; fill: #536174; }
+      .sock { stroke: #8fa2b5; stroke-width: 2.5; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 90 70"><rect x="17" y="5" width="56" height="45" rx="4" fill="#fff" stroke="#17212f" stroke-width="4"/><path d="M9 58 H81 L87 65 H3 Z" fill="#17212f"/></symbol>
+    <symbol id="servers" viewBox="0 0 130 90"><rect x="33" y="3" width="34" height="19" rx="2" fill="#65c515"/><rect x="72" y="3" width="34" height="19" rx="2" fill="#65c515"/><g fill="#65c515"><rect x="6" y="23" width="38" height="62"/><rect x="46" y="23" width="38" height="62"/><rect x="86" y="23" width="38" height="62"/></g><path d="M12 34H38M12 71H38M52 34H78M52 71H78M92 34H118M92 71H118M39 11H61M78 11H100" fill="none" stroke="#fff" stroke-width="3"/></symbol>
+    <symbol id="queue" viewBox="0 0 190 72"><path d="M2 8H170L187 36L170 64H2Z" fill="#fff" stroke="#0c7eb8" stroke-width="4"/><g fill="none" stroke="#0c7eb8" stroke-width="4"><rect x="13" y="18" width="46" height="36"/><rect x="67" y="18" width="46" height="36"/><rect x="121" y="18" width="46" height="36"/><path d="M14 20L36 39L58 20M68 20L90 39L112 20M122 20L144 39L166 20"/></g></symbol>
+  </defs>
+  <rect width="1280" height="660" fill="#fff"/>
+  <text x="28" y="40" class="title">Pattern 4 &#8212; Fan-out when one server is not enough</text>
+  <text x="28" y="70" class="sub">A socket belongs to exactly one process. Reaching the others&#8217; clients needs something underneath all of them.</text>
+  <!-- instance 1 and the two browsers whose sockets it owns. -->
+  <rect x="70" y="120" width="130" height="70" rx="10" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#laptop" x="90" y="136" width="44" height="34"/>
+  <text x="162" y="164" class="client">A</text>
+  <path class="sock" d="M135 190 V280" fill="none"/>
+  <rect x="220" y="120" width="130" height="70" rx="10" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#laptop" x="240" y="136" width="44" height="34"/>
+  <text x="312" y="164" class="client">B</text>
+  <path class="sock" d="M285 190 V280" fill="none"/>
+  <rect x="60" y="280" width="300" height="110" rx="12" fill="#f2f8ee" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#servers" x="84" y="312" width="58" height="40"/>
+  <text x="160" y="326" class="node">instance 1</text>
+  <text x="160" y="354" class="small">holds sockets A and B</text>
+  <!-- instance 2 and the two browsers whose sockets it owns. -->
+  <rect x="500" y="120" width="130" height="70" rx="10" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#laptop" x="520" y="136" width="44" height="34"/>
+  <text x="592" y="164" class="client">C</text>
+  <path class="sock" d="M565 190 V280" fill="none"/>
+  <rect x="650" y="120" width="130" height="70" rx="10" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#laptop" x="670" y="136" width="44" height="34"/>
+  <text x="742" y="164" class="client">D</text>
+  <path class="sock" d="M715 190 V280" fill="none"/>
+  <rect x="490" y="280" width="300" height="110" rx="12" fill="#f2f8ee" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#servers" x="514" y="312" width="58" height="40"/>
+  <text x="590" y="326" class="node">instance 2</text>
+  <text x="590" y="354" class="small">holds sockets C and D</text>
+  <!-- instance 3 and the two browsers whose sockets it owns. -->
+  <rect x="930" y="120" width="130" height="70" rx="10" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#laptop" x="950" y="136" width="44" height="34"/>
+  <text x="1022" y="164" class="client">E</text>
+  <path class="sock" d="M995 190 V280" fill="none"/>
+  <rect x="1080" y="120" width="130" height="70" rx="10" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#laptop" x="1100" y="136" width="44" height="34"/>
+  <text x="1172" y="164" class="client">F</text>
+  <path class="sock" d="M1145 190 V280" fill="none"/>
+  <rect x="920" y="280" width="300" height="110" rx="12" fill="#f2f8ee" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#servers" x="944" y="312" width="58" height="40"/>
+  <text x="1020" y="326" class="node">instance 3</text>
+  <text x="1020" y="354" class="small">holds sockets E and F</text>
+  <!-- The socket lines carry no arrowheads: a WebSocket is one channel, not a direction. -->
+  <text x="425" y="228" class="small" text-anchor="middle">each line is</text>
+  <text x="425" y="250" class="small" text-anchor="middle">one open</text>
+  <text x="425" y="272" class="small" text-anchor="middle">WebSocket</text>
+  <!-- One publish arrow and one deliver arrow per instance; labelled on the first pair only. -->
+  <path data-connector="true" d="M110.0 392.0L110.00 454.00" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <polygon points="110.0,466.0 104.00,452.00 116.00,452.00" fill="#0b78b5"/>
+  <path data-connector="true" d="M310.0 466.0L310.00 404.00" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <polygon points="310.0,392.0 316.00,406.00 304.00,406.00" fill="#0b78b5"/>
+  <path data-connector="true" d="M540.0 392.0L540.00 454.00" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <polygon points="540.0,466.0 534.00,452.00 546.00,452.00" fill="#0b78b5"/>
+  <path data-connector="true" d="M740.0 466.0L740.00 404.00" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <polygon points="740.0,392.0 746.00,406.00 734.00,406.00" fill="#0b78b5"/>
+  <path data-connector="true" d="M970.0 392.0L970.00 454.00" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <polygon points="970.0,466.0 964.00,452.00 976.00,452.00" fill="#0b78b5"/>
+  <path data-connector="true" d="M1170.0 466.0L1170.00 404.00" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <polygon points="1170.0,392.0 1176.00,406.00 1164.00,406.00" fill="#0b78b5"/>
+  <text x="126" y="436" class="small">publish</text>
+  <text x="294" y="436" class="small" text-anchor="end">deliver</text>
+  <rect x="60" y="470" width="1160" height="110" rx="12" fill="#eaf4fb" stroke="#0b78b5" stroke-width="2"/>
+  <use href="#queue" x="94" y="504" width="104" height="40"/>
+  <text x="230" y="516" class="node">pub/sub broker &#8212; every instance holds a subscription</text>
+  <text x="230" y="546" class="small">Redis Pub/Sub, Kafka, NATS, a database&#8217;s LISTEN/NOTIFY: anything one process can publish to and all of them can read from.</text>
+  <text x="28" y="618" class="note">Client A&#8217;s socket lives in instance 1 and client E&#8217;s lives in instance 3, and instance 1 cannot write to a socket it does not hold.</text>
+  <text x="28" y="642" class="note">So it publishes instead, and every instance pushes the message down the sockets it does hold. Add an instance and nothing else changes.</text>
+</svg>

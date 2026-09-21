@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="700" viewBox="0 0 1240 700" role="img" aria-labelledby="title desc">
+  <title id="title">Heartbeat, a dropped connection, then reconnect and resume</title>
+  <desc id="desc">The server sends a ping and the browser answers with a pong. A second ping gets no pong because the network drops. The browser's close event reports code 1006, an abnormal close with no Close frame exchanged. The lifelines break. After a random wait the browser runs a whole new handshake, sends a resume message carrying the last sequence number it saw, 4812, and the server replays messages 4813 and 4814.</desc>
+  <!-- Icons copied from System Design/12. Chat System: high-level-statefull-arch.svg (laptop) and System Design/18. Google Maps: cdn-vs-no-cdn.svg (server). -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 25px; font-weight: 700; }
+      .sub { font-size: 19px; fill: #536174; }
+      .node { font-size: 20px; font-weight: 700; text-anchor: middle; }
+      .msg { font-family: Menlo, Consolas, monospace; font-size: 16px; fill: #17212f; text-anchor: middle; }
+      .note { font-size: 18px; fill: #536174; }
+      .tag { font-size: 17px; fill: #536174; }
+      .life { stroke: #8fa2b5; stroke-width: 2.5; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 90 70"><rect x="17" y="5" width="56" height="45" rx="4" fill="#fff" stroke="#17212f" stroke-width="4"/><path d="M9 58 H81 L87 65 H3 Z" fill="#17212f"/></symbol>
+    <symbol id="server" viewBox="0 0 76 100"><path d="M8 8h48l14 10v67L54 94H8z" fill="#8e9aa6"/><path d="M56 8 70 18v67L56 94z" fill="#b4bec8"/><rect x="17" y="18" width="31" height="14" rx="2" fill="#eee"/><rect x="17" y="38" width="31" height="14" rx="2" fill="#eee"/><circle cx="33" cy="72" r="6" fill="#eee"/></symbol>
+  </defs>
+  <rect width="1240" height="700" fill="#fff"/>
+  <text x="28" y="40" class="title">Pattern 3 &#8212; Heartbeat, then reconnect and resume</text>
+  <text x="28" y="70" class="sub">The protocol gives you an open pipe, not a session. Noticing a dead peer and picking up again are the application&#8217;s job.</text>
+  <rect x="60" y="96" width="180" height="76" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#laptop" x="72" y="110" width="58" height="45"/>
+  <text x="186" y="140" class="node">browser</text>
+  <rect x="880" y="96" width="180" height="76" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#server" x="908" y="108" width="38" height="50"/>
+  <text x="996" y="140" class="node">server</text>
+  <!-- Lifelines break at the outage: everything below it is a second, brand-new connection. -->
+  <path class="life" d="M150 172 V330 M970 172 V330" fill="none"/>
+  <path class="life" d="M150 502 V638 M970 502 V638" fill="none"/>
+  <text x="560" y="199" class="msg">ping   (control frame 0x9)</text>
+  <path data-connector="true" d="M958.0 212.0L174.00 212.00" fill="none" stroke="#3f7d20" stroke-width="2.5"/>
+  <polygon points="162.0,212.0 176.00,206.00 176.00,218.00" fill="#3f7d20"/>
+  <text x="560" y="249" class="msg">pong   (control frame 0xA)</text>
+  <path data-connector="true" d="M162.0 262.0L946.00 262.00" fill="none" stroke="#3f7d20" stroke-width="2.5"/>
+  <polygon points="958.0,262.0 944.00,268.00 944.00,256.00" fill="#3f7d20"/>
+  <text x="560" y="299" class="msg">ping   (control frame 0x9)</text>
+  <path data-connector="true" d="M958.0 312.0L174.00 312.00" fill="none" stroke="#3f7d20" stroke-width="2.5"/>
+  <polygon points="162.0,312.0 176.00,306.00 176.00,318.00" fill="#3f7d20"/>
+  <!-- The outage band: no frames cross it, which is why the lifelines stop. -->
+  <rect x="28" y="346" width="1184" height="90" rx="12" fill="#fdf3ee" stroke="#c2410c" stroke-width="2.5" stroke-dasharray="10 8"/>
+  <text x="56" y="380" class="note">No pong comes back. The server gives up on the socket; in the browser the close event fires with code <tspan font-family="Menlo, Consolas, monospace">1006</tspan>,</text>
+  <text x="56" y="406" class="note">which means the connection ended without either side sending a Close frame.</text>
+  <text x="56" y="482" class="tag">The browser waits a random 0&#8211;5 s, then lengthens the wait after each further failure.</text>
+  <text x="560" y="523" class="msg">GET /chat   Upgrade: websocket   (the whole handshake again)</text>
+  <path data-connector="true" d="M162.0 536.0L946.00 536.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="958.0,536.0 944.00,542.00 944.00,530.00" fill="#17212f"/>
+  <text x="560" y="573" class="msg">{"op": "resume", "lastSeen": 4812}</text>
+  <path data-connector="true" d="M162.0 586.0L946.00 586.00" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <polygon points="958.0,586.0 944.00,592.00 944.00,580.00" fill="#0b78b5"/>
+  <text x="560" y="623" class="msg">{"seq": 4813} then {"seq": 4814}</text>
+  <path data-connector="true" d="M958.0 636.0L174.00 636.00" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <polygon points="162.0,636.0 176.00,630.00 176.00,642.00" fill="#0b78b5"/>
+  <text x="28" y="672" class="note">The gap between 4812 and the first message of the new connection is the application&#8217;s problem, not the protocol&#8217;s. Servers that</text>
+  <text x="28" y="694" class="note">cannot replay lost messages send a full snapshot on resume instead, which is simpler and usually cheaper than a replay log.</text>
+</svg>

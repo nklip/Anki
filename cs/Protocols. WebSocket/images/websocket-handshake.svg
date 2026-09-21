@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1268" height="740" viewBox="0 0 1268 740" role="img" aria-labelledby="title desc">
+  <title id="title">The WebSocket opening handshake, request to 101 to open connection</title>
+  <desc id="desc">Step one: the browser sends an HTTP/1.1 GET carrying Upgrade colon websocket, Connection colon Upgrade, a random Sec-WebSocket-Key, and Sec-WebSocket-Version 13. Step two: the server joins that key to a fixed GUID, takes the SHA-1 hash and base64-encodes it to produce Sec-WebSocket-Accept. Step three: the server answers 101 Switching Protocols carrying that value. The band underneath shows the same connection then carrying WebSocket frames in both directions until a Close frame.</desc>
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .small { font-size: 18px; fill: #536174; }
+      .code { font-family: Menlo, Consolas, monospace; font-size: 16px; fill: #17212f; }
+      .codedim { font-family: Menlo, Consolas, monospace; font-size: 16px; fill: #6b7a8c; }
+      .key { font-family: Menlo, Consolas, monospace; font-size: 16px; fill: #0b78b5; font-weight: 700; }
+      .step { font-size: 18px; font-weight: 700; fill: #536174; }
+    </style>
+  </defs>
+  <rect width="1268" height="740" fill="#fff"/>
+  <text x="28" y="44" class="title">The opening handshake: one HTTP request, then no more HTTP</text>
+  <text x="28" y="78" class="sub">Read left to right. Nothing is re-dialled &#8212; steps 2 and 3 happen on the connection step 1 arrived on.</text>
+  <!-- Step 1: an ordinary HTTP/1.1 GET whose header fields make the upgrade offer. -->
+  <rect x="28" y="104" width="360" height="430" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="52" y="140" class="step">STEP 1</text>
+  <text x="52" y="168" class="heading">Browser offers an upgrade</text>
+  <text x="52" y="194" class="small">An ordinary HTTP/1.1 GET.</text>
+  <text x="52" y="232" class="code">GET /chat HTTP/1.1</text>
+  <text x="52" y="259" class="codedim">Host: chat.example.com</text>
+  <text x="52" y="286" class="key">Upgrade: websocket</text>
+  <text x="52" y="313" class="key">Connection: Upgrade</text>
+  <text x="52" y="340" class="key">Sec-WebSocket-Key:</text>
+  <text x="52" y="367" class="key">  dGhlIHNhbXBsZSBub25jZQ==</text>
+  <text x="52" y="394" class="key">Sec-WebSocket-Version: 13</text>
+  <text x="52" y="421" class="codedim">Sec-WebSocket-Protocol: chat</text>
+  <text x="52" y="448" class="codedim">Origin: https://example.com</text>
+  <text x="52" y="500" class="small">Upgrade, Connection and the two</text>
+  <text x="52" y="522" class="small">Sec- fields are the giveaway.</text>
+  <!-- Connectors sit level with the STEP labels: they order the steps, not the values. -->
+  <path data-connector="true" d="M396.0 148.0L424.00 148.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="436.0,148.0 422.00,154.00 422.00,142.00" fill="#17212f"/>
+  <!-- Step 2: the fixed GUID is what stops a forged or replayed GET from being accepted. -->
+  <rect x="444" y="104" width="340" height="430" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="468" y="140" class="step">STEP 2</text>
+  <text x="468" y="168" class="heading">Server proves it read</text>
+  <text x="468" y="194" class="heading">the key</text>
+  <rect x="468" y="214" width="292" height="44" rx="8" fill="#fff" stroke="#0b78b5" stroke-width="2"/>
+  <text x="614" y="243" class="code" text-anchor="middle">dGhlIHNhbXBsZSBub25jZQ==</text>
+  <path data-connector="true" d="M614.0 262.0L614.00 274.00" fill="none" stroke="#17212f" stroke-width="2"/>
+  <polygon points="614.0,286.0 608.00,272.00 620.00,272.00" fill="#17212f"/>
+  <text x="634" y="280" class="small">joined to</text>
+  <rect x="468" y="292" width="292" height="66" rx="8" fill="#fff" stroke="#8fa2b5" stroke-width="2"/>
+  <text x="614" y="320" class="code" text-anchor="middle">258EAFA5-E914-47DA-</text>
+  <text x="614" y="344" class="code" text-anchor="middle">95CA-C5AB0DC85B11</text>
+  <path data-connector="true" d="M614.0 362.0L614.00 374.00" fill="none" stroke="#17212f" stroke-width="2"/>
+  <polygon points="614.0,386.0 608.00,372.00 620.00,372.00" fill="#17212f"/>
+  <text x="634" y="380" class="small">SHA-1</text>
+  <rect x="504" y="392" width="220" height="40" rx="8" fill="#fff" stroke="#8fa2b5" stroke-width="2"/>
+  <text x="614" y="419" class="codedim" text-anchor="middle">20 raw bytes</text>
+  <path data-connector="true" d="M614.0 436.0L614.00 448.00" fill="none" stroke="#17212f" stroke-width="2"/>
+  <polygon points="614.0,460.0 608.00,446.00 620.00,446.00" fill="#17212f"/>
+  <text x="634" y="454" class="small">base64</text>
+  <rect x="468" y="466" width="292" height="44" rx="8" fill="#eaf4fb" stroke="#0b78b5" stroke-width="2"/>
+  <text x="614" y="495" class="code" text-anchor="middle">s3pPLMBiTxaQ9kYGzzhZRbK+xOo=</text>
+  <path data-connector="true" d="M792.0 148.0L820.00 148.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="832.0,148.0 818.00,154.00 818.00,142.00" fill="#17212f"/>
+  <!-- Step 3: 101 is the only status that opens a WebSocket. -->
+  <rect x="840" y="104" width="400" height="430" rx="12" fill="#f2f8ee" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="864" y="140" class="step">STEP 3</text>
+  <text x="864" y="168" class="heading">Server switches protocols</text>
+  <text x="864" y="194" class="small">Status 101, never 200.</text>
+  <text x="864" y="232" class="key">HTTP/1.1 101 Switching Protocols</text>
+  <text x="864" y="259" class="key">Upgrade: websocket</text>
+  <text x="864" y="286" class="key">Connection: Upgrade</text>
+  <text x="864" y="313" class="key">Sec-WebSocket-Accept:</text>
+  <text x="864" y="340" class="key">  s3pPLMBiTxaQ9kYGzzhZRbK+xOo=</text>
+  <text x="864" y="367" class="codedim">Sec-WebSocket-Protocol: chat</text>
+  <text x="864" y="432" class="small">The browser recomputes the same hash</text>
+  <text x="864" y="454" class="small">and compares. A mismatch, a missing</text>
+  <text x="864" y="476" class="small">field, or any status other than 101</text>
+  <text x="864" y="498" class="small">means no WebSocket: the reply stays an</text>
+  <text x="864" y="520" class="small">ordinary HTTP response.</text>
+  <!-- The band is the outcome: one connection, no further HTTP. -->
+  <rect x="28" y="560" width="1212" height="150" rx="12" fill="#fff" stroke="#3f7d20" stroke-width="2.5" stroke-dasharray="10 8"/>
+  <text x="56" y="598" class="heading">From here on: one connection, both directions</text>
+  <text x="56" y="660" class="small">browser</text>
+  <text x="631" y="634" class="small" text-anchor="middle">text and binary frames sent by either side, with no request</text>
+  <path data-connector="true" d="M166.00 653.00L1096.00 653.00" fill="none" stroke="#3f7d20" stroke-width="2.5"/>
+  <polygon points="1108.0,653.0 1094.00,659.00 1094.00,647.00" fill="#3f7d20"/>
+  <polygon points="154.0,653.0 168.00,659.00 168.00,647.00" fill="#3f7d20"/>
+  <text x="1128" y="660" class="small">server</text>
+  <text x="56" y="692" class="small">It stays open until one side sends a Close frame or the transport drops.</text>
+</svg>

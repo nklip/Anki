@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="480" viewBox="0 0 1240 480" role="img" aria-labelledby="title desc">
+  <title id="title">Server push: one subscribe message, many unprompted updates</title>
+  <desc id="desc">The browser sends one subscribe message naming the topic AAPL. The server then sends three quote messages of its own accord, at the moments the price changed, with no further message from the browser. A bracket beside them marks all three as pushes the browser never asked for.</desc>
+  <!-- Icons copied from System Design/12. Chat System: high-level-statefull-arch.svg (laptop) and System Design/18. Google Maps: cdn-vs-no-cdn.svg (server). -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 25px; font-weight: 700; }
+      .sub { font-size: 19px; fill: #536174; }
+      .node { font-size: 20px; font-weight: 700; text-anchor: middle; }
+      .msg { font-family: Menlo, Consolas, monospace; font-size: 16px; fill: #17212f; text-anchor: middle; }
+      .note { font-size: 18px; fill: #536174; }
+      .tag { font-size: 17px; fill: #536174; }
+      .life { stroke: #8fa2b5; stroke-width: 2.5; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 90 70"><rect x="17" y="5" width="56" height="45" rx="4" fill="#fff" stroke="#17212f" stroke-width="4"/><path d="M9 58 H81 L87 65 H3 Z" fill="#17212f"/></symbol>
+    <symbol id="server" viewBox="0 0 76 100"><path d="M8 8h48l14 10v67L54 94H8z" fill="#8e9aa6"/><path d="M56 8 70 18v67L56 94z" fill="#b4bec8"/><rect x="17" y="18" width="31" height="14" rx="2" fill="#eee"/><rect x="17" y="38" width="31" height="14" rx="2" fill="#eee"/><circle cx="33" cy="72" r="6" fill="#eee"/></symbol>
+  </defs>
+  <rect width="1240" height="480" fill="#fff"/>
+  <text x="28" y="40" class="title">Pattern 1 &#8212; Server push: subscribe once, receive many</text>
+  <text x="28" y="70" class="sub">The browser names what it cares about. Every later message is the server&#8217;s decision, not a reply to anything.</text>
+  <rect x="60" y="96" width="180" height="76" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#laptop" x="90" y="110" width="58" height="45"/>
+  <text x="184" y="140" class="node">browser</text>
+  <rect x="880" y="96" width="180" height="76" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#server" x="908" y="108" width="38" height="50"/>
+  <text x="996" y="140" class="node">server</text>
+  <!-- Lifelines: time runs downward. -->
+  <path class="life" d="M150 172 V400 M970 172 V400" fill="none"/>
+  <text x="560" y="213" class="msg">{"op": "subscribe", "topic": "AAPL"}</text>
+  <path data-connector="true" d="M162.0 226.0L946.00 226.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="958.0,226.0 944.00,232.00 944.00,220.00" fill="#17212f"/>
+  <text x="560" y="275" class="msg">{"AAPL": 189.42}</text>
+  <path data-connector="true" d="M958.0 288.0L174.00 288.00" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="162.0,288.0 176.00,282.00 176.00,294.00" fill="#c2410c"/>
+  <text x="560" y="321" class="msg">{"AAPL": 189.61}</text>
+  <path data-connector="true" d="M958.0 334.0L174.00 334.00" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="162.0,334.0 176.00,328.00 176.00,340.00" fill="#c2410c"/>
+  <text x="560" y="367" class="msg">{"AAPL": 188.97}</text>
+  <path data-connector="true" d="M958.0 380.0L174.00 380.00" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="162.0,380.0 176.00,374.00 176.00,386.00" fill="#c2410c"/>
+  <!-- Span bar groups the three pushes; it is not a connector. -->
+  <path d="M1076 274 H1090 V386 H1076" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <text x="1100" y="318" class="tag">sent when</text>
+  <text x="1100" y="340" class="tag">the price</text>
+  <text x="1100" y="362" class="tag">moved</text>
+  <text x="28" y="438" class="note">One subscribe message replaced a request every second, and the browser learns of a change as soon as the server does.</text>
+  <text x="28" y="460" class="note">Price tickers, dashboards, notification bells, live logs and collaborative cursors are all this shape.</text>
+</svg>

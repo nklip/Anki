@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="900" viewBox="0 0 1240 900" role="img" aria-labelledby="title desc">
+  <title id="title">HTTP request-response compared with one open WebSocket</title>
+  <desc id="desc">Two panels over the same period. In the HTTP panel the browser sends three requests and the server answers each one, so every server message follows a client message. In the WebSocket panel one handshake request and one 101 Switching Protocols reply open the connection, four data frames then travel in both directions without any request, and a Close frame ends it.</desc>
+  <!-- Icons copied from System Design/12. Chat System: high-level-statefull-arch.svg (laptop) and System Design/18. Google Maps: cdn-vs-no-cdn.svg (server). -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 25px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 21px; text-anchor: middle; }
+      .small { font-size: 19px; fill: #536174; }
+      .life { stroke: #8fa2b5; stroke-width: 2.5; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 90 70"><rect x="17" y="5" width="56" height="45" rx="4" fill="#fff" stroke="#17212f" stroke-width="4"/><path d="M9 58 H81 L87 65 H3 Z" fill="#17212f"/></symbol>
+    <symbol id="server" viewBox="0 0 76 100"><path d="M8 8h48l14 10v67L54 94H8z" fill="#8e9aa6"/><path d="M56 8 70 18v67L56 94z" fill="#b4bec8"/><rect x="17" y="18" width="31" height="14" rx="2" fill="#eee"/><rect x="17" y="38" width="31" height="14" rx="2" fill="#eee"/><circle cx="33" cy="72" r="6" fill="#eee"/></symbol>
+  </defs>
+  <rect width="1240" height="900" fill="#fff"/>
+  <text x="28" y="44" class="title">HTTP asks every time; a WebSocket stays open</text>
+  <text x="28" y="78" class="sub">Same browser, same server, same stretch of time. Read each panel downward: lower means later.</text>
+  <!-- Left panel: every server message is an answer to a client message. -->
+  <rect x="28" y="104" width="578" height="756" rx="14" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="317" y="146" class="heading">HTTP</text>
+  <use href="#laptop" x="107" y="166" width="66" height="51"/>
+  <use href="#server" x="471" y="158" width="46" height="60"/>
+  <text x="140" y="246" class="body">browser</text>
+  <text x="494" y="246" class="body">server</text>
+  <path class="life" d="M140 260 V752 M494 260 V752" fill="none"/>
+  <text x="156" y="290" class="small">request</text>
+  <path data-connector="true" d="M152.0 304.0L470.05 332.91" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="482.0,334.0 467.51,338.71 468.60,326.76" fill="#17212f"/>
+  <text x="482" y="366" class="small" text-anchor="end">response</text>
+  <path data-connector="true" d="M482.0 380.0L163.95 408.91" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="152.0,410.0 165.40,402.76 166.49,414.71" fill="#17212f"/>
+  <text x="156" y="442" class="small">request</text>
+  <path data-connector="true" d="M152.0 456.0L470.05 484.91" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="482.0,486.0 467.51,490.71 468.60,478.76" fill="#17212f"/>
+  <text x="482" y="518" class="small" text-anchor="end">response</text>
+  <path data-connector="true" d="M482.0 532.0L163.95 560.91" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="152.0,562.0 165.40,554.76 166.49,566.71" fill="#17212f"/>
+  <text x="156" y="594" class="small">request</text>
+  <path data-connector="true" d="M152.0 608.0L470.05 636.91" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="482.0,638.0 467.51,642.71 468.60,630.76" fill="#17212f"/>
+  <text x="482" y="670" class="small" text-anchor="end">response</text>
+  <path data-connector="true" d="M482.0 684.0L163.95 712.91" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="152.0,714.0 165.40,706.76 166.49,718.71" fill="#17212f"/>
+  <text x="56" y="790" class="small">Six messages, three client-initiated exchanges.</text>
+  <text x="56" y="814" class="small">The server never speaks first: to learn about a change,</text>
+  <text x="56" y="838" class="small">the browser has to ask again.</text>
+  <!-- Right panel: one handshake, then unprompted messages in both directions. -->
+  <rect x="634" y="104" width="578" height="756" rx="14" fill="#f2f8ee" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="923" y="146" class="heading">WebSocket</text>
+  <use href="#laptop" x="713" y="166" width="66" height="51"/>
+  <use href="#server" x="1077" y="158" width="46" height="60"/>
+  <text x="746" y="246" class="body">browser</text>
+  <text x="1100" y="246" class="body">server</text>
+  <!-- Frame block drawn before the lifelines so the lifelines stay visible across it. -->
+  <rect x="660" y="424" width="530" height="232" rx="12" fill="#fff" stroke="#c9b09a" stroke-width="2" stroke-dasharray="9 7"/>
+  <path class="life" d="M746 260 V752 M1100 260 V752" fill="none"/>
+  <text x="762" y="290" class="small">handshake request</text>
+  <path data-connector="true" d="M758.0 304.0L1076.05 332.91" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <polygon points="1088.0,334.0 1073.51,338.71 1074.60,326.76" fill="#0b78b5"/>
+  <text x="1088" y="366" class="small" text-anchor="end">101 Switching Protocols</text>
+  <path data-connector="true" d="M1088.0 380.0L769.95 408.91" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <polygon points="758.0,410.0 771.40,402.76 772.49,414.71" fill="#0b78b5"/>
+  <text x="925" y="456" class="small" text-anchor="middle">data frames &#8212; either side, any time, no request</text>
+  <path data-connector="true" d="M1088.0 484.0L769.97 505.20" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="758.0,506.0 771.57,499.08 772.37,511.06" fill="#c2410c"/>
+  <path data-connector="true" d="M1088.0 524.0L769.97 545.20" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="758.0,546.0 771.57,539.08 772.37,551.06" fill="#c2410c"/>
+  <path data-connector="true" d="M758.0 564.0L1076.03 585.20" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="1088.0,586.0 1073.63,591.06 1074.43,579.08" fill="#c2410c"/>
+  <path data-connector="true" d="M1088.0 604.0L769.97 625.20" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="758.0,626.0 771.57,619.08 772.37,631.06" fill="#c2410c"/>
+  <text x="1088" y="690" class="small" text-anchor="end">Close frame</text>
+  <path data-connector="true" d="M1088.0 704.0L769.96 729.06" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="758.0,730.0 771.49,722.92 772.43,734.88" fill="#17212f"/>
+  <text x="662" y="790" class="small">One handshake, then four messages in both directions</text>
+  <text x="662" y="814" class="small">on the one connection the handshake opened. Three of the</text>
+  <text x="662" y="838" class="small">four were sent by the server on its own initiative.</text>
+</svg>
