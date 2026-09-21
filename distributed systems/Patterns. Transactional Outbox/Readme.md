@@ -59,13 +59,13 @@ Two different mechanisms take partitions away from a consumer that stops making 
 
 Either way the partition moves. The first instance never recorded its offsets in the consumer offsets topic, so the replacement polls the same records again.
 
-Read the image below from top to bottom, with the same column, arrow, and note conventions listed for the sequence diagram in [The relay process publishes what committed](#the-relay-process-publishes-what-committed). The red ellipse marks the pivotal moment: instance 2 consumes the message instance 1 is still working on. Each yellow note on instance 2's side then names an effect that now happens twice.
+Read the image below from top to bottom, with the same column, arrow, and note conventions listed for the sequence diagram in [The relay process publishes what committed](#the-relay-process-publishes-what-committed). The red ellipse marks the pivotal moment: instance 2 consumes the message instance 1 is still working on. Each yellow note on instance 2's side then names an effect that now happens twice. A call that stops at a cross never reaches the participant it points at, and the note directly beneath it names what the caller got instead.
 
 ![duplicate-message-delivery.svg](images/duplicate-message-delivery.svg)
 
 Without either mechanism, a consumer that really had died would keep its partitions and leave them blocked.
 
-While the new instance processes the batch — calling other services over REST, publishing events to Kafka, writing to the database — the first instance is doing the same work. Any step that is not idempotent leaves inconsistent state across the system. The first instance cannot even record its own progress: because it left the group, its offset commit is rejected with a `CommitFailedException`, the safety mechanism that lets only active group members commit offsets. That rejection protects the offset; it does not undo the duplicated work.
+While the new instance processes the batch — calling other services over REST, publishing events to Kafka, writing to the database — the first instance is doing the same work. Any step that is not idempotent leaves inconsistent state across the system. The first instance cannot even record its own progress: because it left the group, its own Kafka client refuses the commit before the request reaches the broker and throws a `CommitFailedException`, the safety mechanism that lets only active group members commit offsets. That rejection protects the offset; it does not undo the duplicated work.
 
 ## Transactional Outbox delivery guarantee
 
@@ -156,7 +156,7 @@ This diagram has no relay column, so the outgoing event appears to leave the `Da
 
 The image below revisits the timeout scenario. Instance 1 has already flushed the unique processed-message record. Instance 2 receives the repeated input and stops at its competing insert, which the `Database` lifeline marks `Wait to acquire lock`, as in the flush diagram above. After instance 1 commits, instance 2 gets the uniqueness violation and rolls back.
 
-Only one of the two then records progress. Instance 1 exceeded `max.poll.interval.ms` and left the group, which is why the input reached instance 2 at all; the same departure means instance 1's own offset commit is now rejected with a `CommitFailedException`. Instance 2 still holds the partition, so its offset commit is the one that takes effect, and instance 1's committed outbox record supplies the outgoing event.
+Only one of the two then records progress. Instance 1 exceeded `max.poll.interval.ms` and left the group, which is why the input reached instance 2 at all; the same departure means instance 1's own offset commit never leaves the consumer, which the crossed arrow and the note beneath it mark as a `CommitFailedException` raised by its own client. Instance 2 still holds the partition, so its offset commit is the one that takes effect, and instance 1's committed outbox record supplies the outgoing event.
 
 ![duplicate-message-delivery-fixed.svg](images/duplicate-message-delivery-fixed.svg)
 
@@ -245,7 +245,7 @@ Try answering each question before expanding its answer.
    <details>
    <summary>Answer</summary>
 
-   Its competing insert waits until instance 1 commits, then fails the uniqueness check before reaching the remote call. Instance 1's committed outbox record supplies the outgoing event. Instance 1 cannot acknowledge the input, because it left the group at `max.poll.interval.ms` and its offset commit is rejected with a `CommitFailedException`; instance 2, still an active member, commits the offset. This particular sequence does not guarantee exactly-once remote effects under every failure.
+   Its competing insert waits until instance 1 commits, then fails the uniqueness check before reaching the remote call. Instance 1's committed outbox record supplies the outgoing event. Instance 1 cannot acknowledge the input, because it left the group at `max.poll.interval.ms`, so its own client rejects the commit with a `CommitFailedException` before the request reaches the broker; instance 2, still an active member, commits the offset. This particular sequence does not guarantee exactly-once remote effects under every failure.
 
    </details>
 
@@ -290,5 +290,6 @@ Try answering each question before expanding its answer.
 - [Debezium — Outbox Event Router: identifiers, keys, and payloads](https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html)
 - [Debezium — Outbox implementation, recovery, and eventual consistency](https://debezium.io/blog/2019/02/19/reliable-microservices-data-exchange-with-the-outbox-pattern/)
 - [Apache Kafka — KafkaConsumer: detecting consumer failures, poll interval, and offset commit failure](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html)
+- [Apache Kafka 4.0.0 — `ConsumerCoordinator`: a commit from a member that is no longer in the group fails in the client](https://github.com/apache/kafka/blob/4.0.0/clients/src/main/java/org/apache/kafka/clients/consumer/internals/ConsumerCoordinator.java#L1268-L1283)
 - [Apache Kafka — Delivery semantics and external-system boundaries](https://kafka.apache.org/43/design/design/#message-delivery-semantics)
 - [Stripe — Idempotent requests](https://docs.stripe.com/api/idempotent_requests)

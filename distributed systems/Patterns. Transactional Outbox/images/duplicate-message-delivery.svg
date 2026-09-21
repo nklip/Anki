@@ -1,10 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1055" height="1065" viewBox="0 0 1055 1065" role="img" aria-labelledby="title desc">
   <title id="title">Duplicate message delivery</title>
-  <desc id="desc">Read the sequence from top to bottom. Kafka delivers the same message to a second consumer service instance after the polling interval is exceeded. The red oval marks the duplicate delivery; REST requests, outbound events, and database writes are repeated. Instance 1 left the group when it exceeded the poll interval, so its offset commit is rejected and only instance 2 records progress.</desc>
+  <desc id="desc">Read the sequence from top to bottom. Kafka delivers the same message to a second consumer service instance after the polling interval is exceeded. The red oval marks the duplicate delivery; REST requests, outbound events, and database writes are repeated. Instance 1 left the group when it exceeded the poll interval, so its own offset commit never reaches Kafka: the crossed arrow and the CommitFailedException note on its lifeline mark that failure, and only instance 2 records progress.</desc>
   <!-- Provenance: Lydtech Figure 1, https://www.lydtechconsulting.com/blog/kafka-idempotent-consumer-transactional-outbox ; PNG etalon: https://cdn.prod.website-files.com/687e4d3574f64b1a223d933f/68bebd81f5bfc985e02a0d8e_01_duplicate-message-delivery-annotated.png ; local copy: duplicate-message-delivery.png. -->
   <!-- Native shapes and editable text recreate the accompanying PNG; canvas and positions follow that etalon. -->
   <!-- Content correction against the etalon: instance 1 proactively left the group at max.poll.interval.ms, so only
-       active members may commit offsets and its own commit is rejected. Marked by the dashed message-8-return; the etalon shows the commit unqualified. -->
+       active members may commit offsets. The Kafka client fails that commit itself, before any OffsetCommit request
+       leaves the consumer, so message-8 stops at a cross short of the Kafka lifeline and note-10 carries the
+       CommitFailedException on instance 1's own lifeline. The etalon draws that commit as an ordinary call. -->
   <defs>
     <style>
       .actor { fill: #ececff; stroke: #dacef3; stroke-width: 1; }
@@ -69,16 +71,12 @@
       <path d="M133 636.5 L124 641 L133 645.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
       <text class="message" x="222.5" y="628">produce event</text>
     </g>
+    <!-- This call ends at a cross 55 units short of the Kafka lifeline: the client refuses it while instance 1
+         is not an active member, so no OffsetCommit request is sent and no broker reply comes back. -->
     <g id="message-8">
-      <path class="arrow-shaft" d="M320 735 H132"/>
-      <path d="M133 730.5 L124 735 L133 739.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
-      <text class="message" x="222.5" y="722">update offsets</text>
-    </g>
-    <!-- Kafka answers instance 1's offset commit with the failure the etalon leaves implicit. -->
-    <g id="message-8-return">
-      <path class="arrow-shaft" d="M125 783 H318" stroke-dasharray="3 3"/>
-      <path d="M317 778.5 L326 783 L317 787.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
-      <text class="message" x="222.5" y="770">CommitFailedException</text>
+      <path class="arrow-shaft" d="M320 735 H196"/>
+      <path id="message-8-cross" d="M180 727 L196 743 M196 727 L180 743" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round"/>
+      <text class="message" x="258.0" y="722">update offsets</text>
     </g>
     <g id="message-9">
       <path class="arrow-shaft" d="M720 829 H132"/>
@@ -102,6 +100,9 @@
     <g id="note-7"><rect class="note" x="614.0" y="745" width="222" height="36"/><text class="note-label" x="725" y="768">Outbound events are duplicated</text></g>
     <g id="note-8"><rect class="note" x="637.5" y="839" width="175" height="36"/><text class="note-label" x="725" y="862">DB writes are duplicated</text></g>
     <g id="note-9"><rect class="note" x="643.0" y="885" width="164" height="36"/><text class="note-label" x="725" y="908">Commit DB transaction</text></g>
+    <!-- Instance 1's own Kafka client raises the exception, so it belongs on that lifeline rather than on a
+         return arrow from the broker. Box width is the measured 147-unit label plus the 20 units these notes pad by. -->
+    <g id="note-10"><rect class="note" x="241.0" y="748" width="168" height="36"/><text class="note-label" x="325" y="771">CommitFailedException</text></g>
   </g>
   <!-- The source oval highlights the duplicate-message note; its top intentionally overlays the delivery arrow as in the PNG. -->
   <ellipse id="duplicate-delivery-highlight" cx="726.5" cy="386.5" rx="119.5" ry="27.5" fill="none" stroke="#ff2600" stroke-width="4"/>

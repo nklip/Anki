@@ -1,12 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1152" height="1073" viewBox="0 0 1152 1073" role="img" aria-labelledby="title desc">
   <title id="title">Duplicate message delivery with idempotency and an outbox</title>
-  <desc id="desc">Read the sequence from top to bottom. Kafka delivers the same message to a second consumer service instance after the polling interval is exceeded. The red oval marks the duplicate delivery. The first transaction records the message identifier and an outbox event; the competing insert waits for the lock, fails its uniqueness constraint after commit, and rolls back. Instance 1 left the group when it exceeded the poll interval, so its own offset commit is rejected and instance 2 records the progress. CDC publishes the committed event.</desc>
+  <desc id="desc">Read the sequence from top to bottom. Kafka delivers the same message to a second consumer service instance after the polling interval is exceeded. The red oval marks the duplicate delivery. The first transaction records the message identifier and an outbox event; the competing insert waits for the lock, fails its uniqueness constraint after commit, and rolls back. Instance 1 left the group when it exceeded the poll interval, so its own offset commit never reaches Kafka: the crossed arrow and the CommitFailedException note on its lifeline mark that failure, and instance 2 records the progress. CDC publishes the committed event.</desc>
   <!-- Provenance: Lydtech Figure 6, https://www.lydtechconsulting.com/blog/kafka-idempotent-consumer-transactional-outbox ; PNG etalon: https://cdn.prod.website-files.com/687e4d3574f64b1a223d933f/68bebe1e2f424ae26f0a44cf_06_duplicate-message-delivery-fixed-annotated.png ; local copy: duplicate-message-delivery-fixed.png. -->
   <!-- Native shapes and editable text recreate the accompanying PNG; canvas and positions follow that etalon. -->
   <!-- Content corrections against the etalon: instance 1 proactively left the group at max.poll.interval.ms, so only
-       active members may commit offsets and Kafka rejects its own commit (the dashed message-10-return). The wait note
-       (note-6) sits on the Database column, as in idempotent-consumer-flush-lock.svg. The canvas is 96 units taller
-       than the etalon: one row for that return, one for the wait note. -->
+       active members may commit offsets. The Kafka client fails that commit itself, before any OffsetCommit request
+       leaves the consumer, so message-10 stops at a cross short of the Kafka lifeline and note-7 carries the
+       CommitFailedException on instance 1's own lifeline; the etalon draws that commit as an ordinary call. The wait
+       note (note-6) sits on the Database column, as in idempotent-consumer-flush-lock.svg. The canvas is 96 units
+       taller than the etalon: one row for that failure note, one for the wait note. -->
   <defs>
     <style>
       .actor { fill: #ececff; stroke: #dacef3; stroke-width: 1; }
@@ -82,16 +84,12 @@
       <path d="M814 734.5 L823 739 L814 743.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
       <text class="message" x="701.5" y="726">constraint violation</text>
     </g>
+    <!-- This call ends at a cross 55 units short of the Kafka lifeline: the client refuses it while instance 1
+         is not an active member, so no OffsetCommit request is sent and no broker reply comes back. -->
     <g id="message-10">
-      <path class="arrow-shaft" d="M320 833 H132"/>
-      <path d="M133 828.5 L124 833 L133 837.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
-      <text class="message" x="222.5" y="820">update offsets</text>
-    </g>
-    <!-- Kafka answers instance 1's offset commit with the failure the etalon leaves implicit. -->
-    <g id="message-10-return">
-      <path class="arrow-shaft" d="M125 881 H318" stroke-dasharray="3 3"/>
-      <path d="M317 876.5 L326 881 L317 885.5 Z" fill="#333" stroke="#333" stroke-width="1" stroke-linejoin="round"/>
-      <text class="message" x="222.5" y="868">CommitFailedException</text>
+      <path class="arrow-shaft" d="M320 833 H196"/>
+      <path id="message-10-cross" d="M180 825 L196 841 M196 825 L180 841" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round"/>
+      <text class="message" x="258.0" y="820">update offsets</text>
     </g>
     <g id="message-11">
       <path class="arrow-shaft" d="M571 929 H132"/>
@@ -113,6 +111,9 @@
     <g id="note-5"><rect class="note" x="744.0" y="749" width="166" height="36"/><text class="note-label" x="827" y="772">Transaction rolled back</text></g>
     <!-- The competing insert blocks here; same marker as idempotent-consumer-flush-lock.svg. -->
     <g id="note-6"><rect class="note" x="501.0" y="605" width="150" height="36"/><text class="note-label" x="576" y="628">Wait to acquire lock</text></g>
+    <!-- Instance 1's own Kafka client raises the exception, so it belongs on that lifeline rather than on a
+         return arrow from the broker. Box width is the measured 147-unit label plus the 20 units these notes pad by. -->
+    <g id="note-7"><rect class="note" x="241.0" y="847" width="168" height="36"/><text class="note-label" x="325" y="870">CommitFailedException</text></g>
   </g>
   <!-- The source oval highlights the duplicate-message note; its top intentionally overlays the delivery arrow as in the PNG. -->
   <ellipse id="duplicate-delivery-highlight" cx="827.5" cy="480.5" rx="119.5" ry="27.5" fill="none" stroke="#ff2600" stroke-width="4"/>
