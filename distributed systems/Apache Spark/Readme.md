@@ -4,11 +4,23 @@
 
 **Apache Spark is an open-source engine that divides data processing across multiple machines, coordinates their work, and can recompute work lost to failures.** You describe a calculation; Spark plans how to execute it over pieces of the data. Its value comes from finishing useful analysis sooner, handling larger datasets, and sometimes reducing the resources needed per result.
 
-This article places Spark in a system, follows query planning and parallel execution through a sales example, explains shuffles, recovery, performance, and streaming, then examines real users, practical benefits, and costs.
+This article opens with documented users, places Spark in a system, follows query planning and parallel execution through a sales example, explains shuffles, recovery, performance, and streaming, then examines practical benefits and costs.
 
 The technical baseline is Apache Spark **4.2.0**, the current stable release checked on **2026-09-14**. Examples center on DataFrames, SQL, and default micro-batch Structured Streaming.
 
 ![apache-spark-logo.svg](images/apache-spark-logo.svg)
+
+## Who uses Spark, and for what?
+
+These are dated, documented deployments. They show what organizations achieved in particular systems, not a claim that every present-day workload has the same architecture.
+
+| Organization and source date | Documented use | Reported value |
+| --- | --- | --- |
+| Uber, 2025 | Migrated interactive and extract-transform-load (ETL) workflows from Hive, which already ran on Spark, to Spark SQL, covering about five million monthly queries. | Reported an overall **50% reduction in runtime and resource usage** for this SQL-engine migration. |
+| Facebook, now Meta, 2016 | Rebuilt an entity-ranking data pipeline that had consisted of hundreds of Hive jobs; processed over 60 TB of compressed input. | Reported roughly **5× lower latency** after pipeline and engine improvements. This was an optimized pipeline comparison, not a universal engine benchmark. |
+| Airbnb, 2024 | Used Spark to generate training, validation, and inference datasets for listing embeddings—numerical representations used to find similar listings. | Prepared data for analytics and model training. The model training and online serving were separate parts of the system; the paper does not isolate a Spark-specific financial return. |
+
+The same capabilities serve different roles: data engineers build ETL pipelines, analysts query prepared data, and machine-learning engineers create features or training datasets. Spark also includes **MLlib**, its machine-learning library, with algorithms and tools for feature processing, pipelines, and model evaluation. Using Spark to prepare training data does not imply the model itself trains inside Spark.
 
 ## What problem does Spark solve?
 
@@ -177,18 +189,6 @@ Exactly-once output requires the whole path to cooperate: replayable input, dura
 
 Micro-batching balances latency and throughput. A short trigger interval is not a promise that every batch finishes that quickly. If processing cannot keep up with arrival, the backlog grows. The right freshness target must be measured with the actual input, state, and sink.
 
-## Who uses Spark, and for what?
-
-These are dated, documented deployments. They show what organizations achieved in particular systems, not a claim that every present-day workload has the same architecture.
-
-| Organization and source date | Documented use | Reported value |
-| --- | --- | --- |
-| Uber, 2025 | Migrated interactive and extract-transform-load (ETL) workflows from Hive, which already ran on Spark, to Spark SQL, covering about five million monthly queries. | Reported an overall **50% reduction in runtime and resource usage** for this SQL-engine migration. |
-| Facebook, now Meta, 2016 | Rebuilt an entity-ranking data pipeline that had consisted of hundreds of Hive jobs; processed over 60 TB of compressed input. | Reported roughly **5× lower latency** after pipeline and engine improvements. This was an optimized pipeline comparison, not a universal engine benchmark. |
-| Airbnb, 2024 | Used Spark to generate training, validation, and inference datasets for listing embeddings—numerical representations used to find similar listings. | Prepared data for analytics and model training. The model training and online serving were separate parts of the system; the paper does not isolate a Spark-specific financial return. |
-
-The same capabilities serve different roles: data engineers build ETL pipelines, analysts query prepared data, and machine-learning engineers create features or training datasets. Spark also includes **MLlib**, its machine-learning library, with algorithms and tools for feature processing, pipelines, and model evaluation. Using Spark to prepare training data does not imply the model itself trains inside Spark.
-
 ## What profit or practical benefit can it bring?
 
 Spark creates value when its execution capabilities improve a business-relevant outcome. The connection should be explicit:
@@ -215,30 +215,79 @@ Operationally, inspect the Spark user interface before tuning at random. It expo
 
 ## Self-check
 
-Answer these aloud before opening the answer key. Use the sales example to make each explanation concrete.
+Try answering each question before expanding its answer. Use the sales example to make each explanation concrete.
 
 1. How do the cluster manager, driver, and executors divide responsibility? How do a job, stage, and task fit together?
+
+   <details>
+   <summary>Answer</summary>
+
+   The cluster manager allocates resources; the driver plans and schedules work; executors run tasks. An action triggers job work, which is divided into stages around shuffle dependencies. Each stage contains tasks that typically process individual partitions.
+
+   </details>
+
 2. Does constructing `totals` immediately calculate every result? What does `totals.show()` change?
+
+   <details>
+   <summary>Answer</summary>
+
+   Constructing `totals` describes transformations. `show()` is an action that asks Spark to execute the necessary work and display results; metadata work may have happened earlier.
+
+   </details>
+
 3. Why are the local `A:10` and `A:5` totals insufficient on their own? What does the shuffle achieve?
+
+   <details>
+   <summary>Answer</summary>
+
+   Each is only a partial sum. The shuffle brings both `A` totals to the same destination so they can be merged into `15`; `B` similarly becomes `10`.
+
+   </details>
+
 4. If an executor disappears, what can Spark recompute, and what must remain available? Why can a retried task send an email twice?
+
+   <details>
+   <summary>Answer</summary>
+
+   Spark can replay the work needed to rebuild lost results using lineage, available inputs, and surviving intermediate data. Repeating computation can also repeat an external email call unless that effect handles retries safely.
+
+   </details>
+
 5. How does spilling differ from caching? Why might adding executors fail to fix one very slow task?
+
+   <details>
+   <summary>Answer</summary>
+
+   Spilling moves working data to disk under memory pressure; caching retains computed data for later reuse. With skew, one partition can hold much more work than others, and extra executors do not automatically divide that task.
+
+   </details>
+
 6. Is a durable streaming checkpoint enough to guarantee exactly-once output? What else must cooperate?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. The source must support replay, recovery information must remain durable, and the sink must handle replay safely. Kafka writes and default `foreachBatch` writes can produce duplicates.
+
+   </details>
+
 7. Why can a job using 40 workers for 20 minutes cost more than one using 20 workers for 30 minutes, despite finishing sooner?
+
+   <details>
+   <summary>Answer</summary>
+
+   Assuming equal worker prices, the faster job uses about `13.3` worker-hours versus `10`. Compare cost per correct result at the required deadline, including other operating costs.
+
+   </details>
+
 8. Name one documented Spark user, its workload, and a reported benefit. What limits the conclusion you can draw from that example?
 
-<details>
-<summary>Answer key</summary>
+   <details>
+   <summary>Answer</summary>
 
-1. The cluster manager allocates resources; the driver plans and schedules work; executors run tasks. An action triggers job work, which is divided into stages around shuffle dependencies. Each stage contains tasks that typically process individual partitions.
-2. Constructing `totals` describes transformations. `show()` is an action that asks Spark to execute the necessary work and display results; metadata work may have happened earlier.
-3. Each is only a partial sum. The shuffle brings both `A` totals to the same destination so they can be merged into `15`; `B` similarly becomes `10`.
-4. Spark can replay the work needed to rebuild lost results using lineage, available inputs, and surviving intermediate data. Repeating computation can also repeat an external email call unless that effect handles retries safely.
-5. Spilling moves working data to disk under memory pressure; caching retains computed data for later reuse. With skew, one partition can hold much more work than others, and extra executors do not automatically divide that task.
-6. No. The source must support replay, recovery information must remain durable, and the sink must handle replay safely. Kafka writes and default `foreachBatch` writes can produce duplicates.
-7. Assuming equal worker prices, the faster job uses about `13.3` worker-hours versus `10`. Compare cost per correct result at the required deadline, including other operating costs.
-8. For example, Uber reported a 50% reduction in runtime and resource usage after migrating Hive workloads that already ran on Spark to Spark SQL. That result concerns its particular migration; it is not a promised saving for every Spark deployment.
+   For example, Uber reported a 50% reduction in runtime and resource usage after migrating Hive workloads that already ran on Spark to Spark SQL. That result concerns its particular migration; it is not a promised saving for every Spark deployment.
 
-</details>
+   </details>
 
 # Sources
 
