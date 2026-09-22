@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="720" viewBox="0 0 1120 720" role="img" aria-labelledby="title desc">
+  <title id="title">A leader must prove it still leads before answering a read</title>
+  <desc id="desc">A top panel shows S1, a partitioned server that still believes it leads term 4 and holds x equals 3, beside S4, which leads term 5 with a majority and has committed x equals 9. Three columns below compare read strategies: putting the read through the log is correct but costs a full replicated write; the ReadIndex approach, in which the leader notes its commit index, confirms with one round of heartbeats that a majority still follows it and applies up to that index, is correct; answering straight from the leader's memory can be stale and would return x equals 3 instead of 9.</desc>
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 19px; fill: #536174; }
+      .node { stroke: #b9c8d4; stroke-width: 2; }
+    </style>
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+    <symbol id="server-dead" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#c9cfd6"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+  </defs>
+  <rect width="1120" height="720" fill="#fff"/>
+
+  <text x="28" y="43" class="title" text-anchor="start">A leader must prove it still leads before answering a read</text>
+  <text x="28" y="77" class="sub" text-anchor="start">Nothing tells a partitioned leader that it has been replaced, so it has to ask.</text>
+
+  <!-- The hazard both correct read paths are designed to rule out. -->
+  <rect x="28" y="110" width="1064" height="170" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="148" class="heading" text-anchor="start">Two servers, two stories, at the same instant</text>
+
+  <use href="#server-dead" x="48" y="176" width="26" height="46"/>
+  <text x="90" y="200" class="heading" text-anchor="start">S1 still believes it leads term 4</text>
+  <text x="90" y="228" class="small" text-anchor="start">Partitioned away. Its copy says x = 3.</text>
+  <text x="90" y="254" class="small" text-anchor="start">It has heard nothing since the split.</text>
+
+  <use href="#server" x="580" y="176" width="26" height="46"/>
+  <text x="622" y="200" class="heading" text-anchor="start">S4 leads term 5 with a majority</text>
+  <text x="622" y="228" class="small" text-anchor="start">It has already committed x = 9.</text>
+  <text x="622" y="254" class="small" text-anchor="start">S1 does not know term 5 exists.</text>
+
+  <!-- THREE WAYS TO ANSWER A READ. -->
+  <rect x="28" y="310" width="340" height="300" rx="12" fill="#f0f8fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="350" class="heading" text-anchor="start">Through the log</text>
+  <text x="48" y="386" class="small" text-anchor="start">The read is appended as</text>
+  <text x="48" y="410" class="small" text-anchor="start">an ordinary entry and</text>
+  <text x="48" y="434" class="small" text-anchor="start">committed on a majority.</text>
+  <rect x="48" y="480" width="300" height="44" rx="8" class="node" fill="#f3faed"/>
+  <text x="198" y="509" class="heading" text-anchor="middle">correct</text>
+  <text x="48" y="562" class="small" text-anchor="start">Costs a full replicated write.</text>
+
+  <rect x="390" y="310" width="340" height="300" rx="12" fill="#f0f8fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="410" y="350" class="heading" text-anchor="start">ReadIndex</text>
+  <text x="410" y="386" class="small" text-anchor="start">The leader notes its commit</text>
+  <text x="410" y="410" class="small" text-anchor="start">index, confirms a majority</text>
+  <text x="410" y="434" class="small" text-anchor="start">still follows it, applies up</text>
+  <text x="410" y="458" class="small" text-anchor="start">to that index, then answers.</text>
+  <rect x="410" y="480" width="300" height="44" rx="8" class="node" fill="#f3faed"/>
+  <text x="560" y="509" class="heading" text-anchor="middle">correct</text>
+  <text x="410" y="562" class="small" text-anchor="start">Costs one round of messages.</text>
+
+  <!-- Inline stroke, not a class: the .node rule would otherwise win over the warning colour. -->
+  <rect x="752" y="310" width="340" height="300" rx="12" fill="#fff" stroke="#c0392b" stroke-width="2"/>
+  <text x="772" y="350" class="heading" text-anchor="start">Straight from memory</text>
+  <text x="772" y="386" class="small" text-anchor="start">The leader answers from</text>
+  <text x="772" y="410" class="small" text-anchor="start">its own state machine</text>
+  <text x="772" y="434" class="small" text-anchor="start">without asking anyone.</text>
+  <rect x="772" y="480" width="300" height="44" rx="8" class="node" fill="#fff" style="stroke:#c0392b"/>
+  <text x="922" y="509" class="heading" text-anchor="middle" style="fill:#c0392b">can be stale</text>
+  <text x="772" y="562" class="small" text-anchor="start">S1 would answer x = 3, not 9.</text>
+
+  <text x="28" y="644" class="small" text-anchor="start">ReadIndex also needs the leader to have committed one entry of its own term first.</text>
+  <text x="28" y="690" class="body" text-anchor="start">A stale read is a deliberate choice, never the default.</text>
+</svg>

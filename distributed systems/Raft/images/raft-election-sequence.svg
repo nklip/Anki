@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="830" viewBox="0 0 1120 830" role="img" aria-labelledby="title desc">
+  <title id="title">An election, message by message</title>
+  <desc id="desc">A sequence chart of one election among three servers. S1's election timeout elapses with no heartbeat, so it moves to term 4 and votes for itself, then sends RequestVote to S2 and S3. S2 grants its vote. S1 now holds two of three votes, which is a majority, so it becomes leader and immediately sends heartbeats to both followers. S3's vote arrives afterwards and is not needed.</desc>
+  <!-- Message sequence chart: time runs downward. Solid shafts are requests, dashed
+       shafts are replies, and a shaft may cross a lifeline it is not addressed to. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 19px; fill: #536174; }
+      .node { stroke: #b9c8d4; stroke-width: 2; }
+      .life { stroke: #8a94a6; stroke-width: 2.5; stroke-dasharray: 3 6; }
+    </style>
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+    <symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
+  </defs>
+  <rect width="1120" height="830" fill="#fff"/>
+
+  <text x="28" y="43" class="title" text-anchor="start">An election, message by message</text>
+  <text x="28" y="77" class="sub" text-anchor="start">Time runs downward. S1 counts its own vote, so it needs only one more.</text>
+
+  <!-- Everything inside this outline is the Raft group; the client sits outside it. -->
+  <rect x="28" y="96" width="1064" height="586" rx="12" fill="#f7f8fa" stroke="#8a94a6" stroke-width="2.5" stroke-dasharray="9 7"/>
+  <text x="50" y="130" class="heading" text-anchor="start">Raft group — three servers, majority is two</text>
+  <use href="#server" x="187" y="140" width="26" height="46"/>
+  <rect x="100" y="198" width="200" height="54" rx="10" class="node" fill="#f3faed"/>
+  <text x="200" y="232" class="heading" text-anchor="middle">S1</text>
+  <use href="#server" x="547" y="140" width="26" height="46"/>
+  <rect x="460" y="198" width="200" height="54" rx="10" class="node" fill="#f0f8fc"/>
+  <text x="560" y="232" class="heading" text-anchor="middle">S2</text>
+  <use href="#server" x="907" y="140" width="26" height="46"/>
+  <rect x="820" y="198" width="200" height="54" rx="10" class="node" fill="#f0f8fc"/>
+  <text x="920" y="232" class="heading" text-anchor="middle">S3</text>
+  <path class="life" d="M200 258L200 682"/>
+  <path class="life" d="M560 258L560 682"/>
+  <path class="life" d="M920 258L920 682"/>
+  <path data-connector="true" d="M200 286L264 286L264 310L212 310" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="200,310 214,304 214,316" fill="#17212f"/>
+  <text x="218" y="274" class="small" text-anchor="start">election timeout: no heartbeat arrived</text>
+  <path data-connector="true" d="M200 342L264 342L264 366L212 366" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="200,366 214,360 214,372" fill="#17212f"/>
+  <text x="218" y="330" class="small" text-anchor="start">term 4, and it votes for itself</text>
+  <path data-connector="true" d="M200 412L548 412" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="560,412 546,406 546,418" fill="#17212f"/>
+  <text x="380" y="396" class="small" text-anchor="middle">RequestVote (term 4)</text>
+  <path data-connector="true" d="M200 454L908 454" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="920,454 906,448 906,460" fill="#17212f"/>
+  <text x="600" y="438" class="small" text-anchor="start">RequestVote (term 4)</text>
+  <path data-connector="true" d="M560 512L212 512" fill="none" stroke="#0b78b5" stroke-width="2.5" stroke-dasharray="7 6"/>
+  <polygon points="200,512 214,506 214,518" fill="#0b78b5"/>
+  <text x="380" y="496" class="small" text-anchor="middle">vote granted</text>
+  <path data-connector="true" d="M200 554L264 554L264 578L212 578" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="200,578 214,572 214,584" fill="#17212f"/>
+  <text x="218" y="542" class="small" text-anchor="start">2 of 3 votes — it is the leader</text>
+  <path data-connector="true" d="M200 624L548 624" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="560,624 546,618 546,630" fill="#17212f"/>
+  <text x="380" y="608" class="small" text-anchor="middle">AppendEntries heartbeat</text>
+  <path data-connector="true" d="M200 666L908 666" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="920,666 906,660 906,672" fill="#17212f"/>
+  <text x="600" y="650" class="small" text-anchor="start">AppendEntries heartbeat</text>
+
+  <!-- Names the outcome the sequence above produces. -->
+  <rect x="28" y="696" width="1064" height="74" rx="10" class="node" fill="#f3faed"/>
+  <text x="50" y="732" class="heading" text-anchor="start">A majority is counted, not collected</text>
+  <text x="50" y="764" class="small" text-anchor="start">S3's vote may still be in flight. S1 is already leading and no longer needs it.</text>
+
+  <text x="28" y="810" class="body" text-anchor="start">Every server grants at most one vote per term, so a second candidate cannot also reach two.</text>
+</svg>

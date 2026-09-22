@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="690" viewBox="0 0 1120 690" role="img" aria-labelledby="title desc">
+  <title id="title">A candidate needs votes from a majority of the whole cluster</title>
+  <desc id="desc">Two panels over the same five servers. In term 5 only S1 is a candidate; S1, S2 and S3 grant votes, which is three of five, so S1 becomes leader without waiting for S4 and S5. In term 6, S3 is down and both S1 and S4 stand as candidates; the four remaining votes split two and two, so neither reaches three and the term ends with no leader.</desc>
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 19px; fill: #536174; }
+      .node { stroke: #b9c8d4; stroke-width: 2; }
+    </style>
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+    <symbol id="server-dead" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#c9cfd6"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+  </defs>
+  <rect width="1120" height="690" fill="#fff"/>
+
+  <text x="28" y="43" class="title" text-anchor="start">A candidate needs votes from a majority of the whole cluster</text>
+  <text x="28" y="77" class="sub" text-anchor="start">Same five servers, two terms. Read each panel downward to its tally.</text>
+
+  <!-- TERM 5: one candidate, a clean majority. -->
+  <rect x="28" y="110" width="520" height="490" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="150" class="heading" text-anchor="start">Term 5 &#8212; one candidate</text>
+  <text x="48" y="178" class="small" text-anchor="start">S1 times out first and asks the other four.</text>
+
+  <use href="#server" x="48" y="196" width="24" height="42"/>
+  <text x="84" y="223" class="small" text-anchor="start">S1</text>
+  <text x="124" y="223" class="small" text-anchor="start">candidate, votes for itself</text>
+  <rect x="396" y="199" width="132" height="34" rx="8" class="node" fill="#f3faed"/>
+  <text x="462" y="222" class="small" text-anchor="middle">vote &#10003;</text>
+
+  <use href="#server" x="48" y="254" width="24" height="42"/>
+  <text x="84" y="281" class="small" text-anchor="start">S2</text>
+  <text x="124" y="281" class="small" text-anchor="start">grants its vote</text>
+  <rect x="396" y="257" width="132" height="34" rx="8" class="node" fill="#f3faed"/>
+  <text x="462" y="280" class="small" text-anchor="middle">vote &#10003;</text>
+
+  <use href="#server" x="48" y="312" width="24" height="42"/>
+  <text x="84" y="339" class="small" text-anchor="start">S3</text>
+  <text x="124" y="339" class="small" text-anchor="start">grants its vote</text>
+  <rect x="396" y="315" width="132" height="34" rx="8" class="node" fill="#f3faed"/>
+  <text x="462" y="338" class="small" text-anchor="middle">vote &#10003;</text>
+
+  <use href="#server" x="48" y="370" width="24" height="42"/>
+  <text x="84" y="397" class="small" text-anchor="start">S4</text>
+  <text x="124" y="397" class="small" text-anchor="start">slow to answer</text>
+  <rect x="396" y="373" width="132" height="34" rx="8" class="node" fill="#fff"/>
+  <text x="462" y="396" class="small" text-anchor="middle">not needed</text>
+
+  <use href="#server" x="48" y="428" width="24" height="42"/>
+  <text x="84" y="455" class="small" text-anchor="start">S5</text>
+  <text x="124" y="455" class="small" text-anchor="start">slow to answer</text>
+  <rect x="396" y="431" width="132" height="34" rx="8" class="node" fill="#fff"/>
+  <text x="462" y="454" class="small" text-anchor="middle">not needed</text>
+
+  <rect x="48" y="490" width="480" height="94" rx="10" class="node" fill="#f3faed"/>
+  <text x="68" y="524" class="heading" text-anchor="start">3 of 5 votes is a majority</text>
+  <text x="68" y="556" class="small" text-anchor="start">S1 leads term 5 and starts sending heartbeats.</text>
+
+  <!-- TERM 6: a dead server makes an even split possible. -->
+  <rect x="572" y="110" width="520" height="490" rx="12" fill="#f0f8fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="592" y="150" class="heading" text-anchor="start">Term 6 &#8212; two candidates</text>
+  <text x="592" y="178" class="small" text-anchor="start">S3 is down, so four votes split evenly.</text>
+
+  <use href="#server" x="592" y="196" width="24" height="42"/>
+  <text x="628" y="223" class="small" text-anchor="start">S1</text>
+  <text x="668" y="223" class="small" text-anchor="start">candidate, votes for itself</text>
+  <rect x="940" y="199" width="132" height="34" rx="8" class="node" fill="#fff"/>
+  <text x="1006" y="222" class="small" text-anchor="middle">for S1</text>
+
+  <use href="#server" x="592" y="254" width="24" height="42"/>
+  <text x="628" y="281" class="small" text-anchor="start">S2</text>
+  <text x="668" y="281" class="small" text-anchor="start">grants its vote to S1</text>
+  <rect x="940" y="257" width="132" height="34" rx="8" class="node" fill="#fff"/>
+  <text x="1006" y="280" class="small" text-anchor="middle">for S1</text>
+
+  <!-- The dead server is the reason the remaining votes can divide two and two. -->
+  <use href="#server-dead" x="592" y="312" width="24" height="42"/>
+  <text x="628" y="339" class="small" text-anchor="start">S3</text>
+  <text x="668" y="339" class="small" text-anchor="start">down, casts no vote</text>
+  <rect x="940" y="315" width="132" height="34" rx="8" class="node" fill="#fff"/>
+  <text x="1006" y="338" class="small" text-anchor="middle">no vote</text>
+
+  <use href="#server" x="592" y="370" width="24" height="42"/>
+  <text x="628" y="397" class="small" text-anchor="start">S4</text>
+  <text x="668" y="397" class="small" text-anchor="start">candidate, votes for itself</text>
+  <rect x="940" y="373" width="132" height="34" rx="8" class="node" fill="#fff"/>
+  <text x="1006" y="396" class="small" text-anchor="middle">for S4</text>
+
+  <use href="#server" x="592" y="428" width="24" height="42"/>
+  <text x="628" y="455" class="small" text-anchor="start">S5</text>
+  <text x="668" y="455" class="small" text-anchor="start">grants its vote to S4</text>
+  <rect x="940" y="431" width="132" height="34" rx="8" class="node" fill="#fff"/>
+  <text x="1006" y="454" class="small" text-anchor="middle">for S4</text>
+
+  <!-- Inline stroke, not a class: the .node rule would otherwise win over the warning colour. -->
+  <rect x="592" y="490" width="480" height="94" rx="10" class="node" fill="#fff" style="stroke:#c0392b"/>
+  <text x="612" y="524" class="heading" text-anchor="start" style="fill:#c0392b">2 and 2 is not a majority</text>
+  <text x="612" y="556" class="small" text-anchor="start">No leader; every timer is randomised again.</text>
+
+  <text x="28" y="650" class="body" text-anchor="start">Randomised timeouts &#8212; Raft recommends 150&#8211;300 ms &#8212; make a repeated split unlikely.</text>
+</svg>

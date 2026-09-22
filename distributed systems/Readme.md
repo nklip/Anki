@@ -17,6 +17,7 @@ Each topic has its own folder, with diagrams in its `images/` directory.
  * [Patterns. Fanout](./Patterns.%20Fanout/Readme.md) — message and request fanout, feed-generation strategies, capacity, and failure handling.
  * [Patterns. Transactional Outbox](./Patterns.%20Transactional%20Outbox/Readme.md) — the outbox table and relay process, atomic local writes, consumer deduplication, flushing, relay recovery, and ordering boundaries.
  * [Presigned URLs](./Presigned%20URLs/Readme.md) — S3 versus CloudFront signatures, private origins, cache behavior, expiration, uploads, and revocation.
+ * [Raft](./Raft/Readme.md) — replicated logs, terms, leader election, commitment, log repair, the election restriction, membership changes, snapshots, and linearizable reads.
  * [Redis](./Redis/Readme.md) — internals, deployments, common patterns, and CDN data placement.
  * [Sticky Sessions](./Sticky%20Sessions/Readme.md) — pinning mechanisms, their costs, and the stateless alternative.
  * [Transactions. Saga](./Transactions.%20Saga/Readme.md) — local commits, wallet transfers, compensation, orchestration, choreography, and failure recovery.

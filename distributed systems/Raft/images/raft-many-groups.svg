@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="640" viewBox="0 0 1120 640" role="img" aria-labelledby="title desc">
+  <title id="title">Splitting the key space splits the write path</title>
+  <desc id="desc">Two panels over the same three servers. On the left a single Raft group covers every key, S1 is the only leader, and S2 and S3 are followers that take no writes. On the right the key space is split into shard A, shard B and shard C, each with its own Raft group: S1 leads shard A, S2 leads shard B, S3 leads shard C, and each server follows the two shards it does not lead, so three write paths run at once.</desc>
+  <!-- Composition adapted from System Design/27. Digital Wallet/images/sharded-raft-groups.svg, redrawn in this folder's visual system. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 19px; fill: #536174; }
+      .tiny { font-size: 15px; fill: #536174; }
+      .node { stroke: #b9c8d4; stroke-width: 2; }
+    </style>
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+  </defs>
+  <rect width="1120" height="640" fill="#fff"/>
+
+  <text x="28" y="43" class="title" text-anchor="start">Splitting the key space splits the write path</text>
+  <text x="28" y="77" class="sub" text-anchor="start">The same three servers both times. Read each row across to see what that server does.</text>
+
+  <!-- ONE GROUP: every write funnels through a single leader. -->
+  <rect x="28" y="110" width="520" height="450" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="150" class="heading" text-anchor="start">One group for all keys</text>
+  <text x="48" y="178" class="small" text-anchor="start">A single Raft group covers the whole key space.</text>
+
+  <text x="130" y="222" class="tiny" text-anchor="start">role in that group</text>
+  <text x="330" y="222" class="tiny" text-anchor="start">accepts</text>
+
+  <use href="#server" x="48" y="245" width="22" height="38"/>
+  <text x="80" y="271" class="small" text-anchor="start">S1</text>
+  <rect x="130" y="238" width="160" height="52" rx="8" class="node" fill="#f3faed"/>
+  <text x="210" y="271" class="small" text-anchor="middle">leader</text>
+  <text x="330" y="271" class="small" text-anchor="start">every write</text>
+
+  <use href="#server" x="48" y="313" width="22" height="38"/>
+  <text x="80" y="339" class="small" text-anchor="start">S2</text>
+  <rect x="130" y="306" width="160" height="52" rx="8" class="node" fill="#fff"/>
+  <text x="210" y="339" class="small" text-anchor="middle">follower</text>
+  <text x="330" y="339" class="small" text-anchor="start">no writes</text>
+
+  <use href="#server" x="48" y="381" width="22" height="38"/>
+  <text x="80" y="407" class="small" text-anchor="start">S3</text>
+  <rect x="130" y="374" width="160" height="52" rx="8" class="node" fill="#fff"/>
+  <text x="210" y="407" class="small" text-anchor="middle">follower</text>
+  <text x="330" y="407" class="small" text-anchor="start">no writes</text>
+
+  <rect x="48" y="446" width="480" height="94" rx="10" class="node" fill="#fff" style="stroke:#c0392b"/>
+  <text x="68" y="480" class="heading" text-anchor="start" style="fill:#c0392b">One write path</text>
+  <text x="68" y="512" class="small" text-anchor="start">S1's disk and network are the whole ceiling.</text>
+
+  <!-- MANY GROUPS: the same servers, one independent group per shard. -->
+  <rect x="572" y="110" width="520" height="450" rx="12" fill="#f0f8fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="592" y="150" class="heading" text-anchor="start">One group per shard</text>
+  <text x="592" y="178" class="small" text-anchor="start">The key space is split; each shard gets its own group.</text>
+
+  <text x="736" y="222" class="tiny" text-anchor="middle">shard A</text>
+  <text x="872" y="222" class="tiny" text-anchor="middle">shard B</text>
+  <text x="1008" y="222" class="tiny" text-anchor="middle">shard C</text>
+
+  <use href="#server" x="592" y="245" width="22" height="38"/>
+  <text x="624" y="271" class="small" text-anchor="start">S1</text>
+  <rect x="672" y="238" width="128" height="52" rx="8" class="node" fill="#f3faed"/>
+  <text x="736" y="271" class="small" text-anchor="middle">leader</text>
+  <rect x="808" y="238" width="128" height="52" rx="8" class="node" fill="#fff"/>
+  <text x="872" y="271" class="small" text-anchor="middle">follower</text>
+  <rect x="944" y="238" width="128" height="52" rx="8" class="node" fill="#fff"/>
+  <text x="1008" y="271" class="small" text-anchor="middle">follower</text>
+
+  <use href="#server" x="592" y="313" width="22" height="38"/>
+  <text x="624" y="339" class="small" text-anchor="start">S2</text>
+  <rect x="672" y="306" width="128" height="52" rx="8" class="node" fill="#fff"/>
+  <text x="736" y="339" class="small" text-anchor="middle">follower</text>
+  <rect x="808" y="306" width="128" height="52" rx="8" class="node" fill="#f3faed"/>
+  <text x="872" y="339" class="small" text-anchor="middle">leader</text>
+  <rect x="944" y="306" width="128" height="52" rx="8" class="node" fill="#fff"/>
+  <text x="1008" y="339" class="small" text-anchor="middle">follower</text>
+
+  <use href="#server" x="592" y="381" width="22" height="38"/>
+  <text x="624" y="407" class="small" text-anchor="start">S3</text>
+  <rect x="672" y="374" width="128" height="52" rx="8" class="node" fill="#fff"/>
+  <text x="736" y="407" class="small" text-anchor="middle">follower</text>
+  <rect x="808" y="374" width="128" height="52" rx="8" class="node" fill="#fff"/>
+  <text x="872" y="407" class="small" text-anchor="middle">follower</text>
+  <rect x="944" y="374" width="128" height="52" rx="8" class="node" fill="#f3faed"/>
+  <text x="1008" y="407" class="small" text-anchor="middle">leader</text>
+
+  <rect x="592" y="446" width="480" height="94" rx="10" class="node" fill="#f3faed"/>
+  <text x="612" y="480" class="heading" text-anchor="start">Three write paths</text>
+  <text x="612" y="512" class="small" text-anchor="start">Each shard elects and commits on its own.</text>
+
+  <text x="28" y="606" class="body" text-anchor="start">One server belongs to many groups at once &#8212; as a leader in some and a follower in others.</text>
+</svg>

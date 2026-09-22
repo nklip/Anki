@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="640" viewBox="0 0 1120 640" role="img" aria-labelledby="title desc">
+  <title id="title">A snapshot replaces old entries with the state they produced</title>
+  <desc id="desc">The same log before and after compaction. Before, it holds seven entries; entries 1 to 5 are committed and applied. After, entries 1 to 5 are replaced by a snapshot block that records last included index 5, last included term 3, and the state x equals 0 and y equals 9, while entries 6 and 7 stay in the log unchanged. A strip explains that the snapshot keeps the index and term so that the AppendEntries consistency check for entry 6 still has an answer.</desc>
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 19px; fill: #536174; }
+      .tiny { font-size: 15px; fill: #536174; }
+      .node { stroke: #b9c8d4; stroke-width: 2; }
+    </style>
+    <symbol id="storage" viewBox="965 459 106 140">
+      <path d="M970 482C970 470 992 462 1018 462S1066 470 1066 482V575C1066 587 1044 595 1018 595S970 587 970 575Z" fill="#0b78b5"/>
+      <ellipse cx="1018" cy="482" rx="48" ry="15" fill="white" stroke="#0b78b5" stroke-width="6"/>
+    </symbol>
+  </defs>
+  <rect width="1120" height="640" fill="#fff"/>
+
+  <text x="28" y="43" class="title" text-anchor="start">A snapshot replaces old entries with the state they produced</text>
+  <text x="28" y="77" class="sub" text-anchor="start">One server's log, before and after. Entries 6 and 7 stay exactly where they were.</text>
+
+  <text x="190" y="152" class="tiny" text-anchor="end">log index</text>
+  <text x="256" y="152" class="tiny" text-anchor="middle">1</text>
+  <text x="376" y="152" class="tiny" text-anchor="middle">2</text>
+  <text x="496" y="152" class="tiny" text-anchor="middle">3</text>
+  <text x="616" y="152" class="tiny" text-anchor="middle">4</text>
+  <text x="736" y="152" class="tiny" text-anchor="middle">5</text>
+  <text x="856" y="152" class="tiny" text-anchor="middle">6</text>
+  <text x="976" y="152" class="tiny" text-anchor="middle">7</text>
+
+  <!-- BEFORE: entries 1 to 5 are committed and applied, 6 and 7 are still in flight. -->
+  <text x="48" y="200" class="heading" text-anchor="start">Before</text>
+  <text x="48" y="226" class="small" text-anchor="start">7 entries</text>
+  <rect x="200" y="169" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="256" y="192" class="tiny" text-anchor="middle">term 1</text>
+  <text x="256" y="217" class="small" text-anchor="middle">x&#8592;3</text>
+  <rect x="320" y="169" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="376" y="192" class="tiny" text-anchor="middle">term 1</text>
+  <text x="376" y="217" class="small" text-anchor="middle">y&#8592;1</text>
+  <rect x="440" y="169" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="496" y="192" class="tiny" text-anchor="middle">term 1</text>
+  <text x="496" y="217" class="small" text-anchor="middle">y&#8592;9</text>
+  <rect x="560" y="169" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="616" y="192" class="tiny" text-anchor="middle">term 2</text>
+  <text x="616" y="217" class="small" text-anchor="middle">x&#8592;2</text>
+  <rect x="680" y="169" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="736" y="192" class="tiny" text-anchor="middle">term 3</text>
+  <text x="736" y="217" class="small" text-anchor="middle">x&#8592;0</text>
+  <rect x="800" y="169" width="112" height="62" rx="8" class="node" fill="#fff"/>
+  <text x="856" y="192" class="tiny" text-anchor="middle">term 3</text>
+  <text x="856" y="217" class="small" text-anchor="middle">y&#8592;7</text>
+  <rect x="920" y="169" width="112" height="62" rx="8" class="node" fill="#fff"/>
+  <text x="976" y="192" class="tiny" text-anchor="middle">term 3</text>
+  <text x="976" y="217" class="small" text-anchor="middle">x&#8592;5</text>
+
+  <!-- Compaction step; the shaft runs in the empty band between the two rows. -->
+  <path data-connector="true" d="M496 241L496 316" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="496,328 490,314 502,314" fill="#17212f"/>
+  <text x="520" y="272" class="small" text-anchor="start">entries 1&#8211;5 are committed and already applied,</text>
+  <text x="520" y="296" class="small" text-anchor="start">so the log no longer needs to keep them</text>
+
+  <!-- AFTER: one block stands in for five entries and carries the metadata the check needs. -->
+  <text x="48" y="380" class="heading" text-anchor="start">After</text>
+  <text x="48" y="406" class="small" text-anchor="start">snapshot + 2</text>
+  <rect x="200" y="330" width="592" height="100" rx="10" class="node" fill="#f0f8fc" style="stroke:#0b78b5"/>
+  <use href="#storage" x="220" y="344" width="54" height="72"/>
+  <text x="292" y="366" class="heading" text-anchor="start">snapshot</text>
+  <text x="292" y="394" class="small" text-anchor="start">last included index 5, last included term 3</text>
+  <text x="292" y="418" class="small" text-anchor="start">state: x = 0, y = 9</text>
+  <rect x="800" y="349" width="112" height="62" rx="8" class="node" fill="#fff"/>
+  <text x="856" y="372" class="tiny" text-anchor="middle">term 3</text>
+  <text x="856" y="397" class="small" text-anchor="middle">y&#8592;7</text>
+  <rect x="920" y="349" width="112" height="62" rx="8" class="node" fill="#fff"/>
+  <text x="976" y="372" class="tiny" text-anchor="middle">term 3</text>
+  <text x="976" y="397" class="small" text-anchor="middle">x&#8592;5</text>
+
+  <rect x="28" y="466" width="1064" height="110" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="500" class="heading" text-anchor="start">Why the snapshot keeps an index and a term</text>
+  <text x="48" y="528" class="small" text-anchor="start">AppendEntries still names the entry just before the new ones. For entry 6 that entry is inside the snapshot,</text>
+  <text x="48" y="552" class="small" text-anchor="start">so the snapshot carries its index and term to answer the consistency check.</text>
+
+  <text x="28" y="616" class="body" text-anchor="start">A follower behind the snapshot is caught up by InstallSnapshot instead of AppendEntries.</text>
+</svg>

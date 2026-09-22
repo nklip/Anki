@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="720" viewBox="0 0 1120 720" role="img" aria-labelledby="title desc">
+  <title id="title">One replicated log makes three servers act like one</title>
+  <desc id="desc">A client sends the command x arrow 0 to the leader. The leader appends it to its log as entry 5 and replicates the log to follower A and follower B. Each of the three servers applies the same five commands in the same index order, so all three state machines hold x equals 0 and y equals 9. The leader replies to the client only after a majority of servers stores the entry.</desc>
+  <!-- Server and laptop icons copied from System Design/01. Scaling/images/message-queue.svg. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 19px; fill: #536174; }
+      .tiny { font-size: 15px; fill: #536174; }
+      .node { stroke: #b9c8d4; stroke-width: 2; }
+    </style>
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+    <symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
+  </defs>
+  <rect width="1120" height="720" fill="#fff"/>
+
+  <!-- Lesson heading. -->
+  <text x="28" y="43" class="title" text-anchor="start">One replicated log makes three servers act like one</text>
+  <text x="28" y="77" class="sub" text-anchor="start">Follow the numbers: the command enters once at the leader and reaches every server.</text>
+
+  <!-- The client sits outside the cluster and talks only to the leader. -->
+  <rect x="28" y="110" width="320" height="96" rx="10" class="node" fill="#f3faed"/>
+  <use href="#laptop" x="50" y="132" width="58" height="37"/>
+  <text x="128" y="152" class="heading" text-anchor="start">Client</text>
+  <text x="128" y="182" class="small" text-anchor="start">sends x&#8592;0</text>
+
+  <!-- Request goes down into the cluster; the reply comes back up beside it. -->
+  <path data-connector="true" d="M118 206L118 262" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="118,274 112,260 124,260" fill="#17212f"/>
+  <text x="134" y="248" class="small" text-anchor="start">&#9312; command</text>
+  <path data-connector="true" d="M300 262L300 220" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <polygon points="300,208 294,222 306,222" fill="#0b78b5"/>
+  <text x="316" y="248" class="small" text-anchor="start" style="fill:#0b78b5">&#9315; reply once a majority has it</text>
+
+  <!-- The cluster: three identical servers, one log each. -->
+  <rect x="28" y="274" width="1064" height="396" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="312" class="heading" text-anchor="start">One cluster: same log, same order, same result</text>
+
+  <!-- Index ruler; it belongs to every row, so it is drawn once above the leader. -->
+  <text x="418" y="346" class="tiny" text-anchor="end">log index</text>
+  <text x="462" y="346" class="tiny" text-anchor="middle">1</text>
+  <text x="532" y="346" class="tiny" text-anchor="middle">2</text>
+  <text x="602" y="346" class="tiny" text-anchor="middle">3</text>
+  <text x="672" y="346" class="tiny" text-anchor="middle">4</text>
+  <text x="742" y="346" class="tiny" text-anchor="middle">5</text>
+
+  <!-- LEADER ROW, centre y = 378. -->
+  <use href="#server" x="48" y="343" width="40" height="70"/>
+  <text x="104" y="374" class="heading" text-anchor="start">Leader</text>
+  <text x="104" y="400" class="small" text-anchor="start">accepts the writes</text>
+  <rect x="430" y="350" width="64" height="56" rx="8" class="node" fill="#f3faed"/>
+  <text x="462" y="385" class="small" text-anchor="middle">x&#8592;3</text>
+  <rect x="500" y="350" width="64" height="56" rx="8" class="node" fill="#f3faed"/>
+  <text x="532" y="385" class="small" text-anchor="middle">y&#8592;1</text>
+  <rect x="570" y="350" width="64" height="56" rx="8" class="node" fill="#f3faed"/>
+  <text x="602" y="385" class="small" text-anchor="middle">y&#8592;9</text>
+  <rect x="640" y="350" width="64" height="56" rx="8" class="node" fill="#f3faed"/>
+  <text x="672" y="385" class="small" text-anchor="middle">x&#8592;2</text>
+  <rect x="710" y="350" width="64" height="56" rx="8" class="node" fill="#f3faed"/>
+  <text x="742" y="385" class="small" text-anchor="middle">x&#8592;0</text>
+  <text x="819" y="364" class="small" text-anchor="middle">&#9314; apply</text>
+  <path data-connector="true" d="M786 378L852 378" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="864,378 850,372 850,384" fill="#17212f"/>
+  <rect x="864" y="340" width="196" height="76" rx="10" class="node" fill="#f0f8fc"/>
+  <text x="962" y="370" class="small" text-anchor="middle">state machine</text>
+  <text x="962" y="400" class="heading" text-anchor="middle">x = 0,  y = 9</text>
+
+  <!-- Replication fans out FROM the leader to each follower; it is never a chain A to B. -->
+  <path data-connector="true" d="M424 378L400 378L400 598" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <path data-connector="true" d="M400 488L418 488" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="430,488 416,482 416,494" fill="#17212f"/>
+  <path data-connector="true" d="M400 598L418 598" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="430,598 416,592 416,604" fill="#17212f"/>
+  <text x="446" y="440" class="small" text-anchor="start">&#9313; the leader replicates to each follower</text>
+
+  <!-- FOLLOWER A ROW, centre y = 488. -->
+  <use href="#server" x="48" y="453" width="40" height="70"/>
+  <text x="104" y="484" class="heading" text-anchor="start">Follower A</text>
+  <text x="104" y="510" class="small" text-anchor="start">copies the leader's log</text>
+  <rect x="430" y="460" width="64" height="56" rx="8" class="node" fill="#f3faed"/>
+  <text x="462" y="495" class="small" text-anchor="middle">x&#8592;3</text>
+  <rect x="500" y="460" width="64" height="56" rx="8" class="node" fill="#f3faed"/>
+  <text x="532" y="495" class="small" text-anchor="middle">y&#8592;1</text>
+  <rect x="570" y="460" width="64" height="56" rx="8" class="node" fill="#f3faed"/>
+  <text x="602" y="495" class="small" text-anchor="middle">y&#8592;9</text>
+  <rect x="640" y="460" width="64" height="56" rx="8" class="node" fill="#f3faed"/>
+  <text x="672" y="495" class="small" text-anchor="middle">x&#8592;2</text>
+  <rect x="710" y="460" width="64" height="56" rx="8" class="node" fill="#f3faed"/>
+  <text x="742" y="495" class="small" text-anchor="middle">x&#8592;0</text>
+  <path data-connector="true" d="M786 488L852 488" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="864,488 850,482 850,494" fill="#17212f"/>
+  <rect x="864" y="450" width="196" height="76" rx="10" class="node" fill="#f0f8fc"/>
+  <text x="962" y="480" class="small" text-anchor="middle">state machine</text>
+  <text x="962" y="510" class="heading" text-anchor="middle">x = 0,  y = 9</text>
+
+  <!-- FOLLOWER B ROW, centre y = 598. -->
+  <use href="#server" x="48" y="563" width="40" height="70"/>
+  <text x="104" y="594" class="heading" text-anchor="start">Follower B</text>
+  <text x="104" y="620" class="small" text-anchor="start">copies the leader's log</text>
+  <rect x="430" y="570" width="64" height="56" rx="8" class="node" fill="#f3faed"/>
+  <text x="462" y="605" class="small" text-anchor="middle">x&#8592;3</text>
+  <rect x="500" y="570" width="64" height="56" rx="8" class="node" fill="#f3faed"/>
+  <text x="532" y="605" class="small" text-anchor="middle">y&#8592;1</text>
+  <rect x="570" y="570" width="64" height="56" rx="8" class="node" fill="#f3faed"/>
+  <text x="602" y="605" class="small" text-anchor="middle">y&#8592;9</text>
+  <rect x="640" y="570" width="64" height="56" rx="8" class="node" fill="#f3faed"/>
+  <text x="672" y="605" class="small" text-anchor="middle">x&#8592;2</text>
+  <rect x="710" y="570" width="64" height="56" rx="8" class="node" fill="#f3faed"/>
+  <text x="742" y="605" class="small" text-anchor="middle">x&#8592;0</text>
+  <path data-connector="true" d="M786 598L852 598" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="864,598 850,592 850,604" fill="#17212f"/>
+  <rect x="864" y="560" width="196" height="76" rx="10" class="node" fill="#f0f8fc"/>
+  <text x="962" y="590" class="small" text-anchor="middle">state machine</text>
+  <text x="962" y="620" class="heading" text-anchor="middle">x = 0,  y = 9</text>
+
+  <text x="28" y="700" class="body" text-anchor="start">Same commands, same order, same result &#8212; that is all a consensus algorithm has to deliver.</text>
+</svg>

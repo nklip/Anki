@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="690" viewBox="0 0 1120 690" role="img" aria-labelledby="title desc">
+  <title id="title">An entry is committed once a majority of servers stores it</title>
+  <desc id="desc">Five server logs drawn as rows of numbered entries. Indexes 1 to 4 are on all five servers and index 5 is on three of five, so all of them are committed. Index 6 is only on two of five, so it is not committed yet. A dashed commit boundary stands between index 5 and index 6, and a tally under each column gives the count and the verdict.</desc>
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 19px; fill: #536174; }
+      .tiny { font-size: 15px; fill: #536174; }
+      .node { stroke: #b9c8d4; stroke-width: 2; }
+    </style>
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+  </defs>
+  <rect width="1120" height="690" fill="#fff"/>
+
+  <text x="28" y="43" class="title" text-anchor="start">An entry is committed once a majority of servers stores it</text>
+  <text x="28" y="77" class="sub" text-anchor="start">Five logs, one per server. Empty space on the right of a row means those entries have not arrived.</text>
+
+  <!-- The dashed rule marks where the commit boundary currently sits; it moves right as counts grow. -->
+  <text x="896" y="118" class="small" text-anchor="middle">commit boundary</text>
+  <path d="M896 136L896 600" fill="none" stroke="#c0392b" stroke-width="2.5" stroke-dasharray="8 7"/>
+
+  <text x="290" y="148" class="tiny" text-anchor="end">log index</text>
+  <text x="356" y="148" class="tiny" text-anchor="middle">1</text>
+  <text x="476" y="148" class="tiny" text-anchor="middle">2</text>
+  <text x="596" y="148" class="tiny" text-anchor="middle">3</text>
+  <text x="716" y="148" class="tiny" text-anchor="middle">4</text>
+  <text x="836" y="148" class="tiny" text-anchor="middle">5</text>
+  <text x="956" y="148" class="tiny" text-anchor="middle">6</text>
+
+  <!-- S1, the leader for term 3; its log is the reference every follower is pulled towards. -->
+  <use href="#server" x="48" y="179" width="24" height="42"/>
+  <text x="84" y="207" class="small" text-anchor="start">S1</text>
+  <text x="124" y="207" class="small" text-anchor="start">leader, term 3</text>
+  <rect x="300" y="169" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="356" y="192" class="tiny" text-anchor="middle">term 1</text>
+  <text x="356" y="217" class="small" text-anchor="middle">x&#8592;3</text>
+  <rect x="420" y="169" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="476" y="192" class="tiny" text-anchor="middle">term 1</text>
+  <text x="476" y="217" class="small" text-anchor="middle">y&#8592;1</text>
+  <rect x="540" y="169" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="596" y="192" class="tiny" text-anchor="middle">term 1</text>
+  <text x="596" y="217" class="small" text-anchor="middle">y&#8592;9</text>
+  <rect x="660" y="169" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="716" y="192" class="tiny" text-anchor="middle">term 2</text>
+  <text x="716" y="217" class="small" text-anchor="middle">x&#8592;2</text>
+  <rect x="780" y="169" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="836" y="192" class="tiny" text-anchor="middle">term 3</text>
+  <text x="836" y="217" class="small" text-anchor="middle">x&#8592;0</text>
+  <rect x="900" y="169" width="112" height="62" rx="8" class="node" fill="#fff"/>
+  <text x="956" y="192" class="tiny" text-anchor="middle">term 3</text>
+  <text x="956" y="217" class="small" text-anchor="middle">y&#8592;7</text>
+
+  <!-- S2 matches the leader exactly. -->
+  <use href="#server" x="48" y="245" width="24" height="42"/>
+  <text x="84" y="273" class="small" text-anchor="start">S2</text>
+  <text x="124" y="273" class="small" text-anchor="start">follower</text>
+  <rect x="300" y="235" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="356" y="258" class="tiny" text-anchor="middle">term 1</text>
+  <text x="356" y="283" class="small" text-anchor="middle">x&#8592;3</text>
+  <rect x="420" y="235" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="476" y="258" class="tiny" text-anchor="middle">term 1</text>
+  <text x="476" y="283" class="small" text-anchor="middle">y&#8592;1</text>
+  <rect x="540" y="235" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="596" y="258" class="tiny" text-anchor="middle">term 1</text>
+  <text x="596" y="283" class="small" text-anchor="middle">y&#8592;9</text>
+  <rect x="660" y="235" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="716" y="258" class="tiny" text-anchor="middle">term 2</text>
+  <text x="716" y="283" class="small" text-anchor="middle">x&#8592;2</text>
+  <rect x="780" y="235" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="836" y="258" class="tiny" text-anchor="middle">term 3</text>
+  <text x="836" y="283" class="small" text-anchor="middle">x&#8592;0</text>
+  <rect x="900" y="235" width="112" height="62" rx="8" class="node" fill="#fff"/>
+  <text x="956" y="258" class="tiny" text-anchor="middle">term 3</text>
+  <text x="956" y="283" class="small" text-anchor="middle">y&#8592;7</text>
+
+  <!-- S3 is the third copy of index 5; it is the server that makes index 5 committed. -->
+  <use href="#server" x="48" y="311" width="24" height="42"/>
+  <text x="84" y="339" class="small" text-anchor="start">S3</text>
+  <text x="124" y="339" class="small" text-anchor="start">follower</text>
+  <rect x="300" y="301" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="356" y="324" class="tiny" text-anchor="middle">term 1</text>
+  <text x="356" y="349" class="small" text-anchor="middle">x&#8592;3</text>
+  <rect x="420" y="301" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="476" y="324" class="tiny" text-anchor="middle">term 1</text>
+  <text x="476" y="349" class="small" text-anchor="middle">y&#8592;1</text>
+  <rect x="540" y="301" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="596" y="324" class="tiny" text-anchor="middle">term 1</text>
+  <text x="596" y="349" class="small" text-anchor="middle">y&#8592;9</text>
+  <rect x="660" y="301" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="716" y="324" class="tiny" text-anchor="middle">term 2</text>
+  <text x="716" y="349" class="small" text-anchor="middle">x&#8592;2</text>
+  <rect x="780" y="301" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="836" y="324" class="tiny" text-anchor="middle">term 3</text>
+  <text x="836" y="349" class="small" text-anchor="middle">x&#8592;0</text>
+
+  <!-- S4 and S5 lag by two entries; the leader keeps retrying until they catch up. -->
+  <use href="#server" x="48" y="377" width="24" height="42"/>
+  <text x="84" y="405" class="small" text-anchor="start">S4</text>
+  <text x="124" y="405" class="small" text-anchor="start">follower</text>
+  <rect x="300" y="367" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="356" y="390" class="tiny" text-anchor="middle">term 1</text>
+  <text x="356" y="415" class="small" text-anchor="middle">x&#8592;3</text>
+  <rect x="420" y="367" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="476" y="390" class="tiny" text-anchor="middle">term 1</text>
+  <text x="476" y="415" class="small" text-anchor="middle">y&#8592;1</text>
+  <rect x="540" y="367" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="596" y="390" class="tiny" text-anchor="middle">term 1</text>
+  <text x="596" y="415" class="small" text-anchor="middle">y&#8592;9</text>
+  <rect x="660" y="367" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="716" y="390" class="tiny" text-anchor="middle">term 2</text>
+  <text x="716" y="415" class="small" text-anchor="middle">x&#8592;2</text>
+
+  <use href="#server" x="48" y="443" width="24" height="42"/>
+  <text x="84" y="471" class="small" text-anchor="start">S5</text>
+  <text x="124" y="471" class="small" text-anchor="start">follower</text>
+  <rect x="300" y="433" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="356" y="456" class="tiny" text-anchor="middle">term 1</text>
+  <text x="356" y="481" class="small" text-anchor="middle">x&#8592;3</text>
+  <rect x="420" y="433" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="476" y="456" class="tiny" text-anchor="middle">term 1</text>
+  <text x="476" y="481" class="small" text-anchor="middle">y&#8592;1</text>
+  <rect x="540" y="433" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="596" y="456" class="tiny" text-anchor="middle">term 1</text>
+  <text x="596" y="481" class="small" text-anchor="middle">y&#8592;9</text>
+  <rect x="660" y="433" width="112" height="62" rx="8" class="node" fill="#f3faed"/>
+  <text x="716" y="456" class="tiny" text-anchor="middle">term 2</text>
+  <text x="716" y="481" class="small" text-anchor="middle">x&#8592;2</text>
+
+  <!-- Tally: the count per column is the only thing that decides the verdict below it. -->
+  <path d="M300 512L1012 512" fill="none" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="290" y="536" class="small" text-anchor="end">servers that store it</text>
+  <text x="356" y="536" class="small" text-anchor="middle">5 of 5</text>
+  <text x="476" y="536" class="small" text-anchor="middle">5 of 5</text>
+  <text x="596" y="536" class="small" text-anchor="middle">5 of 5</text>
+  <text x="716" y="536" class="small" text-anchor="middle">5 of 5</text>
+  <text x="836" y="536" class="small" text-anchor="middle">3 of 5</text>
+  <text x="956" y="536" class="small" text-anchor="middle">2 of 5</text>
+
+  <text x="290" y="580" class="small" text-anchor="end">verdict</text>
+  <rect x="300" y="556" width="112" height="34" rx="8" class="node" fill="#f3faed"/>
+  <text x="356" y="579" class="small" text-anchor="middle">committed</text>
+  <rect x="420" y="556" width="112" height="34" rx="8" class="node" fill="#f3faed"/>
+  <text x="476" y="579" class="small" text-anchor="middle">committed</text>
+  <rect x="540" y="556" width="112" height="34" rx="8" class="node" fill="#f3faed"/>
+  <text x="596" y="579" class="small" text-anchor="middle">committed</text>
+  <rect x="660" y="556" width="112" height="34" rx="8" class="node" fill="#f3faed"/>
+  <text x="716" y="579" class="small" text-anchor="middle">committed</text>
+  <rect x="780" y="556" width="112" height="34" rx="8" class="node" fill="#f3faed"/>
+  <text x="836" y="579" class="small" text-anchor="middle">committed</text>
+  <rect x="900" y="556" width="112" height="34" rx="8" class="node" fill="#fff" style="stroke:#c0392b"/>
+  <text x="956" y="579" class="small" text-anchor="middle" style="fill:#c0392b">not yet</text>
+
+  <text x="28" y="650" class="body" text-anchor="start">A committed entry sits on a majority, so every future leader is guaranteed to have it.</text>
+</svg>
