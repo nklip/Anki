@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="884" viewBox="0 0 1280 884" role="img" aria-labelledby="title desc">
+  <title id="title">Where WebSockets are actually used: browser tab versus native mobile app</title>
+  <desc id="desc">Two panels compare the same chat product in two clients, with time running downward in each. The top panel is a browser tab: the browser sends an HTTP GET carrying Upgrade colon websocket, the server answers HTTP 1.1 101 Switching Protocols, and a dashed band then shows frames travelling both ways over wss on port 443 for as long as the tab is open. The named examples are Discord, Signal, WhatsApp Web and Telegram on the web. The bottom panel is a native mobile app: while the app is in the foreground, a double-headed arrow shows its own framing over its own TCP socket, with no GET, no 101 and no masking. A dashed divider marks the app going to the background, where the socket is gone. Below the divider the server hands the message to a push service labelled APNs slash FCM, which delivers it to the phone as a push notification. Both the phone and the server keep their lifelines across the divider; only the socket between them disappears.</desc>
+  <!-- Icons copied from System Design/12. Chat System: high-level-statefull-arch.svg (laptop) and
+       message-synchronization.svg (phone), and System Design/18. Google Maps: cdn-vs-no-cdn.svg (server).
+       Folder arrow convention: for a tip at T, the head base sits 14 back from T and the shaft stops 12
+       back, so the shaft end is hidden 2 units inside the head. Arrows stop 12 short of the far lifeline. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .node { font-size: 20px; font-weight: 700; text-anchor: middle; }
+      .msg { font-family: Menlo, Consolas, monospace; font-size: 16px; fill: #17212f; text-anchor: middle; }
+      .small { font-size: 18px; fill: #536174; }
+      .smallc { font-size: 18px; fill: #536174; text-anchor: middle; }
+      .tag { font-size: 17px; fill: #536174; text-anchor: middle; }
+      .life { stroke: #8fa2b5; stroke-width: 2.5; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 90 70"><rect x="17" y="5" width="56" height="45" rx="4" fill="#fff" stroke="#17212f" stroke-width="4"/><path d="M9 58 H81 L87 65 H3 Z" fill="#17212f"/></symbol>
+    <symbol id="server" viewBox="0 0 76 100"><path d="M8 8h48l14 10v67L54 94H8z" fill="#8e9aa6"/><path d="M56 8 70 18v67L56 94z" fill="#b4bec8"/><rect x="17" y="18" width="31" height="14" rx="2" fill="#eee"/><rect x="17" y="38" width="31" height="14" rx="2" fill="#eee"/><circle cx="33" cy="72" r="6" fill="#eee"/></symbol>
+    <symbol id="phone" viewBox="0 0 60 100"><rect x="10" y="3" width="40" height="94" rx="5" fill="#fff" stroke="#17212f" stroke-width="4"/><path d="M10 17 H50 M10 82 H50 M25 10 H35 M27 90 H33" fill="none" stroke="#17212f" stroke-width="3"/></symbol>
+  </defs>
+  <rect width="1280" height="884" fill="#fff"/>
+  <text x="28" y="44" class="title">Same product, two transports</text>
+  <text x="28" y="78" class="sub">The browser tab has to upgrade an HTTP request. The phone app does not &#8212; and could not hold the socket anyway.</text>
+  <!-- Panel A: the browser client, the case RFC 6455 was written for. -->
+  <rect x="28" y="100" width="1224" height="330" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="52" y="136" class="heading">In a browser tab &#8212; a WebSocket</text>
+  <text x="52" y="162" class="small">Discord &#183; Signal &#183; WhatsApp Web &#183; Telegram on the web</text>
+  <rect x="60" y="186" width="180" height="76" rx="12" fill="#fff" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#laptop" x="90" y="200" width="58" height="45"/>
+  <text x="184" y="230" class="node">browser</text>
+  <rect x="1012" y="186" width="180" height="76" rx="12" fill="#fff" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#server" x="1040" y="198" width="38" height="50"/>
+  <text x="1128" y="230" class="node">server</text>
+  <!-- Lifelines: time runs downward. They stop where the dashed band takes over. -->
+  <path class="life" d="M150 262 V358 M1102 262 V358" fill="none"/>
+  <text x="626" y="286" class="msg">GET /chat &#183; Upgrade: websocket</text>
+  <path data-connector="true" d="M162 300 L1078 300" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="1090,300 1076,306 1076,294" fill="#17212f"/>
+  <text x="626" y="330" class="msg">HTTP/1.1 101 Switching Protocols</text>
+  <path data-connector="true" d="M1090 344 L174 344" fill="none" stroke="#3f7d20" stroke-width="2.5"/>
+  <polygon points="162,344 176,338 176,350" fill="#3f7d20"/>
+  <!-- Outcome band, not a connector: what the upgrade bought. -->
+  <rect x="150" y="366" width="952" height="48" rx="10" fill="#fff" stroke="#3f7d20" stroke-width="2.5" stroke-dasharray="10 8"/>
+  <text x="626" y="396" class="smallc">then frames both ways on wss:// port 443, for as long as the tab is open</text>
+  <!-- Panel B: the native mobile client. Same two actors, no upgrade, and a state change halfway down. -->
+  <rect x="28" y="450" width="1224" height="410" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="52" y="486" class="heading">In a native mobile app &#8212; usually not a WebSocket</text>
+  <text x="52" y="512" class="small">WhatsApp&#8217;s and Telegram&#8217;s phone clients: their own protocol, on their own socket.</text>
+  <rect x="60" y="532" width="200" height="86" rx="12" fill="#fff" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#phone" x="90" y="547" width="34" height="56"/>
+  <text x="194" y="584" class="node">phone app</text>
+  <rect x="1012" y="532" width="180" height="86" rx="12" fill="#fff" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#server" x="1038" y="547" width="43" height="56"/>
+  <text x="1126" y="584" class="node">server</text>
+  <!-- Both lifelines run the full panel: the device and the server persist. Only the socket between them stops. -->
+  <path class="life" d="M160 618 V810 M1102 618 V810" fill="none"/>
+  <text x="631" y="646" class="smallc">its own framing on its own TCP socket &#8212; no GET, no 101, no masking</text>
+  <!-- Double-headed: both sides may write, exactly as on a WebSocket. The dial-up differs, not the duplex. -->
+  <path data-connector="true" d="M184 660 L1078 660" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="1090,660 1076,666 1076,654" fill="#17212f"/>
+  <polygon points="172,660 186,654 186,666" fill="#17212f"/>
+  <text x="631" y="684" class="tag">while the app is in the foreground</text>
+  <!-- Divider: the state change that decides everything below it. It crosses both lifelines on purpose —
+       the endpoints survive; the socket does not. The centre gap holds the label. -->
+  <path d="M52 716 H380 M900 716 H1228" fill="none" stroke="#8fa2b5" stroke-width="2" stroke-dasharray="8 7"/>
+  <text x="640" y="722" class="smallc">the app goes to the background &#8212; the socket is gone</text>
+  <rect x="540" y="746" width="200" height="64" rx="10" fill="#fff" stroke="#c2410c" stroke-width="2.5"/>
+  <text x="640" y="772" class="node">APNs / FCM</text>
+  <text x="640" y="796" class="tag">push service</text>
+  <text x="921" y="762" class="smallc">the server hands it to the platform</text>
+  <path data-connector="true" d="M1090 778 L752 778" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="740,778 754,772 754,784" fill="#c2410c"/>
+  <text x="350" y="762" class="smallc">arrives as a push notification</text>
+  <path data-connector="true" d="M528 778 L184 778" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="172,778 186,772 186,784" fill="#c2410c"/>
+  <text x="52" y="846" class="small">The app&#8217;s own socket comes back when the user does. Nothing in this panel was ever a WebSocket.</text>
+</svg>

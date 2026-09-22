@@ -1,6 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1288" height="636" viewBox="0 0 1288 636" role="img" aria-labelledby="title desc">
   <title id="title">Anatomy of a WebSocket frame: header fields, opcodes, fragmentation and masking</title>
-  <desc id="desc">A strip shows one frame left to right: FIN one bit, RSV1 to RSV3 three bits, opcode four bits, MASK one bit, payload length seven bits, an extended length of zero, two or eight bytes, a masking key of zero or four bytes, and the payload. Three panels below expand it. The opcode panel lists 0x0 continuation, 0x1 text, 0x2 binary, 0x8 close, 0x9 ping and 0xA pong. The fragmentation panel shows one message sent as three frames, the first two with FIN 0. The masking panel shows MASK 1 with a four-byte key on browser-to-server frames and MASK 0 with no key on server-to-browser frames.</desc>
+  <desc id="desc">A strip shows one frame left to right: FIN one bit, RSV1 to RSV3 three bits, opcode four bits, MASK one bit, payload length seven bits, an extended length of zero, two or eight bytes, a masking key of zero or four bytes, and the payload. Three panels below expand it. The opcode panel lists 0x0 continuation, 0x1 text, 0x2 binary, 0x8 close, 0x9 ping and 0xA pong. The fragmentation panel shows one message sent as three frames, the first two with FIN 0. The masking panel shows two direction rows drawn as icons: a laptop with an arrow to a server, labelled browser to server, above MASK 1 with a fresh four-byte key; and a server with an arrow to a laptop, labelled server to browser, above MASK 0 with no key.</desc>
+  <!-- Icons copied from System Design/12. Chat System: high-level-statefull-arch.svg (laptop) and
+       System Design/18. Google Maps: cdn-vs-no-cdn.svg (server). They carry the asymmetry the MASK
+       panel exists to teach: the rule depends on which end sent the frame. -->
   <defs>
     <style>
       text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
@@ -12,6 +15,8 @@
       .bits { font-size: 16px; fill: #536174; text-anchor: middle; }
       .code { font-family: Menlo, Consolas, monospace; font-size: 16px; fill: #17212f; }
     </style>
+    <symbol id="laptop" viewBox="0 0 90 70"><rect x="17" y="5" width="56" height="45" rx="4" fill="#fff" stroke="#17212f" stroke-width="4"/><path d="M9 58 H81 L87 65 H3 Z" fill="#17212f"/></symbol>
+    <symbol id="server" viewBox="0 0 76 100"><path d="M8 8h48l14 10v67L54 94H8z" fill="#8e9aa6"/><path d="M56 8 70 18v67L56 94z" fill="#b4bec8"/><rect x="17" y="18" width="31" height="14" rx="2" fill="#eee"/><rect x="17" y="38" width="31" height="14" rx="2" fill="#eee"/><circle cx="33" cy="72" r="6" fill="#eee"/></symbol>
   </defs>
   <rect width="1288" height="636" fill="#fff"/>
   <text x="28" y="44" class="title">What actually travels: the frame</text>
@@ -84,17 +89,26 @@
   <text x="456" y="524" class="small">Only the first frame names the type; the rest</text>
   <text x="456" y="546" class="small">say &#8220;continuation&#8221;. A ping or a close may be</text>
   <text x="456" y="568" class="small">slipped in between two fragments.</text>
-  <!-- MASK: obligatory one way, forbidden the other. -->
+  <!-- MASK: obligatory one way, forbidden the other. Each row leads with the sender's icon,
+       because the rule is about which end sent the frame, not about what the frame contains. -->
   <rect x="896" y="286" width="364" height="322" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
   <text x="920" y="322" class="heading">MASK &#8212; who scrambles</text>
-  <text x="920" y="356" class="small">browser &#8594; server</text>
-  <rect x="920" y="368" width="316" height="44" rx="8" fill="#fff" stroke="#c2410c" stroke-width="2"/>
-  <text x="1078" y="396" class="code" text-anchor="middle">MASK 1, fresh 4-byte key</text>
-  <text x="920" y="446" class="small">server &#8594; browser</text>
-  <rect x="920" y="458" width="316" height="44" rx="8" fill="#fff" stroke="#8fa2b5" stroke-width="2"/>
-  <text x="1078" y="486" class="code" text-anchor="middle">MASK 0, no key</text>
-  <text x="920" y="522" class="small">Not encryption. It stops a hostile</text>
-  <text x="920" y="544" class="small">page from choosing the exact bytes</text>
-  <text x="920" y="566" class="small">an old proxy sees. That trick once</text>
-  <text x="920" y="588" class="small">poisoned caches in the wild.</text>
+  <use href="#laptop" x="920" y="334" width="36" height="28"/>
+  <path data-connector="true" d="M966 348 L982 348" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="994,348 980,354 980,342" fill="#17212f"/>
+  <use href="#server" x="1004" y="332" width="24" height="32"/>
+  <text x="1044" y="357" class="small">browser to server</text>
+  <rect x="920" y="372" width="316" height="40" rx="8" fill="#fff" stroke="#c2410c" stroke-width="2"/>
+  <text x="1078" y="399" class="code" text-anchor="middle">MASK 1, fresh 4-byte key</text>
+  <use href="#server" x="920" y="420" width="24" height="32"/>
+  <path data-connector="true" d="M956 436 L972 436" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="984,436 970,442 970,430" fill="#17212f"/>
+  <use href="#laptop" x="994" y="422" width="36" height="28"/>
+  <text x="1044" y="445" class="small">server to browser</text>
+  <rect x="920" y="460" width="316" height="40" rx="8" fill="#fff" stroke="#8fa2b5" stroke-width="2"/>
+  <text x="1078" y="487" class="code" text-anchor="middle">MASK 0, no key</text>
+  <text x="920" y="524" class="small">Not encryption. It stops a hostile</text>
+  <text x="920" y="546" class="small">page from choosing the exact bytes</text>
+  <text x="920" y="568" class="small">an old proxy sees. That trick once</text>
+  <text x="920" y="590" class="small">poisoned caches in the wild.</text>
 </svg>

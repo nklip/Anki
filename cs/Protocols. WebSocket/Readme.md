@@ -4,21 +4,25 @@
 
 **A WebSocket is one connection, opened by an ordinary HTTP request, that both sides may write to whenever they like for as long as it lasts.** [HTTP](../Protocols.%20HTTP/Readme.md) gives a server no way to speak first: every response exists because some request asked for it. The WebSocket Protocol lifts that rule, and lifts it once — the cost of opening the channel is paid at the start rather than on every message.
 
-This article builds the model in the order you need it: what the protocol is and how it differs from the HTTP it begins as, the handshake that opens it, the frames that travel afterwards, what a browser exposes to your code, what the hops between a browser and a server do to a connection that stays open for hours, and then **five patterns** that nearly every WebSocket application is assembled from, and finally the limits that survive all of them. The running examples are a price feed for the ticker `AAPL` and a chat room, because between them they cover the two shapes everything else varies on.
+This article builds the model in the order you need it: what the protocol is and how it differs both from the HTTP it begins as and from Server-Sent Events, the nearest thing to it, the handshake that opens it, the frames that travel afterwards, what a browser exposes to your code, what the hops between a browser and a server do to a connection that stays open for hours, then **five patterns** that nearly every WebSocket application is assembled from, then which real products actually run on one and which only look as though they do, and finally the limits that survive all of them. The running examples are a price feed for the ticker `AAPL` and a chat room, because between them they cover the two shapes everything else varies on.
 
 The specification is **RFC 6455**, published in 2011 and still current; the version number carried in the handshake is `13`. Two later RFCs, 8441 and 9220, say how to start the same protocol over HTTP/2 and HTTP/3.
 
 ## What a WebSocket is
 
-Compare the two panels below over the same stretch of time. On the left, HTTP: the browser asks, the server answers, six messages arranged as three exchanges, and each server message exists only because a request preceded it. To learn that a price changed, the browser has to ask again — and it has no way to know when asking is worthwhile.
+Compare the three panels below over the same stretch of time. Each holds the same browser and the same server, drawn as two vertical lifelines, and lower means later. Blue opens a connection. After that, an arrow's colour says whose decision it was rather than which way it points: black for a message that exists because the browser asked, orange for one the server sent on its own. That is why every arrow in the left panel is black, including the three that fly server to browser — a response is the server's message but the browser's decision, which is the whole complaint of the panel.
 
-On the right, the same period with a WebSocket. Two messages open the connection: a handshake request and a `101 Switching Protocols` reply. After that, the dashed block holds four messages that nobody requested. Three of them are the server's own initiative — it sent them because something happened, not because it was asked. The last arrow is a Close frame, which is how a WebSocket ends on purpose.
+**Left — HTTP polling.** The browser asks, the server answers, six messages arranged as three exchanges, and each server message exists only because a request preceded it. To learn that a price changed, the browser has to ask again — and it has no way to know when asking is worthwhile.
+
+**Middle — Server-Sent Events.** One `GET /events`, answered once with `200 OK` and a `text/event-stream` body the server then keeps writing to. The four messages in the dashed block are the server's own, and no second request is ever sent. They are not four responses, which is why the rule this article opened with survives: they are one response body still being written, and it exists because a request asked for it. This is the half-measure worth knowing from the start — every arrow in the panel runs server to browser, so the browser has no way to answer on that channel. Pattern 1 and the limits both come back to it.
+
+**Right — WebSocket.** Two messages open the connection: a handshake request and a `101 Switching Protocols` reply. After that, the dashed block holds four messages that nobody requested. Three are the server's own initiative — it sent them because something happened, not because it was asked. The fourth, the third arrow down, runs the other way: the browser writing unprompted. That single arrow is the whole of what a WebSocket adds to the middle panel.
 
 ![websocket-vs-http.svg](images/websocket-vs-http.svg)
 
 Two things in that picture are easy to misread.
 
-The first is what "persistent" means. HTTP/1.1 already reuses a TCP connection for many request-response pairs, so an open connection is not what WebSockets added. What they added is the right for the **server** to write into it unprompted. The left panel would look the same whether or not its six messages shared a connection.
+The first is what "persistent" means. HTTP/1.1 already reuses a TCP connection for many request-response pairs, so an open connection is not what WebSockets added — and the middle panel shows that even an open, server-driven stream is available over ordinary HTTP. What a WebSocket adds is the right for **either** side to write into the connection unprompted. The left panel would look the same whether or not its six messages shared a connection.
 
 The second is what the handshake costs. It happens once. A chat session that runs for an hour pays for one handshake; the equivalent in HTTP polling pays for a request every second or two, each with its own header block, whether or not anything changed.
 
@@ -162,7 +166,7 @@ Everything after that point is identical. The same frames, the same opcodes, the
 
 ## Patterns
 
-These five are what WebSocket applications are actually built from. The first four each get a diagram; the fifth is a table, because its lesson is which names already exist rather than how something moves.
+These five are what WebSocket applications are actually built from, and they are ordered by how soon a deployment forces each one on you. The first is why you opened a socket at all. The second is what production breaks on first, because the idle timeouts of the previous section start expiring on day one. The third arrives the moment there is a second instance. The fourth arrives only if your client asks the server questions, and plenty of clients never do. The fifth is the one to check before you hand-build any of the other four. The first four each get a diagram; the fifth is a table, because its lesson is which names already exist rather than how something moves.
 
 They share one premise worth stating first. The protocol delivers messages over an open channel and does nothing else — no addressing, no correlation, no delivery guarantee, no session, no ordering across connections. Everything in this section is an application-level convention filling one of those gaps.
 
@@ -176,19 +180,9 @@ Read the diagram downward. One `subscribe` message goes up. Three quote messages
 
 This is the pattern the protocol was designed for and the one most systems only ever need. Price tickers, dashboards, notification bells, live logs, build progress, and the cursors in a collaborative editor are all this shape.
 
-It is also the pattern with a real alternative. If data only ever flows from server to client, **Server-Sent Events** does the same job over plain HTTP, reconnects by itself, and carries a `Last-Event-ID` for resumption — all the things pattern 3 below exists to rebuild by hand here. Choose a WebSocket when the client genuinely needs to send too, or when the message volume makes the per-message overhead matter.
+It is also the pattern with a real alternative, and it is the middle panel of the opening figure. If data only ever flows from server to client, **Server-Sent Events** does the same job over plain HTTP, reconnects by itself, and carries a `Last-Event-ID` for resumption — all the things pattern 2 below exists to rebuild by hand here. Choose a WebSocket when the client genuinely needs to send too, or when the message volume makes the per-message overhead matter.
 
-### 2. Request and reply over one socket
-
-A WebSocket delivers messages, not pairs. Send two requests and two replies come back, but nothing in the protocol says which answers which. HTTP pairs them for you — in HTTP/1.1 by response order, in HTTP/2 by stream — and a WebSocket has neither mechanism, so replies may arrive in any order with nothing at the transport level to sort them out.
-
-In the diagram the browser sends request `7` and then request `8` without waiting. The server answers `8` first. The bracket marks that reversal, and the `id` in each message, not its position, is what pairs it with a request.
-
-![pattern-request-response.svg](images/pattern-request-response.svg)
-
-So the client keeps a table of the ids it is waiting on and resolves each one when its reply arrives. It also needs a timeout per entry, because a reply that never comes produces no event at all. This is not an exotic convention: **JSON-RPC 2.0** is built on exactly it — the response `id` must equal the request `id`, batch responses may come back in any order, and a request sent with no `id` is a one-way notification that gets no answer. The `graphql-transport-ws` subprotocol does the same, and says so plainly: its `id` exists to connect server responses with the client's requests, so several subscriptions can stay active at once with their messages interleaved on one connection.
-
-### 3. Heartbeat, reconnect, resume
+### 2. Heartbeat, reconnect, resume
 
 The protocol gives you an open pipe, not a session. Noticing that a peer has died, getting back, and working out what was missed are all the application's job.
 
@@ -202,7 +196,9 @@ Three parts of that are easy to get wrong.
 * **Resume, or snapshot.** The gap between the last message received and the first of the new connection is yours to close. A server that can replay sends the messages after a cursor; a server that cannot sends a fresh snapshot of the whole state, which is simpler and usually cheaper than keeping a replay log.
 * **Reauthenticate.** The new connection is a new handshake. A token that expired during the outage will not be noticed until you check it.
 
-### 4. Fan-out across instances
+Every serious WebSocket API ships this pattern because every one of them has to. Discord's gateway makes the heartbeat mandatory — the client sends opcode `1` at the interval the server names in its Hello event — and hands out a `session_id` plus a running sequence number `s`; a client that drops reconnects with Resume, opcode `6`, carrying the last `s` it saw, and the gateway replays the missed events and marks the end of the replay with a `Resumed` event. That is the diagram above, step for step — but one layer up, and the gap is worth seeing. Discord's `1` and `6` are opcodes of Discord's own JSON envelope, not the protocol's: its heartbeat is an ordinary text message that happens to carry `"op": 1`, not the `0x9` ping frame in the diagram. A socket built to RFC 6455 has a heartbeat already, and Discord still defined its own on top — because a ping frame is answered by the peer's WebSocket library, which proves the transport is alive without proving the application behind it still is. Slack's Socket Mode does not even wait for a failure: it refreshes connections on a schedule and warns roughly ten seconds before dropping one, so a client that cannot reconnect cleanly is broken by design rather than by bad luck.
+
+### 3. Fan-out across instances
 
 A socket belongs to exactly one process. When a message has to reach clients spread over several instances, the instance that received it cannot deliver it, because it cannot write to a socket it does not hold.
 
@@ -214,6 +210,20 @@ A chat message from A therefore travels up to instance 1, out to the broker, bac
 
 Two consequences follow. Because a subscription is per instance rather than per client, an instance must still decide which of its own sockets a given message belongs to — so it keeps a local map from topic to sockets. And because the broker is now in the delivery path, its failure is a delivery failure, even though every WebSocket is still perfectly open.
 
+This is why every mature framework ships a ready-made version of it. Socket.IO's Redis adapter publishes each broadcast to a Redis channel that the other servers in the cluster receive. ASP.NET Core SignalR calls the same component a backplane and states the failure it prevents without hedging: add a server and it holds connections the other servers know nothing about, so a message meant for all clients reaches only the clients of the server that sent it. Both documents also record the pinning half of the problem — both require sticky sessions on a server farm, for the reason *How it works over the internet* gave. SignalR's exception is worth reading, though, because it is this article's subject: a client configured to use WebSockets *only*, with the negotiation step skipped, does not need them. The stickiness SignalR usually demands is owed to that negotiation and to its long-polling fallback, not to the socket. A plain WebSocket still has to stay on the instance that holds it — an open socket cannot be moved — but it never needs an affinity cookie to find its way back to one, because it never makes a second request.
+
+### 4. Request and reply over one socket
+
+A WebSocket delivers messages, not pairs. Send two requests and two replies come back, but nothing in the protocol says which answers which. HTTP pairs them for you — in HTTP/1.1 by response order, in HTTP/2 by stream — and a WebSocket has neither mechanism, so replies may arrive in any order with nothing at the transport level to sort them out.
+
+In the diagram the browser sends request `7` and then request `8` without waiting. The server answers `8` first. The bracket marks that reversal, and the `id` in each message, not its position, is what pairs it with a request.
+
+![pattern-request-response.svg](images/pattern-request-response.svg)
+
+It is also the one pattern here you can decline outright. Discord describes its gateway as a connection for receiving events and says most of what an app wants to *do* should go to an ordinary HTTP API instead — the gateway takes a short list of commands, presence and voice state among them, and nothing else; keeping requests on HTTP costs a second connection and buys back status codes, caching, and retry semantics you would otherwise rebuild inside messages. Reach for this pattern when the request genuinely belongs on the socket — because it is frequent, because it is part of an ordered stream, or because the reply is a subscription rather than a value.
+
+When you do, the client keeps a table of the ids it is waiting on and resolves each one when its reply arrives. It also needs a timeout per entry, because a reply that never comes produces no event at all. This is not an exotic convention: **JSON-RPC 2.0** is built on exactly it — the response `id` must equal the request `id`, batch responses may come back in any order, and a request sent with no `id` is a one-way notification that gets no answer. The `graphql-transport-ws` subprotocol does the same, and says so plainly: its `id` exists to connect server responses with the client's requests, so several subscriptions can stay active at once with their messages interleaved on one connection.
+
 ### 5. Put a real subprotocol on top
 
 The four patterns above are all conventions layered on a protocol that has none. You do not have to invent those conventions: several are standardised, registered with IANA, and named in `Sec-WebSocket-Protocol` during the handshake so that client and server agree before the first message.
@@ -221,21 +231,70 @@ The four patterns above are all conventions layered on a protocol that has none.
 | Subprotocol name | What it gives you |
 | --- | --- |
 | `mqtt` | Topics, subscriptions, and quality-of-service levels. The MQTT specification requires that packets travel in **binary** frames and that a client offer `mqtt` and a server return it; it also warns that one WebSocket frame may hold several MQTT packets, or part of one. |
-| `v12.stomp` | A text, frame-based messaging protocol. `SUBSCRIBE` registers interest in a destination and must carry an `id`; `MESSAGE` frames deliver to that subscription; a `heart-beat` header on `CONNECT` negotiates the heartbeat half of pattern 3 for you. |
-| `wamp` | Pub/sub and routed remote procedure calls over one connection — patterns 1 and 2 together, as a specification. |
+| `v12.stomp` | A text, frame-based messaging protocol. `SUBSCRIBE` registers interest in a destination and must carry an `id`; `MESSAGE` frames deliver to that subscription; a `heart-beat` header on `CONNECT` negotiates the heartbeat half of pattern 2 for you. |
+| `wamp` | Pub/sub and routed remote procedure calls over one connection — patterns 1 and 4 together, as a specification. |
 | `xmpp`, `sip`, `amqp`, `coap`, `jmap` | WebSocket transports for existing protocols, so an existing server speaks to a browser without a gateway. |
 
-The registry holds several dozen more. The reason to reach for one is not conformance for its own sake: it is that pattern 3's reconnect-and-resume and pattern 2's correlation are easy to design badly, and a tested client library that already implements them is worth more than a bespoke message envelope.
+The registry holds several dozen more. The reason to reach for one is not conformance for its own sake: it is that pattern 2's reconnect-and-resume and pattern 4's correlation are easy to design badly, and a tested client library that already implements them is worth more than a bespoke message envelope.
 
 If you do invent your own, version it — put the version in the subprotocol name, as `v12.stomp` does. The handshake is the only moment when both sides can still disagree cheaply.
+
+## Where it is actually used
+
+The five patterns above are what you build *on* a WebSocket. This section asks the question that comes before them: whether a WebSocket is the right transport for your client at all. The unit here is no longer a mechanism but a client, which is why the same products come round again — above, they were evidence that a pattern is unavoidable; here, they are the answer.
+
+A chat room has been the running example since the first paragraph, so it is worth being exact about what real chat systems do. The honest answer is not one answer: the same product frequently speaks WebSocket in one client and something else entirely in another, and the line between them is almost always the browser.
+
+### In a browser, the answer is yes
+
+| Product | What its browser client connects to |
+| --- | --- |
+| **Discord** | `wss://gateway.discord.gg/?v=10&encoding=json`. The Gateway is a WebSocket by definition, carrying JSON or binary ETF; its heartbeat and Resume flow are pattern 2. |
+| **Signal** | Signal-Server maps two WebSocket paths: `/v1/websocket/` carries the message stream, `/v1/websocket/provisioning/` links a new device. |
+| **WhatsApp Web** | `wss://web.whatsapp.com/ws/chat`, an ordinary `wss://` endpoint that completes the RFC 6455 handshake. WhatsApp documents no part of this; the endpoint comes from a reverse-engineered client, and it is the one row here not taken from the vendor. |
+| **Telegram on the web** | MTProto over WebSocket. Telegram's transport page recommends it for browser clients over HTTP for its "full-duplex stream logic", requires transport obfuscation, and requires `Sec-WebSocket-Protocol: binary` in the handshake. |
+
+That last row is worth a second look, because it is the handshake section and the subprotocol pattern meeting in production. `binary` is **not** in the IANA subprotocol registry, which is exactly what `Sec-WebSocket-Protocol` is for: the field is a private agreement between one client and one server that happens to have a public registry attached, not a lookup into that registry.
+
+Slack is the instructive absence. It documents a WebSocket API in more detail than anyone else here — **Socket Mode**, which opens up to ten connections at once and has the app acknowledge each event by echoing its `envelope_id`, pattern 4 with the roles reversed — and none of it belongs in the table above, because that socket is held by a *third-party app* receiving events, not by anybody's browser tab. Slack's own reason for offering it is a developer who cannot expose a public HTTP endpoint to receive webhooks on. A vendor's best-documented WebSocket is not automatically its browser client's, which is why the question this section asks is what a given client connects to rather than which products "use WebSockets".
+
+### On a phone, the answer is usually no
+
+Read the diagram as two rows over the same product. The top row is the browser tab: one `wss://` handshake, then frames in both directions for as long as the tab is open. The bottom row is the phone: the app's own socket while it is in the foreground, and — below the dashed line, where the app has gone to the background and the socket is gone — a message routed instead through the platform's push service, Apple's Push Notification service (APNs) or Firebase Cloud Messaging (FCM). Both lifelines cross that line: the phone and the server survive, the socket between them does not.
+
+![where-websockets-run.svg](images/where-websockets-run.svg)
+
+Three things push a native mobile app away from a WebSocket, in the order they bite.
+
+#### **The upgrade is a browser's problem, not an app's**
+
+Everything in *How it works: the handshake* exists for two reasons — a browser cannot open a raw socket, and an intermediary will not forward what it does not recognise. A native app has neither constraint. It opens a TCP connection and writes whatever framing it likes, with no `GET`, no `101`, and no obligation to mask every frame it sends.
+
+Native clients generally take that freedom. WhatsApp's own encryption white paper describes the channel between a client and a WhatsApp chat server as Noise Pipes — Curve25519, AES-GCM and SHA256 from the Noise Protocol Framework, "for long running interactive connections" — and never mentions WebSocket anywhere. Telegram documents five MTProto transports and singles out WebSocket as the one to implement *for browser clients*; a client that is not a browser picks from the others, TCP among them.
+
+#### **The operating system takes the socket away**
+
+This is the reason that survives every other argument. A phone does not let a backgrounded app keep a connection open.
+
+Android's Doze suspends network access once a device has been idle for a while, and App Standby defers background network activity for an app the user has not touched — an app in that state may get network access about once a day. Google's guidance follows directly: an app that needs messaging with a backend service should use FCM rather than maintain its own persistent network connection, and a high-priority FCM message is what wakes the app and temporarily restores its network access. Apple's energy guide describes the same shape from the other side: the system suspends an app that is not performing important work, and a backgrounded app gets only a few seconds to finish what it was doing.
+
+A message arriving while the app is not in front therefore cannot be a frame on a socket the process no longer holds. It is a platform push notification, delivered by APNs or FCM, and the app's own connection — if it opens one at all — comes back when the user does.
+
+#### **A held socket costs radio, battery, and server memory**
+
+Pattern 2's ping every twenty or thirty seconds is the right answer to a reverse proxy's idle timeout and an expensive habit on a battery, where each ping wakes the radio. The server side of the same bill is in *Limits worth knowing*: an idle socket still costs its buffers and its session state. A push service is the trade that removes both — one connection held by the operating system and shared by every app on the device, rather than one per app.
+
+### What the slogan should say
+
+So the accurate version of "chat uses WebSockets" is narrower and more useful than the slogan. **A chat client running in a browser tab uses a WebSocket. A chat client that is a native mobile app usually runs its own protocol over its own socket, and hands everything that happens while it is closed to the platform's push service.** The WebSocket's job in those products is to be the browser's way in — which is precisely the job RFC 6455 was written to do.
 
 ## Limits worth knowing
 
 * **There is no delivery guarantee.** `send()` returning does not mean the peer received anything. It does not even mean the bytes left the machine; `bufferedAmount` tells you that much and no more. If a message matters, acknowledge it at the application level.
 * **Ordering holds within a connection and nowhere else.** Frames arrive in the order they were sent, because TCP says so. Across a reconnect, ordering is whatever your resume logic makes it.
 * **Open connections are the capacity limit.** A server's cost is no longer requests per second but sockets held, each with its buffers and its session state, whether or not it is carrying traffic. Idle connections are not free.
-* **A restart drops every client at once.** There is no graceful handover of an open socket to a new process. A rolling deploy is a synchronised mass reconnection, which is why pattern 3's randomised backoff is not optional at scale.
-* **Not every problem needs one.** If the client never sends, Server-Sent Events is less machinery for the same result. If updates are rare and staleness is acceptable, polling is less machinery still. A WebSocket earns its complexity when traffic is genuinely two-way, or frequent enough that per-message HTTP overhead dominates.
+* **A restart drops every client at once.** There is no graceful handover of an open socket to a new process. A rolling deploy is a synchronised mass reconnection, which is why pattern 2's randomised backoff is not optional at scale.
+* **Not every problem needs one.** If the client never sends, Server-Sent Events is less machinery for the same result. If updates are rare and staleness is acceptable, polling is less machinery still. A WebSocket earns its complexity when traffic is genuinely two-way, or frequent enough that per-message HTTP overhead dominates. And if the client is a native mobile app rather than a browser, *Where it is actually used* gives a third reason to look elsewhere.
 * **Nothing about it is authenticated by default.** The handshake is an HTTP request, so it carries whatever HTTP authentication you attach to it — and nothing more. The `Sec-WebSocket-Key` exchange proves the peer speaks WebSocket, not who it is. Checking `Origin` and validating a token are both your server's work.
 
 ## Self-check
@@ -303,12 +362,12 @@ If you do invent your own, version it — put the version in the subprotocol nam
 
    </details>
 
-8. A client sends two requests without waiting and gets two replies. Can it assume the first reply answers the first request?
+8. A rolling deploy restarts every instance in a fleet in turn. What does that look like from the fleet's side, and what keeps it from becoming an outage?
 
    <details>
    <summary>Answer</summary>
 
-   No. The protocol preserves the order frames were sent in, but says nothing about the order a server chooses to answer in, and the second request may well be the quicker one. Pairing must come from an `id` carried in the messages, as JSON-RPC and GraphQL over WebSocket both do.
+   Every client an instance held disconnects at the same instant, because an open socket cannot be handed over. They all try to reconnect together. Randomised backoff — RFC 6455 suggests a random initial delay of nought to five seconds, lengthening after each failure — is what spreads that burst out.
 
    </details>
 
@@ -321,12 +380,12 @@ If you do invent your own, version it — put the version in the subprotocol nam
 
    </details>
 
-10. A deploy restarts all three instances in sequence. What does that look like from the fleet's side, and what keeps it from becoming an outage?
+10. A client sends two requests without waiting and gets two replies. Can it assume the first reply answers the first request?
 
     <details>
     <summary>Answer</summary>
 
-    Every client an instance held disconnects at the same instant, because an open socket cannot be handed over. They all try to reconnect together. Randomised backoff — RFC 6455 suggests a random initial delay of nought to five seconds, lengthening after each failure — is what spreads that burst out.
+    No. The protocol preserves the order frames were sent in, but says nothing about the order a server chooses to answer in, and the second request may well be the quicker one. Pairing must come from an `id` carried in the messages, as JSON-RPC and GraphQL over WebSocket both do.
 
     </details>
 
@@ -335,7 +394,7 @@ If you do invent your own, version it — put the version in the subprotocol nam
     <details>
     <summary>Answer</summary>
 
-    Whether a registered subprotocol already does it. `v12.stomp` negotiates heartbeats through a `heart-beat` header on `CONNECT` and gives every subscription a mandatory `id`; `mqtt` brings topics and quality-of-service levels; `wamp` brings pub/sub and routed calls. Naming one in `Sec-WebSocket-Protocol` means both sides agree during the handshake, before the first message — and a tested client library has already got pattern 2's correlation and pattern 3's reconnect right. If you do invent your own, put a version in the name, as `v12.stomp` does.
+    Whether a registered subprotocol already does it. `v12.stomp` negotiates heartbeats through a `heart-beat` header on `CONNECT` and gives every subscription a mandatory `id`; `mqtt` brings topics and quality-of-service levels; `wamp` brings pub/sub and routed calls. Naming one in `Sec-WebSocket-Protocol` means both sides agree during the handshake, before the first message — and a tested client library has already got pattern 4's correlation and pattern 2's reconnect right. If you do invent your own, put a version in the name, as `v12.stomp` does.
 
     </details>
 
@@ -344,13 +403,22 @@ If you do invent your own, version it — put the version in the subprotocol nam
     <details>
     <summary>Answer</summary>
 
-    Because nothing flows upward. Server-Sent Events runs over plain HTTP, reconnects by itself, and carries a `Last-Event-ID` for resumption — the automatic version of pattern 3. Choosing a WebSocket there means building reconnection, resumption, and heartbeats by hand for a channel whose second direction is never used.
+    Because nothing flows upward. Server-Sent Events runs over plain HTTP, reconnects by itself, and carries a `Last-Event-ID` for resumption — the automatic version of pattern 2. Choosing a WebSocket there means building reconnection, resumption, and heartbeats by hand for a channel whose second direction is never used.
+
+    </details>
+
+13. WhatsApp Web reaches the server over an ordinary `wss://` WebSocket, but WhatsApp's own white paper describes the phone app's link to the chat server as Noise Pipes over a long-running connection and never mentions WebSocket. Why the difference?
+
+    <details>
+    <summary>Answer</summary>
+
+    Because the handshake exists to get a two-way stream out of a browser. A browser cannot open a raw socket and an intermediary will not forward what it does not recognise, so a browser client has to upgrade an HTTP request. A native app has neither constraint, so it opens its own socket and picks its own framing rather than paying for a `101` and a masking rule it does not need. The operating system settles it either way: Android's Doze suspends network access on an idle device — Google's own guidance is to use FCM rather than maintain a persistent connection — and iOS suspends a backgrounded app, so anything arriving while the app is closed is a platform push notification, not a frame.
 
     </details>
 
 # Sources
 
-Primary specifications and vendor documentation, opened and checked on 2026-09-21. RFC 6455 is the backbone: the handshake, the framing, masking, control frames, and the close codes all come from it directly. RFC 8441 and RFC 9220 supply the HTTP/2 and HTTP/3 bootstrap, the WHATWG standard supplies the browser API, and the NGINX and AWS pages supply the two concrete sixty-second timeouts. The `AAPL` feed, the chat room, the six lettered clients, and every message body in the diagrams are teaching examples.
+Primary specifications and vendor documentation. The protocol sources were opened and checked on 2026-09-21; the product, platform and deployment sources, from Telegram onwards, were opened and checked on 2026-09-22. RFC 6455 is the backbone: the handshake, the framing, masking, control frames, and the close codes all come from it directly. RFC 8441 and RFC 9220 supply the HTTP/2 and HTTP/3 bootstrap, the WHATWG standard supplies the browser API, and the NGINX and AWS pages supply the two concrete sixty-second timeouts. Every product named in *Where it is actually used* is taken from that vendor's own documentation or source, with one exception flagged in place: WhatsApp documents nothing about its web client, so that row rests on a reverse-engineered implementation instead. The `AAPL` feed, the chat room, the six lettered clients, and every message body in the diagrams are teaching examples.
 
 - [RFC 6455 — The WebSocket Protocol](https://datatracker.ietf.org/doc/html/rfc6455)
 - [RFC 6455, full text](https://www.rfc-editor.org/rfc/rfc6455.txt) — the handshake and the `Sec-WebSocket-Accept` computation with its GUID (§1.3, §4), the `ws`/`wss` schemes and their default ports 80 and 443 (§3), the independence from HTTP and the note that port 443 succeeds more often (§1.7–1.8), the base framing protocol with FIN, RSV, opcode, MASK and the 126/127 length escapes (§5.2), client-to-server masking (§5.3), control frames, ping, pong and the 125-byte limit (§5.5), the closing handshake and the defined status codes 1000, 1001, 1006 and 1011 (§5.5.1, §7.4.1), proxy usage with `CONNECT` (§4.1), randomised backoff after an abnormal closure (§7.2.3), `Origin` checking and the `403` response (§10.2), and the cache-poisoning experiment that masking exists to prevent (§10.3).
@@ -363,11 +431,23 @@ Primary specifications and vendor documentation, opened and checked on 2026-09-2
 - [MDN — Using HTTP cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Cookies) — the `SameSite` attribute's `Strict`, `Lax` and `None` values, and that "if no SameSite attribute is set, the cookie is treated as Lax by default", which is why a cross-site WebSocket handshake carries a `SameSite=None; Secure` cookie but not a default one.
 - [NGINX — WebSocket proxying](https://nginx.org/en/docs/http/websocket.html) — the required `Upgrade` and `Connection` header rewriting, the 60-second default before a connection with no upstream data is closed, and the suggestion to send periodic ping frames instead of raising the timeout.
 - [AWS — Application Load Balancers](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/application-load-balancers.html) — the `idle_timeout.timeout_seconds` attribute and its 60-second default.
-- [IANA — WebSocket Protocol Registries](https://www.iana.org/assignments/websocket/websocket.xhtml) — the registered opcodes, the close-code ranges, and the subprotocol names including `mqtt`, `v12.stomp`, `wamp`, `xmpp`, `sip`, `amqp`, `coap` and `jmap`.
+- [IANA — WebSocket Protocol Registries](https://www.iana.org/assignments/websocket/websocket.xhtml) — the registered opcodes, the close-code ranges, and the subprotocol names including `mqtt`, `v12.stomp`, `wamp`, `xmpp`, `sip`, `amqp`, `coap` and `jmap`. Rechecked on 2026-09-22 for the claim in *Where it is actually used*: the registry has `bbf-usp-protocol`, `bfcp`, `bidib` and `binary.ircv3.net`, but no entry named `binary`, which is the name Telegram requires.
 - [MQTT Version 5.0 (OASIS standard)](https://docs.oasis-open.org/mqtt/mqtt/v5.0/os/mqtt-v5.0-os.html) — §6: control packets must travel in binary frames, a client must offer `mqtt` and a server must return it, and packets are not aligned to WebSocket frame boundaries.
 - [STOMP 1.2 specification](https://stomp.github.io/stomp-specification-1.2.html) — a frame-based protocol over a reliable two-way stream, `SUBSCRIBE` with its mandatory `id`, `MESSAGE` delivery, and the `heart-beat` header negotiated on `CONNECT`.
 - [JSON-RPC 2.0 specification](https://www.jsonrpc.org/specification) — the response `id` must equal the request `id`, batch responses may be returned in any order and must be matched by `id`, and a request without an `id` is a notification.
 - [The `graphql-transport-ws` protocol](https://github.com/enisdenjo/graphql-ws/blob/master/PROTOCOL.md) — the subprotocol name, and the `id` that exists to connect server responses with the client's requests so that several operations can stay active with their messages interleaved.
 - [MDN — Using server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events) — that the connection is restarted by default when it closes, and that "this is a one-way connection, so you can't send events from a client to a server". This is the alternative weighed in pattern 1 and in the limits.
-- [WHATWG HTML Standard — server-sent events](https://html.spec.whatwg.org/multipage/server-sent-events.html) — clients reconnect on their own, and a reconnect carries the last event ID string in a `Last-Event-ID` request header, which is the resumption that pattern 3 has to build by hand.
-- Local icon sources: [System Design: stateful chat architecture](../../system%20design/12.%20Chat%20System/images/high-level-statefull-arch.svg) supplies the laptop symbol, [System Design: chat high-level design](../../system%20design/12.%20Chat%20System/images/high-level-design.svg) the load-balancer symbol, [System Design: CDN comparison](../../system%20design/18.%20Google%20Maps/images/cdn-vs-no-cdn.svg) the server symbol, and [System Design: Google Drive high-level design](../../system%20design/15.%20Google%20Drive/images/high-level-design.svg) the server-rack and queue symbols, copied as editable vector shapes into this article's diagrams.
+- [WHATWG HTML Standard — server-sent events](https://html.spec.whatwg.org/multipage/server-sent-events.html) — clients reconnect on their own, and a reconnect carries the last event ID string in a `Last-Event-ID` request header, which is the resumption that pattern 2 has to build by hand.
+- [Telegram — MTProto transport protocols](https://core.telegram.org/mtproto/transports) — the five transports (TCP, WebSocket, WebSocket over HTTPS, HTTP, HTTPS), the recommendation of WebSocket over HTTP "when implementing browser clients, … thanks to its full-duplex stream logic similar to TCP's", the requirement that transport obfuscation be used with it, and the required `Sec-WebSocket-Protocol: binary` handshake header.
+- [WhatsApp Encryption Overview, technical white paper version 9, 25 February 2026](https://www.whatsapp.com/security/WhatsApp-Security-Whitepaper.pdf) — the Transport Security section: communication between clients and WhatsApp chat servers is "layered within a separate encrypted channel using Noise Pipes with Curve25519, AES-GCM, and SHA256 from the Noise Protocol Framework for long running interactive connections". WebSocket is not mentioned in the document.
+- [Discord — Gateway](https://docs.discord.com/developers/events/gateway) — the Gateway as a WebSocket connection for receiving events, the `wss://gateway.discord.gg/?v=10&encoding=json` form with its version and encoding parameters, JSON or binary ETF, the mandatory Heartbeat (opcode `1`) at the `heartbeat_interval` given in Hello, and the Resume flow: cache `session_id` and the last Dispatch sequence number `s`, send Resume (opcode `6`), and the Gateway replays the missed events in order, ending with `Resumed`. The page also states that most resource updates should use the HTTP API rather than the Gateway API, which is the basis for declining pattern 4.
+- [Discord — Gateway Events](https://docs.discord.com/developers/events/gateway-events) — the complete set of Gateway Send Events, the eight commands an app may send up the socket: Identify, Resume, Heartbeat, Request Guild Members, Request Soundboard Sounds, Request Channel Info, Update Voice State and Update Presence. Everything else an app does goes over HTTP. These are opcodes of Discord's own JSON envelope, not RFC 6455 frame opcodes.
+- [Slack — Using Socket Mode](https://docs.slack.dev/apis/events-api/using-socket-mode/) — the `hello` message on connect, that "connections refresh regularly" with a disconnect warning roughly ten seconds ahead and a `refresh_requested` message, up to ten simultaneous connections, and the requirement to acknowledge each event by returning its `envelope_id`. Also that Socket Mode exists so an app can use the Events API "*without* exposing a public HTTP Request URL", for developers behind a corporate firewall — which is why it is an app-facing WebSocket and not Slack's browser client, the point made after the table.
+- [Signal-Server — `WhisperServerService.java`](https://github.com/signalapp/Signal-Server/blob/main/service/src/main/java/org/whispersystems/textsecuregcm/WhisperServerService.java) — the two WebSocket servlet paths `/v1/websocket/` and `/v1/websocket/provisioning/`, mapped through `WebSocketResourceProviderFactory`.
+- [Android — Optimize for Doze and App Standby](https://developer.android.com/training/monitoring-device-state/doze-standby) — that Doze "suspends network access", that App Standby defers background network activity and may allow an idle app network access about once a day, that high-priority FCM messages wake an app and grant it temporary network access, and the recommendation to "use FCM if possible, rather than maintaining your own persistent network connection".
+- [Apple — Energy Efficiency Guide for iOS Apps: Work Less in the Background](https://developer.apple.com/library/archive/documentation/Performance/Conceptual/EnergyGuide-iOS/WorkLessInTheBackground.html) — that the system may suspend an app not performing important work, and that a backgrounded app gets only a few seconds before it must request more time.
+- [Microsoft — ASP.NET Core SignalR production hosting and scaling](https://learn.microsoft.com/en-us/aspnet/core/signalr/scale) — that a server farm requires sticky sessions "in all other scenarios (including when the Redis backplane is used)", and the three exceptions it lists, one of which is that all clients are configured to use WebSockets **only** with `SkipNegotiation` enabled; that a persistent connection consumes memory and a connection slot whether or not it is busy; and the scale-out statement that adding a server gives it connections the other servers do not know about, so a message meant for all clients reaches only the ones on the sending server; the Redis backplane forwards it to the rest.
+- [Socket.IO — Redis adapter](https://socket.io/docs/v4/redis-adapter/) — that every packet sent to multiple clients is delivered to matching clients on the current server and also published to a Redis channel received by the other Socket.IO servers of the cluster; and, in its FAQ, that sticky sessions are still required with the adapter in place, because reaching a server unaware of the session produces an HTTP 400.
+- [whatsmeow — `socket/constants.go`](https://github.com/tulir/whatsmeow/blob/main/socket/constants.go) — `URL = "wss://web.whatsapp.com/ws/chat"`, commented as the websocket URL for the multidevice protocol, with `Origin = "https://web.whatsapp.com"`. This is a third-party reverse-engineered client, not a WhatsApp publication, and it is the only non-vendor source in *Where it is actually used*; it is cited because WhatsApp documents no part of its web transport.
+- The opening three-panel figure is adapted from the sibling article's own comparison, [`sse-vs-polling.svg`](../Protocols.%20SSE/images/sse-vs-polling.svg): the same panels, lifelines and message geometry, with the tint moved from the Server-Sent Events panel to the WebSocket panel and the two right-hand captions rewritten, because here the WebSocket is the subject rather than the contrast.
+- Local icon sources: [System Design: stateful chat architecture](../../system%20design/12.%20Chat%20System/images/high-level-statefull-arch.svg) supplies the laptop symbol, [System Design: chat high-level design](../../system%20design/12.%20Chat%20System/images/high-level-design.svg) the load-balancer symbol, [System Design: CDN comparison](../../system%20design/18.%20Google%20Maps/images/cdn-vs-no-cdn.svg) the server symbol, [System Design: Google Drive high-level design](../../system%20design/15.%20Google%20Drive/images/high-level-design.svg) the server-rack and queue symbols, and [System Design: message synchronization](../../system%20design/12.%20Chat%20System/images/message-synchronization.svg) the phone symbol, copied as editable vector shapes into this article's diagrams.
