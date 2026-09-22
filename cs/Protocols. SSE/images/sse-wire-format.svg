@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1420" height="890" viewBox="0 0 1420 890" role="img" aria-labelledby="title desc">
+  <title id="title">The text/event-stream wire format and the events each blank line produces</title>
+  <desc id="desc">On the left, the exact bytes a server writes: retry colon 5000; a blank line; a colon stream opened comment; a blank line; data colon temp 21.4; a blank line; then event colon alert, id colon 42 and two data lines; a blank line; a colon keep-alive comment; a blank line; id colon 43 and data colon temp 21.9; a blank line. On the right, what each blank line handed to the page. The first two blank lines dispatch nothing because the data buffer is empty: retry only set the reconnection time, and a comment is thrown away. The third dispatches a message event whose data is temp 21.4 and whose lastEventId is still empty. The fourth dispatches an alert event whose data is the two data lines joined by a newline and whose lastEventId is 42. The fifth dispatches nothing. The last dispatches a message event, named message again because no event field was given, with lastEventId now 43. A strip along the bottom lists the whole vocabulary: data, event, id, retry, and a colon comment.</desc>
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .code { font-family: Menlo, Consolas, monospace; font-size: 17px; fill: #17212f; }
+      .key { fill: #0b78b5; font-weight: 700; }
+      .comment { font-family: Menlo, Consolas, monospace; font-size: 17px; fill: #8697a8; }
+      .blank { font-family: Menlo, Consolas, monospace; font-size: 17px; fill: #c2410c; }
+      .outcome { font-size: 18px; font-weight: 700; }
+      .why { font-size: 17px; fill: #405062; }
+      .fname { font-family: Menlo, Consolas, monospace; font-size: 18px; font-weight: 700; fill: #0b78b5; }
+      .fnote { font-size: 15px; fill: #405062; }
+      .strip { font-size: 18px; fill: #536174; }
+    </style>
+  </defs>
+  <rect width="1420" height="890" fill="#fff"/>
+  <text x="28" y="44" class="title">A blank line is the whole framing: it ends one event and hands it over</text>
+  <text x="28" y="78" class="sub">There is no length, no frame and no envelope. Each arrow below leaves from the blank line that caused it.</text>
+  <text x="28" y="138" class="heading">What the server writes</text>
+  <text x="640" y="138" class="heading">What the page receives at that moment</text>
+  <!-- The stream, byte for byte. Blank lines are drawn in orange so they stop looking like padding. -->
+  <rect x="28" y="164" width="520" height="538" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="52" y="190" class="code"><tspan class="key">retry:</tspan> 5000</text>
+  <text x="52" y="222" class="blank">&#9166;  (blank line)</text>
+  <text x="52" y="254" class="comment">: stream opened</text>
+  <text x="52" y="286" class="blank">&#9166;  (blank line)</text>
+  <text x="52" y="318" class="code"><tspan class="key">data:</tspan> {"temp": 21.4}</text>
+  <text x="52" y="350" class="blank">&#9166;  (blank line)</text>
+  <text x="52" y="382" class="code"><tspan class="key">event:</tspan> alert</text>
+  <text x="52" y="414" class="code"><tspan class="key">id:</tspan> 42</text>
+  <text x="52" y="446" class="code"><tspan class="key">data:</tspan> {"level": "high",</text>
+  <text x="52" y="478" class="code"><tspan class="key">data:</tspan> "sensor": "s7"}</text>
+  <text x="52" y="510" class="blank">&#9166;  (blank line)</text>
+  <text x="52" y="542" class="comment">: keep-alive</text>
+  <text x="52" y="574" class="blank">&#9166;  (blank line)</text>
+  <text x="52" y="606" class="code"><tspan class="key">id:</tspan> 43</text>
+  <text x="52" y="638" class="code"><tspan class="key">data:</tspan> {"temp": 21.9}</text>
+  <text x="52" y="670" class="blank">&#9166;  (blank line)</text>
+  <!-- One card per blank line, vertically centred on it. -->
+  <path data-connector="true" d="M560.0 222.0L628.00 222.00" fill="none" stroke="#536174" stroke-width="2.5"/>
+  <polygon points="640.0,222.0 626.00,228.00 626.00,216.00" fill="#536174"/>
+  <rect x="640" y="192" width="752" height="60" rx="10" fill="#f1f3f5" stroke="#8fa2b5" stroke-width="2"/>
+  <text x="660" y="218" class="outcome">no event</text>
+  <text x="660" y="241" class="why">retry set the reconnection time to 5000 ms; the data buffer is still empty</text>
+  <path data-connector="true" d="M560.0 286.0L628.00 286.00" fill="none" stroke="#536174" stroke-width="2.5"/>
+  <polygon points="640.0,286.0 626.00,292.00 626.00,280.00" fill="#536174"/>
+  <rect x="640" y="256" width="752" height="60" rx="10" fill="#f1f3f5" stroke="#8fa2b5" stroke-width="2"/>
+  <text x="660" y="282" class="outcome">no event</text>
+  <text x="660" y="305" class="why">a line beginning with a colon is a comment &#8212; it is read and thrown away</text>
+  <path data-connector="true" d="M560.0 350.0L628.00 350.00" fill="none" stroke="#536174" stroke-width="2.5"/>
+  <polygon points="640.0,350.0 626.00,356.00 626.00,344.00" fill="#536174"/>
+  <rect x="640" y="320" width="752" height="60" rx="10" fill="#eaf7e4" stroke="#3f7d20" stroke-width="2"/>
+  <text x="660" y="346" class="outcome">message event</text>
+  <text x="660" y="369" class="why">e.data is {"temp": 21.4}; e.lastEventId is still the empty string</text>
+  <path data-connector="true" d="M560.0 510.0L628.00 510.00" fill="none" stroke="#536174" stroke-width="2.5"/>
+  <polygon points="640.0,510.0 626.00,516.00 626.00,504.00" fill="#536174"/>
+  <rect x="640" y="480" width="752" height="60" rx="10" fill="#eaf7e4" stroke="#3f7d20" stroke-width="2"/>
+  <text x="660" y="506" class="outcome">alert event</text>
+  <text x="660" y="529" class="why">e.data is the two data lines joined by a newline; e.lastEventId is &#8220;42&#8221;</text>
+  <path data-connector="true" d="M560.0 574.0L628.00 574.00" fill="none" stroke="#536174" stroke-width="2.5"/>
+  <polygon points="640.0,574.0 626.00,580.00 626.00,568.00" fill="#536174"/>
+  <rect x="640" y="544" width="752" height="60" rx="10" fill="#f1f3f5" stroke="#8fa2b5" stroke-width="2"/>
+  <text x="660" y="570" class="outcome">no event</text>
+  <text x="660" y="593" class="why">the keep-alive comment exists only to stop an idle connection being closed</text>
+  <path data-connector="true" d="M560.0 670.0L628.00 670.00" fill="none" stroke="#536174" stroke-width="2.5"/>
+  <polygon points="640.0,670.0 626.00,676.00 626.00,664.00" fill="#536174"/>
+  <rect x="640" y="640" width="752" height="60" rx="10" fill="#eaf7e4" stroke="#3f7d20" stroke-width="2"/>
+  <text x="660" y="666" class="outcome">message event</text>
+  <text x="660" y="689" class="why">no event field, so the name is message again &#8212; but e.lastEventId is now &#8220;43&#8221;</text>
+  <!-- Reference strip: every field the format defines. -->
+  <rect x="28" y="726" width="1364" height="140" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="52" y="762" class="strip">The whole vocabulary. A line with any other field name is ignored, and a field value loses one leading space.</text>
+  <text x="52" y="798" class="fname">data:</text>
+  <text x="52" y="822" class="fnote">the payload. Repeat the field</text>
+  <text x="52" y="843" class="fnote">for a multi-line message.</text>
+  <text x="320" y="798" class="fname">event:</text>
+  <text x="320" y="822" class="fnote">names the event. Without it</text>
+  <text x="320" y="843" class="fnote">the name is message.</text>
+  <text x="588" y="798" class="fname">id:</text>
+  <text x="588" y="822" class="fnote">remembered, and sent back in</text>
+  <text x="588" y="843" class="fnote">Last-Event-ID on a retry.</text>
+  <text x="856" y="798" class="fname">retry:</text>
+  <text x="856" y="822" class="fnote">sets the reconnection delay,</text>
+  <text x="856" y="843" class="fnote">in milliseconds.</text>
+  <text x="1124" y="798" class="fname">: text</text>
+  <text x="1124" y="822" class="fnote">a comment. Dispatches nothing,</text>
+  <text x="1124" y="843" class="fnote">but keeps the connection warm.</text>
+</svg>

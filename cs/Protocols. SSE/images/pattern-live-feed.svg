@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="560" viewBox="0 0 1240 560" role="img" aria-labelledby="title desc">
+  <title id="title">Pattern 1, live feed: one request, then messages the browser never asked for</title>
+  <desc id="desc">The browser sends one GET /prices with Accept text/event-stream. The server answers 200 OK with Content-Type text/event-stream. Three data lines carrying AAPL prices of 189.42, 189.61 and 188.97 then travel from server to browser with no further request. A bracket beside the three marks them as sent at the moments the price changed.</desc>
+  <!-- Icons copied from System Design/12. Chat System: high-level-statefull-arch.svg (laptop) and System Design/15. Google Drive: high-level-design.svg (server rack, queue). -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 25px; font-weight: 700; }
+      .sub { font-size: 19px; fill: #536174; }
+      .node { font-size: 20px; font-weight: 700; text-anchor: middle; }
+      .msg { font-family: Menlo, Consolas, monospace; font-size: 16px; fill: #17212f; text-anchor: middle; }
+      .msgdim { font-family: Menlo, Consolas, monospace; font-size: 16px; fill: #8697a8; text-anchor: middle; }
+      .note { font-size: 18px; fill: #536174; }
+      .tag { font-size: 17px; fill: #536174; }
+      .clock { font-size: 17px; font-weight: 700; fill: #405062; }
+      .life { stroke: #8fa2b5; stroke-width: 2.5; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 90 70"><rect x="17" y="5" width="56" height="45" rx="4" fill="#fff" stroke="#17212f" stroke-width="4"/><path d="M9 58 H81 L87 65 H3 Z" fill="#17212f"/></symbol>
+    <symbol id="servers" viewBox="0 0 130 90"><rect x="33" y="3" width="34" height="19" rx="2" fill="#65c515"/><rect x="72" y="3" width="34" height="19" rx="2" fill="#65c515"/><g fill="#65c515"><rect x="6" y="23" width="38" height="62"/><rect x="46" y="23" width="38" height="62"/><rect x="86" y="23" width="38" height="62"/></g><path d="M12 34H38M12 71H38M52 34H78M52 71H78M92 34H118M92 71H118M39 11H61M78 11H100" fill="none" stroke="#fff" stroke-width="3"/></symbol>
+    <symbol id="queue" viewBox="0 0 190 72"><path d="M2 8H170L187 36L170 64H2Z" fill="#fff" stroke="#0c7eb8" stroke-width="4"/><g fill="none" stroke="#0c7eb8" stroke-width="4"><rect x="13" y="18" width="46" height="36"/><rect x="67" y="18" width="46" height="36"/><rect x="121" y="18" width="46" height="36"/><path d="M14 20L36 39L58 20M68 20L90 39L112 20M122 20L144 39L166 20"/></g></symbol>
+  </defs>
+  <rect width="1240" height="560" fill="#fff"/>
+  <text x="28" y="40" class="title">Pattern 1 &#8212; Live feed: ask once, then be told</text>
+  <text x="28" y="70" class="sub">Two messages open the stream. Everything below them is the server&#8217;s decision, not a reply to anything.</text>
+  <rect x="60" y="96" width="180" height="76" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#laptop" x="84" y="111" width="54" height="42"/>
+  <text x="184" y="140" class="node">browser</text>
+  <rect x="880" y="96" width="180" height="76" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#servers" x="898" y="114" width="58" height="40"/>
+  <text x="1008" y="140" class="node">server</text>
+  <!-- Lifelines: time runs downward. -->
+  <path class="life" d="M150 172 V470 M970 172 V470" fill="none"/>
+  <text x="560" y="205" class="msg">GET /prices HTTP/1.1</text>
+  <path data-connector="true" d="M162.0 218.0L946.00 218.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="958.0,218.0 944.00,224.00 944.00,212.00" fill="#17212f"/>
+  <text x="560" y="255" class="msg">200 OK  Content-Type: text/event-stream</text>
+  <path data-connector="true" d="M958.0 268.0L174.00 268.00" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="162.0,268.0 176.00,274.00 176.00,262.00" fill="#c2410c"/>
+  <text x="560" y="310" class="msg">data: {"AAPL": 189.42}</text>
+  <path data-connector="true" d="M958.0 323.0L174.00 323.00" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="162.0,323.0 176.00,329.00 176.00,317.00" fill="#c2410c"/>
+  <text x="560" y="357" class="msg">data: {"AAPL": 189.61}</text>
+  <path data-connector="true" d="M958.0 370.0L174.00 370.00" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="162.0,370.0 176.00,376.00 176.00,364.00" fill="#c2410c"/>
+  <text x="560" y="404" class="msg">data: {"AAPL": 188.97}</text>
+  <path data-connector="true" d="M958.0 417.0L174.00 417.00" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="162.0,417.0 176.00,423.00 176.00,411.00" fill="#c2410c"/>
+  <!-- Span bar groups the three pushes; it is not a connector. -->
+  <path d="M1076 300 H1090 V423 H1076" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <text x="1100" y="345" class="tag">sent when</text>
+  <text x="1100" y="367" class="tag">the price</text>
+  <text x="1100" y="389" class="tag">moved</text>
+  <text x="28" y="508" class="note">Nothing else is needed: no envelope, no correlation, no acknowledgement. Dashboards, tickers, live logs, notification</text>
+  <text x="28" y="532" class="note">bells and build progress are all this shape, and most of them never need any other pattern on this page.</text>
+</svg>

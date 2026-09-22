@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="780" viewBox="0 0 1240 780" role="img" aria-labelledby="title desc">
+  <title id="title">Pattern 4, heartbeat and a retry you choose: keeping a quiet stream alive and controlling the return</title>
+  <desc id="desc">A timeline down the left marks elapsed seconds. At zero seconds the server sends retry colon 15000, which sets the reconnection time, and then a real data event. At fifteen, thirty and forty-five seconds it sends a colon keep-alive comment; a bracket on the right marks all three as traffic that dispatches no event but resets every idle timer on the way. At sixty-two seconds the stream dies anyway and break marks appear on both lifelines. At seventy-seven seconds, fifteen seconds later because retry said so, the browser sends GET /prices again by itself.</desc>
+  <!-- Icons copied from System Design/12. Chat System: high-level-statefull-arch.svg (laptop) and System Design/15. Google Drive: high-level-design.svg (server rack, queue). -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 25px; font-weight: 700; }
+      .sub { font-size: 19px; fill: #536174; }
+      .node { font-size: 20px; font-weight: 700; text-anchor: middle; }
+      .msg { font-family: Menlo, Consolas, monospace; font-size: 16px; fill: #17212f; text-anchor: middle; }
+      .msgdim { font-family: Menlo, Consolas, monospace; font-size: 16px; fill: #8697a8; text-anchor: middle; }
+      .note { font-size: 18px; fill: #536174; }
+      .tag { font-size: 17px; fill: #536174; }
+      .clock { font-size: 17px; font-weight: 700; fill: #405062; }
+      .life { stroke: #8fa2b5; stroke-width: 2.5; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 90 70"><rect x="17" y="5" width="56" height="45" rx="4" fill="#fff" stroke="#17212f" stroke-width="4"/><path d="M9 58 H81 L87 65 H3 Z" fill="#17212f"/></symbol>
+    <symbol id="servers" viewBox="0 0 130 90"><rect x="33" y="3" width="34" height="19" rx="2" fill="#65c515"/><rect x="72" y="3" width="34" height="19" rx="2" fill="#65c515"/><g fill="#65c515"><rect x="6" y="23" width="38" height="62"/><rect x="46" y="23" width="38" height="62"/><rect x="86" y="23" width="38" height="62"/></g><path d="M12 34H38M12 71H38M52 34H78M52 71H78M92 34H118M92 71H118M39 11H61M78 11H100" fill="none" stroke="#fff" stroke-width="3"/></symbol>
+    <symbol id="queue" viewBox="0 0 190 72"><path d="M2 8H170L187 36L170 64H2Z" fill="#fff" stroke="#0c7eb8" stroke-width="4"/><g fill="none" stroke="#0c7eb8" stroke-width="4"><rect x="13" y="18" width="46" height="36"/><rect x="67" y="18" width="46" height="36"/><rect x="121" y="18" width="46" height="36"/><path d="M14 20L36 39L58 20M68 20L90 39L112 20M122 20L144 39L166 20"/></g></symbol>
+  </defs>
+  <rect width="1240" height="780" fill="#fff"/>
+  <text x="28" y="40" class="title">Pattern 4 &#8212; A heartbeat to stay open, and a retry you choose</text>
+  <text x="28" y="70" class="sub">A quiet stream looks dead to every hop it crosses. A comment is the cheapest thing that stops it looking that way.</text>
+  <rect x="100" y="96" width="180" height="76" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#laptop" x="124" y="111" width="54" height="42"/>
+  <text x="224" y="140" class="node">browser</text>
+  <rect x="900" y="96" width="180" height="76" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#servers" x="918" y="114" width="58" height="40"/>
+  <text x="1028" y="140" class="node">server</text>
+  <path class="life" d="M190 172 V690 M990 172 V690" fill="none"/>
+  <text x="32" y="262" class="clock">0 s</text>
+  <text x="590" y="242" class="msg">retry: 15000</text>
+  <path data-connector="true" d="M978.0 256.0L214.00 256.00" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="202.0,256.0 216.00,262.00 216.00,250.00" fill="#c2410c"/>
+  <text x="590" y="286" class="tag" text-anchor="middle">sets the reconnection time for this stream</text>
+  <text x="590" y="316" class="msg">data: {"AAPL": 189.42}</text>
+  <path data-connector="true" d="M978.0 330.0L214.00 330.00" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="202.0,330.0 216.00,336.00 216.00,324.00" fill="#c2410c"/>
+  <text x="590" y="360" class="tag" text-anchor="middle">an ordinary event</text>
+  <text x="32" y="412" class="clock">15 s</text>
+  <text x="590" y="392" class="msgdim">: keep-alive</text>
+  <path data-connector="true" d="M978.0 406.0L214.00 406.00" fill="none" stroke="#8697a8" stroke-width="2.5" stroke-dasharray="9 7"/>
+  <polygon points="202.0,406.0 216.00,412.00 216.00,400.00" fill="#8697a8"/>
+  <text x="590" y="436" class="tag" text-anchor="middle">no event &#8212; but every idle timer on the way is reset</text>
+  <text x="32" y="490" class="clock">30 s</text>
+  <text x="590" y="470" class="msgdim">: keep-alive</text>
+  <path data-connector="true" d="M978.0 484.0L214.00 484.00" fill="none" stroke="#8697a8" stroke-width="2.5" stroke-dasharray="9 7"/>
+  <polygon points="202.0,484.0 216.00,490.00 216.00,478.00" fill="#8697a8"/>
+  <text x="32" y="562" class="clock">45 s</text>
+  <text x="590" y="542" class="msgdim">: keep-alive</text>
+  <path data-connector="true" d="M978.0 556.0L214.00 556.00" fill="none" stroke="#8697a8" stroke-width="2.5" stroke-dasharray="9 7"/>
+  <polygon points="202.0,556.0 216.00,562.00 216.00,550.00" fill="#8697a8"/>
+  <!-- A bracket groups the three comments: same line, same non-effect. -->
+  <path d="M1092 386 H1104 V562 H1092" fill="none" stroke="#8697a8" stroke-width="2.5"/>
+  <text x="1114" y="468" class="tag">no event,</text>
+  <text x="1114" y="490" class="tag">just traffic</text>
+  <text x="32" y="616" class="clock">62 s</text>
+  <!-- Break marks sit on both lifelines: the request below opens a new connection. -->
+  <g stroke="#c2410c" stroke-width="3" fill="none">
+    <path d="M176 616 L204 606 M176 630 L204 620"/>
+    <path d="M976 616 L1004 606 M976 630 L1004 620"/>
+  </g>
+  <text x="590" y="614" class="tag" text-anchor="middle">the stream dies anyway: a deploy, a crash, a phone going to sleep</text>
+  <text x="32" y="676" class="clock">77 s</text>
+  <text x="590" y="656" class="msg">GET /prices HTTP/1.1</text>
+  <path data-connector="true" d="M202.0 670.0L966.00 670.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="978.0,670.0 964.00,676.00 964.00,664.00" fill="#17212f"/>
+  <text x="28" y="724" class="note">Fifteen seconds later, not sooner, because retry said so. A small retry brings a restarted fleet back all at once; a large one</text>
+  <text x="28" y="748" class="note">leaves a hole in the data. The value is a suggestion: a browser may wait longer, and is encouraged to back off after failures.</text>
+</svg>

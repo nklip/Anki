@@ -23,6 +23,7 @@ Every card lives in its own folder as `Readme.md`, with its diagrams in a siblin
  * [Protocols. SFTP](./Protocols.%20SFTP/Readme.md) - secure file operations over SSH, one protected connection, and differences from FTP and FTPS
  * [Protocols. SMTP](./Protocols.%20SMTP/Readme.md) - how email is submitted, relayed, and accepted for delivery
  * [Protocols. SOAP](./Protocols.%20SOAP/Readme.md) - XML envelopes, headers, bodies, faults, and the roles of WSDL and HTTP
+ * [Protocols. SSE](./Protocols.%20SSE/Readme.md) - one HTTP response that never ends, the four wire-format fields, automatic reconnection with Last-Event-ID, and the five patterns built on top
  * [Protocols. SSH](./Protocols.%20SSH/Readme.md) - server verification, user authentication, and encrypted remote commands
  * [Protocols. WebSocket](./Protocols.%20WebSocket/Readme.md) - the upgrade handshake, frames and masking, what proxies and load balancers do to a long-lived connection, and the five patterns built on top
  * [REST naming convention](./REST%20naming%20convention/Readme.md) - how to name resources, collections, and actions in an HTTP API

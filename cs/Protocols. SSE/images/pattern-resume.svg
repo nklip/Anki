@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="660" viewBox="0 0 1240 660" role="img" aria-labelledby="title desc">
+  <title id="title">Pattern 3, resume: the id field and the Last-Event-ID header close the gap</title>
+  <desc id="desc">The server sends an event with id 41 and then one with id 42, and the browser records 42 as its last event ID. The connection then drops, and break marks on both lifelines show that everything below is a new connection. The browser reissues GET /events with a Last-Event-ID header of 42, which it adds by itself. The server answers 200 OK and sends only the events with ids 43 and 44, the ones that came after 42. A column on the right tracks the value of lastEventId at each step.</desc>
+  <!-- Icons copied from System Design/12. Chat System: high-level-statefull-arch.svg (laptop) and System Design/15. Google Drive: high-level-design.svg (server rack, queue). -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 25px; font-weight: 700; }
+      .sub { font-size: 19px; fill: #536174; }
+      .node { font-size: 20px; font-weight: 700; text-anchor: middle; }
+      .msg { font-family: Menlo, Consolas, monospace; font-size: 16px; fill: #17212f; text-anchor: middle; }
+      .msgdim { font-family: Menlo, Consolas, monospace; font-size: 16px; fill: #8697a8; text-anchor: middle; }
+      .note { font-size: 18px; fill: #536174; }
+      .tag { font-size: 17px; fill: #536174; }
+      .clock { font-size: 17px; font-weight: 700; fill: #405062; }
+      .life { stroke: #8fa2b5; stroke-width: 2.5; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 90 70"><rect x="17" y="5" width="56" height="45" rx="4" fill="#fff" stroke="#17212f" stroke-width="4"/><path d="M9 58 H81 L87 65 H3 Z" fill="#17212f"/></symbol>
+    <symbol id="servers" viewBox="0 0 130 90"><rect x="33" y="3" width="34" height="19" rx="2" fill="#65c515"/><rect x="72" y="3" width="34" height="19" rx="2" fill="#65c515"/><g fill="#65c515"><rect x="6" y="23" width="38" height="62"/><rect x="46" y="23" width="38" height="62"/><rect x="86" y="23" width="38" height="62"/></g><path d="M12 34H38M12 71H38M52 34H78M52 71H78M92 34H118M92 71H118M39 11H61M78 11H100" fill="none" stroke="#fff" stroke-width="3"/></symbol>
+    <symbol id="queue" viewBox="0 0 190 72"><path d="M2 8H170L187 36L170 64H2Z" fill="#fff" stroke="#0c7eb8" stroke-width="4"/><g fill="none" stroke="#0c7eb8" stroke-width="4"><rect x="13" y="18" width="46" height="36"/><rect x="67" y="18" width="46" height="36"/><rect x="121" y="18" width="46" height="36"/><path d="M14 20L36 39L58 20M68 20L90 39L112 20M122 20L144 39L166 20"/></g></symbol>
+  </defs>
+  <rect width="1240" height="660" fill="#fff"/>
+  <text x="28" y="40" class="title">Pattern 3 &#8212; Resume where the last connection stopped</text>
+  <text x="28" y="70" class="sub">An id on an event is remembered, and comes back as a request header on the next attempt. Closing the gap is the server&#8217;s half.</text>
+  <rect x="60" y="96" width="180" height="76" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#laptop" x="84" y="111" width="54" height="42"/>
+  <text x="184" y="140" class="node">browser</text>
+  <rect x="880" y="96" width="180" height="76" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#servers" x="898" y="114" width="58" height="40"/>
+  <text x="1008" y="140" class="node">server</text>
+  <path class="life" d="M150 172 V580 M970 172 V580" fill="none"/>
+  <text x="560" y="200" class="msg">id: 41</text>
+  <text x="560" y="222" class="msg">data: {"AAPL": 189.42}</text>
+  <path data-connector="true" d="M958.0 236.0L174.00 236.00" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="162.0,236.0 176.00,242.00 176.00,230.00" fill="#c2410c"/>
+  <text x="560" y="274" class="msg">id: 42</text>
+  <text x="560" y="296" class="msg">data: {"AAPL": 189.61}</text>
+  <path data-connector="true" d="M958.0 310.0L174.00 310.00" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="162.0,310.0 176.00,316.00 176.00,304.00" fill="#c2410c"/>
+  <!-- Break marks sit on both lifelines: the connection below is a different one. -->
+  <g stroke="#c2410c" stroke-width="3" fill="none">
+    <path d="M136 358 L164 348 M136 372 L164 362"/>
+    <path d="M956 358 L984 348 M956 372 L984 362"/>
+  </g>
+  <text x="560" y="362" class="tag" text-anchor="middle">the connection drops &#8212; the browser waits, then tries again</text>
+  <text x="560" y="400" class="msg">GET /prices HTTP/1.1</text>
+  <text x="560" y="422" class="msg">Last-Event-ID: 42</text>
+  <path data-connector="true" d="M162.0 436.0L946.00 436.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="958.0,436.0 944.00,442.00 944.00,430.00" fill="#17212f"/>
+  <text x="560" y="486" class="msg">200 OK, then id: 43, id: 44 ...</text>
+  <text x="560" y="508" class="msgdim">nothing before 43 is sent again</text>
+  <path data-connector="true" d="M958.0 522.0L174.00 522.00" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="162.0,522.0 176.00,528.00 176.00,516.00" fill="#c2410c"/>
+  <!-- Right column: the one value the browser carries across the break. -->
+  <text x="1076" y="242" class="tag">lastEventId = "41"</text>
+  <text x="1076" y="316" class="tag">lastEventId = "42"</text>
+  <text x="1076" y="442" class="tag">sent as a header</text>
+  <text x="1076" y="528" class="tag">lastEventId = "44"</text>
+  <text x="28" y="616" class="note">Sending the header is automatic; acting on it is not. A server that cannot replay should answer with a fresh</text>
+  <text x="28" y="640" class="note">snapshot of the whole state instead &#8212; simpler than a replay log, and usually cheaper than keeping one.</text>
+</svg>

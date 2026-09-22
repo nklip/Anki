@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1460" height="1470" viewBox="0 0 1460 1470" role="img" aria-labelledby="title desc">
+  <title id="title">The life of one Server-Sent Events connection, from the opening GET to the three ways it ends</title>
+  <desc id="desc">A sequence diagram with the browser on the left and the server on the right, time running downward, in four bands. Band one, OPEN: the browser sends GET /events with Accept text/event-stream while readyState is CONNECTING zero, and the server answers 200 OK with Content-Type text/event-stream, which fires the open event and moves readyState to OPEN one. Band two, STREAM: the server writes data colon temp 21.4 followed by a blank line, which fires a message event; then id colon 42, event colon alert, data colon level high and a blank line, which fires an alert event and sets lastEventId to 42; then a colon keep-alive comment line, which dispatches nothing. readyState stays OPEN one for the whole body. Band three, DROP THEN RETRY: the connection drops, the browser returns to CONNECTING zero and then fires error, then sends GET /events again with a Last-Event-ID colon 42 header of its own accord, and the server answers 200 OK with the events after 42, returning readyState to OPEN one. Band four, CLOSE: three cards show the three endings. Calling close sets readyState to CLOSED two with no error event and no retry. A 204 No Content answer to a reconnect sets CLOSED two and then fires error, with no further retry. Any status other than 200, or a Content-Type that is not text/event-stream, sets CLOSED two and then fires error as well.</desc>
+  <!-- Icons copied from System Design/12. Chat System: high-level-statefull-arch.svg (laptop) and System Design/15. Google Drive: high-level-design.svg (server rack). -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .band { font-size: 22px; font-weight: 700; }
+      .node { font-size: 20px; font-weight: 700; text-anchor: middle; }
+      .note { font-size: 17px; fill: #405062; }
+      .card { font-size: 16px; fill: #405062; }
+      .cardtitle { font-size: 20px; font-weight: 700; }
+      .msg { font-family: Menlo, Consolas, monospace; font-size: 17px; text-anchor: middle; }
+      .msgdim { font-family: Menlo, Consolas, monospace; font-size: 17px; fill: #8697a8; text-anchor: middle; }
+      .tag { font-size: 17px; fill: #536174; text-anchor: middle; }
+      .chip { font-size: 16px; font-weight: 700; text-anchor: middle; }
+      .life { stroke: #8fa2b5; stroke-width: 2.5; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 90 70"><rect x="17" y="5" width="56" height="45" rx="4" fill="#fff" stroke="#17212f" stroke-width="4"/><path d="M9 58 H81 L87 65 H3 Z" fill="#17212f"/></symbol>
+    <symbol id="servers" viewBox="0 0 130 90"><rect x="33" y="3" width="34" height="19" rx="2" fill="#65c515"/><rect x="72" y="3" width="34" height="19" rx="2" fill="#65c515"/><g fill="#65c515"><rect x="6" y="23" width="38" height="62"/><rect x="46" y="23" width="38" height="62"/><rect x="86" y="23" width="38" height="62"/></g><path d="M12 34H38M12 71H38M52 34H78M52 71H78M92 34H118M92 71H118M39 11H61M78 11H100" fill="none" stroke="#fff" stroke-width="3"/></symbol>
+  </defs>
+  <rect width="1460" height="1470" fill="#fff"/>
+  <!-- Phase bands are painted first so the two lifelines stay visible across all of them. -->
+  <g>
+    <rect x="28" y="206" width="1404" height="246" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+    <rect x="28" y="468" width="1404" height="404" rx="12" fill="#f2f8ee" stroke="#3f7d20" stroke-width="2.5" stroke-dasharray="10 8"/>
+    <rect x="28" y="888" width="1404" height="270" rx="12" fill="#fdf4ee" stroke="#c2410c" stroke-width="2"/>
+    <rect x="28" y="1174" width="1404" height="270" rx="12" fill="#f7f9fc" stroke="#8fa2b5" stroke-width="2"/>
+  </g>
+  <text x="28" y="44" class="title">One GET, one response body that never ends, and a browser that retries by itself</text>
+  <text x="28" y="78" class="sub">Time runs downward. The column on the right is readyState, the only thing that tells a retry apart from an ending.</text>
+  <!-- Participants. Lifelines stop above band 4, which leaves the sequence form. -->
+  <rect x="325" y="104" width="210" height="80" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#laptop" x="352" y="119" width="58" height="45"/>
+  <text x="475" y="150" class="node">browser</text>
+  <rect x="1045" y="104" width="210" height="80" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#servers" x="1066" y="122" width="62" height="43"/>
+  <text x="1196" y="150" class="node">server</text>
+  <path class="life" d="M430 184 V1160 M1150 184 V1160" fill="none"/>
+  <!-- Band 1: the opening exchange is ordinary HTTP. -->
+  <text x="52" y="244" class="band">1 &#183; OPEN</text>
+  <text x="52" y="278" class="note">An ordinary GET. The only</text>
+  <text x="52" y="300" class="note">unusual thing is that the</text>
+  <text x="52" y="322" class="note">server will never finish</text>
+  <text x="52" y="344" class="note">the response body.</text>
+  <text x="52" y="382" class="note">The open event fires when</text>
+  <text x="52" y="404" class="note">the 200 arrives.</text>
+  <text x="790" y="262" class="msg">GET /events HTTP/1.1</text>
+  <text x="790" y="284" class="msg">Accept: text/event-stream</text>
+  <path data-connector="true" d="M442.0 302.0L1126.00 302.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="1138.0,302.0 1124.00,308.00 1124.00,296.00" fill="#17212f"/>
+  <text x="790" y="356" class="msg">HTTP/1.1 200 OK</text>
+  <text x="790" y="378" class="msg">Content-Type: text/event-stream</text>
+  <path data-connector="true" d="M1138.0 396.0L454.00 396.00" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="442.0,396.0 456.00,390.00 456.00,402.00" fill="#c2410c"/>
+  <rect x="1276" y="270" width="156" height="34" rx="8" fill="#fff" stroke="#8fa2b5" stroke-width="2"/>
+  <text x="1354" y="293" class="chip">CONNECTING (0)</text>
+  <rect x="1276" y="380" width="156" height="34" rx="8" fill="#eaf7e4" stroke="#3f7d20" stroke-width="2"/>
+  <text x="1354" y="403" class="chip">OPEN (1)</text>
+  <!-- Band 2: the body. A blank line, not a frame or a length, is what ends an event. -->
+  <text x="52" y="506" class="band">2 &#183; STREAM</text>
+  <text x="52" y="540" class="note">The response body arrives</text>
+  <text x="52" y="562" class="note">in pieces. A blank line</text>
+  <text x="52" y="584" class="note">ends an event and hands</text>
+  <text x="52" y="606" class="note">it to your code.</text>
+  <text x="52" y="648" class="note">Only data creates an</text>
+  <text x="52" y="670" class="note">event. A line starting</text>
+  <text x="52" y="692" class="note">with a colon is a comment:</text>
+  <text x="52" y="714" class="note">it keeps the connection</text>
+  <text x="52" y="736" class="note">warm and dispatches</text>
+  <text x="52" y="758" class="note">nothing.</text>
+  <text x="790" y="508" class="msg">data: {"temp": 21.4}</text>
+  <text x="790" y="530" class="msgdim">(blank line)</text>
+  <path data-connector="true" d="M1138.0 548.0L454.00 548.00" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="442.0,548.0 456.00,542.00 456.00,554.00" fill="#c2410c"/>
+  <text x="790" y="572" class="tag">message event fires</text>
+  <text x="790" y="622" class="msg">id: 42</text>
+  <text x="790" y="644" class="msg">event: alert</text>
+  <text x="790" y="666" class="msg">data: {"level": "high"}</text>
+  <text x="790" y="688" class="msgdim">(blank line)</text>
+  <path data-connector="true" d="M1138.0 706.0L454.00 706.00" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="442.0,706.0 456.00,700.00 456.00,712.00" fill="#c2410c"/>
+  <text x="790" y="730" class="tag">alert event fires; lastEventId is now &#8220;42&#8221;</text>
+  <text x="790" y="786" class="msg">: keep-alive</text>
+  <!-- Dashed and grey: the bytes do arrive, but nothing is handed to your code. -->
+  <path data-connector="true" d="M1138.0 804.0L454.00 804.00" fill="none" stroke="#8697a8" stroke-width="2.5" stroke-dasharray="9 7"/>
+  <polygon points="442.0,804.0 456.00,798.00 456.00,810.00" fill="#8697a8"/>
+  <text x="790" y="828" class="tag">no event: a comment is discarded</text>
+  <rect x="1276" y="530" width="156" height="34" rx="8" fill="#eaf7e4" stroke="#3f7d20" stroke-width="2"/>
+  <text x="1354" y="553" class="chip">OPEN (1)</text>
+  <text x="1354" y="590" class="note" text-anchor="middle">stays OPEN for</text>
+  <text x="1354" y="612" class="note" text-anchor="middle">the whole body</text>
+  <!-- Band 3: the retry is the browser's, not the application's. -->
+  <text x="52" y="926" class="band">3 &#183; DROP, THEN RETRY</text>
+  <text x="52" y="960" class="note">The TCP connection dies.</text>
+  <text x="52" y="982" class="note">The browser sets readyState</text>
+  <text x="52" y="1004" class="note">back to CONNECTING and then</text>
+  <text x="52" y="1026" class="note">fires error, waits the</text>
+  <text x="52" y="1048" class="note">reconnection time, and asks</text>
+  <text x="52" y="1070" class="note">again by itself &#8212; nothing in</text>
+  <text x="52" y="1092" class="note">your code has to do this.</text>
+  <!-- Break marks sit on each lifeline: this connection is over, the next one is new. -->
+  <g stroke="#c2410c" stroke-width="3" fill="none">
+    <path d="M416 916 L444 906 M416 930 L444 920"/>
+    <path d="M1136 916 L1164 906 M1136 930 L1164 920"/>
+  </g>
+  <text x="790" y="926" class="tag">the connection drops &#8212; everything below is a new one</text>
+  <text x="790" y="970" class="msg">GET /events HTTP/1.1</text>
+  <text x="790" y="992" class="msg">Last-Event-ID: 42</text>
+  <path data-connector="true" d="M442.0 1010.0L1126.00 1010.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="1138.0,1010.0 1124.00,1016.00 1124.00,1004.00" fill="#17212f"/>
+  <text x="790" y="1034" class="tag">the browser adds this header itself</text>
+  <text x="790" y="1074" class="msg">HTTP/1.1 200 OK</text>
+  <text x="790" y="1096" class="msg">data: ... (the events after 42)</text>
+  <path data-connector="true" d="M1138.0 1114.0L454.00 1114.00" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="442.0,1114.0 456.00,1108.00 456.00,1120.00" fill="#c2410c"/>
+  <rect x="1276" y="954" width="156" height="34" rx="8" fill="#fff" stroke="#8fa2b5" stroke-width="2"/>
+  <text x="1354" y="977" class="chip">CONNECTING (0)</text>
+  <rect x="1276" y="1096" width="156" height="34" rx="8" fill="#eaf7e4" stroke="#3f7d20" stroke-width="2"/>
+  <text x="1354" y="1119" class="chip">OPEN (1)</text>
+  <!-- Band 4 drops the sequence form: three alternative endings, not three steps. -->
+  <text x="52" y="1212" class="band">4 &#183; CLOSE &#8212; three endings, and only readyState tells them apart</text>
+  <rect x="52" y="1236" width="432" height="186" rx="10" fill="#fff" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="76" y="1272" class="cardtitle">You call es.close()</text>
+  <text x="76" y="1302" class="card">The only ending your code chooses.</text>
+  <text x="76" y="1324" class="card">No error event is fired, and the</text>
+  <text x="76" y="1346" class="card">browser never retries.</text>
+  <rect x="76" y="1366" width="156" height="34" rx="8" fill="#f1f3f5" stroke="#536174" stroke-width="2"/>
+  <text x="154" y="1389" class="chip">CLOSED (2)</text>
+  <rect x="512" y="1236" width="432" height="186" rx="10" fill="#fff" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="536" y="1272" class="cardtitle">The server answers 204</text>
+  <text x="536" y="1302" class="card">Seen on a retry, not on a live</text>
+  <text x="536" y="1324" class="card">stream: 204 No Content is how a</text>
+  <text x="536" y="1346" class="card">server says stop coming back.</text>
+  <rect x="536" y="1366" width="156" height="34" rx="8" fill="#f1f3f5" stroke="#536174" stroke-width="2"/>
+  <text x="614" y="1389" class="chip">CLOSED (2)</text>
+  <text x="712" y="1389" class="card">then error fires</text>
+  <rect x="972" y="1236" width="432" height="186" rx="10" fill="#fff" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="996" y="1272" class="cardtitle">Wrong status or wrong type</text>
+  <text x="996" y="1302" class="card">Any status but 200, or a Content-Type</text>
+  <text x="996" y="1324" class="card">that is not text/event-stream. A 404</text>
+  <text x="996" y="1346" class="card">or a 500 ends it for good.</text>
+  <rect x="996" y="1366" width="156" height="34" rx="8" fill="#f1f3f5" stroke="#536174" stroke-width="2"/>
+  <text x="1074" y="1389" class="chip">CLOSED (2)</text>
+  <text x="1172" y="1389" class="card">then error fires</text>
+</svg>

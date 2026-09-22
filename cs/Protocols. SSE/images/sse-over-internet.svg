@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1438" height="644" viewBox="0 0 1438 644" role="img" aria-labelledby="title desc">
+  <title id="title">The hops an event stream crosses, and what each one can do to it</title>
+  <desc id="desc">Five hops in a row: browser, CDN edge, reverse proxy, load balancer, app server. Under each one, what it does to a response that never finishes. The browser allows only six HTTP/1.1 connections per domain across every tab, and a page cannot add a request header of its own to an EventSource. A CDN edge may treat the stream as a document to cache or compress, and a compressor holds bytes back until it has enough of them. A reverse proxy buffers by default: NGINX has proxy_buffering on, which holds events until a buffer fills, and proxy_read_timeout closes a quiet connection after 60 seconds; X-Accel-Buffering no turns the buffering off for one response. A load balancer must keep the stream on one instance, and an AWS Application Load Balancer idles a quiet connection out after 60 seconds by default. The app server holds one unfinished response per client, so a restart drops all of them at once. A band below explains that a colon comment every fifteen seconds or so keeps the connection warm on every hop, and that HTTP/2 removes the six-connection wall by giving each stream its own HTTP/2 stream inside one connection.</desc>
+  <!-- Icons copied from System Design/12. Chat System: high-level-statefull-arch.svg (laptop) and high-level-design.svg (load balancer), System Design/14. Youtube: high-level-design.svg (CDN cloud), System Design/18. Google Maps: cdn-vs-no-cdn.svg (server), and System Design/15. Google Drive: high-level-design.svg (server rack). -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .node { font-size: 20px; font-weight: 700; text-anchor: middle; }
+      .note { font-size: 15px; fill: #405062; }
+      .band { font-size: 18px; fill: #536174; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 90 70"><rect x="17" y="5" width="56" height="45" rx="4" fill="#fff" stroke="#17212f" stroke-width="4"/><path d="M9 58 H81 L87 65 H3 Z" fill="#17212f"/></symbol>
+    <symbol id="cdn" viewBox="0 0 160 110"><path d="M31 92C12 92 3 79 5 65C6 52 16 44 29 43C31 27 44 18 59 21C68 6 85 5 96 15C107 6 124 12 128 27C143 27 155 39 155 55C155 76 140 92 121 92Z" fill="#75d6ef"/><path d="M79 15L62 54H83L70 91L109 45H90L103 15Z" fill="#fff"/></symbol>
+    <symbol id="server" viewBox="0 0 76 100"><path d="M8 8h48l14 10v67L54 94H8z" fill="#8e9aa6"/><path d="M56 8 70 18v67L56 94z" fill="#b4bec8"/><rect x="17" y="18" width="31" height="14" rx="2" fill="#eee"/><rect x="17" y="38" width="31" height="14" rx="2" fill="#eee"/><circle cx="33" cy="72" r="6" fill="#eee"/></symbol>
+    <symbol id="lb" viewBox="0 0 90 85"><path d="M12 3 H78 L87 81 H3 Z" fill="#1677b8"/><g fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"><path d="M45 16 V66 M45 29 L30 46 V60 M45 29 L60 46 V60"/><path d="M39 22 L45 16 L51 22 M24 54 L30 60 L36 54 M54 54 L60 60 L66 54 M39 60 L45 66 L51 60"/></g><circle cx="45" cy="13" r="5" fill="#fff"/></symbol>
+    <symbol id="servers" viewBox="0 0 130 90"><rect x="33" y="3" width="34" height="19" rx="2" fill="#65c515"/><rect x="72" y="3" width="34" height="19" rx="2" fill="#65c515"/><g fill="#65c515"><rect x="6" y="23" width="38" height="62"/><rect x="46" y="23" width="38" height="62"/><rect x="86" y="23" width="38" height="62"/></g><path d="M12 34H38M12 71H38M52 34H78M52 71H78M92 34H118M92 71H118M39 11H61M78 11H100" fill="none" stroke="#fff" stroke-width="3"/></symbol>
+  </defs>
+  <rect width="1438" height="644" fill="#fff"/>
+  <text x="28" y="44" class="title">Across the internet: every hop was built to finish a response</text>
+  <text x="28" y="78" class="sub">A stream asks each of them not to. Read left to right; not every connection crosses every middle hop.</text>
+  <rect x="28" y="132" width="230" height="124" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#laptop" x="110" y="153" width="66" height="51"/>
+  <text x="143" y="238" class="node">browser</text>
+  <text x="28" y="296" class="note">On HTTP/1.1 a browser allows</text>
+  <text x="28" y="318" class="note">only six connections per</text>
+  <text x="28" y="340" class="note">domain, counted across every</text>
+  <text x="28" y="362" class="note">tab, and a stream holds one</text>
+  <text x="28" y="384" class="note">for as long as it lasts. You</text>
+  <text x="28" y="406" class="note">cannot add a request header</text>
+  <text x="28" y="428" class="note">of your own to one.</text>
+  <path data-connector="true" d="M268.0 188.0L294.00 188.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="306.0,188.0 292.00,194.00 292.00,182.00" fill="#17212f"/>
+  <rect x="316" y="132" width="230" height="124" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#cdn" x="392" y="160" width="78" height="54"/>
+  <text x="431" y="238" class="node">CDN edge</text>
+  <text x="316" y="296" class="note">Only if the site is behind one.</text>
+  <text x="316" y="318" class="note">It was built to hold a whole</text>
+  <text x="316" y="340" class="note">document and hand out copies.</text>
+  <text x="316" y="362" class="note">A compressor is the same trap</text>
+  <text x="316" y="384" class="note">in miniature: it keeps bytes</text>
+  <text x="316" y="406" class="note">back until it has enough of</text>
+  <text x="316" y="428" class="note">them to be worth sending.</text>
+  <path data-connector="true" d="M556.0 188.0L582.00 188.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="594.0,188.0 580.00,194.00 580.00,182.00" fill="#17212f"/>
+  <rect x="604" y="132" width="230" height="124" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#server" x="698" y="151" width="42" height="55"/>
+  <text x="719" y="238" class="node">reverse proxy</text>
+  <text x="604" y="296" class="note">Where streams are most often</text>
+  <text x="604" y="318" class="note">lost. NGINX has proxy_buffering</text>
+  <text x="604" y="340" class="note">on by default, so events sit in</text>
+  <text x="604" y="362" class="note">a buffer until it fills. Send</text>
+  <text x="604" y="384" class="note">X-Accel-Buffering: no to switch</text>
+  <text x="604" y="406" class="note">it off. proxy_read_timeout also</text>
+  <text x="604" y="428" class="note">closes a quiet stream after 60 s.</text>
+  <path data-connector="true" d="M844.0 188.0L870.00 188.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="882.0,188.0 868.00,194.00 868.00,182.00" fill="#17212f"/>
+  <rect x="892" y="132" width="230" height="124" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#lb" x="981" y="154" width="52" height="49"/>
+  <text x="1007" y="238" class="node">load balancer</text>
+  <text x="892" y="296" class="note">Must keep this stream on one</text>
+  <text x="892" y="318" class="note">instance for its whole life: a</text>
+  <text x="892" y="340" class="note">different instance has no memory</text>
+  <text x="892" y="362" class="note">of which events it already sent.</text>
+  <text x="892" y="384" class="note">An AWS Application Load Balancer</text>
+  <text x="892" y="406" class="note">idles a quiet connection out</text>
+  <text x="892" y="428" class="note">after 60 s by default.</text>
+  <path data-connector="true" d="M1132.0 188.0L1158.00 188.00" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="1170.0,188.0 1156.00,194.00 1156.00,182.00" fill="#17212f"/>
+  <rect x="1180" y="132" width="230" height="124" rx="12" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#servers" x="1262" y="155" width="66" height="46"/>
+  <text x="1295" y="238" class="node">app server</text>
+  <text x="1180" y="296" class="note">Holds one unfinished response</text>
+  <text x="1180" y="318" class="note">per client, and must flush after</text>
+  <text x="1180" y="340" class="note">every event rather than waiting</text>
+  <text x="1180" y="362" class="note">for the body to end. A restart</text>
+  <text x="1180" y="384" class="note">drops all of its clients at the</text>
+  <text x="1180" y="406" class="note">same moment, and they all come</text>
+  <text x="1180" y="428" class="note">back one reconnection time later.</text>
+  <!-- Two facts that belong to no single hop. -->
+  <rect x="28" y="474" width="1382" height="146" rx="12" fill="#f2f8ee" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="56" y="512" class="heading">What keeps it open</text>
+  <text x="56" y="544" class="band">A line holding nothing but a colon is a comment. The specification</text>
+  <text x="56" y="568" class="band">suggests one every fifteen seconds or so: it dispatches no event, but</text>
+  <text x="56" y="592" class="band">it is traffic, and it resets the idle timer on every hop above.</text>
+  <path d="M732 492 V596" fill="none" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="768" y="512" class="heading">What changes on HTTP/2</text>
+  <text x="768" y="544" class="band">The six-connection wall disappears. Each stream becomes one HTTP/2</text>
+  <text x="768" y="568" class="band">stream inside a single connection, and how many may run at once is</text>
+  <text x="768" y="592" class="band">negotiated &#8212; the RFC sets no initial limit and recommends at least 100.</text>
+</svg>

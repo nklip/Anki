@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+  <title id="title">HTTP polling, Server-Sent Events and WebSocket over the same stretch of time</title>
+  <desc id="desc">Three panels. In the HTTP polling panel the browser sends three requests and the server answers each one, six messages in all, and every server message follows a browser message. In the Server-Sent Events panel the browser sends one GET /events and the server answers 200 OK with Content-Type text/event-stream; a dashed block below holds four further messages that all travel from server to browser inside that same response body, with no second request. In the WebSocket panel a handshake request and a 101 Switching Protocols reply are followed by a dashed block of four messages, three from the server and one from the browser, showing the upward direction that Server-Sent Events does not have.</desc>
+  <!-- Icons copied from System Design/12. Chat System: high-level-statefull-arch.svg (laptop) and System Design/18. Google Maps: cdn-vs-no-cdn.svg (server). -->
+  <defs>
+    <style>
+      /* The centered 4 px white stroke, painted under the glyph, leaves a 2 px halo so every
+         label stays readable where it sits over a lifeline, a panel border or the dashed block. */
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; stroke: #fff; stroke-width: 4px;
+             paint-order: stroke fill; stroke-linejoin: round; stroke-linecap: round; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 25px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 21px; text-anchor: middle; }
+      .small { font-size: 19px; fill: #536174; }
+      .life { stroke: #8fa2b5; stroke-width: 2.5; }
+    </style>
+    <symbol id="laptop" viewBox="0 0 90 70"><rect x="17" y="5" width="56" height="45" rx="4" fill="#fff" stroke="#17212f" stroke-width="4"/><path d="M9 58 H81 L87 65 H3 Z" fill="#17212f"/></symbol>
+    <symbol id="server" viewBox="0 0 76 100"><path d="M8 8h48l14 10v67L54 94H8z" fill="#8e9aa6"/><path d="M56 8 70 18v67L56 94z" fill="#b4bec8"/><rect x="17" y="18" width="31" height="14" rx="2" fill="#eee"/><rect x="17" y="38" width="31" height="14" rx="2" fill="#eee"/><circle cx="33" cy="72" r="6" fill="#eee"/></symbol>
+  </defs>
+  <rect width="1440" height="900" fill="#fff"/>
+  <text x="28" y="44" class="title">Polling asks again and again; SSE and WebSocket are told</text>
+  <text x="28" y="78" class="sub">Same stretch of time in each panel; lower is later. Blue opens the connection; black is the browser&#8217;s decision, orange the server&#8217;s.</text>
+  <!-- HTTP polling panel. -->
+  <rect x="28" y="104" width="448" height="756" rx="14" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="252" y="146" class="heading">HTTP polling</text>
+  <use href="#laptop" x="107" y="166" width="66" height="51"/>
+  <use href="#server" x="341" y="158" width="46" height="60"/>
+  <text x="140" y="246" class="body">browser</text>
+  <text x="364" y="246" class="body">server</text>
+  <path class="life" d="M140 260 V752 M364 260 V752" fill="none"/>
+  <text x="156" y="290" class="small">request</text>
+  <path data-connector="true" d="M152.0 304.0L340.05 320.92" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="352.0,322.0 337.52,326.72 338.59,314.77" fill="#17212f"/>
+  <text x="352" y="366" class="small" text-anchor="end">response</text>
+  <path data-connector="true" d="M352.0 380.0L163.95 396.92" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="152.0,398.0 165.41,390.77 166.48,402.72" fill="#17212f"/>
+  <text x="156" y="442" class="small">request</text>
+  <path data-connector="true" d="M152.0 456.0L340.05 472.92" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="352.0,474.0 337.52,478.72 338.59,466.77" fill="#17212f"/>
+  <text x="352" y="518" class="small" text-anchor="end">response</text>
+  <path data-connector="true" d="M352.0 532.0L163.95 548.92" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="152.0,550.0 165.41,542.77 166.48,554.72" fill="#17212f"/>
+  <text x="156" y="594" class="small">request</text>
+  <path data-connector="true" d="M152.0 608.0L340.05 624.92" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="352.0,626.0 337.52,630.72 338.59,618.77" fill="#17212f"/>
+  <text x="352" y="670" class="small" text-anchor="end">response</text>
+  <path data-connector="true" d="M352.0 684.0L163.95 700.92" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="152.0,702.0 165.41,694.77 166.48,706.72" fill="#17212f"/>
+  <text x="56" y="790" class="small">Six messages, three exchanges. Every</text>
+  <text x="56" y="814" class="small">answer needed a question, so a change</text>
+  <text x="56" y="838" class="small">waits for the next tick of the timer.</text>
+  <!-- Server-Sent Events panel. -->
+  <rect x="496" y="104" width="448" height="756" rx="14" fill="#f2f8ee" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="720" y="146" class="heading">Server-Sent Events</text>
+  <rect x="522" y="424" width="396" height="232" rx="12" fill="#fff" stroke="#c9b09a" stroke-width="2" stroke-dasharray="9 7"/>
+  <use href="#laptop" x="575" y="166" width="66" height="51"/>
+  <use href="#server" x="809" y="158" width="46" height="60"/>
+  <text x="608" y="246" class="body">browser</text>
+  <text x="832" y="246" class="body">server</text>
+  <path class="life" d="M608 260 V752 M832 260 V752" fill="none"/>
+  <text x="624" y="290" class="small">GET /events</text>
+  <path data-connector="true" d="M620.0 304.0L808.05 320.92" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <polygon points="820.0,322.0 805.52,326.72 806.59,314.77" fill="#0b78b5"/>
+  <text x="820" y="366" class="small" text-anchor="end">200 OK, event-stream</text>
+  <path data-connector="true" d="M820.0 380.0L631.95 396.92" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <polygon points="620.0,398.0 633.41,390.77 634.48,402.72" fill="#0b78b5"/>
+  <text x="720" y="456" class="small" text-anchor="middle">one response body, still being written</text>
+  <path data-connector="true" d="M820.0 484.0L631.95 500.92" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="620.0,502.0 633.41,494.77 634.48,506.72" fill="#c2410c"/>
+  <path data-connector="true" d="M820.0 524.0L631.95 540.92" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="620.0,542.0 633.41,534.77 634.48,546.72" fill="#c2410c"/>
+  <path data-connector="true" d="M820.0 564.0L631.95 580.92" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="620.0,582.0 633.41,574.77 634.48,586.72" fill="#c2410c"/>
+  <path data-connector="true" d="M820.0 604.0L631.95 620.92" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="620.0,622.0 633.41,614.77 634.48,626.72" fill="#c2410c"/>
+  <text x="720" y="706" class="small" text-anchor="middle">no second request is ever sent</text>
+  <text x="524" y="790" class="small">Two messages open it; the four below</text>
+  <text x="524" y="814" class="small">them are the server&#8217;s own, and all of</text>
+  <text x="524" y="838" class="small">them are one unfinished response.</text>
+  <!-- WebSocket panel. -->
+  <rect x="964" y="104" width="448" height="756" rx="14" fill="#f7f9fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="1188" y="146" class="heading">WebSocket</text>
+  <rect x="990" y="424" width="396" height="232" rx="12" fill="#fff" stroke="#c9b09a" stroke-width="2" stroke-dasharray="9 7"/>
+  <use href="#laptop" x="1043" y="166" width="66" height="51"/>
+  <use href="#server" x="1277" y="158" width="46" height="60"/>
+  <text x="1076" y="246" class="body">browser</text>
+  <text x="1300" y="246" class="body">server</text>
+  <path class="life" d="M1076 260 V752 M1300 260 V752" fill="none"/>
+  <text x="1092" y="290" class="small">handshake request</text>
+  <path data-connector="true" d="M1088.0 304.0L1276.05 320.92" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <polygon points="1288.0,322.0 1273.52,326.72 1274.59,314.77" fill="#0b78b5"/>
+  <text x="1288" y="366" class="small" text-anchor="end">101 Switching Protocols</text>
+  <path data-connector="true" d="M1288.0 380.0L1099.95 396.92" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+  <polygon points="1088.0,398.0 1101.41,390.77 1102.48,402.72" fill="#0b78b5"/>
+  <text x="1188" y="456" class="small" text-anchor="middle">frames, either direction, no request</text>
+  <path data-connector="true" d="M1288.0 484.0L1099.95 500.92" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="1088.0,502.0 1101.41,494.77 1102.48,506.72" fill="#c2410c"/>
+  <path data-connector="true" d="M1288.0 524.0L1099.95 540.92" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="1088.0,542.0 1101.41,534.77 1102.48,546.72" fill="#c2410c"/>
+  <path data-connector="true" d="M1088.0 564.0L1276.05 580.92" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="1288.0,582.0 1273.52,586.72 1274.59,574.77" fill="#17212f"/>
+  <path data-connector="true" d="M1288.0 604.0L1099.95 620.92" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+  <polygon points="1088.0,622.0 1101.41,614.77 1102.48,626.72" fill="#c2410c"/>
+  <text x="1188" y="706" class="small" text-anchor="middle">the third arrow points upward</text>
+  <text x="992" y="790" class="small">The same shape plus one upward arrow:</text>
+  <text x="992" y="814" class="small">the browser may write too. That extra</text>
+  <text x="992" y="838" class="small">direction is the whole difference.</text>
+</svg>
