@@ -79,7 +79,7 @@ The key should also appear in the most common queries. When a query names it, Ci
 
 ### Mapping keys to partitions
 
-With a key chosen, there are three ways to map its values to partitions: **range**, **hash** and **directory**. The diagram compares range and hash on the same twelve orders and the same three shards; read it row by row, and note one good result and one cost on each side. Directory partitioning follows, and the last part shows how Citus combines range and hash.
+With a key chosen, there are three ways to map its values to partitions, and PostgreSQL's `PARTITION BY` clause has a keyword for each: **range**, **hash** and **list**. The diagram compares range and hash on the same twelve orders and the same three shards; read it row by row, and note one good result and one cost on each side. List partitioning, which suits a different kind of key, follows, and the last part shows how Citus combines range and hash.
 
 ![range-vs-hash-partitioning.svg](images/range-vs-hash-partitioning.svg)
 
@@ -97,12 +97,29 @@ The key first goes through a hash function, which turns it into a well-mixed num
 * **Good: writes stay spread.** In the right panel, new orders 113–115 land one per shard;
 * **Cost: range reads ask every shard.** After hashing, neighbouring keys land on unrelated shards. The router can pick shards only from equality conditions, whose values it hashes; it does not list the values inside a range, so a query for orders 105–107 asks all three shards — even S3, which in the right panel holds none of them. An equality lookup such as `order_id = 106` still goes to one shard, because hashing that single value names its shard. Citus warns about this cost for time columns: "A hash distribution based on time will distribute times seemingly at random into different shards rather than keeping ranges of time together in shards", while time queries usually ask for a range, such as the most recent data.
 
-#### **Directory partitioning**
+#### **List partitioning**
 
-An explicit lookup table maps each key, or group of keys, to its partition, and every read and write consults it. PostgreSQL's `LIST` partitioning is the static form: each partition names the key values it holds.
+Each partition names the exact key values it holds: PostgreSQL's `LIST` partitioning splits a table "by explicitly listing which key value(s) appear in each partition". It suits a key with a small, known set of values, such as the country a customer belongs to:
 
-* **Good: flexibility.** Any key can be assigned to any partition, which makes a directory the most flexible of the three methods;
-* **Cost: one more piece of state.** The lookup table must always be available and correct, because no read or write can find its partition without it.
+```sql
+CREATE TABLE customers (
+    customer_id bigint NOT NULL,
+    country     text   NOT NULL,
+    name        text
+) PARTITION BY LIST (country);
+
+CREATE TABLE customers_eu PARTITION OF customers FOR VALUES IN ('DE', 'FR', 'NL');
+CREATE TABLE customers_us PARTITION OF customers FOR VALUES IN ('US');
+```
+
+* **Good: you choose where each value goes.** Values that belong together share a partition whatever their sort order or hash value, so a query for `country = 'DE'` reads only `customers_eu`. With `postgres_fdw`, `customers_eu` can be a foreign table ([§8](#foreign-partitions-with-postgres_fdw)), which puts the European customers on a server of their own;
+* **Cost: every value must be listed in advance.** The first customer from Japan, `'JP'`, matches no list, so the insert fails with `no partition of relation "customers" found for row` unless a default partition catches it; [§7](#7-postgresql-partitioning-on-one-server) shows the same error for a date and what a default partition costs;
+* **Cost: few values means few pieces.** A key that is easy to list has the low cardinality described above: `country` can never be cut into more pieces than there are countries, and a busy country stays one partition. A list decides *where* data lives; to spread writes over many servers, hash a key with many values instead.
+
+PostgreSQL keeps each partition's list in the table definition, and it is set only when the partition is created or attached. Moving `'NL'` to a partition of its own therefore means detaching `customers_eu`, moving its `'NL'` rows out, and attaching it again with a shorter list. When the same explicit map is kept as data instead — a lookup table that every read and write consults, and that can change while the system runs — it is called a **directory**:
+
+* **Good: flexibility.** Any key can be moved to any piece by changing one entry, which makes a directory the most flexible mapping;
+* **Cost: one more piece of state.** The lookup table must always be available and correct, because no read or write can find its piece without it.
 
 #### **Combining hash and range**
 
@@ -149,7 +166,7 @@ Every request has to reach the node that holds its key. That takes a map in two 
 * **Any node coordinates.** Since Citus 11.0 the metadata is copied to every node by default, and "each node can act as the coordinator, capable of doing the distributed query processing." The first two panels are therefore the same cluster used two ways: they differ only in which node the client connects to. A client may connect to any node, which forwards the query to the worker holding the shard. The cost is connections: "In a single coordinator world, only the coordinator establishes connections per node. Now, each node connects to each other." Schema changes to tables distributed by a column, such as `ALTER TABLE`, still go through the original coordinator;
 * **The application routes.** With application-level sharding there is no coordinator at all. The application holds the map, works out which database owns the key, and connects to it directly, as Notion's application maps a workspace ID to a logical shard and a logical shard to its physical database. No hop is added, but PostgreSQL itself never redirects a query sent to the wrong server, so after a shard moves, every application server must learn its new location before it can find that data.
 
-The map itself is small, critical state that every router must agree on; its partition-to-node layer is a directory in [§3](#directory-partitioning)'s sense, with the same cost. Citus keeps it in metadata tables such as `pg_dist_shard` and `pg_dist_placement`, the names in §8's diagram, and protects the coordinator the same way as a worker: with streaming replication, "to create a hot standby of the coordinator". When every node holds a copy, Citus updates all the copies in one [two-phase commit](../Transactions.%20Two-phase%20commit/Readme.md), a protocol that commits a change on every node or on none, so "all the nodes in the cluster always have the same metadata".
+The map itself is small, critical state that every router must agree on; its partition-to-node layer is a directory in [§3](#list-partitioning)'s sense, with the same cost. Citus keeps it in metadata tables such as `pg_dist_shard` and `pg_dist_placement`, the names in §8's diagram, and protects the coordinator the same way as a worker: with streaming replication, "to create a hot standby of the coordinator". When every node holds a copy, Citus updates all the copies in one [two-phase commit](../Transactions.%20Two-phase%20commit/Readme.md), a protocol that commits a change on every node or on none, so "all the nodes in the cluster always have the same metadata".
 
 ## 6. What sharding costs
 
@@ -464,13 +481,22 @@ Start at the top row when the problem is one very large table: pruning and cheap
 
     </details>
 
+12. `customers` is list-partitioned by `country`, and the first customer from Japan cannot be inserted. Why, and what are the two ways to accept the row?
+
+    <details>
+    <summary>Answer</summary>
+
+    No partition lists `'JP'`, so PostgreSQL has nowhere to route the row and rejects it with `no partition of relation "customers" found for row`. Either create a partition `FOR VALUES IN ('JP')`, or add a default partition that catches every unlisted value. The default partition takes the row at once, but its `'JP'` rows must be moved out before a `'JP'` partition can be created later.
+
+    </details>
+
 # Sources
 
 Primary sources checked on 2026-09-23. PostgreSQL behaviour was read in the version 18 documentation, and its three quoted error messages and its rule for pruning hash partitions in the `REL_18_6` source; `SPLIT PARTITION` and `MERGE PARTITIONS` were read in the version 19 beta documentation. Citus facts come from its documentation and the v14.2.0 source; its distribution-column guidance was read in both the published page and the documentation's source file, `sharding/data_modeling.rst` in the `citus_docs` repository. Its default shard count, the placement of co-located shards, the pruning rule for hash-distributed tables, the notice left after copying local rows, and the error for a primary key without the distribution column were confirmed in the v14.2.0 source. The SQL examples follow the documented syntax but were not executed for this article.
 
 - [PostgreSQL 18: Table Partitioning](https://www.postgresql.org/docs/18/ddl-partitioning.html)
-- [PostgreSQL 18: CREATE TABLE — hash partition moduli](https://www.postgresql.org/docs/18/sql-createtable.html)
-- [PostgreSQL 18: ALTER TABLE — default-partition scan on ATTACH PARTITION, DETACH PARTITION CONCURRENTLY](https://www.postgresql.org/docs/18/sql-altertable.html)
+- [PostgreSQL 18: CREATE TABLE — list partition values, hash partition moduli, default partitions](https://www.postgresql.org/docs/18/sql-createtable.html)
+- [PostgreSQL 18: ALTER TABLE — partition values set on ATTACH PARTITION, default-partition scan, DETACH PARTITION CONCURRENTLY](https://www.postgresql.org/docs/18/sql-altertable.html)
 - [PostgreSQL 18: CREATE FOREIGN TABLE — foreign tables as partitions](https://www.postgresql.org/docs/18/sql-createforeigntable.html)
 - [PostgreSQL 18: postgres_fdw — async execution, transaction management, remote query optimization](https://www.postgresql.org/docs/18/postgres-fdw.html)
 - [PostgreSQL 18: Explicit Locking — ACCESS EXCLUSIVE blocks even SELECT](https://www.postgresql.org/docs/18/explicit-locking.html)
