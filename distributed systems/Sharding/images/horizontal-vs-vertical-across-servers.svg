@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="568" viewBox="0 0 1120 568" role="img" aria-labelledby="title desc">
+  <title id="title">Split rows or split columns across servers</title>
+  <desc id="desc">The same four-row users table, with columns user_id, name and last_seen_at, is split over two servers in two ways. Horizontally, server 1 holds users 7 and 13 and server 2 holds users 42 and 91, each row with all three columns; reading user 42 touches server 2 only, inserting a user touches one server, and a new server can take a share of the rows. Vertically, server 1 holds user_id and name for all four users in a users table, and server 2 holds user_id and last_seen_at for all four users in a user_activity table; reading user 42 touches both servers and joins the halves on user_id, inserting a user writes to both servers, which commit separately, so a crash between the commits can leave half a row, and a new server helps only if another group of columns can move to it.</desc>
+  <!-- Each server box: icon and name on the first line, its key range or table name on the second, then its table.
+       No connectors: the highlighted user 42 rows show where a read of that user must go. Generated; see the box() layout. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .small { font-size: 19px; fill: #536174; }
+      .label { font-size: 19px; font-weight: 700; }
+      .step { font-size: 19px; fill: #17212f; }
+      .cell { font-size: 17px; }
+      .key { font-weight: 700; }
+      .tiny { font-size: 15px; fill: #536174; }
+      .tag { font-size: 15px; fill: #536174; font-family: Menlo, Consolas, monospace; }
+      .node { stroke: #b9c8d4; stroke-width: 2; }
+      .hit { fill: #e3f3d6; }
+    </style>
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+  </defs>
+  <rect width="1120" height="568" fill="#fff"/>
+
+  <!-- Lesson heading. -->
+  <text x="28" y="43" class="title" text-anchor="start">Split rows or split columns across servers</text>
+  <text x="28" y="77" class="sub" text-anchor="start">The same users table on two servers. Follow user 42: its row is highlighted wherever a read must go.</text>
+
+  <!-- LEFT PANEL: horizontal. Each server box holds two whole rows; boxes are 158 tall. -->
+  <rect x="28" y="104" width="520" height="440" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="140" class="heading" text-anchor="start">Horizontal: some rows each</text>
+  <text x="48" y="168" class="small" text-anchor="start">every server holds every column</text>
+  <rect x="48" y="188" width="232" height="158" rx="10" class="node" fill="#fff"/>
+  <use href="#server" x="62" y="200" width="14" height="24"/>
+  <text x="84" y="218" class="small" text-anchor="start">Server 1</text>
+  <text x="62" y="240" class="tag" text-anchor="start">user_id &lt; 40</text>
+  <rect x="56" y="250" width="216" height="86" rx="6" fill="#fff" stroke="#b9c8d4" stroke-width="1.5"/>
+  <path d="M56 276H272" stroke="#b9c8d4" stroke-width="1.5"/>
+  <text x="87" y="268" class="tiny" text-anchor="middle">user_id</text>
+  <path d="M118 250V336" stroke="#b9c8d4" stroke-width="1.5"/>
+  <text x="143" y="268" class="tiny" text-anchor="middle">name</text>
+  <path d="M168 250V336" stroke="#b9c8d4" stroke-width="1.5"/>
+  <text x="220" y="268" class="tiny" text-anchor="middle">last_seen_at</text>
+  <text y="297" class="cell" text-anchor="middle"><tspan x="87" class="key">7</tspan><tspan x="143">Ann</tspan><tspan x="220">09:14</tspan></text>
+  <text y="327" class="cell" text-anchor="middle"><tspan x="87" class="key">13</tspan><tspan x="143">Bo</tspan><tspan x="220">09:20</tspan></text>
+  <rect x="296" y="188" width="232" height="158" rx="10" class="node" fill="#fff"/>
+  <use href="#server" x="310" y="200" width="14" height="24"/>
+  <text x="332" y="218" class="small" text-anchor="start">Server 2</text>
+  <text x="310" y="240" class="tag" text-anchor="start">user_id &#8805; 40</text>
+  <rect x="304" y="250" width="216" height="86" rx="6" fill="#fff" stroke="#b9c8d4" stroke-width="1.5"/>
+  <rect x="305" y="277" width="214" height="28" class="hit"/>
+  <path d="M304 276H520" stroke="#b9c8d4" stroke-width="1.5"/>
+  <text x="335" y="268" class="tiny" text-anchor="middle">user_id</text>
+  <path d="M366 250V336" stroke="#b9c8d4" stroke-width="1.5"/>
+  <text x="391" y="268" class="tiny" text-anchor="middle">name</text>
+  <path d="M416 250V336" stroke="#b9c8d4" stroke-width="1.5"/>
+  <text x="468" y="268" class="tiny" text-anchor="middle">last_seen_at</text>
+  <text y="297" class="cell" text-anchor="middle"><tspan x="335" class="key">42</tspan><tspan x="391">Cy</tspan><tspan x="468">09:31</tspan></text>
+  <text y="327" class="cell" text-anchor="middle"><tspan x="335" class="key">91</tspan><tspan x="391">Di</tspan><tspan x="468">08:55</tspan></text>
+  <text x="48" y="380" class="small" text-anchor="start">Each row lives whole on one server.</text>
+  <!-- Operation costs; both panels share the same three baselines. -->
+  <text x="48" y="454" class="step" text-anchor="start"><tspan class="label">Read user 42:</tspan> server 2 only</text>
+  <text x="48" y="486" class="step" text-anchor="start"><tspan class="label">Insert a user:</tspan> one server</text>
+  <text x="48" y="518" class="step" text-anchor="start"><tspan class="label">Add a server:</tspan> it takes a share of the rows</text>
+
+  <!-- RIGHT PANEL: vertical. Each server box holds all four rows but only some columns; boxes are 218 tall. -->
+  <rect x="572" y="104" width="520" height="440" rx="12" fill="#f0f8fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="592" y="140" class="heading" text-anchor="start">Vertical: some columns each</text>
+  <text x="592" y="168" class="small" text-anchor="start">every server holds every row</text>
+  <rect x="592" y="188" width="232" height="218" rx="10" class="node" fill="#fff"/>
+  <use href="#server" x="606" y="200" width="14" height="24"/>
+  <text x="628" y="218" class="small" text-anchor="start">Server 1</text>
+  <text x="606" y="240" class="tag" text-anchor="start">users</text>
+  <rect x="600" y="250" width="216" height="146" rx="6" fill="#fff" stroke="#b9c8d4" stroke-width="1.5"/>
+  <rect x="601" y="337" width="214" height="28" class="hit"/>
+  <path d="M600 276H816" stroke="#b9c8d4" stroke-width="1.5"/>
+  <text x="648" y="268" class="tiny" text-anchor="middle">user_id</text>
+  <path d="M696 250V396" stroke="#b9c8d4" stroke-width="1.5"/>
+  <text x="756" y="268" class="tiny" text-anchor="middle">name</text>
+  <text y="297" class="cell" text-anchor="middle"><tspan x="648" class="key">7</tspan><tspan x="756">Ann</tspan></text>
+  <text y="327" class="cell" text-anchor="middle"><tspan x="648" class="key">13</tspan><tspan x="756">Bo</tspan></text>
+  <text y="357" class="cell" text-anchor="middle"><tspan x="648" class="key">42</tspan><tspan x="756">Cy</tspan></text>
+  <text y="387" class="cell" text-anchor="middle"><tspan x="648" class="key">91</tspan><tspan x="756">Di</tspan></text>
+  <rect x="840" y="188" width="232" height="218" rx="10" class="node" fill="#fff"/>
+  <use href="#server" x="854" y="200" width="14" height="24"/>
+  <text x="876" y="218" class="small" text-anchor="start">Server 2</text>
+  <text x="854" y="240" class="tag" text-anchor="start">user_activity</text>
+  <rect x="848" y="250" width="216" height="146" rx="6" fill="#fff" stroke="#b9c8d4" stroke-width="1.5"/>
+  <rect x="849" y="337" width="214" height="28" class="hit"/>
+  <path d="M848 276H1064" stroke="#b9c8d4" stroke-width="1.5"/>
+  <text x="896" y="268" class="tiny" text-anchor="middle">user_id</text>
+  <path d="M944 250V396" stroke="#b9c8d4" stroke-width="1.5"/>
+  <text x="1004" y="268" class="tiny" text-anchor="middle">last_seen_at</text>
+  <text y="297" class="cell" text-anchor="middle"><tspan x="896" class="key">7</tspan><tspan x="1004">09:14</tspan></text>
+  <text y="327" class="cell" text-anchor="middle"><tspan x="896" class="key">13</tspan><tspan x="1004">09:20</tspan></text>
+  <text y="357" class="cell" text-anchor="middle"><tspan x="896" class="key">42</tspan><tspan x="1004">09:31</tspan></text>
+  <text y="387" class="cell" text-anchor="middle"><tspan x="896" class="key">91</tspan><tspan x="1004">08:55</tspan></text>
+  <text x="592" y="454" class="step" text-anchor="start"><tspan class="label">Read user 42:</tspan> both servers, joined on user_id</text>
+  <text x="592" y="486" class="step" text-anchor="start"><tspan class="label">Insert a user:</tspan> both servers, two separate commits</text>
+  <text x="592" y="518" class="step" text-anchor="start"><tspan class="label">Add a server:</tspan> only if a column group can move</text>
+</svg>

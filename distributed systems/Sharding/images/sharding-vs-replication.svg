@@ -1,0 +1,125 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="742" viewBox="0 0 1120 742" role="img" aria-labelledby="title desc">
+  <title id="title">Replication copies the data; sharding divides it</title>
+  <desc id="desc">Three horizontal bands compare nine customers, A to I, sending 900 writes per second in total. One server stores all nine customers and applies all 900 writes per second. With replication, three servers each store all nine customers and each applies all 900 writes per second. With sharding, server 1 stores A to C, server 2 stores D to F and server 3 stores G to I, and each applies about 300 writes per second.</desc>
+  <!-- Visual system (fonts, palette, server icon) matches distributed systems/Raft/images. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 19px; fill: #536174; }
+      .load { font-size: 19px; font-weight: 700; }
+      .tiny { font-size: 15px; fill: #17212f; }
+      .node { stroke: #b9c8d4; stroke-width: 2; }
+      .row { fill: #f3faed; stroke: #9fc98a; stroke-width: 1.5; }
+    </style>
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+  </defs>
+  <rect width="1120" height="742" fill="#fff"/>
+
+  <!-- Lesson heading. -->
+  <text x="28" y="43" class="title" text-anchor="start">Replication copies the data; sharding divides it</text>
+  <text x="28" y="77" class="sub" text-anchor="start">Nine customers, A to I, send 900 writes per second in total, spread evenly. Compare what each server holds.</text>
+
+  <!-- BAND 1: a single server. Squares start at x=62 and step 29 units. -->
+  <rect x="28" y="104" width="1064" height="162" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="140" class="heading" text-anchor="start">One server</text>
+  <rect x="48" y="158" width="330" height="92" rx="10" class="node" fill="#fff"/>
+  <use href="#server" x="62" y="168" width="14" height="24"/>
+  <text x="86" y="188" class="small" text-anchor="start">Server 1</text>
+  <text x="364" y="188" class="load" text-anchor="end">900 writes/s</text>
+  <rect x="62" y="206" width="26" height="28" rx="4" class="row"/><text x="75" y="226" class="tiny" text-anchor="middle">A</text>
+  <rect x="91" y="206" width="26" height="28" rx="4" class="row"/><text x="104" y="226" class="tiny" text-anchor="middle">B</text>
+  <rect x="120" y="206" width="26" height="28" rx="4" class="row"/><text x="133" y="226" class="tiny" text-anchor="middle">C</text>
+  <rect x="149" y="206" width="26" height="28" rx="4" class="row"/><text x="162" y="226" class="tiny" text-anchor="middle">D</text>
+  <rect x="178" y="206" width="26" height="28" rx="4" class="row"/><text x="191" y="226" class="tiny" text-anchor="middle">E</text>
+  <rect x="207" y="206" width="26" height="28" rx="4" class="row"/><text x="220" y="226" class="tiny" text-anchor="middle">F</text>
+  <rect x="236" y="206" width="26" height="28" rx="4" class="row"/><text x="249" y="226" class="tiny" text-anchor="middle">G</text>
+  <rect x="265" y="206" width="26" height="28" rx="4" class="row"/><text x="278" y="226" class="tiny" text-anchor="middle">H</text>
+  <rect x="294" y="206" width="26" height="28" rx="4" class="row"/><text x="307" y="226" class="tiny" text-anchor="middle">I</text>
+  <text x="410" y="196" class="small" text-anchor="start">One machine's disk, memory and CPU are the whole ceiling.</text>
+  <text x="410" y="226" class="small" text-anchor="start">The only way up is a bigger machine.</text>
+
+  <!-- BAND 2: replication. Cards at x=48, 395, 742; each copy holds all nine customers. -->
+  <rect x="28" y="282" width="1064" height="190" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="318" class="heading" text-anchor="start">Replication: three full copies</text>
+
+  <rect x="48" y="336" width="330" height="92" rx="10" class="node" fill="#fff"/>
+  <use href="#server" x="62" y="346" width="14" height="24"/>
+  <text x="86" y="366" class="small" text-anchor="start">Server 1</text>
+  <text x="364" y="366" class="load" text-anchor="end">900 writes/s</text>
+  <rect x="62" y="384" width="26" height="28" rx="4" class="row"/><text x="75" y="404" class="tiny" text-anchor="middle">A</text>
+  <rect x="91" y="384" width="26" height="28" rx="4" class="row"/><text x="104" y="404" class="tiny" text-anchor="middle">B</text>
+  <rect x="120" y="384" width="26" height="28" rx="4" class="row"/><text x="133" y="404" class="tiny" text-anchor="middle">C</text>
+  <rect x="149" y="384" width="26" height="28" rx="4" class="row"/><text x="162" y="404" class="tiny" text-anchor="middle">D</text>
+  <rect x="178" y="384" width="26" height="28" rx="4" class="row"/><text x="191" y="404" class="tiny" text-anchor="middle">E</text>
+  <rect x="207" y="384" width="26" height="28" rx="4" class="row"/><text x="220" y="404" class="tiny" text-anchor="middle">F</text>
+  <rect x="236" y="384" width="26" height="28" rx="4" class="row"/><text x="249" y="404" class="tiny" text-anchor="middle">G</text>
+  <rect x="265" y="384" width="26" height="28" rx="4" class="row"/><text x="278" y="404" class="tiny" text-anchor="middle">H</text>
+  <rect x="294" y="384" width="26" height="28" rx="4" class="row"/><text x="307" y="404" class="tiny" text-anchor="middle">I</text>
+
+  <rect x="395" y="336" width="330" height="92" rx="10" class="node" fill="#fff"/>
+  <use href="#server" x="409" y="346" width="14" height="24"/>
+  <text x="433" y="366" class="small" text-anchor="start">Server 2</text>
+  <text x="711" y="366" class="load" text-anchor="end">900 writes/s</text>
+  <rect x="409" y="384" width="26" height="28" rx="4" class="row"/><text x="422" y="404" class="tiny" text-anchor="middle">A</text>
+  <rect x="438" y="384" width="26" height="28" rx="4" class="row"/><text x="451" y="404" class="tiny" text-anchor="middle">B</text>
+  <rect x="467" y="384" width="26" height="28" rx="4" class="row"/><text x="480" y="404" class="tiny" text-anchor="middle">C</text>
+  <rect x="496" y="384" width="26" height="28" rx="4" class="row"/><text x="509" y="404" class="tiny" text-anchor="middle">D</text>
+  <rect x="525" y="384" width="26" height="28" rx="4" class="row"/><text x="538" y="404" class="tiny" text-anchor="middle">E</text>
+  <rect x="554" y="384" width="26" height="28" rx="4" class="row"/><text x="567" y="404" class="tiny" text-anchor="middle">F</text>
+  <rect x="583" y="384" width="26" height="28" rx="4" class="row"/><text x="596" y="404" class="tiny" text-anchor="middle">G</text>
+  <rect x="612" y="384" width="26" height="28" rx="4" class="row"/><text x="625" y="404" class="tiny" text-anchor="middle">H</text>
+  <rect x="641" y="384" width="26" height="28" rx="4" class="row"/><text x="654" y="404" class="tiny" text-anchor="middle">I</text>
+
+  <rect x="742" y="336" width="330" height="92" rx="10" class="node" fill="#fff"/>
+  <use href="#server" x="756" y="346" width="14" height="24"/>
+  <text x="780" y="366" class="small" text-anchor="start">Server 3</text>
+  <text x="1058" y="366" class="load" text-anchor="end">900 writes/s</text>
+  <rect x="756" y="384" width="26" height="28" rx="4" class="row"/><text x="769" y="404" class="tiny" text-anchor="middle">A</text>
+  <rect x="785" y="384" width="26" height="28" rx="4" class="row"/><text x="798" y="404" class="tiny" text-anchor="middle">B</text>
+  <rect x="814" y="384" width="26" height="28" rx="4" class="row"/><text x="827" y="404" class="tiny" text-anchor="middle">C</text>
+  <rect x="843" y="384" width="26" height="28" rx="4" class="row"/><text x="856" y="404" class="tiny" text-anchor="middle">D</text>
+  <rect x="872" y="384" width="26" height="28" rx="4" class="row"/><text x="885" y="404" class="tiny" text-anchor="middle">E</text>
+  <rect x="901" y="384" width="26" height="28" rx="4" class="row"/><text x="914" y="404" class="tiny" text-anchor="middle">F</text>
+  <rect x="930" y="384" width="26" height="28" rx="4" class="row"/><text x="943" y="404" class="tiny" text-anchor="middle">G</text>
+  <rect x="959" y="384" width="26" height="28" rx="4" class="row"/><text x="972" y="404" class="tiny" text-anchor="middle">H</text>
+  <rect x="988" y="384" width="26" height="28" rx="4" class="row"/><text x="1001" y="404" class="tiny" text-anchor="middle">I</text>
+
+  <text x="48" y="456" class="small" text-anchor="start">Each server stores all nine and applies all 900 writes/s: copies help reads and survival, not writes.</text>
+
+  <!-- BAND 3: sharding. Same card grid as band 2; each server holds a disjoint third. -->
+  <rect x="28" y="488" width="1064" height="190" rx="12" fill="#f0f8fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="524" class="heading" text-anchor="start">Sharding: three slices</text>
+
+  <rect x="48" y="542" width="330" height="92" rx="10" class="node" fill="#fff"/>
+  <use href="#server" x="62" y="552" width="14" height="24"/>
+  <text x="86" y="572" class="small" text-anchor="start">Server 1</text>
+  <text x="364" y="572" class="load" text-anchor="end">300 writes/s</text>
+  <rect x="62" y="590" width="26" height="28" rx="4" class="row"/><text x="75" y="610" class="tiny" text-anchor="middle">A</text>
+  <rect x="91" y="590" width="26" height="28" rx="4" class="row"/><text x="104" y="610" class="tiny" text-anchor="middle">B</text>
+  <rect x="120" y="590" width="26" height="28" rx="4" class="row"/><text x="133" y="610" class="tiny" text-anchor="middle">C</text>
+
+  <rect x="395" y="542" width="330" height="92" rx="10" class="node" fill="#fff"/>
+  <use href="#server" x="409" y="552" width="14" height="24"/>
+  <text x="433" y="572" class="small" text-anchor="start">Server 2</text>
+  <text x="711" y="572" class="load" text-anchor="end">300 writes/s</text>
+  <rect x="409" y="590" width="26" height="28" rx="4" class="row"/><text x="422" y="610" class="tiny" text-anchor="middle">D</text>
+  <rect x="438" y="590" width="26" height="28" rx="4" class="row"/><text x="451" y="610" class="tiny" text-anchor="middle">E</text>
+  <rect x="467" y="590" width="26" height="28" rx="4" class="row"/><text x="480" y="610" class="tiny" text-anchor="middle">F</text>
+
+  <rect x="742" y="542" width="330" height="92" rx="10" class="node" fill="#fff"/>
+  <use href="#server" x="756" y="552" width="14" height="24"/>
+  <text x="780" y="572" class="small" text-anchor="start">Server 3</text>
+  <text x="1058" y="572" class="load" text-anchor="end">300 writes/s</text>
+  <rect x="756" y="590" width="26" height="28" rx="4" class="row"/><text x="769" y="610" class="tiny" text-anchor="middle">G</text>
+  <rect x="785" y="590" width="26" height="28" rx="4" class="row"/><text x="798" y="610" class="tiny" text-anchor="middle">H</text>
+  <rect x="814" y="590" width="26" height="28" rx="4" class="row"/><text x="827" y="610" class="tiny" text-anchor="middle">I</text>
+
+  <text x="48" y="662" class="small" text-anchor="start">Each server stores a third and applies about 300 writes/s: a fourth server would add capacity.</text>
+
+  <!-- Footer: the two techniques are combined in practice. -->
+  <text x="28" y="716" class="body" text-anchor="start">Real systems combine both: each shard is usually replicated as well.</text>
+</svg>

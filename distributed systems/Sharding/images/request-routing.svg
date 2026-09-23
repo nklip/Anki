@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="700" viewBox="0 0 1120 700" role="img" aria-labelledby="title desc">
+  <title id="title">Who routes a query to its shard?</title>
+  <desc id="desc">Three panels route the same query for customer 42, whose rows live on server B. With one coordinator, the Citus application sends the query to the coordinator, which routes it to worker B; since Citus 11.0 the workers hold a copy of the map too. When any node coordinates, which Citus 11.0 and later allow, the application connects to any worker, here worker A, which routes the query to worker B using its own copy of the map. When the application routes, as in application-level sharding, only the application holds the map, and it connects straight to server B, with no coordinator and no extra hop.</desc>
+  <!-- Arrow geometry is generated: each shaft stops 1 unit inside its head's base; each tip meets a box border. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .ex { font-size: 17px; fill: #536174; }
+      .small { font-size: 19px; fill: #536174; }
+      .label { font-size: 19px; font-weight: 700; }
+      .step { font-size: 19px; fill: #17212f; }
+      .num { font-size: 21px; font-weight: 700; fill: #17212f; }
+      .tiny { font-size: 15px; fill: #536174; }
+      .node { stroke: #b9c8d4; stroke-width: 2; }
+      .owner { fill: #f3faed; stroke: #9fc98a; stroke-width: 2; }
+      .map { font-size: 17px; font-weight: 700; fill: #0b78b5; }
+    </style>
+  </defs>
+  <rect width="1120" height="700" fill="#fff"/>
+
+  <!-- Lesson heading. -->
+  <text x="28" y="43" class="title" text-anchor="start">Who routes a query to its shard?</text>
+  <text x="28" y="77" class="sub" text-anchor="start">Each panel routes the same query: customer 42, whose rows live on server B.</text>
+
+  <!-- PANEL 1: one Citus coordinator. Application and coordinator share centre x=200; worker B's centre is x=282. -->
+  <rect x="28" y="104" width="344" height="572" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="140" class="heading" text-anchor="start">One coordinator</text>
+  <text x="48" y="166" class="ex" text-anchor="start">Citus: clients use the coordinator</text>
+  <rect x="110" y="192" width="180" height="60" rx="10" class="node" fill="#fff"/>
+  <text x="200" y="229" class="label" text-anchor="middle">Application</text>
+  <rect x="110" y="318" width="180" height="60" rx="10" class="node" fill="#fff"/>
+  <text x="200" y="344" class="label" text-anchor="middle">Coordinator</text>
+  <text x="200" y="366" class="map" text-anchor="middle">holds the map</text>
+  <rect x="48" y="470" width="100" height="60" rx="10" class="node" fill="#fff"/>
+  <text x="98" y="507" class="label" text-anchor="middle">Worker A</text>
+  <rect x="232" y="470" width="100" height="60" rx="10" class="owner"/>
+  <text x="282" y="496" class="label" text-anchor="middle">Worker B</text>
+  <text x="282" y="518" class="tiny" text-anchor="middle">has 42</text>
+  <path data-connector="true" d="M200 252L200 305" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="200,318 194,304 206,304" fill="#17212f"/>
+  <text x="214" y="292" class="num" text-anchor="start">&#9312;</text>
+  <path data-connector="true" d="M282 378L282 457" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="282,470 276,456 288,456" fill="#17212f"/>
+  <text x="296" y="430" class="num" text-anchor="start">&#9313;</text>
+  <text x="48" y="566" class="step" text-anchor="start">&#9312; app asks the coordinator</text>
+  <text x="48" y="594" class="step" text-anchor="start">&#9313; coordinator forwards to B</text>
+  <!-- Footer: who routes, then who holds a copy of the map. Since Citus 11.0 panels 1 and 2 are the same cluster used two ways. -->
+  <text x="48" y="628" class="label" text-anchor="start">Routed by: the coordinator</text>
+  <text x="48" y="654" class="ex" text-anchor="start">Since 11.0 workers hold a copy too</text>
+
+  <!-- PANEL 2: any Citus node coordinates. No separate coordinator; the forward hop runs between the workers at y=500. -->
+  <rect x="388" y="104" width="344" height="572" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="408" y="140" class="heading" text-anchor="start">Any node coordinates</text>
+  <text x="408" y="166" class="ex" text-anchor="start">Citus 11.0+: clients use any node</text>
+  <rect x="470" y="192" width="180" height="60" rx="10" class="node" fill="#fff"/>
+  <text x="560" y="229" class="label" text-anchor="middle">Application</text>
+  <rect x="408" y="470" width="100" height="60" rx="10" class="node" fill="#fff"/>
+  <text x="458" y="507" class="label" text-anchor="middle">Worker A</text>
+  <rect x="592" y="470" width="100" height="60" rx="10" class="owner"/>
+  <text x="642" y="496" class="label" text-anchor="middle">Worker B</text>
+  <text x="642" y="518" class="tiny" text-anchor="middle">has 42</text>
+  <path data-connector="true" d="M500 252L464.2 457.2" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="462,470 458.5,455.2 470.3,457.2" fill="#17212f"/>
+  <text x="466" y="367" class="num" text-anchor="end">&#9312;</text>
+  <path data-connector="true" d="M508 500L579 500" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="592,500 578,506 578,494" fill="#17212f"/>
+  <text x="550" y="488" class="num" text-anchor="middle">&#9313;</text>
+  <text x="408" y="566" class="step" text-anchor="start">&#9312; app asks any node, here A</text>
+  <text x="408" y="594" class="step" text-anchor="start">&#9313; A forwards to B</text>
+  <text x="408" y="628" class="label" text-anchor="start">Routed by: any node</text>
+  <text x="408" y="654" class="ex" text-anchor="start">Every node holds a copy of the map</text>
+
+  <!-- PANEL 3: application-level sharding. One direct hop; server A is drawn but never contacted. -->
+  <rect x="748" y="104" width="344" height="572" rx="12" fill="#f0f8fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="768" y="140" class="heading" text-anchor="start">The application routes</text>
+  <text x="768" y="166" class="ex" text-anchor="start">Application-level sharding</text>
+  <rect x="830" y="192" width="180" height="60" rx="10" class="node" fill="#fff"/>
+  <text x="920" y="218" class="label" text-anchor="middle">Application</text>
+  <text x="920" y="240" class="map" text-anchor="middle">holds the map</text>
+  <rect x="768" y="470" width="100" height="60" rx="10" class="node" fill="#fff"/>
+  <text x="818" y="507" class="label" text-anchor="middle">Server A</text>
+  <rect x="952" y="470" width="100" height="60" rx="10" class="owner"/>
+  <text x="1002" y="496" class="label" text-anchor="middle">Server B</text>
+  <text x="1002" y="518" class="tiny" text-anchor="middle">has 42</text>
+  <path data-connector="true" d="M990 252L1001.3 457" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="1002,470 995.2,456.4 1007.2,455.7" fill="#17212f"/>
+  <text x="1012" y="367" class="num" text-anchor="start">&#9312;</text>
+  <text x="768" y="566" class="step" text-anchor="start">&#9312; app connects straight to B</text>
+  <text x="768" y="594" class="small" text-anchor="start">no coordinator, no extra hop</text>
+  <text x="768" y="628" class="label" text-anchor="start">Routed by: the application</text>
+  <text x="768" y="654" class="ex" text-anchor="start">Only the application holds the map</text>
+</svg>

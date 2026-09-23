@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="676" viewBox="0 0 1120 676" role="img" aria-labelledby="title desc">
+  <title id="title">PostgreSQL partitioning: several tables behind one name</title>
+  <desc id="desc">On one PostgreSQL server, the partitioned table orders stores no rows itself; its rows live in three partitions, orders_2026_07, orders_2026_08 and orders_2026_09, one per month of created_on. A grid shows three statements. Inserting a row with created_on 2026-09-14 stores it in orders_2026_09. Inserting a row with created_on 2026-11-02 matches no partition and fails with an error. A SELECT with created_on greater than or equal to 2026-09-01 prunes the July and August partitions and scans only orders_2026_09.</desc>
+  <!-- Grid: label column x=48..296; partition columns start at x=308, 488, 668 (w=168); outside column x=848..1072. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .small { font-size: 19px; fill: #536174; }
+      .label { font-size: 18px; font-weight: 700; }
+      .code { font-size: 14px; fill: #17212f; font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace; }
+      .tname { font-size: 16px; font-weight: 700; fill: #17212f; font-family: Menlo, Consolas, "DejaVu Sans Mono", monospace; }
+      .tiny { font-size: 15px; fill: #536174; }
+      .node { stroke: #b9c8d4; stroke-width: 2; }
+      .ok { fill: #f3faed; stroke: #9fc98a; stroke-width: 2; }
+      .oktext { font-size: 18px; font-weight: 700; fill: #2f6b12; }
+      .pruned { fill: #fff; stroke: #b9c8d4; stroke-width: 1.5; stroke-dasharray: 6 5; }
+      .prunedtext { font-size: 18px; fill: #536174; }
+      .err { fill: #fdf0ee; stroke: #c0392b; stroke-width: 2; }
+      .errtext { font-size: 18px; font-weight: 700; fill: #c0392b; }
+      .errsmall { font-size: 15px; fill: #c0392b; }
+      .empty { fill: #fff; stroke: #e1e7ec; stroke-width: 1.5; }
+      .tree { fill: none; stroke: #8a9aab; stroke-width: 2; }
+    </style>
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+  </defs>
+  <rect width="1120" height="676" fill="#fff"/>
+
+  <!-- Lesson heading. -->
+  <text x="28" y="43" class="title" text-anchor="start">PostgreSQL partitioning: several tables behind one name</text>
+  <text x="28" y="77" class="sub" text-anchor="start">The orders table is partitioned by RANGE (created_on): one partition per month, one server.</text>
+
+  <!-- The server boundary: everything below shares one machine's disk, memory and CPU. -->
+  <rect x="28" y="104" width="1064" height="548" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <use href="#server" x="48" y="120" width="16" height="28"/>
+  <text x="74" y="142" class="heading" text-anchor="start">One PostgreSQL server</text>
+
+  <!-- Parent: a partitioned table has no storage; it routes rows into its partitions. -->
+  <rect x="412" y="160" width="320" height="62" rx="10" class="node" fill="#fff"/>
+  <text x="572" y="186" class="tname" text-anchor="middle">orders</text>
+  <text x="572" y="210" class="tiny" text-anchor="middle">partitioned table: stores no rows</text>
+  <!-- Tree lines (structure, not flow): parent to each partition. -->
+  <path class="tree" d="M572 222V240M392 258V240H752V258M572 240V258"/>
+  <rect x="308" y="258" width="168" height="62" rx="10" class="node" fill="#fff"/>
+  <text x="392" y="284" class="tname" text-anchor="middle">orders_2026_07</text>
+  <text x="392" y="308" class="tiny" text-anchor="middle">July 2026</text>
+  <rect x="488" y="258" width="168" height="62" rx="10" class="node" fill="#fff"/>
+  <text x="572" y="284" class="tname" text-anchor="middle">orders_2026_08</text>
+  <text x="572" y="308" class="tiny" text-anchor="middle">August 2026</text>
+  <rect x="668" y="258" width="168" height="62" rx="10" class="node" fill="#fff"/>
+  <text x="752" y="284" class="tname" text-anchor="middle">orders_2026_09</text>
+  <text x="752" y="308" class="tiny" text-anchor="middle">September 2026</text>
+  <!-- The outside column is deliberately not a partition: nothing accepts these dates. -->
+  <rect x="848" y="258" width="224" height="62" rx="10" class="pruned"/>
+  <text x="960" y="284" class="label" text-anchor="middle">no partition</text>
+  <text x="960" y="308" class="tiny" text-anchor="middle">any other date</text>
+
+  <!-- Row 1. -->
+  <rect x="48" y="344" width="248" height="64" rx="8" class="node" fill="#fff"/>
+  <text x="62" y="370" class="label" text-anchor="start">INSERT a row</text>
+  <text x="62" y="394" class="code" text-anchor="start">created_on = '2026-09-14'</text>
+  <rect x="308" y="344" width="168" height="64" rx="8" class="empty"/>
+  <rect x="488" y="344" width="168" height="64" rx="8" class="empty"/>
+  <rect x="668" y="344" width="168" height="64" rx="8" class="ok"/>
+  <text x="752" y="372" class="oktext" text-anchor="middle">stored here</text>
+  <text x="752" y="394" class="tiny" text-anchor="middle">routed by the key</text>
+  <rect x="848" y="344" width="224" height="64" rx="8" class="empty"/>
+
+  <!-- Row 2. -->
+  <rect x="48" y="420" width="248" height="64" rx="8" class="node" fill="#fff"/>
+  <text x="62" y="446" class="label" text-anchor="start">INSERT a row</text>
+  <text x="62" y="470" class="code" text-anchor="start">created_on = '2026-11-02'</text>
+  <rect x="308" y="420" width="168" height="64" rx="8" class="empty"/>
+  <rect x="488" y="420" width="168" height="64" rx="8" class="empty"/>
+  <rect x="668" y="420" width="168" height="64" rx="8" class="empty"/>
+  <rect x="848" y="420" width="224" height="64" rx="8" class="err"/>
+  <text x="960" y="448" class="errtext" text-anchor="middle">ERROR</text>
+  <text x="960" y="470" class="errsmall" text-anchor="middle">no partition found for row</text>
+
+  <!-- Row 3. -->
+  <rect x="48" y="496" width="248" height="64" rx="8" class="node" fill="#fff"/>
+  <text x="62" y="522" class="label" text-anchor="start">SELECT count(*) WHERE</text>
+  <text x="62" y="546" class="code" text-anchor="start">created_on &gt;= '2026-09-01'</text>
+  <rect x="308" y="496" width="168" height="64" rx="8" class="pruned"/>
+  <text x="392" y="524" class="prunedtext" text-anchor="middle">pruned</text>
+  <text x="392" y="546" class="tiny" text-anchor="middle">never read</text>
+  <rect x="488" y="496" width="168" height="64" rx="8" class="pruned"/>
+  <text x="572" y="524" class="prunedtext" text-anchor="middle">pruned</text>
+  <text x="572" y="546" class="tiny" text-anchor="middle">never read</text>
+  <rect x="668" y="496" width="168" height="64" rx="8" class="ok"/>
+  <text x="752" y="524" class="oktext" text-anchor="middle">scanned</text>
+  <text x="752" y="546" class="tiny" text-anchor="middle">the only one read</text>
+  <rect x="848" y="496" width="224" height="64" rx="8" class="empty"/>
+
+  <!-- Footer: the exact server message and the escape hatch. -->
+  <text x="48" y="598" class="small" text-anchor="start">The November INSERT fails with: no partition of relation "orders" found for row.</text>
+  <text x="48" y="626" class="small" text-anchor="start">A DEFAULT partition would accept that row instead.</text>
+</svg>

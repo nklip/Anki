@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="752" viewBox="0 0 1120 752" role="img" aria-labelledby="title desc">
+  <title id="title">Growing from three to four servers: what has to move?</title>
+  <desc id="desc">Twelve keys identified by their hash values 0 to 11. In the top panel the server is h mod N: with three servers and then four, only hashes 0, 1 and 2 keep their server, so 9 of 12 keys move. In the bottom panel each key belongs to one of 12 fixed partitions, partition equals h mod 12, and whole partitions are placed on servers. Before, S1 holds P0 to P3, S2 holds P4 to P7 and S3 holds P8 to P11. After adding S4, only P3, P7 and P11 move to S4, so 3 of 12 partitions move.</desc>
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 19px; fill: #536174; }
+      .label { font-size: 19px; font-weight: 700; }
+      .cell { font-size: 17px; fill: #17212f; }
+      .tiny { font-size: 15px; fill: #536174; }
+      .node { stroke: #b9c8d4; stroke-width: 2; }
+      .stay { fill: #f3faed; stroke: #9fc98a; stroke-width: 1.5; }
+      .move { fill: #fdf0ee; stroke: #c0392b; stroke-width: 1.5; stroke-dasharray: 5 4; }
+      .plain { fill: #fff; stroke: #b9c8d4; stroke-width: 1.5; }
+      .verdict { font-size: 19px; font-weight: 700; fill: #c0392b; }
+      .verdictok { font-size: 19px; font-weight: 700; fill: #2f6b12; }
+      .movetext { font-size: 17px; fill: #c0392b; }
+      .res { font-size: 15px; fill: #17212f; }
+      .resmove { font-size: 15px; fill: #c0392b; }
+    </style>
+  </defs>
+  <rect width="1120" height="752" fill="#fff"/>
+
+  <!-- Lesson heading. -->
+  <text x="28" y="43" class="title" text-anchor="start">Growing from three to four servers: what has to move?</text>
+  <text x="28" y="77" class="sub" text-anchor="start">Twelve keys, named by their hash h = 0&#8211;11. Server names: S1 = 0, S2 = 1, S3 = 2, S4 = 3.</text>
+
+  <!-- TOP PANEL: server = h mod N. Grid cells are 64 wide starting at x=300 (centres 332 + 64i). -->
+  <rect x="28" y="104" width="1064" height="250" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="140" class="heading" text-anchor="start">server = h mod N</text>
+  <text x="1072" y="140" class="verdict" text-anchor="end">9 of 12 keys move (75%)</text>
+
+  <text x="48" y="180" class="small" text-anchor="start">h = hash(key)</text>
+  <text x="332" y="180" class="label" text-anchor="middle">0</text>
+  <text x="396" y="180" class="label" text-anchor="middle">1</text>
+  <text x="460" y="180" class="label" text-anchor="middle">2</text>
+  <text x="524" y="180" class="label" text-anchor="middle">3</text>
+  <text x="588" y="180" class="label" text-anchor="middle">4</text>
+  <text x="652" y="180" class="label" text-anchor="middle">5</text>
+  <text x="716" y="180" class="label" text-anchor="middle">6</text>
+  <text x="780" y="180" class="label" text-anchor="middle">7</text>
+  <text x="844" y="180" class="label" text-anchor="middle">8</text>
+  <text x="908" y="180" class="label" text-anchor="middle">9</text>
+  <text x="972" y="180" class="label" text-anchor="middle">10</text>
+  <text x="1036" y="180" class="label" text-anchor="middle">11</text>
+
+  <!-- Row: three servers. -->
+  <text x="48" y="220" class="small" text-anchor="start">3 servers: h mod 3</text>
+  <rect x="304" y="196" width="56" height="36" rx="6" class="plain"/><text x="332" y="220" class="cell" text-anchor="middle">S1</text>
+  <rect x="368" y="196" width="56" height="36" rx="6" class="plain"/><text x="396" y="220" class="cell" text-anchor="middle">S2</text>
+  <rect x="432" y="196" width="56" height="36" rx="6" class="plain"/><text x="460" y="220" class="cell" text-anchor="middle">S3</text>
+  <rect x="496" y="196" width="56" height="36" rx="6" class="plain"/><text x="524" y="220" class="cell" text-anchor="middle">S1</text>
+  <rect x="560" y="196" width="56" height="36" rx="6" class="plain"/><text x="588" y="220" class="cell" text-anchor="middle">S2</text>
+  <rect x="624" y="196" width="56" height="36" rx="6" class="plain"/><text x="652" y="220" class="cell" text-anchor="middle">S3</text>
+  <rect x="688" y="196" width="56" height="36" rx="6" class="plain"/><text x="716" y="220" class="cell" text-anchor="middle">S1</text>
+  <rect x="752" y="196" width="56" height="36" rx="6" class="plain"/><text x="780" y="220" class="cell" text-anchor="middle">S2</text>
+  <rect x="816" y="196" width="56" height="36" rx="6" class="plain"/><text x="844" y="220" class="cell" text-anchor="middle">S3</text>
+  <rect x="880" y="196" width="56" height="36" rx="6" class="plain"/><text x="908" y="220" class="cell" text-anchor="middle">S1</text>
+  <rect x="944" y="196" width="56" height="36" rx="6" class="plain"/><text x="972" y="220" class="cell" text-anchor="middle">S2</text>
+  <rect x="1008" y="196" width="56" height="36" rx="6" class="plain"/><text x="1036" y="220" class="cell" text-anchor="middle">S3</text>
+
+  <!-- Row: four servers. -->
+  <text x="48" y="266" class="small" text-anchor="start">4 servers: h mod 4</text>
+  <rect x="304" y="242" width="56" height="36" rx="6" class="plain"/><text x="332" y="266" class="cell" text-anchor="middle">S1</text>
+  <rect x="368" y="242" width="56" height="36" rx="6" class="plain"/><text x="396" y="266" class="cell" text-anchor="middle">S2</text>
+  <rect x="432" y="242" width="56" height="36" rx="6" class="plain"/><text x="460" y="266" class="cell" text-anchor="middle">S3</text>
+  <rect x="496" y="242" width="56" height="36" rx="6" class="plain"/><text x="524" y="266" class="cell" text-anchor="middle">S4</text>
+  <rect x="560" y="242" width="56" height="36" rx="6" class="plain"/><text x="588" y="266" class="cell" text-anchor="middle">S1</text>
+  <rect x="624" y="242" width="56" height="36" rx="6" class="plain"/><text x="652" y="266" class="cell" text-anchor="middle">S2</text>
+  <rect x="688" y="242" width="56" height="36" rx="6" class="plain"/><text x="716" y="266" class="cell" text-anchor="middle">S3</text>
+  <rect x="752" y="242" width="56" height="36" rx="6" class="plain"/><text x="780" y="266" class="cell" text-anchor="middle">S4</text>
+  <rect x="816" y="242" width="56" height="36" rx="6" class="plain"/><text x="844" y="266" class="cell" text-anchor="middle">S1</text>
+  <rect x="880" y="242" width="56" height="36" rx="6" class="plain"/><text x="908" y="266" class="cell" text-anchor="middle">S2</text>
+  <rect x="944" y="242" width="56" height="36" rx="6" class="plain"/><text x="972" y="266" class="cell" text-anchor="middle">S3</text>
+  <rect x="1008" y="242" width="56" height="36" rx="6" class="plain"/><text x="1036" y="266" class="cell" text-anchor="middle">S4</text>
+
+  <!-- Row: result. Only h = 0, 1, 2 give the same remainder mod 3 and mod 4. -->
+  <text x="48" y="312" class="small" text-anchor="start">result</text>
+  <rect x="304" y="288" width="56" height="36" rx="6" class="stay"/><text x="332" y="311" class="res" text-anchor="middle">stays</text>
+  <rect x="368" y="288" width="56" height="36" rx="6" class="stay"/><text x="396" y="311" class="res" text-anchor="middle">stays</text>
+  <rect x="432" y="288" width="56" height="36" rx="6" class="stay"/><text x="460" y="311" class="res" text-anchor="middle">stays</text>
+  <rect x="496" y="288" width="56" height="36" rx="6" class="move"/><text x="524" y="311" class="resmove" text-anchor="middle">moves</text>
+  <rect x="560" y="288" width="56" height="36" rx="6" class="move"/><text x="588" y="311" class="resmove" text-anchor="middle">moves</text>
+  <rect x="624" y="288" width="56" height="36" rx="6" class="move"/><text x="652" y="311" class="resmove" text-anchor="middle">moves</text>
+  <rect x="688" y="288" width="56" height="36" rx="6" class="move"/><text x="716" y="311" class="resmove" text-anchor="middle">moves</text>
+  <rect x="752" y="288" width="56" height="36" rx="6" class="move"/><text x="780" y="311" class="resmove" text-anchor="middle">moves</text>
+  <rect x="816" y="288" width="56" height="36" rx="6" class="move"/><text x="844" y="311" class="resmove" text-anchor="middle">moves</text>
+  <rect x="880" y="288" width="56" height="36" rx="6" class="move"/><text x="908" y="311" class="resmove" text-anchor="middle">moves</text>
+  <rect x="944" y="288" width="56" height="36" rx="6" class="move"/><text x="972" y="311" class="resmove" text-anchor="middle">moves</text>
+  <rect x="1008" y="288" width="56" height="36" rx="6" class="move"/><text x="1036" y="311" class="resmove" text-anchor="middle">moves</text>
+
+  <!-- BOTTOM PANEL: fixed partitions. Key -> partition never changes; partition -> server does. -->
+  <rect x="28" y="370" width="1064" height="360" rx="12" fill="#f0f8fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="406" class="heading" text-anchor="start">12 fixed partitions: partition = h mod 12</text>
+  <text x="1072" y="406" class="verdictok" text-anchor="end">3 of 12 partitions move (25%)</text>
+  <text x="48" y="436" class="small" text-anchor="start">A key never changes partition. Only whole partitions change server.</text>
+
+  <!-- Before: three servers, four partitions each (boxes at x=48, 395, 742; pills step 64). -->
+  <text x="48" y="474" class="label" text-anchor="start">Before: 3 servers</text>
+  <rect x="48" y="486" width="330" height="62" rx="10" class="node" fill="#fff"/>
+  <text x="66" y="524" class="label" text-anchor="start">S1</text>
+  <rect x="116" y="500" width="56" height="34" rx="6" class="stay"/><text x="144" y="523" class="cell" text-anchor="middle">P0</text>
+  <rect x="180" y="500" width="56" height="34" rx="6" class="stay"/><text x="208" y="523" class="cell" text-anchor="middle">P1</text>
+  <rect x="244" y="500" width="56" height="34" rx="6" class="stay"/><text x="272" y="523" class="cell" text-anchor="middle">P2</text>
+  <rect x="308" y="500" width="56" height="34" rx="6" class="move"/><text x="336" y="523" class="movetext" text-anchor="middle">P3</text>
+
+  <rect x="395" y="486" width="330" height="62" rx="10" class="node" fill="#fff"/>
+  <text x="413" y="524" class="label" text-anchor="start">S2</text>
+  <rect x="463" y="500" width="56" height="34" rx="6" class="stay"/><text x="491" y="523" class="cell" text-anchor="middle">P4</text>
+  <rect x="527" y="500" width="56" height="34" rx="6" class="stay"/><text x="555" y="523" class="cell" text-anchor="middle">P5</text>
+  <rect x="591" y="500" width="56" height="34" rx="6" class="stay"/><text x="619" y="523" class="cell" text-anchor="middle">P6</text>
+  <rect x="655" y="500" width="56" height="34" rx="6" class="move"/><text x="683" y="523" class="movetext" text-anchor="middle">P7</text>
+
+  <rect x="742" y="486" width="330" height="62" rx="10" class="node" fill="#fff"/>
+  <text x="760" y="524" class="label" text-anchor="start">S3</text>
+  <rect x="810" y="500" width="56" height="34" rx="6" class="stay"/><text x="838" y="523" class="cell" text-anchor="middle">P8</text>
+  <rect x="874" y="500" width="56" height="34" rx="6" class="stay"/><text x="902" y="523" class="cell" text-anchor="middle">P9</text>
+  <rect x="938" y="500" width="56" height="34" rx="6" class="stay"/><text x="966" y="523" class="cell" text-anchor="middle">P10</text>
+  <rect x="1002" y="500" width="56" height="34" rx="6" class="move"/><text x="1030" y="523" class="movetext" text-anchor="middle">P11</text>
+
+  <!-- After: four servers, three partitions each (boxes at x=48, 308, 568, 828). -->
+  <text x="48" y="596" class="label" text-anchor="start">After: 4 servers</text>
+  <rect x="48" y="608" width="244" height="62" rx="10" class="node" fill="#fff"/>
+  <text x="64" y="646" class="label" text-anchor="start">S1</text>
+  <rect x="100" y="622" width="56" height="34" rx="6" class="stay"/><text x="128" y="645" class="cell" text-anchor="middle">P0</text>
+  <rect x="164" y="622" width="56" height="34" rx="6" class="stay"/><text x="192" y="645" class="cell" text-anchor="middle">P1</text>
+  <rect x="228" y="622" width="56" height="34" rx="6" class="stay"/><text x="256" y="645" class="cell" text-anchor="middle">P2</text>
+
+  <rect x="308" y="608" width="244" height="62" rx="10" class="node" fill="#fff"/>
+  <text x="324" y="646" class="label" text-anchor="start">S2</text>
+  <rect x="360" y="622" width="56" height="34" rx="6" class="stay"/><text x="388" y="645" class="cell" text-anchor="middle">P4</text>
+  <rect x="424" y="622" width="56" height="34" rx="6" class="stay"/><text x="452" y="645" class="cell" text-anchor="middle">P5</text>
+  <rect x="488" y="622" width="56" height="34" rx="6" class="stay"/><text x="516" y="645" class="cell" text-anchor="middle">P6</text>
+
+  <rect x="568" y="608" width="244" height="62" rx="10" class="node" fill="#fff"/>
+  <text x="584" y="646" class="label" text-anchor="start">S3</text>
+  <rect x="620" y="622" width="56" height="34" rx="6" class="stay"/><text x="648" y="645" class="cell" text-anchor="middle">P8</text>
+  <rect x="684" y="622" width="56" height="34" rx="6" class="stay"/><text x="712" y="645" class="cell" text-anchor="middle">P9</text>
+  <rect x="748" y="622" width="56" height="34" rx="6" class="stay"/><text x="776" y="645" class="cell" text-anchor="middle">P10</text>
+
+  <!-- The new server receives exactly one partition from each old server. -->
+  <rect x="828" y="608" width="244" height="62" rx="10" class="node" fill="#fff" style="stroke:#0b78b5"/>
+  <text x="844" y="646" class="label" text-anchor="start">S4</text>
+  <rect x="880" y="622" width="56" height="34" rx="6" class="move"/><text x="908" y="645" class="movetext" text-anchor="middle">P3</text>
+  <rect x="944" y="622" width="56" height="34" rx="6" class="move"/><text x="972" y="645" class="movetext" text-anchor="middle">P7</text>
+  <rect x="1008" y="622" width="56" height="34" rx="6" class="move"/><text x="1036" y="645" class="movetext" text-anchor="middle">P11</text>
+
+  <text x="48" y="706" class="small" text-anchor="start">Dashed partitions move: P3 from S1, P7 from S2, P11 from S3. Every other partition stays where it was.</text>
+</svg>

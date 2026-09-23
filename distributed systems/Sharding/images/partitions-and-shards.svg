@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="640" viewBox="0 0 1120 640" role="img" aria-labelledby="title desc">
+  <title id="title">Partitioning cuts the table; sharding spreads the pieces</title>
+  <desc id="desc">Three steps from left to right. First, one logical orders table with eight rows, each tagged with the piece its customer_id falls into. Second, partitioning: the rows are cut into four partitions, P1 to P4, all stored on one server. Third, sharding: the same four partitions are spread over two servers, P1 and P3 on server 1, P2 and P4 on server 2. Every row belongs to exactly one partition, chosen by the value of the partition key.</desc>
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 29px; font-weight: 700; }
+      .sub { font-size: 20px; fill: #536174; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .body { font-size: 22px; }
+      .small { font-size: 19px; fill: #536174; }
+      .label { font-size: 19px; font-weight: 700; }
+      .cell { font-size: 19px; fill: #17212f; }
+      .tiny { font-size: 15px; fill: #536174; }
+      .node { stroke: #b9c8d4; stroke-width: 2; }
+      .piece { fill: #f3faed; stroke: #9fc98a; stroke-width: 1.5; }
+    </style>
+    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+  </defs>
+  <rect width="1120" height="640" fill="#fff"/>
+
+  <!-- Lesson heading; the subtitle carries the partitioning rule so every tag below can be checked. -->
+  <text x="28" y="43" class="title" text-anchor="start">Partitioning cuts the table; sharding spreads the pieces</text>
+  <text x="28" y="77" class="sub" text-anchor="start">Partition key: customer_id. P1 holds 1&#8211;25, P2 26&#8211;50, P3 51&#8211;75, P4 76&#8211;100.</text>
+
+  <!-- STEP 1: the logical table. Rows are 36 units tall starting at y=226. -->
+  <rect x="28" y="110" width="288" height="460" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="48" y="146" class="heading" text-anchor="start">&#9312; One table</text>
+  <text x="48" y="174" class="small" text-anchor="start">orders, eight rows</text>
+  <rect x="48" y="192" width="248" height="322" rx="8" class="node" fill="#fff"/>
+  <text x="122" y="216" class="tiny" text-anchor="middle">customer_id</text>
+  <text x="246" y="216" class="tiny" text-anchor="middle">piece</text>
+  <path d="M48 226H296" stroke="#b9c8d4" stroke-width="2"/>
+  <path d="M196 192V514" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="122" y="251" class="cell" text-anchor="middle">7</text><text x="246" y="251" class="label" text-anchor="middle">P1</text>
+  <text x="122" y="287" class="cell" text-anchor="middle">42</text><text x="246" y="287" class="label" text-anchor="middle">P2</text>
+  <text x="122" y="323" class="cell" text-anchor="middle">58</text><text x="246" y="323" class="label" text-anchor="middle">P3</text>
+  <text x="122" y="359" class="cell" text-anchor="middle">91</text><text x="246" y="359" class="label" text-anchor="middle">P4</text>
+  <text x="122" y="395" class="cell" text-anchor="middle">13</text><text x="246" y="395" class="label" text-anchor="middle">P1</text>
+  <text x="122" y="431" class="cell" text-anchor="middle">77</text><text x="246" y="431" class="label" text-anchor="middle">P4</text>
+  <text x="122" y="467" class="cell" text-anchor="middle">30</text><text x="246" y="467" class="label" text-anchor="middle">P2</text>
+  <text x="122" y="503" class="cell" text-anchor="middle">66</text><text x="246" y="503" class="label" text-anchor="middle">P3</text>
+  <text x="48" y="546" class="small" text-anchor="start">Each row carries its key.</text>
+
+  <!-- Step 1 to step 2 connector; the head's tip stops at the next panel's border (x=372). -->
+  <path data-connector="true" d="M318 340L358 340" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="372,340 358,334 358,346" fill="#17212f"/>
+
+  <!-- STEP 2: partitioning. Four pieces, one server. -->
+  <rect x="372" y="110" width="328" height="460" rx="12" fill="#f7f8fa" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="392" y="146" class="heading" text-anchor="start">&#9313; Partitioning</text>
+  <text x="392" y="174" class="small" text-anchor="start">four pieces, one server</text>
+  <rect x="392" y="192" width="288" height="322" rx="10" class="node" fill="#fff"/>
+  <use href="#server" x="408" y="202" width="14" height="24"/>
+  <text x="432" y="222" class="small" text-anchor="start">Server 1</text>
+  <rect x="408" y="240" width="256" height="62" rx="8" class="piece"/>
+  <text x="428" y="278" class="label" text-anchor="start">P1</text><text x="644" y="278" class="small" text-anchor="end">rows 7, 13</text>
+  <rect x="408" y="308" width="256" height="62" rx="8" class="piece"/>
+  <text x="428" y="346" class="label" text-anchor="start">P2</text><text x="644" y="346" class="small" text-anchor="end">rows 30, 42</text>
+  <rect x="408" y="376" width="256" height="62" rx="8" class="piece"/>
+  <text x="428" y="414" class="label" text-anchor="start">P3</text><text x="644" y="414" class="small" text-anchor="end">rows 58, 66</text>
+  <rect x="408" y="444" width="256" height="62" rx="8" class="piece"/>
+  <text x="428" y="482" class="label" text-anchor="start">P4</text><text x="644" y="482" class="small" text-anchor="end">rows 77, 91</text>
+  <text x="392" y="546" class="small" text-anchor="start">Smaller pieces, same capacity.</text>
+
+  <!-- Step 2 to step 3 connector; tip stops at x=756. -->
+  <path data-connector="true" d="M702 340L742 340" fill="none" stroke="#17212f" stroke-width="2.5"/>
+  <polygon points="756,340 742,334 742,346" fill="#17212f"/>
+
+  <!-- STEP 3: sharding. The same pieces, now on two servers. -->
+  <rect x="756" y="110" width="336" height="460" rx="12" fill="#f0f8fc" stroke="#b9c8d4" stroke-width="2"/>
+  <text x="776" y="146" class="heading" text-anchor="start">&#9314; Sharding</text>
+  <text x="776" y="174" class="small" text-anchor="start">the pieces spread over servers</text>
+
+  <rect x="776" y="192" width="296" height="154" rx="10" class="node" fill="#fff"/>
+  <use href="#server" x="792" y="202" width="14" height="24"/>
+  <text x="816" y="222" class="small" text-anchor="start">Server 1</text>
+  <rect x="792" y="248" width="128" height="74" rx="8" class="piece"/>
+  <text x="856" y="279" class="label" text-anchor="middle">P1</text><text x="856" y="307" class="small" text-anchor="middle">rows 7, 13</text>
+  <rect x="928" y="248" width="128" height="74" rx="8" class="piece"/>
+  <text x="992" y="279" class="label" text-anchor="middle">P3</text><text x="992" y="307" class="small" text-anchor="middle">rows 58, 66</text>
+
+  <rect x="776" y="360" width="296" height="154" rx="10" class="node" fill="#fff"/>
+  <use href="#server" x="792" y="370" width="14" height="24"/>
+  <text x="816" y="390" class="small" text-anchor="start">Server 2</text>
+  <rect x="792" y="416" width="128" height="74" rx="8" class="piece"/>
+  <text x="856" y="447" class="label" text-anchor="middle">P2</text><text x="856" y="475" class="small" text-anchor="middle">rows 30, 42</text>
+  <rect x="928" y="416" width="128" height="74" rx="8" class="piece"/>
+  <text x="992" y="447" class="label" text-anchor="middle">P4</text><text x="992" y="475" class="small" text-anchor="middle">rows 77, 91</text>
+  <text x="776" y="546" class="small" text-anchor="start">Two machines share the work.</text>
+
+  <!-- Footer rule shared by all three steps. -->
+  <text x="28" y="614" class="body" text-anchor="start">Every row belongs to exactly one partition; the partition key's value decides which.</text>
+</svg>
