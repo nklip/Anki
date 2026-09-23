@@ -4,14 +4,15 @@
 
 **Apache Kafka is a distributed event streaming platform: applications append records to partitioned logs, and other applications read those records at their own pace.** Kafka retains the records according to a storage policy; reading a record does not remove it. This lets several services react to the same event and lets consumers replay retained history.
 
-Start with the log and its readers, then explore storage guarantees, choose a deployment, and apply the patterns to an order system. Delivery guarantees, offset commits, and Kafka transactions have their own article: [Apache Kafka. Delivery and transactions](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md).
+Start with the log and its readers, then explore storage guarantees, choose a deployment, apply the patterns to an order system, and recognize workloads where Kafka is the wrong tool. Delivery guarantees, offset commits, and Kafka transactions have their own article: [Apache Kafka. Delivery and transactions](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md).
 
 1. [Models and internals](#1-models-and-internals)
 2. [Storage and durability](#2-storage-and-durability)
 3. [Deployment topologies](#3-deployment-topologies)
 4. [Placement: Kafka, Redis, databases](#4-placement-kafka-redis-databases)
 5. [Patterns](#5-patterns)
-6. [Check your understanding](#6-check-your-understanding)
+6. [When Kafka is the wrong tool](#6-when-kafka-is-the-wrong-tool)
+7. [Check your understanding](#7-check-your-understanding)
 
 The article uses Apache Kafka 4.3 documentation and the standard `KafkaConsumer` subscription model. Its partition-assignment rules apply to consumer groups using either the classic or newer consumer protocol. **Share groups** use a different consumption model and are discussed separately. Topic names, event fields, and configuration examples are design choices, not universal defaults.
 
@@ -241,7 +242,7 @@ Kafka's durable log can instead be authoritative in a deliberately designed **ev
 
 A **materialized view** stores a derived result for convenient queries. Its consumer can lag, so accepting an order does not mean every search index and dashboard already includes it. Define what the user sees while those views catch up.
 
-Kafka is useful when retained history, independent consumers, and streaming throughput justify operating it. A shared cache, a simple synchronous call, or a small job queue can be sufficient for narrower requirements. Choose the required behavior before the product.
+Kafka is useful when retained history, independent consumers, and streaming throughput justify operating it. A shared cache, a simple synchronous call, or a small job queue can be sufficient for narrower requirements. Choose the required behavior before the product; [§6](#6-when-kafka-is-the-wrong-tool) names workloads where Kafka is the wrong choice, and one guarantee that no message system provides.
 
 ## 5. Patterns
 
@@ -353,7 +354,56 @@ Here the accepted events define state. Follow one ordered stream through ordinar
 
 **Main trap.** Kafka orders appends; it does not automatically enforce expected entity versions, validate business transitions, or provide an event store's per-entity query interface. The application must enforce ownership or concurrency rules around validation and append. Preserve the necessary history and schema interpretation, and verify that snapshots match their recorded positions. A snapshot accelerates recovery but cannot replace a complete event trail when an audit requires every change. Replaying state transitions must not resend emails or repeat payment calls; those effects require separate handling.
 
-## 6. Check your understanding
+## 6. When Kafka is the wrong tool
+
+[§4](#4-placement-kafka-redis-databases) named what justifies operating Kafka: retained history, independent consumers, and streaming throughput. This section covers the opposite case: for the workloads below, Kafka's defining properties add work or get in the way.
+
+| Workload | Why Kafka is a poor fit |
+|---|---|
+| Strict global ordering | Kafka orders records within a partition, not across partitions or topics |
+| Simple request–response | A producer publishes the request but receives no answer; a reply needs extra machinery |
+| Small workloads | A replicated cluster needs the same processes and monitoring however little traffic it carries |
+| One task per worker | A standard consumer group assigns whole partitions and keeps one restart position per partition, not one acknowledgment per task; share groups address this |
+
+Kafka buffers work, retains history, and lets independent readers replay it. Each row names something it leaves to the application or to another tool: choosing one order across partitions, answering a waiting caller, staying cheap at low volume, and acknowledging tasks one at a time.
+
+One requirement is missing from the table because no message system meets it: making an email or a payment happen exactly once. Kafka's `exactly-once` support does not provide it, and neither does switching to another message system; [the last subsection](#misconception-exactly-once-external-side-effects) explains why, and what does work.
+
+### Strict global ordering
+
+A **global order** is one sequence covering every event, rather than one sequence per partition; [§1](#the-partition-is-the-ordering-boundary) calls it a total order. Kafka provides one only within a partition: each partition numbers its own offsets, and no topic-wide offset exists. Suppose order `42` lands in partition `0` and order `43`, created a moment later, lands in partition `1`. A consumer reading both partitions can process order `43` first. Records in different topics have no defined relative order either.
+
+First check which order the business needs. Keying by `orderId` already keeps each order's own events in sequence, and many workflows need nothing more. If every event truly needs one sequence, a one-partition topic supplies a single append order ([§1](#inside-the-write-and-read-path)). It is limited to one leader's write path and at most one assigned consumer per standard group, which gives up the partition parallelism behind Kafka's throughput.
+
+### Simple request–response
+
+In **request–response**, the caller waits for an answer before it continues: checkout asks whether a coupon is valid and must show the result. A Kafka producer cannot return that answer. `send()` is asynchronous ([§1](#inside-the-write-and-read-path)), and its future completes when the write satisfies the producer's `acks` setting ([§2](#replication-acknowledgments-and-the-isr)). Even a full `acks=all` acknowledgment says nothing about whether any service has processed the request. An answer over Kafka needs a reply topic, a **correlation ID** that lets the caller match each reply to its request, and a timeout. Spring for Apache Kafka's `ReplyingKafkaTemplate` packages these parts; they still exist.
+
+The timeout does not cancel the work. If the coupon service's group falls behind, checkout times out and shows an error, but the request remains in the log. Unless the request carries a deadline that the service checks, the coupon service processes it later, and its reply arrives after the caller has stopped waiting. A direct call, such as a Hypertext Transfer Protocol (HTTP) request, still needs a timeout. The server answers the request it received, though, so no reply topic or correlation ID is needed, and a call that cannot reach the coupon service fails rather than waiting in a log to be processed later. Keep Kafka for steps that need no immediate answer, such as publishing `OrderCreated` after checkout completes.
+
+### Small workloads
+
+Suppose a shop sends a few hundred password-reset emails a day. A replicated production setup ([§3](#separate-brokers-and-controllers)) still needs a controller quorum, enough brokers to hold every copy, and the monitoring from [§2](#capacity-and-operational-checks), where partitions cost resources even at low traffic. The number of processes to run, upgrade, and monitor does not depend on how many emails flow through them.
+
+If the application already has a database, a **job table**, holding one row per pending task, is often enough. Insert the job row in the same transaction as the business change: both commit together, so the crash window between two independent writes, which [Pattern 5](#pattern-5-publish-database-changes-with-a-transactional-outbox) closes with an outbox, never opens. In PostgreSQL, several workers can claim different pending rows with `SELECT ... FOR UPDATE SKIP LOCKED`, which skips rows another worker has already locked instead of waiting for them. A lightweight message queue is another common choice. Reconsider Kafka when volume, retention needs, or the number of independent readers grows.
+
+### One task per worker
+
+In a **work queue**, any free worker takes the next task and acknowledges it on its own. A standard consumer group is not a general-purpose queue: it distributes work differently ([§1](#sharing-work-versus-independent-subscriptions)). It assigns whole partitions, so workers beyond the partition count receive none. Within a partition, the usual poll–process–commit loop handles records in order, so one 30-second image resize delays every later record in that partition, even while another worker is idle. The observable symptom is consumer lag ([§2](#capacity-and-operational-checks)) growing on that one partition.
+
+The committed offset is a restart position, not a per-task acknowledgment. Handing tasks to threads inside one consumer removes the wait but not this limit: if record `43` finishes while record `42` is still running, committing `44` would skip `42` after a restart ([failure scenarios](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md#failure-scenarios)). A task that keeps the loop from calling `poll()` within `max.poll.interval.ms` can also cost the consumer its partitions, so another consumer repeats the task ([poll timeout](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md#poll-timeout)).
+
+A dedicated work queue with per-message acknowledgment fits this shape. Within Kafka, the **share groups** from [§1](#sharing-work-versus-independent-subscriptions), production-ready since Kafka 4.2, target the same workload. Several consumers can take records from the same partition. Each fetched record is locked to one consumer for a limited time, and that consumer acknowledges, releases, or rejects it individually. Share groups suit records processed one at a time rather than as an ordered stream, and they give up record ordering to get that flexibility.
+
+The lock brings back the poll-timeout problem in a new form. It lasts 30 seconds by default (`share.record.lock.duration.ms`). If it expires before the consumer acknowledges the record, Kafka makes the record available to another consumer, so a 30-second resize can run twice. Kafka counts these delivery attempts and stops delivering a record after `share.delivery.count.limit` attempts, 5 by default, so a task that always outlasts the lock runs up to five times and is then no longer delivered. When work can outlast the lock, use explicit acknowledgment and renew the lock with `AcknowledgeType.RENEW` on each pass through the poll loop, or raise the lock duration.
+
+### Misconception: exactly-once external side effects
+
+Kafka's `exactly-once` support covers Kafka's own data. A transaction commits output records together with consumed offsets, and Kafka Streams extends this to its state ([Pattern 4](#pattern-4-aggregate-streams-into-a-queryable-result)). An email server or payment API is outside that boundary. Suppose a consumer charges a card, then crashes before committing its offset. Its replacement resumes from the older committed offset and can charge the card again. If it does, every Kafka guarantee held, yet the customer paid twice.
+
+Switching to a different message system does not help, because the gap lies between the consumer and the external service. The effect itself must be safe to repeat. For a database effect, store the event ID with the business change in one transaction, protected by a uniqueness constraint, as in [Pattern 5](#pattern-5-publish-database-changes-with-a-transactional-outbox). A service call needs that service's own **idempotency** contract, a promise that repeating a request has no further effect, such as accepting a stable key derived from the event ID. Limit retries and move records that keep failing to a dead-letter topic ([Pattern 6](#pattern-6-rebuild-a-view-and-handle-failed-records)). [Database writes and service calls](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md#database-writes-and-service-calls) covers this boundary in full.
+
+## 7. Check your understanding
 
 Try answering each question before expanding its answer.
 
@@ -474,6 +524,33 @@ Try answering each question before expanding its answer.
 
     </details>
 
+14. Checkout must tell a customer immediately whether a coupon is valid. What does a completed `send()` future tell checkout? What happens to the request if checkout times out first?
+
+    <details>
+    <summary>Answer</summary>
+
+    Only that the write satisfied the producer's `acks` setting, not that any service processed it. An answer over Kafka needs a reply topic, a correlation ID, and a timeout. If checkout times out, the request stays in the log; the coupon service can still process it and reply after checkout has stopped waiting. A direct call still needs a timeout, but no reply topic or correlation ID, and a call that cannot reach the service fails rather than waiting in a log.
+
+    </details>
+
+15. Image resizes take 1–30 seconds, and the topic has three partitions. Why can a fourth standard-group worker sit idle while resizes wait? Why can't a worker that finished record `43` commit past it while record `42` still runs? Which Kafka feature targets this workload?
+
+    <details>
+    <summary>Answer</summary>
+
+    A standard group assigns whole partitions, so at most three workers hold assignments, and a slow record delays the later records in its partition. A committed offset is a restart position: committing `44` would skip the unfinished record `42` after a restart. Share groups let several consumers take records from one partition and acknowledge each record individually, giving up record ordering. A resize that outlasts the 30-second default lock must renew it, or another consumer receives the record and repeats the resize.
+
+    </details>
+
+16. A consumer charges a card through a payment API, then crashes before committing its offset. Do Kafka transactions prevent a second charge? What does?
+
+    <details>
+    <summary>Answer</summary>
+
+    No. A Kafka transaction commits Kafka output together with consumed offsets; the payment API is outside it, so the replacement resumes from the older offset and can charge again. The charge must be safe to repeat, through the payment service's own idempotency contract, such as a stable key derived from the event ID.
+
+    </details>
+
 # Sources
 
 - [Apache Kafka introduction: events, topics, partitions, and retention independent of consumption](https://kafka.apache.org/43/getting-started/introduction/)
@@ -493,7 +570,9 @@ Try answering each question before expanding its answer.
 - [Kafka 4.3.0 partition implementation: low watermark, live replicas, and completion of deletion requests](https://github.com/apache/kafka/blob/4.3.0/core/src/main/scala/kafka/cluster/Partition.scala#L1055-L1080)
 - [Kafka distribution: group coordinators and compacted offset storage](https://kafka.apache.org/43/implementation/distribution/)
 - [Consumer configuration: offset reset, automatic commits, polling, and isolation](https://kafka.apache.org/43/configuration/consumer-configs/)
-- [KafkaShareConsumer API: shared partitions and individual record acknowledgment](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/consumer/KafkaShareConsumer.html)
+- [KafkaShareConsumer API: shared partitions, acquisition locks, individual record acknowledgment, lock renewal, and relaxed ordering](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/consumer/KafkaShareConsumer.html)
+- [Group configuration: share-group lock duration and delivery-attempt limit](https://kafka.apache.org/43/configuration/group-configs/)
+- [Kafka 4.3 upgrade notes: share groups production-ready in 4.2 for records processed one at a time](https://kafka.apache.org/43/getting-started/upgrade/)
 - [Consumer rebalance protocol: incremental assignment and migration](https://kafka.apache.org/43/operations/consumer-rebalance-protocol/)
 - [Topic configuration: cleanup, retention, minimum ISR, and file synchronization](https://kafka.apache.org/43/configuration/topic-configs/)
 - [Eligible leader replicas: safe election candidates and strict minimum ISR](https://kafka.apache.org/43/operations/eligible-leader-replicas/)
@@ -520,6 +599,9 @@ Try answering each question before expanding its answer.
 - [CQRS: separating models for changes and queries](https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs)
 - [PostgreSQL transactions: committing several changes atomically](https://www.postgresql.org/docs/current/tutorial-transactions.html)
 - [PostgreSQL constraints: enforcing unique event identities](https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-UNIQUE-CONSTRAINTS)
+- [PostgreSQL SELECT locking clause: `SKIP LOCKED` for multiple consumers of a queue-like table](https://www.postgresql.org/docs/current/sql-select.html#SQL-FOR-UPDATE-SHARE)
+- [Spring for Apache Kafka `ReplyingKafkaTemplate`: reply topics, echoed correlation IDs, and reply timeouts](https://docs.spring.io/spring-kafka/reference/kafka/sending-messages.html#replying-template)
+- [RFC 9110 HTTP Semantics: a request/response protocol in which the server responds to the client's request](https://www.rfc-editor.org/rfc/rfc9110.html#section-3.4)
 - [Redis data types: shared application state and counters](https://redis.io/docs/latest/develop/data-types/)
 - [Amazon S3 objects: storing bytes under object keys](https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingObjects.html)
 - [Confluent S3 sink connector: exporting Kafka records to object files](https://docs.confluent.io/kafka-connectors/s3-sink/current/overview.html)
