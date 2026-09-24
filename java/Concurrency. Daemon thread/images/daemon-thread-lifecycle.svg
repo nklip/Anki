@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="350" viewBox="0 0 960 350" role="img" aria-labelledby="title description">
+  <title id="title">Daemon threads do not keep Java running</title>
+  <desc id="description">Read left to right. Main is the only non-daemon thread, running alongside a daemon worker. When main finishes, shutdown begins even if the worker is still active. When the Java Virtual Machine terminates, the worker stops, and unfinished work may be lost.</desc>
+
+  <!-- Shared text styles; use explicit line breaks for portable rendering. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; text-anchor: middle; fill: #202124; }
+      .title { font-size: 27px; font-weight: 700; }
+      .heading { font-size: 20px; font-weight: 700; }
+      .label { font-size: 18px; font-weight: 700; }
+      .body { font-size: 17px; }
+      .note { font-size: 16px; fill: #5f6368; }
+    </style>
+  </defs>
+
+  <!-- Lesson and scenario; the subtitle defines the scope of the example. -->
+  <rect width="960" height="350" fill="#ffffff"/>
+  <text class="title" x="480" y="39">Daemon threads do not keep Java running</text>
+  <text class="body" x="480" y="69">Example: main is the only non-daemon thread. JVM = Java Virtual Machine.</text>
+
+  <!-- Stage 1: labels carry the distinction as well as blue and purple colors. -->
+  <g id="application-running">
+    <rect x="24" y="96" width="270" height="205" rx="12" fill="#f8f9fa" stroke="#9aa0a6" stroke-width="1.5"/>
+    <text class="heading" x="159" y="130">1 · Application running</text>
+    <rect x="44" y="151" width="230" height="44" rx="7" fill="#e8f0fe"/>
+    <text class="label" x="159" y="179">Non-daemon: main</text>
+    <rect x="44" y="209" width="230" height="44" rx="7" fill="#f3e8fd"/>
+    <text class="label" x="159" y="237">Daemon: worker</text>
+    <text class="note" x="159" y="280">main keeps the JVM alive.</text>
+  </g>
+
+  <!-- Short arrows stay in the gaps; each shaft ends beneath its own head. -->
+  <g id="stage-connectors" fill="#5f6368" stroke="#5f6368">
+    <line id="shutdown-arrow-shaft" data-connector="true" x1="303" y1="199" x2="323" y2="199" stroke-width="3"/>
+    <polygon points="321,192 335,199 321,206" stroke="none"/>
+    <line id="termination-arrow-shaft" data-connector="true" x1="624" y1="199" x2="644" y2="199" stroke-width="3"/>
+    <polygon points="642,192 656,199 642,206" stroke="none"/>
+  </g>
+
+  <!-- Stage 2 is shutdown initiation, not immediate termination of the worker. -->
+  <g id="shutdown-begins">
+    <rect x="345" y="96" width="270" height="205" rx="12" fill="#fff8e1" stroke="#b7791f" stroke-width="1.5"/>
+    <text class="heading" x="480" y="130">2 · Shutdown begins</text>
+    <text class="label" x="480" y="173">main has finished</text>
+    <text class="body" x="480" y="208">Worker may still be running.</text>
+    <text class="body" x="480" y="236">Its completion is not awaited.</text>
+    <text class="note" x="480" y="280">No live non-daemon threads.</text>
+  </g>
+
+  <!-- Stage 3: termination cuts off remaining Java execution and cleanup. -->
+  <g id="jvm-terminates">
+    <rect x="666" y="96" width="270" height="205" rx="12" fill="#fce8e6" stroke="#c53929" stroke-width="1.5"/>
+    <text class="heading" x="801" y="130">3 · JVM terminates</text>
+    <text class="label" x="801" y="173">Worker stops executing</text>
+    <text class="body" x="801" y="208">Unfinished work may be lost.</text>
+    <text class="body" x="801" y="236">Cleanup may never run.</text>
+    <text class="note" x="801" y="280">All Java execution has ended.</text>
+  </g>
+
+  <!-- Practical consequence directly follows the causal sequence. -->
+  <text class="label" x="480" y="332">Wait explicitly when a task must finish.</text>
+</svg>
