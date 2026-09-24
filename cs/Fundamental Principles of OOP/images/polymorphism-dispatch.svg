@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">Polymorphism: the same call selects different implementations</title>
+  <desc id="desc">Two rows represent separate method calls. Both use a variable named maker with the declared interface type SoundMaker and the expression maker.sound(). When maker refers to a Dog, runtime dispatch selects Dog.sound(), which returns Woof. When maker refers to a Cat, it selects Cat.sound(), which returns Meow. The declared type makes the operation available; the actual object's class determines the overriding implementation.</desc>
+
+  <!-- Match the encapsulation diagram: blue is the client-facing contract; green is the result. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #0f172a; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 20px; fill: #475569; }
+      .label { font-size: 18px; font-weight: 700; fill: #475569; }
+      .heading { font-size: 24px; font-weight: 700; }
+      .copy { font-size: 20px; fill: #334155; }
+      .code { font-family: "Courier New", Courier, monospace; font-size: 22px; }
+      .center { text-anchor: middle; }
+      .arrow-shaft { fill: none; stroke: #64748b; stroke-width: 3; }
+    </style>
+  </defs>
+
+  <!-- Explain the reading order and distinguish separate receivers before showing the rows. -->
+  <rect width="1200" height="620" fill="#f8fafc"/>
+  <g id="heading">
+    <text class="label" x="40" y="38">RUNTIME POLYMORPHISM · JAVA INSTANCE METHODS</text>
+    <text class="title" x="40" y="84">Same call. Different object. Different implementation.</text>
+    <text class="subtitle" x="40" y="119">Read each row left to right as a separate call through the SoundMaker interface.</text>
+  </g>
+
+  <!-- Column labels identify compile-time availability separately from runtime selection. -->
+  <g id="column-labels">
+    <text class="label" x="40" y="173">CLIENT CALL</text>
+    <text class="label" x="400" y="173">ACTUAL OBJECT</text>
+    <text class="label" x="735" y="173">METHOD THAT RUNS</text>
+  </g>
+
+  <!-- First receiver: the interface reference still points to a Dog object. -->
+  <g id="dog-call">
+    <rect x="40" y="194" width="290" height="122" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="copy" x="62" y="228">Declared type: SoundMaker</text>
+    <text class="code" x="62" y="278">maker.sound()</text>
+    <rect x="400" y="194" width="265" height="122" rx="14" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+    <text class="heading center" x="532.5" y="238">Dog object</text>
+    <text class="copy center" x="532.5" y="277">maker refers to this</text>
+    <rect x="735" y="194" width="425" height="122" rx="14" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
+    <text class="code" x="759" y="238">Dog.sound()</text>
+    <text class="copy" x="759" y="277">Returns "Woof"</text>
+  </g>
+
+  <!-- Second receiver: the same expression dispatches to the Cat implementation. -->
+  <g id="cat-call">
+    <rect x="40" y="361" width="290" height="122" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="copy" x="62" y="395">Declared type: SoundMaker</text>
+    <text class="code" x="62" y="445">maker.sound()</text>
+    <rect x="400" y="361" width="265" height="122" rx="14" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+    <text class="heading center" x="532.5" y="405">Cat object</text>
+    <text class="copy center" x="532.5" y="444">maker refers to this</text>
+    <rect x="735" y="361" width="425" height="122" rx="14" fill="#ecfdf5" stroke="#15803d" stroke-width="2"/>
+    <text class="code" x="759" y="405">Cat.sound()</text>
+    <text class="copy" x="759" y="444">Returns "Meow"</text>
+  </g>
+
+  <!-- Each short arrow has a separate head. Tips stop at the destination's outer stroke. -->
+  <g id="dispatch-arrows">
+    <line class="arrow-shaft" data-connector="true" x1="332" y1="255" x2="384" y2="255"/>
+    <polygon points="399,255 383,246 383,264" fill="#64748b"/>
+    <line class="arrow-shaft" data-connector="true" x1="667" y1="255" x2="719" y2="255"/>
+    <polygon points="734,255 718,246 718,264" fill="#64748b"/>
+    <line class="arrow-shaft" data-connector="true" x1="332" y1="422" x2="384" y2="422"/>
+    <polygon points="399,422 383,413 383,431" fill="#64748b"/>
+    <line class="arrow-shaft" data-connector="true" x1="667" y1="422" x2="719" y2="422"/>
+    <polygon points="734,422 718,413 718,431" fill="#64748b"/>
+  </g>
+
+  <!-- The closing rule names both type roles without implying that the object changes class. -->
+  <g id="dispatch-rule">
+    <rect x="40" y="521" width="1120" height="65" rx="12" fill="#e2e8f0"/>
+    <text class="copy" x="62" y="549">Declared type: which operations the client can call.</text>
+    <text class="copy" x="62" y="577">Runtime class: which overriding implementation runs.</text>
+  </g>
+</svg>
