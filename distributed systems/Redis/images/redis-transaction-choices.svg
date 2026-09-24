@@ -4,6 +4,12 @@
      originally the MIT-licensed Devicon redis-original icon. Person and database symbols
      are copied from system design/16. Proximity Service/images/final-design.svg. -->
 <defs>
+<!-- Single server matches redis-pubsub.svg; geometry comes from
+     system design/01. Scaling/images/data-center.svg. -->
+<symbol id="backend-server" viewBox="0 0 64 112">
+  <rect width="64" height="112" rx="7" fill="#63c51b"/>
+  <path d="M13 18H51M13 82H51M13 96H51" fill="none" stroke="#fff" stroke-width="6"/>
+</symbol>
 <symbol id="redis-red" viewBox="1.2 10.2 125.6 107.6">
       <path fill="#b30001" d="M121.8 93.1c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.9-11.5 3.8-17.3 1S13 98.1 6.3 94.9c-3.3-1.6-5-2.9-5-4.2V78s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c0 1.3-1.5 2.7-4.9 4.4z"/>
       <path fill="#ec0000" d="M121.8 80.5C115.1 84 80.4 98.2 73 102.1c-7.4 3.9-11.5 3.8-17.3 1-5.8-2.8-42.7-17.7-49.4-20.9C-.3 79-.5 76.8 6 74.3c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
@@ -64,9 +70,10 @@
 <text x="180" y="176" font-size="17" text-anchor="middle">2. B increments Redis to 11.</text>
 <!-- backend-a-0: application service -->
 <rect id="backend-a-0" class="box" x="50" y="199" width="260" height="100"/>
-<text x="180.0" y="230" font-size="22" text-anchor="middle">Backend A</text>
-<text x="180.0" y="257" font-size="17" text-anchor="middle">MULTI · SET views:42 11</text>
-<text x="180.0" y="280" font-size="17" text-anchor="middle">EXEC</text>
+<use id="backend-a-0-icon" href="#backend-server" x="65" y="217" width="30" height="52.5"/>
+<text x="209" y="230" font-size="22" text-anchor="middle" font-weight="bold">Backend A</text>
+<text x="209" y="257" font-size="17" text-anchor="middle">MULTI · SET views:42 11</text>
+<text x="209" y="280" font-size="17" text-anchor="middle">EXEC</text>
 <path id="command-0" class="flow" d="M180 299 L180 350.5"/>
 <text x="194" y="330" font-size="16" text-anchor="start">stale write</text>
 <use id="redis-0" href="#redis-red" x="137" y="360" width="86" height="73.6752"/>
@@ -78,9 +85,10 @@
 <text x="510" y="176" font-size="17" text-anchor="middle">2. B increments Redis to 11.</text>
 <!-- backend-a-1: application service -->
 <rect id="backend-a-1" class="box" x="380" y="199" width="260" height="100"/>
-<text x="510.0" y="230" font-size="22" text-anchor="middle">Backend A</text>
-<text x="510.0" y="257" font-size="17" text-anchor="middle">MULTI · SET views:42 11</text>
-<text x="510.0" y="280" font-size="17" text-anchor="middle">EXEC</text>
+<use id="backend-a-1-icon" href="#backend-server" x="395" y="217" width="30" height="52.5"/>
+<text x="539" y="230" font-size="22" text-anchor="middle" font-weight="bold">Backend A</text>
+<text x="539" y="257" font-size="17" text-anchor="middle">MULTI · SET views:42 11</text>
+<text x="539" y="280" font-size="17" text-anchor="middle">EXEC</text>
 <path id="command-1" class="flow" d="M510 299 L510 350.5"/>
 <text x="524" y="330" font-size="16" text-anchor="start">EXEC → null</text>
 <use id="redis-1" href="#redis-red" x="467" y="360" width="86" height="73.6752"/>
@@ -92,9 +100,10 @@
 <text x="840" y="176" font-size="17" text-anchor="middle">2. A sends an increment.</text>
 <!-- backend-a-2: application service -->
 <rect id="backend-a-2" class="box" x="710" y="199" width="260" height="100"/>
-<text x="840.0" y="230" font-size="22" text-anchor="middle">Backend A</text>
-<text x="840.0" y="257" font-size="17" text-anchor="middle">INCR views:42</text>
-<text x="840.0" y="280" font-size="17" text-anchor="middle">Uses the current value</text>
+<use id="backend-a-2-icon" href="#backend-server" x="725" y="217" width="30" height="52.5"/>
+<text x="869" y="230" font-size="22" text-anchor="middle" font-weight="bold">Backend A</text>
+<text x="869" y="257" font-size="17" text-anchor="middle">INCR views:42</text>
+<text x="869" y="280" font-size="17" text-anchor="middle">Uses the current value</text>
 <path id="command-2" class="flow" d="M840 299 L840 350.5"/>
 <text x="854" y="330" font-size="16" text-anchor="start">atomic INCR</text>
 <use id="redis-2" href="#redis-red" x="797" y="360" width="86" height="73.6752"/>

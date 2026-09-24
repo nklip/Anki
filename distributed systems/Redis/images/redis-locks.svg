@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="750" viewBox="0 0 1000 750" role="img" aria-labelledby="title desc">
-<title id="title">Short leases: reduce duplicate cache rebuilds</title><desc id="desc">Users request a missing cached report. Workers compete for a temporary Redis lease. The winner reads durable inputs and writes a derived cached summary. Token-checked release avoids deleting a newer lease, but expiry and failover can still allow overlap.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="820" viewBox="0 0 1000 820" role="img" aria-labelledby="title desc">
+<title id="title">Short leases: reduce duplicate cache rebuilds</title><desc id="desc">Users request a missing cached report. Backend servers compete for a temporary Redis lease. Parallel arrows show the successful acquisition and the later token-checked release. The selected worker requests database inputs in step 4a, receives them in step 4b, recomputes, and caches the summary. A cloud icon marks optional CDN file delivery. Expiry and failover can still allow overlapping workers.</desc>
 <!-- Shared system-design icons: Redis geometry copied from redis-deployment-sentinel.svg,
      originally the MIT-licensed Devicon redis-original icon. Person and database symbols
      are copied from system design/16. Proximity Service/images/final-design.svg. -->
@@ -51,11 +51,25 @@
       <path d="M0.9 13.75A43.1 8.75 0 0 1 87.1 13.75V82.25A43.1 8.75 0 0 1 0.9 82.25Z" fill="currentColor" stroke="#111" stroke-width="1.6"/>
       <ellipse cx="44" cy="13.75" rx="43.1" ry="8.75" fill="currentColor" stroke="#111" stroke-width="1.6"/>
     </symbol>
+<!-- Server cluster and CDN cloud adapted from system design/14. Youtube/images/message-queue2.svg;
+     single-server rack from system design/01. Scaling/images/data-center.svg. -->
+<symbol id="backend-server-cluster" viewBox="0 0 130 90">
+  <g fill="#63c51b"><rect x="33" y="3" width="34" height="19" rx="2"/><rect x="72" y="3" width="34" height="19" rx="2"/><rect x="6" y="23" width="38" height="62"/><rect x="46" y="23" width="38" height="62"/><rect x="86" y="23" width="38" height="62"/></g>
+  <path d="M12 34H38M12 71H38M52 34H78M52 71H78M92 34H118M92 71H118M39 11H61M78 11H100" fill="none" stroke="#fff" stroke-width="3"/>
+</symbol>
+<symbol id="backend-server" viewBox="0 0 64 112">
+  <rect width="64" height="112" rx="7" fill="#63c51b"/>
+  <path d="M13 18H51M13 82H51M13 96H51" fill="none" stroke="#fff" stroke-width="6"/>
+</symbol>
+<symbol id="cdn-cloud" viewBox="0 0 160 110">
+  <path d="M31 92C12 92 3 79 5 65C6 52 16 44 29 43C31 27 44 18 59 21C68 6 85 5 96 15C107 6 124 12 128 27C143 27 155 39 155 55C155 76 140 92 121 92Z" fill="#75d6ef" stroke="#1677b8" stroke-width="2"/>
+  <path d="M79 15L62 54H83L70 91L109 45H90L103 15Z" fill="#fff"/>
+</symbol>
 <!-- A 2.5-unit nose inset covers the 1.8-unit shaft; connector endpoints compensate for it. -->
 <marker id="arrow" markerWidth="10" markerHeight="10" viewBox="0 0 10 10" refX="7.5" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="#111"/></marker>
 <style>text{font-family:Arial,Helvetica,sans-serif;fill:#111}.box{fill:#fff;stroke:#111;stroke-width:1.8}.flow{fill:none;stroke:#111;stroke-width:1.8;stroke-linejoin:round;marker-end:url(#arrow)}.plain{fill:none;stroke:#111;stroke-width:1.8}</style>
 </defs>
-<rect width="1000" height="750" fill="#fff"/>
+<rect width="1000" height="820" fill="#fff"/>
 <!-- Title and reading cue; topology starts with the user at the left. -->
 <text x="500" y="40" font-size="26" text-anchor="middle" font-weight="bold">Short leases: reduce duplicate cache rebuilds</text>
 <text x="500" y="70" font-size="18" text-anchor="middle">A temporary Redis lease reduces repeated work; pauses or failover can still allow overlap.</text>
@@ -64,54 +78,69 @@
 <text x="106" y="230" font-size="22" text-anchor="middle">Users</text>
 <!-- backend-workers: application service -->
 <rect id="backend-workers" class="box" x="350" y="125" width="240" height="105"/>
-<text x="470.0" y="156" font-size="22" text-anchor="middle">Backend workers</text>
-<text x="470.0" y="183" font-size="17" text-anchor="middle">Many cache misses</text>
-<text x="470.0" y="206" font-size="17" text-anchor="middle">Try a short lease</text>
+<use id="backend-workers-icon" href="#backend-server-cluster" x="367" y="142" width="66" height="45.6923"/>
+<text x="507" y="154" font-size="20" text-anchor="middle" font-weight="bold">Backend</text>
+<text x="507" y="178" font-size="20" text-anchor="middle" font-weight="bold">workers</text>
+<text x="470" y="214" font-size="16" text-anchor="middle">Cache miss → try a lease</text>
 <use id="lease-redis" href="#redis-red" x="817" y="130" width="76" height="65.1083"/>
-<text x="855" y="229" font-size="22" text-anchor="middle">Redis lease</text>
-<text x="855" y="254" font-size="17" text-anchor="middle">lock:report → unique token</text>
-<text x="855" y="277" font-size="17" text-anchor="middle">NX: absent only; PX: 30 s</text>
+<!-- Lease metadata sits below the diagonal return/release corridor. -->
+<text x="855" y="270" font-size="22" text-anchor="middle">Redis lease</text>
+<text x="855" y="300" font-size="17" text-anchor="middle">lock:report → unique token</text>
+<text x="855" y="326" font-size="17" text-anchor="middle">NX: absent only; PX: 30 s</text>
 <path id="request-report" class="flow" d="M145 166 L347.5 166"/>
-<text x="247" y="144" font-size="17" text-anchor="middle">GET /reports/42</text>
+<text x="247" y="144" font-size="17" text-anchor="middle">1. GET /reports/42</text>
 <path id="return-summary-to-users" class="flow" d="M350 197 L147.5 197"/>
-<text x="247" y="220" font-size="17" text-anchor="middle">summary</text>
+<text x="247" y="220" font-size="17" text-anchor="middle">8. Summary</text>
 <path id="acquire-lease" class="flow" d="M590 166 L812.5 166"/>
-<text x="702" y="143" font-size="17" text-anchor="middle">SET NX PX 30000</text>
+<text x="702" y="143" font-size="17" text-anchor="middle">2. SET NX PX 30000</text>
 <!-- The winner recomputes; other workers wait or retry the cached result. -->
 <!-- lease-holder: application service -->
 <rect id="lease-holder" class="box" x="350" y="375" width="240" height="115"/>
-<text x="470.0" y="406" font-size="22" text-anchor="middle">Lease holder</text>
-<text x="470.0" y="433" font-size="17" text-anchor="middle">Read and recompute</text>
-<text x="470.0" y="456" font-size="17" text-anchor="middle">Token-checked release</text>
-<path id="lease-acquired" class="flow" d="M817 180 L735 180 L735 320 L470 320 L470 372.5"/>
-<text x="610" y="302" font-size="17" text-anchor="middle">lease acquired</text>
+<use id="lease-holder-icon" href="#backend-server" x="370" y="392" width="35" height="61.25"/>
+<text x="500" y="406" font-size="21" text-anchor="middle" font-weight="bold">Lease holder</text>
+<text x="500" y="432" font-size="16" text-anchor="middle">Recompute report</text>
+<text x="470" y="474" font-size="16" text-anchor="middle">Selected backend worker</text>
+<!-- Each diagonal uses one straight shaft; endpoints compensate for the marker's 2.5-unit projection. -->
+<path id="lease-acquired" class="flow" d="M817 180 L472.179 373.775"/>
+<text id="lease-acquired-label" x="0" y="-14" transform="translate(643.5 277.5) rotate(-29.33423)" font-size="17" text-anchor="middle">3. Winner continues</text>
 <use id="report-inputs" href="#database" x="817" y="377" width="76" height="80.3182" color="#fff"/>
 <text x="855" y="492" font-size="22" text-anchor="middle">Database</text>
 <text x="855" y="517" font-size="17" text-anchor="middle">Authoritative report inputs</text>
-<path id="read-input-data" class="flow" d="M815 419 L592.5 419"/>
-<text x="702" y="397" font-size="18" text-anchor="middle">read inputs</text>
+<!-- The database exchange is explicit: request above, returned inputs below. -->
+<path id="request-input-data" class="flow" d="M590 394 L812.5 394"/>
+<text id="request-input-data-label" x="702" y="376" font-size="17" text-anchor="middle">4a. Read inputs</text>
+<path id="read-input-data" class="flow" d="M815 435 L592.5 435"/>
+<text id="read-input-data-label" x="702" y="458" font-size="17" text-anchor="middle">4b. Inputs returned</text>
 <use id="summary-redis" href="#redis-red" x="68" y="380" width="76" height="65.1083"/>
 <text x="106" y="482" font-size="22" text-anchor="middle">Redis cache</text>
 <text x="106" y="507" font-size="17" text-anchor="middle">report:42 → summary</text>
 <text x="106" y="530" font-size="17" text-anchor="middle">Rebuildable; short TTL</text>
 <path id="save-cached-summary" class="flow" d="M350 419 L148.5 419"/>
-<text x="247" y="397" font-size="18" text-anchor="middle">cache summary</text>
-<path id="return-summary-via-api" class="flow" d="M106 378 L106 319 L380 319 L380 232.5"/>
-<text x="242" y="299" font-size="17" text-anchor="middle">cached summary</text>
+<text x="247" y="397" font-size="18" text-anchor="middle">5. Cache summary</text>
+<!-- Normal success reads the cached result; losers can retry this path independently. -->
+<path id="return-summary-via-api" class="flow" d="M106 378 L377.8 231.188"/>
+<text id="return-summary-label" x="0" y="-14" transform="translate(243 304) rotate(-28.37552)" font-size="17" text-anchor="middle">7. Summary returned</text>
+<!-- Acquisition and release have the same slope (-195/347), distinct ports, and parallel labels. -->
+<path id="release-owned-lease" class="flow" d="M541.810256 375 L852.820535 200.224684"/>
+<text id="release-owned-lease-label" x="0" y="-14" transform="translate(698.405128 287) rotate(-29.33423)" font-size="16" text-anchor="middle">6. Token-checked release</text>
+<text x="340" y="561" font-size="16" text-anchor="middle">D: optional file download; request omitted. D1 only on CDN miss.</text>
 <!-- Large generated files are stored as objects and delivered through the CDN. -->
 <use id="file-user" href="#person" x="72" y="588" width="68" height="68.0000"/>
 <text x="106" y="682" font-size="22" text-anchor="middle">Users</text>
 <!-- report-file-cdn: application service -->
 <rect id="report-file-cdn" class="box" x="350" y="580" width="240" height="80"/>
-<text x="470.0" y="611" font-size="22" text-anchor="middle">CDN</text>
-<text x="470.0" y="638" font-size="17" text-anchor="middle">Generated report files</text>
+<use id="report-file-cdn-icon" href="#cdn-cloud" x="367" y="592" width="82" height="56.375"/>
+<text x="510" y="615" font-size="24" text-anchor="middle" font-weight="bold">CDN</text>
+<text x="510" y="639" font-size="16" text-anchor="middle">Report files</text>
 <use id="report-file-storage" href="#database" x="820" y="580" width="70" height="73.9773" color="#fff"/>
 <text x="855" y="682" font-size="22" text-anchor="middle">Object storage</text>
 <path id="origin-report-file" class="flow" d="M818 618 L592.5 618"/>
-<text x="702" y="597" font-size="18" text-anchor="middle">file bytes</text>
+<text x="702" y="597" font-size="18" text-anchor="middle">D1. Origin bytes</text>
 <path id="deliver-report-file" class="flow" d="M350 618 L147.5 618"/>
-<text x="247" y="597" font-size="18" text-anchor="middle">download</text>
+<text x="247" y="597" font-size="18" text-anchor="middle">D2. Download</text>
 <!-- A random lease token identifies ownership but does not provide fencing. -->
-<text x="500" y="716" font-size="16" text-anchor="middle">Release only by an atomic token check + delete. Others wait, retry the cache, or use allowed stale data.</text>
-<text x="500" y="740" font-size="16" text-anchor="middle">Expiry or failover can allow two workers. Tolerate duplicate computation; do not rely on this for invariants.</text>
+<text x="500" y="717" font-size="16" text-anchor="middle">After the initial cache miss, try 2. Losers wait, retry 7, or use permitted stale data.</text>
+<text x="500" y="741" font-size="16" text-anchor="middle">4a requests inputs; 4b returns them. Recompute before 5. The cache read request for 7 is omitted.</text>
+<text x="500" y="765" font-size="16" text-anchor="middle">6 is best effort: atomically delete only if the token still matches. Expiry also releases the lease.</text>
+<text x="500" y="797" font-size="16" text-anchor="middle">Expiry or failover can allow two workers. Tolerate duplicate computation; do not rely on this for invariants.</text>
 </svg>

@@ -4,6 +4,15 @@
      originally the MIT-licensed Devicon redis-original icon. Person and database symbols
      are copied from system design/16. Proximity Service/images/final-design.svg. -->
 <defs>
+<!-- Matching server/CDN symbols from redis-pubsub.svg; retain their established colors and geometry. -->
+<symbol id="backend-server" viewBox="0 0 64 112">
+  <rect width="64" height="112" rx="7" fill="#63c51b"/>
+  <path d="M13 18H51M13 82H51M13 96H51" fill="none" stroke="#fff" stroke-width="6"/>
+</symbol>
+<symbol id="cdn-cloud" viewBox="0 0 160 110">
+  <path d="M31 92C12 92 3 79 5 65C6 52 16 44 29 43C31 27 44 18 59 21C68 6 85 5 96 15C107 6 124 12 128 27C143 27 155 39 155 55C155 76 140 92 121 92Z" fill="#75d6ef" stroke="#1677b8" stroke-width="2"/>
+  <path d="M79 15L62 54H83L70 91L109 45H90L103 15Z" fill="#fff"/>
+</symbol>
 <symbol id="redis-red" viewBox="1.2 10.2 125.6 107.6">
       <path fill="#b30001" d="M121.8 93.1c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.9-11.5 3.8-17.3 1S13 98.1 6.3 94.9c-3.3-1.6-5-2.9-5-4.2V78s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c0 1.3-1.5 2.7-4.9 4.4z"/>
       <path fill="#ec0000" d="M121.8 80.5C115.1 84 80.4 98.2 73 102.1c-7.4 3.9-11.5 3.8-17.3 1-5.8-2.8-42.7-17.7-49.4-20.9C-.3 79-.5 76.8 6 74.3c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
@@ -64,11 +73,14 @@
 <text x="100" y="335" font-size="17" text-anchor="middle">Browser / app</text>
 <!-- cdn: application service -->
 <rect id="cdn" class="box" x="345" y="112" width="210" height="100"/>
-<text x="450.0" y="143" font-size="22" text-anchor="middle">CDN edge</text>
-<text x="450.0" y="170" font-size="17" text-anchor="middle">Public HTTP responses</text>
-<text x="450.0" y="193" font-size="17" text-anchor="middle">JS, CSS, images, video</text>
-<path id="asset-request" class="flow" d="M100 230 L100 162 L342.5 162"/>
-<text x="228" y="144" font-size="18" text-anchor="middle">/app.4f2.js</text>
+<use id="cdn-icon" href="#cdn-cloud" x="356" y="121" width="68" height="46.75"/>
+<text x="483" y="149" font-size="22" text-anchor="middle" font-weight="bold">CDN edge</text>
+<text x="450" y="180" font-size="16" text-anchor="middle">Public HTTP responses</text>
+<text x="450" y="201" font-size="16" text-anchor="middle">JS, CSS, images, video</text>
+<!-- Each request uses one straight shaft. Diagonal endpoints account for the marker's 2.5-unit projection. -->
+<path id="asset-request" class="flow" d="M124 253 L342.688 162.952"/>
+<!-- Diagonal labels rotate about each shaft midpoint, with their baseline 14 units above the shaft. -->
+<text id="asset-request-label" x="0" y="-14" transform="translate(233.344 207.976) rotate(-22.38014)" font-size="18" text-anchor="middle">/app.4f2.js</text>
 <use id="object-origin" href="#database" x="810" y="119" width="72" height="76.0909" color="#fff"/>
 <text x="846" y="233" font-size="22" text-anchor="middle">Object origin</text>
 <text x="846" y="258" font-size="17" text-anchor="middle">Original asset files</text>
@@ -77,11 +89,12 @@
 <text x="680" y="144" font-size="18" text-anchor="middle">on cache miss</text>
 <!-- backend: application service -->
 <rect id="backend" class="box" x="345" y="330" width="210" height="100"/>
-<text x="450.0" y="361" font-size="22" text-anchor="middle">Backend API</text>
-<text x="450.0" y="388" font-size="17" text-anchor="middle">Authenticate the user</text>
-<text x="450.0" y="411" font-size="17" text-anchor="middle">Build the cart response</text>
-<path id="api-request" class="flow" d="M124 253 L200 253 L200 380 L342.5 380"/>
-<text x="271" y="362" font-size="18" text-anchor="middle">/api/cart</text>
+<use id="backend-icon" href="#backend-server" x="363" y="343" width="30" height="52.5"/>
+<text x="475" y="357" font-size="20" text-anchor="middle" font-weight="bold">Backend API</text>
+<text x="475" y="381" font-size="16" text-anchor="middle">Authenticate user</text>
+<text x="450" y="416" font-size="16" text-anchor="middle">Build the cart response</text>
+<path id="api-request" class="flow" d="M124 253 L342.832 378.754"/>
+<text id="api-request-label" x="0" y="-14" transform="translate(233.416 315.877) rotate(29.88426)" font-size="18" text-anchor="middle">/api/cart</text>
 <use id="redis-app-state" href="#redis-red" x="810" y="353" width="72" height="61.6815"/>
 <text x="846" y="451" font-size="22" text-anchor="middle">Redis</text>
 <text x="846" y="477" font-size="17" text-anchor="middle">cart:42 · session:abc</text>
@@ -90,8 +103,9 @@
 <use id="durable-database" href="#database" x="810" y="513" width="72" height="76.0909" color="#fff"/>
 <text x="846" y="617" font-size="22" text-anchor="middle">Database</text>
 <text x="846" y="642" font-size="17" text-anchor="middle">Accounts, orders, payments</text>
-<path id="durable-read-write" class="flow" d="M455 430 L455 553 L797.5 553"/>
-<text x="641" y="535" font-size="17" text-anchor="middle">authoritative read / write</text>
+<!-- The database is a direct backend destination; no elbow or intermediate step is needed. -->
+<path id="durable-read-write" class="flow" d="M555 430 L797.766 551.878"/>
+<text id="durable-read-write-label" x="0" y="-14" transform="translate(676.383 490.939) rotate(26.65844)" font-size="17" text-anchor="middle">authoritative read / write</text>
 <!-- Placement guidance stays next to the system paths without a decorative panel. -->
 <text x="40" y="475" font-size="17" text-anchor="start">Redis: small, mutable backend state.</text>
 <text x="40" y="501" font-size="17" text-anchor="start">CDN: reusable HTTP responses / files.</text>

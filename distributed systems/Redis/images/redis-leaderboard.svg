@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="550" viewBox="0 0 1000 550" role="img" aria-labelledby="title desc">
-<title id="title">Leaderboards: a sorted set serves fast rank queries</title><desc id="desc">A player submits a score event to a trusted service. The service validates and saves the event in the score database, then separately updates the Redis sorted set. A viewer requests top players and receives ranked IDs and scores read from Redis.</desc>
+<title id="title">Leaderboards: a sorted set serves fast rank queries</title><desc id="desc">W1 to W6 show a score write: submit and validate, save the event, confirm the database commit, update Redis, receive its acknowledgment, and return success. R1 to R4 are an independent ranking request: ask for top players, query Redis, receive scores, and return ranked results. W4 follows a successful W3; the two stores are not one atomic transaction.</desc>
 <!-- Shared system-design icons: Redis geometry copied from redis-deployment-sentinel.svg,
      originally the MIT-licensed Devicon redis-original icon. Person and database symbols
      are copied from system design/16. Proximity Service/images/final-design.svg. -->
@@ -51,6 +51,12 @@
       <path d="M0.9 13.75A43.1 8.75 0 0 1 87.1 13.75V82.25A43.1 8.75 0 0 1 0.9 82.25Z" fill="currentColor" stroke="#111" stroke-width="1.6"/>
       <ellipse cx="44" cy="13.75" rx="43.1" ry="8.75" fill="currentColor" stroke="#111" stroke-width="1.6"/>
     </symbol>
+<!-- Green server matches redis-pubsub.svg; geometry comes from
+     system design/01. Scaling/images/data-center.svg. -->
+<symbol id="backend-server" viewBox="0 0 64 112">
+  <rect width="64" height="112" rx="7" fill="#63c51b"/>
+  <path d="M13 18H51M13 82H51M13 96H51" fill="none" stroke="#fff" stroke-width="6"/>
+</symbol>
 <!-- A 2.5-unit nose inset covers the 1.8-unit shaft; connector endpoints compensate for it. -->
 <marker id="arrow" markerWidth="10" markerHeight="10" viewBox="0 0 10 10" refX="7.5" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="#111"/></marker>
 <style>text{font-family:Arial,Helvetica,sans-serif;fill:#111}.box{fill:#fff;stroke:#111;stroke-width:1.8}.flow{fill:none;stroke:#111;stroke-width:1.8;stroke-linejoin:round;marker-end:url(#arrow)}.plain{fill:none;stroke:#111;stroke-width:1.8}</style>
@@ -58,25 +64,28 @@
 <rect width="1000" height="550" fill="#fff"/>
 <!-- Title and reading direction: user, trusted service, shared Redis data. -->
 <text x="500" y="37" font-size="26" text-anchor="middle" font-weight="bold">Leaderboards: a sorted set serves fast rank queries</text>
-<text x="500" y="69" font-size="18" text-anchor="middle">The trusted service validates scores; Redis holds a derived ranking that can be rebuilt.</text>
+<text x="500" y="69" font-size="18" text-anchor="middle">W = score write. R = separate ranking request. Redis stores a rebuildable view.</text>
 <use id="requesting-user" href="#person" x="78" y="163" width="72" height="72.0000"/>
 <text x="114" y="264" font-size="22" text-anchor="middle">Player / viewer</text>
 <!-- application: application service -->
 <rect id="application" class="box" x="390" y="141" width="230" height="121"/>
-<text x="505.0" y="172" font-size="22" text-anchor="middle">Trusted service</text>
-<text x="505.0" y="199" font-size="17" text-anchor="middle">Validates score events</text>
-<text x="505.0" y="222" font-size="17" text-anchor="middle">Serves rank queries</text>
+<use id="application-icon" href="#backend-server" x="409" y="153" width="28" height="49"/>
+<text x="529" y="173" font-size="21" text-anchor="middle" font-weight="bold">Trusted</text>
+<text x="529" y="198" font-size="21" text-anchor="middle" font-weight="bold">service</text>
+<text x="505" y="225" font-size="17" text-anchor="middle">Validates score events</text>
+<text x="505" y="249" font-size="17" text-anchor="middle">Serves rank queries</text>
 <use id="shared-redis" href="#redis-red" x="839" y="168" width="98" height="83.9554"/>
 <text x="888" y="283" font-size="22" text-anchor="middle">Redis</text>
-<!-- Request and response lanes remain outside every node label. -->
+<!-- W and R are independent sequences sharing the same request and response lanes. -->
 <path id="user-request" class="flow" d="M158 184 L387.5 184"/>
-<text x="274" y="166" font-size="18" text-anchor="middle">score / top N</text>
+<text x="274" y="166" font-size="17" text-anchor="middle">W1. score / R1. top N</text>
 <path id="user-response" class="flow" d="M390 232 L160.5 232"/>
-<text x="274" y="217" font-size="18" text-anchor="middle">ranked results</text>
+<text x="274" y="217" font-size="17" text-anchor="middle">W6. saved / R4. ranks</text>
 <path id="redis-command" class="flow" d="M620 184 L831.5 184"/>
-<text x="725" y="166" font-size="18" text-anchor="middle">ZADD / ZRANGE</text>
+<text x="725" y="142" font-size="17" text-anchor="middle">W4. ZADD</text>
+<text x="725" y="166" font-size="17" text-anchor="middle">R2. ZRANGE</text>
 <path id="redis-response" class="flow" d="M834 233 L622.5 233"/>
-<text x="725" y="216" font-size="18" text-anchor="middle">scores / rank</text>
+<text x="725" y="216" font-size="17" text-anchor="middle">W5. ack / R3. scores</text>
 <text x="888" y="311" font-size="18" text-anchor="middle">board:season9</text>
 <text x="888" y="337" font-size="18" text-anchor="middle">player7 → 950</text>
 <text x="888" y="363" font-size="18" text-anchor="middle">player2 → 880</text>
@@ -85,11 +94,11 @@
 <text x="505" y="456" font-size="22" text-anchor="middle">Score database</text>
 <text x="505" y="478" font-size="17" text-anchor="middle">Durable, validated events</text>
 <path id="database-request" class="flow" d="M479 262 L479 352"/>
-<text x="460" y="314" font-size="17" text-anchor="end">Save event first</text>
+<text x="460" y="303" font-size="17" text-anchor="end">W2. save event</text>
 <path id="database-response" class="flow" d="M533 355 L533 264.5"/>
-<text x="550" y="332" font-size="17" text-anchor="start">saved</text>
-<text x="58" y="322" font-size="17" text-anchor="start">Write: save, then update rank.</text>
-<text x="58" y="350" font-size="17" text-anchor="start">Read: return top player scores.</text>
+<text x="550" y="332" font-size="17" text-anchor="start">W3. committed</text>
+<text x="58" y="339" font-size="16" text-anchor="start">W4 requires W3 to succeed.</text>
+<text x="58" y="366" font-size="16" text-anchor="start">R1–R4: independent read.</text>
 <text x="58" y="399" font-size="16" text-anchor="start">Sorted set: player IDs are</text>
 <text x="58" y="423" font-size="16" text-anchor="start">ordered by their scores.</text>
 <!-- Data placement and the main correctness caveat; no decorative note panel. -->

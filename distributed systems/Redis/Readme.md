@@ -269,6 +269,8 @@ Apply the placement rule from the previous section to each design: identify the 
 
 In every diagram the user reaches an API or gateway; the trusted backend issues Redis commands. Database and Redis updates are separate operations unless an explicit mechanism coordinates them.
 
+**How to read the numbers.** Numbers identify actions and replies in the example flow. Letter prefixes identify separate flows, such as login, a later read, or a download; follow each prefix independently. An arrow may summarize a request and its reply when the label says so. **Required** means needed for the stated behavior of this example. **Conditional** means required only when its condition holds, such as a cache miss. **Optional** means an optimization or a separate feature that the main operation can complete without. Numbering shows the illustrated order; the notes below each diagram explain branches and work that can run independently.
+
 ### 6.1. Group: Disposable copies
 
 A missing copy can be rebuilt from its authority. Freshness and the load created by rebuilding are the main concerns.
@@ -277,7 +279,16 @@ A missing copy can be rebuilt from its authority. Freshness and the load created
 
 ![redis-cache-aside.svg](images/redis-cache-aside.svg)
 
-**User interaction.** A shopper opens product `42`. The API checks `product:42` in Redis. On a hit it returns the cached fields. On a miss it reads the product database, stores a copy with a TTL, and returns the result. Repeated reads avoid repeating the database work.
+**Request sequence (diagram numbers).**
+
+- **1:** The shopper requests product `42` from the API.
+- **2 → 3:** The API sends `GET product:42`; Redis returns a value or a miss.
+- **Hit: 3 → 7.** The API returns the cached product. Steps **4–6 are skipped**.
+- **Miss: 3 → 4 → 5.** The API reads the product database and receives the authoritative record.
+- **6:** The API can store that record in Redis with `SET ... EX 60` for later requests.
+- **7:** The API returns the product to the shopper.
+
+**Required and optional.** A database read (**4–5**) is required on a miss in this example. Filling Redis (**6**) is an optional performance step: a failed fill need not turn a successful database read into a failed response. The pictured flow fills before replying; an implementation may reply first and fill asynchronously. A cache hit requires neither a database read nor another fill. Redis failure is a separate error case, handled by the bounded fallback policy below.
 
 **Redis data.** Store a compact, frequently requested record such as `{"name":"Mug","price":12,"imageUrl":"/mug-v3.webp"}`, with an illustrative TTL of 60 seconds. Include tenant, language, or other relevant dimensions in the key when the result varies by them.
 
@@ -295,7 +306,15 @@ Sessions and quotas are active operational state; a leaderboard is a derived vie
 
 ![redis-sessions.svg](images/redis-sessions.svg)
 
-**User interaction.** After login, the browser sends an opaque session ID in a cookie. Whichever backend handles the next request looks up that ID in Redis and uses the session to identify the user. The user does not need to return to the server that handled login.
+**Request sequences (diagram numbers).** **L** is login; **R** is a later request using the resulting session.
+
+- **L1 → L2 → L3:** The browser submits credentials. The backend loads the account record and verifies the credentials against it.
+- **L4 → L5:** Only after successful verification, the backend creates a session with an expiry in Redis and receives confirmation.
+- **L6:** The backend returns the opaque session ID in a cookie.
+- **R1 → R2 → R3:** On a later request, the browser sends the cookie and URL. Any backend instance reads the session; Redis returns session data or reports it absent.
+- **R4:** A valid session permits the backend to continue authorization and return the private page. An absent or expired session leads to sign-in instead.
+
+**Required and optional.** Login verification and successful session creation are required before issuing the new session cookie in this design. A later protected request must validate its session, but **does not repeat L1–L6 or read the account database merely to recognize the user**. Failed login stops before session creation. Refreshing an idle timeout is optional policy, not an automatic part of every read; if enabled, it must respect any absolute session lifetime. A missing cookie can be rejected without a Redis lookup.
 
 **Redis data.** A key such as `session:s8` can hold `userId=u42`, creation time, expiry, and small session-specific state. Apply an explicit lifetime; if activity extends an idle timeout, also define any absolute lifetime. Delete the session on logout. Passwords do not belong in the session payload.
 
@@ -307,7 +326,14 @@ Sessions and quotas are active operational state; a leaderboard is a derived vie
 
 ![redis-rate-limiting.svg](images/redis-rate-limiting.svg)
 
-**User interaction.** A user calls an API. The gateway checks and updates Redis quota state before forwarding an allowed request. If the quota is exhausted, the gateway returns HTTP `429 Too Many Requests`. All gateway instances consult shared state, so each instance does not accidentally grant a separate full quota.
+**Request sequence (diagram numbers).**
+
+- **1:** The user sends an API request to a gateway.
+- **2 → 3:** The gateway runs an atomic Redis operation that checks and updates the shared quota, then receives an allow/deny decision.
+- **Allowed: 4A → 5A → 6A.** The gateway forwards the request, receives the backend result, and returns it to the user.
+- **Denied: 4B.** The gateway returns HTTP `429 Too Many Requests`; **4A–6A do not run**.
+
+**Required and optional.** The quota decision must precede forwarding on the normal Redis-backed path. Allow and deny are mutually exclusive branches, not two optional steps that can both be skipped. Each gateway must use the shared quota to enforce the shared limit. Redis unavailability needs an explicit fallback policy; it is not an implicit permission to forward.
 
 **Redis data.** A simple fixed-window design stores a count under a key such as `rate:u42:minute-123`, with an expiry. An alternative token bucket stores remaining tokens and the last refill time. The limit-check and state change must form one atomic Redis operation, such as a short script. Separate `INCR` and `EXPIRE` calls can leave a counter without expiry if the client fails between them.
 
@@ -319,7 +345,15 @@ Sessions and quotas are active operational state; a leaderboard is a derived vie
 
 ![redis-leaderboard.svg](images/redis-leaderboard.svg)
 
-**User interaction.** A game service validates a player's result, records the durable event, and updates a Redis sorted set. Another user asks for the top players; the service queries Redis and returns the ranking.
+**Request sequences (diagram numbers).** **W** writes a score; **R** reads the ranking in a separate request.
+
+- **W1:** A player submits a result; the game service validates it.
+- **W2 → W3:** The service records the durable event and waits for the database commit to succeed.
+- **W4 → W5:** It updates the derived Redis sorted set with `ZADD` and receives the command result.
+- **W6:** The service confirms the saved result to the player.
+- **R1 → R2 → R3 → R4:** A user separately requests the top players; the service runs `ZRANGE`, receives ranked data, and returns it.
+
+**Required and optional.** The durable commit is required before publishing its derived score in Redis. A ranking read **does not require that reader to submit a score first**. The diagram shows a synchronous Redis update; if delayed rankings are acceptable, **W4–W5 may run asynchronously**, and W6 can confirm the durable save after W3. Updating the view is still necessary for it to reflect the event eventually. An outbox is one way to make that later update recoverable; it is not an extra round trip required on every ranking read.
 
 **Redis data.** `board:season9` maps each player ID to a score. For example, these are Redis command examples for a client or an interactive Redis command-line interface (CLI), not shell commands:
 
@@ -342,7 +376,15 @@ Choose whether a message is only a live notification or retained work that consu
 
 ![redis-pubsub.svg](images/redis-pubsub.svg)
 
-**User interaction.** A user sends a chat message. The backend stores the message for history and publishes a notification on `chat:room:9`. Redis forwards it to currently subscribed gateway connections, and the gateways push it to users over WebSocket connections.
+**Request sequence (diagram numbers).**
+
+- **S1 — Setup:** A gateway subscribes to `chat:room:9` before it can receive that channel's live events. This subscription is kept open across messages.
+- **1 → 2 → 3:** The sender submits a message. After checking room access, the API stores it and receives confirmation that the history commit succeeded.
+- **4:** The API publishes the notification only after that commit.
+- **5 → 6:** Redis pushes the event to currently subscribed gateways; they forward it to connected users over WebSocket connections.
+- **A1 → A2 → A3 → A4 — Separate attachment request:** A user requests an attachment from the CDN. On a cache miss, the CDN requests the file from object storage (**A2**) and receives its bytes (**A3**); it then delivers the bytes to the user (**A4**). A usable CDN cache hit skips A2–A3.
+
+**Required and optional.** **Commit before publish** is required for the durable chat behavior shown here; Redis Pub/Sub itself does not require a database. Receiving a live event requires an active subscription, and reaching the user also requires their connection. Offline users skip live delivery and recover through saved history. Attachments are optional and do not gate text-message publication. Use an outbox if the application must recover publication after a crash between **3 and 4**; it does not add subscriber replay to Pub/Sub.
 
 **Redis data.** The channel carries a small message or a message ID and room ID. A Pub/Sub channel is not a retained key containing a durable message history. Redis Pub/Sub provides **at-most-once delivery**: a disconnected or failing subscriber can miss the message permanently.
 
@@ -354,7 +396,16 @@ Choose whether a message is only a live notification or retained work that consu
 
 ![redis-streams.svg](images/redis-streams.svg)
 
-**User interaction.** A user requests a report export. The API appends a job with `XADD` and returns a job ID. Workers use `XREADGROUP` to share work in a consumer group. A worker creates the report, records its successful result, then acknowledges the entry with `XACK`. The user later asks the API for status and a download link.
+**Request sequence (diagram numbers).** The consumer group is created before workers start reading it.
+
+- **1 → 2 → 3:** The user requests an export. The API saves the durable job request, then appends a small entry with `XADD`.
+- **4:** The API returns an accepted job ID; this does not mean the report is ready.
+- **5:** A worker calls `XREADGROUP` and receives a job. Processing can start once **3** succeeds; it need not wait for the user to receive **4**.
+- **6 → 7 → 8:** The worker creates and stores the report, commits its successful outcome and file reference, then calls `XACK`.
+- **P1 → P2 → P3 — Separate status request:** The user polls the API; the API reads durable job status and returns it, including an authorized link when ready. Polling may happen while the job is running.
+- **D1 → D2 — Optional download:** When the user requests the finished file, the CDN fetches origin bytes on a miss (**D1**) and delivers the report (**D2**). The download request itself is omitted from these arrows; a usable CDN hit skips D1.
+
+**Required and optional.** In this recoverable export design, save the file and successful outcome **before acknowledging the job**. If processing fails, do not perform success acknowledgment; retry or reclaim pending work. The database save and `XADD` are separate writes, so reliable eventual enqueueing needs an outbox or another recovery mechanism. Polling and downloading are optional user actions and do not control whether workers finish or acknowledge. The ready status can become visible after **7**, even if **8** has not yet completed. A CDN is a delivery choice, not a Stream requirement.
 
 **Redis data.** `jobs:exports` contains entries with `jobId`, `userId`, report parameters, or an input-object reference. A stream retains entries and IDs. The group's **pending entries list (PEL)** tracks deliveries that have not yet been acknowledged. Different groups can consume the same stream independently.
 
@@ -372,7 +423,16 @@ Use shared state to recognize retries or reduce overlapping work. Decide where t
 
 ![redis-idempotency.svg](images/redis-idempotency.svg)
 
-**User interaction.** A user retries `POST /orders` after a timeout, reusing request ID `req7`. The API recognizes the same logical operation and returns the existing order outcome rather than creating another order.
+**Request sequence (diagram numbers).**
+
+- **1:** The user submits or retries `POST /orders` with the same request ID, `req7`. The API scopes it to the user and derives the request fingerprint for comparison with any saved attempt.
+- **2:** The API looks for a completed matching response in Redis. A matching cache hit goes directly to **5**.
+- **3 — Cache miss:** The API consults the database. It either returns the existing matching outcome or creates the order and its unique idempotency record in one transaction. Concurrent attempts must resolve through that uniqueness rule.
+- **4:** After the durable outcome is known, the API may cache it in Redis with an expiry.
+- **5:** The API returns the recorded outcome, such as order `901`.
+- **D1 — Separate asset delivery:** The CDN can deliver static checkout files independently; this is not part of creating or deduplicating an order.
+
+**Required and optional.** The atomic durable record is required when creating a new order; a Redis claim cannot replace it. **2 and 4 are optional accelerators**: without Redis, go directly to the database. With Redis enabled, a cache miss requires 3, while a completed matching hit skips 3–4. A fingerprint mismatch must be rejected; an in-progress hint is not a completed response and must not trigger another order. Retries are conditional on the client's need, but must reuse the same ID for the same logical operation. Static asset delivery is independent.
 
 **Redis data.** Cache an in-progress hint or completed response under a scoped key such as `idempotency:u42:req7`, including a request fingerprint, result ID, and expiry. A **request fingerprint** summarizes the original input so reusing the same ID for a different order can be rejected. Redis makes repeat lookups fast and can reduce concurrent duplicate work.
 
@@ -384,7 +444,17 @@ Use shared state to recognize retries or reduce overlapping work. Decide where t
 
 ![redis-locks.svg](images/redis-locks.svg)
 
-**User interaction.** Several requests miss an expensive cached report. Backend workers compete for a short lease; the winner recomputes from the database and populates Redis, while others wait briefly, retry the cache, or use an allowed stale result.
+**Request sequence (diagram numbers).** This flow starts when the cached report is missing.
+
+- **1 → 2:** A user requests the report; after the cache miss, a backend worker attempts `SET lock:report <unique-token> NX PX 30000`.
+- **3 — Lease acquired:** Only a worker that acquires the lease enters the rebuild branch. The lease-holder icon represents that selected backend worker. Other workers wait briefly, retry the cache, or use a stale result if policy permits.
+- **4a → 4b:** The holder sends a read request to the database (**4a**) and receives the authoritative inputs (**4b**). These are the request and reply of one database exchange.
+- **5:** After receiving the inputs, the holder recomputes the report and fills the result cache.
+- **6:** After finishing, the holder attempts an atomic token-checked release.
+- **7 → 8:** The API obtains the cached summary and returns it to the user.
+- **D1 → D2 — Optional file download:** A separate request can retrieve a generated file through the CDN. D1 fetches origin bytes only on a miss; D2 delivers the file. The download request is implicit.
+
+**Required and optional.** A cache hit skips lease acquisition and recomputation. A failed lease attempt skips the holder's **4a, 4b, 5, and 6**; the caller must follow its wait/retry/stale policy. Filling the cache before releasing normally lets waiting callers reuse the result. **Early release is best effort**: expiry eventually removes the lease, but any explicit release must compare the token atomically. Reading a ready result at **7** need not wait for release **6**; the holder can also return its computed value without rereading Redis. The separate file download is optional. The lease reduces duplicate work but cannot guarantee that only one worker remains active after expiry or failover.
 
 **Redis data.** Acquire `lock:report` with `SET lock:report <unique-token> NX PX 30000`. `NX` means only if the key does not exist; `PX 30000` sets a 30-second lifetime. The token identifies that acquisition. On Redis 8.4 or later, release it with `DELEX lock:report IFEQ <unique-token>`; older versions can use a short Lua script that atomically compares the token and deletes only a match. An unconditional `DEL` could delete a newer owner's lock.
 
@@ -398,7 +468,7 @@ Use shared state to recognize retries or reduce overlapping work. Decide where t
 
 # Sources
 
-Primary documentation checked on 2026-09-08. The application topologies, example keys, TTLs, and placement recommendations are design examples derived from these mechanisms.
+Original article sources checked on 2026-09-08; pattern request sequences and branch conditions rechecked on 2026-09-24. The application topologies, numbered flows, example keys, TTLs, and placement recommendations are design examples derived from these mechanisms.
 
 - [Redis FAQ: the name means REmote DIctionary Server](https://redis.io/docs/latest/develop/get-started/faq/#where-does-the-name-redis-come-from)
 - [Redis keys and values: naming conventions and expiration](https://redis.io/docs/latest/develop/using-commands/keyspace/)
@@ -424,11 +494,12 @@ Primary documentation checked on 2026-09-08. The application topologies, example
 - [Redis cache-aside](https://redis.io/docs/latest/develop/use-cases/cache-aside/) — shared cache reads and invalidation.
 - [Redis cache consistency](https://redis.io/blog/cache-consistency-strategies/) — stale values, fill races, and update ordering.
 - [Redis session store: shared user state, expiry, and durability](https://redis.io/docs/latest/develop/use-cases/session-store/)
+- [OWASP Session Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html) — authentication, session validation, and idle versus absolute expiration.
 - [Redis INCR](https://redis.io/docs/latest/commands/incr/) — counters and rate-limiter atomicity.
 - [Redis ZADD](https://redis.io/docs/latest/commands/zadd/) and [ZRANGE](https://redis.io/docs/latest/commands/zrange/) — score updates and ranked reads.
 - [Redis Pub/Sub](https://redis.io/docs/latest/develop/pubsub/) — channels, subscriber delivery, and message-loss semantics.
 - [Redis Sharded Pub/Sub](https://redis.io/docs/latest/develop/pubsub/#sharded-pubsub), [SPUBLISH](https://redis.io/docs/latest/commands/spublish/), and [SSUBSCRIBE](https://redis.io/docs/latest/commands/ssubscribe/) — Redis 7.0 introduction, channel slots, and propagation within one shard.
-- [Redis XREADGROUP](https://redis.io/docs/latest/commands/xreadgroup/), [XACK](https://redis.io/docs/latest/commands/xack/), and [XAUTOCLAIM](https://redis.io/docs/latest/commands/xautoclaim/) — consumer groups, pending work, acknowledgments, and recovery.
+- [Redis XADD](https://redis.io/docs/latest/commands/xadd/), [XREADGROUP](https://redis.io/docs/latest/commands/xreadgroup/), [XACK](https://redis.io/docs/latest/commands/xack/), and [XAUTOCLAIM](https://redis.io/docs/latest/commands/xautoclaim/) — enqueueing, consumer groups, pending work, acknowledgments, and recovery.
 - [Redis distributed locks](https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/) — lease acquisition, token-checked release, failover hazards, and fencing guidance.
 - [AWS: Making retries safe with idempotent APIs](https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/) — request identifiers, atomic recording, and retry semantics.
 - [PostgreSQL unique constraints](https://www.postgresql.org/docs/current/ddl-constraints.html#DDL-CONSTRAINTS-UNIQUE-CONSTRAINTS) — durable uniqueness enforcement.
@@ -437,6 +508,7 @@ Primary documentation checked on 2026-09-08. The application topologies, example
 - [MDN HTTP caching](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Caching) — practical caching, versioned resources, and managed-cache behavior.
 - [Amazon CloudFront cache keys](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html) — response variants and edge-cache reuse.
 - [Amazon CloudFront origins](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/DownloadDistS3AndCustomOrigins.html) — object-store and HTTP origins.
+- [How CloudFront delivers content](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/HowCloudFrontWorks.html) — viewer requests, cache hits, and origin fetches on misses.
 - [Amazon CloudFront private content](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/PrivateContent.html) — authorized file delivery with signed URLs or cookies.
 - [Redis security](https://redis.io/docs/latest/operate/oss_and_stack/management/security/) — trusted clients, network access, authentication, and encryption.
 - [Ignas Pangonis: Redis — Introduction, Caching and Transactions (2022)](https://levelup.gitconnected.com/redis-introduction-caching-and-transactions-aa32d385aa2b)

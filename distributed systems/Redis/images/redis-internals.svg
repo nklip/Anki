@@ -3,6 +3,12 @@
 <!-- Redis icon geometry is the MIT-licensed Devicon redis-original icon,
      reused from the neighboring deployment diagrams. -->
 <defs>
+<!-- Backend cluster matches redis-pubsub.svg; geometry comes from
+     system design/14. Youtube/images/message-queue2.svg. -->
+<symbol id="backend-server-cluster" viewBox="0 0 130 90">
+  <g fill="#63c51b"><rect x="33" y="3" width="34" height="19" rx="2"/><rect x="72" y="3" width="34" height="19" rx="2"/><rect x="6" y="23" width="38" height="62"/><rect x="46" y="23" width="38" height="62"/><rect x="86" y="23" width="38" height="62"/></g>
+  <path d="M12 34H38M12 71H38M52 34H78M52 71H78M92 34H118M92 71H118M39 11H61M78 11H100" fill="none" stroke="#fff" stroke-width="3"/>
+</symbol>
 <symbol id="redis-red" viewBox="1.2 10.2 125.6 107.6">
       <path fill="#b30001" d="M121.8 93.1c-6.7 3.5-41.4 17.7-48.8 21.6-7.4 3.9-11.5 3.8-17.3 1S13 98.1 6.3 94.9c-3.3-1.6-5-2.9-5-4.2V78s48-10.5 55.8-13.2c7.8-2.8 10.4-2.9 17-.5s46.1 9.5 52.6 11.9v12.5c0 1.3-1.5 2.7-4.9 4.4z"/>
       <path fill="#ec0000" d="M121.8 80.5C115.1 84 80.4 98.2 73 102.1c-7.4 3.9-11.5 3.8-17.3 1-5.8-2.8-42.7-17.7-49.4-20.9C-.3 79-.5 76.8 6 74.3c6.5-2.6 43.2-17 51-19.7 7.8-2.8 10.4-2.9 17-.5s41.1 16.1 47.6 18.5c6.7 2.4 6.9 4.4.2 7.9z"/>
@@ -31,10 +37,12 @@
 <text x="404" y="160" font-size="22" text-anchor="start">Redis instance · normal command path</text>
 <!-- backend-connections: application service -->
 <rect id="backend-connections" class="box" x="22" y="221" width="190" height="128"/>
-<text x="117.0" y="252" font-size="22" text-anchor="middle">Backend clients</text>
-<text x="117.0" y="279" font-size="17" text-anchor="middle">App servers A, B, C</text>
-<text x="117.0" y="302" font-size="17" text-anchor="middle">GET product:42</text>
-<text x="117.0" y="325" font-size="17" text-anchor="middle">INCR views:42</text>
+<use id="backend-connections-icon" href="#backend-server-cluster" x="31" y="234" width="60" height="41.5385"/>
+<text x="150" y="248" font-size="19" text-anchor="middle" font-weight="bold">Backend</text>
+<text x="150" y="272" font-size="19" text-anchor="middle" font-weight="bold">clients</text>
+<text x="117" y="296" font-size="16" text-anchor="middle">App servers A, B, C</text>
+<text x="117" y="317" font-size="16" text-anchor="middle">GET product:42</text>
+<text x="117" y="338" font-size="16" text-anchor="middle">INCR views:42</text>
 <!-- event-loop: application service -->
 <rect id="event-loop" class="box" x="310" y="218" width="182" height="136"/>
 <text x="401.0" y="249" font-size="22" text-anchor="middle">Event loop</text>
