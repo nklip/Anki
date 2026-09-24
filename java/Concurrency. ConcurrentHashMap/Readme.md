@@ -143,7 +143,7 @@ map.compute("credit", (k, v) -> v + 100);
 
 Each call is atomic for its relevant mapping, but another thread can observe the state between them.
 
-An **invariant** is a rule that must always hold, such as keeping the total balance unchanged during a transfer. If it spans several mappings, use a shared application lock that every relevant reader and writer follows, or store the related fields in one immutable value and replace that value atomically. Simply wrapping these calls in `synchronized (map)` does not make ordinary `get` or `put` calls elsewhere acquire that lock.
+A consistency rule, called an **invariant** must always hold, such as keeping the total balance unchanged during a transfer. If it spans several mappings, use a shared application lock that every relevant reader and writer follows, or store the related fields in one immutable value and replace that value atomically. Simply wrapping these calls in `synchronized (map)` does not make ordinary `get` or `put` calls elsewhere acquire that lock.
 
 ## Remapping functions must be short and simple
 
