@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1067" height="913" viewBox="0 0 1067 913" role="img" aria-labelledby="map-hierarchy-title map-hierarchy-desc">
+  <title id="map-hierarchy-title">ConcurrentSkipListMap: class and interface hierarchy</title>
+  <desc id="map-hierarchy-desc">The source article's historical hierarchy, with aligned rows and columns. Yellow boxes are interfaces and pink boxes are classes. Solid upward arrows mean extends; dotted upward arrows mean implements. ConcurrentSkipListMap extends AbstractMap and implements ConcurrentNavigableMap, which extends NavigableMap and ConcurrentMap. NavigableMap extends SortedMap. SortedMap and ConcurrentMap extend Map; AbstractMap implements Map. This historical diagram omits SequencedMap, introduced in Java 21.</desc>
+  <!-- Shared source palette and typography; all labels remain editable text. -->
+  <defs>
+    <style>
+      .interface { fill: #fff198; }
+      .class { fill: #ffadc3; }
+      .connector { fill: none; stroke: #626262; stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+      .implements-connector { stroke-dasharray: 3 9; }
+      .arrowhead { fill: #626262; }
+      .node-label { fill: #000; font-family: Arial, Helvetica, sans-serif; font-size: 22px; font-weight: 700; }
+      .relation-label { fill: #000; font-family: Arial, Helvetica, sans-serif; font-size: 20px; font-weight: 700; font-style: italic; }
+    </style>
+  </defs>
+  <!-- Original canvas; the middle row shares y=211.5 and height=74.5. Map and ConcurrentMap share center x=529. -->
+  <rect width="1067" height="913" fill="#fff"/>
+  <g id="hierarchy-nodes">
+    <rect id="map-interface" class="interface" x="422" y="23" width="214" height="74.5" rx="7.5"/>
+    <rect id="sorted-map-interface" class="interface" x="29" y="211.5" width="264" height="74.5" rx="7.5"/>
+    <rect id="concurrent-map-interface" class="interface" x="386.5" y="211.5" width="285" height="74.5" rx="7.5"/>
+    <rect id="abstract-map-class" class="class" x="742.5" y="211.5" width="287" height="74.5" rx="7.5"/>
+    <rect id="navigable-map-interface" class="interface" x="29" y="385" width="264" height="74.5" rx="7.5"/>
+    <rect id="concurrent-navigable-map-interface" class="interface" x="116" y="589.5" width="450" height="75" rx="7.5"/>
+    <rect id="concurrent-skip-list-map-class" class="class" x="460" y="808" width="450" height="75" rx="7.5"/>
+  </g>
+  <!-- Parent columns use x=161 and x=529; the centered junction is x=341. Shafts end within their head bases. -->
+  <g id="extends-connectors" class="connector">
+    <path id="sorted-and-concurrent-to-map-shaft" d="M161 211.5 V159 H529 V211.5 M460 159 V108"/>
+    <path id="navigable-to-sorted-shaft" d="M161 385 V298"/>
+    <path id="concurrent-navigable-to-parent-shaft" d="M161 471.5 V527.5 H529 V298 M341 527.5 V589.5"/>
+    <path id="skip-list-to-abstract-shaft" d="M825 808 V298"/>
+  </g>
+  <g id="extends-arrowheads" class="arrowhead">
+    <path id="map-extends-head" d="M452 109 L460 97.5 L468 109 Z"/>
+    <path id="sorted-extends-head" d="M153 299 L161 286 L169 299 Z"/>
+    <path id="navigable-extends-head" d="M153 472.5 L161 459.5 L169 472.5 Z"/>
+    <path id="concurrent-extends-head" d="M521 299 L529 286 L537 299 Z"/>
+    <path id="abstract-extends-head" d="M817 299 L825 286 L833 299 Z"/>
+  </g>
+  <!-- Both top crossbars share y=159; the dotted child route aligns with the ConcurrentMap column at x=529. -->
+  <g id="implements-connectors" class="connector implements-connector">
+    <path id="abstract-to-map-shaft" d="M615 116 V159 H886 V211.5"/>
+    <path id="skip-list-to-concurrent-navigable-shaft" d="M529 808 V685"/>
+  </g>
+  <g id="implements-arrowheads" class="arrowhead">
+    <path id="map-implements-head" d="M607 109 L615 97.5 L623 109 Z"/>
+    <path id="concurrent-navigable-implements-head" d="M521 677 L529 664.5 L537 677 Z"/>
+  </g>
+  <!-- Relation names retain the original placement and remain clear of all shafts. -->
+  <g id="relationship-labels" class="relation-label">
+    <text x="354" y="141">extends</text>
+    <text x="744" y="141">implements</text>
+    <text x="178" y="341">extends</text>
+    <text x="368" y="569">extends</text>
+    <text x="836" y="506">extends</text>
+    <text x="383" y="749">implements</text>
+  </g>
+  <!-- Labels are centered in their own boxes; peers use an identical baseline. -->
+  <g id="node-labels" class="node-label">
+    <text text-anchor="middle" x="529" y="68">Map</text>
+    <text text-anchor="middle" x="161" y="256.5">SortedMap</text>
+    <text text-anchor="middle" x="529" y="256.5">ConcurrentMap</text>
+    <text text-anchor="middle" x="886" y="256.5">AbstractMap</text>
+    <text text-anchor="middle" x="161" y="430">NavigableMap</text>
+    <text text-anchor="middle" x="341" y="634.5">ConcurrentNavigableMap</text>
+    <text text-anchor="middle" x="685" y="853">ConcurrentSkipListMap</text>
+  </g>
+</svg>
