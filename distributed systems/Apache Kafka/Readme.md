@@ -4,6 +4,8 @@
 
 **Apache Kafka is a distributed event streaming platform: applications append records to partitioned logs, and other applications read those records at their own pace.** Kafka retains the records according to a storage policy; reading a record does not remove it. This lets several services react to the same event and lets consumers replay retained history.
 
+Kafka is developed primarily in **Java and Scala** and runs on the **Java Virtual Machine (JVM)**.
+
 Start with the log and its readers, then explore storage guarantees, choose a deployment, apply the patterns to an order system, and recognize workloads where Kafka is the wrong tool. Delivery guarantees, offset commits, and Kafka transactions have their own article: [Apache Kafka. Delivery and transactions](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md).
 
 1. [Models and internals](#1-models-and-internals)
@@ -555,6 +557,7 @@ Try answering each question before expanding its answer.
 
 # Sources
 
+- [Apache Kafka 4.3.0: Java and Scala build requirements](https://github.com/apache/kafka/blob/4.3.0/README.md)
 - [Apache Kafka introduction: events, topics, partitions, and retention independent of consumption](https://kafka.apache.org/43/getting-started/introduction/)
 - [Apache Kafka use cases: editorial descriptions of messaging, buffering, processing, and event sourcing](https://kafka.apache.org/uses/)
 - [Confluent's 2017 Kafka community survey: historical, overlapping pipeline, processing, and integration categories](https://www.confluent.io/blog/2017-apache-kafka-survey-streaming-data-on-the-rise/)

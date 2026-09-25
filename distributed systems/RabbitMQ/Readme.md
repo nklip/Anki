@@ -4,6 +4,8 @@
 
 **RabbitMQ is an open-source message broker that routes and holds messages for applications to process.** It separates sending work from executing it and distributes events to interested systems.
 
+The RabbitMQ broker is developed primarily in **Erlang**; its command-line tools are written in **Elixir**.
+
 The model is **publisher → exchange → queue → consumer**: route, hold, then process. We will follow an order event, examine failures, compare Kafka, and study production cases.
 
 Scope: RabbitMQ **4.3**, using **AMQP 0-9-1** (Advanced Message Queuing Protocol); Kafka **4.3**. Other supported protocols have different APIs. Documentation checked on 2026-09-25; production reports are historical snapshots.
@@ -321,6 +323,7 @@ Try answering each question before expanding its answer.
 
 # Sources
 
+- [RabbitMQ: Erlang server and Elixir CLI build requirements](https://www.rabbitmq.com/docs/build-server)
 - [RabbitMQ: AMQP 0-9-1 model explained](https://www.rabbitmq.com/tutorials/amqp-concepts)
 - [RabbitMQ: work queues tutorial](https://www.rabbitmq.com/tutorials/tutorial-two-python)
 - [RabbitMQ: publish/subscribe tutorial](https://www.rabbitmq.com/tutorials/tutorial-three-python)
