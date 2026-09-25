@@ -12,8 +12,6 @@ Major stock exchanges include **NYSE** and **NASDAQ**, among others.
     <img src="./images/world-stock-exchanges.svg" alt="world-stock-exchanges" width="1000" />
 </div>
 
----
-
 ## Step 1: Understand the Problem and Establish Design Scope
  * C: Which securities are we going to trade? Stocks, options or futures?
  * I: Only stocks for simplicity
@@ -35,19 +33,17 @@ The scale mentioned by the interviewer hints that we are to design a small to me
 We need to also ensure flexibility to support more symbols and users in the future.
 
 Other non-functional requirements:
- * Availability - At least 99.99%. Downtime can harm reputation
- * Fault tolerance - fault tolerance and a fast recovery mechanism are needed to limit the impact of a production incident
- * Latency - Round-trip latency should be at the millisecond level with a focus on the 99th percentile. Persistently high 99th-percentile latency causes a bad experience for a handful of users.
- * Security - We should have an account management system. For legal compliance, we need to support KYC to verify user identity. We should also protect against DDoS for public resources.
+* Availability - At least 99.99%. Downtime can harm reputation
+* Fault tolerance - fault tolerance and a fast recovery mechanism are needed to limit the impact of a production incident
+* Latency - Round-trip latency should be at the millisecond level with a focus on the 99th percentile. Persistently high 99th-percentile latency causes a bad experience for a handful of users.
+* Security - We should have an account management system. For legal compliance, we need to support KYC to verify user identity. We should also protect against DDoS for public resources.
 
 ### **Back-of-the-envelope estimation**
- * 100 symbols, 1 billion orders per day
- * Normal trading hours are from 09:30 to 16:00 (6.5h)
- * QPS = 1 billion / 6.5 / 3,600 = 43,000
- * Peak QPS = 5 * QPS = 215000
- * Trading volume is significantly higher when the market opens
-
----
+* 100 symbols, 1 billion orders per day
+* Normal trading hours are from 09:30 to 16:00 (6.5h)
+* QPS = 1 billion / 6.5 / 3,600 = 43,000
+* Peak QPS = 5 * QPS = 215000
+* Trading volume is significantly higher when the market opens
 
 ## Step 2: Propose High-Level Design and Get Buy-In
 
@@ -60,12 +56,12 @@ Institutional clients trade in large quantities using specialized trading softwa
 E.g., order splitting when trading in large volumes to avoid impacting the market.
 
 Types of orders:
- * Limit - buy or sell at a fixed price. It might not find a match immediately or it might be partially matched.
- * Market - doesn't specify a price. Executed at the current market price immediately.
+* Limit - buy or sell at a fixed price. It might not find a match immediately or it might be partially matched.
+* Market - doesn't specify a price. Executed at the current market price immediately.
 
 Prices:
- * Bid - highest price a buyer is willing to pay for a stock
- * Ask - lowest price at which a seller is willing to sell a stock
+* Bid - highest price a buyer is willing to pay for a stock
+* Ask - lowest price at which a seller is willing to sell a stock
 
 #### **Market data levels**
 
@@ -116,7 +112,7 @@ FIX is a protocol for exchanging securities transaction information, used by mos
     <img src="./images/high-level-design.svg" alt="high-level-design" width="1000" />
 </div>
 
-#### Trade flow:
+#### **Trading flow**:
 * Step 1: A client places an order via the broker’s web or mobile app.
 * Step 2: The broker sends the order to the exchange.
 * Step 3: The order enters the exchange through the client gateway. The client gateway performs basic gatekeeping functions such as input validation, * rate limiting, authentication, normalization, etc. The client gateway then forwards the order to the order manager.
@@ -125,50 +121,50 @@ FIX is a protocol for exchanging securities transaction information, used by mos
 * Step 7 - 9: The order is sent to the matching engine. When a match is found, the matching engine emits two executions (also called fills), with one each for the buy and sell sides. To guarantee that matching results are deterministic when replay, both orders and executions are sequenced in the sequencer (more on the sequencer later).
 * Step 10 - 14: The executions are returned to the client.
 
-#### Market data flow (M1-M3):
+#### **Market data flow (M1-M3)**:
 * Step M1: The matching engine generates a stream of executions (fills) as matches are made. The stream is sent to the market data publisher.
 * Step M2: The market data publisher constructs the candlestick charts and the order books from the stream of executions as market data.
 * Step M3: The market data publisher sends the market data to the data service. The published market data is saved to specialized storage for real-time analytics. The brokers connect to the data service to obtain timely market data. Brokers relay market data to their clients.
 
-#### Reporter flow (R1-R2):
+#### **Reporter flow (R1-R2)**:
  * The reporter collects all necessary reporting fields from orders and executions and writes them to the database.
  * reporting fields - client_id, price, quantity, order_type, filled_quantity, remaining_quantity
 
 Trading flow is on the critical path, whereas the rest of the flows are not, hence, latency requirements differ between them.
 
-#### Trading flow
+#### **Trading flow**
 The trading flow is on the critical path, hence, it should be highly optimized for low latency.
 
-The matching engine is at its heart, also called the cross engine. Primary responsibilities:
- * Maintain the order book for each symbol - a list of buy/sell orders for a symbol.
- * Match buy and sell orders - a match results in two executions (fills), with one each for the buy and sell sides. This function must be fast and accurate
- * Distribute the execution stream as market data
- * Matches must be produced in a deterministic order. Foundational for high availability
+The **matching engine** is at its heart, also called the cross engine. Primary responsibilities:
+* Maintain the order book for each symbol - a list of buy/sell orders for a symbol.
+* Match buy and sell orders - a match results in two executions (fills), with one each for the buy and sell sides. This function must be fast and accurate
+* Distribute the execution stream as market data
+* Matches must be produced in a deterministic order. Foundational for high availability
 
-Next is the sequencer - it is the key component making the matching engine deterministic by stamping each inbound order and outbound fill with a sequence ID.
+Next is the **sequencer** - it is the key component making the matching engine deterministic by stamping each inbound order and outbound fill with a sequence ID.
 
 <div style="margin-left:3rem">
     <img src="./images/sequencer.svg" alt="sequencer" width="1000" />
 </div>
 
 We stamp inbound orders and outbound fills for several reasons:
- * timeliness and fairness
- * fast recovery/replay
- * exactly-once guarantee
+* timeliness and fairness
+* fast recovery/replay
+* exactly-once guarantee
 
 Conceptually, we could use Kafka as our sequencer since it's effectively an inbound and outbound message queue. However, we're going to implement it ourselves in order to achieve lower latency.
 
-The order manager manages the orders state. It also interacts with the matching engine - sending orders and receiving fills.
+The **order manager** manages the orders state. It also interacts with the matching engine - sending orders and receiving fills.
 
 The order manager's responsibilities:
- * Sends orders for risk checks - e.g., verifying that a user's trade volume is less than 1 million
- * Checks the order against the user wallet and verifies there are sufficient funds to execute it
- * It sends the order to the sequencer and on to the matching engine. To reduce bandwidth, only necessary order information is passed to the matching engine.
- * Executions (fills) are received back from the sequencer, where they are then sent to the brokers via the client gateway.
+* Sends orders for risk checks - e.g., verifying that a user's trade volume is less than 1 million
+* Checks the order against the user wallet and verifies there are sufficient funds to execute it
+* It sends the order to the sequencer and on to the matching engine. To reduce bandwidth, only necessary order information is passed to the matching engine.
+* Executions (fills) are received back from the sequencer, where they are then sent to the brokers via the client gateway.
 
 The main challenge with implementing the order manager is the state transition management. Event sourcing is one viable solution (discussed in deep dive).
 
-Finally, the client gateway receives orders from users and sends them to the order manager. Its responsibilities:
+Finally, the **client gateway** receives orders from users and sends them to the order manager. Its responsibilities:
 
 <div style="margin-left:3rem">
     <img src="./images/client-gateway.svg" alt="client-gateway" width="1000" />
@@ -182,8 +178,8 @@ There can be multiple client gateways for different clients. For example, a colo
     <img src="./images/client-gateways.svg" alt="client-gateways" width="1000" />
 </div>
 
-#### Market data flow
-The market data publisher receives executions from the matching engine and builds the order book/candlestick charts from the execution stream.
+#### **Market data flow**
+The **market data publisher (MDP)** receives executions from the matching engine and builds the order book/candlestick charts from the execution stream.
 
 That data is sent to the data service, which is responsible for showing the aggregated data to subscribers:
 
@@ -191,7 +187,7 @@ That data is sent to the data service, which is responsible for showing the aggr
     <img src="./images/market-data.svg" alt="market-data" width="1000" />
 </div>
 
-#### Reporting flow
+#### **Reporting flow**
 The reporter is not on the critical path, but it is an important component nevertheless.
 
 <div style="margin-left:3rem">
@@ -208,85 +204,85 @@ We use a RESTful API for communication between the client gateway and the broker
 
 For institutional clients, a proprietary protocol is used to satisfy their low-latency requirements.
 
-Create order:
+**Order**:
 ```http
 POST /v1/order
 ```
 
 Parameters:
- * symbol - the stock symbol. String
- * side - buy or sell. String
- * price - the price of the limit order. Long
- * orderType - limit or market (we only support limit orders in our design). String
- * quantity - the quantity of the order. Long
+* symbol - the stock symbol. String
+* side - buy or sell. String
+* price - the price of the limit order. Long
+* orderType - limit or market (we only support limit orders in our design). String
+* quantity - the quantity of the order. Long
 
 Response:
- * id - the ID of the order. Long
- * creationTime - the system creation time of the order. Long
- * filledQuantity - the quantity that has been successfully executed. Long
- * remainingQuantity - the quantity still to be executed. Long
- * status - new/canceled/filled. String
- * rest of the attributes are the same as the input parameters
+* id - the ID of the order. Long
+* creationTime - the system creation time of the order. Long
+* filledQuantity - the quantity that has been successfully executed. Long
+* remainingQuantity - the quantity still to be executed. Long
+* status - new/canceled/filled. String
+* rest of the attributes are the same as the input parameters
 
-Get execution:
+**Execution**:
 ```http
 GET /execution?symbol={:symbol}&orderId={:orderId}&startTime={:startTime}&endTime={:endTime}
 ```
 
 Parameters:
- * symbol - the stock symbol. String
- * orderId - the ID of the order. Optional. String
- * startTime - query start time in epoch \[11\]. Long
- * endTime - query end time in epoch. Long
+* symbol - the stock symbol. String
+* orderId - the ID of the order. Optional. String
+* startTime - query start time in epoch \[11\]. Long
+* endTime - query end time in epoch. Long
 
 Response:
- * executions - array with each execution in scope (see attributes below). Array
- * id - the ID of the execution. Long
- * orderId - the ID of the order. Long
- * symbol - the stock symbol. String
- * side - buy or sell. String
- * price - the price of the execution. Long
- * orderType - limit or market. String
- * quantity - the filled quantity. Long
+* executions - array with each execution in scope (see attributes below). Array
+* id - the ID of the execution. Long
+* orderId - the ID of the order. Long
+* symbol - the stock symbol. String
+* side - buy or sell. String
+* price - the price of the execution. Long
+* orderType - limit or market. String
+* quantity - the filled quantity. Long
 
-Get order book:
+**Order book**:
 ```http
 GET /marketdata/orderBook/L2?symbol={:symbol}&depth={:depth}
 ```
 
 Parameters:
- * symbol - the stock symbol. String
- * depth - order book depth per side. Int
+* symbol - the stock symbol. String
+* depth - order book depth per side. Int
 
 Response:
- * bids - array with price and size. Array
- * asks - array with price and size. Array
+* bids - array with price and size. Array
+* asks - array with price and size. Array
 
-Get candlesticks:
+**Candlestick charts**:
 ```http
 GET /marketdata/candles?symbol={:symbol}&resolution={:resolution}&startTime={:startTime}&endTime={:endTime}
 ```
 
 Parameters:
- * symbol - the stock symbol. String
- * resolution - window length of the candlestick chart in seconds. Long
- * startTime - start time of the window in epoch. Long
- * endTime - end time of the window in epoch. Long
+* symbol - the stock symbol. String
+* resolution - window length of the candlestick chart in seconds. Long
+* startTime - start time of the window in epoch. Long
+* endTime - end time of the window in epoch. Long
 
 Response:
- * candles - array with each candlestick data (attributes listed below). Array
- * open - open price of each candlestick. Double
- * close - close price of each candlestick. Double
- * high - high price of each candlestick. Double
- * low - low price of each candlestick. Double
+* candles - array with each candlestick data (attributes listed below). Array
+* open - open price of each candlestick. Double
+* close - close price of each candlestick. Double
+* high - high price of each candlestick. Double
+* low - low price of each candlestick. Double
 
 ### **Data models**
 There are three main types of data in our exchange:
- * Product, order, execution
- * order book
- * candlestick chart
+* Product, order, execution
+* Order book
+* Candlestick chart
 
-#### Product, order, execution
+#### **Product, order, execution**
 Products describe the attributes of a traded symbol - product type, trading symbol, UI display symbol, etc.
 
 This data doesn't change frequently, it is primarily used for rendering in a UI.
@@ -300,18 +296,18 @@ Here's the data model:
 </div>
 
 We encounter orders and executions in all of our three flows:
- * in the critical path, they are processed in-memory for high performance. They are stored and recovered from the sequencer.
- * The reporter writes orders and executions to the database for reporting use-cases
- * Executions are forwarded to market data to reconstruct the order book and candlestick chart
+* in the critical path, they are processed in-memory for high performance. They are stored and recovered from the sequencer.
+* The reporter writes orders and executions to the database for reporting use-cases
+* Executions are forwarded to market data to reconstruct the order book and candlestick chart
 
-#### Order book
+#### **Order book**
 The order book is a list of buy/sell orders for an instrument, organized by price level.
 
 An efficient data structure for this model needs to satisfy:
- * constant lookup time - getting volume at price level or between price levels
- * fast add/execute/cancel operations
- * query best bid/ask price
- * iterate through price levels
+* constant lookup time - getting volume at price level or between price levels
+* fast add/execute/cancel operations
+* query best bid/ask price
+* iterate through price levels
 
 Example order book execution:
 
@@ -344,9 +340,9 @@ class OrderBook {
 ```
 
 For a more efficient implementation, we can use a doubly-linked list instead of a standard list:
- * Placing a new order is O(1), because we're adding an order to the tail of the list.
- * Matching an order is O(1), because we are deleting an order from the head
- * Canceling an order means deleting an order from the order book. We utilize `orderMap` for O(1) lookup and O(1) delete (due to the `Order` having a reference to the previous element in the list).
+* Placing a new order is O(1), because we're adding an order to the tail of the list.
+* Matching an order is O(1), because we are deleting an order from the head
+* Canceling an order means deleting an order from the order book. We utilize `orderMap` for O(1) lookup and O(1) delete (due to the `Order` having a reference to the previous element in the list).
 
 <div style="margin-left:3rem">
     <img src="./images/order-book-impl.svg" alt="order-book-impl" width="1000" />
@@ -354,7 +350,7 @@ For a more efficient implementation, we can use a doubly-linked list instead of 
 
 This data structure is also used in the market data services to reconstruct the order book.
 
-#### Candlestick chart
+#### **Candlestick chart**
 
 The candlestick data is calculated within the market data services by processing orders in a time interval:
 ```java
@@ -374,12 +370,10 @@ class CandlestickChart {
 ```
 
 Some optimizations to avoid consuming too much memory:
- * Use pre-allocated ring buffers to hold sticks to reduce the allocation number
- * Limit the number of sticks in memory and persist the rest to disk
+* Use pre-allocated ring buffers to hold sticks to reduce the allocation number
+* Limit the number of sticks in memory and persist the rest to disk
 
 We'll use an in-memory columnar database (e.g., KDB) for real-time analytics. After the market closes, data is persisted in a historical database.
-
----
 
 ## Step 3: Design Deep Dive
 One interesting thing to be aware of about modern exchanges is that unlike most other software, they typically run everything on one gigantic server.
@@ -390,16 +384,16 @@ Let's explore the details.
 For an exchange, it is very important to have good overall latency for all percentiles.
 
 How can we reduce latency?
- * Reduce the number of tasks on the critical path
- * Shorten the time spent on each task by reducing network/disk usage and/or reducing task execution time
+* Reduce the number of tasks on the critical path
+* Shorten the time spent on each task by reducing network/disk usage and/or reducing task execution time
 
 To achieve the first goal, we've stripped the critical path of all extraneous responsibilities; even logging is removed to achieve optimal latency.
 
+`gateway` → `order manager` → `sequencer` → `matching engine`
+
 If we follow the original design, there are several bottlenecks - network latency between services and disk usage of the sequencer.
 
-With such a design, we can achieve tens of milliseconds of end-to-end latency. We want to achieve tens of microseconds instead.
-
-Hence, we'll put everything on one server and processes are going to communicate via mmap as an event store:
+To reduce the end-to-end latency on the critical path to tens of microseconds, primarily by exploring options to reduce or eliminate network and disk access latency. A time-tested design eliminates the network hops by putting everything on the same server. When all components are on the same server, they can communicate via `mmap` as an event store.
 
 <div style="margin-left:3rem">
     <img src="./images/mmap-bus.svg" alt="mmap-bus" width="1000" />
@@ -430,8 +424,8 @@ In a nutshell, instead of storing current states, we store immutable state trans
     <img src="./images/event-sourcing.svg" alt="event-sourcing" width="1000" />
 </div>
 
- * On the left - traditional schema
- * On the right - event source schema
+* On the left - traditional schema
+* On the right - event source schema
 
 Here's how our design looks like thus far:
 
@@ -439,10 +433,10 @@ Here's how our design looks like thus far:
     <img src="./images/design-so-far.svg" alt="design-so-far" width="1000" />
 </div>
 
- * external domain interacts with our client gateway using the FIX protocol
- * Order manager receives the new order event, validates it and adds it to its internal state. Order is then sent to matching core
- * If order is matched, the `OrderFilledEvent` is generated and sent over mmap
- * Other components subscribe to the event store and do their part of the processing
+* The gateway transforms FIX to 'FIX over Simple Binary Encoding' (SBE) for fast and compact encoding and sends each order as a `NewOrderEvent` via Event Store Client in a pre-defined format (see event store entry in the diagram)
+* The order manager (embedded in the matching engine) receives the 'NewOrderEvent' from the event store, validates it, and adds it to its internal order states. The order is then sent to the matching core.
+* If the order is gets matched, an `OrderFilledEvent` is generated and sent to the event store.
+* Other components such as the market data processor and the reporter subscribe to the event store and process those events accordingly.
 
 One additional optimization is that all components hold a copy of the order manager, which is packaged as a library to avoid extra calls for managing orders.
 
@@ -456,8 +450,8 @@ The sequencer in this design changes from being an event store to being a single
 We aim for 99.99% availability - only 8.64s of downtime per day.
 
 To achieve that, we have to identify single-point-of-failures in the exchange architecture:
- * Set up backup instances of critical services (e.g., the matching engine) that are on standby.
- * aggressively automate failure detection and failover to the backup instance
+* Set up backup instances of critical services (e.g., the matching engine) that are on standby.
+* aggressively automate failure detection and failover to the backup instance
 
 Stateless services such as the client gateway can easily be horizontally scaled by adding more servers.
 
@@ -480,23 +474,25 @@ What if even the warm instances go down? It is a low probability event but we sh
 Large tech companies tackle this problem by replicating core data to data centers in multiple cities to mitigate risks such as natural disasters.
 
 Questions to consider:
- * If the primary instance is down, how and when do we fail over to the backup instance?
- * How do we choose the leader among the backup instances?
- * What is the recovery time needed (RTO - recovery time objective)?
- * What functionalities need to be recovered? Can our system operate under degraded conditions?
+* If the primary instance is down, how and when do we fail over to the backup instance?
+* How do we choose the leader among the backup instances?
+* What is the recovery time needed (RTO - Recovery Time Objective)?
+* What functionalities need to be recovered (RPO - Recovery Point Objective)? Can our system operate under degraded conditions?
 
 How to address these:
- * System can be down due to a bug (affecting primary and replicas), we can use chaos engineering to surface edge-cases and disastrous outcomes like these
- * Initially though, we could perform failovers manually until we gather sufficient knowledge about the system's failure modes
- * Leader election can be used (e.g., Raft) to determine which replica becomes the leader if the primary goes down.
+* System can be down due to a bug (affecting primary and replicas), we can use chaos engineering to surface edge-cases and disastrous outcomes like these
+* Initially though, we could perform failovers manually until we gather sufficient knowledge about the system's failure modes
+* Leader election can be used (e.g., Raft) to determine which replica becomes the leader if the primary goes down.
 
-Example of how replication works across different servers:
+Example below shows a Raft cluster with five servers with their own event stores. The current leader sends data to all the other instances (followers). The minimum number of votes required to perform an operation in Raft is (N/2 + 1), where N is the number of members in the cluster. In the example, the minimum is 3.
+
+The following diagram shows the followers receiving new events from the leader over RPC. The events are saved to the follower's own mmap event store.
 
 <div style="margin-left:3rem">
     <img src="./images/replication-across-servers.svg" alt="replication-across-servers" width="1000" />
 </div>
 
-Example leader-election terms:
+Let's briefly examine the leader election process. The leader sends heartbeat messages (`AppendEntries` with no content as shown) to its followers. If a follower has not received heartbeat messages for a period of time, it triggers an election timeout that initiates a new election. The first follower that reaches election timeout becomes a candidate, and it asks the rest of the followers to vote (`RequestVote`). If the first follower receives a majority of votes, it becomes the new leader. If the first follower has a lower term value than the new node, it cannot be the leader. If multiple followers become candidates at the same time, it is called a 'split vote'. In this case, the election times out, and a new election is initiated. See the below image for the explanation of 'term'. Time is divided into arbitrary intervals in Raft to represent operation and election.
 
 <div style="margin-left:3rem">
     <img src="./images/leader-election-terms.svg" alt="leader-election-terms" width="1000" />
@@ -504,10 +500,9 @@ Example leader-election terms:
 
 For details on how Raft works, [check this out](https://thesecretlivesofdata.com/raft/)
 
-Finally, we need to also consider loss tolerance - how much data can we lose before things get critical?
-This will determine how often we back up our data.
+Next, let's take a look at recovery time. `Recoverty Time Objective (RTO)` refers to the amount of time an application can be down without causing significant damage to the business. For a stock exchange, we need to achieve a second-level RTO, which definitely required automatic failover of services. To do this, we categorize services based on priority and define a degradation strategy to maintain a minimum service level.
 
-For a stock exchange, data loss is unacceptable, so we have to backup data often and rely on raft's replication to reduce probability of data loss.
+Finally, we need to figure out the tolerance for data loss. `Recovery Point Objective (RPO)` refers to the amount of data that can be lost before significant harm is done to the business, i.e. the loss of tolerance. For a stock exchange, data loss is not acceptable, so RPO is near zero. With Raft, we have many copies of the data. It guarantees that state consensus is achieved among cluster nodes. If the current leader crashes, the new leader should be able to function immediately.
 
 ### **Matching algorithms**
 Slight detour on how matching works via pseudocode:
@@ -599,9 +594,9 @@ We need to ensure subscribers receive the data at the same time since if one rec
 To achieve this, we can use multicast using reliable UDP when publishing data to subscribers.
 
 Data can be transported via the internet in three ways:
- * Unicast - one source, one destination
- * Broadcast - one source to entire subnetwork
- * Multicast - one source to a set of hosts on different subnetworks
+* Unicast - one source, one destination
+* Broadcast - one source to entire subnetwork
+* Multicast - one source to a set of hosts on different subnetworks
 
 In theory, by using multicast, all subscribers should receive the data at the same time.
 
@@ -614,18 +609,16 @@ This reduces the latency drastically and can be considered a VIP service.
 
 ### **Network Security**
 DDoS is a challenge for exchanges, as there are some internet-facing services. Here are our options:
- * Isolate public services and data from private services, so DDoS attacks don't impact the most important clients
- * Use a caching layer to store data which is infrequently updated
- * Harden URLs against DDoS; e.g., prefer `https://my.website.com/data/recent` over `https://my.website.com/data?from=123&to=456` because the former is more cacheable.
- * Effective allowlist/blocklist mechanism is needed.
- * Rate limiting can be used to mitigate DDoS
-
----
+* Isolate public services and data from private services, so DDoS attacks don't impact the most important clients
+* Use a caching layer to store data which is infrequently updated
+* Harden URLs against DDoS; e.g., prefer `https://my.website.com/data/recent` over `https://my.website.com/data?from=123&to=456` because the former is more cacheable.
+* Effective allowlist/blocklist mechanism is needed.
+* Rate limiting can be used to mitigate DDoS
 
 ## Step 4: Wrap Up
 Other interesting notes:
- * Not all exchanges rely on putting everything on one big server, but some still do.
- * Modern exchanges rely more on cloud infrastructure and also on automatic market makers (AMM) to avoid maintaining an order book.
+* Not all exchanges rely on putting everything on one big server, but some still do.
+* Modern exchanges rely more on cloud infrastructure and also on automatic market makers (AMM) to avoid maintaining an order book.
 
 ## Reference materials
 
