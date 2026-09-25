@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="530" viewBox="0 0 1080 530" role="img" aria-labelledby="title desc">
+  <title id="title">NFS: two machines, one shared directory</title>
+  <desc id="desc">NFS means Network File System. Client A and client B both mount the directory /shared from files.example.com at their local path /mnt/shared. Each application's /mnt/shared/report.csv refers to the same report.csv on the NFS server. Arrows carry file operations toward the server and data and replies back to the clients. A mount attaches the server's directory to a local path; file access still depends on the network.</desc>
+
+  <!-- Shared typography and semantic colors: blue clients, green shared storage. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172033; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 21px; fill: #475569; }
+      .node-title { font-size: 25px; font-weight: 700; text-anchor: middle; }
+      .label { font-size: 21px; text-anchor: middle; }
+      .path { font-family: monospace; font-size: 19px; text-anchor: middle; }
+      .arrow-label { font-size: 20px; fill: #0b6899; text-anchor: middle; }
+      .flow-shaft { fill: none; stroke: #0b6899; stroke-width: 3; }
+      .footnote { font-size: 21px; fill: #475569; }
+    </style>
+  </defs>
+
+  <!-- Title and expansion establish the lesson before the two parallel client rows. -->
+  <rect id="background" width="1080" height="530" fill="#fff"/>
+  <text class="title" x="30" y="46">NFS: two machines, one shared directory</text>
+  <text class="subtitle" x="30" y="83">Network File System · ordinary file paths backed by remote storage</text>
+
+  <!-- Both local paths identify the same server file, not independently stored copies. -->
+  <g id="clients">
+    <rect id="client-a" x="30" y="124" width="345" height="138" rx="16" fill="#eff8fc" stroke="#0b78b5" stroke-width="2"/>
+    <text class="node-title" x="202.5" y="159">Client A</text>
+    <text class="label" x="202.5" y="195">Application uses</text>
+    <text class="path" x="202.5" y="233">/mnt/shared/report.csv</text>
+
+    <rect id="client-b" x="30" y="302" width="345" height="138" rx="16" fill="#eff8fc" stroke="#0b78b5" stroke-width="2"/>
+    <text class="node-title" x="202.5" y="337">Client B</text>
+    <text class="label" x="202.5" y="373">Application uses</text>
+    <text class="path" x="202.5" y="411">/mnt/shared/report.csv</text>
+  </g>
+
+  <!-- One server groups the exported directory and file that both clients address. -->
+  <g id="shared-server">
+    <rect id="server-frame" x="740" y="124" width="310" height="316" rx="16" fill="#f1f9ed" stroke="#488832" stroke-width="2"/>
+    <text class="node-title" x="895" y="159">NFS server</text>
+    <text class="label" x="895" y="194">files.example.com</text>
+    <text class="label" x="895" y="229">Exports /shared</text>
+    <path id="shared-folder" d="M778 265V250H858L872 265H1012V362H778Z" fill="#fff" stroke="#488832" stroke-width="2" stroke-linejoin="round"/>
+    <text class="path" x="895" y="320">report.csv</text>
+    <text class="label" x="895" y="404">One shared set of files</text>
+  </g>
+
+  <!-- All arrow shafts finish 2 units inside their triangle bases. Tips touch only
+       the outer frame boundaries. Labels remain clear above or below the routes. -->
+  <g id="client-a-traffic">
+    <text class="arrow-label" x="557.5" y="172">File operations</text>
+    <path id="a-request-shaft" class="flow-shaft" data-connector="true" d="M376 194H725"/>
+    <polygon id="a-request-head" points="739,194 723,185 723,203" fill="#0b6899"/>
+    <path id="a-reply-shaft" class="flow-shaft" data-connector="true" d="M739 228H390"/>
+    <polygon id="a-reply-head" points="376,228 392,219 392,237" fill="#0b6899"/>
+    <text class="arrow-label" x="557.5" y="259">Data + replies</text>
+  </g>
+  <g id="client-b-traffic">
+    <text class="arrow-label" x="557.5" y="350">File operations</text>
+    <path id="b-request-shaft" class="flow-shaft" data-connector="true" d="M376 372H725"/>
+    <polygon id="b-request-head" points="739,372 723,363 723,381" fill="#0b6899"/>
+    <path id="b-reply-shaft" class="flow-shaft" data-connector="true" d="M739 406H390"/>
+    <polygon id="b-reply-head" points="376,406 392,397 392,415" fill="#0b6899"/>
+    <text class="arrow-label" x="557.5" y="437">Data + replies</text>
+  </g>
+
+  <!-- The footer explains mounting and prevents mistaking a local path for local storage. -->
+  <g id="mount-explanation">
+    <text class="footnote" x="30" y="480">Mount = attach the server’s directory to a local path.</text>
+    <text class="footnote" x="30" y="513">Both clients use /mnt/shared; file access still depends on the network.</text>
+  </g>
+</svg>

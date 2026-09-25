@@ -21,6 +21,7 @@ Every card lives in its own folder as `Readme.md`, with its diagrams in a siblin
  * [Protocols. FTP](./Protocols.%20FTP/Readme.md) - separate control and data connections, active/passive modes, and encryption
  * [Protocols. HTTP](./Protocols.%20HTTP/Readme.md) - requests, responses, status codes, statelessness, HTTPS, and protocol versions
  * [Protocols. HTTPS](./Protocols.%20HTTPS/Readme.md) - TLS handshakes, public/private and traffic keys, encrypted HTTP, and visible metadata
+ * [Protocols. NFS](./Protocols.%20NFS/Readme.md) - shared directories mounted as local paths, practical uses, and network and concurrency limits
  * [Protocols. POP3 vs IMAP](./Protocols.%20POP3%20vs%20IMAP/Readme.md) - downloaded mail copies versus a shared mailbox synchronized across devices
  * [Protocols. SFTP](./Protocols.%20SFTP/Readme.md) - secure file operations over SSH, one protected connection, and differences from FTP and FTPS
  * [Protocols. SMTP](./Protocols.%20SMTP/Readme.md) - how email is submitted, relayed, and accepted for delivery
