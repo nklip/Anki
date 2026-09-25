@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="860" viewBox="0 0 1100 860" role="img" aria-labelledby="title desc">
+  <title id="title">Two delivery models: work queue and retained log</title>
+  <desc id="desc">Top: a RabbitMQ classic or quorum work queue sends each delivery to one worker, illustrated by M1 going to worker A and M2 to worker B. A consumer acknowledgement removes that message from the queue; independent subscribers need separate queues. Bottom: Kafka ordinary consumer groups read the same retained partition records using their own offsets. Committing offsets records group progress without deleting the records, which can be replayed while retained. RabbitMQ Streams also support replay, and Kafka 4.3 share groups can share records from one partition among consumers.</desc>
+  <!-- Shared typography and native green-server, channel-queue and db icons are reused from
+       Apache Kafka. Connect/images/connect-system-context.svg.
+       Original icon sources: system design/16. Proximity Service/images/final-design.svg;
+       system design/10. Notification System/images/improved-design.svg. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #171717; }
+      .title { font-size: 28px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .label { font-size: 20px; }
+      .detail { font-size: 18px; }
+      .small { font-size: 17px; }
+      .panel { fill: #fff; stroke: #888; stroke-width: 1.6; }
+      .blue { fill: #eaf3ff; stroke: #888; stroke-width: 1.6; }
+      .note { fill: #fff4da; stroke: #888; stroke-width: 1.4; }
+      .shaft { fill: none; stroke: #171717; stroke-width: 2; stroke-linejoin: round; }
+    </style>
+    <symbol id="green-server" viewBox="0 0 30 60">
+      <rect x="8" y="1" width="14" height="9" rx="1" fill="#65c515"/>
+      <path d="M11 5 H19" stroke="#fff" stroke-width="1.5"/>
+      <rect x="3" y="12" width="24" height="46" rx="1.5" fill="#65c515"/>
+      <path d="M7 19 H23 M7 40 H23 M7 48 H23" stroke="#fff" stroke-width="2"/>
+    </symbol>
+    <symbol id="channel-queue" viewBox="0 0 150 58">
+      <path d="M2 2 H135 L148 29 L135 56 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="4"/>
+      <g fill="none" stroke="#1677b8" stroke-width="4">
+        <rect x="10" y="12" width="36" height="33"/><path d="M10 13 L28 29 L46 13"/>
+        <rect x="54" y="12" width="36" height="33"/><path d="M54 13 L72 29 L90 13"/>
+        <rect x="98" y="12" width="36" height="33"/><path d="M98 13 L116 29 L134 13"/>
+      </g>
+    </symbol>
+    <symbol id="db" viewBox="0 0 88 93">
+      <path d="M0.9 13.75A43.1 8.75 0 0 1 87.1 13.75V82.25A43.1 8.75 0 0 1 0.9 82.25Z" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+      <ellipse cx="44" cy="13.75" rx="43.1" ry="8.75" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+    </symbol>
+  </defs>
+  <!-- Canvas, title and product scope. -->
+  <rect width="1100" height="860" fill="#fff"/>
+  <text class="title" x="550" y="39" text-anchor="middle">Two delivery models: work queue and retained log</text>
+  <text class="detail" x="550" y="69" text-anchor="middle">Compare classic/quorum work queues with Kafka ordinary consumer groups.</text>
+  <!-- A concrete pair of deliveries illustrates sharing work; message labels sit above arrows. -->
+  <g id="rabbitmq-work-queue">
+    <rect class="panel" x="30" y="92" width="1040" height="282"/>
+    <text class="heading" x="550" y="126" text-anchor="middle">RabbitMQ classic/quorum: share work from one queue</text>
+    <rect class="blue" x="60" y="157" width="365" height="143"/>
+    <use href="#channel-queue" x="82" y="194" width="125" height="49"/>
+    <rect class="panel" x="228" y="190" width="70" height="54"/>
+    <text class="label" x="263" y="224" text-anchor="middle">M1</text>
+    <rect class="panel" x="317" y="190" width="70" height="54"/>
+    <text class="label" x="352" y="224" text-anchor="middle">M2</text>
+    <text class="detail" x="242.5" y="278" text-anchor="middle">One queue of ready messages</text>
+    <g id="worker-a">
+      <rect class="panel" x="700" y="155" width="330" height="64"/>
+      <use href="#green-server" x="719" y="163" width="24" height="48"/>
+      <text class="label" x="875" y="195" text-anchor="middle">Worker A gets M1</text>
+    </g>
+    <g id="worker-b">
+      <rect class="panel" x="700" y="245" width="330" height="64"/>
+      <use href="#green-server" x="719" y="253" width="24" height="48"/>
+      <text class="label" x="875" y="285" text-anchor="middle">Worker B gets M2</text>
+    </g>
+    <!-- Separate heads meet worker boundaries; no arrow enters the worker label area. -->
+    <path id="m1-delivery-shaft" class="shaft" data-connector="true" d="M425 190 H689"/>
+    <path id="m1-delivery-head" d="M687 184 L699 190 L687 196 Z" fill="#171717"/>
+    <text class="small" x="562" y="172" text-anchor="middle">deliver M1</text>
+    <path id="m2-delivery-shaft" class="shaft" data-connector="true" d="M425 280 H689"/>
+    <path id="m2-delivery-head" d="M687 274 L699 280 L687 286 Z" fill="#171717"/>
+    <text class="small" x="562" y="261" text-anchor="middle">deliver M2</text>
+    <text class="detail" x="550" y="335" text-anchor="middle">Each delivery goes to one worker; its completion ack allows that copy to be removed.</text>
+    <text class="detail" x="550" y="361" text-anchor="middle">For independent subscribers, fanout needs a separate queue for each subscriber.</text>
+  </g>
+  <!-- One stored partition branches to two independently tracked ordinary consumer groups. -->
+  <g id="kafka-retained-log">
+    <rect class="panel" x="30" y="399" width="1040" height="340"/>
+    <text class="heading" x="550" y="434" text-anchor="middle">Kafka log: groups read the same retained records</text>
+    <use href="#db" x="66" y="499" width="66" height="70" style="color:#fff"/>
+    <text class="small" x="99" y="597" text-anchor="middle">Storage</text>
+    <text class="detail" x="350" y="473" text-anchor="middle">One partition; offset = record position</text>
+    <rect class="blue" x="159" y="491" width="375" height="112"/>
+    <rect class="panel" x="176" y="509" width="105" height="76"/>
+    <text class="label" x="228.5" y="539" text-anchor="middle">M0</text>
+    <text class="small" x="228.5" y="568" text-anchor="middle">offset 0</text>
+    <rect class="panel" x="294" y="509" width="105" height="76"/>
+    <text class="label" x="346.5" y="539" text-anchor="middle">M1</text>
+    <text class="small" x="346.5" y="568" text-anchor="middle">offset 1</text>
+    <rect class="panel" x="412" y="509" width="105" height="76"/>
+    <text class="label" x="464.5" y="539" text-anchor="middle">M2</text>
+    <text class="small" x="464.5" y="568" text-anchor="middle">offset 2</text>
+    <g id="standard-group-a">
+      <rect class="blue" x="744" y="468" width="286" height="87"/>
+      <text class="label" x="887" y="503" text-anchor="middle">Group A</text>
+      <text class="detail" x="887" y="532" text-anchor="middle">Saved next offset: 2</text>
+    </g>
+    <g id="standard-group-b">
+      <rect class="blue" x="744" y="582" width="286" height="87"/>
+      <text class="label" x="887" y="617" text-anchor="middle">Group B</text>
+      <text class="detail" x="887" y="646" text-anchor="middle">Saved next offset: 1</text>
+    </g>
+    <!-- Routes leave the log outside record text; group B bends below the first route. -->
+    <path id="group-a-read-shaft" class="shaft" data-connector="true" d="M534 528 H613 V511 H733"/>
+    <path id="group-a-read-head" d="M731 505 L743 511 L731 517 Z" fill="#171717"/>
+    <text class="small" x="675" y="489" text-anchor="middle">read</text>
+    <path id="group-b-read-shaft" class="shaft" data-connector="true" d="M534 575 H613 V625 H733"/>
+    <path id="group-b-read-head" d="M731 619 L743 625 L731 631 Z" fill="#171717"/>
+    <text class="small" x="675" y="603" text-anchor="middle">read</text>
+    <text class="detail" x="305" y="639" text-anchor="middle">Reads leave records in the log.</text>
+    <text class="detail" x="305" y="665" text-anchor="middle">Replay is possible while records are retained.</text>
+    <text class="detail" x="550" y="716" text-anchor="middle">Committing an offset saves group progress; it does not delete records.</text>
+  </g>
+  <!-- Product caveats prevent treating the two illustrated modes as blanket product limits. -->
+  <g id="mode-scope-caveats">
+    <rect class="note" x="30" y="762" width="1040" height="78"/>
+    <text class="detail" x="550" y="792" text-anchor="middle">Scope matters: RabbitMQ Streams also support replay.</text>
+    <text class="detail" x="550" y="821" text-anchor="middle">Kafka 4.3 share groups can share records from one partition among consumers.</text>
+  </g>
+</svg>

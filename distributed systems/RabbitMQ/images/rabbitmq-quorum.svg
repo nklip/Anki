@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="770" viewBox="0 0 1100 770" role="img" aria-labelledby="title desc">
+  <title id="title">Quorum queues: a majority keeps one queue available</title>
+  <desc id="desc">One RabbitMQ quorum queue named orders has three replicas: a leader on node A and followers on nodes B and C. A quorum is a majority of these three queue members, so two are needed. If A fails and B and C can communicate, B can become leader and the queue can continue. One available replica cannot form a majority. Cluster membership alone does not replicate classic queues.</desc>
+  <!-- Shared Arial typography and palette match Apache Kafka. Connect/images/connect-system-context.svg.
+       Native green-server and channel-queue symbols are reused through that diagram.
+       Original icon sources: system design/16. Proximity Service/images/final-design.svg;
+       system design/10. Notification System/images/improved-design.svg. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #171717; }
+      .title { font-size: 28px; font-weight: 700; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .label { font-size: 20px; }
+      .detail { font-size: 18px; }
+      .small { font-size: 17px; }
+      .panel { fill: #fff; stroke: #888; stroke-width: 1.6; }
+      .blue { fill: #eaf3ff; stroke: #888; stroke-width: 1.6; }
+      .note { fill: #fff4da; stroke: #888; stroke-width: 1.4; }
+      .shaft { fill: none; stroke: #171717; stroke-width: 2; stroke-linejoin: round; }
+    </style>
+    <symbol id="green-server" viewBox="0 0 30 60">
+      <rect x="8" y="1" width="14" height="9" rx="1" fill="#65c515"/>
+      <path d="M11 5 H19" stroke="#fff" stroke-width="1.5"/>
+      <rect x="3" y="12" width="24" height="46" rx="1.5" fill="#65c515"/>
+      <path d="M7 19 H23 M7 40 H23 M7 48 H23" stroke="#fff" stroke-width="2"/>
+    </symbol>
+    <symbol id="channel-queue" viewBox="0 0 150 58">
+      <path d="M2 2 H135 L148 29 L135 56 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="4"/>
+      <g fill="none" stroke="#1677b8" stroke-width="4">
+        <rect x="10" y="12" width="36" height="33"/><path d="M10 13 L28 29 L46 13"/>
+        <rect x="54" y="12" width="36" height="33"/><path d="M54 13 L72 29 L90 13"/>
+        <rect x="98" y="12" width="36" height="33"/><path d="M98 13 L116 29 L134 13"/>
+      </g>
+    </symbol>
+  </defs>
+  <!-- Canvas and starting point: this is the membership of one queue. -->
+  <rect width="1100" height="770" fill="#fff"/>
+  <text class="title" x="550" y="39" text-anchor="middle">Quorum queues: a majority keeps one queue available</text>
+  <text class="detail" x="550" y="70" text-anchor="middle">A replica is a copy. This orders queue has three members: A, B and C.</text>
+  <g id="one-queue-three-replicas">
+    <rect class="panel" x="30" y="96" width="1040" height="320"/>
+    <text class="heading" x="550" y="129" text-anchor="middle">1. The leader replicates this queue to its followers</text>
+    <g id="follower-b">
+      <rect class="panel" x="80" y="164" width="240" height="170"/>
+      <text class="label" x="200" y="196" text-anchor="middle">Node B: follower</text>
+      <use href="#green-server" x="102" y="218" width="28" height="56"/>
+      <use href="#channel-queue" x="150" y="222" width="146" height="56"/>
+      <text class="detail" x="200" y="311" text-anchor="middle">orders replica</text>
+    </g>
+    <g id="leader-a">
+      <rect class="blue" x="430" y="164" width="240" height="170"/>
+      <text class="label" x="550" y="196" text-anchor="middle">Node A: leader</text>
+      <use href="#green-server" x="452" y="218" width="28" height="56"/>
+      <use href="#channel-queue" x="500" y="222" width="146" height="56"/>
+      <text class="detail" x="550" y="311" text-anchor="middle">orders replica</text>
+    </g>
+    <g id="follower-c">
+      <rect class="panel" x="780" y="164" width="240" height="170"/>
+      <text class="label" x="900" y="196" text-anchor="middle">Node C: follower</text>
+      <use href="#green-server" x="802" y="218" width="28" height="56"/>
+      <use href="#channel-queue" x="850" y="222" width="146" height="56"/>
+      <text class="detail" x="900" y="311" text-anchor="middle">orders replica</text>
+    </g>
+    <!-- The two independent replication arrows start at A; shafts stop under the separate heads. -->
+    <path id="replicate-to-b-shaft" class="shaft" data-connector="true" d="M430 250 H331"/>
+    <path id="replicate-to-b-head" d="M333 244 L321 250 L333 256 Z" fill="#171717"/>
+    <text class="small" x="375" y="225" text-anchor="middle">copy</text>
+    <path id="replicate-to-c-shaft" class="shaft" data-connector="true" d="M670 250 H769"/>
+    <path id="replicate-to-c-head" d="M767 244 L779 250 L767 256 Z" fill="#171717"/>
+    <text class="small" x="725" y="225" text-anchor="middle">copy</text>
+    <rect class="note" x="80" y="354" width="940" height="42"/>
+    <text class="heading" x="550" y="382" text-anchor="middle">Quorum = a majority of this queue’s members = 2 of 3</text>
+  </g>
+  <!-- Availability outcomes use the same fixed three-member queue; failed members are not removed. -->
+  <g id="two-members-available">
+    <rect class="blue" x="30" y="439" width="510" height="226"/>
+    <text class="heading" x="285" y="472" text-anchor="middle">2. A fails; B and C can communicate</text>
+    <rect class="panel" x="70" y="505" width="160" height="83"/>
+    <text class="label" x="150" y="539" text-anchor="middle">B: new leader</text>
+    <text class="small" x="150" y="566" text-anchor="middle">after election</text>
+    <rect class="panel" x="340" y="505" width="160" height="83"/>
+    <text class="label" x="420" y="539" text-anchor="middle">C: follower</text>
+    <text class="small" x="420" y="566" text-anchor="middle">still available</text>
+    <path id="new-leader-replication-shaft" class="shaft" data-connector="true" d="M230 551 H329"/>
+    <path id="new-leader-replication-head" d="M327 545 L339 551 L327 557 Z" fill="#171717"/>
+    <text class="small" x="285" y="526" text-anchor="middle">copy</text>
+    <text class="heading" x="285" y="621" text-anchor="middle">2 of 3: the queue can continue</text>
+    <text class="small" x="285" y="647" text-anchor="middle">The remaining majority can elect B.</text>
+  </g>
+  <g id="one-member-available">
+    <rect class="panel" x="560" y="439" width="510" height="226"/>
+    <text class="heading" x="815" y="472" text-anchor="middle">3. Only one replica remains available</text>
+    <rect class="panel" x="735" y="505" width="160" height="83"/>
+    <text class="label" x="815" y="539" text-anchor="middle">C only</text>
+    <text class="small" x="815" y="566" text-anchor="middle">A and B unavailable</text>
+    <text class="heading" x="815" y="621" text-anchor="middle">1 of 3: no majority</text>
+    <text class="small" x="815" y="647" text-anchor="middle">This queue cannot continue serving operations.</text>
+  </g>
+  <!-- Scope note prevents conflating queue replication with cluster membership. -->
+  <g id="cluster-scope-note">
+    <rect class="note" x="30" y="690" width="1040" height="60"/>
+    <text class="detail" x="550" y="715" text-anchor="middle">Shown: one replicated queue, not every queue on every node.</text>
+    <text class="detail" x="550" y="739" text-anchor="middle">Cluster membership alone does not replicate classic queues across nodes.</text>
+  </g>
+</svg>

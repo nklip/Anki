@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="730" viewBox="0 0 1100 730" role="img" aria-labelledby="title desc">
+<title id="title">Two acknowledgements cover two different boundaries</title><desc id="desc">An order service publishes E17. RabbitMQ routes and durably replicates the event in a quorum queue, then confirms the publish. A worker receives the event, finishes its durable work and manually acknowledges it. The queue can then remove its copy.</desc>
+<!-- System-design icons reused via Kafka Connect: Notification System/images/improved-design.svg (server, queue); Proximity Service/images/final-design.svg (database, user). -->
+<defs><style>text{font-family:Arial,Helvetica,sans-serif;fill:#171717}.title{font-size:28px;font-weight:700}.strong{font-size:20px;font-weight:700}.detail{font-size:17px}.small{font-size:16px}.panel{fill:#fff;stroke:#888;stroke-width:1.6}.blue{fill:#eaf3ff;stroke:#888;stroke-width:1.6}.note{fill:#fff4da;stroke:#888;stroke-width:1.4}.lifeline{stroke:#bbb;stroke-width:1.4;stroke-dasharray:5 5;fill:none}</style><symbol id="user" viewBox="0 0 54 54"><circle cx="27" cy="12" r="11"/><path d="M3 49V41C3 29 51 29 51 41V49Z"/></symbol>
+<symbol id="green-server" viewBox="0 0 30 60">
+      <rect x="8" y="1" width="14" height="9" rx="1" fill="#65c515"/>
+      <path d="M11 5 H19" stroke="#fff" stroke-width="1.5"/>
+      <rect x="3" y="12" width="24" height="46" rx="1.5" fill="#65c515"/>
+      <path d="M7 19 H23 M7 40 H23 M7 48 H23" stroke="#fff" stroke-width="2"/>
+    </symbol>
+<symbol id="channel-queue" viewBox="0 0 150 58">
+      <path d="M2 2 H135 L148 29 L135 56 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="4"/>
+      <g fill="none" stroke="#1677b8" stroke-width="4">
+        <rect x="10" y="12" width="36" height="33"/><path d="M10 13 L28 29 L46 13"/>
+        <rect x="54" y="12" width="36" height="33"/><path d="M54 13 L72 29 L90 13"/>
+        <rect x="98" y="12" width="36" height="33"/><path d="M98 13 L116 29 L134 13"/>
+      </g>
+    </symbol>
+<symbol id="db" viewBox="0 0 88 93">
+      <path d="M0.9 13.75A43.1 8.75 0 0 1 87.1 13.75V82.25A43.1 8.75 0 0 1 0.9 82.25Z" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+      <ellipse cx="44" cy="13.75" rx="43.1" ry="8.75" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+    </symbol></defs>
+<rect width="1100" height="730" fill="#fff"/>
+<text class="title" x="550" y="36" text-anchor="middle">Two acknowledgements cover two different boundaries</text>
+<text class="detail" x="550" y="68" text-anchor="middle">Read downward. This is one possible timing; delivery can race with the publisher confirm.</text>
+<!-- Participant headers and time guides. -->
+<rect class="blue" x="30" y="96" width="210" height="112"/><use href="#green-server" x="123" y="106" width="24" height="48"/><text class="strong" x="135" y="182" text-anchor="middle">Publisher</text><path class="lifeline" d="M135 210 V620"/>
+<rect class="blue" x="445" y="96" width="210" height="112"/><use href="#channel-queue" x="501" y="106" width="98" height="38"/><text class="strong" x="550" y="182" text-anchor="middle">RabbitMQ</text><path class="lifeline" d="M550 210 V620"/>
+<rect class="blue" x="860" y="96" width="210" height="112"/><use href="#green-server" x="953" y="106" width="24" height="48"/><text class="strong" x="965" y="182" text-anchor="middle">Worker</text><path class="lifeline" d="M965 210 V620"/>
+<!-- publish-event: shaft ends under the triangle base; tip stays clear of participant guides. -->
+<path id="publish-event-shaft" data-connector="true" d="M143 255 H532" fill="none" stroke="#171717" stroke-width="2"/><path id="publish-event-head" d="M531 250 L542 255 L531 260 Z" fill="#171717"/><text class="detail" x="342.5" y="239" text-anchor="middle">1. Publish E17</text>
+<!-- Note backing protects text from dashed time guides. --><rect class="note" x="379" y="276" width="342" height="72"/><text class="detail" x="550.0" y="304" text-anchor="middle">Route into the quorum queue;<tspan x="550.0" dy="24">replicate to a majority</tspan></text>
+<!-- publisher-confirm: shaft ends under the triangle base; tip stays clear of participant guides. -->
+<path id="publisher-confirm-shaft" data-connector="true" d="M542 392 H153" fill="none" stroke="#171717" stroke-width="2" stroke-dasharray="5 4"/><path id="publisher-confirm-join" data-connector="true" d="M159 392 H153" stroke="#171717" stroke-width="2"/><path id="publisher-confirm-head" d="M154 387 L143 392 L154 397 Z" fill="#171717"/><text class="detail" x="342.5" y="376" text-anchor="middle">2. Publisher confirm</text>
+<!-- deliver-event: shaft ends under the triangle base; tip stays clear of participant guides. -->
+<path id="deliver-event-shaft" data-connector="true" d="M558 455 H947" fill="none" stroke="#171717" stroke-width="2"/><path id="deliver-event-head" d="M946 450 L957 455 L946 460 Z" fill="#171717"/><text class="detail" x="757.5" y="439" text-anchor="middle">3. Deliver E17 (manual ack)</text>
+<!-- Note backing protects text from dashed time guides. --><rect class="note" x="736" y="475" width="337" height="72"/><text class="detail" x="904.5" y="503" text-anchor="middle">Handle E17;<tspan x="904.5" dy="24">durably commit the result</tspan></text>
+<!-- consumer-ack: shaft ends under the triangle base; tip stays clear of participant guides. -->
+<path id="consumer-ack-shaft" data-connector="true" d="M957 594 H568" fill="none" stroke="#171717" stroke-width="2" stroke-dasharray="5 4"/><path id="consumer-ack-join" data-connector="true" d="M574 594 H568" stroke="#171717" stroke-width="2"/><path id="consumer-ack-head" d="M569 589 L558 594 L569 599 Z" fill="#171717"/><text class="detail" x="757.5" y="578" text-anchor="middle">4. Consumer ack</text>
+<!-- Note backing protects text from dashed time guides. --><rect class="note" x="30" y="640" width="1040" height="72"/><text class="detail" x="550.0" y="668" text-anchor="middle">Confirm = RabbitMQ accepted responsibility. Ack = the worker says its work is done.<tspan x="550.0" dy="24">After the ack reaches RabbitMQ, that queue copy can be removed.</tspan></text>
+</svg>

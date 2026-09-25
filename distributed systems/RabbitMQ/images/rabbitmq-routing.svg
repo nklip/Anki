@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="630" viewBox="0 0 1100 630" role="img" aria-labelledby="title desc">
+<title id="title">Routing: one event can enter two independent queues</title><desc id="desc">The publisher sends E17 with routing key order.created. A topic exchange matches order.created to fulfilment.work and order.# to audit.work. Each queue gets its own copy of E17.</desc>
+<!-- System-design icons reused via Kafka Connect: Notification System/images/improved-design.svg (server, queue); Proximity Service/images/final-design.svg (database, user). -->
+<defs><style>text{font-family:Arial,Helvetica,sans-serif;fill:#171717}.title{font-size:28px;font-weight:700}.strong{font-size:20px;font-weight:700}.detail{font-size:17px}.small{font-size:16px}.panel{fill:#fff;stroke:#888;stroke-width:1.6}.blue{fill:#eaf3ff;stroke:#888;stroke-width:1.6}.note{fill:#fff4da;stroke:#888;stroke-width:1.4}.lifeline{stroke:#bbb;stroke-width:1.4;stroke-dasharray:5 5;fill:none}</style><symbol id="user" viewBox="0 0 54 54"><circle cx="27" cy="12" r="11"/><path d="M3 49V41C3 29 51 29 51 41V49Z"/></symbol>
+<symbol id="green-server" viewBox="0 0 30 60">
+      <rect x="8" y="1" width="14" height="9" rx="1" fill="#65c515"/>
+      <path d="M11 5 H19" stroke="#fff" stroke-width="1.5"/>
+      <rect x="3" y="12" width="24" height="46" rx="1.5" fill="#65c515"/>
+      <path d="M7 19 H23 M7 40 H23 M7 48 H23" stroke="#fff" stroke-width="2"/>
+    </symbol>
+<symbol id="channel-queue" viewBox="0 0 150 58">
+      <path d="M2 2 H135 L148 29 L135 56 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="4"/>
+      <g fill="none" stroke="#1677b8" stroke-width="4">
+        <rect x="10" y="12" width="36" height="33"/><path d="M10 13 L28 29 L46 13"/>
+        <rect x="54" y="12" width="36" height="33"/><path d="M54 13 L72 29 L90 13"/>
+        <rect x="98" y="12" width="36" height="33"/><path d="M98 13 L116 29 L134 13"/>
+      </g>
+    </symbol>
+<symbol id="db" viewBox="0 0 88 93">
+      <path d="M0.9 13.75A43.1 8.75 0 0 1 87.1 13.75V82.25A43.1 8.75 0 0 1 0.9 82.25Z" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+      <ellipse cx="44" cy="13.75" rx="43.1" ry="8.75" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+    </symbol></defs>
+<rect width="1100" height="630" fill="#fff"/>
+<text class="title" x="550" y="36" text-anchor="middle">Routing: one event can enter two independent queues</text>
+<text class="detail" x="550" y="68" text-anchor="middle">Read left to right. The topic exchange compares the routing key with each binding.</text>
+<!-- The routing topology exists before the message is published. -->
+<rect class="blue" x="30" y="239" width="170" height="124"/>
+<use href="#green-server" x="102" y="255" width="26" height="52"/>
+<text class="strong" x="115" y="340" text-anchor="middle">Order service</text>
+<rect class="blue" x="324" y="239" width="190" height="124"/>
+<text class="strong" x="419" y="282" text-anchor="middle">orders<tspan x="419" dy="24">topic exchange</tspan></text>
+<text class="detail" x="419" y="339" text-anchor="middle">routing rules</text>
+<rect class="blue" x="715" y="145" width="350" height="140"/>
+<use href="#channel-queue" x="832" y="193" width="116" height="45"/>
+<text class="strong" x="890" y="177" text-anchor="middle">fulfilment.work</text>
+<text class="detail" x="890" y="266" text-anchor="middle">queue: pending fulfilment events</text>
+<rect class="blue" x="715" y="385" width="350" height="140"/>
+<use href="#channel-queue" x="832" y="433" width="116" height="45"/>
+<text class="strong" x="890" y="417" text-anchor="middle">audit.work</text>
+<text class="detail" x="890" y="506" text-anchor="middle">queue: pending audit events</text>
+<!-- publish: shaft ends under the triangle base; tip stays clear of participant guides. -->
+<path id="publish-shaft" data-connector="true" d="M202 301 H311" fill="none" stroke="#171717" stroke-width="2"/><path id="publish-head" d="M310 296 L321 301 L310 306 Z" fill="#171717"/><text class="detail" x="261.5" y="285" text-anchor="middle">E17</text>
+<text class="detail" x="115" y="403" text-anchor="middle">routing key:<tspan x="115" dy="24">order.created</tspan></text>
+<text class="detail" x="890" y="124" text-anchor="middle">binding: order.created</text>
+<text class="detail" x="890" y="364" text-anchor="middle">binding: order.#</text>
+<!-- Shared routing shaft branches to matching queues; labels stay outside the routing corridor. -->
+<path id="route-shaft" data-connector="true" d="M516 301 H615 M615 215 V455 M615 215 H704 M615 455 H704" fill="none" stroke="#171717" stroke-width="2"/>
+<path id="route-fulfilment-head" d="M703 210 L714 215 L703 220 Z" fill="#171717"/>
+<path id="route-audit-head" d="M703 450 L714 455 L703 460 Z" fill="#171717"/>
+<!-- Note backing protects text from dashed time guides. --><rect class="note" x="30" y="553" width="1035" height="58"/><text class="detail" x="547.5" y="581" text-anchor="middle">Both bindings match order.created, so each queue receives its own copy of E17.</text>
+</svg>

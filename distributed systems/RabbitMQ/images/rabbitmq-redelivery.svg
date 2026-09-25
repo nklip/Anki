@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="884" viewBox="0 0 1100 884" role="img" aria-labelledby="title desc">
+<title id="title">Redelivery: a crash can repeat a completed operation</title><desc id="desc">RabbitMQ delivers E17. The worker records its event ID and business change atomically, then crashes before acknowledgement. After detecting connection loss RabbitMQ requeues E17. A replacement worker checks the durable event ID, skips the already committed change and acknowledges the new delivery.</desc>
+<!-- System-design icons reused via Kafka Connect: Notification System/images/improved-design.svg (server, queue); Proximity Service/images/final-design.svg (database, user). -->
+<defs><style>text{font-family:Arial,Helvetica,sans-serif;fill:#171717}.title{font-size:28px;font-weight:700}.strong{font-size:20px;font-weight:700}.detail{font-size:17px}.small{font-size:16px}.panel{fill:#fff;stroke:#888;stroke-width:1.6}.blue{fill:#eaf3ff;stroke:#888;stroke-width:1.6}.note{fill:#fff4da;stroke:#888;stroke-width:1.4}.lifeline{stroke:#bbb;stroke-width:1.4;stroke-dasharray:5 5;fill:none}</style><symbol id="user" viewBox="0 0 54 54"><circle cx="27" cy="12" r="11"/><path d="M3 49V41C3 29 51 29 51 41V49Z"/></symbol>
+<symbol id="green-server" viewBox="0 0 30 60">
+      <rect x="8" y="1" width="14" height="9" rx="1" fill="#65c515"/>
+      <path d="M11 5 H19" stroke="#fff" stroke-width="1.5"/>
+      <rect x="3" y="12" width="24" height="46" rx="1.5" fill="#65c515"/>
+      <path d="M7 19 H23 M7 40 H23 M7 48 H23" stroke="#fff" stroke-width="2"/>
+    </symbol>
+<symbol id="channel-queue" viewBox="0 0 150 58">
+      <path d="M2 2 H135 L148 29 L135 56 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="4"/>
+      <g fill="none" stroke="#1677b8" stroke-width="4">
+        <rect x="10" y="12" width="36" height="33"/><path d="M10 13 L28 29 L46 13"/>
+        <rect x="54" y="12" width="36" height="33"/><path d="M54 13 L72 29 L90 13"/>
+        <rect x="98" y="12" width="36" height="33"/><path d="M98 13 L116 29 L134 13"/>
+      </g>
+    </symbol>
+<symbol id="db" viewBox="0 0 88 93">
+      <path d="M0.9 13.75A43.1 8.75 0 0 1 87.1 13.75V82.25A43.1 8.75 0 0 1 0.9 82.25Z" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+      <ellipse cx="44" cy="13.75" rx="43.1" ry="8.75" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+    </symbol></defs>
+<rect width="1100" height="884" fill="#fff"/>
+<text class="title" x="550" y="36" text-anchor="middle">Redelivery: a crash can repeat a completed operation</text>
+<text class="detail" x="550" y="68" text-anchor="middle">Read downward. Stable event ID E17 survives retries; a delivery tag does not.</text>
+<!-- Participant headers; the middle lane represents the active worker before and after replacement. -->
+<rect class="blue" x="25" y="96" width="210" height="112"/><use href="#channel-queue" x="81" y="106" width="98" height="38"/><text class="strong" x="130" y="182" text-anchor="middle">RabbitMQ</text><path class="lifeline" d="M130 210 V779"/>
+<rect class="blue" x="445" y="96" width="210" height="112"/><use href="#green-server" x="538" y="106" width="24" height="48"/><text class="strong" x="550" y="182" text-anchor="middle">Worker A → B</text><path class="lifeline" d="M550 210 V779"/>
+<rect class="blue" x="865" y="96" width="210" height="112"/><use href="#db" x="948" y="106" width="44" height="47" style="color:#eea6ed"/><text class="strong" x="970" y="182" text-anchor="middle">Business database</text><path class="lifeline" d="M970 210 V779"/>
+<!-- first-delivery: shaft ends under the triangle base; tip stays clear of participant guides. -->
+<path id="first-delivery-shaft" data-connector="true" d="M138 256 H532" fill="none" stroke="#171717" stroke-width="2"/><path id="first-delivery-head" d="M531 251 L542 256 L531 261 Z" fill="#171717"/><text class="detail" x="340.0" y="240" text-anchor="middle">1. Deliver E17 to worker A</text>
+<!-- atomic-write: shaft ends under the triangle base; tip stays clear of participant guides. -->
+<path id="atomic-write-shaft" data-connector="true" d="M558 325 H952" fill="none" stroke="#171717" stroke-width="2"/><path id="atomic-write-head" d="M951 320 L962 325 L951 330 Z" fill="#171717"/><text class="detail" x="760.0" y="309" text-anchor="middle">2. Store E17 + business change</text>
+<!-- commit-result: shaft ends under the triangle base; tip stays clear of participant guides. -->
+<path id="commit-result-shaft" data-connector="true" d="M962 387 H568" fill="none" stroke="#171717" stroke-width="2" stroke-dasharray="5 4"/><path id="commit-result-join" data-connector="true" d="M574 387 H568" stroke="#171717" stroke-width="2"/><path id="commit-result-head" d="M569 382 L558 387 L569 392 Z" fill="#171717"/><text class="detail" x="760.0" y="371" text-anchor="middle">Transaction committed</text>
+<!-- Note backing protects text from dashed time guides. --><rect class="note" x="30" y="413" width="1040" height="72"/><text class="detail" x="550.0" y="441" text-anchor="middle">Worker A crashes before the ack reaches RabbitMQ.<tspan x="550.0" dy="24">When its connection closes, RabbitMQ requeues the unacknowledged delivery.</tspan></text>
+<!-- redeliver: shaft ends under the triangle base; tip stays clear of participant guides. -->
+<path id="redeliver-shaft" data-connector="true" d="M138 547 H532" fill="none" stroke="#171717" stroke-width="2"/><path id="redeliver-head" d="M531 542 L542 547 L531 552 Z" fill="#171717"/><text class="detail" x="340.0" y="531" text-anchor="middle">3. Redeliver E17 to worker B</text>
+<!-- deduplicate: shaft ends under the triangle base; tip stays clear of participant guides. -->
+<path id="deduplicate-shaft" data-connector="true" d="M558 610 H952" fill="none" stroke="#171717" stroke-width="2"/><path id="deduplicate-head" d="M951 605 L962 610 L951 615 Z" fill="#171717"/><text class="detail" x="760.0" y="594" text-anchor="middle">4. Check E17 in a new transaction</text>
+<!-- already-done: shaft ends under the triangle base; tip stays clear of participant guides. -->
+<path id="already-done-shaft" data-connector="true" d="M962 673 H568" fill="none" stroke="#171717" stroke-width="2" stroke-dasharray="5 4"/><path id="already-done-join" data-connector="true" d="M574 673 H568" stroke="#171717" stroke-width="2"/><path id="already-done-head" d="M569 668 L558 673 L569 678 Z" fill="#171717"/><text class="detail" x="760.0" y="657" text-anchor="middle">Already processed: skip the change</text>
+<!-- ack-retry: shaft ends under the triangle base; tip stays clear of participant guides. -->
+<path id="ack-retry-shaft" data-connector="true" d="M542 742 H148" fill="none" stroke="#171717" stroke-width="2" stroke-dasharray="5 4"/><path id="ack-retry-join" data-connector="true" d="M154 742 H148" stroke="#171717" stroke-width="2"/><path id="ack-retry-head" d="M149 737 L138 742 L149 747 Z" fill="#171717"/><text class="detail" x="340.0" y="726" text-anchor="middle">5. Ack this new delivery</text>
+<!-- Note backing protects text from dashed time guides. --><rect class="note" x="30" y="797" width="1040" height="70"/><text class="detail" x="550.0" y="825" text-anchor="middle">The event ID and business change must share one database transaction.<tspan x="550.0" dy="24">For external effects, such as a payment API, use the destination’s idempotency mechanism.</tspan></text>
+</svg>

@@ -18,6 +18,7 @@ Each topic has its own folder, with diagrams in its `images/` directory.
  * [Patterns. Fanout](./Patterns.%20Fanout/Readme.md) — message and request fanout, feed-generation strategies, capacity, and failure handling.
  * [Patterns. Transactional Outbox](./Patterns.%20Transactional%20Outbox/Readme.md) — the outbox table and relay process, atomic local writes, consumer deduplication, flushing, relay recovery, and ordering boundaries.
  * [Presigned URLs](./Presigned%20URLs/Readme.md) — S3 versus CloudFront signatures, private origins, cache behavior, expiration, uploads, and revocation.
+ * [RabbitMQ](./RabbitMQ/Readme.md) — exchanges and queues, acknowledgements, retries, replication, Kafka comparison, and real production examples.
  * [Raft](./Raft/Readme.md) — replicated logs, terms, leader election, commitment, log repair, the election restriction, membership changes, snapshots, and linearizable reads.
  * [Redis](./Redis/Readme.md) — internals, deployments, common patterns, and CDN data placement.
  * [Sharding](./Sharding/Readme.md) — sharding explained through PostgreSQL: partitions and shards, horizontal versus vertical partitioning, splitting by range, hash or directory, rebalancing, request routing, cross-shard costs, declarative partitioning, postgres_fdw, Citus, and application-level sharding.
