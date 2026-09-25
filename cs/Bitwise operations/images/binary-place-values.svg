@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="380" viewBox="0 0 900 380" role="img" aria-labelledby="title desc">
+  <title id="title">Binary 1100 represents decimal 12</title>
+  <desc id="desc">Read the four columns downward. Their place values are 8, 4, 2, and 1. Bits 1, 1, 0, and 0 contribute 8, 4, 0, and 0. The total is twelve. The other 28 bits of this Java int are zero.</desc>
+  <!-- Shared typography; blue marks a 1 bit and its contribution. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172b4d; }
+      .title { font-size: 30px; font-weight: 700; }
+      .note { font-size: 20px; fill: #475569; }
+      .label { font-size: 22px; }
+      .number { font-size: 28px; text-anchor: middle; }
+      .bit { font-size: 32px; font-weight: 700; text-anchor: middle; }
+      .on { fill: #fff; }
+      .sum { font-size: 25px; font-weight: 700; }
+    </style>
+  </defs>
+  <!-- Header and the reading rule. -->
+  <rect id="background" width="900" height="380" fill="#fff"/>
+  <text class="title" x="28" y="43">Binary: add the place values with a 1 bit</text>
+  <text class="note" x="28" y="78">Java: int value = 0b1100;     Read each column from top to bottom.</text>
+  <!-- Fixed column centers keep place values, bits, and contributions aligned. -->
+  <g id="place-values">
+    <rect x="312" y="99" width="110" height="185" rx="10" fill="#e9f3fb"/>
+    <rect x="450" y="99" width="110" height="185" rx="10" fill="#e9f3fb"/>
+    <rect x="588" y="99" width="110" height="185" rx="10" fill="#f1f5f9"/>
+    <rect x="726" y="99" width="110" height="185" rx="10" fill="#f1f5f9"/>
+    <text class="label" x="28" y="138">Place value</text>
+    <text class="number" x="367" y="140">8</text>
+    <text class="number" x="505" y="140">4</text>
+    <text class="number" x="643" y="140">2</text>
+    <text class="number" x="781" y="140">1</text>
+    <text class="label" x="28" y="202">Bit</text>
+    <rect x="328" y="160" width="78" height="58" rx="8" fill="#0b6faf"/>
+    <rect x="466" y="160" width="78" height="58" rx="8" fill="#0b6faf"/>
+    <text class="bit on" x="367" y="201">1</text>
+    <text class="bit on" x="505" y="201">1</text>
+    <text class="bit" x="643" y="201">0</text>
+    <text class="bit" x="781" y="201">0</text>
+    <text class="label" x="28" y="263">Contribution</text>
+    <text class="number" x="367" y="264">8</text>
+    <text class="number" x="505" y="264">4</text>
+    <text class="number" x="643" y="264">0</text>
+    <text class="number" x="781" y="264">0</text>
+  </g>
+  <!-- Result and explicit width note prevent a four-bit-int misconception. -->
+  <text class="sum" x="28" y="324">Total: 8 + 4 + 0 + 0 = 12</text>
+  <text class="note" x="28" y="361">Only the last 4 bits are shown. This int has 28 more zero bits to the left.</text>
+</svg>

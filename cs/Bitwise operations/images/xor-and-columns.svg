@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="560" viewBox="0 0 1040 560" role="img" aria-labelledby="title desc">
+  <title id="title">The same inputs produce different results with XOR and AND</title>
+  <desc id="desc">Two panels align the bits of Java ints 12 and 10. XOR produces 0110, decimal 6, because the middle two bit pairs differ. AND produces 1000, decimal 8, because only the leftmost displayed pair contains two ones. Blue result cells mean one. Each vertical column is independent.</desc>
+  <!-- Shared styles keep the two operation panels directly comparable. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172b4d; }
+      .title { font-size: 30px; font-weight: 700; }
+      .note { font-size: 20px; fill: #475569; }
+      .heading { font-size: 27px; font-weight: 700; }
+      .rule { font-size: 21px; }
+      .label { font-size: 21px; }
+      .bit { font-size: 29px; text-anchor: middle; }
+      .place { font-size: 18px; fill: #475569; text-anchor: middle; }
+      .on { fill: #fff; font-weight: 700; }
+      .result { font-size: 23px; font-weight: 700; }
+    </style>
+  </defs>
+  <!-- Header: corresponding positions, not whole-number comparison. -->
+  <rect id="background" width="1040" height="560" fill="#fff"/>
+  <text class="title" x="28" y="43">Same inputs, two different bit rules</text>
+  <text class="note" x="28" y="79">Read downward in each column. Apply the rule separately to each pair of bits.</text>
+  <!-- XOR columns; tinted vertical strips connect each input pair to its result. -->
+  <g id="xor-panel">
+    <rect x="28" y="102" width="478" height="392" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text class="heading" x="48" y="141">XOR in Java: 12 ^ 10</text>
+    <text class="rule" x="48" y="179">Different bits → 1; same bits → 0</text>
+    <text class="label" x="48" y="222">Place</text>
+    <text class="place" x="223" y="222">8</text><text class="place" x="295" y="222">4</text>
+    <text class="place" x="367" y="222">2</text><text class="place" x="439" y="222">1</text>
+    <rect x="197" y="239" width="52" height="182" rx="7" fill="#e9eef5"/>
+    <rect x="269" y="239" width="52" height="182" rx="7" fill="#e9eef5"/>
+    <rect x="341" y="239" width="52" height="182" rx="7" fill="#e9eef5"/>
+    <rect x="413" y="239" width="52" height="182" rx="7" fill="#e9eef5"/>
+    <text class="label" x="48" y="275">a = 12</text>
+    <text class="bit" x="223" y="278">1</text><text class="bit" x="295" y="278">1</text>
+    <text class="bit" x="367" y="278">0</text><text class="bit" x="439" y="278">0</text>
+    <text class="label" x="48" y="335">b = 10</text>
+    <text class="bit" x="223" y="338">1</text><text class="bit" x="295" y="338">0</text>
+    <text class="bit" x="367" y="338">1</text><text class="bit" x="439" y="338">0</text>
+    <rect x="269" y="367" width="52" height="54" rx="7" fill="#0b6faf"/>
+    <rect x="341" y="367" width="52" height="54" rx="7" fill="#0b6faf"/>
+    <text class="label" x="48" y="403">a ^ b</text>
+    <text class="bit" x="223" y="404">0</text><text class="bit on" x="295" y="404">1</text>
+    <text class="bit on" x="367" y="404">1</text><text class="bit" x="439" y="404">0</text>
+    <text class="result" x="48" y="465">Result: 0b0110 = 4 + 2 = 6</text>
+  </g>
+  <!-- AND repeats the exact column geometry; only its rule and output change. -->
+  <g id="and-panel">
+    <rect x="534" y="102" width="478" height="392" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text class="heading" x="554" y="141">AND in Java: 12 &amp; 10</text>
+    <text class="rule" x="554" y="179">Both bits 1 → 1; otherwise → 0</text>
+    <text class="label" x="554" y="222">Place</text>
+    <text class="place" x="729" y="222">8</text><text class="place" x="801" y="222">4</text>
+    <text class="place" x="873" y="222">2</text><text class="place" x="945" y="222">1</text>
+    <rect x="703" y="239" width="52" height="182" rx="7" fill="#e9eef5"/>
+    <rect x="775" y="239" width="52" height="182" rx="7" fill="#e9eef5"/>
+    <rect x="847" y="239" width="52" height="182" rx="7" fill="#e9eef5"/>
+    <rect x="919" y="239" width="52" height="182" rx="7" fill="#e9eef5"/>
+    <text class="label" x="554" y="275">a = 12</text>
+    <text class="bit" x="729" y="278">1</text><text class="bit" x="801" y="278">1</text>
+    <text class="bit" x="873" y="278">0</text><text class="bit" x="945" y="278">0</text>
+    <text class="label" x="554" y="335">b = 10</text>
+    <text class="bit" x="729" y="338">1</text><text class="bit" x="801" y="338">0</text>
+    <text class="bit" x="873" y="338">1</text><text class="bit" x="945" y="338">0</text>
+    <rect x="703" y="367" width="52" height="54" rx="7" fill="#0b6faf"/>
+    <text class="label" x="554" y="403">a &amp; b</text>
+    <text class="bit on" x="729" y="404">1</text><text class="bit" x="801" y="404">0</text>
+    <text class="bit" x="873" y="404">0</text><text class="bit" x="945" y="404">0</text>
+    <text class="result" x="554" y="465">Result: 0b1000 = 8</text>
+  </g>
+  <!-- Legend is textual as well as colored, so color is not required to read results. -->
+  <text class="note" x="28" y="534">Blue result cells = 1. Only the last 4 bits are shown; all omitted input bits are 0.</text>
+</svg>
