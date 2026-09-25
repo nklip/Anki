@@ -18,7 +18,7 @@ The article uses Apache Kafka 4.3 documentation and the standard `KafkaConsumer`
 
 ## 1. Models and internals
 
-An online shop records that order `42` was created. Shipping, notifications, and analytics need that fact, but they do different work at different speeds. The shop publishes an event; each service consumes the event through its own group.
+An online shop records that order `42` was created. Shipping, notifications, and analytics need that fact, but they do different work at different speeds. The shop publishes an **event**; each service consumes the event through its own group.
 
 ### Records, topics, partitions, and offsets
 
@@ -143,7 +143,7 @@ Replication acknowledgment is not a per-record `fsync` guarantee. **`fsync`** as
 
 The **log start offset** is the lower boundary of a partition's available history. Consumers can obtain it with `beginningOffsets()`. Retention or explicit deletion can advance this boundary: if it becomes `13`, records below offset `13` are no longer available for replay. Advancing a consumer group's committed offset only saves that group's restart position; it does not move this storage boundary.
 
-If a consumer tries to fetch below the log start offset, its position is out of range. The [`auto.offset.reset` policy](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md#failure-scenarios) decides what follows: `earliest` resumes at the log start offset, `latest` skips to the end, and `none` makes `poll()` throw `OffsetOutOfRangeException`. Automatic resetting cannot recover records that have already been deleted.
+If a consumer tries to fetch below the log start offset, its position is out of range. The [`auto.offset.reset` policy](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md#4-failure-scenarios) decides what follows: `earliest` resumes at the log start offset, `latest` skips to the end, and `none` makes `poll()` throw `OffsetOutOfRangeException`. Automatic resetting cannot recover records that have already been deleted.
 
 Kafka's **low watermark** tracks deletion progress across a partition's live replicas. It is the minimum log start offset tracked across those replicas, including the leader. Here, **live** means the replica's broker is considered alive by Kafka's cluster metadata: an offline broker does not hold deletion back, but an alive follower that has fallen behind still can. The leader uses the low watermark to decide when an administrative `deleteRecords` request has completed, and the API returns it through `DeletedRecords.lowWatermark()`. A live follower still counts here even if it is outside the ISR; `acks=all` waits on the current ISR.
 
@@ -391,7 +391,7 @@ If the application already has a database, a **job table**, holding one row per 
 
 In a **work queue**, any free worker takes the next task and acknowledges it on its own. A standard consumer group is not a general-purpose queue: it distributes work differently ([§1](#sharing-work-versus-independent-subscriptions)). It assigns whole partitions, so workers beyond the partition count receive none. Within a partition, the usual poll–process–commit loop handles records in order, so one 30-second image resize delays every later record in that partition, even while another worker is idle. The observable symptom is consumer lag ([§2](#capacity-and-operational-checks)) growing on that one partition.
 
-The committed offset is a restart position, not a per-task acknowledgment. Handing tasks to threads inside one consumer removes the wait but not this limit: if record `43` finishes while record `42` is still running, committing `44` would skip `42` after a restart ([failure scenarios](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md#failure-scenarios)). A task that keeps the loop from calling `poll()` within `max.poll.interval.ms` can also cost the consumer its partitions, so another consumer repeats the task ([poll timeout](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md#poll-timeout)).
+The committed offset is a restart position, not a per-task acknowledgment. Handing tasks to threads inside one consumer removes the wait but not this limit: if record `43` finishes while record `42` is still running, committing `44` would skip `42` after a restart ([failure scenarios](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md#4-failure-scenarios)). A task that keeps the loop from calling `poll()` within `max.poll.interval.ms` can also cost the consumer its partitions, so another consumer repeats the task ([poll timeout](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md#poll-timeout)).
 
 A dedicated work queue with per-message acknowledgment fits this shape. Within Kafka, the **share groups** from [§1](#sharing-work-versus-independent-subscriptions), production-ready since Kafka 4.2, target the same workload. Several consumers can take records from the same partition. Each fetched record is locked to one consumer for a limited time, and that consumer acknowledges, releases, or rejects it individually. Share groups suit records processed one at a time rather than as an ordered stream, and they give up record ordering to get that flexibility.
 

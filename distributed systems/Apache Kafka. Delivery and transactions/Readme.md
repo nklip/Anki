@@ -4,17 +4,17 @@
 
 **Kafka delivery guarantees depend on how an application coordinates record writes, consumer progress, and business effects.** Kafka transactions can commit Kafka output and consumed offsets together; database updates and service calls need their own recovery rules.
 
-1. [Essential vocabulary](#essential-vocabulary)
-2. [Delivery guarantees](#delivery-guarantees)
-3. [Consumer offsets](#consumer-offsets)
-4. [Failure scenarios](#failure-scenarios)
-5. [Publishing without Kafka transactions](#publishing-without-kafka-transactions)
-6. [Kafka transactions](#kafka-transactions)
-7. [Starting and handling a transaction in Spring Boot](#starting-and-handling-a-transaction-in-spring-boot)
-8. [Choosing the required guarantee](#choosing-the-required-guarantee)
-9. [Check your understanding](#check-your-understanding)
+1. [Essential vocabulary](#1-essential-vocabulary)
+2. [Delivery guarantees](#2-delivery-guarantees)
+3. [Consumer offsets](#3-consumer-offsets)
+4. [Failure scenarios](#4-failure-scenarios)
+5. [Publishing without Kafka transactions](#5-publishing-without-kafka-transactions)
+6. [Kafka transactions](#6-kafka-transactions)
+7. [Starting and handling a transaction in Spring Boot](#7-starting-and-handling-a-transaction-in-spring-boot)
+8. [Choosing the required guarantee](#8-choosing-the-required-guarantee)
+9. [Check your understanding](#9-check-your-understanding)
 
-## Essential vocabulary
+## 1. Essential vocabulary
 
 A service publishes the fact that order `42` was created. Shipping consumes that fact, may write a shipment row, and saves where it should resume after a failure. These are separate actions with separate failure windows.
 
@@ -35,7 +35,7 @@ A consumer requests records through `poll()`. Consumers in the same standard gro
 
 A partition's **leader** accepts writes, and **followers** copy its log. The replication factor specifies the number of copies. The **in-sync replica set (ISR)** contains replicas sufficiently caught up with the leader. With `acks=all`, success requires acknowledgment from the current ISR; `min.insync.replicas` sets the minimum ISR size for accepting those writes. These settings concern replicated publication, not completed consumer work. Kafka's retention policy determines how long records remain available; consuming them does not remove them.
 
-## Delivery guarantees
+## 2. Delivery guarantees
 
 There are three separate questions: did Kafka accept the write, where will a consumer resume, and did the business effect happen? An answer to one does not answer the others.
 
@@ -49,7 +49,7 @@ Kafka documents `at-least-once` delivery as the **default**. For application pro
 
 These names describe failure semantics, not a promise that outages, expired retention, and application errors cannot lose work.
 
-## Consumer offsets
+## 3. Consumer offsets
 
 An offset commit saves a consumer group's restart progress. It is a separate operation from publishing records to an outbound topic.
 
@@ -57,13 +57,13 @@ An offset commit saves a consumer group's restart progress. It is a separate ope
 
 **Automatic commits do not inspect whether a database operation or background task succeeded.** With auto-commit enabled, finish all work for records returned by one `poll()` before the next `poll()` or consumer close. Otherwise committed progress can move past unfinished work, which may then be skipped after recovery. A crash after completed work but before its offset commit can instead cause duplicates.
 
-For explicit control over when completed work is committed, set `enable.auto.commit=false`. **The success sequence below and the three consume–produce sequences in [Failure scenarios](#failure-scenarios) all use manual commits with that setting.** The application processes the returned records, waits for every required outbound send to succeed, then calls `commitSync(nextOffsets)` for the completed input records. Calling asynchronous `send()` alone does not establish completion. These examples use ordinary, nontransactional publishing, so the output and offset commit remain separate operations.
+For explicit control over when completed work is committed, set `enable.auto.commit=false`. **The success sequence below and the three consume–produce sequences in [Failure scenarios](#4-failure-scenarios) all use manual commits with that setting.** The application processes the returned records, waits for every required outbound send to succeed, then calls `commitSync(nextOffsets)` for the completed input records. Calling asynchronous `send()` alone does not establish completion. These examples use ordinary, nontransactional publishing, so the output and offset commit remain separate operations.
 
 ![kafka-consume-and-produce-success-sequence.svg](images/kafka-consume-and-produce-success-sequence.svg)
 
 The final arrow is an explicit application-controlled commit to the group coordinator. The next poll follows in this example's chosen loop; Kafka does not require a commit after every poll or automatically commit once per application batch.
 
-## Failure scenarios
+## 4. Failure scenarios
 
 **Position is different from committed progress.**
 
@@ -103,7 +103,7 @@ Duplicates do not require a second instance. Here, the sole consumer fails after
 
 ![kafka-consume-and-produce-single-duplicate-sequence.svg](images/kafka-consume-and-produce-single-duplicate-sequence.svg)
 
-## Publishing without Kafka transactions
+## 5. Publishing without Kafka transactions
 
 **Kafka transactions are optional. An application can publish records with ordinary `send()` calls without calling `initTransactions()`, `beginTransaction()`, or `commitTransaction()`.** Leave `transactional.id` unset for this mode. The producer sends batches to partition leaders, and each send completes according to its acknowledgment policy. There is no transaction commit decision or [commit marker](#transaction-aware-consumers) for these records.
 
@@ -169,7 +169,7 @@ public class PlainProducer {
 
 In Spring Boot, an ordinary, nontransactional `KafkaTemplate` provides the same publishing mode through `kafkaTemplate.send(topic, key, payload)`. Its `CompletableFuture` reports the send outcome. Leave the producer's transaction-ID configuration unset when choosing this mode; the Spring transaction example below explains how that same `send()` call behaves when transactions are enabled.
 
-## Kafka transactions
+## 6. Kafka transactions
 
 A **Kafka transaction** can atomically commit output records across Kafka partitions together with consumed input offsets. In the earlier failure scenarios, a service could publish output and crash before saving its input progress. A consume–transform–produce transaction closes that gap: either the output and input progress commit together, or neither becomes committed.
 
@@ -245,7 +245,7 @@ A **[transactional outbox](../Patterns.%20Transactional%20Outbox/Readme.md)** st
 
 A **saga** coordinates a business workflow through a sequence of local transactions, with **compensating transactions** to counteract completed work when a later step fails. For example, reserve inventory, request payment, and release the reservation if payment is rejected. Kafka can carry the commands and outcome events; application logic tracks the workflow. Compensation is a new business action, not an atomic rollback across services: intermediate states can be visible, and compensation can itself fail and need retries. Sagas therefore still need idempotency and recovery rules.
 
-## Starting and handling a transaction in Spring Boot
+## 7. Starting and handling a transaction in Spring Boot
 
 `KafkaProducer` is a Java client running inside the application process. Spring's `KafkaTemplate` wraps that client; Spring can manage its transaction lifecycle for the application. The following producer-only example commits an order event and an audit event together. It does not consume records or update a database.
 
@@ -320,7 +320,7 @@ An alternative is a public service method annotated with `@Transactional(transac
 
 For a Kafka listener that consumes and produces, prefer the container's transaction support when input offsets and output must commit together. A container configured with `KafkaTransactionManager` begins before the listener, includes its template sends, and adds consumed offsets before commit. Listener failure rolls back and permits redelivery. A local `executeInTransaction()` alone does not include listener offsets. Likewise, synchronizing a database transaction and a Kafka transaction leaves a failure window between their commits; use the [transactional outbox pattern](../Patterns.%20Transactional%20Outbox/Readme.md) when the database change must reliably lead to publication.
 
-## Choosing the required guarantee
+## 8. Choosing the required guarantee
 
 **There is no single transaction setting that every Kafka application should use.** The following is a practical selection guide derived from the documented guarantees, not a claim about measured adoption. Ordinary publishing is a first-class Kafka mode. Current compatible producer defaults enable idempotence, while Kafka Streams defaults to `at_least_once` processing; transactions and `exactly_once_v2` are deliberate choices.
 
@@ -334,7 +334,7 @@ For a Kafka listener that consumes and produces, prefer the container's transact
 
 For independent business events, a useful baseline is **idempotent publishing, replication acknowledgments, `at-least-once` processing, and duplicate-safe business effects**. Add Kafka transactions when there is a concrete need for atomic Kafka outputs or output-plus-offset commits. Their benefit is that atomic boundary; their costs include coordinator and marker work, transaction-ID management, failure recovery, and possible delays for `read_committed` readers while transactions remain unresolved. Keep transactions short and measure the tradeoff with the real workload; no fixed throughput penalty applies to every deployment.
 
-## Check your understanding
+## 9. Check your understanding
 
 Try answering each question before expanding its answer.
 
