@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="985" viewBox="0 0 1100 985" role="img" aria-labelledby="title desc">
+<title id="title">Worker loss: a replacement resumes from saved progress</title>
+<desc id="desc">Read downward. Worker A fails and its heartbeats, or liveness signals, stop. Connect group coordination detects the loss after a timeout. With the default sessioned protocol, departed workers’ tasks may remain unassigned while waiting up to scheduled.rebalance.max.delay.ms, 300000 ms or five minutes by default. This scheduled wait is in addition to failure detection and task startup, so five minutes is not a total recovery-time bound. The group assigns the task to worker B. Worker B uses durable configuration and saved offsets from Kafka to start a replacement task. This does not restore worker A process memory, and records after the last saved progress may replay. The group lane abstracts coordination by Connect workers and Kafka group coordinator, rather than a standalone service. Task execution errors are separate: Connect does not automatically restart failed tasks. After diagnosis, an explicit restart can target only failed connector and task instances.</desc>
+<!-- Shared system-design typography and native icons, copied from Apache Kafka/images/kafka-connect.svg.
+     Original icon sources: Proximity Service final-design.svg; Notification System improved-design.svg. -->
+<defs>
+<style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #171717; }
+.title { font-size: 28px; font-weight: 700; }
+.label { font-size: 20px; }
+.strong { font-size: 20px; font-weight: 700; }
+.detail { font-size: 17px; }
+.small { font-size: 16px; }
+.mono { font-family: Consolas, Menlo, monospace; font-size: 16px; }
+.panel { fill: #fff; stroke: #888; stroke-width: 1.6; }
+.blue { fill: #eaf3ff; stroke: #888; stroke-width: 1.6; }
+.note { fill: #fff4da; stroke: #888; stroke-width: 1.4; }
+.service { fill: #fff; stroke: #171717; stroke-width: 1.6; }
+.lifeline { fill: none; stroke: #999; stroke-width: 1.5; stroke-dasharray: 5 6; }
+</style>
+<symbol id="green-server" viewBox="0 0 30 60">
+      <rect x="8" y="1" width="14" height="9" rx="1" fill="#65c515"/>
+      <path d="M11 5 H19" stroke="#fff" stroke-width="1.5"/>
+      <rect x="3" y="12" width="24" height="46" rx="1.5" fill="#65c515"/>
+      <path d="M7 19 H23 M7 40 H23 M7 48 H23" stroke="#fff" stroke-width="2"/>
+    </symbol>
+<symbol id="channel-queue" viewBox="0 0 150 58">
+      <path d="M2 2 H135 L148 29 L135 56 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="4"/>
+      <g fill="none" stroke="#1677b8" stroke-width="4">
+        <rect x="10" y="12" width="36" height="33"/><path d="M10 13 L28 29 L46 13"/>
+        <rect x="54" y="12" width="36" height="33"/><path d="M54 13 L72 29 L90 13"/>
+        <rect x="98" y="12" width="36" height="33"/><path d="M98 13 L116 29 L134 13"/>
+      </g>
+    </symbol>
+<symbol id="db" viewBox="0 0 88 93">
+      <path d="M0.9 13.75A43.1 8.75 0 0 1 87.1 13.75V82.25A43.1 8.75 0 0 1 0.9 82.25Z" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+      <ellipse cx="44" cy="13.75" rx="43.1" ry="8.75" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+    </symbol>
+</defs>
+<!-- Canvas and lesson heading. -->
+<rect width="1100" height="985" fill="#fff"/>
+<text class="title" x="550" y="35" text-anchor="middle">Worker loss: a replacement resumes from saved progress</text>
+<text class="detail" x="550" y="65" text-anchor="middle">Read downward. Failure detection and reassignment take time.</text>
+<!-- Participant headers; the group lane is an abstraction, explicitly defined below. -->
+<rect id="worker-a-header" class="panel" x="30" y="95" width="200" height="82"/>
+<use href="#green-server" x="47" y="108" width="25" height="50"/>
+<text class="strong" x="143" y="128" text-anchor="middle">Worker A</text>
+<text class="small" x="143" y="154" text-anchor="middle">Running task</text>
+<rect id="group-header" class="blue" x="285" y="95" width="230" height="82"/>
+<text class="strong" x="400" y="128" text-anchor="middle">Connect group*</text>
+<text class="small" x="400" y="154" text-anchor="middle">Coordination</text>
+<rect id="worker-b-header" class="panel" x="575" y="95" width="210" height="82"/>
+<use href="#green-server" x="592" y="108" width="25" height="50"/>
+<text class="strong" x="698" y="128" text-anchor="middle">Worker B</text>
+<text class="small" x="698" y="154" text-anchor="middle">Available worker</text>
+<rect id="kafka-header" class="panel" x="855" y="95" width="215" height="82"/>
+<use href="#channel-queue" x="923" y="140" width="78" height="30"/>
+<text class="strong" x="962" y="128" text-anchor="middle">Kafka</text>
+<!-- Lifelines show elapsed time. Each is broken around any filled message or event box. -->
+<path class="lifeline" d="M130 177 V215 M400 177 V283 M400 456 V508 M680 177 V283 M680 456 V698 M962 177 V283 M962 456 V658"/>
+<!-- Step 1 is a local failure event, not a heartbeat message sent after failure. -->
+<rect id="worker-a-failure" class="note" x="30" y="215" width="220" height="94"/>
+<text class="strong" x="140" y="241" text-anchor="middle">1. Worker A fails</text>
+<text class="detail" x="140" y="267" text-anchor="middle">Heartbeats stop<tspan x="140" dy="24">(liveness signals)</tspan></text>
+<path d="M119 324 L141 346 M141 324 L119 346" fill="none" stroke="#a43b2f" stroke-width="3"/>
+<text class="small" x="130" y="370" text-anchor="middle">Task no longer runs</text>
+<!-- Step 2 spans the open coordination region for readable settings and timing scope.
+     Its opaque backing interrupts the participant guides; it is a timing note, not a new participant. -->
+<rect id="group-detects-loss" class="blue" x="285" y="283" width="785" height="173"/>
+<text class="strong" x="677.5" y="315" text-anchor="middle">2. Detect loss; allow for reassignment delay</text>
+<text class="detail" x="677.5" y="349" text-anchor="middle">Default connect.protocol = sessioned: departed workers’ tasks may remain UNASSIGNED.<tspan x="677.5" dy="27">Default scheduled.rebalance.max.delay.ms = 300000 ms (5 min) limits this scheduled wait.</tspan><tspan x="677.5" dy="27">Failure detection and task startup take additional time.</tspan><tspan x="677.5" dy="27">5 minutes is not a bound on total recovery time.</tspan></text>
+<!-- Step 3 assigns the work to a surviving worker. -->
+<text class="strong" x="540" y="493" text-anchor="middle">3. Reassign task</text>
+<!-- task-reassignment: the shaft stops inside its separate head base; the tip meets its lifeline. -->
+<path id="task-reassignment-shaft" data-connector="true" d="M400 517 H670" fill="none" stroke="#171717" stroke-width="2"/>
+<path id="task-reassignment-head" d="M668 511 L680 517 L668 523 Z" fill="#171717"/>
+<!-- Step 4 is a logical durable-state read, not an exact list of Kafka protocol requests. -->
+<text class="strong" x="821" y="573" text-anchor="middle">4. Use saved state</text>
+<!-- load-saved-state: the shaft stops inside its separate head base; the tip meets its lifeline. -->
+<path id="load-saved-state-shaft" data-connector="true" d="M680 596 H952" fill="none" stroke="#171717" stroke-width="2"/>
+<path id="load-saved-state-head" d="M950 590 L962 596 L950 602 Z" fill="#171717"/>
+<text class="detail" x="821" y="636" text-anchor="middle">Configuration + offsets</text>
+<!-- saved-state-result: the shaft stops inside its separate head base; the tip meets its lifeline. -->
+<path id="saved-state-result-shaft" data-connector="true" d="M962 660 H690" fill="none" stroke="#171717" stroke-width="2" stroke-dasharray="6 5"/>
+<path id="saved-state-result-head" d="M692 654 L680 660 L692 666 Z" fill="#171717"/>
+<!-- A local event on B starts a new task instance; memory is not copied from the lost worker. -->
+<rect id="replacement-task" class="blue" x="534" y="698" width="536" height="72"/>
+<text class="strong" x="802" y="726" text-anchor="middle">5. Worker B starts the replacement task</text>
+<text class="detail" x="802" y="753" text-anchor="middle">Resume from the last saved progress</text>
+<rect id="recovery-meaning" class="note" x="30" y="558" width="460" height="212"/>
+<text class="strong" x="260" y="589" text-anchor="middle">Recovery reads durable progress</text>
+<text class="detail" x="260" y="625" text-anchor="middle">Worker A’s in-memory buffers are lost.<tspan x="260" dy="28">Worker B creates a new task instance.</tspan><tspan x="260" dy="28">Records after the last saved progress</tspan><tspan x="260" dy="28">may be read again (replayed).</tspan></text>
+<!-- Scope notes distinguish the group abstraction and task failures from worker loss. -->
+<text class="detail" x="550" y="809" text-anchor="middle">*The group lane represents coordination by Connect workers and Kafka’s group coordinator.</text>
+<text class="detail" x="550" y="834" text-anchor="middle">It is an abstraction, not a separate service.</text>
+<rect id="task-error-scope" class="note" x="30" y="856" width="1040" height="107"/>
+<text class="strong" x="550" y="885" text-anchor="middle">Task errors are separate: Connect does not automatically restart failed tasks.</text>
+<text class="detail" x="550" y="912" text-anchor="middle">After diagnosis, explicitly restart failed connector/task instances, for example:</text>
+<text class="mono" x="550" y="940" text-anchor="middle">POST /connectors/{name}/restart?includeTasks=true&amp;onlyFailed=true</text>
+</svg>

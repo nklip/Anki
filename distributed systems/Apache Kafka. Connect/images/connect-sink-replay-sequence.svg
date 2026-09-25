@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="885" viewBox="0 0 1100 885" role="img" aria-labelledby="title desc">
+<title id="title">Sink: a saved Kafka offset follows a safe destination write</title><desc id="desc">Kafka delivers offset 42. The sink upserts product 7 successfully but crashes before committing 43 as the next offset. After restart 42 is replayed. An idempotent upsert repeats the same state change safely, then the runtime commits 43.</desc>
+<!-- Typography and native icons match Apache Kafka pattern diagrams. Icons reused from system design: Proximity Service final-design.svg (db); Notification System improved-design.svg (green-server, channel-queue). -->
+<defs><style>text{font-family:Arial,Helvetica,sans-serif;fill:#171717}.title{font-size:28px;font-weight:700}.strong{font-size:20px;font-weight:700}.detail{font-size:17px}.small{font-size:16px}.panel{fill:#fff;stroke:#888;stroke-width:1.6}.blue{fill:#eaf3ff;stroke:#888;stroke-width:1.6}.note{fill:#fff4da;stroke:#888;stroke-width:1.4}.lifeline{stroke:#bbb;stroke-width:1.4;stroke-dasharray:5 5;fill:none}</style>
+<symbol id="user" viewBox="0 0 54 54"><circle cx="27" cy="12" r="11"/><path d="M3 49V41C3 29 51 29 51 41V49Z"/></symbol>
+<symbol id="green-server" viewBox="0 0 30 60">
+      <rect x="8" y="1" width="14" height="9" rx="1" fill="#65c515"/>
+      <path d="M11 5 H19" stroke="#fff" stroke-width="1.5"/>
+      <rect x="3" y="12" width="24" height="46" rx="1.5" fill="#65c515"/>
+      <path d="M7 19 H23 M7 40 H23 M7 48 H23" stroke="#fff" stroke-width="2"/>
+    </symbol>
+<symbol id="channel-queue" viewBox="0 0 150 58">
+      <path d="M2 2 H135 L148 29 L135 56 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="4"/>
+      <g fill="none" stroke="#1677b8" stroke-width="4">
+        <rect x="10" y="12" width="36" height="33"/><path d="M10 13 L28 29 L46 13"/>
+        <rect x="54" y="12" width="36" height="33"/><path d="M54 13 L72 29 L90 13"/>
+        <rect x="98" y="12" width="36" height="33"/><path d="M98 13 L116 29 L134 13"/>
+      </g>
+    </symbol>
+<symbol id="db" viewBox="0 0 88 93">
+      <path d="M0.9 13.75A43.1 8.75 0 0 1 87.1 13.75V82.25A43.1 8.75 0 0 1 0.9 82.25Z" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+      <ellipse cx="44" cy="13.75" rx="43.1" ry="8.75" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+    </symbol>
+</defs>
+<rect width="1100" height="885" fill="#fff"/>
+<text class="title" x="550" y="35" text-anchor="middle">Sink: a saved Kafka offset follows a safe destination write</text>
+<text class="detail" x="550" y="66" text-anchor="middle">Read downward. One partition, ordered writes, and ordinary at-least-once delivery.</text>
+<!-- Participant headers; time runs downward on the dashed guides. -->
+<rect class="blue" x="26" y="94" width="208" height="119"/>
+<use href="#channel-queue" x="81" y="106" width="98" height="38"/>
+<text class="strong" x="130" y="174" text-anchor="middle">Kafka brokers<tspan x="130" dy="23">data + saved offsets</tspan></text>
+<path class="lifeline" d="M130 215 V780"/>
+<rect class="blue" x="446" y="94" width="208" height="119"/>
+<use href="#green-server" x="538" y="100" width="24" height="48"/>
+<text class="strong" x="550" y="174" text-anchor="middle">Connect worker<tspan x="550" dy="23">runtime + sink task</tspan></text>
+<path class="lifeline" d="M550 215 V780"/>
+<rect class="blue" x="866" y="94" width="208" height="119"/>
+<use href="#db" x="948" y="103" width="44" height="47" style="color:#eea6ed"/>
+<text class="strong" x="970" y="174" text-anchor="middle">Search destination</text>
+<path class="lifeline" d="M970 215 V780"/>
+<!-- Messages are chronological; dashed horizontal arrows are acknowledgments. -->
+<!-- deliver-record: separate shaft and head overlap at the head base only. -->
+<path id="deliver-record-shaft" data-connector="true" d="M138 273 H533" fill="none" stroke="#171717" stroke-width="2"/><path id="deliver-record-head" d="M532 268 L542 273 L532 278 Z" fill="#171717"/><text class="detail" x="340.0" y="235" text-anchor="middle">Saved next offset = 42<tspan x="340.0" dy="23">Deliver record at offset 42</tspan></text>
+<!-- write-product: separate shaft and head overlap at the head base only. -->
+<path id="write-product-shaft" data-connector="true" d="M558 339 H953" fill="none" stroke="#171717" stroke-width="2"/><path id="write-product-head" d="M952 334 L962 339 L952 344 Z" fill="#171717"/><text class="detail" x="760.0" y="324" text-anchor="middle">Upsert product 7 by stable key</text>
+<!-- ack-product: separate shaft and head overlap at the head base only. -->
+<path id="ack-product-shaft" data-connector="true" d="M962 398 H567" fill="none" stroke="#171717" stroke-width="2" stroke-dasharray="5 4"/><path id="ack-product-join" data-connector="true" d="M573 398 H567" fill="none" stroke="#171717" stroke-width="2"/><path id="ack-product-head" d="M568 393 L558 398 L568 403 Z" fill="#171717"/><text class="detail" x="760.0" y="383" text-anchor="middle">Durable write acknowledged</text>
+<!-- Reading note; backing interrupts time guides to protect the text. --><rect class="note" x="30" y="420" width="1040" height="70"/><text class="detail" x="550.0" y="447" text-anchor="middle">Worker crashes before committing next offset 43.<tspan x="550.0" dy="23">After restart, the saved next offset is still 42.</tspan></text>
+<!-- replay-record: separate shaft and head overlap at the head base only. -->
+<path id="replay-record-shaft" data-connector="true" d="M138 558 H533" fill="none" stroke="#171717" stroke-width="2"/><path id="replay-record-head" d="M532 553 L542 558 L532 563 Z" fill="#171717"/><text class="detail" x="340.0" y="543" text-anchor="middle">Replay record at offset 42</text>
+<!-- repeat-upsert: separate shaft and head overlap at the head base only. -->
+<path id="repeat-upsert-shaft" data-connector="true" d="M558 621 H953" fill="none" stroke="#171717" stroke-width="2"/><path id="repeat-upsert-head" d="M952 616 L962 621 L952 626 Z" fill="#171717"/><text class="detail" x="760.0" y="606" text-anchor="middle">Repeat the same upsert</text>
+<!-- ack-replay: separate shaft and head overlap at the head base only. -->
+<path id="ack-replay-shaft" data-connector="true" d="M962 683 H567" fill="none" stroke="#171717" stroke-width="2" stroke-dasharray="5 4"/><path id="ack-replay-join" data-connector="true" d="M573 683 H567" fill="none" stroke="#171717" stroke-width="2"/><path id="ack-replay-head" d="M568 678 L558 683 L568 688 Z" fill="#171717"/><text class="detail" x="760.0" y="668" text-anchor="middle">Durable write acknowledged</text>
+<!-- commit-next: separate shaft and head overlap at the head base only. -->
+<path id="commit-next-shaft" data-connector="true" d="M542 753 H147" fill="none" stroke="#171717" stroke-width="2"/><path id="commit-next-head" d="M148 748 L138 753 L148 758 Z" fill="#171717"/><text class="detail" x="340.0" y="738" text-anchor="middle">Commit next offset = 43</text>
+<!-- Reading note; backing interrupts time guides to protect the text. --><rect class="note" x="30" y="797" width="1040" height="70"/><text class="detail" x="550.0" y="824" text-anchor="middle">Idempotent = repeating the same write leaves the same result.<tspan x="550.0" dy="23">An upsert needs a stable key; it does not by itself protect against older events arriving late.</tspan></text>
+</svg>

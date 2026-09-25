@@ -290,6 +290,8 @@ Follow the arrows from the product database through the source connector, Kafka 
 
 **Main trap.** “Uses Connect” does not imply `exactly-once` delivery to every destination. Verify the connector's recovery behavior and the destination's write semantics. Also check the data contract: a **schema** defines fields and types, and replay may encounter older schemas long after the producer changes.
 
+For the source/sink sequences, worker recovery, and connector settings behind this example, see [Apache Kafka. Connect](../Apache%20Kafka.%20Connect/Readme.md).
+
 ### Pattern 4. Aggregate streams into a queryable result
 
 The application below keeps an evolving count and publishes its result. Its processing code runs outside the Kafka brokers.

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="789" viewBox="0 0 1100 789" role="img" aria-labelledby="title desc">
+<title id="title">Outbox: Connect publishes an event already committed in the DB</title><desc id="desc">The order service commits order 42 and outbox event evt-901 in one database transaction. A Debezium source task reads the committed outbox insert, the Outbox Event Router transforms it, and Connect publishes it to Kafka. Consumer deduplication still matters.</desc>
+<!-- Typography and native icons match Apache Kafka pattern diagrams. Icons reused from system design: Proximity Service final-design.svg (db); Notification System improved-design.svg (green-server, channel-queue). -->
+<defs><style>text{font-family:Arial,Helvetica,sans-serif;fill:#171717}.title{font-size:28px;font-weight:700}.strong{font-size:20px;font-weight:700}.detail{font-size:17px}.small{font-size:16px}.panel{fill:#fff;stroke:#888;stroke-width:1.6}.blue{fill:#eaf3ff;stroke:#888;stroke-width:1.6}.note{fill:#fff4da;stroke:#888;stroke-width:1.4}.lifeline{stroke:#bbb;stroke-width:1.4;stroke-dasharray:5 5;fill:none}</style>
+<symbol id="user" viewBox="0 0 54 54"><circle cx="27" cy="12" r="11"/><path d="M3 49V41C3 29 51 29 51 41V49Z"/></symbol>
+<symbol id="green-server" viewBox="0 0 30 60">
+      <rect x="8" y="1" width="14" height="9" rx="1" fill="#65c515"/>
+      <path d="M11 5 H19" stroke="#fff" stroke-width="1.5"/>
+      <rect x="3" y="12" width="24" height="46" rx="1.5" fill="#65c515"/>
+      <path d="M7 19 H23 M7 40 H23 M7 48 H23" stroke="#fff" stroke-width="2"/>
+    </symbol>
+<symbol id="channel-queue" viewBox="0 0 150 58">
+      <path d="M2 2 H135 L148 29 L135 56 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="4"/>
+      <g fill="none" stroke="#1677b8" stroke-width="4">
+        <rect x="10" y="12" width="36" height="33"/><path d="M10 13 L28 29 L46 13"/>
+        <rect x="54" y="12" width="36" height="33"/><path d="M54 13 L72 29 L90 13"/>
+        <rect x="98" y="12" width="36" height="33"/><path d="M98 13 L116 29 L134 13"/>
+      </g>
+    </symbol>
+<symbol id="db" viewBox="0 0 88 93">
+      <path d="M0.9 13.75A43.1 8.75 0 0 1 87.1 13.75V82.25A43.1 8.75 0 0 1 0.9 82.25Z" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+      <ellipse cx="44" cy="13.75" rx="43.1" ry="8.75" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+    </symbol>
+</defs>
+<rect width="1100" height="789" fill="#fff"/>
+<text class="title" x="550" y="35" text-anchor="middle">Outbox: Connect publishes an event already committed in the DB</text>
+<text class="detail" x="550" y="66" text-anchor="middle">Read downward. The database transaction owns atomicity; publication follows asynchronously.</text>
+<!-- Participant headers; time runs downward on the dashed guides. -->
+<rect class="blue" x="21" y="94" width="208" height="119"/>
+<use href="#green-server" x="113" y="100" width="24" height="48"/>
+<text class="strong" x="125" y="174" text-anchor="middle">Order service</text>
+<path class="lifeline" d="M125 215 V684"/>
+<rect class="blue" x="301" y="94" width="208" height="119"/>
+<use href="#db" x="383" y="103" width="44" height="47" style="color:#eea6ed"/>
+<text class="strong" x="405" y="174" text-anchor="middle">Order database</text>
+<path class="lifeline" d="M405 215 V684"/>
+<rect class="blue" x="581" y="94" width="208" height="119"/>
+<use href="#green-server" x="673" y="100" width="24" height="48"/>
+<text class="strong" x="685" y="174" text-anchor="middle">Connect worker<tspan x="685" dy="23">Debezium + router</tspan></text>
+<path class="lifeline" d="M685 215 V684"/>
+<rect class="blue" x="871" y="94" width="208" height="119"/>
+<use href="#channel-queue" x="926" y="106" width="98" height="38"/>
+<text class="strong" x="975" y="174" text-anchor="middle">Kafka brokers<tspan x="975" dy="23">orders topic</tspan></text>
+<path class="lifeline" d="M975 215 V684"/>
+<!-- Messages are chronological; dashed horizontal arrows are acknowledgments. -->
+<!-- write-both: separate shaft and head overlap at the head base only. -->
+<path id="write-both-shaft" data-connector="true" d="M133 282 H388" fill="none" stroke="#171717" stroke-width="2"/><path id="write-both-head" d="M387 277 L397 282 L387 287 Z" fill="#171717"/><text class="detail" x="265.0" y="244" text-anchor="middle">One transaction:<tspan x="265.0" dy="23">order 42 + evt-901</tspan></text>
+<!-- commit-both: separate shaft and head overlap at the head base only. -->
+<path id="commit-both-shaft" data-connector="true" d="M397 355 H142" fill="none" stroke="#171717" stroke-width="2" stroke-dasharray="5 4"/><path id="commit-both-join" data-connector="true" d="M148 355 H142" fill="none" stroke="#171717" stroke-width="2"/><path id="commit-both-head" d="M143 350 L133 355 L143 360 Z" fill="#171717"/><text class="detail" x="265.0" y="340" text-anchor="middle">Both rows committed</text>
+<!-- read-outbox: separate shaft and head overlap at the head base only. -->
+<path id="read-outbox-shaft" data-connector="true" d="M413 439 H668" fill="none" stroke="#171717" stroke-width="2"/><path id="read-outbox-head" d="M667 434 L677 439 L667 444 Z" fill="#171717"/><text class="detail" x="545.0" y="401" text-anchor="middle">Committed outbox insert<tspan x="545.0" dy="23">from database change log</tspan></text>
+<!-- Reading note; backing interrupts time guides to protect the text. --><rect class="note" x="565" y="462" width="240" height="70"/><text class="detail" x="685.0" y="489" text-anchor="middle">Router selects event<tspan x="685.0" dy="23">payload, key, and topic</tspan></text>
+<!-- publish-event: separate shaft and head overlap at the head base only. -->
+<path id="publish-event-shaft" data-connector="true" d="M693 606 H958" fill="none" stroke="#171717" stroke-width="2"/><path id="publish-event-head" d="M957 601 L967 606 L957 611 Z" fill="#171717"/><text class="detail" x="830.0" y="568" text-anchor="middle">Publish evt-901<tspan x="830.0" dy="23">key = order-42</tspan></text>
+<!-- ack-event: separate shaft and head overlap at the head base only. -->
+<path id="ack-event-shaft" data-connector="true" d="M967 673 H702" fill="none" stroke="#171717" stroke-width="2" stroke-dasharray="5 4"/><path id="ack-event-join" data-connector="true" d="M708 673 H702" fill="none" stroke="#171717" stroke-width="2"/><path id="ack-event-head" d="M703 668 L693 673 L703 678 Z" fill="#171717"/><text class="detail" x="830.0" y="658" text-anchor="middle">Record acknowledged</text>
+<!-- Reading note; backing interrupts time guides to protect the text. --><rect class="note" x="30" y="701" width="1040" height="70"/><text class="detail" x="550.0" y="728" text-anchor="middle">Connect relays the durable event; it does not put the DB and Kafka in one transaction.<tspan x="550.0" dy="23">A consumer can deduplicate by event ID and commit that ID with its business effect.</tspan></text>
+</svg>

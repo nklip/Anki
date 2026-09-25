@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="852" viewBox="0 0 1100 852" role="img" aria-labelledby="title desc">
+<title id="title">Source: publish data, then save the source offset</title><desc id="desc">A database change becomes a SourceRecord carrying a source offset. Connect transforms and serializes it, writes it to Kafka, then periodically saves the source offset after acknowledgment. A crash in between can replay the change. At-least-once means each record is delivered one or more times. The default offset.flush.interval.ms of 60000 ms schedules commit attempts; it does not bound the replay window. Exactly-once source uses different transaction rules.</desc>
+<!-- Typography and native icons match Apache Kafka pattern diagrams. Icons reused from system design: Proximity Service final-design.svg (db); Notification System improved-design.svg (green-server, channel-queue). -->
+<defs><style>text{font-family:Arial,Helvetica,sans-serif;fill:#171717}.title{font-size:28px;font-weight:700}.strong{font-size:20px;font-weight:700}.detail{font-size:17px}.small{font-size:16px}.panel{fill:#fff;stroke:#888;stroke-width:1.6}.blue{fill:#eaf3ff;stroke:#888;stroke-width:1.6}.note{fill:#fff4da;stroke:#888;stroke-width:1.4}.lifeline{stroke:#bbb;stroke-width:1.4;stroke-dasharray:5 5;fill:none}</style>
+<symbol id="user" viewBox="0 0 54 54"><circle cx="27" cy="12" r="11"/><path d="M3 49V41C3 29 51 29 51 41V49Z"/></symbol>
+<symbol id="green-server" viewBox="0 0 30 60">
+      <rect x="8" y="1" width="14" height="9" rx="1" fill="#65c515"/>
+      <path d="M11 5 H19" stroke="#fff" stroke-width="1.5"/>
+      <rect x="3" y="12" width="24" height="46" rx="1.5" fill="#65c515"/>
+      <path d="M7 19 H23 M7 40 H23 M7 48 H23" stroke="#fff" stroke-width="2"/>
+    </symbol>
+<symbol id="channel-queue" viewBox="0 0 150 58">
+      <path d="M2 2 H135 L148 29 L135 56 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="4"/>
+      <g fill="none" stroke="#1677b8" stroke-width="4">
+        <rect x="10" y="12" width="36" height="33"/><path d="M10 13 L28 29 L46 13"/>
+        <rect x="54" y="12" width="36" height="33"/><path d="M54 13 L72 29 L90 13"/>
+        <rect x="98" y="12" width="36" height="33"/><path d="M98 13 L116 29 L134 13"/>
+      </g>
+    </symbol>
+<symbol id="db" viewBox="0 0 88 93">
+      <path d="M0.9 13.75A43.1 8.75 0 0 1 87.1 13.75V82.25A43.1 8.75 0 0 1 0.9 82.25Z" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+      <ellipse cx="44" cy="13.75" rx="43.1" ry="8.75" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+    </symbol>
+</defs>
+<rect width="1100" height="852" fill="#fff"/>
+<text class="title" x="550" y="35" text-anchor="middle">Source: publish data, then save the source offset</text>
+<text class="detail" x="550" y="66" text-anchor="middle">After the initial snapshot; task + runtime share one worker. Read downward.</text>
+<!-- Participant headers; time runs downward on the dashed guides. -->
+<rect class="blue" x="21" y="94" width="208" height="119"/>
+<use href="#db" x="103" y="103" width="44" height="47" style="color:#eea6ed"/>
+<text class="strong" x="125" y="174" text-anchor="middle">Product database</text>
+<path class="lifeline" d="M125 215 V670"/>
+<rect class="blue" x="301" y="94" width="208" height="119"/>
+<use href="#green-server" x="393" y="100" width="24" height="48"/>
+<text class="strong" x="405" y="174" text-anchor="middle">Source task</text>
+<path class="lifeline" d="M405 215 V670"/>
+<rect class="blue" x="581" y="94" width="208" height="119"/>
+<use href="#green-server" x="673" y="100" width="24" height="48"/>
+<text class="strong" x="685" y="174" text-anchor="middle">Connect runtime</text>
+<path class="lifeline" d="M685 215 V670"/>
+<rect class="blue" x="871" y="94" width="208" height="119"/>
+<use href="#channel-queue" x="926" y="106" width="98" height="38"/>
+<text class="strong" x="975" y="174" text-anchor="middle">Kafka brokers<tspan x="975" dy="23">data + offset topics</tspan></text>
+<path class="lifeline" d="M975 215 V670"/>
+<!-- Messages are chronological; dashed horizontal arrows are acknowledgments. -->
+<!-- read-change: separate shaft and head overlap at the head base only. -->
+<path id="read-change-shaft" data-connector="true" d="M133 281 H388" fill="none" stroke="#171717" stroke-width="2"/><path id="read-change-head" d="M387 276 L397 281 L387 286 Z" fill="#171717"/><text class="detail" x="265.0" y="243" text-anchor="middle">Committed row change<tspan x="265.0" dy="23">source offset = S1</tspan></text>
+<!-- poll-record: separate shaft and head overlap at the head base only. -->
+<path id="poll-record-shaft" data-connector="true" d="M413 355 H668" fill="none" stroke="#171717" stroke-width="2"/><path id="poll-record-head" d="M667 350 L677 355 L667 360 Z" fill="#171717"/><text class="detail" x="545.0" y="317" text-anchor="middle">SourceRecord<tspan x="545.0" dy="23">+ source offset S1</tspan></text>
+<!-- Reading note; backing interrupts time guides to protect the text. --><rect class="note" x="565" y="377" width="240" height="70"/><text class="detail" x="685.0" y="404" text-anchor="middle">Optional transform,<tspan x="685.0" dy="23">then converter to bytes</tspan></text>
+<!-- produce-record: separate shaft and head overlap at the head base only. -->
+<path id="produce-record-shaft" data-connector="true" d="M693 515 H958" fill="none" stroke="#171717" stroke-width="2"/><path id="produce-record-head" d="M957 510 L967 515 L957 520 Z" fill="#171717"/><text class="detail" x="830.0" y="477" text-anchor="middle">Produce keyed record<tspan x="830.0" dy="23">to products topic</tspan></text>
+<!-- ack-record: separate shaft and head overlap at the head base only. -->
+<path id="ack-record-shaft" data-connector="true" d="M967 588 H702" fill="none" stroke="#171717" stroke-width="2" stroke-dasharray="5 4"/><path id="ack-record-join" data-connector="true" d="M708 588 H702" fill="none" stroke="#171717" stroke-width="2"/><path id="ack-record-head" d="M703 583 L693 588 L703 593 Z" fill="#171717"/><text class="detail" x="830.0" y="573" text-anchor="middle">Record acknowledged</text>
+<!-- save-source-offset: separate shaft and head overlap at the head base only. -->
+<path id="save-source-offset-shaft" data-connector="true" d="M693 661 H958" fill="none" stroke="#171717" stroke-width="2"/><path id="save-source-offset-head" d="M957 656 L967 661 L957 666 Z" fill="#171717"/><text class="detail" x="830.0" y="623" text-anchor="middle">Periodic commit: save S1<tspan x="830.0" dy="23">in source offset storage</tspan></text>
+<!-- Delivery and timing scope; the periodic interval schedules attempts and does not bound replay. -->
+<rect id="source-offset-scope" class="note" x="30" y="687" width="1040" height="146"/>
+<text class="detail" x="550" y="714" text-anchor="middle">At-least-once = a record is delivered one or more times; a retry can duplicate it.<tspan x="550" dy="25">Crash after publish but before saving S1 → the source may send the same change again.</tspan><tspan x="550" dy="25">S1 is a source offset (a database position), distinct from Kafka’s topic-partition offset.</tspan><tspan x="550" dy="25">Default offset.flush.interval.ms = 60000 ms (60 s) schedules attempts to save source offsets.</tspan><tspan x="550" dy="25">The interval is not a maximum replay window; exactly-once source uses different transaction rules.</tspan></text>
+</svg>

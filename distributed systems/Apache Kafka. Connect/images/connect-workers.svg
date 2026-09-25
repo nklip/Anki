@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="840" viewBox="0 0 1100 840" role="img" aria-labelledby="title desc">
+<title id="title">Connect workers run tasks outside Kafka brokers</title>
+<desc id="desc">Two configured connectors define the jobs. Worker A runs a source task and a sink task, while worker B runs a second task of the same sink connector. This is one possible placement in a distributed Connect group. Connector instances also run on workers; only task placement is expanded here. Kafka brokers store Connect internal compacted topics for configurations, source offsets, and status. Sink progress is stored separately as consumer-group offsets in __consumer_offsets.</desc>
+<!-- Shared system-design typography and native icons, copied from Apache Kafka/images/kafka-connect.svg.
+     Original icon sources: Proximity Service final-design.svg; Notification System improved-design.svg. -->
+<defs>
+<style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #171717; }
+.title { font-size: 28px; font-weight: 700; }
+.label { font-size: 20px; }
+.strong { font-size: 20px; font-weight: 700; }
+.detail { font-size: 17px; }
+.small { font-size: 16px; }
+.mono { font-family: Consolas, Menlo, monospace; font-size: 16px; }
+.panel { fill: #fff; stroke: #888; stroke-width: 1.6; }
+.blue { fill: #eaf3ff; stroke: #888; stroke-width: 1.6; }
+.note { fill: #fff4da; stroke: #888; stroke-width: 1.4; }
+.service { fill: #fff; stroke: #171717; stroke-width: 1.6; }
+.lifeline { fill: none; stroke: #999; stroke-width: 1.5; stroke-dasharray: 5 6; }
+</style>
+<symbol id="green-server" viewBox="0 0 30 60">
+      <rect x="8" y="1" width="14" height="9" rx="1" fill="#65c515"/>
+      <path d="M11 5 H19" stroke="#fff" stroke-width="1.5"/>
+      <rect x="3" y="12" width="24" height="46" rx="1.5" fill="#65c515"/>
+      <path d="M7 19 H23 M7 40 H23 M7 48 H23" stroke="#fff" stroke-width="2"/>
+    </symbol>
+<symbol id="channel-queue" viewBox="0 0 150 58">
+      <path d="M2 2 H135 L148 29 L135 56 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="4"/>
+      <g fill="none" stroke="#1677b8" stroke-width="4">
+        <rect x="10" y="12" width="36" height="33"/><path d="M10 13 L28 29 L46 13"/>
+        <rect x="54" y="12" width="36" height="33"/><path d="M54 13 L72 29 L90 13"/>
+        <rect x="98" y="12" width="36" height="33"/><path d="M98 13 L116 29 L134 13"/>
+      </g>
+    </symbol>
+<symbol id="db" viewBox="0 0 88 93">
+      <path d="M0.9 13.75A43.1 8.75 0 0 1 87.1 13.75V82.25A43.1 8.75 0 0 1 0.9 82.25Z" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+      <ellipse cx="44" cy="13.75" rx="43.1" ry="8.75" fill="currentColor" stroke="#111" stroke-width="1.6"/>
+    </symbol>
+</defs>
+<!-- Canvas and lesson heading. -->
+<rect width="1100" height="840" fill="#fff"/>
+<text class="title" x="550" y="35" text-anchor="middle">Connect workers run tasks outside Kafka brokers</text>
+<text class="detail" x="550" y="66" text-anchor="middle">A connector defines a job; its tasks perform the data transfer.</text>
+<!-- Configured jobs are logical definitions, distinct from runtime task instances. -->
+<rect id="source-connector-config" class="blue" x="30" y="96" width="330" height="135"/>
+<text class="strong" x="195" y="125" text-anchor="middle">Configured source connector</text>
+<text class="mono" x="195" y="157" text-anchor="middle">products-source</text>
+<text class="detail" x="195" y="190" text-anchor="middle">Import product data<tspan x="195" dy="24">Produces source task configuration</tspan></text>
+<rect id="sink-connector-config" class="blue" x="380" y="96" width="330" height="135"/>
+<text class="strong" x="545" y="125" text-anchor="middle">Configured sink connector</text>
+<text class="mono" x="545" y="157" text-anchor="middle">search-sink</text>
+<text class="detail" x="545" y="190" text-anchor="middle">Export records to search<tspan x="545" dy="24">Produces sink task configurations</tspan></text>
+<rect id="connector-task-distinction" class="note" x="730" y="96" width="340" height="135"/>
+<text class="strong" x="900" y="125" text-anchor="middle">Connector ≠ task</text>
+<text class="detail" x="900" y="158" text-anchor="middle">One connector can have several<tspan x="900" dy="24">tasks. Actual parallelism depends</tspan><tspan x="900" dy="24">on the connector and the data.</tspan></text>
+<!-- Example placement: source and sink tasks can share a worker process. -->
+<text class="strong" x="550" y="270" text-anchor="middle">Distributed Connect group: workers share a group.id</text>
+<rect id="worker-a" class="panel" x="30" y="290" width="610" height="210"/>
+<text class="strong" x="335" y="321" text-anchor="middle">Connect worker A</text>
+<use href="#green-server" x="56" y="350" width="46" height="92"/>
+<rect id="products-source-task-0" class="blue" x="132" y="349" width="230" height="111"/>
+<text class="mono" x="247" y="380" text-anchor="middle">products-source</text>
+<text class="strong" x="247" y="414" text-anchor="middle">Source task 0</text>
+<text class="detail" x="247" y="440" text-anchor="middle">Imports records</text>
+<rect id="search-sink-task-0" class="blue" x="382" y="349" width="230" height="111"/>
+<text class="mono" x="497" y="380" text-anchor="middle">search-sink</text>
+<text class="strong" x="497" y="414" text-anchor="middle">Sink task 0</text>
+<text class="detail" x="497" y="440" text-anchor="middle">Exports records</text>
+<text class="small" x="335" y="481" text-anchor="middle">Source and sink tasks can run in the same worker.</text>
+<rect id="worker-b" class="panel" x="660" y="290" width="410" height="210"/>
+<text class="strong" x="865" y="321" text-anchor="middle">Connect worker B</text>
+<use href="#green-server" x="684" y="350" width="46" height="92"/>
+<rect id="search-sink-task-1" class="blue" x="756" y="349" width="286" height="111"/>
+<text class="mono" x="899" y="380" text-anchor="middle">search-sink</text>
+<text class="strong" x="899" y="414" text-anchor="middle">Sink task 1</text>
+<text class="detail" x="899" y="440" text-anchor="middle">Same connector, another task</text>
+<text class="small" x="865" y="481" text-anchor="middle">This is one possible assignment.</text>
+<text class="detail" x="550" y="530" text-anchor="middle">Workers also run connector instances; only task placement is expanded above.</text>
+<!-- Kafka is a separate process boundary. Connect internal topics and sink consumer offsets have distinct roles. -->
+<rect id="kafka-brokers" class="panel" x="30" y="556" width="1040" height="222"/>
+<use href="#channel-queue" x="49" y="574" width="110" height="43"/>
+<text class="strong" x="624" y="588" text-anchor="middle">Kafka brokers: durable state shared by the workers</text>
+<text class="small" x="624" y="614" text-anchor="middle">Configuration keys below select the three Connect internal topics.</text>
+<rect id="connect-internal-topics" class="blue" x="49" y="629" width="724" height="131"/>
+<text class="strong" x="411" y="654" text-anchor="middle">Connect internal topics — compacted</text>
+<text class="detail" x="173" y="684" text-anchor="middle">Connector configs</text>
+<text class="mono" x="173" y="710" text-anchor="middle">config.storage.topic</text>
+<text class="small" x="173" y="731" text-anchor="middle">1 partition</text>
+<text class="detail" x="414" y="684" text-anchor="middle">Source offsets</text>
+<text class="mono" x="414" y="710" text-anchor="middle">offset.storage.topic</text>
+<text class="small" x="414" y="731" text-anchor="middle">Per input stream</text>
+<text class="detail" x="654" y="684" text-anchor="middle">Reported status</text>
+<text class="mono" x="654" y="710" text-anchor="middle">status.storage.topic</text>
+<text class="small" x="654" y="731" text-anchor="middle">Connector + task states</text>
+<rect id="sink-consumer-offsets" class="note" x="793" y="629" width="258" height="131"/>
+<text class="strong" x="922" y="655" text-anchor="middle">Sink progress</text>
+<text class="mono" x="922" y="686" text-anchor="middle">__consumer_offsets</text>
+<text class="small" x="922" y="715" text-anchor="middle">Kafka consumer-group offsets<tspan x="922" dy="20">Separate from source offsets</tspan></text>
+<!-- Durable state enables replacement workers to resume; it does not contain task process memory. -->
+<text class="detail" x="550" y="818" text-anchor="middle">Worker processes execute the work; Kafka stores the shared configuration and saved progress.</text>
+</svg>
