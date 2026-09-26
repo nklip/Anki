@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="480" viewBox="0 0 960 480" role="img" aria-labelledby="title desc">
+  <title id="title">Clearing a TreeMap range view removes the original mappings</title>
+  <desc id="desc">Before clearing, the map contains keys 10 through 70. A labeled bracket marks the view window: [20, 60), including 20, 30, 40, and 50. Key 60 is explicitly excluded. After window.clear, the original map contains only 10, 60, and 70, and the view is empty. Removing a mapping through either map affects both only within the view's range.</desc>
+  <!-- Shared typography; a labeled bracket and green fill identify the included keys. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #202124; }
+      .title { font-size: 27px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #5f6368; }
+      .key { font-size: 22px; font-weight: 700; text-anchor: middle; }
+      .outside { fill: #f1f3f4; stroke: #9aa0a6; stroke-width: 2; }
+      .inside { fill: #e6f4ea; stroke: #34834b; stroke-width: 2; }
+    </style>
+  </defs>
+  <!-- Heading establishes the exact operation and endpoint rule. -->
+  <rect width="960" height="480" fill="#ffffff"/>
+  <text x="30" y="42" class="title">A range view shares the original mappings</text>
+  <text x="30" y="77" class="body">window = map.subMap(20, true, 60, false)</text>
+  <text x="30" y="107" class="small">Range [20, 60): include 20, exclude 60 · only keys are shown</text>
+  <!-- Before state: selected cells are the original map's entries, not another copy. -->
+  <text x="30" y="151" class="body" font-weight="700">BEFORE</text>
+  <text x="30" y="199" class="body">map</text>
+  <!-- Range bracket stays above the cells; endpoint labels also work without color. -->
+  <text x="455" y="133" class="body" text-anchor="middle" font-weight="700">window: [20, 60)</text>
+  <path id="window-bracket" d="M245 158 V147 H665 V158" fill="none" stroke="#202124" stroke-width="2"/>
+  <text x="730" y="148" class="small" text-anchor="middle">60 excluded</text>
+  <g id="before-keys">
+    <rect x="135" y="167" width="90" height="48" rx="7" class="outside"/>
+    <rect x="245" y="167" width="90" height="48" rx="7" class="inside"/>
+    <rect x="355" y="167" width="90" height="48" rx="7" class="inside"/>
+    <rect x="465" y="167" width="90" height="48" rx="7" class="inside"/>
+    <rect x="575" y="167" width="90" height="48" rx="7" class="inside"/>
+    <rect x="685" y="167" width="90" height="48" rx="7" class="outside"/>
+    <rect x="795" y="167" width="90" height="48" rx="7" class="outside"/>
+    <text x="180" y="199" class="key">10</text>
+    <text x="290" y="199" class="key">20</text>
+    <text x="400" y="199" class="key">30</text>
+    <text x="510" y="199" class="key">40</text>
+    <text x="620" y="199" class="key">50</text>
+    <text x="730" y="199" class="key">60</text>
+    <text x="840" y="199" class="key">70</text>
+  </g>
+  <text x="245" y="243" class="small">Bracketed keys are visible through window.</text>
+  <!-- Vertical mutation arrow; shaft stops under the triangle base, clear of all labels. -->
+  <line id="clear-arrow-shaft" data-connector="true" x1="455" y1="257" x2="455" y2="296" stroke="#356eb3" stroke-width="3"/>
+  <polygon id="clear-arrow-head" points="447,294 463,294 455,307" fill="#356eb3"/>
+  <text x="480" y="286" class="body" font-weight="700">window.clear()</text>
+  <!-- After state: surviving keys retain their columns to make removals easy to see. -->
+  <text x="30" y="335" class="body" font-weight="700">AFTER</text>
+  <text x="30" y="383" class="body">map</text>
+  <g id="after-keys">
+    <rect x="135" y="351" width="90" height="48" rx="7" class="outside"/>
+    <rect x="685" y="351" width="90" height="48" rx="7" class="outside"/>
+    <rect x="795" y="351" width="90" height="48" rx="7" class="outside"/>
+    <text x="180" y="383" class="key">10</text>
+    <text x="730" y="383" class="key">60</text>
+    <text x="840" y="383" class="key">70</text>
+    <text x="455" y="373" class="body" text-anchor="middle">20, 30, 40, 50 removed</text>
+    <text x="455" y="399" class="small" text-anchor="middle">window is now empty</text>
+  </g>
+  <!-- Consequence makes the shared backing explicit without a second storage diagram. -->
+  <rect x="30" y="426" width="900" height="36" rx="7" fill="#e8f0fe"/>
+  <text x="480" y="450" class="body" text-anchor="middle">Within the range, removing through either affects both; removing 10 does not.</text>
+</svg>

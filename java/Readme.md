@@ -4,7 +4,7 @@
 
 Java study materials covering language features, collections, concurrency, the JVM, garbage collection, persistence, and application development.
 
-The 69 topics include **34 simple Anki cards** with Front and Back sections and **35 articles** for longer explanations. The Format column identifies each one.
+The 70 topics include **34 simple Anki cards** with Front and Back sections and **36 articles** for longer explanations. The Format column identifies each one.
 
 Every topic lives in its own folder as `Readme.md`, with its teaching diagrams in a sibling `images/` directory. Diagrams used by several topics are copied into each topic's own `images/` directory.
 
@@ -57,6 +57,7 @@ Every topic lives in its own folder as `Readme.md`, with its teaching diagrams i
 | [Collections. HashMap](./Collections.%20HashMap/Readme.md) | Article |
 | [Collections. HashMap vs LinkedHashMap vs TreeMap](./Collections.%20HashMap%20vs%20LinkedHashMap%20vs%20TreeMap/Readme.md) | Simple card |
 | [Collections. SequencedCollection](./Collections.%20SequencedCollection/Readme.md) | Simple card |
+| [Collections. TreeMap](./Collections.%20TreeMap/Readme.md) | Article |
 
 ### Concurrency and the Java Memory Model
 
