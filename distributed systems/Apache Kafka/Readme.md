@@ -93,7 +93,33 @@ A **group coordinator** is the broker handling a group's membership and offset c
 
 ## 2. Storage and durability
 
-Retention asks which records should remain. Replication asks where copies exist. Acknowledgments ask what the producer has learned about a write. Keep these policies separate. The log start offset and high watermark bound consumer reads; the low watermark tracks deletion progress across live replicas.
+Storage and durability involve five separate questions. Start with the offset vocabulary below, then follow how storage policies change the log and what consumers can read.
+
+* **Retention:** which records should Kafka keep?
+* **Replication:** which brokers hold copies of those records?
+* **Acknowledgments:** what has the producer learned about a write?
+* **Consumer reads:** where does available history begin, and how far has replication made it readable?
+* **Deletion progress:** have all live replicas advanced past the records marked for deletion?
+
+### Offsets
+
+An **offset** is a numbered position in one partition's log. When the leader appends a record, it assigns that record an offset; followers copy the record with the same offset. For example, `(orders, partition 0, offset 13)` identifies one log position. Offset `13` in partition `1` is a different position. An offset is not a byte address, timestamp, or count of records still stored.
+
+Each replica has its own log boundaries, expressed using those same offset numbers:
+
+| Term | What the value means | Example |
+|---|---|---|
+| **Record offset** | The position assigned to one record | Record `13` keeps offset `13` when older records are deleted |
+| **Log start offset** | The inclusive lower boundary of available history | Start `10` means offsets below `10` are unavailable |
+| **Log end offset (LEO)** | The next append position; the exclusive upper boundary of the log | Records through `15` give an end offset of `16` |
+
+**Inclusive** means the boundary position is included; **exclusive** means it is excluded. Stored record offsets lie in `log start offset ≤ record offset < log end offset`. This range can contain gaps, for example after compaction removes records, so subtracting the boundaries does not always count the remaining records. When start and end are equal, the retained range is empty.
+
+Read the diagram from top to bottom. Initially, this leader retains records `10–15`. Appending record `16` moves its log end to `17`. Deleting records below `13` then moves its log start to `13`, while the end stays `17` and surviving records keep their offsets. The dashed **next** slot is an append position, not a stored record.
+
+![kafka-offsets.svg](images/kafka-offsets.svg)
+
+The **high watermark** and **low watermark** discussed below are also offset values. The high watermark marks how far replication has made the log readable; it can be below the leader's log end. The low watermark combines the log start offsets of live replicas to track deletion progress. Their names describe what each boundary measures; neither is a consumer's saved reading position.
 
 ### Retention and compaction
 
@@ -141,37 +167,53 @@ This creates three distinct logs with three copies each: nine partition replicas
 
 Replication acknowledgment is not a per-record `fsync` guarantee. **`fsync`** asks the operating system to synchronize file data to persistent storage. Kafka normally uses buffered file writes and replication; correlated failures of all copies still matter. A timeout can also leave the producer uncertain whether an append succeeded.
 
-### Log start offset and low watermark: deletion progress
+### Low watermark: deletion progress measured by log start offsets
 
-The **log start offset** is the lower boundary of a partition's available history. Consumers can obtain it with `beginningOffsets()`. Retention or explicit deletion can advance this boundary: if it becomes `13`, records below offset `13` are no longer available for replay. Advancing a consumer group's committed offset only saves that group's restart position; it does not move this storage boundary.
+Deletion advances a replica's **log start offset**. If that boundary moves from `10` to `13`, records `10–12` become unavailable on that replica; offset `13` remains within the retained range. Consumers can obtain the partition's beginning offset with `beginningOffsets()`.
 
 If a consumer tries to fetch below the log start offset, its position is out of range. The [`auto.offset.reset` policy](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md#4-failure-scenarios) decides what follows: `earliest` resumes at the log start offset, `latest` skips to the end, and `none` makes `poll()` throw `OffsetOutOfRangeException`. Automatic resetting cannot recover records that have already been deleted.
 
-Kafka's **low watermark** tracks deletion progress across a partition's live replicas. It is the minimum log start offset tracked across those replicas, including the leader. Here, **live** means the replica's broker is considered alive by Kafka's cluster metadata: an offline broker does not hold deletion back, but an alive follower that has fallen behind still can. The leader uses the low watermark to decide when an administrative `deleteRecords` request has completed, and the API returns it through `DeletedRecords.lowWatermark()`. A live follower still counts here even if it is outside the ISR; `acks=all` waits on the current ISR.
+The leader's start offset alone does not show whether deletion has reached the other copies. Kafka's **low watermark** is the smallest log start offset the leader tracks across the partition's **live replicas**, including itself. A value of `13` means all those copies have advanced to at least `13`, making offsets below `13` unavailable on them.
 
-The deletion cutoff is exclusive: in the example below, requesting deletion before offset `13` removes records `10–12` and keeps `13–15`. Use one partition with the same three-copy replication factor as above: its leader and two live followers initially start at `10`. In the middle state, the leader and replica-2 have advanced their log starts to `13`, but replica-3 still starts at `10`. The low watermark remains `min(13, 13, 10) = 10`, so deletion is incomplete even though the leader has already removed `10–12`. Once replica-3 advances to `13` and the leader learns its progress, the low watermark reaches `13` and the request completes. This tracks logical unavailability; reclaiming the underlying segment files can happen later.
+Here, **live** means that Kafka considers the replica's broker alive. A live follower still counts even when it is outside the ISR; an offline broker does not hold this watermark back. The leader uses the low watermark to decide when an administrative `deleteRecords` request has completed, and the API returns the value through `DeletedRecords.lowWatermark()`.
 
-**Consumption and deletion are independent.** The diagram does not say whether records `13–15` have been consumed; they remain because this request only removes offsets below `13`. Records `10–12` can be deleted even if a consumer group has never read or processed them. Neither time/size retention nor `deleteRecords` waits for consumer groups to consume records or commit offsets, and consuming or committing a record does not delete it. The low watermark confirms deletion progress across broker replicas; it does not confirm that consumers finished processing the deleted records. A consumer that still needs those offsets faces the out-of-range behavior described above.
+The deletion cutoff is exclusive: requesting deletion before offset `13` removes records `10–12` and keeps `13–15`. The example below starts with those six records on a leader and two live followers:
+
+1. **Before deletion:** all three log start offsets are `10`, so the low watermark is `10`.
+2. **Deletion in progress:** the leader and replica-2 start at `13`, but replica-3 still starts at `10`. The low watermark remains `min(13, 13, 10) = 10`, so the request still waits.
+3. **Deletion complete:** replica-3 advances to `13` and the leader learns its progress. The low watermark becomes `13`, so the request completes.
+
+Completion means the records are logically unavailable on the live replicas. Reclaiming the underlying segment files can happen later.
+
+**Consumer progress does not control deletion.** Retention and `deleteRecords` can remove records a group has never read. Reading a record or committing a group's restart offset does not delete it. The low watermark reports progress across broker replicas; it says nothing about whether consumers processed those records.
 
 Read the three states from top to bottom: before deletion, deletion in progress, and deletion complete. Each numbered cell is a record offset, the leader is on the left, and its two followers are on the right. Followers learn the leader's log start offset through fetch responses. Dashed slots labeled **gone** mark history unavailable on that replica; **pending** records on replica-3 explain why the low watermark can lag behind the leader's log start. Retained offsets keep their original numbers.
 
 ![kafka-low-watermark-deletion.svg](images/kafka-low-watermark-deletion.svg)
 
-### High watermark: replication and consumer visibility
+### High watermark: the offset boundary for consumer reads
 
-The **high watermark (HW)** is the exclusive upper offset boundary of the history Kafka considers committed by replication. Brokers use it to limit consumer reads: a record's offset must be strictly below this boundary. This keeps consumers from seeing a write before replication has committed it.
+The **high watermark (HW)** is an offset value marking the exclusive upper boundary of history committed by replication. For example, `HW = 16` allows consumers to read retained records below `16`; record `16` itself is held back. A record can already exist on the leader while replication has not yet made it readable.
 
-Continue the deletion example with log start offset `13` and retained records `13–15`. The leader now appends new records `16–18`. A replica's **log end offset** is the next append position: a replica holding records through `18` has log end `19`. This example keeps all three replicas in the ISR, satisfies `min.insync.replicas=2`, and has no transactions or further deletion. Briefly lagging behind the leader does not automatically remove a follower from the ISR.
+Continue the deletion example with log start offset `13` and retained records `13–15`. The leader appends new records `16–18`, moving its **log end offset** to `19`. This example keeps all three replicas in the ISR, satisfies `min.insync.replicas=2`, and has no transactions or further deletion. Briefly lagging behind the leader does not automatically remove a follower from the ISR.
 
-**Before the followers catch up**, the leader's log end is `19`, but each follower's is still `16`. The high watermark remains `16`, so consumers can read `13–15`; the new records `16–18` are held back, even if their producer received `acks=1`. **After the followers catch up**, they request their next records from offset `19`, telling the leader that they have copied through `18`. Once the leader has learned this progress from every follower in the ISR, the high watermark advances to `19`, and records `13–18` are readable. Offset `19` itself remains outside that exclusive boundary.
+* **Before the followers catch up:** the leader's log end is `19`, but each follower's is still `16`. The high watermark remains `16`. Consumers can read `13–15`; records `16–18` are held back, even if their producer received `acks=1`.
+* **After the followers catch up:** they request their next records from offset `19`, telling the leader that they have copied through `18`. Once the leader knows every follower in the ISR has reached that position, the high watermark advances to `19`. Records `13–18` become readable; offset `19` is still excluded.
 
 Read the two states from top to bottom. The leader is on the left, and its two followers are on the right. Dashed slots labeled **absent** have not yet been copied to a follower; **held** records exist on the leader but are not yet readable by consumers. The vertical line on the leader marks the high watermark moving from `16` to `19`. **Visible** means available to consumers, whether or not any consumer has read the record. Consumer reads and committed offsets do not advance the high watermark; replication does. The log start offset stays at `13` throughout.
 
 ![kafka-high-watermark-replication.svg](images/kafka-high-watermark-replication.svg)
 
-This boundary applies even to `read_uncommitted`. Under that isolation level, `endOffsets()` returns the high watermark. With `read_committed`, it returns the [last stable offset (LSO)](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md#transaction-aware-consumers), which can stop earlier while transactions remain open; these consumers also filter out aborted records. The high watermark is shared partition state. A group's committed offset is its own restart progress, so these are two different meanings of “committed.”
+The log start offset supplies the **inclusive lower bound** for reads. The upper bound depends on the consumer's transaction isolation level:
 
-Together, the log start offset and high watermark bound ordinary consumer reads. In the final state above, log start `13` and high watermark `19` make records `13–18` readable. Records below `13` are unavailable; a later record at offset `19` must cross the replication boundary before consumers can read it. The deletion API's low watermark tracks the lower boundary across live replicas: the middle deletion state shows it still at `10` while the leader's log start is already `13`.
+| Isolation level | Bounds on returned record offsets | Java `endOffsets()` returns |
+|---|---|---|
+| `read_uncommitted` (default) | `log start offset ≤ offset < high watermark` | High watermark |
+| `read_committed` | `log start offset ≤ offset < last stable offset` | Last stable offset |
+
+The **[last stable offset (LSO)](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md#transaction-aware-consumers)** is at or below the high watermark; it can hold reads back further while a transaction remains open. A `read_committed` consumer also filters out aborted records. Even `read_uncommitted` waits for replication: “uncommitted” here concerns transactions. Thus the Java consumer's `endOffsets()` value can be lower than the leader's **log end offset**.
+
+In the final diagram state, log start `13` and high watermark `19` allow reads of `13–18`. In the earlier state, the leader already stores through `18`, but high watermark `16` allows only `13–15`. These are broker boundaries. A **consumer group's committed offset** saves that group's restart position and does not move the log start, log end, or replication boundary.
 
 The comparison diagram in [§5](#pattern-4-aggregate-streams-into-a-queryable-result) puts these broker offset boundaries beside event-time watermarks.
 
@@ -304,9 +346,9 @@ The application below keeps an evolving count and publishes its result. Its proc
 
 **Kafka data.** An application reads `orders`, groups events by the desired key and time window, and publishes counts to `order-counts`. A **window** groups events into a time interval. Event time means when the event happened; processing time means when the application handles it. An event can arrive after newer events, so closing an event-time window needs a deliberate late-arrival policy.
 
-The word **watermark** has three distinct meanings in this article. The broker's **high watermark** from [§2](#high-watermark-replication-and-consumer-visibility) limits reads by replication progress. An **event-time watermark** in stream processing estimates progress through event timestamps; an event arriving behind that estimate is late, and the processing policy decides whether it can still update a result. The estimate does not prove that older events can never arrive.
+The word **watermark** has three distinct meanings in this article. The broker's **high watermark** from [§2](#high-watermark-the-offset-boundary-for-consumer-reads) limits reads by replication progress. An **event-time watermark** in stream processing estimates progress through event timestamps; an event arriving behind that estimate is late, and the processing policy decides whether it can still update a result. The estimate does not prove that older events can never arrive.
 
-The **low watermark** from [§2](#log-start-offset-and-low-watermark-deletion-progress) tracks deletion progress across live replicas.
+The **low watermark** from [§2](#low-watermark-deletion-progress-measured-by-log-start-offsets) tracks deletion progress across live replicas.
 
 Kafka Streams uses **stream time**, the maximum record timestamp observed so far by each task, and a window's **grace period** to decide when to reject late records. For a one-minute window covering `12:00:00 ≤ event time < 12:01:00`, a 30-second grace permits late updates until stream time moves past `12:01:30`. An arriving event timestamped `12:00:50` still belongs to that original window; grace extends acceptance time, not window membership. Stream time advances with records, not merely with the wall clock. Longer grace can accept more late events, but requires retaining window state longer and postpones when the result can be considered final; intermediate results may be emitted earlier.
 
@@ -569,6 +611,8 @@ Try answering each question before expanding its answer.
 - [Kafka 4.3.0 partition log: last stable offset and read-committed visibility](https://github.com/apache/kafka/blob/4.3.0/storage/src/main/java/org/apache/kafka/storage/internals/log/UnifiedLog.java#L671-L685)
 - [Producer configuration: acknowledgments, idempotence, transaction identity, and timeouts](https://kafka.apache.org/43/configuration/producer-configs/)
 - [KafkaConsumer API: group assignments, committed offsets, out-of-range recovery, and beginning/end offsets](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html)
+- [ConsumerRecord API: a record's offset within its partition](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/consumer/ConsumerRecord.html#offset())
+- [Kafka 4.3.0 log implementation: log start offset and next-append log end offset](https://github.com/apache/kafka/blob/4.3.0/storage/src/main/java/org/apache/kafka/storage/internals/log/UnifiedLog.java)
 - [Kafka Admin API: deleting records below an exclusive partition offset](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/admin/Admin.html#deleteRecords(java.util.Map))
 - [DeletedRecords API: the low watermark returned after deletion](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/admin/DeletedRecords.html)
 - [KIP-107: log start offsets, deletion progress across live replicas, and deferred physical cleanup](https://cwiki.apache.org/confluence/spaces/KAFKA/pages/67636826/KIP-107+Add+deleteRecordsBefore+API+in+AdminClient)

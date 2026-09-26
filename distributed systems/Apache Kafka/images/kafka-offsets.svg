@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="888" viewBox="0 0 1100 888" role="img" aria-labelledby="title desc">
+  <title id="title">Kafka offsets: record positions and log boundaries</title>
+  <desc id="desc">Three states of one partition's leader log, read top to bottom. Initially records 10 through 15 are retained, the log start is 10, and the log end is 16. After appending record 16, the start remains 10 and the end moves to 17. After deleting records below 13, the start moves to 13 and the end remains 17. Surviving records keep their original offsets. Blue lines mark the inclusive log start; orange lines mark the exclusive log end, which is the next append position. Dashed next slots are not stored records; dashed gone slots are unavailable history. These are storage boundaries; the consumer read limit also depends on replication and transaction state.</desc>
+  <!-- Shared typography and semantic fills match the neighboring Kafka log diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #171717; }
+      .title { font-size: 28px; font-weight: 700; }
+      .heading { font-size: 24px; font-weight: 700; }
+      .detail { font-size: 18px; }
+      .offset { font-size: 24px; }
+      .cell-note { font-size: 16px; }
+      .start-label { font-size: 19px; font-weight: 700; fill: #1677b8; }
+      .end-label { font-size: 19px; font-weight: 700; fill: #a56a0b; }
+      .panel { fill: #fff; stroke: #888; stroke-width: 1.6; }
+      .retained { fill: #eaf3ff; stroke: #888; stroke-width: 1.8; }
+      .appended { fill: #bdf7bd; stroke: #888; stroke-width: 1.8; }
+      .gone { fill: #f5f5f5; stroke: #aaa; stroke-width: 1.5; stroke-dasharray: 6 5; }
+      .next { fill: #fff; stroke: #a56a0b; stroke-width: 1.5; stroke-dasharray: 6 5; }
+      .shaft { fill: none; stroke: #171717; stroke-width: 2; }
+    </style>
+  </defs>
+  <!-- Overview defines the numbers and fixes the scope to one leader's storage state. -->
+  <rect id="background" width="1100" height="888" fill="#fff"/>
+  <text class="title" x="550" y="39" text-anchor="middle">Kafka offsets: record positions and log boundaries</text>
+  <text class="detail" x="550" y="70" text-anchor="middle">One partition’s leader log. Each number identifies a record position: its offset.</text>
+  <text class="detail" x="550" y="96" text-anchor="middle">Read top to bottom: append at the end, then delete from the beginning.</text>
+  <!-- initial: aligned columns preserve each record position across the three states. -->
+  <g id="initial-state">
+    <rect class="panel" x="20" y="110" width="1060" height="198"/>
+    <text class="heading" x="44" y="145" text-anchor="start">1. Current log</text>
+    <text class="detail" x="44" y="174" text-anchor="start">Records 10–15 are retained. The next append will receive offset 16.</text>
+    <text class="detail" x="44" y="221" text-anchor="start">Offsets 0–9</text>
+    <text class="detail" x="44" y="247" text-anchor="start">unavailable</text>
+    <rect id="initial-offset-10" class="retained" x="210" y="196" width="96" height="64"/>
+    <text class="offset" x="258" y="222" text-anchor="middle">10</text>
+    <text class="cell-note" x="258" y="247" text-anchor="middle">record</text>
+    <rect id="initial-offset-11" class="retained" x="306" y="196" width="96" height="64"/>
+    <text class="offset" x="354" y="222" text-anchor="middle">11</text>
+    <text class="cell-note" x="354" y="247" text-anchor="middle">record</text>
+    <rect id="initial-offset-12" class="retained" x="402" y="196" width="96" height="64"/>
+    <text class="offset" x="450" y="222" text-anchor="middle">12</text>
+    <text class="cell-note" x="450" y="247" text-anchor="middle">record</text>
+    <rect id="initial-offset-13" class="retained" x="498" y="196" width="96" height="64"/>
+    <text class="offset" x="546" y="222" text-anchor="middle">13</text>
+    <text class="cell-note" x="546" y="247" text-anchor="middle">record</text>
+    <rect id="initial-offset-14" class="retained" x="594" y="196" width="96" height="64"/>
+    <text class="offset" x="642" y="222" text-anchor="middle">14</text>
+    <text class="cell-note" x="642" y="247" text-anchor="middle">record</text>
+    <rect id="initial-offset-15" class="retained" x="690" y="196" width="96" height="64"/>
+    <text class="offset" x="738" y="222" text-anchor="middle">15</text>
+    <text class="cell-note" x="738" y="247" text-anchor="middle">record</text>
+    <rect id="initial-offset-16" class="next" x="786" y="196" width="96" height="64"/>
+    <text class="offset" x="834" y="222" text-anchor="middle">16</text>
+    <text class="cell-note" x="834" y="247" text-anchor="middle">next</text>
+    <!-- Boundary strokes intentionally overlay cell borders; labels stay below the strokes. -->
+    <path id="initial-log-start" d="M210 188 V266" fill="none" stroke="#1677b8" stroke-width="3"/>
+    <path id="initial-log-end" d="M786 188 V266" fill="none" stroke="#a56a0b" stroke-width="3"/>
+    <text class="start-label" x="210" y="292" text-anchor="middle">Log start = 10</text>
+    <text class="end-label" x="786" y="292" text-anchor="middle">Log end = 16</text>
+  </g>
+  <!-- Transition shaft stops inside the head base; its tip meets the next panel border. -->
+  <path id="initial-transition-shaft" class="shaft" data-connector="true" d="M550 308 V348"/>
+  <path id="initial-transition-head" d="M544 346 L550 360 L556 346 Z" fill="#171717"/>
+  <!-- append: aligned columns preserve each record position across the three states. -->
+  <g id="append-state">
+    <rect class="panel" x="20" y="360" width="1060" height="198"/>
+    <text class="heading" x="44" y="395" text-anchor="start">2. Append record 16</text>
+    <text class="detail" x="44" y="424" text-anchor="start">The new record receives offset 16. Only the log end moves: 16 → 17.</text>
+    <text class="detail" x="44" y="471" text-anchor="start">Offsets 0–9</text>
+    <text class="detail" x="44" y="497" text-anchor="start">unavailable</text>
+    <rect id="append-offset-10" class="retained" x="210" y="446" width="96" height="64"/>
+    <text class="offset" x="258" y="472" text-anchor="middle">10</text>
+    <text class="cell-note" x="258" y="497" text-anchor="middle">record</text>
+    <rect id="append-offset-11" class="retained" x="306" y="446" width="96" height="64"/>
+    <text class="offset" x="354" y="472" text-anchor="middle">11</text>
+    <text class="cell-note" x="354" y="497" text-anchor="middle">record</text>
+    <rect id="append-offset-12" class="retained" x="402" y="446" width="96" height="64"/>
+    <text class="offset" x="450" y="472" text-anchor="middle">12</text>
+    <text class="cell-note" x="450" y="497" text-anchor="middle">record</text>
+    <rect id="append-offset-13" class="retained" x="498" y="446" width="96" height="64"/>
+    <text class="offset" x="546" y="472" text-anchor="middle">13</text>
+    <text class="cell-note" x="546" y="497" text-anchor="middle">record</text>
+    <rect id="append-offset-14" class="retained" x="594" y="446" width="96" height="64"/>
+    <text class="offset" x="642" y="472" text-anchor="middle">14</text>
+    <text class="cell-note" x="642" y="497" text-anchor="middle">record</text>
+    <rect id="append-offset-15" class="retained" x="690" y="446" width="96" height="64"/>
+    <text class="offset" x="738" y="472" text-anchor="middle">15</text>
+    <text class="cell-note" x="738" y="497" text-anchor="middle">record</text>
+    <rect id="append-offset-16" class="appended" x="786" y="446" width="96" height="64"/>
+    <text class="offset" x="834" y="472" text-anchor="middle">16</text>
+    <text class="cell-note" x="834" y="497" text-anchor="middle">new record</text>
+    <rect id="append-offset-17" class="next" x="882" y="446" width="96" height="64"/>
+    <text class="offset" x="930" y="472" text-anchor="middle">17</text>
+    <text class="cell-note" x="930" y="497" text-anchor="middle">next</text>
+    <!-- Boundary strokes intentionally overlay cell borders; labels stay below the strokes. -->
+    <path id="append-log-start" d="M210 438 V516" fill="none" stroke="#1677b8" stroke-width="3"/>
+    <path id="append-log-end" d="M882 438 V516" fill="none" stroke="#a56a0b" stroke-width="3"/>
+    <text class="start-label" x="210" y="542" text-anchor="middle">Log start = 10</text>
+    <text class="end-label" x="882" y="542" text-anchor="middle">Log end = 17</text>
+  </g>
+  <!-- Transition shaft stops inside the head base; its tip meets the next panel border. -->
+  <path id="append-transition-shaft" class="shaft" data-connector="true" d="M550 558 V598"/>
+  <path id="append-transition-head" d="M544 596 L550 610 L556 596 Z" fill="#171717"/>
+  <!-- delete: aligned columns preserve each record position across the three states. -->
+  <g id="delete-state">
+    <rect class="panel" x="20" y="610" width="1060" height="198"/>
+    <text class="heading" x="44" y="645" text-anchor="start">3. Delete records below offset 13</text>
+    <text class="detail" x="44" y="674" text-anchor="start">Offsets 10–12 become unavailable. Only the log start moves: 10 → 13.</text>
+    <text class="detail" x="44" y="721" text-anchor="start">Offsets 0–9</text>
+    <text class="detail" x="44" y="747" text-anchor="start">unavailable</text>
+    <rect id="delete-offset-10" class="gone" x="210" y="696" width="96" height="64"/>
+    <text class="offset" x="258" y="722" text-anchor="middle">10</text>
+    <text class="cell-note" x="258" y="747" text-anchor="middle">gone</text>
+    <rect id="delete-offset-11" class="gone" x="306" y="696" width="96" height="64"/>
+    <text class="offset" x="354" y="722" text-anchor="middle">11</text>
+    <text class="cell-note" x="354" y="747" text-anchor="middle">gone</text>
+    <rect id="delete-offset-12" class="gone" x="402" y="696" width="96" height="64"/>
+    <text class="offset" x="450" y="722" text-anchor="middle">12</text>
+    <text class="cell-note" x="450" y="747" text-anchor="middle">gone</text>
+    <rect id="delete-offset-13" class="retained" x="498" y="696" width="96" height="64"/>
+    <text class="offset" x="546" y="722" text-anchor="middle">13</text>
+    <text class="cell-note" x="546" y="747" text-anchor="middle">record</text>
+    <rect id="delete-offset-14" class="retained" x="594" y="696" width="96" height="64"/>
+    <text class="offset" x="642" y="722" text-anchor="middle">14</text>
+    <text class="cell-note" x="642" y="747" text-anchor="middle">record</text>
+    <rect id="delete-offset-15" class="retained" x="690" y="696" width="96" height="64"/>
+    <text class="offset" x="738" y="722" text-anchor="middle">15</text>
+    <text class="cell-note" x="738" y="747" text-anchor="middle">record</text>
+    <rect id="delete-offset-16" class="appended" x="786" y="696" width="96" height="64"/>
+    <text class="offset" x="834" y="722" text-anchor="middle">16</text>
+    <text class="cell-note" x="834" y="747" text-anchor="middle">record</text>
+    <rect id="delete-offset-17" class="next" x="882" y="696" width="96" height="64"/>
+    <text class="offset" x="930" y="722" text-anchor="middle">17</text>
+    <text class="cell-note" x="930" y="747" text-anchor="middle">next</text>
+    <!-- Boundary strokes intentionally overlay cell borders; labels stay below the strokes. -->
+    <path id="delete-log-start" d="M498 688 V766" fill="none" stroke="#1677b8" stroke-width="3"/>
+    <path id="delete-log-end" d="M882 688 V766" fill="none" stroke="#a56a0b" stroke-width="3"/>
+    <text class="start-label" x="498" y="792" text-anchor="middle">Log start = 13</text>
+    <text class="end-label" x="882" y="792" text-anchor="middle">Log end = 17</text>
+  </g>
+  <!-- Footer states the boundary rule and prevents confusing stored history with readable history. -->
+    <text class="detail" x="550" y="840" text-anchor="middle">Log start is inclusive. Log end is exclusive: the dashed next slot has no record.</text>
+    <text class="detail" x="550" y="869" text-anchor="middle">Surviving offsets stay fixed. Consumer reads also depend on replication and transaction state.</text>
+</svg>
