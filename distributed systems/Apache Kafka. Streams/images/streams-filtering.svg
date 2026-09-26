@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="550" viewBox="0 0 1100 550" role="img" aria-labelledby="title desc">
+<title id="title">Filter in the application, publish a derived topic</title><desc id="desc">One source partition contains order A at offset 40 for 5000 cents, B at 41 for 15000 cents, and C at 42 for 25000 cents. All three reach the Streams application. A predicate keeps amounts above 10000 cents. B and C are written to a new output partition at offsets 0 and 1. A produces no output record. All source records remain under the input topic cleanup policy.</desc>
+<!-- Shared typography and semantic colors follow streams-architecture.svg. -->
+<defs><style>
+text{font-family:Arial,Helvetica,sans-serif;fill:#171717;text-anchor:middle}
+.title{font-size:28px;font-weight:700}.strong{font-size:21px;font-weight:700}.label{font-size:20px}.detail{font-size:18px}
+.panel{fill:#fff;stroke:#888;stroke-width:1.6}.blue{fill:#eaf3ff;stroke:#888;stroke-width:1.6}.note{fill:#fff4da;stroke:#888;stroke-width:1.6}.green{fill:#dff4df;stroke:#888;stroke-width:1.6}
+.flow{fill:none;stroke:#171717;stroke-width:2}
+</style></defs>
+<rect width="1100" height="550" fill="#fff"/>
+<!-- Left-to-right data path; all input records reach application code. -->
+<text class="title" x="550" y="39" text-anchor="middle">Filter in the application, publish a derived topic</text>
+<text class="detail" x="550" y="73" text-anchor="middle">Example: one input partition; keep orders whose amount is above 10000 cents.</text>
+<rect id="input" class="blue" x="30" y="125" width="260" height="260" rx="6"/>
+<text class="strong" x="160" y="160" text-anchor="middle">Input: order-amounts</text>
+<text class="detail" x="160" y="191" text-anchor="middle">offset · key · cents</text>
+<text class="label" x="160" y="233" text-anchor="middle">40 · A · 5000</text>
+<text class="label" x="160" y="273" text-anchor="middle">41 · B · 15000</text>
+<text class="label" x="160" y="313" text-anchor="middle">42 · C · 25000</text>
+<text class="detail" x="160" y="358" text-anchor="middle">Stored on Kafka brokers</text>
+<rect id="filter" class="note" x="390" y="155" width="290" height="165" rx="6"/>
+<text class="strong" x="535" y="190" text-anchor="middle">Streams application</text>
+<text class="label" x="535" y="228" text-anchor="middle">filter: cents &gt; 10000</text>
+<text class="detail" x="535" y="260" text-anchor="middle">true: keep</text>
+<text class="detail" x="535" y="292" text-anchor="middle">false: no output</text>
+<rect id="output" class="green" x="780" y="125" width="290" height="260" rx="6"/>
+<text class="strong" x="925" y="160" text-anchor="middle">Output: large-orders</text>
+<text class="detail" x="925" y="191" text-anchor="middle">new offset · key · cents</text>
+<text class="label" x="925" y="241" text-anchor="middle">0 · B · 15000</text>
+<text class="label" x="925" y="286" text-anchor="middle">1 · C · 25000</text>
+<text class="detail" x="925" y="358" text-anchor="middle">Other consumers read here</text>
+<!-- Arrow shafts stop under triangle bases; tips meet panel edges without entering. -->
+<text class="detail" x="340" y="215" text-anchor="middle">A, B, C</text>
+<path id="all-input-flow" class="flow" data-connector="true" d="M290 245 H380"/>
+<path id="all-input-head" d="M378 239 L390 245 L378 251Z" fill="#171717"/>
+<text class="detail" x="730" y="215" text-anchor="middle">B, C</text>
+<path id="matching-output-flow" class="flow" data-connector="true" d="M680 245 H770"/>
+<path id="matching-output-head" d="M768 239 L780 245 L768 251Z" fill="#171717"/>
+<path id="unmatched-flow" class="flow" data-connector="true" d="M535 320 V392"/>
+<path id="unmatched-head" d="M529 390 L535 402 L541 390Z" fill="#171717"/>
+<rect id="no-output" class="panel" x="390" y="402" width="290" height="76" rx="6"/>
+<text class="strong" x="535" y="432" text-anchor="middle">A: no output record</text>
+<text class="detail" x="535" y="459" text-anchor="middle">Source record stays in Kafka</text>
+<!-- Footer makes the filtering boundary explicit. -->
+<text class="detail" x="550" y="519" text-anchor="middle">Filtering does not delete source records or reduce this application’s input traffic.</text>
+</svg>

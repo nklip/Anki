@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="635" viewBox="0 0 1100 635" role="img" aria-labelledby="title desc">
+  <title id="title">Kafka Streams runs inside your application</title>
+  <desc id="desc">Read left to right. A Kafka input topic supplies records to the Kafka Streams library in your JVM application. The application processes records and produces results to a Kafka output topic. Stateful processing can use a local state store; a Kafka changelog topic records changes and supports restoring that state. Input, output, and changelog topics are stored on Kafka brokers. The processing logic and local state run in the application.</desc>
+
+  <!-- Shared typography and semantic colors match the neighboring Kafka article. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #171717; text-anchor: middle; }
+      .title { font-size: 28px; font-weight: 700; }
+      .strong { font-size: 21px; font-weight: 700; }
+      .label { font-size: 20px; }
+      .detail { font-size: 18px; }
+      .broker { fill: #eaf3ff; stroke: #888; stroke-width: 1.6; }
+      .application { fill: #fff4da; stroke: #888; stroke-width: 1.6; }
+      .local { fill: #fff; stroke: #888; stroke-width: 1.6; }
+      .flow { fill: none; stroke: #171717; stroke-width: 2; }
+      .head { fill: #171717; }
+    </style>
+  </defs>
+
+  <!-- Canvas and central lesson. -->
+  <rect id="canvas" width="1100" height="635" fill="#fff"/>
+  <text class="title" x="550" y="38">Kafka Streams runs inside your application</text>
+  <text class="label" x="550" y="73">An Apache Kafka library: consume records, compute results, produce records.</text>
+
+  <!-- Kafka stores the input; it does not execute the application's processing code. -->
+  <g id="input-topic">
+    <rect class="broker" x="30" y="164" width="240" height="181" rx="6"/>
+    <text class="strong" x="150" y="198">Kafka input topic</text>
+    <text class="label" x="150" y="240">orders</text>
+    <text class="detail" x="150" y="275">Incoming order events</text>
+    <text class="detail" x="150" y="317">On Kafka brokers</text>
+  </g>
+
+  <!-- Amber boundary is the user's JVM process, separate from Kafka brokers. -->
+  <g id="streams-application">
+    <rect class="application" x="365" y="116" width="370" height="324" rx="6"/>
+    <text class="strong" x="550" y="151">Your JVM application</text>
+    <text class="label" x="550" y="182">Kafka Streams library</text>
+    <rect id="processing-node" class="local" x="391" y="214" width="318" height="104" rx="5"/>
+    <text class="strong" x="550" y="249">Process records</text>
+    <text class="label" x="550" y="284">Filter · join · count</text>
+    <rect id="local-state" class="local" x="407" y="348" width="286" height="68" rx="5"/>
+    <text class="strong" x="550" y="374">Optional local state</text>
+    <text class="detail" x="550" y="401">For example, running counts</text>
+  </g>
+
+  <!-- Kafka stores the results for other consumers and future replay. -->
+  <g id="output-topic">
+    <rect class="broker" x="830" y="164" width="240" height="181" rx="6"/>
+    <text class="strong" x="950" y="198">Kafka output topic</text>
+    <text class="label" x="950" y="240">order-counts</text>
+    <text class="detail" x="950" y="275">Computed results</text>
+    <text class="detail" x="950" y="317">On Kafka brokers</text>
+  </g>
+
+  <!-- Manual arrows: each shaft ends under its triangle base; tips meet boundaries. -->
+  <g id="record-flow">
+    <text class="detail" x="317" y="244">consume</text>
+    <path id="consume-flow" class="flow" data-connector="true" d="M270 267 H355"/>
+    <path id="consume-head" class="head" d="M353 261 L365 267 L353 273 Z"/>
+    <text class="detail" x="782" y="244">produce</text>
+    <path id="produce-flow" class="flow" data-connector="true" d="M735 267 H820"/>
+    <path id="produce-head" class="head" d="M818 261 L830 267 L818 273 Z"/>
+  </g>
+
+  <!-- A state changelog is broker storage; it supports recovery of application state. -->
+  <g id="state-recovery">
+    <rect id="changelog-topic" class="broker" x="365" y="498" width="370" height="82" rx="6"/>
+    <text class="strong" x="550" y="530">State changelog topic</text>
+    <text class="detail" x="550" y="559">Stored on Kafka brokers</text>
+    <!-- Shafts intentionally cross the outer application boundary; all text stays clear. -->
+    <path id="log-changes-flow" class="flow" data-connector="true" d="M475 416 V488"/>
+    <path id="log-changes-head" class="head" d="M469 486 L475 498 L481 486 Z"/>
+    <text class="detail" x="406" y="470">log changes</text>
+    <path id="restore-state-flow" class="flow" data-connector="true" d="M625 498 V426"/>
+    <path id="restore-state-head" class="head" d="M619 428 L625 416 L631 428 Z"/>
+    <text class="detail" x="674" y="470">restore</text>
+  </g>
+
+  <!-- Beginner-facing boundary summary; topic boxes may belong to the same cluster. -->
+  <text class="label" x="550" y="614">Brokers store records; your application runs the processing logic.</text>
+</svg>

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="562" viewBox="0 0 1100 562" role="img" aria-labelledby="title desc">
+<title id="title">Delayed output requires application state and a timer</title><desc id="desc">A custom Kafka Streams processor receives message A at 12:00 and persists a dueAt deadline of 12:10 in a state store backed by a changelog. A wall-clock callback at 12:09 keeps A pending. The next illustrated callback at 12:11 sees dueAt less than or equal to now, emits A to an output topic, and removes it from pending state. These sample checks demonstrate best-effort timing, not exact delivery at 12:10. Other readers can still see the original input record.</desc>
+<!-- Shared typography and semantic colors follow streams-architecture.svg. -->
+<defs><style>
+text{font-family:Arial,Helvetica,sans-serif;fill:#171717;text-anchor:middle}
+.title{font-size:28px;font-weight:700}.strong{font-size:21px;font-weight:700}.label{font-size:20px}.detail{font-size:18px}
+.panel{fill:#fff;stroke:#888;stroke-width:1.6}.blue{fill:#eaf3ff;stroke:#888;stroke-width:1.6}.note{fill:#fff4da;stroke:#888;stroke-width:1.6}.green{fill:#dff4df;stroke:#888;stroke-width:1.6}
+.flow{fill:none;stroke:#171717;stroke-width:2}
+</style></defs>
+<rect width="1100" height="562" fill="#fff"/>
+<!-- Three snapshots share the same pending-state and output positions. -->
+<text class="title" x="550" y="39" text-anchor="middle">Delayed output requires application state and a timer</text>
+<text class="detail" x="550" y="73" text-anchor="middle">Custom design: persist a deadline, then check it with a wall-clock callback.</text>
+<!-- receive: illustrative wall-clock time; outputs are separate Kafka records. -->
+<rect id="receive-panel" class="panel" x="30" y="111" width="320" height="351" rx="6"/>
+<text class="strong" x="190" y="149" text-anchor="middle">12:00 · receive A</text>
+<text class="label" x="190" y="184" text-anchor="middle">Set dueAt = 12:10</text>
+<rect id="receive-store" class="note" x="50" y="209" width="280" height="112" rx="6"/>
+<text class="strong" x="190" y="238" text-anchor="middle">Pending state</text>
+<text class="label" x="190" y="273" text-anchor="middle">A → dueAt 12:10</text>
+<text class="detail" x="190" y="304" text-anchor="middle">Persist pending record</text>
+<rect id="receive-result" class="blue" x="50" y="347" width="280" height="84" rx="6"/>
+<text class="strong" x="190" y="379" text-anchor="middle">Output: empty</text>
+<text class="detail" x="190" y="411" text-anchor="middle">No record forwarded</text>
+<!-- early: illustrative wall-clock time; outputs are separate Kafka records. -->
+<rect id="early-panel" class="panel" x="390" y="111" width="320" height="351" rx="6"/>
+<text class="strong" x="550" y="149" text-anchor="middle">12:09 · timer check</text>
+<text class="label" x="550" y="184" text-anchor="middle">12:09 &lt; 12:10</text>
+<rect id="early-store" class="note" x="410" y="209" width="280" height="112" rx="6"/>
+<text class="strong" x="550" y="238" text-anchor="middle">Pending state</text>
+<text class="label" x="550" y="273" text-anchor="middle">A → dueAt 12:10</text>
+<text class="detail" x="550" y="304" text-anchor="middle">Keep A pending</text>
+<rect id="early-result" class="blue" x="410" y="347" width="280" height="84" rx="6"/>
+<text class="strong" x="550" y="379" text-anchor="middle">Output: empty</text>
+<text class="detail" x="550" y="411" text-anchor="middle">Deadline not reached</text>
+<!-- due: illustrative wall-clock time; outputs are separate Kafka records. -->
+<rect id="due-panel" class="panel" x="750" y="111" width="320" height="351" rx="6"/>
+<text class="strong" x="910" y="149" text-anchor="middle">12:11 · timer check</text>
+<text class="label" x="910" y="184" text-anchor="middle">12:11 ≥ 12:10</text>
+<rect id="due-store" class="note" x="770" y="209" width="280" height="112" rx="6"/>
+<text class="strong" x="910" y="238" text-anchor="middle">Pending state</text>
+<text class="label" x="910" y="273" text-anchor="middle">A removed after emit</text>
+<text class="detail" x="910" y="304" text-anchor="middle">No pending A remains</text>
+<rect id="due-result" class="green" x="770" y="347" width="280" height="84" rx="6"/>
+<text class="strong" x="910" y="379" text-anchor="middle">Output topic: A</text>
+<text class="detail" x="910" y="411" text-anchor="middle">Available to consumers</text>
+<!-- Timeline connectors occupy the gaps between snapshots, clear of labels. -->
+<path id="time-to-early-flow" class="flow" data-connector="true" d="M350 286 H380"/>
+<path id="time-to-early-head" d="M378 280 L390 286 L378 292Z" fill="#171717"/>
+<path id="time-to-due-flow" class="flow" data-connector="true" d="M710 286 H740"/>
+<path id="time-to-due-head" d="M738 280 L750 286 L738 292Z" fill="#171717"/>
+<!-- The clock is best effort; persisted deadlines survive application state recovery. -->
+<text class="detail" x="550" y="500" text-anchor="middle">Use a state store backed by a Kafka changelog. Check all records with dueAt ≤ now.</text>
+<text class="detail" x="550" y="533" text-anchor="middle">Illustrative check times: pauses or downtime can delay output beyond the deadline.</text>
+</svg>
