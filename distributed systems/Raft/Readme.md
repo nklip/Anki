@@ -55,7 +55,11 @@ Majority arithmetic is why cluster sizes are conventionally odd:
 
 Four servers need three votes and still tolerate only one failure, so the fourth machine buys nothing. HashiCorp recommends "either 3 or 5 servers for production deployments" for exactly this reason.
 
-The basic algorithm needs two messages. **`RequestVote`** is sent by a candidate to collect votes, carrying the index and term of its last log entry. **`AppendEntries`** is sent by the leader to replicate entries; with no entries in it, it is a **heartbeat**. A third, `InstallSnapshot`, arrives with log compaction in §6. Before answering either, a server persists its current term, its vote, and its log — the write-before-acknowledge bargain the [write-ahead log](../Write-ahead%20log%20%28WAL%29/Readme.md) article describes for one database, now required on a majority of machines.
+Basic Raft uses two RPC types:
+* **`RequestVote`** is sent by a candidate to collect votes, carrying the index and term of its last log entry.
+* **`AppendEntries`** is sent by the leader to replicate entries; with no entries in it, it is a **heartbeat**.
+
+Before replying to either RPC, a server must durably store any changes to its current term, its recorded vote, or its log. This follows the `write-before-acknowledge` principle: after a crash, the server must remember votes it granted and log entries it acknowledged. For an entry from the leader’s current term, the leader can commit it once it is durably stored on a majority of servers, including itself.
 
 Every server is a **leader**, a **follower**, or a **candidate**. Followers are passive: they only respond to requests. Read the diagram as a state machine; each arrow label is the event that causes the change.
 
@@ -149,11 +153,23 @@ A brand-new server has an empty log, so it first joins as a **non-voting member*
 
 A *removed* server stops getting heartbeats, times out, and disrupts the cluster with higher terms. Raft's fix: **a server ignores a `RequestVote` that arrives within the minimum election timeout of hearing from a current leader**. The dissertation's **Pre-Vote** phase covers a related case, a partitioned server rejoining: a candidate first asks whether others *would* vote for it, and increments its term only if they would.
 
-The log also has to stop growing. **Snapshotting** writes the state machine's current state to disk and discards the entries that produced it. Read the two rows below as the same log before and after; entries 6 and 7 do not move.
+### Compacting the log with a snapshot
+
+The log also has to stop growing. **Snapshotting** saves the state produced by committed, applied entries to durable storage; the server can then discard those entries. Read the two rows below as the same log before and after; entries 6 and 7 do not move.
 
 ![raft-snapshot.svg](images/raft-snapshot.svg)
 
-The snapshot records the **last included index** and **term** because the consistency check for the next entry needs a previous index and term, and that entry is no longer in the log. It also stores the latest configuration. Each server snapshots **independently**, the one place a follower acts without its leader — justified, the paper argues, because consensus on those entries is already settled. A follower that falls behind the leader's snapshot receives it through `InstallSnapshot`.
+The snapshot records the **last included index** and **term** because the consistency check for the next entry needs a previous index and term, and that entry is no longer in the log. It also stores the latest configuration as of that index. Each server snapshots **independently** because consensus on those entries is already settled.
+
+### Catching up with `InstallSnapshot`
+
+**`InstallSnapshot` is a third RPC, added for snapshot-based log compaction.** The leader uses it when a follower needs entries that the leader has already discarded. While the missing entries are still available, ordinary `AppendEntries` is enough.
+
+Using the diagram above, suppose a follower has only entries **1–2**, while the leader has replaced entries **1–5** with a snapshot. The follower needs entries 3–5, but the leader can no longer send them.
+
+The leader sends `InstallSnapshot` with the saved state (`x = 0`, `y = 9`), the snapshot boundary (index **5**, term **3**), and the configuration at that boundary. The follower durably saves the snapshot and restores its state machine from it. It now has the result of applying entries 1–5 without replaying those commands.
+
+The leader then resumes `AppendEntries` from entry **6** onward. The snapshot's index and term let the follower check that these entries follow the restored state correctly. Entries after the snapshot are applied when committed, just as in normal replication.
 
 ## 7. Clients and reads
 
@@ -290,6 +306,8 @@ The algorithm does not change — each group runs its own elections, commit rule
 # Sources
 
 Primary sources checked on 2026-09-22; the paper and dissertation were read as text. The dissertation supersedes the paper on membership changes, read-only queries and Pre-Vote. The command sequence `x←3, y←1, y←9, x←2, x←0` follows the paper's Figure 6 and the old-term commit diagram simplifies its Figure 8; server names, terms and log contents are teaching examples.
+
+The snapshot-transfer explanation in §6 was checked against §7 and Figure 13 of the paper on 2026-09-26.
 
 - [In Search of an Understandable Consensus Algorithm (Extended Version) — Diego Ongaro and John Ousterhout](https://raft.github.io/raft.pdf)
 - [Consensus: Bridging Theory and Practice — Diego Ongaro's PhD dissertation](https://github.com/ongardie/dissertation)
