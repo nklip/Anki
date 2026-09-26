@@ -2,7 +2,11 @@
 
 <sub>[Back to Distributed Systems](../Readme.md#content)</sub>
 
-**Kafka Connect is a framework for continuously moving data between Apache Kafka and external systems through reusable connector plugins.** A **source** imports data into Kafka; a **sink** exports Kafka records to another system. Connect supplies the runtime, task management, and progress tracking; the plugin knows how to communicate with a particular database, storage service, or other endpoint.
+**Kafka Connect is a tool for scalably and reliably streaming data between Apache Kafka and other external systems through reusable connector plugins.**
+
+Kafka Connect can ingest entire databases or collect metrics from all your application servers into Kafka topics, making the data available for stream processing with low latency. An export job can deliver data from Kafka topics into secondary storage and query systems or into batch systems for offline analysis.
+
+A **source** imports data into Kafka; a **sink** exports Kafka records to another system. Connect supplies the runtime, task management, and progress tracking; the plugin knows how to communicate with a particular database, storage service, or other endpoint.
 
 This article expands the product-to-search example from [Apache Kafka, Pattern 3](../Apache%20Kafka/Readme.md#pattern-3-move-data-with-kafka-connect). Follow the components, data movement, recovery, and outbox pattern. Framework details use Kafka 4.3; Debezium examples use 3.6 documentation. Plugin capabilities vary by version.
 
