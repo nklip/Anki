@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="570" viewBox="0 0 1200 570" role="img" aria-labelledby="lambda-concurrency-controls-title lambda-concurrency-controls-desc">
+<title id="lambda-concurrency-controls-title">Reserved capacity and prepared environments are different</title>
+<desc id="lambda-concurrency-controls-desc">A Lambda function reserves 100 concurrency units. Forty are provisioned environments initialized in advance; up to sixty more can run on demand. The reserve caps concurrency and is not itself pre-initialization.</desc>
+<!-- Teaching sources: https://docs.aws.amazon.com/lambda/latest/dg/configuration-concurrency.html https://docs.aws.amazon.com/lambda/latest/dg/provisioned-concurrency.html
+     Official AWS icon package: https://d1.awsstatic.com/onedam/marketing-channels/website/public/shared/architecture-icon-release/Icon-package_07312026.5846e92413caa21490223536cc97f1269e44fa92.zip
+     Retrieved from https://aws.amazon.com/architecture/icons/ on 2026-09-26. -->
+<!-- Shared typography and self-contained official AWS symbols. -->
+<defs><style>
+text { font-family: Arial, Helvetica, sans-serif; fill:#162B42; }
+.title { font-size:29px; font-weight:700; }
+.heading { font-size:21px; font-weight:700; }
+.body { font-size:20px; }
+.small { font-size:18px; fill:#4B6074; }
+.number { font-size:36px; font-weight:700; }
+</style><!-- Official AWS artwork: Architecture-Service-Icons_07312026/Arch_Compute/48/Arch_AWS-Lambda_48.svg; original vector geometry and colors preserved. -->
+<symbol id="aws-lambda" viewBox="0 0 64 64"><g xmlns="http://www.w3.org/2000/svg" id="aws-lambda-Icon-Architecture-48-Arch_AWS-Lambda_48" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="aws-lambda-Icon-Architecture-BG-48-Compute" fill="#ED7100">
+            <rect id="aws-lambda-Rectangle" x="0" y="0" width="64" height="64" />
+        </g>
+        <path d="M22.6794094,52 L13.5740701,52 L23.8376189,30.41 L28.3997494,39.861 L22.6794094,52 Z M24.7269406,27.667 C24.5606285,27.321 24.2120702,27.103 23.8306478,27.103 L23.8276601,27.103 C23.4452418,27.104 23.0966835,27.325 22.9323632,27.672 L11.0973143,52.569 C10.9499239,52.879 10.9708374,53.243 11.1540795,53.534 C11.3353298,53.824 11.6540117,54 11.9955989,54 L23.309802,54 C23.695208,54 24.0447622,53.777 24.2100784,53.428 L30.4044577,40.284 C30.5329264,40.01 30.5319305,39.692 30.3994783,39.42 L24.7269406,27.667 Z M51.0082382,52 L41.985557,52 L26.9547262,19.578 C26.7914017,19.226 26.4388599,19 26.0524581,19 L20.1279625,19 L20.1349337,12 L31.8146251,12 L46.7747483,44.42 C46.9380728,44.774 47.2906147,45 47.6790082,45 L51.0082382,45 L51.0082382,52 Z M52.0041191,43 L48.3143803,43 L33.354257,10.58 C33.1909326,10.226 32.8383907,10 32.450993,10 L19.1400486,10 C18.5913182,10 18.1451636,10.447 18.1441677,10.999 L18.1362006,19.999 C18.1362006,20.265 18.2407681,20.519 18.4269979,20.707 C18.6142235,20.895 18.8671772,21 19.1310857,21 L25.4170861,21 L40.4479168,53.422 C40.6112413,53.774 40.9627873,54 41.350185,54 L52.0041191,54 C52.5548412,54 53,53.552 53,53 L53,44 C53,43.448 52.5548412,43 52.0041191,43 L52.0041191,43 Z" id="aws-lambda-AWS-Lambda_Icon_48_Squid" fill="#FFFFFF" />
+    </g>
+</symbol></defs>
+<!-- White canvas; hand-drawn arrow shafts end inside their triangular heads. -->
+<rect width="1200" height="570" fill="#FFFFFF"/>
+<text x="32" y="43" class="title" text-anchor="start">Reserved capacity and prepared environments are different</text>
+<text x="32" y="75" class="body" text-anchor="start">Example: reserved concurrency = 100; provisioned concurrency = 40.</text>
+<!-- The outer boundary is a concurrency cap, not a pool of prewarmed servers. -->
+<rect x="24" y="99" width="1152" height="340" rx="12" fill="#F4F7FB" stroke="#CBD7E2"/>
+<use href="#aws-lambda" x="48" y="120" width="56" height="56"/>
+<text x="122" y="144" class="heading" text-anchor="start">One Lambda function</text>
+<text x="122" y="174" class="body" text-anchor="start">Maximum: 100 concurrent invocations across its versions</text>
+<rect x="48" y="208" width="432" height="112" rx="12" fill="#E9F5EC" stroke="#72AA80"/>
+<text x="72" y="255" class="number" text-anchor="start">40</text>
+<text x="155" y="244" class="heading" text-anchor="start">Provisioned</text>
+<text x="155" y="274" class="small" text-anchor="start">Prepared before requests arrive</text>
+<rect x="494" y="208" width="658" height="112" rx="12" fill="#FFF4E8" stroke="#E7BB84"/>
+<text x="518" y="255" class="number" text-anchor="start">60</text>
+<text x="605" y="244" class="heading" text-anchor="start">Remaining capacity</text>
+<text x="605" y="274" class="small" text-anchor="start">Can use on-demand environments; cold starts are possible</text>
+<text x="48" y="356" class="body" text-anchor="start">100 reserved units are unavailable to other functions, even when idle.</text>
+<text x="48" y="391" class="small" text-anchor="start">Requests beyond the function’s limit are throttled; retry behavior depends on the source.</text>
+<!-- Comparison notes explain what each setting buys. -->
+<text x="32" y="480" class="heading" text-anchor="start">Reserved concurrency</text>
+<text x="32" y="510" class="body" text-anchor="start">Protects capacity and sets a cap.</text>
+<text x="32" y="540" class="small" text-anchor="start">No extra reservation charge; no pre-initialization.</text>
+<text x="624" y="480" class="heading" text-anchor="start">Provisioned concurrency</text>
+<text x="624" y="510" class="body" text-anchor="start">Prepares a version or alias to reduce startup delay.</text>
+<text x="624" y="540" class="small" text-anchor="start">Extra charges apply, including while prepared capacity is idle.</text>
+</svg>

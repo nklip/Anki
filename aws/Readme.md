@@ -16,5 +16,6 @@ Study articles about Amazon Web Services (AWS), organized by service and concept
 - [Amazon SNS](Amazon%20SNS/Readme.md)
 - [Amazon SQS](Amazon%20SQS/Readme.md)
 - [AWS Databases](AWS%20Databases/Readme.md)
+- [AWS Lambda](AWS%20Lambda/Readme.md)
 - [AWS Regions and Zones](AWS%20Regions%20and%20Zones/Readme.md)
 - [AWS Storage Gateway](AWS%20Storage%20Gateway/Readme.md)
