@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="2275.689223" viewBox="0 0 798 908" role="img" aria-labelledby="title desc">
+  <title id="title">Search autocomplete query service</title>
+  <desc id="desc">Four numbered steps show requests from a user's web browser or mobile app reaching a load balancer, then API servers, then a trie cache. A final arrow connects the trie cache to the trie database.</desc>
+  <!-- Preserve the PNG's 798:908 aspect ratio and original layout at 2000 pixels wide.
+       Every icon is editable vector geometry; labels remain real text. -->
+  <defs>
+    <!-- The triangular tip projects 3 units past the shaft endpoint, hiding the shaft join. -->
+    <marker id="request-arrow" markerWidth="17" markerHeight="17" viewBox="0 0 17 17" refX="14" refY="8.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L17 8.5 L0 17 Z" fill="#306ba3"/>
+    </marker>
+    <marker id="cache-arrow" markerWidth="18" markerHeight="18" viewBox="0 0 18 18" refX="15" refY="9" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L18 9 L0 18 L5 9 Z" fill="#306ba3"/>
+    </marker>
+    <style>
+      .panel{fill:#fff;stroke:#31b1d3;stroke-width:2.8}
+      .request-flow{fill:none;stroke:#306ba3;stroke-width:2.8;marker-end:url(#request-arrow)}
+      .cache-flow{fill:none;stroke:#306ba3;stroke-width:2.8;marker-end:url(#cache-arrow)}
+      .label{font-family:Arial,Helvetica,sans-serif;font-size:24px;fill:#111}
+      .client-label{font-family:Arial,Helvetica,sans-serif;font-size:21px;fill:#111;text-anchor:middle}
+      .step-ring{fill:#fff;stroke:#111;stroke-width:1.4}
+      .step-label{font-family:Arial,Helvetica,sans-serif;font-size:18px;fill:#111;text-anchor:middle}
+      .cache-label{font-family:Arial,Helvetica,sans-serif;font-size:18px;fill:#fff}
+    </style>
+  </defs>
+  <rect width="798" height="908" fill="#fff"/>
+
+  <!-- User group and the two client icons. -->
+  <rect id="user-panel" class="panel" x="121.5" y="32" width="367" height="158.5" rx="24"/>
+  <text class="label" x="142" y="70.5">User</text>
+  <g id="web-browser-icon">
+    <path d="M219.5 116 V87 Q219.5 82.5 224 82.5 H270.5 Q275 82.5 275 87 V116" fill="none" stroke="#080808" stroke-width="3"/>
+    <rect x="214.5" y="120" width="65" height="5.5" rx="2.75" fill="#080808"/>
+    <rect x="240" y="121" width="14" height="3" rx="1.5" fill="#fff"/>
+  </g>
+  <text class="client-label" x="262" y="156">Web browser</text>
+  <g id="mobile-app-icon" fill="none" stroke="#3d3d3d" stroke-width="3">
+    <rect x="379.5" y="71" width="39.5" height="59" rx="3.5"/>
+    <path d="M380 79 H418.5 M380 121 H418.5"/>
+    <path d="M396 75.5 H402 M398.5 125.5 H400" stroke-width="1.8" stroke-linecap="round"/>
+  </g>
+  <text class="client-label" x="414" y="157">Mobile app</text>
+
+  <!-- Step 1: separate client arrows meet the load balancer with distinct tips. -->
+  <path id="browser-to-balancer" class="request-flow" d="M213 192 L298.4147 280.3432"/>
+  <path id="mobile-to-balancer" class="request-flow" d="M396 192 L305.1499 280.4079"/>
+  <circle id="step-one" class="step-ring" cx="378" cy="243.7" r="15"/>
+  <text class="step-label" x="378" y="250">1</text>
+
+  <!-- Load-balancer body and white distribution glyph. -->
+  <path id="load-balancer-icon" d="M273 282.5 H330.5 Q334.8 282.5 335.3 287 L342.4 349.8 Q343 355.5 337.5 355.5 H265.8 Q260 355.5 260.8 349.8 L268.9 287 Q269.4 282.5 273 282.5 Z" fill="#2e73b8"/>
+  <g id="distribution-glyph" stroke="#fff" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M300.5 296 V346.5 M300.5 310 L285.7 330 M300.5 310 L315.5 330"/>
+    <path d="M285.7 319.5 V330 H295 M306 330 H315.5 V319.5 M295 339.5 L300.5 346.5 L306 339.5"/>
+  </g>
+  <ellipse cx="300.5" cy="296" rx="4.1" ry="5.2" fill="#fff"/>
+  <text class="label" x="363.5" y="340">Load balancer</text>
+
+  <!-- Step 2: the downward arrow ends just above the API group's dashed border. -->
+  <path id="balancer-to-api" class="request-flow" d="M299.5 356 L300.5 434.6"/>
+  <circle id="step-two" class="step-ring" cx="328" cy="394.5" r="15"/>
+  <text class="step-label" x="328" y="401">2</text>
+  <rect id="api-panel" class="panel" x="221.5" y="439" width="158" height="164" rx="24" stroke-dasharray="9 8.5"/>
+
+  <!-- Five server shapes form a compact green cluster inside the API group. -->
+  <g id="api-server-icon" fill="#7fba42">
+    <path d="M267 454 H297.5 Q300 454 300 456.5 V477 H270 Q267 477 264.5 479 V456.5 Q264.5 454 267 454 Z"/>
+    <path d="M307.5 454 H338 Q340.5 454 340.5 456.5 V477 H310 Q307 477 304.5 479 V457 Q304.5 454 307.5 454 Z"/>
+    <path d="M247.5 481 H277 Q280 481 280 484 V551.5 H244.5 V484 Q244.5 481 247.5 481 Z"/>
+    <path d="M287.5 481 H317 Q320 481 320 484 V551.5 H284.5 V484 Q284.5 481 287.5 481 Z"/>
+    <path d="M328 481 H357.5 Q360.5 481 360.5 484 V551.5 H324.5 V484 Q324.5 481 328 481 Z"/>
+  </g>
+  <g id="server-slots" fill="none" stroke="#fff" stroke-width="2.6">
+    <path d="M270.5 464 H294 M311 464 H334.5"/>
+    <path d="M250.5 491.5 H273.5 M290.5 491.5 H313.5 M331 491.5 H354"/>
+    <path d="M250.5 533.5 H273.5 M250.5 542 H273.5 M290.5 533.5 H313.5 M290.5 542 H313.5 M331 533.5 H354 M331 542 H354"/>
+  </g>
+  <text class="label" x="246" y="590">API servers</text>
+
+  <!-- Step 3: API servers access the trie cache. -->
+  <path id="api-to-cache" class="cache-flow" d="M300.5 605 V711.6"/>
+  <circle id="step-three" class="step-ring" cx="329.5" cy="671" r="15"/>
+  <text class="step-label" x="329.5" y="677.5">3</text>
+  <rect id="trie-cache-panel" class="panel" x="218" y="716" width="165" height="172.5" rx="24"/>
+
+  <!-- Cache tiles overlap in reading order; their darker lower edges retain the reference depth.
+       Condense each real-text label to 70% width to match the icon lettering and preserve padding. -->
+  <g id="cache-tiles">
+    <rect x="234" y="724" width="60.5" height="69.5" rx="9" fill="#245778"/>
+    <rect x="234" y="721.5" width="60.5" height="69.5" rx="9" fill="#2e73b8"/>
+    <text class="cache-label" x="0" y="0" transform="translate(241 744) scale(0.7 1)">CACHE</text>
+    <rect x="268.7" y="751.5" width="60.5" height="69.5" rx="9" fill="#245778"/>
+    <rect x="268.7" y="749" width="60.5" height="69.5" rx="9" fill="#2e73b8"/>
+    <text class="cache-label" x="0" y="0" transform="translate(276 772) scale(0.7 1)">CACHE</text>
+    <rect x="312.5" y="782" width="60.5" height="69.5" rx="9" fill="#245778"/>
+    <rect x="312.5" y="779.5" width="60.5" height="69.5" rx="9" fill="#2e73b8"/>
+    <text class="cache-label" x="0" y="0" transform="translate(320 802) scale(0.7 1)">CACHE</text>
+  </g>
+  <text class="label" x="252" y="877">Trie Cache</text>
+
+  <!-- Step 4: cache-to-database lookup; the arrowhead meets the DB panel's outside edge. -->
+  <path id="cache-to-database" class="cache-flow" d="M384.4 802.5 H554.6"/>
+  <circle id="step-four" class="step-ring" cx="474.5" cy="777" r="15"/>
+  <text class="step-label" x="474.5" y="783.5">4</text>
+  <rect id="trie-database-panel" class="panel" x="559" y="719.5" width="158.5" height="165.5" rx="24"/>
+
+  <!-- Three cylinders overlap from rear left to front right, with white separation rims. -->
+  <g id="database-cylinders" fill="#2e73b8" stroke="#fff" stroke-width="3.5" stroke-linejoin="round">
+    <path d="M580 742 H636.5 V791 Q636.5 801.5 608.25 801.5 Q580 801.5 580 791 Z"/>
+    <ellipse cx="608.25" cy="742" rx="28.25" ry="9"/>
+    <path d="M609.5 758.5 H666 V807.5 Q666 818 637.75 818 Q609.5 818 609.5 807.5 Z"/>
+    <ellipse cx="637.75" cy="758.5" rx="28.25" ry="9"/>
+    <path d="M640 775 H696.5 V824 Q696.5 834.5 668.25 834.5 Q640 834.5 640 824 Z"/>
+    <ellipse cx="668.25" cy="775" rx="28.25" ry="9"/>
+  </g>
+  <text class="label" x="600" y="872.5">Trie DB</text>
+</svg>

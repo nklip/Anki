@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1261.7" height="815.3" viewBox="0 0 814 526" role="img" aria-labelledby="title desc">
+  <title id="title">Find the top two autocomplete suggestions in a trie</title>
+  <desc id="desc">Step 1 follows the blue path from the root through t to the prefix tr. Step 2 explores the dashed green subtree, finding tree with frequency 10, true with frequency 35, and try with frequency 29. Step 3 returns the two most frequent matches: true, then try.</desc>
+  <!-- The PNG's layout is enlarged uniformly by 1.55. Nodes display at 128 by 64 pixels
+       and labels at 23 pixels, matching trie-structure.svg. Keep the original aspect ratio. -->
+  <defs>
+    <!-- Arrow tips project 1.5 units beyond the shaft endpoint; paths stop short accordingly. -->
+    <marker id="arrow-black" markerWidth="8" markerHeight="8" viewBox="0 0 8 8" refX="6.5" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L8 4 L0 8 L2.5 4 Z" fill="#111"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="11" markerHeight="10" viewBox="0 0 11 10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L11 5 L0 10 L3.5 5 Z" fill="#0800cd"/>
+    </marker>
+    <marker id="arrow-result" markerWidth="8" markerHeight="8" viewBox="0 0 8 8" refX="6.5" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L8 4 L0 8 L2.5 4 Z" fill="#a50b61"/>
+    </marker>
+    <style>
+      .node{fill:#fff;stroke:#111;stroke-width:1.096774}
+      .prefix{fill:#fff;stroke:#0800cd;stroke-width:1.096774}
+      .match{fill:#fff;stroke:#65aaa2;stroke-width:2.903226}
+      .edge{fill:none;stroke:#111;stroke-width:0.85;marker-end:url(#arrow-black)}
+      .search-path{fill:none;stroke:#0800cd;stroke-width:1.65;marker-end:url(#arrow-blue)}
+      .label{font-family:Arial,Helvetica,sans-serif;fill:#111;font-size:14.83871px;text-anchor:middle}
+      .step{font-family:Arial,Helvetica,sans-serif;font-size:14px;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="814" height="526" fill="#fff"/>
+
+  <!-- Step 2 boundary sits behind the tree; incoming branches intentionally cross its top. -->
+  <rect id="matching-subtree" x="63" y="283" width="350" height="161" rx="27" fill="none" stroke="#65aaa2" stroke-width="2" stroke-dasharray="6.5 6"/>
+
+  <!-- Root and its annotation. -->
+  <rect id="root-node" class="node" x="423.21" y="15.35" width="82.580645" height="41.290323" rx="6.451613"/>
+  <path id="root-annotation-arrow" class="edge" d="M567.5 36 H507.85"/>
+  <text class="label" x="588" y="41.5">root</text>
+
+  <!-- Step 1 follows root → t → tr; ordinary branches retain their black arrows. -->
+  <path id="search-root-to-t" class="search-path" d="M464.5 56.64 L322.3866 106.6379"/>
+  <path id="root-to-w" class="edge" d="M464.5 56.64 L617.5747 106.8342"/>
+  <rect id="prefix-t" class="node" x="279.21" y="107.85" width="82.580645" height="41.290323" rx="6.451613"/>
+  <text class="label" x="320.5" y="134.2">t</text>
+  <rect id="prefix-w" class="node" x="577.71" y="107.85" width="82.580645" height="41.290323" rx="6.451613"/>
+  <text class="label" x="619" y="134.2">w</text>
+  <path id="search-t-to-tr" class="search-path" d="M320.5 149.14 L239.7939 188.9174"/>
+  <path id="t-to-to" class="edge" d="M320.5 149.14 L468.0529 189.4067"/>
+  <path id="w-to-wi" class="edge" d="M619 149.14 V188.3016"/>
+  <rect id="selected-prefix-tr" class="prefix" x="196.71" y="190.35" width="82.580645" height="41.290323" rx="6.451613"/>
+  <text class="label" x="238" y="216.7" style="fill:#2420a2">tr</text>
+  <rect id="prefix-to" class="node" x="428.21" y="190.35" width="82.580645" height="41.290323" rx="6.451613"/>
+  <text class="label" x="469.5" y="216.7">to</text>
+  <rect id="prefix-wi" class="node" x="577.71" y="190.35" width="82.580645" height="41.290323" rx="6.451613"/>
+  <text class="label" x="619" y="216.7">wi</text>
+
+  <!-- Expand the tr subtree while preserving the unselected to and wi branches. -->
+  <path id="tr-to-tre" class="edge" d="M238 231.64 L115.7997 302.0527"/>
+  <path id="tr-to-tru" class="edge" d="M238 231.64 V301.3016"/>
+  <path id="tr-to-try" class="edge" d="M238 231.64 L350.2246 301.1089"/>
+  <path id="to-to-toy" class="edge" d="M469.5 231.64 V301.3016"/>
+  <path id="wi-to-wis" class="edge" d="M619 231.64 V301.3016"/>
+  <path id="wi-to-win" class="edge" d="M619 231.64 L729.2356 301.9946"/>
+  <rect id="prefix-tre" class="node" x="73.21" y="303.35" width="82.580645" height="41.290323" rx="6.451613"/>
+  <text class="label" x="114.5" y="329.7">tre</text>
+  <rect id="prefix-tru" class="node" x="196.71" y="303.35" width="82.580645" height="41.290323" rx="6.451613"/>
+  <text class="label" x="238" y="329.7">tru</text>
+  <rect id="match-try" class="match" x="310.21" y="303.35" width="82.580645" height="41.290323" rx="6.451613"/>
+  <text class="label" x="351.5" y="329.7">try: 29</text>
+  <rect id="word-toy" class="node" x="428.21" y="303.35" width="82.580645" height="41.290323" rx="6.451613"/>
+  <text class="label" x="469.5" y="329.7">toy: 14</text>
+  <rect id="prefix-wis" class="node" x="577.71" y="303.35" width="82.580645" height="41.290323" rx="6.451613"/>
+  <text class="label" x="619" y="329.7">wis</text>
+  <rect id="word-win" class="node" x="689.21" y="303.35" width="82.580645" height="41.290323" rx="6.451613"/>
+  <text class="label" x="730.5" y="329.7">win: 50</text>
+
+  <!-- Last-level words; green outlines identify the candidate completions under tr. -->
+  <path id="tre-to-tree" class="edge" d="M114.5 344.64 V382.9"/>
+  <path id="tru-to-true" class="edge" d="M238 344.64 V382.9"/>
+  <path id="wis-to-wish" class="edge" d="M619 344.64 V383.8016"/>
+  <rect id="match-tree" class="match" x="73.21" y="385.85" width="82.580645" height="41.290323" rx="6.451613"/>
+  <text class="label" x="114.5" y="412.2">tree: 10</text>
+  <rect id="match-true" class="match" x="196.71" y="385.85" width="82.580645" height="41.290323" rx="6.451613"/>
+  <text class="label" x="238" y="412.2">true: 35</text>
+  <rect id="word-wish" class="node" x="577.71" y="385.85" width="82.580645" height="41.290323" rx="6.451613"/>
+  <text class="label" x="619" y="412.2">wish: 25</text>
+
+  <!-- Numbered callouts preserve the PNG's sequence without crossing any labels. -->
+  <g id="step-one" stroke="#0800cd" fill="#fff" stroke-width="1.8">
+    <circle cx="392.5" cy="66.8" r="10.2"/>
+    <circle cx="268.8" cy="159.5" r="10.2"/>
+  </g>
+  <g class="step" fill="#2420a2">
+    <text x="392.5" y="71.8">1</text>
+    <text x="268.8" y="164.5">1</text>
+  </g>
+  <circle id="step-two" cx="382.2" cy="417" r="10.2" fill="#fff" stroke="#65aaa2" stroke-width="1.8"/>
+  <text class="step" x="382.2" y="422" fill="#65aaa2">2</text>
+
+  <!-- Step 3 ranks the candidates by frequency; the arrow stops above the result text. -->
+  <path id="ranking-result-arrow" d="M238 445 V482.5" fill="none" stroke="#a50b61" stroke-width="0.9" marker-end="url(#arrow-result)"/>
+  <circle id="step-three" cx="145.5" cy="495.3" r="10.2" fill="#fff" stroke="#a50b61" stroke-width="1.8"/>
+  <text class="step" x="145.5" y="500.3" fill="#a50b61">3</text>
+  <text class="label" x="163.5" y="501" style="fill:#a50b61;text-anchor:start">Top 2: [true: 35, try: 29]</text>
+</svg>

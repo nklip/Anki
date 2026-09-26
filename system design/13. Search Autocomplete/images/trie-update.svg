@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="723.157895" viewBox="0 0 950 458" role="img" aria-labelledby="title desc">
+  <title id="title">Updating a trie and its cached autocomplete suggestions</title>
+  <desc id="desc">The left trie stores beer with frequency 10. The right trie updates beer to frequency 30, shown in bold, and reorders the cached suggestions at bee, be, and b. Best remains at frequency 35, bee at 20, and be at 15.</desc>
+  <!-- The reference layout and 950:458 aspect ratio are preserved at 1500 pixels wide. -->
+  <defs>
+    <!-- The tip projects 1.5 units beyond the shaft endpoint; each path stops short of its target. -->
+    <marker id="trie-arrow" markerWidth="8" markerHeight="8" viewBox="0 0 8 8" refX="6.5" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L8 4 L0 8 L2.5 4 Z" fill="#111"/>
+    </marker>
+    <!-- Small breaks keep dashed cache borders clear of arrowheads; shafts may cross the borders. -->
+    <mask id="cache-head-clearance" maskUnits="userSpaceOnUse" x="0" y="0" width="950" height="458">
+      <rect width="950" height="458" fill="#fff"/>
+      <g fill="#000">
+        <rect x="355" y="110" width="11.5" height="12"/>
+        <rect x="355" y="199" width="11.5" height="12"/>
+        <rect x="355" y="315" width="11.5" height="12"/>
+        <rect x="184" y="315" width="15" height="12"/>
+        <rect x="816.75" y="110" width="11.5" height="12"/>
+        <rect x="816.75" y="199" width="11.5" height="12"/>
+        <rect x="816.75" y="315" width="11.5" height="12"/>
+        <rect x="645.75" y="315" width="15" height="12"/>
+      </g>
+    </mask>
+    <style>
+      .node{fill:#fff;stroke:#111;stroke-width:1.1}
+      .terminal{fill:#fff;stroke:#65aaa2;stroke-width:1.1}
+      .cache{fill:none;stroke:#65aaa2;stroke-width:2;stroke-dasharray:6.5 6;mask:url(#cache-head-clearance)}
+      .edge{fill:none;stroke:#111;stroke-width:0.9;marker-end:url(#trie-arrow)}
+      .label{font-family:Arial,Helvetica,sans-serif;font-size:14px;fill:#111;text-anchor:middle}
+      .root-label{font-family:Arial,Helvetica,sans-serif;font-size:15px;fill:#111}
+      .updated{font-weight:700}
+    </style>
+  </defs>
+  <rect width="950" height="458" fill="#fff"/>
+
+  <!-- Before the update: dashed groups attach cached suggestions to their prefix nodes. -->
+  <g id="before-update">
+    <rect id="before-b-cache" class="cache" x="119.5" y="116" width="294" height="53.5" rx="9"/>
+    <text class="label" x="217.5" y="138.5">[best: 35, bee: 20,</text>
+    <text class="label" x="220" y="157">be: 15, beer: 10]</text>
+    <rect id="before-be-cache" class="cache" x="135.5" y="204.5" width="278" height="53.5" rx="9"/>
+    <text class="label" x="222" y="229">[best: 35, bee: 20,</text>
+    <text class="label" x="224.5" y="246.5">be: 15, beer: 10]</text>
+    <rect id="before-bee-cache" class="cache" x="7" y="319.5" width="231" height="54" rx="9"/>
+    <text class="label" x="80" y="352">[bee: 20, beer, 10]</text>
+    <rect id="before-bes-cache" class="cache" x="249" y="319.5" width="167" height="54" rx="9"/>
+    <text class="label" x="282.5" y="352">[best: 35]</text>
+
+    <!-- Hierarchy arrows cross the non-text cache boundaries to reach the prefix nodes. -->
+    <path id="before-root-annotation" class="edge" d="M452.5 42.5 H405.05"/>
+    <path id="before-root-to-b" class="edge" d="M360.75 63 V118.95"/>
+    <path id="before-b-to-be" class="edge" d="M360.75 163 V207.45"/>
+    <path id="before-be-to-bee" class="edge" d="M360.75 251.5 L186.8822 324.3674"/>
+    <path id="before-be-to-bes" class="edge" d="M360.75 251.5 V323.45"/>
+    <path id="before-bee-to-beer" class="edge" d="M185.5 367.5 V407.45"/>
+    <path id="before-bes-to-best" class="edge" d="M360.75 367.5 V407.45"/>
+
+    <!-- Prefix and terminal nodes are painted after the connecting shafts. -->
+    <rect id="before-root" class="node" x="318.5" y="21.5" width="84.5" height="41.5" rx="6"/>
+    <text class="root-label" x="460" y="48.5">root</text>
+    <rect id="before-b" class="node" x="318.5" y="121" width="84.5" height="42" rx="6"/>
+    <text class="label" x="360.75" y="147.5">b</text>
+    <rect id="before-be" class="node" x="318.5" y="209.5" width="84.5" height="42" rx="6"/>
+    <text class="label" x="360.75" y="237">be: 15</text>
+    <rect id="before-bee" class="terminal" x="143.5" y="325.5" width="84" height="42" rx="6"/>
+    <text class="label" x="185.5" y="352">bee: 20</text>
+    <rect id="before-bes" class="node" x="318.5" y="325.5" width="84.5" height="42" rx="6"/>
+    <text class="label" x="360.75" y="352">bes</text>
+    <rect id="before-beer" class="terminal" x="143.5" y="409.5" width="84" height="42" rx="6"/>
+    <text class="label" x="185.5" y="436.5">beer: 10</text>
+    <rect id="before-best" class="terminal" x="318.5" y="409.5" width="84.5" height="42" rx="6"/>
+    <text class="label" x="360.75" y="436.5">best: 35</text>
+  </g>
+
+  <!-- After the update: bold beer entries show the changed frequency and cache order. -->
+  <g id="after-update">
+    <rect id="after-b-cache" class="cache" x="581.25" y="116" width="294" height="53.5" rx="9"/>
+    <text class="label" x="679.5" y="138.5">[best: 35, <tspan class="updated">beer: 30</tspan>,</text>
+    <text class="label" x="681.5" y="156">bee: 20, be: 15]</text>
+    <rect id="after-be-cache" class="cache" x="597.25" y="204.5" width="278" height="53.5" rx="9"/>
+    <text class="label" x="684" y="229">[best: 35, <tspan class="updated">beer: 30</tspan>,</text>
+    <text class="label" x="686" y="246.5">bee: 20, be: 15]</text>
+    <!-- The right edge leaves 10 units of padding around the bee node. -->
+    <rect id="after-bee-cache" class="cache" x="458" y="319.5" width="241.5" height="54" rx="9"/>
+    <text class="label" x="541.5" y="352">[<tspan class="updated">beer, 30</tspan>, bee: 20]</text>
+    <rect id="after-bes-cache" class="cache" x="710.75" y="319.5" width="167" height="54" rx="9"/>
+    <text class="label" x="744.25" y="352">[best: 35]</text>
+
+    <!-- The same trie topology remains; only beer's frequency and cached rankings change. -->
+    <path id="after-root-annotation" class="edge" d="M898.5 42.5 H866.8"/>
+    <path id="after-root-to-b" class="edge" d="M822.5 63 V118.95"/>
+    <path id="after-b-to-be" class="edge" d="M822.5 163 V207.45"/>
+    <path id="after-be-to-bee" class="edge" d="M822.5 251.5 L648.6322 324.3674"/>
+    <path id="after-be-to-bes" class="edge" d="M822.5 251.5 V323.45"/>
+    <path id="after-bee-to-beer" class="edge" d="M647.25 367.5 V407.45"/>
+    <path id="after-bes-to-best" class="edge" d="M822.5 367.5 V407.45"/>
+
+    <!-- Updated terminal labels remain editable text, including their bold emphasis. -->
+    <rect id="after-root" class="node" x="780.25" y="21.5" width="84.5" height="41.5" rx="6"/>
+    <text class="root-label" x="905" y="48.5">root</text>
+    <rect id="after-b" class="node" x="780.25" y="121" width="84.5" height="42" rx="6"/>
+    <text class="label" x="822.5" y="147.5">b</text>
+    <rect id="after-be" class="node" x="780.25" y="209.5" width="84.5" height="42" rx="6"/>
+    <text class="label" x="822.5" y="237">be: 15</text>
+    <rect id="after-bee" class="terminal" x="605.25" y="325.5" width="84" height="42" rx="6"/>
+    <text class="label" x="647.25" y="352">bee: 20</text>
+    <rect id="after-bes" class="node" x="780.25" y="325.5" width="84.5" height="42" rx="6"/>
+    <text class="label" x="822.5" y="352">bes</text>
+    <rect id="after-beer" class="terminal" x="605.25" y="409.5" width="84" height="42" rx="6"/>
+    <text class="label updated" x="647.25" y="436.5">beer: 30</text>
+    <rect id="after-best" class="terminal" x="780.25" y="409.5" width="84.5" height="42" rx="6"/>
+    <text class="label" x="822.5" y="436.5">best: 35</text>
+  </g>
+</svg>
