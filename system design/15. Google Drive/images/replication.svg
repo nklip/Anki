@@ -1,31 +1,70 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1300" height="506" viewBox="0 0 1300 506" role="img" aria-labelledby="title desc">
   <title id="title">Cloud-storage replication</title>
-  <desc id="desc">A bucket can replicate to three copies within one region or across from Region A to Region B.</desc>
-  <!-- Reusable bucket and replication-arrow symbols. -->
+  <desc id="desc">Same-region replication copies a bucket to three destinations inside Region A. Cross-region replication copies a bucket from Region A to three destinations in Region B.</desc>
+  <!-- Shared bucket geometry, inset arrow marker, and reference-matched typography. -->
   <defs>
-    <marker id="arrow-blue" markerWidth="13" markerHeight="13" viewBox="0 0 13 13" refX="12" refY="6.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L13 6.5L0 13Z" fill="#117fb5"/></marker>
-    <symbol id="bucket" viewBox="0 0 82 88"><g fill="#fff" stroke="#087fb6" stroke-width="3.5" stroke-linejoin="round"><ellipse cx="38" cy="17" rx="33" ry="12"/><path d="M5 17L13 72Q38 84 64 72L71 17"/><path d="M41 34L78 50" fill="none" stroke-linecap="round"/><circle cx="38" cy="32" r="3" fill="#087fb6" stroke="none"/></g></symbol>
-    <style>.region{fill:#fff;stroke:#0ab1d0;stroke-width:3.5;stroke-dasharray:10 9}.label{font-family:Arial,Helvetica,sans-serif;fill:#111}.rep{font-size:21px;text-anchor:middle}.region-name{font-size:28px;text-anchor:middle}.caption{font-size:27px;text-anchor:middle}</style>
+    <!-- The six-unit nose projection hides the shaft; path endpoints stop six units before the visible tips. -->
+    <marker id="arrow-blue" markerWidth="18" markerHeight="18" viewBox="0 0 18 18" refX="12" refY="9" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0L18 9L0 18L5 9Z" fill="#23769f"/>
+    </marker>
+    <!-- Paint the body before the complete rim; the curved handle returns to the right side. -->
+    <symbol id="bucket" viewBox="0 0 82 88">
+      <g fill="#fdfefe" stroke="#087aab" stroke-width="2.75" stroke-linejoin="round">
+        <path d="M5.5 15L13 70Q13.5 78 39 78Q64.5 78 65 70L72.5 15Z"/>
+        <ellipse cx="39" cy="15" rx="33.5" ry="10"/>
+        <path d="M41 36C53 42 72 51 76 48C80 46 71 41 71 41" fill="none" stroke-linecap="round"/>
+        <circle cx="39" cy="35" r="2.2" stroke-width="2"/>
+      </g>
+    </symbol>
+    <style>
+      .region{fill:none;stroke:#1db2c7;stroke-width:2.5;stroke-dasharray:9 10}
+      .flow{fill:none;stroke:#23769f;stroke-width:3;stroke-linejoin:round}
+      .label{font-family:Arial,Helvetica,sans-serif;fill:#111;text-anchor:middle}
+      .rep{font-size:21px}
+      .bucket-label{font-size:22px}
+      .region-name{font-size:26px}
+      .caption{font-size:24px}
+    </style>
   </defs>
-  <rect width="1300" height="506" fill="#fff"/>
-  <!-- Same-region replication: one source and three destination copies. -->
-  <rect class="region" x="9" y="34" width="574" height="401" rx="58"/>
-  <use href="#bucket" x="98" y="173" width="82" height="88"/><text class="label" x="139" y="288" font-size="24" text-anchor="middle">Bucket</text>
-  <path d="M181 237H257V119H425" fill="none" stroke="#117fb5" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
-  <path d="M181 237H425" fill="none" stroke="#117fb5" stroke-width="3" marker-end="url(#arrow-blue)"/>
-  <path d="M181 237H257V334H425" fill="none" stroke="#117fb5" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
-  <text class="label rep" x="351" y="101">replication</text><text class="label rep" x="351" y="219">replication</text><text class="label rep" x="351" y="316">replication</text>
-  <use href="#bucket" x="468" y="77" width="82" height="88"/><use href="#bucket" x="468" y="185" width="82" height="88"/><use href="#bucket" x="468" y="282" width="82" height="88"/>
-  <text class="label region-name" x="296" y="414">Region A</text><text class="label caption" x="296" y="490">Same-region replication</text>
-  <!-- Cross-region replication: arrows terminate at the Region B boundary. -->
-  <rect class="region" x="687" y="34" width="171" height="401" rx="28"/>
-  <use href="#bucket" x="731" y="173" width="82" height="88"/><text class="label" x="772" y="288" font-size="24" text-anchor="middle">Bucket</text>
-  <text class="label region-name" x="772" y="414">Region A</text>
-  <rect class="region" x="1104" y="34" width="172" height="401" rx="28"/>
-  <path d="M858 237H938V119H1097" fill="none" stroke="#117fb5" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
-  <path d="M858 237H1097" fill="none" stroke="#117fb5" stroke-width="3" marker-end="url(#arrow-blue)"/>
-  <path d="M858 237H938V334H1097" fill="none" stroke="#117fb5" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow-blue)"/>
-  <text class="label rep" x="1018" y="101">replication</text><text class="label rep" x="1018" y="219">replication</text><text class="label rep" x="1018" y="316">replication</text>
-  <use href="#bucket" x="1148" y="77" width="82" height="88"/><use href="#bucket" x="1148" y="185" width="82" height="88"/><use href="#bucket" x="1148" y="282" width="82" height="88"/>
-  <text class="label region-name" x="1190" y="414">Region B</text><text class="label caption" x="980" y="490">Cross-region replication</text>
+  <rect width="1300" height="506" fill="#fdfefe"/>
+  <!-- Same-region replication: rounded branches stay inside one region. -->
+  <g id="same-region">
+    <rect class="region" x="9" y="34" width="572" height="401" rx="59"/>
+    <use href="#bucket" x="98" y="173" width="82" height="88"/>
+    <text class="label bucket-label" x="138" y="286">Bucket</text>
+    <g class="flow" marker-end="url(#arrow-blue)">
+      <path id="same-upper-flow" d="M257 237V134Q257 119 272 119H419"/>
+      <path id="same-middle-flow" d="M179 237H419"/>
+      <path id="same-lower-flow" d="M257 237V320Q257 335 272 335H419"/>
+    </g>
+    <text class="label rep" x="348" y="111">replication</text>
+    <text class="label rep" x="341" y="229">replication</text>
+    <text class="label rep" x="346" y="326">replication</text>
+    <use href="#bucket" x="470" y="84" width="82" height="88"/>
+    <use href="#bucket" x="470" y="192" width="82" height="88"/>
+    <use href="#bucket" x="470" y="285" width="82" height="88"/>
+    <text class="label region-name" x="294" y="413">Region A</text>
+    <text class="label caption" x="254" y="489">Same-region replication</text>
+  </g>
+  <!-- Cross-region shafts leave Region A; six-unit marker projections stop just before Region B's border. -->
+  <g id="cross-region">
+    <rect class="region" x="688" y="34" width="170" height="401" rx="27"/>
+    <rect class="region" x="1105" y="34" width="170" height="401" rx="28"/>
+    <use href="#bucket" x="732" y="173" width="82" height="88"/>
+    <text class="label bucket-label" x="773" y="286">Bucket</text>
+    <g class="flow" marker-end="url(#arrow-blue)">
+      <path id="cross-upper-flow" d="M937 237V134Q937 119 952 119H1097"/>
+      <path id="cross-middle-flow" d="M858 237H1097"/>
+      <path id="cross-lower-flow" d="M937 237V320Q937 335 952 335H1097"/>
+    </g>
+    <text class="label rep" x="1028" y="111">replication</text>
+    <text class="label rep" x="1020" y="229">replication</text>
+    <text class="label rep" x="1026" y="326">replication</text>
+    <use href="#bucket" x="1149" y="84" width="82" height="88"/>
+    <use href="#bucket" x="1149" y="192" width="82" height="88"/>
+    <use href="#bucket" x="1149" y="285" width="82" height="88"/>
+    <text class="label region-name" x="770" y="413">Region A</text>
+    <text class="label region-name" x="1187" y="413">Region B</text>
+    <text class="label caption" x="972" y="489">Cross-region replication</text>
+  </g>
 </svg>
