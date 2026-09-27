@@ -1,0 +1,212 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1462" height="1600" viewBox="0 0 1462 1600" role="img" aria-labelledby="title desc">
+<title id="title">How Change Data Capture Works</title>
+<desc id="desc">Native SVG recreation of ByteByteGo's PNG, from How Pinterest Transfers Hundreds of Terabytes of Data With CDC, 21 October 2025. Read the numbered flow from user and database to source connector, broker, sink connectors, and destination stores. The connector-to-log arrow represents reading the log. Original artwork remains credited to ByteByteGo.</desc>
+<!-- Common typography and shadow treatment; all artwork is native SVG. -->
+<defs><style>text{font-family:Arial,Helvetica,sans-serif;fill:#000}</style>
+<filter id="soft-shadow" x="-25%" y="-25%" width="160%" height="160%"><feDropShadow dx="3" dy="4" stdDeviation="3" flood-opacity="0.35"/></filter>
+</defs>
+<!-- Original transparent margin and white canvas. -->
+<rect x="15.5" y="15.5" width="1430" height="1570" fill="#fff" stroke="#000" stroke-width="3"/>
+<rect x="475" y="16" width="544" height="72" rx="9" fill="#4c0099"/>
+
+<text x="747" y="63" font-size="34" textLength="490" lengthAdjust="spacingAndGlyphs" text-anchor="middle" fill="#fff" style="fill:#fff">How Change Data Capture Works</text>
+<!-- Database, user, and the write that enters the log. -->
+<path d="M566.5 186 L566.5 432 C566.5 514 903.5 514 903.5 432 L903.5 186" stroke="#000" stroke-width="2.3" fill="#ccffe6" />
+<ellipse cx="735" cy="186" rx="168.5" ry="61.5" fill="#ccffe6" stroke="#000" stroke-width="2.3"/>
+<text x="202" y="249" font-size="28" text-anchor="middle">User</text>
+<g id="user-icon" transform="translate(155 262)" stroke="#1c2d3b" stroke-width="3.2" fill="#fff" filter="url(#soft-shadow)"><circle cx="47" cy="25" r="23"/><path d="M7 91 C12 37 80 37 88 91 Z"/></g>
+<text x="929" y="319" font-size="28" text-anchor="start">Database</text>
+<g filter="url(#soft-shadow)">
+<rect x="660" y="258" width="162" height="81" rx="12" fill="#ff9933" stroke="#000" stroke-width="2.3"/>
+<rect x="649" y="268" width="162" height="81" rx="12" fill="#ff9933" stroke="#000" stroke-width="2.3"/>
+</g>
+<text x="730" y="319" font-size="30" text-anchor="middle">Tables</text>
+<path d="M245 309 H638" stroke="#000" stroke-width="2.3" fill="none" data-connector="true"/>
+<path d="M633 301 L649 309 L633 317 L638 309 Z" fill="#000"/>
+<circle cx="404" cy="273" r="28" fill="#ff8000" stroke="#000" stroke-width="2.3" filter="url(#soft-shadow)"/>
+<text x="404" y="283" font-size="32" text-anchor="middle">1</text>
+<path d="M823 298 C867 298 867 324 867 340 C867 405 605 354 605 405 C605 426 613 433 630 433" stroke="#000" stroke-width="2.3" fill="none" data-connector="true"/>
+<path d="M625 425 L641 433 L625 441 L630 433 Z" fill="#000"/>
+<rect x="642" y="417" width="186" height="32" rx="0" fill="#fff" stroke="#000" stroke-width="2.3"/>
+<path d="M673 417 V449" stroke="#000" stroke-width="2.3" fill="none" />
+<path d="M704 417 V449" stroke="#000" stroke-width="2.3" fill="none" />
+<path d="M735 417 V449" stroke="#000" stroke-width="2.3" fill="none" />
+<path d="M766 417 V449" stroke="#000" stroke-width="2.3" fill="none" />
+<path d="M797 417 V449" stroke="#000" stroke-width="2.3" fill="none" />
+<text x="735" y="474" font-size="20" text-anchor="middle">Transaction Log</text>
+<!-- CDC grouping and labeled components, matching the reference. -->
+<rect x="195" y="526" width="1091" height="729" fill="#fff7e6" stroke="#000" stroke-width="2.3" stroke-dasharray="8 8"/>
+<rect x="206" y="537" width="234" height="50" rx="25" fill="#000"/>
+<text x="323" y="573" font-size="34" text-anchor="middle" fill="#fff" style="fill:#fff">CDC Solution</text>
+<path d="M735 572 C735 462 884 552 884 473 C884 446 868 433 839 433" stroke="#000" stroke-width="2.3" fill="none" data-connector="true"/>
+<path d="M844 425 L828 433 L844 441 L839 433 Z" fill="#000"/>
+<circle cx="932" cy="480" r="28" fill="#ff8000" stroke="#000" stroke-width="2.3" filter="url(#soft-shadow)"/>
+<text x="932" y="490" font-size="32" text-anchor="middle">2</text>
+<rect x="597" y="572" width="276" height="139" rx="0" fill="#ccffff" stroke="#000" stroke-width="2.3"/>
+<text x="669" y="622" font-size="25" text-anchor="middle">Debezium</text>
+<text x="669" y="650" font-size="25" text-anchor="middle">Source</text>
+<text x="669" y="678" font-size="25" text-anchor="middle">Connector</text>
+<g id="debezium-icon" transform="translate(762 596)"><defs><linearGradient id="debezium-gradient" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#80d300"/><stop offset="1" stop-color="#00badf"/></linearGradient></defs><rect x="4" y="3" width="87" height="87" fill="#fff" filter="url(#soft-shadow)"/><g xmlns="http://www.w3.org/2000/svg" transform="translate(0.000000,99.000000) scale(0.100000,-0.100000)" fill="url(#debezium-gradient)" stroke="none">
+<path d="M80 851 c0 -74 2 -83 28 -111 23 -26 36 -32 87 -37 107 -10 165 -69 165 -167 0 -36 6 -52 28 -77 23 -25 38 -32 87 -38 33 -4 74 -15 92 -26 41 -24 73 -82 73 -134 0 -56 22 -96 61 -110 18 -6 61 -11 95 -11 l64 0 0 81 c0 76 -2 82 -29 110 -24 23 -38 29 -74 29 -98 0 -177 79 -177 177 0 36 -6 50 -29 74 -23 23 -38 29 -73 29 -24 0 -61 9 -84 19 -58 26 -85 70 -93 147 -6 52 -13 70 -34 92 -24 24 -36 27 -107 30 l-80 4 0 -81z" />
+<path d="M360 847 c0 -83 14 -111 66 -133 18 -8 51 -14 72 -14 78 0 142 -73 142 -162 0 -38 6 -54 29 -80 28 -31 33 -33 110 -36 l81 -4 0 80 c0 71 -3 84 -25 110 -21 25 -34 30 -84 35 -36 3 -75 14 -95 26 -42 26 -76 92 -76 148 0 30 -7 50 -26 72 -25 30 -28 31 -110 31 l-84 0 0 -73z" />
+<path d="M640 847 c0 -83 14 -111 66 -133 18 -8 61 -14 94 -14 l60 0 0 79 c0 71 -3 83 -26 110 -25 30 -28 31 -110 31 l-84 0 0 -73z" />
+<path d="M80 565 c0 -67 3 -78 28 -106 23 -25 38 -32 87 -38 33 -4 74 -15 92 -26 41 -24 73 -82 73 -134 0 -47 21 -95 45 -105 9 -3 52 -6 96 -6 l79 0 0 76 c0 70 -2 78 -29 105 -23 23 -38 29 -73 29 -24 0 -61 9 -84 19 -58 27 -85 69 -94 148 -5 55 -11 70 -34 89 -24 21 -38 24 -107 24 l-79 0 0 -75z" />
+<path d="M80 281 c0 -69 3 -81 25 -105 22 -24 30 -26 110 -26 l85 0 0 76 c0 70 -2 78 -29 105 -28 27 -34 29 -110 29 l-81 0 0 -79z" />
+</g>
+</g>
+<path d="M596 641 C383 641 232 663 232 764 C232 866 331 888 474 888" stroke="#000" stroke-width="2.3" fill="none" data-connector="true"/>
+<path d="M468 880 L484 888 L468 896 L474 888 Z" fill="#000"/>
+<circle cx="278" cy="767" r="28" fill="#ff8000" stroke="#000" stroke-width="2.3" filter="url(#soft-shadow)"/>
+<text x="278" y="777" font-size="32" text-anchor="middle">3</text>
+<rect x="484" y="774" width="511" height="228" rx="0" fill="#ffffcc" stroke="#000" stroke-width="2.3"/>
+<text x="503" y="811" font-size="30" text-anchor="start">Broker</text>
+<rect x="527" y="838" width="349" height="48" rx="0" fill="#ff6666" stroke="#000" stroke-width="2.3"/>
+<path d="M577 838 V886" stroke="#000" stroke-width="2.3" fill="none" />
+<path d="M627 838 V886" stroke="#000" stroke-width="2.3" fill="none" />
+<path d="M677 838 V886" stroke="#000" stroke-width="2.3" fill="none" />
+<path d="M727 838 V886" stroke="#000" stroke-width="2.3" fill="none" />
+<path d="M777 838 V886" stroke="#000" stroke-width="2.3" fill="none" />
+<path d="M827 838 V886" stroke="#000" stroke-width="2.3" fill="none" />
+<rect x="527" y="918" width="399" height="48" rx="0" fill="#ff6666" stroke="#000" stroke-width="2.3"/>
+<path d="M577 918 V966" stroke="#000" stroke-width="2.3" fill="none" />
+<path d="M627 918 V966" stroke="#000" stroke-width="2.3" fill="none" />
+<path d="M677 918 V966" stroke="#000" stroke-width="2.3" fill="none" />
+<path d="M727 918 V966" stroke="#000" stroke-width="2.3" fill="none" />
+<path d="M777 918 V966" stroke="#000" stroke-width="2.3" fill="none" />
+<path d="M827 918 V966" stroke="#000" stroke-width="2.3" fill="none" />
+<path d="M877 918 V966" stroke="#000" stroke-width="2.3" fill="none" />
+<path d="M996 888 C1150 888 1245 924 1245 1017 C1245 1125 1112 1146 896 1146" stroke="#000" stroke-width="2.3" fill="none" data-connector="true"/>
+<path d="M902 1138 L886 1146 L902 1154 L896 1146 Z" fill="#000"/>
+<circle cx="1195" cy="1018" r="28" fill="#ff8000" stroke="#000" stroke-width="2.3" filter="url(#soft-shadow)"/>
+<text x="1195" y="1028" font-size="32" text-anchor="middle">4</text>
+<rect x="609" y="1076" width="276" height="140" rx="0" fill="#ff99cc" stroke="#000" stroke-width="2.3"/>
+<text x="689" y="1142" font-size="25" text-anchor="middle">Sink</text>
+<text x="689" y="1171" font-size="25" text-anchor="middle">Connectors</text>
+<!-- gear icon: color-separated vector contours from the PNG reference. -->
+<g id="gear-icon" transform="translate(775 1093)" filter="url(#soft-shadow)">
+<g xmlns="http://www.w3.org/2000/svg" transform="translate(0.000000,110.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="#000000" stroke-width="4">
+<path d="M413 1030 c-18 -11 -35 -31 -39 -45 -9 -35 -111 -95 -163 -95 -49 0 -84 -28 -116 -91 -28 -55 -32 -106 -10 -135 20 -27 20 -157 -1 -189 -23 -35 -20 -77 11 -140 30 -63 72 -95 122 -95 38 0 153 -64 153 -86 0 -8 12 -26 26 -39 24 -22 36 -25 105 -25 69 0 81 3 108 26 17 14 31 32 31 40 0 7 26 30 58 50 40 27 67 37 90 35 44 -2 83 22 116 74 20 32 27 57 28 93 0 28 -5 58 -10 68 -16 31 -19 159 -3 177 20 24 15 109 -8 155 -29 57 -65 82 -117 82 -57 0 -140 50 -159 97 -10 22 -26 39 -49 48 -51 22 -134 19 -173 -5z m159 -57 c10 -9 18 -21 18 -28 0 -17 38 -49 103 -85 40 -22 66 -31 85 -27 37 7 58 -7 82 -53 24 -47 26 -83 5 -100 -11 -10 -15 -35 -15 -110 0 -75 4 -100 15 -110 18 -15 20 -62 4 -93 -24 -47 -51 -67 -91 -67 -54 0 -188 -83 -188 -116 0 -22 -43 -44 -85 -44 -46 0 -70 14 -88 49 -18 36 -144 110 -188 111 -71 0 -124 101 -85 163 19 31 20 185 1 214 -22 33 -18 74 10 116 14 20 29 37 33 38 4 1 25 2 47 3 52 3 165 71 184 112 8 16 19 32 25 36 21 15 109 9 128 -9z" />
+<path d="M399 772 c-42 -21 -62 -40 -87 -82 -31 -51 -33 -60 -30 -131 2 -62 8 -83 31 -117 40 -61 97 -95 167 -100 70 -5 120 10 166 51 103 90 107 246 9 341 -73 72 -166 85 -256 38z m178 -49 c45 -21 81 -76 89 -135 5 -37 2 -56 -16 -93 -31 -64 -80 -95 -149 -95 -100 0 -166 67 -166 171 0 45 6 64 28 97 16 22 43 47 60 56 42 20 110 20 154 -1z" />
+<path d="M451 716 c-47 -17 -89 -70 -97 -122 -8 -57 21 -123 68 -152 52 -32 127 -30 168 4 41 35 60 74 60 126 0 60 -28 108 -80 135 -48 26 -69 27 -119 9z m119 -81 c57 -57 14 -159 -66 -159 -29 0 -43 7 -65 32 -84 94 42 216 131 127z" />
+</g>
+
+</g>
+<!-- Fan-out to three derived stores; tips meet the icon silhouettes. -->
+<path d="M678 1217 C678 1346 337 1228 337 1346" stroke="#000" stroke-width="2.3" fill="none" data-connector="true"/>
+<path d="M329 1341 L337 1358 L345 1341 L337 1346 Z" fill="#000"/>
+<path d="M747 1217 V1321" stroke="#000" stroke-width="2.3" fill="none" data-connector="true"/>
+<path d="M739 1315 L747 1332 L755 1315 L747 1321 Z" fill="#000"/>
+<path d="M816 1217 C816 1325 1106 1233 1106 1325" stroke="#000" stroke-width="2.3" fill="none" data-connector="true"/>
+<path d="M1098 1320 L1106 1337 L1114 1320 L1106 1325 Z" fill="#000"/>
+<circle cx="792" cy="1292" r="28" fill="#ff8000" stroke="#000" stroke-width="2.3" filter="url(#soft-shadow)"/>
+<text x="792" y="1302" font-size="32" text-anchor="middle">5</text>
+<!-- redis icon: color-separated vector contours from the PNG reference. -->
+<g id="redis-icon" transform="translate(259 1354)" filter="url(#soft-shadow)">
+<g xmlns="http://www.w3.org/2000/svg" transform="translate(0.000000,126.000000) scale(0.100000,-0.100000)" fill="#ba141a" stroke="#ba141a" stroke-width="4">
+<path d="M649 1190 c-9 -5 -77 -34 -150 -64 -353 -142 -415 -169 -434 -187 -17 -17 -18 -21 -5 -33 8 -8 153 -71 322 -140 267 -110 315 -126 363 -126 48 0 91 14 288 94 353 144 389 160 401 179 14 22 -5 38 -78 66 -28 11 -96 38 -151 61 -381 159 -385 160 -465 160 -41 0 -82 -5 -91 -10z m62 -75 c34 -12 54 -13 97 -5 31 5 57 8 59 6 2 -2 -8 -11 -22 -20 -20 -13 -24 -20 -15 -31 6 -7 22 -16 35 -19 49 -12 26 -26 -33 -20 -53 6 -60 4 -90 -21 -18 -15 -34 -26 -35 -24 -2 2 -8 16 -15 32 -10 22 -18 27 -49 28 -21 0 -46 4 -56 8 -14 5 -7 10 28 19 38 10 45 16 45 37 0 14 2 25 4 25 2 0 23 -7 47 -15z m457 -150 c34 -15 62 -31 62 -35 0 -9 -171 -84 -191 -82 -8 0 -50 17 -92 36 -42 20 -82 36 -89 36 -24 0 7 19 97 59 99 44 77 46 213 -14z m-594 17 c40 -23 54 -47 40 -69 -19 -31 -67 -47 -149 -51 -68 -3 -87 0 -125 20 -51 26 -62 54 -30 83 49 45 199 54 264 17z m244 -208 c-23 -38 -43 -71 -45 -73 -1 -2 -57 21 -125 50 l-123 54 80 12 c85 12 248 29 253 27 2 -1 -16 -32 -40 -70z" />
+<path d="M83 720 c-66 -40 -66 -40 279 -181 324 -132 322 -132 403 -127 53 3 93 14 165 45 52 22 154 64 225 93 265 108 280 115 283 137 2 16 -5 26 -28 38 -35 18 -34 18 -235 -65 -316 -132 -370 -151 -425 -152 -60 0 -73 5 -434 151 -109 45 -199 81 -200 81 0 0 -16 -9 -33 -20z" />
+<path d="M85 490 c-42 -23 -43 -45 -3 -66 42 -22 470 -197 563 -231 51 -18 83 -24 120 -21 34 3 147 45 350 128 165 67 306 127 313 132 20 17 14 37 -20 58 -29 17 -34 18 -67 4 -20 -9 -97 -40 -171 -71 -74 -30 -184 -75 -245 -100 -90 -37 -122 -46 -175 -47 -66 -1 -120 18 -483 170 -150 63 -149 63 -182 44z" />
+</g>
+
+<g xmlns="http://www.w3.org/2000/svg" transform="translate(0.000000,126.000000) scale(0.100000,-0.100000)" fill="#93171b" stroke="#93171b" stroke-width="4">
+<path d="M1045 930 l0 -88 55 25 c30 14 72 32 93 40 20 8 37 19 37 23 0 6 -38 25 -155 75 l-30 13 0 -88z" />
+<path d="M855 930 c-3 -5 -1 -10 4 -10 6 0 11 5 11 10 0 6 -2 10 -4 10 -3 0 -8 -4 -11 -10z" />
+<path d="M50 846 c0 -76 2 -79 122 -128 477 -195 519 -210 576 -210 58 1 88 12 417 147 50 21 131 54 180 74 l90 36 3 73 3 73 -23 -15 c-13 -8 -151 -67 -308 -132 -390 -160 -331 -160 -725 1 -170 69 -315 131 -322 137 -10 8 -13 -3 -13 -56z" />
+<path d="M930 890 c8 -5 20 -10 25 -10 6 0 3 5 -5 10 -8 5 -19 10 -25 10 -5 0 -3 -5 5 -10z" />
+<path d="M1000 860 c8 -5 20 -10 25 -10 6 0 3 5 -5 10 -8 5 -19 10 -25 10 -5 0 -3 -5 5 -10z" />
+<path d="M50 612 c0 -44 5 -63 18 -75 17 -16 59 -34 437 -188 163 -67 186 -73 245 -73 53 1 85 10 175 47 61 25 178 73 260 107 83 34 168 68 189 76 61 22 66 30 66 99 l0 63 -77 -32 c-43 -19 -136 -57 -208 -86 -71 -29 -173 -71 -225 -93 -119 -51 -205 -60 -290 -29 -76 28 -496 200 -544 223 -22 10 -41 19 -43 19 -2 0 -3 -26 -3 -58z" />
+<path d="M50 382 c0 -32 6 -65 13 -74 12 -17 56 -36 414 -182 277 -113 271 -113 528 -6 55 23 156 64 225 92 69 28 144 59 168 70 l42 20 0 70 c0 55 -3 68 -12 60 -7 -5 -148 -65 -313 -132 -203 -83 -316 -125 -350 -128 -37 -3 -69 3 -120 21 -93 34 -521 209 -562 231 l-33 17 0 -59z" />
+</g>
+
+<g xmlns="http://www.w3.org/2000/svg" transform="translate(0.000000,126.000000) scale(0.100000,-0.100000)" fill="#76191c" stroke="#76191c" stroke-width="4">
+<path d="M950 975 c-41 -18 -76 -38 -78 -43 -2 -7 74 -44 166 -79 9 -4 12 15 12 76 0 59 -3 81 -12 80 -7 0 -47 -16 -88 -34z" />
+</g>
+
+</g>
+<!-- warehouse icon: color-separated vector contours from the PNG reference. -->
+<g id="warehouse-icon" transform="translate(671 1330)" filter="url(#soft-shadow)">
+<g xmlns="http://www.w3.org/2000/svg" transform="translate(0.000000,156.000000) scale(0.100000,-0.100000)" fill="#3e3ef4" stroke="#3e3ef4" stroke-width="4">
+<path d="M815 1420 c3 -5 8 -10 11 -10 3 0 2 5 -1 10 -3 6 -8 10 -11 10 -3 0 -2 -4 1 -10z" />
+<path d="M625 1380 c-3 -6 1 -7 9 -4 18 7 21 14 7 14 -6 0 -13 -4 -16 -10z" />
+<path d="M905 1370 c3 -5 8 -10 11 -10 3 0 2 5 -1 10 -3 6 -8 10 -11 10 -3 0 -2 -4 1 -10z" />
+<path d="M1165 1300 c3 -5 8 -10 11 -10 3 0 2 5 -1 10 -3 6 -8 10 -11 10 -3 0 -2 -4 1 -10z" />
+<path d="M683 1203 c48 -2 125 -2 170 0 45 1 6 3 -88 3 -93 0 -130 -2 -82 -3z" />
+<path d="M1205 1200 c3 -5 8 -10 11 -10 3 0 2 5 -1 10 -3 6 -8 10 -11 10 -3 0 -2 -4 1 -10z" />
+<path d="M194 1134 c-18 -14 -18 -15 4 -4 12 6 22 13 22 15 0 8 -5 6 -26 -11z" />
+<path d="M1038 1097 c-3 -19 -2 -25 4 -19 6 6 8 18 6 28 -3 14 -5 12 -10 -9z" />
+<path d="M124 1094 c-18 -14 -18 -15 4 -4 12 6 22 13 22 15 0 8 -5 6 -26 -11z" />
+<path d="M1483 1035 c0 -44 2 -61 4 -37 2 23 2 59 0 80 -2 20 -4 1 -4 -43z" />
+<path d="M1413 1040 c0 -25 2 -35 4 -22 2 12 2 32 0 45 -2 12 -4 2 -4 -23z" />
+<path d="M1305 570 c0 -228 1 -322 2 -208 2 115 2 301 0 415 -1 115 -2 21 -2 -207z" />
+<path d="M1214 938 c-4 -7 -3 -8 4 -4 12 7 16 16 8 16 -3 0 -8 -5 -12 -12z" />
+<path d="M1464 938 c-4 -7 -3 -8 4 -4 12 7 16 16 8 16 -3 0 -8 -5 -12 -12z" />
+<path d="M225 545 c0 -220 1 -309 2 -197 2 112 2 292 0 400 -1 108 -2 17 -2 -203z" />
+<path d="M155 540 c0 -217 1 -306 2 -197 2 108 2 286 0 395 -1 108 -2 19 -2 -198z" />
+<path d="M1093 875 c0 -33 2 -45 4 -27 2 18 2 45 0 60 -2 15 -4 0 -4 -33z" />
+<path d="M644 831 c-102 -17 -204 -62 -236 -105 -30 -41 -31 -69 -6 -106 45 -66 121 -100 268 -121 169 -24 386 27 446 106 60 80 4 156 -151 204 -77 24 -239 35 -321 22z" />
+<path d="M380 461 c0 -50 4 -61 29 -85 15 -15 61 -39 102 -53 60 -21 99 -27 204 -31 151 -5 251 8 332 43 86 38 93 48 93 121 l0 62 -54 -29 c-77 -42 -169 -59 -320 -59 -162 0 -236 13 -320 55 l-66 33 0 -57z" />
+<path d="M380 269 c0 -17 10 -49 22 -71 46 -82 201 -125 413 -115 163 8 275 50 310 117 14 28 21 100 10 100 -3 0 -23 -9 -43 -19 -83 -42 -159 -55 -332 -55 -172 0 -244 12 -332 56 -21 10 -40 18 -43 18 -3 0 -5 -14 -5 -31z" />
+<path d="M365 140 c3 -5 8 -10 11 -10 3 0 2 5 -1 10 -3 6 -8 10 -11 10 -3 0 -2 -4 1 -10z" />
+<path d="M1360 140 c0 -7 3 -10 7 -7 3 4 3 10 0 14 -4 3 -7 0 -7 -7z" />
+<path d="M364 88 c-4 -7 -3 -8 4 -4 7 4 12 9 12 12 0 8 -9 4 -16 -8z" />
+</g>
+
+<g xmlns="http://www.w3.org/2000/svg" transform="translate(0.000000,156.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="#000000" stroke-width="4">
+<path d="M650 1466 c-30 -18 -154 -88 -275 -156 -121 -68 -245 -138 -275 -155 l-55 -31 -3 -83 c-2 -53 1 -88 9 -97 7 -9 31 -14 60 -14 l49 0 0 -399 c0 -478 -9 -446 120 -446 66 0 85 3 93 17 8 12 7 21 -2 32 -10 12 -32 16 -82 16 l-69 0 0 413 c0 308 -3 416 -12 425 -7 7 -31 12 -55 12 l-43 0 0 44 0 45 78 42 c42 23 156 87 252 142 96 55 200 114 230 130 30 16 59 34 65 38 5 5 16 9 24 9 12 0 160 -82 541 -299 l115 -66 3 -42 3 -42 -53 -3 -53 -3 -5 -420 -5 -420 -74 -5 c-57 -4 -76 -9 -85 -23 -18 -29 17 -47 90 -47 78 0 110 14 124 53 6 19 10 171 10 413 l0 384 44 0 c25 0 48 6 55 14 8 9 11 44 9 97 l-3 83 -120 69 c-119 68 -163 93 -240 137 -22 12 -99 55 -170 96 -119 67 -136 74 -185 74 -44 0 -66 -7 -110 -34z" />
+<path d="M574 1255 c-4 -8 -4 -22 0 -30 4 -13 34 -15 184 -15 147 0 182 3 192 15 10 12 10 18 0 30 -10 12 -45 15 -192 15 -150 0 -180 -2 -184 -15z" />
+<path d="M496 1127 c-10 -7 -16 -22 -14 -33 3 -18 14 -19 278 -19 l275 0 3 24 c2 13 -2 28 -10 32 -7 5 -126 9 -264 9 -191 0 -254 -3 -268 -13z" />
+<path d="M301 982 c-13 -25 5 -52 34 -52 23 0 25 -3 25 -54 0 -36 5 -60 16 -70 8 -9 17 -16 19 -16 2 0 11 7 19 16 11 10 16 34 16 70 l0 54 335 0 335 0 0 -59 c0 -40 5 -63 15 -71 27 -23 45 5 45 71 0 55 1 58 26 61 35 4 53 31 35 52 -12 14 -65 16 -462 16 -419 0 -449 -1 -458 -18z" />
+</g>
+
+</g>
+<!-- elastic icon: color-separated vector contours from the PNG reference. -->
+<g id="elastic-icon" transform="translate(1031 1332)" filter="url(#soft-shadow)">
+<g xmlns="http://www.w3.org/2000/svg" transform="translate(0.000000,149.000000) scale(0.100000,-0.100000)" fill="#3cbeb1" stroke="#3cbeb1" stroke-width="4">
+<path d="M298 993 c7 -3 16 -2 19 1 4 3 -2 6 -13 5 -11 0 -14 -3 -6 -6z" />
+<path d="M184 958 c-4 -7 -3 -8 4 -4 12 7 16 16 8 16 -3 0 -8 -5 -12 -12z" />
+<path d="M428 963 c7 -3 16 -2 19 1 4 3 -2 6 -13 5 -11 0 -14 -3 -6 -6z" />
+<path d="M500 930 c0 -7 3 -10 7 -7 3 4 3 10 0 14 -4 3 -7 0 -7 -7z" />
+<path d="M1184 878 c-4 -7 -3 -8 4 -4 7 4 12 9 12 12 0 8 -9 4 -16 -8z" />
+<path d="M120 870 c0 -7 3 -10 7 -7 3 4 3 10 0 14 -4 3 -7 0 -7 -7z" />
+<path d="M1355 850 c3 -5 8 -10 11 -10 3 0 2 5 -1 10 -3 6 -8 10 -11 10 -3 0 -2 -4 1 -10z" />
+<path d="M1099 803 c-13 -16 -12 -17 4 -4 9 7 17 15 17 17 0 8 -8 3 -21 -13z" />
+<path d="M499 793 c-13 -16 -12 -17 4 -4 16 13 21 21 13 21 -2 0 -10 -8 -17 -17z" />
+<path d="M549 764 c-13 -14 -79 -76 -146 -136 l-123 -111 0 -51 c0 -63 23 -146 54 -195 32 -50 100 -109 155 -135 37 -17 65 -21 141 -21 84 1 101 4 148 28 71 37 129 97 140 144 5 21 18 83 28 138 l19 100 -34 65 -34 66 -148 67 c-81 37 -153 67 -161 67 -8 0 -25 -12 -39 -26z" />
+<path d="M1392 760 c0 -14 2 -19 5 -12 2 6 2 18 0 25 -3 6 -5 1 -5 -13z" />
+<path d="M1024 738 l-19 -23 23 19 c21 18 27 26 19 26 -2 0 -12 -10 -23 -22z" />
+<path d="M404 708 l-19 -23 23 19 c21 18 27 26 19 26 -2 0 -12 -10 -23 -22z" />
+<path d="M960 685 c-7 -9 -11 -17 -9 -20 3 -2 10 5 17 15 14 24 10 26 -8 5z" />
+<path d="M1391 674 c0 -11 3 -14 6 -6 3 7 2 16 -1 19 -3 4 -6 -2 -5 -13z" />
+<path d="M150 647 c0 -2 15 -16 33 -33 l32 -29 -29 33 c-28 30 -36 37 -36 29z" />
+<path d="M289 603 l-24 -28 28 24 c15 14 27 26 27 28 0 8 -8 1 -31 -24z" />
+<path d="M1354 588 c-4 -7 -3 -8 4 -4 12 7 16 16 8 16 -3 0 -8 -5 -12 -12z" />
+<path d="M1048 543 c7 -3 16 -2 19 1 4 3 -2 6 -13 5 -11 0 -14 -3 -6 -6z" />
+<path d="M1178 513 c7 -3 16 -2 19 1 4 3 -2 6 -13 5 -11 0 -14 -3 -6 -6z" />
+<path d="M1223 503 c4 -3 10 -3 14 0 3 4 0 7 -7 7 -7 0 -10 -3 -7 -7z" />
+</g>
+
+<g xmlns="http://www.w3.org/2000/svg" transform="translate(0.000000,149.000000) scale(0.100000,-0.100000)" fill="#f4bd19" stroke="#f4bd19" stroke-width="4">
+<path d="M753 1368 c-28 -11 -75 -41 -104 -67 -42 -38 -53 -54 -59 -91 -4 -25 -15 -88 -25 -140 l-17 -95 31 -67 c17 -38 35 -68 40 -68 5 0 73 -29 151 -66 l141 -65 155 136 154 137 0 76 c0 64 -5 87 -29 137 -35 73 -98 135 -171 169 -45 21 -70 26 -135 25 -56 0 -96 -6 -132 -21z" />
+</g>
+
+<g xmlns="http://www.w3.org/2000/svg" transform="translate(0.000000,149.000000) scale(0.100000,-0.100000)" fill="#176655" stroke="#176655" stroke-width="4">
+<path d="M1208 893 c-125 -106 -248 -217 -248 -225 0 -5 11 -31 25 -58 22 -44 30 -50 77 -64 29 -8 83 -21 120 -29 64 -13 70 -12 105 7 47 26 98 100 106 154 14 87 -29 192 -96 232 -18 11 -35 20 -38 20 -4 0 -27 -17 -51 -37z" />
+</g>
+
+<g xmlns="http://www.w3.org/2000/svg" transform="translate(0.000000,149.000000) scale(0.100000,-0.100000)" fill="#2c458f" stroke="#2c458f" stroke-width="4">
+<path d="M216 975 c-51 -35 -72 -61 -91 -114 -18 -52 -19 -91 -4 -144 11 -42 68 -111 108 -132 25 -13 30 -9 167 113 77 70 141 132 143 137 2 6 -7 33 -20 61 l-22 52 -86 20 c-149 36 -152 36 -195 7z" />
+</g>
+
+<g xmlns="http://www.w3.org/2000/svg" transform="translate(0.000000,149.000000) scale(0.100000,-0.100000)" fill="#e9478c" stroke="#e9478c" stroke-width="4">
+<path d="M375 1264 c-47 -24 -73 -53 -91 -101 -12 -31 -14 -52 -8 -75 9 -29 14 -32 104 -54 52 -13 101 -23 108 -24 6 0 12 10 12 23 0 12 9 64 20 116 11 52 20 96 20 98 0 2 -16 11 -35 19 -45 18 -92 18 -130 -2z" />
+</g>
+
+<g xmlns="http://www.w3.org/2000/svg" transform="translate(0.000000,149.000000) scale(0.100000,-0.100000)" fill="#95c63d" stroke="#95c63d" stroke-width="4">
+<path d="M1009 456 c-6 -22 -17 -75 -25 -116 -16 -93 -10 -102 76 -108 53 -4 65 -1 99 23 48 33 71 78 71 139 0 53 2 52 -127 84 l-83 20 -11 -42z" />
+</g>
+
+</g>
+<text x="331" y="1511" font-size="30" text-anchor="middle">Redis</text>
+<text x="740" y="1515" font-size="30" text-anchor="middle">Data Warehouse</text>
+<text x="1112" y="1515" font-size="30" text-anchor="middle">Elasticsearch</text>
+</svg>

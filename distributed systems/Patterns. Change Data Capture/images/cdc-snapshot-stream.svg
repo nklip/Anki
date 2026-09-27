@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="601" viewBox="0 0 1080 601" role="img" aria-labelledby="title desc">
+  <title id="title">A CDC snapshot supplies a baseline before log streaming</title>
+  <desc id="desc">Two phases compare product 7 at a consistent snapshot boundary P, with price 100 and read event r, against a subsequent committed update to price 120 and update event u. Snapshot and log reading must be coordinated; a snapshot does not reconstruct earlier changes.</desc>
+  <!-- Source-native symbols reused unchanged from system design/10. Notification System/images/improved-design.svg. -->
+  <defs>
+    <symbol id="green-server" viewBox="0 0 30 60">
+      <rect x="8" y="1" width="14" height="9" rx="1" fill="#65c515"/>
+      <path d="M11 5 H19" stroke="#fff" stroke-width="1.5"/>
+      <rect x="3" y="12" width="24" height="46" rx="1.5" fill="#65c515"/>
+      <path d="M7 19 H23 M7 40 H23 M7 48 H23" stroke="#fff" stroke-width="2"/>
+    </symbol>
+<symbol id="channel-queue" viewBox="0 0 150 58">
+      <path d="M2 2 H135 L148 29 L135 56 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="4"/>
+      <g fill="none" stroke="#1677b8" stroke-width="4">
+        <rect x="10" y="12" width="36" height="33"/><path d="M10 13 L28 29 L46 13"/>
+        <rect x="54" y="12" width="36" height="33"/><path d="M54 13 L72 29 L90 13"/>
+        <rect x="98" y="12" width="36" height="33"/><path d="M98 13 L116 29 L134 13"/>
+      </g>
+    </symbol>
+<symbol id="db-cylinder" viewBox="0 0 58 82">
+      <rect x="3" y="12" width="52" height="58" fill="#1677b8"/>
+      <ellipse cx="29" cy="12" rx="26" ry="10" fill="#1677b8" stroke="#fff" stroke-width="2"/>
+      <path d="M3 70 A26 10 0 0 0 55 70" fill="#1677b8"/>
+    </symbol>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #182633; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .label { font-size: 18px; }
+      .small { font-size: 16px; fill: #475569; }
+      .event { font-size: 17px; }
+      .panel { fill: #fff; stroke: #cbd5e1; stroke-width: 1.5; }
+      .flow { fill: none; stroke: #1677b8; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- White canvas and reading-order header. -->
+  <rect width="1080" height="601" fill="#fff"/>
+  <text class="title" x="24" y="41">Start with a baseline, then follow changes</text>
+  <text class="subtitle" x="24" y="73">A coordinated initial snapshot establishes state; log streaming keeps it up to date.</text>
+
+  <!-- Phase 1: the consistent snapshot reads an existing row at the coordinated boundary P. -->
+  <g id="snapshot-phase">
+    <rect class="panel" x="24" y="105" width="504" height="321" rx="12"/>
+    <text class="heading" x="48" y="141">1. Initial snapshot</text>
+    <text class="small" x="48" y="170">Read a consistent baseline at source position P.</text>
+    <use href="#db-cylinder" x="64" y="192" width="54" height="76"/>
+    <text class="label" x="145" y="211">Existing database row</text>
+    <text class="label" x="145" y="241">product 7 · price = 100</text>
+    <!-- Manual arrow ends beneath its separate head; the head stays outside the event card. -->
+    <path id="snapshot-read-arrow" class="flow" d="M100 278 V303"/>
+    <path d="M93 302 L100 313 L107 302 Z" fill="#1677b8"/>
+    <text class="small" x="126" y="300">Emit the row as a read event</text>
+    <rect x="48" y="324" width="456" height="79" rx="8" fill="#eef7fd" stroke="#1677b8" stroke-width="1.5"/>
+    <use href="#channel-queue" x="64" y="347" width="72" height="28"/>
+    <text class="event" x="152" y="353">key: 7 · op: r (read)</text>
+    <text class="event" x="152" y="383">after.price: 100</text>
+  </g>
+
+  <!-- Phase 2: subsequent log records describe changes, even if they occurred while the snapshot was reading. -->
+  <g id="streaming-phase">
+    <rect class="panel" x="552" y="105" width="504" height="321" rx="12"/>
+    <text class="heading" x="576" y="141">2. Stream later changes</text>
+    <text class="small" x="576" y="170">Read retained log changes after the boundary.</text>
+    <use href="#db-cylinder" x="592" y="192" width="54" height="76"/>
+    <text class="label" x="673" y="211">Update committed after P</text>
+    <text class="label" x="673" y="241">product 7 · price = 120</text>
+    <!-- Matching arrow geometry makes the two phases directly comparable. -->
+    <path id="streaming-update-arrow" class="flow" d="M628 278 V303"/>
+    <path d="M621 302 L628 313 L635 302 Z" fill="#1677b8"/>
+    <text class="small" x="654" y="300">Emit the change as an update event</text>
+    <rect x="576" y="324" width="456" height="79" rx="8" fill="#eef7fd" stroke="#1677b8" stroke-width="1.5"/>
+    <use href="#channel-queue" x="592" y="347" width="72" height="28"/>
+    <text class="event" x="680" y="353">key: 7 · op: u (update)</text>
+    <text class="event" x="680" y="383">after.price: 120</text>
+  </g>
+
+  <!-- Shared explanation defines P and distinguishes a baseline from historical transitions. -->
+  <g id="snapshot-boundary-lesson">
+    <rect x="24" y="449" width="1032" height="128" rx="12" fill="#f6faf3" stroke="#b4d797" stroke-width="1.5"/>
+    <use href="#green-server" x="52" y="468" width="40" height="80"/>
+    <text class="label" x="119" y="480" font-weight="700">P = source-log position coordinated with the snapshot.</text>
+    <text class="label" x="119" y="514">The baseline and later log changes join without a blind interval.</text>
+    <text class="small" x="119" y="546">A snapshot describes existing rows. It does not recover their earlier changes.</text>
+  </g>
+</svg>

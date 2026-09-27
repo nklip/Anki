@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1285" viewBox="0 0 1600 1285" role="img" aria-labelledby="title desc">
+<title id="title">Architecture of Pinterest's CDC Solution</title>
+<desc id="desc">Pinterest's database shards feed connectors in Kafka Connect workers in the data plane, which publishes changes to Kafka for consumers. A control plane receives ZooKeeper information and manages connectors through the Kafka Connect API. The arrow from consumers to Kafka represents access, as in the source diagram. Native SVG recreation of ByteByteGo's October 21, 2025 article, How Pinterest Transfers Hundreds of Terabytes of Data With CDC, https://blog.bytebytego.com/p/how-pinterest-transfers-hundreds.</desc>
+<!-- Source-native recreation of the user-selected ByteByteGo PNG. Preserve original labels, including Shard 3 and Connector N, and the consumer-access arrow direction. -->
+<!-- Shared typography, colors, and native database and consumer icons. -->
+<defs>
+<style>
+text { font-family:Arial, Helvetica, sans-serif; font-weight:400; fill:#000; text-anchor:middle; }
+.label {font-size:31.25px;}
+.node {stroke:#000;stroke-width:2.2;}
+.flow {fill:none;stroke:#000;stroke-width:3.5;}
+</style>
+<symbol id="database-shard" viewBox="0 0 106 120">
+ <path d="M1 14 C1 6.8 24.3 1 53 1 C81.7 1 105 6.8 105 14 V104 C105 111.2 81.7 117 53 117 C24.3 117 1 111.2 1 104 Z" fill="#cc99ff" stroke="#000" stroke-width="1.2"/>
+ <ellipse cx="53" cy="14" rx="52" ry="13" fill="#cc99ff" stroke="#000" stroke-width="1.2"/>
+ <path d="M1 21 C1 28.2 24.3 34 53 34 C81.7 34 105 28.2 105 21 M1 28 C1 35.2 24.3 41 53 41 C81.7 41 105 35.2 105 28" fill="none" stroke="#000" stroke-width="1.2"/>
+</symbol>
+<symbol id="consumer-person" viewBox="0 0 56 62">
+ <circle cx="28" cy="16" r="15" fill="#fff" stroke="#001126" stroke-width="2.2"/>
+ <path d="M1.5 60 C1.5 44.5 13.4 32 28 32 C42.6 32 54.5 44.5 54.5 60 Z" fill="#fff" stroke="#001126" stroke-width="2.2"/>
+</symbol>
+</defs>
+<!-- White canvas; preserve the supplied PNG transparent outer margin. -->
+<rect x="14.3" y="14.3" width="1572.8" height="1257.9" fill="#fff" stroke="#000" stroke-width="2.2"/>
+<rect id="heading-panel" x="506" y="14" width="589" height="67" rx="9" fill="#4c0099"/>
+<text x="800.5" y="58.5" font-size="30" style="fill:#fff">Architecture of Pinterest's CDC Solution</text>
+<!-- Consumer access line deliberately points down to Kafka, matching the source. -->
+<path id="consumer-access-shaft" class="flow" data-connector="true" d="M559 195 V225 H800 V195 M690 225 V279"/>
+<path id="consumer-access-head" d="M680.5 270.5 L690 275 L699.5 270.5 L690 290 Z" fill="#000"/>
+<use href="#consumer-person" x="531" y="135" width="56" height="62"/>
+<use href="#consumer-person" x="772" y="135" width="56" height="62"/>
+<text class="label" x="679.5" y="184.5">Consumer</text>
+<!-- Kafka is separate from the Kafka Connect runtime. -->
+<rect id="kafka" class="node" x="599" y="290" width="182" height="100" rx="6" fill="#ccffe6"/>
+<text class="label" x="690" y="351">Kafka</text>
+<!-- Publication points upward; the shaft is hidden underneath its concave head. -->
+<path id="publish-shaft" class="flow" data-connector="true" d="M691 454 L690 401"/>
+<path id="publish-head" d="M680.5 409 L690 404.5 L699.5 409 L690 390 Z" fill="#000"/>
+<!-- Data-plane panel and three representative Kafka Connect worker processes. -->
+<rect id="data-plane" class="node" x="376" y="454" width="630" height="760" rx="40" fill="#ffffcc"/>
+<text class="label" x="691" y="500">Data Plane</text>
+<rect id="worker-1" class="node" x="396" y="572" width="596" height="145" rx="10" fill="#e5ccff"/>
+<rect id="worker-2" class="node" x="393" y="749" width="599" height="145" rx="10" fill="#e5ccff"/>
+<rect id="worker-n" class="node" x="391" y="919" width="598" height="145" rx="10" fill="#e5ccff"/>
+<!-- Connector pair and label for worker 1. -->
+<rect id="connector-left-1" class="node" x="421" y="600" width="189" height="94" rx="5" fill="#ffcc99"/>
+<rect id="connector-right-1" class="node" x="763" y="600" width="189" height="94" rx="5" fill="#ffcc99"/>
+<text class="label" x="430" y="658" style="text-anchor:start">Connector 1</text>
+<text class="label" x="625" y="655" style="text-anchor:start">Worker 1</text>
+<text class="label" x="771" y="658" style="text-anchor:start">Connector X</text>
+<!-- Connector pair and label for worker 2. -->
+<rect id="connector-left-2" class="node" x="421" y="779" width="189" height="94" rx="5" fill="#ffcc99"/>
+<rect id="connector-right-2" class="node" x="763" y="779" width="189" height="94" rx="5" fill="#ffcc99"/>
+<text class="label" x="430" y="838" style="text-anchor:start">Connector 2</text>
+<text class="label" x="625" y="838" style="text-anchor:start">Worker 2</text>
+<text class="label" x="771" y="838" style="text-anchor:start">Connector Y</text>
+<!-- Connector pair and label for worker 3. -->
+<rect id="connector-left-3" class="node" x="421" y="949" width="189" height="94" rx="5" fill="#ffcc99"/>
+<rect id="connector-right-3" class="node" x="763" y="949" width="189" height="94" rx="5" fill="#ffcc99"/>
+<text class="label" x="428" y="1008" style="text-anchor:start">Connector N</text>
+<text class="label" x="625" y="1013" style="text-anchor:start">Worker N</text>
+<text class="label" x="771" y="1008" style="text-anchor:start">Connector Z</text>
+<text x="691" y="1164" font-size="41">Kafka Connect</text>
+<!-- Shard connectors intentionally cross the enclosing data-plane and worker borders. Head tips meet the center of each orange box border without entering its fill. -->
+<use href="#database-shard" x="73" y="588" width="106" height="120"/>
+<text x="133.5" y="733" font-size="21.25">Shard 1</text>
+<path id="shard-1-flow-shaft" class="flow" data-connector="true" d="M179 647 H409"/>
+<path id="shard-1-flow-head" d="M402 637.5 L407 647 L402 656.5 L421 647 Z" fill="#000"/>
+<use href="#database-shard" x="73" y="767" width="106" height="120"/>
+<text x="126.5" y="916" font-size="21.25">Shard 2</text>
+<path id="shard-2-flow-shaft" class="flow" data-connector="true" d="M179 826 H409"/>
+<path id="shard-2-flow-head" d="M402 816.5 L407 826 L402 835.5 L421 826 Z" fill="#000"/>
+<use href="#database-shard" x="73" y="937" width="106" height="120"/>
+<text x="126.5" y="1095" font-size="21.25">Shard 3</text>
+<path id="shard-3-flow-shaft" class="flow" data-connector="true" d="M179 996 H409"/>
+<path id="shard-3-flow-head" d="M402 986.5 L407 996 L402 1005.5 L421 996 Z" fill="#000"/>
+<!-- ZooKeeper feeds the control plane, which manages connector configurations. -->
+<rect id="zookeeper" class="node" x="1222" y="475" width="269" height="150" rx="10" fill="#ccffe6"/>
+<text class="label" x="1356.5" y="562">ZooKeeper</text>
+<path id="zookeeper-control-shaft" class="flow" data-connector="true" d="M1356 625 V789"/>
+<path id="zookeeper-control-head" d="M1346.5 780 L1356 784.5 L1365.5 780 L1356 799 Z" fill="#000"/>
+<rect id="control-plane" class="node" x="1163" y="799" width="387" height="230" rx="15" fill="#ffccff"/>
+<text class="label" x="1356.5" y="846">Control Plane</text>
+<rect id="connector-configs" class="node" x="1255" y="893" width="202" height="95" rx="5" fill="#ff9999"/>
+<text class="label" x="1356" y="933"><tspan x="1356">Connector</tspan><tspan x="1356" dy="37">Configs</tspan></text>
+<!-- The API arrow goes left from control plane to the data-plane boundary. The shaft terminates inside its own head; no line extends past the nose. -->
+<path id="control-api-shaft" data-connector="true" d="M1163 914 H1085 V834 H1014" fill="none" stroke="#000" stroke-width="2.2"/>
+<path id="control-api-head" d="M1021.5 826 L1017.5 834 L1021.5 842 L1006 834 Z" fill="#000"/>
+<text class="label" x="1110" y="737"><tspan x="1110">Kafka</tspan><tspan x="1110" dy="37">Connect API</tspan></text>
+</svg>

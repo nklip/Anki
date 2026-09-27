@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="644" viewBox="0 0 1080 644" role="img" aria-labelledby="title desc">
+<title id="title">CDC: Debezium captures; Kafka Connect runs it</title>
+<desc id="desc">Start at the PostgreSQL product database at top left. Its logical change stream goes to a Debezium source task inside a Kafka Connect worker. The worker publishes records to a topic on separate Kafka brokers. A search sink task in a Connect worker reads the topic and updates a derived search index. The database commit and visibility in search are asynchronous.</desc>
+<!-- Native symbols reused unchanged from system design/10. Notification System/images/improved-design.svg. -->
+<defs>
+<style>
+text {font-family:Arial, Helvetica, sans-serif;fill:#171717}
+.title {font-size:28px;font-weight:700}
+.heading {font-size:21px;font-weight:700}
+.body {font-size:19px}
+.detail {font-size:17px}
+.panel {fill:#fff;stroke:#888;stroke-width:1.6}
+.worker {fill:#f1f8ff;stroke:#1677b8;stroke-width:1.6}
+.flow {fill:none;stroke:#171717;stroke-width:2}
+</style>
+<symbol id="green-server" viewBox="0 0 30 60">
+      <rect x="8" y="1" width="14" height="9" rx="1" fill="#65c515"/>
+      <path d="M11 5 H19" stroke="#fff" stroke-width="1.5"/>
+      <rect x="3" y="12" width="24" height="46" rx="1.5" fill="#65c515"/>
+      <path d="M7 19 H23 M7 40 H23 M7 48 H23" stroke="#fff" stroke-width="2"/>
+    </symbol>
+<symbol id="channel-queue" viewBox="0 0 150 58">
+      <path d="M2 2 H135 L148 29 L135 56 H2 Z" fill="#fff" stroke="#1677b8" stroke-width="4"/>
+      <g fill="none" stroke="#1677b8" stroke-width="4">
+        <rect x="10" y="12" width="36" height="33"/><path d="M10 13 L28 29 L46 13"/>
+        <rect x="54" y="12" width="36" height="33"/><path d="M54 13 L72 29 L90 13"/>
+        <rect x="98" y="12" width="36" height="33"/><path d="M98 13 L116 29 L134 13"/>
+      </g>
+    </symbol>
+<symbol id="db-cylinder" viewBox="0 0 58 82">
+      <rect x="3" y="12" width="52" height="58" fill="#1677b8"/>
+      <ellipse cx="29" cy="12" rx="26" ry="10" fill="#1677b8" stroke="#fff" stroke-width="2"/>
+      <path d="M3 70 A26 10 0 0 0 55 70" fill="#1677b8"/>
+    </symbol>
+</defs>
+<!-- Canvas and the primary distinction. -->
+<rect width="1080" height="644" fill="#fff"/>
+<text class="title" x="540" y="38" text-anchor="middle">CDC: Debezium captures; Kafka Connect runs it</text>
+<text class="body" x="540" y="72" text-anchor="middle">Change Data Capture turns committed database changes into downstream updates.</text>
+<!-- Authoritative source and its readable database-specific stream. -->
+<g id="postgresql-source">
+<rect class="panel" x="30" y="110" width="245" height="220" rx="8"/>
+<text class="heading" x="152.5" y="146" text-anchor="middle">PostgreSQL</text>
+<use href="#db-cylinder" x="51" y="180" width="58" height="82"/>
+<text class="body" x="132" y="206">products</text>
+<text class="body" x="132" y="239">price = 120</text>
+<text class="detail" x="152.5" y="298" text-anchor="middle">Authoritative database</text>
+</g>
+<!-- Containment expresses the plugin/runtime relationship, not a separate Debezium server. -->
+<g id="connect-source-worker">
+<rect class="worker" x="360" y="110" width="335" height="220" rx="8"/>
+<text class="heading" x="527.5" y="146" text-anchor="middle">Kafka Connect worker</text>
+<use href="#green-server" x="382" y="182" width="44" height="88"/>
+<rect class="panel" x="450" y="180" width="220" height="112" rx="6"/>
+<text class="heading" x="560" y="211" text-anchor="middle">Debezium</text>
+<text class="body" x="560" y="239" text-anchor="middle">PostgreSQL</text>
+<text class="body" x="560" y="268" text-anchor="middle">source task</text>
+<text class="detail" x="527.5" y="315" text-anchor="middle">Task runs inside this process</text>
+</g>
+<!-- Kafka is explicitly outside the Connect process boundary. -->
+<g id="kafka-brokers">
+<rect class="panel" x="810" y="110" width="240" height="220" rx="8"/>
+<text class="heading" x="930" y="146" text-anchor="middle">Kafka brokers</text>
+<use href="#channel-queue" x="849" y="186" width="162" height="63"/>
+<text class="body" x="930" y="287" text-anchor="middle">Product-change topic</text>
+<text class="detail" x="930" y="315" text-anchor="middle">Stored stream of records</text>
+</g>
+<!-- Separate heads hide two units of the shaft. Tips stop just outside panel boundaries. -->
+<g id="capture-and-publish-arrows">
+<path id="logical-stream-shaft" class="flow" data-connector="true" d="M276 243 H349"/>
+<path id="logical-stream-head" d="M347 237 L359 243 L347 249 Z" fill="#171717"/>
+<text class="detail" x="317" y="191" text-anchor="middle">logical</text>
+<text class="detail" x="317" y="213" text-anchor="middle">stream</text>
+<path id="publish-shaft" class="flow" data-connector="true" d="M696 243 H799"/>
+<path id="publish-head" d="M797 237 L809 243 L797 249 Z" fill="#171717"/>
+<text class="detail" x="751" y="213" text-anchor="middle">publish</text>
+</g>
+<!-- Read from Kafka before applying the change to the derived search view. -->
+<g id="sink-worker">
+<rect class="worker" x="650" y="430" width="400" height="146" rx="8"/>
+<text class="heading" x="850" y="466" text-anchor="middle">Kafka Connect worker</text>
+<use href="#green-server" x="682" y="486" width="34" height="68"/>
+<text class="body" x="744" y="510">Search sink task</text>
+<text class="detail" x="744" y="541">Apply the keyed update</text>
+</g>
+<g id="search-index">
+<rect class="panel" x="30" y="430" width="480" height="146" rx="8"/>
+<text class="heading" x="270" y="466" text-anchor="middle">Search index (derived copy)</text>
+<use href="#db-cylinder" x="55" y="486" width="49" height="69"/>
+<text class="body" x="142" y="510">Product 7 → price 120</text>
+<text class="detail" x="142" y="543">Visible after the pipeline catches up</text>
+</g>
+<!-- Turn downward, then left; arrow corridors stay clear of all labels. -->
+<g id="consume-and-apply-arrows">
+<path id="consume-shaft" class="flow" data-connector="true" d="M930 331 V419"/>
+<path id="consume-head" d="M924 417 L930 429 L936 417 Z" fill="#171717"/>
+<text class="detail" x="966" y="384">read</text>
+<path id="apply-shaft" class="flow" data-connector="true" d="M649 520 H521"/>
+<path id="apply-head" d="M523 514 L511 520 L523 526 Z" fill="#171717"/>
+<text class="detail" x="581" y="493" text-anchor="middle">write</text>
+</g>
+<!-- The visible delay is part of the lesson, not a failure of the diagram. -->
+<text class="body" x="540" y="618" text-anchor="middle">A database commit can succeed before the new value becomes visible in search.</text>
+</svg>
