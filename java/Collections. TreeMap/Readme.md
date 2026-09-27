@@ -45,25 +45,46 @@ With natural ordering, a non-`Comparable` key throws `ClassCastException` even o
 
 ### Comparison determines key identity
 
-**Zero comparison means the same key to this map**, even when `equals()` is `false`. A second `put` replaces the value; OpenJDK 25 retains the original key object.
+**TreeMap uses its ordering rule to decide whether a key already exists.** If `compare(newKey, storedKey)` returns `0` (or `compareTo` returns `0` with natural ordering), TreeMap treats the keys as a match. Here, “zero” means the result of the comparison, not the key or value being stored. TreeMap does not then call `equals()` to check that match.
 
-All Java snippets are method bodies; import `java.util.Comparator`, `java.util.NavigableMap`, and `java.util.TreeMap`.
+For example, `Comparator.comparingInt(String::length)` compares strings **only by their length**. Both `"cat"` and `"dog"` have length 3, so this comparator returns `0` for them. Yet `"cat".equals("dog")` is `false`, because the strings contain different characters.
+
+After `put("cat", 1)`, the map contains one entry. Calling `put("dog", 2)` finds that entry by comparison and changes its value from `1` to `2`. **The map still contains one entry.** In OpenJDK 25, the stored key remains the original `"cat"` object: the result is `{cat=2}`. Keeping that original key object is an implementation detail; replacing the existing entry's value is documented behavior.
+
+This first example is a complete program. The comments show its output on OpenJDK 25:
 
 ```java
-var byLength = new TreeMap<String, Integer>(
-        Comparator.comparingInt(String::length));
-byLength.put("cat", 1);
-byLength.put("dog", 2); // Same length: retain "cat", replace its value.
-System.out.println(byLength.get("cat")); // 2
-System.out.println(byLength.containsKey("dog")); // true
-System.out.println(byLength.keySet()); // [cat]
+import java.util.Comparator;
+import java.util.NavigableMap; // Used by the later range-view example.
+import java.util.TreeMap;
+
+public class TreeMapExample {
+    public static void main(String[] args) {
+        Comparator<String> lengthOrder = Comparator.comparingInt(String::length);
+        var byLength = new TreeMap<String, Integer>(lengthOrder);
+
+        System.out.println(lengthOrder.compare("cat", "dog")); // 0
+        System.out.println("cat".equals("dog"));               // false
+
+        byLength.put("cat", 1);
+        byLength.put("dog", 2);
+
+        System.out.println(byLength.size());             // 1
+        System.out.println(byLength.get("cat"));         // 2
+        System.out.println(byLength.get("dog"));         // 2
+        System.out.println(byLength.containsKey("dog")); // true
+        System.out.println(byLength.keySet());           // [cat]
+    }
+}
 ```
 
-This runs normally: `"dog"` matches `"cat"` by comparison. To obey the `Map` contract, ordering must be **consistent with `equals`**: zero exactly when keys are equal. Otherwise behavior is defined but violates that contract.
+Both `get("cat")` and `get("dog")` find the same entry using the length comparison. Likewise, `containsKey("dog")` is `true` even though the stored key is `"cat"`.
+
+To obey the general `Map` contract, ordering must be **consistent with `equals`**: comparing two keys returns `0` if and only if `equals` returns `true`. The length-only comparator breaks that agreement. TreeMap still runs, but it cannot store these unequal strings as separate keys.
 
 Natural ordering can differ from `equals`, too: `new BigDecimal("4.0")` and `new BigDecimal("4.00")` compare as zero but are not equal, so a natural-order TreeMap treats them as one key.
 
-For the string example, append `.thenComparing(Comparator.naturalOrder())` to retain both strings. It compares lengths first, then text only when the lengths compare as zero.
+For the string example, append `.thenComparing(Comparator.naturalOrder())` to `Comparator.comparingInt(String::length)` to retain both strings. It compares lengths first, then text only when the lengths compare as zero.
 
 Changing a key's comparison fields can invalidate its position and lookup. Remove it before mutation, then reinsert it. Prefer immutable keys and stable comparators.
 
@@ -174,6 +195,9 @@ See [HashMap vs LinkedHashMap vs TreeMap](../Collections.%20HashMap%20vs%20Linke
 - [SequencedMap](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/SequencedMap.html)
 - [Java 21 hierarchy](https://docs.oracle.com/en/java/javase/21/core/creating-sequenced-collections-sets-and-maps.html)
 - [Comparator](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Comparator.html)
+- [Java imports — JLS §7.5](https://docs.oracle.com/javase/specs/jls/se25/html/jls-7.html#jls-7.5)
+- [Method bodies — JLS §8.4.7](https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4.7)
+- [Compiling with `javac`](https://docs.oracle.com/en/java/javase/25/docs/specs/man/javac.html) and [launching with `java`](https://docs.oracle.com/en/java/javase/25/docs/specs/man/java.html)
 - [BigDecimal comparison and equality](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/math/BigDecimal.html)
 - [Synchronized maps](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collections.html#synchronizedNavigableMap(java.util.NavigableMap))
 - [OpenJDK 25 TreeMap source](https://github.com/openjdk/jdk/blob/jdk-25%2B36/src/java.base/share/classes/java/util/TreeMap.java)
