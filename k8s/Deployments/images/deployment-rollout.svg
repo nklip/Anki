@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="466" viewBox="0 0 960 466" role="img" aria-labelledby="title desc">
+<title id="title">A Deployment controls a rollout through ReplicaSets</title>
+<desc id="desc">A Deployment manages an old ReplicaSet with two old Pods and a new ReplicaSet with a new Pod during a rollout.</desc>
+<!-- Shared typography; all labels remain editable text. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; } .title { font-size: 28px; font-weight: 700; } .subtitle { font-size: 18px; fill: #52677b; } .heading { font-size: 21px; font-weight: 700; } .body { font-size: 18px; } .small { font-size: 16px; fill: #52677b; } .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }</style></defs>
+<!-- Canvas and lesson heading. -->
+<rect width="960" height="466" fill="#ffffff"/>
+<text x="32" y="43" class="title" text-anchor="start">A Deployment controls a rollout through ReplicaSets</text>
+<text x="32" y="75" class="subtitle" text-anchor="start">Illustrative intermediate state: old replicas decrease while new replicas increase.</text>
+<!-- Desired template above the two replica groups. -->
+<rect id="deployment" x="320" y="106" width="320" height="77" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="480.0" y="137" class="heading" text-anchor="middle">Deployment</text>
+<text x="480.0" y="166" class="body" text-anchor="middle">Desired template: version 2</text>
+<rect id="old-replicaset" x="32" y="245" width="404" height="163" rx="12" fill="#fff7ed" stroke="#e4b78a" stroke-width="1.5"/>
+<text x="234.0" y="276" class="heading" text-anchor="middle">Old ReplicaSet</text>
+<text x="234.0" y="305" class="body" text-anchor="middle">Scale down version 1</text>
+<rect id="new-replicaset" x="524" y="245" width="404" height="163" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+<text x="726.0" y="276" class="heading" text-anchor="middle">New ReplicaSet</text>
+<text x="726.0" y="305" class="body" text-anchor="middle">Scale up version 2</text>
+<!-- Controller relationship arrows fork in the empty routing corridor. -->
+<path id="old-replicaset-control-shaft" class="connector" data-connector="true" d="M 480 183 L 480 211 L 234 211 L 234 237"/>
+<polygon id="old-replicaset-control-head" points="234,245 229,235 239,235" fill="#52677b"/>
+<path id="new-replicaset-control-shaft" class="connector" data-connector="true" d="M 480 183 L 480 211 L 726 211 L 726 237"/>
+<polygon id="new-replicaset-control-head" points="726,245 721,235 731,235" fill="#52677b"/>
+<rect x="67" y="335" width="132" height="49" rx="12" fill="#ffffff" stroke="#b45309" stroke-width="1.5"/>
+<text x="133" y="366" class="body" text-anchor="middle">Pod v1</text>
+<rect x="247" y="335" width="132" height="49" rx="12" fill="#ffffff" stroke="#b45309" stroke-width="1.5"/>
+<text x="313" y="366" class="body" text-anchor="middle">Pod v1</text>
+<rect x="654" y="335" width="132" height="49" rx="12" fill="#ffffff" stroke="#15803d" stroke-width="1.5"/>
+<text x="720" y="366" class="body" text-anchor="middle">Pod v2</text>
+<text x="480" y="445" class="body" text-anchor="middle">ReplicaSets maintain counts. The Deployment coordinates the version change.</text>
+</svg>

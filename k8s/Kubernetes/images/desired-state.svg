@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="430" viewBox="0 0 960 430" role="img" aria-labelledby="title desc">
+<title id="title">Kubernetes keeps working toward the declared state</title>
+<desc id="desc">Three panels show a desired count of three Pods, an actual count of two, and a replacement restoring the count.</desc>
+<!-- Shared typography; all labels remain editable text. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; } .title { font-size: 28px; font-weight: 700; } .subtitle { font-size: 18px; fill: #52677b; } .heading { font-size: 21px; font-weight: 700; } .body { font-size: 18px; } .small { font-size: 16px; fill: #52677b; } .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }</style></defs>
+<!-- Canvas and lesson heading. -->
+<rect width="960" height="430" fill="#ffffff"/>
+<text x="32" y="43" class="title" text-anchor="start">Kubernetes keeps working toward the declared state</text>
+<text x="32" y="75" class="subtitle" text-anchor="start">Example: a Deployment requests three copies of a web application.</text>
+<!-- Desired state and observed state; each small box represents one Pod. -->
+<rect x="32" y="110" width="280" height="212" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="172" y="148" class="heading" text-anchor="middle">1. Desired state</text>
+<rect x="52" y="184" width="68" height="66" rx="12" fill="#ffffff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="86" y="223" class="body" text-anchor="middle">Pod</text>
+<rect x="134" y="184" width="68" height="66" rx="12" fill="#ffffff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="168" y="223" class="body" text-anchor="middle">Pod</text>
+<rect x="216" y="184" width="68" height="66" rx="12" fill="#ffffff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="250" y="223" class="body" text-anchor="middle">Pod</text>
+<text x="172" y="288" class="body" text-anchor="middle">Keep three replicas</text>
+<rect x="340" y="110" width="280" height="212" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="480" y="148" class="heading" text-anchor="middle">2. One Pod disappears</text>
+<rect x="360" y="184" width="68" height="66" rx="12" fill="#ffffff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="394" y="223" class="body" text-anchor="middle">Pod</text>
+<rect x="442" y="184" width="68" height="66" rx="12" fill="#ffffff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="476" y="223" class="body" text-anchor="middle">Pod</text>
+<rect stroke-dasharray="5 4" x="524" y="184" width="68" height="66" rx="12" fill="#fff7ed" stroke="#b45309" stroke-width="1.5"/>
+<text x="558" y="223" class="body" text-anchor="middle">lost</text>
+<text x="480" y="288" class="body" text-anchor="middle">Only two replicas remain</text>
+<rect x="648" y="110" width="280" height="212" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="788" y="148" class="heading" text-anchor="middle">3. Controller acts</text>
+<rect x="668" y="184" width="68" height="66" rx="12" fill="#ffffff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="702" y="223" class="body" text-anchor="middle">Pod</text>
+<rect x="750" y="184" width="68" height="66" rx="12" fill="#ffffff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="784" y="223" class="body" text-anchor="middle">Pod</text>
+<rect x="832" y="184" width="68" height="66" rx="12" fill="#f0fdf4" stroke="#15803d" stroke-width="1.5"/>
+<text x="866" y="223" class="body" text-anchor="middle">new</text>
+<text x="788" y="288" class="body" text-anchor="middle">Request a replacement</text>
+<!-- Repair sequence; arrow noses meet the next panel boundary. -->
+<path id="observe-shaft" class="connector" data-connector="true" d="M 312 215 L 332 215"/>
+<polygon id="observe-head" points="340,215 330,220 330,210" fill="#52677b"/>
+<path id="reconcile-shaft" class="connector" data-connector="true" d="M 620 215 L 640 215"/>
+<polygon id="reconcile-head" points="648,215 638,220 638,210" fill="#52677b"/>
+<text x="480" y="370" class="body" text-anchor="middle">Reconciliation repeats: compare the goal with reality, then reduce the difference.</text>
+<text x="480" y="402" class="small" text-anchor="middle">A replacement still needs a valid configuration and enough cluster capacity.</text>
+</svg>

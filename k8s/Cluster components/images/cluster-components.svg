@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="530" viewBox="0 0 1000 530" role="img" aria-labelledby="title desc">
+<title id="title">Control plane decides; node components execute</title>
+<desc id="desc">The API server connects to etcd, controllers, the scheduler, and a node kubelet. The kubelet uses a container runtime.</desc>
+<!-- Shared typography; all labels remain editable text. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; } .title { font-size: 28px; font-weight: 700; } .subtitle { font-size: 18px; fill: #52677b; } .heading { font-size: 21px; font-weight: 700; } .body { font-size: 18px; } .small { font-size: 16px; fill: #52677b; } .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }</style></defs>
+<!-- Canvas and lesson heading. -->
+<rect width="1000" height="530" fill="#ffffff"/>
+<text x="32" y="43" class="title" text-anchor="start">Control plane decides; node components execute</text>
+<text x="32" y="75" class="subtitle" text-anchor="start">API = application programming interface. Arrows show coordination, not user traffic.</text>
+<!-- Component groups; shaded panels distinguish control plane from a worker node. -->
+<rect id="control-plane" x="28" y="108" width="600" height="308" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="142" class="heading" text-anchor="start">Control plane</text>
+<rect id="worker-node" x="660" y="108" width="312" height="308" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+<text x="682" y="142" class="heading" text-anchor="start">Worker node</text>
+<rect id="etcd" x="50" y="178" width="160" height="80" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="130.0" y="209" class="heading" text-anchor="middle">etcd</text>
+<text x="130.0" y="238" class="body" text-anchor="middle">Stored state</text>
+<rect id="api-server" x="262" y="178" width="306" height="80" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="415.0" y="209" class="heading" text-anchor="middle">API server</text>
+<text x="415.0" y="238" class="body" text-anchor="middle">Read and change objects</text>
+<rect id="controllers" x="50" y="312" width="225" height="80" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="162.5" y="343" class="heading" text-anchor="middle">Controllers</text>
+<text x="162.5" y="372" class="body" text-anchor="middle">Reconcile state</text>
+<rect id="scheduler" x="321" y="312" width="275" height="80" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="458.5" y="343" class="heading" text-anchor="middle">Scheduler</text>
+<text x="458.5" y="372" class="body" text-anchor="middle">Choose a node</text>
+<rect id="kubelet" x="686" y="178" width="260" height="80" rx="12" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+<text x="816.0" y="209" class="heading" text-anchor="middle">kubelet</text>
+<text x="816.0" y="238" class="body" text-anchor="middle">Run assigned Pods</text>
+<rect id="container-runtime" x="686" y="312" width="260" height="80" rx="12" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+<text x="816.0" y="343" class="heading" text-anchor="middle">Container runtime</text>
+<text x="816.0" y="372" class="body" text-anchor="middle">Start containers</text>
+<!-- Separate shafts and heads; vertical connectors stay in gaps between labels. -->
+<path id="persist-shaft" class="connector" data-connector="true" d="M 262 218 L 218 218"/>
+<polygon id="persist-head" points="210,218 220,213 220,223" fill="#52677b"/>
+<path id="controller-api-shaft" class="connector" data-connector="true" d="M 163 312 L 163 286 L 320 286 L 320 266"/>
+<polygon id="controller-api-head" points="320,258 325,268 315,268" fill="#52677b"/>
+<path id="scheduler-api-shaft" class="connector" data-connector="true" d="M 459 312 L 459 266"/>
+<polygon id="scheduler-api-head" points="459,258 464,268 454,268" fill="#52677b"/>
+<path id="node-api-shaft" class="connector" data-connector="true" d="M 568 218 L 678 218"/>
+<polygon id="node-api-head" points="686,218 676,223 676,213" fill="#52677b"/>
+<path id="runtime-call-shaft" class="connector" data-connector="true" d="M 816 258 L 816 304"/>
+<polygon id="runtime-call-head" points="816,312 811,302 821,302" fill="#52677b"/>
+<text x="500" y="458" class="body" text-anchor="middle">kubectl submits desired objects to the API server; components watch and report state.</text>
+<text x="500" y="493" class="small" text-anchor="middle">Service traffic uses kube-proxy rules or another network implementation (not shown).</text>
+</svg>

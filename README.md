@@ -1,6 +1,6 @@
 # Anki Flashcards and Articles
 
-Anki-ready study cards and teaching diagrams for artificial intelligence, general computer science, distributed systems, Java, Python, and system design.
+Anki-ready study cards and teaching diagrams for artificial intelligence, general computer science, distributed systems, Java, Kubernetes, Python, and system design.
 
 Each subject folder keeps its own index. Start there to browse a subject:
 
@@ -10,5 +10,6 @@ Each subject folder keeps its own index. Start there to browse a subject:
 | [`cs`](cs/Readme.md) | Language-independent computer-science and interview-preparation topics: API naming, design principles, complexity, and answer structure. |
 | [`distributed systems`](distributed%20systems/Readme.md) | Distributed-systems topics, starting with Redis: internals, atomicity, memory and durability, deployment topologies, common patterns, and CDN data placement. |
 | [`java`](java/Readme.md) | The largest subject: modern Java syntax, collections, concurrency and the Java Memory Model, JVM internals, garbage collection, JPA and Hibernate. |
-| [`python`](python/Readme.md) | Python topics, starting with the WSGI and ASGI web-server interfaces. |
+| [`k8s`](k8s/Readme.md) | Kubernetes topics. |
+| [`python`](python/Readme.md) | Python topics. |
 | [`system design`](system%20design/Readme.md) | Chapter notes for the 28 chapters of *System Design Interview* Vol 1 and 2, from scaling fundamentals to a stock exchange. |

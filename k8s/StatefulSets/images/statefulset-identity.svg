@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="463" viewBox="0 0 960 463" role="img" aria-labelledby="title desc">
+<title id="title">StatefulSet identity survives a Pod replacement</title>
+<desc id="desc">An old db-0 Pod is replaced by a new db-0 Pod. Both use the same persistent volume claim, which refers to persistent storage.</desc>
+<!-- Shared typography; all labels remain editable text. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; } .title { font-size: 28px; font-weight: 700; } .subtitle { font-size: 18px; fill: #52677b; } .heading { font-size: 21px; font-weight: 700; } .body { font-size: 18px; } .small { font-size: 16px; fill: #52677b; } .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }</style></defs>
+<!-- Canvas and lesson heading. -->
+<rect width="960" height="463" fill="#ffffff"/>
+<text x="32" y="43" class="title" text-anchor="start">StatefulSet identity survives a Pod replacement</text>
+<text x="32" y="75" class="subtitle" text-anchor="start">The name and per-instance storage remain associated; the Pod object is new.</text>
+<!-- Before and after: stable name does not mean the same running Pod or IP. -->
+<rect id="old-pod" x="32" y="131" width="250" height="100" rx="12" fill="#fff7ed" stroke="#e4b78a" stroke-width="1.5"/>
+<text x="157.0" y="162" class="heading" text-anchor="middle">Before: db-0</text>
+<text x="157.0" y="191" class="body" text-anchor="middle">Old Pod object</text>
+<rect id="replacement-pod" x="678" y="131" width="250" height="100" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+<text x="803.0" y="162" class="heading" text-anchor="middle">After: db-0</text>
+<text x="803.0" y="191" class="body" text-anchor="middle">New Pod; IP may change</text>
+<text x="480" y="157" class="body" text-anchor="middle">Controller replaces Pod</text>
+<path id="pod-replacement-shaft" class="connector" data-connector="true" d="M 282 193 L 670 193"/>
+<polygon id="pod-replacement-head" points="678,193 668,198 668,188" fill="#52677b"/>
+<!-- Both states use the same claim; routed connectors remain outside text. -->
+<rect id="persistent-claim" x="332" y="309" width="296" height="79" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="480.0" y="340" class="heading" text-anchor="middle">Same storage claim</text>
+<text x="480.0" y="369" class="body" text-anchor="middle">PVC for db-0</text>
+<path id="old-pod-storage-shaft" class="connector" data-connector="true" d="M 157 231 L 157 349 L 324 349"/>
+<polygon id="old-pod-storage-head" points="332,349 322,354 322,344" fill="#52677b"/>
+<path id="new-pod-storage-shaft" class="connector" data-connector="true" d="M 803 231 L 803 349 L 636 349"/>
+<polygon id="new-pod-storage-head" points="628,349 638,344 638,354" fill="#52677b"/>
+<text x="480" y="431" class="small" text-anchor="middle">PVC = PersistentVolumeClaim. Application replication and backups are separate.</text>
+</svg>

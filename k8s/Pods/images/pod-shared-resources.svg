@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="470" viewBox="0 0 960 470" role="img" aria-labelledby="title desc">
+<title id="title">A Pod is one shared execution environment</title>
+<desc id="desc">One node contains a Pod with an application and a helper. They share a network and an explicitly mounted volume, but keep separate container filesystems.</desc>
+<!-- Shared typography; all labels remain editable text. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; } .title { font-size: 28px; font-weight: 700; } .subtitle { font-size: 18px; fill: #52677b; } .heading { font-size: 21px; font-weight: 700; } .body { font-size: 18px; } .small { font-size: 16px; fill: #52677b; } .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }</style></defs>
+<!-- Canvas and lesson heading. -->
+<rect width="960" height="470" fill="#ffffff"/>
+<text x="32" y="43" class="title" text-anchor="start">A Pod is one shared execution environment</text>
+<text x="32" y="75" class="subtitle" text-anchor="start">Containers in the same Pod are placed together on one node.</text>
+<!-- Nested boundaries encode co-location, not additional machines. -->
+<rect id="node" x="28" y="104" width="904" height="300" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="48" y="134" class="heading" text-anchor="start">One node</text>
+<rect id="pod" x="50" y="151" width="860" height="231" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="480" y="183" class="heading" text-anchor="middle">One Pod · shared IP addresses and port space</text>
+<rect id="app-container" x="78" y="209" width="300" height="81" rx="12" fill="#ffffff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="228.0" y="240" class="heading" text-anchor="middle">Application container</text>
+<text x="228.0" y="269" class="body" text-anchor="middle">Own container filesystem</text>
+<rect id="helper-container" x="578" y="209" width="300" height="81" rx="12" fill="#ffffff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="728.0" y="240" class="heading" text-anchor="middle">Helper container</text>
+<text x="728.0" y="269" class="body" text-anchor="middle">Own container filesystem</text>
+<!-- Local communication and an explicitly mounted shared volume. -->
+<text x="478" y="235" class="small" text-anchor="middle">localhost</text>
+<path id="local-connection-shaft" class="connector" data-connector="true" d="M 378 262 L 570 262"/>
+<polygon id="local-connection-head" points="578,262 568,267 568,257" fill="#52677b"/>
+<rect id="shared-volume" x="78" y="314" width="800" height="47" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+<text x="478" y="344" class="body" text-anchor="middle">Shared volume — only when explicitly mounted by both containers</text>
+<text x="480" y="443" class="body" text-anchor="middle">For three independent application replicas, create three Pods.</text>
+</svg>
