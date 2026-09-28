@@ -22,7 +22,7 @@ A **payment system** is used to settle financial transactions by transferring mo
 * C: How many payment transactions per day do we support?
 * I: 1 million transactions per day.
 * C: Do we need to support the payout flow, e.g., paying out to sellers each month?
-* I: Yes, we need to support that
+* I: Yes, we need to support that.
 * C: Is there anything else I should pay attention to?
 * I: We need to support reconciliations to fix any inconsistencies in communicating with internal and external systems.
 
@@ -45,7 +45,7 @@ At a high level, the payment flow is broken down into two steps to reflect how m
 * Pay-in flow.
 * Pay-out flow.
 
-Take the e-commerce site, Amazon, as an example. After a buyer places an order, the money flows into Amazon's bank account, which is the pay-in flow. Although the money is in Amazon's bank account, Amazon does not own all of the money. The seller owns a substantial part of it and Amazon only works as the money custodian for a fee. Later, when the products are delivered and money is released, the balance after fees then flow from Amazon's bank account to the seller's bank account. This is the pay-out-flow. The simplified pay-in and pay-out flows are shown in the image below.
+Take the e-commerce site, Amazon, as an example. After a buyer places an order, the money flows into Amazon's bank account, which is the pay-in flow. Although the money is in Amazon's bank account, Amazon does not own all of the money. The seller owns a substantial part of it and Amazon only works as the money custodian for a fee. Later, when the products are delivered and money is released, the balance after fees then flows from Amazon's bank account to the seller's bank account. This is the pay-out flow. The simplified pay-in and pay-out flows are shown in the image below.
 
 <div style="margin-left:3rem">
     <img src="./images/high-level-flow.svg" alt="high-level-flow" width="1000" />
@@ -62,7 +62,7 @@ Here's the high-level overview of the pay-in flow:
 * **Payment executor** - executes a single payment order via the Payment Service Provider (PSP). Payment events may contain several payment orders.
 * **Payment service provider (PSP)** - moves money from one account to another, e.g., from a buyer's credit card account to an e-commerce site's bank account.
 * **Card schemes** - organizations that process credit card operations, e.g., Visa and Mastercard.
-* **Ledger** - keeps financial record of all payment transactions.
+* **Ledger** - keeps financial records of all payment transactions.
 * **Wallet** - keeps the account balance for all merchants.
 
 Here's an example pay-in flow:
@@ -73,7 +73,7 @@ Here's an example pay-in flow:
 5. The payment executor calls an external PSP to process the credit card payment.
 6. After the payment executor processes the payment, the payment service updates the wallet to record how much money the seller has.
 7. The wallet service stores updated balance information in its database.
-8. The payment service calls the ledger
+8. The payment service calls the ledger.
 9. The ledger service stores the record of all money movements.
 
 ### **APIs for payment service**
@@ -99,7 +99,7 @@ Example `payment_order`:
 
 Caveats:
 * The `payment_order_id` is forwarded to the PSP to deduplicate payments; i.e., it is the idempotency key.
-* The amount field is `string` as `double` is not appropriate for representing monetary values.
+* The amount field is a `string` as `double` is not appropriate for representing monetary values.
 
 ```http
 GET /v1/payments/{:id}
@@ -149,7 +149,7 @@ The double-entry accounting mechanism is key to any payment system. It tracks mo
 | buyer   | $1    |        |
 | seller  |       | $1     |
 
-Sum of all transaction entries is always zero. This mechanism provides end-to-end traceability of all money movements within the system.
+The sum of all transaction entries is always zero. This mechanism provides end-to-end traceability of all money movements within the system.
 
 ### **Hosted payment page**
 
@@ -160,12 +160,12 @@ To avoid storing credit card information and having to comply with various heavy
 </div>
 
 ### **Pay-out flow**
-The components of the pay-out flow are very similar to the pay-in flow.
+The components of the pay-out flow are very similar to those of the pay-in flow.
 
 Main differences:
 * Money is moved from the e-commerce site's bank account to the merchant's bank account.
-* We can utilize a third-party account payable provider such as Tipalti
-* There's a lot of bookkeeping and regulatory requirements to handle with regards to pay-outs as well
+* We can utilize a third-party accounts payable provider such as Tipalti
+* There are a lot of bookkeeping and regulatory requirements to handle with regard to pay-outs as well
 
 ## Step 3: Design Deep Dive
 
@@ -176,8 +176,8 @@ If our system can directly connect to banks or card schemes, payment can be made
 These kinds of connections are very rare and uncommon, typically done at large companies which can justify the investment.
 
 If we go down the traditional route, a PSP can be integrated in one of two ways:
-1. If a company can safely store sensetive payment information and chooses to do so: PSP can be integrated using API. The company is responsible for developing the payment web pages, collecting and storing sensitive payment information. PSP is responsible for connecting to banks or card schemes.
-2. If a company chooses not to store sensitive payment information due to complex regulations and security concerns: PSP provides a hosted payment page to collect card payment details and securely store them in PSP. This is the approach most companies take.
+1. If a company can safely store sensitive payment information and chooses to do so, the PSP can be integrated using an API. The company is responsible for developing the payment web pages, collecting and storing sensitive payment information. The PSP is responsible for connecting to banks or card schemes.
+2. If a company chooses not to store sensitive payment information due to complex regulations and security concerns, the PSP provides a hosted payment page to collect card payment details and securely store them with the PSP. This is the approach most companies take.
 
 Here's how the hosted payment page workflow works:
 
@@ -186,16 +186,16 @@ Here's how the hosted payment page workflow works:
 </div>
 
 1. The user clicks the “checkout” button in the client browser. The client calls the payment service with the payment order information.
-2. After receiving the payment order information, the payment service sends a payment registration request to the PSP. This registration request contains payment information, such as the amount, currency, expiration date of the payment request, and the redirect URL. Because a payment order should be registered only once, there is a UUID field to ensure the exactly-once registration. This UUID is also called nonce [10]. Usually, this UUID is the ID of the payment order.
+2. After receiving the payment order information, the payment service sends a payment registration request to the PSP. This registration request contains payment information, such as the amount, currency, expiration date of the payment request, and the redirect URL. Because a payment order should be registered only once, there is a UUID field to ensure exactly-once registration. This UUID is also called a nonce [10]. Usually, this UUID is the ID of the payment order.
 3. The PSP returns a token back to the payment service. A token is a UUID on the PSP side that uniquely identifies the payment registration. We can examine the payment registration and the payment execution status later using this token.
 4. The payment service stores the token in the database before calling the PSP-hosted payment page.
 5. Once the token is persisted, the client displays a PSP-hosted payment page. Mobile applications usually use the PSP’s SDK integration for this functionality. Stripe provides a JavaScript library that displays the payment UI, collects sensitive payment information, and calls the PSP directly to complete the payment. Sensitive payment information is collected by Stripe. It never reaches our payment system. The hosted payment page usually needs two pieces of information:
-    - [a] The token we received in step 4. The PSP’s javascript code uses the token to retrieve detailed information about the payment request from the PSP’s backend. One important piece of information is how much money to collect.
+    - [a] The token we received in step 4. The PSP’s JavaScript code uses the token to retrieve detailed information about the payment request from the PSP’s backend. One important piece of information is how much money to collect.
     - [b] Another important piece of information is the redirect URL. This is the web page URL that is called when the payment is complete. When the PSP’s JavaScript finishes the payment, it redirects the browser to the redirect URL. Usually, the redirect URL is an e-commerce web page that shows the status of the checkout. Note that the redirect URL is different from the webhook [11] URL in step 9.
-6. The user fills in the payment details on the PSP’s web page, such as the credit card number, holder’s name, expiration date, etc, then clicks the pay button. The PSP starts the payment processing.
+6. The user fills in the payment details on the PSP’s web page, such as the credit card number, holder’s name, expiration date, etc., then clicks the pay button. The PSP starts the payment processing.
 7. The PSP returns the payment status.
 8. The web page is now redirected to the redirect URL. The payment status that is received in step 7 is typically appended to the URL. For example, the full redirect URL could be [12]: `https://your-company.com/?tokenID=JIOUIQ123NSF&payResult=X324FSa`
-9. Asynchronously, the PSP calls the payment service with the payment status via a webhook. The webhook is an URL on the payment system side that was registered with the PSP during the initial setup with the PSP. When the payment system receives payment events through the webhook, it extracts the payment status and updates the `payment_order_status` field in the Payment Order database table.
+9. Asynchronously, the PSP calls the payment service with the payment status via a webhook. The webhook is a URL on the payment system side that was registered with the PSP during the initial setup with the PSP. When the payment system receives payment events through the webhook, it extracts the payment status and updates the `payment_order_status` field in the Payment Order database table.
 
 ### **Reconciliation**
 The previous section explains the happy path of a payment. Unhappy paths are detected and reconciled using a background reconciliation process.
@@ -209,20 +209,20 @@ Every night, the PSP sends a settlement file which our system uses to compare th
 This process can also be used to detect internal inconsistencies, for example, between the ledger and wallet services.
 
 Mismatches are handled manually by the finance team. The mismatches and adjustments are usually classified into three categories:
-1. The mismatch is classified and the adjustment can be automated. In this case, we know the cause of the mismatch, how to fix it, and it is cost-effective to write a program to automate the adjustment.  Engineers can automate both the mismatch classification and adjustment.
+1. The mismatch is classified and the adjustment can be automated. In this case, we know the cause of the mismatch, how to fix it, and it is cost-effective to write a program to automate the adjustment. Engineers can automate both the mismatch classification and adjustment.
 2. The mismatch is classifiable, but we are unable to automate the adjustment. In this case, we know the cause of the mismatch and how to fix it, but the cost of writing an auto adjustment program is too high. The mismatch is put into a job queue and the finance team fixes the mismatch manually.
-3. The mismatch is unclassifiable. In this case, we do not know how the mismatch happens. The mismatch is put into a special job queue. The finance team investigate it manually.
+3. The mismatch is unclassifiable. In this case, we do not know how the mismatch happens. The mismatch is put into a special job queue. The finance team investigates it manually.
 
 ### **Handling payment processing delays**
 There are cases where a payment can take hours to complete, although it typically takes seconds.
 
 This can happen due to:
-* a payment being flagged as high-risk and someone has to manually review it
-* A credit card requires extra protection, e.g., 3D Secure Authentication, which requires extra details from the cardholder to complete.
+* a payment being flagged as high-risk and someone having to manually review it
+* a credit card requiring extra protection, e.g., 3D Secure Authentication, which requires extra details from the cardholder to complete.
 
 These situations are handled by:
 * waiting for the PSP to send us a webhook when a payment is complete or polling its API if the PSP doesn't provide webhooks
-* showing a "pending" status to the user and giving them a page, where they can check-in for payment updates. We could also send them an email once their payment is complete
+* showing a "pending" status to the user and giving them a page where they can check in for payment updates. We could also send them an email once their payment is complete
 
 ### **Communication among internal services**
 There are two types of communication patterns services use to communicate with one another - synchronous and asynchronous.
@@ -230,9 +230,9 @@ There are two types of communication patterns services use to communicate with o
 #### **Synchronous communication**
 Synchronous communication (i.e., HTTP) works well for small-scale systems, but suffers as scale increases:
 * low performance - request-response cycle is long as more services get involved in the call chain
-* poor failure isolation - if PSPs or any other service fails, user will not receive a response
+* poor failure isolation - if a PSP or any other service fails, the user will not receive a response
 * tight coupling - sender needs to know the receiver
-* hard to scale - not easy to support sudden increase in traffic due to not having a buffer
+* hard to scale - not easy to support a sudden increase in traffic due to not having a buffer
 
 #### **Asynchronous communication**
 Asynchronous communication can be divided into two categories.
@@ -287,18 +287,18 @@ To achieve the `at-least-once` guarantee, we'll use a retry mechanism:
 Here are some common strategies for deciding the retry intervals:
 * immediate retry - client immediately sends another request after failure
 * fixed intervals - wait a fixed amount of time before retrying a payment
-* incremental intervals - incrementally increase retry interval between each retry
+* incremental intervals - incrementally increase the retry interval between each retry
 * exponential backoff - double the retry interval between subsequent retries
-* cancel - client cancels the request. This happens when the error is terminal or retry threshold is reached
+* cancel - client cancels the request. This happens when the error is terminal or the retry threshold is reached
 
 As a rule of thumb, default to an exponential-backoff retry strategy. A good practice is for the server to specify a retry interval using a `Retry-After` header.
 
 An issue with retries is that the server can potentially process a payment twice:
-* client clicks the "pay button" twice, hence, they are charged twice
-* payment is successfully processed by PSP, but not by downstream services (ledger, wallet). Retry causes the payment to be processed by the PSP again
+* client clicks the "pay button" twice; hence, they are charged twice
+* payment is successfully processed by the PSP, but not by downstream services (ledger, wallet). A retry causes the payment to be processed by the PSP again
 
 #### **Idempotency**
-To address the double payment problem, we need to use an idempotency mechanism - a property that an operation applied multiple times is processed only once.
+To address the double payment problem, we need to use an idempotency mechanism - a property that ensures an operation applied multiple times is processed only once.
 
 From an API perspective, clients can make multiple calls which produce the same result.
 
@@ -323,8 +323,8 @@ We can ensure eventual data consistency between all services by implementing exa
 
 If we use replication, we'll have to deal with replication lag, which can lead to users observing inconsistent data between primary and replica databases.
 
-To mitigate that, we can serve all reads and writes from the primary database and only utilize replicas for redundancy and fail-over.
-Alternatively, we can ensure replicas are always in-sync by utilizing a consensus algorithm such as Paxos [[21]](https://en.wikipedia.org/wiki/Paxos_(computer_science)) or Raft [[22]](https://raft.github.io/).
+To mitigate that, we can serve all reads and writes from the primary database and only utilize replicas for redundancy and failover.
+Alternatively, we can ensure replicas are always in sync by utilizing a consensus algorithm such as Paxos [[21]](https://en.wikipedia.org/wiki/Paxos_(computer_science)) or Raft [[22]](https://raft.github.io/).
 We could also use a consensus-based distributed database such as YugabyteDB [[23]](https://www.yugabyte.com/) or CockroachDB [[24]](https://www.cockroachlabs.com/).
 
 ### **Payment security**
@@ -333,7 +333,7 @@ Here are some mechanisms we can use to ensure payment security:
 * Data tampering - enforce encryption and integrity monitoring
 * Man-in-the-middle attacks - use SSL with certificate pinning
 * Data loss - replicate data across multiple regions and take data snapshots
-* DDoS attack - implement rate limiting and firewall
+* DDoS attack - implement rate limiting and a firewall
 * Card theft - use tokens instead of storing real card information in our system
 * PCI compliance - a security standard for organizations which handle branded credit cards
 * Fraud - address verification, card verification value (CVV), user behavior analysis, etc
@@ -373,7 +373,7 @@ Other talking points:
 22. [Raft](https://raft.github.io/)
 23. [YugabyteDB](https://www.yugabyte.com/)
 24. [CockroachDB](https://www.cockroachlabs.com/)
-25. [What is DDoS attack](https://www.cloudflare.com/learning/ddos/what-is-a-ddos-attack/)
+25. [What is a DDoS attack](https://www.cloudflare.com/learning/ddos/what-is-a-ddos-attack/)
 26. [Fraud Management — Chargebee](https://www.chargebee.com/docs/payments/2.0/fraud-management/chargebee-fraud-management)
 27. [How Uber Processes Early Chargeback Signals](https://www.uber.com/us/en/blog/how-uber-processes-early-chargeback-signals/)
 28. [Re-Architecting Cash and Digital Wallet Payments for India with Uber Engineering](https://www.uber.com/us/en/blog/india-payments/)
