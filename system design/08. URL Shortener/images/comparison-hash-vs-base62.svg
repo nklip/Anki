@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="942" height="550" viewBox="0 0 942 550" role="img" aria-labelledby="title desc">
+  <title id="title">Hash with collision resolution versus Base 62 conversion</title>
+  <desc id="desc">A two-column table reproduces the reference comparison of hash with collision resolution and Base 62 conversion. The rows compare short URL length, the need for a unique ID generator, collisions, and predictability when IDs increment by one.</desc>
+
+  <!-- Shared table styles keep all labels as editable native text. -->
+  <defs>
+    <style>
+      .cell { font-family: Arial, Helvetica, sans-serif; font-size: 23.5px; font-weight: 400; fill: #111; }
+      .heading { font-family: Arial, Helvetica, sans-serif; font-size: 23.5px; font-weight: 700; fill: #111; }
+      .grid { fill: none; stroke: #111; stroke-width: 1.25; }
+    </style>
+  </defs>
+
+  <!-- Canvas and unequal row heights preserve the reference's line wrapping and padding. -->
+  <rect id="canvas" width="942" height="550" fill="#fff"/>
+  <g id="table-grid" class="grid">
+    <rect id="table-border" x="13.3" y="27.3" width="914" height="509.4"/>
+    <path id="column-divider" d="M470.3 27.3 V536.7"/>
+    <path id="row-dividers" d="M13.3 97 H927.3 M13.3 198.6 H927.3 M13.3 300.4 H927.3 M13.3 402.1 H927.3"/>
+  </g>
+
+  <!-- Bold column headings align with the body text below them. -->
+  <g id="column-headings" class="heading">
+    <text x="23.7" y="60.3">Hash + collision resolution</text>
+    <text x="480.5" y="60.3">Base 62 conversion</text>
+  </g>
+
+  <!-- Row 1: short URL length. Explicit line breaks match the PNG. -->
+  <g id="url-length-comparison" class="cell">
+    <text x="23.7" y="129.9">Fixed short URL length.</text>
+    <text x="480.5" y="129.9"><tspan x="480.5" dy="0">The short URL length is not fixed. It goes</tspan><tspan x="480.5" dy="32.1">up with the ID.</tspan></text>
+  </g>
+
+  <!-- Row 2: dependency on a unique ID generator. -->
+  <g id="id-generator-comparison" class="cell">
+    <text x="23.7" y="231.7">It does not need a unique ID generator.</text>
+    <text x="480.5" y="231.7"><tspan x="480.5" dy="0">This option depends on a unique ID</tspan><tspan x="480.5" dy="32.1">generator.</tspan></text>
+  </g>
+
+  <!-- Row 3: collision handling. -->
+  <g id="collision-comparison" class="cell">
+    <text x="23.7" y="333.5"><tspan x="23.7" dy="0">Collision is possible and must be</tspan><tspan x="23.7" dy="32.1">resolved.</tspan></text>
+    <text x="480.5" y="333.5"><tspan x="480.5" dy="0">Collision is impossible because ID is</tspan><tspan x="480.5" dy="32.1">unique.</tspan></text>
+  </g>
+
+  <!-- Row 4: predictability of the next short URL, preserving the supplied wording. -->
+  <g id="predictability-comparison" class="cell">
+    <text x="23.7" y="435.2"><tspan x="23.7" dy="0">It is impossible to figure out the next</tspan><tspan x="23.7" dy="32.1">available short URL because it does not</tspan><tspan x="23.7" dy="32.1">depend on ID.</tspan></text>
+    <text x="480.5" y="435.2"><tspan x="480.5" dy="0">It is easy to figure out the next available</tspan><tspan x="480.5" dy="32.1">short URL if ID increments by 1 for a new</tspan><tspan x="480.5" dy="32.1">entry. This can be a security concern.</tspan></text>
+  </g>
+</svg>

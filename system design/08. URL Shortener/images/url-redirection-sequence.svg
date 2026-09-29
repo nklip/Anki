@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1423.076923" viewBox="0 0 702 666" role="img" aria-labelledby="title desc">
+  <title id="title">URL redirection sequence</title>
+  <desc id="desc">Read from top to bottom. The client visits a short URL on the tinyurl server, receives status code 301 with the long URL in the Location header, and then visits that long URL on the Amazon server.</desc>
+
+  <!-- Reference coordinates preserve the PNG's proportions at a width of 1500 pixels. -->
+  <defs>
+    <style>
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 17.4px; font-weight: 400; fill: #222; }
+      .server-label { font-family: Arial, Helvetica, sans-serif; font-size: 16.2px; font-weight: 400; fill: #222; }
+      .node { fill: #fff; stroke: #32b4d5; stroke-width: 2.4; }
+      .connector { fill: none; stroke: #316fa5; stroke-width: 1.25; }
+      .arrowhead { fill: #316fa5; }
+      .server { fill: #7fba42; }
+    </style>
+  </defs>
+
+  <!-- The white canvas extends beyond the viewBox to cover subpixel edges at the 1500-pixel output size. -->
+  <rect id="canvas" x="-1" y="-1" width="704" height="668" fill="#fff"/>
+
+  <!-- URL examples; the destination is deliberately split at the same place as the reference. -->
+  <g id="url-examples" class="label">
+    <text x="35" y="27.5">short URL: https://tinyurl.com/qtj5opu</text>
+    <text x="35" y="54.5">long URL: https://www.amazon.com/dp/B017V4NTFA?pLink=63eaef76-979c-4d&amp;</text>
+    <text x="127" y="77">ref=adblp13nvvxx_0_2_im</text>
+  </g>
+
+  <!-- Client lifeline provides a top-to-bottom reading order without crossing any message label. -->
+  <path id="client-lifeline" d="M91 175 V648" fill="none" stroke="#111" stroke-width="2.4"/>
+  <g id="client">
+    <rect class="node" x="45.5" y="87.5" width="91.5" height="87.5" rx="13"/>
+    <g id="client-phone" fill="none" stroke="#333" stroke-width="2.4">
+      <rect x="75.5" y="97.5" width="28" height="42" rx="2.5"/>
+      <path d="M76 104 H103 M76 133.5 H103" stroke-width="1.5"/>
+      <path d="M87 100.5 H92 M88.5 136.5 H90.5" stroke-width="1.3" stroke-linecap="round"/>
+    </g>
+    <text class="label" x="91" y="163" text-anchor="middle">Client</text>
+  </g>
+
+  <!-- First request: the shaft ends inside its separate head; the tip meets the tinyurl box. -->
+  <g id="short-url-request">
+    <path class="connector" d="M95 224.5 L534.5 300.5"/>
+    <path class="arrowhead" d="M542.3 301.8 L532.6 306 L534.4 295.3 Z"/>
+    <text class="label" x="260" y="243" transform="rotate(9.81 260 243)">visit short URL</text>
+  </g>
+
+  <!-- The redirect response returns to the client; both labels remain clear of the shaft. -->
+  <g id="redirect-response">
+    <path class="connector" d="M543.5 346 L104.5 397.7"/>
+    <path class="arrowhead" d="M95 398.8 L105.1 392.2 L106.4 403 Z"/>
+    <text class="label" x="254" y="374" transform="rotate(-6.71 254 374)">status code: 301</text>
+    <text class="label" x="256" y="401" transform="rotate(-6.71 256 401)">location: long URL</text>
+  </g>
+
+  <!-- The destination request is later on the client lifeline and ends at the Amazon box. -->
+  <g id="long-url-request">
+    <path class="connector" d="M95 410 L535.1 575.3"/>
+    <path class="arrowhead" d="M542.3 578 L531.9 579.8 L535.8 569.5 Z"/>
+    <text class="label" x="251" y="462" transform="rotate(20.58 251 462)">visit long URL</text>
+  </g>
+
+  <!-- tinyurl server: repeated server-icon geometry is kept native and editable. -->
+  <g id="tinyurl-server">
+    <rect class="node" x="543.5" y="274.5" width="115.5" height="112" rx="17"/>
+    <rect class="server" x="586.5" y="287" width="29.5" height="62.5" rx="2.5"/>
+    <path d="M591 297.5 H612 M591 335.5 H612 M591 342 H612" fill="none" stroke="#fff" stroke-width="2.6"/>
+    <text class="server-label" x="602" y="369" text-anchor="middle">tinyurl server</text>
+  </g>
+
+  <!-- Amazon server receives the final visit; the box border stays outside the arrow nose. -->
+  <g id="amazon-server">
+    <rect class="node" x="543.5" y="523.5" width="115.5" height="112" rx="17"/>
+    <rect class="server" x="586.5" y="536" width="29.5" height="62.5" rx="2.5"/>
+    <path d="M591 546.5 H612 M591 584.5 H612 M591 591 H612" fill="none" stroke="#fff" stroke-width="2.6"/>
+    <text class="server-label" x="601" y="618" text-anchor="middle">Amazon server</text>
+  </g>
+</svg>

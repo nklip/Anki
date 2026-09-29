@@ -5,105 +5,117 @@
   <!-- Shared palette, typography, and connector rules. -->
   <defs>
     <style>
-      .cyan-box { fill: #fff; stroke: #04b3d2; stroke-width: 3; }
-      .flow { fill: none; stroke: #247ba5; stroke-width: 2; }
+      .cyan-box { fill: #fff; stroke: #00b0d5; stroke-width: 2.6; }
+      .flow { fill: none; stroke: #337d9e; stroke-width: 1.5; }
+      .arrowhead { fill: #086ca2; }
       .label { font-family: Arial, Helvetica, sans-serif; fill: #111; }
       .step { fill: #fff; stroke: #111; stroke-width: 1.5; }
-      .step-text { font-family: Arial, Helvetica, sans-serif; font-size: 18px; fill: #111; text-anchor: middle; dominant-baseline: middle; }
+      .step-text { font-family: Arial, Helvetica, sans-serif; font-size: 18px; fill: #111; text-anchor: middle; }
+      .cache-text { font-family: 'Arial Narrow', Arial, Helvetica, sans-serif; font-size: 14px; fill: #fff; text-anchor: middle; }
     </style>
   </defs>
 
-  <!-- User client with laptop and phone icons. -->
+  <!-- An explicit white canvas preserves the PNG background in dark-mode viewers. -->
+  <rect id="canvas" width="1366" height="418" fill="#fff"/>
+
+  <!-- User client: open laptop screen, solid base, and phone speaker/home details. -->
   <g id="user-client">
-    <rect class="cyan-box" x="18" y="23" width="200" height="106" rx="15"/>
-    <text class="label" x="31" y="66" font-size="20">User</text>
+    <rect class="cyan-box" x="18.8" y="22.6" width="198.7" height="107" rx="16.5"/>
+    <text class="label" x="31" y="64.4" font-size="20.5">User</text>
     <g fill="none" stroke="#111" stroke-width="3">
-      <rect x="80" y="71" width="49" height="32" rx="3"/>
-      <path d="M75 108 H134 M90 103 H120"/>
-      <rect x="146" y="61" width="35" height="52" rx="5"/>
-      <path d="M149 69 H178 M149 103 H178"/>
+      <path d="M80.5 100 V75 Q80.5 71.3 84.5 71.3 H125 Q129 71.3 129 75 V100"/>
+      <rect x="146.4" y="61.4" width="33.7" height="51.1" rx="4.3"/>
+      <path d="M147.5 69 H179 M147.5 103.8 H179" stroke-width="1.8"/>
+      <path d="M161 65.5 H165.2 M162.5 108.4 H164.1" stroke-width="1.7" stroke-linecap="round"/>
     </g>
+    <rect x="77.2" y="103.6" width="55.2" height="4.7" rx="1.6" fill="#111"/>
+    <rect x="99.3" y="104.7" width="12.4" height="1.7" rx="0.6" fill="#fff"/>
   </g>
 
   <!-- Request and redirect response around the load balancer. -->
-  <path class="flow" d="M218 49 H803"/>
-  <path d="M822 49 L803 39 V59 Z" fill="#247ba5"/>
-  <circle class="step" cx="331" cy="26" r="15"/>
-  <text class="step-text" x="331" y="27">1</text>
-  <text class="label" x="354" y="33" font-size="21">GET https://tinyurl.com/zn9edcu</text>
+  <path id="short-url-request" class="flow" d="M218.8 49.5 H819"/>
+  <path class="arrowhead" d="M829.5 49.5 L817 43.2 V55.8 Z"/>
+  <circle class="step" cx="331.2" cy="26.3" r="15.2"/>
+  <text class="step-text" x="331.2" y="32.5">1</text>
+  <text class="label" x="354" y="32.5" font-size="21.15">GET https://tinyurl.com/zn9edcu</text>
 
-  <path class="flow" d="M818 107 H237"/>
-  <path d="M218 107 L237 97 V117 Z" fill="#247ba5"/>
-  <text class="label" x="535" y="133" font-size="21" text-anchor="middle">Return long URL:</text>
-  <circle class="step" cx="240" cy="154" r="15"/>
-  <text class="step-text" x="240" y="155">5</text>
-  <text class="label" x="263" y="160" font-size="20">https://en.wikipedia.org/wiki/Systems_design</text>
+  <path id="redirect-response" class="flow" d="M823 108.2 H229"/>
+  <path class="arrowhead" d="M218.8 108.2 L231 102 V114.4 Z"/>
+  <text class="label" x="390" y="134.5" font-size="21">Return long URL:</text>
+  <circle class="step" cx="240" cy="154.8" r="15.2"/>
+  <text class="step-text" x="240" y="161">5</text>
+  <text class="label" x="264.8" y="159.5" font-size="21.2">https://en.wikipedia.org/wiki/Systems_design</text>
 
   <!-- Load balancer and web-server pool. -->
   <g id="load-balancer">
-    <path d="M827 49 H884 L891 109 H818 Z" fill="#087bbb"/>
-    <path d="M856 57 V99 M844 78 H868 M844 78 L850 71 M844 78 L850 85 M868 78 L862 71 M868 78 L862 85" fill="none" stroke="#fff" stroke-width="2.5"/>
-    <text class="label" x="855" y="153" font-size="21" text-anchor="middle">Load balancer</text>
+    <path d="M829.5 49.5 H884.8 L891.4 104.8 Q892 109.5 887.5 109.5 H822.5 Z" fill="#0074bc"/>
+    <circle cx="855.9" cy="59.8" r="3.8" fill="#fff"/>
+    <path d="M855.9 63 V101.4 M849.9 95.2 L855.9 102.2 L861.9 95.2 M855.9 73 L843.5 89 M843.5 81 V90 H851 M855.9 73 L868.3 89 M868.3 81 V90 H860.8" fill="none" stroke="#fff" stroke-width="2.3" stroke-linejoin="round"/>
+    <text class="label" x="856.8" y="153.2" font-size="21" text-anchor="middle">Load balancer</text>
   </g>
 
-  <path class="flow" d="M891 78 H989"/>
-  <path d="M1008 78 L989 68 V88 Z" fill="#247ba5"/>
-  <circle class="step" cx="939" cy="56" r="15"/>
-  <text class="step-text" x="939" y="57">2</text>
+  <path id="balanced-request" class="flow" d="M888.3 79 H997"/>
+  <path class="arrowhead" d="M1006.2 79 L994.7 72.8 V85.2 Z"/>
+  <circle class="step" cx="939.5" cy="56.6" r="15.2"/>
+  <text class="step-text" x="939.5" y="62.8">2</text>
 
   <g id="web-server-pool">
-    <rect x="1007" y="17" width="144" height="123" rx="22" fill="#fff" stroke="#04b3d2" stroke-width="3" stroke-dasharray="9 8"/>
-    <g fill="#78c42a">
-      <rect x="1047" y="30" width="31" height="18" rx="2"/>
-      <rect x="1082" y="30" width="31" height="18" rx="2"/>
-      <rect x="1028" y="50" width="34" height="51" rx="2"/>
-      <rect x="1064" y="50" width="34" height="51" rx="2"/>
-      <rect x="1100" y="50" width="34" height="51" rx="2"/>
+    <!-- Dash phase keeps a painted border segment at the incoming request's tip. -->
+    <rect x="1007.5" y="18" width="143.5" height="122" rx="22" fill="#fff" stroke="#00b0d5" stroke-width="2.6" stroke-dasharray="9 8" stroke-dashoffset="8"/>
+    <g fill="#6abd25">
+      <rect x="1047.2" y="29.8" width="31.5" height="17.2" rx="1.3"/>
+      <rect x="1082.5" y="29.8" width="31.5" height="17.2" rx="1.3"/>
+      <rect x="1028.6" y="49.5" width="33.7" height="51.5" rx="1.3"/>
+      <rect x="1065.2" y="49.5" width="33.7" height="51.5" rx="1.3"/>
+      <rect x="1101" y="49.5" width="33.7" height="51.5" rx="1.3"/>
     </g>
-    <g stroke="#fff" stroke-width="3">
-      <path d="M1052 39 H1073 M1087 39 H1108"/>
-      <path d="M1034 88 H1056 M1070 88 H1092 M1106 88 H1128"/>
+    <g fill="none" stroke="#fff" stroke-width="2.3">
+      <path d="M1052 36.5 H1074 M1087.5 36.5 H1109.5"/>
+      <path d="M1034 56.2 H1056.7 M1070.5 56.2 H1093.2 M1106.3 56.2 H1129"/>
+      <path d="M1034 88 H1056.7 M1070.5 88 H1093.2 M1106.3 88 H1129"/>
+      <path d="M1034 94.6 H1056.7 M1070.5 94.6 H1093.2 M1106.3 94.6 H1129"/>
     </g>
-    <text class="label" x="1079" y="129" font-size="19" text-anchor="middle">Web servers</text>
+    <text class="label" x="1079.3" y="129.7" font-size="20.5" text-anchor="middle">Web servers</text>
   </g>
 
-  <!-- Backend lookups; arrow tips stop at their container borders. -->
-  <path class="flow" d="M1067 140 L1020 246"/>
-  <path d="M1009 265 L1010 243 L1029 252 Z" fill="#247ba5"/>
-  <circle class="step" cx="1021" cy="200" r="15"/>
-  <text class="step-text" x="1021" y="201">3</text>
+  <!-- Both lookups start at the same point; their tips point toward the rounded service corners, as in the PNG. -->
+  <path id="cache-lookup" class="flow" d="M1079.3 140 L1013.8 255.3"/>
+  <path class="arrowhead" d="M1008.6 264.7 L1009.5 251.3 L1019.5 256.9 Z"/>
+  <circle class="step" cx="1021.6" cy="201.2" r="15.2"/>
+  <text class="step-text" x="1021.6" y="207.4">3</text>
 
-  <path class="flow" d="M1091 140 L1149 245"/>
-  <path d="M1160 264 L1140 252 L1159 242 Z" fill="#247ba5"/>
-  <circle class="step" cx="1143" cy="200" r="15"/>
-  <text class="step-text" x="1143" y="201">4</text>
+  <path id="database-lookup" class="flow" d="M1079.3 140 L1154.3 254.7"/>
+  <path class="arrowhead" d="M1160.1 263.9 L1149 257.1 L1158.6 250.9 Z"/>
+  <circle class="step" cx="1143.4" cy="201.3" r="15.2"/>
+  <text class="step-text" x="1143.4" y="207.5">4</text>
 
   <!-- Cache and database services. -->
   <g id="cache-service">
-    <rect class="cyan-box" x="870" y="265" width="138" height="140" rx="20"/>
-    <g fill="#087bbb" stroke="#056ba0" stroke-width="1.5">
-      <rect x="892" y="286" width="46" height="49" rx="5"/>
-      <rect x="920" y="305" width="48" height="49" rx="5"/>
-      <rect x="950" y="324" width="48" height="49" rx="5"/>
+    <rect class="cyan-box" x="870.8" y="265.4" width="137.5" height="138" rx="20.5"/>
+    <g fill="#0074bc" stroke="#086485" stroke-width="1">
+      <rect x="892.2" y="286" width="44.8" height="47.3" rx="5"/>
+      <rect x="918.5" y="304.8" width="44.8" height="47.3" rx="5"/>
+      <rect x="951.7" y="325.1" width="44.8" height="47.3" rx="5"/>
     </g>
-    <g class="label" font-size="11" fill="#fff" text-anchor="middle">
-      <text x="915" y="304">CACHE</text>
-      <text x="944" y="323">CACHE</text>
-      <text x="974" y="342">CACHE</text>
+    <g class="cache-text">
+      <text x="915" y="301.1" textLength="36" lengthAdjust="spacingAndGlyphs">CACHE</text>
+      <text x="941.3" y="320" textLength="36" lengthAdjust="spacingAndGlyphs">CACHE</text>
+      <text x="974.4" y="340.3" textLength="36" lengthAdjust="spacingAndGlyphs">CACHE</text>
     </g>
-    <text class="label" x="939" y="393" font-size="21" text-anchor="middle">Cache</text>
+    <text class="label" x="939.5" y="392.5" font-size="21" text-anchor="middle">Cache</text>
   </g>
 
   <g id="database-service">
-    <rect class="cyan-box" x="1160" y="263" width="140" height="141" rx="20"/>
-    <g fill="#087bbb">
-      <ellipse cx="1204" cy="289" rx="22" ry="7"/>
-      <path d="M1182 289 V332 Q1204 342 1226 332 V289 Q1204 299 1182 289 Z"/>
-      <ellipse cx="1230" cy="301" rx="22" ry="7"/>
-      <path d="M1208 301 V344 Q1230 354 1252 344 V301 Q1230 311 1208 301 Z"/>
-      <ellipse cx="1257" cy="313" rx="22" ry="7"/>
-      <path d="M1235 313 V356 Q1257 366 1279 356 V313 Q1257 323 1235 313 Z"/>
+    <rect class="cyan-box" x="1160.5" y="263.9" width="140.2" height="140.3" rx="20.5"/>
+    <!-- White outlines separate the stepped cylinders and keep every top ellipse visible. -->
+    <g fill="#0074bc" stroke="#fff" stroke-width="2.4">
+      <path d="M1182.4 288.8 V326.6 C1182.4 336.3 1227.6 336.3 1227.6 326.6 V288.8 Z"/>
+      <ellipse cx="1205" cy="288.8" rx="22.6" ry="7"/>
+      <path d="M1207.3 301 V339.1 C1207.3 348.8 1252.7 348.8 1252.7 339.1 V301 Z"/>
+      <ellipse cx="1230" cy="301" rx="22.7" ry="7"/>
+      <path d="M1233.4 313.5 V351.4 C1233.4 361.1 1279 361.1 1279 351.4 V313.5 Z"/>
+      <ellipse cx="1256.2" cy="313.5" rx="22.8" ry="7"/>
     </g>
-    <text class="label" x="1230" y="392" font-size="21" text-anchor="middle">Database</text>
+    <text class="label" x="1230.6" y="391.4" font-size="21" text-anchor="middle">Database</text>
   </g>
 </svg>
