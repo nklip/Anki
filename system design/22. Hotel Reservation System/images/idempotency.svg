@@ -1,8 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1130" height="1066" viewBox="0 0 1130 1066" role="img" aria-labelledby="idempotency-title idempotency-desc">
   <title id="idempotency-title">An idempotency key stops a double submit</title>
   <desc id="idempotency-desc">A sequence diagram between a user and the reservation service. Step 1: the user generates a reservation order. Step 2: the service shows the reservation page carrying a reservation_id. Step 3a: the user submits the reservation with that reservation_id and it succeeds. Step 3b: the same submission is sent again with the same reservation_id, and a red X marks it as rejected before it reaches the service, because the unique constraint on reservation_id is violated.</desc>
+  <!-- Symmetric heads: inset shaft joins hide the stroke inside each triangle.
+       Connector endpoints are pulled back by the same amount to preserve visible tips. -->
   <defs>
-    <marker id="head-flow" viewBox="0 0 21.1 16.6" refX="21.1" refY="8.3" markerWidth="21.1" markerHeight="16.6" markerUnits="userSpaceOnUse" orient="auto">
+    <marker id="head-flow" viewBox="0 0 21.1 16.6" refX="16.1" refY="8.3" markerWidth="21.1" markerHeight="16.6" markerUnits="userSpaceOnUse" orient="auto">
       <path d="M0 0 21.1 8.3 0 16.6Z" fill="#000"/>
     </marker>
     <style>
@@ -54,7 +56,7 @@
   <!-- 1. The order is generated. Each message line breaks where its label sits on top of it. -->
   <g id="step-1">
     <path class="line" d="M122.83 347.55H311.86"/>
-    <path class="flow" d="M797.33 347.55H943.9"/>
+    <path class="flow" d="M797.33 347.55H938.9"/>
     <circle class="ring" cx="334.04" cy="347.73" r="21.08"/>
     <text class="num" x="324" y="361">1</text>
     <text x="366" y="359.5">Generate reservation order</text>
@@ -63,7 +65,7 @@
   <!-- 2. The reply is dashed, and carries the reservation_id the next step will reuse. -->
   <g id="step-2">
     <path class="dash" d="M945.61 495.63H890.45" stroke-dashoffset="1.42"/>
-    <path class="dash flow" d="M216.65 495.63H124.75" stroke-dashoffset="9.15"/>
+    <path class="dash flow" d="M216.65 495.63H129.75" stroke-dashoffset="9.15"/>
     <circle class="ring" cx="238.83" cy="495.87" r="21.08"/>
     <text class="num" x="228" y="510">2</text>
     <text x="270" y="507.5">Show <tspan x="369">reservation</tspan> <tspan x="553">page</tspan> <tspan class="id" x="641">(reservation_id)</tspan></text>
@@ -72,7 +74,7 @@
   <!-- 3a. First submit: it lands. -->
   <g id="step-3a">
     <path class="line" d="M122.83 713.73H242.04"/>
-    <path class="flow" d="M848.77 713.73H943.9"/>
+    <path class="flow" d="M848.77 713.73H938.9"/>
     <circle class="ring" cx="264.23" cy="713.97" r="21.08"/>
     <text class="num-wide" x="247" y="725">3a</text>
     <text x="294" y="725"><tspan class="sub">Submit</tspan> <tspan x="416">reservation</tspan> <tspan class="id" x="599">(reservation_id)</tspan></text>
@@ -82,7 +84,7 @@
   <g id="step-3b">
     <path class="line" d="M122.83 846.25H242.04"/>
     <path class="line" d="M846.26 846.25H873.96"/>
-    <path class="flow" d="M902.57 846.25H943.9"/>
+    <path class="flow" d="M902.57 846.25H938.9"/>
     <circle class="ring" cx="264.22" cy="846.42" r="21.08"/>
     <text class="num-wide" x="246" y="858">3b</text>
     <text x="292" y="858"><tspan class="sub">Submit</tspan> <tspan x="414">reservation</tspan> <tspan class="id" x="597">(reservation_id)</tspan></text>
@@ -91,7 +93,7 @@
   <!-- Why 3b fails, annotated off to the side. -->
   <g id="rejection">
     <text class="err" x="875" y="860">X</text>
-    <path class="flow" d="M766 977.3 872 859.8"/>
+    <path class="flow" d="M766 977.3 868.6508 863.5125"/>
     <text class="note" x="539" y="1006.5">Unique constraint is violated</text>
     <text class="note-id" x="629" y="1042">(reservation_id)</text>
   </g>

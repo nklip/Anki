@@ -1,8 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1994" height="1320" viewBox="0 0 1994 1320" role="img" aria-labelledby="pessimistic-title pessimistic-desc">
   <title id="pessimistic-title">Pessimistic locking serializes competing reservations</title>
   <desc id="pessimistic-desc">Time flows downward. User 1 begins Transaction 1, locks the room inventory with SELECT FOR UPDATE, reserves the room, and commits. Transaction 2 waits for Transaction 1 to finish, then checks the locked inventory, discovers all 100 rooms are reserved, cannot reserve another room, and rolls back.</desc>
+  <!-- Symmetric heads: inset shaft joins hide the stroke inside each triangle.
+       Connector endpoints are pulled back by the same amount to preserve visible tips. -->
   <defs>
-    <marker id="head-flow" viewBox="0 0 22 17" refX="22" refY="8.5" markerWidth="22" markerHeight="17" markerUnits="userSpaceOnUse" orient="auto">
+    <marker id="head-flow" viewBox="0 0 22 17" refX="17" refY="8.5" markerWidth="22" markerHeight="17" markerUnits="userSpaceOnUse" orient="auto">
       <path d="M0 0 22 8.5 0 17Z" fill="#000"/>
     </marker>
     <style>
@@ -20,7 +22,7 @@
   <!-- Time axis establishes the top-to-bottom reading order. -->
   <g id="time-axis">
     <text x="43" y="69">Time</text>
-    <path id="timeFlowArrow" class="flow" d="M156.5 30V1291"/>
+    <path id="timeFlowArrow" class="flow" d="M156.5 30V1286"/>
   </g>
 
   <!-- User 1 and its transaction timeline. -->
@@ -29,7 +31,7 @@
     <circle cx="540.5" cy="106" r="19" fill="#000"/>
     <path d="M501.5 164V155.5A39 19 0 0 1 579.5 155.5V164Z" fill="#000"/>
     <path class="shaft" d="M540.5 164V312"/>
-    <path id="user1CompletionArrow" class="flow" d="M540.5 937V1291"/>
+    <path id="user1CompletionArrow" class="flow" d="M540.5 937V1286"/>
   </g>
 
   <!-- Transaction 1 acquires the row lock, updates inventory, and commits. -->
@@ -55,12 +57,12 @@
   <!-- The center annotation shows the interval during which the second lock request blocks. -->
   <g id="wait-interval">
     <path class="shaft" d="M1113 499H1235"/>
-    <path id="waitStartArrow" class="flow" d="M1176 574V500"/>
+    <path id="waitStartArrow" class="flow" d="M1176 574V505"/>
     <text text-anchor="middle" x="1176" y="642">Transaction 2</text>
     <text text-anchor="middle" x="1176" y="687">waits for</text>
     <text text-anchor="middle" x="1176" y="733">Transaction 1</text>
     <text text-anchor="middle" x="1176" y="779">to finish</text>
-    <path id="waitEndArrow" class="flow" d="M1176 799V898"/>
+    <path id="waitEndArrow" class="flow" d="M1176 799V893"/>
     <path class="shaft" d="M1113 899H1235"/>
   </g>
 
@@ -70,7 +72,7 @@
     <circle cx="1616.5" cy="106" r="19" fill="#000"/>
     <path d="M1577.5 164V155.5A39 19 0 0 1 1655.5 155.5V164Z" fill="#000"/>
     <path class="shaft" d="M1616.5 164V312"/>
-    <path id="user2CompletionArrow" class="flow" d="M1616.5 1225V1291"/>
+    <path id="user2CompletionArrow" class="flow" d="M1616.5 1225V1286"/>
   </g>
 
   <!-- Transaction 2 sees the committed inventory and rolls back instead of overselling. -->

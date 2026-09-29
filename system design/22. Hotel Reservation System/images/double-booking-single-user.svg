@@ -1,8 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1508" height="986" viewBox="0 0 1508 986" role="img" aria-labelledby="double-booking-single-user-title double-booking-single-user-desc">
   <title id="double-booking-single-user-title">One user double-books by clicking twice</title>
   <desc id="double-booking-single-user-desc">A single user clicks the reserve button twice. Each click issues the same INSERT INTO RESERVATION statement with identical values: hotel 121, room type 2, 3 rooms, 2021-06-01 to 2021-06-04, status pending_pay, guest1. Nothing distinguishes the two requests, so both inserts succeed and the reservation table ends up with two identical rows, row 1 and row 2, for the same stay. The reservation schema on the right lists reservation_id as the primary key, followed by hotel_id, room_type_id, start_date, end_date, status and guest_id.</desc>
+  <!-- Symmetric heads: inset shaft joins hide the stroke inside each triangle.
+       Connector endpoints are pulled back by the same amount to preserve visible tips. -->
   <defs>
-    <marker id="head-flow" viewBox="0 0 17.2 14.4" refX="17.2" refY="7.2" markerWidth="17.2" markerHeight="14.4" markerUnits="userSpaceOnUse" orient="auto">
+    <marker id="head-flow" viewBox="0 0 17.2 14.4" refX="12.7" refY="7.2" markerWidth="17.2" markerHeight="14.4" markerUnits="userSpaceOnUse" orient="auto">
       <path d="M0 0 17.2 7.2 0 14.4Z" fill="#000"/>
     </marker>
     <style>
@@ -40,7 +42,7 @@
       <tspan x="55" y="581">guest1</tspan>
       <tspan x="53" y="616">)</tspan>
     </text>
-    <path id="stmt-first-to-rows" class="flow" d="M267.83 634.81V813.2"/>
+    <path id="stmt-first-to-rows" class="flow" d="M267.83 634.81V808.7"/>
   </g>
   <g id="click-second">
     <text id="label-click-second" x="774" y="50">User’s second click</text>
@@ -62,7 +64,7 @@
       <tspan x="690.5" y="581">guest1</tspan>
       <tspan x="688.5" y="616">)</tspan>
     </text>
-    <path id="stmt-second-to-rows" class="flow" d="M905.56 634.81V813.2"/>
+    <path id="stmt-second-to-rows" class="flow" d="M905.56 634.81V808.7"/>
   </g>
 
   <!-- Both inserts land, so the table ends up holding two identical rows for the same stay. -->

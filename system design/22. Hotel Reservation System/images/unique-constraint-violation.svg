@@ -3,8 +3,10 @@
   <desc id="unique-desc">A user's first click inserts reservation ID 121 and stores one row. A second click attempts the same reservation ID, violates the reservation table's unique constraint, and is rejected.</desc>
 
   <!-- Shared typography, strokes, and arrowheads. -->
+  <!-- Symmetric heads: inset shaft joins hide the stroke inside each triangle.
+       Connector endpoints are pulled back by the same amount to preserve visible tips. -->
   <defs>
-    <marker id="flow-arrowhead" viewBox="0 0 20 18" refX="20" refY="9" markerWidth="20" markerHeight="18" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+    <marker id="flow-arrowhead" viewBox="0 0 20 18" refX="16" refY="9" markerWidth="20" markerHeight="18" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
       <path d="M0 0 20 9 0 18Z" fill="#000"/>
     </marker>
     <style>
@@ -51,7 +53,7 @@
   </g>
 
   <!-- The double-ended dashed line makes the repeated ID explicit. -->
-  <path id="duplicateReservationIdFlow" class="duplicate-flow" d="M150 427.5H792"/>
+  <path id="duplicateReservationIdFlow" class="duplicate-flow" d="M154 427.5H788"/>
 
   <!-- SQL-like values remain real text and sit above connector geometry. -->
   <g id="insert-text" class="request-text">
@@ -91,7 +93,7 @@
   </g>
 
   <!-- The callout points to the repeated key without touching its text. -->
-  <path id="uniqueConstraintViolationFlow" class="dashed-flow" d="M1417 594 884 441"/>
+  <path id="uniqueConstraintViolationFlow" class="dashed-flow" d="M1417 594 887.8447 442.1036"/>
   <text class="heading" x="1540" y="602">
     <tspan x="1540">Unique</tspan>
     <tspan x="1540" dy="40">constraint</tspan>
@@ -102,11 +104,11 @@
   <g id="insert-outcomes">
     <path id="firstOutcomeUpperShaft" class="plain-shaft" d="M313 741V815"/>
     <text class="success-mark" x="313" y="870" text-anchor="middle" font-size="58" font-weight="700">✓</text>
-    <path id="firstOutcomeFlow" class="flow" d="M313 890V949"/>
+    <path id="firstOutcomeFlow" class="flow" d="M313 890V945"/>
 
     <path id="secondOutcomeUpperShaft" class="plain-shaft" d="M1047 741V794"/>
     <text class="failure-mark" x="1047" y="864" text-anchor="middle" font-size="56" font-weight="700">X</text>
-    <path id="secondOutcomeFlow" class="flow" d="M1047 883V949"/>
+    <path id="secondOutcomeFlow" class="flow" d="M1047 883V945"/>
   </g>
 
   <!-- Only the first click creates a persisted reservation row. -->

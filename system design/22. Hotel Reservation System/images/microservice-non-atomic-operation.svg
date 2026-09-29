@@ -1,11 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1748" height="1062" viewBox="0 0 1748 1062" role="img" aria-labelledby="non-atomic-title non-atomic-desc">
   <title id="non-atomic-title">Separate microservice operations are not one atomic transaction</title>
   <desc id="non-atomic-desc">A sequence diagram with a user, an inventory service, and a reservation service. Managing room inventory is one transaction in the inventory service. Reserving a room later is a separate transaction in the reservation service, so the two operations are not atomic together.</desc>
+  <!-- Symmetric heads: inset shaft joins hide the stroke inside each triangle.
+       Connector endpoints are pulled back by the same amount to preserve visible tips. -->
   <defs>
-    <marker id="head-flow" viewBox="0 0 23 18" refX="23" refY="9" markerWidth="23" markerHeight="18" markerUnits="userSpaceOnUse" orient="auto">
+    <marker id="head-flow" viewBox="0 0 23 18" refX="18" refY="9" markerWidth="23" markerHeight="18" markerUnits="userSpaceOnUse" orient="auto">
       <path d="M0 0 23 9 0 18Z" fill="#000"/>
     </marker>
-    <marker id="head-transaction" viewBox="0 0 21 17" refX="20" refY="8.5" markerWidth="21" markerHeight="17" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+    <marker id="head-transaction" viewBox="0 0 21 17" refX="15.5" refY="8.5" markerWidth="21" markerHeight="17" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
       <path d="M0 0 20 8.5 0 17Z" fill="#000"/>
     </marker>
     <style>
@@ -52,15 +54,15 @@
     <path class="shaft" d="M145.5 369H281"/>
     <text x="293" y="383">Manage room inventory</text>
     <!-- The short extra gap keeps the connector clear under fallback font metrics. -->
-    <path id="manageInventoryArrow" class="flow" d="M748 369H867"/>
-    <path id="manageInventoryReply" class="reply" d="M868.5 537H147"/>
+    <path id="manageInventoryArrow" class="flow" d="M748 369H862"/>
+    <path id="manageInventoryReply" class="reply" d="M868.5 537H152"/>
   </g>
 
   <!-- The inventory service owns one local transaction only. -->
   <g id="inventory-transaction">
     <path class="shaft" d="M910 369H1059"/>
     <path class="shaft" d="M910 537H1059"/>
-    <path id="inventoryTransactionArrow" class="transaction" d="M986.5 371V535"/>
+    <path id="inventoryTransactionArrow" class="transaction" d="M986.5 375.5V530.5"/>
     <text x="1047" y="443">Single</text>
     <text x="999" y="489">Transaction</text>
   </g>
@@ -69,15 +71,15 @@
   <g id="reserve-room">
     <path class="shaft" d="M145.5 787H984"/>
     <text x="996" y="803">Reserve room</text>
-    <path id="reserveRoomArrow" class="flow" d="M1258 787H1371"/>
-    <path id="reserveRoomReply" class="reply" d="M1372.5 936H147"/>
+    <path id="reserveRoomArrow" class="flow" d="M1258 787H1366"/>
+    <path id="reserveRoomReply" class="reply" d="M1372.5 936H152"/>
   </g>
 
   <!-- The reservation service commits independently of the earlier inventory change. -->
   <g id="reservation-transaction">
     <path class="shaft" d="M1413 787H1562"/>
     <path class="shaft" d="M1413 936H1562"/>
-    <path id="reservationTransactionArrow" class="transaction" d="M1490.5 789V934"/>
+    <path id="reservationTransactionArrow" class="transaction" d="M1490.5 793.5V929.5"/>
     <text x="1550" y="854">Single</text>
     <text x="1503" y="900">Transaction</text>
   </g>

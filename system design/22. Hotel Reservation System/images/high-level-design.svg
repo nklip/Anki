@@ -1,8 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1946" height="1100" viewBox="0 0 1946 1100" role="img" aria-labelledby="high-level-design-title high-level-design-desc">
   <title id="high-level-design-title">Hotel reservation system high-level design</title>
   <desc id="high-level-design-desc">The diagram is split by two dividers: external above internal, and public to the left of private. Externally, a user on a mobile device fetches static content from a CDN and sends requests to the public API gateway; an admin sits on the private side. Internally, the public API gateway fans out to four services — hotel, rate, reservation and payment — each with its own database, and the hotel service also reads a hotel cache. On the private side the admin reaches an internal API which drives the hotel management service.</desc>
+  <!-- Symmetric heads: inset shaft joins hide the stroke inside each triangle.
+       Connector endpoints are pulled back by the same amount to preserve visible tips. -->
   <defs>
-    <marker id="head-flow" viewBox="0 0 20.75 14.5" refX="20.75" refY="7.25" markerWidth="20.75" markerHeight="14.5" markerUnits="userSpaceOnUse" orient="auto">
+    <marker id="head-flow" viewBox="0 0 20.75 14.5" refX="15.25" refY="7.25" markerWidth="20.75" markerHeight="14.5" markerUnits="userSpaceOnUse" orient="auto">
       <path d="M0 0 20.75 7.25 0 14.5Z" fill="#000"/>
     </marker>
     <style>
@@ -37,9 +39,9 @@
     <circle cx="1691.5" cy="146.5" r="17"/>
     <path d="M1657 199V190.28A34 17.03 0 0 1 1725 190.28V199Z"/>
   </g>
-  <path id="arrow-user-cdn" class="flow" d="M779 164.7H521"/>
-  <path id="arrow-user-gateway" class="flow" d="M806.5 211.5V382.5"/>
-  <path id="arrow-admin-internal-api" class="flow" d="M1691.5 199V387.5"/>
+  <path id="arrow-user-cdn" class="flow" d="M779 164.7H526.5"/>
+  <path id="arrow-user-gateway" class="flow" d="M806.5 211.5V377"/>
+  <path id="arrow-admin-internal-api" class="flow" d="M1691.5 199V382"/>
 
   <!-- Services and their stores. -->
   <g id="boxes">
@@ -66,19 +68,19 @@
 
   <!-- The gateway fans out to the four public services. -->
   <g id="fanout">
-    <path class="flow" d="M720.73 483.5 413.31 664.5"/>
-    <path class="flow" d="M779.2 483.5 680.16 664.5"/>
-    <path class="flow" d="M837.69 483.5 946.46 664.5"/>
-    <path class="flow" d="M896.26 483.5 1212.72 664.5"/>
+    <path class="flow" d="M720.73 483.5 418.0495 661.7095"/>
+    <path class="flow" d="M779.2 483.5 682.8001 659.6751"/>
+    <path class="flow" d="M837.69 483.5 943.627 659.7857"/>
+    <path class="flow" d="M896.26 483.5 1207.9457 661.7694"/>
   </g>
   <!-- Each service writes to its own store; the hotel service also reads its cache. -->
   <g id="service-stores">
-    <path class="flow" d="M303.62 765.5 238.09 901.5"/>
-    <path class="flow" d="M351.13 765.5 414.16 901.5"/>
-    <path class="flow" d="M651.5 765.5V901.5"/>
-    <path class="flow" d="M976.5 765.5V901.5"/>
-    <path class="flow" d="M1301 765.5V901.5"/>
-    <path class="flow" d="M1691.5 488.5V664.5"/>
+    <path class="flow" d="M303.62 765.5 240.4774 896.5452"/>
+    <path class="flow" d="M351.13 765.5 411.8473 896.5099"/>
+    <path class="flow" d="M651.5 765.5V896"/>
+    <path class="flow" d="M976.5 765.5V896"/>
+    <path class="flow" d="M1301 765.5V896"/>
+    <path class="flow" d="M1691.5 488.5V659"/>
   </g>
 
   <g id="labels">

@@ -3,12 +3,14 @@
   <desc id="atomicity-monolith-desc">Sequence diagram: a user calls one database to manage room inventory and then to reserve a room. Because both calls hit the same database, they run inside a single transaction, so either both succeed or both roll back.</desc>
 
   <!-- Shared definitions: arrowheads sized from the etalon (message 27x16, reply 25x13, span 23x15). -->
+  <!-- Symmetric heads: inset shaft joins hide the stroke inside each triangle.
+       Connector endpoints are pulled back by the same amount to preserve visible tips. -->
   <defs>
-    <marker id="head-message" viewBox="0 0 27 16" refX="27" refY="8" markerWidth="27" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 27 8 0 16Z" fill="#000"/></marker>
-    <marker id="head-reply" viewBox="0 0 25 13" refX="25" refY="6.5" markerWidth="25" markerHeight="13" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 25 6.5 0 13Z" fill="#000"/></marker>
-    <marker id="head-span-end" viewBox="0 0 23 15" refX="23" refY="7.5" markerWidth="23" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 23 7.5 0 15Z" fill="#000"/></marker>
-    <!-- Backward-pointing twin of head-span-end; refX=0 puts its tip on the path start. -->
-    <marker id="head-span-start" viewBox="0 0 23 15" refX="0" refY="7.5" markerWidth="23" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto"><path d="M23 0 0 7.5 23 15Z" fill="#000"/></marker>
+    <marker id="head-message" viewBox="0 0 27 16" refX="19" refY="8" markerWidth="27" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 27 8 0 16Z" fill="#000"/></marker>
+    <marker id="head-reply" viewBox="0 0 25 13" refX="16" refY="6.5" markerWidth="25" markerHeight="13" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 25 6.5 0 13Z" fill="#000"/></marker>
+    <marker id="head-span-end" viewBox="0 0 23 15" refX="16" refY="7.5" markerWidth="23" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 23 7.5 0 15Z" fill="#000"/></marker>
+    <!-- Backward-pointing twin of head-span-end; both span tips project 7 units beyond the inset shaft. -->
+    <marker id="head-span-start" viewBox="0 0 23 15" refX="7" refY="7.5" markerWidth="23" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto"><path d="M23 0 0 7.5 23 15Z" fill="#000"/></marker>
     <style>
       text{font-family:Arial,Helvetica,sans-serif;font-size:38px;fill:#000}
       .lifeline{fill:none;stroke:#000;stroke-width:3;stroke-dasharray:10.9 7.95}
@@ -43,21 +45,21 @@
 
   <!-- Step 1: manage room inventory. Each shaft stops well clear of its label; the head meets the activation bar. -->
   <path id="arrow-manage-inventory-left" class="flow" d="M120 379H370"/>
-  <path id="arrow-manage-inventory" class="flow" marker-end="url(#head-message)" d="M805 379H1001.5"/>
+  <path id="arrow-manage-inventory" class="flow" marker-end="url(#head-message)" d="M805 379H993.5"/>
   <text x="587.5" y="393" text-anchor="middle">Manage room inventory</text>
   <!-- Reply 1: dashed return to the user; phase starts at the database so the right end lands on the bar. -->
-  <path id="arrow-inventory-reply" class="reply" marker-end="url(#head-reply)" d="M1001.5 538H119.5"/>
+  <path id="arrow-inventory-reply" class="reply" marker-end="url(#head-reply)" d="M1001.5 538H128.5"/>
 
   <!-- Step 2: reserve room, issued against the same database. -->
   <path id="arrow-reserve-room-left" class="flow" d="M120 772H428"/>
-  <path id="arrow-reserve-room" class="flow" marker-end="url(#head-message)" d="M687 772H1001.5"/>
+  <path id="arrow-reserve-room" class="flow" marker-end="url(#head-message)" d="M687 772H993.5"/>
   <text x="557.5" y="786" text-anchor="middle">Reserve room</text>
-  <path id="arrow-reserve-reply" class="reply" marker-end="url(#head-reply)" d="M1001.5 913H119.5"/>
+  <path id="arrow-reserve-reply" class="reply" marker-end="url(#head-reply)" d="M1001.5 913H128.5"/>
 
   <!-- Transaction span: two boundary ticks plus a double-headed measure line covering both operations. -->
   <path id="span-tick-top" class="flow" d="M1038 379H1179"/>
   <path id="span-tick-bottom" class="flow" d="M1038 914H1179"/>
-  <path id="span-transaction" class="flow" marker-start="url(#head-span-start)" marker-end="url(#head-span-end)" d="M1111 379V914"/>
+  <path id="span-transaction" class="flow" marker-start="url(#head-span-start)" marker-end="url(#head-span-end)" d="M1111 386V907"/>
   <!-- Span label is left-anchored per line so its box stays clear of the measure line. -->
   <text id="label-single-transaction" y="640"><tspan x="1165.5">Single</tspan><tspan x="1118" dy="44">Transaction</tspan></text>
 </svg>

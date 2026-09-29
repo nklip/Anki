@@ -1,8 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1964" height="1122" viewBox="0 0 1964 1122" role="img" aria-labelledby="database-sharding-title database-sharding-desc">
   <title id="database-sharding-title">Sharding the reservation database by hotel_id</title>
   <desc id="database-sharding-desc">The reservation service routes every request through a hotel_id modulo 16 hash, which fans out to sixteen database shards labelled Shard 0 through Shard 15.</desc>
+  <!-- Symmetric heads: inset shaft joins hide the stroke inside each triangle.
+       Connector endpoints are pulled back by the same amount to preserve visible tips. -->
   <defs>
-    <marker id="head-flow" viewBox="0 0 23 17" refX="23" refY="8.5" markerWidth="23" markerHeight="17" markerUnits="userSpaceOnUse" orient="auto">
+    <marker id="head-flow" viewBox="0 0 23 17" refX="18" refY="8.5" markerWidth="23" markerHeight="17" markerUnits="userSpaceOnUse" orient="auto">
       <path d="M0 0 23 8.5 0 17Z" fill="#000"/>
     </marker>
     <style>
@@ -16,7 +18,7 @@
   <!-- Caller. -->
   <rect id="reservation-service" class="node" x="852.5" y="24" width="264" height="107.5"/>
   <text id="reservation-service-label" x="984" y="70"><tspan x="984">Reservation</tspan><tspan x="984" dy="42">Service</tspan></text>
-  <path id="arrow-service-to-router" class="flow" d="M984.5 131.5V319.5"/>
+  <path id="arrow-service-to-router" class="flow" d="M984.5 131.5V314.5"/>
 
   <!-- Shard key: hotel_id modulo 16 picks the target shard. -->
   <path id="shard-router" class="node" d="M984 320 1149.6 401.7 984 483.4 818.4 401.7Z"/>
@@ -44,21 +46,21 @@
   </g>
   <!-- Routing fan-out: one connector per shard, each ending on the shard outline. -->
   <g id="shard-connectors">
-    <path id="arrow-shard-0" class="flow" d="M818.8 401.5 175.35 401.5"/>
-    <path id="arrow-shard-1" class="flow" d="M860.41 422.43 197.6 534.64"/>
-    <path id="arrow-shard-2" class="flow" d="M889.82 436.94 306.85 656.27"/>
-    <path id="arrow-shard-3" class="flow" d="M913.21 448.47 438.6 763.49"/>
-    <path id="arrow-shard-4" class="flow" d="M929.48 456.5 566.02 822"/>
-    <path id="arrow-shard-5" class="flow" d="M944.57 463.95 682.84 877.11"/>
-    <path id="arrow-shard-6" class="flow" d="M960.15 471.63 800.47 941.23"/>
-    <path id="arrow-shard-7" class="flow" d="M975.35 479.13 920.81 965.57"/>
-    <path id="arrow-shard-8" class="flow" d="M991.93 479.49 1041.87 965.58"/>
-    <path id="arrow-shard-9" class="flow" d="M1007.31 471.9 1162.31 941.25"/>
-    <path id="arrow-shard-10" class="flow" d="M1022.87 464.23 1279.83 877.2"/>
-    <path id="arrow-shard-11" class="flow" d="M1038.15 456.68 1396.8 822.07"/>
-    <path id="arrow-shard-12" class="flow" d="M1054.36 448.69 1524.4 763.68"/>
-    <path id="arrow-shard-13" class="flow" d="M1079.31 436.38 1658.9 647.85"/>
-    <path id="arrow-shard-14" class="flow" d="M1107.59 422.43 1771.4 534.76"/>
-    <path id="arrow-shard-15" class="flow" d="M1149.2 401.5 1793.65 401.5"/>
+    <path id="arrow-shard-0" class="flow" d="M818.8 401.5 180.35 401.5"/>
+    <path id="arrow-shard-1" class="flow" d="M860.41 422.43 202.5299 533.8054"/>
+    <path id="arrow-shard-2" class="flow" d="M889.82 436.94 311.5298 654.5093"/>
+    <path id="arrow-shard-3" class="flow" d="M913.21 448.47 442.7659 760.7249"/>
+    <path id="arrow-shard-4" class="flow" d="M929.48 456.5 569.5456 818.4546"/>
+    <path id="arrow-shard-5" class="flow" d="M944.57 463.95 685.5157 872.8862"/>
+    <path id="arrow-shard-6" class="flow" d="M960.15 471.63 802.0797 936.4962"/>
+    <path id="arrow-shard-7" class="flow" d="M975.35 479.13 921.3671 960.6011"/>
+    <path id="arrow-shard-8" class="flow" d="M991.93 479.49 1041.359 960.6062"/>
+    <path id="arrow-shard-9" class="flow" d="M1007.31 471.9 1160.7421 936.5022"/>
+    <path id="arrow-shard-10" class="flow" d="M1022.87 464.23 1277.1885 872.9547"/>
+    <path id="arrow-shard-11" class="flow" d="M1038.15 456.68 1393.2975 818.5017"/>
+    <path id="arrow-shard-12" class="flow" d="M1054.36 448.69 1520.2464 760.8965"/>
+    <path id="arrow-shard-13" class="flow" d="M1079.31 436.38 1654.2029 646.1362"/>
+    <path id="arrow-shard-14" class="flow" d="M1107.59 422.43 1766.4701 533.9258"/>
+    <path id="arrow-shard-15" class="flow" d="M1149.2 401.5 1788.65 401.5"/>
   </g>
 </svg>

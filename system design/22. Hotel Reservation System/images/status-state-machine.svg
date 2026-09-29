@@ -3,8 +3,10 @@
   <desc id="state-desc">A pending reservation may be canceled, paid, or rejected. A paid reservation may later be refunded.</desc>
 
   <!-- Shared visual styles and a compact arrowhead that stops before each state box. -->
+  <!-- Symmetric heads: inset shaft joins hide the stroke inside each triangle.
+       Connector endpoints are pulled back by the same amount to preserve visible tips. -->
   <defs>
-    <marker id="state-arrowhead" viewBox="0 0 18 18" refX="18" refY="9" markerWidth="18" markerHeight="18" markerUnits="userSpaceOnUse" orient="auto">
+    <marker id="state-arrowhead" viewBox="0 0 18 18" refX="14.5" refY="9" markerWidth="18" markerHeight="18" markerUnits="userSpaceOnUse" orient="auto">
       <path d="M0 0 18 9 0 18Z" fill="#000"/>
     </marker>
     <style>
@@ -30,13 +32,14 @@
     <text x="664" y="557">Refunded</text>
   </g>
 
-  <!-- Pending can terminate on either side or advance vertically to Paid. -->
+  <!-- Pending can terminate on either side or advance vertically to Paid.
+       Curve endpoints and final controls move together to preserve each tip tangent. -->
   <g id="pending-transitions">
-    <path id="pendingToCanceledFlow" class="flow" d="M514 84C382 98 272 151 216 264"/>
-    <path id="pendingToPaidFlow" class="flow" d="M664 137V264"/>
-    <path id="pendingToRejectedFlow" class="flow" d="M814 84C946 98 1056 151 1110 264"/>
+    <path id="pendingToCanceledFlow" class="flow" d="M514 84C382 98 273.5541 147.864 217.5541 260.864"/>
+    <path id="pendingToPaidFlow" class="flow" d="M664 137V260.5"/>
+    <path id="pendingToRejectedFlow" class="flow" d="M814 84C946 98 1054.4909 147.8421 1108.4909 260.8421"/>
   </g>
 
   <!-- A completed payment may later be refunded. -->
-  <path id="paidToRefundedFlow" class="flow" d="M664 366V493"/>
+  <path id="paidToRefundedFlow" class="flow" d="M664 366V489.5"/>
 </svg>
