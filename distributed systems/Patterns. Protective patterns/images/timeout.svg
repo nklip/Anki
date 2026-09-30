@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1013.513514" viewBox="0 0 740 500" role="img" aria-labelledby="timeout-title timeout-desc">
+  <title id="timeout-title">Timeout: stop waiting after a limit</title>
+  <desc id="timeout-desc">Read from top to bottom. A client sends a request to the main service, which calls a slow service. After waiting up to five seconds without a response, the main service tells the client that the request timed out.</desc>
+  <!-- English conceptual adaptation of https://proselyte.net/wp-content/uploads/2025/05/b2.png
+       from https://proselyte.net/protective-patterns/. Participant order, message directions,
+       and lavender headers are preserved; labels and canvas are intentionally adapted. -->
+  <!-- Shared typography and actor geometry; arrowheads are drawn separately for exact lifeline joins. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#111}
+      .title{font-size:26px;font-weight:bold}
+      .subtitle{font-size:17px;fill:#444}
+      .participant{font-size:19px}
+      .message{font-size:18px}
+      .note{font-size:17px;fill:#444}
+      .header{fill:#e2e2ee;stroke:#666;stroke-width:1}
+      .lifeline{stroke:#777;stroke-width:1;stroke-dasharray:6 6}
+      .arrow-shaft{fill:none;stroke:#111;stroke-width:1.5}
+      .return-shaft{fill:none;stroke:#111;stroke-width:1.5;stroke-dasharray:4 3}
+    </style>
+    <symbol id="client-actor" viewBox="0 0 44 65">
+      <circle cx="22" cy="10" r="9" fill="#e2e2ee" stroke="#666" stroke-width="1"/>
+      <path d="M22 19 V43 M6 28 H38 M22 43 L7 62 M22 43 L37 62" fill="none" stroke="#666" stroke-width="1"/>
+    </symbol>
+  </defs>
+  <rect width="740" height="500" fill="#fff"/>
+  <!-- Lesson and reading direction precede the sequence. -->
+  <text x="370" y="34" class="title" text-anchor="middle">Timeout: stop waiting after a limit</text>
+  <text x="370" y="63" class="subtitle" text-anchor="middle">Read top to bottom. Example waiting limit: 5 seconds.</text>
+  <!-- Top participants match the source: client, main service, then slow service. -->
+  <use href="#client-actor" x="58" y="82" width="44" height="65"/>
+  <text x="80" y="169" class="participant" text-anchor="middle">Client</text>
+  <rect id="main-top" class="header" x="266" y="125" width="168" height="44" rx="2"/>
+  <text x="350" y="153" class="participant" text-anchor="middle">Main service</text>
+  <rect id="slow-top" class="header" x="526" y="125" width="168" height="44" rx="2"/>
+  <text x="610" y="153" class="participant" text-anchor="middle">Slow service</text>
+  <!-- Lifelines encode the passage of time; each message tip terminates at its receiving lifeline. -->
+  <path class="lifeline" d="M80 178 V389 M350 169 V402 M610 169 V402" fill="none"/>
+  <!-- Client request, followed by the main service's outgoing request. Shafts end under their own heads. -->
+  <text x="215" y="208" class="message" text-anchor="middle">Request</text>
+  <path id="client-request-shaft" class="arrow-shaft" data-connector="true" d="M80 224 H341"/>
+  <polygon id="client-request-head" points="350,224 339,219 339,229" fill="#111"/>
+  <text x="480" y="259" class="message" text-anchor="middle">Request</text>
+  <path id="slow-request-shaft" class="arrow-shaft" data-connector="true" d="M350 275 H601"/>
+  <polygon id="slow-request-head" points="610,275 599,270 599,280" fill="#111"/>
+  <!-- No slow-service response is drawn: the caller's waiting limit expires first. -->
+  <text x="480" y="311" class="message" text-anchor="middle">No response within</text>
+  <text x="480" y="335" class="message" text-anchor="middle">5 seconds</text>
+  <text x="215" y="363" class="message" text-anchor="middle">Timed out</text>
+  <!-- Start the dashed shaft beneath the head so its first dash joins the head without a gap. -->
+  <path id="timeout-response-shaft" class="return-shaft" data-connector="true" d="M89 379 H350"/>
+  <polygon id="timeout-response-head" points="80,379 91,374 91,384" fill="#111"/>
+  <!-- Repeated participants close the sequence, as in the source diagram. -->
+  <text x="80" y="414" class="participant" text-anchor="middle">Client</text>
+  <use href="#client-actor" x="58" y="425" width="44" height="65"/>
+  <rect id="main-bottom" class="header" x="266" y="402" width="168" height="44" rx="2"/>
+  <text x="350" y="430" class="participant" text-anchor="middle">Main service</text>
+  <rect id="slow-bottom" class="header" x="526" y="402" width="168" height="44" rx="2"/>
+  <text x="610" y="430" class="participant" text-anchor="middle">Slow service</text>
+</svg>

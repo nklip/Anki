@@ -16,8 +16,8 @@ Each topic has its own folder, with diagrams in its `images/` directory.
  * [Apache ZooKeeper](./Apache%20ZooKeeper/Readme.md) — coordination data, znodes, sessions, watches, quorums, the write and read paths, recipes, and operational limits.
  * [Erasure coding](./Erasure%20coding/Readme.md) — data and parity fragments, storage overhead, failure domains, reconstruction, and repair.
  * [Patterns. Change Data Capture](./Patterns.%20Change%20Data%20Capture/Readme.md) — CDC through Pinterest’s architecture: Kafka Connect and Debezium, snapshots, change events, PostgreSQL WAL retention, replay, and Transactional Outbox.
- * [Patterns. Circuit breaker](./Patterns.%20Circuit%20breaker/Readme.md) — closed/open/half-open states, failure thresholds, retries, timeouts, and transaction recovery limits.
  * [Patterns. Fanout](./Patterns.%20Fanout/Readme.md) — message and request fanout, feed-generation strategies, capacity, and failure handling.
+ * [Patterns. Protective patterns](./Patterns.%20Protective%20patterns/Readme.md) — rate limiting, resource isolation, timeouts, fallbacks, and circuit breakers.
  * [Patterns. Transactional Outbox](./Patterns.%20Transactional%20Outbox/Readme.md) — the outbox table and relay process, atomic local writes, consumer deduplication, flushing, relay recovery, and ordering boundaries.
  * [Presigned URLs](./Presigned%20URLs/Readme.md) — S3 versus CloudFront signatures, private origins, cache behavior, expiration, uploads, and revocation.
  * [RabbitMQ](./RabbitMQ/Readme.md) — exchanges and queues, acknowledgements, retries, replication, Kafka comparison, and real production examples.

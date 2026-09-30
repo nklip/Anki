@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1077.319588" viewBox="0 0 582 418" role="img" aria-labelledby="bulkhead-title bulkhead-desc">
+  <title id="bulkhead-title">Bulkhead: resource isolation</title>
+  <desc id="bulkhead-desc">Read from top to bottom. The client sends a request to the main service, which requests capacity from its bulkhead thread pool. If the pool is full, the client receives a capacity-full response. Otherwise, the pool calls the external service and passes the result back through the main service to the client.</desc>
+  <!-- Source-native adaptation of the supplied Bulkhead sequence diagram:
+       https://proselyte.net/wp-content/uploads/2025/05/n4.png
+       Preserve its canvas, participants, actor, alt frame, message order, and spacing.
+       Method and exception names are replaced only with conceptual English labels. -->
+  <!-- Shared source palette and actor geometry. Separate heads keep every lifeline join exact. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#111;font-size:14px}
+      .header{fill:#e2e2ee;stroke:#777;stroke-width:.7}
+      .lifeline{fill:none;stroke:#888;stroke-width:.7;stroke-dasharray:5 5}
+      .arrow-shaft{fill:none;stroke:#111;stroke-width:1}
+      .return-shaft{fill:none;stroke:#111;stroke-width:1;stroke-dasharray:2 2}
+      .guard{font-size:12px;font-weight:bold}
+    </style>
+    <symbol id="client-actor" viewBox="0 0 28 60">
+      <circle cx="14" cy="9" r="8" fill="#e2e2ee" stroke="#777" stroke-width=".7"/>
+      <path d="M14 17V43 M1 25H27 M14 43L1 59 M14 43L27 59" fill="none" stroke="#777" stroke-width=".7"/>
+    </symbol>
+  </defs>
+  <rect width="582" height="418" fill="#fff"/>
+  <!-- Original top participants: actor, main service, bulkhead thread pool, external service. -->
+  <use href="#client-actor" x="29" y="4" width="28" height="60"/>
+  <text x="43" y="78" text-anchor="middle">Client</text>
+  <rect id="main-top" class="header" x="165" y="50" width="100" height="31" rx="1"/>
+  <text x="215" y="70" text-anchor="middle">Main service</text>
+  <rect id="pool-top" class="header" x="274" y="50" width="158" height="31" rx="1"/>
+  <text x="353" y="70" text-anchor="middle">Bulkhead thread pool</text>
+  <rect id="external-top" class="header" x="442" y="50" width="124" height="31" rx="1"/>
+  <text x="504" y="70" text-anchor="middle">External service</text>
+  <!-- Time runs downward. Message shafts intentionally cross participant lifelines. -->
+  <path class="lifeline" d="M43 83V332 M215 81V338 M353 81V338 M504 81V338"/>
+  <!-- Request followed by capacity acquisition; shafts end under their triangular arrowheads. -->
+  <text x="50" y="105">Request</text>
+  <path id="request-shaft" class="arrow-shaft" data-connector="true" d="M43 112H208"/>
+  <polygon id="request-head" points="215,112 203,107 203,117 206,112" fill="#111"/>
+  <text x="222" y="134">Request capacity</text>
+  <path id="capacity-shaft" class="arrow-shaft" data-connector="true" d="M215 141H346"/>
+  <polygon id="capacity-head" points="353,141 341,136 341,146 344,141" fill="#111"/>
+  <!-- The source's UML alt frame: pool-full rejection above the divider, successful call below. -->
+  <rect id="alternatives-frame" x="10" y="156" width="567" height="166" fill="none" stroke="#111" stroke-width="2"/>
+  <path id="alternatives-tab" d="M10 156H74V164L64 174H10Z" fill="#eee" stroke="#111" stroke-width="1.5"/>
+  <text x="25" y="170" font-weight="bold">alt</text>
+  <text x="89" y="169" class="guard">[Pool full]</text>
+  <text x="59" y="188">Capacity full</text>
+  <!-- Dashed returns begin beneath their heads to avoid a dash gap at the join. -->
+  <path id="capacity-full-shaft" class="return-shaft" data-connector="true" d="M50 195H215"/>
+  <polygon id="capacity-full-head" points="43,195 55,190 52,195 55,200" fill="#111"/>
+  <path id="alternatives-divider" d="M10 203H577" fill="none" stroke="#111" stroke-width="1" stroke-dasharray="2 2"/>
+  <!-- With available capacity, the pool calls the external service and returns its result. -->
+  <text x="361" y="219">Call service</text>
+  <path id="external-call-shaft" class="arrow-shaft" data-connector="true" d="M353 225H497"/>
+  <polygon id="external-call-head" points="504,225 492,220 492,230 495,225" fill="#111"/>
+  <text x="371" y="249">Response</text>
+  <path id="external-response-shaft" class="return-shaft" data-connector="true" d="M360 255H504"/>
+  <polygon id="external-response-head" points="353,255 365,250 362,255 365,260" fill="#111"/>
+  <text x="232" y="279">Result</text>
+  <path id="main-result-shaft" class="return-shaft" data-connector="true" d="M222 285H353"/>
+  <polygon id="main-result-head" points="215,285 227,280 224,285 227,290" fill="#111"/>
+  <text x="59" y="309">OK</text>
+  <path id="client-result-shaft" class="return-shaft" data-connector="true" d="M50 315H215"/>
+  <polygon id="client-result-head" points="43,315 55,310 52,315 55,320" fill="#111"/>
+  <!-- Repeated bottom participants preserve the supplied sequence diagram's closing layout. -->
+  <text x="43" y="350" text-anchor="middle">Client</text>
+  <use href="#client-actor" x="29" y="354" width="28" height="60"/>
+  <rect id="main-bottom" class="header" x="165" y="338" width="100" height="31" rx="1"/>
+  <text x="215" y="358" text-anchor="middle">Main service</text>
+  <rect id="pool-bottom" class="header" x="274" y="338" width="158" height="31" rx="1"/>
+  <text x="353" y="358" text-anchor="middle">Bulkhead thread pool</text>
+  <rect id="external-bottom" class="header" x="442" y="338" width="124" height="31" rx="1"/>
+  <text x="504" y="358" text-anchor="middle">External service</text>
+</svg>

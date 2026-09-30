@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="937.5" viewBox="0 0 1000 625" role="img" aria-labelledby="fallback-title fallback-desc">
+  <title id="fallback-title">Fallback: return a useful alternative</title>
+  <desc id="fallback-desc">Read from top to bottom. A user places an order. The order service asks the payment service for payment, but the payment fails or times out. The order service requests a fallback. The fallback handler returns a payment-unavailable response, and the order service accepts the order without payment.</desc>
+  <!-- English conceptual adaptation of https://proselyte.net/wp-content/uploads/2025/05/b1.png
+       from https://proselyte.net/protective-patterns/. Participant order, message directions,
+       and lavender headers are preserved; labels and canvas are intentionally adapted. -->
+  <!-- Shared typography and actor geometry; separate arrowheads preserve clean joins on dashed returns. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#111}
+      .title{font-size:26px;font-weight:bold}
+      .subtitle{font-size:17px;fill:#444}
+      .participant{font-size:18px}
+      .message{font-size:18px}
+      .note{font-size:17px;fill:#444}
+      .header{fill:#e2e2ee;stroke:#666;stroke-width:1}
+      .lifeline{stroke:#777;stroke-width:1;stroke-dasharray:6 6}
+      .arrow-shaft{fill:none;stroke:#111;stroke-width:1.5}
+      .return-shaft{fill:none;stroke:#111;stroke-width:1.5;stroke-dasharray:4 3}
+    </style>
+    <symbol id="user-actor" viewBox="0 0 44 65">
+      <circle cx="22" cy="10" r="9" fill="#e2e2ee" stroke="#666" stroke-width="1"/>
+      <path d="M22 19 V43 M6 28 H38 M22 43 L7 62 M22 43 L37 62" fill="none" stroke="#666" stroke-width="1"/>
+    </symbol>
+  </defs>
+  <rect width="1000" height="625" fill="#fff"/>
+  <!-- The source's example policy is explicit, rather than implied to be appropriate for every order. -->
+  <text x="500" y="34" class="title" text-anchor="middle">Fallback: return a useful alternative</text>
+  <text x="500" y="63" class="subtitle" text-anchor="middle">Read top to bottom. This example accepts an order without payment.</text>
+  <!-- Four source participants, in their original order. -->
+  <use href="#user-actor" x="43" y="82" width="44" height="65"/>
+  <text x="65" y="169" class="participant" text-anchor="middle">User</text>
+  <rect id="order-top" class="header" x="245" y="125" width="180" height="44" rx="2"/>
+  <text x="335" y="153" class="participant" text-anchor="middle">Order service</text>
+  <rect id="payment-top" class="header" x="520" y="125" width="180" height="44" rx="2"/>
+  <text x="610" y="153" class="participant" text-anchor="middle">Payment service</text>
+  <rect id="fallback-top" class="header" x="800" y="125" width="180" height="44" rx="2"/>
+  <text x="890" y="153" class="participant" text-anchor="middle">Fallback handler</text>
+  <!-- Lifelines show time downward. The payment lifeline is intentionally crossed by fallback messages;
+       its short gap from y=391 to y=420 protects the complete fallback response label. -->
+  <path class="lifeline" d="M65 178 V507 M335 169 V520 M610 169 V391 M610 420 V520 M890 169 V520" fill="none"/>
+  <!-- The user initiates the order, which requires an attempted payment. -->
+  <text x="200" y="204" class="message" text-anchor="middle">Place order</text>
+  <path id="place-order-shaft" class="arrow-shaft" data-connector="true" d="M65 220 H326"/>
+  <polygon id="place-order-head" points="335,220 324,215 324,225" fill="#111"/>
+  <text x="472.5" y="256" class="message" text-anchor="middle">Request payment</text>
+  <path id="payment-request-shaft" class="arrow-shaft" data-connector="true" d="M335 272 H601"/>
+  <polygon id="payment-request-head" points="610,272 599,267 599,277" fill="#111"/>
+  <!-- Failed payment returns to the order service before the alternative is requested. -->
+  <text x="472.5" y="308" class="message" text-anchor="middle">Failure or timeout</text>
+  <!-- Dashed returns start beneath their heads so a trailing dash gap cannot separate each join. -->
+  <path id="payment-failure-shaft" class="return-shaft" data-connector="true" d="M344 324 H610"/>
+  <polygon id="payment-failure-head" points="335,324 346,319 346,329" fill="#111"/>
+  <!-- Label stays left of the payment lifeline; the request then continues across it to the fallback handler. -->
+  <text x="472.5" y="360" class="message" text-anchor="middle">Request fallback</text>
+  <path id="fallback-request-shaft" class="arrow-shaft" data-connector="true" d="M335 376 H881"/>
+  <polygon id="fallback-request-head" points="890,376 879,371 879,381" fill="#111"/>
+  <!-- The payment lifeline is interrupted above so the response remains one readable phrase. -->
+  <text x="612.5" y="412" class="message" text-anchor="middle">Payment temporarily unavailable</text>
+  <path id="fallback-result-shaft" class="return-shaft" data-connector="true" d="M344 428 H890"/>
+  <polygon id="fallback-result-head" points="335,428 346,423 346,433" fill="#111"/>
+  <!-- The user-visible alternative preserves the source's accepted-but-unpaid outcome. -->
+  <text x="200" y="464" class="message" text-anchor="middle">Order accepted</text>
+  <text x="200" y="488" class="message" text-anchor="middle">without payment</text>
+  <path id="order-result-shaft" class="return-shaft" data-connector="true" d="M74 504 H335"/>
+  <polygon id="order-result-head" points="65,504 76,499 76,509" fill="#111"/>
+  <!-- Repeated participants close the original sequence. -->
+  <text x="65" y="539" class="participant" text-anchor="middle">User</text>
+  <use href="#user-actor" x="43" y="550" width="44" height="65"/>
+  <rect id="order-bottom" class="header" x="245" y="520" width="180" height="44" rx="2"/>
+  <text x="335" y="548" class="participant" text-anchor="middle">Order service</text>
+  <rect id="payment-bottom" class="header" x="520" y="520" width="180" height="44" rx="2"/>
+  <text x="610" y="548" class="participant" text-anchor="middle">Payment service</text>
+  <rect id="fallback-bottom" class="header" x="800" y="520" width="180" height="44" rx="2"/>
+  <text x="890" y="548" class="participant" text-anchor="middle">Fallback handler</text>
+</svg>

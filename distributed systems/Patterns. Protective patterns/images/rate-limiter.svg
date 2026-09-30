@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1455" viewBox="0 0 800 776" role="img" aria-labelledby="title desc">
+  <title id="title">Rate limiter</title>
+  <desc id="desc">Two alternative request sequences. When allowance is available, the rate limiter forwards the client's request to the service and returns its response. When the time-based quota is exhausted, the limiter rejects the request without forwarding it. Requests can resume as allowance becomes available.</desc>
+  <!-- Sequence-diagram typography and lavender headers match the source article's teaching diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #171717; }
+      .title { font-size: 28px; font-weight: bold; }
+      .subtitle { font-size: 18px; }
+      .participant { font-size: 20px; }
+      .condition { font-size: 19px; font-weight: bold; }
+      .label { font-size: 17px; }
+      .lifeline { fill: none; stroke: #8c8c8c; stroke-width: 1; stroke-dasharray: 5 5; }
+      .arrow { fill: none; stroke: #171717; stroke-width: 1.5; }
+      .return { stroke-dasharray: 4 3; }
+    </style>
+    <!-- Human client actor shared with timeout.svg and fallback.svg. -->
+    <symbol id="client-actor" viewBox="0 0 44 65">
+      <circle cx="22" cy="10" r="9" fill="#e2e2ee" stroke="#666" stroke-width="1"/>
+      <path d="M22 19 V43 M6 28 H38 M22 43 L7 62 M22 43 L37 62" fill="none" stroke="#666" stroke-width="1"/>
+    </symbol>
+  </defs>
+  <!-- Canvas and subject; the two framed sections are alternative outcomes. -->
+  <rect width="800" height="776" fill="#fff"/>
+  <text x="400" y="33" class="title" text-anchor="middle">Rate limiter</text>
+  <text x="400" y="63" class="subtitle" text-anchor="middle">Allow requests within a time-based limit</text>
+  <!-- Shift the sequence down to make room for the shared human client actor. -->
+  <g id="request-sequences" transform="translate(0 43)">
+  <!-- The human client and service headers establish the three columns. -->
+  <use id="client-top-actor" href="#client-actor" x="78" y="39" width="44" height="65"/>
+  <rect id="limiter-header" x="314" y="88" width="172" height="38" rx="2" fill="#e2e2ef" stroke="#555"/>
+  <rect id="service-header" x="652" y="88" width="120" height="38" rx="2" fill="#e2e2ef" stroke="#555"/>
+  <text x="100" y="126" class="participant" text-anchor="middle">Client</text>
+  <text x="400" y="113" class="participant" text-anchor="middle">Rate limiter</text>
+  <text x="712" y="113" class="participant" text-anchor="middle">Service</text>
+  <!-- Allowance available: read the call and response sequence from top to bottom. -->
+  <rect id="available-case" x="20" y="148" width="760" height="238" fill="#fff" stroke="#b6b6bf"/>
+  <text x="42" y="175" class="condition">Allowance available</text>
+  <path class="lifeline" d="M100 191 V370 M400 191 V370 M712 191 V370"/>
+  <text x="247" y="208" class="label" text-anchor="middle">Request</text>
+  <path id="allowed-request-arrow" class="arrow" data-connector="true" d="M100 222 H382"/>
+  <polygon id="allowed-request-head" points="392,222 380,217 383,222 380,227" fill="#171717"/>
+  <text x="552" y="252" class="label" text-anchor="middle">Forward request</text>
+  <path id="forward-request-arrow" class="arrow" data-connector="true" d="M400 266 H694"/>
+  <polygon id="forward-request-head" points="704,266 692,261 695,266 692,271" fill="#171717"/>
+  <text x="560" y="296" class="label" text-anchor="middle">Response</text>
+  <path id="service-response-arrow" class="arrow return" data-connector="true" d="M712 310 H418"/>
+  <polygon id="service-response-head" points="408,310 420,305 417,310 420,315" fill="#171717"/>
+  <text x="256" y="340" class="label" text-anchor="middle">Response</text>
+  <path id="client-response-arrow" class="arrow return" data-connector="true" d="M400 354 H118"/>
+  <polygon id="client-response-head" points="108,354 120,349 117,354 120,359" fill="#171717"/>
+  <!-- Quota exhausted: no arrow reaches the service column. Heads stop clear of the lifelines. -->
+  <rect id="exhausted-case" x="20" y="408" width="760" height="166" fill="#fff" stroke="#b6b6bf"/>
+  <text x="42" y="437" class="condition">Quota exhausted</text>
+  <path class="lifeline" d="M100 458 V558 M400 458 V558 M712 458 V558"/>
+  <text x="247" y="472" class="label" text-anchor="middle">Request</text>
+  <path id="excess-request-arrow" class="arrow" data-connector="true" d="M100 486 H382"/>
+  <polygon id="excess-request-head" points="392,486 380,481 383,486 380,491" fill="#171717"/>
+  <text x="256" y="522" class="label" text-anchor="middle">Request rejected</text>
+  <path id="rejection-arrow" class="arrow return" data-connector="true" d="M400 536 H118"/>
+  <polygon id="rejection-head" points="108,536 120,531 117,536 120,541" fill="#171717"/>
+  <text x="555" y="493" class="label" text-anchor="middle">No request reaches</text>
+  <text x="555" y="518" class="label" text-anchor="middle">the service</text>
+  </g>
+  <!-- Closing participants mirror the other sequence diagrams; time ends above their labels. -->
+  <path class="lifeline" d="M100 601V619 M400 601V625 M712 601V625"/>
+  <text x="100" y="643" class="participant" text-anchor="middle">Client</text>
+  <use id="client-bottom-actor" href="#client-actor" x="78" y="654" width="44" height="65"/>
+  <rect id="limiter-bottom" x="314" y="625" width="172" height="38" rx="2" fill="#e2e2ef" stroke="#555"/>
+  <rect id="service-bottom" x="652" y="625" width="120" height="38" rx="2" fill="#e2e2ef" stroke="#555"/>
+  <text x="400" y="650" class="participant" text-anchor="middle">Rate limiter</text>
+  <text x="712" y="650" class="participant" text-anchor="middle">Service</text>
+  <!-- The time-based allowance determines when subsequent requests can be admitted. -->
+  <text x="400" y="752" class="subtitle" text-anchor="middle">Requests can resume as allowance becomes available.</text>
+</svg>
