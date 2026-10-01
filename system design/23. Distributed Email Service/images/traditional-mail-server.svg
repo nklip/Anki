@@ -18,13 +18,13 @@
       .connector { fill: none; stroke: #111; stroke-width: 2; marker-end: url(#arrowhead); }
       .storage-shape { fill: #fff; stroke: #111; stroke-width: 2; }
     </style>
-    <!-- The 16-unit triangle projects 2 units beyond each shaft endpoint.
+    <!-- The 16-unit triangle projects 4 units beyond each shaft endpoint.
          Retract endpoints along their route so tips meet the target outlines. -->
     <marker id="arrowhead"
             markerWidth="16"
             markerHeight="16"
             viewBox="0 -8 16 16"
-            refX="14"
+            refX="12"
             refY="0"
             orient="auto"
             markerUnits="userSpaceOnUse">
@@ -99,14 +99,14 @@
     <use href="#person" x="880" y="112" width="59" height="59"/>
   </g>
 
-  <!-- The vertical user routes terminate at the source-native mail-client icons. -->
+  <!-- Vertical tips meet the visible icon contours, including the Gmail envelope notch. -->
   <g id="mail-clients">
-    <path id="alice-client-connector" class="connector" d="M262 171V259"/>
+    <path id="alice-client-connector" class="connector" d="M262 171V257"/>
     <text class="diagram-text centered" x="156" y="287">Outlook</text>
     <text class="diagram-text centered" x="156" y="321">client</text>
     <use href="#outlook-client-icon" x="226" y="261" width="73" height="66"/>
 
-    <path id="bob-client-connector" class="connector" d="M909 171V264"/>
+    <path id="bob-client-connector" class="connector" d="M909 171V282.159091"/>
     <use href="#gmail-client-icon" x="873" y="266" width="73" height="56"/>
     <text class="diagram-text" x="956" y="287">Gmail</text>
     <text class="diagram-text" x="956" y="321">client</text>
@@ -117,11 +117,11 @@
   <g id="client-server-actions">
     <path id="send-label-leader" class="line" d="M278 327L297.5 366"/>
     <text class="diagram-text" x="241" y="403">① Send</text>
-    <path id="send-to-outlook-smtp" class="connector" d="M323.5 418L354.105573 479.211146"/>
+    <path id="send-to-outlook-smtp" class="connector" d="M323.5 418L353.211146 477.422292"/>
 
     <path id="get-label-leader" class="line" d="M922 322L941.5 361"/>
     <text class="diagram-text" x="895" y="395">④ Get</text>
-    <path id="get-from-gmail-imap" class="connector" d="M966 410L1000.605573 479.211146"/>
+    <path id="get-from-gmail-imap" class="connector" d="M966 410L999.711146 477.422292"/>
   </g>
 
   <!-- Dashed frames group the protocol services and storage for each domain. -->
@@ -150,28 +150,28 @@
   <g id="cross-domain-send">
     <path class="line" d="M464 525H521"/>
     <text class="diagram-text" x="527" y="536">② Send</text>
-    <path id="outlook-to-gmail-smtp" class="connector" d="M650 525H716"/>
+    <path id="outlook-to-gmail-smtp" class="connector" d="M650 525H714"/>
   </g>
 
   <!-- Each storage route uses a 1:2 horizontal-to-vertical slope, mirrored for leftward routes.
        Both segments are collinear across the label gap. Tips meet y=699, where the
-       storage symbol viewport clips the upper rim stroke; retract shafts by 2 units. -->
+       storage symbol viewport clips the upper rim stroke; retract shafts by 4 units. -->
   <g id="storage-actions">
     <path id="outlook-fetch-storage-leader" class="line" d="M177 568L199 612"/>
     <text class="diagram-text" x="178" y="641" font-size="24">Fetch</text>
-    <path id="outlook-fetch-storage" class="connector" d="M220 654L241.605573 697.211146"/>
+    <path id="outlook-fetch-storage" class="connector" d="M220 654L240.711146 695.422292"/>
 
     <path id="outlook-store-storage-leader" class="line" d="M356 568L334 612"/>
     <text class="diagram-text" x="296" y="641" font-size="24">Store</text>
-    <path id="outlook-store-storage" class="connector" d="M313 654L291.394427 697.211146"/>
+    <path id="outlook-store-storage" class="connector" d="M313 654L292.288854 695.422292"/>
 
     <path id="gmail-store-storage-leader" class="line" d="M826 568L848 612"/>
     <text class="diagram-text" x="796" y="641">③ Store</text>
-    <path id="gmail-store-storage" class="connector" d="M869 654L890.605573 697.211146"/>
+    <path id="gmail-store-storage" class="connector" d="M869 654L889.711146 695.422292"/>
 
     <path id="gmail-fetch-storage-leader" class="line" d="M1000 568L978 612"/>
     <text class="diagram-text" x="937" y="641" font-size="24">Fetch</text>
-    <path id="gmail-fetch-storage" class="connector" d="M957 654L935.394427 697.211146"/>
+    <path id="gmail-fetch-storage" class="connector" d="M957 654L936.288854 695.422292"/>
   </g>
 
   <!-- Mailbox storage and domain captions complete each server boundary. -->

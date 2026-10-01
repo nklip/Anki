@@ -18,15 +18,17 @@
       .connector { fill: none; stroke: #111; stroke-width: 2; marker-end: url(#arrowhead); }
       .database-shape { fill: #fff; stroke: #111; stroke-width: 2; }
     </style>
+    <!-- A 1:1 viewport preserves the 16-unit head; its 4-unit projection hides the shaft nose.
+         Endpoints are retracted so only the pointed tip meets each outer target boundary. -->
     <marker id="arrowhead"
-            markerWidth="18"
+            markerWidth="16"
             markerHeight="16"
-            viewBox="0 -6 12 12"
-            refX="11.5"
+            viewBox="0 -8 16 16"
+            refX="12"
             refY="0"
             orient="auto"
             markerUnits="userSpaceOnUse">
-      <path d="M0-6L12 0L0 6Z" fill="#111"/>
+      <path d="M0-8L16 0L0 8Z" fill="#111"/>
     </marker>
     <symbol id="person" viewBox="0 0 59 59">
       <circle cx="29" cy="15" r="14.5" fill="#000"/>
@@ -87,17 +89,17 @@
 
   <!-- Server requests terminate at the database outlines; replication arrows leave a label gap. -->
   <g id="internal-data-center-connectors">
-    <path id="normal-us-server-database" class="connector" d="M810 180H1007"/>
-    <path id="normal-europe-server-database" class="connector" d="M810 458H1007"/>
-    <path id="failover-us-server-database" class="connector" d="M810 803H1007"/>
-    <path id="failover-europe-server-database" class="connector" d="M810 1081H1007"/>
+    <path id="normal-us-server-database" class="connector" d="M810 180H1003"/>
+    <path id="normal-europe-server-database" class="connector" d="M810 458H1003"/>
+    <path id="failover-us-server-database" class="connector" d="M810 803H1003"/>
+    <path id="failover-europe-server-database" class="connector" d="M810 1081H1003"/>
 
-    <path id="normal-replication-up" class="connector" d="M1055 295V229"/>
-    <path id="normal-replication-down" class="connector" d="M1055 346V409"/>
+    <path id="normal-replication-up" class="connector" d="M1055 295V233.9978"/>
+    <path id="normal-replication-down" class="connector" d="M1055 346V405"/>
     <text class="diagram-text centered" x="1055" y="331">Replication</text>
 
-    <path id="failover-replication-up" class="connector" d="M1055 918V852"/>
-    <path id="failover-replication-down" class="connector" d="M1055 970V1032"/>
+    <path id="failover-replication-up" class="connector" d="M1055 918V856.9978"/>
+    <path id="failover-replication-down" class="connector" d="M1055 970V1028"/>
     <text class="diagram-text centered" x="1055" y="954">Replication</text>
   </g>
 
@@ -117,9 +119,9 @@
 
   <!-- The lower split route shows the failed U.S. path and successful Europe fallback. -->
   <g id="user-routing-connectors">
-    <path id="normal-user-route" class="connector" d="M313 309L647 204"/>
-    <path id="failed-us-route" class="connector" d="M313 932L647 829"/>
-    <path id="europe-fallback-route" class="connector" d="M313 950L647 1055"/>
+    <path id="normal-user-route" class="connector" d="M313 309L642.184119 205.513975"/>
+    <path id="failed-us-route" class="connector" d="M313 932L642.177627 830.487139"/>
+    <path id="europe-fallback-route" class="connector" d="M313 950L642.184119 1053.486025"/>
     <!-- The red cross intentionally sits on the failed route; it is a symbol, not a label. -->
     <g id="failed-route-mark" fill="none" stroke="#ee451d" stroke-width="3.5">
       <path d="M447 877L466 896"/>
