@@ -23,6 +23,10 @@ The order below is a learning sequence. This is an editorial shortlist of common
 
 To locate an original in Anki's browser, search `nid:1686533135092`, replacing the number with its note ID. These Markdown cards are repository study material; the original Anki collection was read without changing its notes or review history.
 
+## Additional cards
+
+- [What does CloudNativePG (CNPG) do in Kubernetes?](CloudNativePG/Readme.md)
+
 ## What was refreshed
 
 - Cluster architecture separates the API server, scheduler, controllers, kubelet, and container runtime; kube-proxy is optional when another implementation provides Service forwarding.

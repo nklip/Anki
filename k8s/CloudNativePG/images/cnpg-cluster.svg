@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="632" viewBox="0 0 960 632" role="img" aria-labelledby="title desc">
+  <title id="title">CloudNativePG turns a Cluster resource into managed PostgreSQL instances</title>
+  <desc id="desc">A Cluster named shop-db requests three instances. The CloudNativePG operator manages a read-write Service and three PostgreSQL Pods: one primary and two replicas. Application connections reach the primary through shop-db-rw. The primary streams changes to the replicas. On failure, CNPG promotes a replica and updates the Service. Each database Pod has its own persistent storage.</desc>
+
+  <!-- Shared typography and connector colors; every label is editable text. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #52677b; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #52677b; }
+      .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }
+      .replication { fill: none; stroke: #397c5a; stroke-width: 2.5; stroke-linejoin: round; }
+    </style>
+  </defs>
+
+  <!-- Lesson heading and declarative configuration row. -->
+  <rect width="960" height="632" fill="#ffffff"/>
+  <text x="32" y="43" class="title" text-anchor="start">CloudNativePG: declare a PostgreSQL cluster</text>
+  <text x="32" y="75" class="subtitle" text-anchor="start">CNPG manages the database; applications connect through Kubernetes Services.</text>
+  <rect id="cluster-resource" x="32" y="112" width="360" height="94" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="212" y="146" class="heading" text-anchor="middle">Cluster resource: shop-db</text>
+  <text x="212" y="179" class="body" text-anchor="middle">instances: 3</text>
+  <rect id="cnpg-operator" x="566" y="112" width="362" height="94" rx="12" fill="#f5f3ff" stroke="#b7a4de" stroke-width="1.5"/>
+  <text x="747" y="146" class="heading" text-anchor="middle">CloudNativePG operator</text>
+  <text x="747" y="179" class="body" text-anchor="middle">Watches and maintains the cluster</text>
+  <text x="479" y="140" class="small" text-anchor="middle">desired state</text>
+  <!-- Shafts end inside their separate triangular heads; tips stop at node boundaries. -->
+  <path id="desired-state-shaft" class="connector" data-connector="true" d="M392 166 H558"/>
+  <polygon id="desired-state-head" points="566,166 556,171 556,161" fill="#52677b"/>
+
+  <!-- This boundary contains only CNPG-managed resources, excluding the application. -->
+  <rect id="managed-resources" x="330" y="256" width="598" height="344" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="354" y="285" class="small" text-anchor="start">CNPG-managed resources inside Kubernetes</text>
+  <text x="763" y="236" class="small" text-anchor="end">manages</text>
+  <path id="operator-management-shaft" class="connector" data-connector="true" d="M790 206 V248"/>
+  <polygon id="operator-management-head" points="790,256 785,246 795,246" fill="#52677b"/>
+
+  <!-- Application traffic crosses the managed-resource boundary intentionally. -->
+  <rect id="application" x="32" y="303" width="218" height="76" rx="12" fill="#ffffff" stroke="#9aaebf" stroke-width="1.5"/>
+  <text x="141" y="336" class="heading" text-anchor="middle">Application</text>
+  <text x="141" y="363" class="body" text-anchor="middle">Reads and writes</text>
+  <rect id="rw-service" x="354" y="303" width="248" height="76" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="478" y="336" class="heading" text-anchor="middle">shop-db-rw</text>
+  <text x="478" y="363" class="body" text-anchor="middle">Service: current primary</text>
+  <rect id="primary-pod" x="648" y="303" width="254" height="76" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="775" y="336" class="heading" text-anchor="middle">Primary Pod</text>
+  <text x="775" y="363" class="body" text-anchor="middle">PostgreSQL accepts writes</text>
+  <path id="app-connection-shaft" class="connector" data-connector="true" d="M250 342 H346"/>
+  <polygon id="app-connection-head" points="354,342 344,347 344,337" fill="#52677b"/>
+  <path id="service-routing-shaft" class="connector" data-connector="true" d="M602 342 H640"/>
+  <polygon id="service-routing-head" points="648,342 638,347 638,337" fill="#52677b"/>
+
+  <!-- Replication branches below its label, outside all text and node interiors. -->
+  <text x="479" y="419" class="body" text-anchor="start">Streams database changes</text>
+  <path id="replica-one-shaft" class="replication" data-connector="true" d="M775 379 V442 H479 V469"/>
+  <polygon id="replica-one-head" points="479,477 474,467 484,467" fill="#397c5a"/>
+  <path id="replica-two-shaft" class="replication" data-connector="true" d="M775 442 V469"/>
+  <polygon id="replica-two-head" points="775,477 770,467 780,467" fill="#397c5a"/>
+  <rect id="replica-one" x="354" y="477" width="248" height="76" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="478" y="510" class="heading" text-anchor="middle">Replica Pod</text>
+  <text x="478" y="537" class="body" text-anchor="middle">PostgreSQL: read-only</text>
+  <rect id="replica-two" x="648" y="477" width="254" height="76" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="775" y="510" class="heading" text-anchor="middle">Replica Pod</text>
+  <text x="775" y="537" class="body" text-anchor="middle">PostgreSQL: read-only</text>
+  <text x="629" y="582" class="small" text-anchor="middle">Each database Pod has its own persistent storage.</text>
+
+  <!-- Failover consequence is separate from the normal-operation traffic paths. -->
+  <text x="32" y="447" class="heading" text-anchor="start">If the primary fails:</text>
+  <text x="32" y="479" class="body" text-anchor="start">CNPG promotes a replica.</text>
+  <text x="32" y="509" class="body" text-anchor="start">shop-db-rw follows it.</text>
+  <text x="32" y="539" class="small" text-anchor="start">The application reconnects.</text>
+</svg>
