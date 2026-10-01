@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700" role="img" aria-labelledby="read-path-title read-path-desc">
+  <title id="read-path-title">A read finds the newest visible version</title>
+  <desc id="read-path-desc">A LevelDB-style single-key lookup at snapshot s selects the newest entry with sequence number at most s. It first checks mutable and frozen memory tables. A visible value is returned, and a visible deletion marker means not found. If no visible entry is in memory, file metadata and key ranges identify candidate sorted files. With Bloom filtering enabled, each candidate file index first locates the data block. Its block Bloom filter then decides whether to skip the block or read it: definitely absent skips it, while maybe present requires the data-block lookup. The read considers versions up to its snapshot cutoff and continues as needed to determine the newest visible entry.</desc>
+  <!-- Shared typography and semantic colors: blue memory, teal files/results, amber merging. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #15243b; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #526277; }
+      .label { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .note { font-size: 18px; fill: #526277; }
+      .blue { fill: #eaf2ff; stroke: #b6c4d4; stroke-width: 1.5; }
+      .teal { fill: #e9f7f3; stroke: #b6c4d4; stroke-width: 1.5; }
+      .amber { fill: #fff4df; stroke: #b6c4d4; stroke-width: 1.5; }
+      .neutral { fill: #f7f9fc; stroke: #b6c4d4; stroke-width: 1.5; }
+      .connector { fill: none; stroke: #526277; stroke-width: 2; }
+    </style>
+  </defs>
+  <rect width="1000" height="700" fill="#fff"/>
+  <!-- Header establishes the version visibility rule for the complete lookup. -->
+  <text x="32" y="46" class="title" >A read finds the newest visible version</text>
+  <text x="32" y="78" class="subtitle" >LevelDB-style read with Bloom filters: newest entry with seq ≤ snapshot s.</text>
+  <!-- Memory result exits to the right; absence alone continues down to files. -->
+  <rect id="memory-lookup" x="32" y="115" width="475" height="106" rx="12" class="blue"/>
+  <rect id="memory-result" x="614" y="115" width="354" height="106" rx="12" class="teal"/>
+  <path id="memory-hit-shaft" d="M507 175 H602" class="connector" data-connector="true"/>
+  <polygon id="memory-hit-head" points="600,168 614,175 600,182" fill="#526277"/>
+  <text x="541" y="147" class="note" >found</text>
+  <text x="52" y="149" class="label" >1  Check memory</text>
+  <text x="52" y="184" class="body" >Mutable + frozen memtables</text>
+  <text x="52" y="209" class="note" >Find the newest entry with seq ≤ s.</text>
+  <text x="634" y="149" class="label" >Newest visible entry:</text>
+  <text x="634" y="182" class="body" >Value → return value</text>
+  <text x="634" y="209" class="body" >Tombstone → not found</text>
+  <path id="memory-miss-shaft" d="M269 221 V283" class="connector" data-connector="true"/>
+  <polygon id="memory-miss-head" points="262,281 269,295 276,281" fill="#526277"/>
+  <text x="294" y="264" class="note" >No visible entry in memory</text>
+  <!-- LevelDB seeks the file index before using the block offset to check its filter. -->
+  <rect id="candidate-files" x="32" y="295" width="475" height="122" rx="12" class="teal"/>
+  <rect id="filter-outcomes" x="614" y="295" width="354" height="122" rx="12" class="teal"/>
+  <path id="file-filter-shaft" d="M507 356 H602" class="connector" data-connector="true"/>
+  <polygon id="file-filter-head" points="600,349 614,356 600,363" fill="#526277"/>
+  <text x="52" y="329" class="label" >2  Choose candidate SSTables</text>
+  <text x="52" y="366" class="body" >Use file metadata + key ranges</text>
+  <text x="52" y="395" class="body" >Seek index → locate data block</text>
+  <text x="634" y="329" class="body" >Check its block Bloom filter</text>
+  <text x="634" y="365" class="body" >Definitely absent? Skip block.</text>
+  <text x="634" y="394" class="body" >Maybe present? Read block.</text>
+  <!-- The next row receives checked candidates; the elbow stays in the row gap. -->
+  <path id="candidates-to-resolution-shaft" d="M791 417 V453 H269 V478" class="connector" data-connector="true"/>
+  <polygon id="candidates-to-resolution-head" points="262,476 269,490 276,476" fill="#526277"/>
+  <rect id="resolve-versions" x="32" y="490" width="475" height="112" rx="12" class="amber"/>
+  <rect id="final-result" x="614" y="490" width="354" height="112" rx="12" class="teal"/>
+  <path id="resolved-result-shaft" d="M507 546 H602" class="connector" data-connector="true"/>
+  <polygon id="resolved-result-head" points="600,539 614,546 600,553" fill="#526277"/>
+  <text x="52" y="524" class="label" >3  Resolve visible versions</text>
+  <text x="52" y="560" class="note" >Continue through candidates as needed.</text>
+  <text x="52" y="586" class="note" >Select the newest entry with seq ≤ s.</text>
+  <text x="634" y="524" class="body" >Newest visible value → return</text>
+  <text x="634" y="559" class="body" >Newest visible tombstone</text>
+  <text x="634" y="586" class="body" >or no match → not found</text>
+  <!-- Glossary and Bloom-filter rule close the teaching loop without extra branches. -->
+  <text x="32" y="641" class="note" >seq = sequence number. Memtable = sorted RAM buffer. SSTable = immutable sorted file.</text>
+  <text x="32" y="674" class="note" >Tombstone = stored deletion marker. Bloom “maybe” never proves a key exists.</text>
+</svg>

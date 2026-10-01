@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="530" viewBox="0 0 1000 530" role="img" aria-labelledby="title desc">
+  <title id="title">More components spread merging across stages</title>
+  <desc id="desc">A multicomponent LSM-tree has C0 in RAM and larger C1 through Ck components on disk. Rolling merges connect adjacent components. Example capacity targets of 10 MiB, 100 MiB, 1 GiB, omitted intermediate components, and 100 GiB are illustrative rather than universal tuning rules.</desc>
+  <!-- Shared typography and semantic colors. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #15243b; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #526277; }
+      .label { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .note { font-size: 18px; fill: #526277; }
+      .panel { fill: #fff; stroke: #b6c4d4; stroke-width: 1.5; }
+      .ram { fill: #eaf2ff; stroke: #2563eb; stroke-width: 1.5; }
+      .disk { fill: #e9f7f3; stroke: #0f766e; stroke-width: 1.5; }
+      .cost { fill: #fff4df; stroke: #b45309; stroke-width: 1.5; }
+      .arrow { fill: none; stroke: #526277; stroke-width: 2; }
+    </style>
+  </defs>
+  <rect width="1000" height="530" fill="#fff"/>
+  <!-- Lesson heading. -->
+  <text x="32" y="46" class="title">More components spread merging across stages</text>
+  <text x="32" y="78" class="subtitle">Rolling merges move entries between adjacent components.</text>
+
+  <!-- Storage locations make C0 versus the disk components explicit. -->
+  <text x="116" y="145" class="label" text-anchor="middle" fill="#2563eb">RAM</text>
+  <text x="332" y="145" class="label" text-anchor="middle" fill="#0f766e">Disk</text>
+  <text x="548" y="145" class="label" text-anchor="middle" fill="#0f766e">Disk</text>
+  <text x="868" y="145" class="label" text-anchor="middle" fill="#0f766e">Disk</text>
+  <!-- Increasing illustrative targets, with explicit omitted intermediate stages. -->
+  <g id="component-sequence">
+    <rect x="32" y="168" width="168" height="152" rx="12" class="ram"/>
+    <text x="116" y="210" class="label" text-anchor="middle">C0</text>
+    <text x="116" y="257" font-size="30" font-weight="700" text-anchor="middle">10 MiB</text>
+    <text x="116" y="295" class="note" text-anchor="middle">target size</text>
+    <path id="arrow-c0-c1" d="M210 244 H225" class="arrow"/>
+    <path d="M224 237 L238 244 L224 251 Z" fill="#526277"/>
+    <rect x="248" y="168" width="168" height="152" rx="12" class="disk"/>
+    <text x="332" y="210" class="label" text-anchor="middle">C1</text>
+    <text x="332" y="257" font-size="30" font-weight="700" text-anchor="middle">100 MiB</text>
+    <text x="332" y="295" class="note" text-anchor="middle">target size</text>
+    <path id="arrow-c1-c2" d="M426 244 H441" class="arrow"/>
+    <path d="M440 237 L454 244 L440 251 Z" fill="#526277"/>
+    <rect x="464" y="168" width="168" height="152" rx="12" class="disk"/>
+    <text x="548" y="210" class="label" text-anchor="middle">C2</text>
+    <text x="548" y="257" font-size="30" font-weight="700" text-anchor="middle">1 GiB</text>
+    <text x="548" y="295" class="note" text-anchor="middle">target size</text>
+    <path id="arrow-to-omitted" d="M642 244 H657" class="arrow"/>
+    <path d="M656 237 L670 244 L656 251 Z" fill="#526277"/>
+    <text x="700" y="242" font-size="36" text-anchor="middle">…</text>
+    <text x="700" y="281" class="note" text-anchor="middle"><tspan x="700">more</tspan><tspan x="700" dy="24">stages</tspan></text>
+    <path id="arrow-from-omitted" d="M730 244 H745" class="arrow"/>
+    <path d="M744 237 L758 244 L744 251 Z" fill="#526277"/>
+    <rect x="768" y="168" width="200" height="152" rx="12" class="disk"/>
+    <text x="868" y="210" class="label" text-anchor="middle">Ck</text>
+    <text x="868" y="257" font-size="30" font-weight="700" text-anchor="middle">100 GiB</text>
+    <text x="868" y="295" class="note" text-anchor="middle">target size</text>
+  </g>
+  <!-- These capacities explain the idea; they are not a tuning prescription. -->
+  <g id="capacity-caveat">
+    <rect x="32" y="358" width="936" height="143" rx="14" class="panel"/>
+    <text x="56" y="395" class="label">Capacity targets are illustrative</text>
+    <text x="56" y="432" class="body">MiB and GiB are binary units. These targets are not an exact 10× sequence.</text>
+    <text x="56" y="468" class="body">The ellipsis hides stages: 1 GiB and 100 GiB need not be adjacent components.</text>
+  </g>
+
+</svg>

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="565" viewBox="0 0 1000 565" role="img" aria-labelledby="title desc">
+<title id="title">Merge sorted streams without loading the whole disk</title><desc id="desc">Two sorted input streams, A D G K M from memory and B C F H L from disk, merge into A B C D F G H K L M. Only the current buffered portion of the disk component is needed.</desc>
+<!-- Shared typography, semantic colors, and arrow join geometry. -->
+<defs><style>
+text {font-family:Arial,Helvetica,sans-serif;fill:#15243b} .title {font-size:30px;font-weight:700} .subtitle {font-size:19px;fill:#526277} .body {font-size:20px} .label {font-size:22px;font-weight:700} .note {font-size:18px;fill:#526277} .key {font-size:25px;font-weight:700;text-anchor:middle} .formula {font-size:27px;font-weight:700;text-anchor:middle}
+</style><marker id="arrowhead" markerWidth="18" markerHeight="16" viewBox="0 0 18 16" refX="16" refY="8" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L18 8L0 16Z" fill="#526277"/></marker></defs>
+<!-- Canvas and introduction. -->
+<rect width="1000" height="565" fill="#fff"/>
+<text class="title" x="32" y="46">Merge sorted streams without loading the whole disk</text>
+<text class="subtitle" x="32" y="78">Selected input ranges; the 1996 rolling merge advances a cursor.</text>
+<!-- Sorted inputs; blue denotes memory and teal denotes buffered disk data. -->
+<text class="label" x="32" y="163">C0: memory</text>
+<rect x="247" y="127" width="74" height="60" rx="10" fill="#eaf2ff" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="284" y="167">A</text>
+<rect x="345" y="127" width="74" height="60" rx="10" fill="#eaf2ff" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="382" y="167">D</text>
+<rect x="443" y="127" width="74" height="60" rx="10" fill="#eaf2ff" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="480" y="167">G</text>
+<rect x="541" y="127" width="74" height="60" rx="10" fill="#eaf2ff" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="578" y="167">K</text>
+<rect x="639" y="127" width="74" height="60" rx="10" fill="#eaf2ff" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="676" y="167">M</text>
+<path d="M743 157H824" fill="none" stroke="#526277" stroke-width="2" marker-end="url(#arrowhead)"/>
+<text class="label" x="32" y="263">C1: disk input</text>
+<rect x="247" y="227" width="74" height="60" rx="10" fill="#e9f7f3" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="284" y="267">B</text>
+<rect x="345" y="227" width="74" height="60" rx="10" fill="#e9f7f3" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="382" y="267">C</text>
+<rect x="443" y="227" width="74" height="60" rx="10" fill="#e9f7f3" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="480" y="267">F</text>
+<rect x="541" y="227" width="74" height="60" rx="10" fill="#e9f7f3" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="578" y="267">H</text>
+<rect x="639" y="227" width="74" height="60" rx="10" fill="#e9f7f3" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="676" y="267">L</text>
+<path d="M743 257H824" fill="none" stroke="#526277" stroke-width="2" marker-end="url(#arrowhead)"/>
+<!-- Both input arrows enter one merge rule; tips stop at its left edge. -->
+<rect x="826" y="112" width="142" height="215" rx="10" fill="#fff4df" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="label" x="897" y="149" text-anchor="middle">Compare</text>
+<text class="label" x="897" y="178" text-anchor="middle">heads</text>
+<text class="body" x="897" y="221" text-anchor="middle">Emit the</text>
+<text class="body" x="897" y="249" text-anchor="middle">smaller key</text>
+<text class="note" x="897" y="295" text-anchor="middle">Advance it</text>
+<text class="body" x="32" y="352">Example: compare A with B → emit A; compare D with B → emit B.</text>
+<path d="M897 327V398" fill="none" stroke="#526277" stroke-width="2" marker-end="url(#arrowhead)"/>
+<!-- Output is sorted; the arrow lands outside its bounding panel. -->
+<rect x="32" y="400" width="936" height="91" rx="10" fill="#f7fafc" stroke="#b6c4d4" stroke-width="1.5"/>
+<rect x="53" y="418" width="78" height="55" rx="10" fill="#e9f7f3" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="92" y="454">A</text>
+<rect x="143" y="418" width="78" height="55" rx="10" fill="#e9f7f3" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="182" y="454">B</text>
+<rect x="233" y="418" width="78" height="55" rx="10" fill="#e9f7f3" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="272" y="454">C</text>
+<rect x="323" y="418" width="78" height="55" rx="10" fill="#e9f7f3" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="362" y="454">D</text>
+<rect x="413" y="418" width="78" height="55" rx="10" fill="#e9f7f3" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="452" y="454">F</text>
+<rect x="503" y="418" width="78" height="55" rx="10" fill="#e9f7f3" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="542" y="454">G</text>
+<rect x="593" y="418" width="78" height="55" rx="10" fill="#e9f7f3" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="632" y="454">H</text>
+<rect x="683" y="418" width="78" height="55" rx="10" fill="#e9f7f3" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="722" y="454">K</text>
+<rect x="773" y="418" width="78" height="55" rx="10" fill="#e9f7f3" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="812" y="454">L</text>
+<rect x="863" y="418" width="78" height="55" rx="10" fill="#e9f7f3" stroke="#b6c4d4" stroke-width="1.5"/>
+<text class="key" x="902" y="454">M</text>
+<text class="note" x="32" y="535">Equal keys need a version/deletion rule; ordering alone cannot decide what to keep.</text>
+</svg>

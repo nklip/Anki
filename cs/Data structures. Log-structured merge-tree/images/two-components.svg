@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="610" viewBox="0 0 1000 610" role="img" aria-labelledby="title desc">
+  <title id="title">The original two-component LSM-tree</title>
+  <desc id="desc">The original LSM-tree has C0, a sorted in-memory index, and C1, a sorted disk component. An incremental rolling merge combines portions of both using memory buffers and writes replacement C1 blocks at new disk positions. Recovery logging protects C0 entries, which can be key and row identifier pairs.</desc>
+  <!-- Shared typography and semantic colors. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #15243b; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #526277; }
+      .label { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .note { font-size: 18px; fill: #526277; }
+      .panel { fill: #fff; stroke: #b6c4d4; stroke-width: 1.5; }
+      .ram { fill: #eaf2ff; stroke: #2563eb; stroke-width: 1.5; }
+      .disk { fill: #e9f7f3; stroke: #0f766e; stroke-width: 1.5; }
+      .cost { fill: #fff4df; stroke: #b45309; stroke-width: 1.5; }
+      .arrow { fill: none; stroke: #526277; stroke-width: 2; }
+    </style>
+  </defs>
+  <rect width="1000" height="610" fill="#fff"/>
+  <!-- Lesson heading. -->
+  <text x="32" y="46" class="title">The original two-component LSM-tree</text>
+  <text x="32" y="78" class="subtitle">A rolling merge gradually moves index entries from C0 in RAM into C1 on disk.</text>
+
+  <!-- Memory component; the recovery log is intentionally outside the RAM panel. -->
+  <g id="memory-component">
+    <rect x="32" y="112" width="580" height="176" rx="14" class="panel"/>
+    <text x="56" y="148" class="label">RAM (memory)</text>
+    <rect x="56" y="183" width="162" height="74" rx="10" class="ram"/>
+    <text x="137" y="214" class="body" text-anchor="middle"><tspan x="137">New index</tspan><tspan x="137" dy="26">entries</tspan></text>
+    <path id="arrow-insert" d="M232 220 H292" class="arrow"/>
+    <path d="M291 213 L305 220 L291 227 Z" fill="#526277"/>
+    <rect x="316" y="170" width="272" height="96" rx="10" class="ram"/>
+    <text x="452" y="200" class="label" text-anchor="middle">C0: sorted index</text>
+    <text x="452" y="236" class="body" text-anchor="middle">Example keys: 2, 5</text>
+    <rect x="654" y="151" width="290" height="105" rx="10" class="panel"/>
+    <text x="799" y="183" class="label" text-anchor="middle">Recovery log (disk)</text>
+    <text x="799" y="215" class="body" text-anchor="middle"><tspan x="799">Protects changes held</tspan><tspan x="799" dy="26">in the C0 component</tspan></text>
+  </g>
+  <!-- Merge routing passes through the gap between the RAM and disk regions. -->
+  <path id="arrow-c0-to-merge" d="M452 279 V349" class="arrow"/>
+  <path d="M445 348 L452 362 L459 348 Z" fill="#526277"/>
+  <text x="478" y="320" class="note">Merge small portions at a time</text>
+  <!-- Disk input, buffered merge, and newly written output blocks. -->
+  <g id="disk-component">
+    <text x="56" y="374" class="label">Disk input</text>
+    <text x="690" y="374" class="label">Disk output</text>
+    <rect x="56" y="394" width="220" height="115" rx="10" class="disk"/>
+    <text x="166" y="426" class="label" text-anchor="middle">C1: sorted data</text>
+    <text x="166" y="457" class="body" text-anchor="middle"><tspan x="166">Existing blocks</tspan><tspan x="166" dy="27">Keys: 1, 4, 7</tspan></text>
+    <path id="arrow-c1-to-merge" d="M290 451 H328" class="arrow"/>
+    <path d="M327 444 L341 451 L327 458 Z" fill="#526277"/>
+    <rect x="352" y="374" width="244" height="143" rx="10" class="cost"/>
+    <text x="474" y="411" class="label" text-anchor="middle">Rolling merge</text>
+    <text x="474" y="447" class="body" text-anchor="middle"><tspan x="474">Read and combine</tspan><tspan x="474" dy="27">using RAM buffers</tspan></text>
+    <path id="arrow-replacement" d="M610 451 H666" class="arrow"/>
+    <path d="M665 444 L679 451 L665 458 Z" fill="#526277"/>
+    <rect x="690" y="394" width="254" height="127" rx="10" class="disk"/>
+    <text x="817" y="426" class="label" text-anchor="middle">New C1 blocks</text>
+    <text x="817" y="457" class="body" text-anchor="middle"><tspan x="817">At new disk positions</tspan><tspan x="817" dy="27">Keys: 1, 2, 4, 5, 7</tspan></text>
+  </g>
+  <!-- The original index need not store the complete database row. -->
+  <text x="32" y="587" class="body">An index entry may hold a key + row ID, rather than the complete row.</text>
+
+</svg>

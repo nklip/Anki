@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620" viewBox="0 0 1000 620" role="img" aria-labelledby="title desc">
+  <title id="title">Batching changes the disk-write pattern</title>
+  <desc id="desc">A conventional B-tree can modify scattered disk pages. An LSM-tree buffers new entries in RAM, then merges sorted batches into disk data. Later merges rewrite data; the recovery log is a separate structure.</desc>
+  <!-- Shared typography and semantic colors. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #15243b; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #526277; }
+      .label { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .note { font-size: 18px; fill: #526277; }
+      .status { font-size: 15px; fill: #526277; }
+      .panel { fill: #fff; stroke: #b6c4d4; stroke-width: 1.5; }
+      .ram { fill: #eaf2ff; stroke: #2563eb; stroke-width: 1.5; }
+      .disk { fill: #e9f7f3; stroke: #0f766e; stroke-width: 1.5; }
+      .cost { fill: #fff4df; stroke: #b45309; stroke-width: 1.5; }
+      .arrow { fill: none; stroke: #526277; stroke-width: 2; }
+    </style>
+  </defs>
+  <rect width="1000" height="620" fill="#fff"/>
+  <!-- Lesson heading. -->
+  <text x="32" y="46" class="title">Batching changes the disk-write pattern</text>
+  <text x="32" y="78" class="subtitle">Buffering and sorted merges reduce scattered page updates.</text>
+
+  <!-- B-tree comparison: highlighted pages are separated in the file. -->
+  <g id="btree-page-updates">
+    <rect x="32" y="112" width="936" height="200" rx="14" class="panel"/>
+    <text x="56" y="148" class="label">Conventional B-tree: changes can touch scattered pages</text>
+    <rect x="56" y="183" width="174" height="72" rx="10" class="cost"/>
+    <text x="143" y="211" class="body" text-anchor="middle"><tspan x="143">Separate</tspan><tspan x="143" dy="26">updates</tspan></text>
+    <!-- Each shaft ends inside its triangular head base. -->
+    <path id="arrow-btree" d="M248 219 H313" class="arrow"/>
+    <path d="M312 212 L326 219 L312 226 Z" fill="#526277"/>
+    <text x="354" y="191" class="note">Disk pages in file order</text>
+    <rect x="350" y="207" width="86" height="61" rx="5" class="cost"/>
+    <rect x="450" y="207" width="86" height="61" rx="5" class="panel"/>
+    <rect x="550" y="207" width="86" height="61" rx="5" class="cost"/>
+    <rect x="650" y="207" width="86" height="61" rx="5" class="panel"/>
+    <rect x="750" y="207" width="86" height="61" rx="5" class="panel"/>
+    <rect x="850" y="207" width="86" height="61" rx="5" class="cost"/>
+    <text x="393" y="233" class="body" text-anchor="middle">8</text>
+    <text x="393" y="255" class="status" text-anchor="middle">changed</text>
+    <text x="493" y="233" class="body" text-anchor="middle">9</text>
+    <text x="493" y="255" class="status" text-anchor="middle">unchanged</text>
+    <text x="593" y="233" class="body" text-anchor="middle">10</text>
+    <text x="593" y="255" class="status" text-anchor="middle">changed</text>
+    <text x="693" y="233" class="body" text-anchor="middle">11</text>
+    <text x="693" y="255" class="status" text-anchor="middle">unchanged</text>
+    <text x="793" y="233" class="body" text-anchor="middle">12</text>
+    <text x="793" y="255" class="status" text-anchor="middle">unchanged</text>
+    <text x="893" y="233" class="body" text-anchor="middle">13</text>
+    <text x="893" y="255" class="status" text-anchor="middle">changed</text>
+    <text x="354" y="292" class="note">Changed pages are separated by unchanged pages in this example.</text>
+  </g>
+  <!-- LSM sequence: new entries are sorted and merged before batch writes. -->
+  <g id="lsm-batch-writes">
+    <rect x="32" y="332" width="936" height="210" rx="14" class="panel"/>
+    <text x="56" y="369" class="label">LSM-tree: accumulate changes, then write sorted batches</text>
+    <rect x="56" y="399" width="164" height="76" rx="10" class="ram"/>
+    <text x="138" y="444" class="body" text-anchor="middle">Updates</text>
+    <path id="arrow-to-buffer" d="M234 437 H272" class="arrow"/>
+    <path d="M271 430 L285 437 L271 444 Z" fill="#526277"/>
+    <rect x="296" y="399" width="198" height="76" rx="10" class="ram"/>
+    <text x="395" y="430" class="body" text-anchor="middle"><tspan x="395">RAM buffer</tspan><tspan x="395" dy="26">sorts by key</tspan></text>
+    <path id="arrow-to-merge" d="M508 437 H546" class="arrow"/>
+    <path d="M545 430 L559 437 L545 444 Z" fill="#526277"/>
+    <rect x="570" y="399" width="158" height="76" rx="10" class="cost"/>
+    <text x="649" y="430" class="body" text-anchor="middle"><tspan x="649">Merge with</tspan><tspan x="649" dy="26">sorted data</tspan></text>
+    <path id="arrow-to-disk" d="M742 437 H780" class="arrow"/>
+    <path d="M779 430 L793 437 L779 444 Z" fill="#526277"/>
+    <rect x="804" y="399" width="140" height="76" rx="10" class="disk"/>
+    <text x="874" y="430" class="body" text-anchor="middle"><tspan x="874">Sorted</tspan><tspan x="874" dy="26">disk batch</tspan></text>
+    <text x="56" y="513" class="note">Batching improves write locality. Later merges still read and rewrite data.</text>
+  </g>
+  <!-- Distinguish recovery logging from the sorted on-disk data. -->
+  <text x="32" y="584" class="body">The write-ahead log for recovery is separate from the sorted data files shown here.</text>
+
+</svg>
