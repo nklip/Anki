@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="558" viewBox="0 0 960 558" role="img" aria-labelledby="title desc">
+  <title id="title">Operator pattern: declare, reconcile, observe</title>
+  <desc id="desc">Using CloudNativePG as an example, a CustomResourceDefinition registers the Cluster type. A custom resource named shop-db requests three instances. The operator controller reads this desired state and requests changes through the Kubernetes API. PostgreSQL Pods and their storage are managed resources. Their observed state feeds back into the controller for further reconciliation. The CRD defines data, while controller code supplies application behavior.</desc>
+
+  <!-- Shared palette and typography match the neighboring Kubernetes teaching diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #52677b; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #52677b; }
+      .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }
+      .feedback { fill: none; stroke: #397c5a; stroke-width: 2.5; stroke-linejoin: round; }
+    </style>
+  </defs>
+
+  <!-- Begin with the type and an object of that type; examples are from CloudNativePG. -->
+  <rect width="960" height="558" fill="#ffffff"/>
+  <text x="32" y="43" class="title" text-anchor="start">Operator pattern: declare, reconcile, observe</text>
+  <text x="32" y="75" class="subtitle" text-anchor="start">Example: CloudNativePG manages PostgreSQL through a custom Cluster resource.</text>
+
+  <rect id="resource-definition" x="32" y="112" width="240" height="116" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="152" y="144" class="heading" text-anchor="middle">CRD: resource type</text>
+  <text x="152" y="176" class="body" text-anchor="middle">Cluster</text>
+  <text x="152" y="204" class="small" text-anchor="middle">Defines the object schema</text>
+  <rect id="custom-resource" x="366" y="112" width="250" height="116" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="491" y="144" class="heading" text-anchor="middle">CR: desired object</text>
+  <text x="491" y="176" class="body" text-anchor="middle">Cluster named shop-db</text>
+  <text x="491" y="204" class="body" text-anchor="middle">spec.instances: 3</text>
+
+  <!-- Manual arrow shafts stop within their heads; tips meet node boundaries. -->
+  <text x="319" y="148" class="small" text-anchor="middle">defines</text>
+  <path id="definition-shaft" class="connector" data-connector="true" d="M272 176 H358"/>
+  <polygon id="definition-head" points="366,176 356,181 356,171" fill="#52677b"/>
+
+  <!-- The type adds a data API; application behavior lives in the separate controller. -->
+  <text x="660" y="144" class="heading" text-anchor="start">Data + behavior</text>
+  <text x="660" y="176" class="body" text-anchor="start">CRD = new type and schema</text>
+  <text x="660" y="204" class="body" text-anchor="start">Controller = running code</text>
+
+  <!-- Desired state flows down to the controller, with its label clear of the shaft. -->
+  <text x="516" y="276" class="small" text-anchor="start">desired state</text>
+  <path id="desired-state-shaft" class="connector" data-connector="true" d="M491 228 V318"/>
+  <polygon id="desired-state-head" points="491,326 486,316 496,316" fill="#52677b"/>
+  <rect id="operator-controller" x="366" y="326" width="250" height="128" rx="12" fill="#f5f3ff" stroke="#b7a4de" stroke-width="1.5"/>
+  <text x="491" y="360" class="heading" text-anchor="middle">Operator controller</text>
+  <text x="491" y="394" class="body" text-anchor="middle">Knows PostgreSQL</text>
+  <text x="491" y="426" class="body" text-anchor="middle">Compares and acts</text>
+
+  <!-- Resources are created through the API; the controller does not execute Pods itself. -->
+  <rect id="managed-resources" x="700" y="326" width="228" height="128" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="814" y="360" class="heading" text-anchor="middle">Managed resources</text>
+  <text x="814" y="394" class="body" text-anchor="middle">PostgreSQL Pods</text>
+  <text x="814" y="426" class="body" text-anchor="middle">Services and storage</text>
+  <text x="658" y="368" class="small" text-anchor="middle">via API</text>
+  <path id="change-request-shaft" class="connector" data-connector="true" d="M616 389 H692"/>
+  <polygon id="change-request-head" points="700,389 690,394 690,384" fill="#52677b"/>
+
+  <!-- Feedback returns below the nodes, then enters the controller from its bottom edge. -->
+  <path id="observed-state-shaft" class="feedback" data-connector="true" d="M814 454 V498 H491 V462"/>
+  <polygon id="observed-state-head" points="491,454 486,464 496,464" fill="#397c5a"/>
+  <text x="653" y="532" class="body" text-anchor="middle">Observed state feeds the next comparison</text>
+
+  <!-- Plain-language reading guide expands CRD and CR without crowding the nodes. -->
+  <text x="32" y="307" class="small" text-anchor="start">CRD = CustomResourceDefinition</text>
+  <text x="32" y="333" class="small" text-anchor="start">CR = custom resource</text>
+  <text x="32" y="359" class="small" text-anchor="start">API = application programming interface</text>
+  <text x="32" y="408" class="heading" text-anchor="start">Reconciliation</text>
+  <text x="32" y="440" class="body" text-anchor="start">Observe, compare, act.</text>
+  <text x="32" y="470" class="body" text-anchor="start">Report status and repeat.</text>
+</svg>
