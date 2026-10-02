@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="924" height="184" viewBox="0 0 924 184"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Compare the original and received data checksums</title>
+  <desc id="desc">The checksum of the original data and the checksum of the received data both read F7 33 51 1B 9D F6. A Compare label sits between arrows pointing toward the two checksum boxes.</desc>
+
+  <!-- Shared typography and precise symmetric arrowheads. -->
+  <defs>
+    <style>
+      .canvas { fill: #fff; }
+      .box { fill: #fff; stroke: #000; stroke-width: 1.6; }
+      .label { fill: #000; font-family: Arial, Helvetica, sans-serif; font-size: 30px; text-anchor: middle; }
+      .code { fill: #000; font-family: "Andale Mono", Monaco, monospace; font-size: 30px; text-anchor: start; }
+      .arrow-shaft { fill: none; stroke: #000; stroke-width: 1.6; }
+      .arrowhead { fill: #000; }
+    </style>
+  </defs>
+  <rect class="canvas" width="924" height="184"/>
+
+  <!-- Original data checksum. -->
+  <g id="original-checksum">
+    <text class="label" x="161" y="53">
+      <tspan x="161">Checksum of</tspan>
+      <tspan x="161" dy="35">the original data</tspan>
+    </text>
+    <rect class="box" x="6.5" y="100.5" width="309" height="67"/>
+    <text class="code" x="0" y="145" transform="translate(33 0) scale(.84 1)">F7 33 51 1B 9D F6</text>
+  </g>
+
+  <!-- Each shaft stops inside its triangle; the gap around Compare keeps the label unobscured. -->
+  <g id="checksum-comparison">
+    <path class="arrow-shaft" data-connector="true" d="M384 134H333.5"/>
+    <polygon class="arrowhead" points="316.3,134 334.3,127.5 334.3,140.5"/>
+    <text class="label" x="455" y="145">Compare</text>
+    <path class="arrow-shaft" data-connector="true" d="M527 134H582"/>
+    <polygon class="arrowhead" points="598.7,134 580.7,127.5 580.7,140.5"/>
+  </g>
+
+  <!-- Received data checksum retains the same value, letter case, and line breaks. -->
+  <g id="received-checksum">
+    <text class="label" x="755" y="53">
+      <tspan x="755">Checksum of the</tspan>
+      <tspan x="755" dy="35">received data</tspan>
+    </text>
+    <rect class="box" x="599.5" y="100.5" width="310" height="67"/>
+    <text class="code" x="0" y="145" transform="translate(627 0) scale(.84 1)">F7 33 51 1B 9D F6</text>
+  </g>
+</svg>

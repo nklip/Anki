@@ -7,7 +7,8 @@
 
   <!-- Shared labels, node glyph, and repair-safe arrowhead. -->
   <defs>
-    <marker id="arrowhead" markerWidth="22" markerHeight="16" refX="22" refY="8"
+    <!-- Symmetric heads hide shaft ends inside the taper; endpoints are inset to preserve visible tips. -->
+    <marker id="arrowhead" markerWidth="22" markerHeight="16" refX="17" refY="8"
             viewBox="0 0 22 16" markerUnits="userSpaceOnUse" orient="auto">
       <path d="M0 0L22 8L0 16Z" fill="#000"/>
     </marker>
@@ -77,44 +78,44 @@
   <!-- Data flows in both directions between routing and the selected primary. -->
   <g id="data-traffic-flow">
     <path id="data-traffic-to-primary" class="arrow"
-          d="M775 195C914 163 1040 144 1163 133"/>
+          d="M775 195C914 163 1035.019876 144.445377 1158.019876 133.445377"/>
     <path id="data-traffic-to-routing" class="arrow"
-          d="M539 262C421 304 323 357 252 412"/>
+          d="M539 262C421 304 326.952749 353.938011 255.952749 408.938011"/>
     <text class="flow-label" x="550" y="242">Data traffic</text>
   </g>
 
   <!-- Routing and placement exchange lookup information in both directions. -->
   <g id="routing-placement-flow">
-    <path id="placement-to-routing" class="arrow" d="M458 469H330"/>
-    <path id="routing-to-placement" class="arrow" d="M458 469H604"/>
+    <path id="placement-to-routing" class="arrow" d="M458 469H335"/>
+    <path id="routing-to-placement" class="arrow" d="M458 469H599"/>
   </g>
 
   <!-- Heartbeats are bidirectional and split around their labels for readability. -->
   <g id="heartbeat-flows">
-    <path id="primary-heartbeat-up" class="arrow" d="M1029 258L1163 172"/>
-    <path id="primary-heartbeat-down" class="arrow" d="M935 324L797 412"/>
+    <path id="primary-heartbeat-up" class="arrow" d="M1029 258L1158.792068 174.700613"/>
+    <path id="primary-heartbeat-down" class="arrow" d="M935 324L801.21579 409.31167"/>
     <text class="flow-label" x="904" y="301">Heartbeat</text>
 
-    <path id="middle-heartbeat-left" class="arrow" d="M894 469H817"/>
-    <path id="middle-heartbeat-right" class="arrow" d="M1095 469H1163"/>
+    <path id="middle-heartbeat-left" class="arrow" d="M894 469H822"/>
+    <path id="middle-heartbeat-right" class="arrow" d="M1095 469H1158"/>
     <text class="flow-label" x="904" y="481">Heartbeat</text>
 
-    <path id="lower-heartbeat-left" class="arrow" d="M935 612L797 526"/>
-    <path id="lower-heartbeat-right" class="arrow" d="M1034 676L1163 750"/>
+    <path id="lower-heartbeat-left" class="arrow" d="M935 612L801.243443 528.644464"/>
+    <path id="lower-heartbeat-right" class="arrow" d="M1034 676L1158.662928 747.512067"/>
     <text class="flow-label" x="910" y="655">Heartbeat</text>
   </g>
 
   <!-- The primary replicates downward to both secondary data nodes. -->
   <g id="replication-flows">
     <path id="middle-replication-shaft" class="connector" data-connector="true" d="M1229 193V255"/>
-    <path id="middle-replication-arrow" class="arrow" d="M1229 340V400"/>
+    <path id="middle-replication-arrow" class="arrow" d="M1229 340V395"/>
     <text class="flow-label center" x="1229" y="288">Data</text>
     <text class="flow-label center" x="1229" y="327">replication</text>
 
     <path id="lower-replication-shaft" class="connector" data-connector="true"
           d="M1294 180C1372 247 1420 329 1443 410"/>
     <path id="lower-replication-arrow" class="arrow"
-          d="M1447 503C1438 587 1384 680 1294 744"/>
+          d="M1447 503C1438 587 1388.074777 677.102381 1298.074777 741.102381"/>
     <text class="flow-label center" x="1418" y="451">Data</text>
     <text class="flow-label center" x="1418" y="491">replication</text>
   </g>

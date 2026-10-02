@@ -7,12 +7,13 @@
 
   <!-- Shared typography, panel fills, and the two arrowhead sizes used in the diagram. -->
   <defs>
-    <marker id="arrowhead" viewBox="0 0 20 15" refX="20" refY="7.5" markerWidth="20" markerHeight="15"
+    <!-- Symmetric heads hide shaft ends inside the taper; endpoints are inset to preserve visible tips. -->
+    <marker id="arrowhead" viewBox="0 0 20 15" refX="16" refY="7.5" markerWidth="20" markerHeight="15"
             markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 20 7.5 0 15Z" fill="#000"/></marker>
     <!-- Backward twin of #arrowhead; refX=0 puts its tip on the path start for two-headed connectors. -->
-    <marker id="arrowhead-back" viewBox="0 0 20 15" refX="0" refY="7.5" markerWidth="20" markerHeight="15"
+    <marker id="arrowhead-back" viewBox="0 0 20 15" refX="4" refY="7.5" markerWidth="20" markerHeight="15"
             markerUnits="userSpaceOnUse" orient="auto"><path d="M20 0 0 7.5 20 15Z" fill="#000"/></marker>
-    <marker id="tick-arrow" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="10" markerHeight="7"
+    <marker id="tick-arrow" viewBox="0 0 10 7" refX="6.5" refY="3.5" markerWidth="10" markerHeight="7"
             markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 10 3.5 0 7Z" fill="#000"/></marker>
     <style>
       .canvas{fill:#fff}
@@ -44,7 +45,7 @@
 
   <!-- Client, and the request it sends. -->
   <g id="client" class="glyph"><circle cx="709.5" cy="65.5" r="16.5"/><path d="M677 114V104A32.5 14 0 0 1 742 104V114Z"/></g>
-  <path id="client-lb-link" class="arrow-both" d="M709 115.5V302.5"/>
+  <path id="client-lb-link" class="arrow-both" d="M709 119.5V298.5"/>
   <g id="step-1"><circle class="badge" cx="421.75" cy="203" r="14.75"/><text class="flow-label" x="421.75" y="213.7">1</text></g>
   <text class="flow-label" x="442" y="181" style="text-anchor:start" letter-spacing="-0.9">HTTP GET:</text>
   <g transform="scale(0.82,1)">
@@ -60,14 +61,14 @@
     <rect class="box" x="699" y="315" width="21" height="13"/>
     <path class="connector" d="M709.5 328V344.5"/>
     <path class="tree" d="M666.5 344.5H751.5"/>
-    <path class="tree-arrow" d="M666.5 344.5V359.5"/>
-    <path class="tree-arrow" d="M709.5 344.5V359.5"/>
-    <path class="tree-arrow" d="M751.5 344.5V359.5"/>
+    <path class="tree-arrow" d="M666.5 344.5V356"/>
+    <path class="tree-arrow" d="M709.5 344.5V356"/>
+    <path class="tree-arrow" d="M751.5 344.5V356"/>
     <rect class="box" x="656" y="361" width="21" height="13"/>
     <rect class="box" x="699" y="361" width="21" height="13"/>
     <rect class="box" x="741" y="361" width="21" height="13"/>
   </g>
-  <path id="lb-api-link" class="arrow-both" d="M709 385.5V538.5"/>
+  <path id="lb-api-link" class="arrow-both" d="M709 389.5V534.5"/>
   <!-- API service. -->
   <rect id="api-service" class="box" x="562" y="541" width="295" height="47"/>
   <text class="node-label" x="709" y="576">API Service</text>
@@ -83,18 +84,18 @@
   <text class="node-label" x="221" y="659"><tspan x="221">Identity &amp; Access</tspan><tspan x="221" dy="38">Management</tspan></text>
   <!-- Authorization hop: the connector is split around its label. -->
   <path id="api-iam-shaft" class="connector" d="M561 564.5H528"/>
-  <path id="api-iam-arrow" class="arrow" d="M324 564.5H270.5"/>
+  <path id="api-iam-arrow" class="arrow" d="M324 564.5H274.5"/>
   <g id="step-2"><circle class="badge" cx="425.5" cy="495.5" r="14.75"/><text class="flow-label" x="425.5" y="506.2">2</text></g>
   <text class="flow-label" x="425.5" y="541"><tspan x="426.5">Identity</tspan><tspan x="425" dy="33">validation and</tspan><tspan x="425.5" dy="34">authorization</tspan></text>
   <!-- Metadata store: the API service resolves the object UUID here. -->
-  <path id="api-meta-arrow-up" class="arrow" d="M709 631V589.5"/>
-  <path id="api-meta-arrow-down" class="arrow" d="M709 737V802.5"/>
+  <path id="api-meta-arrow-up" class="arrow" d="M709 631V593.5"/>
+  <path id="api-meta-arrow-down" class="arrow" d="M709 737V798.5"/>
   <g id="step-3"><circle class="badge" cx="583.5" cy="682.5" r="14.75"/><text class="flow-label" x="583.5" y="693.2">3</text></g>
   <text class="flow-label" x="709" y="659.5"><tspan x="709">Query DB to get</tspan><tspan x="708.5" dy="33">object location</tspan><tspan x="709" dy="34">(UUID)</tspan></text>
   <rect id="metadata-store" class="group" x="496" y="750.5" width="426" height="308"/>
   <rect class="box" x="541" y="804" width="336" height="47"/>
   <text class="node-label" x="709.5" y="839">Metadata Service</text>
-  <path id="meta-db-arrow" class="arrow" d="M709 851V924.5"/>
+  <path id="meta-db-arrow" class="arrow" d="M709 851V920.5"/>
   <use href="#cylinder" x="676" y="926" width="67" height="67"/>
   <text class="node-label" x="709.5" y="1025">Metadata DB</text>
   <text class="node-label" x="709.5" y="1092">Metadata store</text>
@@ -106,7 +107,7 @@
     <rect class="box" x="1140" y="284" width="179" height="93.5"/>
     <text class="node-label" x="1229.5" y="323"><tspan x="1229.5">Storage</tspan><tspan x="1229" dy="39">Service</tspan></text>
     <use href="#cylinder" x="1450" y="298" width="67" height="67"/>
-    <path class="arrow" d="M1319 330.75H1449.5"/>
+    <path class="arrow" d="M1319 330.75H1445.5"/>
     <text class="small-label" x="1465.5" y="413.5">Storage Node</text>
   </g>
   <g id="storage-node-primary">
@@ -115,7 +116,7 @@
     <rect class="box" x="1140" y="517.5" width="179" height="93.5"/>
     <text class="node-label" x="1229.5" y="557"><tspan x="1229.5">Storage</tspan><tspan x="1229" dy="38">Service</tspan></text>
     <use href="#cylinder" x="1450" y="531" width="67" height="67"/>
-    <path class="arrow" d="M1319 564.25H1449.5"/>
+    <path class="arrow" d="M1319 564.25H1445.5"/>
     <text class="small-label" x="1465.5" y="646.5">Storage Node</text>
   </g>
   <g id="storage-node-secondary-bottom">
@@ -124,15 +125,15 @@
     <rect class="box" x="1140" y="750.5" width="179" height="93.5"/>
     <text class="node-label" x="1229.5" y="790"><tspan x="1229.5">Storage</tspan><tspan x="1229" dy="38">Service</tspan></text>
     <use href="#cylinder" x="1450" y="764" width="67" height="67"/>
-    <path class="arrow" d="M1319 797.25H1449.5"/>
+    <path class="arrow" d="M1319 797.25H1445.5"/>
     <text class="small-label" x="1465.5" y="879.5">Storage Node</text>
   </g>
-  <path id="replicate-up" class="arrow" d="M1229 517.5V379"/>
-  <path id="replicate-down" class="arrow" d="M1229 611V749"/>
+  <path id="replicate-up" class="arrow" d="M1229 517.5V383"/>
+  <path id="replicate-down" class="arrow" d="M1229 611V745"/>
   <text class="node-label" x="1329" y="959">Data Store</text>
   <!-- Object fetch: the connector is split around its label and drawn over the node panel. -->
-  <path id="api-store-arrow" class="arrow" d="M900 564.5H858.5"/>
-  <path id="store-api-arrow" class="arrow" d="M1045 564.5H1138.5"/>
+  <path id="api-store-arrow" class="arrow" d="M900 564.5H862.5"/>
+  <path id="store-api-arrow" class="arrow" d="M1045 564.5H1134.5"/>
   <g id="step-4"><circle class="badge" cx="972" cy="491" r="14.75"/><text class="flow-label" x="972" y="501.7">4</text></g>
   <text class="flow-label" x="972.5" y="541"><tspan x="972">Get</tspan><tspan x="972.5" dy="33">object by</tspan><tspan x="972.5" dy="34">UUID</tspan></text>
 </svg>

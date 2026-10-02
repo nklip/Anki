@@ -7,11 +7,12 @@
 
   <!-- Reused from download-object.svg: shared typography, strokes, arrowhead, and cylinder geometry. -->
   <defs>
-    <marker id="arrowhead" viewBox="0 0 20 15" refX="20" refY="7.5"
+    <!-- Symmetric heads hide shaft ends inside the taper; endpoints are inset to preserve visible tips. -->
+    <marker id="arrowhead" viewBox="0 0 20 15" refX="16" refY="7.5"
             markerWidth="20" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto">
       <path d="M0 0 20 7.5 0 15Z" fill="#000"/>
     </marker>
-    <marker id="small-arrowhead" viewBox="0 0 10 7" refX="10" refY="3.5"
+    <marker id="small-arrowhead" viewBox="0 0 10 7" refX="6.5" refY="3.5"
             markerWidth="10" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto">
       <path d="M0 0 10 3.5 0 7Z" fill="#000"/>
     </marker>
@@ -44,7 +45,7 @@
     <circle cx="627.5" cy="51.5" r="16.5"/>
     <path d="M595 102V92A32.5 14 0 0 1 660 92V102Z"/>
   </g>
-  <path id="client-to-load-balancer-arrow" class="arrow" d="M627.5 103.5V232.5"/>
+  <path id="client-to-load-balancer-arrow" class="arrow" d="M627.5 103.5V228.5"/>
 
   <!-- Load balancer and its fan-out glyph. -->
   <text class="node-label" x="429" y="289">Load balancer</text>
@@ -53,14 +54,14 @@
     <rect class="box" x="617" y="245" width="22" height="13"/>
     <path class="connector" d="M628 258V275.5"/>
     <path class="tree" d="M583 275.5H672"/>
-    <path class="tree-arrow" d="M583 275.5V292"/>
-    <path class="tree-arrow" d="M628 275.5V292"/>
-    <path class="tree-arrow" d="M672 275.5V292"/>
+    <path class="tree-arrow" d="M583 275.5V288.5"/>
+    <path class="tree-arrow" d="M628 275.5V288.5"/>
+    <path class="tree-arrow" d="M672 275.5V288.5"/>
     <rect class="box" x="572" y="294" width="22" height="13"/>
     <rect class="box" x="617" y="294" width="22" height="13"/>
     <rect class="box" x="661" y="294" width="22" height="13"/>
   </g>
-  <path id="load-balancer-to-api-arrow" class="arrow" d="M627.5 318.5V478.5"/>
+  <path id="load-balancer-to-api-arrow" class="arrow" d="M627.5 318.5V474.5"/>
 
   <!-- API service and the identity-and-access dependency. -->
   <rect id="api-service" class="box" x="474" y="480" width="308" height="50"/>
@@ -76,7 +77,7 @@
       <path d="M220 548 223.5 551.5 216.9 552.2Z"/>
     </g>
   </g>
-  <path id="api-to-identity-arrow" class="arrow" d="M473 505H234.5"/>
+  <path id="api-to-identity-arrow" class="arrow" d="M473 505H238.5"/>
   <text class="node-label" x="180" y="603">
     <tspan x="180">Identity &amp; Access</tspan>
     <tspan x="180" dy="38">Management</tspan>
@@ -84,10 +85,10 @@
 
   <!-- Metadata store: API requests are resolved to object metadata. -->
   <rect id="metadata-store-boundary" class="group" x="409" y="698.5" width="437" height="331.5"/>
-  <path id="api-to-metadata-arrow" class="arrow" d="M628 531V752.5"/>
+  <path id="api-to-metadata-arrow" class="arrow" d="M628 531V748.5"/>
   <rect id="metadata-service" class="box" x="452" y="754" width="351" height="49"/>
   <text class="node-label" x="627.5" y="790">Metadata Service</text>
-  <path id="metadata-service-to-db-arrow" class="arrow" d="M627.5 804V895.5"/>
+  <path id="metadata-service-to-db-arrow" class="arrow" d="M627.5 804V891.5"/>
   <use href="#cylinder" x="594" y="897" width="67" height="67"/>
   <text class="node-label" x="627.5" y="999">Metadata DB</text>
   <text class="node-label" x="627.5" y="1065">Metadata Store</text>
@@ -102,7 +103,7 @@
       <tspan x="1168.5">Data Store</tspan>
       <tspan x="1168.5" dy="38">Service</tspan>
     </text>
-    <path class="arrow" d="M1263 262H1397.5"/>
+    <path class="arrow" d="M1263 262H1393.5"/>
     <use href="#cylinder" x="1399" y="228" width="67" height="67"/>
     <text class="small-label" x="1410" y="349">Storage Node</text>
   </g>
@@ -110,14 +111,14 @@
   <g id="primary-storage-node">
     <rect class="panel" x="1042" y="409" width="459" height="191"/>
     <!-- Drawn over the panel fill so the API-to-primary connector remains continuous. -->
-    <path id="api-to-primary-store-arrow" class="arrow" d="M783 505H1073.5"/>
+    <path id="api-to-primary-store-arrow" class="arrow" d="M783 505H1069.5"/>
     <text class="node-label" x="1439" y="443">Primary</text>
     <rect class="box" x="1075" y="444" width="187" height="122"/>
     <text class="node-label" x="1168.5" y="499">
       <tspan x="1168.5">Data Store</tspan>
       <tspan x="1168.5" dy="38">Service</tspan>
     </text>
-    <path class="arrow" d="M1263 505H1397.5"/>
+    <path class="arrow" d="M1263 505H1393.5"/>
     <use href="#cylinder" x="1399" y="471" width="67" height="67"/>
     <text class="small-label" x="1410" y="592">Storage Node</text>
   </g>
@@ -130,13 +131,13 @@
       <tspan x="1168.5">Data Store</tspan>
       <tspan x="1168.5" dy="38">Service</tspan>
     </text>
-    <path class="arrow" d="M1263 748H1397.5"/>
+    <path class="arrow" d="M1263 748H1393.5"/>
     <use href="#cylinder" x="1399" y="714" width="67" height="67"/>
     <text class="small-label" x="1410" y="835">Storage Node</text>
   </g>
 
   <!-- Primary-to-secondary replication. -->
-  <path id="replication-to-top-secondary-arrow" class="arrow" d="M1168.5 443V324.5"/>
-  <path id="replication-to-bottom-secondary-arrow" class="arrow" d="M1168.5 567V685.5"/>
+  <path id="replication-to-top-secondary-arrow" class="arrow" d="M1168.5 443V328.5"/>
+  <path id="replication-to-bottom-secondary-arrow" class="arrow" d="M1168.5 567V681.5"/>
   <text class="node-label" x="1272.5" y="916">Data Store</text>
 </svg>

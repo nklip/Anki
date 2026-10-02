@@ -7,7 +7,8 @@
 
   <!-- Shared geometry and repair-safe arrowhead. -->
   <defs>
-    <marker id="arrowhead" markerWidth="22" markerHeight="16" refX="22" refY="8"
+    <!-- Symmetric heads hide shaft ends inside the taper; endpoints are inset to preserve visible tips. -->
+    <marker id="arrowhead" markerWidth="22" markerHeight="16" refX="18" refY="8"
             viewBox="0 0 22 16" markerUnits="userSpaceOnUse" orient="auto">
       <path d="M0 0L22 8L0 16Z" fill="#000"/>
     </marker>
@@ -65,13 +66,13 @@
   <!-- Write request and object-ID reply. Labels are painted over deliberate shaft gaps. -->
   <g id="client-request-flow">
     <path class="connector" d="M233 394L268 385"/>
-    <path class="arrow" d="M440 385L500 394"/>
+    <path class="arrow" d="M466 388.9L496.044255 393.406638"/>
     <circle class="step" cx="295" cy="379" r="15"/>
     <text class="step-number" x="295" y="388">1</text>
     <text class="detail" x="320" y="390" style="font-size:25px">Write data</text>
 
     <path class="connector" d="M500 465L460 473"/>
-    <path class="arrow" d="M275 472L233 469"/>
+    <path class="arrow" d="M275 472L236.989835 469.284988"/>
     <circle class="step" cx="295" cy="484" r="15"/>
     <text class="step-number" x="295" y="493">5</text>
     <text class="detail center" x="385" y="477">Reply with</text>
@@ -80,8 +81,8 @@
 
   <!-- Placement lookup is bidirectional; the central explanation occupies the line gap. -->
   <g id="placement-lookup-flow">
-    <path class="arrow" d="M770 428H720"/>
-    <path class="arrow" d="M938 428H990"/>
+    <path class="arrow" d="M770 428H724"/>
+    <path class="arrow" d="M938 428H986"/>
     <circle class="step" cx="852" cy="326" r="15"/>
     <text class="step-number" x="852" y="335">2</text>
     <text class="detail center" x="854" y="370">Choose</text>
@@ -109,7 +110,7 @@
   <!-- Step 3 sends the payload directly from routing to the selected primary. -->
   <g id="primary-write-flow">
     <path class="connector" d="M648 381C760 258 865 204 960 185"/>
-    <path class="arrow" d="M1165 128C1270 112 1370 116 1471 126"/>
+    <path class="arrow" d="M1165 128C1270 112 1366.019463 115.605887 1467.019463 125.605887"/>
     <circle class="step" cx="866" cy="149" r="15"/>
     <text class="step-number" x="866" y="158">3</text>
     <text class="detail" x="886" y="162">Send data to primary node</text>
@@ -117,30 +118,30 @@
 
   <!-- Heartbeat returns; shafts are split around their text labels. -->
   <g id="heartbeat-flows">
-    <path class="arrow" d="M1355 250L1471 174"/>
-    <path class="arrow" d="M1280 300L1157 381"/>
+    <path class="arrow" d="M1355 250L1467.654155 176.192105"/>
+    <path class="arrow" d="M1280 300L1160.340683 378.800038"/>
     <text class="detail center" x="1318" y="286">Heartbeat</text>
 
-    <path class="arrow" d="M1405 428H1471"/>
-    <path class="arrow" d="M1240 428H1173"/>
+    <path class="arrow" d="M1405 428H1467"/>
+    <path class="arrow" d="M1240 428H1177"/>
     <text class="detail center" x="1318" y="438">Heartbeat</text>
 
-    <path class="arrow" d="M1365 598L1471 663"/>
-    <path class="arrow" d="M1285 552L1158 476"/>
+    <path class="arrow" d="M1365 598L1467.590057 660.908997"/>
+    <path class="arrow" d="M1285 552L1161.432354 478.054007"/>
     <text class="detail center" x="1318" y="587">Heartbeat</text>
   </g>
 
   <!-- Step 4 replication paths stop just outside each destination disk. -->
   <g id="replication-flows">
     <path class="connector" d="M1529 190V245"/>
-    <path class="arrow" d="M1529 331V370"/>
+    <path class="arrow" d="M1529 331V366"/>
     <circle class="step" cx="1467" cy="273" r="15"/>
     <text class="step-number" x="1467" y="282">4</text>
     <text class="detail center" x="1529" y="282">Data</text>
     <text class="detail center" x="1529" y="318">replication</text>
 
     <path class="connector" d="M1585 181C1648 241 1685 309 1705 351"/>
-    <path class="arrow" d="M1711 480C1695 544 1653 614 1588 663"/>
+    <path class="arrow" d="M1711 480C1695 544 1656.194094 611.592145 1591.194094 660.592145"/>
     <circle class="step" cx="1712" cy="377" r="15"/>
     <text class="step-number" x="1712" y="384" style="font-size:22px">4</text>
     <text class="detail center" x="1712" y="422">Data</text>

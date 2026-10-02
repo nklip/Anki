@@ -7,10 +7,12 @@
 
   <!-- Shared styles plus the two arrowhead sizes: a large one for the reconstruction
        flow and a small one for the twelve chunk-placement links. -->
+  <!-- Stripe links approach vertically to keep neighboring arrowheads unobscured. -->
   <defs>
-    <marker id="arrowhead" viewBox="0 0 27 20" refX="27" refY="10" markerWidth="27" markerHeight="20"
+    <!-- Symmetric heads hide shaft ends inside the taper; endpoints are inset to preserve visible tips. -->
+    <marker id="arrowhead" viewBox="0 0 27 20" refX="22.5" refY="10" markerWidth="27" markerHeight="20"
             markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 27 10 0 20Z" fill="#000"/></marker>
-    <marker id="arrowhead-small" viewBox="0 0 13 10" refX="13" refY="5" markerWidth="13" markerHeight="10"
+    <marker id="arrowhead-small" viewBox="0 0 13 10" refX="9" refY="5" markerWidth="13" markerHeight="10"
             markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 13 5 0 10Z" fill="#000"/></marker>
     <style>
       .canvas{fill:#fff}
@@ -40,9 +42,9 @@
     <rect class="block" x="781.14" y="40" width="19" height="19"/>
     <rect class="block" x="819" y="40" width="19" height="19"/>
   </g>
-  <path id="calc-to-object" class="flow" d="M696 155.5V78.5"/>
+  <path id="calc-to-object" class="flow" d="M696 155.5V83"/>
   <text class="title-label" x="697" y="197">Math Calculation</text>
-  <path id="stripe-to-calc" class="flow" d="M696 286V211"/>
+  <path id="stripe-to-calc" class="flow" d="M696 286V215.5"/>
   <!-- The stripe: eight data chunks and four parity chunks gathered for decoding. -->
   <g id="stripe">
     <rect class="frame" x="454" y="285" width="485" height="55"/>
@@ -413,29 +415,29 @@
   <!-- Chunk placement: one link per stripe slot. Each link is broken where it would
        run through a Failure Domain caption, so no shaft ever touches text. -->
   <g id="chunk-links">
-    <path id="chunk-link-0" class="link" data-connector="true" d="M206.2 472.93 481.8 317.07"/>
-    <path id="chunk-link-1" class="link" data-connector="true" d="M553.82 467.41 528.54 322.59"/>
-    <path id="chunk-link-2" class="link" data-connector="true" d="M832.62 518.11 571.11 317.89"/>
-    <path id="chunk-link-3" class="link" data-connector="true" d="M1149.8 474.43 611.29 315.57"/>
+    <path id="chunk-link-0" class="link" data-connector="true" d="M206.2 472.93 L481.8 347.07 V321.07"/>
+    <path id="chunk-link-1" class="link" data-connector="true" d="M553.82 467.41 L528.54 352.59 V326.59"/>
+    <path id="chunk-link-2" class="link" data-connector="true" d="M832.62 518.11 L571.11 347.89 V321.89"/>
+    <path id="chunk-link-3" class="link" data-connector="true" d="M1149.8 474.43 L611.29 345.57 V319.57"/>
     <path id="chunk-link-4-0" class="link-shaft" data-connector="true" d="M240.38 836.61 327.52 722.56"/>
-    <path id="chunk-link-4" class="link" data-connector="true" d="M359.83 680.28 635.57 319.39"/>
+    <path id="chunk-link-4" class="link" data-connector="true" d="M359.83 680.28 L635.57 349.39 V323.39"/>
     <path id="chunk-link-5-0" class="link-shaft" data-connector="true" d="M592.95 1244.68 611.46 1042.67"/>
     <path id="chunk-link-5-1" class="link-shaft" data-connector="true" d="M615.34 1000.29 640.77 722.73"/>
-    <path id="chunk-link-5" class="link" data-connector="true" d="M644.68 680.12 677.37 323.32"/>
+    <path id="chunk-link-5" class="link" data-connector="true" d="M644.68 680.12 L677.37 353.32 V327.32"/>
     <path id="chunk-link-6-0" class="link-shaft" data-connector="true" d="M837.75 1290.98 806.89 1042.7"/>
     <path id="chunk-link-6-1" class="link-shaft" data-connector="true" d="M801.6 1000.11 767.09 722.55"/>
-    <path id="chunk-link-6" class="link" data-connector="true" d="M761.83 680.2 717.43 323.02"/>
+    <path id="chunk-link-6" class="link" data-connector="true" d="M761.83 680.2 L717.43 353.02 V327.02"/>
     <path id="chunk-link-7-0" class="link-shaft" data-connector="true" d="M1155.23 1293 1052.77 1042.71"/>
     <path id="chunk-link-7-1" class="link-shaft" data-connector="true" d="M1035.36 1000.19 921.75 722.68"/>
-    <path id="chunk-link-7" class="link" data-connector="true" d="M904.35 680.15 757.32 321"/>
+    <path id="chunk-link-7" class="link" data-connector="true" d="M904.35 680.15 L757.32 351 V325"/>
     <path id="chunk-link-8-0" class="link-shaft" data-connector="true" d="M631.74 832.49 665.64 722.55"/>
-    <path id="chunk-link-8" class="link" data-connector="true" d="M667.4 716.82 788.67 323.51"/>
+    <path id="chunk-link-8" class="link" data-connector="true" d="M667.4 716.82 L788.67 353.51 V327.51"/>
     <path id="chunk-link-9-0" class="link-shaft" data-connector="true" d="M803.02 878.01 810.38 722.61"/>
-    <path id="chunk-link-9" class="link" data-connector="true" d="M812.39 680.23 829.25 323.99"/>
+    <path id="chunk-link-9" class="link" data-connector="true" d="M812.39 680.23 L829.25 353.99 V327.99"/>
     <path id="chunk-link-10-0" class="link-shaft" data-connector="true" d="M1189.56 879.44 1100.39 722.54"/>
-    <path id="chunk-link-10" class="link" data-connector="true" d="M1076.34 680.22 873.07 322.56"/>
+    <path id="chunk-link-10" class="link" data-connector="true" d="M1076.34 680.22 L873.07 352.56 V326.56"/>
     <path id="chunk-link-11-0" class="link-shaft" data-connector="true" d="M205.6 1246.2 358.3 1042.6"/>
     <path id="chunk-link-11-1" class="link-shaft" data-connector="true" d="M384.12 1008.17 598.35 722.53"/>
-    <path id="chunk-link-11" class="link" data-connector="true" d="M630.07 680.24 898.9 321.8"/>
+    <path id="chunk-link-11" class="link" data-connector="true" d="M630.07 680.24 L898.9 351.8 V325.8"/>
   </g>
 </svg>

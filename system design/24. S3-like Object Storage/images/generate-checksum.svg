@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="936" height="178" viewBox="0 0 936 178"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Generate a checksum from data</title>
+  <desc id="desc">Three rows of binary data pass through a checksum algorithm to produce the checksum F7 33 51 1B 9D F6.</desc>
+
+  <!-- Shared typography and source-native box and arrow geometry. -->
+  <defs>
+    <style>
+      .canvas { fill: #fff; }
+      .box { fill: #fff; stroke: #000; stroke-width: 1.3; }
+      .label { fill: #000; font-family: Arial, Helvetica, sans-serif; font-size: 24px; text-anchor: middle; }
+      .code { fill: #000; font-family: "Andale Mono", Monaco, monospace; font-size: 24px; text-anchor: start; }
+      .arrow-shaft { fill: none; stroke: #000; stroke-width: 1.3; }
+      .arrowhead { fill: #000; }
+    </style>
+  </defs>
+  <rect class="canvas" width="936" height="178"/>
+
+  <!-- Input data keeps the reference's three binary lines and condensed character proportions. -->
+  <g id="input-data">
+    <text class="label" x="106.5" y="37">Data</text>
+    <rect class="box" x="7.5" y="50" width="198" height="116.5"/>
+    <g transform="translate(29 0) scale(.82 1)">
+      <text class="code" x="0" y="90">0110101010110</text>
+      <text class="code" x="0" y="116">1010010101001</text>
+      <text class="code" x="0" y="142">0100100010100</text>
+    </g>
+  </g>
+
+  <!-- The shafts stop inside the symmetric triangular bases, never at the pointed tips. -->
+  <g id="data-to-algorithm">
+    <path class="arrow-shaft" data-connector="true" d="M206.2 108H350"/>
+    <polygon class="arrowhead" points="362.85,108 348.85,103 348.85,113"/>
+  </g>
+  <g id="checksum-algorithm">
+    <rect class="box" x="363.5" y="67.5" width="155.5" height="82"/>
+    <text class="label" x="441.25" y="103">
+      <tspan x="441.25">Checksum</tspan>
+      <tspan x="441.25" dy="27">algorithm</tspan>
+    </text>
+  </g>
+  <g id="algorithm-to-checksum">
+    <path class="arrow-shaft" data-connector="true" d="M519.65 108H664"/>
+    <polygon class="arrowhead" points="676.85,108 662.85,103 662.85,113"/>
+  </g>
+
+  <!-- The generated hexadecimal checksum matches the PNG. -->
+  <g id="generated-checksum">
+    <text class="label" x="798" y="76">Checksum</text>
+    <rect class="box" x="677.5" y="82" width="241" height="52"/>
+    <text class="code" x="0" y="116" transform="translate(698 0) scale(.82 1)">F7 33 51 1B 9D F6</text>
+  </g>
+</svg>

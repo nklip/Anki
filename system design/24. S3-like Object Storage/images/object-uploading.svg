@@ -7,11 +7,12 @@
 
   <!-- Shared from the companion download diagram: typography, stores, badges, and compact arrows. -->
   <defs>
-    <marker id="arrowhead" viewBox="0 0 20 15" refX="20" refY="7.5"
+    <!-- Symmetric heads hide shaft ends inside the taper; endpoints are inset to preserve visible tips. -->
+    <marker id="arrowhead" viewBox="0 0 20 15" refX="16" refY="7.5"
             markerWidth="20" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto">
       <path d="M0 0L20 7.5L0 15Z" fill="#000"/>
     </marker>
-    <marker id="tick-arrow" viewBox="0 0 10 7" refX="10" refY="3.5"
+    <marker id="tick-arrow" viewBox="0 0 10 7" refX="6.5" refY="3.5"
             markerWidth="10" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto">
       <path d="M0 0L10 3.5L0 7Z" fill="#000"/>
     </marker>
@@ -54,7 +55,7 @@
     <circle cx="689.5" cy="60.5" r="16.5"/>
     <path d="M657 109V99A32.5 14 0 0 1 722 99V109Z"/>
   </g>
-  <path id="client-load-balancer-arrow" class="arrow" d="M689 110V264"/>
+  <path id="client-load-balancer-arrow" class="arrow" d="M689 110V260"/>
 
   <text class="flow-label" x="448" y="159" style="text-anchor:start">HTTP PUT:</text>
   <g id="step-1">
@@ -81,14 +82,14 @@
     <rect class="box" x="679" y="276" width="21" height="13"/>
     <path class="connector" data-connector="true" d="M689.5 289V305.5"/>
     <path class="tree" data-connector="true" d="M646.5 305.5H731.5"/>
-    <path class="tree-arrow" d="M646.5 305.5V320.5"/>
-    <path class="tree-arrow" d="M689.5 305.5V320.5"/>
-    <path class="tree-arrow" d="M731.5 305.5V320.5"/>
+    <path class="tree-arrow" d="M646.5 305.5V317"/>
+    <path class="tree-arrow" d="M689.5 305.5V317"/>
+    <path class="tree-arrow" d="M731.5 305.5V317"/>
     <rect class="box" x="636" y="322" width="21" height="13"/>
     <rect class="box" x="679" y="322" width="21" height="13"/>
     <rect class="box" x="721" y="322" width="21" height="13"/>
   </g>
-  <path id="load-balancer-api-arrow" class="arrow" d="M689 346V501"/>
+  <path id="load-balancer-api-arrow" class="arrow" d="M689 346V497"/>
 
   <!-- API service coordinates the authorization, metadata, and data-store writes. -->
   <rect id="api-service" class="box" x="542" y="502" width="295" height="47"/>
@@ -113,7 +114,7 @@
 
   <!-- Authorization is split around its three-line label to preserve text clearance. -->
   <path id="api-iam-connector" class="connector" data-connector="true" d="M541 525.5H504"/>
-  <path id="api-iam-arrow" class="arrow" d="M309 525.5H251"/>
+  <path id="api-iam-arrow" class="arrow" d="M309 525.5H255"/>
   <g id="authorization-steps">
     <circle class="badge" cx="389" cy="456" r="14.75"/>
     <circle class="badge" cx="427" cy="456" r="14.75"/>
@@ -128,7 +129,7 @@
   </text>
 
   <!-- Metadata creation: labels flank the shared downward write to the metadata service. -->
-  <path id="api-metadata-arrow" class="arrow" d="M689 550V764"/>
+  <path id="api-metadata-arrow" class="arrow" d="M689 550V760"/>
   <g id="step-3">
     <circle class="badge" cx="469" cy="636" r="14.75"/>
     <text class="flow-label" x="469" y="646.7">3</text>
@@ -150,7 +151,7 @@
     <rect class="group" x="487" y="711" width="407" height="334"/>
     <rect class="box" x="521" y="765" width="336" height="47"/>
     <text class="node-label" x="689" y="800">Metadata Service</text>
-    <path id="metadata-database-arrow" class="arrow" d="M689 813V915"/>
+    <path id="metadata-database-arrow" class="arrow" d="M689 813V911"/>
     <use href="#cylinder" x="656" y="916" width="67" height="67"/>
     <text class="node-label" x="689.5" y="1014">Metadata DB</text>
     <text class="node-label" x="690.5" y="1077">Metadata Store</text>
@@ -169,7 +170,7 @@
         <tspan x="1209.5" dy="39">Service</tspan>
       </text>
       <use href="#cylinder" x="1430" y="259" width="67" height="67"/>
-      <path id="top-service-disk-arrow" class="arrow" d="M1299 292H1429"/>
+      <path id="top-service-disk-arrow" class="arrow" d="M1299 292H1425"/>
       <text class="small-label" x="1445.5" y="375">Storage Node</text>
     </g>
 
@@ -182,7 +183,7 @@
         <tspan x="1209.5" dy="38">Service</tspan>
       </text>
       <use href="#cylinder" x="1430" y="492" width="67" height="67"/>
-      <path id="primary-service-disk-arrow" class="arrow" d="M1299 525H1429"/>
+      <path id="primary-service-disk-arrow" class="arrow" d="M1299 525H1425"/>
       <text class="small-label" x="1445.5" y="608">Storage Node</text>
     </g>
 
@@ -195,18 +196,18 @@
         <tspan x="1209.5" dy="38">Service</tspan>
       </text>
       <use href="#cylinder" x="1430" y="725" width="67" height="67"/>
-      <path id="bottom-service-disk-arrow" class="arrow" d="M1299 758H1429"/>
+      <path id="bottom-service-disk-arrow" class="arrow" d="M1299 758H1425"/>
       <text class="small-label" x="1445.5" y="841">Storage Node</text>
     </g>
 
-    <path id="replication-up-arrow" class="arrow" d="M1209 478V340"/>
-    <path id="replication-down-arrow" class="arrow" d="M1209 572V710"/>
+    <path id="replication-up-arrow" class="arrow" d="M1209 478V344"/>
+    <path id="replication-down-arrow" class="arrow" d="M1209 572V706"/>
     <text class="node-label" x="1309" y="922">Data Store</text>
   </g>
 
   <!-- Step 6: the API sends the object bytes to the primary data service. -->
   <path id="api-upload-connector" class="connector" data-connector="true" d="M837 525.5H890"/>
-  <path id="api-upload-arrow" class="arrow" d="M991 525.5H1119"/>
+  <path id="api-upload-arrow" class="arrow" d="M991 525.5H1115"/>
   <g id="step-6">
     <circle class="badge" cx="941" cy="471" r="14.75"/>
     <text class="flow-label" x="941" y="481.7">6</text>
