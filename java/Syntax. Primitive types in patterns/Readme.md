@@ -4,13 +4,13 @@
 
 # Front
 
-How do primitive patterns prevent lossy conversions, how do they expand `switch`, and are they final in JDK 26?
+How do primitive patterns prevent lossy conversions, how do they expand `switch`, and are they final in JDK 27?
 
 # Back
 
-**Primitive Types in Patterns, `instanceof`, and `switch` was previewed for a fourth time in JDK 26 with JEP 530.**
+**Primitive Types in Patterns, `instanceof`, and `switch` was previewed for a fifth time in JDK 27 with JEP 532.**
 
-It allows primitive types in pattern contexts, extends `instanceof` to test primitive conversions, and lets `switch` use every primitive selector type. It is **not final**.
+It allows primitive types in pattern contexts, extends `instanceof` to test primitive conversions, and lets `switch` use every primitive selector type. It is still **not final**.
 
 ![syntax-primitive-types-in-patterns.svg](images/syntax-primitive-types-in-patterns.svg)
 
@@ -47,14 +47,14 @@ The selector may now be `boolean`, `long`, `float`, or `double`, in addition to 
 ## Preview requirement
 
 ```bash
-javac --release 26 --enable-preview Main.java
+javac --release 27 --enable-preview Main.java
 java --enable-preview Main
 ```
 
-Preview features are disabled by default and may change or disappear. The feature began as JEP 455 in JDK 23 and was re-previewed in JDK 24, 25, and 26.
+Preview features are disabled by default and may change or disappear. The feature began as JEP 455 in JDK 23 and was re-previewed in JDK 24, 25, 26, and 27. The JDK 27 preview made no changes, so code written for the JDK 26 preview behaves the same.
 
 # Sources
 
-- [OpenJDK — JEP 530: Primitive Types in Patterns, `instanceof`, and `switch` (Fourth Preview)](https://openjdk.org/jeps/530)
-- [Oracle Java 26 Language Guide — Primitive Types in Patterns, `instanceof`, and `switch`](https://docs.oracle.com/en/java/javase/26/language/primitive-types-patterns-instanceof-switch.html)
-- [Java SE 26 Preview Specification — Exactness of Testing Conversions](https://docs.oracle.com/en/java/javase/26/docs/specs/primitive-types-in-patterns-instanceof-switch-jls.html#jls-5.7.1)
+- [OpenJDK — JEP 532: Primitive Types in Patterns, `instanceof`, and `switch` (Fifth Preview)](https://openjdk.org/jeps/532)
+- [Oracle Java 27 Language Guide — Primitive Types in Patterns, `instanceof`, and `switch`](https://docs.oracle.com/en/java/javase/27/language/primitive-types-patterns-instanceof-switch.html)
+- [Java SE 27 Preview Specification — Exactness of Testing Conversions](https://docs.oracle.com/en/java/javase/27/docs/specs/primitive-types-in-patterns-instanceof-switch-jls.html#jls-5.7.1)
