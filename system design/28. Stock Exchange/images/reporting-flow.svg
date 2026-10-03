@@ -26,14 +26,12 @@
       .document,
       .database,
       .connector,
-      .exchange-continuation,
       .group-box {
         fill: #fff;
         stroke: #000;
         stroke-width: 1;
       }
-      .connector,
-      .exchange-continuation {
+      .connector {
         fill: none;
         stroke-linecap: butt;
         stroke-linejoin: miter;
@@ -70,20 +68,17 @@
     </g>
   </g>
 
-  <!-- Bidirectional service exchange; shafts are split around their labels. -->
+  <!-- Orders travel to matching; fills/rejects return to the Order Manager. Shafts leave both labels clear. -->
   <g id="service-exchange">
-    <path class="connector" data-connector="true" d="M511.5 31.5 L471 27"/>
-    <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
-          d="M406 27 L366.5 31.8"/>
+    <path class="connector" data-connector="true" d="M363.5 31.5 L406 27"/>
+    <path class="connector" id="orders-to-matching" data-connector="true" marker-end="url(#arrowhead)"
+          d="M471 27 L508.019 31.165"/>
     <text class="label" x="438.5" y="32">orders</text>
 
-    <!-- Split only at the label-clearance boundary; both pieces remain collinear. -->
-    <path class="connector" data-connector="true" d="M363.5 67 L377 69.33"/>
-    <path class="exchange-continuation" d="M377 69.33 L392.5 72"/>
-    <path class="exchange-continuation" d="M483.5 73 L500.05 69.7"/>
-    <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
-          d="M500 69.7 L508.55 68"/>
-    <text class="label exchange-small" x="438.5" y="81.5">fills/rejects</text>
+    <path class="connector" id="fills-to-order-manager" data-connector="true" marker-end="url(#arrowhead)"
+          d="M380 69.807 L366.955 67.518"/>
+    <path class="connector" data-connector="true" d="M511.5 68 L497 70.589"/>
+    <text class="label exchange-small" style="font-size:17px" x="438.5" y="81.5">fills/rejects</text>
   </g>
 
   <!-- Order Manager forwards the combined stream into the Reporter. -->
@@ -111,11 +106,11 @@
       <text class="label" x="372" y="291">Response</text>
     </g>
 
-    <!-- Both groups contribute to the execution report document. -->
+    <!-- Both groups contribute to the report; the right nose meets the sloped fold boundary. -->
     <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
           d="M253 300.5 L281.4 332.9"/>
     <path class="connector" data-connector="true" marker-end="url(#arrowhead)"
-          d="M337 300.5 L318.1 332.9"/>
+          d="M337 300.5 L317.998 333.468"/>
     <path class="document" d="M283.5 331.5 H312 L320 341 V381.5 H283.5 Z M312 331.5 V341 H320"/>
     <text class="label" x="301.75" y="398.5">ExecutionReport</text>
   </g>

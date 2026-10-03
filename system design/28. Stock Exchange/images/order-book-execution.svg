@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1434" height="1042" viewBox="0 0 717 521"
+<svg xmlns="http://www.w3.org/2000/svg" width="1434" height="1070" viewBox="0 0 717 535"
      role="img" aria-labelledby="title desc">
   <title id="title">Executing a 2,700-share market buy against an Apple order book</title>
   <desc id="desc">An Apple level 3 order book shows sell and buy price levels. A market buy for 2,700 shares consumes quantities 200, 400, 1,100, and 100 at the best ask, then 900 at the next ask price.</desc>
@@ -18,28 +18,24 @@
       .connector { fill: none; stroke: #000; stroke-width: 1.25; }
       .formula-box { fill: #fff; stroke: #000; stroke-width: 1; }
     </style>
-    <!-- The tip projects two units beyond the shaft endpoint so the shaft is hidden under the taper. -->
-    <marker id="execution-arrowhead" markerWidth="14" markerHeight="11" viewBox="0 0 14 11"
-            refX="12" refY="5.5" orient="auto" markerUnits="userSpaceOnUse">
-      <path d="M0 0 L14 5.5 L0 11 Z" fill="#000"/>
+    <!-- The 2.5-unit tip projection covers the thicker execution shafts, including their antialiased edges. -->
+    <marker id="execution-arrowhead" markerWidth="12" markerHeight="10" viewBox="0 0 12 10"
+            refX="9.5" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L12 5 L0 10 Z" fill="#000"/>
     </marker>
   </defs>
 
   <!-- Opaque canvas and the overall Apple-stock boundary. -->
-  <rect width="717" height="521" fill="#fff"/>
-  <rect class="outline" x="48" y="13" width="624" height="413"/>
+  <rect width="717" height="535" fill="#fff"/>
+  <rect class="outline" x="48" y="13" width="656" height="509"/>
   <text class="label" x="64.5" y="40.5">APPLE stock</text>
 
   <!-- Sell and buy books retain the reference's stacked reading order. -->
   <rect class="panel" x="164" y="60.5" width="495.5" height="171.5"/>
-  <rect class="panel" x="164" y="242.5" width="495.5" height="171.5"/>
   <g class="label center">
     <text x="109" y="152.5">Sell book</text>
-    <text x="109" y="335.5">Buy book</text>
     <text x="315.5" y="87">Price</text>
     <text x="408" y="87">Quantity</text>
-    <text x="315.5" y="270.5">Price</text>
-    <text x="408" y="270.5">Quantity</text>
   </g>
 
   <!-- Sell-side depth labels and ask prices. -->
@@ -80,6 +76,14 @@
   <path d="M498 113 L509 108.5 L509 117.5 Z" fill="#000"/>
   <text class="label" x="553.5" y="120">price levels</text>
 
+  <!-- Shift the buy book down to reserve a clear execution corridor above it. -->
+  <g id="buy-book" transform="translate(0 95)">
+    <rect class="panel" x="164" y="242.5" width="495.5" height="171.5"/>
+    <g class="label center">
+      <text x="109" y="335.5">Buy book</text>
+      <text x="315.5" y="270.5">Price</text>
+      <text x="408" y="270.5">Quantity</text>
+    </g>
   <!-- Buy-side labels and prices. -->
   <g class="label">
     <text x="189" y="303.5">best bid</text>
@@ -113,48 +117,51 @@
     <text x="408.25" y="393.5">500</text><text x="467.25" y="393.5">100</text>
   </g>
 
-  <!-- Execution equation: each boxed quantity maps to the ask order it consumes. -->
-  <g aria-label="Buy 2700 shares: 2700 minus 200 minus 400 minus 1100 minus 100 minus 900 equals zero">
-    <text class="label" x="100" y="503.5"
-          transform="translate(100 0) scale(.925 1) translate(-100 0)">Buy 2700 shares:</text>
-    <text class="number" x="252" y="503.5">2700</text>
+  </g>
+
+  <!-- Execution equation is directly below the asks; all quantities retain their original order. -->
+  <g id="execution-equation" aria-label="Buy 2700 shares: 2700 minus 200 minus 400 minus 1100 minus 100 minus 900 equals zero">
+    <text class="label" x="144" y="283.5"
+          transform="translate(144 0) scale(.925 1) translate(-144 0)">Buy 2700 shares:</text>
+    <text class="number" x="300" y="283.5">2700</text>
     <g class="label center">
-      <text x="303.5" y="503.5">-</text>
-      <text x="360.5" y="503.5">-</text>
-      <text x="417" y="503.5">-</text>
-      <text x="483" y="503.5">-</text>
-      <text x="540.5" y="503.5">-</text>
-      <text x="596.5" y="503.5">=</text>
-      <text x="615.5" y="503.5">0</text>
+      <text x="379" y="283.5">-</text>
+      <text x="437.75" y="283.5">-</text>
+      <text x="496.75" y="283.5">-</text>
+      <text x="555.75" y="283.5">-</text>
+      <text x="614.75" y="283.5">-</text>
+      <text x="672.75" y="283.5">=</text>
+      <text x="691.75" y="283.5">0</text>
     </g>
     <g class="formula-box">
-      <rect x="314.5" y="484" width="36" height="25"/>
-      <rect x="371.5" y="484" width="36" height="25"/>
-      <rect x="427.5" y="484" width="45" height="25"/>
-      <rect x="493.5" y="484" width="36" height="25"/>
-      <rect x="550.5" y="484" width="36" height="25"/>
+      <rect x="390.25" y="264" width="36" height="30"/>
+      <rect x="449.25" y="264" width="36" height="30"/>
+      <rect x="503.75" y="264" width="45" height="30"/>
+      <rect x="567.25" y="264" width="36" height="30"/>
+      <rect x="626.25" y="264" width="36" height="30"/>
     </g>
     <g class="number center">
-      <text x="332.5" y="503.5">200</text>
-      <text x="389.5" y="503.5">400</text>
-      <text x="450" y="503.5">1100</text>
-      <text x="511.5" y="503.5">100</text>
-      <text x="568.5" y="503.5">900</text>
+      <text x="408.25" y="283.5">200</text>
+      <text x="467.25" y="283.5">400</text>
+      <text x="526.25" y="283.5">1100</text>
+      <text x="585.25" y="283.5">100</text>
+      <text x="644.25" y="283.5">900</text>
     </g>
   </g>
 
-  <!-- The original etalon uses five continuous execution shafts, including intentional label crossings. -->
+  <!-- Short shafts cross only the sell-panel outline; noses meet the ask cells' outer lower edges. -->
   <g class="connector">
-    <path id="consume-200-arrow" data-connector="true" d="M332.5 484 L407.7 219.2"
+    <path id="consume-200-arrow" data-connector="true" d="M408.25 264 V220.25"
           marker-end="url(#execution-arrowhead)"/>
-    <path id="consume-400-arrow" data-connector="true" d="M389.5 484 L466.7 219.2"
+    <path id="consume-400-arrow" data-connector="true" d="M467.25 264 V220.25"
           marker-end="url(#execution-arrowhead)"/>
-    <path id="consume-1100-arrow" data-connector="true" d="M450 484 L525.7 219.2"
+    <path id="consume-1100-arrow" data-connector="true" d="M526.25 264 V220.25"
           marker-end="url(#execution-arrowhead)"/>
-    <path id="consume-100-arrow" data-connector="true" d="M511.5 484 L584.7 219.2"
+    <path id="consume-100-arrow" data-connector="true" d="M585.25 264 V220.25"
           marker-end="url(#execution-arrowhead)"/>
-    <!-- The visible nose lands on the same 900/200 boundary position used by the PNG etalon. -->
-    <path id="consume-900-arrow" data-connector="true" d="M568.5 484 L416.9 190.8"
+    <!-- The last quantity loops below the equation and up the price/quantity gutter.
+         Its head enters the 900-share cell from the left, clear of the 200-share cell below. -->
+    <path id="consume-900-arrow" data-connector="true" d="M644.25 294 V310 H360 V173 H375.75"
           marker-end="url(#execution-arrowhead)"/>
   </g>
 </svg>
