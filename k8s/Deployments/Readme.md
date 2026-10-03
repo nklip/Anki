@@ -10,13 +10,19 @@ How does a Deployment manage Pods through ReplicaSets, including during an updat
 
 **A Deployment manages ReplicaSets to maintain and update a set of usually interchangeable Pods.** A ReplicaSet maintains a requested replica count; the Deployment adds controlled replacement of one Pod template with another.
 
+## Where Deployments and ReplicaSets fit
+
+The diagram shows two applications behind **Gateway API**, which defines listeners and routing rules implemented by a compatible controller. Solid arrows trace the logical request path through its proxy or load balancer to a **Service** and the application's Pods; actual network hops depend on the implementation.
+
+Follow the dashed arrows upward from each **Deployment**: it creates and scales **ReplicaSets**; each ReplicaSet creates or removes Pods to maintain its requested count. Deployments and ReplicaSets are outside the request path. One active ReplicaSet per application is shown.
+
+![deployment-rollout.svg](images/deployment-rollout.svg)
+
 ## Count versus version
 
 A **Pod template** describes the containers and configuration used when creating a Pod. Changing the Deployment's template, such as its container image, triggers a rollout. Simply changing its replica count scales the workload without triggering a new template rollout.
 
-With the default `RollingUpdate` strategy, the Deployment scales up a ReplicaSet for the new template and scales down the old one. Read the diagram from the declared template to the two replica groups.
-
-![deployment-rollout.svg](images/deployment-rollout.svg)
+With the default `RollingUpdate` strategy, the Deployment scales up a ReplicaSet for the new template and scales down the old one. During an update, old and new ReplicaSets can coexist under the same Deployment.
 
 ## Control the rollout
 
@@ -42,3 +48,5 @@ kubectl rollout undo deployment/web
 - [Kubernetes — Deployments, rollout strategy, history, and failure conditions](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
 - [Kubernetes — ReplicaSet](https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/)
 - [Kubernetes — Readiness probes](https://kubernetes.io/docs/concepts/workloads/pods/probes/)
+- [Kubernetes — Gateway API resources and request flow](https://kubernetes.io/docs/concepts/services-networking/gateway/)
+- [Kubernetes — Services and their backend Pods](https://kubernetes.io/docs/concepts/services-networking/service/)

@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="942" viewBox="0 0 960 942" role="img" aria-labelledby="title desc">
-  <title id="title">Deployments manage ReplicaSets; ReplicaSets maintain Pods</title>
-  <desc id="desc">A browser reaches a Gateway-controller-managed proxy. Host and path rules route /users to users-service and Users Pods, or /orders to orders-service and Orders Pods. Each application has a separate Deployment that creates and scales a ReplicaSet. Each ReplicaSet creates and removes Pods to maintain its desired count. One active ReplicaSet per application is shown; old and new ReplicaSets can coexist during a rollout. Solid arrows are logical request routing, and dashed arrows are configuration or resource management. Deployments and ReplicaSets are outside the request path.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="798" viewBox="0 0 960 798" role="img" aria-labelledby="title desc">
+  <title id="title">Gateway API routes requests; Deployments manage Pods</title>
+  <desc id="desc">A browser requests example.com. A proxy or load balancer configured by a Gateway controller routes /users to users-service and Users Pods, or /orders to orders-service and Orders Pods. Separate users and orders Deployments manage these Pods through ReplicaSets. Solid arrows show logical request routing; dashed arrows show configuration or management. Requests never pass through Deployment objects.</desc>
   <!-- Shared typography and colors match the existing Kubernetes diagrams. -->
   <defs>
     <style>
@@ -15,9 +15,9 @@
     </style>
   </defs>
   <!-- Canvas and lesson; preserve the distinction between traffic and Pod management. -->
-  <rect width="960" height="942" fill="#ffffff"/>
-  <text x="32" y="43" class="title" text-anchor="start">Deployments manage ReplicaSets; ReplicaSets maintain Pods</text>
-  <text x="32" y="75" class="subtitle" text-anchor="start">Gateway API example: request routing and workload management.</text>
+  <rect width="960" height="798" fill="#ffffff"/>
+  <text x="32" y="43" class="title" text-anchor="start">Gateway API routes requests; Deployments manage Pods</text>
+  <text x="32" y="75" class="subtitle" text-anchor="start">One hostname, two paths: example.com/users and example.com/orders.</text>
   <!-- Configuration stays beside the traffic path; the controller applies these declarations. -->
   <rect id="routing-configuration" x="32" y="108" width="364" height="202" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/>
   <text x="52" y="140" class="heading" text-anchor="start">Gateway API configuration</text>
@@ -54,22 +54,14 @@
   <rect id="users-pods" x="64" y="500" width="352" height="72" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
   <text x="240" y="530" class="heading" text-anchor="middle">Users Pods</text>
   <text x="240" y="557" class="body" text-anchor="middle">Run the users application</text>
-  <!-- Explicit ReplicaSet layer: it owns Pods and maintains the requested count. -->
-  <rect id="users-replicaset" x="64" y="644" width="352" height="72" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/>
-  <text x="240" y="674" class="heading" text-anchor="middle">users ReplicaSet</text>
-  <text x="240" y="701" class="body" text-anchor="middle">Maintains desired Pod count</text>
-  <path id="users-replicaset-pods-shaft" class="management" data-connector="true" d="M240 644 L240 580"/>
-  <polygon id="users-replicaset-pods-head" points="240,572 234,582 246,582" fill="#8066a5"/>
-  <text x="264" y="602" class="small" text-anchor="start">creates / removes Pods</text>
-  <text x="264" y="626" class="small" text-anchor="start">to maintain replica count</text>
-  <!-- Deployment-to-ReplicaSet management points upward; neither object receives application requests. -->
-  <rect id="users-deployment" x="64" y="788" width="352" height="72" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/>
-  <text x="240" y="818" class="heading" text-anchor="middle">users Deployment</text>
-  <text x="240" y="845" class="body" text-anchor="middle">Coordinates replicas and rollouts</text>
-  <path id="users-deployment-replicaset-shaft" class="management" data-connector="true" d="M240 788 L240 724"/>
-  <polygon id="users-deployment-replicaset-head" points="240,716 234,726 246,726" fill="#8066a5"/>
-  <text x="264" y="746" class="small" text-anchor="start">creates / scales</text>
-  <text x="264" y="770" class="small" text-anchor="start">ReplicaSets</text>
+  <!-- Upward dashed management arrow deliberately points from Deployment to Pods, via ReplicaSet. -->
+  <rect id="users-deployment" x="64" y="644" width="352" height="72" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/>
+  <text x="240" y="674" class="heading" text-anchor="middle">users Deployment</text>
+  <text x="240" y="701" class="body" text-anchor="middle">Desired replicas and rollouts</text>
+  <path id="users-management-shaft" class="management" data-connector="true" d="M240 644 L240 580"/>
+  <polygon id="users-management-head" points="240,572 234,582 246,582" fill="#8066a5"/>
+  <text x="264" y="602" class="small" text-anchor="start">manages Pods</text>
+  <text x="264" y="626" class="small" text-anchor="start">via ReplicaSet</text>
   <!-- Orders traffic ends at application Pods; the Deployment is a separate management resource. -->
   <rect id="orders-service" x="543" y="382" width="352" height="74" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
   <text x="719" y="413" class="heading" text-anchor="middle">orders-service</text>
@@ -79,23 +71,15 @@
   <rect id="orders-pods" x="543" y="500" width="352" height="72" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
   <text x="719" y="530" class="heading" text-anchor="middle">Orders Pods</text>
   <text x="719" y="557" class="body" text-anchor="middle">Run the orders application</text>
-  <!-- Explicit ReplicaSet layer: it owns Pods and maintains the requested count. -->
-  <rect id="orders-replicaset" x="543" y="644" width="352" height="72" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/>
-  <text x="719" y="674" class="heading" text-anchor="middle">orders ReplicaSet</text>
-  <text x="719" y="701" class="body" text-anchor="middle">Maintains desired Pod count</text>
-  <path id="orders-replicaset-pods-shaft" class="management" data-connector="true" d="M719 644 L719 580"/>
-  <polygon id="orders-replicaset-pods-head" points="719,572 713,582 725,582" fill="#8066a5"/>
-  <text x="743" y="602" class="small" text-anchor="start">creates / removes Pods</text>
-  <text x="743" y="626" class="small" text-anchor="start">to maintain replica count</text>
-  <!-- Deployment-to-ReplicaSet management points upward; neither object receives application requests. -->
-  <rect id="orders-deployment" x="543" y="788" width="352" height="72" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/>
-  <text x="719" y="818" class="heading" text-anchor="middle">orders Deployment</text>
-  <text x="719" y="845" class="body" text-anchor="middle">Coordinates replicas and rollouts</text>
-  <path id="orders-deployment-replicaset-shaft" class="management" data-connector="true" d="M719 788 L719 724"/>
-  <polygon id="orders-deployment-replicaset-head" points="719,716 713,726 725,726" fill="#8066a5"/>
-  <text x="743" y="746" class="small" text-anchor="start">creates / scales</text>
-  <text x="743" y="770" class="small" text-anchor="start">ReplicaSets</text>
+  <!-- Upward dashed management arrow deliberately points from Deployment to Pods, via ReplicaSet. -->
+  <rect id="orders-deployment" x="543" y="644" width="352" height="72" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/>
+  <text x="719" y="674" class="heading" text-anchor="middle">orders Deployment</text>
+  <text x="719" y="701" class="body" text-anchor="middle">Desired replicas and rollouts</text>
+  <path id="orders-management-shaft" class="management" data-connector="true" d="M719 644 L719 580"/>
+  <polygon id="orders-management-head" points="719,572 713,582 725,582" fill="#8066a5"/>
+  <text x="743" y="602" class="small" text-anchor="start">manages Pods</text>
+  <text x="743" y="626" class="small" text-anchor="start">via ReplicaSet</text>
   <!-- Visible legend explains both arrow types and the abstraction used for Service forwarding. -->
-  <text x="480" y="896" class="small" text-anchor="middle">Solid: logical request routing. Dashed: configuration or resource management.</text>
-  <text x="480" y="922" class="small" text-anchor="middle">One active ReplicaSet per app is shown; old and new ReplicaSets can coexist during updates.</text>
+  <text x="480" y="752" class="small" text-anchor="middle">Solid arrows show logical routing; actual network hops depend on the implementation.</text>
+  <text x="480" y="778" class="small" text-anchor="middle">Dashed arrows configure routing or manage Pods. Requests do not pass through Deployments.</text>
 </svg>
