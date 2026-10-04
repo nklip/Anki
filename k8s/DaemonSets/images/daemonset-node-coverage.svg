@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="780" viewBox="0 0 960 780" role="img" aria-labelledby="title desc">
+  <title id="title">DaemonSet: one agent Pod per eligible Node, alongside other Pods</title>
+  <desc id="desc">Each Node is a physical or virtual machine with CPU and memory. Nodes A, B, C, and the newly joined Node D each contain an Other app Pod and a Log-agent Pod. Every green Pod is a workload unit containing one white container box in this illustration. In general a Pod has one or more containers on the same Node, sharing networking and optionally storage. Read the dashed arrows upward from the log-agent DaemonSet to only the Log-agent Pods. The DaemonSet manages one agent Pod per eligible Node, alongside other application Pods. All four Nodes shown are eligible, and the picture shows the resulting steady state.</desc>
+  <!-- Shared typography, semantic colors, and upward management arrows match related Kubernetes diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #52677b; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #52677b; }
+      .container-label { font-size: 16px; }
+      .management { fill: none; stroke: #8066a5; stroke-width: 2.5; stroke-dasharray: 7 5; }
+      .arrow-join { fill: none; stroke: #8066a5; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Canvas and lesson: Nodes supply machine resources, while Pods hold the running containers. -->
+  <rect width="960" height="780" fill="#ffffff"/>
+  <text x="32" y="43" class="title" text-anchor="start">DaemonSet: one agent Pod per eligible Node</text>
+  <text x="32" y="75" class="subtitle" text-anchor="start">Node = physical or virtual machine. All four Nodes shown are eligible.</text>
+  <!-- Node A: both Pods share this machine; white container boxes stay inside their own Pod. -->
+  <rect id="node-a" x="32" y="108" width="206" height="350" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="135" y="146" class="heading" text-anchor="middle">Node A</text>
+  <text x="135" y="172" class="small" text-anchor="middle">existing node</text>
+  <text x="135" y="196" class="small" text-anchor="middle">CPU + memory</text>
+  <rect id="app-pod-a" x="52" y="206" width="166" height="106" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="135" y="237" class="body" text-anchor="middle">Other app Pod</text>
+  <rect id="app-container-a" x="64" y="253" width="142" height="40" rx="8" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="135" y="279" class="container-label" text-anchor="middle">App container</text>
+  <rect id="agent-pod-a" x="52" y="326" width="166" height="106" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="135" y="357" class="body" text-anchor="middle">Log-agent Pod</text>
+  <rect id="agent-container-a" x="64" y="373" width="142" height="40" rx="8" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="135" y="399" class="container-label" text-anchor="middle">Agent container</text>
+  <!-- Node B: both Pods share this machine; white container boxes stay inside their own Pod. -->
+  <rect id="node-b" x="262" y="108" width="206" height="350" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="365" y="146" class="heading" text-anchor="middle">Node B</text>
+  <text x="365" y="172" class="small" text-anchor="middle">existing node</text>
+  <text x="365" y="196" class="small" text-anchor="middle">CPU + memory</text>
+  <rect id="app-pod-b" x="282" y="206" width="166" height="106" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="365" y="237" class="body" text-anchor="middle">Other app Pod</text>
+  <rect id="app-container-b" x="294" y="253" width="142" height="40" rx="8" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="365" y="279" class="container-label" text-anchor="middle">App container</text>
+  <rect id="agent-pod-b" x="282" y="326" width="166" height="106" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="365" y="357" class="body" text-anchor="middle">Log-agent Pod</text>
+  <rect id="agent-container-b" x="294" y="373" width="142" height="40" rx="8" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="365" y="399" class="container-label" text-anchor="middle">Agent container</text>
+  <!-- Node C: both Pods share this machine; white container boxes stay inside their own Pod. -->
+  <rect id="node-c" x="492" y="108" width="206" height="350" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="595" y="146" class="heading" text-anchor="middle">Node C</text>
+  <text x="595" y="172" class="small" text-anchor="middle">existing node</text>
+  <text x="595" y="196" class="small" text-anchor="middle">CPU + memory</text>
+  <rect id="app-pod-c" x="512" y="206" width="166" height="106" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="595" y="237" class="body" text-anchor="middle">Other app Pod</text>
+  <rect id="app-container-c" x="524" y="253" width="142" height="40" rx="8" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="595" y="279" class="container-label" text-anchor="middle">App container</text>
+  <rect id="agent-pod-c" x="512" y="326" width="166" height="106" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="595" y="357" class="body" text-anchor="middle">Log-agent Pod</text>
+  <rect id="agent-container-c" x="524" y="373" width="142" height="40" rx="8" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="595" y="399" class="container-label" text-anchor="middle">Agent container</text>
+  <!-- Node D: both Pods share this machine; white container boxes stay inside their own Pod. -->
+  <rect id="new-node-d" x="722" y="108" width="206" height="350" rx="12" fill="#fff7ed" stroke="#d7a36a" stroke-width="1.5"/>
+  <text x="825" y="146" class="heading" text-anchor="middle">Node D</text>
+  <text x="825" y="172" class="small" text-anchor="middle">newly joined node</text>
+  <text x="825" y="196" class="small" text-anchor="middle">CPU + memory</text>
+  <rect id="app-pod-d" x="742" y="206" width="166" height="106" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="825" y="237" class="body" text-anchor="middle">Other app Pod</text>
+  <rect id="app-container-d" x="754" y="253" width="142" height="40" rx="8" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="825" y="279" class="container-label" text-anchor="middle">App container</text>
+  <rect id="new-agent-pod-d" x="742" y="326" width="166" height="106" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="825" y="357" class="body" text-anchor="middle">Log-agent Pod</text>
+  <rect id="agent-container-d" x="754" y="373" width="142" height="40" rx="8" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="825" y="399" class="container-label" text-anchor="middle">Agent container</text>
+  <!-- The shared bus crosses Node borders only below the Log-agent Pods; other app Pods receive no arrow. -->
+  <path id="daemonset-management-shaft" class="management" data-connector="true" d="M480 536 L480 476"/>
+  <path id="daemonset-left-branch-shaft" class="management" data-connector="true" d="M480 476 L135 476 L135 440"/>
+  <path id="daemonset-right-branch-shaft" class="management" data-connector="true" d="M480 476 L825 476 L825 440"/>
+  <path id="daemonset-pod-b-shaft" class="management" data-connector="true" d="M365 476 L365 440"/>
+  <path id="daemonset-pod-c-shaft" class="management" data-connector="true" d="M595 476 L595 440"/>
+  <!-- Solid joins hide dash gaps at the bases; each upward nose stops at its Log-agent Pod's lower boundary. -->
+  <path id="pod-a-arrow-join" class="arrow-join" data-connector="true" d="M135 448 L135 440"/>
+  <path id="pod-b-arrow-join" class="arrow-join" data-connector="true" d="M365 448 L365 440"/>
+  <path id="pod-c-arrow-join" class="arrow-join" data-connector="true" d="M595 448 L595 440"/>
+  <path id="pod-d-arrow-join" class="arrow-join" data-connector="true" d="M825 448 L825 440"/>
+  <polygon id="pod-a-head" points="135,432 129,442 141,442" fill="#8066a5"/>
+  <polygon id="pod-b-head" points="365,432 359,442 371,442" fill="#8066a5"/>
+  <polygon id="pod-c-head" points="595,432 589,442 601,442" fill="#8066a5"/>
+  <polygon id="pod-d-head" points="825,432 819,442 831,442" fill="#8066a5"/>
+  <text x="504" y="501" class="small" text-anchor="start">creates / replaces an agent Pod</text>
+  <text x="504" y="525" class="small" text-anchor="start">on each eligible Node</text>
+  <!-- Direct Pod management: the DaemonSet controls agent Pods, not the other application Pods. -->
+  <rect id="log-agent-daemonset" x="304" y="536" width="352" height="76" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/>
+  <text x="480" y="567" class="heading" text-anchor="middle">log-agent DaemonSet</text>
+  <text x="480" y="596" class="body" text-anchor="middle">One agent Pod per eligible Node</text>
+  <!-- Compact legend explains nesting; the steady-state note avoids promising instant availability. -->
+  <text x="480" y="646" class="small" text-anchor="middle">Green Pod = workload unit. White boxes = containers; one container is shown per Pod.</text>
+  <text x="480" y="672" class="small" text-anchor="middle">A Pod has one or more containers on the same Node, sharing networking and optionally storage.</text>
+  <text x="480" y="704" class="body" text-anchor="middle">One agent Pod from this DaemonSet per eligible Node, alongside other app Pods.</text>
+  <text x="480" y="732" class="small" text-anchor="middle">A newly joined eligible Node gets its own agent Pod; no fixed replica count is needed.</text>
+  <text x="480" y="760" class="small" text-anchor="middle">Read upward. Dashed arrows mean management; steady state is shown (startup takes time).</text>
+</svg>
