@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="568" viewBox="0 0 1000 568" role="img" aria-labelledby="wal-recovery-title wal-recovery-desc">
+  <title id="wal-recovery-title">A durable write can survive before any flush</title>
+  <desc id="wal-recovery-desc">An example with a synchronous Put cat blue that has returned success. Before the crash, the write-ahead log contains a durable record on stable storage and the memtable contains cat blue in RAM. Power loss clears RAM but the durable log survives. On restart, the engine reads the surviving log and replays it to rebuild the memtable. Existing SSTables did not contain cat at the crash because the crash occurred before a flush.</desc>
+  <!-- Shared folder palette: teal persistent storage, blue RAM, amber lost RAM. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #15243b; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 20px; fill: #526277; }
+      .label { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .blue { fill: #eaf2ff; stroke: #b6c4d4; stroke-width: 1.5; }
+      .teal { fill: #e9f7f3; stroke: #b6c4d4; stroke-width: 1.5; }
+      .amber { fill: #fff4df; stroke: #b6c4d4; stroke-width: 1.5; }
+      .neutral { fill: #f7f9fc; stroke: #b6c4d4; stroke-width: 1.5; }
+      .connector { fill: none; stroke: #526277; stroke-width: 2; }
+    </style>
+  </defs>
+  <rect width="1000" height="568" fill="#fff"/>
+  <!-- The durability condition is explicit: success followed a synchronous write. -->
+  <text x="32" y="46" class="title">A durable write can survive before any flush</text>
+  <text x="32" y="78" class="subtitle">Example: sync=true Put(cat, blue) has returned success.</text>
+  <!-- Stage headers establish time order; arrows occupy the gaps between them. -->
+  <rect id="before-crash" x="32" y="119" width="286" height="54" rx="12" class="neutral"/>
+  <rect id="power-loss" x="357" y="119" width="286" height="54" rx="12" class="neutral"/>
+  <rect id="restart" x="682" y="119" width="286" height="54" rx="12" class="neutral"/>
+  <path id="crash-timeline-shaft" d="M318 146 H345" class="connector" data-connector="true"/>
+  <polygon id="crash-timeline-head" points="343,139 357,146 343,153" fill="#526277"/>
+  <path id="restart-timeline-shaft" d="M643 146 H670" class="connector" data-connector="true"/>
+  <polygon id="restart-timeline-head" points="668,139 682,146 668,153" fill="#526277"/>
+  <text x="175" y="153" class="label" text-anchor="middle">1  Write succeeds</text>
+  <text x="500" y="153" class="label" text-anchor="middle">2  Power fails</text>
+  <text x="825" y="153" class="label" text-anchor="middle">3  Restart + replay</text>
+  <!-- Durable log records remain on storage across the power-loss boundary. -->
+  <g id="durable-log-states">
+    <rect id="durable-wal" x="32" y="201" width="286" height="90" rx="12" class="teal"/>
+    <rect id="surviving-wal" x="357" y="201" width="286" height="90" rx="12" class="teal"/>
+    <rect id="replayed-wal" x="682" y="201" width="286" height="90" rx="12" class="teal"/>
+    <text x="52" y="234" class="label">WAL · stable storage</text>
+    <text x="52" y="269" class="body">cat → blue · durable</text>
+    <text x="377" y="234" class="label">WAL survives</text>
+    <text x="377" y="269" class="body">cat → blue · durable</text>
+    <text x="702" y="234" class="label">Read surviving WAL</text>
+    <text x="702" y="269" class="body">cat → blue</text>
+  </g>
+  <!-- Recovery alone has a downward arrow: log replay rebuilds volatile memory.
+       The shaft ends beneath the triangle base, leaving a clean unobscured tip. -->
+  <path id="log-replay-shaft" d="M825 291 V336" class="connector" data-connector="true"/>
+  <polygon id="log-replay-head" points="818,334 825,348 832,334" fill="#526277"/>
+  <text x="702" y="323" class="body">replay</text>
+  <!-- RAM is populated, lost, then rebuilt; this row does not represent a flush. -->
+  <g id="memory-states">
+    <rect id="live-memory" x="32" y="348" width="286" height="90" rx="12" class="blue"/>
+    <rect id="lost-memory" x="357" y="348" width="286" height="90" rx="12" class="amber"/>
+    <rect id="rebuilt-memory" x="682" y="348" width="286" height="90" rx="12" class="blue"/>
+    <text x="52" y="381" class="label">Memtable · RAM</text>
+    <text x="52" y="416" class="body">cat → blue</text>
+    <text x="377" y="381" class="label">RAM is cleared</text>
+    <text x="377" y="416" class="body">No memtable remains</text>
+    <text x="702" y="381" class="label">Memtable rebuilt</text>
+    <text x="702" y="416" class="body">cat → blue · in RAM again</text>
+  </g>
+  <!-- Existing files cannot recover this new value; the log supplies it instead. -->
+  <rect id="sstable-state" x="32" y="466" width="936" height="48" rx="12" class="neutral"/>
+  <text x="52" y="497" class="body">Existing SSTables had no cat at the crash: the memtable had not been flushed.</text>
+  <!-- Definitions support reading the image without surrounding article prose. -->
+  <text x="32" y="547" class="body">WAL = write-ahead log. SSTable = immutable sorted file.</text>
+</svg>

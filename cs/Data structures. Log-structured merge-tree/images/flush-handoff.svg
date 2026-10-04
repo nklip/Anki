@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="590" viewBox="0 0 1000 590" role="img" aria-labelledby="flush-handoff-title flush-handoff-desc">
+  <title id="flush-handoff-title">Flush hands recovery from the log to a sorted file</title>
+  <desc id="flush-handoff-desc">LevelDB freezes the old memtable while new writes use a fresh write-ahead log and memory table. Background flushing writes and syncs an immutable sorted SSTable, then durably registers it in the MANIFEST. Only after both steps can the old write-ahead log be removed. Sync waits for persistent storage; the MANIFEST records the current data files.</desc>
+  <!-- Shared folder typography and colors: blue memory, teal files, amber retirement. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #15243b; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 20px; fill: #526277; }
+      .label { font-size: 22px; font-weight: 700; }
+      .step { font-size: 20px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .note { font-size: 20px; fill: #526277; }
+      .blue { fill: #eaf2ff; stroke: #b6c4d4; stroke-width: 1.5; }
+      .teal { fill: #e9f7f3; stroke: #b6c4d4; stroke-width: 1.5; }
+      .amber { fill: #fff4df; stroke: #b6c4d4; stroke-width: 1.5; }
+      .neutral { fill: #f7f9fc; stroke: #b6c4d4; stroke-width: 1.5; }
+      .connector { fill: none; stroke: #526277; stroke-width: 2; }
+    </style>
+  </defs>
+  <rect width="1000" height="590" fill="#fff"/>
+  <!-- The title states the durable handoff, while the parallel lane shows continued writes. -->
+  <text x="32" y="46" class="title">Flush hands recovery from the log to a sorted file</text>
+  <text x="32" y="78" class="subtitle">LevelDB: keep the old log until its replacement is safely registered.</text>
+  <rect id="new-writes" x="32" y="111" width="280" height="84" rx="12" class="blue"/>
+  <rect id="fresh-log-and-memory" x="382" y="111" width="586" height="84" rx="12" class="blue"/>
+  <!-- Shafts stop under the triangle bases; heads touch only the target borders. -->
+  <path id="new-writes-shaft" d="M312 153 H370" class="connector" data-connector="true"/>
+  <polygon id="new-writes-head" points="368,146 382,153 368,160" fill="#526277"/>
+  <text x="52" y="146" class="label">New writes continue</text>
+  <text x="52" y="175" class="body">During background flush</text>
+  <text x="402" y="146" class="label">Fresh WAL + fresh memtable</text>
+  <text x="402" y="175" class="body">New recovery log + new sorted RAM buffer</text>
+  <!-- Four ordered stages make the log-retirement prerequisite visible. -->
+  <text x="32" y="237" class="label">The old memtable and its log</text>
+  <rect id="freeze-old-memory" x="32" y="259" width="204" height="153" rx="12" class="blue"/>
+  <rect id="write-and-sync-file" x="276" y="259" width="204" height="153" rx="12" class="teal"/>
+  <rect id="register-and-sync-file" x="520" y="259" width="204" height="153" rx="12" class="teal"/>
+  <rect id="retire-old-log" x="764" y="259" width="204" height="153" rx="12" class="amber"/>
+  <path id="freeze-to-file-shaft" d="M236 337 H264" class="connector" data-connector="true"/>
+  <polygon id="freeze-to-file-head" points="262,330 276,337 262,344" fill="#526277"/>
+  <path id="file-to-manifest-shaft" d="M480 337 H508" class="connector" data-connector="true"/>
+  <polygon id="file-to-manifest-head" points="506,330 520,337 506,344" fill="#526277"/>
+  <path id="manifest-to-retirement-shaft" d="M724 337 H752" class="connector" data-connector="true"/>
+  <polygon id="manifest-to-retirement-head" points="750,330 764,337 750,344" fill="#526277"/>
+  <text x="48" y="293" class="step">1  Freeze</text>
+  <text x="48" y="331" class="body"><tspan x="48">Old memtable</tspan><tspan x="48" dy="29">becomes</tspan><tspan x="48" dy="29">read-only.</tspan></text>
+  <text x="292" y="293" class="step">2  Flush + sync</text>
+  <text x="292" y="331" class="body"><tspan x="292">Write a sorted</tspan><tspan x="292" dy="29">SSTable; sync</tspan><tspan x="292" dy="29">its contents.</tspan></text>
+  <text x="536" y="293" class="step">3  Register + sync</text>
+  <text x="536" y="331" class="body"><tspan x="536">Save new file in</tspan><tspan x="536" dy="29">the MANIFEST;</tspan><tspan x="536" dy="29">sync that record.</tspan></text>
+  <text x="780" y="293" class="step">4  Retire old log</text>
+  <text x="780" y="331" class="body"><tspan x="780">The old WAL</tspan><tspan x="780" dy="29">may now be</tspan><tspan x="780" dy="29">removed.</tspan></text>
+  <!-- The durability rule prevents interpreting file creation alone as a safe handoff. -->
+  <rect id="durability-rule" x="32" y="436" width="936" height="58" rx="12" class="neutral"/>
+  <text x="52" y="472" class="body">Keep the old WAL until both the SSTable and its MANIFEST record are durable.</text>
+  <!-- Compact glossary keeps every abbreviation interpretable without article prose. -->
+  <text x="32" y="535" class="note">Sync = wait for persistent storage. MANIFEST = list of current data files.</text>
+  <text x="32" y="568" class="note">SSTable = immutable sorted file. WAL = write-ahead log for recovery.</text>
+</svg>

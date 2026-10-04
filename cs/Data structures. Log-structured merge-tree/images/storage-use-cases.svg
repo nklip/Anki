@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="610" viewBox="0 0 1000 610" role="img" aria-labelledby="title desc">
+<title id="title">Where an LSM storage engine fits</title><desc id="desc">Three independent examples: an application stores records with LevelDB or RocksDB, Kafka Streams stores running counts with RocksDB, and Bigtable stores sensor readings with memtables and SSTables. The arrows go from incoming changes through storage to supported reads. Distribution and replication are additional system mechanisms.</desc>
+<!-- Shared typography, blue inputs, teal storage, and amber transformations. -->
+<defs><style>text {font-family:Arial,Helvetica,sans-serif;fill:#15243b} .title{font-size:30px;font-weight:700} .sub{font-size:20px;fill:#526277} .label{font-size:22px;font-weight:700} .body{font-size:20px} .blue{fill:#eaf2ff;stroke:#b6c4d4;stroke-width:1.5} .teal{fill:#e9f7f3;stroke:#b6c4d4;stroke-width:1.5} .amber{fill:#fff4df;stroke:#b6c4d4;stroke-width:1.5} .panel{fill:#f7f9fc;stroke:#b6c4d4;stroke-width:1.5} .shaft{fill:none;stroke:#526277;stroke-width:2}</style></defs>
+<rect width="1000" height="610" fill="#fff"/>
+<!-- Header and column labels establish left-to-right reading within each row. -->
+<text x="32" y="46" class="title" text-anchor="start">Where an LSM storage engine fits</text>
+<text x="32" y="80" class="sub" text-anchor="start">Three examples: incoming changes → storage → useful reads</text>
+<text x="32" y="127" class="label" text-anchor="start">Incoming changes</text>
+<text x="357" y="127" class="label" text-anchor="start">Storage inside the system</text>
+<text x="682" y="127" class="label" text-anchor="start">What the application reads</text>
+<!-- app: independent use case; connectors end at target boundaries. -->
+<rect id="app-input" x="32" y="150" width="286" height="110" rx="12" class="blue"/>
+<rect id="app-engine" x="357" y="150" width="286" height="110" rx="12" class="teal"/>
+<rect id="app-read" x="682" y="150" width="286" height="110" rx="12" class="panel"/>
+<path id="app-store-shaft" d="M318 205 H345" class="shaft" data-connector="true"/><polygon id="app-store-head" points="343,198 357,205 343,212" fill="#526277"/>
+<path id="app-lookup-shaft" d="M643 205 H670" class="shaft" data-connector="true"/><polygon id="app-lookup-head" points="668,198 682,205 668,212" fill="#526277"/>
+<text x="52" y="188" class="label" text-anchor="start">Changed app records</text>
+<text x="52" y="227" class="body" text-anchor="start">user:42 → profile</text>
+<text x="377" y="188" class="label" text-anchor="start">LevelDB / RocksDB</text>
+<text x="377" y="227" class="body" text-anchor="start">Library in the application</text>
+<text x="702" y="188" class="body" text-anchor="start">Find a record by key</text>
+<text x="702" y="227" class="body" text-anchor="start">or scan a key range</text>
+<!-- stream: independent use case; connectors end at target boundaries. -->
+<rect id="stream-input" x="32" y="280" width="286" height="110" rx="12" class="blue"/>
+<rect id="stream-engine" x="357" y="280" width="286" height="110" rx="12" class="teal"/>
+<rect id="stream-read" x="682" y="280" width="286" height="110" rx="12" class="panel"/>
+<path id="stream-store-shaft" d="M318 335 H345" class="shaft" data-connector="true"/><polygon id="stream-store-head" points="343,328 357,335 343,342" fill="#526277"/>
+<path id="stream-lookup-shaft" d="M643 335 H670" class="shaft" data-connector="true"/><polygon id="stream-lookup-head" points="668,328 682,335 668,342" fill="#526277"/>
+<text x="52" y="318" class="label" text-anchor="start">Customer events</text>
+<text x="52" y="357" class="body" text-anchor="start">Repeated count updates</text>
+<text x="377" y="318" class="label" text-anchor="start">Kafka Streams</text>
+<text x="377" y="357" class="body" text-anchor="start">RocksDB local state store</text>
+<text x="702" y="318" class="body" text-anchor="start">Read a running count</text>
+<text x="702" y="357" class="body" text-anchor="start">customer:42 → 128</text>
+<!-- sensor: independent use case; connectors end at target boundaries. -->
+<rect id="sensor-input" x="32" y="410" width="286" height="110" rx="12" class="blue"/>
+<rect id="sensor-engine" x="357" y="410" width="286" height="110" rx="12" class="teal"/>
+<rect id="sensor-read" x="682" y="410" width="286" height="110" rx="12" class="panel"/>
+<path id="sensor-store-shaft" d="M318 465 H345" class="shaft" data-connector="true"/><polygon id="sensor-store-head" points="343,458 357,465 343,472" fill="#526277"/>
+<path id="sensor-lookup-shaft" d="M643 465 H670" class="shaft" data-connector="true"/><polygon id="sensor-lookup-head" points="668,458 682,465 668,472" fill="#526277"/>
+<text x="52" y="448" class="label" text-anchor="start">Sensor readings</text>
+<text x="52" y="487" class="body" text-anchor="start">Values recorded over time</text>
+<text x="377" y="448" class="label" text-anchor="start">Bigtable</text>
+<text x="377" y="487" class="body" text-anchor="start">Memtables + SSTables</text>
+<text x="702" y="448" class="body" text-anchor="start">Read stored readings</text>
+<text x="702" y="487" class="body" text-anchor="start">by row key or key range</text>
+<!-- Scope note separates a storage design from a distributed system. -->
+<text x="32" y="567" class="sub" text-anchor="start">The LSM organizes storage. Distribution and replication need other mechanisms.</text>
+</svg>

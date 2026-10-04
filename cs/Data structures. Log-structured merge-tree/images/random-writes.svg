@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620" viewBox="0 0 1000 620" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="636" viewBox="0 0 1000 636" role="img" aria-labelledby="title desc">
   <title id="title">Batching changes the disk-write pattern</title>
-  <desc id="desc">A conventional B-tree can modify scattered disk pages. An LSM-tree buffers new entries in RAM, then merges sorted batches into disk data. Later merges rewrite data; the recovery log is a separate structure.</desc>
+  <desc id="desc">A conventional B-tree can modify scattered disk pages. An LSM-tree buffers and sorts new entries in RAM. A flush first creates a sorted file on disk. Later compaction merges sorted files into new files and rewrites data. The recovery log is a separate structure.</desc>
   <!-- Shared typography and semantic colors. -->
   <defs>
     <style>
@@ -18,7 +18,7 @@
       .arrow { fill: none; stroke: #526277; stroke-width: 2; }
     </style>
   </defs>
-  <rect width="1000" height="620" fill="#fff"/>
+  <rect width="1000" height="636" fill="#fff"/>
   <!-- Lesson heading. -->
   <text x="32" y="46" class="title">Batching changes the disk-write pattern</text>
   <text x="32" y="78" class="subtitle">Buffering and sorted merges reduce scattered page updates.</text>
@@ -53,27 +53,29 @@
     <text x="893" y="255" class="status" text-anchor="middle">changed</text>
     <text x="354" y="292" class="note">Changed pages are separated by unchanged pages in this example.</text>
   </g>
-  <!-- LSM sequence: new entries are sorted and merged before batch writes. -->
+  <!-- LSM sequence: flush creates a disk file before later compaction merges files. -->
   <g id="lsm-batch-writes">
-    <rect x="32" y="332" width="936" height="210" rx="14" class="panel"/>
-    <text x="56" y="369" class="label">LSM-tree: accumulate changes, then write sorted batches</text>
-    <rect x="56" y="399" width="164" height="76" rx="10" class="ram"/>
-    <text x="138" y="444" class="body" text-anchor="middle">Updates</text>
-    <path id="arrow-to-buffer" d="M234 437 H272" class="arrow"/>
-    <path d="M271 430 L285 437 L271 444 Z" fill="#526277"/>
-    <rect x="296" y="399" width="198" height="76" rx="10" class="ram"/>
-    <text x="395" y="430" class="body" text-anchor="middle"><tspan x="395">RAM buffer</tspan><tspan x="395" dy="26">sorts by key</tspan></text>
-    <path id="arrow-to-merge" d="M508 437 H546" class="arrow"/>
-    <path d="M545 430 L559 437 L545 444 Z" fill="#526277"/>
-    <rect x="570" y="399" width="158" height="76" rx="10" class="cost"/>
-    <text x="649" y="430" class="body" text-anchor="middle"><tspan x="649">Merge with</tspan><tspan x="649" dy="26">sorted data</tspan></text>
-    <path id="arrow-to-disk" d="M742 437 H780" class="arrow"/>
-    <path d="M779 430 L793 437 L779 444 Z" fill="#526277"/>
-    <rect x="804" y="399" width="140" height="76" rx="10" class="disk"/>
-    <text x="874" y="430" class="body" text-anchor="middle"><tspan x="874">Sorted</tspan><tspan x="874" dy="26">disk batch</tspan></text>
-    <text x="56" y="513" class="note">Batching improves write locality. Later merges still read and rewrite data.</text>
+    <rect x="32" y="332" width="936" height="240" rx="14" class="panel"/>
+    <text x="56" y="369" class="label">LSM-tree: buffer changes, flush a file, then merge files later</text>
+    <rect id="ram-buffer" x="56" y="402" width="230" height="104" rx="10" class="ram"/>
+    <rect id="flushed-file" x="385" y="402" width="230" height="104" rx="10" class="disk"/>
+    <rect id="later-compaction" x="714" y="402" width="230" height="104" rx="10" class="cost"/>
+    <!-- Arrow labels sit above the shafts; each shaft ends inside its head base. -->
+    <path id="arrow-flush" d="M286 462 H373" class="arrow"/>
+    <path id="arrow-flush-head" d="M371 455 L385 462 L371 469 Z" fill="#526277"/>
+    <path id="arrow-later-compaction" d="M615 462 H702" class="arrow"/>
+    <path id="arrow-later-compaction-head" d="M700 455 L714 462 L700 469 Z" fill="#526277"/>
+    <text x="335" y="440" class="note" text-anchor="middle">Flush</text>
+    <text x="665" y="440" class="note" text-anchor="middle">Later</text>
+    <text x="171" y="431" class="label" text-anchor="middle">RAM buffer</text>
+    <text x="171" y="461" class="body" text-anchor="middle"><tspan x="171">Collects updates</tspan><tspan x="171" dy="27">in key order</tspan></text>
+    <text x="500" y="431" class="label" text-anchor="middle">Sorted file</text>
+    <text x="500" y="461" class="body" text-anchor="middle"><tspan x="500">New file on disk</tspan><tspan x="500" dy="27">created by flush</tspan></text>
+    <text x="829" y="431" class="label" text-anchor="middle">Compaction</text>
+    <text x="829" y="461" class="body" text-anchor="middle"><tspan x="829">Merge sorted files</tspan><tspan x="829" dy="27">into new files</tspan></text>
+    <text x="56" y="545" class="note">Flush creates a file first. Later compaction reads and rewrites existing files.</text>
   </g>
   <!-- Distinguish recovery logging from the sorted on-disk data. -->
-  <text x="32" y="584" class="body">The write-ahead log for recovery is separate from the sorted data files shown here.</text>
+  <text x="32" y="612" class="body">The write-ahead log for recovery is separate from the sorted data files shown here.</text>
 
 </svg>

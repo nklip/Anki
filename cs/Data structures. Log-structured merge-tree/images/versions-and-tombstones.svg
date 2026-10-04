@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="650" viewBox="0 0 1000 650" role="img" aria-labelledby="versions-title versions-desc">
+  <title id="versions-title">One key, three versions, two different reads</title>
+  <desc id="versions-desc">For key cat, writes create value blue at sequence 10 and value green at sequence 20. A snapshot is taken after sequence 20 and before sequence 30. It captures the newest sequence at creation, so its fixed cutoff is 20. A later write creates a deletion marker at sequence 30. Both reads happen after sequence 30: the saved snapshot ignores the later deletion and returns green, while a latest-state read sees the deletion and returns not found. Applications must retain the snapshot created earlier; they cannot choose an arbitrary historical sequence at read time. Compaction may remove old versions only when no reader needs them; a tombstone must also no longer be needed to hide an older copy.</desc>
+  <!-- Shared folder typography and colors; every version and event has a text label. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #15243b; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 20px; fill: #526277; }
+      .label { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .note { font-size: 20px; fill: #526277; }
+      .blue { fill: #eaf2ff; stroke: #b6c4d4; stroke-width: 1.5; }
+      .teal { fill: #e9f7f3; stroke: #b6c4d4; stroke-width: 1.5; }
+      .amber { fill: #fff4df; stroke: #b6c4d4; stroke-width: 1.5; }
+      .neutral { fill: #f7f9fc; stroke: #b6c4d4; stroke-width: 1.5; }
+      .connector { fill: none; stroke: #526277; stroke-width: 2; }
+    </style>
+  </defs>
+  <rect width="1000" height="650" fill="#fff"/>
+  <!-- Snapshot creation is an event between writes, not a cutoff selected at read time. -->
+  <text x="32" y="46" class="title">One key, three versions, two different reads</text>
+  <text x="32" y="78" class="subtitle">A snapshot captures the newest sequence at creation; its cutoff then stays fixed.</text>
+  <text x="32" y="119" class="label">1  Events in time order for key “cat”</text>
+  <rect id="blue-version" x="32" y="139" width="210" height="142" rx="12" class="blue"/>
+  <rect id="green-version" x="274" y="139" width="210" height="142" rx="12" class="teal"/>
+  <rect id="snapshot-created" x="516" y="139" width="210" height="142" rx="12" class="neutral"/>
+  <rect id="deletion-version" x="758" y="139" width="210" height="142" rx="12" class="amber"/>
+  <!-- Shafts join beneath separate heads; tips meet the next event's left boundary. -->
+  <path id="blue-to-green-shaft" d="M242 210 H262" class="connector" data-connector="true"/>
+  <polygon id="blue-to-green-head" points="260,203 274,210 260,217" fill="#526277"/>
+  <path id="green-to-snapshot-shaft" d="M484 210 H504" class="connector" data-connector="true"/>
+  <polygon id="green-to-snapshot-head" points="502,203 516,210 502,217" fill="#526277"/>
+  <path id="snapshot-to-delete-shaft" d="M726 210 H746" class="connector" data-connector="true"/>
+  <polygon id="snapshot-to-delete-head" points="744,203 758,210 744,217" fill="#526277"/>
+  <text x="52" y="175" class="label">seq 10 · cat</text>
+  <text x="52" y="215" class="label">value: blue</text>
+  <text x="52" y="251" class="body">An older value</text>
+  <text x="294" y="175" class="label">seq 20 · cat</text>
+  <text x="294" y="215" class="label">value: green</text>
+  <text x="294" y="251" class="body">A newer value</text>
+  <text x="536" y="175" class="label">Take snapshot</text>
+  <text x="536" y="205" class="body">after 20,</text>
+  <text x="536" y="232" class="body">before 30</text>
+  <text x="536" y="262" class="body">Cutoff saved: 20</text>
+  <text x="778" y="175" class="label">seq 30 · cat</text>
+  <text x="778" y="215" class="label">tombstone</text>
+  <text x="778" y="251" class="body">Deletion marker</text>
+  <!-- The retained snapshot and current deletion lead to two later read outcomes.
+       The left elbow stays above the step label; both heads meet result boundaries. -->
+  <path id="snapshot-selection-shaft" d="M621 281 V296 H450 V337" class="connector" data-connector="true"/>
+  <polygon id="snapshot-selection-head" points="443,335 450,349 457,335" fill="#526277"/>
+  <path id="latest-selection-shaft" d="M863 281 V337" class="connector" data-connector="true"/>
+  <polygon id="latest-selection-head" points="856,335 863,349 870,335" fill="#526277"/>
+  <text x="32" y="327" class="label">2  Both reads happen after seq 30</text>
+  <rect id="snapshot-read-result" x="32" y="349" width="449" height="152" rx="12" class="teal"/>
+  <rect id="latest-read-result" x="519" y="349" width="449" height="152" rx="12" class="amber"/>
+  <text x="52" y="385" class="label">Read using the saved snapshot</text>
+  <text x="52" y="420" class="body">Cutoff stays 20; seq 30 is too new.</text>
+  <text x="52" y="449" class="body">Newest visible version: seq 20.</text>
+  <text x="52" y="478" class="label">Result: green</text>
+  <text x="539" y="385" class="label">Read the latest state</text>
+  <text x="539" y="420" class="body">Cutoff is now 30; sees the tombstone.</text>
+  <text x="539" y="449" class="body">The deletion hides older values.</text>
+  <text x="539" y="478" class="label">Result: not found</text>
+  <!-- Cleanup has both reader-visibility and hidden-older-copy conditions. -->
+  <rect id="cleanup-rule" x="32" y="525" width="936" height="78" rx="12" class="neutral"/>
+  <text x="52" y="557" class="body">Compaction removes versions only when readers no longer need them.</text>
+  <text x="52" y="586" class="body">A tombstone must also no longer be needed to hide an older copy.</text>
+  <!-- The footer rules out inventing a historical cutoff after the relevant writes. -->
+  <text x="32" y="638" class="note">seq = write order. A past cutoff cannot be chosen later; keep the snapshot.</text>
+</svg>

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="550" viewBox="0 0 1000 550" role="img" aria-labelledby="wal-memory-title wal-memory-desc">
+  <title id="wal-memory-title">Write order in the log; key order in memory</title>
+  <desc id="wal-memory-desc">Put dog brown arrives first, then Put cat blue. The write-ahead log on storage appends dog then cat in write order, keeping recovery records. The memtable in RAM keeps cat before dog in key order for lookups and a later flush. Appending to the log adds a record at the end; it does not rewrite a sorted file.</desc>
+  <!-- Shared folder palette: teal storage, blue RAM, neutral incoming work. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #15243b; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 20px; fill: #526277; }
+      .label { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .entry { font-size: 22px; }
+      .blue { fill: #eaf2ff; stroke: #b6c4d4; stroke-width: 1.5; }
+      .teal { fill: #e9f7f3; stroke: #b6c4d4; stroke-width: 1.5; }
+      .neutral { fill: #f7f9fc; stroke: #b6c4d4; stroke-width: 1.5; }
+      .row { fill: #fff; stroke: #b6c4d4; stroke-width: 1; }
+      .connector { fill: none; stroke: #526277; stroke-width: 2; }
+    </style>
+  </defs>
+  <rect width="1000" height="550" fill="#fff"/>
+  <!-- The top strip is the shared input; its numbers identify arrival order. -->
+  <text x="32" y="46" class="title">Write order in the log; key order in memory</text>
+  <text x="32" y="78" class="subtitle">Both writes enter both copies: dog first, then cat.</text>
+  <rect id="incoming-writes" x="32" y="106" width="936" height="68" rx="12" class="neutral"/>
+  <text x="74" y="148" class="label">1  Put(dog, brown)</text>
+  <text x="574" y="148" class="label">2  Put(cat, blue)</text>
+  <path id="write-order-shaft" d="M411 140 H518" class="connector" data-connector="true"/>
+  <polygon id="write-order-head" points="516,133 530,140 516,147" fill="#526277"/>
+  <!-- One shared input branches to two representations; both receive both writes.
+       Shafts stop inside their own triangle bases; the tips meet panel borders. -->
+  <path id="input-to-wal-shaft" d="M500 174 V204 H254 V222" class="connector" data-connector="true"/>
+  <polygon id="input-to-wal-head" points="247,220 254,234 261,220" fill="#526277"/>
+  <path id="input-to-memory-shaft" d="M500 204 H746 V222" class="connector" data-connector="true"/>
+  <polygon id="input-to-memory-head" points="739,220 746,234 753,220" fill="#526277"/>
+  <!-- WAL rows remain in arrival order, with the second record appended last. -->
+  <g id="wal-representation">
+    <rect x="32" y="234" width="444" height="246" rx="12" class="teal"/>
+    <text x="54" y="268" class="label">WAL · storage</text>
+    <text x="54" y="297" class="body">Write-ahead log: write order</text>
+    <rect id="wal-first-record" x="54" y="318" width="400" height="46" rx="6" class="row"/>
+    <rect id="wal-second-record" x="54" y="373" width="400" height="46" rx="6" class="row"/>
+    <text x="74" y="348" class="entry">1  dog → brown</text>
+    <text x="74" y="403" class="entry">2  cat → blue</text>
+    <text x="54" y="456" class="body">Append at end · used for recovery</text>
+  </g>
+  <!-- Memtable rows show the same values in key order, independent of arrival. -->
+  <g id="memory-representation">
+    <rect x="524" y="234" width="444" height="246" rx="12" class="blue"/>
+    <text x="546" y="268" class="label">Memtable · RAM</text>
+    <text x="546" y="297" class="body">In-memory table: sorted by key</text>
+    <rect id="memory-cat-entry" x="546" y="318" width="400" height="46" rx="6" class="row"/>
+    <rect id="memory-dog-entry" x="546" y="373" width="400" height="46" rx="6" class="row"/>
+    <text x="566" y="348" class="entry">cat → blue</text>
+    <text x="566" y="403" class="entry">dog → brown</text>
+    <text x="546" y="456" class="body">Used for lookups + a later flush</text>
+  </g>
+  <!-- The takeaway distinguishes a cheap append from rewriting sorted data. -->
+  <text x="32" y="523" class="body">Appending adds a record; it does not rewrite a sorted file.</text>
+</svg>

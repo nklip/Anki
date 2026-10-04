@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="722" viewBox="0 0 1000 722" role="img" aria-labelledby="write-path-title write-path-desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="468" viewBox="0 0 1000 468" role="img" aria-labelledby="write-path-title write-path-desc">
   <title id="write-path-title">A write first enters the log and memory</title>
-  <desc id="write-path-desc">A simplified modern LevelDB-style write path. A foreground write appends to the write-ahead log, updates a sorted memory table, then acknowledges according to configured durability: sync=true waits for stable storage, while sync=false, the LevelDB default, waits for operating-system handoff. Background work freezes memory, flushes sorted files, often to L0 but sometimes directly to a higher level when overlap permits, records live-file metadata, and later compacts files. A log is retired only when its records are safely covered.</desc>
-  <!-- Shared typography and semantic colors: blue memory, teal files/results, amber merging. -->
+  <desc id="write-path-desc">LevelDB foreground write order: first append a recovery record to the write-ahead log, optionally syncing that log to persistent storage; next update the active memtable, a sorted RAM table that accepts new writes; then return success after both steps succeed. With sync=true, log sync completes before the memtable update. With sync=false, the default, log data is handed to the operating system without waiting for persistent storage.</desc>
+  <!-- Shared folder typography and semantic colors: blue memory and teal log/results. -->
   <defs>
     <style>
       text { font-family: Arial, Helvetica, sans-serif; fill: #15243b; }
@@ -12,55 +12,36 @@
       .note { font-size: 18px; fill: #526277; }
       .blue { fill: #eaf2ff; stroke: #b6c4d4; stroke-width: 1.5; }
       .teal { fill: #e9f7f3; stroke: #b6c4d4; stroke-width: 1.5; }
-      .amber { fill: #fff4df; stroke: #b6c4d4; stroke-width: 1.5; }
       .neutral { fill: #f7f9fc; stroke: #b6c4d4; stroke-width: 1.5; }
       .connector { fill: none; stroke: #526277; stroke-width: 2; }
     </style>
   </defs>
-  <rect width="1000" height="722" fill="#fff"/>
-  <!-- Title and foreground stages; arrows stop at the next box boundary. -->
-  <text x="32" y="46" class="title" >A write first enters the log and memory</text>
-  <text x="32" y="78" class="subtitle" >Modern LevelDB-style engine: foreground work, then background file work.</text>
-  <text x="32" y="124" class="label" fill="#2563eb">Foreground · one write</text>
-  <rect id="wal" x="32" y="145" width="286" height="122" rx="12" class="teal"/>
-  <rect id="memtable" x="357" y="145" width="286" height="122" rx="12" class="blue"/>
-  <rect id="acknowledge" x="682" y="145" width="286" height="122" rx="12" class="teal"/>
-  <path id="wal-to-memory-shaft" d="M318 207 H345" class="connector" data-connector="true"/>
-  <polygon id="wal-to-memory-head" points="343,200 357,207 343,214" fill="#526277"/>
-  <path id="memory-to-ack-shaft" d="M643 207 H670" class="connector" data-connector="true"/>
-  <polygon id="memory-to-ack-head" points="668,200 682,207 668,214" fill="#526277"/>
-  <text x="52" y="179" class="label" >1  Append to WAL</text>
-  <text x="52" y="215" class="body" >Write-ahead log on disk</text>
-  <text x="52" y="243" class="note" >A recovery record</text>
-  <text x="377" y="179" class="label" >2  Update memtable</text>
-  <text x="377" y="215" class="body" >Sorted entries in RAM</text>
-  <text x="702" y="179" class="label" >3  Acknowledge</text>
-  <text x="702" y="213" class="note" >After log + memory steps</text>
-  <text x="702" y="240" class="note" >Durability settings below</text>
-  <!-- Acknowledgment distinguishes stable storage from the default operating-system handoff. -->
-  <text x="32" y="303" class="body" >sync=true waits for stable storage; sync=false (default) waits for OS handoff.</text>
-  <text x="32" y="335" class="body" >The log records arrival order; the memtable keeps keys sorted.</text>
-  <!-- Background stages begin after a memtable is selected for flushing. -->
-  <text x="32" y="384" class="label" >Rotation and background flushing</text>
-  <rect id="freeze" x="32" y="405" width="286" height="117" rx="12" class="blue"/>
-  <rect id="flush" x="357" y="405" width="286" height="117" rx="12" class="teal"/>
-  <rect id="publish" x="682" y="405" width="286" height="117" rx="12" class="teal"/>
-  <path id="freeze-to-flush-shaft" d="M318 464 H345" class="connector" data-connector="true"/>
-  <polygon id="freeze-to-flush-head" points="343,457 357,464 343,471" fill="#526277"/>
-  <path id="flush-to-publish-shaft" d="M643 464 H670" class="connector" data-connector="true"/>
-  <polygon id="flush-to-publish-head" points="668,457 682,464 668,471" fill="#526277"/>
-  <text x="52" y="438" class="label" >1  Freeze old memtable</text>
-  <text x="52" y="475" class="note" >New writes use a fresh one</text>
-  <text x="377" y="438" class="label" >2  Flush sorted contents</text>
-  <text x="377" y="475" class="body" >Create an immutable</text>
-  <text x="377" y="503" class="body" >SSTable (often in L0)</text>
-  <text x="702" y="438" class="label" >3  Publish live files</text>
-  <text x="702" y="475" class="body" >Record live-file metadata</text>
-  <!-- WAL retirement depends on safe coverage, not on a Bloom-filter cache. -->
-  <rect id="wal-retirement-rule" x="32" y="546" width="936" height="54" rx="12" class="neutral"/>
-  <text x="52" y="580" class="body" >Retire the old WAL only when its records are safely covered by published files.</text>
-  <!-- Compaction is later background work on selected disk files. -->
-  <rect id="compaction" x="32" y="621" width="936" height="54" rx="12" class="amber"/>
-  <text x="52" y="655" class="body" >Later compaction merges selected overlapping files into further levels.</text>
-  <text x="32" y="708" class="note" >SSTable = immutable sorted file. L0 = first disk level; a flush can bypass it without overlap.</text>
+  <rect width="1000" height="468" fill="#fff"/>
+  <!-- Foreground order: optional log sync is part of stage 1, before memory changes. -->
+  <text x="32" y="46" class="title">A write first enters the log and memory</text>
+  <text x="32" y="78" class="subtitle">LevelDB foreground path: finish these steps before returning success.</text>
+  <rect id="wal" x="32" y="111" width="286" height="162" rx="12" class="teal"/>
+  <rect id="memtable" x="357" y="111" width="286" height="162" rx="12" class="blue"/>
+  <rect id="acknowledge" x="682" y="111" width="286" height="162" rx="12" class="teal"/>
+  <!-- Shafts stop inside triangle bases; arrow tips meet only the next box boundary. -->
+  <path id="wal-to-memory-shaft" d="M318 192 H345" class="connector" data-connector="true"/>
+  <polygon id="wal-to-memory-head" points="343,185 357,192 343,199" fill="#526277"/>
+  <path id="memory-to-ack-shaft" d="M643 192 H670" class="connector" data-connector="true"/>
+  <polygon id="memory-to-ack-head" points="668,185 682,192 668,199" fill="#526277"/>
+  <text x="52" y="145" class="label">1  Append to WAL</text>
+  <text x="52" y="180" class="body">Write-ahead log:</text>
+  <text x="52" y="207" class="body">append a recovery record</text>
+  <text x="52" y="245" class="note">Then sync if sync=true</text>
+  <text x="377" y="145" class="label">2  Update memtable</text>
+  <text x="377" y="180" class="body">Sorted table in RAM</text>
+  <text x="377" y="218" class="note"><tspan x="377">Active memtable = the one</tspan><tspan x="377" dy="26">accepting new writes</tspan></text>
+  <text x="702" y="145" class="label">3  Acknowledge</text>
+  <text x="702" y="180" class="body">Return success after</text>
+  <text x="702" y="207" class="body">both steps succeed</text>
+  <!-- Two log-durability choices; both precede the memtable update and acknowledgment. -->
+  <rect id="durability-settings" x="32" y="294" width="936" height="143" rx="12" class="neutral"/>
+  <text x="52" y="327" class="label">How stage 1 handles durability</text>
+  <text x="52" y="362" class="body">sync=true: wait until the log reaches persistent storage.</text>
+  <text x="52" y="394" class="body">sync=false (default): hand log data to the OS; do not wait for persistent storage.</text>
+  <text x="52" y="423" class="note">OS = operating system. Sync completes before stage 2 when requested.</text>
 </svg>
