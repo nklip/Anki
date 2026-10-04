@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="792" viewBox="0 0 960 792" role="img" aria-labelledby="title desc">
+  <title id="title">ReplicaSet: keep a requested number of Pods</title>
+  <desc id="desc">A Node is a physical or virtual machine providing CPU and memory. Blue Node boxes contain green Pods; each Pod contains a white container box. A Pod is an application instance with one or more containers, all on the same Node, sharing networking and optionally storage. One container per Pod is drawn here. Read upward from the users Deployment through one active ReplicaSet to three users Pods: two on Node A, one on Node B, and none on Node C. This is one possible placement, not a placement guarantee. Dashed arrows show resource management.</desc>
+  <!-- Match the Deployment diagram's typography, green Pods, blue context, and purple management. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #52677b; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #52677b; }
+      .management { fill: none; stroke: #8066a5; stroke-width: 2.5; stroke-dasharray: 7 5; }
+      .arrow-join { fill: none; stroke: #8066a5; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Canvas and lesson; node boxes describe machines, not additional controllers. -->
+  <rect width="960" height="792" fill="#ffffff"/>
+  <text x="32" y="43" class="title" text-anchor="start">ReplicaSet: keep a requested number of Pods</text>
+  <text x="32" y="75" class="subtitle" text-anchor="start">A Node is a physical or virtual machine; it can host many Pods.</text>
+  <!-- Node → Pod → container containment is literal; all three replicas use the same illustrated template. -->
+  <rect id="node-a" x="32" y="110" width="280" height="232" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="172" y="150" class="heading" text-anchor="middle">Node A</text>
+  <text x="172" y="176" class="small" text-anchor="middle">Machine: CPU + memory</text>
+  <rect id="users-pod-1" x="52" y="194" width="108" height="116" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="106" y="222" class="body" text-anchor="middle">Users Pod</text>
+  <rect id="users-container-1" x="62" y="242" width="88" height="48" rx="8" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="106" y="272" class="small" text-anchor="middle">Container</text>
+  <rect id="users-pod-2" x="184" y="194" width="108" height="116" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="238" y="222" class="body" text-anchor="middle">Users Pod</text>
+  <rect id="users-container-2" x="194" y="242" width="88" height="48" rx="8" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="238" y="272" class="small" text-anchor="middle">Container</text>
+  <rect id="node-b" x="340" y="110" width="280" height="232" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="480" y="150" class="heading" text-anchor="middle">Node B</text>
+  <text x="480" y="176" class="small" text-anchor="middle">Machine: CPU + memory</text>
+  <rect id="users-pod-3" x="426" y="194" width="108" height="116" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="480" y="222" class="body" text-anchor="middle">Users Pod</text>
+  <rect id="users-container-3" x="436" y="242" width="88" height="48" rx="8" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="480" y="272" class="small" text-anchor="middle">Container</text>
+  <!-- No users Pods are required on Node C; a replica count is not a per-node placement rule. -->
+  <rect id="node-c" x="648" y="110" width="280" height="232" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="788" y="150" class="heading" text-anchor="middle">Node C</text>
+  <text x="788" y="176" class="small" text-anchor="middle">Machine: CPU + memory</text>
+  <text x="788" y="246" class="body" text-anchor="middle">No users Pods</text>
+  <text x="788" y="274" class="small" text-anchor="middle">Valid for this replica count</text>
+  <!-- Shift management geometry with the taller Pods so every arrow still meets its Pod boundary. -->
+  <g id="workload-management" transform="translate(0,64)">
+  <!-- Shafts intentionally cross node borders to reach the contained Pods; they never cross labels. -->
+  <path id="replicaset-pod-3-shaft" class="management" data-connector="true" d="M480 372 L480 254"/>
+  <path id="replicaset-pod-1-shaft" class="management" data-connector="true" d="M480 314 L106 314 L106 254"/>
+  <path id="replicaset-pod-2-shaft" class="management" data-connector="true" d="M238 314 L238 254"/>
+  <!-- Short solid joins prevent a dash gap at a triangle base; shafts stop inside each head. -->
+  <path id="pod-1-arrow-join" class="arrow-join" data-connector="true" d="M106 262 L106 254"/>
+  <path id="pod-2-arrow-join" class="arrow-join" data-connector="true" d="M238 262 L238 254"/>
+  <path id="pod-3-arrow-join" class="arrow-join" data-connector="true" d="M480 262 L480 254"/>
+  <polygon id="pod-1-head" points="106,246 100,256 112,256" fill="#8066a5"/>
+  <polygon id="pod-2-head" points="238,246 232,256 244,256" fill="#8066a5"/>
+  <polygon id="pod-3-head" points="480,246 474,256 486,256" fill="#8066a5"/>
+  <text x="504" y="338" class="small" text-anchor="start">creates / removes Pods</text>
+  <text x="504" y="362" class="small" text-anchor="start">to maintain the total count</text>
+  <!-- One active ReplicaSet is shown, matching the Deployment card's steady-state example. -->
+  <rect id="users-replicaset" x="304" y="380" width="352" height="76" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/>
+  <text x="480" y="411" class="heading" text-anchor="middle">users ReplicaSet</text>
+  <text x="480" y="440" class="body" text-anchor="middle">Desired replicas: 3</text>
+  <path id="replicaset-origin-shaft" class="management" data-connector="true" d="M480 380 L480 372"/>
+  <!-- Deployment management points upward, as in deployment-rollout.svg. -->
+  <rect id="users-deployment" x="304" y="534" width="352" height="76" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/>
+  <text x="480" y="565" class="heading" text-anchor="middle">users Deployment</text>
+  <text x="480" y="594" class="body" text-anchor="middle">Coordinates replicas and rollouts</text>
+  <path id="deployment-replicaset-shaft" class="management" data-connector="true" d="M480 534 L480 464"/>
+  <path id="replicaset-arrow-join" class="arrow-join" data-connector="true" d="M480 472 L480 464"/>
+  <polygon id="replicaset-head" points="480,456 474,466 486,466" fill="#8066a5"/>
+  <text x="504" y="490" class="small" text-anchor="start">creates / scales</text>
+  <text x="504" y="514" class="small" text-anchor="start">ReplicaSets</text>
+  <!-- Reading cue and legend make the resource hierarchy explicit without the surrounding card. -->
+  <text x="480" y="648" class="small" text-anchor="middle">Read upward: Deployment → ReplicaSet → Pods. Dashed arrows: resource management.</text>
+  <text x="480" y="676" class="small" text-anchor="middle">Green Pod = application instance with one or more containers; one white container is drawn per Pod.</text>
+  <text x="480" y="704" class="small" text-anchor="middle">A Pod stays on one Node. Its containers share networking and can share storage.</text>
+  </g>
+</svg>

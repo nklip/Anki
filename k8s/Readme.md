@@ -17,5 +17,6 @@ Kubernetes concepts, workloads, networking, and extensions.
 - [Kubernetes](Kubernetes/Readme.md)
 - [Namespaces](Namespaces/Readme.md)
 - [Pods](Pods/Readme.md)
+- [ReplicaSets](ReplicaSets/Readme.md)
 - [Services](Services/Readme.md)
 - [StatefulSets](StatefulSets/Readme.md)
