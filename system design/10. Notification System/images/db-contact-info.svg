@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="934" height="310" viewBox="0 0 934 310" role="img" aria-labelledby="title desc">
+  <title id="title">User contact information and registered devices</title>
+  <desc id="desc">The user table stores a user identifier, email, country code, phone number, and creation timestamp. The device table stores an identifier, device token, user identifier, and last login timestamp. The highlighted user_id fields connect the tables: one user can have many devices.</desc>
+
+  <!-- Shared table styling follows the neighboring PNG; all labels remain editable text. -->
+  <defs>
+    <style>
+      .table-body { fill: #f6f6f6; }
+      .table-header { fill: #3c6899; }
+      .key-row { fill: #deecf4; }
+      .heading { font-family: Arial, Helvetica, sans-serif; font-size: 23px; font-weight: 700; fill: #fff; }
+      .field { font-family: Arial, Helvetica, sans-serif; font-size: 20.5px; fill: #808080; }
+      .type { font-family: Arial, Helvetica, sans-serif; font-size: 20.5px; fill: #9d9d9d; text-anchor: end; }
+      .primary-key { font-weight: 700; }
+      .cardinality { font-family: Arial, Helvetica, sans-serif; fill: #334343; }
+    </style>
+  </defs>
+
+  <!-- Original canvas and rounded one-to-many relationship; this connector has no arrowheads. -->
+  <rect width="934" height="310" fill="#fbfbfb"/>
+  <path id="user-device-connector" data-connector="true" d="M356 91 H423 Q437 91 437 105 V206 Q437 220 451 220 H530" fill="none" stroke="#699dcd" stroke-width="5"/>
+  <text class="cardinality" x="365" y="82" font-size="16">1</text>
+  <text class="cardinality" x="510" y="242" font-size="21">*</text>
+
+  <!-- User table, including its highlighted identifier row. -->
+  <g id="user-table">
+    <rect class="table-body" x="6" y="14" width="350" height="290"/>
+    <rect class="table-header" x="6" y="14" width="350" height="53"/>
+    <rect class="key-row" x="6" y="67" width="350" height="48"/>
+    <text class="heading" x="28" y="49">user</text>
+
+    <!-- Small palette icon reproduced with a vector silhouette and four color wells. -->
+    <g id="user-palette-icon">
+      <path d="M319 25.5 C326.4 25.5 332 31 332 38.5 C332 41.8 330.5 43 326.5 42.6 C322.3 42.1 320.1 44.1 321.2 47.4 C322.1 50.1 320.5 52 317.4 52 C310.5 51.4 305.9 46.2 305.9 39 C305.9 31.4 311.4 25.5 319 25.5 Z" fill="#fff"/>
+      <g fill="#3c6899">
+        <circle cx="318.8" cy="30.9" r="1.65"/>
+        <circle cx="312.7" cy="34.2" r="1.65"/>
+        <circle cx="325" cy="34.2" r="1.65"/>
+        <circle cx="311.4" cy="40.5" r="1.65"/>
+      </g>
+    </g>
+
+    <g class="field">
+      <text x="28" y="98">user_id</text>
+      <text x="28" y="146">email</text>
+      <text x="28" y="194">country_code</text>
+      <text x="28" y="242">phone_number</text>
+      <text x="28" y="290">created_at</text>
+    </g>
+    <g class="type">
+      <text x="336" y="98">bigint</text>
+      <text x="336" y="146">varchar</text>
+      <text x="336" y="194">integer</text>
+      <text x="336" y="242">integer</text>
+      <text x="336" y="290">timestamp</text>
+    </g>
+  </g>
+
+  <!-- Device table; user_id links each device back to its owning user. -->
+  <g id="device-table">
+    <rect class="table-body" x="530" y="47" width="397" height="245"/>
+    <rect class="table-header" x="530" y="47" width="397" height="53"/>
+    <rect class="key-row" x="530" y="196" width="397" height="48"/>
+    <text class="heading" x="552" y="82">device</text>
+    <g class="field">
+      <text class="primary-key" x="552" y="131" fill="#222">id</text>
+      <text x="552" y="179">device_token</text>
+      <text x="552" y="227">user_id</text>
+      <text x="552" y="275">last_logged_in_at</text>
+    </g>
+    <g class="type">
+      <text class="primary-key" x="908" y="131">bigint</text>
+      <text x="908" y="179">varchar</text>
+      <text x="908" y="227">bigint</text>
+      <text x="908" y="275">timestamp</text>
+    </g>
+  </g>
+</svg>

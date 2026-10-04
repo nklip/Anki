@@ -4,17 +4,19 @@
 
   <!-- Reusable chapter icons and blue flow marker. -->
   <defs>
-    <marker id="arrow-blue" markerWidth="15" markerHeight="15" viewBox="0 0 15 15" refX="14" refY="7.5" orient="auto" markerUnits="userSpaceOnUse">
+    <!-- Shafts end 3 units inside each triangular head, safely behind the tapered nose.
+         Tips project 12 units beyond path endpoints; endpoints compensate to meet outer target outlines. -->
+    <marker id="arrow-blue" markerWidth="15" markerHeight="15" viewBox="0 0 15 15" refX="3" refY="7.5" orient="auto" markerUnits="userSpaceOnUse">
       <path d="M0 0 L15 7.5 L0 15 Z" fill="#1677b8"/>
     </marker>
     <symbol id="green-server" viewBox="0 0 50 90">
       <rect x="3" y="2" width="44" height="86" rx="3" fill="#65c515"/>
       <path d="M12 17 H38 M12 68 H38 M12 78 H38" stroke="#fff" stroke-width="4"/>
     </symbol>
+    <!-- One continuous cylinder body avoids antialiasing seams at the curved base. -->
     <symbol id="db-cylinder" viewBox="0 0 58 82">
-      <rect x="3" y="12" width="52" height="58" fill="#1677b8"/>
+      <path d="M3 12 V70 A26 10 0 0 0 55 70 V12 Z" fill="#1677b8"/>
       <ellipse cx="29" cy="12" rx="26" ry="10" fill="#1677b8" stroke="#fff" stroke-width="2"/>
-      <path d="M3 70 A26 10 0 0 0 55 70" fill="#1677b8"/>
     </symbol>
     <style>
       .cyan-box { fill: #fff; stroke: #08b4cf; stroke-width: 4; }
@@ -40,7 +42,7 @@
   </g>
 
   <!-- Registration event flows to the load balancer. -->
-  <path class="flow" d="M128 166 H352"/>
+  <path class="flow" d="M128 166 H345.0851"/>
   <text class="small" x="237" y="123">on app install</text>
   <text class="small" x="237" y="155">or sign up</text>
 
@@ -53,7 +55,7 @@
     <text class="label" x="406" y="264">Load balancer</text>
   </g>
 
-  <path class="flow" d="M462 166 H670"/>
+  <path class="flow" d="M462 166 H656"/>
 
   <!-- API server cluster. -->
   <g id="api-servers">
@@ -67,7 +69,7 @@
   </g>
 
   <!-- Contact information is stored in the database. -->
-  <path class="flow" d="M895 166 H1106"/>
+  <path class="flow" d="M895 166 H1092"/>
   <text class="small" x="1001" y="123">store contact</text>
   <text class="small" x="1001" y="155">info</text>
 

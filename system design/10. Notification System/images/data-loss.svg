@@ -4,17 +4,19 @@
 
   <!-- Reusable queue, worker, database, and APNs styling. -->
   <defs>
-    <marker id="arrow-blue" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="13" refY="7" orient="auto" markerUnits="userSpaceOnUse">
+    <!-- Shafts end 3 units inside each triangular head, safely behind the tapered nose.
+         Tips project 11 units beyond path endpoints; endpoints compensate to meet outer target outlines. -->
+    <marker id="arrow-blue" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="3" refY="7" orient="auto" markerUnits="userSpaceOnUse">
       <path d="M0 0 L14 7 L0 14 Z" fill="#1677b8"/>
     </marker>
     <symbol id="green-server" viewBox="0 0 50 90">
       <rect x="3" y="2" width="44" height="86" rx="3" fill="#65c515"/>
       <path d="M12 17 H38 M12 68 H38 M12 78 H38" stroke="#fff" stroke-width="4"/>
     </symbol>
+    <!-- One continuous cylinder body avoids antialiasing seams at the curved base. -->
     <symbol id="db-cylinder" viewBox="0 0 58 82">
-      <rect x="3" y="12" width="52" height="58" fill="#1677b8"/>
+      <path d="M3 12 V70 A26 10 0 0 0 55 70 V12 Z" fill="#1677b8"/>
       <ellipse cx="29" cy="12" rx="26" ry="10" fill="#1677b8" stroke="#fff" stroke-width="2"/>
-      <path d="M3 70 A26 10 0 0 0 55 70" fill="#1677b8"/>
     </symbol>
     <style>
       .cyan-box { fill: #fff; stroke: #08b4cf; stroke-width: 4; }
@@ -42,7 +44,7 @@
     <text class="label" x="165" y="199">iOS PN</text>
   </g>
 
-  <path class="flow" d="M303 128 H428"/>
+  <path class="flow" d="M303 128 H415"/>
 
   <!-- Worker cluster dispatches the notification and records its status. -->
   <g id="workers">
@@ -56,14 +58,14 @@
   </g>
 
   <!-- Worker delivery to Apple Push Notification service. -->
-  <path class="flow" d="M578 128 H767"/>
+  <path class="flow" d="M578 128 H748.9387"/>
   <g id="apns">
     <path d="M778 158 C760 158 754 138 766 126 C759 105 774 87 792 89 C800 72 819 65 834 76 C850 67 872 77 875 96 C894 99 905 113 903 130 C902 147 888 159 870 159 Z" fill="#fff" stroke="#333" stroke-width="7" stroke-linejoin="round"/>
     <text x="832" y="143" font-family="Arial, Helvetica, sans-serif" font-size="34" fill="#111" text-anchor="middle">APNs</text>
   </g>
 
   <!-- Downward log write is separated from the APNs delivery path. -->
-  <path class="flow" d="M503 214 V360"/>
+  <path class="flow" d="M503 214 V347"/>
   <g id="notification-log">
     <rect class="cyan-box" x="407" y="360" width="194" height="171" rx="25"/>
     <use href="#db-cylinder" x="445" y="371" width="60" height="84"/>

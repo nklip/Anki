@@ -4,10 +4,12 @@
 
   <!-- Shared channel, worker, storage, provider, and client symbols. -->
   <defs>
-    <marker id="arrow-blue" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+    <!-- Shafts end 3 units inside each triangular head, safely behind the tapered nose.
+         Tips project 9 units beyond path endpoints; endpoints compensate to meet outer target outlines. -->
+    <marker id="arrow-blue" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="3" refY="6" orient="auto" markerUnits="userSpaceOnUse">
       <path d="M0 0 L12 6 L0 12 Z" fill="#1677b8"/>
     </marker>
-    <marker id="arrow-black" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+    <marker id="arrow-black" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="3" refY="6" orient="auto" markerUnits="userSpaceOnUse">
       <path d="M0 0 L12 6 L0 12 Z" fill="#111"/>
     </marker>
     <symbol id="green-server" viewBox="0 0 30 60">
@@ -24,10 +26,10 @@
         <rect x="98" y="12" width="36" height="33"/><path d="M98 13 L116 29 L134 13"/>
       </g>
     </symbol>
+    <!-- One continuous cylinder body avoids antialiasing seams at the curved base. -->
     <symbol id="db-cylinder" viewBox="0 0 58 82">
-      <rect x="3" y="12" width="52" height="58" fill="#1677b8"/>
+      <path d="M3 12 V70 A26 10 0 0 0 55 70 V12 Z" fill="#1677b8"/>
       <ellipse cx="29" cy="12" rx="26" ry="10" fill="#1677b8" stroke="#fff" stroke-width="2"/>
-      <path d="M3 70 A26 10 0 0 0 55 70" fill="#1677b8"/>
     </symbol>
     <symbol id="phone" viewBox="0 0 60 100">
       <rect x="10" y="3" width="40" height="94" rx="5" fill="none" stroke="#333" stroke-width="4"/>
@@ -88,9 +90,9 @@
     <rect class="service" x="10" y="522" width="126" height="61" rx="10"/>
     <text class="label" x="73" y="559">Service N</text>
 
-    <path class="blue-flow" d="M136 255 L280 388"/>
-    <path class="blue-flow" d="M136 366 L280 405"/>
-    <path class="blue-flow" d="M136 552 L280 412"/>
+    <path class="blue-flow" d="M136 255 L272.1651 381.8649"/>
+    <path class="blue-flow" d="M136 366 L270.0682 402.6281"/>
+    <path class="blue-flow" d="M136 552 L272.3244 418.3018"/>
     <rect class="dashed-box" x="280" y="357" width="90" height="99" rx="16"/>
     <use href="#green-server" x="291" y="364" width="22" height="55"/>
     <use href="#green-server" x="313" y="364" width="22" height="55"/>
@@ -101,12 +103,12 @@
 
   <!-- Cache and database below the notification-server tier. -->
   <g id="shared-storage">
-    <path class="blue-flow" d="M325 456 V518"/>
+    <path class="blue-flow" d="M325 456 V507.75"/>
     <rect class="cyan-box" x="274" y="518" width="99" height="98" rx="15"/>
     <rect x="278" y="526" width="51" height="46" rx="7" fill="#1677b8"/><text x="303.5" y="548" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#fff" text-anchor="middle">CACHE</text>
     <rect x="300" y="545" width="51" height="46" rx="7" fill="#1677b8"/><text x="325.5" y="567" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#fff" text-anchor="middle">CACHE</text>
     <rect x="322" y="564" width="47" height="44" rx="7" fill="#1677b8"/><text x="345.5" y="586" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#fff" text-anchor="middle">CACHE</text>
-    <path class="blue-flow" d="M324 616 V678"/>
+    <path class="blue-flow" d="M324 616 V667.75"/>
     <rect class="cyan-box" x="278" y="678" width="91" height="98" rx="14"/>
     <use href="#db-cylinder" x="288" y="684" width="36" height="45"/><use href="#db-cylinder" x="310" y="694" width="36" height="45"/><use href="#db-cylinder" x="332" y="704" width="34" height="40"/>
     <text class="label" x="323.5" y="768">DB</text>
@@ -114,10 +116,11 @@
 
   <!-- Channel queues receive independent copies of each request. -->
   <g id="channel-queues">
-    <path class="blue-flow" d="M370 397 L538 176"/>
-    <path class="blue-flow" d="M370 405 L538 335"/>
-    <path class="blue-flow" d="M370 414 L538 483"/>
-    <path class="blue-flow" d="M370 409 L538 641"/>
+    <!-- Start outside the server border in queue order so the outgoing shafts never cross. -->
+    <path class="blue-flow" d="M371.25 397 L547.7909 182.9433"/>
+    <path class="blue-flow" d="M371.25 405 L545.1155 338.2267"/>
+    <path class="blue-flow" d="M371.25 414 L545.1002 479.8136"/>
+    <path class="blue-flow" d="M371.25 423 L547.7444 634.0954"/>
 
     <use href="#channel-queue" x="538" y="153" width="150" height="46"/><text class="label" x="613" y="218">iOS PN</text>
     <use href="#channel-queue" x="538" y="312" width="150" height="46"/><text class="label" x="613" y="376">Android PN</text>
@@ -127,30 +130,30 @@
 
   <!-- Dedicated workers consume each queue. -->
   <g id="workers">
-    <path class="blue-flow" d="M688 176 H757"/><path class="blue-flow" d="M688 335 H757"/><path class="blue-flow" d="M688 483 H757"/><path class="blue-flow" d="M688 641 H757"/>
+    <path class="blue-flow" d="M688 176 H746.75"/><path class="blue-flow" d="M688 335 H746.75"/><path class="blue-flow" d="M688 483 H746.75"/><path class="blue-flow" d="M688 641 H746.75"/>
     <g id="worker-ios"><rect class="dashed-box" x="757" y="126" width="90" height="99" rx="16"/><use href="#green-server" x="769" y="135" width="22" height="61"/><use href="#green-server" x="791" y="135" width="22" height="61"/><use href="#green-server" x="813" y="135" width="22" height="61"/><text class="small" x="802" y="214">Workers</text></g>
     <g id="worker-android"><rect class="dashed-box" x="757" y="285" width="90" height="99" rx="16"/><use href="#green-server" x="769" y="294" width="22" height="61"/><use href="#green-server" x="791" y="294" width="22" height="61"/><use href="#green-server" x="813" y="294" width="22" height="61"/><text class="small" x="802" y="373">Workers</text></g>
     <g id="worker-sms"><rect class="dashed-box" x="757" y="434" width="90" height="99" rx="16"/><use href="#green-server" x="769" y="443" width="22" height="61"/><use href="#green-server" x="791" y="443" width="22" height="61"/><use href="#green-server" x="813" y="443" width="22" height="61"/><text class="small" x="802" y="522">Workers</text></g>
     <g id="worker-email"><rect class="dashed-box" x="757" y="590" width="90" height="99" rx="16"/><use href="#green-server" x="769" y="599" width="22" height="61"/><use href="#green-server" x="791" y="599" width="22" height="61"/><use href="#green-server" x="813" y="599" width="22" height="61"/><text class="small" x="802" y="678">Workers</text></g>
 
-    <path class="blue-flow" d="M802 126 V78 H580 V154"/>
+    <path class="blue-flow" d="M802 126 V78 H580 V144"/>
     <text class="label" x="690" y="65">retry on error</text>
   </g>
 
   <!-- Third-party providers and destination devices. -->
   <rect class="provider-panel" x="915" y="105" width="105" height="672" rx="22"/>
   <g id="providers-and-clients">
-    <path class="blue-flow" d="M847 175 H915"/><use href="#apns-cloud" x="928" y="126" width="80" height="62"/>
-    <path class="black-flow" d="M1020 175 H1135"/><use href="#phone" x="1135" y="145" width="45" height="75"/><text class="label" x="1157" y="247">iOS</text>
+    <path class="blue-flow" d="M847 175 H905.25"/><use href="#apns-cloud" x="928" y="126" width="80" height="62"/>
+    <path class="black-flow" d="M1020 175 H1132"/><use href="#phone" x="1135" y="145" width="45" height="75"/><text class="label" x="1157" y="247">iOS</text>
 
-    <path class="blue-flow" d="M847 334 H915"/><use href="#fcm" x="935" y="280" width="65" height="80"/><text class="label" x="968" y="381">FCM</text>
-    <path class="black-flow" d="M1020 334 H1135"/><use href="#phone" x="1135" y="302" width="45" height="75"/><text class="label" x="1157" y="404">Android</text>
+    <path class="blue-flow" d="M847 334 H905.25"/><use href="#fcm" x="935" y="280" width="65" height="80"/><text class="label" x="968" y="381">FCM</text>
+    <path class="black-flow" d="M1020 334 H1132"/><use href="#phone" x="1135" y="302" width="45" height="75"/><text class="label" x="1157" y="404">Android</text>
 
-    <path class="blue-flow" d="M847 483 H915"/><use href="#sms-provider" x="934" y="445" width="70" height="70"/><text class="label" x="968" y="539">SMS</text><text class="label" x="968" y="559">Service</text>
-    <path class="black-flow" d="M1020 483 H1135"/><use href="#phone" x="1135" y="452" width="45" height="75"/><text class="label" x="1157" y="554">SMS</text>
+    <path class="blue-flow" d="M847 483 H905.25"/><use href="#sms-provider" x="934" y="445" width="70" height="70"/><text class="label" x="968" y="539">SMS</text><text class="label" x="968" y="559">Service</text>
+    <path class="black-flow" d="M1020 483 H1132"/><use href="#phone" x="1135" y="452" width="45" height="75"/><text class="label" x="1157" y="554">SMS</text>
 
-    <path class="blue-flow" d="M847 639 H915"/><use href="#email-provider" x="924" y="598" width="88" height="78"/><text class="label" x="968" y="698">Email</text><text class="label" x="968" y="718">Service</text>
-    <path class="black-flow" d="M1020 639 H1135"/><use href="#laptop" x="1130" y="615" width="70" height="54"/><text class="label" x="1165" y="700">Email</text>
+    <path class="blue-flow" d="M847 639 H905.25"/><use href="#email-provider" x="924" y="598" width="88" height="78"/><text class="label" x="968" y="698">Email</text><text class="label" x="968" y="718">Service</text>
+    <path class="black-flow" d="M1020 639 H1132.8571"/><use href="#laptop" x="1130" y="615" width="70" height="54"/><text class="label" x="1165" y="700">Email</text>
     <text class="small" x="968" y="750">Third Party</text><text class="small" x="968" y="768">Services</text>
   </g>
 
