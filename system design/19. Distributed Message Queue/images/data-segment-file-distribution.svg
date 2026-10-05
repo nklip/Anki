@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="958" height="350" viewBox="0 0 958 350" role="img" aria-labelledby="title desc">
+  <title id="title">Data segment files within topic partitions</title>
+  <desc id="desc">Topic-A contains Partition-1 and Partition-2. Each partition stores segment-1, segment-2, segment-3, and further segment files represented by an ellipsis.</desc>
+  <!-- Shared file outline; the curved folded corner remains editable vector geometry. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:30.5px;fill:#000}
+      .outline{fill:#fff;stroke:#808080;stroke-width:1.8}
+      .segment-label{text-anchor:middle}
+    </style>
+    <g id="segment-file" class="outline">
+      <path d="M0 0H133C140 0 151 4.5 167 10.5C173 12.5 176 14 176 18V64H0Z"/>
+      <path d="M133 0C140 0 140 3 140 13H172C174 13 176 15 176 18" fill="none"/>
+    </g>
+  </defs>
+  <rect id="background" width="958" height="350" fill="#fff"/>
+
+  <!-- Topic boundary and its two independent partition containers. -->
+  <rect id="topic" class="outline" x="14.5" y="15" width="921" height="315"/>
+  <text x="23" y="52">Topic-A</text>
+  <rect id="partition-1" class="outline" x="36" y="80.8" width="426" height="228"/>
+  <text x="46" y="118">Partition-1</text>
+  <rect id="partition-2" class="outline" x="487" y="80.8" width="426" height="228"/>
+  <text x="497" y="118">Partition-2</text>
+
+  <!-- Partition 1: numbered segment files followed by an ellipsis for more files. -->
+  <g id="partition-1-segments">
+    <use href="#segment-file" x="62.5" y="145.5"/>
+    <text class="segment-label" x="150" y="188">segment-1</text>
+    <use href="#segment-file" x="259" y="145.5"/>
+    <text class="segment-label" x="346.5" y="188">segment-2</text>
+    <use href="#segment-file" x="62.5" y="221.7"/>
+    <text class="segment-label" x="150" y="264">segment-3</text>
+    <use href="#segment-file" x="259" y="221.7"/>
+    <text class="segment-label" x="346.5" y="264" style="font-size:32px">...</text>
+  </g>
+
+  <!-- Partition 2 repeats the same local segment-file organization. -->
+  <g id="partition-2-segments">
+    <use href="#segment-file" x="513.5" y="145.5"/>
+    <text class="segment-label" x="601" y="188">segment-1</text>
+    <use href="#segment-file" x="710" y="145.5"/>
+    <text class="segment-label" x="797.5" y="188">segment-2</text>
+    <use href="#segment-file" x="513.5" y="221.7"/>
+    <text class="segment-label" x="601" y="264">segment-3</text>
+    <use href="#segment-file" x="710" y="221.7"/>
+    <text class="segment-label" x="797.5" y="264" style="font-size:32px">...</text>
+  </g>
+</svg>

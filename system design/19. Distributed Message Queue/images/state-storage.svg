@@ -3,8 +3,11 @@
   <title id="title">Consumer group state storage</title>
   <desc id="desc">Two consumer groups store independent last-consumed offsets for the same topic partition.</desc>
   <!-- Shared diagram definitions -->
+  <!-- Arrow noses project 3.2 units beyond their shaft endpoints; endpoints
+       are inset so the full symmetric head stays outside its target border. -->
+  <!-- Dash phases put a solid section under each arrowhead base. -->
   <defs>
-    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth" orient="auto-start-reverse">
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth" orient="auto-start-reverse">
       <path d="M0 0 10 5 0 10z"/>
     </marker>
     <style>text{font-family:Arial,Helvetica,sans-serif;fill:#000}.box{fill:#fff;stroke:#888;stroke-width:2}.line{fill:none;stroke:#000;stroke-width:2}.arrow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrow)}.dash{stroke-dasharray:10 8}.msg{fill:#fff;stroke:#888;stroke-width:2}.persist{fill:#bdf7bd;stroke:#888;stroke-width:2}.new{fill:#fffdb5;stroke:#888;stroke-width:2}</style>
@@ -47,23 +50,23 @@
     <text x="1374" y="301" font-size="34" text-anchor="middle">15</text>
   </g>
   <!-- Group 1 offset -->
-  <path class="line dash" marker-start="url(#arrow)" d="M48 168H145"/>
-  <path class="line dash" marker-end="url(#arrow)" d="M455 168H598"/>
-  <path class="line" d="M41 143V187M600 132V205"/>
+  <path class="line dash" marker-start="url(#arrow)" d="M45.2 168H145" stroke-dashoffset="12.000"/>
+  <path class="line dash" marker-end="url(#arrow)" d="M455 168H595.8" stroke-dashoffset="1.200"/>
+  <path class="line" d="M41 143V187"/>
   <text x="166" y="179" font-size="34">group-1 consumed</text>
   <text x="600" y="72" font-size="34" text-anchor="middle">
     <tspan x="600">consumer group-1:</tspan>
     <tspan x="600" dy="40">last consumed offset = 6</tspan>
   </text>
-  <path class="arrow" d="M600 132V206"/>
+  <path class="arrow" d="M600 132V203.8"/>
   <!-- Group 2 offset -->
-  <path class="line dash" marker-start="url(#arrow)" d="M48 412H440"/>
-  <path class="line dash" marker-end="url(#arrow)" d="M760 412H1198"/>
-  <path class="line" d="M41 390V434M1199 370V446"/>
+  <path class="line dash" marker-start="url(#arrow)" d="M45.2 412H440" stroke-dashoffset="12.000"/>
+  <path class="line dash" marker-end="url(#arrow)" d="M760 412H1194.8" stroke-dashoffset="13.200"/>
+  <path class="line" d="M41 390V434"/>
   <text x="462" y="423" font-size="34">group-2 consumed</text>
   <text x="1199" y="491" font-size="34" text-anchor="middle">
     <tspan x="1199">consumer group-2:</tspan>
     <tspan x="1199" dy="40">last consumed offset = 13</tspan>
   </text>
-  <path class="arrow" d="M1199 446V372"/>
+  <path class="arrow" d="M1199 446V374.2"/>
 </svg>

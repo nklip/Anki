@@ -3,8 +3,11 @@
   <title id="title">Consumer offsets example</title>
   <desc id="desc">Two consumers have independently consumed offsets through 6 and 13 in the same partition.</desc>
   <!-- Shared diagram definitions -->
+  <!-- Arrow noses project 3.2 units beyond their shaft endpoints; endpoints
+       are inset so the full symmetric head stays outside its target border. -->
+  <!-- Dash phases put a solid section under each arrowhead base. -->
   <defs>
-    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth" orient="auto-start-reverse">
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth" orient="auto-start-reverse">
       <path d="M0 0 10 5 0 10z"/>
     </marker>
     <style>text{font-family:Arial,Helvetica,sans-serif;fill:#000}.box{fill:#fff;stroke:#888;stroke-width:2}.line{fill:none;stroke:#000;stroke-width:2}.arrow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrow)}.dash{stroke-dasharray:10 8}.msg{fill:#fff;stroke:#888;stroke-width:2}.persist{fill:#bdf7bd;stroke:#888;stroke-width:2}.new{fill:#fffdb5;stroke:#888;stroke-width:2}</style>
@@ -46,10 +49,10 @@
     <text x="1139" y="259" font-size="32" text-anchor="middle">15</text>
   </g>
   <!-- Consumer 1 range and connection -->
-  <path class="line dash" marker-start="url(#arrow)" d="M45 147H100"/>
-  <path class="line dash" marker-end="url(#arrow)" d="M450 147H499"/>
+  <path class="line dash" marker-start="url(#arrow)" d="M46.6 147H100" stroke-dashoffset="12.000"/>
+  <path class="line dash" marker-end="url(#arrow)" d="M450 147H495.8" stroke-dashoffset="6.200"/>
   <text x="114" y="158" font-size="31">Consumer 1 consumed</text>
-  <path class="arrow" d="M1447 105H500V177"/>
+  <path class="arrow" d="M1447 105H500V174.8"/>
   <text x="1195" y="48" font-size="31" text-anchor="middle">
     <tspan x="1195">consumer 1:</tspan>
     <tspan x="1195" dy="35">last consumed offset = 6</tspan>
@@ -57,10 +60,10 @@
   <rect id="consumer-1" class="box" x="1447" y="50" width="236" height="111" rx="9"/>
   <text x="1565" y="118" font-size="31" text-anchor="middle">Consumer 1</text>
   <!-- Consumer 2 range and connection -->
-  <path class="line dash" marker-start="url(#arrow)" d="M45 348H330"/>
-  <path class="line dash" marker-end="url(#arrow)" d="M735 348H995"/>
+  <path class="line dash" marker-start="url(#arrow)" d="M46.6 348H330" stroke-dashoffset="12.000"/>
+  <path class="line dash" marker-end="url(#arrow)" d="M735 348H990.8" stroke-dashoffset="12.200"/>
   <text x="356" y="359" font-size="31">Consumer 2 consumed</text>
-  <path class="arrow" d="M1447 376H995V315"/>
+  <path class="arrow" d="M1447 376H995V317.2"/>
   <text x="1195" y="421" font-size="31" text-anchor="middle">
     <tspan x="1195">consumer 2:</tspan>
     <tspan x="1195" dy="35">last consumed offset = 13</tspan>

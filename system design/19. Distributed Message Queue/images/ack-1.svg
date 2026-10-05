@@ -2,8 +2,13 @@
   <title id="title">Producer acknowledgement mode one</title>
   <desc id="desc">The producer acknowledgement mode is shown with a leader, an in-sync follower, and a follower that is not caught up.</desc>
   <!-- Shared diagram definitions -->
+  <!-- The returning sync arrow approaches the lower border at 45 degrees,
+       leaving both sides of the triangle clear of the replica box. -->
+  <!-- Arrow noses project 3.2 units beyond their shaft endpoints; endpoints
+       are inset so the full symmetric head stays outside its target border. -->
+  <!-- Dash phases put a solid section under each arrowhead base. -->
   <defs>
-    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth" orient="auto-start-reverse">
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" markerUnits="strokeWidth" orient="auto-start-reverse">
       <path d="M0 0 10 5 0 10z" />
     </marker>
     <style>text{font-family:Arial,Helvetica,sans-serif;fill:#000}.box{fill:#fff;stroke:#808080;stroke-width:2}.line{fill:none;stroke:#000;stroke-width:2}.arrow{fill:none;stroke:#000;stroke-width:2;marker-end:url(#arrow)}.dash{stroke-dasharray:10 8}.msg{fill:#fff;stroke:#808080;stroke-width:2}.persist{fill:#cdfdc5;stroke:#808080;stroke-width:2}.new{fill:#fffec4;stroke:#808080;stroke-width:2}</style>
@@ -61,13 +66,13 @@
     <text x="1286" y="463" font-size="32" text-anchor="middle">not caught up</text>
   </g>
   <!-- Connectors are painted above the panels; labels follow so no route crosses text. -->
-  <path class="arrow" d="M699 322C705 390 721 455 746 507" />
+  <path class="arrow" d="M699 322C705 390 721 455 746.296 507.616" />
   <path class="line dash" d="M809 520C826 472 833 429 832 405" />
-  <path class="arrow dash" d="M828 346C818 281 789 219 762 178" />
+  <path class="arrow dash" d="M828 346C818 281 789 219 761.455 177.173" stroke-dashoffset="13.221"/>
   <path class="line" d="M734 511.5C702.3 486.1 660.4 464.1 613 453.5" />
-  <path class="arrow" d="M495 453.3C455.6 462.4 415.3 481.2 376 513" />
+  <path class="arrow" d="M495 453.3C455.6 462.4 415.3 481.2 381.577 508.487" />
   <path class="line dash" d="M386 592C433 619 463 629 476 630" />
-  <path class="arrow dash" d="M600 637C635 631 676 615 714 599" />
+  <path class="arrow dash" d="M600 637C635 625 694 621.75 716.487 599.263" stroke-dashoffset="0.402"/>
   <text x="831" y="380" font-size="32" text-anchor="middle">2. ack</text>
   <text x="543" y="456" font-size="31.5" text-anchor="middle">fetch</text>
   <text x="541" y="648" font-size="31.5" text-anchor="middle">synced</text>
