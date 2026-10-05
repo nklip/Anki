@@ -48,7 +48,7 @@ Costs include delayed results, duplicates, recovery, and another service. Queues
 | **Routing key** | A publisher-supplied label such as `order.created`, used by some exchange types. |
 | **Queue** | Stores pending messages; its type determines storage and recovery (§7). |
 | **Quorum queue** | A queue copied across nodes. Each copy is a **replica**; a **quorum** is a majority, more than half (e.g. two of three replicas). |
-| **Consumer / worker** | An application subscribed to a queue that handles deliveries. |
+| **Consumer / worker** | An application that receives messages from a queue and processes them. |
 | **Consumer acknowledgement / ack** | The worker reports completion, allowing RabbitMQ to remove that queue’s copy. |
 | **Publisher confirm** | RabbitMQ tells the publisher it accepted responsibility, independently of worker completion (§4). |
 
@@ -80,6 +80,15 @@ The **default exchange** (`""`) binds queues by name. Publishing “directly to 
 Two questions need answers: **“Did the broker take responsibility?”** and **“Did the worker finish?”** Time runs downward. The diagram uses a quorum queue (§7); delivery can race with the publisher confirm.
 
 ![rabbitmq-acknowledgements.svg](images/rabbitmq-acknowledgements.svg)
+
+### Push and pull consumption
+
+**RabbitMQ supports both push and pull consumption for classic and quorum queues. Push is the usual, recommended default approach.** With AMQP 0-9-1, the application chooses the model through the API it calls:
+
+- **Push — `basic.consume`:** the application subscribes once, and RabbitMQ sends available messages to its handler without a separate request for each message. For example, a fulfilment worker subscribes at startup and receives orders as they arrive.
+- **Pull — `basic.get`:** the application requests one message at a time. Each call returns a message or an empty result; it must call again to receive more. This is **polling**, and repeated requests waste resources when the queue is empty. RabbitMQ discourages it for normal workloads; integration tests are one use case.
+
+Here, “default” means the standard recommended consumption pattern. The client still explicitly subscribes or polls; opening a connection alone does not start delivery. Both models support manual or automatic acknowledgements, described below.
 
 ### Publisher confirms
 
@@ -335,7 +344,8 @@ Try answering each question before expanding its answer.
 - [RabbitMQ 4.3: consumer acknowledgements and publisher confirms](https://www.rabbitmq.com/docs/confirms)
 - [RabbitMQ 4.3: reliability and recovery](https://www.rabbitmq.com/docs/reliability)
 - [RabbitMQ 4.3: queues, durability, and ordering](https://www.rabbitmq.com/docs/queues)
-- [RabbitMQ 4.3: consumers](https://www.rabbitmq.com/docs/consumers)
+- [RabbitMQ 4.3: consumers, push subscriptions, and pull polling](https://www.rabbitmq.com/docs/consumers)
+- [RabbitMQ Java client: push subscriptions and retrieving individual messages](https://www.rabbitmq.com/client-libraries/java-api-guide)
 - [RabbitMQ 4.3: consumer prefetch](https://www.rabbitmq.com/docs/consumer-prefetch)
 - [RabbitMQ 4.3: dead-letter exchanges and transfer safety](https://www.rabbitmq.com/docs/dlx)
 - [RabbitMQ 4.3: quorum queues](https://www.rabbitmq.com/docs/quorum-queues)
