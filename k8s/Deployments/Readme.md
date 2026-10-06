@@ -8,7 +8,13 @@ How does a Deployment manage Pods through ReplicaSets, including during an updat
 
 # Back
 
-**A Deployment manages ReplicaSets to maintain and update a set of usually interchangeable Pods.** A ReplicaSet maintains a requested replica count; the Deployment adds controlled replacement of one Pod template with another.
+A **Deployment** manages a set of Pods to run an application workload, usually one that doesn't maintain state.
+
+A **Deployment** provides declarative updates for Pods and ReplicaSets.
+
+You describe a desired state in a Deployment, and the Deployment Controller changes the actual state to the desired state at a controlled rate. You can define Deployments to create new ReplicaSets, or to remove existing Deployments and adopt all their resources with new Deployments.
+
+> Note: Do not manage ReplicaSets owned by a Deployment. Consider opening an issue in the main Kubernetes repository if your use case is not covered below.
 
 ## Where Deployments and ReplicaSets fit
 

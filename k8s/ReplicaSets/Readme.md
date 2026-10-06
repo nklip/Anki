@@ -2,13 +2,9 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-What does a ReplicaSet maintain, and how does it differ from a Deployment?
-
 # Back
 
-**A ReplicaSet maintains a requested number of Pod replicas by creating or deleting Pods.** A Pod runs one or more containers together; a replica is another instance of the workload.
+A **ReplicaSet**'s purpose is to maintain a stable set of replica Pods running at any given time. Usually, you define a Deployment and let that Deployment manage ReplicaSets automatically.
 
 ## Count across the cluster
 
