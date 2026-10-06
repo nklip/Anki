@@ -4,7 +4,8 @@
 
   <!-- Shared shapes, typography, and a tapered arrow whose nose projects to each target boundary. -->
   <defs>
-    <marker id="arrow-black" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="10.5" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+    <!-- Register shafts near the head base so rounded caps stay fully inside the triangle. -->
+    <marker id="arrow-black" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="2" refY="6" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
       <path d="M0 0 L12 6 L0 12 Z" fill="#000"/>
     </marker>
     <style>
@@ -21,23 +22,23 @@
 
   <rect width="1186" height="814" fill="#fff"/>
 
-  <!-- Main left-to-right crawl path. Endpoints are pulled back 1.5 units so marker tips meet, but do not enter, box borders. -->
+  <!-- Main left-to-right crawl path. Shaft endpoints are recessed 10 units behind the tips, which meet the painted outer borders. -->
   <g id="primary-flow">
     <rect class="node" x="20" y="180" width="174" height="73" rx="11"/>
     <text class="label" x="107" y="217">seed URLs</text>
-    <path class="flow" d="M194 216.5 H248.5"/>
+    <path class="flow" d="M194 216.5 H239.2"/>
 
     <rect class="node" x="250" y="180" width="174" height="73" rx="11"/>
     <text class="label" x="337" y="217">URL Frontier</text>
-    <path class="flow" d="M424 216.5 H479.5"/>
+    <path class="flow" d="M424 216.5 H470.2"/>
 
     <rect class="node" x="481" y="180" width="174" height="73" rx="11"/>
     <text class="label" x="568" y="217">HTML Downloader</text>
-    <path class="flow" d="M655 216.5 H723.5"/>
+    <path class="flow" d="M655 216.5 H714.2"/>
 
     <rect class="node" x="725" y="180" width="175" height="73" rx="11"/>
     <text class="label" x="812.5" y="217">Content Parser</text>
-    <path class="flow" d="M900 216.5 H975.5"/>
+    <path class="flow" d="M900 216.5 H966.2"/>
 
     <rect class="node" x="977" y="180" width="159" height="73" rx="11"/>
     <text class="label" x="1056.5" y="217">Content Seen?</text>
@@ -47,7 +48,7 @@
   <g id="dns-resolver">
     <rect class="node" x="481" y="26" width="174" height="77" rx="11"/>
     <text class="label" x="568" y="65">DNS Resolver</text>
-    <path class="flow" d="M568 180 V104.5"/>
+    <path class="flow" d="M568 180 V113.8"/>
   </g>
 
   <!-- Content storage uses the narrow vertical cylinder shown in the workflow reference. -->
@@ -56,27 +57,27 @@
     <ellipse class="storage" cx="1057" cy="35" rx="44" ry="15"/>
     <text class="storage-label" x="1057" y="70">Content</text>
     <text class="storage-label" x="1057" y="91">Storage</text>
-    <path class="two-way" d="M1057 107.5 V178.5"/>
+    <path class="two-way" d="M1057 117.2 V169.2"/>
   </g>
 
   <!-- Extracted links descend through filtering and URL deduplication. -->
   <g id="link-processing">
-    <path class="flow" d="M1056.5 253 V292.5"/>
+    <path class="flow" d="M1056.5 253 V283.2"/>
     <rect class="node" x="977" y="294" width="159" height="73" rx="11"/>
     <text class="label" x="1056.5" y="331">Link Extractor</text>
 
-    <path class="flow" d="M1056.5 367 V422.5"/>
+    <path class="flow" d="M1056.5 367 V413.2"/>
     <rect class="node" x="970" y="424" width="174" height="73" rx="11"/>
     <text class="label" x="1057" y="461">URL Filter</text>
 
-    <path class="flow" d="M1057 497 V566.5"/>
+    <path class="flow" d="M1057 497 V557.2"/>
     <rect class="node" x="974" y="568" width="166" height="72" rx="11"/>
     <text class="label" x="1057" y="604.5">URL Seen?</text>
   </g>
 
   <!-- URL storage repeats the same vertical-cylinder convention and uses a bidirectional lookup connector. -->
   <g id="url-storage">
-    <path class="two-way" d="M1057 641.5 V710.5"/>
+    <path class="two-way" d="M1057 650.8 V700.8"/>
     <path class="storage" d="M1013 727 V785 C1013 793 1033 799 1057 799 C1081 799 1101 793 1101 785 V727"/>
     <ellipse class="storage" cx="1057" cy="727" rx="44" ry="15"/>
     <text class="storage-label" x="1057" y="762">URL</text>
@@ -84,7 +85,7 @@
   </g>
 
   <!-- Unseen URLs loop left and then upward into the frontier; the rounded corner mirrors the PNG. -->
-  <path id="frontier-feedback" class="flow" d="M974 604 H350 Q336 604 336 590 V254.5"/>
+  <path id="frontier-feedback" class="flow" d="M974 604 H350 Q336 604 336 590 V263.8"/>
 
   <!-- Circled numbers label the eleven operations; a 1-unit baseline offset optically centers each glyph. -->
   <g id="workflow-steps">

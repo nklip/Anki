@@ -4,7 +4,8 @@
 
   <!-- Match the PNG's monochrome process flow and gray extension-module panel. -->
   <defs>
-    <marker id="arrow-black" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="13" refY="7" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
+    <!-- One symmetric, fixed-size head serves every arrow; shafts end inside its base. -->
+    <marker id="arrow-black" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="2" refY="7" orient="auto-start-reverse" markerUnits="userSpaceOnUse">
       <path d="M0 0 L14 7 L0 14 Z" fill="#111"/>
     </marker>
     <style>
@@ -21,23 +22,24 @@
 
   <rect width="1666" height="1082" fill="#fff"/>
 
+  <!-- Tips meet painted outer borders; shafts stop 12 units behind them. Diagonal routes turn downward before the shared full-size heads. -->
   <!-- Core crawler stages align to the source image's upper horizontal row. -->
   <g id="core-pipeline">
     <rect class="node" x="10" y="225" width="220" height="90" rx="14"/>
     <text class="label" x="120" y="270">seed URLs</text>
-    <path class="flow" d="M230 270 H284"/>
+    <path class="flow" d="M230 270 H271"/>
 
     <rect class="node" x="284" y="225" width="220" height="90" rx="14"/>
     <text class="label" x="394" y="270">URL Frontier</text>
-    <path class="flow" d="M504 270 H558"/>
+    <path class="flow" d="M504 270 H545"/>
 
     <rect class="node" x="558" y="225" width="220" height="90" rx="14"/>
     <text class="label" x="668" y="270">HTML Downloader</text>
-    <path class="flow" d="M778 270 H850"/>
+    <path class="flow" d="M778 270 H837"/>
 
     <rect class="node" x="850" y="225" width="220" height="90" rx="14"/>
     <text class="label" x="960" y="270">Content Parser</text>
-    <path class="flow" d="M1070 270 H1142"/>
+    <path class="flow" d="M1070 270 H1129"/>
 
     <rect class="node" x="1142" y="223" width="202" height="92" rx="14"/>
     <text class="label" x="1243" y="269">Content Seen?</text>
@@ -47,13 +49,13 @@
   <g id="support-services">
     <rect class="node" x="558" y="27" width="220" height="98" rx="14"/>
     <text class="label" x="668" y="76">DNS Resolver</text>
-    <path class="flow" d="M668 225 V125"/>
+    <path class="flow" d="M668 225 V138"/>
 
     <path class="storage" d="M1188 39 V112 C1188 121 1213 129 1243 129 C1273 129 1298 121 1298 112 V39"/>
     <ellipse class="storage" cx="1243" cy="39" rx="55" ry="17"/>
     <text class="storage-label" x="1243" y="83">Content</text>
     <text class="storage-label" x="1243" y="109">Storage</text>
-    <path class="two-way" d="M1243 129 V223"/>
+    <path class="two-way" d="M1243 142.5 V210"/>
   </g>
 
   <!-- Extension module panel and the three handlers shown in the PNG. -->
@@ -61,9 +63,9 @@
   <text class="module-title" x="1370" y="552">Extension Module</text>
 
   <g id="extension-handlers">
-    <path class="flow" d="M1243 315 L996 396"/>
-    <path class="flow" d="M1243 315 V396"/>
-    <path class="flow" d="M1243 315 L1487 396"/>
+    <path class="flow" d="M1243 315 L996 367 V383"/>
+    <path class="flow" d="M1243 315 V383"/>
+    <path class="flow" d="M1243 315 L1487 367 V383"/>
 
     <rect class="node" x="896" y="396" width="201" height="91" rx="14"/>
     <text class="label" x="996.5" y="431">PNG</text>
@@ -78,23 +80,23 @@
 
   <!-- The link-extractor branch continues downward exactly as in the source. -->
   <g id="url-processing">
-    <path class="flow" d="M1243 487 V615"/>
+    <path class="flow" d="M1243 487 V602"/>
     <rect class="node" x="1133" y="615" width="220" height="92" rx="14"/>
     <text class="label" x="1243" y="661">URL Filter</text>
 
-    <path class="flow" d="M1243 707 V780"/>
+    <path class="flow" d="M1243 707 V767"/>
     <rect class="node" x="1138" y="780" width="212" height="91" rx="14"/>
     <text class="label" x="1244" y="825.5">URL Seen?</text>
   </g>
 
   <!-- URL storage and the feedback loop retain the original monochrome routing. -->
   <g id="url-storage">
-    <path class="two-way" d="M1244 871 V962"/>
+    <path class="two-way" d="M1244 884 V948.5"/>
     <path class="storage" d="M1189 979 V1052 C1189 1061 1214 1069 1244 1069 C1274 1069 1299 1061 1299 1052 V979"/>
     <ellipse class="storage" cx="1244" cy="979" rx="55" ry="17"/>
     <text class="storage-label" x="1244" y="1023">URL</text>
     <text class="storage-label" x="1244" y="1049">Storage</text>
   </g>
 
-  <path id="frontier-feedback" class="flow" d="M1138 825.5 H394 V315"/>
+  <path id="frontier-feedback" class="flow" d="M1138 825.5 H394 V328"/>
 </svg>

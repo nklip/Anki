@@ -4,7 +4,8 @@
 
   <!-- Geometry, colors, and type sizes follow the tall PNG reference. -->
   <defs>
-    <marker id="arrow-blue" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="11" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+    <!-- One symmetric, fixed-size head serves every arrow; shafts end inside its base. -->
+    <marker id="arrow-blue" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="2" refY="6" orient="auto" markerUnits="userSpaceOnUse">
       <path d="M0 0 L12 6 L0 12 Z" fill="#1677b8"/>
     </marker>
     <style>
@@ -23,9 +24,10 @@
 
   <rect width="826" height="1328" fill="#fff"/>
 
+  <!-- Tips meet painted outer borders; shafts stop 10 units behind them. Diagonal routes turn downward before the shared full-size heads. -->
   <!-- Input and prioritizer. The label stays to the right of the vertical arrow. -->
   <g id="prioritizer">
-    <path class="flow" d="M378 45 V126"/>
+    <path class="flow" d="M378 45 V114.75"/>
     <text class="annotation" x="396" y="89">input URLs</text>
     <rect class="router" x="286" y="126" width="185" height="75" rx="12"/>
     <text class="label" x="378.5" y="163.5">Prioritizer</text>
@@ -33,9 +35,9 @@
 
   <!-- Priority fan-out into front queues f1, f2, and fn. -->
   <g id="front-queues">
-    <path class="flow" d="M329 201 L128 264"/>
-    <path class="flow" d="M378.5 201 V264"/>
-    <path class="flow" d="M428 201 L626 264"/>
+    <path class="flow" d="M329 201 L128 238.6 V252.6"/>
+    <path class="flow" d="M378.5 201 V252.6"/>
+    <path class="flow" d="M428 201 L626 238.6 V252.6"/>
 
     <text class="queue-name" x="66" y="283">f1</text>
     <rect class="queue" x="90" y="264" width="76" height="157"/>
@@ -54,13 +56,13 @@
 
   <!-- Front selector converges the priority queues. -->
   <g id="front-selector">
-    <path class="flow" d="M128 421 L326 486"/>
-    <path class="flow" d="M379 421 V486"/>
-    <path class="flow" d="M626 421 L431 486"/>
+    <path class="flow" d="M128 421 L326 460.75 V474.75"/>
+    <path class="flow" d="M379 421 V474.75"/>
+    <path class="flow" d="M626 421 L431 460.75 V474.75"/>
     <rect class="router" x="286" y="486" width="185" height="76" rx="12"/>
     <text class="label" x="378.5" y="524" style="font-size: 18px;">Front queue selector</text>
 
-    <path class="flow" d="M378.5 562 V640"/>
+    <path class="flow" d="M378.5 562 V628.75"/>
     <text class="annotation" x="390" y="607">output URLs</text>
   </g>
 
@@ -69,19 +71,21 @@
     <rect class="router" x="291" y="640" width="184" height="76" rx="12"/>
     <text class="label" x="383" y="678" style="font-size: 18px;">Back queue router</text>
 
-    <path class="flow" d="M475 678 H619"/>
+    <path class="flow" d="M475 678 H607.75"/>
     <rect class="router" x="619" y="623" width="134" height="111" rx="16"/>
-    <rect x="663" y="643" width="46" height="52" rx="5" fill="#1677b8"/>
-    <ellipse cx="686" cy="643" rx="23" ry="8" fill="#1677b8" stroke="#fff" stroke-width="2"/>
-    <path d="M663 695 A23 8 0 0 0 709 695" fill="#1677b8" stroke="#1677b8" stroke-width="2"/>
+    <!-- Continuous sidewalls and base match the PNG; a 2-unit gap cleanly separates the oval cap. -->
+    <g id="mapping-table-cylinder">
+      <path id="mapping-table-body" d="M664 643 A22 7.5 0 0 0 708 643 V686 A22 8 0 0 1 664 686 Z" fill="#1677b8"/>
+      <ellipse id="mapping-table-cap" cx="686" cy="641" rx="22" ry="7.5" fill="#1677b8"/>
+    </g>
     <text class="small" x="686" y="720">Mapping Table</text>
   </g>
 
   <!-- Host-aware back queues b1 through bn. -->
   <g id="back-queues">
-    <path class="flow" d="M329 716 L133 801"/>
-    <path class="flow" d="M383 716 L382 801"/>
-    <path class="flow" d="M437 716 L632 801"/>
+    <path class="flow" d="M329 716 L133 775.6 V789.6"/>
+    <path class="flow" d="M383 716 L382.134 789.601"/>
+    <path class="flow" d="M437 716 L632 775.6 V789.6"/>
 
     <text class="queue-name" x="70" y="820">b1</text>
     <rect class="queue" x="95" y="801" width="76" height="155"/>
@@ -100,15 +104,15 @@
 
   <!-- Back selector releases URLs to workers at the bottom. -->
   <g id="back-selector">
-    <path class="flow" d="M133 956 L331 1037"/>
-    <path class="flow" d="M382 956 V1037"/>
-    <path class="flow" d="M632 956 L435 1037"/>
+    <path class="flow" d="M133 956 L331 1011.75 V1025.75"/>
+    <path class="flow" d="M382 956 V1025.75"/>
+    <path class="flow" d="M632 956 L435 1011.75 V1025.75"/>
     <rect class="router" x="291" y="1037" width="184" height="75" rx="12"/>
     <text class="label" x="383" y="1074.5" style="font-size: 18px;">Back queue selector</text>
 
-    <path class="flow" d="M344 1112 L145 1195"/>
-    <path class="flow" d="M383 1112 V1195"/>
-    <path class="flow" d="M422 1112 L604 1195"/>
+    <path class="flow" d="M344 1112 L145 1169.75 V1183.75"/>
+    <path class="flow" d="M383 1112 V1183.75"/>
+    <path class="flow" d="M422 1112 L604 1169.75 V1183.75"/>
   </g>
 
   <!-- Worker cards retain the compact source proportions. -->
