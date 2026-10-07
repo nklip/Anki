@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="355" viewBox="0 0 960 355" role="img" aria-labelledby="title desc">
+<title id="title">kubectl sends requests; the cluster does the work</title><desc id="desc">A kubeconfig context selects the destination. kubectl sends a request to the API server. After a desired-state update is accepted, controllers work toward it.</desc>
+<!-- Shared typography and palette match the neighboring Kubernetes cards. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; } .title { font-size: 28px; font-weight: 700; } .heading { font-size: 21px; font-weight: 700; } .body { font-size: 18px; } .small { font-size: 16px; fill: #52677b; } .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }</style></defs>
+<rect width="960" height="355" fill="#fff"/>
+<!-- Title and introduction establish the reading direction. -->
+<text x="32" y="43" class="title" text-anchor="start">kubectl sends requests; the cluster does the work</text>
+<text x="32" y="77" class="small" text-anchor="start">Example: apply a Deployment manifest, then inspect the resulting Pods.</text>
+<!-- kubectl-client: keep labels inset from its border. -->
+<rect id="kubectl-client" x="32" y="112" width="254" height="138" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="159.0" y="145" class="heading" text-anchor="middle">1. kubectl</text>
+<text x="159.0" y="175" class="body" text-anchor="middle">Reads your manifest</text>
+<text x="159.0" y="200" class="body" text-anchor="middle">Uses kubeconfig context</text>
+<!-- api-server: keep labels inset from its border. -->
+<rect id="api-server" x="353" y="112" width="254" height="138" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="480.0" y="145" class="heading" text-anchor="middle">2. API server</text>
+<text x="480.0" y="175" class="body" text-anchor="middle">Checks the request</text>
+<text x="480.0" y="200" class="body" text-anchor="middle">Stores accepted state</text>
+<!-- controllers: keep labels inset from its border. -->
+<rect id="controllers" x="674" y="112" width="254" height="138" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+<text x="801.0" y="145" class="heading" text-anchor="middle">3. Controllers</text>
+<text x="801.0" y="175" class="body" text-anchor="middle">Watch desired state</text>
+<text x="801.0" y="200" class="body" text-anchor="middle">Manage workload objects</text>
+<!-- Shaft ends under the head base; the tip meets the target boundary. -->
+<path id="request-shaft" class="connector" data-connector="true" d="M 286 184 H 345"/>
+<polygon id="request-head" points="353,184 343,179 343,189" fill="#52677b"/>
+<!-- Shaft ends under the head base; the tip meets the target boundary. -->
+<path id="reconcile-shaft" class="connector" data-connector="true" d="M 607 184 H 666"/>
+<polygon id="reconcile-head" points="674,184 664,179 664,189" fill="#52677b"/>
+<text x="480" y="293" class="body" text-anchor="middle">Context = cluster + user + default namespace</text>
+<text x="480" y="325" class="body" text-anchor="middle">A successful apply does not prove that the application is ready.</text>
+</svg>

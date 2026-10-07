@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="465" viewBox="0 0 960 465" role="img" aria-labelledby="title desc">
+<title id="title">A CronJob creates a new Job for each scheduled run</title><desc id="desc">Daily schedule at 02:00 UTC. The CronJob creates a separate Job on each day, and each Job creates a Pod that runs a finite task.</desc>
+<!-- Shared typography and palette match the neighboring Kubernetes cards. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; } .title { font-size: 28px; font-weight: 700; } .heading { font-size: 21px; font-weight: 700; } .body { font-size: 18px; } .small { font-size: 16px; fill: #52677b; } .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }</style></defs>
+<rect width="960" height="465" fill="#fff"/>
+<!-- Title and introduction establish the reading direction. -->
+<text x="32" y="43" class="title" text-anchor="start">A CronJob creates a new Job for each scheduled run</text>
+<text x="32" y="77" class="small" text-anchor="start">Example: schedule &quot;0 2 * * *&quot; with timeZone &quot;Etc/UTC&quot;</text>
+<!-- schedule: keep labels inset from its border. -->
+<rect id="schedule" x="32" y="152" width="244" height="156" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="154.0" y="185" class="heading" text-anchor="middle">CronJob</text>
+<text x="154.0" y="215" class="body" text-anchor="middle">Recurring schedule</text>
+<text x="154.0" y="240" class="body" text-anchor="middle">Job template</text>
+<!-- job-day-one: keep labels inset from its border. -->
+<rect id="job-day-one" x="357" y="111" width="249" height="111" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="481.5" y="144" class="heading" text-anchor="middle">Day 1: Job</text>
+<text x="481.5" y="174" class="body" text-anchor="middle">Created for 02:00</text>
+<!-- pod-day-one: keep labels inset from its border. -->
+<rect id="pod-day-one" x="679" y="111" width="249" height="111" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+<text x="803.5" y="144" class="heading" text-anchor="middle">Pod</text>
+<text x="803.5" y="174" class="body" text-anchor="middle">Runs task, then exits</text>
+<!-- job-day-two: keep labels inset from its border. -->
+<rect id="job-day-two" x="357" y="264" width="249" height="111" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="481.5" y="297" class="heading" text-anchor="middle">Day 2: new Job</text>
+<text x="481.5" y="327" class="body" text-anchor="middle">Created for 02:00</text>
+<!-- pod-day-two: keep labels inset from its border. -->
+<rect id="pod-day-two" x="679" y="264" width="249" height="111" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+<text x="803.5" y="297" class="heading" text-anchor="middle">New Pod</text>
+<text x="803.5" y="327" class="body" text-anchor="middle">Runs task, then exits</text>
+<!-- Separate schedule branches avoid the labels and share no arrowheads. -->
+<path id="first-schedule-shaft" class="connector" data-connector="true" d="M 276 197 H 316 V 166 H 349"/>
+<polygon id="first-schedule-head" points="357,166 347,161 347,171" fill="#52677b"/>
+<path id="next-schedule-shaft" class="connector" data-connector="true" d="M 276 264 H 316 V 319 H 349"/>
+<polygon id="next-schedule-head" points="357,319 347,314 347,324" fill="#52677b"/>
+<!-- Shaft ends under the head base; the tip meets the target boundary. -->
+<path id="job-one-creates-shaft" class="connector" data-connector="true" d="M 606 166 H 671"/>
+<polygon id="job-one-creates-head" points="679,166 669,161 669,171" fill="#52677b"/>
+<!-- Shaft ends under the head base; the tip meets the target boundary. -->
+<path id="job-two-creates-shaft" class="connector" data-connector="true" d="M 606 319 H 671"/>
+<polygon id="job-two-creates-head" points="679,319 669,314 669,324" fill="#52677b"/>
+<text x="480" y="417" class="body" text-anchor="middle">CronJob schedules Jobs; each Job manages its own task Pods.</text>
+<text x="480" y="448" class="small" text-anchor="middle">Runs can be missed or duplicated, so tasks must tolerate repetition.</text>
+</svg>

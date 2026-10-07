@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="370" viewBox="0 0 960 370" role="img" aria-labelledby="title desc">
+<title id="title">A Job counts successful completions</title><desc id="desc">Example with one required successful Pod and restartPolicy Never: the first Pod fails, the Job creates a replacement, and the replacement succeeds.</desc>
+<!-- Shared typography and palette match the neighboring Kubernetes cards. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; } .title { font-size: 28px; font-weight: 700; } .heading { font-size: 21px; font-weight: 700; } .body { font-size: 18px; } .small { font-size: 16px; fill: #52677b; } .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }</style></defs>
+<rect width="960" height="370" fill="#fff"/>
+<!-- Title and introduction establish the reading direction. -->
+<text x="32" y="43" class="title" text-anchor="start">A Job counts successful completions</text>
+<text x="32" y="77" class="small" text-anchor="start">Example: completions: 1, parallelism: 1, restartPolicy: Never</text>
+<!-- attempt-one: keep labels inset from its border. -->
+<rect id="attempt-one" x="32" y="112" width="254" height="145" rx="12" fill="#fff7ed" stroke="#e4b78a" stroke-width="1.5"/>
+<text x="159.0" y="145" class="heading" text-anchor="middle">Pod attempt 1</text>
+<text x="159.0" y="175" class="body" text-anchor="middle">Task fails</text>
+<text x="159.0" y="200" class="body" text-anchor="middle">0 successful completions</text>
+<!-- job-retry: keep labels inset from its border. -->
+<rect id="job-retry" x="353" y="112" width="254" height="145" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+<text x="480.0" y="145" class="heading" text-anchor="middle">Job retries</text>
+<text x="480.0" y="175" class="body" text-anchor="middle">Within retry / time limits</text>
+<text x="480.0" y="200" class="body" text-anchor="middle">Creates a new Pod</text>
+<!-- attempt-two: keep labels inset from its border. -->
+<rect id="attempt-two" x="674" y="112" width="254" height="145" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+<text x="801.0" y="145" class="heading" text-anchor="middle">Pod attempt 2</text>
+<text x="801.0" y="175" class="body" text-anchor="middle">Task succeeds</text>
+<text x="801.0" y="200" class="body" text-anchor="middle">1 successful completion</text>
+<!-- Shaft ends under the head base; the tip meets the target boundary. -->
+<path id="failure-shaft" class="connector" data-connector="true" d="M 286 185 H 345"/>
+<polygon id="failure-head" points="353,185 343,180 343,190" fill="#52677b"/>
+<!-- Shaft ends under the head base; the tip meets the target boundary. -->
+<path id="replacement-shaft" class="connector" data-connector="true" d="M 607 185 H 666"/>
+<polygon id="replacement-head" points="674,185 664,180 664,190" fill="#52677b"/>
+<text x="480" y="303" class="body" text-anchor="middle">Target reached: the Job completes and stops creating work.</text>
+<text x="480" y="338" class="body" text-anchor="middle">Retries can repeat side effects; make the task safe to repeat.</text>
+</svg>

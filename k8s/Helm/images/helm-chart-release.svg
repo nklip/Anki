@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="488" viewBox="0 0 960 488" role="img" aria-labelledby="title desc">
+  <title id="title">Helm turns a reusable chart into a named release</title>
+  <desc id="desc">Read left to right. Chart templates and configuration values enter Helm, which renders Kubernetes manifests and installs a named release, shop, in a cluster. A release is one installation of a chart. An upgrade creates a new release revision. Kubernetes controllers reconcile workloads, and kubelets run their containers.</desc>
+  <!-- Shared typography and palette match nearby Kubernetes teaching diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #52677b; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #52677b; }
+      .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }
+    </style>
+  </defs>
+  <!-- Heading introduces the package-to-installation distinction. -->
+  <rect width="960" height="488" fill="#ffffff"/>
+  <text x="32" y="43" class="title" text-anchor="start">Helm turns a reusable chart into a named release</text>
+  <text x="32" y="75" class="subtitle" text-anchor="start">One chart can be installed many times, with different names and configuration.</text>
+  <!-- Separate inputs prevent confusing a chart with a particular installation. -->
+  <rect id="chart" x="32" y="115" width="248" height="96" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="156" y="148" class="heading" text-anchor="middle">Chart</text>
+  <text x="156" y="177" class="body" text-anchor="middle">Reusable package</text>
+  <text x="156" y="199" class="small" text-anchor="middle">Contains templates</text>
+  <rect id="values" x="32" y="241" width="248" height="88" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="156" y="275" class="heading" text-anchor="middle">Values</text>
+  <text x="156" y="304" class="body" text-anchor="middle">Configuration</text>
+  <!-- Shafts stop inside the separate heads; heads remain in the input gaps. -->
+  <path id="chart-to-helm-connector" class="connector" data-connector="true" d="M280 163 L309 163 L309 195 L333 195"/>
+  <polygon id="chart-to-helm-head" points="342,195 331,189 331,201" fill="#52677b"/>
+  <path id="values-to-helm-connector" class="connector" data-connector="true" d="M280 285 L309 285 L309 255 L333 255"/>
+  <polygon id="values-to-helm-head" points="342,255 331,249 331,261" fill="#52677b"/>
+  <!-- Rendering produces manifests; Helm then installs their resources. -->
+  <rect id="helm-render" x="342" y="153" width="232" height="144" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="458" y="191" class="heading" text-anchor="middle">Helm</text>
+  <text x="458" y="226" class="body" text-anchor="middle">Renders manifests</text>
+  <text x="458" y="254" class="small" text-anchor="middle">Kubernetes resource</text>
+  <text x="458" y="277" class="small" text-anchor="middle">definitions (YAML)</text>
+  <path id="helm-install-connector" class="connector" data-connector="true" d="M574 225 L633 225"/>
+  <polygon id="helm-install-head" points="642,225 631,219 631,231" fill="#52677b"/>
+  <text x="608" y="208" class="small" text-anchor="middle">install</text>
+  <!-- Cluster panel contains the release and examples of installed resources. -->
+  <rect id="cluster" x="642" y="115" width="286" height="214" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="785" y="148" class="heading" text-anchor="middle">Kubernetes cluster</text>
+  <rect id="release" x="666" y="173" width="238" height="130" rx="10" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="785" y="207" class="heading" text-anchor="middle">Release: shop</text>
+  <text x="785" y="236" class="body" text-anchor="middle">One installation</text>
+  <text x="785" y="266" class="small" text-anchor="middle">Example resources:</text>
+  <text x="785" y="288" class="small" text-anchor="middle">Deployment + Service</text>
+  <!-- Supporting notes distinguish Helm lifecycle from workload reconciliation. -->
+  <rect id="lifecycle-note" x="32" y="363" width="896" height="86" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="480" y="397" class="body" text-anchor="middle">Upgrade: change the chart or values → create a new revision of release shop.</text>
+  <text x="480" y="427" class="body" text-anchor="middle">Kubernetes controllers reconcile workloads; kubelets run the containers.</text>
+</svg>

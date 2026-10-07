@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="484" viewBox="0 0 960 484" role="img" aria-labelledby="title desc">
+  <title id="title">RBAC: a binding gives a subject the Role's permissions</title>
+  <desc id="desc">Within namespace team-a, the ServiceAccount reporter is a subject of a RoleBinding that references the Role pod-reader. The Role allows get and list on Pods. This binding permits the account to read Pods in team-a and grants no access in team-b. Roles define allowed actions; bindings specify who receives them.</desc>
+  <!-- Reusable visual styles; green indicates the permission granted by this binding. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 27px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #52677b; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #52677b; }
+      .connector { fill: none; stroke: #52677b; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Main lesson and abbreviation expansion are visible without card prose. -->
+  <rect width="960" height="484" fill="#ffffff"/>
+  <text x="32" y="43" class="title" text-anchor="start">RBAC: a binding gives a subject the Role's permissions</text>
+  <text x="32" y="75" class="subtitle" text-anchor="start">Role-based access control connects who is asking with what they may do.</text>
+  <!-- All three objects in this example belong to the same namespace. -->
+  <rect id="team-a-objects" x="32" y="110" width="896" height="192" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="56" y="144" class="heading" text-anchor="start">Namespace: team-a</text>
+  <rect id="subject" x="56" y="165" width="220" height="111" rx="10" fill="#ffffff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="166" y="197" class="heading" text-anchor="middle">Subject</text>
+  <text x="166" y="228" class="body" text-anchor="middle">ServiceAccount</text>
+  <text x="166" y="254" class="body" text-anchor="middle">reporter</text>
+  <!-- Direction is a reading sequence: subject, binding, then referenced Role. -->
+  <path id="subject-binding-connector" class="connector" data-connector="true" d="M276 220 L333 220"/>
+  <polygon id="subject-binding-head" points="342,220 331,214 331,226" fill="#52677b"/>
+  <rect id="rolebinding" x="342" y="165" width="250" height="111" rx="10" fill="#ffffff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="467" y="197" class="heading" text-anchor="middle">RoleBinding</text>
+  <text x="467" y="228" class="body" text-anchor="middle">Who gets the permissions</text>
+  <text x="467" y="254" class="small" text-anchor="middle">Links reporter to pod-reader</text>
+  <path id="binding-role-connector" class="connector" data-connector="true" d="M592 220 L649 220"/>
+  <polygon id="binding-role-head" points="658,220 647,214 647,226" fill="#52677b"/>
+  <rect id="role" x="658" y="165" width="246" height="111" rx="10" fill="#ffffff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="781" y="197" class="heading" text-anchor="middle">Role: pod-reader</text>
+  <text x="781" y="228" class="body" text-anchor="middle">Allowed actions</text>
+  <text x="781" y="254" class="body" text-anchor="middle">get, list → Pods</text>
+  <!-- Outcomes describe only this grant; other bindings could grant more access. -->
+  <text x="32" y="342" class="heading" text-anchor="start">Permissions from this binding</text>
+  <rect id="team-a-result" x="32" y="362" width="434" height="90" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="249" y="396" class="heading" text-anchor="middle">Pods in team-a</text>
+  <text x="249" y="427" class="body" text-anchor="middle">reporter may get and list them</text>
+  <rect id="team-b-result" x="494" y="362" width="434" height="90" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="711" y="396" class="heading" text-anchor="middle">Pods in team-b</text>
+  <text x="711" y="427" class="body" text-anchor="middle">This binding grants no access here</text>
+</svg>
