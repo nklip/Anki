@@ -10,9 +10,15 @@ How does the operator pattern extend Kubernetes?
 
 **An operator combines custom resources with a controller that automates application-specific operations, without changing Kubernetes itself.** It turns operational knowledge—such as how to configure database replication, take backups, or perform upgrades—into software.
 
+## What is a CRD?
+
+A **CustomResourceDefinition (CRD)** is an object in the Kubernetes **application programming interface (API)** that registers a new resource type. It defines the type's name, API group, versions, scope (namespaced or cluster-scoped), and validation schema: the allowed structure of its objects.
+
+For example, CloudNativePG's CRD defines the PostgreSQL `Cluster` type; `shop-db` is one **custom resource (CR)** of that type. Kubernetes can store and validate that object, but a separate controller supplies its application-specific behavior.
+
 ## Three parts to distinguish
 
-The common setup uses a **CustomResourceDefinition (CRD)** to extend the Kubernetes application programming interface (**API**):
+The operator pattern connects the type definition, its instances, and the code that manages them:
 
 | Part | Responsibility | CloudNativePG example |
 | --- | --- | --- |
@@ -61,6 +67,7 @@ CNPG interprets this as one PostgreSQL primary plus two replicas, with persisten
 
 - [Kubernetes — Operator pattern and application-specific automation](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
 - [Kubernetes — Custom resources, CRDs, and custom controllers](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
+- [Kubernetes — Defining a CRD's group, versions, scope, and schema](https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/)
 - [Kubernetes — Controllers and the desired-state control loop](https://kubernetes.io/docs/concepts/architecture/controller/)
 - [CloudNativePG 1.28 — Quickstart and example custom resource](https://cloudnative-pg.io/docs/1.28/quickstart/)
 - [CloudNativePG 1.28 — Operator capabilities, replication, storage, and status](https://cloudnative-pg.io/docs/1.28/operator_capability_levels/)
