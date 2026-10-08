@@ -2,52 +2,66 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-How does a Deployment manage Pods through ReplicaSets, including during an update?
-
 # Back
 
-A **Deployment** manages a set of Pods to run an application workload, usually one that doesn't maintain state.
-
-A **Deployment** provides declarative updates for Pods and ReplicaSets.
-
-You describe a desired state in a Deployment, and the Deployment Controller changes the actual state to the desired state at a controlled rate. You can define Deployments to create new ReplicaSets, or to remove existing Deployments and adopt all their resources with new Deployments.
-
-> Note: Do not manage ReplicaSets owned by a Deployment. Consider opening an issue in the main Kubernetes repository if your use case is not covered below.
+A **Deployment** manages application Pods through **ReplicaSets**, which maintain the requested Pod counts. You declare the desired state; the Deployment controller manages updates. Avoid directly editing ReplicaSets owned by a Deployment.
 
 ## Where Deployments and ReplicaSets fit
 
-The diagram shows two applications behind **Gateway API**, which defines listeners and routing rules implemented by a compatible controller. Solid arrows trace the logical request path through its proxy or load balancer to a **Service** and the application's Pods; actual network hops depend on the implementation.
+The diagram shows two applications behind **Gateway API**, whose listeners and routes require a compatible controller. Solid arrows show the logical request path through a proxy or load balancer, a **Service**, and Pods; actual network hops depend on the implementation.
 
-Follow the dashed arrows upward from each **Deployment**: it creates and scales **ReplicaSets**; each ReplicaSet creates or removes Pods to maintain its requested count. Deployments and ReplicaSets are outside the request path. One active ReplicaSet per application is shown.
+Dashed arrows show ownership: Deployments manage ReplicaSets, which manage Pods. These controllers are outside the request path. One active ReplicaSet per application is shown.
 
 ![deployment-rollout.svg](images/deployment-rollout.svg)
 
 ## Count versus version
 
-A **Pod template** describes the containers and configuration used when creating a Pod. Changing the Deployment's template, such as its container image, triggers a rollout. Simply changing its replica count scales the workload without triggering a new template rollout.
+A **Pod template** describes new Pods' containers and configuration. Changing it, such as updating an image, triggers a rollout. Changing only the replica count scales the workload without a new template rollout.
 
-With the default `RollingUpdate` strategy, the Deployment scales up a ReplicaSet for the new template and scales down the old one. During an update, old and new ReplicaSets can coexist under the same Deployment.
+## Built-in Deployment strategies
 
-## Control the rollout
+Deployment resource has only two built-in update strategies, selected through `.spec.strategy.type`:
+1. **RollingUpdate** — gradually replaces old Pods with new ones; the default.
+2. **Recreate** — terminates all old Pods before creating the new ones during an upgrade.
 
-- `maxSurge` bounds how many extra replicas may be created during the rollout.
-- `maxUnavailable` bounds how many desired replicas may be unavailable during it.
-- A **readiness probe** tests whether a container is ready to serve. Correct readiness checks help keep unready Pods out of normal Service traffic.
+### 1. Rolling update
+
+**`RollingUpdate` is the default.** It gradually scales up the new ReplicaSet and scales down the old one. Old and new versions can coexist.
+
+- `maxSurge` allows extra replicas; terminating Pods can temporarily raise the total further.
+- `maxUnavailable` limits unavailable replicas during the update.
+- A **readiness probe** checks whether a container is ready to serve, helping keep unready Pods out of Service traffic.
+
+With three replicas, `maxSurge: 1`, and `maxUnavailable: 0`, a new Pod can become available before an old one is removed. This does not guarantee zero downtime if the application or readiness checks are faulty.
+
+### 2. Recreate
+
+**`Recreate` terminates all old Pods before creating new ones during an upgrade.** Expect a service gap. Use it when old and new versions must not overlap during that upgrade and downtime is acceptable.
+
+This ordering applies to upgrades; it is not a general guarantee against overlapping Pods after manual deletion.
+
+## Other release patterns
+
+Kubernetes supports other release patterns, including:
+1. **Blue-green** — run both versions, then switch traffic to the new version.
+2. **Canary** — send a small share of traffic to the new version, then gradually increase it.
+
+These patterns require additional workload and traffic-routing configuration. Tools such as Argo Rollouts automate them through their own resource types, rather than adding values to `Deployment.spec.strategy.type`.
+
+## Observe and roll back
 
 For an existing Deployment named `web` in the current namespace:
 
 ```bash
 kubectl rollout status deployment/web
 kubectl rollout history deployment/web
-# Explicitly restore the preceding retained Pod-template revision:
+# Restore the preceding retained Pod-template revision:
 kubectl rollout undo deployment/web
 ```
 
 ### Important limit
 
-**A failed rollout does not automatically roll back.** A progress deadline can mark it `ProgressDeadlineExceeded`; a person or additional automation must decide what to do. Rollback restores a retained Pod template, not database changes or every external configuration value. A Deployment also does not provide a stable network endpoint; that is a Service's role.
+**A failed Deployment rollout does not automatically roll back.** `ProgressDeadlineExceeded` reports stalled progress; a person or automation must act. Rollback restores a retained Pod template, not database changes or all external configuration. A Service provides the stable network endpoint.
 
 # Sources
 
@@ -56,3 +70,5 @@ kubectl rollout undo deployment/web
 - [Kubernetes — Readiness probes](https://kubernetes.io/docs/concepts/workloads/pods/probes/)
 - [Kubernetes — Gateway API resources and request flow](https://kubernetes.io/docs/concepts/services-networking/gateway/)
 - [Kubernetes — Services and their backend Pods](https://kubernetes.io/docs/concepts/services-networking/service/)
+- [Argo Rollouts — Blue-green traffic switching](https://argo-rollouts.readthedocs.io/en/stable/features/bluegreen/)
+- [Argo Rollouts — Canary steps and traffic-weighting limits](https://argo-rollouts.readthedocs.io/en/stable/features/canary/)
