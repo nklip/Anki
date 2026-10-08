@@ -24,12 +24,12 @@ The design includes two main flows:
 1. **Feed Publishing:** A user publishes a post, which is written to the database and propagated to their friends’ feeds.
 2. **News Feed Building:** A user retrieves their news feed by aggregating posts from friends in reverse chronological order.
 
-### News Feed APIs
-1. **Feed Publishing API:**
+### APIs
+1. **Feed Publishing:**
    - **Endpoint:** `POST /v1/me/feed`
    - **Params:** `content` (post text) and `auth_token` (authentication).
 
-2. **News Feed Retrieval API:**
+2. **News Feed Retrieval:**
    - **Endpoint:** `GET /v1/me/feed`
    - **Params:** `auth_token` (authentication).
 
@@ -46,7 +46,7 @@ The design includes two main flows:
 5. **Fanout Service:** Propagates the post to friends’ news feeds in the cache.
 6. **Notification Service:** Sends notifications to friends.
 
-### News Feed Building
+### News Feed Retrieval
 
    <div style="margin-left:3rem">
       <img src="./images/hld-news-feed-building.svg" alt="hld-news-feed-building.svg" width="1000">
@@ -59,7 +59,7 @@ The design includes two main flows:
 
 ## Step 3: Design Deep Dive
 
-### Feed Publishing Deep Dive
+### Feed Publishing - Deep Dive
 
 The image below, outlines the detailed design for feed publishing.
 
@@ -103,7 +103,7 @@ We adopt a hybrid approach to get benefits of both approaches and avoid pitfalls
 4. **Fanout Workers** fetch data from the message queue and store news feed data in the news feed cache. You can think of the news feed cache as a `<post_id, user_id>` mapping table. Whenever a new post is made, it will be appended to the news feed table as shown in the image above. The memory consumption can become very large if we store the entire user and post objects in the cache. Thus, only IDs are stored. To keep the memory size small, we set a configurable limit. The chance of a user scrolling through thousands of posts in news feed is slim. Most users are only interested in the latest content, so the cache miss rate is low.
 5. **Store in News Feed Cache:** Append new post IDs to the friends’ news feed cache. A configurable limit ensures that only recent posts are stored, as most users focus on the latest content, keeping cache memory consumption manageable.
 
-### News Feed Retrieval Deep Dive
+### News Feed Retrieval - Deep Dive
 
 The image below, illustrates the detailed design for news feed retrieval.
 
