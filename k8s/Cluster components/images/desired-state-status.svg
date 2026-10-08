@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="450" viewBox="0 0 1000 450" role="img" aria-labelledby="title desc">
+  <title id="title">Desired state and reported status can differ</title>
+  <desc id="desc">One Deployment object named web requests three Pods in its spec but reports two available Pods in its status. Controllers work to close the gap. Saving configuration does not mean the workload is ready.</desc>
+  <!-- Shared typography and palette match the neighboring cluster-components diagram. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #52677b; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .code { font-family: Menlo, Consolas, monospace; font-size: 20px; }
+      .small { font-size: 16px; fill: #52677b; }
+    </style>
+  </defs>
+  <!-- Lesson heading; the two panels compare fields within the same object. -->
+  <rect id="canvas" width="1000" height="450" fill="#ffffff"/>
+  <text x="32" y="43" class="title" text-anchor="start">Desired state and reported status can differ</text>
+  <text x="32" y="75" class="subtitle" text-anchor="start">An API object can contain both what is wanted and what has been observed.</text>
+  <!-- One enclosing panel makes it clear that spec and status belong to one Deployment. -->
+  <rect id="deployment-object" x="28" y="104" width="944" height="252" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="50" y="138" class="heading" text-anchor="start">Deployment web — one API object</text>
+  <!-- Requested configuration: no Pod icons, because the request does not prove Pod existence. -->
+  <rect id="desired-state-panel" x="50" y="159" width="432" height="175" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="72" y="195" class="heading" text-anchor="start">Desired state (spec)</text>
+  <text x="72" y="234" class="code" text-anchor="start">.spec.replicas: 3</text>
+  <text x="72" y="272" class="body" text-anchor="start">Requested Pod count</text>
+  <text x="72" y="307" class="small" text-anchor="start">Describes what is wanted.</text>
+  <!-- Status is an observation, not a promise that the requested count has been reached. -->
+  <rect id="reported-status-panel" x="518" y="159" width="432" height="175" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="540" y="195" class="heading" text-anchor="start">Reported status (status)</text>
+  <text x="540" y="234" class="code" text-anchor="start">.status.availableReplicas: 2</text>
+  <text x="540" y="272" class="body" text-anchor="start">Reported available Pods</text>
+  <text x="540" y="307" class="small" text-anchor="start">Reports what has been observed.</text>
+  <!-- The takeaway links the mismatch to reconciliation without implying immediate readiness. -->
+  <text x="500" y="396" class="body" text-anchor="middle">Controllers work to bring observed state toward desired state.</text>
+  <text x="500" y="427" class="small" text-anchor="middle">A saved configuration does not mean the workload is ready.</text>
+</svg>
