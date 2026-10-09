@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="680" viewBox="0 0 1000 680" role="img" aria-labelledby="title desc">
+  <title id="title">Docker images can run without Docker Engine</title>
+  <desc id="desc">Docker tooling builds and publishes an image to a registry. On a Kubernetes worker node, containerd or CRI-O pulls that image. Kubernetes coordinates Pods through kubelet, which calls the runtime through the Container Runtime Interface. The runtime runs containers inside a Pod. Docker Engine is not needed on this example node.</desc>
+  <!-- Shared visual system: blue for image delivery, purple for coordination, green for execution. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 28px; font-weight: 700; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #52677b; }
+      .image-connector { fill: none; stroke: #3976a8; stroke-width: 2.5; }
+      .control-connector { fill: none; stroke: #6554a4; stroke-width: 2.5; }
+      .runtime-connector { fill: none; stroke: #438665; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Heading states the central compatibility lesson. -->
+  <rect id="canvas" width="1000" height="680" fill="#ffffff"/>
+  <text x="32" y="43" class="title">Docker images can run without Docker Engine</text>
+  <text x="32" y="75" class="body">Build an image, coordinate Pods, and run containers: three different jobs.</text>
+  <!-- Image path: a published artifact is transferred, not an already-running container. -->
+  <rect id="image-delivery" x="28" y="104" width="944" height="158" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="50" y="135" class="heading">Build and publish</text>
+  <rect id="docker-tooling" x="50" y="154" width="250" height="80" rx="10" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="175" y="187" class="heading" text-anchor="middle">Docker tooling</text>
+  <text x="175" y="216" class="body" text-anchor="middle">Build image web:v1</text>
+  <rect id="registry" x="680" y="154" width="270" height="80" rx="10" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="815" y="187" class="heading" text-anchor="middle">Registry</text>
+  <text x="815" y="216" class="body" text-anchor="middle">Stores image web:v1</text>
+  <path id="publish-image-shaft" class="image-connector" d="M300 194 H672"/>
+  <polygon id="publish-image-head" points="680,194 669,188 669,200" fill="#3976a8"/>
+  <text x="490" y="177" class="small" text-anchor="middle">Publish image</text>
+  <!-- Worker boundary contains kubelet and runtime, but neither Docker tooling nor the registry. -->
+  <rect id="worker-node" x="352" y="310" width="620" height="306" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="374" y="343" class="heading">Worker node (one machine)</text>
+  <rect id="kubernetes-control-plane" x="28" y="367" width="280" height="88" rx="10" fill="#f3f0ff" stroke="#ad9cce" stroke-width="1.5"/>
+  <text x="168" y="401" class="heading" text-anchor="middle">Kubernetes control plane</text>
+  <text x="168" y="431" class="body" text-anchor="middle">Coordinates desired Pods</text>
+  <rect id="kubelet" x="376" y="367" width="194" height="88" rx="10" fill="#f3f0ff" stroke="#ad9cce" stroke-width="1.5"/>
+  <text x="473" y="401" class="heading" text-anchor="middle">Kubelet</text>
+  <text x="473" y="431" class="body" text-anchor="middle">Local node agent</text>
+  <rect id="container-runtime" x="680" y="367" width="268" height="88" rx="10" fill="#dcfce7" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="814" y="401" class="heading" text-anchor="middle">Container runtime</text>
+  <text x="814" y="431" class="body" text-anchor="middle">containerd or CRI-O</text>
+  <!-- Control arrows are conceptual coordination; low-level API exchanges are omitted. -->
+  <path id="pod-assignment-shaft" class="control-connector" d="M308 411 H368"/>
+  <polygon id="pod-assignment-head" points="376,411 365,405 365,417" fill="#6554a4"/>
+  <path id="cri-call-shaft" class="control-connector" d="M570 411 H672"/>
+  <polygon id="cri-call-head" points="680,411 669,405 669,417" fill="#6554a4"/>
+  <text x="625" y="394" class="small" text-anchor="middle">CRI calls</text>
+  <!-- Image arrow shows data delivered when the runtime pulls from the registry. -->
+  <path id="pull-image-shaft" class="image-connector" d="M815 234 V359"/>
+  <polygon id="pull-image-head" points="815,367 809,356 821,356" fill="#3976a8"/>
+  <text x="835" y="288" class="small">Pull image</text>
+  <!-- A Pod groups containers; the runtime handles their execution. -->
+  <rect id="pod" x="680" y="512" width="268" height="80" rx="10" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="711" y="559" class="heading">Pod</text>
+  <rect id="container" x="775" y="529" width="151" height="46" rx="7" fill="#dcfce7" stroke="#86b89a"/>
+  <text x="850.5" y="559" class="body" text-anchor="middle">Container</text>
+  <path id="run-container-shaft" class="runtime-connector" d="M815 455 V504"/>
+  <polygon id="run-container-head" points="815,512 809,501 821,501" fill="#438665"/>
+  <text x="835" y="489" class="small">Runs</text>
+  <text x="393" y="536" class="body">Docker Engine is not needed</text>
+  <text x="393" y="562" class="body">on this example node.</text>
+  <!-- Definition and scope note keep the image independently understandable. -->
+  <text x="500" y="649" class="small" text-anchor="middle">CRI = Container Runtime Interface. Arrows show image delivery or control, not application traffic.</text>
+</svg>
