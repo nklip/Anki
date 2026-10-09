@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600" role="img" aria-labelledby="title desc">
+  <title id="title">Minikube runs Kubernetes on your computer</title>
+  <desc id="desc">Minikube manages a local one-node Kubernetes cluster in a driver-provided environment. Kubectl sends requests to the API server in the control plane. The same node runs kubelet, a container runtime such as containerd, and application Pods. Driver-specific virtualization is simplified.</desc>
+  <!-- Shared typography matches the existing Kubernetes teaching diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 28px; font-weight: 700; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #52677b; }
+      .lifecycle-connector { fill: none; stroke: #3976a8; stroke-width: 2.5; }
+      .control-connector { fill: none; stroke: #6554a4; stroke-width: 2.5; }
+      .node-connector { fill: none; stroke: #52677b; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Outer boundary: all illustrated tools and cluster components are local. -->
+  <rect id="canvas" width="1000" height="600" fill="#ffffff"/>
+  <text x="32" y="43" class="title">Minikube runs Kubernetes on your computer</text>
+  <text x="32" y="75" class="body">One local node can host the control plane and run your application Pods.</text>
+  <rect id="computer" x="28" y="104" width="944" height="438" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="50" y="135" class="heading">Your computer</text>
+  <!-- Local command-line tools perform different jobs. -->
+  <rect id="minikube-tool" x="50" y="156" width="248" height="70" rx="10" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="174" y="185" class="heading" text-anchor="middle">minikube</text>
+  <text x="174" y="210" class="small" text-anchor="middle">Manages the local cluster</text>
+  <rect id="kubectl-client" x="50" y="254" width="248" height="70" rx="10" fill="#f3f0ff" stroke="#ad9cce" stroke-width="1.5"/>
+  <text x="174" y="283" class="heading" text-anchor="middle">kubectl</text>
+  <text x="174" y="308" class="small" text-anchor="middle">Manages Kubernetes resources</text>
+  <text x="50" y="388" class="body">Driver: where the node runs.</text>
+  <text x="50" y="420" class="body">Runtime: runs its containers.</text>
+  <!-- Driver-specific nesting is abstracted as one local node environment. -->
+  <rect id="local-node" x="380" y="156" width="568" height="360" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="402" y="189" class="heading">One-node Kubernetes cluster</text>
+  <text x="402" y="217" class="small">Driver provides a container or virtual machine (VM)</text>
+  <rect id="control-plane" x="406" y="241" width="516" height="75" rx="10" fill="#f3f0ff" stroke="#ad9cce" stroke-width="1.5"/>
+  <text x="664" y="272" class="heading" text-anchor="middle">Control plane</text>
+  <text x="664" y="299" class="body" text-anchor="middle">Includes the Kubernetes API server</text>
+  <!-- Lifecycle arrow targets the node boundary; API requests target the control plane. -->
+  <path id="manage-node-shaft" class="lifecycle-connector" d="M298 191 H372"/>
+  <polygon id="manage-node-head" points="380,191 369,185 369,197" fill="#3976a8"/>
+  <text x="339" y="175" class="small" text-anchor="middle">Manages</text>
+  <path id="api-request-shaft" class="control-connector" d="M298 289 H398"/>
+  <polygon id="api-request-head" points="406,289 395,283 395,295" fill="#6554a4"/>
+  <text x="339" y="272" class="small" text-anchor="middle">Requests</text>
+  <!-- Node execution components share the same node as the control plane in this example. -->
+  <rect id="kubelet" x="406" y="355" width="196" height="68" rx="10" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="504" y="384" class="heading" text-anchor="middle">Kubelet</text>
+  <text x="504" y="409" class="small" text-anchor="middle">Local node agent</text>
+  <rect id="runtime" x="676" y="355" width="246" height="68" rx="10" fill="#dcfce7" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="799" y="384" class="heading" text-anchor="middle">Container runtime</text>
+  <text x="799" y="409" class="small" text-anchor="middle">For example, containerd</text>
+  <path id="pod-coordination-shaft" class="node-connector" d="M504 316 V347"/>
+  <polygon id="pod-coordination-head" points="504,355 498,344 510,344" fill="#52677b"/>
+  <path id="cri-call-shaft" class="node-connector" d="M602 389 H668"/>
+  <polygon id="cri-call-head" points="676,389 665,383 665,395" fill="#52677b"/>
+  <text x="639" y="373" class="small" text-anchor="middle">CRI</text>
+  <rect id="application-pod" x="676" y="460" width="246" height="36" rx="8" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="799" y="484" class="body" text-anchor="middle">Pod: application containers</text>
+  <path id="run-containers-shaft" class="node-connector" d="M799 423 V452"/>
+  <polygon id="run-containers-head" points="799,460 793,449 805,449" fill="#52677b"/>
+  <!-- Definitions keep the technical abbreviations readable outside the card. -->
+  <text x="500" y="571" class="small" text-anchor="middle">API = application programming interface; CRI = Container Runtime Interface.</text>
+</svg>

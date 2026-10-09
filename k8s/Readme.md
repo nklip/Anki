@@ -21,6 +21,7 @@ Kubernetes concepts, workloads, networking, and extensions.
 - [kubectl](Kubectl/Readme.md)
 - [Kubernetes](Kubernetes/Readme.md)
 - [Kubernetes and Docker](Kubernetes%20and%20Docker/Readme.md)
+- [Minikube](Minikube/Readme.md)
 - [Namespaces](Namespaces/Readme.md)
 - [Pods](Pods/Readme.md)
 - [Role-Based Access Control (RBAC)](RBAC/Readme.md)
