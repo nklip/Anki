@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="1502" viewBox="0 0 1400 1026.7578125" role="img" aria-labelledby="title desc">
+  <title id="title">Dockerfile builds an image; Docker Compose runs an application</title>
+  <desc id="desc">Top: a Dockerfile and build context are used to build an image, which is then run as a container. Bottom: a compose.yaml file configures Docker Compose. The example database and cache services use existing images; the application service builds an image from a Dockerfile and source files. Compose creates and starts the service containers. Dockerfile and Compose perform complementary jobs. This is a redrawn, recolored adaptation with all logos and website branding removed.</desc>
+  <!-- Shared artwork is source-native. Blue identifies files, violet images, amber containers. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #1e293b; }
+      .heading { font-size: 36px; font-weight: 700; }
+      .subheading { font-size: 22px; fill: #475569; }
+      .label { font-size: 22px; font-weight: 600; }
+      .note { font-size: 19px; fill: #475569; }
+      .code { font-family: Menlo, Consolas, monospace; font-size: 20px; fill: #334155; }
+      .flow-connector { fill: none; stroke: #64748b; stroke-width: 3; stroke-linejoin: round; }
+    </style>
+    <!-- Neutral document icon replaces the source's branded or raster artwork. -->
+    <symbol id="file-icon" viewBox="0 0 112 96">
+      <path d="M20 4 H76 L94 22 V92 H20 Z" fill="#dbeafe" stroke="#3b6da5" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M76 4 V22 H94" fill="#bfdbfe" stroke="#3b6da5" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M34 39 H79 M34 54 H79 M34 69 H65" fill="none" stroke="#3b6da5" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+    <!-- Layered artifact represents an image, without a vendor logo. -->
+    <symbol id="image-icon" viewBox="0 0 112 96">
+      <path d="M8 54 L56 30 L104 54 L56 80 Z" fill="#c4b5fd" stroke="#7253a1" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M8 38 L56 14 L104 38 L56 64 Z" fill="#ddd6fe" stroke="#7253a1" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M8 22 L56 0 L104 22 L56 46 Z" fill="#ede9fe" stroke="#7253a1" stroke-width="3" stroke-linejoin="round" transform="translate(0 8)"/>
+    </symbol>
+    <!-- Container icon has a clear silhouette and no Docker branding. -->
+    <symbol id="container-icon" viewBox="0 0 112 96">
+      <path d="M10 25 L25 10 H87 L102 25" fill="#fed7aa" stroke="#ad642f" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M10 25 H102 V85 H90 L84 77 H28 L22 85 H10 Z" fill="#ffedd5" stroke="#ad642f" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M27 38 V65 M42 38 V65 M57 38 V65 M72 38 V65 M87 38 V65" fill="none" stroke="#ad642f" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+  <!-- Two panels preserve the reference's top build flow and bottom Compose fan-out. -->
+  <rect id="canvas" width="1400" height="1026.7578125" fill="#ffffff"/>
+  <rect id="dockerfile-panel" x="16" y="16" width="1368" height="380" rx="20" fill="#eff6ff" stroke="#b7cbe1" stroke-width="1.5"/>
+  <text x="48" y="70" class="heading">Dockerfile</text>
+  <text x="48" y="106" class="subheading">Describes how to build an image.</text>
+  <use href="#file-icon" x="120" y="164" width="140" height="120"/>
+  <use href="#image-icon" x="630" y="164" width="140" height="120"/>
+  <use href="#container-icon" x="1150" y="164" width="140" height="120"/>
+  <text x="190" y="319" class="label" text-anchor="middle">Dockerfile</text>
+  <text x="190" y="351" class="note" text-anchor="middle">+ build context (source files)</text>
+  <text x="700" y="319" class="label" text-anchor="middle">Image</text>
+  <text x="1220" y="319" class="label" text-anchor="middle">Container</text>
+  <!-- Shafts stop under the triangle bases; arrowheads have clearance from the icons. -->
+  <path id="top-build-shaft" class="flow-connector" d="M278 224 H600"/>
+  <polygon id="top-build-head" points="612,224 597,216 597,232" fill="#64748b"/>
+  <text x="442" y="198" class="code" text-anchor="middle">docker build</text>
+  <path id="top-run-shaft" class="flow-connector" d="M788 224 H1120"/>
+  <polygon id="top-run-head" points="1132,224 1117,216 1117,232" fill="#64748b"/>
+  <text x="960" y="198" class="code" text-anchor="middle">docker run</text>
+  <!-- Complementary roles replace the reference's misleading competitive VS badge. -->
+  <rect id="relationship-caption" x="441" y="382" width="518" height="40" rx="20" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="700" y="409" class="note" text-anchor="middle">Different jobs, used together</text>
+  <rect id="compose-panel" x="16" y="438" width="1368" height="570" rx="20" fill="#f7f3ff" stroke="#c8badd" stroke-width="1.5"/>
+  <text x="48" y="488" class="heading">Docker Compose</text>
+  <text x="48" y="524" class="subheading">Defines services and creates their containers. Example: database, cache, and app.</text>
+  <!-- The configuration file drives Compose; it can reference images or build instructions. -->
+  <use href="#file-icon" x="44" y="699" width="112" height="96"/>
+  <text x="100" y="833" class="code" text-anchor="middle">compose.yaml</text>
+  <rect id="compose-tool" x="250" y="694" width="264" height="106" rx="14" fill="#ffffff" stroke="#9475b8" stroke-width="2"/>
+  <text x="382" y="737" class="label" text-anchor="middle">Docker Compose</text>
+  <text x="382" y="773" class="code" text-anchor="middle">docker compose up</text>
+  <path id="configuration-shaft" class="flow-connector" d="M174 747 H239"/>
+  <polygon id="configuration-head" points="250,747 235,739 235,755" fill="#64748b"/>
+  <text x="264" y="855" class="note">image: use an existing image</text>
+  <text x="264" y="886" class="note">build: use a Dockerfile + files</text>
+  <text x="264" y="935" class="note">Also manages the application's</text>
+  <text x="264" y="964" class="note">networks and volumes.</text>
+  <!-- A shared branch bus routes to three service definitions, never across labels. -->
+  <path id="compose-fanout-shaft" class="flow-connector" d="M514 747 H600 M600 594 V898"/>
+  <path id="database-image-shaft" class="flow-connector" d="M600 594 H681"/>
+  <polygon id="database-image-head" points="692,594 677,586 677,602" fill="#64748b"/>
+  <text x="650" y="574" class="code" text-anchor="middle">image:</text>
+  <path id="cache-image-shaft" class="flow-connector" d="M600 747 H681"/>
+  <polygon id="cache-image-head" points="692,747 677,739 677,755" fill="#64748b"/>
+  <text x="650" y="727" class="code" text-anchor="middle">image:</text>
+  <path id="app-build-shaft" class="flow-connector" d="M600 898 H681"/>
+  <polygon id="app-build-head" points="692,898 677,890 677,906" fill="#64748b"/>
+  <text x="650" y="878" class="code" text-anchor="middle">build:</text>
+  <!-- Services one and two use existing images; each shown with one running container. -->
+  <use href="#image-icon" x="710" y="546" width="112" height="96"/>
+  <use href="#container-icon" x="1074" y="546" width="112" height="96"/>
+  <text x="766" y="673" class="label" text-anchor="middle">Database image</text>
+  <text x="1130" y="673" class="label" text-anchor="middle">Database container</text>
+  <path id="database-run-shaft" class="flow-connector" d="M840 594 H1045"/>
+  <polygon id="database-run-head" points="1056,594 1041,586 1041,602" fill="#64748b"/>
+  <text x="948" y="574" class="note" text-anchor="middle">Create and start</text>
+  <use href="#image-icon" x="710" y="699" width="112" height="96"/>
+  <use href="#container-icon" x="1074" y="699" width="112" height="96"/>
+  <text x="766" y="826" class="label" text-anchor="middle">Cache image</text>
+  <text x="1130" y="826" class="label" text-anchor="middle">Cache container</text>
+  <path id="cache-run-shaft" class="flow-connector" d="M840 747 H1045"/>
+  <polygon id="cache-run-head" points="1056,747 1041,739 1041,755" fill="#64748b"/>
+  <text x="948" y="727" class="note" text-anchor="middle">Create and start</text>
+  <!-- Service three builds its image before Compose creates its container. -->
+  <use href="#file-icon" x="710" y="850" width="112" height="96"/>
+  <use href="#image-icon" x="952" y="850" width="112" height="96"/>
+  <use href="#container-icon" x="1190" y="850" width="112" height="96"/>
+  <text x="766" y="981" class="label" text-anchor="middle">Dockerfile</text>
+  <text x="1008" y="981" class="label" text-anchor="middle">App image</text>
+  <text x="1246" y="981" class="label" text-anchor="middle">App container</text>
+  <path id="app-image-shaft" class="flow-connector" d="M840 898 H923"/>
+  <polygon id="app-image-head" points="934,898 919,890 919,906" fill="#64748b"/>
+  <text x="884" y="878" class="note" text-anchor="middle">Build</text>
+  <path id="app-run-shaft" class="flow-connector" d="M1082 898 H1161"/>
+  <polygon id="app-run-head" points="1172,898 1157,890 1157,906" fill="#64748b"/>
+  <text x="1127" y="862" class="note" text-anchor="middle">Create</text>
+  <text x="1127" y="884" class="note" text-anchor="middle">and start</text>
+</svg>

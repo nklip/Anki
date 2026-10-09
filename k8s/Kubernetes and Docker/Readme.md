@@ -2,19 +2,28 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
+**Docker provides tools to build, share, and run containers.**
 
-How do Docker, Kubernetes, and container runtimes work together?
-
-# Back
-
-**Docker provides tools to build, share, and run containers. Kubernetes orchestrates applications across machines, using a container runtime on each node. Docker Engine is not required.**
-
-An **image** is a packaged application with its dependencies and startup instructions. A **container** is an instance created from an image. A **registry** stores images for other machines to download.
+**Kubernetes is a cluster orchestration system**.
 
 ## What is Docker?
 
-Docker is a platform with several tools. You can build an image, test it locally, and publish it to a registry. **Docker Engine** runs and manages containers on a host through its background service, `dockerd`. It uses **containerd** to manage their lifecycle.
+Docker is a containerization platform that solves the **it works on my machine** problem.
+
+Definitions:
+* An **image** is a packaged application with its dependencies and startup instructions.
+* A **container** is an instance created from an image.
+* A **registry** stores images for other machines to download.
+
+It builds images, runs containers, and primarily runs them on a single host (without `Docker Swarm`). Applications are packaged with everything they need and run as lightweight, isolated containers. The focus is on running software consistently with simple primitives like images and containers. A continuous integration (CI) pipeline can build an image and push it to a registry..
+
+A Dockerfile describes an image build; Compose defines services that use existing or built images.
+
+![dockerfile-compose.svg](images/dockerfile-compose.svg)
+
+### Connection between Docker and Kubernetes
+
+**Docker Engine** runs and manages containers on a host through its background service, `dockerd`. It uses **containerd** to manage their lifecycle.
 
 **containerd can also run independently of Docker Engine**, including as a Kubernetes node's runtime.
 
@@ -53,6 +62,7 @@ Kubernetes removed **dockershim**, its built-in adapter for Docker Engine, in **
 
 # Sources
 
+- [Docker — Compose application model](https://docs.docker.com/compose/intro/compose-application-model/)
 - [Docker — Platform, Engine, images, containers, and registries](https://docs.docker.com/get-started/docker-overview/)
 - [Docker — containerd in Docker Engine](https://docs.docker.com/engine/storage/containerd/)
 - [Docker — Build and publish an image](https://docs.docker.com/get-started/docker-concepts/building-images/build-tag-and-publish-an-image/)
