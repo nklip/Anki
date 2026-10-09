@@ -9,6 +9,7 @@ Kubernetes concepts, workloads, networking, and extensions.
 - [CloudNativePG](CloudNativePG/Readme.md)
 - [Cluster components](Cluster%20components/Readme.md)
 - [ConfigMaps and Secrets](ConfigMaps%20and%20Secrets/Readme.md)
+- [Container fundamentals](Container%20fundamentals/Readme.md)
 - [CronJobs](CronJobs/Readme.md)
 - [DaemonSets](DaemonSets/Readme.md)
 - [Deployments](Deployments/Readme.md)

@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="648" viewBox="0 0 1000 648" role="img" aria-labelledby="title desc">
+  <title id="title">Containers separate dependencies, but still share a host kernel</title>
+  <desc id="desc">Two example Linux hosts are compared. On the left, applications use a shared host installation of a library. On the right, each container has its own application files and library version. A container runtime manages those environments, which share one host Linux kernel.</desc>
+  <!-- Shared typography and palette follow the neighboring Kubernetes cards. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 28px; font-weight: 700; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #52677b; }
+      .connector { fill: none; stroke: #52677b; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- One panel per example host; these are deployment alternatives, not a migration sequence. -->
+  <rect id="canvas" width="1000" height="648" fill="#ffffff"/>
+  <text x="32" y="43" class="title">Separate dependencies; shared host kernel</text>
+  <text x="32" y="75" class="body">A comparison of ordinary Linux deployments. Each panel represents one host.</text>
+  <rect id="direct-host" x="28" y="108" width="452" height="464" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="50" y="143" class="heading">Direct host deployment</text>
+  <rect id="container-host" x="520" y="108" width="452" height="464" rx="14" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="542" y="143" class="heading">Container deployment</text>
+  <!-- Left: common shared-dependency setup. Separate host environments are also possible. -->
+  <rect id="direct-app-a" x="50" y="174" width="190" height="72" rx="10" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="145" y="204" class="heading" text-anchor="middle">App A</text>
+  <text x="145" y="229" class="small" text-anchor="middle">Needs library v1</text>
+  <rect id="direct-app-b" x="266" y="174" width="192" height="72" rx="10" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="362" y="204" class="heading" text-anchor="middle">App B</text>
+  <text x="362" y="229" class="small" text-anchor="middle">Needs library v2</text>
+  <rect id="shared-dependencies" x="50" y="280" width="408" height="86" rx="10" fill="#fff7ed" stroke="#d6aa78" stroke-width="1.5"/>
+  <text x="254" y="313" class="heading" text-anchor="middle">Shared library installation</text>
+  <text x="254" y="343" class="body" text-anchor="middle">Version conflicts need handling</text>
+  <!-- Dependency arrows meet the shared installation border; no shaft protrudes through a tip. -->
+  <path id="app-a-dependency-shaft" class="connector" d="M145 246 V272"/>
+  <polygon id="app-a-dependency-head" points="145,280 139,269 151,269" fill="#52677b"/>
+  <path id="app-b-dependency-shaft" class="connector" d="M362 246 V272"/>
+  <polygon id="app-b-dependency-head" points="362,280 356,269 368,269" fill="#52677b"/>
+  <text x="254" y="405" class="small" text-anchor="middle">Applications run as host processes</text>
+  <!-- Right: image-supplied files and libraries belong to separate container environments. -->
+  <rect id="container-a" x="542" y="174" width="190" height="192" rx="10" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="637" y="203" class="heading" text-anchor="middle">Container A</text>
+  <rect id="container-a-app" x="558" y="221" width="158" height="50" rx="7" fill="#eff6ff" stroke="#93b4e9"/>
+  <text x="637" y="253" class="body" text-anchor="middle">App A</text>
+  <rect id="container-a-library" x="558" y="287" width="158" height="57" rx="7" fill="#dcfce7" stroke="#86b89a"/>
+  <text x="637" y="322" class="body" text-anchor="middle">Library v1</text>
+  <rect id="container-b" x="756" y="174" width="192" height="192" rx="10" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="852" y="203" class="heading" text-anchor="middle">Container B</text>
+  <rect id="container-b-app" x="772" y="221" width="160" height="50" rx="7" fill="#eff6ff" stroke="#93b4e9"/>
+  <text x="852" y="253" class="body" text-anchor="middle">App B</text>
+  <rect id="container-b-library" x="772" y="287" width="160" height="57" rx="7" fill="#dcfce7" stroke="#86b89a"/>
+  <text x="852" y="322" class="body" text-anchor="middle">Library v2</text>
+  <!-- The runtime manages lifecycle; this bar does not represent an extra guest operating system. -->
+  <rect id="container-runtime" x="542" y="384" width="406" height="38" rx="7" fill="#e7f0f5" stroke="#a1b8c8"/>
+  <text x="745" y="409" class="small" text-anchor="middle">Container runtime starts and stops containers</text>
+  <!-- Each host has one shared kernel. Libraries are deliberately drawn outside the kernel bars. -->
+  <rect id="direct-kernel" x="50" y="440" width="408" height="60" rx="8" fill="#e2e8f0" stroke="#94a3b8"/>
+  <text x="254" y="477" class="heading" text-anchor="middle">Host Linux kernel</text>
+  <rect id="container-kernel" x="542" y="440" width="406" height="60" rx="8" fill="#e2e8f0" stroke="#94a3b8"/>
+  <text x="745" y="477" class="heading" text-anchor="middle">One shared host Linux kernel</text>
+  <text x="254" y="542" class="body" text-anchor="middle">Physical or virtual host machine</text>
+  <text x="745" y="542" class="body" text-anchor="middle">Physical or virtual host machine</text>
+  <!-- Limits prevent interpreting the simplified dependency picture as an absolute security boundary. -->
+  <text x="500" y="605" class="body" text-anchor="middle">Container images carry application dependencies, not a separate kernel.</text>
+  <text x="500" y="633" class="small" text-anchor="middle">Host deployments can also separate dependencies; container isolation depends on configuration.</text>
+</svg>
