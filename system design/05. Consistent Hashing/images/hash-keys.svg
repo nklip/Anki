@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="952" height="574" viewBox="0 0 952 574" role="img" aria-labelledby="title desc">
+  <title id="title">Servers and keys share a consistent hash ring</title>
+  <desc id="desc">Four colored servers, s0 through s3, and four white key markers, k0 through k3, occupy positions on the same circular hash space. The left legend identifies the server colors; the right legend expands each server and key abbreviation.</desc>
+
+  <!-- Shared colors and editable type match the neighboring hash-ring diagrams. -->
+  <defs>
+    <style>
+      .server-zero { fill: #c3abce; }
+      .server-one { fill: #3bb4db; }
+      .server-two { fill: #ff66ff; }
+      .server-three { fill: #ffb470; }
+      .sans { font-family: Arial, Helvetica, sans-serif; fill: #000; }
+      .node-label { font-family: Georgia, serif; font-size: 21px; text-anchor: middle; fill: #000; }
+    </style>
+  </defs>
+  <rect width="952" height="574" fill="#fff"/>
+
+  <!-- Four physical servers retain the PNG's rounded legend swatches. -->
+  <g id="server-legend">
+    <text x="14.5" y="103.5" font-family="'Times New Roman', Times, serif" font-size="24">Servers</text>
+    <rect class="server-zero" x="11.5" y="130.8" width="81" height="81" rx="13"/>
+    <rect class="server-one" x="11.5" y="231" width="81" height="81" rx="13"/>
+    <rect class="server-two" x="11.5" y="338" width="81" height="81" rx="13"/>
+    <rect class="server-three" x="11.5" y="433.5" width="81" height="81" rx="13"/>
+    <g class="sans" font-size="19.5" text-anchor="middle">
+      <text x="52" y="178.5">server 0</text>
+      <text x="52" y="278.8">server 1</text>
+      <text x="52" y="385.5">server 2</text>
+      <text x="52" y="481">server 3</text>
+    </g>
+  </g>
+
+  <!-- The hash-space outline sits behind all server and key markers. -->
+  <circle id="hash-ring" cx="467.4" cy="297.1" r="254.9" fill="none" stroke="#666" stroke-width="4.6"/>
+
+  <!-- Colored server positions, with labels centered independently of the ring. -->
+  <g id="server-positions">
+    <circle class="server-zero" cx="647.8" cy="114.7" r="20.1"/>
+    <circle class="server-one" cx="647.8" cy="474.9" r="20.1"/>
+    <circle class="server-two" cx="278.8" cy="474.9" r="20.1"/>
+    <circle class="server-three" cx="285.2" cy="112.9" r="20.1"/>
+    <g class="node-label">
+      <text x="647.3" y="123.5">s0</text>
+      <text x="646.5" y="484">s1</text>
+      <text x="278" y="484">s2</text>
+      <text x="284.5" y="121.4">s3</text>
+    </g>
+  </g>
+
+  <!-- White key markers conceal the underlying ring; text is painted above the rims. -->
+  <g id="key-positions" fill="#fff" stroke="#000" stroke-width="4.3">
+    <circle id="key-zero" cx="419.8" cy="42.2" r="16"/>
+    <circle id="key-one" cx="707.7" cy="378.5" r="16"/>
+    <circle id="key-two" cx="403.7" cy="540.9" r="16"/>
+    <circle id="key-three" cx="212.7" cy="346.5" r="16"/>
+  </g>
+  <!-- Slightly inset key labels leave clear space between glyphs and black rims. -->
+  <g id="key-labels" font-family="Georgia, serif" font-size="18.5" text-anchor="middle" fill="#000">
+    <text x="419.8" y="48.5">k0</text>
+    <text x="707.7" y="384.8">k1</text>
+    <text x="403.7" y="547.2">k2</text>
+    <text x="212.7" y="352.8">k3</text>
+  </g>
+
+  <!-- Abbreviation legend preserves separate server and key groups. -->
+  <g id="notation" class="sans" font-size="22.5">
+    <g id="server-notation" text-anchor="end">
+      <text x="938" y="161">s0 = server 0</text>
+      <text x="938" y="186.5">s1 = server 1</text>
+      <text x="938" y="212">s2 = server 2</text>
+      <text x="938" y="237.5">s3 = server 3</text>
+    </g>
+    <g id="key-notation">
+      <text x="808" y="288">k0 = key0</text>
+      <text x="808" y="313.5">k1 = key1</text>
+      <text x="808" y="339">k2 = key2</text>
+      <text x="808" y="364.5">k3 = key3</text>
+    </g>
+  </g>
+</svg>

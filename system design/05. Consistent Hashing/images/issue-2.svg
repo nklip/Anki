@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="954" height="582" viewBox="0 0 954 582" role="img" aria-labelledby="title desc">
+  <title id="title">Uneven distribution of keys on a consistent hash ring</title>
+  <desc id="desc">Four colored servers and five hollow key markers are distributed unevenly around a hash ring. The colored server positions cluster on the upper arc, leaving unequal intervals between servers.</desc>
+
+  <!-- Shared palette and editable typography match the companion diagram. -->
+  <defs>
+    <style>
+      .server-zero { fill: #c3abce; }
+      .server-one { fill: #3bb4db; }
+      .server-two { fill: #ff66ff; }
+      .server-three { fill: #ffb470; }
+      .sans { font-family: Arial, Helvetica, sans-serif; fill: #000; }
+      .serif { font-family: 'Times New Roman', Times, serif; fill: #000; }
+    </style>
+  </defs>
+  <rect width="954" height="582" fill="#fff"/>
+
+  <!-- Physical-server color legend. -->
+  <g id="server-legend">
+    <text class="serif" x="19" y="89" font-size="25.5">Servers</text>
+    <rect class="server-zero" x="15.5" y="118.5" width="87" height="87" rx="14"/>
+    <rect class="server-one" x="15.5" y="225.5" width="87" height="87" rx="14"/>
+    <rect class="server-two" x="15.5" y="340" width="87" height="87" rx="14"/>
+    <rect class="server-three" x="15.5" y="442" width="87" height="87" rx="14"/>
+    <g class="sans" font-size="21" text-anchor="middle">
+      <text x="59" y="169.5">server 0</text>
+      <text x="59" y="276.5">server 1</text>
+      <text x="59" y="391">server 2</text>
+      <text x="59" y="493">server 3</text>
+    </g>
+  </g>
+
+  <!-- Draw the ring first so opaque node fills conceal the line beneath them. -->
+  <circle id="hash-ring" cx="503.5" cy="296.4" r="272.8" fill="none" stroke="#666" stroke-width="4.8"/>
+
+  <!-- The five key positions retain the reference's white centers and black rims. -->
+  <g id="key-positions" fill="#fff" stroke="#000" stroke-width="4.8">
+    <circle id="key-top" cx="571.3" cy="34.2" r="17.1"/>
+    <circle id="key-left" cx="230.5" cy="286.3" r="17.1"/>
+    <circle id="key-lower-left" cx="264.7" cy="432.6" r="17.1"/>
+    <circle id="key-bottom-left" cx="309" cy="485.4" r="17.1"/>
+    <circle id="key-bottom-right" cx="675" cy="511.1" r="17.1"/>
+  </g>
+
+  <!-- Four physical servers, clustered along the upper half of the hash ring. -->
+  <g id="server-positions">
+    <circle class="server-three" cx="391.5" cy="48.4" r="21.5"/>
+    <circle class="server-zero" cx="696.3" cy="101.2" r="21.5"/>
+    <circle class="server-one" cx="759.3" cy="215.5" r="21.5"/>
+    <circle class="server-two" cx="258.5" cy="172.8" r="21.5"/>
+    <g font-family="Georgia, serif" font-size="22.5" text-anchor="middle">
+      <text x="391" y="57">s3</text>
+      <text x="696.3" y="110.8">s0</text>
+      <text x="757.5" y="225.1">s1</text>
+      <text x="258.5" y="182.4">s2</text>
+    </g>
+  </g>
+
+  <!-- Server abbreviations on the right follow the original line spacing. -->
+  <g id="server-notation" class="sans" font-size="24" text-anchor="end">
+    <text x="942" y="142">s0 = server 0</text>
+    <text x="942" y="169">s1 = server 1</text>
+    <text x="942" y="196">s2 = server 2</text>
+    <text x="942" y="223">s3 = server 3</text>
+  </g>
+</svg>

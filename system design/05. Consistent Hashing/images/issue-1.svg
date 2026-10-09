@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="964" height="526" viewBox="0 0 964 526" role="img" aria-labelledby="title desc">
+  <title id="title">Unequal ring partitions after a server is removed</title>
+  <desc id="desc">Four colored servers occupy a consistent hash ring. Server s1 is crossed out. A magenta double-ended arrow follows the enlarged interval between s2 and s0 through the removed server's position.</desc>
+
+  <!-- Shared colors and type; all labels remain editable text. -->
+  <defs>
+    <style>
+      .server-zero { fill: #c3abce; }
+      .server-one { fill: #3bb4db; }
+      .server-two { fill: #ff66ff; }
+      .server-three { fill: #ffb470; }
+      .sans { font-family: Arial, Helvetica, sans-serif; fill: #000; }
+      .serif { font-family: 'Times New Roman', Times, serif; fill: #000; }
+    </style>
+  </defs>
+  <rect width="964" height="526" fill="#fff"/>
+
+  <!-- Physical servers: preserve the PNG's four rounded legend swatches. -->
+  <g id="server-legend">
+    <text class="serif" x="18" y="75" font-size="23">Servers</text>
+    <rect class="server-zero" x="15.5" y="100.5" width="77" height="77" rx="12"/>
+    <rect class="server-one" x="15.5" y="196" width="77" height="77.5" rx="12"/>
+    <rect class="server-two" x="15.5" y="297.5" width="77" height="77" rx="12"/>
+    <rect class="server-three" x="15.5" y="388.5" width="77" height="77" rx="12"/>
+    <g class="sans" font-size="18.5" text-anchor="middle">
+      <text x="54" y="146">server 0</text>
+      <text x="54" y="241.5">server 1</text>
+      <text x="54" y="343">server 2</text>
+      <text x="54" y="434">server 3</text>
+    </g>
+  </g>
+
+  <!-- Hash space; the ring stays behind every server marker. -->
+  <circle id="hash-ring" cx="449.5" cy="258.8" r="242.7" fill="none" stroke="#666" stroke-width="4.3"/>
+
+  <!-- Enlarged interval. Shafts end inside the two concave arrowheads. -->
+  <path id="enlarged-interval-arrow-shaft" data-connector="true" d="M280 454 L349 508 Q359 516 375 516 H492 Q510 516 525 509 L646 453 Q661 446 669 429 L716 330 Q723 315 719 298 L694 153 Q692 137 680 125 L650 96" fill="none" stroke="#ff66ff" stroke-width="4.3"/>
+  <path id="interval-start-arrowhead" d="M270 446.6 L296 453 L283 457 L282 470 Z" fill="#ff66ff"/>
+  <path id="interval-end-arrowhead" d="M640.6 85.5 L666 94 L653 98 L650 111 Z" fill="#ff66ff"/>
+
+  <!-- Server positions. The s1 label sits beside the crossed-out marker. -->
+  <g id="server-positions">
+    <circle class="server-zero" cx="621.5" cy="85.5" r="19.1"/>
+    <circle class="server-one" cx="621.5" cy="427.5" r="19.1"/>
+    <circle class="server-two" cx="269.8" cy="427.5" r="19.1"/>
+    <circle class="server-three" cx="276" cy="83.7" r="19.1"/>
+    <g font-family="Georgia, serif" font-size="20" text-anchor="middle">
+      <text x="620.5" y="94">s0</text>
+      <text x="269" y="436">s2</text>
+      <text x="275" y="92">s3</text>
+    </g>
+    <text class="sans" x="569.5" y="435" font-size="21.5">s1</text>
+    <path id="removed-server-cross" d="M611.5 420 L632 435 M611.5 435 L632 420" fill="none" stroke="#cd586b" stroke-width="5"/>
+  </g>
+
+  <!-- Abbreviations retain the reference's reading order and right alignment. -->
+  <g id="server-notation" class="sans" font-size="21.5">
+    <text x="819" y="122">s0 = server 0</text>
+    <text x="819" y="146">s1 = server 1</text>
+    <text x="819" y="170">s2 = server 2</text>
+    <text x="819" y="194">s3 = server 3</text>
+  </g>
+</svg>
