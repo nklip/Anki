@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="596" viewBox="0 0 1000 596" role="img" aria-labelledby="title desc">
+  <title id="title">kind: Kubernetes nodes run as containers</title>
+  <desc id="desc">In the default one-node kind cluster, Docker can host a container that acts as a Kubernetes node. kind creates this node. Inside it, the control plane manages the cluster, kubelet is the node agent, and containerd runs application containers in Pods. The outer node container and the application containers are different layers. Host virtualization and other Kubernetes components are omitted.</desc>
+  <!-- Shared palette and typography follow nearby Kubernetes cards. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 28px; font-weight: 700; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #52677b; }
+      .create-connector { fill: none; stroke: #3976a8; stroke-width: 2.5; }
+      .node-connector { fill: none; stroke: #52677b; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- The computer groups the local tool and its container-hosted cluster. -->
+  <rect id="canvas" width="1000" height="596" fill="#ffffff"/>
+  <text x="32" y="43" class="title">kind: Kubernetes nodes run as containers</text>
+  <text x="32" y="75" class="body">Default one-node cluster, shown with Docker as the provider.</text>
+  <rect id="computer" x="28" y="104" width="944" height="446" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="50" y="137" class="heading">Your computer · Docker example</text>
+  <!-- kind provisions the outer node container; it is not the runtime inside it. -->
+  <rect id="kind-tool" x="50" y="196" width="240" height="82" rx="10" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="170" y="229" class="heading" text-anchor="middle">kind</text>
+  <text x="170" y="255" class="small" text-anchor="middle">Creates the local cluster</text>
+  <text x="50" y="340" class="body">Docker hosts the node.</text>
+  <text x="50" y="372" class="body">containerd runs its apps.</text>
+  <text x="50" y="451" class="body">One node by default.</text>
+  <text x="50" y="483" class="body">More nodes via configuration.</text>
+  <!-- This single boundary is a container that behaves as a Kubernetes node. -->
+  <rect id="node-container" x="394" y="166" width="548" height="358" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="416" y="200" class="heading">Node = one container</text>
+  <text x="416" y="228" class="small">Kubernetes components run inside this node.</text>
+  <path id="create-node-shaft" class="create-connector" d="M290 237 H386"/>
+  <polygon id="create-node-head" points="394,237 383,231 383,243" fill="#3976a8"/>
+  <text x="342" y="219" class="small" text-anchor="middle">Creates</text>
+  <!-- The default node hosts both the control plane and application workloads. -->
+  <rect id="control-plane" x="416" y="254" width="504" height="65" rx="10" fill="#f3f0ff" stroke="#ad9cce" stroke-width="1.5"/>
+  <text x="668" y="281" class="heading" text-anchor="middle">Control plane</text>
+  <text x="668" y="306" class="small" text-anchor="middle">Manages the Kubernetes cluster</text>
+  <rect id="kubelet" x="416" y="365" width="210" height="65" rx="10" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="521" y="392" class="heading" text-anchor="middle">Kubelet</text>
+  <text x="521" y="417" class="small" text-anchor="middle">Node agent</text>
+  <rect id="containerd" x="710" y="365" width="210" height="65" rx="10" fill="#dcfce7" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="815" y="392" class="heading" text-anchor="middle">containerd</text>
+  <text x="815" y="417" class="small" text-anchor="middle">Container runtime</text>
+  <!-- Manual arrow shafts stop inside their triangular bases, before the visible tips. -->
+  <path id="control-to-agent-shaft" class="node-connector" d="M521 319 V357"/>
+  <polygon id="control-to-agent-head" points="521,365 515,354 527,354" fill="#52677b"/>
+  <path id="agent-to-runtime-shaft" class="node-connector" d="M626 397 H702"/>
+  <polygon id="agent-to-runtime-head" points="710,397 699,391 699,403" fill="#52677b"/>
+  <text x="668" y="380" class="small" text-anchor="middle">Uses</text>
+  <rect id="application-pod" x="710" y="469" width="210" height="36" rx="8" fill="#ffffff" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="815" y="493" class="body" text-anchor="middle">Pod: app containers</text>
+  <path id="runtime-to-apps-shaft" class="node-connector" d="M815 430 V461"/>
+  <polygon id="runtime-to-apps-head" points="815,469 809,458 821,458" fill="#52677b"/>
+  <!-- Footer makes the nested containment lesson explicit without relying on color. -->
+  <text x="500" y="578" class="small" text-anchor="middle">A node container hosts Kubernetes; Pods group the application containers it runs.</text>
+</svg>
