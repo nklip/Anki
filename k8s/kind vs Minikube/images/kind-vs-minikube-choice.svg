@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700" role="img" aria-labelledby="title desc">
+  <title id="title">kind or Minikube? Choose by workflow</title>
+  <desc id="desc">Read down the questions and stop at the first yes. Need a virtual-machine driver: choose Minikube. Otherwise, mainly creating, testing, and deleting clusters in continuous integration: prefer kind. Otherwise, want built-in addons, dashboard access, and local app-access helpers: prefer Minikube. For basic Kubernetes learning, either works; follow your team or tutorial. These are workflow recommendations, not exclusive capabilities.</desc>
+  <!-- Shared typography and semantic colors match the neighboring Kubernetes cards. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 28px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .question { font-size: 20px; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #52677b; }
+      .decision-connector { fill: none; stroke: #52677b; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- The subtitle states the priority order and stopping rule. -->
+  <rect id="canvas" width="1000" height="700" fill="#ffffff"/>
+  <text x="32" y="43" class="title">kind or Minikube? Choose by workflow</text>
+  <text x="32" y="76" class="body">Start at the top. Follow “No” downward; stop at the first “Yes”.</text>
+  <!-- Hard requirement first: a VM driver is a Minikube choice. -->
+  <rect id="vm-question" x="32" y="112" width="572" height="88" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="318" y="148" class="question" text-anchor="middle">Need a virtual machine (VM) driver</text>
+  <text x="318" y="176" class="question" text-anchor="middle">instead of container-based nodes?</text>
+  <rect id="vm-result" x="744" y="112" width="224" height="88" rx="12" fill="#f3f0ff" stroke="#ad9cce" stroke-width="1.5"/>
+  <text x="856" y="148" class="heading" text-anchor="middle">Minikube</text>
+  <text x="856" y="177" class="small" text-anchor="middle">Choose a VM driver</text>
+  <path id="vm-yes-shaft" class="decision-connector" d="M604 156 H736"/>
+  <polygon id="vm-yes-head" points="744,156 733,150 733,162" fill="#52677b"/>
+  <text x="674" y="139" class="body" text-anchor="middle">Yes</text>
+  <!-- All manual shafts end under triangle bases; tips meet only target borders. -->
+  <path id="vm-no-shaft" class="decision-connector" d="M318 200 V258"/>
+  <polygon id="vm-no-head" points="318,266 312,255 324,255" fill="#52677b"/>
+  <text x="340" y="240" class="body">No</text>
+  <!-- Test automation is a preference, so the result deliberately says prefer. -->
+  <rect id="ci-question" x="32" y="266" width="572" height="88" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="318" y="302" class="question" text-anchor="middle">Main goal: repeatable create → test → delete</text>
+  <text x="318" y="330" class="question" text-anchor="middle">in continuous integration (CI)?</text>
+  <rect id="ci-result" x="744" y="266" width="224" height="88" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="856" y="302" class="heading" text-anchor="middle">Prefer kind</text>
+  <text x="856" y="331" class="small" text-anchor="middle">Built for test workflows</text>
+  <path id="ci-yes-shaft" class="decision-connector" d="M604 310 H736"/>
+  <polygon id="ci-yes-head" points="744,310 733,304 733,316" fill="#52677b"/>
+  <text x="674" y="293" class="body" text-anchor="middle">Yes</text>
+  <path id="ci-no-shaft" class="decision-connector" d="M318 354 V412"/>
+  <polygon id="ci-no-head" points="318,420 312,409 324,409" fill="#52677b"/>
+  <text x="340" y="394" class="body">No</text>
+  <!-- Interactive conveniences form the next decision, without excluding kind for learning. -->
+  <rect id="helpers-question" x="32" y="420" width="572" height="88" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="318" y="456" class="question" text-anchor="middle">Want built-in addons, dashboard access,</text>
+  <text x="318" y="484" class="question" text-anchor="middle">and helpers for accessing local apps?</text>
+  <rect id="helpers-result" x="744" y="420" width="224" height="88" rx="12" fill="#f3f0ff" stroke="#ad9cce" stroke-width="1.5"/>
+  <text x="856" y="456" class="heading" text-anchor="middle">Prefer Minikube</text>
+  <text x="856" y="485" class="small" text-anchor="middle">Convenient local tools</text>
+  <path id="helpers-yes-shaft" class="decision-connector" d="M604 464 H736"/>
+  <polygon id="helpers-yes-head" points="744,464 733,458 733,470" fill="#52677b"/>
+  <text x="674" y="447" class="body" text-anchor="middle">Yes</text>
+  <path id="helpers-no-shaft" class="decision-connector" d="M318 508 V566"/>
+  <polygon id="helpers-no-head" points="318,574 312,563 324,563" fill="#52677b"/>
+  <text x="340" y="548" class="body">No</text>
+  <!-- Fallback follows the same reading column rather than implying a fourth prerequisite. -->
+  <rect id="either-result" x="32" y="574" width="572" height="70" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="318" y="603" class="heading" text-anchor="middle">Either works for the basics</text>
+  <text x="318" y="630" class="small" text-anchor="middle">Use the tool your team or tutorial already uses.</text>
+  <!-- This short definition keeps the decision guide understandable by itself. -->
+  <text x="744" y="597" class="small">Addons = optional</text>
+  <text x="744" y="622" class="small">cluster components.</text>
+  <text x="32" y="682" class="small">Both support multiple nodes. These recommendations describe typical workflows.</text>
+</svg>

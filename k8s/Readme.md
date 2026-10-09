@@ -19,6 +19,7 @@ Kubernetes concepts, workloads, networking, and extensions.
 - [Ingress](Ingress/Readme.md)
 - [Jobs](Jobs/Readme.md)
 - [kind](kind/Readme.md)
+- [kind vs Minikube](kind%20vs%20Minikube/Readme.md)
 - [kubectl](Kubectl/Readme.md)
 - [Kubernetes](Kubernetes/Readme.md)
 - [Kubernetes and Docker](Kubernetes%20and%20Docker/Readme.md)
