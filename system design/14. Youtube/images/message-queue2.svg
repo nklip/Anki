@@ -1,22 +1,75 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="326" viewBox="0 0 960 326" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1136.667" height="366.667" viewBox="0 0 620 200" role="img" aria-labelledby="title desc">
   <title id="title">Encoded-video delivery queue</title>
-  <desc id="desc">An upload module sends work through a message queue to encoded storage, which uploads encoded videos to the CDN.</desc>
-  <!-- Reusable infrastructure symbols. -->
+  <desc id="desc">Incoming encoded videos reach an upload module. The module passes work through a message queue to encoded storage, which uploads encoded videos to a content delivery network.</desc>
+  <!-- Retain the original layout coordinates; the viewport enlarges all artwork by 11/6
+       so 12-unit labels render at 22 px, matching message-queue1.svg's native scale. -->
   <defs>
-    <marker id="arrow" markerWidth="11" markerHeight="11" viewBox="0 0 11 11" refX="10" refY="5.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L11 5.5L0 11Z" fill="#2e7ca8"/></marker>
-    <symbol id="queue" viewBox="0 0 200 65"><path d="M3 3H181L197 32.5L181 62H3Z" fill="#fff" stroke="#3183b5" stroke-width="5" stroke-linejoin="round"/><g fill="none" stroke="#3183b5" stroke-width="5"><rect x="13" y="14" width="48" height="35"/><path d="M14 15L37 35L60 15"/><rect x="69" y="14" width="48" height="35"/><path d="M70 15L93 35L116 15"/><rect x="125" y="14" width="48" height="35"/><path d="M126 15L149 35L172 15"/></g></symbol>
-    <symbol id="servers" viewBox="0 0 130 90"><rect x="33" y="3" width="34" height="19" rx="2" fill="#d87300"/><rect x="72" y="3" width="34" height="19" rx="2" fill="#d87300"/><g fill="#d87300"><rect x="6" y="23" width="38" height="62"/><rect x="46" y="23" width="38" height="62"/><rect x="86" y="23" width="38" height="62"/></g><path d="M12 34H38M12 71H38M52 34H78M52 71H78M92 34H118M92 71H118M39 11H61M78 11H100" fill="none" stroke="#fff" stroke-width="3"/></symbol>
-    <symbol id="bucket" viewBox="0 0 120 95"><path d="M25 19Q60 5 95 19L88 74Q60 91 32 74Z" fill="#fff" stroke="#2f8a24" stroke-width="4"/><ellipse cx="60" cy="19" rx="35" ry="12" fill="#fff" stroke="#2f8a24" stroke-width="4"/><path d="M42 40L33 57H51ZM60 45A8 8 0 1 0 60 61A8 8 0 1 0 60 45ZM44 63V78H58V63ZM73 35L99 48M78 30L92 44" fill="none" stroke="#2f8a24" stroke-width="3" stroke-linejoin="round"/></symbol>
-    <symbol id="cdn" viewBox="0 0 160 110"><path d="M31 92C12 92 3 79 5 65C6 52 16 44 29 43C31 27 44 18 59 21C68 6 85 5 96 15C107 6 124 12 128 27C143 27 155 39 155 55C155 76 140 92 121 92Z" fill="#75d6ef"/><path d="M79 15L62 54H83L70 91L109 45H90L103 15Z" fill="#fff"/></symbol>
-    <style>.flow{fill:none;stroke:#2e7ca8;stroke-width:1.8;marker-end:url(#arrow)}.group{fill:#fff;stroke:#42bbd2;stroke-width:3.5;stroke-dasharray:11 8}.t{font:22px Arial,Helvetica,sans-serif;fill:#111;text-anchor:middle}</style>
+    <!-- Four equal symmetric heads project 1.5 units beyond their shaft endpoints.
+         The endpoints compensate for that projection and the target's border thickness. -->
+    <marker id="arrow" markerWidth="8" markerHeight="8" viewBox="0 0 8 8" refX="6.5" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0L8 4L0 8Z" fill="#2e6d9f"/>
+    </marker>
+    <symbol id="queue" viewBox="0 0 110 36">
+      <g fill="#fff" stroke="#2e78ac" stroke-width="2.2" stroke-linejoin="round">
+        <path d="M2 2H98L107 18L98 34H2Z"/>
+        <rect x="7" y="8" width="25" height="19"/>
+        <rect x="38" y="8" width="25" height="19"/>
+        <rect x="69" y="8" width="25" height="19"/>
+        <path d="M7 8L19.5 20L32 8M38 8L50.5 20L63 8M69 8L81.5 20L94 8" fill="none"/>
+      </g>
+    </symbol>
+    <symbol id="server-racks" viewBox="0 0 78 56">
+      <g fill="currentColor">
+        <rect x="14" y="1" width="24" height="13" rx="1"/>
+        <rect x="40" y="1" width="24" height="13" rx="1"/>
+        <rect x="1" y="16" width="24" height="38" rx="1"/>
+        <rect x="27" y="16" width="24" height="38" rx="1"/>
+        <rect x="53" y="16" width="24" height="38" rx="1"/>
+      </g>
+      <path d="M18 6H34M44 6H60M5 22H21M31 22H47M57 22H73M5 44H21M5 49H21M31 44H47M31 49H47M57 44H73M57 49H73" fill="none" stroke="#fff" stroke-width="1.5"/>
+    </symbol>
+    <symbol id="storage-bucket" viewBox="0 0 56 58">
+      <g fill="#fff" stroke="#287316" stroke-width="2" stroke-linejoin="round">
+        <path d="M3 9L8.5 48Q26 56 44 48L50 9Z"/>
+        <ellipse cx="26.5" cy="9" rx="23.5" ry="7.5"/>
+        <path d="M12 32L17 22L23 32Z"/>
+        <rect x="15" y="38" width="9" height="9"/>
+        <circle cx="35" cy="37" r="5.5"/>
+        <path d="M26 22Q45 31 52 31Q56 30 46 25" fill="none"/>
+        <circle cx="25" cy="21" r="1.7"/>
+      </g>
+    </symbol>
+    <symbol id="cdn-cloud" viewBox="0 0 90 58">
+      <path d="M16 55C5 55 0 48 1 39C2 30 8 23 16 22C9 5 29 0 39 10C43 4 48 1 53 1C70 -1 78 12 77 23C88 26 94 40 87 49C83 56 76 55 69 55Z" fill="#7eddfd"/>
+      <path d="M53 0L43 29H55L44 48L73 14H62L70 0Z" fill="#fff"/>
+    </symbol>
+    <style>
+      .group,.box{fill:#fff;stroke:#35b2d7;stroke-width:1.6}
+      .group{stroke-dasharray:5 5}
+      .flow{fill:none;stroke:#2e6d9f;stroke-width:1;marker-end:url(#arrow)}
+      .label,.caption{font-family:Arial,Helvetica,sans-serif;font-size:12px;fill:#171717;text-anchor:middle}
+      .queue-label{font-family:Arial,Helvetica,sans-serif;font-size:11px;fill:#171717;text-anchor:middle}
+    </style>
   </defs>
-  <rect width="960" height="326" fill="#fff"/>
-  <!-- Upload module, queue, and encoded storage. -->
-  <rect class="group" x="4" y="151" width="165" height="162" rx="25"/><use href="#servers" x="21" y="164" width="130" height="90"/><text class="t" x="86" y="275">Upload</text><text class="t" x="86" y="300">module</text>
-  <use href="#queue" x="214" y="0" width="197" height="64"/><text class="t" x="312" y="85">Message queue</text>
-  <rect x="393" y="144" width="178" height="167" rx="25" fill="#fff" stroke="#42bbd2" stroke-width="3.5"/><use href="#bucket" x="422" y="151" width="120" height="95"/><text class="t" x="482" y="267">Encoded</text><text class="t" x="482" y="292">storage</text>
-  <!-- Queue path and final CDN upload. -->
-  <path class="flow" d="M86 151V20H214"/><path class="flow" d="M296 96V220H393"/>
-  <path class="flow" d="M571 230H792"/><text class="t" x="683" y="189">upload</text><text class="t" x="683" y="214">encoded videos</text>
-  <rect class="group" x="792" y="166" width="153" height="129" rx="22"/><use href="#cdn" x="803" y="174" width="132" height="91"/><text class="t" x="868" y="286">CDN</text>
+  <rect width="620" height="200" fill="#fff"/>
+  <!-- Upload workers, message queue, encoded storage, and CDN retain the PNG layout. -->
+  <rect id="upload-module" class="group" x="82.3" y="101.5" width="89" height="89" rx="13.5"/>
+  <use href="#server-racks" x="93.8" y="106.8" width="62.2" height="44.65" style="color:#cc6502"/>
+  <use id="message-queue" href="#queue" x="197.5" y="11.5" width="110" height="36"/>
+  <rect id="encoded-storage" class="box" x="296" y="97.5" width="98.2" height="90.8" rx="13"/>
+  <use href="#storage-bucket" x="321.8" y="103.7" width="44.8" height="46.4"/>
+  <rect id="cdn" class="group" x="517.8" y="109" width="83.2" height="70.5" rx="11"/>
+  <use href="#cdn-cloud" x="522.5" y="117.2" width="72" height="46.4"/>
+  <!-- The left input is part of the reference; all turns stay orthogonal. -->
+  <path id="incoming-upload-flow" class="flow" d="M19.8 61.5V138.2H80"/>
+  <path id="upload-to-queue-flow" class="flow" d="M126.8 100.7V28H196.9"/>
+  <!-- Start below the queue caption so the shaft cannot cross its descenders. -->
+  <path id="queue-to-storage-flow" class="flow" d="M242.5 70V138.2H293.7"/>
+  <path id="storage-to-cdn-flow" class="flow" d="M395 144H515.5"/>
+  <!-- Editable labels; transfer text has visible clearance above the arrow. -->
+  <text class="label" x="124.5" y="167.5">Upload<tspan x="124.5" dy="14.5">module</tspan></text>
+  <text class="queue-label" x="247" y="63">Message queue</text>
+  <text class="label" x="345" y="164.5">Encoded<tspan x="345" dy="14.5">storage</tspan></text>
+  <text class="label" x="559" y="175">CDN</text>
+  <text class="caption" x="454" y="124">upload<tspan x="454" dy="14">encoded videos</tspan></text>
 </svg>

@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1384.533" height="486.933" viewBox="0 0 944 332" role="img" aria-labelledby="title desc">
+  <title id="title">Parallel video download, encoding, and upload modules</title>
+  <desc id="desc">Original storage sends segmented videos through download and encoding modules. The encoded videos continue on the lower row through an upload module to encoded storage and a content delivery network.</desc>
+  <!-- Retain the original layout coordinates; the viewport enlarges all artwork by 22/15
+       so 15-unit labels render at 22 px, matching message-queue1.svg's native scale. -->
+  <defs>
+    <!-- All six heads are symmetric and equally sized. Their tips project 1.5 units
+         beyond the shafts; the endpoints account for the destination's outer stroke. -->
+    <marker id="flow-arrow" markerWidth="9" markerHeight="9" viewBox="0 0 9 9" refX="7.5" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0L9 4.5L0 9Z" fill="#2e6d9f"/>
+    </marker>
+    <symbol id="server-racks" viewBox="0 0 78 56">
+      <g fill="currentColor">
+        <rect x="14" y="1" width="24" height="13" rx="1"/>
+        <rect x="40" y="1" width="24" height="13" rx="1"/>
+        <rect x="1" y="16" width="24" height="38" rx="1"/>
+        <rect x="27" y="16" width="24" height="38" rx="1"/>
+        <rect x="53" y="16" width="24" height="38" rx="1"/>
+      </g>
+      <path d="M18 6H34M44 6H60M5 22H21M31 22H47M57 22H73M5 44H21M5 49H21M31 44H47M31 49H47M57 44H73M57 49H73" fill="none" stroke="#fff" stroke-width="1.5"/>
+    </symbol>
+    <symbol id="storage-bucket" viewBox="0 0 56 58">
+      <g fill="#fff" stroke="#287316" stroke-width="2" stroke-linejoin="round">
+        <path d="M3 9L8.5 48Q26 56 44 48L50 9Z"/>
+        <ellipse cx="26.5" cy="9" rx="23.5" ry="7.5"/>
+        <path d="M12 32L17 22L23 32Z"/>
+        <rect x="15" y="38" width="9" height="9"/>
+        <circle cx="35" cy="37" r="5.5"/>
+        <path d="M26 22Q45 31 52 31Q56 30 46 25" fill="none"/>
+        <circle cx="25" cy="21" r="1.7"/>
+      </g>
+    </symbol>
+    <symbol id="cdn-cloud" viewBox="0 0 90 58">
+      <path d="M16 55C5 55 0 48 1 39C2 30 8 23 16 22C9 5 29 0 39 10C43 4 48 1 53 1C70 -1 78 12 77 23C88 26 94 40 87 49C83 56 76 55 69 55Z" fill="#7eddfd"/>
+      <path d="M53 0L43 29H55L44 48L73 14H62L70 0Z" fill="#fff"/>
+    </symbol>
+    <style>
+      .box,.group{fill:#fff;stroke:#35b2d7;stroke-width:2}
+      .group{stroke-dasharray:6.5 6.5}
+      .flow{fill:none;stroke:#2e6d9f;stroke-width:1.1;marker-end:url(#flow-arrow)}
+      .label,.caption{font:15px Arial,Helvetica,sans-serif;fill:#171717;text-anchor:middle}
+    </style>
+  </defs>
+  <rect width="944" height="332" fill="#fff"/>
+  <!-- Upper row: original storage, parallel download workers, and encoding workers. -->
+  <rect id="original-storage" class="box" x="135.5" y="21" width="120" height="111.5" rx="17"/>
+  <use href="#storage-bucket" x="167.5" y="31.5" width="56" height="58"/>
+  <rect id="download-module" class="group" x="404.5" y="21.5" width="109.5" height="110" rx="17"/>
+  <use href="#server-racks" x="418.5" y="28.5" width="78" height="56" style="color:#7fba42"/>
+  <rect id="encoding-module" class="group" x="672.5" y="21" width="109" height="109.5" rx="17"/>
+  <use href="#server-racks" x="686" y="27.5" width="78" height="56" style="color:#7ea6e1"/>
+  <path id="download-flow" class="flow" d="M256.5 76.5H402"/>
+  <path id="encoding-flow" class="flow" d="M515 74.5H670"/>
+  <path id="encoded-output-flow" class="flow" d="M782.5 74.5H929"/>
+  <!-- Lower row continues the encoded-video hand-off shown at the upper right. -->
+  <rect id="upload-module" class="group" x="144.5" y="213" width="109" height="109" rx="17"/>
+  <use href="#server-racks" x="157.5" y="219.5" width="78" height="56" style="color:#cc6502"/>
+  <rect id="encoded-storage" class="box" x="406.5" y="208" width="120.5" height="111" rx="17"/>
+  <use href="#storage-bucket" x="438.5" y="215.5" width="56" height="58"/>
+  <rect id="cdn" class="group" x="679" y="222" width="102.5" height="87" rx="15"/>
+  <use href="#cdn-cloud" x="684.5" y="230" width="90" height="58"/>
+  <path id="upload-input-flow" class="flow" d="M14 261.5H142"/>
+  <path id="storage-upload-flow" class="flow" d="M257 264.5H404"/>
+  <path id="cdn-upload-flow" class="flow" d="M528 265H676.5"/>
+  <!-- Node labels and transfer captions stay clear of shafts and arrowheads. -->
+  <text class="label" x="195.5" y="114">Original storage</text>
+  <text class="label" x="455.5" y="104">Download<tspan x="455.5" dy="18">module</tspan></text>
+  <text class="label" x="725.5" y="102.5">Encoding<tspan x="725.5" dy="18">module</tspan></text>
+  <text class="label" x="197" y="295">Upload<tspan x="197" dy="18">module</tspan></text>
+  <text class="label" x="466.5" y="291">Encoded<tspan x="466.5" dy="18">storage</tspan></text>
+  <text class="label" x="730" y="304">CDN</text>
+  <text class="caption" x="330" y="52.5">download original<tspan x="330" dy="17">segmented videos</tspan></text>
+  <text class="caption" x="591.5" y="50.5">original<tspan x="591.5" dy="17">segmented videos</tspan></text>
+  <text class="caption" x="859.5" y="68.5">encoded videos</text>
+  <text class="caption" x="72.5" y="255">encoded videos</text>
+  <text class="caption" x="330" y="241.5">upload<tspan x="330" dy="17">encoded videos</tspan></text>
+  <text class="caption" x="601" y="241.5">upload<tspan x="601" dy="17">encoded videos</tspan></text>
+</svg>
