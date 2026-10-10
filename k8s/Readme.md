@@ -23,6 +23,7 @@ Kubernetes concepts, workloads, networking, and extensions.
 - [kubectl](Kubectl/Readme.md)
 - [Kubernetes](Kubernetes/Readme.md)
 - [Kubernetes and Docker](Kubernetes%20and%20Docker/Readme.md)
+- [Labels and Selectors](Labels%20and%20Selectors/Readme.md)
 - [Minikube](Minikube/Readme.md)
 - [Namespaces](Namespaces/Readme.md)
 - [Pods](Pods/Readme.md)

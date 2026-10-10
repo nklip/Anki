@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="516" viewBox="0 0 960 516" role="img" aria-labelledby="title desc">
+  <title id="title">Labels describe objects; selectors match a group</title>
+  <desc id="desc">A label selector requires app equals web and environment equals prod. Four Pods in namespace demo are checked. Pods web-a and web-b match both conditions. Pod web-dev has environment dev, and Pod api-prod has app api, so neither matches. Arrows mean check the labels, not network traffic.</desc>
+  <!-- Shared typography and colors follow the neighboring Kubernetes diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #52677b; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #52677b; }
+      .code { font-family: Menlo, Consolas, monospace; font-size: 17px; }
+      .query { font-family: Menlo, Consolas, monospace; font-size: 22px; }
+      .match { font-size: 19px; font-weight: 700; fill: #246744; }
+      .miss { font-size: 19px; font-weight: 700; fill: #8f461e; }
+      .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }
+    </style>
+  </defs>
+  <!-- The title states the lesson; the subtitle defines the objects being checked. -->
+  <rect width="960" height="516" fill="#ffffff"/>
+  <text x="32" y="44" class="title" text-anchor="start">Labels describe objects; selectors match a group</text>
+  <text x="32" y="76" class="subtitle" text-anchor="start">All four Pods are in namespace demo. A Pod groups application containers.</text>
+
+  <!-- Rule panel: the comma is explicitly explained as a requirement to match both. -->
+  <rect id="selector-rule" x="32" y="104" width="896" height="92" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="480" y="136" class="heading" text-anchor="middle">Selector: both conditions must match</text>
+  <text x="480" y="175" class="query" text-anchor="middle">app=web,environment=prod</text>
+
+  <!-- Shared evaluation bus stays entirely in the corridor above the Pod cards. -->
+  <path id="evaluation-bus" class="connector" data-connector="true" d="M480 196 V224 M136 224 H824"/>
+  <!-- Shafts end beneath their triangular bases; tips meet the Pod boundaries. -->
+  <path id="check-web-a-shaft" class="connector" data-connector="true" d="M136 224 V254"/>
+  <polygon id="check-web-a-head" points="136,262 130,252 142,252" fill="#52677b"/>
+  <path id="check-web-b-shaft" class="connector" data-connector="true" d="M365 224 V254"/>
+  <polygon id="check-web-b-head" points="365,262 359,252 371,252" fill="#52677b"/>
+  <path id="check-web-dev-shaft" class="connector" data-connector="true" d="M595 224 V254"/>
+  <polygon id="check-web-dev-head" points="595,262 589,252 601,252" fill="#52677b"/>
+  <path id="check-api-prod-shaft" class="connector" data-connector="true" d="M824 224 V254"/>
+  <polygon id="check-api-prod-head" points="824,262 818,252 830,252" fill="#52677b"/>
+
+  <!-- Two matching objects demonstrate that labels do not identify a unique Pod. -->
+  <rect id="pod-web-a" x="32" y="262" width="208" height="168" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="136" y="296" class="heading" text-anchor="middle">Pod web-a</text>
+  <text x="136" y="331" class="code" text-anchor="middle">app=web</text>
+  <text x="136" y="360" class="code" text-anchor="middle">environment=prod</text>
+  <text x="136" y="405" class="match" text-anchor="middle">MATCH</text>
+  <rect id="pod-web-b" x="261" y="262" width="208" height="168" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="365" y="296" class="heading" text-anchor="middle">Pod web-b</text>
+  <text x="365" y="331" class="code" text-anchor="middle">app=web</text>
+  <text x="365" y="360" class="code" text-anchor="middle">environment=prod</text>
+  <text x="365" y="405" class="match" text-anchor="middle">MATCH</text>
+
+  <!-- Nonmatches each fail one different condition; labels carry the explanation. -->
+  <rect id="pod-web-dev" x="491" y="262" width="208" height="168" rx="12" fill="#fff7ed" stroke="#e4b78a" stroke-width="1.5"/>
+  <text x="595" y="296" class="heading" text-anchor="middle">Pod web-dev</text>
+  <text x="595" y="331" class="code" text-anchor="middle">app=web</text>
+  <text x="595" y="360" class="code" text-anchor="middle">environment=dev</text>
+  <text x="595" y="405" class="miss" text-anchor="middle">NO MATCH</text>
+  <rect id="pod-api-prod" x="720" y="262" width="208" height="168" rx="12" fill="#fff7ed" stroke="#e4b78a" stroke-width="1.5"/>
+  <text x="824" y="296" class="heading" text-anchor="middle">Pod api-prod</text>
+  <text x="824" y="331" class="code" text-anchor="middle">app=api</text>
+  <text x="824" y="360" class="code" text-anchor="middle">environment=prod</text>
+  <text x="824" y="405" class="miss" text-anchor="middle">NO MATCH</text>
+
+  <!-- Visible captions explain both the result and the meaning of the arrows. -->
+  <text x="480" y="468" class="body" text-anchor="middle">Result: web-a and web-b match both requirements.</text>
+  <text x="480" y="496" class="small" text-anchor="middle">Arrows mean “check labels”. The selector does not add or change labels.</text>
+</svg>
