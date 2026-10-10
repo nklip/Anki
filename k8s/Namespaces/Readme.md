@@ -28,7 +28,7 @@ In the diagram, the two `web` Deployments are distinct objects. The cluster's no
 | Requirement | Mechanism |
 | --- | --- |
 | Limit who can read or change objects | Role-based access control (**RBAC**) |
-| Bound aggregate resource consumption | `ResourceQuota` |
+| Cap resource requests, limits, and object counts within a namespace | `ResourceQuota` |
 | Restrict traffic to or from Pods | `NetworkPolicy`, enforced by a compatible network implementation |
 
 ### Important limits
