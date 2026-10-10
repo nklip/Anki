@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="480" viewBox="0 0 960 480" role="img" aria-labelledby="title desc">
+  <title id="title">VPA changes resource requests while the replica count stays the same</title>
+  <desc id="desc">Read left to right. Two Pods each have one application container requesting 100 millicpu and 128 mebibytes. After usage-based VPA recommendations are applied, each requests 250 millicpu and 256 mebibytes. There are still two Pods. Applying changes can replace Pods.</desc>
+  <!-- Shared typography and palette match the neighboring HPA card. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #52677b; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #52677b; }
+      .connector { fill: none; stroke: #52677b; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Canvas and explicit lesson; every Pod in this example has one container. -->
+  <rect width="960" height="480" fill="#ffffff"/>
+  <text x="32" y="44" class="title" text-anchor="start">VPA changes resource requests</text>
+  <text x="32" y="76" class="subtitle" text-anchor="start">Vertical Pod Autoscaler: an example with one application container per Pod.</text>
+
+  <!-- Before: two separate Pod boxes make the unchanged replica count visible. -->
+  <rect id="before-panel" x="32" y="110" width="272" height="250" rx="12" fill="#f8fafc" stroke="#b5c3d1" stroke-width="1.5"/>
+  <text x="168" y="142" class="heading" text-anchor="middle">Before: 2 Pods</text>
+  <rect id="before-pod-one" x="48" y="160" width="240" height="82" rx="9" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="168" y="190" class="body" text-anchor="middle">Pod</text>
+  <text x="168" y="220" class="small" text-anchor="middle">CPU 100m · memory 128Mi</text>
+  <rect id="before-pod-two" x="48" y="256" width="240" height="82" rx="9" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="168" y="286" class="body" text-anchor="middle">Pod</text>
+  <text x="168" y="316" class="small" text-anchor="middle">CPU 100m · memory 128Mi</text>
+
+  <!-- Decision stage: recommendations come from usage history, not a fixed multiplier. -->
+  <rect id="vpa-recommendation" x="344" y="170" width="272" height="130" rx="12" fill="#fff7ed" stroke="#e4b78a" stroke-width="1.5"/>
+  <text x="480" y="202" class="heading" text-anchor="middle">VPA</text>
+  <text x="480" y="237" class="body" text-anchor="middle">Observe usage over time</text>
+  <text x="480" y="271" class="body" text-anchor="middle">Recommend new requests</text>
+
+  <!-- After: equal box count and size avoid suggesting extra replicas or a new node. -->
+  <rect id="after-panel" x="656" y="110" width="272" height="250" rx="12" fill="#f8fafc" stroke="#b5c3d1" stroke-width="1.5"/>
+  <text x="792" y="142" class="heading" text-anchor="middle">After applying: 2 Pods</text>
+  <rect id="after-pod-one" x="672" y="160" width="240" height="82" rx="9" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="792" y="190" class="body" text-anchor="middle">Pod</text>
+  <text x="792" y="220" class="small" text-anchor="middle">CPU 250m · memory 256Mi</text>
+  <rect id="after-pod-two" x="672" y="256" width="240" height="82" rx="9" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="792" y="286" class="body" text-anchor="middle">Pod</text>
+  <text x="792" y="316" class="small" text-anchor="middle">CPU 250m · memory 256Mi</text>
+
+  <!-- Arrow shafts stop under their triangular bases; tips meet panel boundaries. -->
+  <path id="observe-shaft" class="connector" data-connector="true" d="M304 235 H336"/>
+  <polygon id="observe-head" points="344,235 334,241 334,229" fill="#52677b"/>
+  <path id="apply-shaft" class="connector" data-connector="true" d="M616 235 H648"/>
+  <polygon id="apply-head" points="656,235 646,241 646,229" fill="#52677b"/>
+
+  <!-- Captions define the comparison, units, and replacement caveat within the canvas. -->
+  <text x="480" y="398" class="body" text-anchor="middle">The Horizontal Pod Autoscaler (HPA) changes replica count instead.</text>
+  <text x="480" y="429" class="small" text-anchor="middle">CPU = processor capacity; 100m = 0.1 CPU; Mi = mebibytes (2²⁰ bytes).</text>
+  <text x="480" y="458" class="small" text-anchor="middle">Illustrative recommendations. Applying changes can replace Pods.</text>
+</svg>

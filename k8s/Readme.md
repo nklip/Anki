@@ -30,3 +30,4 @@ Kubernetes concepts, workloads, networking, and extensions.
 - [ReplicaSets](ReplicaSets/Readme.md)
 - [Services](Services/Readme.md)
 - [StatefulSets](StatefulSets/Readme.md)
+- [VPA](VPA/Readme.md)
