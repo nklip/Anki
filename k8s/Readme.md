@@ -18,6 +18,7 @@ Kubernetes concepts, workloads, networking, and extensions.
 - [Horizontal Pod Autoscaling](Horizontal%20Pod%20Autoscaling/Readme.md)
 - [Ingress](Ingress/Readme.md)
 - [Jobs](Jobs/Readme.md)
+- [Karpenter](Karpenter/Readme.md)
 - [kind](kind/Readme.md)
 - [kind vs Minikube](kind%20vs%20Minikube/Readme.md)
 - [kubectl](Kubectl/Readme.md)
