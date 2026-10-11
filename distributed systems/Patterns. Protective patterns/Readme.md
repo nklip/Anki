@@ -2,30 +2,28 @@
 
 <sub>[Back to Distributed Systems](../Readme.md#content)</sub>
 
-1. [Introduction: why protective patterns are needed](#1-introduction-why-protective-patterns-are-needed)
-2. [Rate Limiter: limiting throughput](#2-rate-limiter-limiting-throughput)
-3. [Bulkhead: isolating resources](#3-bulkhead-isolating-resources)
-4. [Timeout: limiting waiting time](#4-timeout-limiting-waiting-time)
-5. [Fallback: providing an alternative response](#5-fallback-providing-an-alternative-response)
-6. [Circuit Breaker: breaking the call chain](#6-circuit-breaker-breaking-the-call-chain)
-7. [Java libraries](#7-java-libraries)
+1. [Rate Limiter: limiting throughput](#1-rate-limiter-limiting-throughput)
+2. [Bulkhead: isolating resources](#2-bulkhead-isolating-resources)
+3. [Timeout: limiting waiting time](#3-timeout-limiting-waiting-time)
+4. [Fallback: providing an alternative response](#4-fallback-providing-an-alternative-response)
+5. [Circuit Breaker: breaking the call chain](#5-circuit-breaker-breaking-the-call-chain)
 
-## 1. Introduction: why protective patterns are needed
+## Introduction: why protective patterns are needed
 
 In complex distributed systems built with a microservice architecture, the failure or overload of one component can cause a cascading failure throughout the system. For example, if service A depends on service B, and B starts responding very slowly or stops responding altogether, requests to A remain waiting and occupy threads until they time out.
 
 Vinsguru describes a situation in which service D stops responding because of network delays, slowing down the services that depend on it and blocking threads all the way back to service A. Without protective mechanisms, a failure or overload in one microservice exhausts its clients' resources, such as threads and connections, and causes failures in other services. As Microsoft explains, excessive load or a service failure affects its clients: their resources can become exhausted, leaving them unable to call other services.
 
 The main patterns are:
-* Rate Limiter
-* Bulkhead
-* Timeout
-* Fallback
-* Circuit Breaker
+1. Rate Limiter
+2. Bulkhead
+3. Timeout
+4. Fallback
+5. Circuit Breaker
 
 They contain and isolate problems to protect services from cascading failures.
 
-## 2. Rate Limiter: limiting throughput
+## 1. Rate Limiter: limiting throughput
 
 ### Why it is needed
 
@@ -53,7 +51,7 @@ Rate Limiter and Circuit Breaker are sometimes confused, but they address differ
 
 A rate limiter smooths peak load; a circuit breaker stops calls to a failing service.
 
-## 3. Bulkhead: isolating resources
+## 2. Bulkhead: isolating resources
 
 ### Why it is needed
 
@@ -83,7 +81,7 @@ For example, suppose a client has 30 threads, with a bulkhead allowing only 10 o
 
 A bulkhead preserves part of the system's functionality when problems occur. Other services can continue responding even if one dependency becomes unresponsive. This is particularly important in systems with many interdependent services.
 
-## 4. Timeout: limiting waiting time
+## 3. Timeout: limiting waiting time
 
 ### Why it is needed
 
@@ -109,7 +107,7 @@ A maximum waiting time is set for an operation. For example, if the operation ha
 
 Timeouts prevent requests from holding a caller's resources indefinitely. This helps core services remain responsive when their dependencies are unavailable. During network failures and outages, a timeout allows a prompt failure response instead of leaving requests blocked without a limit.
 
-## 5. Fallback: providing an alternative response
+## 4. Fallback: providing an alternative response
 
 ### Why it is needed
 
@@ -135,7 +133,7 @@ A fallback can involve another service, static data, or a response stating that 
 
 One option is **silent failure**: returning an empty response when the data is not essential. Another is **failing fast**: immediately returning an error when the required data is unavailable.
 
-## 6. Circuit Breaker: breaking the call chain
+## 5. Circuit Breaker: breaking the call chain
 
 ### Why it is needed
 
@@ -173,7 +171,7 @@ Circuit Breaker can be combined with Retry and Fallback. For example, a service 
 
 Once the circuit is open, further attempts are stopped immediately instead of waiting for another response timeout. As Azure explains, a circuit breaker prevents repeated attempts at an operation that is likely to fail, allowing the application to continue without waiting for the underlying fault to be fixed.
 
-## 7. Java libraries
+## Java libraries
 
 Resilience4j and Netflix Hystrix (legacy).
 
