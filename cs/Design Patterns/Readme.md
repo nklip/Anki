@@ -129,14 +129,28 @@ class Player {
 * **Interface**: Preserves the component interface, so clients can use the decorated object through the same type.
 * **Composition**: Decorators can wrap other decorators to combine behaviors.
 
+### Adapter vs Wrapper
+
+**Wrapper** is a broad term; **Adapter** is a specific design pattern that makes incompatible interfaces work together.
+
+```text
+Application → PrinterAdapter.print(text) → LegacyPrinter.printText(text)
+```
+
+`PrinterAdapter` is:
+- A wrapper because it holds and delegates to the legacy printer.
+- An adapter because it translates the interface the application expects into the legacy interface.
+
+### Decorator vs Wrapper
+
 ```java
 InputStream input =
     new BufferedInputStream(new FileInputStream("data.txt"));
 ```
 
-BufferedInputStream is both:
+`BufferedInputStream` is both:
 - A wrapper, because it holds another stream and reads from it.
-- A decorator, because it adds buffering while remaining an InputStream.
+- A decorator, because it adds buffering while remaining an `InputStream`.
 
 # Sources
 
