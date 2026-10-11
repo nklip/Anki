@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="488" viewBox="0 0 960 488" role="img" aria-labelledby="title desc">
+<title id="title">VPA adjusts the resources requested by each Pod</title><desc id="desc">Two one-container Pods each request a quarter of a CPU and 256 mebibytes of memory. VPA recommends or applies increased requests of half a CPU and 512 mebibytes. The desired replica count remains two. Updates may resize or recreate Pods according to the installed version and update policy.</desc>
+<!-- Shared definitions for the article's resource and scaling diagrams. -->
+<defs><style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+.title { font-size: 28px; font-weight: 700; }
+.subtitle { font-size: 18px; fill: #52677b; }
+.heading { font-size: 21px; font-weight: 700; }
+.body { font-size: 18px; }
+.small { font-size: 16px; fill: #52677b; }
+.bold { font-size: 18px; font-weight: 700; }
+.connector { fill: none; stroke: #52677b; stroke-width: 2.5; }
+</style></defs>
+<!-- Lesson and canvas. -->
+<rect width="960" height="488" fill="#ffffff"/>
+<text x="32" y="43" class="title" text-anchor="start">VPA adjusts the resources requested by each Pod</text>
+<text x="32" y="77" class="subtitle" text-anchor="start">Illustrative increase for two Pods, each running one application container.</text>
+<!-- Same replica count on both sides isolates the resource-sizing decision. -->
+<rect id="before-sizing" x="32" y="110" width="272" height="242" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/><text x="52" y="145" class="heading" text-anchor="start">Before: 2 Pods</text><rect id="before-pod-1" x="52" y="176" width="232" height="60" rx="7" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/><text x="68" y="201" class="bold" text-anchor="start">Pod 1: requests</text><text x="68" y="224" class="body" text-anchor="start">0.25 CPU / 256 MiB</text><rect id="before-pod-2" x="52" y="253" width="232" height="60" rx="7" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/><text x="68" y="278" class="bold" text-anchor="start">Pod 2: requests</text><text x="68" y="301" class="body" text-anchor="start">0.25 CPU / 256 MiB</text><!-- VPA recommendation can be applied according to the configured update mode. -->
+<rect id="vpa" x="354" y="154" width="252" height="156" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/><text x="374" y="191" class="heading" text-anchor="start">VPA sizes resources</text><text x="374" y="229" class="body" text-anchor="start">Uses observed usage</text><text x="374" y="257" class="body" text-anchor="start">to recommend or apply</text><text x="374" y="285" class="body" text-anchor="start">new resource requests.</text><!-- Requests increase in this example; VPA may recommend decreases too. -->
+<rect id="after-sizing" x="656" y="110" width="272" height="242" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/><text x="676" y="145" class="heading" text-anchor="start">After: still 2 Pods</text><rect id="after-pod-1" x="676" y="176" width="232" height="60" rx="7" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/><text x="692" y="201" class="bold" text-anchor="start">Pod 1: requests</text><text x="692" y="224" class="body" text-anchor="start">0.5 CPU / 512 MiB</text><rect id="after-pod-2" x="676" y="253" width="232" height="60" rx="7" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/><text x="692" y="278" class="bold" text-anchor="start">Pod 2: requests</text><text x="692" y="301" class="body" text-anchor="start">0.5 CPU / 512 MiB</text><!-- usage-to-vpa: shaft ends inside the separate triangle base. --><path id="usage-to-vpa-shaft" class="connector" data-connector="true" d="M304 232 L346 232"/><polygon id="usage-to-vpa-head" points="354,232 344,226 344,238" fill="#52677b"/><!-- vpa-to-sizing: shaft ends inside the separate triangle base. --><path id="vpa-to-sizing-shaft" class="connector" data-connector="true" d="M606 232 L648 232"/><polygon id="vpa-to-sizing-head" points="656,232 646,226 646,238" fill="#52677b"/><!-- Fixed replica count does not imply every resource update is performed in place. -->
+<rect id="scope" x="32" y="380" width="896" height="88" rx="12" fill="#ffffff" stroke="#a5b4c2" stroke-width="1.5"/><text x="52" y="413" class="bold" text-anchor="start">VPA = Vertical Pod Autoscaler. It changes sizing, not desired replica count.</text><text x="52" y="444" class="small" text-anchor="start">Updates may resize or recreate Pods. Larger requests may need additional node capacity.</text>
+</svg>

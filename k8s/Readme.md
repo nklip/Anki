@@ -24,6 +24,7 @@ Kubernetes concepts, workloads, networking, and extensions.
 - [kubectl](Kubectl/Readme.md)
 - [Kubernetes](Kubernetes/Readme.md)
 - [Kubernetes and Docker](Kubernetes%20and%20Docker/Readme.md)
+- [Kubernetes, One Problem at a Time](Kubernetes%2C%20One%20Problem%20at%20a%20Time/Readme.md)
 - [Labels and Selectors](Labels%20and%20Selectors/Readme.md)
 - [Minikube](Minikube/Readme.md)
 - [Namespaces](Namespaces/Readme.md)

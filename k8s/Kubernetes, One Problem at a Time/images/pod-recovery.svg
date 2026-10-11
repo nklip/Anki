@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="493" viewBox="0 0 960 493" role="img" aria-labelledby="title desc">
+  <title id="title">A ReplicaSet restores the requested Pod count</title>
+  <desc id="desc">A Deployment manages a ReplicaSet with desired replicas equal to three. Pod B is lost, leaving Pods A and C. The ReplicaSet creates a new Pod D, restoring three Pods. A and C survive. Dashed arrows show management; the horizontal solid arrow shows time. The kubelet can restart a crashed container within the same Pod; replacing a deleted or failed Pod requires a controller.</desc>
+  <!-- Shared styles keep text editable and colors consistent with adjacent Kubernetes diagrams. -->
+  <defs><style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+    .title { font-size: 28px; font-weight: 700; }
+    .subtitle { font-size: 18px; fill: #52677b; }
+    .heading { font-size: 21px; font-weight: 700; }
+    .body { font-size: 18px; }
+    .small { font-size: 16px; fill: #52677b; }
+    .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }
+    .management { fill: none; stroke: #8066a5; stroke-width: 2.5; stroke-dasharray: 7 5; stroke-linejoin: round; }
+  </style></defs>
+  <!-- White canvas and top-to-bottom lesson heading. -->
+  <rect width="960" height="493" fill="#ffffff"/>
+  <text x="32" y="43" class="title" text-anchor="start">A ReplicaSet restores the requested Pod count</text>
+  <text x="32" y="75" class="subtitle" text-anchor="start">The replacement is a new Pod. Surviving Pods keep running.</text>
+  <!-- Management hierarchy stays separate from the before-and-after timeline. -->
+  <rect id="deployment" x="180" y="109" width="250" height="84" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/>
+  <text x="305" y="143" class="heading" text-anchor="middle">Deployment</text>
+  <text x="305" y="174" class="body" text-anchor="middle">Manages ReplicaSets</text>
+  <rect id="replicaset" x="530" y="109" width="250" height="84" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/>
+  <text x="655" y="143" class="heading" text-anchor="middle">ReplicaSet</text>
+  <text x="655" y="174" class="body" text-anchor="middle">Desired replicas: 3</text>
+  <!-- Manual shafts end inside their triangle bases; solid joins cover dash gaps. -->
+  <path id="deployment-to-replicaset-shaft" data-connector="true" class="management" d="M430 151 L522 151"/>
+  <path id="deployment-to-replicaset-join" data-connector="true" d="M516 151 L522 151" fill="none" stroke="#8066a5" stroke-width="2.5"/>
+  <polygon id="deployment-to-replicaset-head" points="530,151 520,145 520,157" fill="#8066a5"/>
+  <path id="replicaset-restores-count-shaft" data-connector="true" class="management" d="M655 193 L655 214 L728 214 L728 247"/>
+  <path id="replicaset-restores-count-join" data-connector="true" d="M728 241 L728 247" fill="none" stroke="#8066a5" stroke-width="2.5"/>
+  <polygon id="replicaset-restores-count-head" points="728,255 722,245 734,245" fill="#8066a5"/>
+  <text x="748" y="237" class="small" text-anchor="start">creates Pod D</text>
+  <!-- Before: A and C survive; orange B is explicitly marked as lost. -->
+  <rect id="before-loss" x="32" y="255" width="400" height="124" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="232" y="282" class="heading" text-anchor="middle">1 · Pod B is lost; 2 remain</text>
+  <rect id="before-pod-a" x="55" y="303" width="103" height="51" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="106.5" y="335" class="body" text-anchor="middle">Pod A</text>
+  <rect id="before-pod-b" x="180" y="303" width="103" height="51" rx="12" fill="#fff7ed" stroke="#d9ab72" stroke-width="1.5"/>
+  <text x="231.5" y="335" class="body" text-anchor="middle">B lost</text>
+  <rect id="before-pod-c" x="305" y="303" width="103" height="51" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="356.5" y="335" class="body" text-anchor="middle">Pod C</text>
+  <!-- Timeline arrow indicates change of state, not network traffic. -->
+  <path id="time-shaft" data-connector="true" class="connector" d="M432 317 L520 317"/>
+  <polygon id="time-head" points="528,317 518,311 518,323" fill="#52677b"/>
+  <text x="480" y="294" class="small" text-anchor="middle">then</text>
+  <rect id="after-replacement" x="528" y="255" width="400" height="124" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="728" y="282" class="heading" text-anchor="middle">2 · ReplicaSet restores 3 Pods</text>
+  <rect id="after-pod-a" x="551" y="303" width="103" height="51" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="602.5" y="335" class="body" text-anchor="middle">Pod A</text>
+  <rect id="after-pod-c" x="676" y="303" width="103" height="51" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="727.5" y="335" class="body" text-anchor="middle">Pod C</text>
+  <rect id="new-pod-d" x="801" y="303" width="103" height="51" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="852.5" y="335" class="body" text-anchor="middle">D new</text>
+  <!-- Notes distinguish container restart from Pod replacement without changing the main sequence. -->
+  <text x="32" y="418" class="body" text-anchor="start">Container crash: the kubelet can restart a container inside the same Pod.</text>
+  <text x="32" y="446" class="body" text-anchor="start">Deleted or failed Pod: a workload controller creates a replacement Pod.</text>
+  <text x="32" y="474" class="small" text-anchor="start">Dashed arrows: management. Horizontal solid arrow: time.</text>
+</svg>

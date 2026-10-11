@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="487" viewBox="0 0 960 487" role="img" aria-labelledby="title desc">
+  <title id="title">Reuse one image; configure the running app</title>
+  <desc id="desc">An immutable container image contains the application code without an embedded password. Starting a container creates a running application. At runtime, a ConfigMap supplies non-confidential LOG_LEVEL=info and a Secret supplies the placeholder DB_PASSWORD=&lt;value&gt; through environment variables or files. The running application does receive the secret. Restrict access to Secrets; base64 encoding is not encryption.</desc>
+  <!-- Shared styles keep text editable and colors consistent with adjacent Kubernetes diagrams. -->
+  <defs><style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+    .title { font-size: 28px; font-weight: 700; }
+    .subtitle { font-size: 18px; fill: #52677b; }
+    .heading { font-size: 21px; font-weight: 700; }
+    .body { font-size: 18px; }
+    .small { font-size: 16px; fill: #52677b; }
+    .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }
+    .management { fill: none; stroke: #8066a5; stroke-width: 2.5; stroke-dasharray: 7 5; stroke-linejoin: round; }
+  </style></defs>
+  <!-- White canvas and top-to-bottom lesson heading. -->
+  <rect width="960" height="487" fill="#ffffff"/>
+  <text x="32" y="43" class="title" text-anchor="start">Reuse one image; configure the running app</text>
+  <text x="32" y="75" class="subtitle" text-anchor="start">Build once; supply environment-specific values when the application runs.</text>
+  <!-- Build artifact and running process are distinct boxes: the running app receives the secret. -->
+  <rect id="immutable-image" x="32" y="112" width="244" height="126" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="154" y="147" class="heading" text-anchor="middle">Immutable image</text>
+  <text x="154" y="181" class="body" text-anchor="middle">Application code</text>
+  <text x="154" y="214" class="body" text-anchor="middle">No embedded password</text>
+  <rect id="running-application" x="600" y="112" width="328" height="126" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="764" y="149" class="heading" text-anchor="middle">Running app</text>
+  <text x="764" y="182" class="body" text-anchor="middle">Receives settings + secret</text>
+  <text x="764" y="216" class="body" text-anchor="middle">Reads environment or files</text>
+  <path id="start-container-shaft" data-connector="true" class="connector" d="M276 178 L592 178"/>
+  <polygon id="start-container-head" points="600,178 590,172 590,184" fill="#52677b"/>
+  <text x="438" y="156" class="body" text-anchor="middle">start a container</text>
+  <text x="438" y="206" class="small" text-anchor="middle">same image</text>
+  <!-- Runtime sources enter the running application; neither arrow points into the image. -->
+  <rect id="configmap" x="32" y="303" width="300" height="116" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="182" y="338" class="heading" text-anchor="middle">ConfigMap</text>
+  <text x="182" y="371" class="body" text-anchor="middle">LOG_LEVEL=info</text>
+  <text x="182" y="400" class="body" text-anchor="middle">Non-confidential settings</text>
+  <rect id="secret" x="600" y="303" width="328" height="116" rx="12" fill="#fff7ed" stroke="#d9ab72" stroke-width="1.5"/>
+  <text x="764" y="338" class="heading" text-anchor="middle">Secret</text>
+  <text x="764" y="371" class="body" text-anchor="middle">DB_PASSWORD=&lt;value&gt;</text>
+  <text x="764" y="400" class="body" text-anchor="middle">Restrict who can read it</text>
+  <path id="configmap-to-app-shaft" data-connector="true" class="connector" d="M332 361 L466 361 L466 226 L592 226"/>
+  <polygon id="configmap-to-app-head" points="600,226 590,220 590,232" fill="#52677b"/>
+  <text x="481" y="282" class="small" text-anchor="start">env / files</text>
+  <path id="secret-to-app-shaft" data-connector="true" class="connector" d="M764 303 L764 246"/>
+  <polygon id="secret-to-app-head" points="764,238 758,248 770,248" fill="#52677b"/>
+  <text x="790" y="278" class="small" text-anchor="start">env / files</text>
+  <!-- Security note explains the encoding limit without presenting a real password. -->
+  <text x="32" y="462" class="body" text-anchor="start">Base64 is not encryption. Secret values still need access controls.</text>
+</svg>

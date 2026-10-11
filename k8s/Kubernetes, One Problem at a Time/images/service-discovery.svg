@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="462" viewBox="0 0 960 462" role="img" aria-labelledby="title desc">
+  <title id="title">A Service keeps the address stable as Pods change</title>
+  <desc id="desc">A client uses the web Service DNS name and stable ClusterIP. Its app=web selector identifies application Pods. Logical request routing goes to ready Pods A and D, where D is a new replacement. EndpointSlices track backend addresses as Pods change; they are not a network proxy. The client does not need to hardcode Pod IP addresses.</desc>
+  <!-- Shared styles keep text editable and colors consistent with adjacent Kubernetes diagrams. -->
+  <defs><style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+    .title { font-size: 28px; font-weight: 700; }
+    .subtitle { font-size: 18px; fill: #52677b; }
+    .heading { font-size: 21px; font-weight: 700; }
+    .body { font-size: 18px; }
+    .small { font-size: 16px; fill: #52677b; }
+    .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }
+    .management { fill: none; stroke: #8066a5; stroke-width: 2.5; stroke-dasharray: 7 5; stroke-linejoin: round; }
+  </style></defs>
+  <!-- White canvas and top-to-bottom lesson heading. -->
+  <rect width="960" height="462" fill="#ffffff"/>
+  <text x="32" y="43" class="title" text-anchor="start">A Service keeps the address stable as Pods change</text>
+  <text x="32" y="75" class="subtitle" text-anchor="start">Two ready backends shown; clients keep using web as Pod addresses change.</text>
+  <!-- Stable client-facing address appears before the changing backend pool. -->
+  <rect id="client" x="32" y="154" width="184" height="100" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="124" y="195" class="heading" text-anchor="middle">Client</text>
+  <text x="124" y="225" class="body" text-anchor="middle">Uses name web</text>
+  <rect id="web-service" x="320" y="119" width="302" height="170" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="471" y="151" class="heading" text-anchor="middle">web Service</text>
+  <text x="471" y="185" class="body" text-anchor="middle">Stable DNS name: web</text>
+  <text x="471" y="216" class="body" text-anchor="middle">Stable ClusterIP</text>
+  <text x="471" y="259" class="body" text-anchor="middle">Selector: app=web</text>
+  <!-- Solid arrows depict logical routing; shared trunk intentionally splits to two ready Pods. -->
+  <path id="client-to-service-shaft" data-connector="true" class="connector" d="M216 204 L312 204"/>
+  <polygon id="client-to-service-head" points="320,204 310,198 310,210" fill="#52677b"/>
+  <path id="service-to-pod-a-shaft" data-connector="true" class="connector" d="M622 204 L672 204 L672 152 L734 152"/>
+  <polygon id="service-to-pod-a-head" points="742,152 732,146 732,158" fill="#52677b"/>
+  <path id="service-to-pod-d-shaft" data-connector="true" class="connector" d="M672 204 L672 256 L734 256"/>
+  <polygon id="service-to-pod-d-head" points="742,256 732,250 732,262" fill="#52677b"/>
+  <rect id="ready-pod-a" x="742" y="116" width="186" height="72" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="835" y="146" class="heading" text-anchor="middle">Pod A</text>
+  <text x="835" y="173" class="body" text-anchor="middle">Ready · app=web</text>
+  <rect id="ready-pod-d" x="742" y="220" width="186" height="72" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="835" y="250" class="heading" text-anchor="middle">Pod D · new</text>
+  <text x="835" y="277" class="body" text-anchor="middle">Ready · app=web</text>
+  <!-- EndpointSlice note is outside the traffic path: it describes discovery, not a proxy hop. -->
+  <rect id="endpointslices" x="32" y="328" width="896" height="86" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/>
+  <text x="56" y="359" class="body" text-anchor="start">EndpointSlices track backend addresses as Pods come and go.</text>
+  <text x="56" y="390" class="body" text-anchor="start">The Service uses ready backends; clients do not hardcode Pod IP addresses.</text>
+  <text x="32" y="446" class="small" text-anchor="start">Arrows show logical request routing, not every physical network hop.</text>
+</svg>

@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="543" viewBox="0 0 960 543" role="img" aria-labelledby="title desc">
+  <title id="title">Ingress rules connect web requests to Services</title>
+  <desc id="desc">An Ingress object declares host shop.example and path rules /shop to shop Service and /api to api Service. The Ingress controller watches the rules and configures a proxy or load balancer. Browser traffic reaches that proxy, then follows the selected Service to its application Pods. Dashed arrows show configuration; solid arrows show logical request routing. A shared entry point is this example, not a guarantee of one load balancer.</desc>
+  <!-- Shared styles keep text editable and colors consistent with adjacent Kubernetes diagrams. -->
+  <defs><style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+    .title { font-size: 28px; font-weight: 700; }
+    .subtitle { font-size: 18px; fill: #52677b; }
+    .heading { font-size: 21px; font-weight: 700; }
+    .body { font-size: 18px; }
+    .small { font-size: 16px; fill: #52677b; }
+    .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }
+    .management { fill: none; stroke: #8066a5; stroke-width: 2.5; stroke-dasharray: 7 5; stroke-linejoin: round; }
+  </style></defs>
+  <!-- White canvas and top-to-bottom lesson heading. -->
+  <rect width="960" height="543" fill="#ffffff"/>
+  <text x="32" y="43" class="title" text-anchor="start">Ingress rules connect web requests to Services</text>
+  <text x="32" y="75" class="subtitle" text-anchor="start">Example: shop.example/shop and shop.example/api share an entry point.</text>
+  <!-- Configuration is above the request path; it is never drawn as a traffic hop. -->
+  <rect id="ingress-rules" x="32" y="111" width="267" height="146" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/>
+  <text x="165.5" y="145" class="heading" text-anchor="middle">Ingress rules</text>
+  <text x="52" y="175" class="body" text-anchor="start">Host: shop.example</text>
+  <text x="52" y="209" class="body" text-anchor="start">/shop → shop Service</text>
+  <text x="52" y="238" class="body" text-anchor="start">/api → api Service</text>
+  <rect id="ingress-controller" x="356" y="136" width="245" height="96" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/>
+  <text x="478.5" y="173" class="heading" text-anchor="middle">Ingress controller</text>
+  <text x="478.5" y="205" class="body" text-anchor="middle">Watches the rules</text>
+  <path id="rules-to-controller-shaft" data-connector="true" class="management" d="M299 184 L348 184"/>
+  <path id="rules-to-controller-join" data-connector="true" d="M342 184 L348 184" fill="none" stroke="#8066a5" stroke-width="2.5"/>
+  <polygon id="rules-to-controller-head" points="356,184 346,178 346,190" fill="#8066a5"/>
+  <path id="controller-configures-proxy-shaft" data-connector="true" class="management" d="M407 232 L407 297"/>
+  <path id="controller-configures-proxy-join" data-connector="true" d="M407 291 L407 297" fill="none" stroke="#8066a5" stroke-width="2.5"/>
+  <polygon id="controller-configures-proxy-head" points="407,305 401,295 413,295" fill="#8066a5"/>
+  <text x="433" y="276" class="small" text-anchor="start">configures</text>
+  <!-- Traffic starts at the browser; the proxy selects a Service by host and path. -->
+  <rect id="browser" x="32" y="325" width="180" height="88" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="122" y="359" class="heading" text-anchor="middle">Browser</text>
+  <text x="122" y="389" class="body" text-anchor="middle">shop.example</text>
+  <rect id="proxy" x="292" y="305" width="230" height="128" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="407" y="344" class="heading" text-anchor="middle">Proxy /</text>
+  <text x="407" y="371" class="heading" text-anchor="middle">load balancer</text>
+  <text x="407" y="408" class="body" text-anchor="middle">Routes by host + path</text>
+  <path id="browser-to-proxy-shaft" data-connector="true" class="connector" d="M212 369 L284 369"/>
+  <polygon id="browser-to-proxy-head" points="292,369 282,363 282,375" fill="#52677b"/>
+  <!-- Branch labels sit above horizontal shafts; arrow tips meet only node borders. -->
+  <path id="shop-route-shaft" data-connector="true" class="connector" d="M522 369 L579 369 L579 307 L631 307"/>
+  <polygon id="shop-route-head" points="639,307 629,301 629,313" fill="#52677b"/>
+  <path id="api-route-shaft" data-connector="true" class="connector" d="M579 369 L579 421 L631 421"/>
+  <polygon id="api-route-head" points="639,421 629,415 629,427" fill="#52677b"/>
+  <text x="588" y="287" class="body" text-anchor="start">/shop</text>
+  <text x="588" y="401" class="body" text-anchor="start">/api</text>
+  <rect id="shop-service" x="639" y="273" width="151" height="68" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="714.5" y="302" class="heading" text-anchor="middle">shop</text>
+  <text x="714.5" y="328" class="body" text-anchor="middle">Service</text>
+  <rect id="api-service" x="639" y="387" width="151" height="68" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="714.5" y="416" class="heading" text-anchor="middle">api</text>
+  <text x="714.5" y="442" class="body" text-anchor="middle">Service</text>
+  <path id="shop-service-to-pods-shaft" data-connector="true" class="connector" d="M790 307 L825 307"/>
+  <polygon id="shop-service-to-pods-head" points="833,307 823,301 823,313" fill="#52677b"/>
+  <path id="api-service-to-pods-shaft" data-connector="true" class="connector" d="M790 421 L825 421"/>
+  <polygon id="api-service-to-pods-head" points="833,421 823,415 823,427" fill="#52677b"/>
+  <rect id="shop-pods" x="833" y="273" width="95" height="68" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="880.5" y="302" class="heading" text-anchor="middle">Shop</text>
+  <text x="880.5" y="328" class="body" text-anchor="middle">Pods</text>
+  <rect id="api-pods" x="833" y="387" width="95" height="68" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="880.5" y="416" class="heading" text-anchor="middle">API</text>
+  <text x="880.5" y="442" class="body" text-anchor="middle">Pods</text>
+  <!-- The legend explicitly limits the shared-entry-point example. -->
+  <text x="32" y="492" class="small" text-anchor="start">Solid arrows: logical request routing. Dashed arrows: configuration.</text>
+  <text x="32" y="521" class="small" text-anchor="start">A shared entry point is an example; one load balancer is not guaranteed.</text>
+</svg>

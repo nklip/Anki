@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="490" viewBox="0 0 960 490" role="img" aria-labelledby="title desc">
+<title id="title">Requests decide fit; limits bound runtime use</title><desc id="desc">Left: a node with 2 CPU available to Pods has existing requests totaling 1.5 CPU. A new Pod requesting 0.5 CPU fits. Right: a CPU limit causes throttling; exceeding a memory limit can cause out-of-memory termination. Requests are scheduling inputs, not usage caps.</desc>
+<!-- Shared definitions for the article's resource and scaling diagrams. -->
+<defs><style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+.title { font-size: 28px; font-weight: 700; }
+.subtitle { font-size: 18px; fill: #52677b; }
+.heading { font-size: 21px; font-weight: 700; }
+.body { font-size: 18px; }
+.small { font-size: 16px; fill: #52677b; }
+.bold { font-size: 18px; font-weight: 700; }
+.connector { fill: none; stroke: #52677b; stroke-width: 2.5; }
+</style></defs>
+<!-- Lesson and canvas. -->
+<rect width="960" height="490" fill="#ffffff"/>
+<text x="32" y="43" class="title" text-anchor="start">Requests decide fit; limits bound runtime use</text>
+<text x="32" y="77" class="subtitle" text-anchor="start">A simplified CPU example: node capacity here already excludes system reservations.</text>
+<!-- Scheduling accounts for declared requests, even when a container is idle. -->
+<rect id="scheduling" x="32" y="110" width="430" height="256" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/><text x="52" y="147" class="heading" text-anchor="start">Before launch: scheduling</text><text x="52" y="182" class="body" text-anchor="start">Node capacity available to Pods: 2 CPU</text><text x="52" y="212" class="body" text-anchor="start">Existing requests: 1.5 CPU</text><rect x="52" y="234" width="285" height="42" rx="6" fill="#c3d9f7"/><rect x="337" y="234" width="95" height="42" rx="6" fill="#d9f3e2"/><text x="194" y="261" class="bold" text-anchor="middle">1.5 CPU already counted</text><text x="384" y="261" class="small" text-anchor="middle">0.5 free</text><text x="52" y="312" class="bold" text-anchor="start">New Pod requests 0.5 CPU → it fits.</text><text x="52" y="344" class="small" text-anchor="start">A request is not a cap on actual usage.</text><!-- Runtime limits have different enforcement for CPU and memory. -->
+<rect id="runtime" x="498" y="110" width="430" height="256" rx="12" fill="#fff7ed" stroke="#d9ab72" stroke-width="1.5"/><text x="518" y="147" class="heading" text-anchor="start">While running: enforcement</text><text x="518" y="184" class="bold" text-anchor="start">CPU limit: 1 CPU</text><text x="518" y="213" class="body" text-anchor="start">More CPU demand → throttling</text><text x="518" y="260" class="bold" text-anchor="start">Memory limit: 512 MiB</text><text x="518" y="290" class="body" text-anchor="start">Exceeding it can cause an OOM kill.</text><text x="518" y="344" class="small" text-anchor="start">OOM = out of memory.</text><!-- Shared example ties scheduling and runtime together without implying a hard reservation. -->
+<rect id="example" x="32" y="392" width="896" height="78" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/><text x="52" y="424" class="bold" text-anchor="start">One container: request 0.5 CPU / 256 MiB; limit 1 CPU / 512 MiB.</text><text x="52" y="450" class="small" text-anchor="start">Requests help placement; limits reduce unbounded resource use. Neither guarantees application health.</text>
+</svg>
