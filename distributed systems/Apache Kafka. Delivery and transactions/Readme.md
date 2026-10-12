@@ -23,7 +23,8 @@ A service publishes the fact that order `42` was created. Shipping consumes that
 | Record / message | One stored item, such as an `OrderCreated` event |
 | Producer / consumer | The application client that writes / reads records |
 | Topic | A named collection of related records, such as `orders` |
-| Partition | One ordered, append-only log within a topic |
+| Partition | One ordered, append-only log within a topic (it'
+s not WAL) |
 | Offset | A record's position within one partition; not a global event identity |
 | Broker | A Kafka server storing partition replicas and serving clients |
 | Consumer group | Consumers sharing partition assignments and saved progress under a `group.id` |
@@ -119,12 +120,14 @@ Nontransactional does not mean unreplicated or unreliable. You can still use `ac
 
 ### Producer idempotence: retrying an append
 
-An operation is **idempotent** when repeating it has the same intended effect as doing it once. Kafka's idempotent producer prevents its internal retries from appending duplicate copies of the same send. Enable it explicitly when it is part of the application's required contract:
+An operation is **idempotent** when repeating it has the same intended effect as doing it once. Kafka's idempotent producer prevents its internal retries from appending duplicate copies of the same send. Enable it explicitly when it is part of the application's required contract
 
 ```properties
 enable.idempotence=true
 acks=all
 ```
+
+![kafka-producer-location.svg](images/kafka-producer-location.svg)
 
 Idempotence requires `acks=all`, positive `retries`, and at most five in-flight requests per connection (`max.in.flight.requests.per.connection<=5`). With `enable.idempotence=true`, incompatible settings fail configuration. Compatible defaults already enable idempotence in the documented version.
 

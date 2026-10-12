@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="316" viewBox="0 0 1180 316" role="img" aria-labelledby="title desc">
+  <title id="title">The Kafka producer runs inside your application</title>
+  <desc id="desc">Read left to right. Your code calls producer.send(record) on a Kafka producer client library in the same application process. The client batches records and retries network requests to the broker hosting the partition leader. The broker detects duplicate producer retries and appends accepted records to its partition log. Configure enable.idempotence=true and acks=all on the producer client.</desc>
+  <!-- Match the article's component diagrams: Arial text, white rounded containers, thin charcoal arrows. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #111; text-anchor: middle; }
+      .title-label { font-size: 22px; font-weight: 700; }
+      .heading { font-size: 15px; }
+      .label { font-size: 14px; }
+      .small { font-size: 12px; }
+      .container { fill: #fff; stroke: #111; stroke-width: 1; }
+      .shaft { fill: none; stroke: #111; stroke-width: 1; }
+    </style>
+  </defs>
+  <rect width="1180" height="316" fill="#fff"/>
+
+  <!-- The title states the location; grouping separates the application process from the Kafka server. -->
+  <text class="title-label" x="590" y="29">The Kafka producer runs inside your application</text>
+  <text class="heading" x="590" y="52">Read left to right: local method call, network request, then log append.</text>
+  <rect id="application-process" class="container" x="20.5" y="78.5" width="520" height="218" rx="30"/>
+  <rect id="kafka-broker" class="container" x="690.5" y="78.5" width="470" height="218" rx="30"/>
+  <text class="heading" x="280.5" y="105">Your application process</text>
+  <text class="heading" x="925.5" y="105">Kafka broker (server in the cluster)</text>
+
+  <!-- Both application nodes are in the same process; the producer owns batching and internal retries. -->
+  <rect id="application-code" class="container" x="40.5" y="135.5" width="150" height="92" rx="16"/>
+  <rect id="producer-client" class="container" x="340.5" y="135.5" width="180" height="92" rx="16"/>
+  <text class="heading" x="115.5" y="169">Your code</text>
+  <text class="label" x="115.5" y="193">Creates a record</text>
+  <text class="heading" x="430.5" y="159">Kafka producer</text>
+  <text class="label" x="430.5" y="181">Client library</text>
+  <text class="label" x="430.5" y="203">Batches and retries</text>
+
+  <!-- The leader handles the request; its partition log holds the accepted records. -->
+  <rect id="partition-leader" class="container" x="710.5" y="135.5" width="180" height="92" rx="16"/>
+  <rect id="partition-log" class="container" x="970.5" y="135.5" width="170" height="92" rx="16"/>
+  <text class="heading" x="800.5" y="159">Partition leader</text>
+  <text class="label" x="800.5" y="181">Accepts writes</text>
+  <text class="small" x="800.5" y="203">Detects duplicate retries</text>
+  <text class="heading" x="1055.5" y="169">Partition log</text>
+  <text class="label" x="1055.5" y="193">Stored records</text>
+
+  <!-- Shafts stop beneath their triangle bases. Tips meet node borders without entering them.
+       The network shaft intentionally crosses both process-group borders, away from all labels. -->
+  <path id="local-send-shaft" class="shaft" data-connector="true" d="M190.5 180.5 H334.5"/>
+  <path id="local-send-head" d="M333.5 177.21 L340.5 180.5 L333.5 183.79 Z" fill="#111"/>
+  <path id="network-request-shaft" class="shaft" data-connector="true" d="M520.5 180.5 H704.5"/>
+  <path id="network-request-head" d="M703.5 177.21 L710.5 180.5 L703.5 183.79 Z" fill="#111"/>
+  <path id="log-append-shaft" class="shaft" data-connector="true" d="M890.5 180.5 H964.5"/>
+  <path id="log-append-head" d="M963.5 177.21 L970.5 180.5 L963.5 183.79 Z" fill="#111"/>
+  <text class="small" x="265.5" y="158">producer.send(record)</text>
+  <text class="label" x="615.5" y="158">Network request</text>
+  <text class="label" x="930.5" y="158">append</text>
+
+  <!-- Configuration belongs to the client; the broker enforces deduplication when it receives retries. -->
+  <text class="label" x="280.5" y="254">Configure this client in your application:</text>
+  <text class="small" x="280.5" y="277">enable.idempotence=true   acks=all</text>
+  <text class="label" x="925.5" y="254">Accepted records are appended to the log.</text>
+  <text class="small" x="925.5" y="277">Producer retry duplicates are not appended again.</text>
+</svg>
