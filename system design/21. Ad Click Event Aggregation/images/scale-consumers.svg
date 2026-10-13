@@ -3,7 +3,8 @@
   <desc id="diagram-desc">Two states of the same topic, side by side. On the left, the topic has four partitions but only two consumers, so consumer 0 reads partitions 0 and 1 while consumer 1 reads partitions 2 and 3. A rebalance arrow leads to the right, where two more consumers have been added, highlighted in pink. Now each of the four partitions feeds its own consumer, so a single consumer no longer has to keep up with two partitions.</desc>
   <!-- One arrowhead marker and one style block drive the diagram; restyle from here. -->
   <defs>
-    <marker id="head" viewBox="0 0 23 16.6" refX="1" refY="8.3" markerWidth="23" markerHeight="16.6" markerUnits="userSpaceOnUse" orient="auto">
+    <!-- Equal symmetric heads: noses project 4.5 units beyond the shaft, whose endpoint is compensated to meet the outer target stroke. -->
+    <marker id="head" viewBox="0 0 23 16.6" refX="18.5" refY="8.3" markerWidth="23" markerHeight="16.6" markerUnits="userSpaceOnUse" orient="auto">
       <path d="M0 0L23 8.3L0 16.6Z" fill="#000"/>
     </marker>
     <style>
@@ -33,14 +34,15 @@
     <text x="553" y="287">Consumer 0</text>
     <text x="553" y="513">Consumer 1</text>
     <!-- Two partitions per consumer: the pairs converge. -->
-    <path class="flow" d="M364.5 229.49L507.75 251.3"/>
-    <path class="flow" d="M364.5 309.87L507.66 292.6"/>
-    <path class="flow" d="M364.5 458.86L507.71 478.61"/>
-    <path class="flow" d="M364.5 539.26L507.7 519.91"/>
+    <path id="flow-1" class="flow" d="M364.5 229.49L523.8013 253.7438"/>
+    <path id="flow-2" class="flow" d="M364.5 309.87L523.7824 290.6551"/>
+    <path id="flow-3" class="flow" d="M364.5 458.86L523.7922 480.8279"/>
+    <path id="flow-4" class="flow" d="M364.5 539.26L523.7905 517.7358"/>
   </g>
-  <!-- The rebalance itself, drawn as a block arrow pointing at the after state. -->
+  <!-- The rebalance uses the same head as the partition flows; a gap keeps its label clear of the shaft. -->
   <g id="rebalance">
-    <path class="box" d="M845.6 318.5H1077V283L1105.5 352.4L1077 421.5V387.3H845.6Z"/>
+    <path id="rebalance-lead-shaft" d="M845.6 352.4H858" fill="none" stroke="#000" stroke-width="2.5" data-connector="true"/>
+    <path id="rebalance-arrow" class="flow" d="M1066 352.4H1101"/>
     <text x="872.5" y="367">Rebalance</text>
   </g>
   <!-- After: consumers 2 and 3 are new, so every partition gets its own consumer. -->
@@ -64,9 +66,9 @@
     <text x="1640" y="340">Consumer 1</text>
     <text x="1640" y="455">Consumer 2</text>
     <text x="1639.5" y="571">Consumer 3</text>
-    <path class="flow" d="M1451.5 210.5L1593 210.5"/>
-    <path class="flow" d="M1451.5 326L1593 326"/>
-    <path class="flow" d="M1451.5 442L1593 442"/>
-    <path class="flow" d="M1451.5 557.5L1593 557.5"/>
+    <path id="flow-5" class="flow" d="M1451.5 210.5L1610.75 210.5"/>
+    <path id="flow-6" class="flow" d="M1451.5 326L1610.75 326"/>
+    <path id="flow-7" class="flow" d="M1451.5 442L1610.75 442"/>
+    <path id="flow-8" class="flow" d="M1451.5 557.5L1610.75 557.5"/>
   </g>
 </svg>

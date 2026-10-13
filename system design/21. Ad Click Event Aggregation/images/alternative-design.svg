@@ -1,24 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1960" height="680" viewBox="0 0 1960 680" role="img" aria-labelledby="title desc">
   <title id="title">Alternative analytics design</title>
-  <desc id="desc">A log watcher and message queue feed a risk control engine, which sends data to Hive and ClickHouse for ElasticSearch, merchant analytics, and data-scientist queries.</desc>
+  <desc id="desc">A log watcher and message queue feed a risk control engine, which sends data to Hive and ClickHouse for Elasticsearch, merchant analytics, and data-scientist queries.</desc>
+  <!-- Every head is the same symmetric 19-by-20 triangle, rotated without scaling.
+       Shafts finish two units inside the bases; tips meet outer target strokes. -->
   <defs>
-    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="strokeWidth" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#111"/></marker>
+    <path id="arrowhead" d="M0 0L-19 -10L-19 10Z" fill="#111"/>
     <style>
       text{font-family:Arial,Helvetica,sans-serif;fill:#111}
       .box{fill:#fff;stroke:#111;stroke-width:2.5}
-      .flow{fill:none;stroke:#111;stroke-width:2.5;marker-end:url(#arrow)}
+      .flow{fill:none;stroke:#111;stroke-width:2.5}
     </style>
   </defs>
   <rect width="1960" height="680" fill="#fff"/>
   <!-- Ingestion and risk-control path. -->
   <rect class="box" x="36" y="143" width="232" height="94"/>
-  <text x="152" y="203" font-size="38" text-anchor="middle">Log Watcher</text>
-  <path d="M268 190H379" fill="none" stroke="#111" stroke-width="2.5"/>
-  <polygon points="398,190 379,180 379,200" fill="#111"/>
+  <text x="152" y="203" font-size="36" text-anchor="middle">Log Watcher</text>
+  <path id="flow-1-shaft" data-connector="true" d="M268 190L379.770273 190" fill="none" stroke="#111" stroke-width="2.5"/>
+  <use id="flow-1-arrowhead" href="#arrowhead" transform="translate(396.770273 190) rotate(0)"/>
   <path class="box" d="M425 140H641V237H425C410 237 398 216 398 188C398 161 410 140 425 140Z"/>
   <ellipse class="box" cx="641" cy="188.5" rx="28" ry="48.5"/>
   <text x="525" y="184" font-size="35" text-anchor="middle"><tspan x="525">Message</tspan><tspan x="525" dy="40">Queue</tspan></text>
-  <path class="flow" d="M669 190H796"/>
+  <path id="flow-2-shaft" data-connector="true" class="flow" d="M669 190L777.75 190"/>
+  <use id="flow-2-arrowhead" href="#arrowhead" transform="translate(794.75 190) rotate(0)"/>
   <rect class="box" x="796" y="143" width="254" height="94"/>
   <text x="923" y="184" font-size="38" text-anchor="middle"><tspan x="923">Risk Control</tspan><tspan x="923" dy="43">Engine</tspan></text>
   <!-- Risk results fan out to Hive and ClickHouse. -->
@@ -26,24 +29,26 @@
   <text x="1359" y="105" font-size="38" text-anchor="middle">Hive</text>
   <rect class="box" x="1231" y="251" width="256" height="96"/>
   <text x="1359" y="312" font-size="38" text-anchor="middle">ClickHouse</text>
-  <path class="flow" d="M1050 164L1231 92"/>
-  <path class="flow" d="M1050 219L1231 299"/>
-  <!-- Hive indexes into ElasticSearch. -->
+  <path id="flow-3-shaft" data-connector="true" class="flow" d="M1050 164L1213.953888 98.780774"/>
+  <use id="flow-3-arrowhead" href="#arrowhead" transform="translate(1229.75 92.497238) rotate(-21.692171)"/>
+  <path id="flow-4-shaft" data-connector="true" class="flow" d="M1050 219L1214.201066 291.575057"/>
+  <use id="flow-4-arrowhead" href="#arrowhead" transform="translate(1229.75 298.447514) rotate(23.844899)"/>
+  <!-- Hive indexes into Elasticsearch. -->
   <rect class="box" x="1660" y="44" width="252" height="96"/>
-  <text x="1786" y="105" font-size="38" text-anchor="middle">ElasticSearch</text>
-  <path d="M1487 92H1641" fill="none" stroke="#111" stroke-width="2.5"/>
-  <polygon points="1660,92 1641,82 1641,102" fill="#111"/>
+  <text x="1786" y="105" font-size="38" text-anchor="middle">Elasticsearch</text>
+  <path id="flow-5-shaft" data-connector="true" d="M1487 92L1641.75 92" fill="none" stroke="#111" stroke-width="2.5"/>
+  <use id="flow-5-arrowhead" href="#arrowhead" transform="translate(1658.75 92) rotate(0)"/>
   <!-- Vertical query paths keep labels clear of the shafts. -->
   <rect class="box" x="1179" y="547" width="358" height="98"/>
   <text x="1358" y="587" font-size="35" text-anchor="middle"><tspan x="1358">Merchant Facing</tspan><tspan x="1358" dy="40">Analytics</tspan></text>
   <path d="M1358 547V490" fill="none" stroke="#111" stroke-width="2.5"/>
   <text x="1358" y="466" font-size="34" text-anchor="middle">Query aggregation results</text>
-  <path d="M1358 410V366" fill="none" stroke="#111" stroke-width="2.5"/>
-  <polygon points="1358,347 1348,366 1368,366" fill="#111"/>
+  <path id="flow-6-shaft" data-connector="true" d="M1358 410L1358 365.25" fill="none" stroke="#111" stroke-width="2.5"/>
+  <use id="flow-6-arrowhead" href="#arrowhead" transform="translate(1358 348.25) rotate(-90)"/>
   <rect class="box" x="1660" y="547" width="252" height="98"/>
   <text x="1786" y="587" font-size="35" text-anchor="middle"><tspan x="1786">Data Scientist</tspan><tspan x="1786" dy="40">Queries</tspan></text>
   <path d="M1786 547V395" fill="none" stroke="#111" stroke-width="2.5"/>
   <text x="1786" y="365" font-size="34" text-anchor="middle">Query</text>
-  <path d="M1786 305V159" fill="none" stroke="#111" stroke-width="2.5"/>
-  <polygon points="1786,140 1776,159 1796,159" fill="#111"/>
+  <path id="flow-7-shaft" data-connector="true" d="M1786 305L1786 158.25" fill="none" stroke="#111" stroke-width="2.5"/>
+  <use id="flow-7-arrowhead" href="#arrowhead" transform="translate(1786 141.25) rotate(-90)"/>
 </svg>

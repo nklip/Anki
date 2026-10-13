@@ -2,6 +2,11 @@
   <title id="title">Lambda architecture</title>
   <desc id="desc">Incoming data is copied to batch and streaming engines. Both processing paths write to one serving backend, which answers queries, while raw data and results are retained in shared storage.</desc>
   <!-- Shared visual rules mirror the monochrome PNG and keep repair targets easy to find. -->
+  <!-- Every head is the same symmetric 18-by-16 triangle, rotated without scaling.
+       Shafts finish two units inside the bases; tips meet outer target strokes. -->
+  <defs>
+    <path id="arrowhead" d="M0 0L-18 -8L-18 8Z" fill="#111"/>
+  </defs>
   <style>
     text{font-family:Arial,Helvetica,sans-serif;fill:#111}
     .shape{fill:#fff;stroke:#111;stroke-width:2.2}
@@ -15,8 +20,8 @@
 
   <!-- Input icon, queue, and the fan-out into the two processing paths. -->
   <path class="shape" d="M64 242H107L117 252V295H64Z M107 242V253H117"/>
-  <path id="input-flow-shaft" class="connector" data-connector="true" d="M117 268H264"/>
-  <polygon points="284,268 264,258 264,278" fill="#111"/>
+  <path id="flow-1-shaft" data-connector="true" class="connector" d="M117 268L266.901331 268"/>
+  <use id="flow-1-arrowhead" href="#arrowhead" transform="translate(282.901331 268) rotate(0)"/>
   <path class="shape" d="M308 224H506C538 224 538 313 506 313H308C276 313 276 224 308 224Z"/>
   <path class="shape" d="M506 224C474 224 474 313 506 313"/>
 
@@ -25,32 +30,32 @@
   <text x="862" y="91" font-size="32" text-anchor="middle">Batch Layer</text>
   <rect class="shape" x="719" y="129" width="290" height="60"/>
   <text x="864" y="170" font-size="32" text-anchor="middle">Batch Engine</text>
-  <path id="batch-input-flow-shaft" class="connector" data-connector="true" d="M522 236L700 180"/>
-  <polygon points="719,174 697,170 703,190" fill="#111"/>
+  <path id="flow-2-shaft" data-connector="true" class="connector" d="M522 236L702.638001 179.149462"/>
+  <use id="flow-2-arrowhead" href="#arrowhead" transform="translate(717.9 174.346193) rotate(-17.469874)"/>
 
   <!-- Streaming processing layer. -->
   <rect class="group" x="696" y="259" width="336" height="178"/>
   <text x="864" y="310" font-size="32" text-anchor="middle">Streaming Layer</text>
   <rect class="shape" x="721" y="348" width="290" height="61"/>
   <text x="866" y="390" font-size="32" text-anchor="middle">Real-time Engine</text>
-  <path id="stream-input-flow-shaft" class="connector" data-connector="true" d="M522 302L702 356"/>
-  <polygon points="721,362 699,366 705,347" fill="#111"/>
+  <path id="flow-3-shaft" data-connector="true" class="connector" d="M522 302L704.58115 357.049593"/>
+  <use id="flow-3-arrowhead" href="#arrowhead" transform="translate(719.9 361.668342) rotate(16.778455)"/>
 
   <!-- Serving path where the batch and streaming results converge. -->
   <rect class="group" x="1195" y="142" width="347" height="178"/>
   <text x="1369" y="201" font-size="32" text-anchor="middle">Serving Layer</text>
   <rect class="shape" x="1223" y="238" width="290" height="62"/>
   <text x="1368" y="280" font-size="32" text-anchor="middle">Serving Backend</text>
-  <path id="batch-serving-flow-shaft" class="connector" data-connector="true" d="M981 189L1204 248"/>
-  <polygon points="1223,253 1201,258 1206,238" fill="#111"/>
-  <path id="stream-serving-flow-shaft" class="connector" data-connector="true" d="M984 348L1204 291"/>
-  <polygon points="1223,286 1206,301 1201,281" fill="#111"/>
+  <path id="flow-4-shaft" data-connector="true" class="connector" d="M981 189L1206.431787 248.618324"/>
+  <use id="flow-4-arrowhead" href="#arrowhead" transform="translate(1221.9 252.709091) rotate(14.813464)"/>
+  <path id="flow-5-shaft" data-connector="true" class="connector" d="M984 348L1206.412633 290.302999"/>
+  <use id="flow-5-arrowhead" href="#arrowhead" transform="translate(1221.9 286.285356) rotate(-14.542774)"/>
 
   <!-- Queries travel from the client toward the serving backend. -->
   <rect class="shape" x="1654" y="239" width="137" height="61"/>
   <text x="1722.5" y="280" font-size="32" text-anchor="middle">Query</text>
-  <path id="query-flow-shaft" class="connector" data-connector="true" d="M1654 269H1534"/>
-  <polygon points="1514,269 1534,259 1534,279" fill="#111"/>
+  <path id="flow-6-shaft" data-connector="true" class="connector" d="M1654 269L1530.1 269"/>
+  <use id="flow-6-arrowhead" href="#arrowhead" transform="translate(1514.1 269) rotate(180)"/>
 
   <!-- Shared durable storage for raw events and processed results. -->
   <rect class="group" x="299" y="479" width="1183" height="196"/>

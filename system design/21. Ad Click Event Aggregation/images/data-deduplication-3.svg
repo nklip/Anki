@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1950" height="1342" viewBox="0 0 936 644" role="img" aria-labelledby="diagram-title diagram-desc">
+  <title id="diagram-title">Save the offset after the downstream acknowledgement</title>
+  <desc id="diagram-desc">Read this sequence from top to bottom. The aggregator polls upstream Kafka, consumes from offset 100, verifies the stored offset in HDFS or S3, and aggregates events from 100 to 110. It sends the aggregated result to downstream Kafka and receives an acknowledgement. It then saves the offset in HDFS or S3 and acknowledges upstream with the new offset 110. Dashed lines show participant lifelines; narrow rectangles show activity. Ack means acknowledgement.</desc>
+  <!-- Screenshot coordinates are displayed at the neighboring diagrams' 1950-pixel width:
+       20.64-unit text and 1.5024-unit strokes render at 43 pixels and 3.13 pixels. -->
+  <defs>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;font-size:20.64px;fill:#000;text-anchor:middle}
+      .box{fill:#fff;stroke:#000;stroke-width:1.5024}
+      .life{fill:none;stroke:#000;stroke-width:1.5024;stroke-dasharray:4.464 4.56}
+      .flow{fill:none;stroke:#000;stroke-width:1.5024}
+      .arrowhead{fill:#000}
+    </style>
+  </defs>
+  <!-- Opaque background keeps the diagram legible in light and dark viewers. -->
+  <rect id="background" width="936" height="644" fill="#fff"/>
+  <!-- Lifelines are painted first; activation bars cover their dashes. -->
+  <g id="lifelines">
+    <path class="life" d="M84.25 71.5V642"/>
+    <path class="life" d="M342 71.5V642"/>
+    <!-- The storage lifeline pauses behind steps 4 and 5, keeping both labels clear. -->
+    <path class="life" d="M595 71.5V378M595 450V642"/>
+    <path class="life" d="M849.75 71.5V642"/>
+  </g>
+  <!-- Four participants, aligned with the screenshot's columns. -->
+  <g id="participants">
+    <rect id="upstream" class="box" x="7" y="9.5" width="154.5" height="62" rx="9.5"/>
+    <rect id="aggregator" class="box" x="264.75" y="9.5" width="154.5" height="62" rx="9.5"/>
+    <rect id="offset-storage" class="box" x="517.75" y="9.5" width="154.5" height="62" rx="9.5"/>
+    <rect id="downstream" class="box" x="772.5" y="9.5" width="154.5" height="62" rx="9.5"/>
+  </g>
+  <!-- Storage has separate activations for verification and the later offset save. -->
+  <g id="activations">
+    <rect id="upstream-active" class="box" x="76.5" y="136" width="15.5" height="429.5"/>
+    <rect id="aggregator-active" class="box" x="334.25" y="167" width="15.5" height="398.5"/>
+    <rect id="verify-offset-active" class="box" x="587.25" y="266" width="15.5" height="21.75"/>
+    <rect id="save-offset-active" class="box" x="587.25" y="497.5" width="15.5" height="22"/>
+    <rect id="downstream-active" class="box" x="842" y="400.25" width="15.5" height="38.5"/>
+  </g>
+  <!-- Separate arrowheads meet the outer activation borders. Shafts end just inside
+       the triangle bases, so neither a gap nor a shaft tail is visible. -->
+  <g id="messages">
+    <!-- 1. Poll upstream, pointing left. -->
+    <path id="poll-arrow" class="flow" d="M333.5 167.25H104.5"/>
+    <polygon class="arrowhead" points="92.75,167.25 105.25,160.77 105.25,173.73"/>
+    <!-- 2. Deliver events from offset 100, pointing right. -->
+    <path id="consume-arrow" class="flow" d="M92.75 227.5H321.75"/>
+    <polygon class="arrowhead" points="333.5,227.5 321,221.02 321,233.98"/>
+    <!-- 3.1. Verify the stored offset. -->
+    <path id="verify-offset-arrow" class="flow" d="M350.5 267.6H574.75"/>
+    <polygon class="arrowhead" points="586.5,267.6 574,261.12 574,274.08"/>
+    <!-- 3. The curved self-call returns to the aggregator's right border. -->
+    <path id="aggregate-loop-arrow" class="flow" d="M350.5 338C490.75 338 491.75 370.25 362.25 370.25"/>
+    <polygon class="arrowhead" points="350.5,370.25 363,363.77 363,376.73"/>
+    <!-- 4 and 5 cross the storage column intentionally: the result and ack
+         travel directly between the aggregator and downstream Kafka. -->
+    <path id="send-result-arrow" class="flow" d="M350.5 405H829.5"/>
+    <polygon class="arrowhead" points="841.25,405 828.75,398.52 828.75,411.48"/>
+    <path id="downstream-ack-arrow" class="flow" d="M841.25 437.5H362.25"/>
+    <polygon class="arrowhead" points="350.5,437.5 363,431.02 363,443.98"/>
+    <!-- 5.1. Save the offset only after receiving the downstream acknowledgement. -->
+    <path id="save-offset-arrow" class="flow" d="M350.5 498.5H574.75"/>
+    <polygon class="arrowhead" points="586.5,498.5 574,492.02 574,504.98"/>
+    <!-- 6. Acknowledge upstream with offset 110. -->
+    <path id="upstream-ack-arrow" class="flow" d="M333.5 565.5H104.5"/>
+    <polygon class="arrowhead" points="92.75,565.5 105.25,559.02 105.25,571.98"/>
+  </g>
+  <!-- Labels are painted last. Explicit line breaks preserve the reference wording. -->
+  <g id="labels">
+    <text x="84.25" y="37.5"><tspan x="84.25">Upstream</tspan><tspan x="84.25" dy="22">(Kafka)</tspan></text>
+    <text x="342" y="48.5">Aggregator</text>
+    <text x="595" y="48.5">HDFS / S3</text>
+    <text x="849.75" y="37.5"><tspan x="849.75">Downstream</tspan><tspan x="849.75" dy="22">(Kafka)</tspan></text>
+    <text x="213.5" y="159.5">1. Poll events</text>
+    <text x="210.5" y="198"><tspan x="210.5">2. Consume from</tspan><tspan x="210.5" dy="22">offset 100</tspan></text>
+    <text x="473" y="260">3.1 Verify offset</text>
+    <text x="489" y="311"><tspan x="489">3. Aggregate events</tspan><tspan x="489" dy="22">from 100 to 110</tspan></text>
+    <text x="598" y="397.25">4. Send aggregated result</text>
+    <text x="598" y="429.5">5. Ack back</text>
+    <text x="471.5" y="491.5">5.1 Save offset</text>
+    <text x="213" y="536.5"><tspan x="213">6. Ack upstream</tspan><tspan x="213" dy="22">with new offset 110</tspan></text>
+  </g>
+</svg>

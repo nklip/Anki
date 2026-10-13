@@ -1,10 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1160" height="804" viewBox="0 0 1160 804" role="img" aria-labelledby="title desc">
   <title id="title">Ad count map-reduce</title>
   <desc id="desc">A map step fans input into two minute-based aggregate steps that emit ad counts.</desc>
-  <!-- Shared styles and compact arrowheads mirror the PNG etalon. -->
+  <!-- Shared styles and symmetric heads preserve the diagram’s scale. -->
   <defs>
-    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="strokeWidth" orient="auto">
-      <path d="M0 0L10 5L0 10Z" fill="#111"/>
+    <!-- Equal symmetric heads: noses project 3 units beyond the shaft, whose endpoint is compensated to meet the outer target stroke. -->
+    <marker id="arrow" viewBox="0 0 17.5 17.5" refX="14.5" refY="8.75" markerWidth="17.5" markerHeight="17.5" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0L17.5 8.75L0 17.5Z" fill="#111"/>
     </marker>
     <style>
       text{font-family:Arial,Helvetica,sans-serif;fill:#111;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}
@@ -21,24 +22,24 @@
   <text x="559" y="61" font-size="37" text-anchor="middle">Aggregate every minute</text>
   <text x="559" y="760" font-size="35" text-anchor="middle">Aggregation Service</text>
 
-  <!-- Map input and fan-out; each shaft ends at the target boundary. -->
+  <!-- Map input and fan-out; each visible nose meets the target’s outer stroke. -->
   <path class="line" d="M39 403H61"/>
-  <path class="flow" d="M158 403H270"/>
+  <path id="flow-1" class="flow" d="M158 403L267.75 403"/>
   <text x="108" y="397" font-size="34" text-anchor="middle">
     <tspan x="108" dy="0">Data</tspan><tspan x="108" dy="38">Input</tspan>
   </text>
   <circle class="node" cx="372" cy="403" r="100"/>
   <text x="372" y="415" font-size="36" text-anchor="middle">Map</text>
 
-  <path class="flow" d="M462 359L642 256"/>
+  <path id="flow-2" class="flow" d="M462 359L644.7403 254.432"/>
   <circle class="node" cx="742" cy="217" r="100"/>
   <text x="742" y="229" font-size="36" text-anchor="middle">Aggregate</text>
-  <path class="flow" d="M842 217H960"/>
+  <path id="flow-3" class="flow" d="M842 217L958.75 217"/>
   <text x="967" y="229" font-size="35">Ad count</text>
 
-  <path class="flow" d="M462 447L642 556"/>
+  <path id="flow-4" class="flow" d="M462 447L645.0339 557.8372"/>
   <circle class="node" cx="742" cy="596" r="100"/>
   <text x="742" y="608" font-size="36" text-anchor="middle">Aggregate</text>
-  <path class="flow" d="M842 596H960"/>
+  <path id="flow-5" class="flow" d="M842 596L958.75 596"/>
   <text x="967" y="608" font-size="35">Ad count</text>
 </svg>

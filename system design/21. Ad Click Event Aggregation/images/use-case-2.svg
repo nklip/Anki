@@ -3,7 +3,8 @@
   <desc id="diagram-desc">A pipeline in five columns: inputs, map, aggregate, reduce and outputs. All click events are split by the map stage into three groups of five ads each. The aggregate stage counts clicks per ad within each group and keeps only that group’s top 3, striking through the rest. The reduce stage merges the nine survivors into one ranked list and again strikes through everything below third place, leaving ad3 with 12 clicks, ad1 with 9 and ad2 with 8. The output states that the top 3 most clicked ads in the past 1 minute are ad3, ad1 and ad2.</desc>
   <!-- One arrowhead marker and one style block drive the diagram; .out marks a count that was dropped. -->
   <defs>
-    <marker id="head" viewBox="0 0 20 14.6" refX="1" refY="7.3" markerWidth="20" markerHeight="14.6" markerUnits="userSpaceOnUse" orient="auto">
+    <!-- Equal symmetric heads: noses project 3.5 units beyond the shaft, whose endpoint is compensated to meet the outer target stroke. -->
+    <marker id="head" viewBox="0 0 20 14.6" refX="16.5" refY="7.3" markerWidth="20" markerHeight="14.6" markerUnits="userSpaceOnUse" orient="auto">
       <path d="M0 0L20 7.3L0 14.6Z" fill="#000"/>
     </marker>
     <style>
@@ -39,14 +40,15 @@
   <!-- Inputs: one mixed event stream. -->
   <rect class="box" x="297.75" y="498.07" width="205.25" height="84.43"/>
   <text x="331.5" y="551">All Events</text>
-  <!-- Map: the stream is split into three groups of five ads. -->
+  <!-- Map: the stream is split into three groups of five ads.
+       First-line baselines leave extra clearance above the outgoing connector level. -->
   <g id="map-groups">
     <rect class="box" x="596" y="206" width="273.36" height="84"/>
-    <text x="612.5" y="242">Events: ad3, ad6,</text><text x="620.5" y="277">ad9, ad12, ad15</text>
+    <text x="612.5" y="238">Events: ad3, ad6,</text><text x="620.5" y="277">ad9, ad12, ad15</text>
     <rect class="box" x="596" y="498" width="273.36" height="84"/>
-    <text x="612.5" y="534">Events: ad1, ad4,</text><text x="620.5" y="569">ad7, ad10, ad13</text>
+    <text x="612.5" y="530">Events: ad1, ad4,</text><text x="620.5" y="569">ad7, ad10, ad13</text>
     <rect class="box" x="596" y="790" width="273.36" height="85"/>
-    <text x="612.5" y="826">Events: ad2, ad5,</text><text x="620.5" y="861">ad8, ad11, ad14</text>
+    <text x="612.5" y="822">Events: ad2, ad5,</text><text x="620.5" y="861">ad8, ad11, ad14</text>
   </g>
   <!-- Aggregate: counts per ad; the strike-through rows fall outside that group's top 3. -->
   <g id="aggregate-groups">
@@ -95,19 +97,19 @@
     <line class="out" x1="1277" y1="700.5" x2="1417" y2="700.5"/>
   </g>
   <g id="connectors">
-    <path class="flow" d="M434.4 498.07L592.28 304.72"/>
-    <path class="flow" d="M503 540.31L577 540.31"/>
-    <path class="flow" d="M433.3 582.5L585.71 775.1"/>
-    <path class="flow" d="M869.36 248.13L965 248.13"/>
-    <path class="flow" d="M869.36 540.31L965 540.31"/>
-    <path class="flow" d="M869.36 832.48L965 832.48"/>
-    <path class="flow" d="M1146 332.66L1253.49 443.05"/>
-    <path class="flow" d="M1146 540.31L1247.75 540.31"/>
-    <path class="flow" d="M1146 748.05L1253.51 637.31"/>
-    <path class="flow" d="M1428.75 540.93L1507 540.93"/>
+    <path id="flow-1" class="flow" d="M434.4 498.07L601.3102 293.661"/>
+    <path id="flow-2" class="flow" d="M503 540.31L591.55 540.31"/>
+    <path id="flow-3" class="flow" d="M433.3 582.5L594.5772 786.3054"/>
+    <path id="flow-4" class="flow" d="M869.36 248.13L979.55 248.13"/>
+    <path id="flow-5" class="flow" d="M869.36 540.31L979.55 540.31"/>
+    <path id="flow-6" class="flow" d="M869.36 832.48L979.55 832.48"/>
+    <path id="flow-7" class="flow" d="M1146 332.66L1263.3583 453.1845"/>
+    <path id="flow-8" class="flow" d="M1146 540.31L1262.3 540.31"/>
+    <path id="flow-9" class="flow" d="M1146 748.05L1263.362 627.162"/>
+    <path id="flow-10" class="flow" d="M1428.75 540.93L1522.5 540.93"/>
   </g>
   <g id="output">
-    <text x="1534.5" y="500">Top 3 most clicked</text>
+    <text x="1506.5" y="500">The top 3 most clicked</text>
     <text x="1548" y="535">ads in the past 1</text>
     <text x="1554.5" y="571">minute are ad3,</text>
     <text x="1576" y="606">ad1 and ad2</text>
