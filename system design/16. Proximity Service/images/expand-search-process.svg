@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="403.846154"
+     viewBox="0 0 936 252" role="img" aria-labelledby="title desc">
+  <title id="title">Expand the search area progressively</title>
+  <desc id="desc">Three equal ten-by-ten grids, read from left to right. The green
+    square marks the search area. Its side length doubles at each step, from one
+    cell wide to two cells wide and then four cells wide. Each right-pointing
+    arrow is labeled increase search area.</desc>
+
+  <!-- Reuse the same grid while retaining the reference's original coordinate system. -->
+  <defs>
+    <style>
+      .grid { fill: none; stroke: #000; stroke-width: 1.375; }
+      .search-area { fill: #009c02; fill-opacity: .82; stroke: #009000; stroke-width: .7; }
+      .arrow-shaft { fill: none; stroke: #000; stroke-width: 1.5; }
+      .label { font-family: Arial, Helvetica, sans-serif; font-size: 22px;
+               fill: #000; text-anchor: middle; }
+    </style>
+    <!-- Reusing this symmetric 13-by-12 head makes both arrows identical. -->
+    <path id="expansion-arrowhead" d="M0 -6L13 0L0 6L3.5 0Z" fill="#000"/>
+    <g id="ten-by-ten-grid" class="grid">
+      <rect width="236" height="236"/>
+      <path d="M23.6 0V236 M47.2 0V236 M70.8 0V236 M94.4 0V236
+               M118 0V236 M141.6 0V236 M165.2 0V236 M188.8 0V236 M212.4 0V236
+               M0 23.6H236 M0 47.2H236 M0 70.8H236 M0 94.4H236
+               M0 118H236 M0 141.6H236 M0 165.2H236 M0 188.8H236 M0 212.4H236"/>
+    </g>
+  </defs>
+
+  <!-- White canvas; the requested width scales the full reference proportionally. -->
+  <rect id="background" width="936" height="252" fill="#fff"/>
+
+  <!-- Stage 1: the small search square straddles a grid intersection, as in the PNG. -->
+  <g id="initial-search">
+    <use href="#ten-by-ten-grid" x="9.3" y="9.5"/>
+    <rect id="initial-search-area" class="search-area" x="92" y="115.3" width="23" height="23"/>
+  </g>
+
+  <!-- Stage 2: translucent green keeps the grid visible beneath the search area. -->
+  <g id="expanded-search">
+    <use href="#ten-by-ten-grid" x="347.5" y="9.5"/>
+    <rect id="expanded-search-area" class="search-area" x="418.3" y="103.9" width="47.2" height="47.2"/>
+  </g>
+
+  <!-- Stage 3: the search area doubles in side length once more. -->
+  <g id="widest-search">
+    <use href="#ten-by-ten-grid" x="685.8" y="9.5"/>
+    <rect id="widest-search-area" class="search-area" x="733" y="80.3" width="94.4" height="94.4"/>
+  </g>
+
+  <!-- Both noses stop 3.5 units before the next grid; shafts end under the heads. -->
+  <g id="search-expansion-arrows">
+    <path id="first-arrow-shaft" class="arrow-shaft" data-connector="true" d="M250.5 127.5H338.5"/>
+    <use id="first-arrowhead" href="#expansion-arrowhead" x="331" y="127.5"/>
+    <path id="second-arrow-shaft" class="arrow-shaft" data-connector="true" d="M586.5 127.5H676.8"/>
+    <use id="second-arrowhead" href="#expansion-arrowhead" x="669.3" y="127.5"/>
+  </g>
+
+  <!-- Three-line labels allow larger text while keeping clear of grids and arrows. -->
+  <g id="transition-labels" class="label">
+    <text x="296.4" y="54">increase<tspan x="296.4" dy="28">search</tspan><tspan x="296.4" dy="28">area</tspan></text>
+    <text x="634.65" y="54">increase<tspan x="634.65" dy="28">search</tspan><tspan x="634.65" dy="28">area</tspan></text>
+  </g>
+</svg>

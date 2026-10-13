@@ -3,10 +3,9 @@
   <desc id="desc">A user reaches a load balancer. Nearby searches use the location-based service and a Redis cluster; business lookups use the business service and primary database. Data is replicated and synchronized.</desc>
   <!-- Shared icons and flow styling. -->
   <defs>
-    <!-- Nose inset: the head narrows to a point at x=10, so a shaft ending at x=9 (half-height 1.0)
-         squeezed its 1.6-wide stroke out both sides and notched every tip. refX 7.5 ends the shaft
-         where the head is 2.5 tall, covering the stroke with 0.45 to spare; the tip then sits 2.5
-         units past the path end, which every flow path below already accounts for. -->
+    <!-- All ten arrows share this symmetric 10-by-10 head. The 1.6-wide shaft ends at refX 7.5,
+         where the triangle is 2.5 tall, so no shaft protrudes past the tapered nose. The visible
+         tip projects 2.5 units beyond each endpoint; routes allow a 2-unit gap to target strokes. -->
     <marker id="arrow" markerWidth="10" markerHeight="10" viewBox="0 0 10 10" refX="7.5" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L10 5L0 10Z" fill="#111"/></marker>
     <symbol id="user" viewBox="0 0 54 54"><circle cx="27" cy="12" r="11"/><path d="M3 49V41C3 29 51 29 51 41V49Z"/></symbol>
     <!-- Cylinder measured off the etalon: lid ellipse rx 43.1 / ry 8.75 centred at local y 13.75,
@@ -38,29 +37,33 @@
   <!-- Entry point and services. Each labelled connector is one straight line broken by a single
        gap for its label, so both fragments share the line the etalon measures; the gap is only as
        tall as the label needs. Lines: LB->LBS x=916.33-1.7585y, LB->Business x=198.71+1.4811y. -->
-  <use href="#user" x="500" y="37" width="54" height="54"/><path class="plain" d="M527 91V118"/><path class="flow" d="M527 145V183.5"/><circle cx="527" cy="129" r="10" fill="#fff" stroke="#111"/><text class="t small" x="527" y="136">1</text>
+  <use href="#user" x="500" y="37" width="54" height="54"/><path class="plain" d="M527 91V118"/><path id="user-to-load-balancer-arrow" class="flow" d="M527 145V181.7"/><circle cx="527" cy="129" r="10" fill="#fff" stroke="#111"/><text class="t small" x="527" y="136">1</text>
   <rect class="box" x="431" y="187" width="191" height="68"/><text class="t node" x="527" y="230">Load balancer</text>
-  <path class="plain" d="M467.9 255L409.9 288"/><path class="flow" d="M341.3 327L267.9 368.76"/><text class="t label" x="361" y="317">② /search/nearby</text>
-  <path class="plain" d="M576.4 255L626.7 289"/><path class="flow" d="M683 327L744.66 368.56"/><text class="t label" x="662" y="317">/businesses/{:id}</text>
+  <path class="plain" d="M467.9 255L409.9 288"/><path id="load-balancer-to-lbs-arrow" class="flow" d="M341.3 327L272.815 365.964"/><text class="t label" x="361" y="317">② /search/nearby</text>
+  <path class="plain" d="M576.4 255L626.7 289"/><path id="load-balancer-to-business-arrow" class="flow" d="M683 327L740.569 365.803"/><text class="t label" x="662" y="317">/businesses/{:id}</text>
   <rect class="box" x="109" y="370" width="191" height="68"/><text class="t node" x="205" y="413">LBS</text><text class="t label" x="61" y="413">③ ④</text>
   <rect class="box" x="703" y="370" width="191" height="68"/><text class="t node" x="799" y="394">Business</text><text class="t node" x="799" y="425">Service</text>
   <!-- Redis reads and database access. -->
-  <!-- Steps 5 and 6 flank the shared Read label, matching the original bidirectional flow. Shaft
-       and both hand-drawn heads sit on x=204.86; Business->Redis runs x=1670.44-2.1565y. -->
-  <path class="plain" d="M204.86 452V500M204.86 530.5V583"/><path d="M199.56 453.3L204.86 439.3L210.16 453.3ZM199.56 582.2L204.86 596L210.16 582.2Z" fill="#111"/><text class="t label" x="161" y="509">⑤</text><text class="t label" x="161" y="544">⑥</text><text class="t label" x="205" y="524">Read</text>
-  <path class="plain" d="M725.9 438L620.2 487"/><path class="flow" d="M554.5 517.5L377.76 599.47"/><text class="t label" x="586" y="510">Read</text>
+  <!-- Steps 5 and 6 flank the shared Read label. Opposite path directions use the same marker
+       on x=204.86; each visible tip stays 2 units outside its target's painted border. -->
+  <path id="redis-to-lbs-read-arrow" class="flow" d="M204.86 500V443.3"/>
+  <path id="lbs-to-redis-read-arrow" class="flow" d="M204.86 534V590.7"/>
+  <text class="t label" x="161" y="509">⑤</text><text class="t label" x="161" y="544">⑥</text><text class="t label" x="205" y="524">Read</text>
+  <path class="plain" d="M725.9 438L620.2 487"/><path id="business-to-redis-read-arrow" class="flow" d="M554.5 517.5L379.068 598.863"/><text class="t label" x="586" y="510">Read</text>
   <path class="plain" d="M824.3 438L853.5 475.5"/><text class="t label" x="869" y="500">Write</text>
   <!-- Redis cluster. -->
   <rect class="box" x="35" y="596" width="339" height="166"/><use href="#redis-cube" x="90.85" y="623.1" width="66.3" height="56.8"/><use href="#redis-cube" x="264.85" y="623.1" width="66.3" height="56.8"/><g class="t label"><text x="124" y="707">Business Info</text><text x="298" y="707">Geohash</text><text class="cluster" x="205" y="746">Redis Cluster</text></g>
   <!-- Database cluster and replication. -->
   <rect class="box" x="497" y="565" width="601" height="229"/><use href="#db" x="548" y="618" width="88" height="93" color="#fff"/><use href="#db" x="753.5" y="618" width="88" height="93" color="#fff"/><use href="#db" x="959.25" y="618" width="88" height="93" color="#f2a7f1"/>
-  <!-- Second half of the Write connector. It crosses the cluster boundary, so it has to be
-       painted after the panel rect; drawn earlier the panel's white fill hid this run and its
-       arrowhead. The path stops one unit short of the primary so the marker tip lands on it. -->
-  <path class="flow" d="M884.3 514.5L969.67 623.32"/>
+  <!-- Write crosses the cluster panel intentionally, so it is painted above the panel and
+       cylinder. Its visible tip (969.710, 623.372) clears the curved lid stroke by 2 units. -->
+  <path id="business-to-primary-write-arrow" class="flow" d="M884.3 514.5L968.167 621.405"/>
   <g class="t label"><text x="592" y="739">Replica</text><text x="797" y="739">Replica</text><text x="1003" y="739">Primary</text></g>
-  <!-- The replication arc has only a text-sized break, as in the PNG original. -->
-  <path class="plain" d="M959.6 638.7C919.8 617.1 879.9 603.7 840 598.2"/><path class="flow" d="M757 598.3C717.6 603.7 678.2 616.8 638.7 637.2"/><text class="t small" x="798" y="601">Replicate</text><path class="plain" d="M949 666.5H960.15"/><path class="flow" d="M864 666.5H844.1"/><text class="t small" x="906.5" y="671.5">Replicate</text>
-  <!-- Cache data is synchronized from the database replicas. -->
-  <path class="flow" d="M497 679H378"/><text class="t label" x="435" y="667">Sync</text><text class="t cluster" x="797" y="778">Database Cluster</text>
+  <!-- Trim both ends of the original replication arc around the label for readable clearance.
+       The left curve's final tangent sets the marker direction; both replica tips clear walls by 2 units. -->
+  <path id="primary-to-first-replica-source-connector" class="plain" d="M959.6 638.7C922.460 618.544 885.233 605.528 848 599.409"/>
+  <path id="primary-to-first-replica-arrow" class="flow" d="M749 599.502C712.740 605.429 676.475 617.855 640.125 636.467"/>
+  <text class="t small" x="798" y="601">Replicate</text><path class="plain" d="M949 666.5H960.15"/><path id="primary-to-second-replica-arrow" class="flow" d="M864 666.5H845.9"/><text class="t small" x="906.5" y="671.5">Replicate</text>
+  <!-- Cache data is synchronized from the database replicas; the head clears the Redis border. -->
+  <path id="database-to-redis-sync-arrow" class="flow" d="M497 679H379.3"/><text class="t label" x="435" y="667">Sync</text><text class="t cluster" x="797" y="778">Database Cluster</text>
 </svg>
