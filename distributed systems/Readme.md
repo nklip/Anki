@@ -15,6 +15,7 @@ Each topic has its own folder, with diagrams in its `images/` directory.
  * [Apache Spark](./Apache%20Spark/Readme.md) — parallel execution, query planning, shuffles, recovery, streaming, real users, and practical benefits.
  * [Apache ZooKeeper](./Apache%20ZooKeeper/Readme.md) — coordination data, znodes, sessions, watches, quorums, the write and read paths, recipes, and operational limits.
  * [Erasure coding](./Erasure%20coding/Readme.md) — data and parity fragments, storage overhead, failure domains, reconstruction, and repair.
+ * [MapReduce](./MapReduce/Readme.md) — map, shuffle, reduce, distributed execution, and uses in Hadoop, Amazon EMR, and CouchDB.
  * [Patterns. Change Data Capture](./Patterns.%20Change%20Data%20Capture/Readme.md) — CDC through Pinterest’s architecture: Kafka Connect and Debezium, snapshots, change events, PostgreSQL WAL retention, replay, and Transactional Outbox.
  * [Patterns. Fanout](./Patterns.%20Fanout/Readme.md) — message and request fanout, feed-generation strategies, capacity, and failure handling.
  * [Patterns. Protective patterns](./Patterns.%20Protective%20patterns/Readme.md) — rate limiting, resource isolation, timeouts, fallbacks, and circuit breakers.

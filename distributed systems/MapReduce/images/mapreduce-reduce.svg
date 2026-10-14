@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="352" viewBox="0 0 960 352" role="img" aria-labelledby="title desc">
+  <title id="title">Reduce: compute a total for each word</title>
+  <desc id="desc">Reducing cat values 1, 1, 1 produces 3. Reducing the dog value 1 produces 1.</desc>
+  <!-- Shared typography and palette; labels also identify every grouping. -->
+  <defs><style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+    .title { font-size: 27px; font-weight: 700; }
+    .subtitle { font-size: 19px; fill: #536174; }
+    .heading { font-size: 20px; font-weight: 700; }
+    .body { font-size: 23px; }
+    .note { font-size: 18px; fill: #536174; }
+  </style></defs>
+  <!-- Canvas and reading direction. -->
+  <rect width="960" height="352" fill="#fff"/>
+  <text x="24" y="38" class="title" text-anchor="start">Reduce: compute a total for each word</text>
+  <text x="24" y="70" class="subtitle" text-anchor="start">Read each row left to right: grouped values → reduce function → result.</text>
+  <!-- Each grouped key is reduced independently into its total. -->
+  <rect x="24" y="106" width="350" height="88" rx="12" fill="#f6f3fc" stroke="#b8a8d3" stroke-width="2"/>
+  <rect x="584" y="106" width="352" height="88" rx="12" fill="#f0f8ed" stroke="#a7c49a" stroke-width="2"/>
+  <text x="44" y="135" class="heading" text-anchor="start">Key: cat</text>
+  <text x="44" y="169" class="body" text-anchor="start">Values: [1, 1, 1]</text>
+  <text x="604" y="135" class="heading" text-anchor="start">Output pair</text>
+  <text x="604" y="169" class="body" text-anchor="start">(cat, 3)</text>
+  <!-- Each arrow represents a sum; the triangle remains clear of the result box. -->
+  <path data-connector="true" d="M382 150 L565.00 150.00" fill="none" stroke="#526579" stroke-width="2.5"/><polygon points="576,150 564.00,155.00 564.00,145.00" fill="#526579"/>
+  <text x="479" y="130" class="heading" text-anchor="middle">sum</text>
+  <rect x="24" y="214" width="350" height="88" rx="12" fill="#f6f3fc" stroke="#b8a8d3" stroke-width="2"/>
+  <rect x="584" y="214" width="352" height="88" rx="12" fill="#f0f8ed" stroke="#a7c49a" stroke-width="2"/>
+  <text x="44" y="243" class="heading" text-anchor="start">Key: dog</text>
+  <text x="44" y="277" class="body" text-anchor="start">Values: [1]</text>
+  <text x="604" y="243" class="heading" text-anchor="start">Output pair</text>
+  <text x="604" y="277" class="body" text-anchor="start">(dog, 1)</text>
+  <!-- Each arrow represents a sum; the triangle remains clear of the result box. -->
+  <path data-connector="true" d="M382 258 L565.00 258.00" fill="none" stroke="#526579" stroke-width="2.5"/><polygon points="576,258 564.00,263.00 564.00,253.00" fill="#526579"/>
+  <text x="479" y="238" class="heading" text-anchor="middle">sum</text>
+  <text x="24" y="335" class="note" text-anchor="start">Result: cat occurs 3 times; dog occurs 1 time across both documents.</text>
+</svg>

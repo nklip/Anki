@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="408" viewBox="0 0 960 408" role="img" aria-labelledby="title desc">
+  <title id="title">Shuffle: bring equal keys together</title>
+  <desc id="desc">The cat value from mapper A and two cat values from mapper B go to the cat group. The dog value goes to the dog group.</desc>
+  <!-- Shared typography and palette; labels also identify every grouping. -->
+  <defs><style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+    .title { font-size: 27px; font-weight: 700; }
+    .subtitle { font-size: 19px; fill: #536174; }
+    .heading { font-size: 20px; font-weight: 700; }
+    .body { font-size: 23px; }
+    .note { font-size: 18px; fill: #536174; }
+  </style></defs>
+  <!-- Canvas and reading direction. -->
+  <rect width="960" height="408" fill="#fff"/>
+  <text x="24" y="38" class="title" text-anchor="start">Shuffle: bring equal keys together</text>
+  <text x="24" y="70" class="subtitle" text-anchor="start">The framework transfers pairs and groups them by word; arrows show routing.</text>
+  <!-- Mapper outputs remain separated on the left; grouped keys appear on the right. -->
+  <rect x="24" y="122" width="300" height="108" rx="12" fill="#fff6ed" stroke="#dcb588" stroke-width="2"/>
+  <rect x="24" y="254" width="300" height="96" rx="12" fill="#fff6ed" stroke="#dcb588" stroke-width="2"/>
+  <rect x="610" y="122" width="326" height="108" rx="12" fill="#f6f3fc" stroke="#b8a8d3" stroke-width="2"/>
+  <rect x="610" y="254" width="326" height="96" rx="12" fill="#f6f3fc" stroke="#b8a8d3" stroke-width="2"/>
+  <text x="24" y="105" class="heading" text-anchor="start">FROM MAP TASKS</text>
+  <text x="610" y="105" class="heading" text-anchor="start">GROUPS FOR REDUCE</text>
+  <text x="44" y="151" class="heading" text-anchor="start">Mapper A</text>
+  <text x="44" y="180" class="body" text-anchor="start" style="fill:#a9470c">cat: 1</text>
+  <text x="44" y="212" class="body" text-anchor="start" style="fill:#1464a0">dog: 1</text>
+  <text x="44" y="283" class="heading" text-anchor="start">Mapper B</text>
+  <text x="44" y="318" class="body" text-anchor="start" style="fill:#a9470c">cat: 1, 1</text>
+  <text x="630" y="154" class="heading" text-anchor="start">Key: cat</text>
+  <text x="630" y="198" class="body" text-anchor="start" style="fill:#a9470c">Values: [1, 1, 1]</text>
+  <text x="630" y="286" class="heading" text-anchor="start">Key: dog</text>
+  <text x="630" y="322" class="body" text-anchor="start" style="fill:#1464a0">Values: [1]</text>
+  <!-- Crossing paths intentionally show redistribution; no text occupies the corridor. -->
+  <path data-connector="true" d="M332 172 L591.00 172.00" fill="none" stroke="#a9470c" stroke-width="2.5"/><polygon points="602,172 590.00,177.00 590.00,167.00" fill="#a9470c"/>
+  <path data-connector="true" d="M332 204 L591.68 300.18" fill="none" stroke="#1464a0" stroke-width="2.5"/><polygon points="602,304 589.01,304.52 592.48,295.14" fill="#1464a0"/>
+  <path data-connector="true" d="M332 310 L591.71 211.89" fill="none" stroke="#a9470c" stroke-width="2.5"/><polygon points="602,208 592.54,216.92 589.01,207.56" fill="#a9470c"/>
+  <text x="24" y="386" class="note" text-anchor="start">Same word → same group, even when values come from different mappers.</text>
+</svg>
