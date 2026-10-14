@@ -4,7 +4,11 @@
 
 **Kubernetes concepts solve connected problems around the same application: keeping it running, making it reachable, supplying configuration, and matching resources to demand.** Follow a small web shop as each new problem gives the next concept a purpose.
 
-A [container](../Container%20fundamentals/Readme.md) runs an application process. A [Pod](../Pods/Readme.md) groups one or more containers that run together. A **worker node** is a machine that runs Pods. The [scheduler](../Cluster%20components/Readme.md) chooses a node for a Pod; **controllers** repeatedly work to make the observed state match the desired state you declared.
+* A [container](../Container%20fundamentals/Readme.md) runs an application process.
+* A [Pod](../Pods/Readme.md) groups one or more containers that run together.
+* A **worker node** is a machine that runs Pods.
+* The [scheduler](../Cluster%20components/Readme.md) chooses a node for a Pod.
+* **Controllers** repeatedly work to make the observed state match the desired state you declared.
 
 ## Step 1 — Deployment
 
