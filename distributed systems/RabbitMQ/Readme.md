@@ -208,6 +208,10 @@ Two other consumption models change the comparison:
 
 Neither product makes arbitrary external effects exactly once. See [Delivery and transactions](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md#2-delivery-guarantees).
 
+Start with your main requirement in the diagram below, then compare the alternatives within that branch.
+
+![rabbitmq-kafka-choice.svg](images/rabbitmq-kafka-choice.svg)
+
 ## 9. Where RabbitMQ fits
 
 | Requirement | Why RabbitMQ can fit | What to decide explicitly |
