@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1380" viewBox="0 0 1440 1380" role="img" aria-labelledby="title desc">
+  <title id="title">Choosing RabbitMQ, Kafka, or another messaging system</title>
+  <desc id="desc">Start with the main requirement. Prefer RabbitMQ classic or quorum queues for routed tasks and individual completion. Prefer Kafka with ordinary consumer groups for retained event history, independent readers, replay, and its integration and processing tools. Consider Amazon SQS for managed AWS queues, ActiveMQ Artemis for Java messaging APIs and protocol integration, Redpanda for Kafka-compatible streaming, or Pulsar for streaming with flexible subscription types. RabbitMQ Streams and Kafka share groups overlap these roles. Recommendations are starting points inferred from the linked official documentation, checked on 14 October 2026.</desc>
+
+  <!-- Match the neighboring RabbitMQ diagrams: Arial, pale blue panels, gray borders,
+       black connectors, and a pale yellow note. Text remains editable SVG text. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #171717; }
+      .title { font-size: 34px; font-weight: 700; }
+      .heading { font-size: 28px; font-weight: 700; }
+      .question { font-size: 24px; font-weight: 700; text-anchor: middle; }
+      .label { font-size: 22px; font-weight: 700; }
+      .body { font-size: 21px; }
+      .detail { font-size: 19px; }
+      .small { font-size: 17px; }
+      .muted { fill: #555; }
+      .panel { fill: #fff; stroke: #888; stroke-width: 1.6; }
+      .blue { fill: #eaf3ff; stroke: #888; stroke-width: 1.6; }
+      .note { fill: #fff4da; stroke: #888; stroke-width: 1.4; }
+      .shaft { fill: none; stroke: #171717; stroke-width: 2; stroke-linejoin: round; }
+      .source { font-size: 17px; fill: #1677b8; text-decoration: underline; }
+    </style>
+  </defs>
+
+  <!-- Entry point and two explicit requirements. The diamond is a choice, not a capability test. -->
+  <rect width="1440" height="1380" fill="#fff"/>
+  <text class="title" x="720" y="46" text-anchor="middle">RabbitMQ or Kafka?</text>
+  <text class="body" x="720" y="81" text-anchor="middle">Start with the main requirement; follow the branch that matters most.</text>
+  <path id="primary-choice" class="blue" d="M720 108 L1060 180 L720 252 L380 180 Z"/>
+  <text class="question" x="720" y="175">What is the main requirement?</text>
+  <text class="detail" x="720" y="205" text-anchor="middle">Work delivery or event history?</text>
+
+  <!-- Manual heads touch the top borders of the result panels. Shafts end under their bases. -->
+  <path id="work-branch-shaft" class="shaft" data-connector="true" d="M379 180 H365 V309"/>
+  <path id="work-branch-head" d="M358 307 L365 319.2 L372 307 Z" fill="#171717"/>
+  <text class="label" x="180" y="263" text-anchor="middle">Complete jobs</text>
+  <text class="detail" x="180" y="291" text-anchor="middle">and route each task</text>
+  <path id="history-branch-shaft" class="shaft" data-connector="true" d="M1061 180 H1075 V309"/>
+  <path id="history-branch-head" d="M1068 307 L1075 319.2 L1082 307 Z" fill="#171717"/>
+  <text class="label" x="1250" y="263" text-anchor="middle">Keep event history</text>
+  <text class="detail" x="1250" y="291" text-anchor="middle">for independent readers</text>
+
+  <!-- RabbitMQ choice: the comparison is specifically about classic/quorum queues. -->
+  <g id="rabbitmq-choice">
+    <rect class="panel" x="40" y="320" width="650" height="350"/>
+    <rect class="blue" x="40" y="320" width="650" height="96"/>
+    <text class="heading" x="72" y="360">Prefer RabbitMQ queues</text>
+    <text class="detail" x="72" y="393">Classic/quorum queues: routed work and completion.</text>
+    <text class="body" x="72" y="452">• Route by keys, topic patterns, or headers.</text>
+    <text class="body" x="72" y="488">• Workers acknowledge individual deliveries.</text>
+    <text class="body" x="72" y="524">• Requeue work or send failures to another queue.</text>
+    <text class="body" x="72" y="560">• You do not need to replay completed queue messages.</text>
+    <text class="detail muted" x="72" y="610">Examples: invoice jobs, email delivery, image resizing.</text>
+    <text class="detail" x="72" y="644">A completion acknowledgement removes that queue’s copy.</text>
+  </g>
+
+  <!-- Kafka choice: ordinary groups track independent progress over retained partitions. -->
+  <g id="kafka-choice">
+    <rect class="panel" x="750" y="320" width="650" height="350"/>
+    <rect class="blue" x="750" y="320" width="650" height="96"/>
+    <text class="heading" x="782" y="360">Prefer Apache Kafka</text>
+    <text class="detail" x="782" y="393">Ordinary consumer groups: reusable event streams.</text>
+    <text class="body" x="782" y="452">• Several applications read the same event history.</text>
+    <text class="body" x="782" y="488">• Replay or rebuild while records are retained.</text>
+    <text class="body" x="782" y="524">• Scale through partitions; order is per partition.</text>
+    <text class="body" x="782" y="560">• Use Connect for integration, Streams for processing.</text>
+    <text class="detail muted" x="782" y="610">Examples: clickstream analytics, database change feeds.</text>
+    <text class="detail" x="782" y="644">Saving reader progress does not delete log records.</text>
+  </g>
+
+  <!-- Optional alternatives stay in their corresponding branch. Connectors run to the
+       right of the headings; their heads end at the alternative-panel boundaries. -->
+  <text class="label" x="72" y="721">Other queues, when a constraint dominates</text>
+  <path id="queue-alternatives-shaft" class="shaft" data-connector="true" d="M645 671 V757"/>
+  <path id="queue-alternatives-head" d="M638 755 L645 767.2 L652 755 Z" fill="#171717"/>
+  <text class="label" x="782" y="721">Other event-streaming platforms</text>
+  <path id="stream-alternatives-shaft" class="shaft" data-connector="true" d="M1355 671 V757"/>
+  <path id="stream-alternatives-head" d="M1348 755 L1355 767.2 L1362 755 Z" fill="#171717"/>
+
+  <!-- Alternative queue services: decision cue first, then the candidate and its trade-off. -->
+  <g id="queue-alternatives">
+    <rect class="panel" x="40" y="768" width="650" height="260"/>
+    <text class="detail" x="72" y="803">Want a fully managed queue on Amazon Web Services?</text>
+    <text class="label" x="72" y="835">Amazon SQS</text>
+    <text class="detail muted" x="72" y="866">Use its service API; no broker cluster to manage.</text>
+    <path d="M64 895 H666" stroke="#ccc" stroke-width="1"/>
+    <text class="detail" x="72" y="931">Need Java messaging APIs or protocol interoperability?</text>
+    <text class="label" x="72" y="963">Apache ActiveMQ Artemis</text>
+    <text class="detail muted" x="72" y="994">Java Message Service (JMS) / Jakarta Messaging APIs.</text>
+  </g>
+
+  <!-- Redpanda is an API-compatibility option; Pulsar supports both stream and queue patterns. -->
+  <g id="stream-alternatives">
+    <rect class="panel" x="750" y="768" width="650" height="260"/>
+    <text class="detail" x="782" y="803">Want an alternative that works with Kafka clients?</text>
+    <text class="label" x="782" y="835">Redpanda</text>
+    <text class="detail muted" x="782" y="866">Kafka-compatible streaming; check API coverage.</text>
+    <path d="M774 895 H1376" stroke="#ccc" stroke-width="1"/>
+    <text class="detail" x="782" y="931">Need streaming plus flexible work-sharing subscriptions?</text>
+    <text class="label" x="782" y="963">Apache Pulsar</text>
+    <text class="detail muted" x="782" y="994">Shared workers or independent readers; configure retention.</text>
+  </g>
+
+  <!-- Overlapping modes prevent turning this decision aid into false product limitations.
+       Kafka share-group behavior is verified against Kafka 4.3 documentation. -->
+  <g id="overlapping-modes">
+    <rect class="note" x="40" y="1052" width="1360" height="166"/>
+    <text class="label" x="72" y="1088">Need both? Compare modes before adding another system.</text>
+    <text class="body" x="72" y="1125">RabbitMQ Streams keep replayable logs alongside the broker’s queues.</text>
+    <text class="body" x="72" y="1160">Kafka share groups let workers share records and acknowledge them individually.</text>
+    <text class="detail" x="72" y="1195">If requirements justify two systems, Kafka can hold event history while RabbitMQ distributes routed tasks.</text>
+  </g>
+
+  <!-- Source links are clickable when opening the SVG directly. Recommendations above are
+       a synthesis of documented features, not vendor rankings or throughput benchmarks. -->
+  <text class="detail" x="720" y="1253" text-anchor="middle">Selection guide: validate retention, ordering, duplicate handling, throughput, and operating cost.</text>
+  <text class="small muted" x="40" y="1290">Official documentation · checked 2026-10-14 · RabbitMQ / Kafka modes: 4.3</text>
+  <a href="https://www.rabbitmq.com/docs/queues"><text class="source" x="40" y="1324">RabbitMQ queues</text></a>
+  <a href="https://www.rabbitmq.com/docs/exchanges"><text class="source" x="225" y="1324">Routing</text></a>
+  <a href="https://www.rabbitmq.com/docs/streams"><text class="source" x="325" y="1324">RabbitMQ Streams</text></a>
+  <a href="https://kafka.apache.org/intro/"><text class="source" x="525" y="1324">Kafka concepts</text></a>
+  <a href="https://kafka.apache.org/43/design/design/#the-share-consumer"><text class="source" x="700" y="1324">Kafka share groups</text></a>
+  <a href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"><text class="source" x="40" y="1356">Amazon SQS</text></a>
+  <a href="https://activemq.apache.org/components/artemis/documentation/latest/using-jms.html"><text class="source" x="195" y="1356">Artemis messaging</text></a>
+  <a href="https://activemq.apache.org/components/artemis/documentation/latest/protocols-interoperability.html"><text class="source" x="395" y="1356">Artemis protocols</text></a>
+  <a href="https://docs.redpanda.com/streaming/current/develop/kafka-clients/"><text class="source" x="585" y="1356">Redpanda</text></a>
+  <a href="https://pulsar.apache.org/docs/5.0.x/concepts-messaging/"><text class="source" x="715" y="1356">Pulsar</text></a>
+</svg>
