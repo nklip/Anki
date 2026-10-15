@@ -10,6 +10,12 @@ How does Karpenter adjust Kubernetes node capacity to fit application demand?
 
 **Karpenter is an open-source Kubernetes node autoscaler and lifecycle manager.** It provisions suitable nodes when Pods cannot be scheduled, and can remove or replace nodes to reduce cost. A **node** is a machine that runs **Pods**, the units Kubernetes uses to run application containers.
 
+## Where Karpenter fits
+
+Karpenter runs as an installed controller Pod on an existing node, outside the core **control plane** that manages the cluster. In the overview, follow its connection to the Kubernetes **API (application programming interface)** to observe waiting Pods, then its request to the cloud provider for a new machine. The new node's **kubelet**, its local Pod agent, registers with the API server. The scheduler assigns Pods to ready nodes; kubelets run them through a container runtime.
+
+![karpenter-cluster-overview.svg](images/karpenter-cluster-overview.svg)
+
 ## How dynamic provisioning works
 
 A Pod is **unschedulable** when the Kubernetes scheduler cannot assign it to an existing node. For example, no node may have enough available capacity for its declared processor (CPU) and memory **requests**.
@@ -49,6 +55,9 @@ Adding nodes cannot solve incompatible rules. If a Pod requires a zone excluded 
 
 # Sources
 
+- [Karpenter — Controller placement and cloud-provider integration](https://karpenter.sh/docs/concepts/)
+- [Kubernetes — Cluster components](https://kubernetes.io/docs/concepts/overview/components/)
+- [Kubernetes — Node registration](https://kubernetes.io/docs/concepts/architecture/nodes/#self-registration-of-nodes)
 - [Karpenter — Overview and provisioning flow](https://karpenter.sh/docs/)
 - [Karpenter — NodePools](https://karpenter.sh/docs/concepts/nodepools/)
 - [Karpenter — NodeClasses and AWS launch settings](https://karpenter.sh/docs/concepts/nodeclasses/)
