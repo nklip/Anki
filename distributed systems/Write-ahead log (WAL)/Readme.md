@@ -6,7 +6,17 @@
 
 Start with the memory and storage layout, follow a transaction through commit and checkpointing, then examine crash recovery and the limits of the guarantee. The main example uses PostgreSQL 18 with synchronous local commit and reliable storage; other engines share the idea but implement it differently.
 
-## The pieces you need to know
+1. [The pieces you need to know](#1-the-pieces-you-need-to-know)
+2. [Two representations of the same changes](#2-two-representations-of-the-same-changes)
+3. [The two ordering rules](#3-the-two-ordering-rules)
+4. [A transfer from update to durable storage](#4-a-transfer-from-update-to-durable-storage)
+5. [What happens after a crash?](#5-what-happens-after-a-crash)
+6. [Why WAL helps performance](#6-why-wal-helps-performance)
+7. [How implementations differ](#7-how-implementations-differ)
+8. [Guarantees and boundaries](#8-guarantees-and-boundaries)
+9. [Check your understanding](#9-check-your-understanding)
+
+## 1. The pieces you need to know
 
 | Term | Meaning |
 |---|---|
@@ -19,7 +29,7 @@ Start with the memory and storage layout, follow a transaction through commit an
 | REDO | Reapplying recorded changes during recovery. |
 | Checkpoint | A recovery boundary established by persisting data and recording where recovery can safely begin. |
 
-## Two representations of the same changes
+## 2. Two representations of the same changes
 
 Read the diagram from the client through the database engine to memory, then down to persistent storage. Memory holds working pages and buffered log records. Follow the downward arrows to compare **WAL on storage** with **Data files**. The two storage boxes describe different roles; they do not require different physical disks.
 
@@ -29,7 +39,7 @@ The WAL describes changes in log order. Data files organize the database for acc
 
 **“Write ahead” constrains persistent writes, not every change in memory.** Updating an in-memory page does not require a separate disk synchronization first. Before that dirty page is written to its data file, however, all WAL records needed to recover its changes must be durable.
 
-## The two ordering rules
+## 3. The two ordering rules
 
 | Rule | Required ordering | Why it matters |
 |---|---|---|
@@ -38,7 +48,7 @@ The WAL describes changes in log order. Data files organize the database for acc
 
 Appending bytes to a memory buffer or handing them to the operating system is not necessarily enough. A synchronization operation, such as `fsync` or an equivalent supported mechanism, must establish persistence. PostgreSQL's `wal_sync_method` selects how WAL is synchronized; available methods depend on the platform. The operating system, controller, and drive must honor that request.
 
-## A transaction to follow
+## 4. A transfer from update to durable storage
 
 Suppose accounts A and B contain `100` and `50`. Transaction `T1` transfers `20`, producing `A = 80` and `B = 70`. Assume the two rows occupy different pages and there are no competing updates in this example.
 
@@ -51,9 +61,9 @@ UPDATE accounts SET balance = balance + 20 WHERE id = 'B';
 COMMIT;
 ```
 
-The next three sections follow one possible execution. Background page writes can overlap transaction execution; they do not universally wait for commit.
+The next three steps follow one possible execution. Background page writes can overlap transaction execution; they do not universally wait for commit.
 
-## Step 1 — Change memory and generate log records
+### Step 1 — Change memory and generate log records
 
 ![wal-buffer-changes.svg](images/wal-buffer-changes.svg)
 
@@ -63,7 +73,7 @@ At this stage, the transaction has not received a successful commit response. Th
 
 The diagram deliberately separates log generation from log persistence: a record's existence in memory is not proof that recovery will find it.
 
-## Step 2 — Persist the commit before acknowledging success
+### Step 2 — Persist the commit before acknowledging success
 
 ![wal-durable-commit.svg](images/wal-durable-commit.svg)
 
@@ -75,7 +85,7 @@ With that synchronization done, `T1` is durable even if neither changed page has
 
 **Group commit** lets one WAL synchronization cover several transactions whose commit records are included in the flushed range. It reduces synchronization work per transaction while each caller still waits for its own required WAL position to become durable.
 
-## Step 3 — Persist pages and advance the recovery boundary
+### Step 3 — Persist pages and advance the recovery boundary
 
 ![wal-checkpoint.svg](images/wal-checkpoint.svg)
 
@@ -89,7 +99,7 @@ In PostgreSQL, `wal_keep_size` reserves a minimum amount of recent WAL for repli
 
 This step is not a universal commit prerequisite. In PostgreSQL, a dirty page may even reach storage before its transaction commits, provided its WAL is already durable; transaction status determines whether those changes become visible.
 
-## What happens after a crash?
+## 5. What happens after a crash?
 
 Consider a crash after `T1` has a durable commit but before B's page is saved. Disk contains the new A page and the old B page. Recovery uses the checkpoint's redo starting position and the surviving WAL to restore the database to a consistent state.
 
@@ -112,7 +122,7 @@ WAL does not prescribe one universal undo algorithm. Physical recovery and trans
 
 A power failure can leave a **torn page**: part of a page reflects the new write while another part remains old. Incremental changes alone may not repair that damaged starting state. With `full_page_writes` enabled, PostgreSQL logs a full page image on its first modification after a checkpoint so recovery can reconstruct it. Reliable storage synchronization remains necessary.
 
-## Why WAL helps performance
+## 6. Why WAL helps performance
 
 Committing several scattered data-page changes immediately would require synchronizing those pages. WAL concentrates the commit-critical work into an append-oriented log, while the engine can combine and spread out later page writes. Group commit shares synchronization cost across concurrent transactions.
 
@@ -120,7 +130,7 @@ The work does not disappear: the system writes log information, later writes dat
 
 PostgreSQL starts automatic checkpoints based on elapsed time (`checkpoint_timeout`) or WAL growth (`max_wal_size`), whichever triggers first; idle periods with no new WAL can skip checkpoints. Lowering either setting can make checkpoints more frequent. `max_wal_size` is a soft limit, not a hard cap on retained WAL.
 
-## How implementations differ
+## 7. How implementations differ
 
 | Engine | What WAL protects | Important distinction |
 |---|---|---|
@@ -130,7 +140,7 @@ PostgreSQL starts automatic checkpoints based on elapsed time (`checkpoint_timeo
 
 Do not transfer durability defaults between engines. For example, SQLite's `synchronous=FULL` synchronizes WAL at each commit; `NORMAL` can lose recent transactions after power loss. RocksDB's default WAL behavior provides process-crash consistency, which is not the same promise as surviving a machine failure with all recent writes.
 
-## Guarantees and boundaries
+## 8. Guarantees and boundaries
 
 - **Asynchronous commit changes the acknowledgment promise.** With `synchronous_commit=off`, PostgreSQL can return success before WAL is durable, so a crash can lose recent acknowledged transactions. Recovery can still remain consistent. Disabling `fsync` is different and can permit corruption.
 - **Local WAL does not create a remote copy.** Replication sends changes to another server. An asynchronous replica can lag behind an acknowledged local commit; failover may lose work it never received. Compare LSNs from the same WAL history to locate the gap: in PostgreSQL's `pg_stat_replication`, a replica's `flush_lsn` reports how far its WAL is durable, while `replay_lsn` reports how far changes have been applied. A replay gap alone does not mean the WAL is missing; the replica may already have it durably stored.
@@ -140,36 +150,99 @@ Do not transfer durability defaults between engines. For example, SQLite's `sync
 
 The key distinction to remember is **commit versus checkpoint**: commit establishes the transaction's durability promise; a checkpoint establishes a later recovery boundary by persisting accumulated state.
 
-## Self-check
+## 9. Check your understanding
 
-Try answering before revealing the explanations.
+Try answering each question before expanding its answer.
 
 1. Can a page change in memory before its WAL is durable? What must happen before that page is written to its data file?
+
+   <details>
+   <summary>Answer</summary>
+
+   Yes. The write-ahead rule constrains persistent page writes: the WAL needed to recover a page's changes must be durable before the changed page is written to its data file.
+
+   </details>
+
 2. `T1` has a durable commit, but B's data page still contains `50` when the server crashes. What balances should recovery produce, and did commit need to wait for a checkpoint?
+
+   <details>
+   <summary>Answer</summary>
+
+   Recovery restores `A = 80` and `B = 70` under the example's storage assumptions. Commit needed durable WAL through its commit record, not a checkpoint or immediate writes of both data pages.
+
+   </details>
+
 3. Which PostgreSQL setting allows success before local WAL durability? Why is that different from disabling `fsync`?
+
+   <details>
+   <summary>Answer</summary>
+
+   `synchronous_commit=off` permits asynchronous commit. A crash can lose recent acknowledged transactions while recovery remains consistent. Turning `fsync` off can also permit corruption.
+
+   </details>
+
 4. Why can a completed checkpoint leave older WAL on storage? Name two retention mechanisms.
+
+   <details>
+   <summary>Answer</summary>
+
+   Other consumers may still need that WAL. `wal_keep_size` retains recent WAL for replicas, replication slots can retain WAL needed by their consumers, and enabled archiving must finish before segments can be recycled.
+
+   </details>
+
 5. Which two settings control automatic checkpoint timing, and what is the tradeoff in making checkpoints more frequent?
+
+   <details>
+   <summary>Answer</summary>
+
+   `checkpoint_timeout` and `max_wal_size`. More frequent checkpoints can shorten recovery but increase page-write pressure and full-page WAL traffic; `max_wal_size` is not a hard storage cap.
+
+   </details>
+
 6. A replica's `flush_lsn` has reached the end of `T1`'s commit record, but its `replay_lsn` has not. What has the replica done, and what remains unfinished?
+
+   <details>
+   <summary>Answer</summary>
+
+   The replica has durably stored WAL through the commit but has not finished replaying it. This is an apply delay, not evidence that those WAL records are absent.
+
+   </details>
+
 7. The client times out after sending `COMMIT`. Why is blindly repeating the transfer unsafe, and what should a retry check?
+
+   <details>
+   <summary>Answer</summary>
+
+   The first attempt may already have committed, so another debit could transfer money twice. Use a stable transfer ID and check the stored outcome so a retry cannot duplicate the effect.
+
+   </details>
+
 8. Why might ordinary incremental WAL records fail to repair a torn page? Which PostgreSQL setting supplies the missing protection?
+
+   <details>
+   <summary>Answer</summary>
+
+   A torn page mixes old and new contents, leaving an unreliable starting point for incremental changes. `full_page_writes` logs a full page image on the first modification after a checkpoint; reliable synchronization is still required.
+
+   </details>
+
 9. Why can one WAL synchronization safely acknowledge several transactions?
+
+   <details>
+   <summary>Answer</summary>
+
+   Group commit makes a range of WAL durable together. Each transaction can return once that durable range includes its own commit record and preceding changes.
+
+   </details>
+
 10. Why is “WAL is enabled” insufficient to claim power-loss durability? Use SQLite's `FULL`/`NORMAL` modes and RocksDB's default as examples.
 
-<details>
-<summary>Check your answers</summary>
+    <details>
+    <summary>Answer</summary>
 
-1. Yes. The write-ahead rule constrains persistent page writes: the WAL needed to recover a page's changes must be durable before the changed page is written to its data file.
-2. Recovery restores `A = 80` and `B = 70` under the example's storage assumptions. Commit needed durable WAL through its commit record, not a checkpoint or immediate writes of both data pages.
-3. `synchronous_commit=off` permits asynchronous commit. A crash can lose recent acknowledged transactions while recovery remains consistent. Turning `fsync` off can also permit corruption.
-4. Other consumers may still need that WAL. `wal_keep_size` retains recent WAL for replicas, replication slots can retain WAL needed by their consumers, and enabled archiving must finish before segments can be recycled.
-5. `checkpoint_timeout` and `max_wal_size`. More frequent checkpoints can shorten recovery but increase page-write pressure and full-page WAL traffic; `max_wal_size` is not a hard storage cap.
-6. The replica has durably stored WAL through the commit but has not finished replaying it. This is an apply delay, not evidence that those WAL records are absent.
-7. The first attempt may already have committed, so another debit could transfer money twice. Use a stable transfer ID and check the stored outcome so a retry cannot duplicate the effect.
-8. A torn page mixes old and new contents, leaving an unreliable starting point for incremental changes. `full_page_writes` logs a full page image on the first modification after a checkpoint; reliable synchronization is still required.
-9. Group commit makes a range of WAL durable together. Each transaction can return once that durable range includes its own commit record and preceding changes.
-10. In SQLite WAL mode, `synchronous=FULL` synchronizes WAL at each commit, while `NORMAL` can lose recent transactions after power loss. RocksDB's default provides process-crash consistency, not a promise that every recent write survives machine failure. Check each engine's durability settings and failure model.
+    In SQLite WAL mode, `synchronous=FULL` synchronizes WAL at each commit, while `NORMAL` can lose recent transactions after power loss. RocksDB's default provides process-crash consistency, not a promise that every recent write survives machine failure. Check each engine's durability settings and failure model.
 
-</details>
+    </details>
 
 # Sources
 
