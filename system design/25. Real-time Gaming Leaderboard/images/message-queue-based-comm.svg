@@ -12,9 +12,11 @@
       .service-box{fill:#fff;stroke:#111;stroke-width:2}
       .flow-shaft{fill:none;stroke:#111;stroke-width:2.2}
     </style>
-    <marker id="flow-arrowhead" viewBox="0 0 11 9" refX="11" refY="4.5"
+    <!-- One symmetric 22×18 head for every direction. Its tip projects 4 units beyond
+         the shaft endpoint to hide the stroke beneath the taper. -->
+    <marker id="flow-arrowhead" viewBox="0 0 22 18" refX="18" refY="9"
             markerWidth="22" markerHeight="18" markerUnits="userSpaceOnUse" orient="auto">
-      <path d="M0 0 L11 4.5 L0 9 Z" fill="#111"/>
+      <path d="M0 0 L22 9 L0 18 Z" fill="#111"/>
     </marker>
   </defs>
 
@@ -31,13 +33,13 @@
   <!-- Connectors are painted before Kafka and all labels; their heads stop at receiving boundaries. -->
   <g id="message-flows">
     <path id="game-to-kafka-flow" class="flow-shaft" data-connector="true"
-          d="M258.5 262.5 H507" marker-end="url(#flow-arrowhead)"/>
+          d="M258.5 262.5 L501.25 262.5" marker-end="url(#flow-arrowhead)"/>
     <path id="kafka-to-leaderboard-flow" class="flow-shaft" data-connector="true"
-          d="M726 228.5 L978.5 148" marker-end="url(#flow-arrowhead)"/>
+          d="M726 228.5 L974.688991 149.214995" marker-end="url(#flow-arrowhead)"/>
     <path id="kafka-to-analytics-flow" class="flow-shaft" data-connector="true"
-          d="M729.5 262.5 H978.5" marker-end="url(#flow-arrowhead)"/>
+          d="M729.5 262.5 L974.5 262.5" marker-end="url(#flow-arrowhead)"/>
     <path id="kafka-to-notifications-flow" class="flow-shaft" data-connector="true"
-          d="M726 296.5 L978.5 376" marker-end="url(#flow-arrowhead)"/>
+          d="M726 296.5 L974.684643 374.798729" marker-end="url(#flow-arrowhead)"/>
   </g>
 
   <!-- Kafka cylinder: a rounded left body with a full right end cap. -->

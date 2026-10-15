@@ -64,12 +64,13 @@
     <text class="node-label" x="190" y="253"><tspan x="190">Leaderboard</tspan><tspan x="190" dy="38">service</tspan></text>
   </g>
 
+  <!-- All heads are symmetric 23×20 triangles; shafts end one unit inside their bases. -->
   <g id="service-to-api-flow">
-    <path id="service-return-shaft" class="shaft" data-connector="true" d="M418 260H361"/>
-    <polygon id="service-return-arrowhead" class="arrow-head" points="339,260 361,250 361,270"/>
+    <path id="service-return-shaft" class="shaft" data-connector="true" d="M418 260L361 260"/>
+    <polygon id="service-return-arrowhead" class="arrow-head" points="339,260 362,250 362,270"/>
     <text class="flow-label" x="520" y="254"><tspan x="520">Get</tspan><tspan x="520" dy="38">leaderboard</tspan></text>
-    <path id="service-request-shaft" class="shaft" data-connector="true" d="M622 260H671"/>
-    <polygon id="service-request-arrowhead" class="arrow-head" points="694,260 671,250 671,270"/>
+    <path id="service-request-shaft" class="shaft" data-connector="true" d="M622 260L672 260"/>
+    <polygon id="service-request-arrowhead" class="arrow-head" points="694,260 671,270 671,250"/>
   </g>
 
   <!-- Reused AWS API Gateway mark. -->
@@ -81,8 +82,8 @@
   <!-- Bidirectional invocation/response link between API Gateway and Lambda. -->
   <g id="api-lambda-flow">
     <path id="api-lambda-shaft" class="shaft" data-connector="true" d="M848 260H999"/>
-    <polygon id="lambda-to-api-arrowhead" class="arrow-head" points="826,260 848,250 848,270"/>
-    <polygon id="api-to-lambda-arrowhead" class="arrow-head" points="1021,260 999,250 999,270"/>
+    <polygon id="lambda-to-api-arrowhead" class="arrow-head" points="826,260 849,250 849,270"/>
+    <polygon id="api-to-lambda-arrowhead" class="arrow-head" points="1021,260 998,270 998,250"/>
   </g>
 
   <!-- Reused AWS Lambda mark. -->
@@ -95,15 +96,15 @@
   <g id="redis-query-flow">
     <path id="redis-callout-leading-shaft" class="shaft" data-connector="true" d="M1123 244L1251 202"/>
     <text class="branch-label" x="1160" y="185">① Call ZREVRANGE</text>
-    <path id="redis-callout-trailing-shaft" class="shaft" data-connector="true" d="M1425 145L1500 121"/>
-    <polygon id="redis-query-arrowhead" class="arrow-head" points="1522,112 1504,130 1496,112"/>
+    <path id="redis-callout-trailing-shaft" class="shaft" data-connector="true" d="M1425 145L1501.172309 119.085709"/>
+    <polygon id="redis-query-arrowhead" class="arrow-head" points="1522,112 1503.446373,128.874919 1497.004819,109.940655"/>
   </g>
 
   <g id="mysql-query-flow">
     <path id="mysql-callout-leading-shaft" class="shaft" data-connector="true" d="M1123 274L1207 298"/>
     <text class="branch-label" x="1218" y="319"><tspan x="1218">② Fetch</tspan><tspan x="1218" dy="38">user details</tspan></text>
-    <path id="mysql-callout-trailing-shaft" class="shaft" data-connector="true" d="M1430 356L1500 379"/>
-    <polygon id="mysql-query-arrowhead" class="arrow-head" points="1522,386 1497,389 1503,369"/>
+    <path id="mysql-callout-trailing-shaft" class="shaft" data-connector="true" d="M1430 356L1501.083944 379.179547"/>
+    <polygon id="mysql-query-arrowhead" class="arrow-head" points="1522,386 1497.033008,388.376825 1503.23342,369.362228"/>
   </g>
 
   <!-- Data stores reuse the local Redis/MySQL marks from manage-services-ourselves.svg. -->

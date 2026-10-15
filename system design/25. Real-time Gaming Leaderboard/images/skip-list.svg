@@ -16,15 +16,12 @@
       .node-value{font-size:31px;text-anchor:middle}
       .index-link{fill:none;stroke:#111;stroke-width:1.25}
       .search-link{fill:none;stroke:#111;stroke-width:3.5}
-      .stage-arrow{fill:#fff;stroke:#111;stroke-width:2;stroke-linejoin:round}
+      .stage-arrow{fill:none;stroke:#111;stroke-width:2}
     </style>
-    <marker id="index-arrowhead" viewBox="0 0 10 8" refX="10" refY="4"
-            markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto">
-      <path d="M0 0 L10 4 L0 8 Z" fill="#111"/>
-    </marker>
-    <marker id="search-arrowhead" viewBox="0 0 12 10" refX="12" refY="5"
-            markerWidth="24" markerHeight="20" markerUnits="userSpaceOnUse" orient="auto">
-      <path d="M0 0 L12 5 L0 10 Z" fill="#111"/>
+    <!-- All heads are 18×16. A 4.5-unit nose projection covers even the bold shaft. -->
+    <marker id="connector-arrowhead" viewBox="0 0 18 16" refX="13.5" refY="8"
+            markerWidth="18" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M0 0 L18 8 L0 16 Z" fill="#111"/>
     </marker>
   </defs>
 
@@ -41,70 +38,70 @@
     <text class="panel-label" x="85" y="937">Level 1 index</text>
   </g>
 
-  <!-- Large outlined arrows indicate adding another skip-list index level. -->
+  <!-- Stage transitions use the same head as list links and retain their original tips. -->
   <g id="stage-transitions">
-    <path id="base-to-level-1-arrow" class="stage-arrow" d="M648 190 H695 V228 H718 L672 251 L625 228 H648 Z"/>
-    <path id="level-1-to-level-2-arrow" class="stage-arrow" d="M648 588 H695 V626 H718 L672 649 L625 626 H648 Z"/>
+    <path id="base-to-level-1-arrow" class="stage-arrow" data-connector="true" d="M672 190 V246.5" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-1-to-level-2-arrow" class="stage-arrow" data-connector="true" d="M672 588 V644.5" marker-end="url(#connector-arrowhead)"/>
   </g>
 
-  <!-- Connectors are below nodes so their tips terminate cleanly at box boundaries. -->
+  <!-- Shafts stop 4.5 units before the outer box stroke; complete heads meet its edge. -->
   <g id="base-list-links">
-    <path id="base-1-to-4" class="search-link" data-connector="true" d="M352 101 L392 101" marker-end="url(#search-arrowhead)"/>
-    <path id="base-4-to-8" class="search-link" data-connector="true" d="M452 101 L491 101" marker-end="url(#search-arrowhead)"/>
-    <path id="base-8-to-10" class="search-link" data-connector="true" d="M551 101 L591 101" marker-end="url(#search-arrowhead)"/>
-    <path id="base-10-to-15" class="search-link" data-connector="true" d="M651 101 L690 101" marker-end="url(#search-arrowhead)"/>
-    <path id="base-15-to-26" class="search-link" data-connector="true" d="M750 101 L790 101" marker-end="url(#search-arrowhead)"/>
-    <path id="base-26-to-36" class="search-link" data-connector="true" d="M850 101 L889 101" marker-end="url(#search-arrowhead)"/>
-    <path id="base-36-to-45" class="search-link" data-connector="true" d="M949 101 L989 101" marker-end="url(#search-arrowhead)"/>
-    <path id="base-45-to-60" class="index-link" data-connector="true" d="M1049 101 L1088 101" marker-end="url(#index-arrowhead)"/>
-    <path id="base-60-to-68" class="index-link" data-connector="true" d="M1148 101 L1188 101" marker-end="url(#index-arrowhead)"/>
+    <path id="base-1-to-4" class="search-link" data-connector="true" d="M352 101 L386.6 101" marker-end="url(#connector-arrowhead)"/>
+    <path id="base-4-to-8" class="search-link" data-connector="true" d="M452 101 L485.6 101" marker-end="url(#connector-arrowhead)"/>
+    <path id="base-8-to-10" class="search-link" data-connector="true" d="M551 101 L585.6 101" marker-end="url(#connector-arrowhead)"/>
+    <path id="base-10-to-15" class="search-link" data-connector="true" d="M651 101 L684.6 101" marker-end="url(#connector-arrowhead)"/>
+    <path id="base-15-to-26" class="search-link" data-connector="true" d="M750 101 L784.6 101" marker-end="url(#connector-arrowhead)"/>
+    <path id="base-26-to-36" class="search-link" data-connector="true" d="M850 101 L883.6 101" marker-end="url(#connector-arrowhead)"/>
+    <path id="base-36-to-45" class="search-link" data-connector="true" d="M949 101 L983.6 101" marker-end="url(#connector-arrowhead)"/>
+    <path id="base-45-to-60" class="index-link" data-connector="true" d="M1049 101 L1082.6 101" marker-end="url(#connector-arrowhead)"/>
+    <path id="base-60-to-68" class="index-link" data-connector="true" d="M1148 101 L1182.6 101" marker-end="url(#connector-arrowhead)"/>
   </g>
 
   <g id="level-1-stage-links">
-    <path id="level-1-top-1-to-8" class="search-link" data-connector="true" d="M352 335 L491 335" marker-end="url(#search-arrowhead)"/>
-    <path id="level-1-top-8-to-15" class="search-link" data-connector="true" d="M551 335 L690 335" marker-end="url(#search-arrowhead)"/>
-    <path id="level-1-top-15-to-36" class="search-link" data-connector="true" d="M750 335 L889 335" marker-end="url(#search-arrowhead)"/>
-    <path id="level-1-top-36-to-60" class="index-link" data-connector="true" d="M949 335 L1088 335" marker-end="url(#index-arrowhead)"/>
-    <path id="level-1-drop-1" class="index-link" data-connector="true" d="M322 361 L322 468" marker-end="url(#index-arrowhead)"/>
-    <path id="level-1-drop-8" class="index-link" data-connector="true" d="M521 361 L521 468" marker-end="url(#index-arrowhead)"/>
-    <path id="level-1-drop-15" class="index-link" data-connector="true" d="M720 361 L720 468" marker-end="url(#index-arrowhead)"/>
-    <path id="level-1-drop-36" class="search-link" data-connector="true" d="M919 361 L919 468" marker-end="url(#search-arrowhead)"/>
-    <path id="level-1-drop-60" class="index-link" data-connector="true" d="M1118 361 L1118 468" marker-end="url(#index-arrowhead)"/>
-    <path id="level-1-base-1-to-4" class="index-link" data-connector="true" d="M352 493 L392 493" marker-end="url(#index-arrowhead)"/>
-    <path id="level-1-base-4-to-8" class="index-link" data-connector="true" d="M452 493 L491 493" marker-end="url(#index-arrowhead)"/>
-    <path id="level-1-base-8-to-10" class="index-link" data-connector="true" d="M551 493 L591 493" marker-end="url(#index-arrowhead)"/>
-    <path id="level-1-base-10-to-15" class="index-link" data-connector="true" d="M651 493 L690 493" marker-end="url(#index-arrowhead)"/>
-    <path id="level-1-base-15-to-26" class="index-link" data-connector="true" d="M750 493 L790 493" marker-end="url(#index-arrowhead)"/>
-    <path id="level-1-base-26-to-36" class="index-link" data-connector="true" d="M850 493 L889 493" marker-end="url(#index-arrowhead)"/>
-    <path id="level-1-base-36-to-45" class="search-link" data-connector="true" d="M949 493 L989 493" marker-end="url(#search-arrowhead)"/>
-    <path id="level-1-base-45-to-60" class="index-link" data-connector="true" d="M1049 493 L1088 493" marker-end="url(#index-arrowhead)"/>
-    <path id="level-1-base-60-to-68" class="index-link" data-connector="true" d="M1148 493 L1188 493" marker-end="url(#index-arrowhead)"/>
+    <path id="level-1-top-1-to-8" class="search-link" data-connector="true" d="M352 335 L485.6 335" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-1-top-8-to-15" class="search-link" data-connector="true" d="M551 335 L684.6 335" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-1-top-15-to-36" class="search-link" data-connector="true" d="M750 335 L883.6 335" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-1-top-36-to-60" class="index-link" data-connector="true" d="M949 335 L1082.6 335" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-1-drop-1" class="index-link" data-connector="true" d="M322 361 L322 462.6" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-1-drop-8" class="index-link" data-connector="true" d="M521 361 L521 462.6" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-1-drop-15" class="index-link" data-connector="true" d="M720 361 L720 462.6" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-1-drop-36" class="search-link" data-connector="true" d="M919 361 L919 462.6" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-1-drop-60" class="index-link" data-connector="true" d="M1118 361 L1118 462.6" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-1-base-1-to-4" class="index-link" data-connector="true" d="M352 493 L386.6 493" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-1-base-4-to-8" class="index-link" data-connector="true" d="M452 493 L485.6 493" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-1-base-8-to-10" class="index-link" data-connector="true" d="M551 493 L585.6 493" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-1-base-10-to-15" class="index-link" data-connector="true" d="M651 493 L684.6 493" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-1-base-15-to-26" class="index-link" data-connector="true" d="M750 493 L784.6 493" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-1-base-26-to-36" class="index-link" data-connector="true" d="M850 493 L883.6 493" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-1-base-36-to-45" class="search-link" data-connector="true" d="M949 493 L983.6 493" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-1-base-45-to-60" class="index-link" data-connector="true" d="M1049 493 L1082.6 493" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-1-base-60-to-68" class="index-link" data-connector="true" d="M1148 493 L1182.6 493" marker-end="url(#connector-arrowhead)"/>
   </g>
 
   <g id="level-2-stage-links">
-    <path id="level-2-top-1-to-15" class="search-link" data-connector="true" d="M352 743 L690 743" marker-end="url(#search-arrowhead)"/>
-    <path id="level-2-top-15-to-60" class="index-link" data-connector="true" d="M750 743 L1088 743" marker-end="url(#index-arrowhead)"/>
-    <path id="level-2-drop-1" class="index-link" data-connector="true" d="M322 769 L322 900" marker-end="url(#index-arrowhead)"/>
-    <path id="level-2-drop-15" class="search-link" data-connector="true" d="M720 769 L720 900" marker-end="url(#search-arrowhead)"/>
-    <path id="level-2-drop-60" class="index-link" data-connector="true" d="M1118 769 L1118 900" marker-end="url(#index-arrowhead)"/>
-    <path id="level-2-mid-1-to-8" class="index-link" data-connector="true" d="M352 925 L491 925" marker-end="url(#index-arrowhead)"/>
-    <path id="level-2-mid-8-to-15" class="index-link" data-connector="true" d="M551 925 L690 925" marker-end="url(#index-arrowhead)"/>
-    <path id="level-2-mid-15-to-36" class="search-link" data-connector="true" d="M750 925 L889 925" marker-end="url(#search-arrowhead)"/>
-    <path id="level-2-mid-36-to-60" class="index-link" data-connector="true" d="M949 925 L1088 925" marker-end="url(#index-arrowhead)"/>
-    <path id="level-2-mid-drop-1" class="index-link" data-connector="true" d="M322 951 L322 1058" marker-end="url(#index-arrowhead)"/>
-    <path id="level-2-mid-drop-8" class="index-link" data-connector="true" d="M521 951 L521 1058" marker-end="url(#index-arrowhead)"/>
-    <path id="level-2-mid-drop-15" class="index-link" data-connector="true" d="M720 951 L720 1058" marker-end="url(#index-arrowhead)"/>
-    <path id="level-2-mid-drop-36" class="search-link" data-connector="true" d="M919 951 L919 1058" marker-end="url(#search-arrowhead)"/>
-    <path id="level-2-mid-drop-60" class="index-link" data-connector="true" d="M1118 951 L1118 1058" marker-end="url(#index-arrowhead)"/>
-    <path id="level-2-base-1-to-4" class="index-link" data-connector="true" d="M352 1083 L392 1083" marker-end="url(#index-arrowhead)"/>
-    <path id="level-2-base-4-to-8" class="index-link" data-connector="true" d="M452 1083 L491 1083" marker-end="url(#index-arrowhead)"/>
-    <path id="level-2-base-8-to-10" class="index-link" data-connector="true" d="M551 1083 L591 1083" marker-end="url(#index-arrowhead)"/>
-    <path id="level-2-base-10-to-15" class="index-link" data-connector="true" d="M651 1083 L690 1083" marker-end="url(#index-arrowhead)"/>
-    <path id="level-2-base-15-to-26" class="index-link" data-connector="true" d="M750 1083 L790 1083" marker-end="url(#index-arrowhead)"/>
-    <path id="level-2-base-26-to-36" class="index-link" data-connector="true" d="M850 1083 L889 1083" marker-end="url(#index-arrowhead)"/>
-    <path id="level-2-base-36-to-45" class="search-link" data-connector="true" d="M949 1083 L989 1083" marker-end="url(#search-arrowhead)"/>
-    <path id="level-2-base-45-to-60" class="index-link" data-connector="true" d="M1049 1083 L1088 1083" marker-end="url(#index-arrowhead)"/>
-    <path id="level-2-base-60-to-68" class="index-link" data-connector="true" d="M1148 1083 L1188 1083" marker-end="url(#index-arrowhead)"/>
+    <path id="level-2-top-1-to-15" class="search-link" data-connector="true" d="M352 743 L684.6 743" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-top-15-to-60" class="index-link" data-connector="true" d="M750 743 L1082.6 743" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-drop-1" class="index-link" data-connector="true" d="M322 769 L322 894.6" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-drop-15" class="search-link" data-connector="true" d="M720 769 L720 894.6" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-drop-60" class="index-link" data-connector="true" d="M1118 769 L1118 894.6" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-mid-1-to-8" class="index-link" data-connector="true" d="M352 925 L485.6 925" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-mid-8-to-15" class="index-link" data-connector="true" d="M551 925 L684.6 925" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-mid-15-to-36" class="search-link" data-connector="true" d="M750 925 L883.6 925" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-mid-36-to-60" class="index-link" data-connector="true" d="M949 925 L1082.6 925" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-mid-drop-1" class="index-link" data-connector="true" d="M322 951 L322 1052.6" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-mid-drop-8" class="index-link" data-connector="true" d="M521 951 L521 1052.6" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-mid-drop-15" class="index-link" data-connector="true" d="M720 951 L720 1052.6" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-mid-drop-36" class="search-link" data-connector="true" d="M919 951 L919 1052.6" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-mid-drop-60" class="index-link" data-connector="true" d="M1118 951 L1118 1052.6" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-base-1-to-4" class="index-link" data-connector="true" d="M352 1083 L386.6 1083" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-base-4-to-8" class="index-link" data-connector="true" d="M452 1083 L485.6 1083" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-base-8-to-10" class="index-link" data-connector="true" d="M551 1083 L585.6 1083" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-base-10-to-15" class="index-link" data-connector="true" d="M651 1083 L684.6 1083" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-base-15-to-26" class="index-link" data-connector="true" d="M750 1083 L784.6 1083" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-base-26-to-36" class="index-link" data-connector="true" d="M850 1083 L883.6 1083" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-base-36-to-45" class="search-link" data-connector="true" d="M949 1083 L983.6 1083" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-base-45-to-60" class="index-link" data-connector="true" d="M1049 1083 L1082.6 1083" marker-end="url(#connector-arrowhead)"/>
+    <path id="level-2-base-60-to-68" class="index-link" data-connector="true" d="M1148 1083 L1182.6 1083" marker-end="url(#connector-arrowhead)"/>
   </g>
 
   <!-- Nodes are painted above links; the value 45 remains the highlighted target. -->

@@ -40,14 +40,17 @@
 
   <rect width="1694" height="1344" fill="#fff"/>
 
+  <!-- All flow heads are congruent 22×20 isosceles triangles, rotated onto each shaft.
+       Shafts end one unit inside the base so their tips cannot protrude. -->
   <!-- Client request enters the proxy vertically. -->
   <g id="client-node">
     <rect class="outline" x="735" y="40" width="221" height="132"/>
     <text class="node-label" x="845.5" y="119">Client</text>
   </g>
   <g id="client-to-proxy">
-    <path id="client-to-proxy-shaft" class="shaft" data-connector="true" d="M846 172V321"/>
-    <polygon id="client-to-proxy-arrowhead" class="arrow-head" points="846,343 836,321 856,321"/>
+    <path id="client-to-proxy-shaft" class="shaft" data-connector="true" d="M846 172 L846 322"/>
+    <polygon id="client-to-proxy-arrowhead" class="arrow-head" points="0,0 -22,-10 -22,10"
+             transform="translate(846 343) rotate(90)"/>
   </g>
 
   <!-- Proxy calculates a Redis Cluster hash slot before selecting a shard. -->
@@ -61,18 +64,21 @@
   <g id="slot-routing">
     <path id="left-slot-leading-shaft" class="shaft" data-connector="true" d="M735 425C620 460 531 508 478 572"/>
     <text class="slot-label" x="453" y="615">Slot: [0, 5500]</text>
-    <path id="left-slot-trailing-shaft" class="shaft" data-connector="true" d="M436 633C409 674 390 715 380 744"/>
-    <polygon id="left-slot-arrowhead" class="arrow-head" points="378,766 370,743 390,749"/>
+    <path id="left-slot-trailing-shaft" class="shaft" data-connector="true" d="M436 633 C409 674 390 715 382.809826 745.558239"/>
+    <polygon id="left-slot-arrowhead" class="arrow-head" points="0,0 -22,-10 -22,10"
+             transform="translate(378 766) rotate(103.24052)"/>
 
     <path id="middle-slot-leading-shaft" class="shaft" data-connector="true" d="M846 475V571"/>
     <text class="slot-label" x="846" y="615">Slot: [5501, 11000]</text>
-    <path id="middle-slot-trailing-shaft" class="shaft" data-connector="true" d="M846 633V744"/>
-    <polygon id="middle-slot-arrowhead" class="arrow-head" points="846,766 836,744 856,744"/>
+    <path id="middle-slot-trailing-shaft" class="shaft" data-connector="true" d="M846 633 L846 745"/>
+    <polygon id="middle-slot-arrowhead" class="arrow-head" points="0,0 -22,-10 -22,10"
+             transform="translate(846 766) rotate(90)"/>
 
     <path id="right-slot-leading-shaft" class="shaft" data-connector="true" d="M956 435C1068 466 1138 510 1182 572"/>
     <text class="slot-label" x="1208" y="615">Slot: [11001, 16383]</text>
-    <path id="right-slot-trailing-shaft" class="shaft" data-connector="true" d="M1226 633C1254 674 1274 715 1286 744"/>
-    <polygon id="right-slot-arrowhead" class="arrow-head" points="1291,766 1277,747 1297,742"/>
+    <path id="right-slot-trailing-shaft" class="shaft" data-connector="true" d="M1226 633 C1254 674 1274 715 1284.359217 746.077651"/>
+    <polygon id="right-slot-arrowhead" class="arrow-head" points="0,0 -22,-10 -22,10"
+             transform="translate(1291 766) rotate(71.565051)"/>
   </g>
 
   <!-- Redis Cluster boundary and the three dashed shard groups. -->
@@ -88,10 +94,12 @@
   <g id="shard-one">
     <text class="role-label" x="168" y="853">Primary</text>
     <use href="#redis-cube" x="299" y="800" width="102" height="87"/>
-    <path id="shard-one-left-replica-shaft" class="shaft" data-connector="true" d="M319 893L288 942"/>
-    <polygon id="shard-one-left-replica-arrowhead" class="arrow-head" points="277,960 279,936 296,947"/>
-    <path id="shard-one-right-replica-shaft" class="shaft" data-connector="true" d="M381 893L409 941"/>
-    <polygon id="shard-one-right-replica-arrowhead" class="arrow-head" points="420,960 401,946 418,936"/>
+    <path id="shard-one-left-replica-shaft" class="shaft" data-connector="true" d="M319 893 L288.153839 942.206971"/>
+    <polygon id="shard-one-left-replica-arrowhead" class="arrow-head" points="0,0 -22,-10 -22,10"
+             transform="translate(277 960) rotate(122.082187)"/>
+    <path id="shard-one-right-replica-shaft" class="shaft" data-connector="true" d="M381 893 L409.435556 941.850826"/>
+    <polygon id="shard-one-right-replica-arrowhead" class="arrow-head" points="0,0 -22,-10 -22,10"
+             transform="translate(420 960) rotate(59.796762)"/>
     <use href="#redis-cube" x="194" y="968" width="102" height="87"/>
     <use href="#redis-cube" x="399" y="968" width="102" height="87"/>
     <text class="replica-label" x="245" y="1095">Replica</text>
@@ -103,10 +111,12 @@
   <g id="shard-two">
     <text class="role-label" x="665" y="853">Primary</text>
     <use href="#redis-cube" x="795" y="800" width="102" height="87"/>
-    <path id="shard-two-left-replica-shaft" class="shaft" data-connector="true" d="M815 893L784 942"/>
-    <polygon id="shard-two-left-replica-arrowhead" class="arrow-head" points="773,960 775,936 792,947"/>
-    <path id="shard-two-right-replica-shaft" class="shaft" data-connector="true" d="M877 893L905 941"/>
-    <polygon id="shard-two-right-replica-arrowhead" class="arrow-head" points="916,960 897,946 914,936"/>
+    <path id="shard-two-left-replica-shaft" class="shaft" data-connector="true" d="M815 893 L784.153839 942.206971"/>
+    <polygon id="shard-two-left-replica-arrowhead" class="arrow-head" points="0,0 -22,-10 -22,10"
+             transform="translate(773 960) rotate(122.082187)"/>
+    <path id="shard-two-right-replica-shaft" class="shaft" data-connector="true" d="M877 893 L905.435556 941.850826"/>
+    <polygon id="shard-two-right-replica-arrowhead" class="arrow-head" points="0,0 -22,-10 -22,10"
+             transform="translate(916 960) rotate(59.796762)"/>
     <use href="#redis-cube" x="690" y="968" width="102" height="87"/>
     <use href="#redis-cube" x="895" y="968" width="102" height="87"/>
     <text class="replica-label" x="741" y="1095">Replica</text>
@@ -118,10 +128,12 @@
   <g id="shard-three">
     <text class="role-label" x="1160" y="853">Primary</text>
     <use href="#redis-cube" x="1292" y="800" width="102" height="87"/>
-    <path id="shard-three-left-replica-shaft" class="shaft" data-connector="true" d="M1312 893L1281 942"/>
-    <polygon id="shard-three-left-replica-arrowhead" class="arrow-head" points="1270,960 1272,936 1289,947"/>
-    <path id="shard-three-right-replica-shaft" class="shaft" data-connector="true" d="M1374 893L1402 941"/>
-    <polygon id="shard-three-right-replica-arrowhead" class="arrow-head" points="1413,960 1394,946 1411,936"/>
+    <path id="shard-three-left-replica-shaft" class="shaft" data-connector="true" d="M1312 893 L1281.153839 942.206971"/>
+    <polygon id="shard-three-left-replica-arrowhead" class="arrow-head" points="0,0 -22,-10 -22,10"
+             transform="translate(1270 960) rotate(122.082187)"/>
+    <path id="shard-three-right-replica-shaft" class="shaft" data-connector="true" d="M1374 893 L1402.435556 941.850826"/>
+    <polygon id="shard-three-right-replica-arrowhead" class="arrow-head" points="0,0 -22,-10 -22,10"
+             transform="translate(1413 960) rotate(59.796762)"/>
     <use href="#redis-cube" x="1187" y="968" width="102" height="87"/>
     <use href="#redis-cube" x="1392" y="968" width="102" height="87"/>
     <text class="replica-label" x="1238" y="1095">Replica</text>

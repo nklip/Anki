@@ -64,12 +64,13 @@
     <text class="node-label" x="205.5" y="248"><tspan x="205.5">Leaderboard</tspan><tspan x="205.5" dy="38">service</tspan></text>
   </g>
 
+  <!-- All heads are symmetric 23×20 triangles; shafts end one unit inside their bases. -->
   <!-- Winning a game enters API Gateway; the text sits in an intentional shaft gap. -->
   <g id="win-game-flow">
     <path id="win-game-leading-shaft" class="shaft" data-connector="true" d="M355 256H432"/>
     <text class="flow-label" x="442" y="268">Win game</text>
-    <path id="win-game-trailing-shaft" class="shaft" data-connector="true" d="M619 256H686"/>
-    <polygon id="win-game-arrowhead" class="arrow-head" points="709,256 686,246 686,266"/>
+    <path id="win-game-trailing-shaft" class="shaft" data-connector="true" d="M619 256L687 256"/>
+    <polygon id="win-game-arrowhead" class="arrow-head" points="709,256 686,266 686,246"/>
   </g>
 
   <!-- Reused API Gateway mark and label. -->
@@ -80,8 +81,8 @@
 
   <!-- One-way invocation from API Gateway to Lambda. -->
   <g id="api-to-lambda-flow">
-    <path id="api-to-lambda-shaft" class="shaft" data-connector="true" d="M840 256H1014"/>
-    <polygon id="api-to-lambda-arrowhead" class="arrow-head" points="1037,256 1014,246 1014,266"/>
+    <path id="api-to-lambda-shaft" class="shaft" data-connector="true" d="M840 256L1015 256"/>
+    <polygon id="api-to-lambda-arrowhead" class="arrow-head" points="1037,256 1014,266 1014,246"/>
   </g>
 
   <!-- Reused Lambda mark and label. -->
@@ -94,15 +95,15 @@
   <g id="redis-score-flow">
     <path id="redis-score-leading-shaft" class="shaft" data-connector="true" d="M1139 239L1266 198"/>
     <text class="branch-label" x="1245" y="179">Call ZINCRBY</text>
-    <path id="redis-score-trailing-shaft" class="shaft" data-connector="true" d="M1440 139L1516 115"/>
-    <polygon id="redis-score-arrowhead" class="arrow-head" points="1538,106 1520,124 1512,106"/>
+    <path id="redis-score-trailing-shaft" class="shaft" data-connector="true" d="M1440 139L1517.15034 113.020804"/>
+    <polygon id="redis-score-arrowhead" class="arrow-head" points="1538,106 1519.393903,122.817049 1513.011354,103.862813"/>
   </g>
 
   <g id="mysql-point-flow">
     <path id="mysql-point-leading-shaft" class="shaft" data-connector="true" d="M1139 270L1253 301"/>
     <text class="branch-label" x="1262" y="336">Insert point</text>
-    <path id="mysql-point-trailing-shaft" class="shaft" data-connector="true" d="M1445 351L1517 373"/>
-    <polygon id="mysql-point-arrowhead" class="arrow-head" points="1540,380 1515,383 1521,363"/>
+    <path id="mysql-point-trailing-shaft" class="shaft" data-connector="true" d="M1445 351L1518.958547 373.57682"/>
+    <polygon id="mysql-point-arrowhead" class="arrow-head" points="1540,380 1515.08249,382.849154 1520.921745,363.72056"/>
   </g>
 
   <!-- Reused Redis/MySQL data-store marks. -->

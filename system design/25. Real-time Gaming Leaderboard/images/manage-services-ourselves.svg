@@ -56,16 +56,16 @@
     <circle cx="200.5" cy="425" r="6.5" fill="#fff"/>
   </g>
 
-  <!-- Main request path: arrow shafts stop underneath their separate triangular heads. -->
+  <!-- Every arrowhead is symmetric and 22×20, including the load-balancer routing arrows. -->
   <g id="request-flow">
-    <path id="user-to-load-balancer-shaft" class="shaft" data-connector="true" d="M279 382H495"/>
-    <polygon id="user-to-load-balancer-arrowhead" class="arrow-head" points="518,382 495,371 495,393"/>
+    <path id="user-to-load-balancer-shaft" class="shaft" data-connector="true" d="M279 382L497 382"/>
+    <polygon id="user-to-load-balancer-arrowhead" class="arrow-head" points="518,382 496,392 496,372"/>
 
-    <path id="load-balancer-to-web-shaft" class="shaft" data-connector="true" d="M684 382H876"/>
-    <polygon id="load-balancer-to-web-arrowhead" class="arrow-head" points="898,382 876,371 876,393"/>
+    <path id="load-balancer-to-web-shaft" class="shaft" data-connector="true" d="M684 382L877 382"/>
+    <polygon id="load-balancer-to-web-arrowhead" class="arrow-head" points="898,382 876,392 876,372"/>
   </g>
 
-  <!-- Load balancer: the miniature routing tree mirrors the original symbol. -->
+  <!-- Load-balancer branch bar clears the 22×20 heads; shafts stop inside their bases. -->
   <g id="load-balancer">
     <rect class="outline" x="518" y="338" width="166" height="90"/>
     <g fill="#fff" stroke="#111" stroke-width="2">
@@ -75,12 +75,12 @@
       <rect x="640" y="401" width="23" height="15"/>
     </g>
     <g fill="none" stroke="#111" stroke-width="1.8">
-      <path d="M601.5 365V386M551.5 386H651.5M551.5 386V401M601.5 386V401M651.5 386V401"/>
+      <path id="load-balancer-routing-shafts" data-connector="true" d="M601.5 365V374M551.5 374H651.5M551.5 374V380M601.5 374V380M651.5 374V380"/>
     </g>
     <g fill="#111">
-      <polygon points="551.5,401 546.5,391 556.5,391"/>
-      <polygon points="601.5,401 596.5,391 606.5,391"/>
-      <polygon points="651.5,401 646.5,391 656.5,391"/>
+      <polygon class="arrow-head" points="551.5,401 541.5,379 561.5,379"/>
+      <polygon class="arrow-head" points="601.5,401 591.5,379 611.5,379"/>
+      <polygon class="arrow-head" points="651.5,401 641.5,379 661.5,379"/>
     </g>
     <text class="caption" x="601" y="465">Load balancer</text>
   </g>
@@ -94,18 +94,18 @@
   <g id="storage-branches">
     <path id="leaderboard-branch-shaft" class="shaft" data-connector="true" d="M1004 326C1024 247 1080 190 1183 146"/>
     <text class="branch-label" x="1294" y="105"><tspan x="1294">Leaderboard</tspan><tspan x="1294" dy="42">Sorted set</tspan></text>
-    <path id="leaderboard-to-redis-shaft" class="shaft" data-connector="true" d="M1428 97C1465 95 1500 94 1518 94"/>
-    <polygon id="leaderboard-to-redis-arrowhead" class="arrow-head" points="1540,94 1518,84 1518,104"/>
+    <path id="leaderboard-to-redis-shaft" class="shaft" data-connector="true" d="M1428 97C1465 95 1500 94 1519 94"/>
+    <polygon id="leaderboard-to-redis-arrowhead" class="arrow-head" points="1540,94 1518,104 1518,84"/>
 
     <path id="profile-branch-leading-shaft" class="shaft" data-connector="true" d="M1093 382H1206"/>
     <text class="branch-label" x="1315" y="354"><tspan x="1315">User profile</tspan><tspan x="1315" dy="42">+</tspan><tspan x="1315" dy="42">User Points</tspan></text>
-    <path id="profile-to-mysql-shaft" class="shaft" data-connector="true" d="M1415 382H1518"/>
-    <polygon id="profile-to-mysql-arrowhead" class="arrow-head" points="1540,382 1518,372 1518,392"/>
+    <path id="profile-to-mysql-shaft" class="shaft" data-connector="true" d="M1415 382L1519 382"/>
+    <polygon id="profile-to-mysql-arrowhead" class="arrow-head" points="1540,382 1518,392 1518,372"/>
 
     <path id="cache-branch-shaft" class="shaft" data-connector="true" d="M1008 439C1031 506 1077 552 1153 590"/>
     <text class="branch-label" x="1309" y="635"><tspan x="1309">User profile cache</tspan><tspan x="1309" dy="42">(for top 10)</tspan></text>
-    <path id="cache-to-redis-shaft" class="shaft" data-connector="true" d="M1468 665C1489 666 1504 666 1518 666"/>
-    <polygon id="cache-to-redis-arrowhead" class="arrow-head" points="1540,666 1518,656 1518,676"/>
+    <path id="cache-to-redis-shaft" class="shaft" data-connector="true" d="M1468 665C1489 666 1504 666 1519 666"/>
+    <polygon id="cache-to-redis-arrowhead" class="arrow-head" points="1540,666 1518,676 1518,656"/>
   </g>
 
   <!-- Brand marks remain vectors; no raster image is embedded. -->
