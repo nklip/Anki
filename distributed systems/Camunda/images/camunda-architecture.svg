@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="380" viewBox="0 0 1100 380" role="img" aria-labelledby="title desc">
+  <title id="title">Camunda 8 separates coordination from work</title>
+  <desc id="desc">Read left to right. Modeler deploys an executable process model to Zeebe, which stores workflow progress. Application workers request jobs, receive activated jobs, and report completion or failure. Workers perform the business actions in other systems.</desc>
+  <!-- Shared palette: violet for orchestration, green for application work. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172b4d; }
+      .title { font-size: 28px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 19px; }
+      .small { font-size: 17px; fill: #49617f; }
+      .connector { fill: none; stroke: #49617f; stroke-width: 2.5; }
+      .head { fill: #49617f; }
+    </style>
+  </defs>
+  <!-- Title and subtitle explain the division of responsibility. -->
+  <rect width="1100" height="380" fill="#fff"/>
+  <text class="title" x="28" y="43">Camunda 8 separates coordination from work</text>
+  <text class="body" x="28" y="76">The engine tracks progress; your workers perform business actions.</text>
+  <!-- Three roles, aligned to leave dedicated lanes for the job protocol. -->
+  <g id="modeler">
+    <rect x="28" y="112" width="238" height="200" rx="12" fill="#eef7fc" stroke="#1677b8" stroke-width="2"/>
+    <text class="heading" x="147" y="156" text-anchor="middle">Modeler</text>
+    <text class="body" x="147" y="199" text-anchor="middle">Executable</text>
+    <text class="body" x="147" y="227" text-anchor="middle">process model</text>
+    <text class="small" x="147" y="280" text-anchor="middle">Tasks and branches</text>
+  </g>
+  <g id="zeebe">
+    <rect x="370" y="112" width="290" height="200" rx="12" fill="#f5effb" stroke="#7955ad" stroke-width="2"/>
+    <text class="heading" x="515" y="156" text-anchor="middle">Zeebe engine</text>
+    <text class="body" x="515" y="199" text-anchor="middle">Stores workflow state</text>
+    <text class="body" x="515" y="227" text-anchor="middle">Creates and tracks jobs</text>
+    <text class="small" x="515" y="280" text-anchor="middle">Example: order 42</text>
+  </g>
+  <g id="worker">
+    <rect x="850" y="112" width="222" height="200" rx="12" fill="#f0fae9" stroke="#549925" stroke-width="2"/>
+    <text class="heading" x="961" y="156" text-anchor="middle">Job worker</text>
+    <text class="body" x="961" y="199" text-anchor="middle">Your application</text>
+    <text class="body" x="961" y="227" text-anchor="middle">code</text>
+    <text class="small" x="961" y="280" text-anchor="middle">Example: charge card</text>
+  </g>
+  <!-- Manual shafts stop beneath head bases; tips touch only outer box borders. -->
+  <g id="deployment">
+    <text class="small" x="318" y="200" text-anchor="middle">deploy</text>
+    <path class="connector" d="M267 220 H357"/>
+    <polygon class="head" points="369,220 355,213 355,227"/>
+  </g>
+  <g id="job-protocol">
+    <text class="small" x="755" y="140" text-anchor="middle">request jobs</text>
+    <path class="connector" d="M849 160 H673"/>
+    <polygon class="head" points="661,160 675,153 675,167"/>
+    <text class="small" x="755" y="200" text-anchor="middle">activated job</text>
+    <path class="connector" d="M661 220 H837"/>
+    <polygon class="head" points="849,220 835,213 835,227"/>
+    <text class="small" x="755" y="260" text-anchor="middle">complete / fail</text>
+    <path class="connector" d="M849 280 H673"/>
+    <polygon class="head" points="661,280 675,273 675,287"/>
+  </g>
+  <!-- Scope note prevents interpreting this as a deployment topology. -->
+  <text class="small" x="28" y="354">Conceptual job protocol. Gateway routing, external services, and operational tools are omitted.</text>
+</svg>

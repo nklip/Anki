@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1060" height="390" viewBox="0 0 1060 390" role="img" aria-labelledby="title desc">
+  <title id="title">A successful payment can be attempted again</title>
+  <desc id="desc">Read left to right. A worker charges a card, then crashes before reporting completion. When its activation timeout expires, Zeebe can assign the same job again. A payment service that durably deduplicates the same operation identifier avoids charging twice.</desc>
+  <!-- Shared typography and semantic colors match the architecture diagram. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172b4d; }
+      .title { font-size: 28px; font-weight: 700; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 19px; }
+      .small { font-size: 17px; fill: #49617f; }
+      .connector { fill: none; stroke: #49617f; stroke-width: 2.5; }
+      .head { fill: #49617f; }
+    </style>
+  </defs>
+  <!-- The failure window is between the payment and engine completion. -->
+  <rect width="1060" height="390" fill="#fff"/>
+  <text class="title" x="28" y="43">A successful payment can be attempted again</text>
+  <text class="body" x="28" y="76">Example failure sequence · read from left to right</text>
+  <g id="failure-sequence">
+    <rect x="28" y="112" width="218" height="144" rx="12" fill="#f0fae9" stroke="#549925" stroke-width="2"/>
+    <text class="heading" x="137" y="148" text-anchor="middle">Payment succeeds</text>
+    <text class="body" x="137" y="188" text-anchor="middle">Card charged</text>
+    <text class="small" x="137" y="226" text-anchor="middle">ID: payment-42</text>
+    <rect x="290" y="112" width="218" height="144" rx="12" fill="#fff3e8" stroke="#c16a24" stroke-width="2"/>
+    <text class="heading" x="399" y="148" text-anchor="middle">Worker crashes</text>
+    <text class="body" x="399" y="188" text-anchor="middle">Completion never</text>
+    <text class="body" x="399" y="217" text-anchor="middle">reaches Zeebe</text>
+    <rect x="552" y="112" width="218" height="144" rx="12" fill="#f5effb" stroke="#7955ad" stroke-width="2"/>
+    <text class="heading" x="661" y="148" text-anchor="middle">Timeout expires</text>
+    <text class="body" x="661" y="188" text-anchor="middle">Zeebe can reassign</text>
+    <text class="body" x="661" y="217" text-anchor="middle">the unfinished job</text>
+    <rect x="814" y="112" width="218" height="144" rx="12" fill="#f0fae9" stroke="#549925" stroke-width="2"/>
+    <text class="heading" x="923" y="148" text-anchor="middle">Same job runs</text>
+    <text class="body" x="923" y="188" text-anchor="middle">Payment requested</text>
+    <text class="small" x="923" y="226" text-anchor="middle">Same ID: payment-42</text>
+  </g>
+  <!-- Horizontal arrows occupy the gaps; heads meet only destination borders. -->
+  <g id="sequence-arrows">
+    <path class="connector" d="M247 184 H277"/>
+    <polygon class="head" points="289,184 275,177 275,191"/>
+    <path class="connector" d="M509 184 H539"/>
+    <polygon class="head" points="551,184 537,177 537,191"/>
+    <path class="connector" d="M771 184 H801"/>
+    <polygon class="head" points="813,184 799,177 799,191"/>
+  </g>
+  <!-- Contrast the engine's delivery guarantee with the application's protection. -->
+  <g id="idempotency-rule">
+    <rect x="28" y="282" width="1004" height="84" rx="12" fill="#eef7fc" stroke="#1677b8" stroke-width="2"/>
+    <text class="heading" x="48" y="316">At-least-once delivery permits repeated execution.</text>
+    <text class="body" x="48" y="347">A payment service that durably deduplicates payment-42 applies the charge only once.</text>
+  </g>
+</svg>

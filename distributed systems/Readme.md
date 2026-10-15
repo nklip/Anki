@@ -14,6 +14,7 @@ Each topic has its own folder, with diagrams in its `images/` directory.
  * [Apache Seata](./Apache%20Seata/Readme.md) — purpose, coordinator architecture, AT/TCC/Saga/XA modes, integration, and recovery limits.
  * [Apache Spark](./Apache%20Spark/Readme.md) — parallel execution, query planning, shuffles, recovery, streaming, real users, and practical benefits.
  * [Apache ZooKeeper](./Apache%20ZooKeeper/Readme.md) — coordination data, znodes, sessions, watches, quorums, the write and read paths, recipes, and operational limits.
+ * [Camunda](./Camunda/Readme.md) — workflow orchestration, Zeebe, job workers, retries, idempotency, and compensation.
  * [Erasure coding](./Erasure%20coding/Readme.md) — data and parity fragments, storage overhead, failure domains, reconstruction, and repair.
  * [MapReduce](./MapReduce/Readme.md) — map, shuffle, reduce, distributed execution, and uses in Hadoop, Amazon EMR, and CouchDB.
  * [Patterns. Change Data Capture](./Patterns.%20Change%20Data%20Capture/Readme.md) — CDC through Pinterest’s architecture: Kafka Connect and Debezium, snapshots, change events, PostgreSQL WAL retention, replay, and Transactional Outbox.
