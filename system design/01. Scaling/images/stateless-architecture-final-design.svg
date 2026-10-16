@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="930" height="880" viewBox="0 0 930 880" role="img" aria-labelledby="title desc">
+  <title id="title">Stateless architecture: final design</title>
+  <desc id="desc">Web and mobile clients use DNS and a CDN and connect through a load balancer to four automatically scaled web servers. The servers access a replicated database tier, a cache, and NoSQL storage. The master database has two slave databases linked by replication arrows.</desc>
+  <!-- Reusable source-native infrastructure icons and chapter typography. -->
+  <defs>
+    <style>text{font-family:Arial,Helvetica,sans-serif}.label{font-size:20px}.client-label{font-size:18px}</style>
+
+<symbol id="laptop" viewBox="0 0 100 70">
+      <path d="M8 54V10Q8 3 15 3H85Q92 3 92 10V54" fill="none" stroke="#111" stroke-width="4"/>
+      <path d="M7 62H94" fill="none" stroke="#111" stroke-width="8" stroke-linecap="round"/>
+      <path d="M42 62H59" stroke="white" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+<symbol id="phone" viewBox="0 0 54 80">
+      <rect x="3" y="3" width="48" height="74" rx="5" fill="white" stroke="#333" stroke-width="4"/>
+      <path d="M4 13H50M4 66H50" stroke="#333" stroke-width="2"/>
+      <path d="M24 8H30M25 71H29" stroke="#333" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+<symbol id="server" viewBox="0 0 60 115" preserveAspectRatio="none">
+      <path d="M7 0H53Q60 0 60 7V115H0V7Q0 0 7 0Z" fill="#7fba42"/>
+      <path d="M12 16H48M12 84H48M12 98H48" stroke="white" stroke-width="5"/>
+    </symbol>
+<symbol id="dns-globe" viewBox="0 0 140 136">
+      <g fill="none" stroke="#4d4d4d" stroke-width="8">
+        <ellipse cx="70" cy="68" rx="65" ry="63"/>
+        <path d="M19 26Q70 44 121 26M19 110Q70 92 121 110M38 47Q48 5 70 5Q92 5 102 47M38 91Q48 131 70 131Q92 131 102 91M5 68H16M124 68H135"/>
+      </g>
+      <text x="70" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="49" fill="#4d4d4d">DNS</text>
+    </symbol>
+<symbol id="load-balancer" viewBox="0 0 114 78" preserveAspectRatio="none">
+      <path d="M13 0H101L113 70Q115 78 106 78H8Q0 78 1 70Z" fill="#2e73b8"/>
+      <circle cx="56" cy="14" r="6" fill="white"/>
+      <path d="M56 20V67M56 32L36 51M56 32L77 51M36 39V51H48M65 51H77V39M48 58L56 67L64 58" fill="none" stroke="white" stroke-width="3.5"/>
+    </symbol>
+<symbol id="cloud" viewBox="0 0 180 110">
+      <path d="M25 46C16 20 45 -1 73 17C82 8 91 3 103 1C112 -1 128 1 139 8C152 17 158 31 156 45C187 58 192 90 164 106C160 109 151 110 143 110H31C5 110 -6 91 3 71C7 59 14 52 25 46Z" fill="#7eddfd"/>
+      <path d="M103 0H141L127 25H149L89 91L104 51H83Z" fill="white"/>
+    </symbol>
+
+    <symbol id="database" viewBox="0 0 58 90" preserveAspectRatio="none">
+      <path d="M0 12C0 -4 58 -4 58 12V79C58 93.667 0 93.667 0 79Z" fill="#2e73b8"/>
+      <ellipse cx="29" cy="12" rx="22" ry="6.5" fill="white"/>
+      <text x="29" y="64" text-anchor="middle" font-size="33" fill="white">DB</text>
+    </symbol>
+    <symbol id="nosql" viewBox="0 0 64 85" preserveAspectRatio="none">
+      <path d="M0 12C0 -4 64 -4 64 12V74C64 88.667 0 88.667 0 74Z" fill="#2e73b8"/>
+      <ellipse cx="32" cy="12" rx="24" ry="6.5" fill="white"/>
+      <text x="32" y="64" text-anchor="middle" font-size="39" font-weight="bold" fill="white">{ }</text>
+    </symbol>
+    <!-- Tips extend 4 units beyond refX so the 2.4-unit shafts remain covered by their heads. -->
+    <marker id="blue-arrow" markerWidth="16" markerHeight="14" viewBox="0 0 16 14" refX="12" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L16 7L0 14L4 7Z" fill="#2d68a0"/></marker>
+    <marker id="blue-triangle-arrow" markerWidth="16" markerHeight="14" viewBox="0 0 16 14" refX="12" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L16 7L0 14Z" fill="#2d68a0"/></marker>
+    <marker id="green-arrow" markerWidth="16" markerHeight="14" viewBox="0 0 16 14" refX="12" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L16 7L0 14Z" fill="#006000"/></marker>
+    <marker id="purple-arrow" markerWidth="16" markerHeight="14" viewBox="0 0 16 14" refX="12" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L16 7L0 14Z" fill="#4c0099"/></marker>
+  </defs>
+  <!-- White canvas. -->
+  <rect width="930" height="880" fill="white"/>
+
+  <!-- User devices, DNS, and CDN preserve the reference's edge-service layout. -->
+  <rect id="user-group" x="190" y="14" width="397" height="172" rx="25" fill="white" stroke="#37b5d8" stroke-width="2.4"/>
+  <text x="210" y="49" class="label">User</text>
+  <use href="#laptop" x="281" y="60" width="66" height="46"/>
+  <text x="318" y="132" text-anchor="middle" class="client-label">Web browser</text>
+  <use href="#phone" x="441" y="50" width="42" height="62"/>
+  <text x="468" y="133" text-anchor="middle" class="client-label">Mobile app</text>
+  <use href="#dns-globe" x="18" y="52" width="92" height="90"/>
+  <use href="#cloud" x="724" y="49" width="120" height="71"/>
+  <text x="781" y="153" text-anchor="middle" class="label">CDN</text>
+  <path id="dns-request" d="M190 100L113.000 100.000" fill="none" stroke="#2d68a0" stroke-width="2.4" marker-end="url(#blue-arrow)"/>
+  <path id="cdn-request" d="M587 99L722.000 99.000" fill="none" stroke="#2d68a0" stroke-width="2.4" marker-end="url(#blue-arrow)"/>
+  <!-- Client requests meet distinct points on the balancer to keep their heads separate. -->
+  <path id="browser-request" d="M296 142L364.938 256.573" fill="none" stroke="#2d68a0" stroke-width="2.4" marker-end="url(#blue-triangle-arrow)"/>
+  <path id="mobile-request" d="M453 151L377.328 256.747" fill="none" stroke="#2d68a0" stroke-width="2.4" marker-end="url(#blue-triangle-arrow)"/>
+  <text x="166" y="229" text-anchor="start" font-size="20" >www.mysite.com</text>
+  <text x="418" y="229" text-anchor="start" font-size="20" >api.mysite.com</text>
+  <use href="#load-balancer" x="340" y="260" width="70" height="63"/>
+  <text x="413" y="309" text-anchor="start" font-size="20" >Load balancer</text>
+  <!-- Two balancing routes enter the same four-server pool. -->
+  <path id="balancer-route-left" d="M374 323L295.763 404.908" fill="none" stroke="#2d68a0" stroke-width="2.4" marker-end="url(#blue-triangle-arrow)"/>
+  <path id="balancer-route-right" d="M374 323L447.330 404.821" fill="none" stroke="#2d68a0" stroke-width="2.4" marker-end="url(#blue-triangle-arrow)"/>
+  <rect id="server-pool" x="142" y="409" width="483" height="148" rx="23" fill="white" stroke="#37b5d8" stroke-width="2.4" stroke-dasharray="7 7"/>
+  <use href="#server" x="191" y="425" width="47" height="92"/>
+  <text x="214.5" y="544" text-anchor="middle" font-size="20" >Server1</text>
+  <use href="#server" x="307" y="425" width="47" height="92"/>
+  <text x="330.5" y="544" text-anchor="middle" font-size="20" >Server2</text>
+  <use href="#server" x="414" y="426" width="47" height="92"/>
+  <text x="437.5" y="544" text-anchor="middle" font-size="20" >Server3</text>
+  <use href="#server" x="518" y="426" width="47" height="92"/>
+  <text x="541.5" y="544" text-anchor="middle" font-size="20" >Server4</text>
+  <circle id="auto-scale-step" cx="655" cy="484" r="11.5" fill="none" stroke="#111" stroke-width="1.2"/>
+  <text x="655" y="490" text-anchor="middle" font-size="16" >1</text>
+  <text x="672" y="491" text-anchor="start" font-size="20" >Auto scale</text>
+  <!-- Data-service shafts share the pool's lower exit. Dashed branches go to the slaves. -->
+  <rect id="database-tier" x="74" y="696" width="544" height="168" rx="25" fill="white" stroke="#37b5d8" stroke-width="2.4"/>
+  <path id="pool-to-left-slave" d="M376 562L180.327 692.580" fill="none" stroke="#2d68a0" stroke-width="2.4" stroke-dasharray="7 7" marker-end="url(#blue-triangle-arrow)"/>
+  <path id="pool-to-master" d="M376 562L347.853 690.892" fill="none" stroke="#2d68a0" stroke-width="2.4" marker-end="url(#blue-arrow)"/>
+  <path id="pool-to-right-slave" d="M388 562L536.988 692.168" fill="none" stroke="#2d68a0" stroke-width="2.4" stroke-dasharray="7 7" marker-end="url(#blue-triangle-arrow)"/>
+  <path id="pool-to-cache" d="M383 559L720.433 730.190" fill="none" stroke="#006000" stroke-width="2.4" marker-end="url(#green-arrow)"/>
+  <!-- Leave the reference gap above the curved NoSQL rim so the full arrowhead stays clear. -->
+  <path id="pool-to-nosql" d="M383 558L868.191 713.777" fill="none" stroke="#4c0099" stroke-width="2.4" marker-end="url(#purple-arrow)"/>
+  <!-- Replicated database tier: slave, master, slave. -->
+  <use href="#database" x="142" y="713" width="57" height="89"/>
+  <use href="#database" x="322" y="709" width="57" height="90"/>
+  <use href="#database" x="518" y="714" width="57" height="89"/>
+  <text x="170" y="831" text-anchor="middle" font-size="20" >Slave DB</text>
+  <text x="348" y="829" text-anchor="middle" font-size="20" >Master DB</text>
+  <text x="548" y="832" text-anchor="middle" font-size="20" >Slave DB</text>
+  <!-- Paired arrowheads preserve the two bidirectional replication links in the reference. -->
+  <path id="replicate-left-to-slave" d="M261 766L203.000 766.000" fill="none" stroke="#2d68a0" stroke-width="2.4" marker-end="url(#blue-triangle-arrow)"/>
+  <path id="replicate-left-to-master" d="M261 766L318.000 766.000" fill="none" stroke="#2d68a0" stroke-width="2.4" marker-end="url(#blue-triangle-arrow)"/>
+  <path id="replicate-right-to-master" d="M448 765L383.000 765.000" fill="none" stroke="#2d68a0" stroke-width="2.4" marker-end="url(#blue-triangle-arrow)"/>
+  <path id="replicate-right-to-slave" d="M448 765L514.000 765.000" fill="none" stroke="#2d68a0" stroke-width="2.4" marker-end="url(#blue-triangle-arrow)"/>
+  <text x="254" y="756" text-anchor="middle" font-size="20" >Replicate</text>
+  <text x="443" y="756" text-anchor="middle" font-size="20" >Replicate</text>
+  <!-- Shared cache and NoSQL storage remain outside the relational database group. -->
+  <rect id="cache-shadow" x="691" y="734" width="66" height="68" rx="8" fill="#19527a"/>
+  <rect id="cache-tile" x="691" y="732" width="66" height="68" rx="8" fill="#2e73b8"/>
+  <text x="724" y="755" text-anchor="middle" font-family="Arial Narrow,Arial,sans-serif" font-size="20" font-weight="bold" fill="white" style="font-family:'Arial Narrow',Arial,sans-serif" transform="translate(72.4 0) scale(.9 1)">CACHE</text>
+  <text x="721" y="830" text-anchor="middle" class="label">Cache</text>
+  <use href="#nosql" x="843" y="717" width="64" height="85"/>
+  <text x="873" y="830" text-anchor="middle" class="label">NoSQL</text>
+</svg>

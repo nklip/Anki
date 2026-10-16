@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="462" height="564" viewBox="0 0 462 564" role="img" aria-labelledby="title desc">
+  <title id="title">Users tables in four sharded databases</title>
+  <desc id="desc">Four database cylinders each contain a Users table with user_id and additional columns. Shard 0 holds IDs 0, 4, 8, and 12; shard 1 holds 1, 5, 9, and 13; shard 2 holds 2, 6, 10, and 14; shard 3 holds 3, 7, 11, and 15. Ellipses indicate further rows and columns. Each user ID belongs to the shard matching its remainder when divided by four.</desc>
+
+  <!-- Reusable outlined database cylinder and portable chapter typography. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #222; }
+      .shard-label { font-size: 15px; text-anchor: middle; }
+      .table-label { font-size: 12px; }
+      .table-grid { fill: none; stroke: #444; stroke-width: 1.2; }
+    </style>
+    <symbol id="outlined-database" viewBox="0 0 172 253" preserveAspectRatio="none">
+      <!-- Only the front half of the lower ellipse is visible below the vertical sides. -->
+      <path d="M1 43V210A85 42 0 0 0 171 210V43" fill="white" stroke="#111" stroke-width="2"/>
+      <ellipse cx="86" cy="43" rx="85" ry="42" fill="white" stroke="#111" stroke-width="2"/>
+    </symbol>
+  </defs>
+
+  <!-- White canvas preserves the compact two-by-two reference arrangement. -->
+  <rect width="462" height="564" fill="white"/>
+
+  <!-- Shard 0: IDs with remainder 0 when divided by four. -->
+  <g id="shard-0">
+    <use href="#outlined-database" x="16" y="10" width="172" height="253"/>
+    <text x="99" y="58" class="shard-label">Shard 0</text>
+    <!-- The Users title spans both columns; the column divider starts below it. -->
+    <rect id="shard-0-table-header" x="43" y="102" width="120" height="26" fill="#dfdfdf"/>
+    <rect id="shard-0-table-border" x="43" y="102" width="120" height="141" class="table-grid"/>
+    <path id="shard-0-table-dividers" d="M43 128H163M43 153H163M103.0 128V243" class="table-grid"/>
+    <text x="103.0" y="120" text-anchor="middle" class="table-label">Users</text>
+    <text x="48" y="146" class="table-label">user_id</text>
+    <text x="129.0" y="146" text-anchor="middle" class="table-label">...</text>
+    <text x="65" y="172" text-anchor="middle" class="table-label">
+      <tspan x="65" dy="0">0</tspan>
+      <tspan x="65" dy="14">4</tspan>
+      <tspan x="65" dy="14">8</tspan>
+      <tspan x="65" dy="14">12</tspan>
+      <tspan x="65" dy="14">...</tspan>
+    </text>
+  </g>
+
+  <!-- Shard 1: IDs with remainder 1 when divided by four. -->
+  <g id="shard-1">
+    <use href="#outlined-database" x="275" y="11" width="173" height="253"/>
+    <text x="359" y="64" class="shard-label">Shard 1</text>
+    <!-- The Users title spans both columns; the column divider starts below it. -->
+    <rect id="shard-1-table-header" x="303" y="108" width="121" height="26" fill="#dfdfdf"/>
+    <rect id="shard-1-table-border" x="303" y="108" width="121" height="141" class="table-grid"/>
+    <path id="shard-1-table-dividers" d="M303 134H424M303 159H424M363.5 134V249" class="table-grid"/>
+    <text x="363.5" y="126" text-anchor="middle" class="table-label">Users</text>
+    <text x="308" y="152" class="table-label">user_id</text>
+    <text x="389.5" y="152" text-anchor="middle" class="table-label">...</text>
+    <text x="325" y="178" text-anchor="middle" class="table-label">
+      <tspan x="325" dy="0">1</tspan>
+      <tspan x="325" dy="14">5</tspan>
+      <tspan x="325" dy="14">9</tspan>
+      <tspan x="325" dy="14">13</tspan>
+      <tspan x="325" dy="14">...</tspan>
+    </text>
+  </g>
+
+  <!-- Shard 2: IDs with remainder 2 when divided by four. -->
+  <g id="shard-2">
+    <use href="#outlined-database" x="11" y="301" width="172" height="253"/>
+    <text x="94" y="349" class="shard-label">Shard 2</text>
+    <!-- The Users title spans both columns; the column divider starts below it. -->
+    <rect id="shard-2-table-header" x="38" y="393" width="120" height="26" fill="#dfdfdf"/>
+    <rect id="shard-2-table-border" x="38" y="393" width="120" height="141" class="table-grid"/>
+    <path id="shard-2-table-dividers" d="M38 419H158M38 444H158M98.0 419V534" class="table-grid"/>
+    <text x="98.0" y="411" text-anchor="middle" class="table-label">Users</text>
+    <text x="43" y="437" class="table-label">user_id</text>
+    <text x="124.0" y="437" text-anchor="middle" class="table-label">...</text>
+    <text x="60" y="463" text-anchor="middle" class="table-label">
+      <tspan x="60" dy="0">2</tspan>
+      <tspan x="60" dy="14">6</tspan>
+      <tspan x="60" dy="14">10</tspan>
+      <tspan x="60" dy="14">14</tspan>
+      <tspan x="60" dy="14">...</tspan>
+    </text>
+  </g>
+
+  <!-- Shard 3: IDs with remainder 3 when divided by four. -->
+  <g id="shard-3">
+    <use href="#outlined-database" x="270" y="306" width="173" height="253"/>
+    <text x="354" y="354" class="shard-label">Shard 3</text>
+    <!-- The Users title spans both columns; the column divider starts below it. -->
+    <rect id="shard-3-table-header" x="298" y="398" width="121" height="26" fill="#dfdfdf"/>
+    <rect id="shard-3-table-border" x="298" y="398" width="121" height="141" class="table-grid"/>
+    <path id="shard-3-table-dividers" d="M298 424H419M298 449H419M358.5 424V539" class="table-grid"/>
+    <text x="358.5" y="416" text-anchor="middle" class="table-label">Users</text>
+    <text x="303" y="442" class="table-label">user_id</text>
+    <text x="384.5" y="442" text-anchor="middle" class="table-label">...</text>
+    <text x="320" y="468" text-anchor="middle" class="table-label">
+      <tspan x="320" dy="0">3</tspan>
+      <tspan x="320" dy="14">7</tspan>
+      <tspan x="320" dy="14">11</tspan>
+      <tspan x="320" dy="14">15</tspan>
+      <tspan x="320" dy="14">...</tspan>
+    </text>
+  </g>
+
+</svg>

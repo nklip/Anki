@@ -1,77 +1,123 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="846" height="1058" viewBox="0 0 846 1058" role="img" aria-labelledby="title desc">
   <title id="title">Logging, metrics, and asynchronous processing</title>
-  <desc id="desc">A load-balanced data center uses web servers, databases, caches, a message queue with workers, and NoSQL storage. Logging, metrics, monitoring, and automation tools observe the system.</desc>
-
-  <!-- Reusable arrows and infrastructure icons. -->
+  <desc id="desc">Clients use DNS and a CDN and connect through a load balancer to a data center. Web servers access databases, caches, and NoSQL storage and send jobs through a message queue to workers. Logging, metrics, monitoring, and automation tools support the data center.</desc>
+  <!-- Reusable native icons, shared with the original architecture diagrams. -->
   <defs>
-    <marker id="blue-arrow" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="0" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L11 6L0 11Z" fill="#0b78b5"/></marker>
-    <marker id="green-arrow" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="0" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L11 6L0 11Z" fill="#148c28"/></marker>
-    <marker id="purple-arrow" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="0" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L11 6L0 11Z" fill="#6a0dad"/></marker>
-    <symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
-    <symbol id="phone" viewBox="0 0 54 96"><rect x="5" y="2" width="44" height="90" rx="7" fill="white" stroke="#333" stroke-width="5"/><path d="M19 11H35M23 82H31" stroke="#333" stroke-width="3"/></symbol>
-    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
-    <symbol id="envelope" viewBox="0 0 42 30"><rect x="1" y="1" width="40" height="28" rx="3" fill="white" stroke="#0b78b5" stroke-width="4"/><path d="M3 4L21 19L39 4" fill="none" stroke="#0b78b5" stroke-width="4"/></symbol>
-    <!-- Centered DNS globe shared by every scaling diagram. -->
-    <symbol id="dns-globe" viewBox="0 0 120 120">
-      <circle cx="60" cy="60" r="54" fill="white" stroke="#555" stroke-width="7"/>
-      <path d="M60 6C36 24 36 96 60 114M60 6C84 24 84 96 60 114" fill="none" stroke="#555" stroke-width="5"/>
-      <path d="M14 38Q60 20 106 38M14 82Q60 100 106 82" fill="none" stroke="#555" stroke-width="5"/>
-      <rect x="15" y="42" width="90" height="36" rx="9" fill="white"/>
-      <text x="60" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#0b78b5">DNS</text>
+    <style>text{font-family:Arial,Helvetica,sans-serif;fill:#111}.label{font-size:18px}.small{font-size:16px}</style>
+
+  <symbol id="laptop" viewBox="0 0 100 70"><path d="M6 55V11Q6 4 13 4H87Q94 4 94 11V55" fill="none" stroke="#000" stroke-width="5"/><rect y="60" width="100" height="9" rx="4" fill="#000"/><rect x="39" y="62" width="22" height="3" rx="1.5" fill="#fff"/></symbol>
+  <symbol id="phone" viewBox="0 0 64 96"><rect x="3" y="3" width="58" height="90" rx="6" fill="none" stroke="#4d4d4d" stroke-width="6"/><path d="M4 16H60M4 80H60" stroke="#4d4d4d" stroke-width="4"/><path d="M27 9H37M29 87H35" stroke="#4d4d4d" stroke-width="3" stroke-linecap="round"/></symbol>
+  <symbol id="server" viewBox="0 0 60 115">
+    <path d="M7 0H53Q60 0 60 7V115H0V7Q0 0 7 0Z" fill="#6bbc24"/>
+    <path d="M12 16H48M12 84H48M12 98H48" stroke="white" stroke-width="5"/>
+  </symbol>
+  <symbol id="dns-globe" viewBox="0 0 140 136"><g fill="none" stroke="#4d4d4d" stroke-width="8"><ellipse cx="70" cy="68" rx="65" ry="63"/><path d="M19 26Q70 44 121 26M19 110Q70 92 121 110M38 47Q48 5 70 5Q92 5 102 47M38 91Q48 131 70 131Q92 131 102 91M5 68H16M124 68H135"/></g><text x="70" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="49" style="fill:#4d4d4d">DNS</text></symbol>
+  <symbol id="load-balancer" preserveAspectRatio="none" viewBox="0 0 114 78">
+    <path d="M13 0H101L113 70Q115 78 106 78H8Q0 78 1 70Z" fill="#0074bc"/>
+    <circle cx="56" cy="14" r="6" fill="white"/>
+    <path d="M56 20V67M56 32L36 51M56 32L77 51M36 39V51H48M65 51H77V39M48 58L56 67L64 58" fill="none" stroke="white" stroke-width="3.5"/>
+  </symbol>
+  <symbol id="cloud" viewBox="0 0 180 110">
+    <path d="M25 46C16 20 45 -1 73 17C82 8 91 3 103 1C112 -1 128 1 139 8C152 17 158 31 156 45C187 58 192 90 164 106C160 109 151 110 143 110H31C5 110 -6 91 3 71C7 59 14 52 25 46Z" fill="#55dfff"/>
+    <path d="M103 0H141L127 25H149L89 91L104 51H83Z" fill="white"/>
+  </symbol>
+
+<symbol id="server-cluster" preserveAspectRatio="none" viewBox="0 0 96 80">
+      <path d="M17 22V4Q17 0 21 0H42Q46 0 46 4V22ZM49 22V4Q49 0 53 0H74Q78 0 78 4V22Z" fill="#6abd25"/>
+      <path d="M22 9H40M54 9H72" stroke="white" stroke-width="3"/>
+      <path d="M1 79V27Q1 23 5 23H26Q30 23 30 27V79ZM33 79V27Q33 23 37 23H58Q62 23 62 27V79ZM65 79V27Q65 23 69 23H90Q94 23 94 27V79Z" fill="#6abd25"/>
+      <path d="M6 31H24M6 65H24M6 72H24M38 31H56M38 65H56M38 72H56M70 31H88M70 65H88M70 72H88" stroke="white" stroke-width="3"/>
     </symbol>
+    <symbol id="database" viewBox="0 0 44 61">
+      <path d="M1 9V51C1 64 43 64 43 51V9Z" fill="#0074bc"/>
+      <ellipse cx="22" cy="9" rx="21" ry="8" fill="#0074bc" stroke="#f0f0f0" stroke-width="3"/>
+    </symbol>
+    <symbol id="cache" viewBox="0 0 48 57">
+      <rect x="1" y="3" width="46" height="54" rx="7" fill="#005879"/>
+      <rect x="1" y="1" width="46" height="54" rx="7" fill="#0074bc"/>
+      <text x="24" y="19" transform="translate(2.4 0) scale(0.9 1)" text-anchor="middle" font-family="Arial Narrow,Arial,sans-serif" font-size="15" style="font-family:Arial Narrow,Arial,sans-serif;font-weight:bold;fill:white">CACHE</text>
+    </symbol>
+    <symbol id="envelope" viewBox="0 0 47 37">
+      <rect x="2" y="2" width="43" height="33" rx="1" fill="#f0f0f0" stroke="#0074bc" stroke-width="4"/>
+      <path d="M4 5L23.5 21L43 5" fill="none" stroke="#0074bc" stroke-width="4" stroke-linejoin="round"/>
+    </symbol>
+    <!-- The head extends 2 units beyond the shaft endpoint, covering its nose join. -->
+    <marker id="blue-arrow" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="12" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L14 7L0 14L4 7Z" fill="#176d9c"/></marker>
+    <marker id="green-arrow" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="12" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L14 7L0 14Z" fill="#008000"/></marker>
+    <marker id="purple-arrow" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="12" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L14 7L0 14Z" fill="#6100a8"/></marker>
+    <marker id="blue-triangle" markerWidth="14" markerHeight="14" viewBox="0 0 14 14" refX="12" refY="7" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0L14 7L0 14Z" fill="#176d9c"/></marker>
   </defs>
-
   <rect width="846" height="1058" fill="white"/>
-
-  <!-- User edge, DNS, and CDN. -->
-  <rect x="180" y="29" width="350" height="151" rx="24" fill="white" stroke="#08b7d1" stroke-width="3"/>
-  <text x="198" y="58" font-family="Arial, sans-serif" font-size="18">User</text>
-  <use href="#laptop" x="249" y="70" width="78" height="50"/><text x="288" y="148" text-anchor="middle" font-family="Arial, sans-serif" font-size="15">Web browser</text>
-  <use href="#phone" x="400" y="57" width="42" height="75"/><text x="421" y="148" text-anchor="middle" font-family="Arial, sans-serif" font-size="15">Mobile app</text>
-  <use href="#dns-globe" x="31" y="65" width="82" height="82"/>
-  <path d="M180 105H124" fill="none" stroke="#0b78b5" stroke-width="3" marker-end="url(#blue-arrow)"/>
-  <g id="cdn" fill="#4dd0ec"><circle cx="669" cy="95" r="25"/><circle cx="699" cy="83" r="34"/><circle cx="733" cy="97" r="26"/><rect x="652" y="95" width="104" height="33" rx="17"/><path d="M711 59L693 92H712L701 119L739 80H719L730 59Z" fill="white"/></g><text x="704" y="153" text-anchor="middle" font-family="Arial, sans-serif" font-size="18">CDN</text>
-  <path d="M530 105H639" fill="none" stroke="#0b78b5" stroke-width="3" marker-end="url(#blue-arrow)"/>
-
-  <!-- Client routes converge at the load balancer. -->
-  <path d="M288 158L321.08 224.16" fill="none" stroke="#0b78b5" stroke-width="3" marker-end="url(#blue-arrow)"/><text x="159" y="218" font-family="Arial, sans-serif" font-size="15">www.mysite.com</text>
-  <path id="api-route" d="M421 158L373.37 225.03" fill="none" stroke="#0b78b5" stroke-width="3" marker-end="url(#blue-arrow)"/><text x="410" y="218" font-family="Arial, sans-serif" font-size="15">api.mysite.com</text>
-  <g id="load-balancer"><path d="M320 236H371L381 300H310Z" fill="#0b78b5"/><circle cx="346" cy="251" r="5" fill="white"/><path d="M346 257V286M346 269L333 279M346 269L359 279M333 279V290M359 279V290" stroke="white" stroke-width="3" fill="none"/><text x="388" y="281" font-family="Arial, sans-serif" font-size="17">Load balancer</text></g>
-  <path d="M346 301V336" fill="none" stroke="#0b78b5" stroke-width="3" marker-end="url(#blue-arrow)"/>
-
-  <!-- Main data-center boundary. -->
-  <rect x="12" y="349" width="642" height="480" rx="51" fill="#f2f2f2" stroke="#08b7d1" stroke-width="3" stroke-dasharray="9 7"/>
-  <text x="39" y="388" font-family="Arial, sans-serif" font-size="16">DC1</text>
-
-  <!-- Web tier sends synchronous data requests and asynchronous jobs. -->
-  <rect x="112" y="367" width="139" height="151" rx="23" fill="#f8f8f8" stroke="#08b7d1" stroke-width="2" stroke-dasharray="7 6"/>
-  <use href="#server" x="129" y="408" width="43" height="78"/><use href="#server" x="168" y="389" width="43" height="78"/><use href="#server" x="207" y="408" width="43" height="78"/><text x="182" y="504" text-anchor="middle" font-family="Arial, sans-serif" font-size="16">Web servers</text>
-
-  <path d="M251 441H414" fill="none" stroke="#0b78b5" stroke-width="3" marker-end="url(#blue-arrow)"/>
-  <path d="M428 405H594L614 432L594 459H428Z" fill="#eef8fd" stroke="#0b78b5" stroke-width="3"/>
-  <use href="#envelope" x="440" y="415" width="42" height="30"/><use href="#envelope" x="487" y="415" width="42" height="30"/><use href="#envelope" x="534" y="415" width="42" height="30"/>
-  <text x="511" y="486" text-anchor="middle" font-family="Arial, sans-serif" font-size="16">1. Message queue</text>
-
-  <!-- Worker route bends around the queue caption before entering the worker pool. -->
-  <path d="M594 461V575H513V609" fill="none" stroke="#0b78b5" stroke-width="3" marker-end="url(#blue-arrow)"/>
-  <rect x="444" y="622" width="138" height="153" rx="23" fill="#f8f8f8" stroke="#08b7d1" stroke-width="2" stroke-dasharray="7 6"/>
-  <use href="#server" x="460" y="661" width="42" height="78"/><use href="#server" x="495" y="642" width="42" height="78"/><use href="#server" x="530" y="661" width="42" height="78"/><text x="513" y="760" text-anchor="middle" font-family="Arial, sans-serif" font-size="16">Workers</text>
-
-  <!-- Databases and caches. -->
-  <path d="M167 519L98.24 618.94" fill="none" stroke="#0b78b5" stroke-width="3" marker-end="url(#blue-arrow)"/><path d="M196 519L247.9 618.25" fill="none" stroke="#148c28" stroke-width="3" marker-end="url(#green-arrow)"/>
-  <rect x="29" y="630" width="124" height="157" rx="20" fill="#f8f8f8" stroke="#08b7d1" stroke-width="2"/><path d="M48 666C48 656 64 650 82 650S116 656 116 666V724C116 734 100 740 82 740S48 734 48 724Z" fill="#0b78b5"/><ellipse cx="82" cy="666" rx="34" ry="10" fill="white" stroke="#0b78b5" stroke-width="4"/><text x="91" y="769" text-anchor="middle" font-family="Arial, sans-serif" font-size="16">Databases</text>
-  <rect x="188" y="630" width="128" height="157" rx="20" fill="#f8f8f8" stroke="#08b7d1" stroke-width="2"/><rect x="204" y="655" width="68" height="47" rx="8" fill="#0b78b5"/><rect x="221" y="679" width="68" height="47" rx="8" fill="#0b78b5"/><text x="238" y="684" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="white">CACHE</text><text x="252" y="769" text-anchor="middle" font-family="Arial, sans-serif" font-size="16">Caches</text>
-
-  <!-- Web servers also write to an external NoSQL service. -->
-  <path d="M251 495C468 526 651 558 739.2 603" fill="none" stroke="#6a0dad" stroke-width="3" marker-end="url(#purple-arrow)"/>
-  <path d="M748 622C748 612 764 606 782 606S816 612 816 622V680C816 690 800 696 782 696S748 690 748 680Z" fill="#0b78b5"/><ellipse cx="782" cy="622" rx="34" ry="10" fill="white" stroke="#0b78b5" stroke-width="4"/><text x="782" y="667" text-anchor="middle" font-family="Arial, sans-serif" font-size="27" font-weight="bold" fill="white">{ }</text><text x="782" y="727" text-anchor="middle" font-family="Arial, sans-serif" font-size="17">NoSQL</text>
-
-  <!-- Operations tooling observes and manages the data center. -->
-  <path d="M276 888V842" fill="none" stroke="#0b78b5" stroke-width="3" marker-end="url(#blue-arrow)"/>
-  <rect x="152" y="888" width="248" height="124" rx="21" fill="#fbfbfb" stroke="#6a0dad" stroke-width="2"/>
-  <rect x="174" y="902" width="92" height="42" rx="6" fill="white" stroke="#6a0dad" stroke-width="2"/><text x="220" y="929" text-anchor="middle" font-family="Arial, sans-serif" font-size="15">Logging</text>
-  <rect x="280" y="902" width="92" height="42" rx="6" fill="white" stroke="#6a0dad" stroke-width="2"/><text x="326" y="929" text-anchor="middle" font-family="Arial, sans-serif" font-size="15">Metrics</text>
-  <rect x="174" y="955" width="92" height="42" rx="6" fill="white" stroke="#6a0dad" stroke-width="2"/><text x="220" y="982" text-anchor="middle" font-family="Arial, sans-serif" font-size="15">Monitoring</text>
-  <rect x="280" y="955" width="92" height="42" rx="6" fill="white" stroke="#6a0dad" stroke-width="2"/><text x="326" y="982" text-anchor="middle" font-family="Arial, sans-serif" font-size="15">Automation</text>
-  <text x="276" y="1042" text-anchor="middle" font-family="Arial, sans-serif" font-size="18">2. Tools</text>
+  <!-- User devices and the two edge services. -->
+  <rect x="181" y="29" width="347" height="151" rx="24" fill="white" stroke="#00b6cb" stroke-width="2"/>
+  <text x="199" y="59" class="label">User</text>
+  <use href="#laptop" x="262" y="70" width="56" height="41"/>
+  <text x="293" y="132" text-anchor="middle" font-size="15">Web browser</text>
+  <use href="#phone" x="400" y="60" width="38" height="56"/>
+  <text x="426" y="134" text-anchor="middle" font-size="15">Mobile app</text>
+  <use href="#dns-globe" x="31" y="63" width="80" height="77"/>
+  <use href="#cloud" x="648" y="60" width="104" height="63"/>
+  <text x="698" y="151" text-anchor="middle" class="label">CDN</text>
+  <path d="M181 104L113 105" fill="none" stroke="#176d9c" stroke-width="2" marker-end="url(#blue-arrow)"/>
+  <path d="M528 104H645" fill="none" stroke="#176d9c" stroke-width="2" marker-end="url(#blue-arrow)"/>
+  <!-- Routes converge at the original balancer position; endpoints account for head projection. -->
+  <path d="M272 138L315.3 241.16" fill="none" stroke="#176d9c" stroke-width="2" marker-end="url(#blue-triangle)"/>
+  <path d="M414 142L364.89 241.21" fill="none" stroke="#176d9c" stroke-width="2" marker-end="url(#blue-triangle)"/>
+  <text x="159" y="217" class="label">www.mysite.com</text>
+  <text x="393" y="217" class="label">api.mysite.com</text>
+  <use href="#load-balancer" x="309" y="243" width="62" height="57" preserveAspectRatio="none"/>
+  <text x="377" y="287" class="label">Load balancer</text>
+  <path d="M339 300V345" fill="none" stroke="#176d9c" stroke-width="2" marker-end="url(#blue-triangle)"/>
+  <!-- Data center and its two five-server pools. -->
+  <rect x="12" y="348" width="643" height="483" rx="73" fill="#f0f0f0" stroke="#00b6cb" stroke-width="2" stroke-dasharray="6 6"/>
+  <text x="40" y="386" class="small">DC1</text>
+  <rect x="112" y="366" width="137" height="153" rx="22" fill="none" stroke="#00b6cb" stroke-width="2" stroke-dasharray="6 6"/>
+  <use href="#server-cluster" x="131" y="380" width="104" height="91"/>
+  <text x="185" y="502" text-anchor="middle" class="label">Web servers</text>
+  <rect x="444" y="622" width="137" height="151" rx="22" fill="none" stroke="#00b6cb" stroke-width="2" stroke-dasharray="6 6"/>
+  <use href="#server-cluster" x="463" y="636" width="103" height="91"/>
+  <text x="514" y="756" text-anchor="middle" class="small">Workers</text>
+  <!-- Message queue, with a straight downward consumer route as in the reference. -->
+  <path d="M434 405H596L613 431L596 458H434Q429 458 429 453V410Q429 405 434 405Z" fill="none" stroke="#0074bc" stroke-width="3.5"/>
+  <use href="#envelope" x="437" y="414" width="48" height="35"/>
+  <use href="#envelope" x="490" y="414" width="48" height="35"/>
+  <use href="#envelope" x="543" y="414" width="48" height="35"/>
+  <circle cx="433" cy="475" r="10" fill="none" stroke="#111" stroke-width="1"/>
+  <text x="433" y="480" text-anchor="middle" font-size="15">1</text>
+  <text x="449" y="481" class="label">Message Queue</text>
+  <path d="M250 442H425.25" fill="none" stroke="#176d9c" stroke-width="2" marker-end="url(#blue-arrow)"/>
+  <path d="M506 489V613" fill="none" stroke="#176d9c" stroke-width="2" marker-end="url(#blue-arrow)"/>
+  <!-- Three database replicas and three cache tiles, preserving the staggered stacking. -->
+  <rect x="30" y="631" width="123" height="156" rx="20" fill="none" stroke="#00b6cb" stroke-width="2"/>
+  <use href="#database" x="48" y="649" width="43" height="60"/>
+  <use href="#database" x="70" y="663" width="43" height="60"/>
+  <use href="#database" x="92" y="677" width="43" height="60"/>
+  <text x="95" y="766" text-anchor="middle" class="label">Databases</text>
+  <rect x="190" y="633" width="127" height="153" rx="20" fill="none" stroke="#00b6cb" stroke-width="2"/>
+  <use href="#cache" x="198" y="654" width="47" height="56"/>
+  <use href="#cache" x="224" y="675" width="47" height="56"/>
+  <use href="#cache" x="257" y="697" width="47" height="56"/>
+  <text x="252" y="778" text-anchor="middle" class="label">Caches</text>
+  <path d="M177 523L93.2 628.4" fill="none" stroke="#176d9c" stroke-width="2" marker-end="url(#blue-arrow)"/>
+  <path d="M182 524L251.9 630.3" fill="none" stroke="#008000" stroke-width="2" marker-end="url(#green-arrow)"/>
+  <!-- The NoSQL write crosses the queue's vertical shaft, but stays clear of every label. -->
+  <path d="M182 520L751 606.7" fill="none" stroke="#6100a8" stroke-width="2" marker-end="url(#purple-arrow)"/>
+  <path d="M742 618C742 602 798 602 798 618V669C798 685 742 685 742 669Z" fill="#0074bc"/>
+  <ellipse cx="770" cy="616" rx="20" ry="6" fill="white"/>
+  <text x="770" y="664" text-anchor="middle" font-size="36" font-weight="bold" style="fill:white">{ }</text>
+  <text x="770" y="707" text-anchor="middle" class="label">NoSQL</text>
+  <!-- Operations tools connect upward to the data-center boundary. -->
+  <path d="M275 887V833" fill="none" stroke="#176d9c" stroke-width="2" marker-end="url(#blue-arrow)"/>
+  <rect x="152" y="888" width="247" height="124" rx="21" fill="none" stroke="#6100a8" stroke-width="2"/>
+  <rect x="175" y="900" width="92" height="42" rx="6" fill="none" stroke="#6100a8" stroke-width="2"/>
+  <rect x="280" y="900" width="92" height="42" rx="6" fill="none" stroke="#6100a8" stroke-width="2"/>
+  <rect x="175" y="952" width="92" height="42" rx="6" fill="none" stroke="#6100a8" stroke-width="2"/>
+  <rect x="280" y="952" width="92" height="42" rx="6" fill="none" stroke="#6100a8" stroke-width="2"/>
+  <text x="221" y="928" text-anchor="middle" font-size="15">Logging</text>
+  <text x="326" y="928" text-anchor="middle" font-size="15">Metrics</text>
+  <text x="221" y="980" text-anchor="middle" font-size="15">Monitoring</text>
+  <text x="326" y="980" text-anchor="middle" font-size="15">Automation</text>
+  <circle cx="210" cy="1040" r="10" fill="none" stroke="#111" stroke-width="1"/>
+  <text x="210" y="1045" text-anchor="middle" font-size="15">2</text>
+  <text x="228" y="1046" class="label">Tools</text>
 </svg>

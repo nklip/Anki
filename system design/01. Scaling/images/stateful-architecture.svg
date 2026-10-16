@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="956" height="546" viewBox="0 0 956 546" role="img" aria-labelledby="title desc">
+  <title id="title">Stateful web servers</title>
+  <desc id="desc">Each user sends requests to a specific server, which stores that user’s session data and profile image locally.</desc>
+  <!-- Shared laptop and blue request-arrow definitions. -->
+  <defs>
+    <symbol id="laptop" viewBox="0 0 80 55">
+      <path d="M6 44V7Q6 2 11 2H69Q74 2 74 7V44" fill="none" stroke="#050505" stroke-width="3.5"/>
+      <rect x="0" y="48" width="80" height="7" rx="3.5" fill="#050505"/>
+      <rect x="31" y="50" width="18" height="2.5" rx="1.25" fill="#fefefe"/>
+    </symbol>
+    <!-- The triangular tip projects 10 units beyond refX; the shaft stays beneath the head. -->
+    <marker id="arrow" markerWidth="16" markerHeight="14" viewBox="0 0 16 14" refX="6" refY="7" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0L16 7L0 14Z" fill="#146b9f"/>
+    </marker>
+  </defs>
+  <rect width="956" height="546" fill="#fefefe"/>
+  <!-- User A: the request arrow ends at the top border of Server 1. -->
+  <g id="user-a">
+    <use href="#laptop" x="113.5" y="16" width="66" height="45.4"/>
+    <text x="146.5" y="89.5" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19">User A</text>
+    <path id="request-a" d="M146.5 105.5V237.75" fill="none" stroke="#146b9f" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <text x="118.5" y="167" text-anchor="middle" transform="rotate(90 118.5 167)" font-family="Arial, Helvetica, sans-serif" font-size="16">http request</text>
+  </g>
+  <!-- Local state in Server 1; bullets are separate to preserve the reference indentation. -->
+  <g id="server-1">
+    <rect x="35.5" y="249" width="219" height="278" rx="32" fill="#fefefe" stroke="#00b5d3" stroke-width="2.5"/>
+    <path d="M35.5 318H254.5" fill="none" stroke="#00b5d3" stroke-width="2.5"/>
+    <text x="135.0" y="297" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22">Server 1</text>
+    <path d="M106.0 334Q106.0 329 111.0 329H149.0Q154.0 329 154.0 334V423H106.0Z" fill="#6abd25"/>
+    <path d="M115.0 343H145.0M115.0 399H145.0M115.0 411H145.0" fill="none" stroke="#fefefe" stroke-width="4"/>
+    <g font-family="Arial, Helvetica, sans-serif" font-size="16">
+      <text x="42.5" y="457">•</text><text x="61.5" y="457">Session data for User A</text>
+      <text x="44.5" y="494">•</text><text x="63.5" y="494">Profile image for User A</text>
+    </g>
+  </g>
+  <!-- User B: the request arrow ends at the top border of Server 2. -->
+  <g id="user-b">
+    <use href="#laptop" x="438.5" y="18" width="66" height="45.4"/>
+    <text x="471.5" y="91.5" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19">User B</text>
+    <path id="request-b" d="M471.5 103V236.25" fill="none" stroke="#146b9f" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <text x="443.5" y="165" text-anchor="middle" transform="rotate(90 443.5 165)" font-family="Arial, Helvetica, sans-serif" font-size="16">http request</text>
+  </g>
+  <!-- Local state in Server 2; bullets are separate to preserve the reference indentation. -->
+  <g id="server-2">
+    <rect x="366" y="247.5" width="219" height="278" rx="32" fill="#fefefe" stroke="#00b5d3" stroke-width="2.5"/>
+    <path d="M366 316.5H585" fill="none" stroke="#00b5d3" stroke-width="2.5"/>
+    <text x="465.5" y="295.5" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22">Server 2</text>
+    <path d="M436.5 332.5Q436.5 327.5 441.5 327.5H479.5Q484.5 327.5 484.5 332.5V421.5H436.5Z" fill="#6abd25"/>
+    <path d="M445.5 341.5H475.5M445.5 397.5H475.5M445.5 409.5H475.5" fill="none" stroke="#fefefe" stroke-width="4"/>
+    <g font-family="Arial, Helvetica, sans-serif" font-size="16">
+      <text x="373" y="455.5">•</text><text x="392" y="455.5">Session data for User B</text>
+      <text x="375" y="492.5">•</text><text x="394" y="492.5">Profile image for User B</text>
+    </g>
+  </g>
+  <!-- User C: the request arrow ends at the top border of Server 3. -->
+  <g id="user-c">
+    <use href="#laptop" x="744" y="16" width="66" height="45.4"/>
+    <text x="777" y="89.5" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="19">User C</text>
+    <path id="request-c" d="M781.5 98V234.75" fill="none" stroke="#146b9f" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <text x="753.5" y="160" text-anchor="middle" transform="rotate(90 753.5 160)" font-family="Arial, Helvetica, sans-serif" font-size="16">http request</text>
+  </g>
+  <!-- Local state in Server 3; bullets are separate to preserve the reference indentation. -->
+  <g id="server-3">
+    <rect x="687.5" y="246" width="219" height="278" rx="32" fill="#fefefe" stroke="#00b5d3" stroke-width="2.5"/>
+    <path d="M687.5 315H906.5" fill="none" stroke="#00b5d3" stroke-width="2.5"/>
+    <text x="787.0" y="294" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="22">Server 3</text>
+    <path d="M758.0 331Q758.0 326 763.0 326H801.0Q806.0 326 806.0 331V420H758.0Z" fill="#6abd25"/>
+    <path d="M767.0 340H797.0M767.0 396H797.0M767.0 408H797.0" fill="none" stroke="#fefefe" stroke-width="4"/>
+    <g font-family="Arial, Helvetica, sans-serif" font-size="16">
+      <text x="694.5" y="454">•</text><text x="713.5" y="454">Session data for User C</text>
+      <text x="696.5" y="491">•</text><text x="715.5" y="491">Profile image for User C</text>
+    </g>
+  </g>
+</svg>

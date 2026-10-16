@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="444" height="300" viewBox="0 0 444 300" role="img" aria-labelledby="title desc">
+  <title id="title">Database sharding by user ID</title>
+  <desc id="desc">The remainder of user_id divided by four selects one of four database shards, numbered zero through three. Cyan arrows connect the routing rule to the corresponding blue database cylinders.</desc>
+
+  <!-- Shared cylinder geometry, chapter typography, and downward routing arrow. -->
+  <defs>
+    <style>text{font-family:Arial,Helvetica,sans-serif;font-size:16px;text-anchor:middle}</style>
+    <symbol id="database-shard" viewBox="0 0 68 92" preserveAspectRatio="none">
+      <path d="M0.5 12.5A33.5 12.5 0 0 1 67.5 12.5V78.5A33.5 12.5 0 0 1 0.5 78.5Z" fill="#2e73b8"/>
+      <ellipse cx="34" cy="12" rx="24" ry="7" fill="white"/>
+    </symbol>
+    <!-- The nose projects four units past refX, covering the full 2.5-unit shaft. -->
+    <marker id="shard-arrow" markerWidth="16" markerHeight="16" viewBox="0 0 16 16" refX="12" refY="8" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0L16 8L0 16L4 8Z" fill="#37b5d8"/>
+    </marker>
+  </defs>
+
+  <!-- Plain white canvas. -->
+  <rect width="444" height="300" fill="white"/>
+
+  <!-- Outer branches leave the diamond's sides; the center stem splits into two inner branches. -->
+  <g id="shard-routing" fill="none" stroke="#37b5d8" stroke-width="2.5">
+    <path id="route-to-shard-0" d="M148 57H42.5V190" marker-end="url(#shard-arrow)"/>
+    <path id="route-to-shard-3" d="M298 57H402V190" marker-end="url(#shard-arrow)"/>
+    <path id="inner-routing-stem" d="M223 98V145"/>
+    <path id="route-to-shard-1" d="M223 145H170V190" marker-end="url(#shard-arrow)"/>
+    <path id="route-to-shard-2" d="M223 145H279V190" marker-end="url(#shard-arrow)"/>
+  </g>
+
+  <!-- Routing rule remains above the connecting lines, with generous label clearance. -->
+  <path id="shard-selection-rule" d="M223 16L298 57L223 98L148 57Z" fill="white" stroke="#333" stroke-width="1.6"/>
+  <text x="222" y="63" fill="#222">user_id % 4</text>
+
+  <!-- Four shards; the off-center right branch retains the reference's small gap above its curved rim. -->
+  <use id="shard-0" href="#database-shard" x="13" y="194" width="68" height="92"/>
+  <use id="shard-1" href="#database-shard" x="135" y="194" width="68" height="92"/>
+  <use id="shard-2" href="#database-shard" x="243" y="194" width="68" height="92"/>
+  <use id="shard-3" href="#database-shard" x="352" y="194" width="68" height="92"/>
+  <g id="shard-labels" fill="white">
+    <text x="47" y="246">0</text>
+    <text x="169" y="246">1</text>
+    <text x="277" y="246">2</text>
+    <text x="386" y="246">3</text>
+  </g>
+</svg>

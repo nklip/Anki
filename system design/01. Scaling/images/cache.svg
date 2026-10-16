@@ -1,47 +1,35 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1202" height="184" viewBox="0 0 1202 184" role="img" aria-labelledby="title desc">
   <title id="title">Cache read flow</title>
-  <desc id="desc">A web server reads from a cache. On a cache miss, data is fetched from the database, stored in the cache, and returned to the web server.</desc>
-
-  <!-- Shared arrowheads and compact infrastructure icons. -->
+  <desc id="desc">If data exists in cache, the cache returns it to the web server. Otherwise, data is fetched from the database and saved in cache before being returned.</desc>
+  <!-- Typography and colors follow the PNG reference's sRGB rendering. -->
   <defs>
-    <marker id="blue-arrow" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="0" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L11 6L0 11Z" fill="#0b78b5"/></marker>
-    <marker id="green-arrow" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="0" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L11 6L0 11Z" fill="#138a28"/></marker>
+    <style>text{font-family:Arial,Helvetica,sans-serif;fill:#111}.caption{font-size:24px}.step{font-size:21px}.cache-label{font-family:'Arial Narrow',Arial,sans-serif;font-stretch:condensed;font-weight:bold;fill:white}</style>
   </defs>
-
-  <rect width="1202" height="184" fill="white"/>
-
-  <!-- Web server. -->
-  <g id="web-server">
-    <rect x="48" y="18" width="56" height="106" rx="7" fill="#63c51b"/>
-    <path d="M60 33H92M60 98H92M60 110H92" stroke="white" stroke-width="5"/>
-    <text x="76" y="153" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#222">Web server</text>
-  </g>
-
-  <!-- Cache. -->
-  <g id="cache">
-    <rect x="622" y="43" width="80" height="72" rx="10" fill="#0b78b5" stroke="#075b8c" stroke-width="2"/>
-    <text x="662" y="84" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white">CACHE</text>
-    <text x="662" y="151" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#222">Cache</text>
-  </g>
-
-  <!-- Database. -->
-  <g id="database">
-    <path d="M1098 32C1098 23 1114 17 1133 17S1168 23 1168 32V109C1168 118 1152 124 1133 124S1098 118 1098 109Z" fill="#0b78b5"/>
-    <ellipse cx="1133" cy="32" rx="35" ry="11" fill="white" stroke="#0b78b5" stroke-width="5"/>
-    <text x="1133" y="96" text-anchor="middle" font-family="Arial, sans-serif" font-size="37" fill="white">DB</text>
-    <text x="1133" y="153" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="#222">Database</text>
-  </g>
-
-  <!-- Cache hit: response travels directly from cache to server. -->
-  <path d="M622 53H117" fill="none" stroke="#138a28" stroke-width="3" marker-end="url(#green-arrow)"/>
-  <text x="365" y="38" text-anchor="middle" font-family="Arial, sans-serif" font-size="19" fill="#222">1. Cache hit: read data from cache</text>
-
-  <!-- Cache miss: database fills the cache, then the cache responds. -->
-  <path d="M1098 101H715" fill="none" stroke="#0b78b5" stroke-width="3" marker-end="url(#blue-arrow)"/>
-  <text x="902" y="137" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#222">
-    <tspan x="902">2.1 Cache miss: fetch from database</tspan>
-    <tspan x="902" dy="21">and save the result in cache</tspan>
-  </text>
-  <path d="M622 101H117" fill="none" stroke="#0b78b5" stroke-width="3" marker-end="url(#blue-arrow)"/>
-  <text x="365" y="137" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#222">2.2 Return data to the web server</text>
+  <rect width="1202" height="184" fill="#fefefe"/>
+  <!-- The reference has a small clipped mark at its upper edge. -->
+  <path d="M52 0H58" stroke="#555" stroke-width="1"/>
+  <!-- Web server: the lower corners are square in the source icon. -->
+  <path d="M49 124V24Q49 17 56 17H97Q104 17 104 24V124Z" fill="#6abd25"/>
+  <path d="M59 33H93M59 96H93M59 110H93" stroke="white" stroke-width="5"/>
+  <text class="caption" x="76" y="151" text-anchor="middle">Web server</text>
+  <!-- Cache hit and cache miss responses; the shafts end inside the arrow bases. -->
+  <path id="cache-hit-shaft" d="M617 53H119" stroke="#008000" stroke-width="3"/>
+  <path d="M106 53L123 45V61Z" fill="#008000"/>
+  <text class="step" x="614" y="40" text-anchor="end">1. If data exists in cache, read data from cache</text>
+  <path id="cache-response-shaft" d="M624 101.5H123" stroke="#176d9c" stroke-width="3"/>
+  <path d="M109 101.5L126 93V110Z" fill="#176d9c"/>
+  <text class="step" x="177" y="138">2.2 Return data to the web server</text>
+  <path id="database-response-shaft" d="M1100 101H718" stroke="#176d9c" stroke-width="3"/>
+  <path d="M703 101L720 92.5V109.5Z" fill="#176d9c"/>
+  <text class="step" x="907" y="137" text-anchor="middle"><tspan x="907">2.1 If data doesn't exist in cache,</tspan><tspan x="867" dy="23">save data to cache</tspan></text>
+  <!-- Cache tile, including its darker lower edge and condensed label. -->
+  <rect x="623" y="36" width="78" height="80" rx="12" fill="#005879"/>
+  <rect x="623" y="33" width="78" height="80" rx="12" fill="#0074bc"/>
+  <text class="cache-label" x="662" y="60" transform="translate(66.2 0) scale(0.9 1)" font-size="23" text-anchor="middle">CACHE</text>
+  <text class="caption" x="658" y="149" text-anchor="middle">Cache</text>
+  <!-- Database cylinder, with a white top opening and the original DB label. -->
+  <path d="M1098 33C1098 16 1166 16 1166 33V112C1166 130 1098 130 1098 112Z" fill="#0074bc"/>
+  <ellipse cx="1132" cy="34" rx="26" ry="7" fill="#fefefe"/>
+  <text x="1133" y="96" text-anchor="middle" font-size="39" style="fill:white">DB</text>
+  <text class="caption" x="1132" y="153" text-anchor="middle">Database</text>
 </svg>

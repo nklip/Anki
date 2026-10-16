@@ -1,47 +1,42 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1204" height="700" viewBox="0 0 1204 700" role="img" aria-labelledby="title desc">
   <title id="title">Web server with a database</title>
   <desc id="desc">Browser and mobile clients resolve the site through DNS, send requests to a web server, and the server reads and writes data in a database.</desc>
-
-  <!-- Reusable arrowheads and infrastructure icons. -->
+  <!-- Reusable native device silhouettes and the monochrome DNS globe. -->
   <defs>
-    <marker id="arrow" markerWidth="13" markerHeight="13" viewBox="0 0 13 13" refX="0" refY="6.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L12 6.5L0 12Z" fill="#222"/></marker>
-    <symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
-    <symbol id="phone" viewBox="0 0 54 96"><rect x="5" y="2" width="44" height="90" rx="7" fill="white" stroke="#333" stroke-width="5"/><path d="M19 11H35M23 82H31" stroke="#333" stroke-width="3"/></symbol>
-    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
-    <!-- Centered DNS globe shared by every scaling diagram. -->
-    <symbol id="dns-globe" viewBox="0 0 120 120">
-      <circle cx="60" cy="60" r="54" fill="white" stroke="#555" stroke-width="7"/>
-      <path d="M60 6C36 24 36 96 60 114M60 6C84 24 84 96 60 114" fill="none" stroke="#555" stroke-width="5"/>
-      <path d="M14 38Q60 20 106 38M14 82Q60 100 106 82" fill="none" stroke="#555" stroke-width="5"/>
-      <rect x="15" y="42" width="90" height="36" rx="9" fill="white"/>
-      <text x="60" y="70" text-anchor="middle" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#0b78b5">DNS</text>
-    </symbol>
+    <symbol id="laptop" viewBox="0 0 100 70"><path d="M6 55V11Q6 4 13 4H87Q94 4 94 11V55" fill="none" stroke="#000" stroke-width="5"/><rect y="60" width="100" height="9" rx="4" fill="#000"/><rect x="39" y="62" width="22" height="3" rx="1.5" fill="#fff"/></symbol>
+    <symbol id="phone" viewBox="0 0 64 96"><rect x="3" y="3" width="58" height="90" rx="6" fill="none" stroke="#4d4d4d" stroke-width="6"/><path d="M4 16H60M4 80H60" stroke="#4d4d4d" stroke-width="4"/><path d="M27 9H37M29 87H35" stroke="#4d4d4d" stroke-width="3" stroke-linecap="round"/></symbol>
+    <symbol id="server" viewBox="0 0 72 140"><path d="M0 140V9Q0 0 9 0H63Q72 0 72 9V140Z" fill="#6abd25"/><path d="M5 139V9Q5 4 10 4H63" fill="none" stroke="#88c74b" stroke-width="3"/><path d="M14 21H57M14 103H57M14 121H57" stroke="#fff" stroke-width="6"/></symbol>
+    <symbol id="dns-globe" viewBox="0 0 140 136"><g fill="none" stroke="#4d4d4d" stroke-width="8"><ellipse cx="70" cy="68" rx="65" ry="63"/><path d="M19 26Q70 44 121 26M19 110Q70 92 121 110M38 47Q48 5 70 5Q92 5 102 47M38 91Q48 131 70 131Q92 131 102 91M5 68H16M124 68H135"/></g><text x="70" y="85" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="49" fill="#4d4d4d">DNS</text></symbol>
   </defs>
-
-  <rect width="1204" height="700" fill="white"/>
-
-  <!-- User devices and DNS. -->
-  <rect x="90" y="14" width="570" height="245" rx="36" fill="white" stroke="#222" stroke-width="2"/>
-  <text x="119" y="59" font-family="Arial, sans-serif" font-size="29">User</text>
-  <use href="#laptop" x="214" y="77" width="110" height="70"/><text x="269" y="184" text-anchor="middle" font-family="Arial, sans-serif" font-size="27">Web browser</text>
-  <use href="#phone" x="449" y="59" width="54" height="96"/><text x="476" y="184" text-anchor="middle" font-family="Arial, sans-serif" font-size="27">Mobile app</text>
-
-  <use href="#dns-globe" x="972" y="46" width="132" height="132"/>
-  <path d="M667 101H960" fill="none" stroke="#222" stroke-width="3" marker-end="url(#arrow)"/><text x="817" y="77" text-anchor="middle" font-family="Arial, sans-serif" font-size="27">www.mysite.com</text>
-  <path d="M972 151H679" fill="none" stroke="#222" stroke-width="3" marker-end="url(#arrow)"/><text x="817" y="190" text-anchor="middle" font-family="Arial, sans-serif" font-size="26">IP address</text>
-
-  <!-- Client requests enter the web tier. -->
-  <path d="M269 259V421" fill="none" stroke="#222" stroke-width="3" marker-end="url(#arrow)"/><text x="31" y="337" font-family="Arial, sans-serif" font-size="26">www.mysite.com</text>
-  <path d="M476 259V421" fill="none" stroke="#222" stroke-width="3" marker-end="url(#arrow)"/><text x="492" y="337" font-family="Arial, sans-serif" font-size="26">api.mysite.com</text>
-
-  <!-- Web server and database tiers. -->
-  <rect x="220" y="435" width="310" height="232" rx="40" fill="#fbfbfb" stroke="#222" stroke-width="2" stroke-dasharray="8 7"/>
-  <use href="#server" x="340" y="475" width="70" height="128"/><text x="375" y="644" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">Web server</text>
-
-  <rect x="860" y="435" width="310" height="232" rx="40" fill="#fbfbfb" stroke="#222" stroke-width="2" stroke-dasharray="8 7"/>
-  <path d="M970 482C970 470 992 462 1018 462S1066 470 1066 482V575C1066 587 1044 595 1018 595S970 587 970 575Z" fill="#0b78b5"/><ellipse cx="1018" cy="482" rx="48" ry="15" fill="white" stroke="#0b78b5" stroke-width="6"/><text x="1018" y="555" text-anchor="middle" font-family="Arial, sans-serif" font-size="48" fill="white">DB</text><text x="1018" y="644" text-anchor="middle" font-family="Arial, sans-serif" font-size="29">Database</text>
-
-  <!-- Request and response lines use separate corridors. -->
-  <path d="M532 500H846" fill="none" stroke="#222" stroke-width="3" marker-end="url(#arrow)"/><text x="695" y="482" text-anchor="middle" font-family="Arial, sans-serif" font-size="25">read / write / update</text>
-  <path d="M858 612H544" fill="none" stroke="#222" stroke-width="3" marker-end="url(#arrow)"/><text x="695" y="594" text-anchor="middle" font-family="Arial, sans-serif" font-size="25">return data</text>
+  <rect width="1204" height="700" fill="#fefefe"/>
+<!-- User devices and monochrome DNS lookup. -->
+<rect x="92" y="13" width="568" height="247" rx="36" fill="none" stroke="#000" stroke-width="1.8"/>
+<text x="120" y="61" font-family="Arial, sans-serif" font-size="30">User</text>
+<use href="#laptop" x="223" y="79" width="92" height="66"/>
+<text x="275" y="183" font-family="Arial, sans-serif" font-size="27" text-anchor="middle">Web browser</text>
+<use href="#phone" x="451" y="64" width="61" height="89"/>
+<text x="491" y="185" font-family="Arial, sans-serif" font-size="27" text-anchor="middle">Mobile app</text>
+<use href="#dns-globe" x="977" y="51" width="132" height="124"/>
+<path data-connector="true" d="M666 101L967.25 101" fill="none" stroke="#000" stroke-width="2"/><path d="M978 101L963 108L965.25 101L963 94Z" fill="#000"/>
+<text x="827" y="90" font-family="Arial, sans-serif" font-size="30" text-anchor="middle">www.mysite.com</text>
+<path data-connector="true" d="M988 150L677.75 149.033" fill="none" stroke="#000" stroke-width="2"/><path d="M667 149L682.022 142.047L679.75 149.04L681.978 156.047Z" fill="#000"/>
+<text x="790" y="188" font-family="Arial, sans-serif" font-size="30" text-anchor="middle">IP address</text>
+<!-- Requests begin inside the user panel, as in the source, and stop at the server tier. -->
+<path data-connector="true" d="M269 220L269 424.4" fill="none" stroke="#000" stroke-width="2"/><path d="M269 436L262 420L269 422.4L276 420Z" fill="#000"/>
+<text x="30" y="342" font-family="Arial, sans-serif" font-size="30">www.mysite.com</text>
+<path data-connector="true" d="M478 219L478 424.4" fill="none" stroke="#000" stroke-width="2"/><path d="M478 436L471 420L478 422.4L485 420Z" fill="#000"/>
+<text x="490" y="342" font-family="Arial, sans-serif" font-size="30">api.mysite.com</text>
+<!-- Web and database tiers retain the original dashed boundaries. -->
+<rect x="220" y="437" width="310" height="237" rx="37" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="5 5"/>
+<use href="#server" x="341" y="471" width="67" height="131"/>
+<text x="375" y="642" font-family="Arial, sans-serif" font-size="29" text-anchor="middle">Web server</text>
+<rect x="862" y="437" width="310" height="237" rx="37" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="5 5"/>
+<path d="M971 486C971 466 1062 466 1062 486V588C1062 606 971 606 971 588Z" fill="#0074bc"/><ellipse cx="1017" cy="488" rx="35" ry="10" fill="#fff"/>
+<text x="1017" y="565" font-family="Arial, sans-serif" font-size="48" fill="#fff" text-anchor="middle">DB</text>
+<text x="1017" y="639" font-family="Arial, sans-serif" font-size="29" text-anchor="middle">Database</text>
+<!-- Each shaft stops inside its own triangular head; labels remain above both routes. -->
+<path data-connector="true" d="M530 496L850.25 496" fill="none" stroke="#000" stroke-width="2"/><path d="M861 496L846 503L848.25 496L846 489Z" fill="#000"/>
+<text x="566" y="483" font-family="Arial, sans-serif" font-size="29">read/write/update</text>
+<path data-connector="true" d="M862 614L541.75 614" fill="none" stroke="#000" stroke-width="2"/><path d="M531 614L546 607L543.75 614L546 621Z" fill="#000"/>
+<text x="566" y="599" font-family="Arial, sans-serif" font-size="29">return data</text>
 </svg>

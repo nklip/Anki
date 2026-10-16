@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="846" height="876" viewBox="0 0 784 812" role="img" aria-labelledby="title desc">
+  <title id="title">Separate database write and read routes</title>
+  <desc id="desc">Web servers send writes to the master database and reads to three slave databases. Blue replication branches connect the master with all three slaves; the middle branch retains the two arrowheads shown in the supplied diagram.</desc>
+
+  <!-- Native icons and colors match the other Scaling chapter diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+      .node-label { font-size: 20px; text-anchor: middle; }
+      .route-label { font-size: 14px; text-anchor: middle; }
+    </style>
+    <symbol id="server-cluster" viewBox="0 0 96 86" preserveAspectRatio="none">
+      <!-- Only the upper portions of the two rear servers are visible. -->
+      <path d="M17 22V4Q17 0 21 0H42Q46 0 46 4V22ZM49 22V4Q49 0 53 0H74Q78 0 78 4V22Z" fill="#6abd25"/>
+      <path d="M22 9H40M54 9H72" stroke="white" stroke-width="3"/>
+      <path d="M1 86V27Q1 23 5 23H26Q30 23 30 27V86ZM33 86V27Q33 23 37 23H58Q62 23 62 27V86ZM65 86V27Q65 23 69 23H90Q94 23 94 27V86Z" fill="#6abd25"/>
+      <path d="M6 32H24M6 70H24M6 78H24M38 32H56M38 70H56M38 78H56M70 32H88M70 70H88M70 78H88" stroke="white" stroke-width="3"/>
+    </symbol>
+    <symbol id="database" viewBox="0 0 54 85">
+      <path d="M0 11C0 -3.667 54 -3.667 54 11V75C54 88.333 0 88.333 0 75Z" fill="#0074bc"/>
+      <ellipse cx="27" cy="11" rx="20" ry="6" fill="white"/>
+      <text x="27" y="61" text-anchor="middle" font-size="30" style="fill:white">DB</text>
+    </symbol>
+    <!-- Each marker projects 2 units past the shaft; endpoints compensate for that projection. -->
+    <marker id="blue-arrow" markerWidth="16" markerHeight="14" viewBox="0 0 16 14" refX="14" refY="7" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0L16 7L0 14L4 7Z" fill="#176d9c"/>
+    </marker>
+    <marker id="green-arrow" markerWidth="16" markerHeight="14" viewBox="0 0 16 14" refX="14" refY="7" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0L16 7L0 14Z" fill="#008000"/>
+    </marker>
+  </defs>
+
+  <!-- White canvas; the screenshot's outer blue frame and gray panel are intentionally omitted. -->
+  <rect width="784" height="812" fill="white"/>
+
+  <!-- Web-server group retains its local dashed outline. -->
+  <rect id="web-server-group" x="283" y="23" width="148" height="164" rx="23" fill="white" stroke="#00b6cb" stroke-width="2" stroke-dasharray="7 7"/>
+  <use href="#server-cluster" x="303" y="37" width="112" height="99"/>
+  <text x="362" y="170" class="node-label">Web servers</text>
+
+  <!-- Writes go to the master. The shaft has a real gap around its label. -->
+  <path id="write-route" d="M320 188V279Q320 291 308 291H106Q94 291 94 303V399" fill="none" stroke="#176d9c" stroke-width="2.3"/>
+  <text x="94" y="414" class="route-label">writes</text>
+  <path id="write-to-master" d="M94 421V539" fill="none" stroke="#176d9c" stroke-width="2.3" marker-end="url(#blue-arrow)"/>
+
+  <!-- Shared read bus, with separate vertical branches and clear label gaps. -->
+  <path id="read-bus" d="M394 188V286H712" fill="none" stroke="#008000" stroke-width="2.3"/>
+  <path id="read-1-upper" d="M605 286V366" fill="none" stroke="#008000" stroke-width="2.3"/>
+  <text x="605" y="380" class="route-label">reads</text>
+  <path id="read-to-slave-1" d="M605 387V441H545" fill="none" stroke="#008000" stroke-width="2.3" marker-end="url(#green-arrow)"/>
+  <path id="read-2-upper" d="M663 286V431" fill="none" stroke="#008000" stroke-width="2.3"/>
+  <text x="663" y="445" class="route-label">reads</text>
+  <path id="read-to-slave-2" d="M663 452V593H545" fill="none" stroke="#008000" stroke-width="2.3" marker-end="url(#green-arrow)"/>
+  <path id="read-3-upper" d="M712 286V572" fill="none" stroke="#008000" stroke-width="2.3"/>
+  <text x="712" y="586" class="route-label">reads</text>
+  <path id="read-to-slave-3" d="M712 593V716H545" fill="none" stroke="#008000" stroke-width="2.3" marker-end="url(#green-arrow)"/>
+
+  <!-- Replication uses a shared trunk; its intersection with the middle branch is intentional. -->
+  <path id="replication-trunk" d="M185 450Q173 450 173 462V706Q173 718 185 718" fill="none" stroke="#176d9c" stroke-width="2.3"/>
+  <path id="replication-to-slave-1" d="M185 450H487" fill="none" stroke="#176d9c" stroke-width="2.3" marker-end="url(#blue-arrow)"/>
+  <path id="replication-to-slave-2" d="M173 592H487" fill="none" stroke="#176d9c" stroke-width="2.3" marker-end="url(#blue-arrow)"/>
+  <path id="replication-to-slave-3" d="M185 718H487" fill="none" stroke="#176d9c" stroke-width="2.3" marker-end="url(#blue-arrow)"/>
+  <!-- The left-facing head on the middle branch is retained from the supplied picture. -->
+  <path id="replication-to-master" d="M173 592H123" fill="none" stroke="#176d9c" stroke-width="2.3" marker-end="url(#blue-arrow)"/>
+  <text x="282" y="441" class="route-label">DB replication</text>
+  <text x="279" y="584" class="route-label">DB replication</text>
+  <text x="278" y="710" class="route-label">DB replication</text>
+
+  <!-- One write database and three read databases preserve the screenshot's order and labels. -->
+  <use href="#database" x="67" y="541" width="54" height="85"/>
+  <text x="94" y="655" class="node-label">Master DB</text>
+  <use href="#database" x="489" y="409" width="54" height="85"/>
+  <text x="523" y="520" class="node-label">Slave DB1</text>
+  <use href="#database" x="489" y="539" width="54" height="85"/>
+  <text x="523" y="650" class="node-label">Slave DB2</text>
+  <use href="#database" x="489" y="660" width="54" height="85"/>
+  <text x="523" y="771" class="node-label">Slave DB3</text>
+</svg>

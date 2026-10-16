@@ -1,46 +1,84 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1160" height="372" viewBox="0 0 1160 372" role="img" aria-labelledby="title desc">
   <title id="title">Content delivery network flow</title>
-  <desc id="desc">User A requests an image that the CDN fetches from the origin server and stores. User B later receives the cached image directly from the CDN.</desc>
-
-  <!-- Reusable arrowhead and device icons. -->
+  <desc id="desc">User A requests image.png. A CDN cache miss fetches it from the origin server and stores it; subsequent requests use the CDN copy.</desc>
+  <!-- Faithful reusable infrastructure icons from the PNG etalons. -->
   <defs>
-    <marker id="arrow" markerWidth="12" markerHeight="12" viewBox="0 0 12 12" refX="0" refY="6" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 1L11 6L0 11Z" fill="#0b78b5"/></marker>
-    <symbol id="laptop" viewBox="0 0 110 70"><rect x="16" y="4" width="78" height="49" rx="5" fill="white" stroke="#111" stroke-width="5"/><path d="M7 58H103L96 66H14Z" fill="#111"/><rect x="48" y="59" width="18" height="3" rx="1.5" fill="white"/></symbol>
-    <symbol id="server" viewBox="0 0 64 112"><rect width="64" height="112" rx="7" fill="#63c51b"/><path d="M13 18H51M13 82H51M13 96H51" stroke="white" stroke-width="6"/></symbol>
+    <symbol id="laptop" viewBox="0 0 100 70">
+      <path d="M8 54V10Q8 3 15 3H85Q92 3 92 10V54" fill="none" stroke="#111" stroke-width="4"/>
+      <path d="M7 62H94" fill="none" stroke="#111" stroke-width="8" stroke-linecap="round"/>
+      <path d="M42 62H59" stroke="white" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="phone" viewBox="0 0 54 80">
+      <rect x="3" y="3" width="48" height="74" rx="5" fill="white" stroke="#333" stroke-width="4"/>
+      <path d="M4 13H50M4 66H50" stroke="#333" stroke-width="2"/>
+      <path d="M24 8H30M25 71H29" stroke="#333" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="server" viewBox="0 0 60 115">
+      <path d="M7 0H53Q60 0 60 7V115H0V7Q0 0 7 0Z" fill="#6bbc24"/>
+      <path d="M12 16H48M12 84H48M12 98H48" stroke="white" stroke-width="5"/>
+    </symbol>
+    <symbol id="stack-server" viewBox="0 0 60 115" preserveAspectRatio="none">
+      <path d="M7 0H53Q60 0 60 7V115H0V7Q0 0 7 0Z" fill="#6bbc24" stroke="#e7e7e7" stroke-width="4"/>
+      <path d="M12 16H48M12 84H48M12 98H48" stroke="white" stroke-width="5"/>
+    </symbol>
+    <symbol id="dns-globe" viewBox="0 0 104 104">
+      <g fill="none" stroke="#525252" stroke-width="5">
+        <path d="M52 4C20 25 20 79 52 100M52 4C84 25 84 79 52 100M12 25Q52 40 92 25M12 79Q52 64 92 79"/>
+      </g>
+      <rect x="3" y="34" width="98" height="37" fill="white"/>
+      <circle cx="52" cy="52" r="48" fill="none" stroke="#525252" stroke-width="6"/>
+      <text x="52" y="66" text-anchor="middle" font-family="Arial, sans-serif" font-size="35" font-weight="bold" fill="#525252">DNS</text>
+    </symbol>
+    <symbol id="load-balancer" viewBox="0 0 114 78" preserveAspectRatio="none">
+      <path d="M13 0H101L113 70Q115 78 106 78H8Q0 78 1 70Z" fill="#0074bc"/>
+      <circle cx="56" cy="14" r="6" fill="white"/>
+      <path d="M56 20V67M56 32L36 51M56 32L77 51M36 39V51H48M65 51H77V39M48 58L56 67L64 58" fill="none" stroke="white" stroke-width="3.5"/>
+    </symbol>
+    <symbol id="cloud" viewBox="0 0 180 110">
+      <path d="M25 46C16 20 45 -1 73 17C82 8 91 3 103 1C112 -1 128 1 139 8C152 17 158 31 156 45C187 58 192 90 164 106C160 109 151 110 143 110H31C5 110 -6 91 3 71C7 59 14 52 25 46Z" fill="#55dfff"/>
+      <path d="M103 0H141L127 25H149L89 91L104 51H83Z" fill="white"/>
+    </symbol>
   </defs>
-
+  <!-- Canvas. -->
   <rect width="1160" height="372" fill="white"/>
-
-  <!-- Users. -->
-  <use href="#laptop" x="36" y="28" width="110" height="70"/>
-  <text x="91" y="129" text-anchor="middle" font-family="Arial, sans-serif" font-size="25">User A</text>
-  <use href="#laptop" x="36" y="258" width="110" height="70"/>
-  <text x="91" y="359" text-anchor="middle" font-family="Arial, sans-serif" font-size="25">User B</text>
-
-  <!-- CDN cloud. -->
-  <g id="cdn-cloud" fill="#4dd0ec">
-    <circle cx="474" cy="167" r="42"/><circle cx="523" cy="146" r="55"/><circle cx="574" cy="172" r="43"/><rect x="447" y="165" width="160" height="52" rx="26"/>
-    <path d="M542 112L513 170H543L526 210L585 145H553L571 112Z" fill="white"/>
+  <!-- User devices, cloud and origin server. -->
+  <use href="#laptop" x="46" y="28" width="100" height="70"/>
+  <text x="95" y="134" font-family="Arial, sans-serif" font-size="26" text-anchor="middle">User A</text>
+  <use href="#laptop" x="41" y="260" width="100" height="70"/>
+  <text x="91" y="365" font-family="Arial, sans-serif" font-size="26" text-anchor="middle">User B</text>
+  <use href="#cloud" x="430" y="105" width="180" height="110"/>
+  <text x="515" y="260" font-family="Arial, sans-serif" font-size="30" text-anchor="middle">CDN</text>
+  <use href="#server" x="1070" y="92" width="71" height="139"/>
+  <text x="1106" y="276" font-family="Arial, sans-serif" font-size="30" text-anchor="middle">Server</text>
+  <!-- Separate request and response paths preserve the six numbered PNG steps. -->
+  <g id="user-a-request">
+    <path data-connector="true" d="M140 40L432.817 126.343" fill="none" stroke="#16739c" stroke-width="3.5"/>
+    <path d="M452 132L429.185 135.125L434.53 116.996Z" fill="#16739c"/>
   </g>
-  <text x="525" y="255" text-anchor="middle" font-family="Arial, sans-serif" font-size="26">CDN</text>
-
-  <!-- Origin server. -->
-  <use href="#server" x="1060" y="92" width="70" height="122"/>
-  <text x="1095" y="274" text-anchor="middle" font-family="Arial, sans-serif" font-size="25">Server</text>
-
-  <!-- User A request and response form a parallel corridor with a 32 px separation. -->
-  <path id="user-a-request" d="M147 73L425.36 146.2" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
-  <text x="300" y="100" text-anchor="middle" transform="rotate(14.73 300 100)" font-family="Arial, sans-serif" font-size="17">1. get image.png</text>
-  <path id="origin-fetch" d="M607 139H1047" fill="none" stroke="#0b78b5" stroke-width="4" stroke-dasharray="10 8" marker-end="url(#arrow)"/>
-  <text x="833" y="116" text-anchor="middle" font-family="Arial, sans-serif" font-size="18">2. Cache miss: fetch from origin</text>
-  <path id="origin-return" d="M1058 207H619" fill="none" stroke="#0b78b5" stroke-width="4" stroke-dasharray="10 8" marker-end="url(#arrow)"/>
-  <text x="833" y="188" text-anchor="middle" font-family="Arial, sans-serif" font-size="18">3. Store image.png in CDN</text>
-  <path id="user-a-return" d="M435 181L157.64 108.06" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
-  <text x="300" y="170" text-anchor="middle" transform="rotate(14.0 300 170)" font-family="Arial, sans-serif" font-size="17">4. return image.png</text>
-
-  <!-- User B request and response stay parallel while clearing both labels and devices. -->
-  <path id="user-b-request" d="M147 292L435.51 201.3" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
-  <text x="280" y="240" text-anchor="middle" transform="rotate(-17.45 280 240)" font-family="Arial, sans-serif" font-size="17">5. get image.png</text>
-  <path id="user-b-return" d="M447 217L157.49 308.02" fill="none" stroke="#0b78b5" stroke-width="4" marker-end="url(#arrow)"/>
-  <text x="300" y="290" text-anchor="middle" transform="rotate(-17.45 300 290)" font-family="Arial, sans-serif" font-size="17">6. return image.png</text>
+  <text x="162" y="33" font-family="Arial, sans-serif" font-size="23" transform="rotate(16.4 162 33)">1. get image.png</text>
+  <g id="user-a-return">
+    <path data-connector="true" d="M444 167L167.188 85.6398" fill="none" stroke="#16739c" stroke-width="3.5"/>
+    <path d="M148 80L170.813 76.8553L165.483 94.9883Z" fill="#16739c"/>
+  </g>
+  <text x="189" y="126" font-family="Arial, sans-serif" font-size="23" transform="rotate(16.4 189 126)">4. return image.png</text>
+  <g id="origin-fetch">
+    <path data-connector="true" d="M592 138L1050 135.126" fill="none" stroke="#16739c" stroke-width="3.5" stroke-dasharray="12 11"/>
+    <path d="M1070 135L1049.06 144.582L1048.94 125.682Z" fill="#16739c"/>
+  </g>
+  <text x="615" y="118" font-family="Arial, sans-serif" font-size="23">2. if not in CDN, get image.png from server</text>
+  <g id="origin-return">
+    <path data-connector="true" d="M1065 213L616 213" fill="none" stroke="#16739c" stroke-width="3.5" stroke-dasharray="12 11"/>
+    <path d="M596 213L617 203.55L617 222.45Z" fill="#16739c"/>
+  </g>
+  <text x="625" y="201" font-family="Arial, sans-serif" font-size="23">3. store image.png in CDN</text>
+  <g id="user-b-request">
+    <path data-connector="true" d="M143 271L409.605 203.883" fill="none" stroke="#16739c" stroke-width="3.5"/>
+    <path d="M429 199L410.942 213.291L406.328 194.963Z" fill="#16739c"/>
+  </g>
+  <text x="167" y="294" font-family="Arial, sans-serif" font-size="23" transform="rotate(-14.1 167 294)">5. get image.png</text>
+  <g id="user-b-return">
+    <path data-connector="true" d="M467 250L162.389 327.093" fill="none" stroke="#16739c" stroke-width="3.5"/>
+    <path d="M143 332L161.04 317.686L165.677 336.009Z" fill="#16739c"/>
+  </g>
+  <text x="180" y="352" font-family="Arial, sans-serif" font-size="23" transform="rotate(-14.1 180 352)">6. return image.png</text>
 </svg>
