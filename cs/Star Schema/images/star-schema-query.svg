@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="410" viewBox="0 0 1000 410" role="img" aria-labelledby="title desc">
+  <title id="title">Filter October sales, then sum by category</title>
+  <desc id="desc">Four illustrative joined sales rows include October Books amounts of 30 and 20 dollars, October Games of 40 dollars, and September Books of 10 dollars. Excluding September and summing October rows gives Books 50 dollars and Games 40 dollars.</desc>
+  <!-- Match the structure diagram's typography and semantic colors. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172b4d; }
+      .title { font-size: 27px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .heading { font-size: 20px; font-weight: 700; }
+      .cell { font-size: 19px; }
+      .small { font-size: 17px; }
+      .muted { fill: #64748b; }
+      .sum { font-size: 21px; font-weight: 700; fill: #975011; }
+    </style>
+  </defs>
+  <!-- Title introduces the operation; all amounts share one currency. -->
+  <rect width="1000" height="410" fill="#ffffff"/>
+  <text x="24" y="36" class="title">Filter October sales, then sum by category</text>
+  <text x="24" y="66" class="subtitle">Dimensions choose the rows and groups; the fact measure supplies the amounts.</text>
+  <!-- Joined example rows. The last row is visibly labeled as excluded. -->
+  <g id="joined-detail">
+    <text x="24" y="110" class="heading">Joined sales rows</text>
+    <rect x="24" y="130" width="536" height="218" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+    <path d="M25 174 H559" stroke="#94a3b8" stroke-width="1"/>
+    <rect x="25" y="175" width="534" height="129" fill="#eff6ff"/>
+    <rect x="25" y="304" width="534" height="36" fill="#f1f5f9"/>
+    <text x="40" y="158" class="heading">Date</text>
+    <text x="216" y="158" class="heading">Category</text>
+    <text x="370" y="158" class="heading">Amount</text>
+    <text x="40" y="204" class="cell">2026-10-01</text>
+    <text x="216" y="204" class="cell">Books</text>
+    <text x="402" y="204" class="cell" text-anchor="end">$30</text>
+    <text x="476" y="204" class="small">keep</text>
+    <text x="40" y="246" class="cell">2026-10-02</text>
+    <text x="216" y="246" class="cell">Books</text>
+    <text x="402" y="246" class="cell" text-anchor="end">$20</text>
+    <text x="476" y="246" class="small">keep</text>
+    <text x="40" y="288" class="cell">2026-10-03</text>
+    <text x="216" y="288" class="cell">Games</text>
+    <text x="402" y="288" class="cell" text-anchor="end">$40</text>
+    <text x="476" y="288" class="small">keep</text>
+    <text x="40" y="330" class="cell muted">2026-09-30</text>
+    <text x="216" y="330" class="cell muted">Books</text>
+    <text x="402" y="330" class="cell muted" text-anchor="end">$10</text>
+    <text x="476" y="330" class="small muted">omit</text>
+  </g>
+  <!-- The shaft ends beneath the triangle base; the nose stays clear of the result. -->
+  <g id="aggregate-flow">
+    <text x="642" y="203" class="small" text-anchor="middle">Group + sum</text>
+    <path d="M582 240 H688" fill="none" stroke="#b96b20" stroke-width="3" data-connector="true"/>
+    <path d="M686 232 L702 240 L686 248 Z" fill="#b96b20"/>
+  </g>
+  <!-- Result rows represent category totals, not new stored sales events. -->
+  <g id="category-totals">
+    <text x="728" y="110" class="heading">October report</text>
+    <rect x="728" y="130" width="248" height="174" rx="8" fill="#fff4e6" stroke="#b96b20" stroke-width="2"/>
+    <text x="746" y="164" class="heading">Category</text>
+    <text x="958" y="164" class="heading" text-anchor="end">Total</text>
+    <text x="746" y="216" class="cell">Books</text>
+    <text x="958" y="216" class="sum" text-anchor="end">$50</text>
+    <text x="746" y="266" class="cell">Games</text>
+    <text x="958" y="266" class="sum" text-anchor="end">$40</text>
+    <text x="728" y="340" class="small">Books: $30 + $20 = $50</text>
+  </g>
+  <!-- Reinforce the distinction between stored grain and query output. -->
+  <text x="24" y="388" class="subtitle">The report summarizes rows; FactSales still stores one receipt line per row. Amounts: US dollars.</text>
+</svg>

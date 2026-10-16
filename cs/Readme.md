@@ -34,6 +34,7 @@ Every card lives in its own folder as `Readme.md`, with its diagrams in a siblin
  * [REST naming convention](./REST%20naming%20convention/Readme.md) - how to name resources, collections, and actions in an HTTP API
  * [SOLID](./SOLID/Readme.md) - the five design principles, the problem each one solves, and how to spot a violation
  * [STAR](./STAR/Readme.md) - the situation, task, action, and result structure for behavioural interview answers
+ * [Star Schema](./Star%20Schema/Readme.md) - fact and dimension tables, row grain, analytical queries, and the snowflake alternative
  * [Time Complexity](./Time%20Complexity/Readme.md) - how growth rates compare and what each one costs at scale
  * [Transaction isolation levels](./Transaction%20isolation%20levels/Readme.md) - lost updates, dirty and non-repeatable reads, phantoms, the four SQL isolation levels, and Oracle read-only transactions
  * [URI vs URL](./URI%20vs%20URL/Readme.md) - identification versus location, the URL subset, and concrete URL and URN examples

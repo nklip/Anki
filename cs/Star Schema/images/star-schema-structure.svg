@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="594" viewBox="0 0 1000 594" role="img" aria-labelledby="title desc">
+  <title id="title">Star schema: one sales fact table, three dimensions</title>
+  <desc id="desc">FactSales stores one receipt line per row with date, product, and store foreign keys plus quantity and sales amount. Each key links many sales rows to one descriptive dimension row.</desc>
+  <!-- Shared typography and semantic colors: blue dimensions, orange facts. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172b4d; }
+      .title { font-size: 27px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #475569; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .field { font-size: 18px; }
+      .note { font-size: 17px; fill: #475569; }
+      .cardinality { font-size: 20px; font-weight: 700; }
+      .dimension { fill: #eff6ff; stroke: #4f78ad; stroke-width: 2; }
+      .fact { fill: #fff4e6; stroke: #b96b20; stroke-width: 2; }
+      .connector { fill: none; stroke: #64748b; stroke-width: 2; }
+    </style>
+  </defs>
+  <!-- Canvas and reading cue. -->
+  <rect width="1000" height="594" fill="#ffffff"/>
+  <text x="24" y="36" class="title">Star schema: measurements at the center</text>
+  <text x="24" y="66" class="subtitle">Dimensions describe each sale: when, what, and where.</text>
+  <!-- Date dimension; the vertical relationship has no direction arrow. -->
+  <g id="date-dimension">
+    <rect x="378" y="94" width="244" height="132" rx="10" class="dimension"/>
+    <text x="398" y="128" class="heading">DimDate</text>
+    <text x="398" y="162" class="field">date_key [PK]</text>
+    <text x="398" y="192" class="field">full_date</text>
+  </g>
+  <!-- Key relationships: numbers sit beside the lines, never on them. -->
+  <g id="key-relationships">
+    <path d="M500 226 V290" class="connector"/>
+    <text x="516" y="250" class="cardinality">1</text>
+    <text x="516" y="280" class="cardinality">*</text>
+    <path d="M270 390 H346" class="connector"/>
+    <text x="281" y="377" class="cardinality">1</text>
+    <text x="324" y="377" class="cardinality">*</text>
+    <path d="M654 390 H730" class="connector"/>
+    <text x="666" y="377" class="cardinality">*</text>
+    <text x="708" y="377" class="cardinality">1</text>
+  </g>
+  <!-- Product dimension: category is stored directly beside the product name. -->
+  <g id="product-dimension">
+    <rect x="24" y="316" width="246" height="178" rx="10" class="dimension"/>
+    <text x="44" y="350" class="heading">DimProduct</text>
+    <text x="44" y="386" class="field">product_key [PK]</text>
+    <text x="44" y="418" class="field">product_name</text>
+    <text x="44" y="450" class="field">category</text>
+  </g>
+  <!-- Central fact: one receipt line, including its measures. -->
+  <g id="sales-fact">
+    <rect x="346" y="290" width="308" height="234" rx="10" class="fact"/>
+    <text x="366" y="324" class="heading">FactSales</text>
+    <text x="366" y="356" class="field">sale_line_id [PK]</text>
+    <text x="366" y="386" class="field">date_key [FK]</text>
+    <text x="366" y="416" class="field">product_key [FK]</text>
+    <text x="366" y="446" class="field">store_key [FK]</text>
+    <text x="366" y="478" class="field">quantity</text>
+    <text x="366" y="508" class="field">sales_amount</text>
+  </g>
+  <!-- Store dimension. -->
+  <g id="store-dimension">
+    <rect x="730" y="316" width="246" height="178" rx="10" class="dimension"/>
+    <text x="750" y="350" class="heading">DimStore</text>
+    <text x="750" y="386" class="field">store_key [PK]</text>
+    <text x="750" y="418" class="field">store_name</text>
+    <text x="750" y="450" class="field">city</text>
+  </g>
+  <!-- Visible legend defines all relationship notation. -->
+  <text x="24" y="558" class="note">PK = primary key (unique row ID) · FK = foreign key (reference to a dimension row)</text>
+  <text x="24" y="582" class="note">1 / * = one / many · Grain of FactSales: one line item on one sales receipt</text>
+</svg>
