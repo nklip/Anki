@@ -45,7 +45,7 @@ The rule that follows: a singleton is shared by **all concurrent requests**, so 
 
 ### `prototype` — a new instance every time
 
-Spring creates a fresh instance on each lookup or injection point:
+Spring creates a fresh instance (Spring resolves dependencies and supplies them) on each lookup or injection point:
 
 ```java
 @Component
@@ -117,7 +117,7 @@ The diagram groups beans by their sharing boundary. HTTP sessions and WebSocket 
 
 These web scopes require different supporting context:
 
-- **`request` and `session`:** a web-aware `ApplicationContext` registers the scopes, and access requires HTTP request attributes bound to the current thread. Spring MVC's `DispatcherServlet` binds them while processing a request. For access outside it, such as in a plain servlet or a filter, configure `RequestContextListener` or a suitably mapped `RequestContextFilter`.
+- **`request` and `session`:** a web-aware `ApplicationContext` registers the scopes, and access requires HTTP request attributes bound to the current thread. Spring MVC's `DispatcherServlet` binds them while processing a request. For access outside it, such as in a plain servlet or a filter, configure `RequestContextListener` or a suitably mapped `RequestContextFilter`. These scopes are basically only useful for Stateful services, components, controllers.
 - **`application`:** a web application context with a `ServletContext` registers this scope. It stores beans directly in that `ServletContext`; access does not require an HTTP request bound to the thread. For destruction callbacks at web-application shutdown, register `ContextCleanupListener` (or use `ContextLoaderListener`, which includes that cleanup), unless equivalent cleanup is already configured.
 - **`websocket`:** Spring's STOMP (Simple Text Oriented Messaging Protocol) message-broker configuration, such as `@EnableWebSocketMessageBroker`, registers the scope. Message handling exposes the current messaging session's attributes. An HTTP request listener alone cannot provide that context.
 
