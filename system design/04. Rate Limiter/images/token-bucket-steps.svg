@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="776" height="814" viewBox="0 0 776 814" role="img" aria-labelledby="title desc">
+  <title id="title">Token bucket: requests consume tokens, then the bucket refills</title>
+  <desc id="desc">Four steps read from left to right, then top to bottom. At 1:00:00, one request consumes one of four tokens. At 1:00:05, three requests consume the three remaining tokens. At 1:00:20, the empty bucket drops a request. At 1:01:00, four tokens are refilled at the one-minute interval. Green checks mean admitted requests; the red cross means a dropped request.</desc>
+
+  <!-- Editable coin relief and status symbols preserve the reference's gold, green, and red palette. -->
+  <defs>
+    <linearGradient id="token-edge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#efd18b"/>
+      <stop offset="0.65" stop-color="#dba753"/>
+      <stop offset="1" stop-color="#bc8c43"/>
+    </linearGradient>
+    <linearGradient id="token-face" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0" stop-color="#f1ce85"/>
+      <stop offset="1" stop-color="#eac06c"/>
+    </linearGradient>
+    <linearGradient id="accepted-green" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#5a9417"/>
+      <stop offset="1" stop-color="#9ce21c"/>
+    </linearGradient>
+    <linearGradient id="rejected-red" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f47b68"/>
+      <stop offset="0.55" stop-color="#e9232c"/>
+      <stop offset="1" stop-color="#d31120"/>
+    </linearGradient>
+    <filter id="token-shadow" x="-20%" y="-30%" width="140%" height="170%">
+      <feGaussianBlur stdDeviation="0.7"/>
+    </filter>
+    <symbol id="token" viewBox="0 0 36 30">
+      <ellipse cx="18" cy="24.4" rx="15.3" ry="3.5" fill="#8b7959" opacity="0.3" filter="url(#token-shadow)"/>
+      <path d="M3 14C3 6.8 9.5 3.5 18 3.5S33 7 33 14V17C33 23.3 26.5 26.5 18 26.5S3 23.3 3 17Z" fill="url(#token-edge)" stroke="#d0a15b" stroke-width="0.5"/>
+      <ellipse cx="18" cy="14" rx="14.7" ry="10.5" fill="url(#token-face)" stroke="#dfb76d" stroke-width="0.7"/>
+      <ellipse cx="18" cy="13.7" rx="12.8" ry="8.7" fill="none" stroke="#ffe4a1" stroke-width="1.1"/>
+      <path d="M15 7C17 5.6 21 6.2 22 8.2C23 10 21.5 12 21.5 13.1C21.6 14.6 24 15.3 24 18C21 20.4 12.8 20.2 10.5 17.9C10.4 15.5 14 14.1 14.7 12.5C14.1 10.6 13.9 8.6 15 7Z" fill="#e8bf6d" stroke="#f9dc94" stroke-width="1"/>
+      <path d="M21.5 8.3C22.7 10 21.1 11.6 21.4 13.2M23.7 17.1V18.5C20.7 20 14.3 20.2 11.7 18.7" fill="none" stroke="#d6ab5c" stroke-width="0.9" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="accepted" viewBox="0 0 38 30">
+      <path d="M1.5 14.5L5.5 10.2Q6.7 9 8.1 10.1L15.5 16.2L29.8 2Q31 0.8 32.4 2L37 6.6Q38 7.8 36.8 9.1L17 28.3Q15.6 29.7 14.1 28.2L1.4 17Q0.2 15.8 1.5 14.5Z" fill="url(#accepted-green)"/>
+    </symbol>
+    <symbol id="rejected" viewBox="0 0 30 30">
+      <path d="M2 7.7L7.7 2L15 9.3L22.3 2L28 7.7L20.7 15L28 22.3L22.3 28L15 20.7L7.7 28L2 22.3L9.3 15Z" fill="url(#rejected-red)" stroke="#d64b42" stroke-width="0.4"/>
+    </symbol>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #111; font-weight: 400; }
+      .step-number { font-size: 20px; text-anchor: middle; }
+      .request-label { font-size: 19.5px; }
+      .time { font-size: 22.3px; text-anchor: middle; }
+      .note { font-size: 20.6px; }
+      .bucket { fill: #fff; stroke: #111; stroke-width: 1.35; }
+      .step-circle { fill: #fff; stroke: #111; stroke-width: 1.2; }
+      .flow-shaft { fill: none; stroke: #111; stroke-width: 1.25; }
+      .arrowhead { fill: #000; }
+    </style>
+  </defs>
+
+  <!-- Original 776 × 814 canvas; the four panels retain the PNG's reading order. -->
+  <rect width="776" height="814" fill="#fff"/>
+
+  <!-- Step 1: four tokens before admission. Shafts are split around the request label. -->
+  <g id="step-1">
+    <circle class="step-circle" cx="184.7" cy="35.2" r="12.6"/>
+    <text class="step-number" x="184.7" y="42" style="font-size:18px">1</text>
+    <rect id="initial-bucket" class="bucket" x="158.4" y="63.8" width="69.2" height="193.5" rx="10.8"/>
+    <use href="#token" x="174.2" y="81.5" width="36" height="30"/>
+    <use href="#token" x="174.2" y="123" width="36" height="30"/>
+    <use href="#token" x="174.2" y="164.4" width="36" height="30"/>
+    <use href="#token" x="174.2" y="205.8" width="36" height="30"/>
+    <path id="step-1-input-shaft" class="flow-shaft" d="M48.5 139.8H68M139 139.8H152"/>
+    <text class="request-label" x="71" y="146.2">request</text>
+    <!-- Each shaft ends inside the broad part of its concave head, short of the visible nose. -->
+    <path class="arrowhead" d="M145.7 133.6L158.1 139.8L145.7 146L149 139.8Z"/>
+    <path id="step-1-output-shaft" class="flow-shaft" d="M228.3 139.8H318"/>
+    <path class="arrowhead" d="M311.3 133.6L323.7 139.8L311.3 146L314.6 139.8Z"/>
+    <use href="#accepted" x="255.4" y="103.7" width="38" height="30"/>
+    <text class="time" x="192.4" y="292.4">1:00:00</text>
+    <circle cx="63.1" cy="332.7" r="3.3"/>
+    <circle cx="63.1" cy="357.4" r="3.3"/>
+    <circle cx="63.1" cy="382.1" r="3.3"/>
+    <text class="note" x="82" y="339.4">Start with 4 tokens</text>
+    <text class="note" x="82" y="364.1">The request will go through</text>
+    <text class="note" x="82" y="388.8">1 token is consumed</text>
+  </g>
+
+  <!-- Step 2: three requests use the remaining three tokens; each arrow keeps its own check. -->
+  <g id="step-2">
+    <circle class="step-circle" cx="532.7" cy="36.6" r="13.6"/>
+    <text class="step-number" x="532.7" y="43.7">2</text>
+    <rect id="three-token-bucket" class="bucket" x="508.4" y="63.8" width="69.2" height="193.5" rx="10.8"/>
+    <use href="#token" x="524.2" y="123" width="36" height="30"/>
+    <use href="#token" x="524.2" y="164.4" width="36" height="30"/>
+    <use href="#token" x="524.2" y="205.8" width="36" height="30"/>
+    <path id="step-2-input-shafts" class="flow-shaft" d="M398.5 119.3H418M489 119.3H502M398.5 173.4H418M489 173.4H502M398.5 236.3H418M489 236.3H502"/>
+    <text class="request-label" x="421" y="125.7">request</text>
+    <text class="request-label" x="421" y="179.8">request</text>
+    <text class="request-label" x="421" y="242.7">request</text>
+    <path class="arrowhead" d="M495.7 113.1L508.1 119.3L495.7 125.5L499 119.3Z"/>
+    <path class="arrowhead" d="M495.7 167.2L508.1 173.4L495.7 179.6L499 173.4Z"/>
+    <path class="arrowhead" d="M495.7 230.1L508.1 236.3L495.7 242.5L499 236.3Z"/>
+    <path id="step-2-output-shafts" class="flow-shaft" d="M578.3 119.3H668M578.3 173.4H668M578.3 238.3H668"/>
+    <path class="arrowhead" d="M661.3 113.1L673.7 119.3L661.3 125.5L664.6 119.3Z"/>
+    <path class="arrowhead" d="M661.3 167.2L673.7 173.4L661.3 179.6L664.6 173.4Z"/>
+    <path class="arrowhead" d="M661.3 232.1L673.7 238.3L661.3 244.5L664.6 238.3Z"/>
+    <use href="#accepted" x="605.4" y="83.2" width="38" height="30"/>
+    <use href="#accepted" x="605.4" y="137.2" width="38" height="30"/>
+    <use href="#accepted" x="605.4" y="202.8" width="38" height="30"/>
+    <text class="time" x="542.4" y="292.4">1:00:05</text>
+    <circle cx="427.2" cy="332.7" r="3.3"/>
+    <circle cx="427.2" cy="357.4" r="3.3"/>
+    <circle cx="427.2" cy="382.1" r="3.3"/>
+    <text class="note" x="445.5" y="339.4">Start with 3 tokens</text>
+    <text class="note" x="445.5" y="364.1">All three requests will go through</text>
+    <text class="note" x="445.5" y="388.8">3 tokens are consumed</text>
+  </g>
+
+  <!-- Step 3: an empty bucket rejects the request. Keep the cross above the route. -->
+  <g id="step-3">
+    <circle class="step-circle" cx="193" cy="463.6" r="13.7"/>
+    <text class="step-number" x="193" y="470.8">3</text>
+    <rect id="empty-bucket" class="bucket" x="158.4" y="491.2" width="69.2" height="193.5" rx="10.8"/>
+    <path id="step-3-input-shaft" class="flow-shaft" d="M48.5 570.4H68M139 570.4H152"/>
+    <text class="request-label" x="71" y="576.8">request</text>
+    <path class="arrowhead" d="M145.7 564.2L158.1 570.4L145.7 576.6L149 570.4Z"/>
+    <path id="step-3-output-shaft" class="flow-shaft" d="M228.3 571H319"/>
+    <path class="arrowhead" d="M312.3 564.8L324.7 571L312.3 577.2L315.6 571Z"/>
+    <use href="#rejected" x="258.8" y="534.7" width="30" height="30"/>
+    <text class="time" x="192.4" y="719.7">1:00:20</text>
+    <circle cx="104.6" cy="759.8" r="3.3"/>
+    <circle cx="104.6" cy="784.6" r="3.3"/>
+    <text class="note" x="123.2" y="766.6">Start with 0 token</text>
+    <text class="note" x="123.2" y="791.3">The request will be dropped.</text>
+  </g>
+
+  <!-- Step 4: the one-minute refill restores all four tokens, with no request in this panel. -->
+  <g id="step-4">
+    <circle class="step-circle" cx="532.1" cy="463.6" r="13.7"/>
+    <text class="step-number" x="532.1" y="470.8">4</text>
+    <rect id="refilled-bucket" class="bucket" x="497.4" y="491.2" width="69.2" height="193.5" rx="10.8"/>
+    <use href="#token" x="513.2" y="508.8" width="36" height="30"/>
+    <use href="#token" x="513.2" y="550.3" width="36" height="30"/>
+    <use href="#token" x="513.2" y="591.7" width="36" height="30"/>
+    <use href="#token" x="513.2" y="633.1" width="36" height="30"/>
+    <text class="time" x="531.4" y="719.7">1:01:00</text>
+    <circle cx="437.4" cy="759.8" r="3.3"/>
+    <text class="note" x="455.8" y="766.6">4 tokens are refilled at</text>
+    <text class="note" x="455.8" y="791.3">1 minute interval</text>
+  </g>
+</svg>
