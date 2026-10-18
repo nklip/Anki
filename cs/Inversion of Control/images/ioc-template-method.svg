@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="590" viewBox="0 0 1000 590" role="img" aria-labelledby="title desc">
+  <title id="title">Template Method: the base algorithm calls your steps</title>
+  <desc id="desc">Application calls run on a CsvImporter instance. The inherited run method invokes read and then parse on that same instance, dispatching to the subclass overrides. Both green self-calls are on one object. After the steps complete, run returns to the application.</desc>
+  <!-- Shared source-native sequence notation. Green messages identify the IoC operation. -->
+  <defs>
+    <style>
+      .title { font: 700 30px Arial, Helvetica, sans-serif; fill: #172033; }
+      .body { font: 400 21px Arial, Helvetica, sans-serif; fill: #334155; }
+      .name { font: 700 23px Arial, Helvetica, sans-serif; fill: #172033; }
+      .small { font: 400 18px Arial, Helvetica, sans-serif; fill: #475569; }
+      .message { font: 400 21px Arial, Helvetica, sans-serif; fill: #172033; }
+      .hook { font: 700 21px Arial, Helvetica, sans-serif; fill: #166534; }
+    </style>
+  </defs>
+  <!-- Overview and reading key; chronological messages begin below the participant row. -->
+  <rect width="1000" height="590" fill="#f8fafc"/>
+
+  <text class="title" x="32" y="44" text-anchor="start">Template Method: the base algorithm calls your steps</text>
+  <text class="body" x="32" y="78" text-anchor="start">One CsvImporter object inherits run() and overrides read() and parse().</text>
+  <text class="small" x="32" y="108" text-anchor="start">Time ↓    Solid = call / construction    Dashed = return    Green = IoC operation</text>
+  <!-- Participant lifelines. Message tips stop before them, keeping heads unobscured. -->
+  <g id="participant-1">
+    <rect x="30" y="130" width="280" height="68" rx="12" fill="#e8f0fe" stroke="#285ea8" stroke-width="2"/>
+  <text class="name" x="170" y="158" text-anchor="middle">Application</text>
+  <text class="small" x="170" y="184" text-anchor="middle">starts the import</text>
+    <line id="lifeline-1-199" x1="170" y1="199" x2="170" y2="514" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 7"/>
+  </g>
+  <g id="participant-2">
+    <rect x="430" y="130" width="280" height="68" rx="12" fill="#e8f0fe" stroke="#285ea8" stroke-width="2"/>
+  <text class="name" x="570" y="158" text-anchor="middle">CsvImporter object</text>
+  <text class="small" x="570" y="184" text-anchor="middle">inherits run()</text>
+    <line id="lifeline-2-199" x1="570" y1="199" x2="570" y2="514" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 7"/>
+  </g>
+  <!-- Footer states the consequence of the sequence, outside the lifeline area. -->
+  <rect x="24" y="531" width="952" height="42" rx="10" fill="#ecfdf5"/>
+  <text class="body" x="500" y="559" text-anchor="middle">The inherited algorithm fixes the order; the subclass supplies the steps.</text>
+  <!-- run-import: shaft ends inside the separate arrowhead base; crossing other lifelines is intentional. -->
+  <text class="message" x="370.0" y="235" text-anchor="middle">1. run()</text>
+  <path id="run-import-arrow" data-connector="true" d="M175 250 H552" fill="none" stroke="#285ea8" stroke-width="3"/>
+  <polygon id="run-import-head" points="550,243 565,250 550,257" fill="#285ea8"/>
+  <!-- read-step: inherited code invokes an override on the same object; this is a self-call, not a second object. -->
+  <text class="hook" x="712.5" y="299" text-anchor="middle">2. read() override</text>
+  <path id="read-step-arrow" data-connector="true" d="M575 315 H855 V355 H588" fill="none" stroke="#15803d" stroke-width="3"/>
+  <polygon id="read-step-head" points="590,348 575,355 590,362" fill="#15803d"/>
+  <!-- parse-step: inherited code invokes an override on the same object; this is a self-call, not a second object. -->
+  <text class="hook" x="712.5" y="389" text-anchor="middle">3. parse() override</text>
+  <path id="parse-step-arrow" data-connector="true" d="M575 405 H855 V445 H588" fill="none" stroke="#15803d" stroke-width="3"/>
+  <polygon id="parse-step-head" points="590,438 575,445 590,452" fill="#15803d"/>
+  <!-- return-import: shaft ends inside the separate arrowhead base; crossing other lifelines is intentional. -->
+  <text class="message" x="370.0" y="485" text-anchor="middle">4. run() returns</text>
+  <path id="return-import-arrow" data-connector="true" d="M565 500 H188" fill="none" stroke="#64748b" stroke-width="3" stroke-dasharray="7 6"/>
+  <!-- A short solid tail guarantees a clean shaft/head join regardless of dash phase. -->
+  <path id="return-import-join" data-connector="true" d="M198 500 H188" fill="none" stroke="#64748b" stroke-width="3"/>
+  <polygon id="return-import-head" points="190,493 175,500 190,507" fill="#64748b"/>
+</svg>

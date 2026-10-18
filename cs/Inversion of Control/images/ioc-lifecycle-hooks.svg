@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="665" viewBox="0 0 1000 665" role="img" aria-labelledby="title desc">
+  <title id="title">Lifecycle hooks: the container schedules preparation and cleanup</title>
+  <desc id="desc">Application starts a Spring context. Spring creates and prepares a Worker bean and invokes its PostConstruct start method. Later the application closes the context. Spring invokes the PreDestroy stop method during orderly shutdown. Green messages are lifecycle callbacks.</desc>
+  <!-- Shared source-native sequence notation. Green messages identify the IoC operation. -->
+  <defs>
+    <style>
+      .title { font: 700 30px Arial, Helvetica, sans-serif; fill: #172033; }
+      .body { font: 400 21px Arial, Helvetica, sans-serif; fill: #334155; }
+      .name { font: 700 23px Arial, Helvetica, sans-serif; fill: #172033; }
+      .small { font: 400 18px Arial, Helvetica, sans-serif; fill: #475569; }
+      .message { font: 400 21px Arial, Helvetica, sans-serif; fill: #172033; }
+      .hook { font: 700 21px Arial, Helvetica, sans-serif; fill: #166534; }
+    </style>
+  </defs>
+  <!-- Overview and reading key; chronological messages begin below the participant row. -->
+  <rect width="1000" height="665" fill="#f8fafc"/>
+
+  <text class="title" x="32" y="44" text-anchor="start">Lifecycle hooks: the container schedules preparation and cleanup</text>
+  <text class="body" x="32" y="78" text-anchor="start">Shown for a managed singleton with annotation processing enabled.</text>
+  <text class="small" x="32" y="108" text-anchor="start">Time ↓    Solid = call / construction    Dashed = return    Green = IoC operation</text>
+  <!-- Participant lifelines. Message tips stop before them, keeping heads unobscured. -->
+  <g id="participant-1">
+    <rect x="20" y="130" width="280" height="68" rx="12" fill="#e8f0fe" stroke="#285ea8" stroke-width="2"/>
+  <text class="name" x="160" y="158" text-anchor="middle">Application</text>
+  <text class="small" x="160" y="184" text-anchor="middle">opens / closes context</text>
+    <line id="lifeline-1-199" x1="160" y1="199" x2="160" y2="589" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 7"/>
+  </g>
+  <g id="participant-2">
+    <rect x="360" y="130" width="280" height="68" rx="12" fill="#e8f0fe" stroke="#285ea8" stroke-width="2"/>
+  <text class="name" x="500" y="158" text-anchor="middle">Spring context</text>
+  <text class="small" x="500" y="184" text-anchor="middle">manages the lifecycle</text>
+    <line id="lifeline-2-199" x1="500" y1="199" x2="500" y2="589" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 7"/>
+  </g>
+  <g id="participant-3">
+    <rect x="700" y="130" width="280" height="68" rx="12" fill="#e8f0fe" stroke="#285ea8" stroke-width="2"/>
+  <text class="name" x="840" y="158" text-anchor="middle">Worker bean</text>
+  <text class="small" x="840" y="184" text-anchor="middle">provides hook methods</text>
+    <line id="lifeline-3-199" x1="840" y1="199" x2="840" y2="589" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 7"/>
+  </g>
+  <!-- Footer states the consequence of the sequence, outside the lifeline area. -->
+  <rect x="24" y="606" width="952" height="42" rx="10" fill="#ecfdf5"/>
+  <text class="body" x="500" y="634" text-anchor="middle">Spring invokes the hooks; a plain new Worker() would not do so.</text>
+  <!-- open-context: shaft ends inside the separate arrowhead base; crossing other lifelines is intentional. -->
+  <text class="message" x="330.0" y="235" text-anchor="middle">1. start context</text>
+  <path id="open-context-arrow" data-connector="true" d="M165 250 H482" fill="none" stroke="#285ea8" stroke-width="3"/>
+  <polygon id="open-context-head" points="480,243 495,250 480,257" fill="#285ea8"/>
+  <!-- construct-bean: shaft ends inside the separate arrowhead base; crossing other lifelines is intentional. -->
+  <text class="message" x="670.0" y="310" text-anchor="middle">2. new Worker()</text>
+  <path id="construct-bean-arrow" data-connector="true" d="M505 325 H822" fill="none" stroke="#285ea8" stroke-width="3"/>
+  <polygon id="construct-bean-head" points="820,318 835,325 820,332" fill="#285ea8"/>
+  <!-- initialize-bean: shaft ends inside the separate arrowhead base; crossing other lifelines is intentional. -->
+  <text class="hook" x="670.0" y="365" text-anchor="middle">3. start()</text>
+  <text class="hook" x="670.0" y="390" text-anchor="middle">@PostConstruct</text>
+  <path id="initialize-bean-arrow" data-connector="true" d="M505 405 H822" fill="none" stroke="#15803d" stroke-width="3"/>
+  <polygon id="initialize-bean-head" points="820,398 835,405 820,412" fill="#15803d"/>
+  <!-- close-context: shaft ends inside the separate arrowhead base; crossing other lifelines is intentional. -->
+  <text class="message" x="330.0" y="470" text-anchor="middle">4. close()</text>
+  <path id="close-context-arrow" data-connector="true" d="M165 485 H482" fill="none" stroke="#285ea8" stroke-width="3"/>
+  <polygon id="close-context-head" points="480,478 495,485 480,492" fill="#285ea8"/>
+  <!-- destroy-bean: shaft ends inside the separate arrowhead base; crossing other lifelines is intentional. -->
+  <text class="hook" x="670.0" y="530" text-anchor="middle">5. stop()</text>
+  <text class="hook" x="670.0" y="555" text-anchor="middle">@PreDestroy</text>
+  <path id="destroy-bean-arrow" data-connector="true" d="M505 570 H822" fill="none" stroke="#15803d" stroke-width="3"/>
+  <polygon id="destroy-bean-head" points="820,563 835,570 820,577" fill="#15803d"/>
+</svg>

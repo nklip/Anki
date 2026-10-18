@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="565" viewBox="0 0 1000 565" role="img" aria-labelledby="title desc">
+  <title id="title">Test runner: the framework drives each test</title>
+  <desc id="desc">JUnit Jupiter calls prepare annotated BeforeEach, then adds annotated Test, then cleanUp annotated AfterEach on the test instance. The runner orchestrates all three calls. This is one successful test sequence, not an ordering guarantee between separate tests.</desc>
+  <!-- Shared source-native sequence notation. Green messages identify the IoC operation. -->
+  <defs>
+    <style>
+      .title { font: 700 30px Arial, Helvetica, sans-serif; fill: #172033; }
+      .body { font: 400 21px Arial, Helvetica, sans-serif; fill: #334155; }
+      .name { font: 700 23px Arial, Helvetica, sans-serif; fill: #172033; }
+      .small { font: 400 18px Arial, Helvetica, sans-serif; fill: #475569; }
+      .message { font: 400 21px Arial, Helvetica, sans-serif; fill: #172033; }
+      .hook { font: 700 21px Arial, Helvetica, sans-serif; fill: #166534; }
+    </style>
+  </defs>
+  <!-- Overview and reading key; chronological messages begin below the participant row. -->
+  <rect width="1000" height="565" fill="#f8fafc"/>
+
+  <text class="title" x="32" y="44" text-anchor="start">Test runner: the framework drives each test</text>
+  <text class="body" x="32" y="78" text-anchor="start">One successful JUnit Jupiter test with one setup and one cleanup method.</text>
+  <text class="small" x="32" y="108" text-anchor="start">Time ↓    Solid = call / construction    Dashed = return    Green = IoC operation</text>
+  <!-- Participant lifelines. Message tips stop before them, keeping heads unobscured. -->
+  <g id="participant-1">
+    <rect x="80" y="130" width="280" height="68" rx="12" fill="#e8f0fe" stroke="#285ea8" stroke-width="2"/>
+  <text class="name" x="220" y="158" text-anchor="middle">JUnit Jupiter</text>
+  <text class="small" x="220" y="184" text-anchor="middle">test runner</text>
+    <line id="lifeline-1-199" x1="220" y1="199" x2="220" y2="489" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 7"/>
+  </g>
+  <g id="participant-2">
+    <rect x="640" y="130" width="280" height="68" rx="12" fill="#e8f0fe" stroke="#285ea8" stroke-width="2"/>
+  <text class="name" x="780" y="158" text-anchor="middle">AdditionTest instance</text>
+  <text class="small" x="780" y="184" text-anchor="middle">your test code</text>
+    <line id="lifeline-2-199" x1="780" y1="199" x2="780" y2="489" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 7"/>
+  </g>
+  <!-- Footer states the consequence of the sequence, outside the lifeline area. -->
+  <rect x="24" y="506" width="952" height="42" rx="10" fill="#ecfdf5"/>
+  <text class="body" x="500" y="534" text-anchor="middle">The runner schedules setup, the test, and cleanup; your methods supply behavior.</text>
+  <!-- before-test: shaft ends inside the separate arrowhead base; crossing other lifelines is intentional. -->
+  <text class="hook" x="500.0" y="225" text-anchor="middle">1. prepare()</text>
+  <text class="hook" x="500.0" y="250" text-anchor="middle">@BeforeEach</text>
+  <path id="before-test-arrow" data-connector="true" d="M225 265 H762" fill="none" stroke="#15803d" stroke-width="3"/>
+  <polygon id="before-test-head" points="760,258 775,265 760,272" fill="#15803d"/>
+  <!-- run-test: shaft ends inside the separate arrowhead base; crossing other lifelines is intentional. -->
+  <text class="hook" x="500.0" y="325" text-anchor="middle">2. adds()</text>
+  <text class="hook" x="500.0" y="350" text-anchor="middle">@Test</text>
+  <path id="run-test-arrow" data-connector="true" d="M225 365 H762" fill="none" stroke="#15803d" stroke-width="3"/>
+  <polygon id="run-test-head" points="760,358 775,365 760,372" fill="#15803d"/>
+  <!-- after-test: shaft ends inside the separate arrowhead base; crossing other lifelines is intentional. -->
+  <text class="hook" x="500.0" y="425" text-anchor="middle">3. cleanUp()</text>
+  <text class="hook" x="500.0" y="450" text-anchor="middle">@AfterEach</text>
+  <path id="after-test-arrow" data-connector="true" d="M225 465 H762" fill="none" stroke="#15803d" stroke-width="3"/>
+  <polygon id="after-test-head" points="760,458 775,465 760,472" fill="#15803d"/>
+</svg>

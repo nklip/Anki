@@ -18,6 +18,7 @@ Every card lives in its own folder as `Readme.md`, with its diagrams in a siblin
  * [Design Patterns](./Design%20Patterns/Readme.md) - concise explanations of nine patterns and terms, including Decorator versus Wrapper
  * [Encoded vs Encrypted](./Encoded%20vs%20Encrypted/Readme.md) - Base64 versus confidentiality, symmetric and asymmetric encryption, and what digital signatures verify
  * [Fundamental Principles of OOP](./Fundamental%20Principles%20of%20OOP/Readme.md) - encapsulation, abstraction, inheritance, and Java's forms of polymorphism: runtime dispatch, overloading, generics, and implicit conversions, with examples and teaching diagrams
+ * [Inversion of Control](./Inversion%20of%20Control/Readme.md) - article covering dependency injection, event callbacks, Template Method, lifecycle hooks, and test runners, with an example and sequence diagram for each
  * [Multiversion concurrency control](./Multiversion%20concurrency%20control/Readme.md) - how one row becomes a chain of versions, how a snapshot picks the version a reader sees, where engines keep the old ones, and why write skew survives
  * [Non-functional requirements and how to test them](./Non-functional%20requirements%20and%20how%20to%20test%20them/Readme.md) - functional versus quality requirements, measurable targets, testing methods, and production examples
  * [p50 vs p95](./p50%20vs%20p95/Readme.md) - typical and slow-tail request latency, percentile cutoffs, and automatic measurement with k6 and Prometheus

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600" role="img" aria-labelledby="title desc">
+  <title id="title">Dependency Injection: assembly moves outside</title>
+  <desc id="desc">Read downward. Startup constructs a Notifier, passes it to the Orders constructor, and calls place. Orders then calls send on the supplied Notifier. Green marks dependency injection; the other calls are ordinary construction and use.</desc>
+  <!-- Shared source-native sequence notation. Green messages identify the IoC operation. -->
+  <defs>
+    <style>
+      .title { font: 700 30px Arial, Helvetica, sans-serif; fill: #172033; }
+      .body { font: 400 21px Arial, Helvetica, sans-serif; fill: #334155; }
+      .name { font: 700 23px Arial, Helvetica, sans-serif; fill: #172033; }
+      .small { font: 400 18px Arial, Helvetica, sans-serif; fill: #475569; }
+      .message { font: 400 21px Arial, Helvetica, sans-serif; fill: #172033; }
+      .hook { font: 700 21px Arial, Helvetica, sans-serif; fill: #166534; }
+    </style>
+  </defs>
+  <!-- Overview and reading key; chronological messages begin below the participant row. -->
+  <rect width="1000" height="600" fill="#f8fafc"/>
+
+  <text class="title" x="32" y="44" text-anchor="start">Dependency Injection: assembly moves outside</text>
+  <text class="body" x="32" y="78" text-anchor="start">Setup supplies the dependency; Orders controls only its use.</text>
+  <text class="small" x="32" y="108" text-anchor="start">Time ↓    Solid = call / construction    Dashed = return    Green = IoC operation</text>
+  <!-- Participant lifelines. Message tips stop before them, keeping heads unobscured. -->
+  <g id="participant-1">
+    <rect x="20" y="130" width="280" height="68" rx="12" fill="#e8f0fe" stroke="#285ea8" stroke-width="2"/>
+  <text class="name" x="160" y="158" text-anchor="middle">Startup code</text>
+  <text class="small" x="160" y="184" text-anchor="middle">chooses and assembles</text>
+    <line id="lifeline-1-199" x1="160" y1="199" x2="160" y2="524" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 7"/>
+  </g>
+  <g id="participant-2">
+    <rect x="360" y="130" width="280" height="68" rx="12" fill="#e8f0fe" stroke="#285ea8" stroke-width="2"/>
+  <text class="name" x="500" y="158" text-anchor="middle">Notifier</text>
+  <text class="small" x="500" y="184" text-anchor="middle">prints a message</text>
+    <line id="lifeline-2-199" x1="500" y1="199" x2="500" y2="524" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 7"/>
+  </g>
+  <g id="participant-3">
+    <rect x="700" y="130" width="280" height="68" rx="12" fill="#e8f0fe" stroke="#285ea8" stroke-width="2"/>
+  <text class="name" x="840" y="158" text-anchor="middle">Orders</text>
+  <text class="small" x="840" y="184" text-anchor="middle">uses its dependency</text>
+    <line id="lifeline-3-199" x1="840" y1="199" x2="840" y2="524" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 7"/>
+  </g>
+  <!-- Footer states the consequence of the sequence, outside the lifeline area. -->
+  <rect x="24" y="541" width="952" height="42" rx="10" fill="#ecfdf5"/>
+  <text class="body" x="500" y="569" text-anchor="middle">Orders receives the notifier instead of constructing or locating one.</text>
+  <!-- create-notifier: shaft ends inside the separate arrowhead base; crossing other lifelines is intentional. -->
+  <text class="message" x="330.0" y="235" text-anchor="middle">1. new Notifier()</text>
+  <path id="create-notifier-arrow" data-connector="true" d="M165 250 H482" fill="none" stroke="#285ea8" stroke-width="3"/>
+  <polygon id="create-notifier-head" points="480,243 495,250 480,257" fill="#285ea8"/>
+  <!-- inject-notifier: shaft ends inside the separate arrowhead base; crossing other lifelines is intentional. -->
+  <text class="hook" x="670" y="320" text-anchor="middle">2. new Orders(notifier)</text>
+  <path id="inject-notifier-arrow" data-connector="true" d="M165 335 H822" fill="none" stroke="#15803d" stroke-width="3"/>
+  <polygon id="inject-notifier-head" points="820,328 835,335 820,342" fill="#15803d"/>
+  <!-- place-order: shaft ends inside the separate arrowhead base; crossing other lifelines is intentional. -->
+  <text class="message" x="330" y="405" text-anchor="middle">3. place()</text>
+  <path id="place-order-arrow" data-connector="true" d="M165 420 H822" fill="none" stroke="#285ea8" stroke-width="3"/>
+  <polygon id="place-order-head" points="820,413 835,420 820,427" fill="#285ea8"/>
+  <!-- send-message: shaft ends inside the separate arrowhead base; crossing other lifelines is intentional. -->
+  <text class="message" x="670.0" y="490" text-anchor="middle">4. send(&quot;Order placed&quot;)</text>
+  <path id="send-message-arrow" data-connector="true" d="M835 505 H518" fill="none" stroke="#285ea8" stroke-width="3"/>
+  <polygon id="send-message-head" points="520,498 505,505 520,512" fill="#285ea8"/>
+</svg>
