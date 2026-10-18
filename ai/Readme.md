@@ -9,6 +9,7 @@ lexical and semantic retrieval, reciprocal rank fusion, large language model pro
 Model Context Protocol (MCP), streaming, and temperature.
 
 ## Content
+ * [Codex commands](./Codex%20commands/Readme.md) - ten built-in slash commands for software engineering, learning, and writing
  * [Cosine Similarity](./Cosine%20similarity/Readme.md) - the geometry behind similarity scores and its role in retrieval
  * [LLM Failure Modes](./LLM%20Failure%20Modes/Readme.md) - hallucination, error propagation, sycophancy, instruction drift, and knowledge conflict
  * [Markov table](./Markov%20table/Readme.md) - transition probabilities, n-gram models, and a worked text generator

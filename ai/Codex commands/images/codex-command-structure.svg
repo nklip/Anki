@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="442" viewBox="0 0 960 442" role="img" aria-labelledby="diagram-title diagram-description">
+  <title id="diagram-title">Keep, branch, or start a new Codex chat</title>
+  <desc id="diagram-description">Three independent rows read left to right. Compact summarizes earlier context in the same chat. Fork copies a local chat and its context into a new chat. New starts a blank chat in the same local workspace when available.</desc>
+  <!-- Shared typography; manual arrowheads keep endpoint geometry explicit. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172b4d; }
+      .heading { font-size: 27px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #485b74; }
+      .label { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .command { font-family: Menlo, Consolas, monospace; font-size: 24px; font-weight: 700; text-anchor: middle; }
+      .arrow-shaft { stroke: #526783; stroke-width: 2; fill: none; }
+      .arrow-head { fill: #526783; }
+    </style>
+  </defs>
+  <!-- Title explains the choice; each row is an alternative, not a required sequence. -->
+  <rect width="960" height="442" rx="18" fill="#f5f8fc"/>
+  <text class="heading" x="28" y="42">Keep, branch, or start fresh</text>
+  <text class="subtitle" x="28" y="73">Choose one row. Follow its arrows from the starting point to the result.</text>
+  <!-- Compact keeps the current conversation and summarizes its earlier context. -->
+  <g id="compact-row">
+    <rect x="28" y="100" width="236" height="92" rx="12" fill="#ffffff" stroke="#cbd5e2"/>
+    <text class="label" x="46" y="137">Long chat</text>
+    <text class="body" x="46" y="165">Continue the same task</text>
+    <rect x="340" y="100" width="216" height="92" rx="12" fill="#e8f0ff" stroke="#8daee1"/>
+    <text class="command" x="448" y="155">/compact</text>
+    <rect x="650" y="100" width="282" height="92" rx="12" fill="#e8f0ff" stroke="#8daee1"/>
+    <text class="label" x="668" y="137">Same chat</text>
+    <text class="body" x="668" y="165">Earlier context summarized</text>
+    <!-- Shafts end inside the triangular bases; tips meet target boundaries. -->
+    <path id="compact-input-shaft" class="arrow-shaft" d="M280 146 H329"/>
+    <path class="arrow-head" d="M328 139 L340 146 L328 153 Z"/>
+    <path id="compact-output-shaft" class="arrow-shaft" d="M572 146 H639"/>
+    <path class="arrow-head" d="M638 139 L650 146 L638 153 Z"/>
+  </g>
+  <!-- Fork carries the existing context into a separate conversation. -->
+  <g id="fork-row">
+    <rect x="28" y="212" width="236" height="92" rx="12" fill="#ffffff" stroke="#cbd5e2"/>
+    <text class="label" x="46" y="249">Current local chat</text>
+    <text class="body" x="46" y="277">Try another direction</text>
+    <rect x="340" y="212" width="216" height="92" rx="12" fill="#e6f5f2" stroke="#83bcb1"/>
+    <text class="command" x="448" y="267">/fork</text>
+    <rect x="650" y="212" width="282" height="92" rx="12" fill="#e6f5f2" stroke="#83bcb1"/>
+    <text class="label" x="668" y="249">New chat</text>
+    <text class="body" x="668" y="277">Prior context carried over</text>
+    <path id="fork-input-shaft" class="arrow-shaft" d="M280 258 H329"/>
+    <path class="arrow-head" d="M328 251 L340 258 L328 265 Z"/>
+    <path id="fork-output-shaft" class="arrow-shaft" d="M572 258 H639"/>
+    <path class="arrow-head" d="M638 251 L650 258 L638 265 Z"/>
+  </g>
+  <!-- New creates a blank conversation while retaining the local workspace choice. -->
+  <g id="new-row">
+    <rect x="28" y="324" width="236" height="92" rx="12" fill="#ffffff" stroke="#cbd5e2"/>
+    <text class="label" x="46" y="361">Local workspace</text>
+    <text class="body" x="46" y="389">Begin a separate task</text>
+    <rect x="340" y="324" width="216" height="92" rx="12" fill="#efeafe" stroke="#ac9fd5"/>
+    <text class="command" x="448" y="365">/new</text>
+    <text class="body" x="448" y="394" text-anchor="middle">when available</text>
+    <rect x="650" y="324" width="282" height="92" rx="12" fill="#efeafe" stroke="#ac9fd5"/>
+    <text class="label" x="668" y="361">Blank chat</text>
+    <text class="body" x="668" y="389">Same local workspace</text>
+    <path id="new-input-shaft" class="arrow-shaft" d="M280 370 H329"/>
+    <path class="arrow-head" d="M328 363 L340 370 L328 377 Z"/>
+    <path id="new-output-shaft" class="arrow-shaft" d="M572 370 H639"/>
+    <path class="arrow-head" d="M638 363 L650 370 L638 377 Z"/>
+  </g>
+</svg>
