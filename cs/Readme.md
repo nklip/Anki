@@ -8,6 +8,7 @@ Every card lives in its own folder as `Readme.md`, with its diagrams in a siblin
 ## Content
  * [ACID vs BASE](./ACID%20vs%20BASE/Readme.md) — every ACID and BASE property, synchronous versus asynchronous replication, and the CAP theorem's partition trade-off.
  * [Bitwise operations](./Bitwise%20operations/Readme.md) - binary place values, XOR and AND, masks, flags, and beginner-friendly Java examples
+ * [Caching strategies](./Caching%20strategies/Readme.md) - Cache Aside, Read Through, Write Through, Write Back, and Write Around, with one sequence diagram per strategy
  * [Cross-Site Request Forgery](./Cross-Site%20Request%20Forgery/Readme.md) - how a browser sends an attacker's action with the victim's session cookie, attack sequence diagrams, and CSRF defenses
  * [Data structures. Bloom filter](./Data%20structures.%20Bloom%20filter/Readme.md) - bit arrays and hashing, false positives without false negatives, and avoiding unnecessary database reads
  * [Data structures. Log-structured merge-tree](./Data%20structures.%20Log-structured%20merge-tree/Readme.md) - memory and disk components, streaming merges, durability, tombstones, read paths, and compaction tradeoffs

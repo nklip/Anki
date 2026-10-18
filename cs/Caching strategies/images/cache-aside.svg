@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="640" viewBox="0 0 1040 640" role="img" aria-labelledby="title desc">
+  <title id="title">Cache Aside: the application handles a miss</title>
+  <desc id="desc">Read downward. The application checks the cache and receives a miss. It reads the database, receives the value, stores it in the cache, and then returns it to its caller. A cache hit avoids the database and cache-fill steps. Solid blue arrows are requests; dashed purple arrows are replies.</desc>
+  <!-- Shared visual system: Arial text, blue requests, purple replies, and gray lifelines.
+       Manual heads use one join convention for both horizontal directions. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17212f; }
+      .title { font-size: 30px; font-weight: 700; }
+      .guide { font-size: 20px; fill: #475569; }
+      .actor { font-size: 23px; font-weight: 700; }
+      .message { font-size: 21px; }
+      .action { font-size: 20px; }
+      .footer { font-size: 20px; fill: #475569; }
+      .lifeline { fill: none; stroke: #cbd5e1; stroke-width: 2; stroke-dasharray: 6 7; }
+    </style>
+  </defs>
+  <!-- Heading and explicit sequence-reading guide. -->
+  <rect id="background" width="1040" height="640" fill="#fff"/>
+  <text x="32" y="47" class="title" text-anchor="start">Cache Aside: the application handles a miss</text>
+  <text x="32" y="81" class="guide" text-anchor="start">Read miss shown · top to bottom · solid: request; dashed: reply</text>
+  <!-- Participant positions stay fixed across all five strategy diagrams. -->
+  <g id="participants">
+    <rect id="app-header" x="40" y="112" width="240" height="60" rx="12" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="160" y="150" class="actor" text-anchor="middle">Application</text>
+    <path id="app-lifeline" class="lifeline" d="M160 173V573"/>
+    <rect id="cache-header" x="400" y="112" width="240" height="60" rx="12" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="520" y="150" class="actor" text-anchor="middle">Cache</text>
+    <path id="cache-lifeline" class="lifeline" d="M520 173V573"/>
+    <rect id="db-header" x="760" y="112" width="240" height="60" rx="12" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="880" y="150" class="actor" text-anchor="middle">Database</text>
+    <path id="db-lifeline" class="lifeline" d="M880 173V573"/>
+  </g>
+  <!-- Chronological messages and internal actions. -->
+  <!-- lookup: tip stops 5 units before the lifeline; shaft joins inside the triangle base.
+       A long application/database shaft intentionally crosses the cache lifeline without stopping. -->
+  <g id="lookup">
+    <path id="lookup-shaft" data-connector="true" d="M165 220H503" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+    <polygon id="lookup-head" points="515,220 501,213 501,227" fill="#0b78b5"/>
+    <text x="340.0" y="203" class="message" text-anchor="middle">1 · Read item</text>
+  </g>
+  <!-- miss: tip stops 5 units before the lifeline; shaft joins inside the triangle base.
+       A long application/database shaft intentionally crosses the cache lifeline without stopping. -->
+  <g id="miss">
+    <path id="miss-shaft" data-connector="true" d="M515 285H177" fill="none" stroke="#7c3aed" stroke-width="2.5" stroke-dasharray="8 6"/>
+    <!-- Solid terminal segment keeps the dashed reply joined to its arrowhead. -->
+    <path id="miss-terminal-shaft" data-connector="true" d="M187 285H177" fill="none" stroke="#7c3aed" stroke-width="2.5"/>
+    <polygon id="miss-head" points="165,285 179,278 179,292" fill="#7c3aed"/>
+    <text x="340.0" y="268" class="message" text-anchor="middle">2 · Miss: item absent</text>
+  </g>
+  <!-- database-read: tip stops 5 units before the lifeline; shaft joins inside the triangle base.
+       A long application/database shaft intentionally crosses the cache lifeline without stopping. -->
+  <g id="database-read">
+    <path id="database-read-shaft" data-connector="true" d="M165 350H863" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+    <polygon id="database-read-head" points="875,350 861,343 861,357" fill="#0b78b5"/>
+    <text x="335" y="333" class="message" text-anchor="middle">3 · Read from database</text>
+  </g>
+  <!-- database-value: tip stops 5 units before the lifeline; shaft joins inside the triangle base.
+       A long application/database shaft intentionally crosses the cache lifeline without stopping. -->
+  <g id="database-value">
+    <path id="database-value-shaft" data-connector="true" d="M875 415H177" fill="none" stroke="#7c3aed" stroke-width="2.5" stroke-dasharray="8 6"/>
+    <!-- Solid terminal segment keeps the dashed reply joined to its arrowhead. -->
+    <path id="database-value-terminal-shaft" data-connector="true" d="M187 415H177" fill="none" stroke="#7c3aed" stroke-width="2.5"/>
+    <polygon id="database-value-head" points="165,415 179,408 179,422" fill="#7c3aed"/>
+    <text x="700" y="398" class="message" text-anchor="middle">4 · Value</text>
+  </g>
+  <!-- cache-fill: tip stops 5 units before the lifeline; shaft joins inside the triangle base.
+       A long application/database shaft intentionally crosses the cache lifeline without stopping. -->
+  <g id="cache-fill">
+    <path id="cache-fill-shaft" data-connector="true" d="M165 480H503" fill="none" stroke="#0b78b5" stroke-width="2.5"/>
+    <polygon id="cache-fill-head" points="515,480 501,473 501,487" fill="#0b78b5"/>
+    <text x="340.0" y="463" class="message" text-anchor="middle">5 · Store value</text>
+  </g>
+  <!-- cache-stored: tip stops 5 units before the lifeline; shaft joins inside the triangle base.
+       A long application/database shaft intentionally crosses the cache lifeline without stopping. -->
+  <g id="cache-stored">
+    <path id="cache-stored-shaft" data-connector="true" d="M515 545H177" fill="none" stroke="#7c3aed" stroke-width="2.5" stroke-dasharray="8 6"/>
+    <!-- Solid terminal segment keeps the dashed reply joined to its arrowhead. -->
+    <path id="cache-stored-terminal-shaft" data-connector="true" d="M187 545H177" fill="none" stroke="#7c3aed" stroke-width="2.5"/>
+    <polygon id="cache-stored-head" points="165,545 179,538 179,552" fill="#7c3aed"/>
+    <text x="340.0" y="528" class="message" text-anchor="middle">6 · Stored</text>
+  </g>
+  <!-- Outcome and the omitted branch or tradeoff. -->
+  <g id="outcome">
+    <text x="32" y="613" class="footer" text-anchor="start">A hit returns the value at step 2; skip steps 3–6. Otherwise, return after step 6.</text>
+  </g>
+</svg>
