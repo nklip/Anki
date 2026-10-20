@@ -1,0 +1,176 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="780" viewBox="0 0 1600 780" role="img" aria-labelledby="title desc">
+<title id="title">RAG: a horizontal retrieval and generation pipeline</title>
+<desc id="desc">Horizontal adaptation of ByteByteGo's RAG diagram. Steps 1 and 2 carry a query from the user through the application to the retriever. Steps 3 and 4 search the offline index and return top-K chunks. Step 5 passes the question and chunks to the prompt builder; step 6 sends an augmented prompt to the large language model. Steps 7 and 8 return the answer through the application to the user. Native icons, editable text, and the original numbered handoffs are preserved.</desc>
+<!-- Shared styles and source-native pictograms from the original vertical recreation. -->
+<defs>
+<style>
+text{font-family:Arial,Helvetica,sans-serif}
+.connector{fill:none;stroke:#080a0a;stroke-width:3.5;stroke-dasharray:15 12;stroke-linejoin:round}
+.head{fill:none;stroke:#080a0a;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}
+</style>
+<symbol id="symbol-user" viewBox="179 45 120 120">
+<g xmlns="http://www.w3.org/2000/svg" id="user-icon"><g transform="translate(138 0)"><g transform="translate(41 45)" stroke="#080c0d" stroke-width="4.5" stroke-linejoin="round">
+<circle cx="60" cy="60" r="55" fill="#fff" />
+<ellipse cx="60" cy="51" rx="19" ry="18.7" fill="#9160dc" />
+<path d="M25 103 C38 70 81 70 95 103 A55 55 0 0 1 25 103Z" fill="#9160dc" />
+</g></g></g>
+
+</symbol>
+<symbol id="symbol-app" viewBox="176 515 128 104">
+<g xmlns="http://www.w3.org/2000/svg" id="llm-app-icon"><g transform="translate(142 61)"><g transform="translate(34 454)" stroke="#08131c" stroke-width="4.5" stroke-linejoin="round">
+<rect x="5" y="7" width="116" height="90" rx="8" fill="#f6fafb" />
+<path d="M13 7 H113 Q121 7 121 15 V27 H5 V15 Q5 7 13 7Z" fill="#9160dc" />
+<g fill="#f9f2ff" stroke="none"><circle cx="17" cy="17.5" r="4.3" /><circle cx="30" cy="17.5" r="4.3" /><circle cx="44" cy="17.5" r="4.3" /></g>
+<rect x="15" y="49" width="26" height="26" rx="4" fill="#f6fafb" />
+<rect x="68" y="40" width="43" height="43" rx="4" fill="#9160dc" />
+<path d="M44 62 H60 M56 56 L62 62 L56 68" fill="none" stroke-width="3.5" stroke-linecap="round" />
+</g></g></g>
+
+</symbol>
+<symbol id="symbol-llm" viewBox="566 522 108 104">
+<g xmlns="http://www.w3.org/2000/svg" id="llm-icon"><g transform="translate(522 -1048)"><g id="chip-pictogram" stroke-linejoin="round"><g fill="none" stroke="#c3a7ef" stroke-width="6"><path d="M97 1579 V1600 M73 1582 V1593 H81 V1600 M121 1582 V1593 H113 V1600 M58 1598 V1608 H74 M54 1622 H74 M58 1646 V1637 H74 M136 1598 V1608 H120 M140 1622 H120 M136 1646 V1637 H120 M97 1664 V1646 M73 1661 V1653 H81 V1646 M121 1661 V1653 H113 V1646" /></g><rect x="72" y="1597" width="50" height="51" fill="#9160dc" stroke="#061118" stroke-width="4.5" /><path d="M85 1610 H108 V1627 L102 1633 H85Z" fill="#7137c9" /><circle cx="73" cy="1582" r="5.7" fill="#8b55d7" stroke="#071218" stroke-width="4" /><circle cx="97" cy="1579" r="5.7" fill="#8b55d7" stroke="#071218" stroke-width="4" /><circle cx="121" cy="1582" r="5.7" fill="#8b55d7" stroke="#071218" stroke-width="4" /><circle cx="58" cy="1598" r="5.7" fill="#8b55d7" stroke="#071218" stroke-width="4" /><circle cx="54" cy="1622" r="5.7" fill="#8b55d7" stroke="#071218" stroke-width="4" /><circle cx="58" cy="1646" r="5.7" fill="#8b55d7" stroke="#071218" stroke-width="4" /><circle cx="136" cy="1598" r="5.7" fill="#8b55d7" stroke="#071218" stroke-width="4" /><circle cx="140" cy="1622" r="5.7" fill="#8b55d7" stroke="#071218" stroke-width="4" /><circle cx="136" cy="1646" r="5.7" fill="#8b55d7" stroke="#071218" stroke-width="4" /><circle cx="73" cy="1661" r="5.7" fill="#8b55d7" stroke="#071218" stroke-width="4" /><circle cx="97" cy="1664" r="5.7" fill="#8b55d7" stroke="#071218" stroke-width="4" /><circle cx="121" cy="1661" r="5.7" fill="#8b55d7" stroke="#071218" stroke-width="4" /></g></g></g>
+
+</symbol>
+<symbol id="symbol-retriever" viewBox="180 970 122 120">
+<g xmlns="http://www.w3.org/2000/svg" id="retriever-icon"><g stroke="#0a101a" stroke-width="3.8" stroke-linejoin="round">
+<path d="M187 990 H263 V1063 C263 1081 187 1081 187 1063Z" fill="#9366e2" />
+<ellipse cx="225" cy="990" rx="38" ry="13" fill="#e9dcff" />
+<path d="M187 1011 C198 1028 251 1028 263 1011 M187 1035 C198 1051 251 1051 263 1035" fill="none" />
+<path d="M273 1064 L290 1077" fill="none" stroke-width="13" stroke-linecap="round" />
+<path d="M273 1064 L290 1077" fill="none" stroke="#9366e2" stroke-width="7" stroke-linecap="round" />
+<circle cx="255" cy="1041" r="29" fill="#faf6ff" />
+<path d="M246 1023 H259 L268 1033 V1055 H243 V1023Z" fill="#fff" stroke-width="3" />
+<path d="M258 1024 V1034 H267" fill="none" stroke-width="3" />
+</g></g>
+
+</symbol>
+<symbol id="symbol-pdf" viewBox="90 1610 100 94">
+<g xmlns="http://www.w3.org/2000/svg" id="pdf-icon"><g stroke="#090c10" stroke-width="3.8" stroke-linejoin="round">
+<rect x="97" y="1618" width="43" height="67" fill="#595959" />
+<path d="M122 1626 H148 V1695 H106 V1643Z" fill="#fff" />
+<path d="M107 1643 H122 V1627 M116 1654 H139 M116 1664 H139 M116 1674 H128" fill="none" />
+<rect x="128" y="1663" width="55" height="33" fill="#914eff" />
+</g></g>
+
+<text x="132" y="1689" font-size="26" font-weight="700" text-anchor="start" fill="#080a0a">PDF</text>
+</symbol>
+<symbol id="symbol-docs" viewBox="204 1606 80 96">
+<g xmlns="http://www.w3.org/2000/svg" id="docs-icon"><g transform="translate(204 1606) scale(1.4)" stroke="#080c0d" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+<rect x="13" y="12" width="38" height="52" rx="4" fill="#b899e1" />
+<path d="M19 4 H37 Q43 4 43 10 V51 Q43 57 37 57 H11 Q5 57 5 51 V18Z" fill="#fff" />
+<path d="M6 19 H15 Q19 19 19 15 V5" fill="none" />
+<path d="M16 29 H33 M16 36 H33 M16 44 H25" fill="none" />
+</g></g>
+
+</symbol>
+<symbol id="symbol-code" viewBox="310 1612 88 90">
+<g xmlns="http://www.w3.org/2000/svg" id="code-icon"><g stroke="#090c10" stroke-width="3.3" stroke-linejoin="round">
+<rect x="314" y="1616" width="79" height="74" rx="5" fill="#fff" />
+<path d="M319 1616 H388 Q393 1616 393 1621 V1635 H314 V1621 Q314 1616 319 1616Z" fill="#9969e4" />
+<g fill="#fff" stroke="none"><circle cx="323" cy="1626" r="1.7" /><circle cx="331" cy="1626" r="1.7" /><circle cx="339" cy="1626" r="1.7" /></g>
+<path d="M351 1626 H382 M339 1651 L328 1662 L339 1673 M368 1651 L379 1662 L368 1673 M360 1650 L351 1675" fill="none" stroke-linecap="round" />
+</g></g>
+
+</symbol>
+<symbol id="symbol-search" viewBox="420 1605 94 96">
+<g xmlns="http://www.w3.org/2000/svg" id="search-index-icon"><g stroke="#090c10" stroke-width="2.7" stroke-linejoin="round">
+<rect x="430" y="1613" width="64" height="71" rx="4" fill="#b083ec" />
+<path d="M430 1629 H494" fill="none" />
+<g fill="#f9f5ff" stroke-width="1.4"><rect x="447" y="1633" width="12" height="13" /><rect x="462" y="1633" width="12" height="13" /><rect x="477" y="1633" width="12" height="13" /><rect x="447" y="1650" width="12" height="13" /><rect x="462" y="1650" width="12" height="13" /><rect x="447" y="1667" width="12" height="13" /></g>
+<g fill="#8c53d5" stroke-width="1.4"><rect x="433" y="1633" width="10" height="13" /><rect x="433" y="1650" width="10" height="13" /><rect x="433" y="1667" width="10" height="13" /></g>
+<path d="M491 1683 L502 1694" fill="none" stroke-width="9" stroke-linecap="round" />
+<path d="M491 1683 L502 1694" fill="none" stroke="#8c53d5" stroke-width="4.5" stroke-linecap="round" />
+<circle cx="478" cy="1670" r="17" fill="#eee5fa" /><circle cx="478" cy="1670" r="13" fill="#7546ba" stroke-width="1.5" />
+</g></g>
+
+</symbol>
+</defs>
+<!-- Landscape canvas; the upper row retrieves, the lower row generates and returns. -->
+<rect width="1600" height="780" fill="#fff"/>
+<rect x="10" y="10" width="1580" height="760" rx="28" fill="#faf6ff" stroke="#b28bdb" stroke-width="3"/>
+<text x="48" y="63" font-size="37" font-weight="700" text-anchor="start" fill="#080a0a">RAG</text>
+<text x="48" y="102" font-size="24" font-weight="400" text-anchor="start" fill="#494151">Retrieve evidence, build a prompt, then generate an answer. Follow steps 1–8.</text>
+<!-- Offline index: four original source pictograms remain together in one searchable store. -->
+<rect id="offline-index" x="1100" y="160" width="440" height="245" rx="18" fill="#fff" stroke="#7c39cf" stroke-width="3"/>
+<text x="1320" y="201" font-size="30" font-weight="700" text-anchor="middle" fill="#080a0a">Vector / Hybrid Index</text>
+<use href="#symbol-pdf" x="1125" y="238" width="90" height="88"/>
+<use href="#symbol-docs" x="1230" y="238" width="72" height="88"/>
+<use href="#symbol-code" x="1330" y="238" width="79" height="88"/>
+<use href="#symbol-search" x="1435" y="238" width="85" height="88"/>
+<text x="1170" y="359" font-size="21" font-weight="400" text-anchor="middle" fill="#080a0a">PDF</text>
+<text x="1266" y="359" font-size="21" font-weight="400" text-anchor="middle" fill="#080a0a">Docs</text>
+<text x="1370" y="359" font-size="21" font-weight="400" text-anchor="middle" fill="#080a0a">Code</text>
+<text x="1465" y="359" font-size="20" font-weight="400" text-anchor="middle" fill="#080a0a">Search Index</text>
+<text x="1320" y="438" font-size="23" font-weight="400" text-anchor="middle" fill="#494151">built offline</text>
+<!-- Upper row components: user, application, retriever. Original icons stay upright. -->
+<use href="#symbol-user" x="60" y="220" width="120" height="120"/>
+<use href="#symbol-app" x="376" y="228" width="128" height="104"/>
+<use href="#symbol-retriever" x="729" y="220" width="122" height="120"/>
+<text x="120" y="379" font-size="31" font-weight="700" text-anchor="middle" fill="#080a0a">User</text>
+<text x="440" y="379" font-size="31" font-weight="700" text-anchor="middle" fill="#080a0a">LLM App</text>
+<text x="790" y="379" font-size="31" font-weight="700" text-anchor="middle" fill="#080a0a">Retriever</text>
+<!-- Request and response are separate lanes between the same user and application. -->
+<path id="user-query-connector" class="connector" d="M191 299 H362"/>
+<path id="user-query-tip-connector" class="head" d="M348 299 L362 299"/>
+<path id="user-query-arrowhead" class="head" d="M349 286 L362 299 L349 312"/>
+<g id="step-1"><circle cx="220" cy="343" r="23" fill="#080a0a"/>
+<text x="220" y="351" font-size="25" font-weight="700" text-anchor="middle" fill="#fff">1</text>
+</g>
+<text x="256" y="351" font-size="25" font-weight="400" text-anchor="start" fill="#080a0a">query</text>
+<path id="user-response-connector" class="connector" d="M362 241 H191"/>
+<path id="user-response-tip-connector" class="head" d="M205 241 L191 241"/>
+<path id="user-response-arrowhead" class="head" d="M204 228 L191 241 L204 254"/>
+<g id="step-8"><circle cx="220" cy="194" r="23" fill="#080a0a"/>
+<text x="220" y="202" font-size="25" font-weight="700" text-anchor="middle" fill="#fff">8</text>
+</g>
+<text x="256" y="202" font-size="25" font-weight="400" text-anchor="start" fill="#080a0a">response</text>
+<path id="retrieval-query-connector" class="connector" d="M518 281 H711"/>
+<path id="retrieval-query-tip-connector" class="head" d="M697 281 L711 281"/>
+<path id="retrieval-query-arrowhead" class="head" d="M698 268 L711 281 L698 294"/>
+<g id="step-2"><circle cx="572" cy="236" r="23" fill="#080a0a"/>
+<text x="572" y="244" font-size="25" font-weight="700" text-anchor="middle" fill="#fff">2</text>
+</g>
+<text x="608" y="244" font-size="25" font-weight="400" text-anchor="start" fill="#080a0a">query</text>
+<!-- Index search and its result have distinct opposing lanes; neither crosses a label. -->
+<path id="embed-search-connector" class="connector" d="M866 254 H1086"/>
+<path id="embed-search-tip-connector" class="head" d="M1072 254 L1086 254"/>
+<path id="embed-search-arrowhead" class="head" d="M1073 241 L1086 254 L1073 267"/>
+<g id="step-3"><circle cx="874" cy="205" r="23" fill="#080a0a"/>
+<text x="874" y="213" font-size="25" font-weight="700" text-anchor="middle" fill="#fff">3</text>
+</g>
+<text x="910" y="213" font-size="24" font-weight="400" text-anchor="start" fill="#080a0a">embed + search</text>
+<path id="top-k-chunks-connector" class="connector" d="M1086 322 H866"/>
+<path id="top-k-chunks-tip-connector" class="head" d="M880 322 L866 322"/>
+<path id="top-k-chunks-arrowhead" class="head" d="M879 309 L866 322 L879 335"/>
+<g id="step-4"><circle cx="900" cy="369" r="23" fill="#080a0a"/>
+<text x="900" y="377" font-size="25" font-weight="700" text-anchor="middle" fill="#fff">4</text>
+</g>
+<text x="936" y="377" font-size="25" font-weight="400" text-anchor="start" fill="#080a0a">top-K chunks</text>
+<!-- The retriever supplies question plus chunks to the lower prompt-building row. -->
+<path id="query-and-chunks-connector" class="connector" d="M790 400 V459 Q790 480 811 480 H1299 Q1320 480 1320 501 V555"/>
+<path id="query-and-chunks-tip-connector" class="head" d="M1320 541 L1320 555"/>
+<path id="query-and-chunks-arrowhead" class="head" d="M1307 542 L1320 555 L1333 542"/>
+<g id="step-5"><circle cx="944" cy="522" r="23" fill="#080a0a"/>
+<text x="944" y="530" font-size="25" font-weight="700" text-anchor="middle" fill="#fff">5</text>
+</g>
+<text x="980" y="530" font-size="25" font-weight="400" text-anchor="start" fill="#080a0a">query + chunks</text>
+<rect id="prompt-builder" x="1175" y="570" width="290" height="110" rx="18" fill="#f0e8fa" stroke="#7c39cf" stroke-width="3"/>
+<text x="1320" y="636" font-size="31" font-weight="700" text-anchor="middle" fill="#080a0a">Prompt Builder</text>
+<!-- Generation runs right to left, then the answer returns upward to the application. -->
+<use href="#symbol-llm" x="386" y="573" width="108" height="104"/>
+<text x="440" y="719" font-size="31" font-weight="700" text-anchor="middle" fill="#080a0a">LLM</text>
+<path id="augmented-prompt-connector" class="connector" d="M1160 625 H510"/>
+<path id="augmented-prompt-tip-connector" class="head" d="M524 625 L510 625"/>
+<path id="augmented-prompt-arrowhead" class="head" d="M523 612 L510 625 L523 638"/>
+<g id="step-6"><circle cx="792" cy="578" r="23" fill="#080a0a"/>
+<text x="792" y="586" font-size="25" font-weight="700" text-anchor="middle" fill="#fff">6</text>
+</g>
+<text x="828" y="586" font-size="25" font-weight="400" text-anchor="start" fill="#080a0a">augmented prompt</text>
+<path id="model-answer-connector" class="connector" d="M440 557 V400"/>
+<path id="model-answer-tip-connector" class="head" d="M440 414 L440 400"/>
+<path id="model-answer-arrowhead" class="head" d="M427 413 L440 400 L453 413"/>
+<g id="step-7"><circle cx="274" cy="479" r="23" fill="#080a0a"/>
+<text x="274" y="487" font-size="25" font-weight="700" text-anchor="middle" fill="#fff">7</text>
+</g>
+<text x="310" y="487" font-size="25" font-weight="400" text-anchor="start" fill="#080a0a">answer</text>
+</svg>

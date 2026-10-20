@@ -1,0 +1,193 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="900" viewBox="0 0 1800 900" role="img" aria-labelledby="title desc">
+<title id="title">Agentic RAG: choose sources, check evidence, and retry</title>
+<desc id="desc">A horizontal adaptation of the original numbered Agentic RAG diagram. Follow the top row from the user through the LLM app and agent orchestrator to retrieval sources. Continue down the right side, then left through retrieved evidence, evaluator, context builder and LLM. Insufficient evidence returns to the orchestrator, with a five-try maximum. The answer goes back to the app, then the response to the user.</desc>
+<!-- Shared original teal palette and editable Arial labels. -->
+<defs><style>
+text { font-family: Arial, Helvetica, sans-serif; }
+</style></defs>
+<!-- Landscape canvas; rows read clockwise, with a dedicated center corridor for retries. -->
+<rect width="1800" height="900" fill="#fff"/>
+<rect x="15" y="15" width="1770" height="870" rx="28" fill="#f3fcfb" stroke="#6ba9a8" stroke-width="3"/>
+
+<text x="52" y="58" font-size="40" font-weight="700" fill="#0a0c0e" text-anchor="start">Agentic RAG</text>
+<text x="52" y="95" font-size="23" font-weight="400" fill="#0a0c0e" text-anchor="start">Choose sources → check evidence → retry if needed → build context and answer.</text>
+<!-- Top row: user, application, and orchestrator. -->
+<!-- user-icon: original pictogram rebuilt from editable native shapes. -->
+<g id="user-icon" transform="translate(65 177) scale(1) translate(-41 -45)"><g transform="translate(41 45)" stroke="#080c0d" stroke-width="4.5" stroke-linejoin="round">
+<circle cx="60" cy="60" r="55" fill="#fff"/>
+<ellipse cx="60" cy="51" rx="19" ry="18.7" fill="#00a3a5"/>
+<path d="M25 103 C38 70 81 70 95 103 A55 55 0 0 1 25 103Z" fill="#00a3a5"/>
+</g></g>
+<text x="125" y="332" font-size="30" font-weight="700" fill="#0a0c0e" text-anchor="middle">User</text>
+<!-- application-icon: original pictogram rebuilt from editable native shapes. -->
+<g id="application-icon" transform="translate(340 192) scale(1) translate(-34 -454)"><g transform="translate(34 454)" stroke="#08131c" stroke-width="4.5" stroke-linejoin="round">
+<rect x="5" y="7" width="116" height="90" rx="8" fill="#f6fafb"/>
+<path d="M13 7 H113 Q121 7 121 15 V27 H5 V15 Q5 7 13 7Z" fill="#007f87"/>
+<g fill="#d4f1ef" stroke="none"><circle cx="17" cy="17.5" r="4.3"/><circle cx="30" cy="17.5" r="4.3"/><circle cx="44" cy="17.5" r="4.3"/></g>
+<rect x="15" y="49" width="26" height="26" rx="4" fill="#f6fafb"/>
+<rect x="68" y="40" width="43" height="43" rx="4" fill="#00a3a5"/>
+<path d="M44 62 H60 M56 56 L62 62 L56 68" fill="none" stroke-width="3.5" stroke-linecap="round"/>
+</g></g>
+<text x="403" y="332" font-size="30" font-weight="700" fill="#0a0c0e" text-anchor="middle">LLM App</text>
+<rect id="orchestrator" x="660" y="184" width="240" height="134" rx="18" fill="#e6f6f5" stroke="#1a8587" stroke-width="3"/>
+<text x="780" y="235" font-size="29" font-weight="700" fill="#0a0c0e" text-anchor="middle">Agent</text>
+<text x="780" y="277" font-size="29" font-weight="700" fill="#0a0c0e" text-anchor="middle">Orchestrator</text>
+<!-- Retrieval source panel. API and web icon labels stay real editable text. -->
+<rect id="retrieval-sources" x="1120" y="168" width="565" height="265" rx="18" fill="#fff" stroke="#1a8587" stroke-width="3"/>
+<text x="1402.5" y="207" font-size="29" font-weight="700" fill="#0a0c0e" text-anchor="middle">Tools &amp; Retrieval Sources</text>
+<!-- vector-database-icon: original pictogram rebuilt from editable native shapes. -->
+<g id="vector-database-icon" transform="translate(1178 232) scale(1.05) translate(-508 -702)"><g transform="translate(508 702)" stroke="#091820" stroke-width="1.3" stroke-linejoin="round">
+<path d="M4 10 H37 V44 C36 55 5 55 4 44Z" fill="#41a1a6"/>
+<ellipse cx="20.5" cy="10" rx="16.5" ry="6.5" fill="#236b72"/>
+<path d="M4 21 C9 31 33 31 37 21 M4 33 C9 43 33 43 37 33" fill="none"/>
+<g fill="#c2e8e8"><circle cx="9" cy="21" r="1.6"/><circle cx="9" cy="33" r="1.6"/><circle cx="9" cy="44" r="1.6"/></g>
+<path d="M43 24 H61 M43 34 H61 M43 45 H61 M43 24 V45 M52 24 V45 M61 24 V45" fill="none"/>
+<g fill="#90c7cd"><circle cx="43" cy="24" r="2.7"/><circle cx="52" cy="24" r="2.7"/><circle cx="61" cy="24" r="2.7"/><circle cx="43" cy="34" r="2.7"/><circle cx="52" cy="34" r="2.7"/><circle cx="61" cy="34" r="2.7"/><circle cx="43" cy="45" r="2.7"/><circle cx="52" cy="45" r="2.7"/><circle cx="61" cy="45" r="2.7"/></g>
+</g></g>
+<text x="1215" y="311" font-size="20" font-weight="400" fill="#0a0c0e" text-anchor="middle">Vector DB</text>
+<!-- documents-icon: original pictogram rebuilt from editable native shapes. -->
+<g id="documents-icon" transform="translate(1370 225) scale(1.05) translate(-631 -696)"><g transform="translate(631 696)" stroke="#080c0d" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round">
+<rect x="13" y="12" width="38" height="52" rx="4" fill="#8cc7c7"/>
+<path d="M19 4 H37 Q43 4 43 10 V51 Q43 57 37 57 H11 Q5 57 5 51 V18Z" fill="#fff"/>
+<path d="M6 19 H15 Q19 19 19 15 V5" fill="none"/>
+<path d="M16 29 H33 M16 36 H33 M16 44 H25" fill="none"/>
+</g></g>
+<text x="1400" y="311" font-size="20" font-weight="400" fill="#0a0c0e" text-anchor="middle">Docs</text>
+<!-- web-search-icon: original pictogram rebuilt from editable native shapes. -->
+<g id="web-search-icon" transform="translate(1548 235) scale(1.05) translate(-736 -703)"><g transform="translate(736 703)" stroke="#080c0d" stroke-width="2.2" stroke-linejoin="round">
+<rect x="3" y="3" width="55" height="36" rx="4" fill="#fff"/>
+<path d="M7 3 H54 Q58 3 58 7 V13 H3 V7 Q3 3 7 3Z" fill="#399da6" stroke="none"/>
+<g fill="#fff" stroke="none"><circle cx="8" cy="8" r="1"/><circle cx="13" cy="8" r="1"/><circle cx="18" cy="8" r="1"/></g>
+</g></g>
+<text x="1580" y="269" font-size="17" font-weight="700" fill="#7e69df" text-anchor="middle">‹WWW›</text>
+<text x="1580" y="311" font-size="20" font-weight="400" fill="#0a0c0e" text-anchor="middle">Web search</text>
+<!-- crm-icon: original pictogram rebuilt from editable native shapes. -->
+<g id="crm-icon" transform="translate(1180 328) scale(1.05) translate(-508 -798)"><g transform="translate(508 798)" stroke="#07141e" stroke-width="1.4" stroke-linejoin="round">
+<rect x="9" y="3" width="49" height="29" rx="1.5" fill="#369ca3"/>
+<rect x="14" y="8" width="17" height="19" fill="#2d737f"/>
+<circle cx="22.5" cy="15" r="3.3" fill="#fff"/>
+<path d="M16 26 C16 18 29 18 29 26Z" fill="#fff"/>
+<path d="M36 9 H54 M36 15 H54"/><rect x="36" y="21" width="17" height="4" fill="#71b9bd"/>
+<path d="M33 33 V39 M33 39 H19 Q15 39 15 43 V46 M33 39 H47 Q51 39 51 43 V46" fill="none"/>
+<circle cx="33" cy="39" r="2.2" fill="#4baeb5"/>
+<rect x="5" y="45" width="25" height="15" rx="2" fill="#fff"/><rect x="38" y="45" width="25" height="15" rx="2" fill="#fff"/>
+<g fill="#7abfc7"><rect x="9" y="49" width="5" height="6"/><rect x="42" y="49" width="5" height="6"/></g>
+<path d="M17 50 H26 M17 54 H26 M50 50 H59 M50 54 H59"/>
+</g></g>
+<text x="1215" y="415" font-size="20" font-weight="400" fill="#0a0c0e" text-anchor="middle">CRM</text>
+<!-- api-icon: original pictogram rebuilt from editable native shapes. -->
+<g id="api-icon" transform="translate(1364 326) scale(1.05) translate(-626 -793)"><g transform="translate(626 793)" stroke="#07141d" stroke-width="2.7" stroke-linejoin="round">
+<path d="M12 38 C0 37 2 21 14 20 C12 10 22 5 29 10 C34 -3 53 3 54 18 C66 20 69 37 54 39Z" fill="#41a1ac"/>
+<g stroke="#efd071" stroke-width="2.7" fill="none"><path d="M17 40 V46 L11 51 V60 M25 40 V48 L23 52 M35 40 V61 M44 40 V48 L46 52 M52 40 V46 L58 51 V60"/></g>
+<g fill="#67afb7"><circle cx="11" cy="61" r="3"/><circle cx="23" cy="54" r="3"/><circle cx="35" cy="61" r="3"/><circle cx="46" cy="54" r="3"/><circle cx="58" cy="61" r="3"/></g>
+</g></g>
+<text x="1400" y="359" font-size="19" font-weight="700" fill="#fff" text-anchor="middle">API</text>
+<text x="1400" y="415" font-size="20" font-weight="400" fill="#0a0c0e" text-anchor="middle">APIs</text>
+<!-- mcp-servers-icon: original pictogram rebuilt from editable native shapes. -->
+<g id="mcp-servers-icon" transform="translate(1546 333) scale(1.05) translate(-740 -802)"><g transform="translate(740 802)" stroke="#081620" stroke-width="1.4" stroke-linejoin="round">
+<g fill="#37969e"><rect x="5" y="5" width="37" height="15" rx="2"/><rect x="5" y="20" width="37" height="15" rx="2"/><rect x="5" y="35" width="37" height="15" rx="2"/></g>
+<g fill="#b8e2e8"><circle cx="11" cy="12.5" r="1.5"/><circle cx="11" cy="27.5" r="1.5"/><circle cx="11" cy="42.5" r="1.5"/></g>
+<path d="M30 10 H37 M30 14 H37 M30 25 H37 M30 29 H37 M30 40 H37 M30 44 H37 M42 13 H52 V10 H59 M42 28 H59 M52 13 V46 H59" fill="none"/>
+<g fill="#83bfc9"><circle cx="59" cy="10" r="3.6"/><circle cx="59" cy="28" r="3.6"/><circle cx="59" cy="46" r="3.6"/></g>
+</g></g>
+<text x="1580" y="415" font-size="20" font-weight="400" fill="#0a0c0e" text-anchor="middle">MCP servers</text>
+<!-- Bottom row: retrieved evidence, evaluation, context building, and generation. -->
+<!-- retrieved-evidence-icon: original pictogram rebuilt from editable native shapes. -->
+<g id="retrieved-evidence-icon" transform="translate(1536 645) scale(1) translate(-671 -1127)"><g transform="translate(671 1127)" stroke="#080c0d" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M26 5 H69 Q77 5 77 13 V103 H13 Q5 103 5 95 V25Z" fill="#f6fafb"/>
+<path d="M6 27 H20 Q26 27 26 21 V6" fill="none"/>
+<path d="M22 42 H38 M22 55 H38 M22 68 H38 M22 81 H38"/>
+<path d="M77 103 C58 87 46 70 47 40 L76 28 L104 44 C105 70 99 88 77 103Z" fill="#00a3a5"/>
+<path d="M77 48 L90 53 C90 68 87 78 77 87 C67 78 64 67 64 54Z" fill="#41b3b7" stroke="none"/>
+</g></g>
+<text x="1590" y="802" font-size="28" font-weight="700" fill="#0a0c0e" text-anchor="middle">Retrieved evidence</text>
+<rect id="evaluator" x="1120" y="640" width="240" height="140" rx="18" fill="#e6f6f5" stroke="#1a8587" stroke-width="3"/>
+<text x="1240" y="698" font-size="29" font-weight="700" fill="#0a0c0e" text-anchor="middle">Evaluator</text>
+<text x="1240" y="740" font-size="29" font-weight="700" fill="#0a0c0e" text-anchor="middle">Agent</text>
+<rect id="context-builder" x="650" y="640" width="240" height="140" rx="18" fill="#e6f6f5" stroke="#1a8587" stroke-width="3"/>
+<text x="770" y="698" font-size="29" font-weight="700" fill="#0a0c0e" text-anchor="middle">Context</text>
+<text x="770" y="740" font-size="29" font-weight="700" fill="#0a0c0e" text-anchor="middle">Builder</text>
+<!-- language-model-icon: original pictogram rebuilt from editable native shapes. -->
+<g id="language-model-icon" transform="translate(346 650) scale(1) translate(-43 -1569)"><g id="chip-pictogram" stroke-linejoin="round"><g fill="none" stroke="#83cdcf" stroke-width="6"><path d="M97 1579 V1600 M73 1582 V1593 H81 V1600 M121 1582 V1593 H113 V1600 M58 1598 V1608 H74 M54 1622 H74 M58 1646 V1637 H74 M136 1598 V1608 H120 M140 1622 H120 M136 1646 V1637 H120 M97 1664 V1646 M73 1661 V1653 H81 V1646 M121 1661 V1653 H113 V1646"/></g><rect x="72" y="1597" width="50" height="51" fill="#00a3a5" stroke="#061118" stroke-width="4.5"/><path d="M85 1610 H108 V1627 L102 1633 H85Z" fill="#3bd0d2"/><circle cx="73" cy="1582" r="5.7" fill="#3bb2b7" stroke="#071218" stroke-width="4"/><circle cx="97" cy="1579" r="5.7" fill="#3bb2b7" stroke="#071218" stroke-width="4"/><circle cx="121" cy="1582" r="5.7" fill="#3bb2b7" stroke="#071218" stroke-width="4"/><circle cx="58" cy="1598" r="5.7" fill="#3bb2b7" stroke="#071218" stroke-width="4"/><circle cx="54" cy="1622" r="5.7" fill="#3bb2b7" stroke="#071218" stroke-width="4"/><circle cx="58" cy="1646" r="5.7" fill="#3bb2b7" stroke="#071218" stroke-width="4"/><circle cx="136" cy="1598" r="5.7" fill="#3bb2b7" stroke="#071218" stroke-width="4"/><circle cx="140" cy="1622" r="5.7" fill="#3bb2b7" stroke="#071218" stroke-width="4"/><circle cx="136" cy="1646" r="5.7" fill="#3bb2b7" stroke="#071218" stroke-width="4"/><circle cx="73" cy="1661" r="5.7" fill="#3bb2b7" stroke="#071218" stroke-width="4"/><circle cx="97" cy="1664" r="5.7" fill="#3bb2b7" stroke="#071218" stroke-width="4"/><circle cx="121" cy="1661" r="5.7" fill="#3bb2b7" stroke="#071218" stroke-width="4"/></g></g>
+<text x="400" y="802" font-size="30" font-weight="700" fill="#0a0c0e" text-anchor="middle">LLM</text>
+<!-- Step 1: user query enters the application. -->
+<path id="query-shaft" data-connector="true" d="M195 242 L328 242" fill="none" stroke="#070c0c" stroke-width="4" stroke-dasharray="18 14"/>
+<path id="query-tip-join" data-connector="true" d="M314.0 242.0 L328 242" fill="none" stroke="#070c0c" stroke-width="4"/>
+<path id="query-head" data-connector="true" d="M316 230 L328 242 L316 254" fill="none" stroke="#070c0c" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<g id="step-1"><circle cx="261" cy="180" r="21" fill="#090c0d"/>
+<text x="261" y="188.5" font-size="25" font-weight="700" fill="#fff" text-anchor="middle">1</text>
+</g>
+<text x="261" y="224" font-size="23" font-weight="700" fill="#0a0c0e" text-anchor="middle">query</text>
+<!-- Step 2: the application gives the orchestrator a task. -->
+<path id="task-shaft" data-connector="true" d="M480 250 L648 250" fill="none" stroke="#070c0c" stroke-width="4" stroke-dasharray="18 14"/>
+<path id="task-tip-join" data-connector="true" d="M634.0 250.0 L648 250" fill="none" stroke="#070c0c" stroke-width="4"/>
+<path id="task-head" data-connector="true" d="M636 238 L648 250 L636 262" fill="none" stroke="#070c0c" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<g id="step-2"><circle cx="565" cy="180" r="21" fill="#090c0d"/>
+<text x="565" y="188.5" font-size="25" font-weight="700" fill="#fff" text-anchor="middle">2</text>
+</g>
+<text x="565" y="226" font-size="23" font-weight="700" fill="#0a0c0e" text-anchor="middle">task</text>
+<!-- Step 3: the orchestrator selects retrieval tools and sources. -->
+<path id="select-tools-shaft" data-connector="true" d="M915 250 L1108 250" fill="none" stroke="#070c0c" stroke-width="4" stroke-dasharray="18 14"/>
+<path id="select-tools-tip-join" data-connector="true" d="M1094.0 250.0 L1108 250" fill="none" stroke="#070c0c" stroke-width="4"/>
+<path id="select-tools-head" data-connector="true" d="M1096 238 L1108 250 L1096 262" fill="none" stroke="#070c0c" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<g id="step-3"><circle cx="1010" cy="180" r="21" fill="#090c0d"/>
+<text x="1010" y="188.5" font-size="25" font-weight="700" fill="#fff" text-anchor="middle">3</text>
+</g>
+<text x="1010" y="226" font-size="23" font-weight="700" fill="#0a0c0e" text-anchor="middle">select tools</text>
+<!-- Step 4: retrieved evidence returns below the sources. -->
+<path id="fetch-evidence-shaft" data-connector="true" d="M1590 450 L1590 628" fill="none" stroke="#070c0c" stroke-width="4" stroke-dasharray="18 14"/>
+<path id="fetch-evidence-tip-join" data-connector="true" d="M1590.0 614.0 L1590 628" fill="none" stroke="#070c0c" stroke-width="4"/>
+<path id="fetch-evidence-head" data-connector="true" d="M1578 616 L1590 628 L1602 616" fill="none" stroke="#070c0c" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<g id="step-4"><circle cx="1650" cy="481" r="21" fill="#090c0d"/>
+<text x="1650" y="489.5" font-size="25" font-weight="700" fill="#fff" text-anchor="middle">4</text>
+</g>
+<text x="1715" y="481" font-size="23" font-weight="700" fill="#0a0c0e" text-anchor="middle">fetch</text>
+<text x="1715" y="517" font-size="23" font-weight="700" fill="#0a0c0e" text-anchor="middle">evidence</text>
+<!-- Step 5: evidence is checked against the task. -->
+<path id="check-task-shaft" data-connector="true" d="M1522 709 L1372 709" fill="none" stroke="#070c0c" stroke-width="4" stroke-dasharray="18 14"/>
+<path id="check-task-tip-join" data-connector="true" d="M1386.0 709.0 L1372 709" fill="none" stroke="#070c0c" stroke-width="4"/>
+<path id="check-task-head" data-connector="true" d="M1384 697 L1372 709 L1384 721" fill="none" stroke="#070c0c" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<g id="step-5"><circle cx="1450" cy="621" r="21" fill="#090c0d"/>
+<text x="1450" y="629.5" font-size="25" font-weight="700" fill="#fff" text-anchor="middle">5</text>
+</g>
+<text x="1450" y="665" font-size="21" font-weight="700" fill="#0a0c0e" text-anchor="middle">check vs task</text>
+<!-- Step 6: accepted evidence goes to the context builder. -->
+<path id="accepted-evidence-shaft" data-connector="true" d="M1108 709 L902 709" fill="none" stroke="#070c0c" stroke-width="4" stroke-dasharray="18 14"/>
+<path id="accepted-evidence-tip-join" data-connector="true" d="M916.0 709.0 L902 709" fill="none" stroke="#070c0c" stroke-width="4"/>
+<path id="accepted-evidence-head" data-connector="true" d="M914 697 L902 709 L914 721" fill="none" stroke="#070c0c" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<g id="step-6"><circle cx="1005" cy="638" r="21" fill="#090c0d"/>
+<text x="1005" y="646.5" font-size="25" font-weight="700" fill="#fff" text-anchor="middle">6</text>
+</g>
+<text x="1005" y="681" font-size="23" font-weight="700" fill="#1a8587" text-anchor="middle">yes: evidence</text>
+<!-- Step 7: the augmented prompt goes into the language model. -->
+<path id="augmented-prompt-shaft" data-connector="true" d="M638 709 L468 709" fill="none" stroke="#070c0c" stroke-width="4"/>
+<path id="augmented-prompt-head" data-connector="true" d="M480 697 L468 709 L480 721" fill="none" stroke="#070c0c" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<g id="step-7"><circle cx="556" cy="628" r="21" fill="#090c0d"/>
+<text x="556" y="636.5" font-size="25" font-weight="700" fill="#fff" text-anchor="middle">7</text>
+</g>
+<text x="556" y="668" font-size="21" font-weight="700" fill="#0a0c0e" text-anchor="middle">augmented</text>
+<text x="556" y="696" font-size="21" font-weight="700" fill="#0a0c0e" text-anchor="middle">prompt</text>
+<!-- Step 8: the model answer goes up to the application, clear of the retry corridor. -->
+<path id="answer-shaft" data-connector="true" d="M400 628 L400 356" fill="none" stroke="#070c0c" stroke-width="4" stroke-dasharray="18 14"/>
+<path id="answer-tip-join" data-connector="true" d="M400.0 370.0 L400 356" fill="none" stroke="#070c0c" stroke-width="4"/>
+<path id="answer-head" data-connector="true" d="M388 368 L400 356 L412 368" fill="none" stroke="#070c0c" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<g id="step-8"><circle cx="454" cy="471" r="21" fill="#090c0d"/>
+<text x="454" y="479.5" font-size="25" font-weight="700" fill="#fff" text-anchor="middle">8</text>
+</g>
+<text x="522" y="479" font-size="23" font-weight="700" fill="#0a0c0e" text-anchor="middle">answer</text>
+<!-- Step 9: the application response returns to the user above the query. -->
+<path id="response-shaft" data-connector="true" d="M400 181 V150 H125 V170" fill="none" stroke="#070c0c" stroke-width="4" stroke-dasharray="16 12"/>
+<path id="response-tip-join" data-connector="true" d="M125 156 V170" fill="none" stroke="#070c0c" stroke-width="4"/>
+<path id="response-head" data-connector="true" d="M113 158 L125 170 L137 158" fill="none" stroke="#070c0c" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<g id="step-9"><circle cx="234" cy="122" r="21" fill="#090c0d"/>
+<text x="234" y="130.5" font-size="25" font-weight="700" fill="#fff" text-anchor="middle">9</text>
+</g>
+<text x="323" y="130" font-size="23" font-weight="700" fill="#0a0c0e" text-anchor="middle">response</text>
+<!-- A failed evaluation loops upward; the red annotation is above its horizontal route. -->
+<path id="retry-shaft" data-connector="true" d="M1240 626 V535 H780 V333" fill="none" stroke="#b7272d" stroke-width="4" stroke-dasharray="12 10"/>
+<path id="retry-tip-join" data-connector="true" d="M780 347 V333" fill="none" stroke="#b7272d" stroke-width="4"/>
+<path id="retry-head" data-connector="true" d="M768 345 L780 333 L792 345" fill="none" stroke="#b7272d" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="1005" y="456" font-size="24" font-weight="700" fill="#be2727" text-anchor="middle">no: rewrite query</text>
+<text x="1005" y="488" font-size="24" font-weight="700" fill="#be2727" text-anchor="middle">or switch source</text>
+<text x="1005" y="520" font-size="24" font-weight="700" fill="#be2727" text-anchor="middle">max 5 tries</text>
+</svg>
