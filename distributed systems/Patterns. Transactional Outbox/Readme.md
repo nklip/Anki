@@ -2,125 +2,122 @@
 
 <sub>[Back to Distributed Systems](../Readme.md#content)</sub>
 
-**Transactional Outbox saves a business change and an event record in one local database transaction: both commit, or neither does.** A separate **relay** publishes committed events to a message broker such as Kafka. Publication can be retried, so consumers must still handle duplicates safely.
+**Transactional Outbox (aka Outbox pattern) saves a business change and the event that announces it in one local database transaction, so both commit or neither does.** A separate **relay** then publishes the saved events to a message broker such as Kafka.
+
+The relay can publish an event more than once, so consumers must tolerate duplicates. After the problem and the pattern's two parts, the article shows how a consumer can process one message twice, how a deduplication table prevents it, and how Spring Data JPA and Hibernate affect the timing.
+
+## The problem it solves
+
+An order service handles `create order 42`. It must save the order in its database and publish an `OrderCreated` event to Kafka so that other services can react. That is two writes to two systems, and no transaction covers both:
+
+- **Save, then publish.** If the service crashes between the two writes, the order exists, but no event is ever sent.
+- **Publish, then save.** If the save fails, other services react to an order that does not exist.
+
+Swapping the writes only swaps the failure. This is the **dual-write problem**.
 
 ## How it works
 
-Save an order, then publish `OrderCreated`: a crash between the writes leaves an order without an event. Publish first: a failed commit leaves an event without an order. Reversing the writes cannot remove this failure window.
+The pattern turns the publish into a second database write. It adds two parts: an **outbox table** in the service's own database, and a **relay** process that publishes from it.
 
-Transactional Outbox closes that window by adding two components: an **outbox table** inside the service's own database, and a **relay process** that publishes from it.
+### The outbox table
 
-### The outbox table holds the obligation to publish
+The service no longer publishes `OrderCreated` itself. Instead, the transaction that inserts order `42` into the orders table also inserts a row into the outbox table: event ID `evt-901`, type `OrderCreated`, and a **payload** with the event data. Both tables live in the same database, so the database commits both rows or neither. No broker is involved yet.
 
-The outbox table stores events that still need publishing. It lives in the same database as the business data, so one local transaction can write both. For example, one transaction inserts order `42` into the orders table and an outbox row with event identifier `evt-901`, order identifier `42`, type `OrderCreated`, and a **payload**—the event data. Both rows commit, or neither does, because the database applies one transaction atomically. No broker takes part in that guarantee.
-
-The image below names the parts and numbers the five operations. Steps 1 and 2 are the service's two writes inside that single transaction; steps 3, 4, and 5 are the relay's later work. Every step arrow except step 4 crosses the `Database` panel's border, because the service and the relay both reach its tables from outside. Step 4 stays outside the panel: it carries the event from the relay to the messaging system.
+In the image below, steps 1 and 2 are those two writes inside one transaction. Steps 3 to 5 are the relay's later work: poll for unsent events, send them, and mark them as sent or delete them.
 
 ![outbox-components.svg](images/outbox-components.svg)
 
-No standard prescribes the outbox schema. These columns are a common starting point:
+No standard defines the outbox table's columns. This is a common starting point:
 
 | Column | Type | Purpose |
 |---|---|---|
-| `id` | `INT` or `UUID` | The event's unique identifier. |
+| `id` | `INT` or `UUID` | The event's unique ID. |
 | `event_type` | string | The event's type, such as `OrderCreated`. |
-| `payload` | JSON or text | The serialized event body. |
+| `payload` | JSON or text | The serialized event. |
 | `created_at` | timestamp | When the event was stored. |
-| `sent_at` | nullable timestamp | When it was published; `NULL` marks it unsent. |
+| `sent_at` | nullable timestamp | When the event was published; `NULL` means not sent yet. |
 
-Add the columns an operation needs: `entity_id` and `entity_name` to identify the domain object, `retries`, `status`, or `error_message` for error handling, and `correlation_id` for tracing. Tooling may expect its own names — Debezium's outbox event router reads `id`, `aggregatetype`, `aggregateid`, and `payload` by default, points each at a different column on request, and carries any remaining column as a payload field or message header.
+Add what your system needs, such as `entity_id` for the order the event belongs to, `retries` and `error_message` for events that keep failing, or `correlation_id` for tracing.
 
-### The relay process publishes what committed
+### The relay
 
-The relay process is a background worker, also called an **outbox processor** or **event dispatcher**. It reads committed outbox events and publishes them to a messaging system such as Kafka, RabbitMQ, Amazon EventBridge, or Azure Service Bus. Once the broker acknowledges an event, the relay marks its row as sent or deletes it.
+The relay is a background worker, also called an **outbox processor** or **event dispatcher**. It reads committed outbox rows and publishes them to a broker such as Kafka, RabbitMQ, Amazon EventBridge, or Azure Service Bus. After the broker acknowledges an event, the relay marks its row as sent or deletes it.
 
-The image below follows one change through the two phases its dividers name: the service's `Transaction phase`, then the relay's `Publishing phase`. Read time **from top to bottom**: the columns are participants, the vertical lines follow them through time, solid arrows are calls, dashed arrows are returns, the narrow outlined bars mark a participant that is busy, and yellow notes mark important facts. The `loop [for each event]` frame repeats for every event in the selected batch.
+The image below follows order `42` from top to bottom; dashed arrows are replies. In the `Transaction phase`, the service writes the order and event `evt-901` in one transaction and answers the client. In the `Publishing phase`, the relay selects a batch of unsent events and runs the `loop [for each event]`: publish, wait for the acknowledgement, then mark as sent or delete.
 
 ![outbox-publication-sequence.svg](images/outbox-publication-sequence.svg)
 
-The two phases are separate runs, which is why the client's response does not wait for publication. The relay's transaction is not the service's transaction; it exists so that a row is marked sent only for an event the broker actually accepted.
+The client has its response before anything is published, because the relay runs on its own schedule. The relay also has its own transaction, separate from the service's. It covers only the relay's reads and its `mark as sent or delete` updates.
 
-A relay can **poll** the outbox table periodically, as the image above shows, or use **change data capture (CDC)** to read committed changes from the database log, for example with Debezium. Retries retain the **same event identifier**. A polling relay marks or removes a row only after the broker acknowledges it; a CDC relay tracks its position in the log instead.
+Polling the table, as shown here, is one way to build a relay. The other is [**change data capture (CDC)**](../Patterns.%20Change%20Data%20Capture/Readme.md): a tool such as Debezium reads committed changes from the database's log and publishes the new outbox rows. A CDC relay does not mark rows. It remembers its position in the log instead. CDC tools can also expect their own column names: Debezium's outbox event router reads `id`, `aggregatetype`, `aggregateid`, and `payload` unless you point those settings at your own columns.
 
-An incoming Kafka message is not required: an ordinary request that changes database state can also create an outbox event, as the image above's `create order 42` does.
+### Why an event can be published twice
 
-## Terminology
+The relay marks a row only after the broker acknowledges the event. If the relay crashes after publishing `evt-901` but before marking its row, it publishes `evt-901` again after it restarts. This is the price of never losing an event: the pattern delivers **at least once**, not exactly once.
 
-* A **Kafka offset** records a position in a partition, an ordered part of a topic. Updating the committed offset records how far the consumer has finished processing;
-* The diagrams' `REST POST request` is a call to a third-party web service, such as a payment service. That service has its own state and transaction boundary;
-* **REST** means Representational State Transfer, a web-service design style;
-* **POST** is the request method used in these examples.
+A consumer that is not ready for this can send the same email twice or charge a card twice. A retry keeps the same event ID, which is what lets a consumer recognize the repeat.
 
-## Duplicate message delivery without Transactional Outbox
+## How a consumer processes the same message twice
 
-A consumer polls for a batch of records, processes it, and polls again. The Java Apache Kafka client bounds the gap between two polls with `max.poll.interval.ms` and caps the batch size with `max.poll.records`.
+Duplicates do not only come from the relay. Kafka itself can give one message to two instances of the same consumer service.
 
-Two different mechanisms take partitions away from a consumer that stops making progress, and they act from opposite sides. The **broker** side is `session.timeout.ms`: a consumer that stops sending heartbeats for that long is considered dead, and its partitions are reassigned. The **client** side is `max.poll.interval.ms`: a consumer that still sends heartbeats but misses its poll deadline leaves the group on its own initiative, so that another consumer can take over its partitions. This section follows the second mechanism, and the difference matters later: an instance that has left the group is no longer an active member, and only active members may commit offsets.
+A Kafka consumer works in a loop: it polls for a batch of records, processes them, and polls again. It records its progress by committing an **offset**, its position in a **partition**, an ordered part of a topic. If an instance goes longer than `max.poll.interval.ms` between two polls, its Kafka client treats it as stuck and leaves the **consumer group**, the instances that split the topic's partitions between them, so another instance can take over its partitions. The stuck instance never committed its offset, so the new owner receives the same records again, while the first instance may still be working on them.
 
-Either way the partition moves. The first instance never recorded its offsets in the consumer offsets topic, so the replacement polls the same records again.
+Kafka does this on purpose. Without it, an instance that is stuck but still alive would hold its partitions forever, and nobody would process them.
 
-Read the image below from top to bottom, with the same column, arrow, and note conventions listed for the sequence diagram in [The relay process publishes what committed](#the-relay-process-publishes-what-committed). The red ellipse marks the pivotal moment: instance 2 consumes the message instance 1 is still working on. Each yellow note on instance 2's side then names an effect that now happens twice. A call that stops at a cross never reaches the participant it points at, and the note directly beneath it names what the caller got instead.
+The image below shows the result. The `REST POST request` arrows are calls to a third-party web service, such as a payment provider, which keeps its own data. (REST stands for Representational State Transfer, a common style for web APIs.) Instance 1 exceeds `max.poll.interval.ms` in the middle of its work, and instance 2 receives the same message, circled as `Duplicate message consumed`. From there, the notes on instance 2's side list what now happens twice: `REST requests are duplicated`, `Outbound events are duplicated`, and `DB writes are duplicated`.
 
 ![duplicate-message-delivery.svg](images/duplicate-message-delivery.svg)
 
-Without either mechanism, a consumer that really had died would keep its partitions and leave them blocked.
+Instance 1 cannot even record its progress. It has left the group, so its own Kafka client rejects the offset commit with a `CommitFailedException`, shown as the arrow that ends in a cross. That protects the offset, but it does not undo the work instance 1 already did.
 
-While the new instance processes the batch — calling other services over REST, publishing events to Kafka, writing to the database — the first instance is doing the same work. Any step that is not idempotent leaves inconsistent state across the system. The first instance cannot even record its own progress: because it left the group, its own Kafka client refuses the commit before the request reaches the broker and throws a `CommitFailedException`, the safety mechanism that lets only active group members commit offsets. That rejection protects the offset; it does not undo the duplicated work.
+## Handling duplicates: the idempotent consumer
 
-## Transactional Outbox delivery guarantee
+Duplicates will happen, so every consumer must be able to receive the same message twice without doing the work twice. Such a consumer is an **idempotent consumer**. There are two ways to build one:
 
-The Transactional Outbox pattern guarantees **at-least-once** delivery — not exactly-once.
+- **Make the work naturally repeatable.** For example, insert a row only if it is not already there, so a second run changes nothing.
+- **Remember what was processed.** Keep a **deduplication table**, also called an **inbox table**, of processed message IDs. The producer gives each message a unique ID, in the payload or in a Kafka header.
 
-This means that due to transient failures (e.g., network issues, broker timeouts, retries), consumers might receive duplicate events. If downstream processing is not prepared for this, it risks inconsistent state or triggering actions multiple times (e.g., sending duplicate emails or creating double charges).
+The second approach works for any business logic. It relies on a **unique constraint** on the message ID and on this order of steps:
 
-There are two main ways to handle this:
+1. Start a database transaction and insert the message ID.
+2. Do the business work.
+3. Commit the transaction, then commit the Kafka offset.
 
-* **Make the logic idempotent**. Design consumers so that they can safely process the same event more than once. For example, insert a record only if it is not already present.
-* **Deduplicate events explicitly**. Keep a separate table (also called an inbox table) that stores the identifiers of processed events for a set retention period (an hour, six hours, or even several days, for example). Before processing an event, the consumer checks this table: if the identifier is found, the event is skipped; otherwise it is processed and the identifier is saved.
+If the insert fails because the ID already exists, the message is a duplicate. The consumer rolls back, commits the offset so that Kafka does not deliver the message again, and does nothing else.
 
-## The idempotent consumer pattern
+Why insert the ID instead of first looking it up? Two instances can both look, both find nothing, and both go ahead. The unique constraint is what actually stops the second one, because the database accepts only one row per ID. So the insert itself can be the check.
 
-An **idempotent consumer** may receive the same message any number of times but processes it only once. The recommended implementation is the deduplication table from the previous section, with a unique constraint on the message identifier, so that the database itself refuses a second row for the same message.
+Store the event's own ID, not the order ID: one order produces many events over time, and each must be tracked separately. The table protects a message only while its ID is stored. If IDs are deleted after a retention period, such as an hour, six hours, or a few days, a redelivery or replay that arrives later looks new and runs again.
 
-Each message carries a unique identifier assigned by the producing service, either inside the payload or as a Kafka message header. The consumer looks that identifier up before doing any work.
+## Deep dive: Spring Data JPA and Hibernate
 
-If the identifier is already in the table, the message is a duplicate. The consumer commits its offsets to mark the message consumed so that it is not redelivered, and does nothing else. If the identifier is absent, the consumer opens a database transaction, inserts the identifier, runs the business logic, and commits.
+The rest of the article uses **Spring Data JPA**, a Java data-access library built on the Jakarta Persistence API, with **Hibernate**, an object-relational mapper that turns changes to Java objects into SQL. They matter here because `save()` does not run the insert when you call it.
 
-That lookup describes the rule, but it is not how to implement it. Two instances can both look up the same identifier, both find it absent, and both proceed. The unique constraint is what actually enforces the rule, so [Deep dive](#deep-dive) drops the separate lookup and lets the insert itself be the check.
+### When the insert reaches the database
 
-## Deep dive
+Hibernate keeps changes in memory and sends them to the database during a **flush**. A flush runs the SQL inside the current transaction but does not commit it. Hibernate's documentation calls this a **transactional write-behind cache**. By default, Hibernate flushes just before commit, or earlier when a query in the same transaction needs to see the pending changes.
 
-### Default flush strategy
+For the deduplication insert, that delay matters, because the unique check runs only when the insert reaches the database. Two instances that handle the same message can both call `save()` and both do their business work. Only at commit does the second one hit the constraint and roll back.
 
-The next diagrams use **Spring Data JPA**, a Java data-access library based on the Jakarta Persistence API, with **Hibernate**, an object-relational mapper that translates object changes into database writes. Hibernate can queue changes in memory.
-
-A **flush** sends those pending changes to the database inside the current transaction; **commit** completes that transaction. Flushing alone does not commit it.
-
-The flush strategy decides when the identifier insert above, and with it its uniqueness check, actually reaches the database. Spring Data's `save()` hands the change to Hibernate's persistence context, which acts as a **transactional write-behind cache**: it queues the change and flushes at the last possible moment.
-
-That moment is usually commit, but not always. Under `AUTO`, the default flush mode, the persistence provider must make pending changes visible to a query those changes could affect, so a query issued in the same transaction can force the flush earlier. The mapping, the queries the transaction issues, and the configured flush mode together decide the timing.
-
-Two duplicates processed in parallel can therefore both open a transaction, write the message identifier uncommitted, and run their business logic. The constraint violation surfaces only when the second one commits, and only then does its transaction roll back.
-
-The diagram below shows that run. It drops the broker and the third-party service so that the two instances and the database stay side by side, and it assumes both instances have already consumed the same duplicated message.
+The image below shows that run. It leaves out Kafka and the third-party service and starts after both instances received the same message. The arrows into `Database` show when each instance calls the repository, not when the SQL runs: Hibernate holds both writes until it flushes, here at commit. Only the second `Commit DB transaction` gets a `constraint violation`.
 
 ![idempotent-consumer.svg](images/idempotent-consumer.svg)
 
-This can be acceptable. The second transaction rolls back at commit and takes every other database update it contains with it, and with Transactional Outbox in place as well (below) no duplicate outgoing event is published. What rollback cannot reach is still duplicated: a REST call to an external service, or an event published outside the outbox.
+The rollback undoes all of the second instance's database changes, including any outbox rows. What it cannot undo is work outside the database, such as a REST call to a payment provider or an event sent straight to Kafka.
 
-Flushing at the point of save sends the row to the database immediately, though still uncommitted, and that changes the flow. The second consumer instance consumes the duplicate, starts its transaction, and attempts the same insert. It cannot acquire the row lock until the first transaction ends.
+### Flushing early with `saveAndFlush()`
 
-If the first transaction commits, the second one is aborted at that point. If the first rolls back, the second duplicate is free to proceed and can then succeed or roll back on its own.
+`saveAndFlush()` saves the entity and flushes at once, so the insert reaches the database immediately, still uncommitted. That changes the race. With an ordinary unique constraint, PostgreSQL makes a second insert of the same ID wait until the first transaction ends:
 
-**Flushing early makes the competing insert wait.**
+- If the first transaction commits, the waiting insert fails with a uniqueness violation.
+- If the first transaction rolls back, there is no conflict, and the waiting insert succeeds.
 
-With Spring Data JPA and Hibernate, that means calling `saveAndFlush()` instead of `save()`: it saves an entity and flushes pending changes immediately. In these diagrams, `saveAndFlush(messageId)` is shorthand for saving and flushing the processed-message record. Perform this inside the transaction that also contains the business changes.
-
-The image below shows the ordinary immediate uniqueness-check case: the second insert waits for the first transaction's outcome. When the first commits, the waiting insert fails because that message is already recorded. Instance 2 is rejected before reaching its other business work.
+In the image below, instance 2's `saveAndFlush(messageId)` stops at `Wait to acquire lock`. When instance 1 commits, instance 2 gets the `constraint violation`. The `Transaction rolled back` note on the `Database` line means instance 2's transaction, not instance 1's: instance 2 rolls back before it does any other work.
 
 ![idempotent-consumer-flush-lock.svg](images/idempotent-consumer-flush-lock.svg)
 
-This is the lookup and the insert in one step. There is no `findById` first: the insert is the check, and the constraint reports a duplicate as a `DataIntegrityViolationException`.
+In code, there is no lookup first. The insert is the check, and a duplicate arrives as Spring's `DataIntegrityViolationException`:
 
 ```java
 private void deduplicate(UUID eventId) throws DuplicateEventException {
@@ -132,149 +129,136 @@ private void deduplicate(UUID eventId) throws DuplicateEventException {
 }
 ```
 
-The yellow rollback note refers to the second transaction. This is database coordination, not a separate application lock that must be acquired before every event. PostgreSQL's immediate unique-index check, for example, waits for an uncommitted conflicting insert and then checks the outcome again. A deferred constraint has different timing.
+Call it at the start of the transaction that also does the business work. This is the recommended approach, because the duplicate stops before the expensive or irreversible steps. If the event triggers a payment, `save()` lets both instances reach the payment call, while `saveAndFlush()` lets only the first one through.
 
-This is the **recommended** approach, because it minimizes the actions that get duplicated. Take an event that triggers a payment through a third-party bank rail service. Under the default `save()` strategy both duplicates reach the payment call and two payments go out; with `saveAndFlush()` only the first one does.
-
-If the first consumer fails before committing its database transaction, its uncommitted row disappears. The second consumer then acquires the lock on that message identifier and processes the message itself.
+If instance 1 fails before it commits (`Failure` in the image below), its uncommitted row disappears. Instance 2's insert then goes through (`Lock acquired`), and instance 2 processes the message itself.
 
 ![idempotent-consumer-flush-lock-failure.svg](images/idempotent-consumer-flush-lock-failure.svg)
 
-Early flushing prevents both workers from passing the same uniqueness check concurrently. It does **not** make a remote payment part of the database transaction. If the first worker completes a payment and then rolls back, a retry may still repeat that payment unless the provider recognizes the same request.
+Early flushing stops two instances from passing the check at the same time. It does not put a remote payment inside the database transaction. If instance 1 had already paid before it failed, instance 2 would pay again, unless the payment provider recognizes the repeated request. That is the job of an **idempotency key**: a unique key that the client sends with a request and that the provider uses to recognize retries. Both instances must send the same key, for example one derived from the event ID.
 
 ### Adding the outbox table
 
-The image below adds the outbox. The processed-message record, business update, and outgoing event record belong to one database transaction. The input offset is acknowledged after commit.
+Now put both patterns together. A consumer that publishes events of its own should write them to the outbox instead of sending them straight to Kafka. Then one database transaction holds three writes: the processed message ID, the business change, and the outgoing event. Here a Kafka message triggers the outbox write, but any request that changes the database can write one, as `create order 42` did in [The relay](#the-relay).
 
-This diagram has no relay column, so the outgoing event appears to leave the `Database` itself. It does not: the `CDC produce` arrow is the relay from [How it works](#how-it-works) in its change-data-capture form, a Kafka Connect connector that reads committed changes and publishes them to the outbound topic. The database commit publishes nothing on its own.
+The image below has no relay column, so the outgoing event seems to leave the `Database` by itself. It does not. The `CDC produce` arrow is the relay in its CDC form, such as a Debezium connector running on [Kafka Connect](../Apache%20Kafka.%20Connect/Readme.md#8-pattern-transactional-outbox-with-connect-as-the-relay). Committing a transaction publishes nothing on its own.
 
 ![idempotent-consumer-and-transactional-outbox.svg](images/idempotent-consumer-and-transactional-outbox.svg)
 
-**What is atomic is the database state and the stored publication obligation.** The input's Kafka offset and the eventual Kafka publication are outside this local transaction. If the process crashes after commit but before acknowledging the input, redelivery finds its processed-message record and skips a second business update or outbox insertion.
+Only the database writes are atomic. The offset commit, `update offsets`, and the relay's publication happen outside the transaction. If the consumer crashes after the commit but before the offset commit, Kafka delivers the message again, the insert fails on the stored ID, and the consumer skips the message.
 
-## Duplicate delivery with both protections
+## Both protections together
 
-The image below revisits the timeout scenario. Instance 1 has already flushed the unique processed-message record. Instance 2 receives the repeated input and stops at its competing insert, which the `Database` lifeline marks `Wait to acquire lock`, as in the flush diagram above. After instance 1 commits, instance 2 gets the uniqueness violation and rolls back.
+The image below replays the timeout scenario from [How a consumer processes the same message twice](#how-a-consumer-processes-the-same-message-twice), now with both patterns. Instance 1 has flushed the message ID and made its `REST POST request` when it exceeds `max.poll.interval.ms`, and instance 2 receives the same message. Instance 2's `saveAndFlush(messageId)` waits at `Wait to acquire lock`. When instance 1 commits, instance 2 gets the `constraint violation` and rolls back, so it never makes the REST call.
 
-Only one of the two then records progress. Instance 1 exceeded `max.poll.interval.ms` and left the group, which is why the input reached instance 2 at all; the same departure means instance 1's own offset commit never leaves the consumer, which the crossed arrow and the note beneath it mark as a `CommitFailedException` raised by its own client. Instance 2 still holds the partition, so its offset commit is the one that takes effect, and instance 1's committed outbox record supplies the outgoing event.
+Instance 1's offset commit still fails with a `CommitFailedException`, because instance 1 left the group. Instance 2 now owns the partition, so its offset commit is the one that counts. The outgoing event comes from instance 1's committed outbox row, through `CDC produce`.
 
 ![duplicate-message-delivery-fixed.svg](images/duplicate-message-delivery-fixed.svg)
 
-This sequence shows why the second worker does not perform the remote call in this particular run. It does not establish exactly-once remote effects for every crash scenario. An **idempotency key** is a stable request identifier that the remote provider uses to recognize retries; use the provider's supported contract for calls such as payments.
+This run is safe because instance 1 committed. If instance 1 had made the call and then crashed before committing, instance 2 would process the message again and repeat the call. Remote calls still need an idempotency key.
 
 ## Important boundaries
 
-- **Local atomicity, eventual propagation:** downstream services catch up later. Publication needs durable storage, relay recovery, and retries. Outbox does not make a multi-service workflow one transaction; a [saga](../Transactions.%20Saga/Readme.md) coordinates its steps and recovery actions.
-- **Ordering:** publish each order's events in order. Use its identifier as the Kafka key to place its events in one partition. A key cannot fix relay workers publishing out of order.
-- **External effects:** [Kafka transactions](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md#database-writes-and-service-calls) do not automatically include an external database or payment service. Each remote effect needs its own retry protection.
-- **Delivery operations:** monitor unpublished work and relay failures. Retire outbox rows only when the chosen delivery mechanism can safely recover without them. Keep a recovery path for events that repeatedly fail publication or processing.
+- **Atomic locally, consistent eventually.** The outbox makes the service's own writes atomic. Other services see the change later, after the relay runs. The outbox does not turn a workflow across several services into one transaction; a [saga](../Transactions.%20Saga/Readme.md) coordinates that.
+- **Ordering.** To keep one order's events in sequence, use the order ID as the Kafka key, so they all land in the same partition. A key cannot fix a relay that publishes them out of order, for example with several relay workers.
+- **External effects.** [Kafka transactions](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md#database-writes-and-service-calls) do not cover an external database or a payment service. Each remote call needs its own retry protection.
+- **Operations.** Monitor how many events wait unsent and whether the relay fails. Delete sent rows only when the relay no longer needs them to recover, and plan for events that keep failing.
 
 ## Summary
 
-Commit the business change and its outgoing event record together, then publish through a recoverable relay. At the receiving end, commit duplicate recognition and the business effect together. Early flushing can detect a competing database insert sooner; remote calls still need their own retry protection.
+On the sending side, commit the business change and its outbox event in one transaction, and let a relay publish the event later. Expect some events to be published twice. On the receiving side, insert the message ID first, flush it with `saveAndFlush()`, and commit it with the business change, so a duplicate stops before it does any work. Calls outside the database still need idempotency keys.
 
 ## Self-check
 
-Try answering each question before expanding its answer.
-
-1. Which two components does the pattern add, and why must the outbox table sit in the service's own database?
+1. What goes wrong if the order service saves order `42` and then publishes `OrderCreated` straight to Kafka? Why must the outbox table live in the service's own database?
 
    <details>
    <summary>Answer</summary>
 
-   An outbox table and a relay process. The table shares the database that holds the business data, so a single local transaction covers both writes and the database's own atomicity makes them commit or roll back together. A table in a separate database would reintroduce the two-system failure window the pattern removes.
+   A crash between the two writes leaves an order that no other service hears about, and publishing first instead risks an event for an order that was never saved. The outbox turns the publish into a second database write in the same local transaction, so both commit or neither does. That works only because both tables are in one database: an outbox somewhere else would bring back the dual-write problem.
 
    </details>
 
-2. A polling relay opens its own transaction before selecting a batch of unsent rows. What does that transaction cover, and why is it not the service's transaction?
+2. The relay marks a row as sent only after the broker acknowledges the event. Why can an event then be published twice, and what does that require from consumers?
 
    <details>
    <summary>Answer</summary>
 
-   It covers the relay's own reads and its `mark as sent or delete` updates, so a row is recorded as sent only for an event the broker acknowledged. It runs later, in a different process, after the service already answered the client, so it cannot be the transaction that wrote the event. The publication itself stays outside both transactions.
+   If the relay stops after the broker accepted `evt-901` but before it marked the row, it publishes `evt-901` again after it restarts. Delivery is at least once, not exactly once. A retry keeps the same event ID, so consumers must recognize a repeated ID and skip the work.
 
    </details>
 
-3. Instance 1 is still processing its batch when instance 2 receives the same message. How can this happen, and which work can be duplicated?
+3. How does a polling relay know which events it has already published, and how does a CDC relay know?
 
    <details>
    <summary>Answer</summary>
 
-   Instance 1 exceeds the permitted interval between polling calls and can lose its partition assignment. A replacement can receive unfinished input while the original worker continues application work. Without protection, both can update business data, call the third-party service, and publish an outgoing event.
+   A polling relay reads the outbox table itself. It selects rows that are still unsent, such as rows whose `sent_at` is `NULL`, and marks or deletes each row after the broker acknowledges its event. A CDC relay does not mark rows: it reads the database log and remembers its position in that log.
 
    </details>
 
-4. Under the default write-behind flush strategy, both workers call `save(messageId)`. Why can both reach other event processing before one is rejected?
+4. How can two instances of one consumer service process the same Kafka message at the same time?
 
    <details>
    <summary>Answer</summary>
 
-   Saving only queues the record in Hibernate; the actual insert and its uniqueness check happen during a later flush, so both workers can pass into their other processing before either is rejected. A losing transaction's database changes roll back, but a completed remote call cannot be undone by that rollback.
+   Instance 1 takes longer than `max.poll.interval.ms` between two polls, so its Kafka client leaves the consumer group, and instance 2 takes over the partition. Instance 1 never committed its offset, so instance 2 receives the same message while instance 1 is still working on it. Instance 1's later offset commit fails with a `CommitFailedException`, but its work is already done.
 
    </details>
 
-5. With `saveAndFlush()`, instance 1 has flushed its processed-message record but has not committed. What happens when instance 2 attempts the same insert and instance 1 then commits?
+5. Why does an idempotent consumer insert the message ID instead of first checking whether the ID exists?
 
    <details>
    <summary>Answer</summary>
 
-   With the immediate uniqueness check shown, instance 2 waits for instance 1's outcome. Once instance 1 commits, the conflicting record is committed and instance 2's insert fails. It rolls back and skips the duplicate before doing the other business work. A flush alone did not commit instance 1's transaction.
+   Two instances can both check, both find nothing, and both continue. Only the unique constraint stops the second one, because the database accepts a single row per ID. So the insert is the check: if it fails, the message is a duplicate.
 
    </details>
 
-6. Take that same run, but instance 1 rolls back instead of committing. Why can instance 2 proceed, and what if instance 1 had already completed a remote payment?
+6. With Hibernate's default `save()`, why can both instances run their business logic before one of them is rejected?
 
    <details>
    <summary>Answer</summary>
 
-   Rollback removes instance 1's uncommitted processed-message record, so the waiting insert can succeed and instance 2 can perform the work. The remote payment is outside that database transaction. Repeating it still requires the provider's idempotency contract and the same request key.
+   `save()` only queues the insert in Hibernate's memory. The SQL, and with it the unique check, runs at flush time, by default just before commit. Both instances get through their business logic, and the second one fails only when it commits. Its database changes roll back, but a REST call that it already made does not.
 
    </details>
 
-7. When an idempotent consumer also writes to an outbox table, which three writes commit together? What happens if the consumer crashes after that commit but before updating its Kafka offset?
+7. With `saveAndFlush()`, instance 1 has flushed the message ID but not committed when instance 2 inserts the same ID. What happens if instance 1 commits, and what happens if it rolls back?
 
    <details>
    <summary>Answer</summary>
 
-   The processed-message record, business update, and outgoing outbox record commit in one database transaction. Redelivery recognizes the processed-message record and skips another business update or outbox insertion, then acknowledges the duplicate. The Kafka offset and the relay's eventual publication are outside the database transaction.
+   Instance 2's insert waits for instance 1's transaction to end. If instance 1 commits, instance 2 gets a uniqueness violation and rolls back before it does any other work. If instance 1 rolls back, its row disappears, instance 2's insert succeeds, and instance 2 processes the message.
 
    </details>
 
-8. With both protections in place, instance 2 receives the repeated input while instance 1 is still working. Why does instance 2 avoid the remote call, and what still supplies the outgoing event?
+8. A consumer that also writes to an outbox commits three writes together. Which three are they, and what happens if the consumer crashes after the commit but before it commits its Kafka offset?
 
    <details>
    <summary>Answer</summary>
 
-   Its competing insert waits until instance 1 commits, then fails the uniqueness check before reaching the remote call. Instance 1's committed outbox record supplies the outgoing event. Instance 1 cannot acknowledge the input, because it left the group at `max.poll.interval.ms`, so its own client rejects the commit with a `CommitFailedException` before the request reaches the broker; instance 2, still an active member, commits the offset. This particular sequence does not guarantee exactly-once remote effects under every failure.
+   The processed message ID, the business change, and the outgoing outbox event. After the crash, Kafka delivers the message again. The insert fails on the stored ID, so the consumer skips the business change and the outbox write and only commits the offset. The relay still publishes the original event.
 
    </details>
 
-9. A polling relay marks or removes the row for `evt-901` only after the broker acknowledges it. What does that ordering cost, and what must the receiving consumer do about it?
+9. Instance 1 made a payment and then crashed before it committed. Why does instance 2 pay again, even with `saveAndFlush()`, and what prevents the second payment?
 
    <details>
    <summary>Answer</summary>
 
-   An event the broker already accepted can be published a second time if the relay stops before recording that acknowledgement, which is why the pattern guarantees at-least-once delivery rather than exactly-once. Retries keep the same event identifier. The consumer must record that identifier in the same transaction as its business effect, so a repeat delivery is recognized instead of applied again.
+   Instance 1's rollback removed its message ID, so instance 2's insert succeeds, and instance 2 processes the message, payment included. The database cannot undo a payment that a remote service made. The payment provider must recognize the retry, which takes an idempotency key that both instances send, for example one derived from the event ID.
 
    </details>
 
-10. The deduplication table keeps processed-event identifiers only for a set retention period. What protection does a consumer lose once an identifier ages out of that table?
+10. The deduplication table deletes IDs after six hours. What happens when the same message is replayed a day later?
 
-   <details>
-   <summary>Answer</summary>
+    <details>
+    <summary>Answer</summary>
 
-   The check that runs before processing no longer finds the identifier, so a redelivery or a replay of that event looks like new input and the business logic runs again. Effects a rollback cannot undo, such as a payment or another REST call, are repeated with it. The stored identifier, not the message, is what carries the protection.
+    The ID is no longer in the table, so the insert succeeds, and the message looks new. The business logic runs again, including any remote calls. The protection lasts only as long as the ID is stored.
 
-   </details>
-
-11. No standard prescribes the outbox schema. Which column tells a polling relay that a row still needs publishing, and what must a table using its own column names do before Debezium's outbox event router can read it?
-
-   <details>
-   <summary>Answer</summary>
-
-   A nullable `sent_at`, where `NULL` marks the row unsent; the relay fills it, or deletes the row, once the broker acknowledges the event. The router expects `id`, `aggregateid`, `aggregatetype`, and `payload` by default, so a table with different names must point each of those settings at its own column. Remaining columns are not lost: each can be placed in the message payload or in a message header.
-
-   </details>
+    </details>
 
 # Sources
 
@@ -283,11 +267,11 @@ Try answering each question before expanding its answer.
 - [Lydtech — Kafka Idempotent Consumer & Transactional Outbox](https://www.lydtechconsulting.com/blog/kafka-idempotent-consumer-transactional-outbox)
 - [Microservices.io — Transactional Outbox and relay failures](https://microservices.io/patterns/data/transactional-outbox.html)
 - [Microservices.io — Idempotent Consumer and unique processed-message keys](https://microservices.io/patterns/communication-style/idempotent-consumer.html)
-- [AWS — Transactional Outbox, polling, and saga boundaries](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html)
+- [AWS — Transactional Outbox, dual writes, and saga boundaries](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html)
 - [Hibernate — Flushing and delayed database writes](https://docs.hibernate.org/orm/current/userguide/html_single/#flushing)
 - [Spring Data JPA — JpaRepository: flush and saveAndFlush](https://docs.spring.io/spring-data/jpa/reference/api/java/org/springframework/data/jpa/repository/JpaRepository.html)
 - [PostgreSQL — Index uniqueness checks and concurrent transactions](https://www.postgresql.org/docs/18/index-unique-checks.html)
-- [Debezium — Outbox Event Router: identifiers, keys, and payloads](https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html)
+- [Debezium — Outbox Event Router: the outbox pattern, identifiers, keys, and payloads](https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html)
 - [Debezium — Outbox implementation, recovery, and eventual consistency](https://debezium.io/blog/2019/02/19/reliable-microservices-data-exchange-with-the-outbox-pattern/)
 - [Apache Kafka — KafkaConsumer: detecting consumer failures, poll interval, and offset commit failure](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html)
 - [Apache Kafka 4.0.0 — `ConsumerCoordinator`: a commit from a member that is no longer in the group fails in the client](https://github.com/apache/kafka/blob/4.0.0/clients/src/main/java/org/apache/kafka/clients/consumer/internals/ConsumerCoordinator.java#L1268-L1283)
