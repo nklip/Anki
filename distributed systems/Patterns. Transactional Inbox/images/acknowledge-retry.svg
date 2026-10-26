@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="735" viewBox="0 0 1000 735" role="img" aria-labelledby="title desc">
+<title id="title">A retry after commit must not award the points again</title>
+<desc id="desc">Sequence diagram with broker, consumer and database. First delivery of evt-901 commits the receipt and 110 points. The consumer crashes before acknowledgement. The broker redelivers the same ID. In a new transaction, the consumer attempts the unique receipt insertion, discovers a committed duplicate and skips the credit. It finishes the transaction and acknowledges the duplicate. Account 7 remains at 110 points.</desc>
+<!-- Shared native SVG styles; dashed message arrows mean replies, not failures.
+Reply heads have short solid joins so dash gaps cannot detach them from their shafts. -->
+<defs><style>
+text {font-family:Arial, Helvetica, sans-serif; fill:#17304b;}
+.title {font-size:28px; font-weight:700;}
+.subtitle {font-size:18px; fill:#486078;}
+.actor {font-size:20px; font-weight:700;}
+.message {font-size:18px;}
+.detail {font-size:17px;}
+.emphasis {font-size:18px; font-weight:700;}
+.actor-box {fill:#eff6ff; stroke:#3980bd; stroke-width:1.6;}
+.transaction {fill:#eff6ff; stroke:#7da8ce; stroke-width:1.5;}
+.lifeline {fill:none; stroke:#8fa4b8; stroke-width:1.4; stroke-dasharray:5 6;}
+.flow {fill:none; stroke:#47637f; stroke-width:2;}
+.reply {stroke-dasharray:7 5;}
+.failure {fill:#fff6e5; stroke:#c68b25; stroke-width:1.4;}
+</style></defs>
+<!-- Canvas and reading convention. -->
+<rect width="1000" height="735" fill="#fff"/>
+<text class="title" x="28" y="39" text-anchor="start">A retry after commit must not award the points again</text>
+<text class="subtitle" x="28" y="72" text-anchor="start">Read top to bottom · dashed arrows are replies</text>
+<!-- Separate database frames distinguish the completed first attempt and the retry. -->
+<g id="first-delivery-transaction"><rect class="transaction" x="454" y="219" width="452" height="125" rx="8"/><text class="detail" x="680" y="245" text-anchor="middle">Database transaction · first delivery</text></g>
+<g id="retry-transaction"><rect class="transaction" x="454" y="456" width="452" height="184" rx="8"/><text class="detail" x="680" y="482" text-anchor="middle">Database transaction · retry</text></g>
+<!-- The consumer lifeline is interrupted at its crash annotation, then resumes for redelivery. -->
+<path id="broker-lifeline" class="lifeline" d="M140 158 V704"/>
+<path id="consumer-lifeline" class="lifeline" d="M500 158 V359 M500 397 V704"/>
+<path id="database-lifeline" class="lifeline" d="M860 158 V704"/>
+<rect class="actor-box" x="51" y="100" width="178" height="58" rx="8"/><text class="actor" x="140" y="136" text-anchor="middle">Broker</text>
+<rect class="actor-box" x="411" y="100" width="178" height="58" rx="8"/><text class="actor" x="500" y="136" text-anchor="middle">Consumer</text>
+<rect class="actor-box" x="771" y="100" width="178" height="58" rx="8"/><text class="actor" x="860" y="136" text-anchor="middle">Database</text>
+<!-- First delivery commits before the consumer loses the acknowledgement opportunity. -->
+<text class="message" x="320.0" y="184" text-anchor="middle">evt-901: award 10 points</text><path id="first-delivery-shaft" class="flow" data-connector="true" d="M141 196 H488"/><polygon id="first-delivery-head" points="487,191 498,196 487,201" fill="#47637f"/>
+<text class="message" x="680.0" y="269" text-anchor="middle">Receipt + credit; COMMIT</text><path id="first-process-shaft" class="flow" data-connector="true" d="M501 281 H848"/><polygon id="first-process-head" points="847,276 858,281 847,286" fill="#47637f"/>
+<text class="message" x="680.0" y="312" text-anchor="middle">Committed: 110 points</text><path id="first-committed-shaft" class="flow reply" data-connector="true" d="M859 324 H512"/><path id="first-committed-head-join" class="flow" data-connector="true" d="M518 324 H512"/><polygon id="first-committed-head" points="513,319 502,324 513,329" fill="#47637f"/>
+<!-- Crash label replaces a segment of the consumer lifeline; it covers no message arrow. -->
+<rect class="failure" x="350" y="360" width="300" height="36" rx="7"/>
+<text class="detail" x="500" y="384" text-anchor="middle">Crash before acknowledgement</text>
+<!-- Redelivery keeps the original ID, so the committed receipt is found. -->
+<text class="message" x="320.0" y="420" text-anchor="middle">Redeliver evt-901 (same ID)</text><path id="redeliver-shaft" class="flow" data-connector="true" d="M141 432 H488"/><polygon id="redeliver-head" points="487,427 498,432 487,437" fill="#47637f"/>
+<text class="message" x="680.0" y="508" text-anchor="middle">BEGIN; try unique insert</text><path id="retry-insert-shaft" class="flow" data-connector="true" d="M501 520 H848"/><polygon id="retry-insert-head" points="847,515 858,520 847,525" fill="#47637f"/>
+<text class="message" x="680.0" y="549" text-anchor="middle">Committed duplicate</text><path id="duplicate-shaft" class="flow reply" data-connector="true" d="M859 561 H512"/><path id="duplicate-head-join" class="flow" data-connector="true" d="M518 561 H512"/><polygon id="duplicate-head" points="513,556 502,561 513,566" fill="#47637f"/>
+<text class="message" x="680.0" y="608" text-anchor="middle">Skip credit; finish transaction</text><path id="finish-retry-shaft" class="flow" data-connector="true" d="M501 620 H848"/><polygon id="finish-retry-head" points="847,615 858,620 847,625" fill="#47637f"/>
+<!-- The duplicate still receives acknowledgement, outside the transaction. -->
+<text class="message" x="320.0" y="673" text-anchor="middle">Acknowledge delivery</text><path id="retry-acknowledge-shaft" class="flow" data-connector="true" d="M499 685 H152"/><polygon id="retry-acknowledge-head" points="153,680 142,685 153,690" fill="#47637f"/>
+<text class="emphasis" x="680" y="687" text-anchor="middle">Account 7 stays at 110 points.</text>
+</svg>

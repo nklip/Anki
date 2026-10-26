@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="650" viewBox="0 0 1000 650" role="img" aria-labelledby="title desc">
+<title id="title">Commit the receipt and award, then acknowledge</title>
+<desc id="desc">Sequence diagram with broker, consumer and database. The broker delivers evt-901. In one database transaction the consumer begins, inserts a unique receipt, receives confirmation that it is a new uncommitted row, awards ten points to account 7, and commits. Only after the database confirms commit does the consumer acknowledge the broker. The receipt and the 110-point balance become durable together.</desc>
+<!-- Shared native SVG styles; dashed message arrows mean replies, not failures.
+Reply heads have short solid joins so dash gaps cannot detach them from their shafts. -->
+<defs><style>
+text {font-family:Arial, Helvetica, sans-serif; fill:#17304b;}
+.title {font-size:28px; font-weight:700;}
+.subtitle {font-size:18px; fill:#486078;}
+.actor {font-size:20px; font-weight:700;}
+.message {font-size:18px;}
+.detail {font-size:17px;}
+.emphasis {font-size:18px; font-weight:700;}
+.actor-box {fill:#eff6ff; stroke:#3980bd; stroke-width:1.6;}
+.transaction {fill:#eff6ff; stroke:#7da8ce; stroke-width:1.5;}
+.lifeline {fill:none; stroke:#8fa4b8; stroke-width:1.4; stroke-dasharray:5 6;}
+.flow {fill:none; stroke:#47637f; stroke-width:2;}
+.reply {stroke-dasharray:7 5;}
+.failure {fill:#fff6e5; stroke:#c68b25; stroke-width:1.4;}
+</style></defs>
+<!-- Canvas and reading convention. -->
+<rect width="1000" height="650" fill="#fff"/>
+<text class="title" x="28" y="39" text-anchor="start">Commit the receipt and award, then acknowledge</text>
+<text class="subtitle" x="28" y="72" text-anchor="start">Read top to bottom · dashed arrows are replies</text>
+<!-- Transaction frame is painted before lifelines and messages. -->
+<g id="atomic-processing"><rect class="transaction" x="454" y="216" width="452" height="320" rx="8"/><text class="detail" x="680" y="242" text-anchor="middle">Database transaction</text></g>
+<!-- Participant lifelines establish downward time. -->
+<path id="broker-lifeline" class="lifeline" d="M140 158 V598"/>
+<path id="consumer-lifeline" class="lifeline" d="M500 158 V598"/>
+<path id="database-lifeline" class="lifeline" d="M860 158 V598"/>
+<rect class="actor-box" x="51" y="100" width="178" height="58" rx="8"/><text class="actor" x="140" y="136" text-anchor="middle">Broker</text>
+<rect class="actor-box" x="411" y="100" width="178" height="58" rx="8"/><text class="actor" x="500" y="136" text-anchor="middle">Consumer</text>
+<rect class="actor-box" x="771" y="100" width="178" height="58" rx="8"/><text class="actor" x="860" y="136" text-anchor="middle">Database</text>
+<!-- Arrowheads stop two units before the lifeline; shafts end under their bases. -->
+<text class="message" x="320.0" y="187" text-anchor="middle">evt-901: award 10 points</text><path id="deliver-shaft" class="flow" data-connector="true" d="M141 199 H488"/><polygon id="deliver-head" points="487,194 498,199 487,204" fill="#47637f"/>
+<text class="message" x="680.0" y="272" text-anchor="middle">BEGIN</text><path id="begin-shaft" class="flow" data-connector="true" d="M501 284 H848"/><polygon id="begin-head" points="847,279 858,284 847,289" fill="#47637f"/>
+<text class="message" x="680.0" y="316" text-anchor="middle">Insert unique receipt: evt-901</text><path id="insert-receipt-shaft" class="flow" data-connector="true" d="M501 328 H848"/><polygon id="insert-receipt-head" points="847,323 858,328 847,333" fill="#47637f"/>
+<text class="message" x="680.0" y="360" text-anchor="middle">New row (uncommitted)</text><path id="new-row-shaft" class="flow reply" data-connector="true" d="M859 372 H512"/><path id="new-row-head-join" class="flow" data-connector="true" d="M518 372 H512"/><polygon id="new-row-head" points="513,367 502,372 513,377" fill="#47637f"/>
+<text class="message" x="680.0" y="404" text-anchor="middle">Account 7: 100 → 110</text><path id="credit-shaft" class="flow" data-connector="true" d="M501 416 H848"/><polygon id="credit-head" points="847,411 858,416 847,421" fill="#47637f"/>
+<text class="message" x="680.0" y="448" text-anchor="middle">COMMIT</text><path id="commit-shaft" class="flow" data-connector="true" d="M501 460 H848"/><polygon id="commit-head" points="847,455 858,460 847,465" fill="#47637f"/>
+<text class="message" x="680.0" y="502" text-anchor="middle">Committed</text><path id="committed-shaft" class="flow reply" data-connector="true" d="M859 514 H512"/><path id="committed-head-join" class="flow" data-connector="true" d="M518 514 H512"/><polygon id="committed-head" points="513,509 502,514 513,519" fill="#47637f"/>
+<!-- Acknowledgement is below and outside the database transaction. -->
+<text class="message" x="320.0" y="568" text-anchor="middle">Acknowledge delivery</text><path id="acknowledge-shaft" class="flow" data-connector="true" d="M499 580 H152"/><polygon id="acknowledge-head" points="153,575 142,580 153,585" fill="#47637f"/>
+<text class="message" x="28" y="627" text-anchor="start">Receipt and credit become durable together; acknowledgement comes afterwards.</text>
+</svg>

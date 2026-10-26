@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="670" viewBox="0 0 1040 670" role="img" aria-labelledby="title desc">
+  <title id="title">Inbox: accept the request now, process it later</title>
+  <desc id="desc">Read downward. A client sends a request to the Web API. The API saves the full request as pending in the inbox and waits for the database commit before replying HTTP 202 Accepted. Later a worker reads and locks a pending request, applies its business change and marks it done in one database transaction. Acceptance means stored, not completed.</desc>
+  <!-- Original sequence layout inspired by Frap's CC0 Inbox-pattern.svg on Wikimedia Commons.
+       The worker explicitly polls; the database does not spontaneously invoke application code. -->
+  <!-- Shared semantic colors, editable labels, and separate arrow shafts and heads. -->
+  <defs><style>
+    text { font-family:Arial,Helvetica,sans-serif; fill:#17304b; text-anchor:middle; }
+    .title { font-size:27px; font-weight:700; text-anchor:start; }
+    .subtitle { font-size:17px; fill:#486078; text-anchor:start; }
+    .actor { fill:#eff6ff; stroke:#3980bd; stroke-width:1.5; }
+    .actor-label { font-size:20px; font-weight:700; }
+    .message { font-size:18px; }
+    .detail { font-size:17px; }
+    .lifeline { fill:none; stroke:#9aaabc; stroke-width:1.4; stroke-dasharray:6 6; }
+    .activation { fill:#fff; stroke:#3980bd; stroke-width:1.5; }
+    .flow { fill:none; stroke:#47637f; stroke-width:2; }
+    .reply { fill:none; stroke:#47637f; stroke-width:2; stroke-dasharray:6 5; }
+    .frame { fill:#f3f8ff; stroke:#94b8db; stroke-width:1.5; }
+  </style></defs>
+  <rect width="1040" height="670" fill="#fff"/>
+  <!-- Heading explains both time direction and the key distinction. -->
+  <text class="title" x="28" y="38">Inbox: accept the request now, process it later</text>
+  <text class="subtitle" x="28" y="68">Read top to bottom · dashed arrows are replies · accepted does not mean completed</text>
+  <!-- The worker frame encloses only its later atomic processing, not the HTTP reply. -->
+  <rect id="processing-transaction" class="frame" x="585" y="362" width="426" height="244" rx="8"/>
+  <text class="detail" x="798" y="389" font-weight="700">Later: one database transaction</text>
+  <!-- Lifelines occupy participant centers; labels sit entirely between lifelines. -->
+  <path class="lifeline" d="M110 134 V340 M350 134 V340 M640 134 V606 M940 134 V606"/>
+  <rect class="actor" x="30" y="90" width="160" height="44" rx="6"/>
+  <text class="actor-label" x="110" y="119">Client</text>
+  <rect class="actor" x="270" y="90" width="160" height="44" rx="6"/>
+  <text class="actor-label" x="350" y="119">Web API</text>
+  <rect class="actor" x="560" y="90" width="160" height="44" rx="6"/>
+  <text class="actor-label" x="640" y="119">Database</text>
+  <rect class="actor" x="860" y="90" width="160" height="44" rx="6"/>
+  <text class="actor-label" x="940" y="119">Worker</text>
+  <!-- The API remains active until the accepted reply; the database commits before it. -->
+  <rect class="activation" x="344" y="183" width="12" height="143"/>
+  <rect class="activation" x="634" y="233" width="12" height="50"/>
+  <rect class="activation" x="934" y="428" width="12" height="162"/>
+  <rect class="activation" x="634" y="428" width="12" height="162"/>
+  <!-- All noses stop at activation boundaries. Shafts terminate inside their own heads. -->
+  <g id="receive-request">
+    <text class="message" x="227" y="169">POST /awards</text>
+    <path class="flow" data-connector="true" d="M110 189 H334"/>
+    <polygon points="344,189 332,183 332,195" fill="#47637f"/>
+  </g>
+  <g id="persist-request">
+    <text class="message" x="495" y="219">Save full request: pending</text>
+    <path class="flow" data-connector="true" d="M356 239 H624"/>
+    <polygon points="634,239 622,233 622,245" fill="#47637f"/>
+    <text class="message" x="495" y="265">Committed</text>
+    <path class="reply" data-connector="true" d="M634 283 H366"/>
+    <polygon points="356,283 368,277 368,289" fill="#47637f"/>
+  </g>
+  <g id="accept-request">
+    <text class="message" x="227" y="310">202 Accepted</text>
+    <path class="reply" data-connector="true" d="M344 326 H120"/>
+    <polygon points="110,326 122,320 122,332" fill="#47637f"/>
+  </g>
+  <!-- A worker polls and locks a pending row; the stored payload survives an API crash. -->
+  <g id="read-pending">
+    <text class="message" x="790" y="417">Read + lock pending request</text>
+    <path class="flow" data-connector="true" d="M934 435 H656"/>
+    <polygon points="646,435 658,429 658,441" fill="#47637f"/>
+    <text class="message" x="790" y="461">Request data</text>
+    <path class="reply" data-connector="true" d="M646 479 H924"/>
+    <polygon points="934,479 922,473 922,485" fill="#47637f"/>
+  </g>
+  <g id="complete-work">
+    <text class="message" x="790" y="507">Apply award + mark done;</text>
+    <text class="message" x="790" y="529">commit both</text>
+    <path class="flow" data-connector="true" d="M934 547 H656"/>
+    <polygon points="646,547 658,541 658,553" fill="#47637f"/>
+    <text class="message" x="790" y="573">Committed</text>
+    <path class="reply" data-connector="true" d="M646 590 H924"/>
+    <polygon points="934,590 922,584 922,596" fill="#47637f"/>
+  </g>
+  <!-- This note fills the inactive side with the lesson instead of more protocol detail. -->
+  <rect x="28" y="394" width="500" height="134" rx="8" fill="#eef9f1" stroke="#419464" stroke-width="1.5"/>
+  <text class="actor-label" x="278" y="430">The request is already safe in the inbox.</text>
+  <text class="message" x="278" y="463">The client can leave while the worker finishes.</text>
+  <text class="message" x="278" y="496">If processing rolls back, pending work remains.</text>
+  <text class="detail" x="520" y="644">Unique request ID: retries reuse the existing row, including its status.</text>
+</svg>

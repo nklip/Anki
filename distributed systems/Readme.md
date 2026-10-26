@@ -20,6 +20,7 @@ Each topic has its own folder, with diagrams in its `images/` directory.
  * [Patterns. Change Data Capture](./Patterns.%20Change%20Data%20Capture/Readme.md) — CDC through Pinterest’s architecture: Kafka Connect and Debezium, snapshots, change events, PostgreSQL WAL retention, replay, and Transactional Outbox.
  * [Patterns. Fanout](./Patterns.%20Fanout/Readme.md) — message and request fanout, feed-generation strategies, capacity, and failure handling.
  * [Patterns. Protective patterns](./Patterns.%20Protective%20patterns/Readme.md) — rate limiting, resource isolation, timeouts, fallbacks, and circuit breakers.
+ * [Patterns. Transactional Inbox](./Patterns.%20Transactional%20Inbox/Readme.md) — atomic consumer deduplication, crash recovery, concurrent deliveries, PostgreSQL examples, and inbox/outbox boundaries.
  * [Patterns. Transactional Outbox](./Patterns.%20Transactional%20Outbox/Readme.md) — the outbox table and relay process, atomic local writes, consumer deduplication, flushing, relay recovery, and ordering boundaries.
  * [Presigned URLs](./Presigned%20URLs/Readme.md) — S3 versus CloudFront signatures, private origins, cache behavior, expiration, uploads, and revocation.
  * [RabbitMQ](./RabbitMQ/Readme.md) — exchanges and queues, acknowledgements, retries, replication, Kafka comparison, and real production examples.
