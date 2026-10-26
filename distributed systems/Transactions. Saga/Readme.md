@@ -2,282 +2,509 @@
 
 <sub>[Back to Distributed Systems](../Readme.md#content)</sub>
 
-**A Saga coordinates a business operation as a sequence of independently committed local transactions.** If the operation cannot finish, it runs compensating transactions to repair the effects of completed work. Other operations can observe intermediate results, so a Saga does not provide the isolation or single atomic commit of one database transaction.
+**A saga runs one business operation across several databases as a chain of local transactions, each committed on its own. If a later step fails, the saga runs compensating transactions that undo the effects of the steps that already committed.** Because nothing commits the whole operation at once, other users can see it half done: a saga gives up the isolation of one big transaction so that each database can stay in charge of its own data.
 
-This article uses the repository's Digital Wallet design: transfer **$1 from account A to account C**, held in different partitions. It explains the architecture, successful and failed transfers, coordination styles, recovery mechanisms, and how Saga differs from Try-Confirm/Cancel (TCC).
+This article follows one example from start to finish: moving **$1 from Alice's account in database A to Bob's account in database B**. It first shows why one database transaction cannot do this, then runs the saga step by step in SQL, including what happens when the second step fails. The later sections add what a real saga needs: rules for what others see between the steps, someone to run the steps, safe retries, reliable messages, and recovery when progress stops. The article ends by comparing sagas with Try-Confirm/Cancel (TCC) and two-phase commit.
 
-## Saga in practice
+## The problem: one transfer, two databases
 
-**Airbnb described a production example of compensation-based workflows in April 2026: Skipper, its embedded Java/Kotlin workflow engine.** Skipper records progress so work can resume after a crash. Its `@Compensate` annotation pairs an action with an operation that counteracts its effect. After a failure, the engine runs the applicable compensations in reverse order, such as releasing inventory or refunding a charge. This is **Saga-like behavior**; Airbnb's article describes the mechanism without naming it Saga.
+A payment app keeps its accounts in two PostgreSQL databases, `db_a` and `db_b`, each owned by its own service. **Service A** owns database A, which holds Alice's account, and **service B** owns database B, which holds Bob's. Both databases have the same small table:
 
-Airbnb chose to make compensation part of the engine so teams could stop repeatedly building custom cleanup and recovery logic. By that publication, Skipper had run in production for more than a year across **over 15 use cases**, including payments, insurance, and wallet workflows. Airbnb reported a **peak of 10,000 workflows per second on DynamoDB**. This is an engine throughput figure; the article gives no separate rate for payment workflows or those using compensation.
+```sql
+-- Database A
+CREATE TABLE accounts (
+    id      text PRIMARY KEY,
+    balance numeric(12, 2) NOT NULL CHECK (balance >= 0),
+    status  text NOT NULL DEFAULT 'open'    -- 'open' or 'closed'
+);
 
-For architectural preference, **Amazon Web Services (AWS), Microsoft Azure, and Google Cloud recommend considering Saga for business operations spanning independent services** when compensation and temporary inconsistency are acceptable. The reason is that each service can commit its own work while the workflow handles retries and recovery across service boundaries. AWS's service-selection guide, updated **September 4, 2026**, also lists Saga as an orchestration workload. These are published design recommendations; they do not establish which protocol Amazon.com's checkout uses internally.
+INSERT INTO accounts (id, balance) VALUES ('alice', 10.00);
+```
 
-## Why it is called Saga
+```sql
+-- Database B: the same CREATE TABLE, then
+INSERT INTO accounts (id, balance) VALUES ('bob', 5.00);
+```
 
-**Saga is a name; the original paper gives no acronym expansion for SAGA.** Hector Garcia-Molina and Kenneth Salem introduced the term in their 1987 paper *Sagas*. Its acknowledgments credit **Bruce Lindsay** with suggesting the name.
+The `numeric` type keeps money exact, and the `CHECK` constraint stops any balance from going below zero.
 
-In ordinary English, a *saga* is a long story or a complicated series of connected events. That gives us a useful memory aid: **the business operation is the story, and its local transactions are the chapters**. The paper does not explain Lindsay's reason for choosing the word, so this story analogy explains why the name fits rather than claiming a documented naming rationale.
+The transfer should leave Alice with $9 and Bob with $6. If both accounts lived in one database, one transaction would do it:
 
-## The problem: one operation, separate commit boundaries
+```sql
+BEGIN;
+UPDATE accounts SET balance = balance - 1.00 WHERE id = 'alice';
+UPDATE accounts SET balance = balance + 1.00 WHERE id = 'bob';
+COMMIT;
+```
 
-A **local transaction** commits changes within one participant's transactional boundary. A **participant** is the service or partition responsible for that data. A **commit** makes the transaction's changes durable according to that participant's guarantees.
+Both updates would commit together or not at all. Across two databases, this is impossible. A PostgreSQL connection works inside exactly one database, so its transaction can change only that database's tables. A query in database A that even names database B fails:
 
-Suppose A has $10 and C has $5. The business request wants A to have $9 and C to have $6. If these accounts belong to independent databases, committing A's debit does not commit C's credit. A crash between the two leaves unfinished work.
+```sql
+-- Database A
+SELECT balance FROM db_b.public.accounts WHERE id = 'bob';
+```
 
-A Saga makes that unfinished work explicit. Its **compensation** is another local transaction with a business-defined corrective effect: for example, refunding A after C definitively rejects the credit. **Eventual consistency** here means the workflow seeks a valid completed or compensated outcome through recovery; it does not promise an immediate result or a fixed completion time.
+```text
+ERROR:  cross-database references are not implemented: "db_b.public.accounts"
+```
 
-![saga.svg](images/saga.svg)
+The `postgres_fdw` extension can make Bob's table look local, but it commits the remote transaction separately and does not support two-phase commit, so the two commits are still not atomic.
 
-## Where Saga appears in the System Design material
+The transfer therefore needs two commits, and something can go wrong between them. If the app commits Alice's debit and then crashes before it credits Bob, Alice has $9, Bob has $5, and a dollar has disappeared.
 
-The **Digital Wallet** chapter uses Saga both for a debit/credit flow and for coordination across account partitions. The diagrams below adapt its `saga.svg` and `sharded-raft-groups.svg`, retaining the A-to-C example while separating commit outcomes from communication failures. The original paths are listed under Sources.
+There are two ways out. **Two-phase commit** makes both databases commit together, at the price of participant support and locks that stay held until the coordinator's decision arrives; the [Two-phase commit](../Transactions.%20Two-phase%20commit/Readme.md) article covers it. A **saga** accepts two separate commits and manages the gap between them. It cannot close the gap, but it turns it into a known state that the system can always finish or undo.
 
-The architecture below simplifies the chapter's full design. A **coordinator**, also called an **orchestrator**, records progress and directs participants. A **Raft group** uses consensus to replicate a partition's state across nodes; the leader coordinates replication to followers. Those replicas belong to the same partition. They do not make the two partitions commit together.
+If you have read the System Design chapter [Digital Wallet](../../system%20design/27.%20Digital%20Wallet/Readme.md), this is its transfer between accounts A and C. There, each account partition is replicated with Raft. Replication keeps the copies of one partition in sync; it does not make two partitions commit together, so the chapter uses a saga across partitions for the same reason.
 
-![saga-wallet-architecture.svg](images/saga-wallet-architecture.svg)
+## The plan: steps and their compensations
 
-The durable progress store corresponds to the chapter's **Phase Status Table**. It records which actions are pending, completed, or being compensated. Saga does not require a table with that particular name or schema; the implementation needs durable information sufficient to recover its workflow. The full wallet diagram's separate read path and proxy routing are omitted here to keep the transaction boundaries visible. Raft and event sourcing—recording state changes as events—are choices in that wallet architecture, not requirements of Saga.
+A saga starts with a plan. For this transfer, the plan has three local transactions:
 
-The **Hotel Reservation System** chapter also discusses Saga under data consistency across services. Its chosen design keeps dependent reservation and inventory updates in one relational database. An **invariant** is a rule that valid data must satisfy. That gives us a useful starting question: **can the invariant stay inside one local transaction?**
+- **T1** debits Alice by $1 in database A.
+- **T2** credits Bob by $1 in database B.
+- **C1** refunds Alice's $1 in database A. It is the **compensating transaction** for T1, and it runs only if T2 fails.
 
-## Step 1 — Commit the debit in A's partition
+A **local transaction** is an ordinary transaction inside one database, with its own `COMMIT`. A compensating transaction is local too: it does not roll anything back, but commits a new change that cancels the effect of an earlier one.
+
+The original 1987 paper on sagas states the promise precisely. For forward steps T1 … Tn with compensations C1 … Cn−1, the system runs either all the forward steps, T1 … Tn, or the first few of them followed by their compensations in reverse order: T1 … Tj, Cj … C1. For this transfer, that leaves three possible outcomes: T1 and T2 both commit, and the transfer is **completed**; T1 commits and C1 refunds it, and the transfer is **compensated**; or T1 itself is rejected, and nothing changes. The last forward step never needs a compensation, because no later step can fail after it. This is what people mean when they call a saga **eventually consistent**: it reaches one of these outcomes through recovery, but not immediately and not within any fixed time.
+
+![saga-plan.svg](images/saga-plan.svg)
+
+Read the figure from left to right along the top for the success path. A rejected step sends the saga down its failure branch: a rejected T1 stops the saga with nothing to undo, and a rejected T2 starts C1.
+
+The component that follows the plan and remembers how far it got is the **orchestrator**. It can be a service of its own or a part of service A. What matters is that it records each step's outcome durably, so that after a crash it can continue the saga instead of forgetting it. A saga can also run without an orchestrator, as [Who runs the steps](#who-runs-the-steps-orchestration-or-choreography) shows.
+
+### Why it is called a saga
+
+**Saga is a name, not an acronym.** Hector Garcia-Molina and Kenneth Salem introduced the term in their 1987 paper *Sagas*, and its acknowledgments credit **Bruce Lindsay** with suggesting it. In everyday English, a saga is a long story told in parts, which makes a handy memory aid: **the business operation is the story, and its local transactions are the chapters**. The paper does not explain why Lindsay picked the word, so treat this as a mnemonic, not as history.
+
+## Step 1 — Debit Alice in database A
 
 ![saga-step-1-debit.svg](images/saga-step-1-debit.svg)
 
-Before this step, A has $10, C has $5, and transfer `tr-42` is pending. The request to transfer $1 triggers a debit command. A's participant validates the request and commits `A − $1` together with a durable record of that command's outcome.
+The orchestrator asks service A to debit Alice. Service A runs one local transaction in database A:
 
-After the coordinator learns that the debit committed, the balances are A = $9 and C = $5, and the transfer remains pending. C has not received the money yet. This is an intermediate state that the application must represent and recover from.
+```sql
+-- Database A
+BEGIN;
+UPDATE accounts
+SET    balance = balance - 1.00
+WHERE  id = 'alice' AND status = 'open' AND balance >= 1.00;
+COMMIT;
+```
 
-For this example, a definitively rejected debit ends the request without refunding anything. If the debit rolled back locally, there is no committed debit to compensate. A missing reply requires outcome resolution, described below.
+PostgreSQL reports how many rows the `UPDATE` changed. `UPDATE 1` means the debit happened. `UPDATE 0` means Alice's account is closed or holds less than $1: T1 is rejected, nothing has changed, and the saga ends with nothing to undo. Without the `balance >= 1.00` condition, the `CHECK` constraint would still stop an overdraft, but with an error instead of a clean `UPDATE 0`.
 
-## Step 2 — Commit the credit in C's partition
+After the `COMMIT`, Alice has $9 and Bob still has $5. The orchestrator records “debit done” for transfer `tr-42` before it moves on, so a crash at this point does not lose track of the dollar.
+
+This intermediate state is real. Anyone who adds up the two balances right now gets $14 instead of $15, because the missing dollar is in flight between the databases. [Between the steps](#between-the-steps-other-transactions-see-the-half-done-work) explains why that matters.
+
+## Step 2 — Credit Bob in database B
 
 ![saga-step-2-credit.svg](images/saga-step-2-credit.svg)
 
-The confirmed debit triggers `C + $1`. C's participant commits the credit and its command result in its own local transaction. Once the coordinator has durable confirmation of both outcomes, it marks `tr-42` completed.
+With the debit recorded, the orchestrator asks service B to credit Bob:
 
-Now A = $9 and C = $6. These are two commits followed by a workflow decision. The coordinator's final status does not retroactively combine them into one database commit.
+```sql
+-- Database B
+BEGIN;
+UPDATE accounts
+SET    balance = balance + 1.00
+WHERE  id = 'bob' AND status = 'open';
+COMMIT;
+```
 
-A client can receive a transfer identifier while the operation is pending and query its status later. An accepted request must be distinguishable from a completed transfer; otherwise the interface hides precisely the failure window the Saga must manage.
+`UPDATE 1`: Bob now has $6, and the orchestrator marks `tr-42` **completed**. The total is $15 again. These were still two separate commits. The orchestrator's “completed” record says that both happened, but it does not merge them into one commit after the fact.
 
-A short Saga can also finish while the original request waits. **Synchronous response timing and transaction guarantees are separate choices.** Waiting does not isolate intermediate commits, and a client timeout does not establish failure. Keep the same transfer identifier available for outcome lookup and retries even when the normal response reports completion.
+The client does not have to wait for all of this. The app can accept the request at once, return the transfer ID `tr-42` with the status “pending”, and let the client check the status later. For a short saga, the app can instead wait and answer “completed”. Either way, a pending transfer must look different from a completed one, and a client timeout does not mean that the transfer failed, so the client keeps `tr-42` to check the status or to retry. Waiting changes the response time, not the guarantees: the steps still commit separately.
 
-## Step 3 — Compensate after a confirmed failure
+## Step 3 — If Bob's account is closed, refund Alice
 
 ![saga-step-3-compensate.svg](images/saga-step-3-compensate.svg)
 
-This is the alternative to successful completion. Assume A's debit committed, but C durably rejected the credit and will reject delayed duplicates of that command. The coordinator records a compensating state and requests `A + $1` as the correction for the original debit.
+Now go back to the moment after Step 1, and suppose that Bob closed his account a minute earlier. Step 2's `UPDATE` finds no open account and reports `UPDATE 0`: database B has definitively rejected the credit. Alice has already paid, so the orchestrator runs the compensation C1 in database A:
 
-After that correction commits, A = $10 and C = $5, assuming no other transfers occurred. The transfer is **compensated**, not completed successfully. If the correction fails temporarily, the workflow stays unresolved and retries it; it must not claim compensation is finished.
+```sql
+-- Database A
+BEGIN;
+UPDATE accounts
+SET    balance = balance + 1.00
+WHERE  id = 'alice';
+COMMIT;
+```
 
-The original wallet diagram also has a branch that reverses C's credit before refunding A. That branch makes sense only when C's credit actually committed and an allowed cancellation requires reversal. If C rejected the credit atomically, executing `C − $1` would create a new error.
+Alice is back to $10, Bob still has $5, and the orchestrator marks `tr-42` **compensated**: the transfer failed, and its effect was undone. Nothing was rolled back in the database sense. The refund is a new commit, and both the debit and the refund stay in the history.
+
+Three rules keep compensation correct:
+
+- **Undo only what committed.** Bob's credit never changed his balance, so there is nothing to undo in database B. Running `balance - 1.00` for Bob would take a dollar that he never received.
+- **Compensate only after a definite “no”.** `UPDATE 0` is a definite answer. A timeout is not: the credit may have happened, as [A timeout means the outcome is unknown](#a-timeout-means-the-outcome-is-unknown) explains.
+- **Keep trying until the compensation commits.** If the refund fails for a temporary reason, the transfer stays unresolved and the orchestrator retries. It must not report “compensated” before the refund commits.
+
+The SQL so far assumes that every statement runs exactly once. Real networks break that assumption: a request can time out after it succeeded, or arrive twice. [Timeouts and retries](#timeouts-and-retries-make-each-step-safe-to-repeat) adds the missing protection.
 
 ## Compensation repairs an effect, not a snapshot
 
-Suppose A receives an unrelated $20 deposit after the debit. A now has $29. Compensating the $1 debit should leave A with $30, rather than restore the old $10 balance and erase the deposit. Record a correction linked to the original transfer.
+Suppose Alice receives an unrelated $20 deposit between the debit and the refund. She then has $29, and the refund must leave her with $30. If C1 wrote back her old balance of $10 instead, it would erase the deposit. That is why C1 adds $1 to whatever the balance is now. The original paper makes the same point with airline seats: a compensation undoes a step's effect in business terms, but it does not necessarily return the database to the state it had before the step.
 
-Compensation is domain-specific. Canceling a reservation may release capacity; refunding a payment may leave fees or an audit history. It can itself fail and require recorded progress, retries, and operator intervention.
+Compensation is a business action, so the business defines it. Canceling a reservation may free a seat; refunding a card payment may keep a fee and leave an audit trail. A compensation can fail like any other step, so it needs recorded progress, retries, and sometimes a person.
 
-The wallet example reverses dependent actions in reverse order. That is a useful default for a sequential flow, not a universal rule for all workflows. The original Saga paper also allows parallel work when dependencies permit it; compensation must respect those dependencies. The wallet chapter's linear example should not be read as a prohibition on parallel Sagas.
+The plan compensates in reverse order, which is the safe default when each step depends on the one before. The original paper also allows steps that do not depend on each other to run in parallel; their compensations must then respect the same dependencies.
 
-## Orchestration and choreography
+## Between the steps, other transactions see the half-done work
 
-A **command** asks a participant to do something, such as `CreditC`. A **reply** returns the outcome of a particular command to its requester: `DebitCommitted` tells the coordinator that A's requested debit committed. The earlier architecture diagram labels these replies generically as **Commit result**.
+**A saga does not isolate the whole operation.** Each local transaction is isolated inside its own database, but between the steps, everyone can see the intermediate state. Between Step 1 and Step 2, a report that adds up all balances finds $14 instead of $15. Nothing is broken in either database; the saga simply has not finished yet.
 
-An **event** announces a fact to interested subscribers: `ADebited` announces that A's debit committed. Here, the reply and event describe the same fact but serve different roles: the reply answers the coordinator's request; the published event lets subscribers react. In the failure path, a `CreditRejected` event announces C's rejection and lets A's handler start the refund. These message names are illustrative. Both coordination styles still need durable state and recovery rules.
+Microsoft's saga guidance names three anomalies that this can cause:
 
-The diagram compares how the same debit triggers the credit. A message broker transports events in the choreography example; the participants decide their next actions.
+| Anomaly | What it looks like with transfers |
+| --- | --- |
+| Lost update | One saga writes a value that it read earlier and overwrites another saga's change, for example by setting Alice's balance to a total computed before a concurrent deposit. |
+| Dirty read | Another workflow uses a step's result before the saga is final, for example a cashback program that rewards Alice's payment shortly before the saga refunds it. |
+| Nonrepeatable read | Two steps of one saga read different data because another saga committed in between, for example a funds check that passes and a later step that finds the money gone. |
+
+Here, “dirty” means work that has committed locally but is not yet final for the business. It is not a SQL dirty read, which reads another transaction's uncommitted changes: PostgreSQL never allows that, at any isolation level. A database can prevent SQL dirty reads and still expose a saga's half-finished state.
+
+Microsoft also lists six countermeasures. Each one needs enforcement by the service that owns the data; a `PENDING` label or a history table alone protects nothing.
+
+| Countermeasure | How it applies to a transfer |
+| --- | --- |
+| Semantic lock | Mark the work as in progress, for example as a pending amount that other withdrawals must respect, and make conflicting operations wait or fail. |
+| Commutative updates | Use changes whose order does not matter: `balance = balance - 1.00` instead of writing a computed total. |
+| Pessimistic view | Reorder the steps so that updates others could misread happen late, in retryable steps after the [point of no return](#the-point-of-no-return-compensable-pivot-and-retryable-steps). |
+| Reread values | Check that the data has not changed before you update it, and stop the step if it has. |
+| Version files | Keep a log of all operations on a record and apply them in the correct order. |
+| Risk-based concurrency | Choose the mechanism by business risk: a saga for low-risk updates, a distributed transaction for high-risk ones. |
+
+Step 1's SQL already uses two of these. It adjusts the balance instead of writing a new total, which is a commutative update. Its `balance >= 1.00` condition checks the funds in the same statement that spends them, which is the safe form of rereading: if another transaction changes Alice's row first, PostgreSQL re-evaluates the condition against the new version of the row before it applies the update. A check in one statement followed by a write in another would leave a race. Commutative updates still need the other protections: `balance - 1.00` on its own does not stop overspending, and a repeated statement would still apply twice.
+
+## Who runs the steps: orchestration or choreography
+
+So far, an orchestrator has told each service what to do. That is one of two ways to coordinate a saga. Three kinds of messages are involved:
+
+- A **command** asks a service to do something: `CreditBob`.
+- A **reply** answers one command: `DebitCommitted` tells the orchestrator that its debit request succeeded.
+- An **event** announces a fact to every subscriber: `AliceDebited` says that Alice's debit committed.
+
+A reply and an event can describe the same fact; they differ in who receives them. In the failure path, a `CreditRejected` event lets service A's handler start the refund. These message names are illustrative.
+
+The figure shows how the same debit leads to the credit in each style. In choreography, a message broker carries the events, and the services decide what to do next.
 
 ![saga-coordination.svg](images/saga-coordination.svg)
 
 | Question | Orchestration | Choreography |
 | --- | --- | --- |
-| Who chooses the next action? | A coordinator interprets results and sends commands. | Each participant reacts to subscribed events. |
-| Where is the workflow logic? | Explicitly represented in the coordinator. | Distributed across participant handlers. |
-| How is compensation started? | The coordinator sends corrective commands. | Failure events trigger corrective handlers. |
-| Main design cost | The coordinator needs durable recovery and availability. | Dependencies, timeouts, and end-to-end progress become harder to follow as the flow grows. |
+| Who chooses the next step? | The orchestrator reads results and sends commands. | Each service reacts to the events it subscribes to. |
+| Where does the workflow live? | In one place: the orchestrator. | Spread across the services' event handlers. |
+| How does compensation start? | The orchestrator sends compensating commands. | A failure event triggers a compensating handler. |
+| Main cost | The orchestrator must be durable and recoverable. | Dependencies, timeouts, and overall progress get hard to follow as the flow grows. |
 
-Orchestration is a natural fit for the wallet chapter because transfer progress is explicit. The coordinator is a logical role: a reliable implementation can recover on another worker from durable state. Choreography removes that central decision-maker but retains dependencies on participants and messaging infrastructure.
+Orchestration suits a transfer, because the progress of every transfer is explicit in one place. The orchestrator is a role, not a single machine: another worker can take over from its durable state. Choreography removes the central decision-maker but still depends on every service and on the messaging infrastructure. Both styles need durable state and recovery rules.
 
-## A timeout means the outcome is unknown
+## Timeouts and retries: make each step safe to repeat
 
-If C commits the credit and its reply is lost, the coordinator sees a timeout even though C has $6. Immediately refunding A would leave A = $10 and C = $6: the example has created an extra dollar.
+### A timeout means the outcome is unknown
 
-Use a stable **idempotency key**, an identifier that makes repeated requests represent the same intended action. For example, use `(tr-42, credit-c)` for the credit and `(tr-42, refund-a)` for its separate corrective action. A retry uses the original action's key and parameters.
+Suppose service B commits Bob's credit, but its reply is lost. The orchestrator sees a timeout, not a rejection. If it refunded Alice now, Alice would have $10 and Bob $6: the saga would have created a dollar.
 
-The participant must atomically record the key, business mutation, and result. A duplicate returns the recorded outcome without applying the effect again. Merely placing an identifier in a message does not provide idempotency.
+A timeout therefore means “we do not know yet”. The orchestrator must either find out what happened or repeat the same request, and repeating is safe only if a step cannot apply twice.
 
-Resolve ambiguous outcomes by querying durable status or retrying the same idempotent action. A status check alone cannot stop a delayed original request: cancellation rules must also prevent a canceled action from executing later. Keep sufficient command history for the supported retry and late-delivery window.
+### Record each step once
 
-## Make state changes and messages recover together
+A step is **idempotent** if running it twice has the same effect as running it once. To make the credit idempotent, give it a stable **idempotency key**, here transfer `tr-42` plus step `credit`, and let database B remember the keys it has used. Add one small table next to `accounts` in each database:
 
-A second failure window exists after a participant commits its state but before it sends the next message. The **[transactional outbox](../Patterns.%20Transactional%20Outbox/Readme.md)** addresses this: write the business change and an outgoing message record in the same local database transaction. A **relay**, a delivery worker, later publishes committed records.
+```sql
+CREATE TABLE transfer_log (
+    transfer_id text NOT NULL,
+    step        text NOT NULL,     -- 'debit', 'credit', or 'refund'
+    result      text NOT NULL,     -- 'done', 'rejected', or 'canceled'
+    PRIMARY KEY (transfer_id, step)
+);
+```
+
+The table name and columns are this article's choice: a saga needs durable records like these, not this exact schema. Service B then performs the credit and records its result in one statement:
+
+```sql
+-- Database B: credit Bob at most once for tr-42
+WITH credit AS (
+    UPDATE accounts
+    SET    balance = balance + 1.00
+    WHERE  id = 'bob' AND status = 'open'
+    RETURNING id                      -- returns a row only if Bob was credited
+)
+INSERT INTO transfer_log (transfer_id, step, result)
+SELECT 'tr-42', 'credit',
+       CASE WHEN EXISTS (SELECT 1 FROM credit) THEN 'done' ELSE 'rejected' END;
+```
+
+PostgreSQL runs a single statement like this as one transaction, so the balance change and its log row commit together or not at all. If the request arrives again, the `INSERT` hits the primary key and fails, and PostgreSQL cancels the whole statement, including the `UPDATE`:
+
+```text
+ERROR:  duplicate key value violates unique constraint "transfer_log_pkey"
+DETAIL:  Key (transfer_id, step)=(tr-42, credit) already exists.
+```
+
+Bob is credited once, however many times the request arrives. On this error, SQLSTATE `23505` (`unique_violation`), service B answers with the result it recorded the first time:
+
+```sql
+SELECT result FROM transfer_log WHERE transfer_id = 'tr-42' AND step = 'credit';
+```
+
+A rejection is recorded too, as `result = 'rejected'`, so a delayed copy of the request cannot credit Bob later, after the saga has refunded Alice. Service A protects the debit and the refund in the same way, with the keys `('tr-42', 'debit')` and `('tr-42', 'refund')`. The key belongs to the step, not to a network message: a retry must reuse the same key, or the database cannot recognize it. Keep the log rows at least as long as a late duplicate could still arrive.
+
+### Settle an unknown outcome before compensating
+
+Back to the lost reply. Asking service B whether the credit happened is not enough: if B has no record yet, the original request may still be on its way and could arrive after the refund. Instead, the orchestrator asks service B to close the door on it, by recording the credit as canceled if no result exists yet:
+
+```sql
+-- Database B
+INSERT INTO transfer_log (transfer_id, step, result)
+VALUES ('tr-42', 'credit', 'canceled')
+ON CONFLICT DO NOTHING;
+
+SELECT result FROM transfer_log WHERE transfer_id = 'tr-42' AND step = 'credit';
+```
+
+If the result is `done`, the credit happened: the orchestrator completes the transfer and does not refund Alice. If it is `canceled` or `rejected`, the credit can no longer happen, because any late copy of the request now hits the existing key: the orchestrator refunds Alice. Either way, the decision rests on a durable record, not on a guess.
+
+## Hand off each step reliably: outbox and inbox
+
+One more gap remains. Service A commits Alice's debit and then crashes before it sends “debit done”. The database has the debit, but nobody else knows. The **transactional outbox** closes this gap: service A writes the business change and the outgoing message, as a row in an outbox table, in the same local transaction. A separate **relay** later reads the committed outbox rows and publishes them. The [Transactional Outbox](../Patterns.%20Transactional%20Outbox/Readme.md) article covers the pattern in detail.
 
 ![saga-reliable-handoff.svg](images/saga-reliable-handoff.svg)
 
-If the service crashes after committing, the outbox record survives. If the relay publishes and crashes before recording delivery, it may publish again. Receivers therefore still need idempotent handling. The outbox closes the database/message gap; it does not create a global transaction or guarantee exactly-once execution of arbitrary external effects.
+If the service crashes after the commit, the outbox row survives and the relay publishes it later. If the relay publishes a message and crashes before it records that, it publishes the message again after it restarts. Receivers therefore still need the idempotency from the previous section. The outbox closes the gap between the database and the message broker; it does not create a global transaction or make arbitrary side effects happen exactly once.
 
-Apply the same principle to an orchestrator's progress update and next command. Otherwise it can record “credit requested” without durably arranging delivery, or send a command and forget that it sent it.
+The orchestrator needs the same discipline for its own progress. Otherwise it can record “credit requested” without arranging to send the command, or send the command and forget that it did.
 
 ### Inbox, publication order, and change data capture
 
-A **transactional inbox** records received message identities at the consumer. For a relational implementation, a unique key such as `(consumer, message_id)` prevents concurrent handlers from accepting the same message twice. Insert that identity, apply the business update, and write any next outbox message in one local transaction. Acknowledge delivery after commit. If the transaction rolls back, the identity must roll back too so redelivery can retry the work. A separate “already processed?” query followed by an unprotected update leaves a race.
+The receiving side has a matching tool. A **transactional inbox** records the identity of each message that a service has accepted, in the same local transaction as the business change, and the service acknowledges the message to the broker only after that commit. If the transaction rolls back, the recorded identity rolls back too, so a redelivery can retry the work. In this design, the `transfer_log` key `('tr-42', 'credit')` can serve as that identity, so one table provides both inbox deduplication and step idempotency. If retries carry new transport message IDs, the receiver must still check the stable step key: checking only the message ID would allow a second credit. A separate “already processed?” query followed by an unprotected update leaves a race; the primary key makes the check and the write one atomic action.
 
-In this design, the credit command could carry `(tr-42, credit-c)` as its stable message identity on every delivery and retry; `consumer` identifies the receiving handler. The same durable record can then provide inbox deduplication and the business idempotency described earlier. Two separate tables are not required. If retries instead get new transport message IDs, the receiver must still recognize the stable operation key: checking only the new message ID would allow another credit.
+A relay can poll the outbox table, or use **change data capture (CDC)** to read committed changes from the database's transaction log. Debezium's outbox event router is one example: its event ID supports deduplication, and its entity key routes related events to the same Kafka partition, which keeps them in order. Keep events about the same account in order, so that a later update cannot overtake an earlier one; monitor the oldest unpublished row; and delete rows only when the relay no longer needs them. **The outbox handles reliable handoff; the saga decides what happens next.**
 
-An outbox relay can poll pending rows or use **change data capture (CDC)** to read committed changes from the database's transaction log. Debezium provides an outbox event router that converts captured rows into messages. Its event ID supports deduplication; its entity key routes related events to the same Kafka partition for ordering. Configure and operate the connector as part of delivery, including recovery and retention.
+## The point of no return: compensable, pivot, and retryable steps
 
-Preserve publication order where business events depend on it: an account's later update must not overtake its earlier update merely because two relay workers ran concurrently. Monitor the oldest unpublished record and clean up only when the delivery mechanism can safely retire it. A durable outbox preserves work to deliver; eventual delivery still needs a functioning relay and destination. **Outbox handles reliable handoff; Saga decides what the business workflow does next.**
+Not every step can be undone. Microsoft's saga guidance sorts steps into three kinds:
 
-## Compensatable, pivot, and retryable work
+| Kind | Meaning | In the transfer |
+| --- | --- | --- |
+| Compensable | Can be undone by a compensating transaction. | T1: C1 refunds the debit. |
+| Pivot | The point of no return: once it commits, the saga must finish. | T2: once Bob's credit commits, the transfer is done. |
+| Retryable | Comes after the pivot and is retried until it succeeds, never undone. | Sending Alice a receipt: an email outage leaves the receipt pending; it does not reverse the transfer. |
 
-The **pivot** separates work the workflow may compensate from work it has committed to finishing.
-
-| Category | Recovery contract |
-| --- | --- |
-| Compensatable | Supply a business correction for an action already completed. |
-| Pivot | Its successful completion crosses the workflow's point of no return. |
-| Retryable | After the pivot, complete through idempotent retries instead of compensation. |
-
-Put checks that can reject the operation before that boundary. A post-pivot action that can permanently reject for business reasons has no guaranteed path to completion. Payment capture is not inherently a pivot: the available refund contract and business policy determine whether it can be compensated. A workflow cannot promise to undo a delivered physical item merely because it can reverse a database row.
-
-This also separates a completed transfer from optional follow-up work. If the business contract treats a receipt notification as independent, its outage should leave notification work pending rather than reverse the transfer. Retrying cannot guarantee that every external action will eventually become possible; permanent failures need an explicit resolution policy.
-
-## Isolation anomalies and countermeasures
-
-**Saga does not isolate the whole business operation.** Local transactions can commit correctly while concurrent workflows still interfere. In the wallet example, allowing C to spend a provisional credit can make a later reversal impossible. Restoring consistency requires rules for spendable balances and pending transfers, not just inverse arithmetic.
-
-| Anomaly | Example across local commits |
-| --- | --- |
-| Lost update | An order's delayed approval overwrites a concurrent cancellation. |
-| Saga-level dirty read | Loyalty awards a benefit for a payment that is later compensated. |
-| Nonrepeatable read | Repeated funds checks see different balances because another transfer commits between them. |
-
-Here, “dirty” means **unfinished business work that has already committed locally**. SQL dirty reads instead mean reading another database transaction's uncommitted writes. A database can prevent SQL dirty reads while still exposing a Saga's intermediate committed state.
-
-Countermeasures address particular conflicts:
-
-| Technique | Responsibility |
-| --- | --- |
-| Semantic lock | Enforce a pending state that delays or rejects conflicting operations. |
-| Commutative updates | Use operations whose final result does not depend on their order. |
-| Pessimistic view (reorder steps) | Reorder the Saga so updates that could mislead other workflows occur in retryable transactions after the pivot. |
-| Reread and version check | Reject stale writes atomically with the update. |
-| Version file | Keep an operation history and enforce the required application order. |
-| Choice by business risk | Use stronger coordination where an incorrect intermediate result is unacceptable. |
-
-For **commutative updates**, an atomic `balance = balance + amount` preserves concurrent additive changes better than writing a saved total. It still needs deduplication and funds constraints: subtraction alone does not prevent overspending.
-
-For **reread and version check**, rereading and then writing in separate transactions leaves another race. Check the expected version and apply the update atomically. Each countermeasure needs enforcement by the owning participant; a `PENDING` label or a history table alone protects nothing.
+Put every check that can reject the operation before the pivot. A step after the pivot that can still fail for a business reason has no path to completion. Whether a step is the pivot is a business decision: a card payment is not automatically a pivot, because a refund may be an acceptable compensation. And no saga can undo a delivered parcel just because it can reverse a database row. Retrying cannot guarantee that every external action eventually becomes possible, so permanent failures need an explicit policy, such as handing the case to a person.
 
 ## Recovery deadlines and observability
 
-Persist enough information to resume both forward work and compensation after crashes. Useful operational records include the transfer identifier, current state, participant results, command identifiers, attempts, and last failure. Track aged pending transfers and failed compensations, and provide a reconciliation process that compares intended outcomes with participant records. Eventual consistency needs a functioning recovery process.
+A saga is only as reliable as the process that finishes it. Store enough to resume both forward steps and compensations after a crash: the transfer ID, its current state, each step's key and result, the number of attempts, and the last error. Watch for transfers that stay pending too long and for compensations that keep failing, and run a reconciliation job that compares each transfer's state with the `transfer_log` rows in both databases.
 
-Schedule transient failures with increasing retry delays instead of a tight loop. Define a recovery deadline or retry budget and an owner for escalation when automatic progress stops. Expiring that budget means **unresolved and needing attention**, not successfully compensated. Record the next attempt time so restarting a worker does not erase the schedule.
+Retry temporary failures with growing delays instead of a tight loop, and store the time of the next attempt, so that restarting a worker does not reset the schedule. Give each transfer a recovery deadline and an owner. When the deadline passes, the transfer is **unresolved and needs a person**, not compensated; opening a support ticket does not refund anyone.
 
-Carry the transfer ID through commands, events, logs, and traces. It correlates the whole workflow; individual actions still need their own idempotency identities. A trace helps diagnose where progress stopped, while durable workflow and participant records establish what actually completed. Alerting for manual resolution preserves that distinction: opening a support case does not itself refund money.
+Carry `tr-42` through every command, event, log line, and trace. It ties the whole saga together for debugging, while each step still has its own idempotency key. A trace shows where progress stopped; only the durable records in the databases show what actually committed.
+
+## Saga in practice
+
+**Airbnb described a production example of compensation-based workflows in April 2026: Skipper, its embedded Java/Kotlin workflow engine.** Skipper records progress so that work can resume after a crash. Its `@Compensate` annotation pairs an action with an operation that counteracts its effect. After a failure, the engine runs the applicable compensations in reverse order, such as releasing inventory or refunding a charge. This is **saga-like behavior**: Airbnb's article describes the mechanism without calling it a saga.
+
+Airbnb built compensation into the engine so that teams would stop building their own cleanup and recovery logic again and again. By the time of that article, Skipper had run in production for more than a year across **over 15 use cases**, including payments, insurance, and wallet workflows, with a reported **peak of 10,000 workflows per second on DynamoDB**. That is the engine's overall throughput; the article gives no separate rate for payment workflows or for workflows that use compensation.
+
+**Amazon Web Services (AWS), Microsoft Azure, and Google Cloud all recommend considering a saga for business operations that span independent services**, when compensation and temporary inconsistency are acceptable. Each service commits its own work, and the workflow handles retries and recovery across service boundaries. AWS's service-selection guide, updated **September 4, 2026**, also lists sagas as an orchestration workload. These are published design recommendations; they do not tell us which protocol Amazon.com's own checkout uses.
 
 ## Saga and TCC
 
-**Saga can coordinate completed business actions and their compensations; TCC requires an explicit reservation contract.** In Try-Confirm/Cancel, **Try** checks prerequisites and reserves the resources needed to finish. The second phase either **Confirms** those reservations or **Cancels** them. Confirm and Cancel are alternatives, not consecutive steps. Both patterns use local commits before the overall operation finishes, so local commits alone do not distinguish them.
+**A saga coordinates completed business actions and their compensations; TCC requires an explicit reservation contract.** In **Try-Confirm/Cancel (TCC)**, **Try** checks the prerequisites and reserves what is needed to finish. The second phase then either **Confirms** the reservations or **Cancels** them; Confirm and Cancel are alternatives, never both. Both patterns commit locally before the whole operation finishes, so local commits alone do not tell them apart.
 
-The distinction is the business state recorded by the wallet writes. In the Saga above, A's committed $1 debit is a completed action: A has $9, and a later definitive rejection from C triggers a separate refund.
+The difference is what the first write means. In this article's saga, Step 1 completes the debit: Alice has $9, and a later rejection needs a separate refund. In TCC, Try only reserves the dollar. Its local commit leaves Alice with **$9 available and $1 reserved** for `tr-42`, where the **available balance** is the money she can still spend. Confirm turns the reservation into a final debit; Cancel releases it, and Alice has $10 available again if nothing else happened.
 
-For the TCC comparison, **available balance** means the money A can still spend, excluding funds reserved for pending transfers. Starting from $10, Try commits a state of **$9 available and $1 reserved for this transfer**. The reserved dollar is a tracked hold awaiting a decision. Confirm finalizes the debit using that hold; Cancel releases it, returning A to $10 available if no other operations occurred.
+Bob's side must also secure its part during Try, even though receiving money needs no funds reservation: service B must establish that it can accept the credit and keep that ability until Confirm or Cancel. TCC moves every prerequisite of completion into Try; a saga can discover a rejection after earlier steps have completed, as in Step 3.
 
-C's Try must also secure its ability to accept the credit, even if receiving money requires no funds reservation. TCC moves completion's prerequisites into Try; a Saga can discover a later business rejection after earlier actions have completed.
+A booking example makes the difference easier to see. Holding a flight seat corresponds to reserving Alice's dollar; buying the seat corresponds to the saga's completed debit.
 
-A booking example makes the difference more visible. We now want both a flight seat and a hotel room. Holding the seat corresponds to reserving A's dollar; buying it corresponds to the Saga's completed debit.
-
-Two side-by-side panels compare TCC on the left with Saga on the right. Read each panel downward: a flight seat is held or purchased, then the hotel accepts or definitively rejects the request. The lower branches are alternative outcomes. Compare releasing the TCC flight hold with canceling the Saga's purchased flight under its refund policy.
+Two side-by-side panels compare TCC on the left with Saga on the right. Read each panel downward: a flight seat is held or purchased, then the hotel accepts or definitively rejects the request. The lower branches are alternative outcomes. Compare releasing the TCC flight hold with canceling the saga's purchased flight under its refund policy.
 
 ![tcc-versus-saga.svg](images/tcc-versus-saga.svg)
 
-The takeaway rows at the bottom of the panels name what recovery acts on: “Undo a committed reservation” in TCC and “Compensate a completed purchase” in this Saga example. The summary band beneath both panels identifies their shared requirements and limits, including how Saga can also use reservations.
+The takeaway rows at the bottom of the panels name what recovery acts on: “Undo a committed reservation” in TCC and “Compensate a completed purchase” in the saga. The summary band beneath both panels lists what the two share, including that a saga can also use reservations.
 
-**A missing reservation API does not automatically rule out TCC.** If you control the resource, you can implement durable holds and make competing operations respect them. If an external hotel offers only immediate purchases, however, recording `PENDING` in your own database does not reserve its rooms. Checking availability during Try and buying during Confirm leaves time for another customer to buy the last room. That participant cannot safely join TCC unless it can secure completion and honor Confirm or Cancel. A Saga may instead purchase immediately if later cancellation is an acceptable compensation; fees and irreversible effects still matter.
+**A missing reservation API does not automatically rule out TCC.** If you control the resource, you can implement durable holds and make competing operations respect them. But if an external hotel offers only immediate purchases, recording `PENDING` in your own database does not reserve its rooms: checking availability during Try and buying during Confirm leaves time for another customer to buy the last room. That hotel cannot safely join TCC. A saga may instead buy immediately, if later cancellation is an acceptable compensation; fees and irreversible effects still matter.
 
-Apache Seata's Saga implementation, for example, can coordinate progress and retries. The participating services still supply the business actions and compensations: Seata cannot invent a refund policy. Likewise, a TCC coordinator cannot make an external service honor a reservation that the service does not support. An ordinary database balance update does not create either complete workflow automatically.
+Frameworks do not change this. Apache Seata's saga mode can coordinate progress and retries, but the services still supply the business actions and compensations: Seata cannot invent a refund policy. Likewise, a TCC coordinator cannot make an external service honor a reservation that the service does not support. The [Try-Confirm/Cancel](../Transactions.%20Try-Confirm-Cancel/Readme.md) article covers TCC in full.
 
 ## Choosing the transaction boundary
 
-| Approach | Commit and recovery model | Main consideration |
+Start with one question: **can the rule you must protect stay inside one local transaction?** Such a rule is an **invariant**, for example “the total amount of money never changes”. The System Design chapter [Hotel Reservation System](../../system%20design/22.%20Hotel%20Reservation%20System/Readme.md) discusses sagas for consistency across services, but its chosen design keeps reservations and inventory in one relational database, so one local transaction protects them.
+
+| Approach | How it commits and recovers | Main consideration |
 | --- | --- | --- |
-| One local transaction | Related writes commit or roll back within one transactional boundary. | Prefer this when the required invariant can stay together, as in the hotel design. |
-| Two-phase commit (2PC) | Participants prepare; a transaction manager coordinates a global commit or rollback decision. | Requires participant support and recovery machinery. Prepared PostgreSQL transactions retain locks until resolved. |
-| TCC | Participants commit reservations, then confirm or cancel them. | Requires participants to secure completion during Try and preserve the reservation contract. |
-| Saga | Participants commit independently; recovery continues forward or compensates committed effects. | Requires acceptable intermediate states and meaningful business recovery. |
+| One local transaction | Related writes commit or roll back together in one database. | Prefer this when the data can live together, as in the hotel design. |
+| Two-phase commit (2PC) | Participants prepare; a transaction manager decides a global commit or rollback. | Needs participant support and recovery machinery. Prepared PostgreSQL transactions keep their locks until resolved. |
+| TCC | Participants commit reservations, then confirm or cancel them. | Participants must secure completion during Try and honor the reservation. |
+| Saga | Participants commit independently; recovery goes forward or compensates committed effects. | The business must accept intermediate states and define meaningful compensations. |
 
-Two-phase commit concerns atomic commitment; it is not, by itself, a guarantee of every isolation property. Saga avoids holding one database transaction open for the entire business workflow, but shifts substantial correctness work into application logic.
+Two-phase commit is about atomic commitment; on its own, it does not guarantee every isolation property. A saga avoids holding one database transaction open for the whole business operation, but it moves a lot of correctness work into the application.
 
-Use Saga when the operation genuinely spans independent transactional boundaries and the business can tolerate pending work and compensation. If a rule must hold atomically across all affected data, changing the boundary or using a suitable atomic transaction mechanism may be the better design.
+Use a saga when the operation really spans independent databases and the business can live with pending work and compensation. If a rule must hold atomically across all the affected data, moving that data together, or using an atomic commit protocol, may be the better design.
 
 ## Self-check
 
-Try answering before revealing the explanations.
+1. Why can one PostgreSQL transaction not move the dollar from database A to database B?
 
-1. How do `CreditC`, `DebitCommitted`, and `ADebited` differ in the coordination diagram?
-2. Why is immediately refunding A unsafe when C's credit request times out?
-3. Why does a transactional outbox still need idempotent receivers?
-4. How does the ordinary meaning of *saga* help you remember the pattern?
-5. What distinguishes TCC from a Saga that also uses reservations?
-6. Why can't a local `PENDING` record make an external purchase-only hotel service support TCC?
-7. Can a Saga-level dirty read occur when the databases prohibit SQL dirty reads?
-8. What must be true of actions after the pivot?
-9. How do an inbox and an outbox protect opposite ends of a message handoff?
-10. Does reaching a recovery deadline mean compensation succeeded?
+   <details>
+   <summary>Answer</summary>
 
-<details>
-<summary>Check your answers</summary>
+   A PostgreSQL connection works inside one database, so its transaction can change only that database's tables; even naming the other database fails with `cross-database references are not implemented`. The transfer needs two commits, and a crash between them leaves it half done.
 
-1. `CreditC` is a command requesting a credit. `DebitCommitted` is a reply telling the coordinator the outcome of its debit command; the architecture calls this a **Commit result**. `ADebited` is a published event announcing the committed debit to subscribers, whose handlers choose their next actions.
-2. C may have committed the credit and lost the reply. Refunding A would then leave A = $10 and C = $6, creating an extra dollar in the example. Resolve the outcome by querying durable status or retrying the same idempotent command. Refund A only when the recovery rules justify it, including preventing a delayed credit from executing after cancellation.
-3. The relay can publish a message and crash before recording delivery, then publish it again after restarting. The outbox preserves the outgoing message alongside the local change; the receiver's idempotent handling prevents repeated delivery from producing another business effect.
-4. Think of one business operation as a story unfolding through smaller chapters: its independently committed local transactions. This is a memory aid; the original paper supplies no acronym expansion or explanation of the name's choice.
-5. TCC requires the explicit Try/Confirm/Cancel contract: secure completion's prerequisites, then finalize or release the reservation. A Saga can use reservations as business actions without requiring that contract for every participant.
-6. The record does not hold the hotel's inventory or prevent another customer from buying the last room. Try has not secured completion. A Saga can use an immediate purchase when its compensation and other recovery rules are acceptable.
-7. Yes. Other workflows can consume locally committed effects of a Saga that may later compensate them. No uncommitted database read is necessary.
-8. They need an idempotent path to completion, with business rejection conditions resolved before crossing the boundary. Permanent impossibility requires explicit recovery, not endless blind retries.
-9. The outbox commits an outgoing message with the sender's change. The inbox commits duplicate recognition with the receiver's change, preventing repeat deliveries from applying the business effect again.
-10. No. Preserve the unresolved state and escalate with the recorded outcomes; a deadline is not evidence of rollback or compensation.
+   </details>
 
-</details>
+2. After Step 1 commits, what does a report that adds up all balances show, and why?
+
+   <details>
+   <summary>Answer</summary>
+
+   $14 instead of $15. Alice's debit has committed in database A, but Bob's credit has not happened yet, so the dollar is in flight. The report sees it because a saga does not isolate the whole operation.
+
+   </details>
+
+3. Step 2 reports `UPDATE 0` because Bob's account is closed. Why does the saga refund Alice instead of also running `balance - 1.00` for Bob?
+
+   <details>
+   <summary>Answer</summary>
+
+   `UPDATE 0` means that Bob's balance never changed, so database B has nothing to undo; subtracting $1 there would take money that Bob never received. Only Alice's committed debit has an effect to compensate.
+
+   </details>
+
+4. Alice receives a $20 deposit between the debit and the refund. Why does C1 add $1 instead of restoring her earlier balance?
+
+   <details>
+   <summary>Answer</summary>
+
+   A compensation undoes an effect, not a snapshot. Restoring the old $10 would erase the deposit; adding $1 to the current $29 leaves the correct $30.
+
+   </details>
+
+5. The credit request times out. Why is refunding Alice at once unsafe?
+
+   <details>
+   <summary>Answer</summary>
+
+   The credit may have committed, with only the reply lost. A refund would then leave Alice with $10 and Bob with $6, creating a dollar.
+
+   </details>
+
+6. How does the `transfer_log` primary key stop a retried credit from paying Bob twice?
+
+   <details>
+   <summary>Answer</summary>
+
+   The credit and its log row commit in one statement. A second attempt hits the existing `('tr-42', 'credit')` key and fails with `unique_violation`, which cancels the whole statement, including the balance update. Service B then returns the recorded result.
+
+   </details>
+
+7. After a timeout, why does the orchestrator insert a `canceled` row before it decides to refund Alice?
+
+   <details>
+   <summary>Answer</summary>
+
+   Without a record, the original credit request could still arrive after the refund. The `canceled` row makes any late credit fail on the key. If the row already says `done` instead, the insert changes nothing, the credit happened, and the transfer completes without a refund.
+
+   </details>
+
+8. How do `CreditBob`, `DebitCommitted`, and `AliceDebited` differ?
+
+   <details>
+   <summary>Answer</summary>
+
+   `CreditBob` is a command that asks service B to act. `DebitCommitted` is a reply that tells the orchestrator the outcome of its debit command. `AliceDebited` is an event that announces the committed debit to every subscriber.
+
+   </details>
+
+9. Why does a transactional outbox still need idempotent receivers?
+
+   <details>
+   <summary>Answer</summary>
+
+   The relay can publish a message, crash before recording that, and publish it again after a restart. The outbox keeps the message together with the local change; the receiver's idempotency stops the repeated message from applying a second effect.
+
+   </details>
+
+10. Can a saga-level dirty read happen even though PostgreSQL never allows SQL dirty reads?
+
+    <details>
+    <summary>Answer</summary>
+
+    Yes. Another workflow can use a step's locally committed result before the saga is final, for example a cashback reward for a payment that is later refunded. No uncommitted data is read.
+
+    </details>
+
+11. In the transfer, which step is the pivot, and what must be true of the steps after it?
+
+    <details>
+    <summary>Answer</summary>
+
+    T2, Bob's credit: once it commits, the transfer must finish. Steps after the pivot must be retryable, with an idempotent path to completion, and every business check that could reject the operation must run before the pivot.
+
+    </details>
+
+12. Does reaching a recovery deadline mean that compensation succeeded?
+
+    <details>
+    <summary>Answer</summary>
+
+    No. It means that the transfer is unresolved and needs a person. Keep its state and recorded outcomes; a deadline is not evidence of a refund.
+
+    </details>
+
+13. What distinguishes TCC's Try from the saga's Step 1?
+
+    <details>
+    <summary>Answer</summary>
+
+    Try only reserves the dollar: Alice has $9 available and $1 held, and Cancel releases the hold. The saga's Step 1 completes the debit, so undoing it needs a separate refund. TCC also requires every participant, including service B, to secure completion during Try.
+
+    </details>
 
 # Sources
 
-Primary sources checked on 2026-09-14. The message names, wallet balances, and flight/hotel comparison are illustrative; diagram provenance is identified below.
+Primary sources checked on 2026-09-14. The practice section and its sources were checked on 2026-09-16; classifying Skipper's compensation mechanism as saga-like is an interpretation of Airbnb's documented behavior, not terminology used in that article. Microsoft's saga recommendation is covered by its Architecture Center source listed below.
+
+The two-database SQL walkthrough was added on 2026-10-26. Every SQL statement and error message in it was run on a local PostgreSQL 18.6 server, and the behavior it relies on was checked against the PostgreSQL 18 documentation below. The account names, balances, transfer ID, and message names are illustrative.
 
 Coverage review also used [Timofei Ivankov — Distributed transactions in microservices: from Saga to Two-Phase Commit (Habr, Russian)](https://habr.com/ru/articles/906484/). Added concepts were checked against the primary sources below; its broad claims about Saga atomicity and synchronous APIs are qualified in the teaching text.
 
-The practice section and its sources were checked on 2026-09-16. Classifying Skipper's compensation mechanism as Saga-like is an interpretation of Airbnb's documented behavior, not terminology used in that article. Microsoft's Saga recommendation is covered by its Architecture Center source listed below.
-
+- [Garcia-Molina and Salem — Sagas: definition, the guarantee of T1 … Tn or T1 … Tj, Cj … C1, and semantic compensation](https://www.cs.princeton.edu/techreports/1987/070.pdf)
+- [Princeton — Sagas publication record: authors and 1987 date](https://www.cs.princeton.edu/research/techreps/598)
+- [Merriam-Webster — saga: ordinary meaning and word history](https://www.merriam-webster.com/dictionary/saga)
+- [PostgreSQL 18 — Managing databases: one database per connection](https://www.postgresql.org/docs/18/manage-ag-overview.html)
+- [PostgreSQL 18 — postgres_fdw: remote transactions committed separately, no two-phase commit](https://www.postgresql.org/docs/18/postgres-fdw.html)
+- [PostgreSQL 18 — Numeric types: numeric for monetary amounts](https://www.postgresql.org/docs/18/datatype-numeric.html)
+- [PostgreSQL 18 — UPDATE: the UPDATE count command tag](https://www.postgresql.org/docs/18/sql-update.html)
+- [PostgreSQL 18 — Transactions tutorial: every statement runs inside a transaction](https://www.postgresql.org/docs/18/tutorial-transactions.html)
+- [PostgreSQL 18 — WITH queries: data-modifying statements and RETURNING](https://www.postgresql.org/docs/18/queries-with.html)
+- [PostgreSQL 18 — INSERT: ON CONFLICT DO NOTHING and the INSERT command tag](https://www.postgresql.org/docs/18/sql-insert.html)
+- [PostgreSQL 18 — Error codes: 23505 unique_violation](https://www.postgresql.org/docs/18/errcodes-appendix.html)
+- [PostgreSQL 18 — Transaction isolation: no dirty reads, SQL anomalies, and concurrent conditional updates](https://www.postgresql.org/docs/18/transaction-iso.html)
+- [PostgreSQL documentation — PREPARE TRANSACTION](https://www.postgresql.org/docs/current/sql-prepare-transaction.html)
+- [Microsoft Azure Architecture Center — Saga pattern: compensable, pivot, and retryable steps, three anomalies, and six countermeasures](https://learn.microsoft.com/en-us/azure/architecture/patterns/saga)
+- [Microsoft Azure Architecture Center — Compensating Transaction pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction)
+- [Microsoft Azure — Retry pattern: transient failures, backoff, and retry limits](https://learn.microsoft.com/en-us/azure/architecture/patterns/retry)
+- [Chris Richardson — Saga pattern: local commits, compensation, and lack of isolation](https://microservices.io/patterns/data/saga.html)
+- [Chris Richardson — Saga design: compensating business failures and semantic locks](https://microservices.io/post/microservices/2019/07/09/developing-sagas-part-1.html)
+- [Chris Richardson — Transactional outbox](https://microservices.io/patterns/data/transactional-outbox.html)
+- [Chris Richardson — Idempotent Consumer: processed-message identities in the local transaction](https://microservices.io/patterns/communication-style/idempotent-consumer.html)
+- [AWS Builders' Library — Making retries safe with idempotent APIs](https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/)
+- [AWS Prescriptive Guidance — Saga orchestration](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/saga-orchestration.html)
+- [AWS Prescriptive Guidance — Saga choreography](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/saga-choreography.html)
+- [Debezium — Outbox event router: event IDs, entity keys, and routing](https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html)
 - [Airbnb Engineering — Skipper: Java/Kotlin workflows, compensation, production use, and throughput (April 28, 2026)](https://medium.com/airbnb-engineering/skipper-building-airbnbs-embedded-workflow-engine-f6c34552146f)
 - [AWS Prescriptive Guidance — Saga pattern: when to use it and the cost of compensation](https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-data-persistence/saga-pattern.html)
 - [AWS Decision Guides — Choosing a serverless service: Saga and orchestration (updated September 4, 2026)](https://docs.aws.amazon.com/decision-guides/latest/decision-guides/choosing-aws-serverless-service.html)
 - [Google Cloud — Workflows best practices: apply retries and the Saga pattern](https://docs.cloud.google.com/workflows/docs/best-practice#apply_retries_and_the_saga_pattern)
-- [System Design — Digital Wallet: Saga flow, coordination, and sharded account example](../../system%20design/27.%20Digital%20Wallet/Readme.md). Diagram provenance: [original saga.svg](../../system%20design/27.%20Digital%20Wallet/images/saga.svg) and [original sharded-raft-groups.svg](../../system%20design/27.%20Digital%20Wallet/images/sharded-raft-groups.svg). The local wallet diagrams are adaptations, with explicit commit outcomes and simplified architecture.
-- [System Design — Hotel Reservation System: data consistency among services](../../system%20design/22.%20Hotel%20Reservation%20System/Readme.md).
-- [Transactions. Try-Confirm/Cancel — companion article](../Transactions.%20Try-Confirm-Cancel/Readme.md). The local `tcc-versus-saga.svg` is reused from its [comparison diagram](../Transactions.%20Try-Confirm-Cancel/images/tcc-versus-saga.svg), with the accessible title aligned to the visible headline; the booking example applies the reservation and compensation rules in the sources below.
 - [Apache Seata — Saga mode: orchestration, retries, and application-defined compensation](https://seata.apache.org/docs/user/mode/saga/)
 - [Apache Seata — TCC mode: service-level operations and application-defined handlers](https://seata.apache.org/docs/user/mode/tcc/)
 - [Oracle MicroTx — Try-Confirm/Cancel: reservations and prerequisites for confirmation](https://docs.oracle.com/en/database/oracle/transaction-manager-for-microservices/24.2/tmmdg/tcc-transaction-model.html)
-- [Garcia-Molina and Salem — Sagas, original research paper](https://www.cs.princeton.edu/techreports/1987/070.pdf)
-- [Princeton — Sagas publication record: authors and 1987 date](https://www.cs.princeton.edu/research/techreps/598)
-- [Merriam-Webster — saga: ordinary meaning and word history](https://www.merriam-webster.com/dictionary/saga)
-- [Chris Richardson — Saga pattern: local commits, compensation, and lack of isolation](https://microservices.io/patterns/data/saga.html)
-- [Microsoft Azure Architecture Center — Saga pattern: compensable/pivot/retryable categories, three isolation anomalies, and six countermeasures](https://learn.microsoft.com/en-us/azure/architecture/patterns/saga)
-- [Microsoft Azure Architecture Center — Compensating Transaction pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/compensating-transaction)
-- [AWS Prescriptive Guidance — Saga orchestration](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/saga-orchestration.html)
-- [AWS Prescriptive Guidance — Saga choreography](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/saga-choreography.html)
-- [AWS Builders' Library — Making retries safe with idempotent APIs](https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/)
-- [Chris Richardson — Transactional outbox](https://microservices.io/patterns/data/transactional-outbox.html)
-- [PostgreSQL documentation — PREPARE TRANSACTION](https://www.postgresql.org/docs/current/sql-prepare-transaction.html)
+- [Transactions. Try-Confirm/Cancel — companion article](../Transactions.%20Try-Confirm-Cancel/Readme.md). The local `tcc-versus-saga.svg` is reused from its [comparison diagram](../Transactions.%20Try-Confirm-Cancel/images/tcc-versus-saga.svg), with the accessible title aligned to the visible headline; the booking example applies the reservation and compensation rules in the sources above.
+- [System Design — Digital Wallet: the same transfer across Raft-replicated account partitions](../../system%20design/27.%20Digital%20Wallet/Readme.md). The local `saga-plan.svg` redraws the chapter's [saga.svg](../../system%20design/27.%20Digital%20Wallet/images/saga.svg) flow for the Alice and Bob example, without its credit-reversal branch.
+- [System Design — Hotel Reservation System: data consistency among services](../../system%20design/22.%20Hotel%20Reservation%20System/Readme.md)
 - [Raft — consensus and replicated state machines](https://raft.github.io/)
-- [Chris Richardson — Saga design: compensating business failures and semantic locks](https://microservices.io/post/microservices/2019/07/09/developing-sagas-part-1.html)
-- [Chris Richardson — Idempotent Consumer: processed-message identities in the local transaction](https://microservices.io/patterns/communication-style/idempotent-consumer.html)
-- [Debezium — Outbox event router: event IDs, entity keys, and routing](https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html)
-- [Microsoft Azure — Retry pattern: transient failures, backoff, and retry limits](https://learn.microsoft.com/en-us/azure/architecture/patterns/retry)
-- [PostgreSQL 18 — Transaction isolation: SQL anomalies and concurrent conditional updates](https://www.postgresql.org/docs/18/transaction-iso.html)

@@ -1,32 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="360" viewBox="0 0 1120 360" role="img" aria-labelledby="title desc">
-<title id="title">Step 1 · A commits the debit; the transfer stays pending</title>
-<desc id="desc">A starts with $10 and C with $5. A local transaction commits A minus $1 and saves its outcome. A has $9 and C still has $5; the transfer remains pending.</desc>
-<!-- Visual style and arrowhead reused from system design/27. Digital Wallet/images/saga.svg. -->
-<defs><style>text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}.step,.state{fill:#fff;stroke:#000;stroke-width:2.5}.connector{fill:none;stroke:#000;stroke-width:2.5}</style>
-<!-- The marker projects 3.5 units beyond the shaft endpoint; every path is shortened by that amount. -->
-<marker id="arrowhead" markerWidth="22" markerHeight="18"
-            viewBox="0 0 22 18" refX="18.5" refY="9"
-            orient="auto" markerUnits="userSpaceOnUse">
-      <path d="M0 0 L22 9 L0 18 Z" fill="#000"/>
-    </marker>
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="470" viewBox="0 0 1120 470" role="img" aria-labelledby="title desc">
+<title id="title">Step 1 · Debit Alice in database A</title>
+<desc id="desc">Two accounts tables after step 1 of transfer tr-42. In database A, Alice's balance changes from 10.00 to 9.00 in one local transaction that commits; PostgreSQL reports UPDATE 1. In database B, Bob still has 5.00, because this step does not touch database B. The visible total is 14.00: the dollar is in flight. The saga has finished the debit and will credit Bob next.</desc>
+<!-- Visual style follows this folder's black-and-white diagrams. The changed cell has a light fill, but its "old → new" text carries the meaning. -->
+<defs><style>text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000}.panel{fill:#fff;stroke:#000;stroke-width:2.5}.head{fill:#f2f2f2;stroke:#000;stroke-width:1.5}.cell{fill:#fff;stroke:#000;stroke-width:1.5}.changed{fill:#fff3c4;stroke:#000;stroke-width:1.5}.grid{fill:none;stroke:#000;stroke-width:1.5}.th{font-size:19px;font-weight:700}.td{font-size:21px}.note{font-size:19px}</style>
 </defs>
-<rect width="1120" height="360" fill="#fff"/>
-<!-- Title and explicit reading order; labels do not depend on color. -->
-<text x="32" y="43" font-size="28" text-anchor="start">Step 1 · A commits the debit; the transfer stays pending</text>
-<text x="32" y="77" font-size="18" text-anchor="start">Transfer tr-42: $1 from A to C. Read left to right; assume no concurrent transfers.</text>
-<!-- The source flowchart circle and large operation box replace the former colored panels. -->
-<circle id="before" class="state" cx="145" cy="195" r="20"/>
-<text x="145" y="143" font-size="24" text-anchor="middle">Start: PENDING</text>
-<text x="145" y="278" font-size="22" text-anchor="middle">A = $10 · C = $5</text>
-<rect id="local-transaction" class="step" x="405" y="139" width="215" height="112"/>
-<text x="512.5" y="209.0" font-size="40" text-anchor="middle">A − $1</text>
-<text x="512.5" y="116" font-size="24" text-anchor="middle">A’s local transaction</text>
-<text x="512.5" y="278" font-size="22" text-anchor="middle">Save debit outcome</text>
-<circle id="after" class="state" cx="840" cy="195" r="20"/>
-<text x="878" y="205" font-size="30" text-anchor="start">Pending</text>
-<text x="840" y="278" font-size="22" text-anchor="middle">A = $9 · C = $5</text>
-<!-- Each visible arrow nose meets its target boundary; neither arrow enters a node. -->
-<path id="begin-action" class="connector" data-connector="true" d="M165 195 L401.5 195" marker-end="url(#arrowhead)"/>
-<path id="commit-action" class="connector" data-connector="true" d="M620 195 L816.5 195" marker-end="url(#arrowhead)"/>
-<text x="32" y="333" font-size="22" text-anchor="start">Only A changed. C’s credit still needs a separate commit.</text>
+<rect width="1120" height="470" fill="#fff"/>
+<!-- Title and lesson. -->
+<text x="32" y="43" font-size="28">Step 1 · Debit Alice in database A</text>
+<text x="32" y="77" font-size="18">Transfer tr-42 moves $1 from Alice to Bob. This step is one local transaction in database A only.</text>
+<!-- Database A: the only table this step changes. Columns: id 56-196, balance 196-396, status 396-516. -->
+<g id="database-a">
+<rect class="panel" x="32" y="104" width="508" height="226"/>
+<text x="56" y="142" font-size="22">Database A · accounts</text>
+<rect class="head" x="56" y="160" width="460" height="40"/>
+<rect class="cell" x="56" y="200" width="460" height="48"/>
+<rect id="alice-balance-changed" class="changed" x="196" y="200" width="200" height="48"/>
+<path class="grid" d="M196 160 V248 M396 160 V248"/>
+<text class="th" x="72" y="187">id</text>
+<text class="th" x="212" y="187">balance</text>
+<text class="th" x="412" y="187">status</text>
+<text class="td" x="72" y="231">alice</text>
+<text class="td" x="212" y="231" font-weight="700">10.00 → 9.00</text>
+<text class="td" x="412" y="231">open</text>
+<text class="note" x="56" y="284">Local transaction: alice − 1.00, then COMMIT</text>
+<text class="note" x="56" y="312">PostgreSQL reports UPDATE 1</text>
+</g>
+<!-- Database B: untouched by this step. Columns: id 604-744, balance 744-944, status 944-1064. -->
+<g id="database-b">
+<rect class="panel" x="580" y="104" width="508" height="226"/>
+<text x="604" y="142" font-size="22">Database B · accounts</text>
+<rect class="head" x="604" y="160" width="460" height="40"/>
+<rect class="cell" x="604" y="200" width="460" height="48"/>
+<path class="grid" d="M744 160 V248 M944 160 V248"/>
+<text class="th" x="620" y="187">id</text>
+<text class="th" x="760" y="187">balance</text>
+<text class="th" x="960" y="187">status</text>
+<text class="td" x="620" y="231">bob</text>
+<text class="td" x="760" y="231">5.00</text>
+<text class="td" x="960" y="231">open</text>
+<text class="note" x="604" y="284">Not touched by this step</text>
+</g>
+<!-- Saga status band: progress and the visible intermediate total. -->
+<g id="saga-status">
+<rect x="32" y="352" width="1056" height="92" fill="#f3f5f7"/>
+<text x="56" y="388" font-size="21" font-weight="700">Saga tr-42: debit done · next: credit Bob</text>
+<text x="56" y="424" font-size="19">Visible total: 9.00 + 5.00 = 14.00. The missing $1 is in flight between the databases.</text>
+</g>
 </svg>

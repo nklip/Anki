@@ -1,33 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="360" viewBox="0 0 1120 360" role="img" aria-labelledby="title desc">
-<title id="title">Step 2 · C commits the credit; the transfer can complete</title>
-<desc id="desc">A has $9 and C has $5 after the confirmed debit. C commits a local credit of $1 and saves the outcome. Once both outcomes are confirmed, the coordinator marks the transfer completed with A at $9 and C at $6.</desc>
-<!-- Visual style and arrowhead reused from system design/27. Digital Wallet/images/saga.svg. -->
-<defs><style>text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000;font-weight:400}.step,.state{fill:#fff;stroke:#000;stroke-width:2.5}.connector{fill:none;stroke:#000;stroke-width:2.5}</style>
-<!-- The marker projects 3.5 units beyond the shaft endpoint; every path is shortened by that amount. -->
-<marker id="arrowhead" markerWidth="22" markerHeight="18"
-            viewBox="0 0 22 18" refX="18.5" refY="9"
-            orient="auto" markerUnits="userSpaceOnUse">
-      <path d="M0 0 L22 9 L0 18 Z" fill="#000"/>
-    </marker>
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="470" viewBox="0 0 1120 470" role="img" aria-labelledby="title desc">
+<title id="title">Step 2 · Credit Bob in database B</title>
+<desc id="desc">Two accounts tables after step 2 of transfer tr-42. In database B, Bob's balance changes from 5.00 to 6.00 in a second, separate local transaction that commits; PostgreSQL reports UPDATE 1. In database A, Alice still has 9.00 from step 1. The total is 15.00 again, and the saga marks the transfer completed. These were two separate commits, not one.</desc>
+<!-- Same layout as saga-step-1-debit.svg. The changed cell has a light fill, but its "old → new" text carries the meaning. -->
+<defs><style>text{font-family:Arial,Helvetica,"Liberation Sans",sans-serif;fill:#000}.panel{fill:#fff;stroke:#000;stroke-width:2.5}.head{fill:#f2f2f2;stroke:#000;stroke-width:1.5}.cell{fill:#fff;stroke:#000;stroke-width:1.5}.changed{fill:#fff3c4;stroke:#000;stroke-width:1.5}.grid{fill:none;stroke:#000;stroke-width:1.5}.th{font-size:19px;font-weight:700}.td{font-size:21px}.note{font-size:19px}</style>
 </defs>
-<rect width="1120" height="360" fill="#fff"/>
-<!-- Title and explicit reading order; labels do not depend on color. -->
-<text x="32" y="43" font-size="28" text-anchor="start">Step 2 · C commits the credit; the transfer can complete</text>
-<text x="32" y="77" font-size="18" text-anchor="start">Start after A’s debit is confirmed. Read left to right; success needs both durable outcomes.</text>
-<!-- The source flowchart circle and large operation box replace the former colored panels. -->
-<circle id="before" class="state" cx="145" cy="195" r="20"/>
-<text x="145" y="143" font-size="24" text-anchor="middle">Debit committed</text>
-<text x="145" y="278" font-size="22" text-anchor="middle">A = $9 · C = $5</text>
-<rect id="local-transaction" class="step" x="405" y="139" width="215" height="112"/>
-<text x="512.5" y="209.0" font-size="40" text-anchor="middle">C + $1</text>
-<text x="512.5" y="116" font-size="24" text-anchor="middle">C’s local transaction</text>
-<text x="512.5" y="278" font-size="22" text-anchor="middle">Save credit outcome</text>
-<circle id="after" class="state" cx="840" cy="195" r="20"/>
-<path id="after-check" d="M828 196 L836 206 L851 181" fill="none" stroke="#0797f9" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-<text x="878" y="205" font-size="30" text-anchor="start">Completed</text>
-<text x="840" y="278" font-size="22" text-anchor="middle">A = $9 · C = $6</text>
-<!-- Each visible arrow nose meets its target boundary; neither arrow enters a node. -->
-<path id="begin-action" class="connector" data-connector="true" d="M165 195 L401.5 195" marker-end="url(#arrowhead)"/>
-<path id="commit-action" class="connector" data-connector="true" d="M620 195 L816.5 195" marker-end="url(#arrowhead)"/>
-<text x="32" y="333" font-size="22" text-anchor="start">Mark COMPLETED after both commits are confirmed; they remain separate transactions.</text>
+<rect width="1120" height="470" fill="#fff"/>
+<!-- Title and lesson. -->
+<text x="32" y="43" font-size="28">Step 2 · Credit Bob in database B</text>
+<text x="32" y="77" font-size="18">A second, separate local transaction, this time in database B only. Database A is not touched.</text>
+<!-- Database A: unchanged since step 1. Columns: id 56-196, balance 196-396, status 396-516. -->
+<g id="database-a">
+<rect class="panel" x="32" y="104" width="508" height="226"/>
+<text x="56" y="142" font-size="22">Database A · accounts</text>
+<rect class="head" x="56" y="160" width="460" height="40"/>
+<rect class="cell" x="56" y="200" width="460" height="48"/>
+<path class="grid" d="M196 160 V248 M396 160 V248"/>
+<text class="th" x="72" y="187">id</text>
+<text class="th" x="212" y="187">balance</text>
+<text class="th" x="412" y="187">status</text>
+<text class="td" x="72" y="231">alice</text>
+<text class="td" x="212" y="231">9.00</text>
+<text class="td" x="412" y="231">open</text>
+<text class="note" x="56" y="284">Not touched by this step</text>
+</g>
+<!-- Database B: the only table this step changes. Columns: id 604-744, balance 744-944, status 944-1064. -->
+<g id="database-b">
+<rect class="panel" x="580" y="104" width="508" height="226"/>
+<text x="604" y="142" font-size="22">Database B · accounts</text>
+<rect class="head" x="604" y="160" width="460" height="40"/>
+<rect class="cell" x="604" y="200" width="460" height="48"/>
+<rect id="bob-balance-changed" class="changed" x="744" y="200" width="200" height="48"/>
+<path class="grid" d="M744 160 V248 M944 160 V248"/>
+<text class="th" x="620" y="187">id</text>
+<text class="th" x="760" y="187">balance</text>
+<text class="th" x="960" y="187">status</text>
+<text class="td" x="620" y="231">bob</text>
+<text class="td" x="760" y="231" font-weight="700">5.00 → 6.00</text>
+<text class="td" x="960" y="231">open</text>
+<text class="note" x="604" y="284">Local transaction: bob + 1.00, then COMMIT</text>
+<text class="note" x="604" y="312">PostgreSQL reports UPDATE 1</text>
+</g>
+<!-- Saga status band: final state of the success path. -->
+<g id="saga-status">
+<rect x="32" y="352" width="1056" height="92" fill="#f3f5f7"/>
+<text x="56" y="388" font-size="21" font-weight="700">Saga tr-42: credit done · transfer COMPLETED</text>
+<text x="56" y="424" font-size="19">Total: 9.00 + 6.00 = 15.00 again. These were two separate commits, not one.</text>
+</g>
 </svg>

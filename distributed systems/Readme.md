@@ -27,7 +27,7 @@ Each topic has its own folder, with diagrams in its `images/` directory.
  * [Redis](./Redis/Readme.md) — internals, deployments, common patterns, and CDN data placement.
  * [Sharding](./Sharding/Readme.md) — sharding explained through PostgreSQL: partitions and shards, horizontal versus vertical partitioning, splitting by range, hash or directory, rebalancing, request routing, cross-shard costs, declarative partitioning, postgres_fdw, Citus, and application-level sharding.
  * [Sticky Sessions](./Sticky%20Sessions/Readme.md) — pinning mechanisms, their costs, and the stateless alternative.
- * [Transactions. Saga](./Transactions.%20Saga/Readme.md) — local commits, wallet transfers, compensation, orchestration, choreography, and failure recovery.
+ * [Transactions. Saga](./Transactions.%20Saga/Readme.md) — a $1 transfer between two PostgreSQL databases in SQL steps, compensation, orchestration, choreography, safe retries, and recovery.
  * [Transactions. Two-phase commit](./Transactions.%20Two-phase%20commit/Readme.md) — preparation, atomic commit, abort, blocking, crash recovery, and comparison with TCC and Saga.
  * [Transactions. Try-Confirm/Cancel](./Transactions.%20Try-Confirm-Cancel/Readme.md) — reservations, wallet transfer phases, idempotency, cancellation, and crash recovery.
  * [Write-ahead log (WAL)](./Write-ahead%20log%20%28WAL%29/Readme.md) — durable commits, checkpoints, crash recovery, and storage guarantees.
