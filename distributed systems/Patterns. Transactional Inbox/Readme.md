@@ -37,9 +37,11 @@ In the image below, read from top to bottom; dashed arrows are replies. Everythi
 
 ![commit-business.svg](images/commit-business.svg)
 
-After the commit, the database holds the receipt and `110` points. If anything fails before the commit, the rollback removes both, and the next delivery starts from a clean state. This works only because both tables are in the same database. A receipt in one database and points in another are two separate commits, whatever the application code calls them.
+After the commit, the database holds the receipt and `110` points. Until then, both changes exist only inside the open transaction, even if the handler has already added the points. If the consumer crashes at that point, the database rolls both changes back: the account is back at `100`, with no receipt. The redelivery then runs the work again, and that is not a second award, because the first attempt left nothing behind.
 
-**Do not commit the receipt on its own before doing the work.** A crash between the two commits would leave a receipt for an award that never happened, and every redelivery would be skipped. Wolverine, a .NET messaging framework, describes exactly this bug in an earlier version of its own duplicate check: a failed handler's retry found a "handled" record for work that had never committed, and Wolverine rejected the retry as a duplicate of itself.
+**So never commit the receipt on its own.** If the handler commits the receipt first and adds the points in a second transaction, a crash between the two commits keeps the receipt but loses the points. Every redelivery then finds the receipt and skips the work, and the account stays at `100` for good. The opposite order fails the opposite way: the points survive without a receipt, and the redelivery awards them again, for `120`. A receipt in one database and points in another are two separate commits too, whatever the application code calls them.
+
+Wolverine, a .NET messaging framework, describes the first of these bugs in an earlier version of its own duplicate check. It committed the receipt before the handler ran. When a handler failed and the message was retried, the retry found the receipt left by its own failed attempt, and Wolverine rejected it as a duplicate of itself. Wolverine now writes the receipt in the handler's transaction.
 
 Work that fails quietly needs the same care. If account `7` does not exist, the `UPDATE` changes zero rows and raises no error. Committing then would record an award that was never applied, and the message would never be retried. So treat "zero rows updated" as a failure and roll back. If a message truly can never succeed, the handler may record that as its final outcome, but as a deliberate decision, not by accident.
 
