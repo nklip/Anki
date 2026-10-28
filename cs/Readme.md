@@ -22,6 +22,7 @@ Every card lives in its own folder as `Readme.md`, with its diagrams in a siblin
  * [Multiversion concurrency control](./Multiversion%20concurrency%20control/Readme.md) - how one row becomes a chain of versions, how a snapshot picks the version a reader sees, where engines keep the old ones, and why write skew survives
  * [Non-functional requirements and how to test them](./Non-functional%20requirements%20and%20how%20to%20test%20them/Readme.md) - functional versus quality requirements, measurable targets, testing methods, and production examples
  * [p50 vs p95](./p50%20vs%20p95/Readme.md) - typical and slow-tail request latency, percentile cutoffs, and automatic measurement with k6 and Prometheus
+ * [Primary Key vs Candidate Key](./Primary%20Key%20vs%20Candidate%20Key/Readme.md) - unique and minimal column sets, superkeys and alternate keys, and how PostgreSQL declares each key
  * [Protocols. FTP](./Protocols.%20FTP/Readme.md) - separate control and data connections, active/passive modes, and encryption
  * [Protocols. HTTP](./Protocols.%20HTTP/Readme.md) - requests, responses, status codes, statelessness, HTTPS, and protocol versions
  * [Protocols. HTTPS](./Protocols.%20HTTPS/Readme.md) - TLS handshakes, public/private and traffic keys, encrypted HTTP, and visible metadata

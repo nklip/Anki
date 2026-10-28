@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="618" viewBox="0 0 1000 618" role="img" aria-labelledby="title desc">
+  <title id="title">Several candidate keys, one primary key</title>
+  <desc id="desc">A table can have one or more candidate keys and exactly one chosen primary key. An example users table has the columns user_id, email, username, and full_name. Each of user_id, email, and username is unique for every row, so each is a candidate key. The value Anna Lee appears twice in full_name, so full_name is not a key. user_id is the chosen primary key, and email and username are alternate keys. Below the table, nested boxes show that every primary key is a candidate key and every candidate key is a superkey. A superkey is any unique column set. The superkeys {user_id, email} and {email, full_name} are not candidate keys, because a column can be removed and the rest stays unique.</desc>
+
+  <!-- Shared typography and semantic colors: green = primary key, blue = candidate key,
+       cyan outline = superkey, gray = not a key, orange = repeated value. Every color also has a text label. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172033; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 20px; fill: #475569; }
+      .label { font-size: 21px; font-weight: 700; }
+      .role { font-size: 19px; font-weight: 700; }
+      .note { font-size: 17px; fill: #475569; }
+      .code { font-family: Menlo, Consolas, monospace; font-size: 18px; }
+      .code-bold { font-family: Menlo, Consolas, monospace; font-size: 18px; font-weight: 700; }
+      .pk-text { fill: #166534; }
+      .ck-text { fill: #075985; }
+      .grid { fill: #fff; stroke: #cbd5e1; stroke-width: 1.5; }
+      .header { fill: #e2e8f0; stroke: #cbd5e1; stroke-width: 1.5; }
+      .pk { fill: #ecfdf3; stroke: #15803d; stroke-width: 2; }
+      .ck { fill: #eaf5fc; stroke: #0b78b5; stroke-width: 2; }
+      .nokey { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 2; }
+      .repeat { fill: #fff4e6; stroke: #b96b20; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <!-- Canvas, title, and the definition that the whole diagram tests. -->
+  <rect id="background" width="1000" height="618" fill="#fff"/>
+  <text class="title" x="24" y="44">Several candidate keys, one primary key</text>
+  <text class="subtitle" x="24" y="76">Candidate key: no two rows can ever share it, and none of its columns is extra.</text>
+
+  <!-- Part 1: example table. Column edges: 24 | 194 | 494 | 704 | 976.
+       The role row above the header names what each column is. -->
+  <text class="label" x="24" y="112">Example table: users</text>
+  <g id="role-row">
+    <rect x="24" y="124" width="170" height="60" class="pk"/>
+    <text class="role pk-text" x="40" y="150">Primary key</text>
+    <text class="note" x="40" y="174">chosen identifier</text>
+    <rect x="194" y="124" width="300" height="60" class="ck"/>
+    <text class="role ck-text" x="210" y="150">Candidate key</text>
+    <text class="note" x="210" y="174">alternate key</text>
+    <rect x="494" y="124" width="210" height="60" class="ck"/>
+    <text class="role ck-text" x="510" y="150">Candidate key</text>
+    <text class="note" x="510" y="174">alternate key</text>
+    <rect x="704" y="124" width="272" height="60" class="nokey"/>
+    <text class="role" x="720" y="150" style="fill:#475569">Not a key</text>
+    <text class="note" x="720" y="174">names can repeat</text>
+  </g>
+
+  <!-- Header row with the column names. -->
+  <g id="header-row">
+    <rect x="24" y="184" width="170" height="36" class="header"/>
+    <rect x="194" y="184" width="300" height="36" class="header"/>
+    <rect x="494" y="184" width="210" height="36" class="header"/>
+    <rect x="704" y="184" width="272" height="36" class="header"/>
+    <text class="code-bold" x="40" y="208">user_id</text>
+    <text class="code-bold" x="210" y="208">email</text>
+    <text class="code-bold" x="510" y="208">username</text>
+    <text class="code-bold" x="720" y="208">full_name</text>
+  </g>
+
+  <!-- Data rows; the two orange full_name cells are the repeated value that disqualifies the column. -->
+  <g id="data-rows">
+    <rect x="24" y="220" width="170" height="36" class="grid"/>
+    <rect x="194" y="220" width="300" height="36" class="grid"/>
+    <rect x="494" y="220" width="210" height="36" class="grid"/>
+    <rect x="704" y="220" width="272" height="36" class="repeat"/>
+    <text class="code" x="40" y="244">1</text>
+    <text class="code" x="210" y="244">anna@example.com</text>
+    <text class="code" x="510" y="244">anna</text>
+    <text class="code" x="720" y="244">Anna Lee</text>
+
+    <rect x="24" y="256" width="170" height="36" class="grid"/>
+    <rect x="194" y="256" width="300" height="36" class="grid"/>
+    <rect x="494" y="256" width="210" height="36" class="grid"/>
+    <rect x="704" y="256" width="272" height="36" class="repeat"/>
+    <text class="code" x="40" y="280">2</text>
+    <text class="code" x="210" y="280">a.lee@example.com</text>
+    <text class="code" x="510" y="280">alee</text>
+    <text class="code" x="720" y="280">Anna Lee</text>
+    <text class="note" x="836" y="280">← repeated</text>
+
+    <rect x="24" y="292" width="170" height="36" class="grid"/>
+    <rect x="194" y="292" width="300" height="36" class="grid"/>
+    <rect x="494" y="292" width="210" height="36" class="grid"/>
+    <rect x="704" y="292" width="272" height="36" class="grid"/>
+    <text class="code" x="40" y="316">3</text>
+    <text class="code" x="210" y="316">omar@example.com</text>
+    <text class="code" x="510" y="316">omar</text>
+    <text class="code" x="720" y="316">Omar Diaz</text>
+  </g>
+
+  <!-- Part 2: containment carries the lesson, like the URI vs URL card.
+       Superkey (outer) contains candidate keys, which contain the one primary key. -->
+  <g id="superkey-set">
+    <rect x="24" y="352" width="952" height="242" rx="18" fill="#f8fafc" stroke="#08b7d1" stroke-width="3"/>
+    <text class="label" x="48" y="388">Superkeys: any column set whose values are unique</text>
+    <text class="note" x="48" y="416">A superkey may contain extra columns.</text>
+  </g>
+
+  <!-- Candidate keys: the minimal superkeys. Keep this box clear of the right-hand examples. -->
+  <g id="candidate-set">
+    <rect x="48" y="434" width="572" height="140" rx="14" class="ck"/>
+    <text class="label ck-text" x="68" y="466">Candidate keys: unique and minimal</text>
+    <text class="role" x="346" y="512">Alternate keys</text>
+    <text class="code" x="346" y="542">{email}  {username}</text>
+  </g>
+
+  <!-- The primary key sits inside the candidate set: it is one of them. -->
+  <g id="primary-set">
+    <rect x="68" y="484" width="250" height="72" rx="10" class="pk"/>
+    <text class="role pk-text" x="88" y="512">Primary key</text>
+    <text class="code" x="88" y="542">{user_id}</text>
+  </g>
+
+  <!-- Superkeys that are not candidate keys: each has a removable column. -->
+  <g id="not-minimal">
+    <text class="role" x="644" y="466">Not minimal (superkey only)</text>
+    <text class="code" x="644" y="504">{user_id, email}</text>
+    <text class="code" x="644" y="536">{email, full_name}</text>
+    <text class="note" x="644" y="566">Each one has an extra column.</text>
+  </g>
+</svg>
