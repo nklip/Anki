@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="484" viewBox="0 0 960 484" role="img" aria-labelledby="title desc">
+  <title id="title">Skaffold runs the inner loop for you</title>
+  <desc id="desc">Read left to right. One Skaffold command runs four stages: skaffold run runs them once, and skaffold dev runs them again as you code. The stages are: build an image with a new tag, push it to a registry, point the manifest at the new image and deploy it, then wait until the new Pods are ready. Under each stage, a dashed box shows the manual command it replaces: docker build, docker push, editing the tag and running kubectl apply, and kubectl rollout status. On a local cluster such as minikube, kind, or Docker Desktop, Skaffold skips the push and loads the image directly.</desc>
+  <!-- Shared typography and palette match nearby Kubernetes teaching diagrams (Helm, kind). -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #52677b; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #52677b; }
+      .code { font-family: "Courier New", Courier, monospace; font-size: 17px; fill: #18324b; }
+      .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }
+    </style>
+  </defs>
+  <rect width="960" height="484" fill="#ffffff"/>
+  <!-- Heading states the lesson: each stage replaces a manual command. -->
+  <text x="32" y="43" class="title" text-anchor="start">Skaffold runs the inner loop for you</text>
+  <text x="32" y="75" class="subtitle" text-anchor="start">Each stage replaces a command you would otherwise type after every code change.</text>
+  <!-- Command banner spans all four stages: one command starts the whole row. -->
+  <rect id="command-banner" x="32" y="100" width="896" height="50" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="480" y="131" class="body" text-anchor="middle">One command runs all four stages: <tspan class="code">skaffold run</tspan> (once) or <tspan class="code">skaffold dev</tspan> (again as you code)</text>
+  <!-- Stage row: four 188-wide boxes on a 236-unit pitch; 48-unit gaps hold the arrows. -->
+  <rect id="stage-build" x="32" y="176" width="188" height="104" rx="12" fill="#ffffff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="126" y="210" class="heading" text-anchor="middle">1. Build</text>
+  <text x="126" y="240" class="body" text-anchor="middle">Make an image</text>
+  <text x="126" y="264" class="body" text-anchor="middle">with a new tag</text>
+  <rect id="stage-push" x="268" y="176" width="188" height="104" rx="12" fill="#ffffff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="362" y="210" class="heading" text-anchor="middle">2. Push</text>
+  <text x="362" y="240" class="body" text-anchor="middle">Upload it to</text>
+  <text x="362" y="264" class="body" text-anchor="middle">a registry</text>
+  <rect id="stage-deploy" x="504" y="176" width="188" height="104" rx="12" fill="#ffffff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="598" y="210" class="heading" text-anchor="middle">3. Deploy</text>
+  <text x="598" y="240" class="body" text-anchor="middle">Point the manifest</text>
+  <text x="598" y="264" class="body" text-anchor="middle">at the new image</text>
+  <rect id="stage-check" x="740" y="176" width="188" height="104" rx="12" fill="#ffffff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="834" y="210" class="heading" text-anchor="middle">4. Check</text>
+  <text x="834" y="240" class="body" text-anchor="middle">Wait until the</text>
+  <text x="834" y="264" class="body" text-anchor="middle">new Pods are ready</text>
+  <!-- Stage arrows: shafts stop 2 units inside each head base; tips meet the next box border. -->
+  <path id="build-to-push-connector" class="connector" data-connector="true" d="M220 228 L259 228"/>
+  <polygon id="build-to-push-head" points="268,228 257,222 257,234" fill="#52677b"/>
+  <path id="push-to-deploy-connector" class="connector" data-connector="true" d="M456 228 L495 228"/>
+  <polygon id="push-to-deploy-head" points="504,228 493,222 493,234" fill="#52677b"/>
+  <path id="deploy-to-check-connector" class="connector" data-connector="true" d="M692 228 L731 228"/>
+  <polygon id="deploy-to-check-head" points="740,228 729,222 729,234" fill="#52677b"/>
+  <!-- Manual row: dashed boxes share each stage's column and show the command it replaces. -->
+  <rect id="manual-build" x="32" y="304" width="188" height="94" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="126" y="332" class="small" text-anchor="middle">By hand:</text>
+  <text x="126" y="362" class="code" text-anchor="middle">docker build</text>
+  <rect id="manual-push" x="268" y="304" width="188" height="94" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="362" y="332" class="small" text-anchor="middle">By hand:</text>
+  <text x="362" y="362" class="code" text-anchor="middle">docker push</text>
+  <rect id="manual-deploy" x="504" y="304" width="188" height="94" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="598" y="332" class="small" text-anchor="middle">By hand: edit the tag,</text>
+  <text x="598" y="362" class="code" text-anchor="middle">kubectl apply</text>
+  <rect id="manual-check" x="740" y="304" width="188" height="94" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="834" y="332" class="small" text-anchor="middle">By hand:</text>
+  <text x="834" y="362" class="code" text-anchor="middle">kubectl rollout</text>
+  <text x="834" y="384" class="code" text-anchor="middle">status</text>
+  <!-- Local-cluster note explains when stage 2 is skipped. -->
+  <rect id="local-cluster-note" x="32" y="422" width="896" height="44" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="480" y="450" class="body" text-anchor="middle">Local cluster (minikube, kind, Docker Desktop)? Skaffold skips the push and loads the image directly.</text>
+</svg>

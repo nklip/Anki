@@ -32,5 +32,6 @@ Kubernetes concepts, workloads, networking, and extensions.
 - [Role-Based Access Control (RBAC)](RBAC/Readme.md)
 - [ReplicaSets](ReplicaSets/Readme.md)
 - [Services](Services/Readme.md)
+- [Skaffold](Skaffold/Readme.md)
 - [StatefulSets](StatefulSets/Readme.md)
 - [VPA](VPA/Readme.md)

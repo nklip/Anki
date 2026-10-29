@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="564" viewBox="0 0 960 564" role="img" aria-labelledby="title desc">
+  <title id="title">skaffold dev: one loop for every save</title>
+  <desc id="desc">Read from the top. skaffold dev first builds and deploys everything once, then watches your files. When you save a file, Skaffold checks whether the file matches a sync rule. If yes, it copies the file into the running container, with no rebuild and the same Pod. If no, it builds a new image and deploys it again, so new Pods start. Both paths return to watching files. The whole time, container logs stream into the terminal, and Ctrl+C stops Skaffold and deletes the Kubernetes resources it created.</desc>
+  <!-- Shared typography and palette match nearby Kubernetes teaching diagrams (Helm, kind). -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 18px; fill: #52677b; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #52677b; }
+      .strong { font-weight: 700; }
+      .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }
+    </style>
+  </defs>
+  <rect width="960" height="564" fill="#ffffff"/>
+  <!-- Heading names the command and the branch rule. -->
+  <text x="32" y="43" class="title" text-anchor="start">skaffold dev: one loop for every save</text>
+  <text x="32" y="75" class="subtitle" text-anchor="start">A sync rule decides between a quick file copy and a full rebuild.</text>
+  <!-- Center column, x=480: first run, then the watch state that every path returns to. -->
+  <rect id="first-run" x="330" y="100" width="300" height="72" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="480" y="130" class="heading" text-anchor="middle">First run</text>
+  <text x="480" y="158" class="body" text-anchor="middle">Build and deploy everything</text>
+  <path id="first-run-to-watch-connector" class="connector" data-connector="true" d="M480 172 L480 187"/>
+  <polygon id="first-run-to-watch-head" points="480,196 474,185 486,185" fill="#52677b"/>
+  <rect id="watch" x="330" y="196" width="300" height="72" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+  <text x="480" y="226" class="heading" text-anchor="middle">Watch files</text>
+  <text x="480" y="254" class="body" text-anchor="middle">Wait for you to save one</text>
+  <!-- Save event: label sits right of the shaft, clear of it. -->
+  <path id="watch-to-decision-connector" class="connector" data-connector="true" d="M480 268 L480 307"/>
+  <polygon id="watch-to-decision-head" points="480,316 474,305 486,305" fill="#52677b"/>
+  <text x="494" y="297" class="small" text-anchor="start">you save a file</text>
+  <!-- Decision diamond: vertices at top 316, bottom 428, left 350, right 610. -->
+  <polygon id="sync-rule-decision" points="480,316 610,372 480,428 350,372" fill="#fff7ed" stroke="#e0a96d" stroke-width="1.5"/>
+  <text x="480" y="366" class="heading" text-anchor="middle">Matches a</text>
+  <text x="480" y="390" class="heading" text-anchor="middle">sync rule?</text>
+  <!-- Yes branch: left vertex to the sync box; label above the shaft, outside the diamond edge. -->
+  <path id="decision-to-sync-connector" class="connector" data-connector="true" d="M350 372 L309 372"/>
+  <polygon id="decision-to-sync-head" points="300,372 311,366 311,378" fill="#52677b"/>
+  <text x="325" y="358" class="small strong" text-anchor="middle">yes</text>
+  <rect id="sync" x="32" y="312" width="268" height="120" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+  <text x="166" y="344" class="heading" text-anchor="middle">Sync</text>
+  <text x="166" y="372" class="body" text-anchor="middle">Copy the file into the</text>
+  <text x="166" y="396" class="body" text-anchor="middle">running container</text>
+  <text x="166" y="420" class="small" text-anchor="middle">No rebuild. Same Pod.</text>
+  <!-- No branch: right vertex to the rebuild box. -->
+  <path id="decision-to-rebuild-connector" class="connector" data-connector="true" d="M610 372 L651 372"/>
+  <polygon id="decision-to-rebuild-head" points="660,372 649,366 649,378" fill="#52677b"/>
+  <text x="635" y="358" class="small strong" text-anchor="middle">no</text>
+  <rect id="rebuild" x="660" y="312" width="268" height="120" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="794" y="344" class="heading" text-anchor="middle">Rebuild</text>
+  <text x="794" y="372" class="body" text-anchor="middle">Build a new image</text>
+  <text x="794" y="396" class="body" text-anchor="middle">and deploy it again</text>
+  <text x="794" y="420" class="small" text-anchor="middle">New Pods start.</text>
+  <!-- Return paths: up from each branch box, then across to the watch box sides at y=232. -->
+  <path id="sync-to-watch-connector" class="connector" data-connector="true" d="M166 312 L166 232 L321 232"/>
+  <polygon id="sync-to-watch-head" points="330,232 319,226 319,238" fill="#52677b"/>
+  <text x="248" y="222" class="small" text-anchor="middle">repeat</text>
+  <path id="rebuild-to-watch-connector" class="connector" data-connector="true" d="M794 312 L794 232 L639 232"/>
+  <polygon id="rebuild-to-watch-head" points="630,232 641,226 641,238" fill="#52677b"/>
+  <text x="712" y="222" class="small" text-anchor="middle">repeat</text>
+  <!-- Footer: behavior that holds for the whole session, not one branch. -->
+  <rect id="session-note" x="32" y="460" width="896" height="80" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="56" y="492" class="body" text-anchor="start"><tspan class="strong">The whole time:</tspan> logs from your containers stream into the same terminal.</text>
+  <text x="56" y="522" class="body" text-anchor="start"><tspan class="strong">Ctrl+C:</tspan> Skaffold stops and deletes the Kubernetes resources it created.</text>
+</svg>
