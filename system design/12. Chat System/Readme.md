@@ -2,6 +2,7 @@
 <sub>[Back to System Design](../Readme.md#content)</sub>
 
 ## Introduction
+
 A **chat system** supports real-time messaging between users. This chapter focuses on designing a chat app that includes:
 - **One-on-One Chat**
 - **Group Chat (max 100 users)**
@@ -14,6 +15,7 @@ The system targets **50 million daily active users (DAU)** and stores chat histo
 ## Step 1: Understanding the Problem
 
 ### Requirements
+
 1. **Features:**
    - One-on-one and group chat (max 100 members).
    - Text-based messages (up to 100,000 characters).
@@ -23,35 +25,45 @@ The system targets **50 million daily active users (DAU)** and stores chat histo
 2. **Scale:** Design for 50 million DAU.
 3. **Storage:** Permanent chat history.
 
-## Step 2: High-Level Design
+## Step 2: Propose a High-Level Design and Get Buy-In
 
-### Communication Protocols
-1. **Sender Side:** HTTP for sending messages, leveraging persistent connections for efficiency.
+The chat service must support the following functions:
+* Receive messages from other clients.
+* Find the right recipient for each message and relay the message to the recipient.
+* If a recipient is not online, hold the messages for that recipient on the server until she is online.
+
+The image below shows the relationships between clients (sender and receiver) and the chat service.
 
 <div style="margin-left:2rem">
    <img src="./images/basic-design.svg" alt="basic-design.svg" width="1000">
 </div>
 
-2. **Receiver Side:**
-   - **Polling:**
-      - Client periodically asks the server if there are messages available.
-      - Inefficient due to frequent, redundant requests.
+For a chat service, the choice of network protocols is important.
 
-         <img src="./images/polling.svg" alt="polling.svg" width="1000">
+### Polling
 
-   - **Long Polling:**
-      - Keeps the connection open until messages arrive.
-      - Inefficient for inactive users.
+As shown in the image below, polling is a technique in which the client periodically asks the server if there are messages available. It is inefficient due to frequent, redundant requests.
 
-      <img src="./images/long-polling.svg" alt="long-polling.svg" width="1000">
+<img src="./images/polling.svg" alt="polling.svg" width="1000">
 
-   - **WebSocket:**
-      - A bi-directional, persistent connection for real-time communication, chosen for both sending and receiving messages.
-      - Uses the WebSocket (`ws`) protocol for sending and receiving messages.
+### Long polling
 
-      <img src="./images/websocket.svg" alt="websocket.svg" width="1000" >
+Because polling could be inefficient, the next progression is long polling.
 
-### Components
+<img src="./images/long-polling.svg" alt="long-polling.svg" width="1000">
+
+In long polling, a client holds the connection open until there are actually new messages available or a timeout threshold has been reached. Long polling is still inefficient for inactive users.
+
+### WebSocket
+
+WebSocket is the most common solution for sending asynchronous updates from server to client.
+
+<img src="./images/websocket.svg" alt="websocket.svg" width="1000" >
+
+- A bi-directional, persistent connection for real-time communication, chosen for both sending and receiving messages.
+- Uses the WebSocket (`ws`) protocol for sending and receiving messages.
+
+### High-level design
 
 <div style="margin-left:5rem">
    <img src="./images/high-level-stateless-arch.svg" alt="high-level-stateless-arch.svg" width="1000">
@@ -68,7 +80,7 @@ The system targets **50 million daily active users (DAU)** and stores chat histo
    - Push notification services notify users about new messages.
    - Refer to the Notification System chapter for notification implementation.
 
-### Design
+### Scalability
 
 The client maintains a persistent WebSocket connection to a chat server for real-time messaging.
 
@@ -78,27 +90,31 @@ The client maintains a persistent WebSocket connection to a chat server for real
 
 - Chat servers facilitate message sending/receiving.
 - Presence servers manage online/offline status.
-- API servers handle everything including user login, signup, profile changes, etc.
+- API servers handle everything, including user login, signup, profile changes, etc.
 - Notification servers send push notifications.
-- Finally, the key-value store is used to store chat history. Key-value stores are suitable for chat history for the following reasons:
-   - It allows easy horizontal scaling.
-   - KV stores provide very low latency to access data.
-   - Relational databases do not handle the long tail of data well. When the indexes grow
-   large, random access is expensive.
-   - KV stores are adopted by other proven reliable chat applications. For example,
-   both Facebook messenger and Discord.
+- Finally, the key-value store is used to store chat history.
 
+### Storage
 
-The following are the data models for one-to-one chat and group chat.
-   - The primary key is the message ID, which helps determine message sequence.
-   - For the group chat, the composite primary key is (channel_id, message_id).
-      - IDs can be generated using a global 64-bit sequence number generator like Snowflake.
-      - A better approach is to use a local sequence number generator. Local means IDs are only unique within a group.
-      - The reason why local IDs work is that maintaining message sequence within one-on-one channel or a group channel is sufficient.
+Key-value stores are suitable for chat history for the following reasons:
+- They allow easy horizontal scaling.
+- KV stores provide very low latency for data access.
+- Relational databases do not handle the long tail [[3]](#ref-3) of data well. When the indexes grow large, random access is expensive.
+- KV stores are adopted by other proven, reliable chat applications, such as Facebook Messenger and Discord.
 
-      <img src="./images/one-to-one-chat.svg" alt="one-to-one-chat.svg" width="1000">
-      <img src="./images/group-chat.svg" alt="group-chat.svg" width="1000">
+### Data models
 
+#### **Message table for 1-on-1 chat**
+
+The image below shows the message table for 1-on-1 chat. The primary key is `message_id`, which helps to decide the message sequence. We cannot rely on `created_at` to decide the message sequence because two messages can be created at the same time.
+
+<img src="./images/one-to-one-chat.svg" alt="one-to-one-chat.svg" width="1000">
+
+#### **Message table for group chat**
+
+The image below shows the message table for group chat. The composite primary key is (`channel_id`, `message_id`). Channel and group have the same meaning here. `channel_id` is the partition key because all queries in a group chat operate in a channel.
+
+<img src="./images/group-chat.svg" alt="group-chat.svg" width="1000">
 
 ## Step 3: Design Deep Dive
 
@@ -106,7 +122,7 @@ The following are the data models for one-to-one chat and group chat.
 
 - The primary role of service discovery is to recommend the best chat server for a client based
 on criteria such as geographical location and server capacity.
-- Uses **Apache Zookeeper** to allocate chat servers based on criteria like geographic location and server capacity.
+- Uses **Apache ZooKeeper** to allocate chat servers based on criteria like geographic location and server capacity.
 - Ensures efficient load distribution and minimizes latency.
 
 <div style="margin-left:3rem">
@@ -119,7 +135,8 @@ on criteria such as geographical location and server capacity.
 4. `User A` connects to chat server 2 through WebSocket.
 
 ### Messaging Flows
-#### One-on-One Chat
+
+#### **One-on-One Chat Flow**
 
 <div style="margin-left:3rem">
    <img src="./images/one-to-one-chat-flow.svg" alt="one-to-one-chat-flow.svg" width="1000">
@@ -130,36 +147,34 @@ on criteria such as geographical location and server capacity.
 3. Chat server 1 sends the message to the message sync queue.
 4. The message is stored in a key-value store.
 5. If `User B` is:
-   * a. online, the message is forwarded to Chat server 2 where `User B` is connected.
+   * a. online, the message is forwarded to Chat server 2, where `User B` is connected.
    * b. offline, a push notification is sent from push notification (PN) servers.
 6. Chat server 2 forwards the message to `User B`. There is a persistent WebSocket connection between `User B` and Chat server 2.
 
-#### Group Chat
+#### **Message Synchronization Across Multiple Devices**
+
+Many users have multiple devices. We need to synchronize messages across the devices.
+
+<div style="margin-left:3rem">
+   <img src="./images/message-synchronization.svg" alt="message-synchronization.svg" width="1000">
+</div>
+
+Each device maintains a variable called `cur_max_message_id`, which keeps track of the latest message ID on the device. Messages that satisfy the following two conditions are considered new messages:
+- The recipient ID is equal to the currently logged-in user's ID.
+- The message ID in the key-value store is larger than `cur_max_message_id`.
+
+#### **Small Group Chat Flow**
 
 <div style="margin-left:3rem">
    <img src="./images/group-chat-flow.svg" alt="group-chat-flow.svg" width="1000">
 </div>
 
 - Messages are copied to individual inboxes for each recipient in the group.
-- Simplifies synchronization but becomes expensive for larger groups.
-- On the recipient side, each recipient can receive messages from multiple users. Each recipient
-has an inbox (message sync queue) which contains messages from different senders.
-
-#### Message Synchronization
-
-Many users have multiple devices. We need to synchronize the message across the devices.
-Each device maintains a variable called `cur_max_message_id`, which keeps track of the latest
-message ID on the device. Messages that satisfy the following two conditions are considered
-as new messages:
-
-<div style="margin-left:3rem">
-   <img src="./images/message-synchronization.svg" alt="message-synchronization.svg" width="1000">
-</div>
-
-- The recipient ID is equal to the currently logged-in user ID.
-- The message ID in the key-value store is larger than `cur_max_message_id`.
+- This simplifies synchronization but becomes expensive for larger groups.
+- On the recipient side, each recipient can receive messages from multiple users. Each recipient has an inbox (message sync queue) which contains messages from different senders.
 
 ### Online Presence
+
 1. **Heartbeat Mechanism:**
 
 <div style="margin-left:3rem">
@@ -176,14 +191,14 @@ as new messages:
 </div>
 
 - Presence updates are pushed to friends using a publish-subscribe model in which each friend pair maintains a channel.
-- When `User A`’s online status changes, it publishes the event to three channels, channel A-B, A-C, and A-D.
+- When `User A`’s online status changes, `User A` publishes the event to three channels: A-B, A-C, and A-D.
 - Those three channels are subscribed to by Users B, C, and D, respectively, who receive the online status updates.
 - The above design is effective for small user groups.
 
 ## Step 4: Wrap Up
 
 ### Scalability
-- **Horizontal Scaling:** Add servers as user count increases.
+- **Horizontal Scaling:** Add servers as the user count increases.
 - **Load Balancing:** Distribute traffic evenly across servers.
 - **Caching:** Reduce database load and improve latency.
 
@@ -199,13 +214,13 @@ as new messages:
 
 ## Reference materials
 
-1. [Erlang at Facebook](https://www.erlang-factory.com/upload/presentations/31/EugeneLetuchy-ErlangatFacebook.pdf)
-2. [Messenger and WhatsApp process 60 billion messages a day](https://www.theverge.com/2016/4/12/11415198/facebook-messenger-whatsapp-number-messages-vs-sms-f8-2016)
-3. [Long tail](https://en.wikipedia.org/wiki/Long_tail)
-4. [The Underlying Technology of Messages](https://engineering.fb.com/2010/11/15/core-infra/the-underlying-technology-of-messages/)
-5. [How Discord Stores Billions of Messages](https://blog.discordapp.com/how-discord-stores-billions-of-messages-7fa6ec7ee4c7)
-6. [Announcing Snowflake](https://blog.twitter.com/engineering/en_us/a/2010/announcing-snowflake.html)
-7. [Apache ZooKeeper](https://zookeeper.apache.org/)
-8. [DAGOR: Overload Control for Scaling WeChat Microservices](https://arxiv.org/abs/1806.04075)
-9. [WhatsApp end-to-end encryption](https://faq.whatsapp.com/general/security-and-privacy/end-to-end-encryption)
-10. [Flannel: An Application-Level Edge Cache to Make Slack Scale](https://slack.engineering/flannel-an-application-level-edge-cache-to-make-slack-scale-b8a6400e2f6b)
+1. <a id="ref-1"></a>[Erlang at Facebook](https://www.erlang-factory.com/upload/presentations/31/EugeneLetuchy-ErlangatFacebook.pdf)
+2. <a id="ref-2"></a>[Messenger and WhatsApp process 60 billion messages a day](https://www.theverge.com/2016/4/12/11415198/facebook-messenger-whatsapp-number-messages-vs-sms-f8-2016)
+3. <a id="ref-3"></a>[Long tail](https://en.wikipedia.org/wiki/Long_tail)
+4. <a id="ref-4"></a>[The Underlying Technology of Messages](https://engineering.fb.com/2010/11/15/core-infra/the-underlying-technology-of-messages/)
+5. <a id="ref-5"></a>[How Discord Stores Billions of Messages](https://blog.discordapp.com/how-discord-stores-billions-of-messages-7fa6ec7ee4c7)
+6. <a id="ref-6"></a>[Announcing Snowflake](https://blog.twitter.com/engineering/en_us/a/2010/announcing-snowflake.html)
+7. <a id="ref-7"></a>[Apache ZooKeeper](https://zookeeper.apache.org/)
+8. <a id="ref-8"></a>[DAGOR: Overload Control for Scaling WeChat Microservices](https://arxiv.org/abs/1806.04075)
+9. <a id="ref-9"></a>[WhatsApp end-to-end encryption](https://faq.whatsapp.com/general/security-and-privacy/end-to-end-encryption)
+10. <a id="ref-10"></a>[Flannel: An Application-Level Edge Cache to Make Slack Scale](https://slack.engineering/flannel-an-application-level-edge-cache-to-make-slack-scale-b8a6400e2f6b)
