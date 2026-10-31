@@ -10,7 +10,7 @@ Google Drive is a cloud-based file storage and synchronization service that allo
 - **File Revision History**
 - **Notifications for Edits, Deletes, and Shares**
 
-## Step 1: Understanding the Problem
+## Step 1: Understand the Problem and Establish Design Scope
 
 ### Key Requirements
 
@@ -35,7 +35,7 @@ Google Drive is a cloud-based file storage and synchronization service that allo
 - Upload frequency: **2 files per day per user**.
 - Total storage required: **500 PB**.
 
-## Step 2: High-Level Design
+## Step 2: Propose High-Level Design and Get Buy-In
 
 ### Single-Server Setup
 A basic setup includes:
@@ -74,7 +74,7 @@ This design serves as a starting point but is inadequate for scaling.
 1. **Sharding:** Split storage across servers based on `user_id`.
 2. **Amazon S3:** Use S3 for scalable and redundant file storage with cross-region replication.
 
-    <img src="./images/replication.svg" alt="replication.svg" width="1000" />
+<img src="./images/replication.svg" alt="replication.svg" width="1000" />
 
 3. **Load Balancer:** Distribute traffic across multiple web servers.
 4. **Metadata Database Replication:** Ensure availability through database sharding and replication.
@@ -228,7 +228,7 @@ Once a client knows that a file has changed, it first requests metadata via API 
 
 ### Notification Service
 1. **Purpose:** Keeps clients updated about file changes.
-2. **Mechanism:** Implements **long polling** for asynchronous notifications. Dropbox uses long polling [[10]](https://assets.dropbox.com/www/en-us/business/solutions/solutions/dfb_security_whitepaper.pdf).
+2. **Mechanism:** Implements **long polling** for asynchronous notifications. Dropbox uses HTTP long polling [[10]](https://assets.dropbox.com/www/en-us/business/solutions/solutions/dfb_security_whitepaper.pdf).
 3. **Example:** When a file is added, edited, or deleted, notifications are pushed to all relevant clients.
 
 ### Storage Optimization
@@ -247,7 +247,7 @@ Once a client knows that a file has changed, it first requests metadata via API 
 4. **Cloud Storage Failure:** Use cross-region replication to fetch unavailable files.
 5. **Notification Service Failure:** Clients reconnect to alternative servers.
 
-## Step 4: Wrap-up
+## Step 4: Wrap Up
 
 In a different design, a file could be uploaded directly to cloud storage from the client instead of going through block servers. The advantage of this approach is that it makes file upload faster because a file only needs to be transferred once to the cloud storage.
 
