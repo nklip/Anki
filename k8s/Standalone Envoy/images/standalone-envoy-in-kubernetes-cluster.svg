@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="950" viewBox="0 0 1440 950" role="img" aria-labelledby="title desc">
+  <title id="title">Standalone Envoy at the edge of a Kubernetes cluster</title>
+  <desc id="desc">The external user sends a request through a standalone Envoy proxy to the Checkout application using its Kubernetes Service. Green arrows show this request. Checkout then makes a separate request to Payments through the Payments Service, shown in blue; this call bypasses Envoy. Envoy runs in its own Deployment, and both application Pods have no sidecars in this example. A dashed purple arrow shows a ConfigMap supplying envoy.yaml as a mounted file, read at startup. The Kubernetes control plane manages resource definitions but does not carry application requests. This is a static configuration example with no Istio control plane. The external load balancer, node placement, detailed Service routing, and response arrows are omitted.</desc>
+
+  <!-- Match the Istio diagram's typography and green/blue/purple flow conventions. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 30px; font-weight: 700; }
+      .section { font-size: 23px; font-weight: 700; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #52677b; }
+      .incoming-label { font-size: 16px; font-weight: 700; fill: #286343; }
+      .payment-label { font-size: 16px; font-weight: 700; fill: #24639a; }
+      .incoming { fill: none; stroke: #397c5a; stroke-width: 4; stroke-linejoin: round; }
+      .payment { fill: none; stroke: #3279b5; stroke-width: 4; stroke-linejoin: round; }
+      .configuration { fill: none; stroke: #8066a5; stroke-width: 2.5; stroke-dasharray: 7 5; stroke-linejoin: round; }
+      .configuration-join { fill: none; stroke: #8066a5; stroke-width: 2.5; }
+    </style>
+  </defs>
+
+  <!-- Scope is one directly configured edge proxy; other standalone topologies are possible. -->
+  <rect width="1440" height="950" fill="#ffffff"/>
+  <text x="32" y="44" class="title">Standalone Envoy: a proxy you configure at the cluster edge</text>
+  <text x="32" y="77" class="body">Follow the green user request, then the blue payment call. Static configuration; no application sidecars in this example.</text>
+  <rect id="kubernetes-cluster" x="272" y="110" width="1136" height="690" rx="16" fill="#f8fafc" stroke="#9aaebf" stroke-width="2"/>
+  <text x="300" y="148" class="section">Kubernetes cluster</text>
+  <text x="1380" y="148" class="small" text-anchor="end">Same applications as the Istio example</text>
+
+  <!-- Kubernetes manages resources; its API server is separate from the application data path. -->
+  <g id="kubernetes-control-plane">
+    <rect x="304" y="184" width="405" height="170" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+    <text x="506" y="218" class="heading" text-anchor="middle">Kubernetes control plane</text>
+    <rect id="api-server" x="326" y="240" width="361" height="88" rx="10" fill="#ffffff" stroke="#93b4e9" stroke-width="1.5"/>
+    <text x="506" y="274" class="heading" text-anchor="middle">API server</text>
+    <text x="506" y="303" class="small" text-anchor="middle">Stores resource definitions</text>
+  </g>
+
+  <!-- A ConfigMap is a configuration object, not a running proxy-control process like istiod. -->
+  <g id="envoy-configuration">
+    <rect x="960" y="184" width="416" height="170" rx="12" fill="#f5f3ff" stroke="#b7a4de" stroke-width="1.5"/>
+    <text x="1168" y="218" class="heading" text-anchor="middle">Your Envoy configuration</text>
+    <rect id="envoy-configmap" x="984" y="240" width="368" height="88" rx="10" fill="#ffffff" stroke="#b7a4de" stroke-width="1.5"/>
+    <text x="1168" y="274" class="heading" text-anchor="middle">ConfigMap: envoy-config</text>
+    <text x="1168" y="303" class="small" text-anchor="middle">envoy.yaml — written by you</text>
+  </g>
+
+  <!-- External caller remains outside the cluster boundary, as in the Istio diagram. -->
+  <g id="external-user">
+    <rect x="32" y="570" width="165" height="110" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+    <text x="114" y="602" class="heading" text-anchor="middle">User</text>
+    <text x="114" y="628" class="small" text-anchor="middle">web browser</text>
+    <text x="114" y="660" class="incoming-label" text-anchor="middle">1. Sends request</text>
+    <text x="114" y="706" class="small" text-anchor="middle">Outside the cluster</text>
+  </g>
+
+  <!-- One Envoy container is a separate workload, exposed through its own Kubernetes Service. -->
+  <g id="edge-envoy-pod">
+    <rect x="310" y="490" width="260" height="255" rx="14" fill="#fff7ed" stroke="#d8b991" stroke-width="1.5"/>
+    <text x="430" y="527" class="heading" text-anchor="middle">Pod: edge-envoy</text>
+    <rect id="envoy-proxy" x="330" y="550" width="220" height="155" rx="10" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+    <text x="440" y="591" class="heading" text-anchor="middle">Envoy</text>
+    <text x="440" y="615" class="small" text-anchor="middle">proxy container</text>
+    <text x="440" y="674" class="incoming-label" text-anchor="middle">Routes to Checkout</text>
+    <text x="440" y="730" class="small" text-anchor="middle">Own Deployment</text>
+  </g>
+
+  <!-- Checkout handles the external request and originates a separate downstream call. -->
+  <g id="checkout-pod">
+    <rect x="710" y="490" width="260" height="255" rx="14" fill="#fff7ed" stroke="#d8b991" stroke-width="1.5"/>
+    <text x="840" y="527" class="heading" text-anchor="middle">Pod: checkout</text>
+    <rect id="checkout-app" x="730" y="550" width="220" height="155" rx="10" fill="#ffffff" stroke="#d8b991" stroke-width="1.5"/>
+    <text x="840" y="591" class="heading" text-anchor="middle">Checkout</text>
+    <text x="840" y="615" class="small" text-anchor="middle">app container</text>
+    <text x="840" y="659" class="incoming-label" text-anchor="middle">Handles request</text>
+    <text x="840" y="688" class="payment-label" text-anchor="middle">2. Calls Payments</text>
+    <text x="840" y="730" class="small" text-anchor="middle">No Envoy sidecar</text>
+  </g>
+
+  <!-- Payments has an application container only; the payment call never visits the edge proxy. -->
+  <g id="payments-pod">
+    <rect x="1110" y="490" width="260" height="255" rx="14" fill="#fff7ed" stroke="#d8b991" stroke-width="1.5"/>
+    <text x="1240" y="527" class="heading" text-anchor="middle">Pod: payments</text>
+    <rect id="payments-app" x="1130" y="550" width="220" height="155" rx="10" fill="#ffffff" stroke="#d8b991" stroke-width="1.5"/>
+    <text x="1240" y="591" class="heading" text-anchor="middle">Payments</text>
+    <text x="1240" y="615" class="small" text-anchor="middle">app container</text>
+    <text x="1240" y="674" class="payment-label" text-anchor="middle">Handles payment</text>
+    <text x="1240" y="730" class="small" text-anchor="middle">No Envoy sidecar</text>
+  </g>
+
+  <!-- Dashed arrow represents a mounted-file relationship, not an API push or automatic reload. -->
+  <g id="configuration-flow">
+    <path id="config-file-shaft" class="configuration" data-connector="true" d="M1168 328 V410 H530 V540"/>
+    <path id="config-file-join" class="configuration-join" data-connector="true" d="M530 535 V542"/>
+    <polygon id="config-file-head" points="530,550 524,539 536,539" fill="#8066a5"/>
+    <text x="850" y="455" class="body" text-anchor="middle">Mounted file; Envoy reads static settings at startup.</text>
+    <text x="760" y="385" class="small" text-anchor="middle">No istiod in this setup</text>
+  </g>
+
+  <!-- Green arrows carry the original user request; shafts cross logical grouping borders intentionally. -->
+  <g id="user-request-path">
+    <text x="238" y="624" class="incoming-label" text-anchor="middle">request</text>
+    <path id="external-request-shaft" class="incoming" data-connector="true" d="M197 650 H319"/>
+    <polygon id="external-request-head" points="330,650 316,642 316,658" fill="#397c5a"/>
+    <text x="640" y="585" class="incoming-label" text-anchor="middle">User request</text>
+    <text x="640" y="609" class="small" text-anchor="middle">via checkout</text>
+    <text x="640" y="633" class="small" text-anchor="middle">Service</text>
+    <path id="envoy-checkout-shaft" class="incoming" data-connector="true" d="M550 650 H719"/>
+    <polygon id="envoy-checkout-head" points="730,650 716,642 716,658" fill="#397c5a"/>
+  </g>
+
+  <!-- Blue starts at the application and bypasses Envoy; Service names label network abstractions. -->
+  <g id="payment-request-path">
+    <text x="1040" y="585" class="payment-label" text-anchor="middle">Payment request</text>
+    <text x="1040" y="609" class="small" text-anchor="middle">via payments</text>
+    <text x="1040" y="633" class="small" text-anchor="middle">Service</text>
+    <path id="checkout-payments-shaft" class="payment" data-connector="true" d="M950 650 H1119"/>
+    <polygon id="checkout-payments-head" points="1130,650 1116,642 1116,658" fill="#3279b5"/>
+  </g>
+
+  <!-- Explicit scope prevents the edge-only example from being mistaken for every Envoy topology. -->
+  <text x="840" y="778" class="body" text-anchor="middle">Envoy handles only traffic routed through it. The payment call bypasses it in this example.</text>
+
+  <!-- Legend uses the Istio diagram's request colors, while the dashed line is file configuration here. -->
+  <path id="incoming-legend-shaft" class="incoming" data-connector="true" d="M32 835 H82"/>
+  <text x="98" y="840" class="small">1. User → Checkout</text>
+  <path id="payment-legend-shaft" class="payment" data-connector="true" d="M440 835 H490"/>
+  <text x="506" y="840" class="small">2. Checkout → Payments</text>
+  <path id="configuration-legend-shaft" class="configuration" data-connector="true" d="M940 835 H990"/>
+  <text x="1006" y="840" class="small">Mounted configuration file</text>
+  <text x="720" y="875" class="small" text-anchor="middle">API = application programming interface. ConfigMap = Kubernetes object for non-secret configuration.</text>
+  <text x="720" y="902" class="small" text-anchor="middle">A LoadBalancer Service exposes Envoy; the external load balancer, node placement, and detailed Service routing are omitted.</text>
+  <text x="720" y="929" class="small" text-anchor="middle">Responses return along the connections. Application requests do not pass through the API server or the ConfigMap.</text>
+</svg>
