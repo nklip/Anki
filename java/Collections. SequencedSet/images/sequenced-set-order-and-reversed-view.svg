@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="720" viewBox="0 0 1500 720" role="img" aria-labelledby="title description">
+  <title id="title">SequencedSet keeps unique elements in order and exposes a reversed view</title>
+  <desc id="description">A LinkedHashSet named tasks contains clean, compile, and test in insertion order. Its reversed view visits test, compile, and clean. First and last are swapped. Adding compile again leaves the order unchanged, while addFirst moves compile to the front. Both operations keep exactly three unique elements.</desc>
+
+  <!-- Shared typography; palette matches the SequencedCollection companion diagram. -->
+  <defs>
+    <style>
+      text { font-family: sans-serif; }
+      .code { font-family: monospace; }
+      .blue { fill: #1d4f82; }
+      .purple { fill: #6a3e94; }
+    </style>
+  </defs>
+
+  <!-- Lesson statement: each node is one unique set element. -->
+  <rect width="1500" height="720" fill="white"/>
+  <text x="750" y="52" text-anchor="middle" font-size="36" font-weight="bold" fill="#111">SequencedSet: unique elements with a defined order</text>
+  <text x="750" y="90" text-anchor="middle" font-size="22" fill="#444">Each box is one element; arrows show the order in which elements are visited</text>
+
+  <!-- Initial set: positions follow insertion order for this LinkedHashSet. -->
+  <g id="original-order">
+    <rect x="55" y="130" width="625" height="380" rx="10" fill="#edf5fd" stroke="#2f6fad" stroke-width="3"/>
+    <path d="M55 198H680" stroke="#2f6fad" stroke-width="3"/>
+    <text x="367" y="173" text-anchor="middle" font-size="27" font-weight="bold" class="blue">tasks: LinkedHashSet</text>
+
+    <text x="165" y="239" text-anchor="middle" font-size="18" font-weight="bold" class="blue">FIRST</text>
+    <text x="569" y="239" text-anchor="middle" font-size="18" font-weight="bold" class="blue">LAST</text>
+
+    <rect x="90" y="264" width="150" height="90" rx="8" fill="white" stroke="#2f6fad" stroke-width="2"/>
+    <text x="165" y="318" text-anchor="middle" font-size="25" font-weight="bold" class="code blue">clean</text>
+    <rect x="292" y="264" width="150" height="90" rx="8" fill="white" stroke="#2f6fad" stroke-width="2"/>
+    <text x="367" y="318" text-anchor="middle" font-size="25" font-weight="bold" class="code blue">compile</text>
+    <rect x="494" y="264" width="150" height="90" rx="8" fill="white" stroke="#2f6fad" stroke-width="2"/>
+    <text x="569" y="318" text-anchor="middle" font-size="25" font-weight="bold" class="code blue">test</text>
+
+    <!-- Shafts end inside their heads' bases; arrow tips stop short of node borders. -->
+    <path id="original-first-connector" data-connector="true" d="M246 309H268" stroke="#2f6fad" stroke-width="3"/>
+    <polygon points="286,309 267,300 267,318" fill="#2f6fad"/>
+    <path id="original-last-connector" data-connector="true" d="M448 309H470" stroke="#2f6fad" stroke-width="3"/>
+    <polygon points="488,309 469,300 469,318" fill="#2f6fad"/>
+
+    <rect x="105" y="390" width="525" height="85" rx="8" fill="#dceafb" stroke="#2f6fad" stroke-width="2"/>
+    <text x="367" y="424" text-anchor="middle" font-size="22" font-weight="bold" class="code blue">tasks.getFirst() = clean</text>
+    <text x="367" y="456" text-anchor="middle" font-size="22" font-weight="bold" class="code blue">tasks.getLast() = test</text>
+  </g>
+
+  <!-- The central relation creates a view; its arrow stays outside both panels. -->
+  <g id="reversed-relation">
+    <text x="750" y="275" text-anchor="middle" font-size="20" font-weight="bold" class="code purple">reversed()</text>
+    <path id="view-connector" data-connector="true" d="M697 309H784" stroke="#7b4ba3" stroke-width="4"/>
+    <polygon points="803,309 783,299 783,319" fill="#7b4ba3"/>
+    <text x="750" y="354" text-anchor="middle" font-size="18" class="purple">same elements</text>
+    <text x="750" y="381" text-anchor="middle" font-size="18" class="purple">reverse order</text>
+  </g>
+
+  <!-- Reverse view: the same unique elements appear in the opposite encounter order. -->
+  <g id="reversed-order">
+    <rect x="820" y="130" width="625" height="380" rx="10" fill="#f4edfb" stroke="#7b4ba3" stroke-width="3"/>
+    <path d="M820 198H1445" stroke="#7b4ba3" stroke-width="3"/>
+    <text x="1132" y="173" text-anchor="middle" font-size="27" font-weight="bold" class="purple">reverse: view of tasks</text>
+
+    <text x="930" y="239" text-anchor="middle" font-size="18" font-weight="bold" class="purple">FIRST</text>
+    <text x="1334" y="239" text-anchor="middle" font-size="18" font-weight="bold" class="purple">LAST</text>
+
+    <rect x="855" y="264" width="150" height="90" rx="8" fill="white" stroke="#7b4ba3" stroke-width="2"/>
+    <text x="930" y="318" text-anchor="middle" font-size="25" font-weight="bold" class="code purple">test</text>
+    <rect x="1057" y="264" width="150" height="90" rx="8" fill="white" stroke="#7b4ba3" stroke-width="2"/>
+    <text x="1132" y="318" text-anchor="middle" font-size="25" font-weight="bold" class="code purple">compile</text>
+    <rect x="1259" y="264" width="150" height="90" rx="8" fill="white" stroke="#7b4ba3" stroke-width="2"/>
+    <text x="1334" y="318" text-anchor="middle" font-size="25" font-weight="bold" class="code purple">clean</text>
+
+    <!-- The reversed encounter order still reads left to right within this panel. -->
+    <path id="reverse-first-connector" data-connector="true" d="M1011 309H1033" stroke="#7b4ba3" stroke-width="3"/>
+    <polygon points="1051,309 1032,300 1032,318" fill="#7b4ba3"/>
+    <path id="reverse-last-connector" data-connector="true" d="M1213 309H1235" stroke="#7b4ba3" stroke-width="3"/>
+    <polygon points="1253,309 1234,300 1234,318" fill="#7b4ba3"/>
+
+    <rect x="870" y="390" width="525" height="85" rx="8" fill="#eadcf7" stroke="#7b4ba3" stroke-width="2"/>
+    <text x="1132" y="424" text-anchor="middle" font-size="22" font-weight="bold" class="code purple">reverse.getFirst() = test</text>
+    <text x="1132" y="456" text-anchor="middle" font-size="22" font-weight="bold" class="code purple">reverse.getLast() = clean</text>
+  </g>
+
+  <!-- Both operations begin with the initial order above; neither adds a duplicate. -->
+  <g id="repositioning-outcome">
+    <rect x="120" y="550" width="1260" height="115" rx="9" fill="#fafafa" stroke="#777" stroke-width="2"/>
+    <text x="750" y="580" text-anchor="middle" font-size="25" font-weight="bold" fill="#333">LinkedHashSet: order after adding an existing element</text>
+    <text x="750" y="617" text-anchor="middle" font-size="22" class="code" fill="#333">tasks.add("compile") → [clean, compile, test] (unchanged)</text>
+    <text x="750" y="650" text-anchor="middle" font-size="22" class="code" fill="#333">tasks.addFirst("compile") → [compile, clean, test] (moved to front)</text>
+  </g>
+  <text x="750" y="699" text-anchor="middle" font-size="19" fill="#555">Both operations leave exactly three elements: moving an element does not create a duplicate.</text>
+</svg>
