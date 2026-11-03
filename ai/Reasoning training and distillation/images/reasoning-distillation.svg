@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="680" viewBox="0 0 900 680" role="img" aria-labelledby="title desc">
+  <title id="title">Distillation trains a student from teacher outputs</title>
+  <desc id="desc">In this output-based distillation recipe, a teacher model generates worked solutions. Checking and selection produce a dataset of intermediate working and final answers. Supervised fine-tuning trains a student model to predict the recorded solution tokens and updates its weights. During ordinary inference, the student answers new problems using its own fixed weights without requiring the teacher. A correct final answer does not guarantee that all intermediate steps are correct.</desc>
+  <!-- Blue marks models and examples; orange is selection and purple is learning. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .section { font-size: 20px; font-weight: 700; }
+      .label { font-size: 22px; font-weight: 700; }
+      .copy { font-size: 20px; }
+      .small { font-size: 18px; }
+      .note { font-size: 19px; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="680" fill="#ffffff"/>
+
+  <!-- Teacher generation and selection create training data, not copied weights. -->
+  <text class="title" x="28" y="44">Distillation trains a student from teacher outputs</text>
+  <text class="subtitle" x="28" y="76">One output-based recipe: learn from selected worked solutions.</text>
+  <text class="section" x="28" y="110">TRAINING</text>
+  <g id="teacher-model">
+    <rect x="28" y="130" width="226" height="100" rx="13" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="141" y="167" text-anchor="middle">Teacher model</text>
+    <text class="copy" x="141" y="203" text-anchor="middle">Generate solutions</text>
+  </g>
+  <g id="check-and-select">
+    <rect x="337" y="130" width="226" height="100" rx="13" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="450" y="167" text-anchor="middle">Check and select</text>
+    <text class="copy" x="450" y="203" text-anchor="middle">Keep useful examples</text>
+  </g>
+  <g id="student-dataset">
+    <rect x="646" y="130" width="226" height="100" rx="13" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="759" y="167" text-anchor="middle">Training examples</text>
+    <text class="copy" x="759" y="203" text-anchor="middle">Working + answer</text>
+  </g>
+
+  <!-- Route the dataset into student training, clear of all text. -->
+  <line class="connector" x1="255" y1="180" x2="324" y2="180"/>
+  <polygon class="head" points="337,180 323,173 323,187"/>
+  <line class="connector" x1="564" y1="180" x2="633" y2="180"/>
+  <polygon class="head" points="646,180 632,173 632,187"/>
+  <path id="examples-to-student-connector" class="connector" d="M759 231 V254 H450 V273"/>
+  <polygon class="head" points="450,286 443,272 457,272"/>
+
+  <!-- Training adjusts the student's own weights using recorded text targets. -->
+  <g id="train-student-model">
+    <rect x="170" y="286" width="560" height="110" rx="13" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="450" y="321" text-anchor="middle">Supervised fine-tuning of the student</text>
+    <text class="copy" x="450" y="353" text-anchor="middle">Learn to predict the teacher's recorded text.</text>
+    <text class="copy" x="450" y="382" text-anchor="middle">Update the student's weights.</text>
+  </g>
+
+  <!-- A distinct phase shows deployment without a teacher call or weight update. -->
+  <text class="section" x="28" y="442">ORDINARY INFERENCE</text>
+  <line class="connector" x1="450" y1="397" x2="450" y2="447"/>
+  <polygon class="head" points="450,460 443,446 457,446"/>
+  <g id="use-trained-student">
+    <rect x="170" y="460" width="560" height="116" rx="13" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="450" y="497" text-anchor="middle">Use the trained student</text>
+    <text class="copy" x="450" y="531" text-anchor="middle">New problem → student's own answer</text>
+    <text class="small" x="450" y="560" text-anchor="middle">Teacher not required; student weights stay fixed.</text>
+  </g>
+
+  <!-- Filtering is useful but does not certify the teacher's entire reasoning. -->
+  <text class="note" x="450" y="620" text-anchor="middle">A correct final answer does not certify every intermediate step.</text>
+  <text class="note" x="450" y="651" text-anchor="middle">Check examples and test the student on problems kept out of training.</text>
+</svg>

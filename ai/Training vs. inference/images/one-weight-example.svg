@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="596" viewBox="0 0 900 596" role="img" aria-labelledby="title desc">
+  <title id="title">One weight changes in training, then stays fixed in inference</title>
+  <desc id="desc">A toy model predicts weight times input. For input 2 and target 6, weight 2 gives prediction 4 and squared error 4. Gradient minus 8 and learning rate 0.1 update the weight to 2.8, giving prediction 5.6 and loss 0.16. At inference, a new input 3 gives prediction 8.4 using the unchanged weight 2.8.</desc>
+  <!-- Colors and typography match the conceptual comparison diagram. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .section { font-size: 23px; font-weight: 700; }
+      .label { font-size: 23px; font-weight: 700; }
+      .copy { font-size: 19px; }
+      .small { font-size: 17px; }
+      .connector { fill: none; stroke: #64748b; stroke-width: 2.5; }
+      .head { fill: #64748b; }
+      .update-connector { stroke: #9333ea; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <rect width="900" height="596" fill="#ffffff"/>
+
+  <!-- Name the toy model explicitly to avoid implying LLMs have one weight. -->
+  <text class="title" x="28" y="44">Change the weight, then use the resulting model</text>
+  <text class="subtitle" x="28" y="76">Toy model: prediction = w × input. Here, w is the only weight.</text>
+
+  <!-- Before/after: the input and target are held constant while the weight changes. -->
+  <rect x="24" y="104" width="852" height="276" rx="16" fill="#faf8ff" stroke="#d8b4fe" stroke-width="2"/>
+  <text class="section" x="48" y="143">Training example: input 2, target 6</text>
+  <g id="before-update">
+    <rect x="48" y="166" width="310" height="116" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="203" y="201" text-anchor="middle">Before: w = 2</text>
+    <text class="copy" x="203" y="233" text-anchor="middle">Prediction: 2 × 2 = 4</text>
+    <text class="copy" x="203" y="261" text-anchor="middle">Loss: (4 − 6)² = 4</text>
+  </g>
+  <g id="after-update">
+    <rect x="542" y="166" width="310" height="116" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="697" y="201" text-anchor="middle">After: w = 2.8</text>
+    <text class="copy" x="697" y="233" text-anchor="middle">Prediction: 2.8 × 2 = 5.6</text>
+    <text class="copy" x="697" y="261" text-anchor="middle">Loss: (5.6 − 6)² = 0.16</text>
+  </g>
+
+  <!-- Gradient and rate label the update arrow; neither touches the shaft. -->
+  <text class="small" x="450" y="202" text-anchor="middle">Gradient: −8</text>
+  <line class="update-connector" x1="359" y1="224" x2="529" y2="224"/>
+  <polygon points="542,224 528,217 528,231" fill="#9333ea"/>
+  <text class="small" x="450" y="257" text-anchor="middle">Learning rate: 0.1</text>
+  <text class="copy" x="450" y="316" text-anchor="middle">Weight update: 2 − 0.1 × (−8) = 2.8</text>
+  <text class="copy" x="450" y="351" text-anchor="middle">Same training input; lower squared-error loss.</text>
+
+  <!-- Inference reuses 2.8 on a new input. Output is a prediction, not a known target. -->
+  <rect x="24" y="400" width="852" height="172" rx="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text class="section" x="48" y="437">Inference: new input, same updated weight</text>
+  <g id="new-input">
+    <rect x="48" y="460" width="200" height="60" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="148" y="497" text-anchor="middle">Input: 3</text>
+  </g>
+  <g id="fixed-weight">
+    <rect x="350" y="460" width="200" height="60" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="450" y="497" text-anchor="middle">w = 2.8</text>
+  </g>
+  <g id="new-prediction">
+    <rect x="652" y="460" width="200" height="60" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="752" y="497" text-anchor="middle">Prediction: 8.4</text>
+  </g>
+  <!-- Each shaft joins its own triangle base; tips stop at the target borders. -->
+  <line class="connector" x1="249" y1="490" x2="337" y2="490"/>
+  <polygon class="head" points="350,490 336,483 336,497"/>
+  <line class="connector" x1="551" y1="490" x2="639" y2="490"/>
+  <polygon class="head" points="652,490 638,483 638,497"/>
+  <text class="copy" x="450" y="551" text-anchor="middle">2.8 × 3 = 8.4. The weight remains 2.8.</text>
+</svg>

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="672" viewBox="0 0 900 672" role="img" aria-labelledby="title desc">
+  <title id="title">A demonstration can teach a tool-use sequence</title>
+  <desc id="desc">A fictional recorded conversation lists an order lookup tool, a user asking about order 123, an assistant requesting lookup_order with order_id 123, the tool result Shipped, and the assistant reply Your order has shipped. With assistant-only scoring, the assistant request and reply are training targets; the user message and tool result provide context. During actual inference, an application executes the tool and supplies its result.</desc>
+  <!-- Match the target diagram: blue is context and orange is taught behavior. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 19px; font-weight: 700; }
+      .copy { font-size: 22px; }
+      .note { font-size: 19px; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="672" fill="#ffffff"/>
+
+  <!-- Available tool definition precedes the chronological message sequence. -->
+  <text class="title" x="28" y="44">A demonstration can teach a tool-use sequence</text>
+  <text class="subtitle" x="28" y="76">Fictional training record · read downward · assistant-only scoring</text>
+  <g id="tool-definition">
+    <rect x="28" y="96" width="844" height="70" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="50" y="124">AVAILABLE TOOL</text>
+    <text class="note" x="50" y="151">lookup_order takes an order number and returns its delivery status.</text>
+  </g>
+
+  <!-- Message roles determine context versus scored assistant behavior. -->
+  <g id="user-message">
+    <rect x="50" y="188" width="800" height="76" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="72" y="216">USER · context</text>
+    <text class="copy" x="72" y="246">Where is order 123?</text>
+  </g>
+  <g id="assistant-tool-request">
+    <rect x="50" y="298" width="800" height="76" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="72" y="326">ASSISTANT · training targets</text>
+    <text class="copy" x="72" y="356">Request: lookup_order(order_id=123)</text>
+  </g>
+  <g id="recorded-tool-result">
+    <rect x="50" y="408" width="800" height="76" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="72" y="436">TOOL · context for the next reply</text>
+    <text class="copy" x="72" y="466">Shipped</text>
+  </g>
+  <g id="assistant-final-reply">
+    <rect x="50" y="518" width="800" height="76" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="72" y="546">ASSISTANT · training targets</text>
+    <text class="copy" x="72" y="576">Your order has shipped.</text>
+  </g>
+
+  <!-- Arrow tips meet the next message border. Shafts stop inside their bases. -->
+  <line class="connector" x1="450" y1="265" x2="450" y2="285"/>
+  <polygon class="head" points="450,298 443,284 457,284"/>
+  <line class="connector" x1="450" y1="375" x2="450" y2="395"/>
+  <polygon class="head" points="450,408 443,394 457,394"/>
+  <line class="connector" x1="450" y1="485" x2="450" y2="505"/>
+  <polygon class="head" points="450,518 443,504 457,504"/>
+
+  <!-- Distinguish a training record from the runtime that performs live actions. -->
+  <text class="note" x="450" y="628" text-anchor="middle">Training learns from this record; the tool-call format is simplified here.</text>
+  <text class="note" x="450" y="655" text-anchor="middle">At inference, the application runs the tool and supplies its result.</text>
+</svg>

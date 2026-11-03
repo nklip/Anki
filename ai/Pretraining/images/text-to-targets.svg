@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="574" viewBox="0 0 900 574" role="img" aria-labelledby="title desc">
+  <title id="title">Text supplies its own practice questions</title>
+  <desc id="desc">The training sentence The cat sleeps, followed by a full stop, is shown as four simplified tokens. Earlier text The has target cat. Earlier text The cat has target sleeps. Earlier text The cat sleeps has target full stop. Each prediction can use only the earlier text, while the target is used to score the prediction.</desc>
+  <!-- Typography matches the preceding articles. Blue is input; orange is the target. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 21px; font-weight: 700; }
+      .token { font-size: 25px; text-anchor: middle; }
+      .copy { font-size: 19px; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="574" fill="#ffffff"/>
+
+  <!-- Entry point: show the source text before its input-target pairs. -->
+  <text class="title" x="28" y="44">Text supplies its own practice questions</text>
+  <text class="subtitle" x="28" y="76">One sentence, several targets. Read each practice row left to right.</text>
+  <g id="source-sentence">
+    <rect x="24" y="104" width="852" height="118" rx="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="48" y="139">Training text: words and punctuation as simplified tokens</text>
+    <rect x="48" y="159" width="174" height="42" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+    <text class="token" x="135" y="188">The</text>
+    <rect x="258" y="159" width="174" height="42" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+    <text class="token" x="345" y="188">cat</text>
+    <rect x="468" y="159" width="174" height="42" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+    <text class="token" x="555" y="188">sleeps</text>
+    <rect x="678" y="159" width="174" height="42" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+    <text class="token" x="765" y="188">.</text>
+  </g>
+
+  <!-- Column headings distinguish what predicts from what is scored. -->
+  <text class="label" x="48" y="257">Earlier text (model input)</text>
+  <text class="label" x="620" y="257">Next token (target)</text>
+
+  <!-- Independent practice positions, not a sequence of the model's own guesses. -->
+  <g id="predict-cat">
+    <rect x="48" y="274" width="468" height="56" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="token" x="282" y="310">The</text>
+    <rect x="620" y="274" width="232" height="56" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="token" x="736" y="310">cat</text>
+  </g>
+  <g id="predict-sleeps">
+    <rect x="48" y="350" width="468" height="56" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="token" x="282" y="386">The cat</text>
+    <rect x="620" y="350" width="232" height="56" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="token" x="736" y="386">sleeps</text>
+  </g>
+  <g id="predict-full-stop">
+    <rect x="48" y="426" width="468" height="56" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="token" x="282" y="462">The cat sleeps</text>
+    <rect x="620" y="426" width="232" height="56" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="token" x="736" y="462">.</text>
+  </g>
+
+  <!-- Arrow shafts end inside their triangle bases; tips meet target borders. -->
+  <line class="connector" x1="517" y1="302" x2="607" y2="302"/>
+  <polygon class="head" points="620,302 606,295 606,309"/>
+  <line class="connector" x1="517" y1="378" x2="607" y2="378"/>
+  <polygon class="head" points="620,378 606,371 606,385"/>
+  <line class="connector" x1="517" y1="454" x2="607" y2="454"/>
+  <polygon class="head" points="620,454 606,447 606,461"/>
+
+  <!-- No-lookahead rule prevents interpreting the full source as visible at every position. -->
+  <text class="copy" x="450" y="519" text-anchor="middle">Each prediction sees only the text before its target.</text>
+  <text class="copy" x="450" y="547" text-anchor="middle">The target is used for scoring, not shown as input to that prediction.</text>
+</svg>

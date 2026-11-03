@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="610" viewBox="0 0 900 610" role="img" aria-labelledby="title desc">
+  <title id="title">Training updates weights; inference uses them</title>
+  <desc id="desc">Two rows compare supervised training and ordinary inference. Training runs a forward pass, measures loss against a target, computes gradients by backpropagation, and updates weights with an optimizer. The updated weights are reused on the next batch. Inference computes an output from an input using fixed weights.</desc>
+  <!-- Shared typography and connectors. Purple marks the parameter update. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .section { font-size: 24px; font-weight: 700; }
+      .label { font-size: 21px; font-weight: 700; }
+      .copy { font-size: 18px; }
+      .connector { fill: none; stroke: #64748b; stroke-width: 2.5; }
+      .head { fill: #64748b; }
+      .update-connector { fill: none; stroke: #9333ea; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <rect width="900" height="610" fill="#ffffff"/>
+
+  <!-- Direct lesson before the comparison. -->
+  <text class="title" x="28" y="44">Training updates weights; inference uses them</text>
+  <text class="subtitle" x="28" y="76">Read each row left to right. Both use a forward computation.</text>
+
+  <!-- Training panel: predictions and target feed the loss. -->
+  <rect x="24" y="104" width="852" height="272" rx="16" fill="#faf8ff" stroke="#d8b4fe" stroke-width="2"/>
+  <text class="section" x="48" y="140">Supervised training</text>
+  <text class="copy" x="48" y="165">Training batch: inputs and known targets</text>
+  <g id="training-forward">
+    <rect x="48" y="186" width="174" height="88" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="135" y="222" text-anchor="middle">Forward pass</text>
+    <text class="copy" x="135" y="251" text-anchor="middle">Predict output</text>
+  </g>
+  <g id="training-loss">
+    <rect x="258" y="186" width="174" height="88" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="345" y="222" text-anchor="middle">Loss</text>
+    <text class="copy" x="345" y="251" text-anchor="middle">Compare target</text>
+  </g>
+  <g id="training-backward">
+    <rect x="468" y="186" width="174" height="88" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="555" y="222" text-anchor="middle">Backward pass</text>
+    <text class="copy" x="555" y="251" text-anchor="middle">Compute gradients</text>
+  </g>
+  <g id="training-optimizer">
+    <rect x="678" y="186" width="174" height="88" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="765" y="222" text-anchor="middle">Optimizer</text>
+    <text class="copy" x="765" y="251" text-anchor="middle">Update weights</text>
+  </g>
+
+  <!-- Shafts stop inside triangle bases. Tips meet, but do not enter, target borders. -->
+  <line class="connector" x1="223" y1="230" x2="245" y2="230"/>
+  <polygon class="head" points="258,230 244,223 244,237"/>
+  <line class="connector" x1="433" y1="230" x2="455" y2="230"/>
+  <polygon class="head" points="468,230 454,223 454,237"/>
+  <line class="connector" x1="643" y1="230" x2="665" y2="230"/>
+  <polygon class="head" points="678,230 664,223 664,237"/>
+
+  <!-- Feedback carries updated weights to the next forward computation. -->
+  <text class="copy" x="450" y="312" text-anchor="middle">Reuse the updated weights on the next training batch</text>
+  <path class="update-connector" d="M765 275 V338 H135 V287"/>
+  <polygon points="135,274 128,288 142,288" fill="#9333ea"/>
+
+  <!-- Inference uses fixed weights and produces scores or predictions. -->
+  <rect x="24" y="398" width="852" height="188" rx="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text class="section" x="48" y="435">Ordinary inference</text>
+  <g id="inference-input">
+    <rect x="48" y="456" width="222" height="78" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="159" y="487" text-anchor="middle">Input</text>
+    <text class="copy" x="159" y="515" text-anchor="middle">Prompt or other data</text>
+  </g>
+  <g id="inference-forward">
+    <rect x="339" y="456" width="222" height="78" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="450" y="487" text-anchor="middle">Forward pass</text>
+    <text class="copy" x="450" y="515" text-anchor="middle">Use current weights</text>
+  </g>
+  <g id="inference-output">
+    <rect x="630" y="456" width="222" height="78" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="741" y="487" text-anchor="middle">Output</text>
+    <text class="copy" x="741" y="515" text-anchor="middle">Prediction or scores</text>
+  </g>
+  <line class="connector" x1="271" y1="495" x2="326" y2="495"/>
+  <polygon class="head" points="339,495 325,488 325,502"/>
+  <line class="connector" x1="562" y1="495" x2="617" y2="495"/>
+  <polygon class="head" points="630,495 616,488 616,502"/>
+  <text class="copy" x="450" y="565" text-anchor="middle">Weights stay fixed. Generated tokens can become new input.</text>
+</svg>

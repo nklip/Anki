@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="832" viewBox="0 0 1120 832" role="img" aria-labelledby="title desc">
+  <title id="title">A tool request becomes a result, then an answer</title>
+  <desc id="desc">Sequence diagram with User, Runtime, Model, and Calculator tool lifelines. Time moves downward. Solid arrows are calls; dashed arrows with open heads are replies. Narrow activation bars mark the duration of a call. The user asks for 18 times 22 using the calculator. The runtime calls the model with the question, context, and tool description. The model replies with a tool-call request. The runtime calls the calculator and receives 396, then calls the same model again with the updated context. The model replies with the answer, and the runtime displays it to the user. Model weights stay unchanged.</desc>
+  <!-- Shared palette matches the system map. UML notation reference:
+       https://developer.ibm.com/articles/the-sequence-diagram/ -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 23px; font-weight: 700; }
+      .copy { font-size: 18px; }
+      .message { font-size: 18px; text-anchor: middle; }
+      .lifeline { stroke: #94a3b8; stroke-width: 1.5; stroke-dasharray: 5 6; }
+      .connector { stroke: #334155; stroke-width: 2.2; fill: none; }
+      .reply { stroke-dasharray: 7 5; }
+      .head { fill: #334155; }
+      .open-head { stroke: #334155; stroke-width: 2.2; fill: none; stroke-linejoin: miter; }
+      .activation { stroke-width: 2; }
+    </style>
+  </defs>
+  <rect width="1120" height="832" fill="#ffffff"/>
+
+  <!-- Reading order is explicit; spacing shows order, not elapsed duration. -->
+  <g id="heading">
+    <text class="title" x="28" y="44">A tool request becomes a result, then an answer</text>
+    <text class="subtitle" x="28" y="76">Sequence diagram: read downward. Each vertical lifeline follows one participant.</text>
+  </g>
+
+  <!-- Standard actor and rectangular participant heads, in request order. -->
+  <g id="participants">
+    <g id="user">
+      <circle cx="100" cy="116" r="11" fill="#ffffff" stroke="#334155" stroke-width="2.2"/>
+      <path d="M100 127 V151 M82 138 H118 M100 151 L84 169 M100 151 L116 169" fill="none" stroke="#334155" stroke-width="2.2"/>
+      <text class="label" x="100" y="192" text-anchor="middle">User</text>
+    </g>
+    <rect x="280" y="106" width="220" height="70" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="390" y="136" text-anchor="middle">Runtime</text>
+    <text class="copy" x="390" y="161" text-anchor="middle">Coordinates calls</text>
+    <rect x="580" y="106" width="220" height="70" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="690" y="136" text-anchor="middle">Model</text>
+    <text class="copy" x="690" y="161" text-anchor="middle">Generates output</text>
+    <rect x="880" y="106" width="216" height="70" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="988" y="136" text-anchor="middle">Calculator tool</text>
+    <text class="copy" x="988" y="161" text-anchor="middle">Does arithmetic</text>
+  </g>
+
+  <!-- Lifelines sit behind activation bars. Calculator messages intentionally
+       cross the idle model lifeline; their labels stay to its right. -->
+  <g id="lifelines">
+    <line class="lifeline" x1="100" y1="204" x2="100" y2="720"/>
+    <line class="lifeline" x1="390" y1="177" x2="390" y2="720"/>
+    <line class="lifeline" x1="690" y1="177" x2="690" y2="720"/>
+    <line class="lifeline" x1="988" y1="177" x2="988" y2="720"/>
+  </g>
+
+  <!-- The runtime handles one request. The model has two separate activations;
+       its first reply requests a tool call, which the runtime then dispatches. -->
+  <g id="activations">
+    <rect id="runtime-activation" class="activation" x="382" y="254" width="16" height="442" fill="#f3e8ff" stroke="#9333ea"/>
+    <rect id="model-first-call" class="activation" x="682" y="316" width="16" height="62" fill="#eff6ff" stroke="#2563eb"/>
+    <rect id="calculator-activation" class="activation" x="980" y="442" width="16" height="62" fill="#ecfdf5" stroke="#059669"/>
+    <rect id="model-second-call" class="activation" x="682" y="568" width="16" height="64" fill="#eff6ff" stroke="#2563eb"/>
+  </g>
+
+  <!-- Solid calls have filled heads; each shaft ends inside its triangle base.
+       Tips meet the outer activation border, including its one-unit stroke. -->
+  <g id="user-question">
+    <text class="message" x="242" y="216">What is 18 × 22?</text>
+    <text class="message" x="242" y="238">Use the calculator.</text>
+    <line class="connector" x1="100" y1="254" x2="368" y2="254"/>
+    <polygon class="head" points="381,254 367,247 367,261"/>
+  </g>
+
+  <!-- First model invocation supplies the question and available tool. -->
+  <g id="initial-context">
+    <text class="message" x="540" y="280">Question + context</text>
+    <text class="message" x="540" y="302">+ tool description</text>
+    <line class="connector" x1="399" y1="316" x2="668" y2="316"/>
+    <polygon class="head" points="681,316 667,309 667,323"/>
+  </g>
+
+  <!-- Dashed replies return to the caller. The open-head miter projects 2.18
+       units left of its vertex, so inset that vertex 2.2 units from the target.
+       Start the dash pattern at the head to keep every shaft joined cleanly. -->
+  <g id="tool-request">
+    <text class="message" x="540" y="364">Tool call: calculate(18, 22)</text>
+    <line class="connector reply" x1="401.2" y1="378" x2="681" y2="378"/>
+    <path class="open-head" d="M413.2 371 L401.2 378 L413.2 385"/>
+  </g>
+
+  <!-- The runtime invokes the calculator after the first model call ends. -->
+  <g id="tool-execution">
+    <text class="message" x="839" y="428">Run calculate(18, 22)</text>
+    <line class="connector" x1="399" y1="442" x2="966" y2="442"/>
+    <polygon class="head" points="979,442 965,435 965,449"/>
+  </g>
+
+  <!-- Calculator reply returns the value to the runtime. -->
+  <g id="tool-result">
+    <text class="message" x="839" y="490">Result: 396</text>
+    <line class="connector reply" x1="401.2" y1="504" x2="979" y2="504"/>
+    <path class="open-head" d="M413.2 497 L401.2 504 L413.2 511"/>
+  </g>
+
+  <!-- A second invocation uses updated context on the same model lifeline. -->
+  <g id="updated-context">
+    <text class="message" x="540" y="532">Conversation + tool result:</text>
+    <text class="message" x="540" y="554">396</text>
+    <line class="connector" x1="399" y1="568" x2="668" y2="568"/>
+    <polygon class="head" points="681,568 667,561 667,575"/>
+  </g>
+
+  <!-- The second model reply completes its activation. -->
+  <g id="final-answer">
+    <text class="message" x="540" y="618">Answer: “18 × 22 = 396”</text>
+    <line class="connector reply" x1="401.2" y1="632" x2="681" y2="632"/>
+    <path class="open-head" d="M413.2 625 L401.2 632 L413.2 639"/>
+  </g>
+
+  <!-- The outer request ends with the runtime returning the displayed answer. -->
+  <g id="display-answer">
+    <text class="message" x="242" y="682">Display: “18 × 22 = 396”</text>
+    <line class="connector reply" x1="103" y1="696" x2="381" y2="696"/>
+    <path class="open-head" d="M115 689 L103 696 L115 703"/>
+  </g>
+
+  <!-- A small notation key keeps the sequence readable for a new learner. -->
+  <g id="notation-key">
+    <rect x="28" y="742" width="1068" height="48" rx="8" fill="#f8fafc"/>
+    <line class="connector" x1="50" y1="766" x2="97" y2="766"/>
+    <polygon class="head" points="110,766 96,759 96,773"/>
+    <text class="copy" x="126" y="772">Call</text>
+    <line class="connector reply" x1="240.2" y1="766" x2="298" y2="766"/>
+    <path class="open-head" d="M252.2 759 L240.2 766 L252.2 773"/>
+    <text class="copy" x="314" y="772">Reply</text>
+    <rect x="448" y="754" width="14" height="24" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+    <text class="copy" x="476" y="772">Activation: handling a call (including waits)</text>
+  </g>
+
+  <!-- Keep the original inference lesson tied to the two model activations. -->
+  <text class="copy" x="560" y="818" text-anchor="middle">The same model is called twice; its weights stay unchanged.</text>
+</svg>

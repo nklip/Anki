@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="634" viewBox="0 0 900 634" role="img" aria-labelledby="title desc">
+  <title id="title">RLHF uses a learned reward model</title>
+  <desc id="desc">Classic reinforcement learning from human feedback first trains a reward model from human comparisons. Then the assistant model generates responses, the trained reward model scores those responses, and a Proximal Policy Optimization update changes the assistant model weights. The cycle repeats. A Kullback–Leibler penalty also discourages large changes from a frozen reference model. Reward model weights stay fixed during the illustrated assistant training phase.</desc>
+  <!-- Blue marks data, orange the scorer, and purple the weight update. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .section { font-size: 20px; font-weight: 700; }
+      .label { font-size: 22px; font-weight: 700; }
+      .copy { font-size: 19px; }
+      .small { font-size: 18px; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="634" fill="#ffffff"/>
+
+  <!-- Separate fitting the reward model from using its fixed scores below. -->
+  <text class="title" x="28" y="44">RLHF uses a learned reward model</text>
+  <text class="subtitle" x="28" y="76">RLHF = reinforcement learning from human feedback · classic recipe</text>
+  <text class="section" x="28" y="113">TRAIN THE SCORER</text>
+  <g id="human-comparisons">
+    <rect x="28" y="132" width="302" height="86" rx="13" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="179" y="168" text-anchor="middle">Human comparisons</text>
+    <text class="copy" x="179" y="198" text-anchor="middle">Prompt + chosen + rejected</text>
+  </g>
+  <g id="fit-reward-model">
+    <rect x="486" y="132" width="386" height="86" rx="13" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="679" y="168" text-anchor="middle">Train the reward model</text>
+    <text class="copy" x="679" y="198" text-anchor="middle">Learn to score responses</text>
+  </g>
+
+  <!-- The scorer feeds the middle node; keep this route above the training row. -->
+  <line class="connector" x1="331" y1="175" x2="473" y2="175"/>
+  <polygon class="head" points="486,175 472,168 472,182"/>
+  <path class="connector" d="M679 219 V250 H450 V310"/>
+  <polygon class="head" points="450,323 443,309 457,309"/>
+
+  <!-- The assistant training loop uses fresh generated responses. -->
+  <text class="section" x="28" y="282">TRAIN THE ASSISTANT MODEL</text>
+  <g id="generate-responses">
+    <rect x="28" y="323" width="226" height="106" rx="13" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="141" y="360" text-anchor="middle">Assistant model</text>
+    <text class="copy" x="141" y="392" text-anchor="middle">Generate responses</text>
+  </g>
+  <g id="score-responses">
+    <rect x="337" y="323" width="226" height="106" rx="13" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="450" y="355" text-anchor="middle">Reward model</text>
+    <text class="copy" x="450" y="385" text-anchor="middle">Score each response</text>
+    <text class="small" x="450" y="412" text-anchor="middle">Weights stay fixed here</text>
+  </g>
+  <g id="ppo-update">
+    <rect x="646" y="323" width="226" height="106" rx="13" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="759" y="355" text-anchor="middle">Training update</text>
+    <text class="copy" x="759" y="385" text-anchor="middle">Change assistant</text>
+    <text class="copy" x="759" y="412" text-anchor="middle">model weights</text>
+  </g>
+
+  <!-- Manual heads share the same inset shaft join in every orientation. -->
+  <line class="connector" x1="255" y1="376" x2="324" y2="376"/>
+  <polygon class="head" points="337,376 323,369 323,383"/>
+  <line class="connector" x1="564" y1="376" x2="633" y2="376"/>
+  <polygon class="head" points="646,376 632,369 632,383"/>
+  <path id="repeat-training-connector" class="connector" d="M759 430 V470 H141 V442"/>
+  <polygon class="head" points="141,429 134,443 148,443"/>
+  <text class="copy" x="450" y="504" text-anchor="middle">Repeat with the updated assistant model.</text>
+
+  <!-- The reference contribution is explained separately to keep the loop legible. -->
+  <g id="reference-penalty-note">
+    <rect x="28" y="530" width="844" height="80" rx="13" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="copy" x="50" y="561">The update also uses a frozen reference model (unchanging weights).</text>
+    <text class="copy" x="50" y="590">Kullback–Leibler (KL) penalty: a cost for large probability changes.</text>
+  </g>
+</svg>

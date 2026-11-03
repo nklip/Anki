@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="642" viewBox="0 0 900 642" role="img" aria-labelledby="title desc">
+  <title id="title">The desired reply supplies the training targets</title>
+  <desc id="desc">In this assistant-only scoring example, the user prompt is Rewrite Send the file politely. The desired assistant reply is Please send the file. Predict Please from the prompt, send from the prompt and Please, and the from the prompt and Please send. User text provides context but is not scored. Each prediction uses the recorded earlier text and cannot see its target. Words are simplified tokens; chat markers are omitted.</desc>
+  <!-- Blue denotes visible context and orange denotes the assistant targets. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 20px; font-weight: 700; }
+      .copy { font-size: 21px; }
+      .token { font-size: 23px; text-anchor: middle; }
+      .note { font-size: 19px; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="642" fill="#ffffff"/>
+
+  <!-- The example is a recorded conversation, not a generated answer. -->
+  <text class="title" x="28" y="44">The desired reply supplies the training targets</text>
+  <text class="subtitle" x="28" y="76">Assistant-only scoring: user text gives context; assistant text is scored.</text>
+  <g id="user-context">
+    <rect x="28" y="100" width="844" height="88" rx="13" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="50" y="132">USER PROMPT · context, not scored</text>
+    <text class="copy" x="50" y="165">Rewrite “Send the file” politely.</text>
+  </g>
+  <g id="desired-assistant-reply">
+    <rect x="28" y="206" width="844" height="88" rx="13" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="50" y="238">DESIRED ASSISTANT REPLY · tokens to learn</text>
+    <text class="copy" x="50" y="271">Please send the file.</text>
+  </g>
+
+  <!-- Independent prediction positions show teacher forcing without technical notation. -->
+  <text class="label" x="50" y="334">Earlier text used for prediction</text>
+  <text class="label" x="642" y="334">Target to score</text>
+  <g id="predict-please">
+    <rect x="50" y="352" width="474" height="54" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="token" x="287" y="387">Prompt</text>
+    <rect x="642" y="352" width="208" height="54" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="token" x="746" y="387">Please</text>
+  </g>
+  <g id="predict-send">
+    <rect x="50" y="424" width="474" height="54" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="token" x="287" y="459">Prompt + Please</text>
+    <rect x="642" y="424" width="208" height="54" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="token" x="746" y="459">send</text>
+  </g>
+  <g id="predict-the">
+    <rect x="50" y="496" width="474" height="54" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="token" x="287" y="531">Prompt + Please send</text>
+    <rect x="642" y="496" width="208" height="54" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="token" x="746" y="531">the</text>
+  </g>
+
+  <!-- Shafts end one unit inside the triangle bases; tips meet target borders. -->
+  <line class="connector" x1="525" y1="379" x2="629" y2="379"/>
+  <polygon class="head" points="642,379 628,372 628,386"/>
+  <line class="connector" x1="525" y1="451" x2="629" y2="451"/>
+  <polygon class="head" points="642,451 628,444 628,458"/>
+  <line class="connector" x1="525" y1="523" x2="629" y2="523"/>
+  <polygon class="head" points="642,523 628,516 628,530"/>
+
+  <!-- State the simplification and prevent the target from being read as input. -->
+  <text class="note" x="450" y="585" text-anchor="middle">Each prediction sees earlier text from the example, never its target.</text>
+  <text class="subtitle" x="450" y="615" text-anchor="middle">First three targets shown. Words are simplified tokens; chat markers omitted.</text>
+</svg>
