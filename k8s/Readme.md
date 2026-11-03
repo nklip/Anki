@@ -6,6 +6,7 @@ Kubernetes concepts, workloads, networking, and extensions.
 
 ## Content
 
+- [Argo CD](Argo%20CD/Readme.md)
 - [CloudNativePG](CloudNativePG/Readme.md)
 - [Cluster components](Cluster%20components/Readme.md)
 - [ConfigMaps and Secrets](ConfigMaps%20and%20Secrets/Readme.md)
