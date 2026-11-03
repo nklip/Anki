@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1100" viewBox="0 0 1440 1100" role="img" aria-labelledby="title desc">
+  <title id="title">A user reaches Checkout through an Istio ingress gateway, then Checkout calls Payments</title>
+  <desc id="desc">The external user is outside the Kubernetes cluster. Solid green arrows show the user request entering an Istio ingress gateway, reaching the Checkout Envoy sidecar, and being delivered to the Checkout application. Solid blue arrows show a separate payment request made by Checkout through the same Envoy, then through the Payments Envoy to the Payments application. Each application shares a Pod with its sidecar. Dashed purple arrows show the Kubernetes API server providing configuration information to istiod, which configures the gateway and both sidecars. Application requests do not enter either control plane. This sidecar-mode example uses mutual TLS between proxies and a LoadBalancer Service to expose the gateway. The external load balancer, detailed Service routing, node placement, and response arrows are omitted.</desc>
+
+  <!-- Shared colors distinguish two application requests from control-plane configuration. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 30px; font-weight: 700; }
+      .section { font-size: 23px; font-weight: 700; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #52677b; }
+      .incoming-label { font-size: 16px; font-weight: 700; fill: #286343; }
+      .payment-label { font-size: 16px; font-weight: 700; fill: #24639a; }
+      .incoming { fill: none; stroke: #397c5a; stroke-width: 4; stroke-linejoin: round; }
+      .payment { fill: none; stroke: #3279b5; stroke-width: 4; stroke-linejoin: round; }
+      .management { fill: none; stroke: #8066a5; stroke-width: 2.5; stroke-dasharray: 7 5; stroke-linejoin: round; }
+      .management-join { fill: none; stroke: #8066a5; stroke-width: 2.5; }
+    </style>
+  </defs>
+
+  <!-- Title identifies the two linked requests and the illustrated deployment mode. -->
+  <rect width="1440" height="1100" fill="#ffffff"/>
+  <text x="32" y="44" class="title">From user to Checkout, then from Checkout to Payments</text>
+  <text x="32" y="77" class="body">Sidecar mode: follow the green user request first, then the blue payment call.</text>
+
+  <!-- The left column remains outside the cluster; a user calls its public entry point. -->
+  <g id="external-user">
+    <rect x="32" y="458" width="165" height="110" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+    <text x="114" y="490" class="heading" text-anchor="middle">User</text>
+    <text x="114" y="516" class="small" text-anchor="middle">web browser</text>
+    <text x="114" y="548" class="incoming-label" text-anchor="middle">1. Sends request</text>
+    <text x="114" y="594" class="small" text-anchor="middle">Outside the cluster</text>
+  </g>
+
+  <!-- Reuse the original cluster grid; translation reserves room for the external caller. -->
+  <g id="cluster-content" transform="translate(240 0)">
+    <rect id="kubernetes-cluster" x="32" y="110" width="1136" height="840" rx="16" fill="#f8fafc" stroke="#9aaebf" stroke-width="2"/>
+    <text x="60" y="148" class="section">Kubernetes cluster</text>
+    <text x="1140" y="148" class="small" text-anchor="end">Example with an ingress gateway and mTLS between proxies</text>
+
+    <!-- Kubernetes control plane supplies resource state; it is not a request destination. -->
+    <g id="kubernetes-control-plane">
+      <rect x="64" y="184" width="405" height="170" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+      <text x="266" y="218" class="heading" text-anchor="middle">Kubernetes control plane</text>
+      <rect id="api-server" x="86" y="240" width="361" height="88" rx="10" fill="#ffffff" stroke="#93b4e9" stroke-width="1.5"/>
+      <text x="266" y="274" class="heading" text-anchor="middle">API server</text>
+      <text x="266" y="303" class="small" text-anchor="middle">Exposes cluster resources</text>
+    </g>
+
+    <!-- istiod is a separate workload that configures every illustrated Envoy. -->
+    <g id="istio-control-plane">
+      <rect x="720" y="184" width="416" height="170" rx="12" fill="#f5f3ff" stroke="#b7a4de" stroke-width="1.5"/>
+      <text x="928" y="218" class="heading" text-anchor="middle">Istio control plane</text>
+      <rect id="istiod" x="744" y="240" width="368" height="88" rx="10" fill="#ffffff" stroke="#b7a4de" stroke-width="1.5"/>
+      <text x="928" y="274" class="heading" text-anchor="middle">istiod Deployment / Pods</text>
+      <text x="928" y="303" class="small" text-anchor="middle">namespace: istio-system</text>
+    </g>
+
+    <!-- Gateway is an Envoy workload in its own Pod; its exposing Service is not a proxy Pod. -->
+    <g id="ingress-gateway">
+      <rect x="70" y="440" width="260" height="130" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+      <text x="200" y="473" class="heading" text-anchor="middle">Istio ingress gateway</text>
+      <text x="200" y="499" class="small" text-anchor="middle">Envoy in a separate Pod</text>
+      <text x="200" y="545" class="incoming-label" text-anchor="middle">Routes to Checkout</text>
+    </g>
+
+    <!-- One Checkout sidecar handles both incoming user traffic and outgoing payment traffic. -->
+    <g id="checkout-pod">
+      <rect x="70" y="590" width="450" height="285" rx="14" fill="#fff7ed" stroke="#d8b991" stroke-width="1.5"/>
+      <text x="210" y="625" class="heading" text-anchor="middle">Pod: checkout</text>
+      <rect id="checkout-app" x="88" y="650" width="178" height="200" rx="10" fill="#ffffff" stroke="#d8b991" stroke-width="1.5"/>
+      <text x="177" y="700" class="heading" text-anchor="middle">Checkout</text>
+      <text x="177" y="724" class="small" text-anchor="middle">app container</text>
+      <text x="177" y="773" class="incoming-label" text-anchor="middle">Handles request</text>
+      <text x="177" y="805" class="payment-label" text-anchor="middle">2. Calls Payments</text>
+      <rect id="checkout-envoy" x="326" y="650" width="178" height="200" rx="10" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+      <text x="415" y="700" class="heading" text-anchor="middle">Envoy</text>
+      <text x="415" y="724" class="small" text-anchor="middle">sidecar container</text>
+      <text x="415" y="773" class="incoming-label" text-anchor="middle">Forwards to app</text>
+      <text x="415" y="805" class="payment-label" text-anchor="middle">Routes new call</text>
+    </g>
+
+    <!-- Payments receives only the downstream request, not the original browser request. -->
+    <g id="payments-pod">
+      <rect x="680" y="590" width="450" height="285" rx="14" fill="#fff7ed" stroke="#d8b991" stroke-width="1.5"/>
+      <text x="950" y="625" class="heading" text-anchor="middle">Pod: payments</text>
+      <rect id="payments-envoy" x="696" y="650" width="178" height="200" rx="10" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+      <text x="785" y="700" class="heading" text-anchor="middle">Envoy</text>
+      <text x="785" y="724" class="small" text-anchor="middle">sidecar container</text>
+      <text x="785" y="793" class="payment-label" text-anchor="middle">Forwards to app</text>
+      <rect id="payments-app" x="934" y="650" width="178" height="200" rx="10" fill="#ffffff" stroke="#d8b991" stroke-width="1.5"/>
+      <text x="1023" y="700" class="heading" text-anchor="middle">Payments</text>
+      <text x="1023" y="724" class="small" text-anchor="middle">app container</text>
+      <text x="1023" y="793" class="payment-label" text-anchor="middle">Handles payment</text>
+    </g>
+
+    <!-- Dashed configuration routes stay clear of user-request paths and all text. -->
+    <g id="configuration-flow">
+      <text x="595" y="258" class="small" text-anchor="middle">Services, endpoints,</text>
+      <text x="595" y="282" class="small" text-anchor="middle">Istio policies</text>
+      <path id="api-state-shaft" class="management" data-connector="true" d="M447 304 H734"/>
+      <path id="api-state-join" class="management-join" data-connector="true" d="M728 304 H736"/>
+      <polygon id="api-state-head" points="744,304 733,298 733,310" fill="#8066a5"/>
+      <text x="600" y="391" class="body" text-anchor="middle">istiod supplies routing rules and certificates.</text>
+      <path id="istiod-config-bus" class="management" data-connector="true" d="M928 328 V420 H200"/>
+      <!-- Solid end joins hide dash gaps; every head stops at its proxy's top boundary. -->
+      <path id="gateway-config-shaft" class="management-join" data-connector="true" d="M200 420 V432"/>
+      <polygon id="gateway-config-head" points="200,440 194,429 206,429" fill="#8066a5"/>
+      <path id="checkout-config-shaft" class="management" data-connector="true" d="M480 420 V640"/>
+      <path id="checkout-config-join" class="management-join" data-connector="true" d="M480 635 V642"/>
+      <polygon id="checkout-config-head" points="480,650 474,639 486,639" fill="#8066a5"/>
+      <path id="payments-config-shaft" class="management" data-connector="true" d="M785 420 V640"/>
+      <path id="payments-config-join" class="management-join" data-connector="true" d="M785 635 V642"/>
+      <polygon id="payments-config-head" points="785,650 779,639 791,639" fill="#8066a5"/>
+      <text x="940" y="490" class="small" text-anchor="middle">Dashed arrows configure proxies.</text>
+      <text x="940" y="516" class="small" text-anchor="middle">Application requests stay below</text>
+      <text x="940" y="542" class="small" text-anchor="middle">the two control-plane boxes.</text>
+    </g>
+
+    <!-- Green ingress goes down into the sidecar, then LEFT into Checkout's application. -->
+    <g id="incoming-request-path">
+      <path id="gateway-checkout-shaft" class="incoming" data-connector="true" d="M330 520 H400 V639"/>
+      <polygon id="gateway-checkout-head" points="400,650 392,636 408,636" fill="#397c5a"/>
+      <text x="416" y="560" class="incoming-label">mTLS</text>
+      <text x="296" y="750" class="small" text-anchor="middle">deliver</text>
+      <path id="checkout-inbound-shaft" class="incoming" data-connector="true" d="M326 770 H277"/>
+      <polygon id="checkout-inbound-head" points="266,770 280,762 280,778" fill="#397c5a"/>
+    </g>
+
+    <!-- Blue is a NEW request made by Checkout; it uses the same sidecar and reads left to right. -->
+    <g id="payment-request-path">
+      <text x="296" y="811" class="small" text-anchor="middle">call</text>
+      <path id="checkout-outbound-shaft" class="payment" data-connector="true" d="M266 830 H315"/>
+      <polygon id="checkout-outbound-head" points="326,830 312,822 312,838" fill="#3279b5"/>
+      <text x="600" y="760" class="payment-label" text-anchor="middle">Payment request</text>
+      <text x="600" y="786" class="small" text-anchor="middle">encrypted with mTLS</text>
+      <!-- Shaft intentionally crosses Pod grouping borders; the head meets the sidecar. -->
+      <path id="payment-service-shaft" class="payment" data-connector="true" d="M504 830 H685"/>
+      <polygon id="payment-service-head" points="696,830 682,822 682,838" fill="#3279b5"/>
+      <text x="904" y="811" class="small" text-anchor="middle">deliver</text>
+      <path id="payments-local-shaft" class="payment" data-connector="true" d="M874 830 H923"/>
+      <polygon id="payments-local-head" points="934,830 920,822 920,838" fill="#3279b5"/>
+    </g>
+
+    <!-- Explain the causal handoff and the single sidecar; response arrows would clutter this view. -->
+    <text x="600" y="903" class="body" text-anchor="middle">Checkout handles the user's request and makes a separate request to Payments.</text>
+    <text x="600" y="930" class="small" text-anchor="middle">The same Checkout Envoy handles both directions. Responses return along these connections (not drawn).</text>
+  </g>
+
+  <!-- The public-entry arrow intentionally crosses the logical cluster boundary. -->
+  <text x="238" y="500" class="incoming-label" text-anchor="middle">request</text>
+  <path id="external-request-shaft" class="incoming" data-connector="true" d="M197 520 H299"/>
+  <polygon id="external-request-head" points="310,520 296,512 296,528" fill="#397c5a"/>
+
+  <!-- Legend and scope notes define both request colors and the omitted network implementation. -->
+  <path id="incoming-legend-shaft" class="incoming" data-connector="true" d="M32 985 H82"/>
+  <text x="98" y="990" class="small">1. User → Checkout</text>
+  <path id="payment-legend-shaft" class="payment" data-connector="true" d="M440 985 H490"/>
+  <text x="506" y="990" class="small">2. Checkout → Payments</text>
+  <path id="management-legend-shaft" class="management" data-connector="true" d="M940 985 H990"/>
+  <text x="1006" y="990" class="small">Configuration / identity</text>
+  <text x="720" y="1025" class="small" text-anchor="middle">mTLS = mutual Transport Layer Security: encrypted connections with both proxies authenticated. API = application programming interface.</text>
+  <text x="720" y="1053" class="small" text-anchor="middle">Example public entry point: a LoadBalancer Service exposes the gateway; the external load balancer is omitted.</text>
+  <text x="720" y="1080" class="small" text-anchor="middle">Each app and its Envoy share a Pod. Node placement and detailed Service routing are omitted.</text>
+</svg>

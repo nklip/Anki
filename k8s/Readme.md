@@ -18,6 +18,7 @@ Kubernetes concepts, workloads, networking, and extensions.
 - [Helm](Helm/Readme.md)
 - [Horizontal Pod Autoscaling](Horizontal%20Pod%20Autoscaling/Readme.md)
 - [Ingress](Ingress/Readme.md)
+- [Istio](Istio/Readme.md)
 - [Jobs](Jobs/Readme.md)
 - [Karpenter](Karpenter/Readme.md)
 - [kind](kind/Readme.md)
