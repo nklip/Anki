@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="736" viewBox="0 0 900 736" role="img" aria-labelledby="title desc">
+  <title id="title">Sparse routing selects two of four expert MLPs for one token</title>
+  <desc id="desc">An illustrative mixture of experts. A learned router reads one token's input vector and selects Expert 1 with weight 0.75 and Expert 3 with weight 0.25. The same unchanged input vector is sent to both selected experts. Expert 1 produces [4, 0] and Expert 3 produces [0, 4]. Experts 2 and 4 are stored but are not run for this token. The weighted mixture is 0.75 times [4, 0] plus 0.25 times [0, 4], giving [3, 1]. Each expert is an MLP, or multilayer perceptron. Solid arrows carry vector data; the dashed arrow represents routing control, not a modified input vector.</desc>
+  <!-- Blue and orange mark selected experts; gray experts have no execution or output flow. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 21px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 21px; text-anchor: middle; }
+      .note { font-size: 19px; text-anchor: middle; }
+      .value { font-size: 29px; text-anchor: middle; }
+      .math { font-size: 26px; text-anchor: middle; }
+      .muted { fill: #64748b; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+      .control-connector { stroke: #9333ea; stroke-width: 2.5; stroke-dasharray: 6 4; fill: none; }
+      .control-head { fill: #9333ea; }
+    </style>
+  </defs>
+  <rect width="900" height="736" fill="#ffffff"/>
+
+  <!-- The router reads the input but outputs a decision, not a replacement vector. -->
+  <text class="title" x="28" y="44">Sparse expert routing: two of four experts</text>
+  <text class="subtitle" x="28" y="76">One token · Invented outputs and normalized mixing weights</text>
+  <g id="input-and-router">
+    <rect x="28" y="108" width="270" height="78" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="163" y="136">Input vector</text>
+    <text class="body" x="163" y="165">for one token</text>
+    <rect x="592" y="108" width="280" height="78" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="732" y="136">Learned router</text>
+    <text class="note" x="732" y="165">selects experts and weights</text>
+    <text class="note" x="445" y="126">Reads the input</text>
+    <line class="connector" x1="299" y1="147" x2="579" y2="147"/>
+    <polygon class="head" points="592,147 578,140 578,154"/>
+  </g>
+
+  <!-- Routing control is kept in a decision panel so it cannot be mistaken for vector data. -->
+  <g id="routing-decision">
+    <line class="control-connector" x1="732" y1="187" x2="732" y2="210"/>
+    <polygon class="control-head" points="732,223 725,209 739,209"/>
+    <rect x="592" y="223" width="280" height="98" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="732" y="252">Routing decision</text>
+    <text class="note" x="732" y="280">Expert 1: 0.75</text>
+    <text class="note" x="732" y="306">Expert 3: 0.25</text>
+  </g>
+
+  <!-- Both solid branches start at the original input, bypassing the router's decision output. -->
+  <text class="label" x="370" y="238">Same input vector</text>
+  <text class="note" x="370" y="267">to both selected experts</text>
+  <g id="selected-expert-input-flow">
+    <path class="connector" d="M163 187 V286 M121 286 H559 M121 286 V337 M559 286 V337"/>
+    <polygon class="head" points="121,350 114,336 128,336"/>
+    <polygon class="head" points="559,350 552,336 566,336"/>
+  </g>
+
+  <!-- All four experts remain visible; only experts 1 and 3 run for this token. -->
+  <g id="expert-one-selected">
+    <rect x="28" y="350" width="186" height="141" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="121" y="380">Expert 1</text>
+    <text class="note" x="121" y="408">Selected</text>
+    <text class="note" x="121" y="437">Output</text>
+    <text class="value" x="121" y="473">[4, 0]</text>
+  </g>
+  <g id="expert-two-unselected">
+    <rect x="247" y="350" width="186" height="141" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label muted" x="340" y="380">Expert 2</text>
+    <text class="note muted" x="340" y="424">Not run</text>
+    <text class="note muted" x="340" y="453">for this token</text>
+  </g>
+  <g id="expert-three-selected">
+    <rect x="466" y="350" width="186" height="141" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="559" y="380">Expert 3</text>
+    <text class="note" x="559" y="408">Selected</text>
+    <text class="note" x="559" y="437">Output</text>
+    <text class="value" x="559" y="473">[0, 4]</text>
+  </g>
+  <g id="expert-four-unselected">
+    <rect x="685" y="350" width="186" height="141" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label muted" x="778" y="380">Expert 4</text>
+    <text class="note muted" x="778" y="424">Not run</text>
+    <text class="note muted" x="778" y="453">for this token</text>
+  </g>
+
+  <!-- Only selected outputs enter the mixture; arrow tips meet the panel's top boundary. -->
+  <g id="selected-output-flow">
+    <path class="connector" d="M121 492 V517 H295 V537"/>
+    <polygon class="head" points="295,550 288,536 302,536"/>
+    <path class="connector" d="M559 492 V517 H605 V537"/>
+    <polygon class="head" points="605,550 598,536 612,536"/>
+  </g>
+  <g id="weighted-expert-mixture">
+    <rect x="84" y="550" width="732" height="88" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="450" y="580">Mix the selected expert outputs</text>
+    <text class="math" x="450" y="618">0.75 × [4, 0] + 0.25 × [0, 4] = [3, 1]</text>
+  </g>
+
+  <!-- The legend distinguishes control from data and makes the stored-versus-used count explicit. -->
+  <text class="note" x="450" y="676">Each expert is an MLP (multilayer perceptron) · 4 stored, 2 used for this token</text>
+  <text class="note" x="450" y="709">Solid arrows: vector data · Dashed arrow: routing control</text>
+</svg>

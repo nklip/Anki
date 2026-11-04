@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="628" viewBox="0 0 900 628" role="img" aria-labelledby="title desc">
+  <title id="title">Add updates to the running vector</title>
+  <desc id="desc">Focus on one token position. Its incoming residual vector [1, 7] receives an invented attention update [2, -3], giving [3, 4]. An invented MLP update [-1, 1] is then added, giving [2, 5]. Each addition combines matching coordinates. The vector still has two slots, and negative update values can decrease existing values. MLP means multilayer perceptron.</desc>
+  <!-- Blue is the incoming vector, orange and purple are updates, green is the updated stream. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 20px; font-weight: 700; text-anchor: middle; }
+      .small-label { font-size: 18px; font-weight: 700; text-anchor: middle; }
+      .value { font-size: 29px; text-anchor: middle; }
+      .plus { font-size: 30px; text-anchor: middle; }
+      .math { font-size: 25px; text-anchor: middle; }
+      .note { font-size: 19px; text-anchor: middle; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="628" fill="#ffffff"/>
+
+  <!-- Other token positions have their own residual vectors; this is a single-position trace. -->
+  <text class="title" x="28" y="44">Add updates to the running vector</text>
+  <text class="subtitle" x="28" y="76">One token position · two invented updates · read the stream from left to right</text>
+  <g id="component-updates">
+    <rect x="182" y="128" width="200" height="100" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="282" y="160">Attention update</text>
+    <text class="value" x="282" y="205">[2, −3]</text>
+    <rect x="518" y="128" width="200" height="100" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="618" y="160">MLP update</text>
+    <text class="value" x="618" y="205">[−1, 1]</text>
+  </g>
+
+  <!-- All stream boxes have the same width and the same number of vector slots. -->
+  <g id="residual-states">
+    <rect x="28" y="270" width="170" height="90" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="small-label" x="113" y="299">Incoming</text>
+    <text class="value" x="113" y="339">[1, 7]</text>
+    <circle cx="282" cy="315" r="22" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+    <text class="plus" x="282" y="325">+</text>
+    <rect x="365" y="270" width="170" height="90" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="small-label" x="450" y="299">After attention</text>
+    <text class="value" x="450" y="339">[3, 4]</text>
+    <circle cx="618" cy="315" r="22" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+    <text class="plus" x="618" y="325">+</text>
+    <rect x="702" y="270" width="170" height="90" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="small-label" x="787" y="299">After MLP</text>
+    <text class="value" x="787" y="339">[2, 5]</text>
+  </g>
+
+  <!-- Each manual head meets its target boundary; shafts end under the triangle bases. -->
+  <g id="update-addition-flow">
+    <line class="connector" x1="199" y1="315" x2="247" y2="315"/>
+    <polygon class="head" points="260,315 246,308 246,322"/>
+    <line class="connector" x1="305" y1="315" x2="352" y2="315"/>
+    <polygon class="head" points="365,315 351,308 351,322"/>
+    <line class="connector" x1="536" y1="315" x2="583" y2="315"/>
+    <polygon class="head" points="596,315 582,308 582,322"/>
+    <line class="connector" x1="641" y1="315" x2="689" y2="315"/>
+    <polygon class="head" points="702,315 688,308 688,322"/>
+    <line class="connector" x1="282" y1="229" x2="282" y2="280"/>
+    <polygon class="head" points="282,293 275,279 289,279"/>
+    <line class="connector" x1="618" y1="229" x2="618" y2="280"/>
+    <polygon class="head" points="618,293 611,279 625,279"/>
+  </g>
+
+  <!-- Expanded arithmetic explains the addition and shows that negative updates decrease values. -->
+  <g id="coordinatewise-arithmetic">
+    <rect x="28" y="404" width="844" height="140" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="450" y="438">+ means: add matching slots</text>
+    <text class="math" x="450" y="481">[1, 7] + [2, −3] = [3, 4]</text>
+    <text class="math" x="450" y="521">[3, 4] + [−1, 1] = [2, 5]</text>
+  </g>
+  <text class="note" x="450" y="574">The vector still has two slots after both additions.</text>
+  <text class="note" x="450" y="601">MLP = multilayer perceptron.</text>
+</svg>

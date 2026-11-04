@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="730" viewBox="0 0 900 730" role="img" aria-labelledby="title desc">
+  <title id="title">RoPE makes position gaps affect attention</title>
+  <desc id="desc">Rotary position embeddings rotate pairs of numbers in query and key vectors before attention compares them. The toy rule for one pair is a ten-degree rotation per position. A key at position 2 rotates twenty degrees and a query at position 5 rotates fifty degrees, a rotation difference of thirty degrees. At positions 3 and 6, the rotations are thirty and sixty degrees, keeping the difference thirty degrees. Content is held fixed; both toy arrows start pointing right. Real RoPE uses different rotation rates for different number pairs.</desc>
+  <!-- Blue identifies the key, orange the query, and gray the computation flow. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 21px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 20px; text-anchor: middle; }
+      .note { font-size: 19px; text-anchor: middle; }
+      .math { font-size: 22px; text-anchor: middle; }
+      .key-label { font-size: 20px; fill: #2563eb; text-anchor: middle; }
+      .query-label { font-size: 20px; fill: #c2410c; text-anchor: middle; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .key-connector { stroke: #2563eb; stroke-width: 3; fill: none; }
+      .query-connector { stroke: #c2410c; stroke-width: 3; fill: none; }
+      .head { fill: #64748b; }
+      .baseline { stroke: #cbd5e1; stroke-width: 2; }
+    </style>
+  </defs>
+  <rect width="900" height="730" fill="#ffffff"/>
+
+  <!-- The pipeline places rotations inside attention, after query/key creation. -->
+  <text class="title" x="28" y="44">RoPE makes position gaps affect attention</text>
+  <text class="subtitle" x="28" y="76">RoPE = rotary position embeddings</text>
+  <g id="attention-position-pipeline">
+    <rect x="28" y="110" width="180" height="80" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="body" x="118" y="158">Token vector</text>
+    <rect x="250" y="110" width="180" height="80" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="body" x="340" y="144">Make query</text>
+    <text class="body" x="340" y="172">and key</text>
+    <rect x="472" y="110" width="180" height="80" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="body" x="562" y="144">Rotate pairs</text>
+    <text class="body" x="562" y="172">by position</text>
+    <rect x="694" y="110" width="178" height="80" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="body" x="783" y="144">Compare in</text>
+    <text class="body" x="783" y="172">attention</text>
+    <line class="connector" x1="209" y1="150" x2="237" y2="150"/>
+    <polygon class="head" points="250,150 236,143 236,157"/>
+    <line class="connector" x1="431" y1="150" x2="459" y2="150"/>
+    <polygon class="head" points="472,150 458,143 458,157"/>
+    <line class="connector" x1="653" y1="150" x2="681" y2="150"/>
+    <polygon class="head" points="694,150 680,143 680,157"/>
+  </g>
+  <text class="note" x="450" y="221">Queries and keys are vectors attention compares.</text>
+  <text class="label" x="450" y="267">One number pair · invented rate: 10° per position</text>
+  <!-- Original comparison: fixed content, with rotations measured from the rightward baseline. -->
+  <g id="original-rotations">
+    <rect x="28" y="300" width="406" height="315" rx="12" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="231" y="333">Original positions</text>
+    <text class="key-label" x="231" y="367">Key: position 2 → 20° rotation</text>
+    <text class="query-label" x="231" y="397">Query: position 5 → 50° rotation</text>
+    <line class="baseline" x1="103" y1="525" x2="225" y2="525"/>
+    <!-- The pale angle sector intentionally meets both vector shafts, away from their heads. -->
+    <path d="M115 525 L166.683 506.189 A55 55 0 0 0 150.353 482.868 Z" fill="#eef2ff"/>
+    <!-- Key head covers its shaft join; the arrow shows applied rotation in this toy. -->
+    <line class="key-connector" x1="115" y1="525" x2="187.356" y2="498.664"/>
+    <polygon id="original-key-head" points="199.572,494.218 188.811,505.584 184.022,492.429" fill="#2563eb"/>
+    <!-- Query head covers its shaft join; the arrow shows applied rotation in this toy. -->
+    <line class="query-connector" x1="115" y1="525" x2="164.495" y2="466.015"/>
+    <polygon id="original-query-head" points="172.851,456.056 169.214,471.280 158.490,462.281" fill="#c2410c"/>
+    <text class="body" x="321" y="450">Rotation</text>
+    <text class="body" x="321" y="477">difference:</text>
+    <text class="math" x="321" y="515">50° − 20°</text>
+    <text class="label" x="321" y="546">= 30°</text>
+    <text class="note" x="231" y="587">Position gap: 5 − 2 = 3</text>
+  </g>
+  <!-- Shifted comparison: fixed content, with rotations measured from the rightward baseline. -->
+  <g id="shifted-rotations">
+    <rect x="466" y="300" width="406" height="315" rx="12" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="669" y="333">Both shifted by one</text>
+    <text class="key-label" x="669" y="367">Key: position 3 → 30° rotation</text>
+    <text class="query-label" x="669" y="397">Query: position 6 → 60° rotation</text>
+    <line class="baseline" x1="541" y1="525" x2="663" y2="525"/>
+    <!-- The pale angle sector intentionally meets both vector shafts, away from their heads. -->
+    <path d="M553 525 L600.631 497.500 A55 55 0 0 0 580.500 477.369 Z" fill="#eef2ff"/>
+    <!-- Key head covers its shaft join; the arrow shows applied rotation in this toy. -->
+    <line class="key-connector" x1="553" y1="525" x2="619.684" y2="486.500"/>
+    <polygon id="shifted-key-head" points="630.942,480.000 622.318,493.062 615.318,480.938" fill="#2563eb"/>
+    <!-- Query head covers its shaft join; the arrow shows applied rotation in this toy. -->
+    <line class="query-connector" x1="553" y1="525" x2="591.500" y2="458.316"/>
+    <polygon id="shifted-query-head" points="598.000,447.058 597.062,462.682 584.938,455.682" fill="#c2410c"/>
+    <text class="body" x="759" y="450">Rotation</text>
+    <text class="body" x="759" y="477">difference:</text>
+    <text class="math" x="759" y="515">60° − 30°</text>
+    <text class="label" x="759" y="546">= 30°</text>
+    <text class="note" x="669" y="587">Position gap: 6 − 3 = 3</text>
+  </g>
+
+  <!-- These limits prevent the toy from implying whole-model shift invariance. -->
+  <text class="note" x="450" y="650">Here both arrows start pointing right; their content is held fixed.</text>
+  <text class="note" x="450" y="681">Same position gap → same difference between applied rotations.</text>
+  <text class="note" x="450" y="711">Real RoPE uses different rotation rates for different number pairs.</text>
+</svg>

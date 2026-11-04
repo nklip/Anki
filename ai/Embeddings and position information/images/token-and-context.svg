@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="596" viewBox="0 0 900 596" role="img" aria-labelledby="title desc">
+  <title id="title">The same token can develop different representations</title>
+  <desc id="desc">In two invented examples, bank has token ID 17 and the same lookup vector [2, 1]. Transformer blocks process the full phrase river bank in the first case and savings bank in the second. The later vector at bank is [3, 0] in the first example and [0, 3] in the second. Weights stay unchanged. The values are illustrative and the dimensions are not assigned labels such as water and money.</desc>
+  <!-- Purple shows table lookup values, orange the blocks, and green later activations. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 21px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 21px; text-anchor: middle; }
+      .value { font-size: 30px; text-anchor: middle; }
+      .note { font-size: 19px; text-anchor: middle; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="596" fill="#ffffff"/>
+
+  <!-- Only bank is tracked; full phrases, including the earlier token, enter the blocks. -->
+  <text class="title" x="28" y="44">Same token, different context</text>
+  <text class="subtitle" x="28" y="76">Focus on bank; other token vectors also enter the transformer blocks.</text>
+  <text class="label" x="140.5" y="136">Lookup vector</text>
+  <text class="label" x="450" y="136">Same model weights</text>
+  <text class="label" x="761" y="136">Later vector at bank</text>
+
+  <!-- The first input provides river as earlier context. -->
+  <g id="river-context">
+    <rect x="28" y="175" width="225" height="110" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="body" x="140.5" y="211">bank · ID 17</text>
+    <text class="value" x="140.5" y="257">[2, 1]</text>
+    <rect x="335" y="175" width="230" height="110" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="body" x="450" y="216">Blocks process</text>
+    <text class="label" x="450" y="253">river bank</text>
+    <rect x="650" y="175" width="222" height="110" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="value" x="761" y="241">[3, 0]</text>
+  </g>
+
+  <!-- The second input changes context without changing the token-table row. -->
+  <g id="savings-context">
+    <rect x="28" y="334" width="225" height="110" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="body" x="140.5" y="370">bank · ID 17</text>
+    <text class="value" x="140.5" y="416">[2, 1]</text>
+    <rect x="335" y="334" width="230" height="110" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="body" x="450" y="375">Blocks process</text>
+    <text class="label" x="450" y="412">savings bank</text>
+    <rect x="650" y="334" width="222" height="110" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="value" x="761" y="400">[0, 3]</text>
+  </g>
+
+  <!-- Shafts end inside triangle bases; tips meet target edges without entering the fill. -->
+  <g id="context-flow">
+    <line class="connector" x1="254" y1="230" x2="322" y2="230"/>
+    <polygon class="head" points="335,230 321,223 321,237"/>
+    <line class="connector" x1="566" y1="230" x2="637" y2="230"/>
+    <polygon class="head" points="650,230 636,223 636,237"/>
+    <line class="connector" x1="254" y1="389" x2="322" y2="389"/>
+    <polygon class="head" points="335,389 321,382 321,396"/>
+    <line class="connector" x1="566" y1="389" x2="637" y2="389"/>
+    <polygon class="head" points="650,389 636,382 636,396"/>
+  </g>
+
+  <!-- Explicit qualifiers keep the illustrative numbers from implying named semantic axes. -->
+  <text class="note" x="450" y="498">Same token ID → same lookup vector.</text>
+  <text class="note" x="450" y="532">Different earlier context → potentially different later vector.</text>
+  <text class="note" x="450" y="566">Toy IDs and numbers; the vector slots have no assigned meaning.</text>
+</svg>

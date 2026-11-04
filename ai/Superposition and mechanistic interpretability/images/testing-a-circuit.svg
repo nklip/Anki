@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="650" viewBox="0 0 900 650" role="img" aria-labelledby="title desc">
+  <title id="title">A circuit explanation should predict effects</title>
+  <desc id="desc">An illustrative name-completion experiment compares unchanged computation, suppression of a candidate contribution, and replacement of an activation from another run. The remaining model computes name scores. Compare with the baseline, test the predicted changes, and check other inputs and side effects. No experimental results are claimed.</desc>
+  <!-- Three parallel conditions have identical geometry so the changed component is clear. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .label { font-size: 22px; font-weight: 700; }
+      .body { font-size: 21px; }
+      .small { font-size: 19px; fill: #475569; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="650" fill="#ffffff"/>
+  <!-- The name-completion prompt is invented and the diagram describes tests, not measured results. -->
+  <g id="heading">
+    <text x="30" y="43" class="title">A circuit explanation should predict effects</text>
+    <text x="30" y="78" class="small">Illustrative tests of a proposed mechanism; model weights stay fixed.</text>
+    <rect x="30" y="101" width="840" height="58" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="450" y="137" text-anchor="middle" class="body">Anna and Ben arrived. Ben gave the map to ___.</text>
+  </g>
+  <!-- The condition headings define each intervention before its result is inspected. -->
+  <g id="conditions" text-anchor="middle">
+    <text x="155" y="198" class="label">Baseline</text>
+    <text x="450" y="198" class="label">Ablation</text>
+    <text x="745" y="198" class="label">Activation patching</text>
+    <rect x="30" y="220" width="250" height="84" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="155" y="254" class="body">Keep original</text>
+    <text x="155" y="282" class="body">activation</text>
+    <rect x="325" y="220" width="250" height="84" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text x="450" y="254" class="body">Suppress a candidate</text>
+    <text x="450" y="282" class="body">contribution</text>
+    <rect x="620" y="220" width="250" height="84" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text x="745" y="254" class="body">Swap in an activation</text>
+    <text x="745" y="282" class="body">from another run</text>
+  </g>
+  <!-- Only activations change; downstream computation uses the same original model weights. -->
+  <g id="remaining-computation" text-anchor="middle">
+    <rect x="30" y="348" width="250" height="60" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="155" y="386" class="label">Remaining model</text>
+    <rect x="325" y="348" width="250" height="60" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="450" y="386" class="label">Remaining model</text>
+    <rect x="620" y="348" width="250" height="60" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="745" y="386" class="label">Remaining model</text>
+  </g>
+  <!-- The measured outcome is a score change; no invented success rate or causal result is asserted. -->
+  <g id="measurements" text-anchor="middle">
+    <rect x="30" y="452" width="250" height="90" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text x="155" y="488" class="label">Record name scores</text>
+    <text x="155" y="520" class="body">Anna versus Ben</text>
+    <rect x="325" y="452" width="250" height="90" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text x="450" y="488" class="label">Compare scores</text>
+    <text x="450" y="520" class="body">with the baseline</text>
+    <rect x="620" y="452" width="250" height="90" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text x="745" y="488" class="label">Compare scores</text>
+    <text x="745" y="520" class="body">with the baseline</text>
+  </g>
+  <!-- Every shaft ends one unit inside its triangle base; tips stop at the target top border. -->
+  <g id="condition-flows">
+    <path class="connector" d="M155 304 V335"/><polygon class="head" points="155,348 148,334 162,334"/>
+    <path class="connector" d="M450 304 V335"/><polygon class="head" points="450,348 443,334 457,334"/>
+    <path class="connector" d="M745 304 V335"/><polygon class="head" points="745,348 738,334 752,334"/>
+    <path class="connector" d="M155 408 V439"/><polygon class="head" points="155,452 148,438 162,438"/>
+    <path class="connector" d="M450 408 V439"/><polygon class="head" points="450,452 443,438 457,438"/>
+    <path class="connector" d="M745 408 V439"/><polygon class="head" points="745,452 738,438 752,438"/>
+  </g>
+  <text x="450" y="590" text-anchor="middle" class="body">Specify the predicted change before interpreting the result.</text>
+  <text x="450" y="622" text-anchor="middle" class="body">Repeat on other inputs; check for side effects and backup pathways.</text>
+</svg>

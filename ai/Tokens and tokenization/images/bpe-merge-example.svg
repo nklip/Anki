@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="698" viewBox="0 0 900 698" role="img" aria-labelledby="title desc">
+  <title id="title">BPE merges the most frequent neighboring pair</title>
+  <desc id="desc">In this tiny Byte-pair encoding training dataset, hug occurs three times and pug occurs twice. Starting from separate letters and preserving word boundaries, h plus u occurs three times, p plus u occurs twice, and u plus g occurs five times. BPE merges the most frequent pair u and g into a new token ug. After this one merge, hug is represented by h and ug, and pug by p and ug. Original tokens stay in the vocabulary and further rounds can build longer pieces.</desc>
+  <!-- The most frequent pair and its new token share orange highlighting. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 21px; font-weight: 700; }
+      .copy { font-size: 22px; }
+      .pair { font-size: 25px; font-weight: 700; }
+      .result { font-size: 25px; text-anchor: middle; }
+      .note { font-size: 19px; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="698" fill="#ffffff"/>
+
+  <!-- Word counts determine how often each adjacent pair occurs in the data. -->
+  <text class="title" x="28" y="44">BPE merges the most frequent neighboring pair</text>
+  <text class="subtitle" x="28" y="76">Byte-pair encoding: one merge in a tiny training dataset</text>
+  <g id="training-word-counts">
+    <rect x="28" y="100" width="844" height="88" rx="13" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="copy" x="50" y="135">Training data: hug appears 3 times; pug appears 2 times.</text>
+    <text class="note" x="50" y="167">Start with separate letters; keep word boundaries in this example.</text>
+  </g>
+
+  <!-- The complete pair count table makes the winning merge checkable. -->
+  <text class="label" x="50" y="220">Neighboring pair</text>
+  <text class="label" x="330" y="220">Where it appears</text>
+  <text class="label" x="760" y="220" text-anchor="middle">Count</text>
+  <g id="pair-h-u">
+    <rect x="28" y="238" width="844" height="50" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="pair" x="50" y="271">h + u</text>
+    <text class="copy" x="330" y="271">Only in hug</text>
+    <text class="pair" x="760" y="271" text-anchor="middle">3</text>
+  </g>
+  <g id="pair-p-u">
+    <rect x="28" y="302" width="844" height="50" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="pair" x="50" y="335">p + u</text>
+    <text class="copy" x="330" y="335">Only in pug</text>
+    <text class="pair" x="760" y="335" text-anchor="middle">2</text>
+  </g>
+  <g id="winning-pair-u-g">
+    <rect x="28" y="366" width="844" height="50" rx="10" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="pair" x="50" y="399">u + g</text>
+    <text class="copy" x="330" y="399">Both words: 3 + 2</text>
+    <text class="pair" x="760" y="399" text-anchor="middle">5</text>
+  </g>
+
+  <!-- Merge adds a vocabulary entry instead of deleting the base-letter entries. -->
+  <g id="learn-merge-rule">
+    <rect x="28" y="454" width="844" height="76" rx="13" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="pair" x="450" y="486" text-anchor="middle">Merge u + g into ug</text>
+    <text class="note" x="450" y="515" text-anchor="middle">Add ug to the vocabulary; keep the original tokens too.</text>
+  </g>
+
+  <!-- Apply the single learned merge to both word types. Brackets mark pieces. -->
+  <g id="hug-after-merge">
+    <rect x="28" y="570" width="404" height="72" rx="13" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="result" x="230" y="615">hug → [h] [ug]</text>
+  </g>
+  <g id="pug-after-merge">
+    <rect x="468" y="570" width="404" height="72" rx="13" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="result" x="670" y="615">pug → [p] [ug]</text>
+  </g>
+
+  <!-- All shaft ends sit within their triangular heads; tips meet box borders. -->
+  <line class="connector" x1="450" y1="417" x2="450" y2="441"/>
+  <polygon class="head" points="450,454 443,440 457,440"/>
+  <line class="connector" x1="230" y1="531" x2="230" y2="557"/>
+  <polygon class="head" points="230,570 223,556 237,556"/>
+  <line class="connector" x1="670" y1="531" x2="670" y2="557"/>
+  <polygon class="head" points="670,570 663,556 677,556"/>
+
+  <!-- State the update rule rather than implying that BPE stops after one merge. -->
+  <text class="note" x="450" y="679" text-anchor="middle">Repeat with new pair counts; later merges can build longer tokens.</text>
+</svg>

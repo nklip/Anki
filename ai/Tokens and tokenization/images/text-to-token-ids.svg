@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="654" viewBox="0 0 900 654" role="img" aria-labelledby="title desc">
+  <title id="title">Text pieces get vocabulary IDs</title>
+  <desc id="desc">In an invented toy tokenizer, the text two cats exclamation mark splits into four pieces: two, a leading space followed by cat, s, and the exclamation mark. Their integer IDs are 8, 17, 4, and 9. The four-column mapping preserves sequence order. Decoding these IDs with the same vocabulary gives the original text. The diagram writes the leading space as bracket space bracket for visibility.</desc>
+  <!-- Blue denotes text pieces; purple denotes integer vocabulary labels. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 21px; font-weight: 700; }
+      .text-value { font-size: 30px; text-anchor: middle; }
+      .token { font-size: 25px; text-anchor: middle; }
+      .space-token { font-size: 23px; text-anchor: middle; }
+      .id { font-size: 29px; font-weight: 700; text-anchor: middle; }
+      .note { font-size: 19px; text-anchor: middle; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="654" fill="#ffffff"/>
+
+  <!-- The example uses invented IDs rather than implying a production tokenizer. -->
+  <text class="title" x="28" y="44">Text pieces get vocabulary IDs</text>
+  <text class="subtitle" x="28" y="76">Toy split and IDs · read the token sequence from left to right</text>
+  <g id="input-text">
+    <text class="label" x="28" y="155">Input text</text>
+    <rect x="228" y="108" width="644" height="80" rx="13" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="text-value" x="550" y="158">two cats!</text>
+  </g>
+
+  <!-- A shared panel groups the ordered pieces into one token sequence. -->
+  <g id="token-pieces">
+    <text class="label" x="28" y="285">Token pieces</text>
+    <rect x="216" y="230" width="668" height="96" rx="13" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="228" y="247" width="149" height="60" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="token" x="302.5" y="286">two</text>
+    <rect x="393" y="247" width="149" height="60" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="space-token" x="467.5" y="285">[space]cat</text>
+    <rect x="558" y="247" width="149" height="60" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="token" x="632.5" y="286">s</text>
+    <rect x="723" y="247" width="149" height="60" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="token" x="797.5" y="286">!</text>
+  </g>
+
+  <!-- Each ID sits directly under its piece, with no numerical meaning implied. -->
+  <g id="vocabulary-ids">
+    <text class="label" x="28" y="405">Token IDs</text>
+    <rect x="216" y="347" width="668" height="98" rx="13" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="228" y="365" width="149" height="62" rx="10" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="id" x="302.5" y="407">8</text>
+    <rect x="393" y="365" width="149" height="62" rx="10" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="id" x="467.5" y="407">17</text>
+    <rect x="558" y="365" width="149" height="62" rx="10" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="id" x="632.5" y="407">4</text>
+    <rect x="723" y="365" width="149" height="62" rx="10" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="id" x="797.5" y="407">9</text>
+  </g>
+
+  <!-- Decoding uses the same vocabulary; it restores the real space in this toy. -->
+  <g id="decoded-text">
+    <text class="label" x="28" y="532">Decoded text</text>
+    <rect x="228" y="484" width="644" height="80" rx="13" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="text-value" x="550" y="534">two cats!</text>
+  </g>
+
+  <!-- Lookup shafts intentionally cross the grouping outlines, never text. -->
+  <line class="connector" x1="550" y1="189" x2="550" y2="217"/>
+  <polygon class="head" points="550,230 543,216 557,216"/>
+  <line class="connector" x1="302.5" y1="308" x2="302.5" y2="352"/>
+  <polygon class="head" points="302.5,365 295.5,351 309.5,351"/>
+  <line class="connector" x1="467.5" y1="308" x2="467.5" y2="352"/>
+  <polygon class="head" points="467.5,365 460.5,351 474.5,351"/>
+  <line class="connector" x1="632.5" y1="308" x2="632.5" y2="352"/>
+  <polygon class="head" points="632.5,365 625.5,351 639.5,351"/>
+  <line class="connector" x1="797.5" y1="308" x2="797.5" y2="352"/>
+  <polygon class="head" points="797.5,365 790.5,351 804.5,351"/>
+  <line class="connector" x1="550" y1="446" x2="550" y2="471"/>
+  <polygon class="head" points="550,484 543,470 557,470"/>
+
+  <!-- Explain the space placeholder and count the pieces rather than the words. -->
+  <text class="note" x="450" y="601">Here, [space] stands for one actual space.</text>
+  <text class="note" x="450" y="628">This text has four tokens in the toy tokenizer, even though it has two words.</text>
+</svg>

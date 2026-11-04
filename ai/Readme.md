@@ -9,22 +9,30 @@ lexical and semantic retrieval, reciprocal rank fusion, large language model pro
 Model Context Protocol (MCP), streaming, and temperature.
 
 ## Content
+ * [Attention: queries, keys, values, and heads](./Attention/Readme.md) - query-key scores, scaling, causal masks, softmax, value mixtures, and parallel heads
  * [Codex commands](./Codex%20commands/Readme.md) - ten built-in slash commands for software engineering, learning, and writing
  * [Cosine Similarity](./Cosine%20similarity/Readme.md) - the geometry behind similarity scores and its role in retrieval
+ * [Embeddings and position information](./Embeddings%20and%20position%20information/Readme.md) - token and contextual vectors, retrieval embeddings, added position vectors, and RoPE
+ * [Features and the linear representation hypothesis](./Features%20and%20the%20linear%20representation%20hypothesis/Readme.md) - features, neurons, directions, projections, linear probes, and limits of the evidence
  * [LLM Failure Modes](./LLM%20Failure%20Modes/Readme.md) - hallucination, error propagation, sycophancy, instruction drift, and knowledge conflict
  * [Markov table](./Markov%20table/Readme.md) - transition probabilities, n-gram models, and a worked text generator
+ * [MLPs, nonlinearities, and mixture of experts](./MLPs%20and%20mixture%20of%20experts/Readme.md) - expansion, ReLU, gated MLPs, expert routing, and active versus total parameters
  * [Model, assistant, and agent: the system map](./Model%2C%20assistant%2C%20and%20agent/Readme.md) - the model, application runtime, tools, context, and saved state
  * [Preference tuning: RLHF and DPO](./Preference%20tuning/Readme.md) - preference pairs, reward models, direct updates, and the limits of preference scores
  * [Pretraining: learning from next-token prediction](./Pretraining/Readme.md) - text-derived targets, prediction loss, useful patterns, and training data
  * [Prompt-writing guidelines](./Prompt-writing%20guidelines/Readme.md) - what makes a prompt specific, testable, and stable
  * [RAG pipeline](./RAG%20pipeline/Readme.md) - components and numbered walkthroughs of RAG and agentic RAG
  * [Reasoning training and distillation](./Reasoning%20training%20and%20distillation/Readme.md) - verifiable rewards, teacher-to-student training, and inference-time computation
+ * [Superposition and mechanistic interpretability](./Superposition%20and%20mechanistic%20interpretability/Readme.md) - overlapping features, interference, sparse autoencoders, and causal tests of circuits
  * [Supervised fine-tuning: learning to act as an assistant](./Supervised%20fine-tuning/Readme.md) - demonstrations, assistant-only scoring, chat formatting, and tool-use training
+ * [The residual stream and normalization](./The%20residual%20stream%20and%20normalization/Readme.md) - additive updates, pre-norm branches, LayerNorm, and RMSNorm
+ * [The transformer forward pass](./The%20transformer%20forward%20pass/Readme.md) - embedding lookup, transformer blocks, residual updates, and next-token scores
+ * [Tokens and tokenization](./Tokens%20and%20tokenization/Readme.md) - token IDs, vocabulary, BPE merges, bytes, and token counts
  * [Training vs. inference](./Training%20vs.%20inference/Readme.md) - weight updates, forward passes, gradients, and a one-weight example
 
 ## AI agents learning plan
 
-**Series scope: 24 article-mode cards**, studied in the order below. Articles 1–6 are available; the remaining 18 are planned. The other existing cards above are supporting reading and are not included in this count.
+**Series scope: 24 article-mode cards**, studied in the order below. Articles 1–14 are available; the remaining 10 are planned. The other existing cards above are supporting reading and are not included in this count.
 
 **For every article, prioritize clarity and simplicity.** Define unfamiliar terms before using them, keep one main lesson per article, and use small examples and diagrams that each explain one idea. Include technical detail only when it helps the learner understand the lesson.
 
@@ -47,14 +55,14 @@ Use a decoder-only transformer as the teaching baseline. Label model-specific ar
 
 | # | Proposed article | Central question and scope |
 | --- | --- | --- |
-| 7 | **Tokens and tokenization** | How does text become token IDs? Cover byte-pair encoding (BPE), bytes and subwords, vocabulary, special tokens, and consequences for spelling, languages, context length, and token counts. |
-| 8 | **The transformer forward pass** | How do token IDs become scores for the next token? Trace embeddings, repeated transformer blocks, final normalization, and the output projection. Define vectors and matrix transformations before using them. |
-| 9 | **Embeddings and position information** | How are token identity and token order represented? Compare embedding-table lookup, contextual representations, and retrieval embeddings. Introduce positional encoding and rotary position embeddings (RoPE) at a conceptual level. |
-| 10 | **Attention: queries, keys, values, and heads** | How can one token position use information from other positions? Work through query-key scores, scaling, the causal mask, softmax, weighted values, and multiple attention heads. |
-| 11 | **The residual stream and normalization** | How do transformer components share and update information? Follow the per-token residual vector, additive updates, and normalization. Contrast LayerNorm and root mean square normalization (RMSNorm) without a full derivation. |
-| 12 | **MLPs, nonlinearities, and mixture of experts** | What computation happens between attention layers? Explain the multilayer perceptron (MLP), expansion, nonlinear activation, gating, and projection back. Introduce mixture of experts (MoE) as a routed variant, including active versus total parameters. |
-| 13 | **Features and the linear representation hypothesis** | What might a direction in an activation space represent? Define features, neurons, directions, projections, and linear probes. Explain the hypothesis, its supporting evidence, and the limits of interpreting a successful probe. |
-| 14 | **Superposition and mechanistic interpretability** | How can representations contain more features than dimensions? Cover overlapping directions, interference, polysemantic neurons, and sparse autoencoders. Distinguish descriptive correlations from evidence obtained by interventions. |
+| 7 | **[Tokens and tokenization](./Tokens%20and%20tokenization/Readme.md)** | How does text become token IDs? Cover byte-pair encoding (BPE), bytes and subwords, vocabulary, special tokens, and consequences for spelling, languages, context length, and token counts. |
+| 8 | **[The transformer forward pass](./The%20transformer%20forward%20pass/Readme.md)** | How do token IDs become scores for the next token? Trace embeddings, repeated transformer blocks, final normalization, and the output projection. Define vectors and matrix transformations before using them. |
+| 9 | **[Embeddings and position information](./Embeddings%20and%20position%20information/Readme.md)** | How are token identity and token order represented? Compare embedding-table lookup, contextual representations, and retrieval embeddings. Introduce positional encoding and rotary position embeddings (RoPE) at a conceptual level. |
+| 10 | **[Attention: queries, keys, values, and heads](./Attention/Readme.md)** | How can one token position use information from other positions? Work through query-key scores, scaling, the causal mask, softmax, weighted values, and multiple attention heads. |
+| 11 | **[The residual stream and normalization](./The%20residual%20stream%20and%20normalization/Readme.md)** | How do transformer components share and update information? Follow the per-token residual vector, additive updates, and normalization. Contrast LayerNorm and root mean square normalization (RMSNorm) without a full derivation. |
+| 12 | **[MLPs, nonlinearities, and mixture of experts](./MLPs%20and%20mixture%20of%20experts/Readme.md)** | What computation happens between attention layers? Explain the multilayer perceptron (MLP), expansion, nonlinear activation, gating, and projection back. Introduce mixture of experts (MoE) as a routed variant, including active versus total parameters. |
+| 13 | **[Features and the linear representation hypothesis](./Features%20and%20the%20linear%20representation%20hypothesis/Readme.md)** | What might a direction in an activation space represent? Define features, neurons, directions, projections, and linear probes. Explain the hypothesis, its supporting evidence, and the limits of interpreting a successful probe. |
+| 14 | **[Superposition and mechanistic interpretability](./Superposition%20and%20mechanistic%20interpretability/Readme.md)** | How can representations contain more features than dimensions? Cover overlapping directions, interference, polysemantic neurons, and sparse autoencoders. Distinguish descriptive correlations from evidence obtained by interventions. |
 
 ### 3. Inference and context — 4 articles
 

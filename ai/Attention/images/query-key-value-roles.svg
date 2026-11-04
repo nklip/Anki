@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="610" viewBox="0 0 900 610" role="img" aria-labelledby="title desc">
+  <title id="title">Three projections, three jobs</title>
+  <desc id="desc">Each position's current vector is processed by three learned multiply-and-add recipes. One makes a query for matching allowed positions, another a key for being matched, and another a value carrying information to mix. Queries and keys determine mixing weights. Values provide the content. Projection parameters are learned; queries, keys, and values are computed for the input.</desc>
+  <!-- Blue is the input, purple the matching vectors, and orange the content vectors. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 23px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 21px; text-anchor: middle; }
+      .note { font-size: 19px; text-anchor: middle; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="610" fill="#ffffff"/>
+
+  <!-- All three branches start from the same current vector, not separate token lookups. -->
+  <text class="title" x="28" y="44">Three projections, three jobs</text>
+  <text class="subtitle" x="28" y="76">Three learned multiply-and-add recipes, applied at every token position</text>
+  <g id="current-vector">
+    <rect x="285" y="105" width="330" height="75" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="body" x="450" y="134">One position's</text>
+    <text class="label" x="450" y="165">current vector</text>
+  </g>
+
+  <!-- These three role boxes define the abbreviations used by the remaining diagrams. -->
+  <g id="projected-vector-roles">
+    <rect x="28" y="250" width="250" height="120" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="153" y="286">Query (Q)</text>
+    <text class="body" x="153" y="320">Used to match</text>
+    <text class="body" x="153" y="348">allowed positions</text>
+    <rect x="325" y="250" width="250" height="120" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="450" y="286">Key (K)</text>
+    <text class="body" x="450" y="320">Used to be matched</text>
+    <text class="body" x="450" y="348">by a query</text>
+    <rect x="622" y="250" width="250" height="120" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="747" y="286">Value (V)</text>
+    <text class="body" x="747" y="320">Information this</text>
+    <text class="body" x="747" y="348">position can supply</text>
+  </g>
+
+  <!-- The role outcomes are distinct: matching versus the information being mixed. -->
+  <g id="roles-in-attention">
+    <rect x="28" y="455" width="547" height="80" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="body" x="301.5" y="487">Compare queries with keys</text>
+    <text class="body" x="301.5" y="516">to calculate mixing weights</text>
+    <rect x="622" y="455" width="250" height="80" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="body" x="747" y="487">Values supply</text>
+    <text class="body" x="747" y="516">the contents to mix</text>
+  </g>
+
+  <!-- Branch intersections are intentional. Shafts terminate beneath triangle bases. -->
+  <g id="projection-connectors">
+    <line class="connector" x1="450" y1="181" x2="450" y2="237"/>
+    <path class="connector" d="M450 211 H153 V237"/>
+    <path class="connector" d="M450 211 H747 V237"/>
+    <polygon class="head" points="153,250 146,236 160,236"/>
+    <polygon class="head" points="450,250 443,236 457,236"/>
+    <polygon class="head" points="747,250 740,236 754,236"/>
+    <line class="connector" x1="153" y1="371" x2="153" y2="442"/>
+    <polygon class="head" points="153,455 146,441 160,441"/>
+    <line class="connector" x1="450" y1="371" x2="450" y2="442"/>
+    <polygon class="head" points="450,455 443,441 457,441"/>
+    <line class="connector" x1="747" y1="371" x2="747" y2="442"/>
+    <polygon class="head" points="747,455 740,441 754,441"/>
+  </g>
+
+  <!-- Distinguish learned parameters from values computed during this pass. -->
+  <text class="note" x="450" y="581">The recipes are learned. Q, K, and V are calculated for the current input.</text>
+</svg>

@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="700" viewBox="0 0 900 700" role="img" aria-labelledby="title desc">
+  <title id="title">Reading an activation and changing it are different experiments</title>
+  <desc id="desc">Two separate experiments with fixed model weights. On the left, a copy of a hidden activation goes to a trained external probe, which predicts a property label. The original activation continues through the model unchanged. Accuracy on held-out examples shows recoverable information, but readout alone does not show that the model uses that information when answering. On the right, an intervention edits the hidden activation before the remaining model uses it. Compare outputs with an unedited run to test causal influence and check side effects. A probe readout is not automatically a valid steering direction.</desc>
+  <!-- Blue represents activation data; purple an external readout or deliberate edit; green results. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .heading { font-size: 23px; font-weight: 700; text-anchor: middle; }
+      .label { font-size: 21px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 21px; text-anchor: middle; }
+      .note { font-size: 19px; text-anchor: middle; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="700" fill="#ffffff"/>
+
+  <!-- Separate columns prevent an implied automatic flow from a probe's weights to an edit. -->
+  <text class="title" x="28" y="44">Reading information and changing it differ</text>
+  <text class="subtitle" x="28" y="76">Two separate experiments · Model weights stay fixed in both</text>
+  <rect x="28" y="101" width="406" height="540" rx="12" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+  <rect x="466" y="101" width="406" height="540" rx="12" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+  <text class="heading" x="231" y="133">Read a copy</text>
+  <text class="heading" x="669" y="133">Change the activation</text>
+
+  <!-- The copied vector goes to the probe; a separate bypass keeps the model's own state unchanged. -->
+  <g id="probe-readout-experiment">
+    <rect x="64" y="160" width="334" height="62" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="231" y="197">Hidden activation</text>
+    <rect x="64" y="265" width="334" height="70" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="231" y="294">Trained external probe</text>
+    <text class="note" x="231" y="322">reads the copied vector</text>
+    <rect x="64" y="370" width="334" height="70" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="231" y="400">Predicted property label</text>
+    <text class="note" x="231" y="427">Check against known labels</text>
+    <rect x="64" y="466" width="334" height="64" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="231" y="492">Model continues</text>
+    <text class="note" x="231" y="518">with original activation</text>
+    <text class="note" x="307" y="246">Copy only</text>
+  </g>
+
+  <!-- Manual heads meet target borders; the bypass stays clear of every readout label and node. -->
+  <g id="probe-and-unchanged-model-flow">
+    <line class="connector" x1="231" y1="223" x2="231" y2="252"/>
+    <polygon class="head" points="231,265 224,251 238,251"/>
+    <line class="connector" x1="231" y1="336" x2="231" y2="357"/>
+    <polygon class="head" points="231,370 224,356 238,356"/>
+    <path class="connector" d="M399 191 H420 V498 H411"/>
+    <polygon class="head" points="398,498 412,491 412,505"/>
+  </g>
+
+  <!-- In the intervention experiment, the edited state actually enters the remaining computation. -->
+  <g id="activation-intervention-experiment">
+    <rect x="500" y="160" width="338" height="62" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="669" y="197">Original activation</text>
+    <rect x="500" y="265" width="338" height="70" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="669" y="294">Edited activation</text>
+    <text class="note" x="669" y="322">change selected values</text>
+    <rect x="500" y="370" width="338" height="70" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="669" y="400">Remaining model</text>
+    <text class="note" x="669" y="427">uses the edited activation</text>
+    <rect x="500" y="466" width="338" height="64" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="669" y="492">Compare outputs</text>
+    <text class="note" x="669" y="518">with an unedited run</text>
+    <text class="note" x="755" y="246">Intervention</text>
+  </g>
+
+  <!-- The edit precedes the remaining model; the comparison explicitly includes an unedited baseline. -->
+  <g id="intervention-flow">
+    <line class="connector" x1="669" y1="223" x2="669" y2="252"/>
+    <polygon class="head" points="669,265 662,251 676,251"/>
+    <line class="connector" x1="669" y1="336" x2="669" y2="357"/>
+    <polygon class="head" points="669,370 662,356 676,356"/>
+    <line class="connector" x1="669" y1="441" x2="669" y2="453"/>
+    <polygon class="head" points="669,466 662,452 676,452"/>
+  </g>
+
+  <!-- Conclusions are qualified: accurate readout is observational; interventions need side-effect checks. -->
+  <text class="note" x="231" y="568">If accurate on held-out examples:</text>
+  <text class="label" x="231" y="596">Information is recoverable.</text>
+  <text class="note" x="231" y="625">Readout alone does not show use.</text>
+  <text class="label" x="669" y="568">Test for causal influence</text>
+  <text class="note" x="669" y="596">Compare with the unedited run.</text>
+  <text class="note" x="669" y="625">Check for effects on other properties.</text>
+  <text class="note" x="450" y="675">A probe readout is not automatically a valid steering direction.</text>
+</svg>

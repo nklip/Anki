@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="650" viewBox="0 0 900 650" role="img" aria-labelledby="title desc">
+  <title id="title">A gate scales each coordinate</title>
+  <desc id="desc">Two learned projections read the same input in a gated multilayer perceptron. The gate branch uses SiLU. Example content coordinates two and four multiplied by gate values one half and two give one and eight, before projection back.</desc>
+  <!-- Shared styles; numeric values are invented examples after the branch operations. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .label { font-size: 23px; font-weight: 700; }
+      .body { font-size: 21px; }
+      .small { font-size: 19px; fill: #475569; }
+      .number { font-size: 28px; font-weight: 700; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="650" fill="#ffffff"/>
+  <!-- Scope distinguishes an internal coordinate gate from expert selection. -->
+  <g id="heading">
+    <text x="30" y="43" class="title">A gate scales each coordinate</text>
+    <text x="30" y="78" class="small">Gated multilayer perceptron (MLP): only two intermediate coordinates shown.</text>
+  </g>
+  <!-- Original input fans out to independent learned projections. -->
+  <g id="input" text-anchor="middle">
+    <rect x="330" y="106" width="240" height="58" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="450" y="143" class="label">Same input vector</text>
+  </g>
+  <g id="input-fork">
+    <path class="connector" d="M450 164 V184 H235 V202"/><polygon class="head" points="235,215 228,201 242,201"/>
+    <path class="connector" d="M450 184 H665 V202"/><polygon class="head" points="665,215 658,201 672,201"/>
+  </g>
+  <!-- Branch values are illustrative outputs, not inputs to the SiLU formula. -->
+  <g id="branches" text-anchor="middle">
+    <rect x="50" y="215" width="370" height="82" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text x="235" y="246" class="label">Content projection</text>
+    <text x="235" y="280" class="number">[2, 4]</text>
+    <rect x="480" y="215" width="370" height="82" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text x="665" y="246" class="label">Gate projection + SiLU</text>
+    <text x="665" y="280" class="number">[0.5, 2]</text>
+  </g>
+  <!-- Two separate downward heads make both operands visible at the product. -->
+  <g id="product-inputs">
+    <path class="connector" d="M235 297 V331 H340 V352"/><polygon class="head" points="340,365 333,351 347,351"/>
+    <path class="connector" d="M665 297 V331 H560 V352"/><polygon class="head" points="560,365 553,351 567,351"/>
+  </g>
+  <g id="coordinate-product" text-anchor="middle">
+    <rect x="230" y="365" width="440" height="105" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text x="450" y="397" class="label">Multiply matching coordinates</text>
+    <text x="450" y="432" class="number">[2, 4] × [0.5, 2] = [1, 8]</text>
+    <text x="450" y="457" class="small">First is halved; second is doubled.</text>
+  </g>
+  <!-- Head stops on the final projection's top border. -->
+  <g id="output-flow">
+    <path class="connector" d="M450 470 V500"/><polygon class="head" points="450,513 443,499 457,499"/>
+  </g>
+  <g id="output-projection" text-anchor="middle">
+    <rect x="230" y="513" width="440" height="69" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="450" y="542" class="label">Project back to residual width</text>
+    <text x="450" y="568" class="body">Result: the MLP update</text>
+  </g>
+  <!-- Activation name and behavior are defined without a second math lesson. -->
+  <text x="450" y="622" text-anchor="middle" class="small">SiLU = sigmoid linear unit (Swish), a smooth nonlinear rule.</text>
+</svg>

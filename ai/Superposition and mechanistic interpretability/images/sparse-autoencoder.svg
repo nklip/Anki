@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="712" viewBox="0 0 900 712" role="img" aria-labelledby="title desc">
+  <title id="title">A sparse code can reconstruct an activation without identifying its original cause</title>
+  <desc id="desc">A sparse autoencoder, or SAE, is an external analysis tool trained while the original model weights stay fixed. In this invented illustration, the saved activation [1, 1] passes through an encoder to a sparse code with A equal to 0, B equal to 0, and C equal to 1. The decoder uses dictionary directions A=[1, 0], B=[0, 1], and C=[1, 1]. Adding their weighted directions reconstructs [1, 1]. This perfect reconstruction does not prove C caused the original activation, because A plus B produces the same vector. Real SAEs learn their dictionary and may leave reconstruction error.</desc>
+  <!-- Blue marks activation vectors, purple the candidate code, and green the active contribution. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 21px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 21px; text-anchor: middle; }
+      .note { font-size: 19px; text-anchor: middle; }
+      .value { font-size: 30px; text-anchor: middle; }
+      .math { font-size: 25px; text-anchor: middle; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="712" fill="#ffffff"/>
+
+  <!-- The toy code is supplied for explanation, not presented as an actual learned result. -->
+  <text class="title" x="28" y="44">A sparse code can reconstruct an activation</text>
+  <text class="subtitle" x="28" y="76">SAE = sparse autoencoder · External analysis tool · Invented code and dictionary</text>
+  <rect x="28" y="103" width="844" height="50" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text class="body" x="450" y="135">Original model weights stay fixed; only the SAE is trained.</text>
+
+  <!-- Both endpoints show the same vector, while the sparse code uses only one of three candidate slots. -->
+  <g id="saved-activation">
+    <rect x="28" y="210" width="190" height="106" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="123" y="243">Saved activation</text>
+    <text class="value" x="123" y="290">[1, 1]</text>
+  </g>
+  <g id="illustrative-sparse-code">
+    <rect x="326" y="188" width="248" height="168" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="450" y="218">Sparse code</text>
+    <text class="body" x="386" y="250">A</text>
+    <text class="body" x="450" y="250">B</text>
+    <text class="body" x="514" y="250">C</text>
+    <rect x="365" y="268" width="42" height="40" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+    <rect x="429" y="268" width="42" height="40" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+    <rect x="493" y="268" width="42" height="40" rx="4" fill="#bbf7d0" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="386" y="339">0</text>
+    <text class="label" x="450" y="339">0</text>
+    <text class="label" x="514" y="339">1</text>
+  </g>
+  <g id="reconstructed-activation">
+    <rect x="682" y="210" width="190" height="106" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="777" y="243">Reconstruction</text>
+    <text class="value" x="777" y="290">[1, 1]</text>
+  </g>
+
+  <!-- Transformation labels sit above and below the shafts; tips meet the destination boundaries. -->
+  <g id="encoder-decoder-flow">
+    <text class="note" x="272" y="236">Encoder</text>
+    <line class="connector" x1="219" y1="263" x2="313" y2="263"/>
+    <polygon class="head" points="326,263 312,256 312,270"/>
+    <text class="note" x="272" y="297">finds code</text>
+    <text class="note" x="628" y="236">Decoder</text>
+    <line class="connector" x1="575" y1="263" x2="669" y2="263"/>
+    <polygon class="head" points="682,263 668,256 668,270"/>
+    <text class="note" x="628" y="297">rebuilds</text>
+  </g>
+  <text class="note" x="450" y="389">Real codes can have many candidate slots, with only a few active.</text>
+
+  <!-- The dictionary and its weighted sum explicitly connect the code entries to reconstruction. -->
+  <g id="toy-dictionary-reconstruction">
+    <rect x="28" y="413" width="844" height="130" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="450" y="442">Decoder: add weighted dictionary directions</text>
+    <text class="body" x="170" y="478">A = [1, 0]</text>
+    <text class="body" x="450" y="478">B = [0, 1]</text>
+    <text class="body" x="730" y="478">C = [1, 1]</text>
+    <text class="math" x="450" y="521">0 × [1, 0] + 0 × [0, 1] + 1 × [1, 1] = [1, 1]</text>
+  </g>
+
+  <!-- The collision is deliberate: low reconstruction error cannot identify a unique original cause here. -->
+  <g id="reconstruction-ambiguity">
+    <rect x="28" y="566" width="844" height="84" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="450" y="598">The same [1, 1] can also come from A + B.</text>
+    <text class="note" x="450" y="630">Perfect reconstruction does not prove that C was the original cause.</text>
+  </g>
+  <text class="note" x="450" y="687">Real SAEs learn their dictionary and may leave reconstruction error.</text>
+</svg>

@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560" role="img" aria-labelledby="title desc">
+  <title id="title">Normalize the branch while keeping the residual path unchanged</title>
+  <desc id="desc">A Llama-style pre-norm MLP branch at one token position. The incoming residual vector splits into two paths. The direct path carries the original vector unchanged to an addition. The other path normalizes the vector, then a multilayer perceptron computes an update. Add matching coordinates of the update and the original vector to produce the updated residual vector. Normalization changes only the branch input, not the direct path.</desc>
+  <!-- Purple marks the incoming state, blue normalization, orange the MLP, and green the result. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 21px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 21px; text-anchor: middle; }
+      .note { font-size: 19px; text-anchor: middle; }
+      .plus { font-size: 36px; text-anchor: middle; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="560" fill="#ffffff"/>
+
+  <!-- This diagram isolates the per-position MLP branch rather than simplifying cross-token attention. -->
+  <text class="title" x="28" y="44">Normalize the branch, keep the direct path</text>
+  <text class="subtitle" x="28" y="76">Llama-style pre-norm · One token position · MLP branch</text>
+
+  <!-- The upper path computes an update from normalized input. -->
+  <text class="label" x="566" y="124">Compute an update</text>
+  <g id="normalized-mlp-branch">
+    <rect x="300" y="150" width="200" height="92" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="400" y="187">Normalization</text>
+    <text class="note" x="400" y="216">scales the input</text>
+    <rect x="562" y="150" width="270" height="92" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="697" y="180">MLP</text>
+    <text class="note" x="697" y="207">Multilayer perceptron</text>
+    <text class="note" x="697" y="231">computes an update</text>
+  </g>
+
+  <!-- The original vector goes directly into the addition without passing through normalization. -->
+  <g id="residual-input-and-result">
+    <rect x="28" y="310" width="190" height="94" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="123" y="346">Incoming</text>
+    <text class="body" x="123" y="375">residual vector</text>
+    <circle cx="640" cy="357" r="27" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="plus" x="640" y="369">+</text>
+    <rect x="722" y="310" width="150" height="94" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="797" y="337">Updated</text>
+    <text class="body" x="797" y="365">residual</text>
+    <text class="body" x="797" y="393">vector</text>
+  </g>
+  <text class="note" x="425" y="331">Original vector, unchanged</text>
+  <text class="note" x="748" y="276">Update</text>
+  <text class="body" x="640" y="441">Add matching coordinates</text>
+
+  <!-- Split junction is intentional; every shaft ends inside its own manual arrowhead base. -->
+  <g id="read-update-add-flow">
+    <line class="connector" x1="219" y1="357" x2="600" y2="357"/>
+    <polygon class="head" points="613,357 599,350 599,364"/>
+    <path class="connector" d="M254 357 V196 H287"/>
+    <circle cx="254" cy="357" r="4" fill="#64748b"/>
+    <polygon class="head" points="300,196 286,189 286,203"/>
+    <line class="connector" x1="501" y1="196" x2="549" y2="196"/>
+    <polygon class="head" points="562,196 548,189 548,203"/>
+    <path class="connector" d="M697 243 V283 H640 V317"/>
+    <polygon class="head" points="640,330 633,316 647,316"/>
+    <line class="connector" x1="668" y1="357" x2="709" y2="357"/>
+    <polygon class="head" points="722,357 708,350 708,364"/>
+  </g>
+
+  <!-- Notes distinguish a normalized branch read from replacement of the running residual state. -->
+  <text class="body" x="450" y="498">Normalization changes the branch input, not the direct path.</text>
+  <text class="note" x="450" y="532">Attention uses this pattern while reading from allowed token positions.</text>
+</svg>

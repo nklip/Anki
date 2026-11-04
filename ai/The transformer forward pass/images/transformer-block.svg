@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="786" viewBox="0 0 900 786" role="img" aria-labelledby="title desc">
+  <title id="title">One transformer block adds two updates</title>
+  <desc id="desc">A Llama-style block receives one vector per token position. Normalization then attention produces an update; a side path carries the unchanged incoming vectors to an addition. Attention uses position information and can access only the current and earlier positions. Normalization then a multilayer perceptron produces a second update, applied separately at each position, which is added through another residual connection. Updated vectors pass to the next block, which has its own weights.</desc>
+  <!-- Main computation runs down the center; left paths preserve input values. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 23px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 20px; text-anchor: middle; }
+      .note { font-size: 19px; text-anchor: middle; }
+      .side { font-size: 19px; text-anchor: end; }
+      .plus { font-size: 30px; text-anchor: middle; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="786" fill="#ffffff"/>
+
+  <!-- The baseline is explicit: other transformer variants arrange blocks differently. -->
+  <text class="title" x="28" y="44">One transformer block adds two updates</text>
+  <text class="subtitle" x="28" y="76">Llama-style design · one vector per token position · read downward</text>
+  <g id="incoming-vectors">
+    <rect x="285" y="110" width="330" height="60" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="450" y="148">Incoming vectors</text>
+  </g>
+
+  <!-- Pre-normalization lies on the update path, not on the residual side path. -->
+  <g id="attention-update">
+    <rect x="285" y="215" width="330" height="100" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="body" x="450" y="241">Normalize, then</text>
+    <text class="label" x="450" y="271">attention</text>
+    <text class="note" x="450" y="298">Mix allowed positions</text>
+    <rect x="658" y="220" width="214" height="75" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="body" x="765" y="251">Position</text>
+    <text class="body" x="765" y="279">information</text>
+    <text class="note" x="756" y="337">Current and earlier</text>
+    <text class="note" x="756" y="363">positions only</text>
+    <circle cx="450" cy="365" r="22" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+    <text class="plus" x="450" y="375">+</text>
+  </g>
+
+  <!-- The MLP applies separately to each position after the attention addition. -->
+  <g id="mlp-update">
+    <rect x="285" y="430" width="330" height="100" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="body" x="450" y="456">Normalize, then</text>
+    <text class="label" x="450" y="486">MLP</text>
+    <text class="note" x="450" y="514">Transform each position</text>
+    <text class="note" x="756" y="463">MLP = multilayer</text>
+    <text class="note" x="756" y="489">perceptron</text>
+    <circle cx="450" cy="580" r="22" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+    <text class="plus" x="450" y="590">+</text>
+  </g>
+
+  <!-- Residual paths branch at open junctions and meet addition circles from the left. -->
+  <g id="residual-connections">
+    <path class="connector" d="M450 190 H160 V365 H415"/>
+    <polygon class="head" points="428,365 414,358 414,372"/>
+    <text class="side" x="134" y="259">Carry</text>
+    <text class="side" x="134" y="286">unchanged</text>
+    <path class="connector" d="M450 403 H160 V580 H415"/>
+    <polygon class="head" points="428,580 414,573 414,587"/>
+    <text class="side" x="134" y="474">Carry</text>
+    <text class="side" x="134" y="501">unchanged</text>
+  </g>
+
+  <!-- Separate heads prevent shaft tails; each tip stops at its target outline. -->
+  <g id="main-flow-connectors">
+    <line class="connector" x1="450" y1="171" x2="450" y2="202"/>
+    <polygon class="head" points="450,215 443,201 457,201"/>
+    <line class="connector" x1="657" y1="257" x2="628" y2="257"/>
+    <polygon class="head" points="615,257 629,250 629,264"/>
+    <line class="connector" x1="450" y1="316" x2="450" y2="330"/>
+    <polygon class="head" points="450,343 443,329 457,329"/>
+    <line class="connector" x1="450" y1="388" x2="450" y2="417"/>
+    <polygon class="head" points="450,430 443,416 457,416"/>
+    <line class="connector" x1="450" y1="531" x2="450" y2="545"/>
+    <polygon class="head" points="450,558 443,544 457,544"/>
+    <line class="connector" x1="450" y1="603" x2="450" y2="617"/>
+    <polygon class="head" points="450,630 443,616 457,616"/>
+  </g>
+
+  <!-- Output retains a vector for every position; another block repeats the structure. -->
+  <g id="updated-vectors">
+    <rect x="285" y="630" width="330" height="60" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="450" y="668">Updated vectors</text>
+  </g>
+  <text class="note" x="450" y="731">+ means: add matching numbers in the two incoming vectors.</text>
+  <text class="note" x="450" y="762">The next block repeats this structure with its own weights.</text>
+</svg>

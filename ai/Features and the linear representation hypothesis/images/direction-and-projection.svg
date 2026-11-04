@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="610" viewBox="0 0 900 610" role="img" aria-labelledby="title desc">
+  <title id="title">A direction can use several coordinates</title>
+  <desc id="desc">Invented two-dimensional geometry. Activation x equals [2, 1]. Unit direction u equals [0.6, 0.8]. The dot product is 2, so the projection onto the direction is [1.2, 1.6]. A dashed perpendicular drops from x to the projected point. Both axes are numerical slots, not named concepts.</desc>
+  <!-- Common series palette; the graph uses 140 pixels per numerical unit on both axes. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .label { font-size: 22px; font-weight: 700; }
+      .body { font-size: 21px; }
+      .small { font-size: 19px; fill: #475569; }
+      .math { font-size: 27px; font-weight: 700; }
+      .axis { stroke: #94a3b8; stroke-width: 2; fill: none; }
+      .grid { stroke: #e2e8f0; stroke-width: 1; fill: none; }
+      .direction-connector { stroke: #059669; stroke-width: 3; fill: none; }
+      .vector-connector { stroke: #2563eb; stroke-width: 3; fill: none; }
+      .projection-connector { stroke: #64748b; stroke-width: 2; stroke-dasharray: 6 5; fill: none; }
+    </style>
+  </defs>
+  <rect width="900" height="610" fill="#ffffff"/>
+  <!-- Toy values prevent the diagram from implying discovery of a real semantic direction. -->
+  <g id="heading">
+    <text x="30" y="43" class="title">A direction can use several coordinates</text>
+    <text x="30" y="78" class="small">Invented geometry: x = [2, 1] and unit direction u = [0.6, 0.8].</text>
+  </g>
+  <!-- Coordinate axes are slots in a vector, with equal scales for an accurate projection. -->
+  <g id="coordinate-grid">
+    <path class="grid" d="M80 280 H430 M80 140 H430 M220 140 V420 M360 140 V420"/>
+    <path class="axis" d="M80 130 V420 H440"/>
+    <text x="30" y="119" class="small">slot 2</text>
+    <text x="381" y="455" class="small">slot 1</text>
+    <text x="58" y="445" class="small">0</text>
+    <text x="220" y="445" text-anchor="middle" class="small">1</text>
+    <text x="360" y="445" text-anchor="middle" class="small">2</text>
+    <text x="59" y="287" text-anchor="middle" class="small">1</text>
+    <text x="59" y="147" text-anchor="middle" class="small">2</text>
+  </g>
+  <!-- The direction shaft intentionally passes through the projected point. Its head is beyond the point and clear of the grid. -->
+  <g id="direction-arrow">
+    <path class="direction-connector" d="M80 420 L303.8 121.6"/>
+    <polygon fill="#059669" points="312.8,109.6 309.6,127.2 296.8,117.6"/>
+    <text x="330" y="120" class="label">line along u</text>
+  </g>
+  <!-- The activation endpoint and its perpendicular shadow use circles, leaving no arrowhead collisions. -->
+  <g id="activation-and-shadow">
+    <path class="vector-connector" d="M80 420 L360 280"/>
+    <path class="projection-connector" d="M355.2 276.4 L252.8 199.6"/>
+    <path class="axis" d="M239.6 207.2 L250.8 215.6 L259.2 204.4"/>
+    <circle cx="360" cy="280" r="6" fill="#2563eb"/>
+    <circle cx="248" cy="196" r="6" fill="#059669"/>
+    <circle cx="164" cy="308" r="5" fill="#ffffff" stroke="#059669" stroke-width="2"/>
+    <text x="135" y="299" class="label">u</text>
+    <text x="340" y="326" class="label">x = [2, 1]</text>
+    <text x="88" y="190" class="label">[1.2, 1.6]</text>
+    <text x="88" y="218" class="small">projection</text>
+  </g>
+  <!-- Dot product and projected vector are different outputs, each shown with its arithmetic. -->
+  <g id="dot-product-recipe">
+    <rect x="480" y="115" width="390" height="153" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="502" y="150" class="label">Measure along u</text>
+    <text x="502" y="191" class="math">2 × 0.6 + 1 × 0.8 = 2</text>
+    <text x="502" y="226" class="body">Multiply matching slots, then add.</text>
+    <text x="502" y="252" class="small">Score: 2 units along the direction.</text>
+  </g>
+  <g id="projection-vector-recipe">
+    <rect x="480" y="293" width="390" height="157" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text x="502" y="328" class="label">Find the projected point</text>
+    <text x="502" y="369" class="math">2 × [0.6, 0.8] = [1.2, 1.6]</text>
+    <text x="502" y="405" class="body">Scale each slot by the score.</text>
+    <text x="502" y="432" class="small">Dashed line: drop at a right angle.</text>
+  </g>
+  <!-- Vocabulary and interpretation limits remain readable outside the plot. -->
+  <g id="reading-notes">
+    <rect x="30" y="486" width="840" height="96" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="450" y="521" text-anchor="middle" class="body">A unit direction has length 1. It can involve more than one slot.</text>
+    <text x="450" y="555" text-anchor="middle" class="body">A score is a measurement; it is not a probability or a concept label.</text>
+  </g>
+</svg>

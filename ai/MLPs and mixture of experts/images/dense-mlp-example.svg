@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="510" viewBox="0 0 900 510" role="img" aria-labelledby="title desc">
+  <title id="title">An MLP expands, changes, and projects back</title>
+  <desc id="desc">One token's two-number input is expanded to three numbers, passed through ReLU, then projected back to a two-number update. The invented projection recipes are shown explicitly.</desc>
+  <!-- Shared type, palette, and manually joined arrows. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .label { font-size: 22px; font-weight: 700; }
+      .body { font-size: 21px; }
+      .small { font-size: 19px; fill: #475569; }
+      .number { font-size: 27px; font-weight: 700; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="510" fill="#ffffff"/>
+  <!-- Lesson and scope: the width changes within one token position. -->
+  <g id="heading">
+    <text x="30" y="43" class="title">An MLP expands, changes, and projects back</text>
+    <text x="30" y="78" class="small">MLP = multilayer perceptron. One token position; invented numbers and weights.</text>
+  </g>
+  <!-- Four states; all intermediate widths are numbers, not additional tokens. -->
+  <g id="states" text-anchor="middle">
+    <rect x="30" y="120" width="150" height="126" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text x="105" y="153" class="label">Input</text>
+    <text x="105" y="191" class="number">[2, −1]</text>
+    <text x="105" y="224" class="small">2 slots</text>
+    <rect x="230" y="120" width="190" height="126" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text x="325" y="153" class="label">Expand</text>
+    <text x="325" y="191" class="number">[2, −1, 1]</text>
+    <text x="325" y="224" class="small">3 slots</text>
+    <rect x="470" y="120" width="190" height="126" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text x="565" y="153" class="label">Apply ReLU</text>
+    <text x="565" y="191" class="number">[2, 0, 1]</text>
+    <text x="565" y="224" class="small">3 slots</text>
+    <rect x="710" y="120" width="160" height="126" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text x="790" y="153" class="label">Project back</text>
+    <text x="790" y="191" class="number">[3, −1]</text>
+    <text x="790" y="224" class="small">2-slot update</text>
+  </g>
+  <!-- Each shaft stops one unit inside its head base; tips meet box boundaries. -->
+  <g id="state-flow">
+    <path class="connector" d="M180 183 H217"/><polygon class="head" points="230,183 216,176 216,190"/>
+    <path class="connector" d="M420 183 H457"/><polygon class="head" points="470,183 456,176 456,190"/>
+    <path class="connector" d="M660 183 H697"/><polygon class="head" points="710,183 696,176 696,190"/>
+  </g>
+  <!-- The nonlinearity is a fixed rule; the projections' recipes are learned. -->
+  <g id="relu-rule">
+    <text x="450" y="286" text-anchor="middle" class="body">ReLU (rectified linear unit): replace negative numbers with zero.</text>
+  </g>
+  <!-- Worked projection recipes make each arithmetic result inspectable. -->
+  <g id="projection-recipes">
+    <rect x="30" y="312" width="405" height="124" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="50" y="343" class="label">Expansion recipe</text>
+    <text x="50" y="376" class="body">Copy both slots; append their sum.</text>
+    <text x="50" y="411" class="number">2 + (−1) = 1</text>
+    <rect x="455" y="312" width="415" height="124" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="475" y="343" class="label">Projection-back recipe</text>
+    <text x="475" y="376" class="body">First + third; second − third.</text>
+    <text x="475" y="411" class="number">2 + 1 = 3;   0 − 1 = −1</text>
+  </g>
+  <!-- Residual addition lies outside the MLP illustrated above. -->
+  <text x="450" y="479" text-anchor="middle" class="body">The MLP update is then added to the original residual vector.</text>
+</svg>

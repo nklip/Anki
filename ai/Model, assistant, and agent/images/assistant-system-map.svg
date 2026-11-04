@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600" role="img" aria-labelledby="title desc">
-  <title id="title">A model is one part of the assistant</title>
-  <desc id="desc">The assistant application contains an interface and a runtime. The runtime coordinates the model, tools, and saved state. The model generates responses, tools perform operations, and saved state holds messages, notes, and files outside the model. An agent uses these parts in an action-and-feedback loop.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="800" viewBox="0 0 900 800" role="img" aria-labelledby="title desc">
+  <title id="title">Where the agent fits inside an assistant</title>
+  <desc id="desc">The assistant application contains the user interface and, in this example, an agent. A dashed boundary groups the agent's runtime, model, tools, and saved state. The runtime builds context and coordinates calls; the model chooses the next step. A purple feedback arrow returns tool results to the runtime so they can enter the next model call's context. The loop continues until completion, a pause, or a runtime limit. These are logical roles, and the components may run on different machines.</desc>
   <!-- Shared typography and semantic colors; labels explain every component. -->
   <defs>
     <style>
@@ -11,62 +11,81 @@
       .copy { font-size: 19px; }
       .connector { fill: none; stroke: #64748b; stroke-width: 2.5; }
       .head { fill: #64748b; }
+      .feedback { fill: none; stroke: #9333ea; stroke-width: 2.5; }
+      .feedback-head { fill: #9333ea; }
+      .feedback-label { font-size: 19px; fill: #7e22ce; }
     </style>
   </defs>
-  <rect width="900" height="600" fill="#ffffff"/>
+  <rect width="900" height="800" fill="#ffffff"/>
 
   <!-- Main lesson and reading direction. -->
   <g id="heading">
-    <text class="title" x="28" y="45">A model is one part of the assistant</text>
-    <text class="subtitle" x="28" y="77">You use the interface. The runtime coordinates the parts below.</text>
+    <text class="title" x="28" y="45">Where the agent fits inside an assistant</text>
+    <text class="subtitle" x="28" y="77">An assistant can run an agent. The model is one part of that agent.</text>
   </g>
 
   <!-- Logical application boundary; components need not share one machine. -->
-  <rect id="application-boundary" x="24" y="104" width="852" height="464" rx="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <rect id="application-boundary" x="24" y="104" width="852" height="668" rx="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
   <text class="label" x="48" y="141">Assistant application</text>
 
   <!-- Interface presents the user's request and the application's answer. -->
   <g id="interface">
-    <rect x="48" y="164" width="804" height="78" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+    <rect x="48" y="164" width="804" height="74" rx="12" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
     <text class="label" x="450" y="195" text-anchor="middle">Interface</text>
     <text class="copy" x="450" y="223" text-anchor="middle">Your messages and the displayed answer</text>
   </g>
 
-  <!-- Shaft ends under its own triangular base; tip meets the runtime border. -->
-  <line class="connector" x1="450" y1="243" x2="450" y2="262"/>
-  <polygon class="head" points="450,274 443,261 457,261"/>
+  <!-- The dashed boundary groups a working system, not a separate model.
+       Paint it before the incoming arrow so the head remains unobscured. -->
+  <rect id="agent-boundary" x="48" y="282" width="804" height="442" rx="14" fill="#ffffff" stroke="#64748b" stroke-width="2" stroke-dasharray="8 6"/>
+  <text class="label" x="72" y="316">Agent: the system inside the dashed box</text>
+  <text class="copy" x="72" y="345">The runtime runs the loop; the model chooses the next step.</text>
 
+  <!-- The request enters the agent. Tip meets the outer boundary stroke;
+       the shaft ends inside its own triangle base. -->
+  <line class="connector" x1="450" y1="239" x2="450" y2="269"/>
+  <polygon class="head" points="450,281 443,268 457,268"/>
+
+  <!-- Runtime hosts the control loop and supplies each model call's context. -->
   <g id="runtime">
-    <rect x="48" y="274" width="804" height="80" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
-    <text class="label" x="450" y="307" text-anchor="middle">Runtime: the coordinating code</text>
-    <text class="copy" x="450" y="335" text-anchor="middle">Prepares context, calls the model, and dispatches permitted tool calls</text>
+    <rect x="96" y="370" width="708" height="86" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="450" y="403" text-anchor="middle">Runtime: the coordinating code</text>
+    <text class="copy" x="450" y="432" text-anchor="middle">Builds context, calls the model, runs permitted tool calls</text>
   </g>
 
-  <!-- Shared coordination branch. Heads meet the three component borders. -->
-  <path class="connector" d="M450 355 V376 M171 376 H729 M171 376 V391 M450 376 V391 M729 376 V391"/>
-  <polygon class="head" points="171,404 164,390 178,390"/>
-  <polygon class="head" points="450,404 443,390 457,390"/>
-  <polygon class="head" points="729,404 722,390 736,390"/>
+  <!-- Shared coordination branch. Heads meet the outer component strokes. -->
+  <path class="connector" d="M450 457 V488 M206 488 H694 M206 488 V511 M450 488 V511 M694 488 V511"/>
+  <polygon class="head" points="206,523 199,510 213,510"/>
+  <polygon class="head" points="450,523 443,510 457,510"/>
+  <polygon class="head" points="694,523 687,510 701,510"/>
 
+  <!-- Model selects actions; tools execute them; state persists outside weights. -->
   <g id="model">
-    <rect x="48" y="404" width="246" height="110" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-    <text class="label" x="171" y="437" text-anchor="middle">Model</text>
-    <text class="copy" x="171" y="466" text-anchor="middle">Learned weights</text>
-    <text class="copy" x="171" y="492" text-anchor="middle">Generates responses</text>
+    <rect x="96" y="524" width="220" height="112" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="206" y="557" text-anchor="middle">Model</text>
+    <text class="copy" x="206" y="586" text-anchor="middle">Learned weights</text>
+    <text class="copy" x="206" y="614" text-anchor="middle">Chooses next step</text>
   </g>
   <g id="tools">
-    <rect x="327" y="404" width="246" height="110" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-    <text class="label" x="450" y="437" text-anchor="middle">Tools</text>
-    <text class="copy" x="450" y="466" text-anchor="middle">Calculator, search, …</text>
-    <text class="copy" x="450" y="492" text-anchor="middle">Perform operations</text>
+    <rect x="340" y="524" width="220" height="112" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="450" y="557" text-anchor="middle">Tools</text>
+    <text class="copy" x="450" y="586" text-anchor="middle">Calculator, search, …</text>
+    <text class="copy" x="450" y="614" text-anchor="middle">Run requested actions</text>
   </g>
   <g id="saved-state">
-    <rect x="606" y="404" width="246" height="110" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
-    <text class="label" x="729" y="437" text-anchor="middle">Saved state</text>
-    <text class="copy" x="729" y="466" text-anchor="middle">Messages, notes, files</text>
-    <text class="copy" x="729" y="492" text-anchor="middle">Stored outside model</text>
+    <rect x="584" y="524" width="220" height="112" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="694" y="557" text-anchor="middle">Saved state</text>
+    <text class="copy" x="694" y="586" text-anchor="middle">Messages, notes, files</text>
+    <text class="copy" x="694" y="614" text-anchor="middle">Stored outside model</text>
   </g>
 
-  <!-- Agent names the way these components cooperate, not another model box. -->
-  <text class="copy" x="450" y="546" text-anchor="middle">An agent uses these parts in an action-and-feedback loop.</text>
+  <!-- Feedback stays in the right-hand gutter and clear of all component text.
+       The left-pointing tip meets the runtime's outer stroke at x=805. -->
+  <path id="tool-feedback-arrow" class="feedback" data-connector="true" d="M450 637 V660 H828 V413 H817"/>
+  <polygon class="feedback-head" points="805,413 818,406 818,420"/>
+  <text class="feedback-label" x="450" y="685" text-anchor="middle">Tool results enter context for the next model call.</text>
+  <text class="copy" x="450" y="710" text-anchor="middle">Repeat until finished, paused, or stopped by a runtime limit.</text>
+
+  <!-- This is a logical organization, not a claim about physical deployment. -->
+  <text class="subtitle" x="450" y="752" text-anchor="middle">These parts may run on different machines.</text>
 </svg>
