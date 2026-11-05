@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="440" viewBox="0 0 1100 440" role="img" aria-labelledby="title desc">
+  <title id="title">One request runs in two phases: prefill, then decode</title>
+  <desc id="desc">A prompt with tokens A, B, and C goes through prefill, which processes the whole prompt at once and produces the first token, D. Decoding then produces one token per pass: E, F, and more. A key-value cache below both phases links them: prefill saves keys and values for A, B, and C; each decoding step reads the saved work and adds the new token. The cache holds working numbers for this request only; reuse across requests is prompt caching.</desc>
+  <!-- Shared typography and connector colors match the series' where-this-fits diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 21px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .note { font-size: 19px; fill: #475569; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="1100" height="440" fill="#ffffff"/>
+  <!-- Heading states the lesson and the reading order. -->
+  <text class="title" x="28" y="43" text-anchor="start">One request runs in two phases: prefill, then decode</text>
+  <text class="subtitle" x="28" y="76" text-anchor="start">Read left to right. This article covers both numbered phases and the cache that links them.</text>
+  <!-- Request route; the two numbered phase boxes are this article's focus. -->
+  <g id="request-route">
+    <rect x="28" y="108" width="150" height="88" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="103" y="146" text-anchor="middle">Prompt</text>
+    <text class="note" x="103" y="176" text-anchor="middle">tokens A B C</text>
+    <rect x="212" y="108" width="230" height="88" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="327" y="146" text-anchor="middle">1. Prefill</text>
+    <text class="note" x="327" y="176" text-anchor="middle">whole prompt at once</text>
+    <rect x="475" y="108" width="150" height="88" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="550" y="146" text-anchor="middle">First token</text>
+    <text class="note" x="550" y="176" text-anchor="middle">D</text>
+    <rect x="659" y="108" width="230" height="88" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="774" y="146" text-anchor="middle">2. Decode</text>
+    <text class="note" x="774" y="176" text-anchor="middle">one token per pass</text>
+    <rect x="922" y="108" width="150" height="88" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="997" y="146" text-anchor="middle">More tokens</text>
+    <text class="note" x="997" y="176" text-anchor="middle">E, F, …</text>
+  </g>
+  <!-- Each shaft ends inside its triangular head; tips meet the next box boundary. -->
+  <g id="route-connectors">
+    <line class="connector" x1="179" y1="152" x2="200" y2="152"/><polygon class="head" points="212,152 199,146 199,158"/>
+    <line class="connector" x1="443" y1="152" x2="463" y2="152"/><polygon class="head" points="475,152 462,146 462,158"/>
+    <line class="connector" x1="626" y1="152" x2="647" y2="152"/><polygon class="head" points="659,152 646,146 646,158"/>
+    <line class="connector" x1="890" y1="152" x2="910" y2="152"/><polygon class="head" points="922,152 909,146 909,158"/>
+  </g>
+  <!-- Cache spans both phases; it is state shared by them, not another step in the route. -->
+  <g id="kv-cache">
+    <rect x="212" y="262" width="677" height="88" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="550" y="298" text-anchor="middle">KV cache, inside this request</text>
+    <text class="body" x="550" y="328" text-anchor="middle">saved keys and values for each processed token, at every layer</text>
+  </g>
+  <!-- Vertical arrows: prefill writes; decode reads (upward) and appends (downward). Labels sit beside shafts. -->
+  <g id="cache-connectors">
+    <line class="connector" x1="327" y1="197" x2="327" y2="250"/><polygon class="head" points="327,262 321,249 333,249"/>
+    <text class="note" x="340" y="236" text-anchor="start">saves A, B, C</text>
+    <line class="connector" x1="730" y1="261" x2="730" y2="209"/><polygon class="head" points="730,196 724,209 736,209"/>
+    <text class="note" x="718" y="236" text-anchor="end">reads saved work</text>
+    <line class="connector" x1="818" y1="197" x2="818" y2="250"/><polygon class="head" points="818,262 812,249 824,249"/>
+    <text class="note" x="830" y="236" text-anchor="start">adds the new token</text>
+  </g>
+  <!-- Notes separate this per-request cache from the next article's cross-request cache. -->
+  <text class="note" x="550" y="388" text-anchor="middle">The cache holds working numbers, not answers, and it grows with every token.</text>
+  <text class="note" x="550" y="416" text-anchor="middle">Reusing work across separate requests is prompt caching, the next article.</text>
+</svg>

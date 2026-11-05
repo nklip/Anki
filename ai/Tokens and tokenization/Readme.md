@@ -2,57 +2,57 @@
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-**Tokenization turns text into a sequence of pieces called tokens, each represented by an integer token ID. A token is not necessarily a word or a letter.**
+**Tokenization turns text into a list of numbered pieces called tokens. A language model never sees letters or words directly; it sees only this list of token IDs.** A token is often a whole common word or a piece of a rarer one, so a token is not the same as a word or a letter.
 
-Start with the mapping, then see how a tokenizer learns useful pieces and why token boundaries matter.
+## Where this fits
+
+A model can only calculate with numbers, so text must become numbers first. Tokenization is that first step, and it happens before the model runs:
+
+![where-this-fits.svg](images/where-this-fits.svg)
+
+Read left to right. The blue group shows tokenization; the gray group shows what the model does next.
+
+[The transformer forward pass](../The%20transformer%20forward%20pass/Readme.md) follows what the model does with the IDs. When the model replies, the same tokenizer turns the chosen IDs back into text.
 
 ## Pieces, vocabulary, and IDs
 
-A **tokenizer** applies rules for splitting and encoding text. Its **vocabulary** lists the available tokens and their IDs. Tokens can represent whole words, word parts, punctuation, spaces, or smaller units of text.
-
-In this toy example, `two cats!` becomes four tokens. `[space]` in the diagram stands for one actual space. The pieces and IDs are invented for teaching; a real tokenizer may split this text differently.
+A **tokenizer** is the program that splits text into pieces and looks up a number for each one. Its **vocabulary** is the fixed list of pieces it knows, each with an ID. Pieces can be whole words, parts of words, punctuation, spaces, or smaller units of text.
 
 ![text-to-token-ids.svg](images/text-to-token-ids.svg)
 
-* The ID `17` is a label, not a measure of importance.
-* **Encoding** produces the ID sequence.
-* **Decoding** converts IDs back into text.
-* Use the model's own tokenizer: the same ID can mean something different in another vocabulary.
+Read the diagram from top to bottom. The text `two cats!` becomes four pieces, each piece gets an ID, and **decoding** turns the IDs back into the same text. `[space]` stands for one real space, which here belongs to the piece `[space]cat`. The pieces and IDs are invented; a real tokenizer may split this text differently.
 
-## How byte-pair encoding builds pieces
+Two points often surprise beginners:
 
-**Byte-pair encoding (BPE)** is a common tokenization method. During tokenizer training, it starts with small units and repeatedly merges the most frequent allowed neighboring pair into a new token. A pair can contain previously merged pieces, so tokens can grow longer than two letters.
+- An ID is only a label. ID 17 is not “bigger” or “more important” than ID 8.
+- IDs belong to one tokenizer. Another tokenizer may split the same text differently and give the same piece a different ID, so a model must always be used with its own tokenizer.
 
-In the tiny dataset below, `hug` appears three times and `pug` twice. The pair `u` + `g` appears in both words: **3 + 2 = 5 appearances**. That is more than either other pair, so the tokenizer learns to merge it into `ug`.
+## How a tokenizer chooses its pieces
+
+The vocabulary is learned once, from a large sample of text, separately from training the model's weights. The most popular method, **byte-pair encoding (BPE)**, starts from single characters and repeatedly glues together the neighboring pair that appears most often. As a result, common words end up as single tokens, while rare words are built from several smaller pieces.
 
 ![bpe-merge-example.svg](images/bpe-merge-example.svg)
 
-More rounds build more pieces until a stopping target is reached. In real tokenizers, text may first be split into chunks, and merges respect those boundaries. **Unigram** and **WordPiece** are other subword methods; not every tokenizer uses BPE.
+The diagram shows one round on a tiny dataset where `hug` appears three times and `pug` twice. The pair `u` + `g` occurs in both words, so it is the most frequent pair, and BPE adds `ug` to the vocabulary. Later rounds can glue `ug` to other pieces, so tokens can grow into whole words.
 
-Learning these rules is separate from training the language model's weights. During ordinary BPE use, the tokenizer applies its saved merge rules in their learned priority order. It does not learn a new vocabulary from each chat message.
+Once learned, the rules are frozen: using the tokenizer only applies them, and it does not learn new pieces from your messages. **Unigram** and **WordPiece** are other methods with the same goal.
 
-## Bytes are smaller than many characters
+## Bytes: a safety net for any text
 
-A **byte** is a small unit of computer data with 256 possible values. A character can take one or several bytes to encode.
+Computers store text as **bytes**, small units with 256 possible values, and one character can take several bytes. **Byte-level BPE** starts from all 256 byte values, so it can encode any text, even characters it never saw, without an “unknown” token. The price is that a token boundary can fall inside a character, so one token may not show a complete character by itself.
 
-**Byte-level BPE** starts from all 256 byte values and merges byte sequences. This lets it represent text containing unfamiliar characters without needing an “unknown character” token. A token boundary can fall inside a character's bytes, so one token may not display as a complete character by itself.
-
-“Subword” therefore does not mean “meaningful word part.” Token boundaries are chosen by the tokenizer's rules, not by a grammar teacher.
+Pieces are chosen by frequency, not by grammar, so a “subword” is not necessarily a meaningful part of a word.
 
 ## Special tokens mark structure
 
-Some vocabulary entries have special roles, such as marking the end of text or a message boundary. A **chat template** formats messages and may add role markers before tokenization. These markers let the model distinguish user and assistant messages within one token sequence.
+Some vocabulary entries are not ordinary text. **Special tokens** mark things such as the end of a text or the border between chat messages. A **chat template** wraps each message with role markers before tokenization, so the model can tell user and assistant messages apart inside one long token list. Their exact names and format depend on the model, and they count toward the token total too.
 
-Their names and exact format depend on the model. Chat formatting contributes to token counts too; counting only the visible words can miss it.
+## Why tokens matter in practice
 
-## Why the boundaries matter
-
-- **Context limits:** a text context budget counts tokens, not words. In a toy shared budget of 1,000 tokens, 700 input tokens leave 300 for output: subtract the 700 already used. Actual model limits vary.
-- **Languages:** translations of the same content can use different numbers of tokens. More pieces use more context space and can cost more in services that charge per token.
-- **Spelling:** the word `cats` spans two tokens here but has four letters. Counting tokens is not counting letters; spelling tasks must work with the letters inside the pieces.
-- **Exact text:** spaces, punctuation, and capitalization can change the split. Measure with the intended tokenizer instead of assuming a fixed number of words per token.
-
-Tokenization chooses the model's input units. The next article follows what the transformer does with their IDs.
+- **Context limits** are counted in tokens, not words. In a toy model where the input and the reply share 1,000 tokens, a 700-token input leaves 300 for the reply.
+- **Languages differ:** the same message can need more tokens in one language than in another. More tokens use more context and can cost more where a service charges per token.
+- **Spelling is hidden:** the model sees `cats` as two pieces, not four letters, so a spelling task has to recover the letters inside each piece.
+- **Small changes count:** a space, a punctuation mark, or a capital letter can change the split. Count with the model's own tokenizer rather than guessing.
 
 ## Check your understanding
 

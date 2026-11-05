@@ -2,64 +2,60 @@
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-**A forward pass turns token IDs into scores for possible next tokens, using current weights.** It looks up vectors, updates them through transformer blocks, then calculates scores. The pass itself does not train the model or choose a token.
+**A forward pass is one run of the model: token IDs go in, and a score for every possible next token comes out.** It uses the model's learned weights without changing them, and it does not choose the next token by itself.
 
-We will follow a **Llama-style decoder-only transformer**: a model built to continue a sequence. Other transformers arrange some components differently.
+## Where this fits
 
-## The numbers we follow
+[Tokens and tokenization](../Tokens%20and%20tokenization/Readme.md) has already turned the text into token IDs. The forward pass is everything between those IDs and the next-token scores:
 
-A **vector** is an ordered list of numbers, such as `[2, 1]`. A **matrix** is a grid of numbers. A learned matrix can transform a vector by multiplying matching numbers and adding the results; we will try this below.
+![where-this-fits.svg](images/where-this-fits.svg)
 
-**Weights** are numbers learned during training. **Activations** are working values calculated for the current input. Keep these separate: new activations do not mean new weights.
+Read left to right. The blue group covers the forward pass, from looking up vectors to producing scores.
+
+To write a reply, the model repeats this run once for every new token. This article gives the whole route; the next articles zoom in on its parts: [Embeddings and position information](../Embeddings%20and%20position%20information/Readme.md), [Attention: queries, keys, values, and heads](../Attention/Readme.md), [The residual stream and normalization](../The%20residual%20stream%20and%20normalization/Readme.md), and [MLPs, nonlinearities, and mixture of experts](../MLPs%20and%20mixture%20of%20experts/Readme.md).
+
+We follow a **Llama-style decoder-only transformer**, a design built to continue text. Other transformers arrange some parts differently.
+
+## Two kinds of numbers
+
+A **vector** is a list of numbers, such as `[2, 1]`; the model represents each token as one. **Weights** are numbers learned during training and stored in the model. **Activations** are working numbers calculated for the current input. A forward pass creates new activations but leaves the weights alone, so running the model does not teach it anything.
 
 ## Step 1 — Look up a vector for each token
 
 ![token-embedding-lookup.svg](images/token-embedding-lookup.svg)
 
-Suppose our toy tokenizer turns `The cat` into IDs `12, 87`. These are labels, not measurements: ID 87 does not mean “more cat” than ID 12.
+The model keeps an **embedding table** with one learned vector for each token ID. In the diagram, the toy input `The cat` has IDs 12 and 87, and each ID selects its row of the table. That row becomes the token's starting vector. The same ID always starts with the same vector; context changes it later. Real vectors are much longer: the 7-billion-parameter LLaMA model uses 4,096 numbers per token.
 
-The **embedding table** stores a learned vector for each token ID. Looking up both IDs gives two starting vectors, one per position. The same ID always selects the same row in this table; later computation makes its representation depend on context.
-
-These two-number vectors are invented. Real models use much longer ones.
-
-## Step 2 — Update the vectors through repeated blocks
+## Step 2 — Refine the vectors through repeated blocks
 
 ![transformer-block.svg](images/transformer-block.svg)
 
-A **transformer block** is a repeated bundle of operations. In this design, it applies attention, adds its update, applies an MLP, then adds that update. Each block has its own learned weights.
+A **transformer block** is a unit that is stacked many times, 32 times in that LLaMA model, each copy with its own weights. Read the diagram from top to bottom. Each block does two jobs:
 
-**Attention** lets a position combine information from other allowed positions. A **causal mask** blocks access to later positions: `cat` can use `The` and itself; `The` cannot use `cat`. Position information is used inside attention in this design, helping it account for token order.
+- **Attention** lets each position gather information from other positions. A **causal mask** allows only the current and earlier positions: `cat` can look at `The`, but `The` cannot look ahead at `cat`. Position information enters here, so the model can use word order.
+- An **MLP (multilayer perceptron)** then works on each position's vector separately, transforming the information it already holds.
 
-An **MLP (multilayer perceptron)** is a small neural network that transforms each position's vector separately. It uses the same weights at every position within that block. It mixes numbers and applies nonlinear rules—rules more flexible than a single fixed multiply-and-add recipe. Attention moves information between positions; the MLP processes information within each position.
+Before each job, **normalization** keeps the numbers at a stable scale. The side paths labeled “Carry unchanged” bring the incoming vectors to the `+` circles, where each job's result is added. So each job only supplies an update, and the running vectors that pass from block to block are called the **residual stream**.
 
-Before attention and before the MLP, **normalization** adjusts the input vector's scale. The side path carries the incoming vector unchanged to an addition. This **residual connection** adds the operation's update to that vector, matching number to number: `[2, 1] + [1, −1] = [3, 0]`. Add the first pair, then the second pair.
+After the last block, there is still one vector per position, but each now carries information from its context.
 
-The running vectors form the **residual stream**. After all blocks, there is still one vector per position, now carrying information shaped by the allowed context.
-
-## Step 3 — Turn the final vector into token scores
+## Step 3 — Turn the last vector into scores
 
 ![vector-to-logits.svg](images/vector-to-logits.svg)
 
-After the last block, a final normalization adjusts the vectors' scale. To continue `The cat`, we use the vector at the **last position**, `cat`. It can contain information about both tokens.
+To continue `The cat`, the model uses the vector at the **last position**, `cat`, which has gathered information from both tokens. After a final normalization, a learned **output projection** compares this vector with a learned row for each vocabulary token and gives each token a score. The table in the diagram shows two of them: `sat` scores 7 and `ran` scores 2, so `sat` is favored. A real model scores its whole vocabulary at once.
 
-The **output projection** is a learned matrix that turns this vector into one score per vocabulary token. Suppose the normalized vector is `[2, 1]`. Using two invented rows of that matrix:
-
-- `sat`: weights `[3, 1]` give `2 × 3 + 1 × 1 = 7`.
-- `ran`: weights `[0, 2]` give `2 × 0 + 1 × 2 = 2`.
-
-Multiply matching pairs, then add. The real calculation scores the whole vocabulary; we show only two entries.
-
-These raw scores are **logits**. They can be negative and need not add up to 1. A higher score favors that token; it is not a measure of factual truth.
+These raw scores are called **logits**. They are not probabilities: they can be negative and need not add up to 1. A high score favors a token; it is not a measure of factual truth.
 
 ## How this becomes a reply
 
-**Softmax** converts logits into probabilities that add up to 100%. A **decoding rule** then selects a token—for example, choosing the highest score or sampling using probabilities. The selected token is appended, and another pass supplies scores for the following token. Cached calculations can save repeated work.
+**Softmax** turns the logits into probabilities that add up to 100%. A **decoding rule** then picks one token, for example the most likely one or a random draw weighted by the probabilities; [From logits to text: decoding and sampling](../Decoding%20and%20sampling/Readme.md) covers this. The chosen token is added to the input, and another forward pass scores the next one. Saved results from earlier passes avoid repeating work, as [Prefill, decoding, and the KV cache](../Prefill%20and%20KV%20cache/Readme.md) explains.
 
-Check your understanding: after one pass, what changed? **The working values.** Updating the weights requires additional training steps.
+Check your understanding: after one forward pass, what changed? **Only the working values.** The weights change only during training.
 
 # Sources
 
-- [LLaMA: architecture, §2.2](https://arxiv.org/html/2302.13971v1)
+- [LLaMA: architecture and model sizes, §2.2 and Table 2](https://arxiv.org/html/2302.13971v1)
 - [Meta: Llama 3 model implementation](https://github.com/meta-llama/llama3/blob/main/llama/model.py)
 - [Transformer Circuits: residual stream and attention](https://transformer-circuits.pub/2021/framework/index.html)
 - PyTorch: [Embedding](https://docs.pytorch.org/docs/2.15/generated/torch.nn.Embedding.html), [Linear](https://docs.pytorch.org/docs/2.15/generated/torch.nn.Linear.html), [Softmax](https://docs.pytorch.org/docs/2.15/generated/torch.nn.Softmax.html).

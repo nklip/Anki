@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="482" viewBox="0 0 1100 482" role="img" aria-labelledby="title desc">
+  <title id="title">The MLP processes each position after attention</title>
+  <desc id="desc">The model route runs from text through token IDs and starting vectors to repeated transformer blocks and next-token scores. Inside a decoder-only transformer block, attention gathers information from allowed positions. The multilayer perceptron, or MLP, then processes each position separately. Both components add updates to the running vectors. Normalization and additions are omitted from this high-level map.</desc>
+  <!-- Gray shows context; orange highlights the MLP's place within a block. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 21px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 20px; text-anchor: middle; }
+      .note { font-size: 19px; text-anchor: middle; fill: #475569; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="1100" height="482" fill="#ffffff"/>
+  <!-- Shared overview keeps the highlighted component in its full model context. -->
+  <text class="title" x="28" y="44">The MLP processes each position after attention</text>
+  <text class="subtitle" x="28" y="76">Read left to right · orange highlights this article's part of the model</text>
+  <g id="model-route">
+    <rect x="28" y="108" width="150" height="86" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="103" y="144">Text</text>
+    <text class="body" x="103" y="174">“The cat”</text>
+    <rect x="218" y="108" width="150" height="86" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="293" y="144">Token IDs</text>
+    <text class="note" x="293" y="174">piece numbers</text>
+    <rect x="408" y="108" width="160" height="86" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="488" y="144">Starting</text>
+    <text class="body" x="488" y="174">vectors</text>
+    <rect x="608" y="108" width="224" height="86" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="720" y="144">Transformer blocks</text>
+    <text class="note" x="720" y="174">attention, then MLP</text>
+    <rect x="872" y="108" width="200" height="86" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="972" y="144">Next-token</text>
+    <text class="body" x="972" y="174">scores</text>
+  </g>
+  <!-- Shafts end inside the separate arrowhead bases; tips meet target borders. -->
+  <g id="overview-flow">
+    <path class="connector" d="M179 151 H205"/><polygon class="head" points="218,151 204,144 204,158"/>
+    <path class="connector" d="M369 151 H395"/><polygon class="head" points="408,151 394,144 394,158"/>
+    <path class="connector" d="M569 151 H595"/><polygon class="head" points="608,151 594,144 594,158"/>
+    <path class="connector" d="M833 151 H859"/><polygon class="head" points="872,151 858,144 858,158"/>
+  </g>
+  <!-- Enlarged block separates information sharing from per-position processing. -->
+  <g id="two-jobs-in-one-block">
+    <rect x="28" y="228" width="1044" height="180" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="550" y="263">Inside each block in this decoder-only model</text>
+    <rect x="56" y="286" width="450" height="96" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="281" y="318">1. Attention</text>
+    <text class="body" x="281" y="350">Gathers information from</text>
+    <text class="body" x="281" y="374">current and earlier positions</text>
+    <rect x="594" y="286" width="450" height="96" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="819" y="318">2. MLP (multilayer perceptron)</text>
+    <text class="body" x="819" y="350">Works on the information</text>
+    <text class="body" x="819" y="374">at each position separately</text>
+    <path class="connector" d="M507 334 H581"/><polygon class="head" points="594,334 580,327 580,341"/>
+  </g>
+  <!-- Explicit simplification keeps the overview from replacing the detailed block diagram. -->
+  <text class="note" x="550" y="441">Both jobs add updates to the running vectors. The next block repeats these two jobs.</text>
+  <text class="note" x="550" y="468">Normalization and the additions are omitted here to show the order clearly.</text>
+</svg>

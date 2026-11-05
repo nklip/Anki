@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="748" viewBox="0 0 1280 748" role="img" aria-labelledby="title desc">
+  <title id="title">AI guardrails: three checkpoints around the model</title>
+  <desc id="desc">Read left to right: customer request, input checks, AI model, output checks, customer reply. If the model proposes a tool call, application code checks identity, amount, and approval before the refund service runs. The service result returns to the model. Blocked input or output receives a controlled response; blocked or pending actions do not execute.</desc>
+  <!-- Shared typography and palette: blue input, purple model, orange action, green output. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 31px; font-weight: 700; }
+      .subtitle { font-size: 21px; fill: #475569; }
+      .label { font-size: 23px; font-weight: 700; }
+      .copy { font-size: 20px; }
+      .small { font-size: 19px; fill: #475569; }
+      .connector { fill: none; stroke: #64748b; stroke-width: 2.5; stroke-linejoin: round; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="1280" height="748" fill="#ffffff"/>
+
+  <!-- The main reading path stays in one horizontal row. -->
+  <text class="title" x="32" y="47">AI guardrails: three checkpoints around the model</text>
+  <text class="subtitle" x="32" y="82">Screen the request, authorize the action, then check the reply.</text>
+  <g id="customer-request">
+    <rect x="32" y="144" width="164" height="144" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="114" y="194" text-anchor="middle">Customer</text>
+    <text class="copy" x="114" y="233" text-anchor="middle">Request</text>
+  </g>
+  <g id="input-checkpoint">
+    <rect x="244" y="144" width="232" height="144" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="268" y="183">1 · Input checks</text>
+    <text class="copy" x="268" y="221">Mask sensitive text</text>
+    <text class="copy" x="268" y="251">Screen requests</text>
+  </g>
+  <g id="application-model">
+    <rect x="524" y="144" width="214" height="144" rx="14" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="label" x="548" y="183">AI model</text>
+    <text class="copy" x="548" y="221">Proposes actions</text>
+    <text class="copy" x="548" y="251">Drafts replies</text>
+  </g>
+  <g id="output-checkpoint">
+    <rect x="786" y="144" width="232" height="144" rx="14" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="810" y="183">3 · Output checks</text>
+    <text class="copy" x="810" y="221">Check claims</text>
+    <text class="copy" x="810" y="251">Use trusted values</text>
+  </g>
+  <g id="customer-reply">
+    <rect x="1066" y="144" width="182" height="144" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="1157" y="194" text-anchor="middle">Customer</text>
+    <text class="copy" x="1157" y="233" text-anchor="middle">Checked reply</text>
+  </g>
+
+  <!-- Each shaft ends within its separate triangle base; the nose meets the next border. -->
+  <path class="connector" d="M197 216 H231"/>
+  <polygon class="head" points="244,216 230,209 230,223"/>
+  <path class="connector" d="M477 216 H511"/>
+  <polygon class="head" points="524,216 510,209 510,223"/>
+  <path class="connector" d="M739 216 H773"/>
+  <polygon class="head" points="786,216 772,209 772,223"/>
+  <path class="connector" d="M1019 216 H1053"/>
+  <polygon class="head" points="1066,216 1052,209 1052,223"/>
+
+  <!-- The optional action branch is distinct from the final-reply path. -->
+  <path id="proposed-tool-connector" class="connector" d="M676 289 V405"/>
+  <polygon class="head" points="676,418 669,404 683,404"/>
+  <text class="small" x="696" y="352">Proposed tool call</text>
+  <g id="tool-checkpoint">
+    <rect x="554" y="418" width="316" height="168" rx="14" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="578" y="458">2 · Tool / action checks</text>
+    <text class="copy" x="578" y="497">Application code checks</text>
+    <text class="copy" x="578" y="527">identity, amount, approval.</text>
+    <text class="small" x="578" y="560">Block or hold if not allowed.</text>
+  </g>
+  <g id="refund-service">
+    <rect x="950" y="440" width="298" height="124" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="974" y="481">Refund service</text>
+    <text class="copy" x="974" y="520">Execute an allowed action</text>
+  </g>
+  <path class="connector" d="M871 502 H937"/>
+  <polygon class="head" points="950,502 936,495 936,509"/>
+  <text class="small" x="910" y="480" text-anchor="middle">Allow</text>
+
+  <!-- Result return runs left of the action box and enters a separate model port. -->
+  <path id="tool-result-connector" class="connector" d="M1099 565 V650 H514 V324 H566 V301"/>
+  <polygon class="head" points="566,288 559,302 573,302"/>
+  <text class="small" x="620" y="630">Tool result returns to the model</text>
+
+  <!-- This note explains the trust boundary without adding another process stage. -->
+  <g id="enforcement-note">
+    <rect x="32" y="408" width="416" height="188" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="56" y="450">The application stays in control</text>
+    <text class="copy" x="56" y="490">The model can request a refund.</text>
+    <text class="copy" x="56" y="523">Authorized code decides whether</text>
+    <text class="copy" x="56" y="553">the refund actually happens.</text>
+  </g>
+
+  <!-- Failure behavior applies at the checkpoint where the request stops. -->
+  <text class="small" x="32" y="700">Blocked input or output: return a controlled message. Blocked or pending action: do not execute.</text>
+</svg>

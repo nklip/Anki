@@ -2,61 +2,44 @@
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-**The residual stream carries running information through a transformer. Components read it and add updates; normalization adjusts the values those components use.** We will follow an update, locate normalization, then compare LayerNorm with RMSNorm.
+**The residual stream is the running vector that carries each token's information through the model. Every attention and MLP step reads it and adds an update back. Normalization keeps the numbers at a steady scale, so those steps work reliably.**
 
-We use a **Llama-style pre-norm transformer** as our baseline. Other designs place normalization differently.
+## Where this fits
 
-## One running vector per token position
+The residual stream is not one more step; it is the path that connects all the steps:
 
-A **vector** is an ordered list of numbers. Each token position has its own **residual vector**, which keeps the same number of slots as it passes through the blocks. These vectors together form the residual stream.
+![where-this-fits.svg](images/where-this-fits.svg)
 
-**Attention** brings information from allowed positions. An **MLP (multilayer perceptron)** processes each position's vector separately. Each produces an update that is added to the stream.
+Follow the blue path: each block reads the running vector and adds updates to it.
+
+It starts as each token's starting vector from [Embeddings and position information](../Embeddings%20and%20position%20information/Readme.md). It ends as the final vector that [The transformer forward pass](../The%20transformer%20forward%20pass/Readme.md) turns into scores. We follow a **Llama-style pre-norm** design; other designs place normalization differently.
+
+## One running vector per token
+
+Picture each token's vector as a shared notepad that travels through the blocks. Each component reads the notepad, works something out, and writes its result by adding it on top. The notepad keeps the same number of slots all the way through.
 
 ![residual-vector-updates.svg](images/residual-vector-updates.svg)
 
-For one position, start with the invented vector `[1, 7]`. An attention update `[2, −3]` gives `[3, 4]`: `1 + 2 = 3`, and `7 − 3 = 4`. A later MLP update `[-1, 1]` gives `[2, 5]`.
+In the diagram, one position starts with `[1, 7]`. Attention adds its update, and then the MLP adds its own; each `+` adds matching slots, so the vector stays two numbers long. Updates can raise, lower, or cancel earlier values, so the stream is not a permanent record of everything the model has seen.
 
-A **residual connection** carries the incoming vector directly into this addition. Adding matching slots does not append new slots. Updates can increase, decrease, or cancel earlier values; the stream is not a permanent record of everything seen.
-
-This direct route lets a component learn an update instead of having to recreate the entire incoming vector. Residual connections also help deep networks train. During ordinary inference, the working vectors change while learned weights stay fixed.
+Why build a model this way? A component only has to learn a useful change, not rebuild the whole vector, and the direct path through the additions helps very deep networks train. During ordinary use, the stream's numbers change while the weights stay fixed. Because every component reads from and writes to this one stream, it is also a common place to look for what the model represents, as [Features and the linear representation hypothesis](../Features%20and%20the%20linear%20representation%20hypothesis/Readme.md) explains.
 
 ## Where normalization goes
 
+**Normalization** rescales a vector so that its numbers stay in a steady range from block to block. This helps both training and the calculation itself stay stable. It works on one token's vector at a time and never mixes different tokens.
+
 ![pre-norm-read-and-add.svg](images/pre-norm-read-and-add.svg)
 
-In **pre-norm**, normalization happens before attention or the MLP on the branch that computes an update. The original residual vector travels along the side path. The update is added to that original vector, not to the normalized version.
-
-After the attention addition, the MLP branch reads a normalized version of the updated stream. After all blocks, a final normalization precedes the vocabulary-scoring projection. The diagram isolates one MLP branch so the two paths are easy to see.
-
-**Normalization** controls numerical scale, helping computation and training stay stable. Here it calculates statistics across the slots of **one token's vector**, separately at each position. It does not average different tokens together.
+In **pre-norm**, normalization happens on the branch, just before a component reads the vector. Read the diagram from left to right: the incoming residual vector splits in two. The upper branch is normalized and fed to the MLP, which computes an update. The path labeled “Original vector, unchanged” carries the vector straight to the `+`, where the update is added. So the stream itself is never normalized in place; only the copy a component reads is. Attention uses the same pattern, and one final normalization prepares the last vector for scoring.
 
 ## LayerNorm and RMSNorm
 
-Both methods divide by a measure of size. **LayerNorm also subtracts the mean**; **RMSNorm does not**. The **mean** is the average: add the numbers, then divide by how many there are.
+Two normalization methods are common:
 
-![layernorm-and-rmsnorm.svg](images/layernorm-and-rmsnorm.svg)
+- **LayerNorm** first shifts the numbers so that their average is zero (**centering**), then divides them by their spread, so every vector ends up on a similar scale.
+- **RMSNorm** skips the centering and only divides by the vector's typical size, its **root mean square (RMS)**. It is simpler and therefore cheaper to compute, and it is the method that Llama-style models use.
 
-Use `[1, 7]` for both examples. To keep the arithmetic simple, use learned multipliers of 1, offsets of 0, and temporarily ignore the tiny safety term described below.
-
-### LayerNorm: center, then scale
-
-The mean is `(1 + 7) ÷ 2 = 4`. Subtract 4 from both slots to get `[-3, 3]`. This **centers** the numbers around zero.
-
-Find their **standard deviation**, a measure of spread: square the centered numbers, average them, then take the square root. Squaring means multiplying a number by itself: `(-3) × (-3) = 9` and `3 × 3 = 9`. Their average is 9. Its square root is 3, because `3 × 3 = 9`.
-
-Divide `[-3, 3]` by 3 to get **`[-1, 1]`**.
-
-### RMSNorm: scale without centering
-
-**RMS** means **root mean square**. Square the original numbers: `1 × 1 = 1`, and `7 × 7 = 49`. Their mean is `(1 + 49) ÷ 2 = 25`. Its square root is 5, because `5 × 5 = 25`.
-
-Divide `[1, 7]` by 5 to get **`[0.2, 1.4]`**. The average need not be zero. RMSNorm is the normalization used in our Llama-style example.
-
-## What the simplified math leaves out
-
-Real implementations add a tiny positive number, **epsilon**, inside the square root so the divisor cannot be zero. Both methods then apply learned multipliers, one per coordinate; LayerNorm typically also adds learned offsets. A **coordinate** is a slot; an **offset** is a number added after scaling.
-
-The mean and size measure are recalculated from the current input. The learned multipliers and offsets remain fixed during inference. After those learned adjustments, the output need not retain a mean of zero or a particular scale. These vectors are working information, not probabilities.
+Both then multiply each slot by a learned number, and LayerNorm usually adds a learned offset as well, so the output need not average zero or have a fixed size. A tiny safety number keeps either method from dividing by zero. The scale is recalculated for every input, while the learned numbers stay fixed during use. A normalized vector is still working information, not a set of probabilities.
 
 # Sources
 

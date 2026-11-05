@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="690" viewBox="0 0 900 690" role="img" aria-labelledby="title desc">
+  <title id="title">Reuse a shared prompt prefix, then generate a new reply</title>
+  <desc id="desc">Two requests have identical instructions and document content totaling 1,024 tokens, followed by different 256-token questions. The first request computes the input and saves the eligible prefix's attention key-value state. The later request reuses that state, processes the new question, and generates a reply again. Assume matching model and settings, an eligible cache boundary, and an available entry. The 1,024-token prefix is 80% of the total 1,280 input tokens. This is cached input coverage, not a time or cost saving percentage.</desc>
+  <!-- Blue marks initial computation, green reuse, and orange the new suffix. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 23px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 21px; text-anchor: middle; }
+      .note { font-size: 19px; text-anchor: middle; }
+      .left { font-size: 21px; font-weight: 700; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="690" fill="#ffffff"/>
+
+  <!-- The example assumes a valid match; equal shared words alone do not guarantee a cache hit. -->
+  <text class="title" x="28" y="44">Reuse the beginning; generate the reply again</text>
+  <text class="subtitle" x="28" y="77">Assume matching settings, an eligible cache boundary, and an available entry.</text>
+  <text class="left" x="30" y="117">First request: compute the input</text>
+  <g id="first-request-input">
+    <rect x="30" y="136" width="672" height="82" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <rect x="702" y="136" width="168" height="82" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="366" y="170">Instructions + document</text>
+    <text class="body" x="366" y="202">1,024 tokens</text>
+    <text class="body" x="786" y="170">Question A</text>
+    <text class="note" x="786" y="202">256 tokens</text>
+  </g>
+
+  <!-- The saved object is attention state, not a finished response. -->
+  <g id="saved-prefix-state">
+    <rect x="30" y="272" width="672" height="82" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="366" y="305">Saved key-value (KV) state</text>
+    <text class="body" x="366" y="338">Attention calculations for the first 1,024 tokens</text>
+    <text class="note" x="798" y="302">First reply</text>
+    <text class="note" x="798" y="331">not shown</text>
+  </g>
+  <g id="save-and-reuse-connectors">
+    <line class="connector" x1="366" y1="219" x2="366" y2="259"/>
+    <polygon class="head" points="366,272 359,258 373,258"/>
+    <text class="note" x="523" y="250">Save eligible prefix</text>
+    <line class="connector" x1="366" y1="355" x2="366" y2="417"/>
+    <polygon class="head" points="366,430 359,416 373,416"/>
+    <text class="note" x="437" y="389">Reuse</text>
+  </g>
+
+  <!-- Both input rows have the same 4:1 width ratio as their token counts. -->
+  <text class="left" x="30" y="410">Later request: cache hit</text>
+  <g id="later-request-input">
+    <rect x="30" y="430" width="672" height="82" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <rect x="702" y="430" width="168" height="82" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="366" y="464">Identical instructions + document</text>
+    <text class="body" x="366" y="496">1,024 tokens: reuse state</text>
+    <text class="body" x="786" y="464">Question B</text>
+    <text class="note" x="786" y="496">256 new tokens</text>
+  </g>
+
+  <!-- Decoding still happens; the response itself was never taken from the prompt cache. -->
+  <g id="new-reply-computation">
+    <line class="connector" x1="450" y1="513" x2="450" y2="541"/>
+    <polygon class="head" points="450,554 443,540 457,540"/>
+    <rect x="30" y="554" width="840" height="76" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="450" y="586">Process the new suffix; generate a reply.</text>
+    <text class="note" x="450" y="615">No saved answer is returned. The new reply may still use the same words.</text>
+  </g>
+  <text class="note" x="450" y="666">1,024 of 1,280 input tokens reused = 80% coverage, not 80% time or cost saved.</text>
+</svg>

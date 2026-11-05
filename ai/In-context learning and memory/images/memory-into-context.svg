@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="710" viewBox="0 0 900 710" role="img" aria-labelledby="title desc">
+  <title id="title">Stored information must be supplied in the active context</title>
+  <desc id="desc">Saved conversation messages and external notes or documents are separate sources outside the active context. An application selects messages or retrieves information, then adds the current instructions and question. In this illustrative example, the active context contains instructions, the question How do I build this project, selected older messages, and the retrieved note Project uses Maven. The model uses the supplied context with fixed weights to generate an answer that may use the note. Storage does not mean inclusion, and retrieval may miss useful information.</desc>
+  <!-- Blue marks archived conversation, purple external documents, and green the assembled context. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 21px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 21px; text-anchor: middle; }
+      .note { font-size: 19px; text-anchor: middle; }
+      .item { font-size: 21px; font-weight: 700; }
+      .detail { font-size: 19px; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="710" fill="#ffffff"/>
+
+  <!-- Both stores are outside the model's active input; the example note is not a claim about a real project. -->
+  <text class="title" x="28" y="44">Stored information must enter the active context</text>
+  <text class="subtitle" x="28" y="76">An application chooses what the model receives for this call.</text>
+  <g id="external-information-sources">
+    <rect x="28" y="110" width="404" height="88" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="230" y="145">Saved conversation</text>
+    <text class="note" x="230" y="180">Older messages in the chat archive</text>
+    <rect x="468" y="110" width="404" height="88" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="670" y="145">Notes / documents</text>
+    <text class="note" x="670" y="180">Example note: “Project uses Maven.”</text>
+  </g>
+
+  <!-- Selection and retrieval occur before the context reaches the model; neither store is automatically included. -->
+  <g id="application-selection">
+    <path class="connector" d="M230 199 V225 H340 V247"/>
+    <polygon class="head" points="340,260 333,246 347,246"/>
+    <path class="connector" d="M670 199 V225 H560 V247"/>
+    <polygon class="head" points="560,260 553,246 567,246"/>
+    <rect x="200" y="260" width="500" height="82" rx="12" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+    <text class="label" x="450" y="292">Application selects or retrieves</text>
+    <text class="note" x="450" y="321">and adds current instructions + question</text>
+  </g>
+
+  <!-- The bounded context contains selected material, including an explicit copy of the retrieved note. -->
+  <g id="active-context-for-call">
+    <line class="connector" x1="450" y1="343" x2="450" y2="369"/>
+    <polygon class="head" points="450,382 443,368 457,368"/>
+    <rect x="28" y="382" width="844" height="142" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="450" y="413">Active context for this call</text>
+    <text class="item" x="54" y="453">Instructions + current question</text>
+    <text class="item" x="510" y="453">Selected messages + notes</text>
+    <text class="detail" x="54" y="493">Question: “How do I build this project?”</text>
+    <text class="detail" x="510" y="493">Retrieved note: “Project uses Maven.”</text>
+  </g>
+
+  <!-- The model receives the assembled context; there is no direct store-to-answer shortcut or weight update. -->
+  <g id="model-and-answer">
+    <path class="connector" d="M450 525 V543 H320 V555"/>
+    <polygon class="head" points="320,568 313,554 327,554"/>
+    <rect x="110" y="568" width="420" height="74" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="320" y="612">Model: weights stay fixed</text>
+    <line class="connector" x1="531" y1="605" x2="637" y2="605"/>
+    <polygon class="head" points="650,605 636,598 636,612"/>
+    <rect x="650" y="568" width="222" height="74" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="761" y="599">Answer</text>
+    <text class="note" x="761" y="627">May use Maven</text>
+  </g>
+
+  <!-- Retrieval and selection are fallible; stored content is not automatically visible to the model. -->
+  <text class="note" x="450" y="685">Stored does not mean included; retrieval may miss useful information.</text>
+</svg>

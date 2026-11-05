@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="530" viewBox="0 0 1100 530" role="img" aria-labelledby="title desc">
+  <title id="title">Decoding turns next-token scores into text</title>
+  <desc id="desc">Text becomes token IDs, the forward pass runs the whole model, and it produces next-token scores. Decoding, the step this article covers, picks one token. A loop arrow shows that the chosen token is added and the model runs again. An inset opens the decoding step: softmax turns scores into probabilities, optional temperature, top-k, or top-p reshaping changes the odds, and then greedy choice takes the top token or sampling makes a weighted draw. Generation stops at an end-of-sequence token, a stop text, or a length limit.</desc>
+  <!-- Shared typography and connector colors match the series' where-this-fits diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 21px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .note { font-size: 19px; fill: #475569; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="1100" height="530" fill="#ffffff"/>
+  <!-- Heading states the lesson and the reading order. -->
+  <text class="title" x="28" y="43" text-anchor="start">Decoding turns next-token scores into text</text>
+  <text class="subtitle" x="28" y="76" text-anchor="start">Read left to right, then follow the loop back. This article covers the decoding step.</text>
+  <!-- Common model route; only the decoding box is emphasized and labeled as this article. -->
+  <g id="model-route">
+    <rect x="28" y="108" width="150" height="88" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="103" y="146" text-anchor="middle">Text</text>
+    <text class="note" x="103" y="176" text-anchor="middle">your prompt</text>
+    <rect x="216" y="108" width="160" height="88" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="296" y="146" text-anchor="middle">Token IDs</text>
+    <text class="note" x="296" y="176" text-anchor="middle">piece numbers</text>
+    <rect x="414" y="108" width="200" height="88" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="514" y="146" text-anchor="middle">Forward pass</text>
+    <text class="note" x="514" y="176" text-anchor="middle">the whole model</text>
+    <rect x="652" y="108" width="190" height="88" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="747" y="144" text-anchor="middle">Next-token</text>
+    <text class="label" x="747" y="172" text-anchor="middle">scores</text>
+    <rect x="880" y="108" width="192" height="88" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="976" y="146" text-anchor="middle">Decoding</text>
+    <text class="note" x="976" y="176" text-anchor="middle">this article</text>
+  </g>
+  <!-- Each shaft ends inside its triangular head; tips meet the next box boundary. -->
+  <g id="route-connectors">
+    <line class="connector" x1="179" y1="152" x2="204" y2="152"/><polygon class="head" points="216,152 203,146 203,158"/>
+    <line class="connector" x1="377" y1="152" x2="402" y2="152"/><polygon class="head" points="414,152 401,146 401,158"/>
+    <line class="connector" x1="615" y1="152" x2="640" y2="152"/><polygon class="head" points="652,152 639,146 639,158"/>
+    <line class="connector" x1="843" y1="152" x2="868" y2="152"/><polygon class="head" points="880,152 867,146 867,158"/>
+  </g>
+  <!-- The loop returns from decoding to the token IDs; its label sits below the horizontal run. -->
+  <g id="generation-loop">
+    <path class="connector" d="M976 197 V236 H296 V209"/>
+    <polygon class="head" points="296,196 290,209 302,209"/>
+    <text class="note" x="636" y="264" text-anchor="middle">add the chosen token, then run the model again</text>
+  </g>
+  <!-- Inset opens the decoding box; the matching border ties it to the emphasized route box. -->
+  <g id="decoding-inset">
+    <rect x="28" y="290" width="1044" height="176" rx="12" fill="#ffffff" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="52" y="326" text-anchor="start">Inside the decoding step</text>
+    <rect x="52" y="344" width="300" height="102" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="202" y="380" text-anchor="middle">1. Softmax</text>
+    <text class="body" x="202" y="410" text-anchor="middle">scores become</text>
+    <text class="body" x="202" y="436" text-anchor="middle">probabilities</text>
+    <rect x="400" y="344" width="300" height="102" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="550" y="380" text-anchor="middle">2. Optional reshaping</text>
+    <text class="body" x="550" y="410" text-anchor="middle">temperature, top-k, top-p</text>
+    <text class="body" x="550" y="436" text-anchor="middle">change the odds</text>
+    <rect x="748" y="344" width="300" height="102" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="898" y="380" text-anchor="middle">3. Pick one token</text>
+    <text class="body" x="898" y="410" text-anchor="middle">greedy: the top token</text>
+    <text class="body" x="898" y="436" text-anchor="middle">sampling: a weighted draw</text>
+  </g>
+  <!-- Inset arrows run between box borders and stay clear of the box text. -->
+  <g id="inset-connectors">
+    <line class="connector" x1="353" y1="395" x2="388" y2="395"/><polygon class="head" points="400,395 387,389 387,401"/>
+    <line class="connector" x1="701" y1="395" x2="736" y2="395"/><polygon class="head" points="748,395 735,389 735,401"/>
+  </g>
+  <!-- Stopping rule answers the beginner question "when does the loop end?". -->
+  <text class="note" x="550" y="502" text-anchor="middle">Generation stops at an end-of-sequence token, a stop text, or a length limit.</text>
+</svg>

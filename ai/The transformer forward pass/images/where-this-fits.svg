@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="364" viewBox="0 0 1100 364" role="img" aria-labelledby="title desc">
+  <title id="title">The forward pass turns token IDs into scores</title>
+  <desc id="desc">Read left to right. Tokenization first converts text into token IDs. In the highlighted forward pass, embedding lookup produces starting vectors, repeated transformer blocks update them, and final normalization and an output projection produce next-token scores. A later decoding rule chooses a token. The model's learned weights stay fixed during this inference run.</desc>
+  <!-- Shared typography follows the neighboring diagrams; blue labels the scope of this article. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; text-anchor: middle; }
+      .title { font-size: 29px; font-weight: 700; text-anchor: start; }
+      .subtitle { font-size: 19px; fill: #475569; text-anchor: start; }
+      .group-label { font-size: 19px; font-weight: 700; }
+      .label { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; fill: #475569; }
+      .note { font-size: 20px; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="1100" height="364" fill="#ffffff"/>
+
+  <!-- Token IDs are the input boundary; the blue panel begins with the lookup operation. -->
+  <text class="title" x="28" y="42">The forward pass turns token IDs into scores</text>
+  <text class="subtitle" x="28" y="74">Read left to right · Llama-style model · the blue group is this article's focus</text>
+  <g id="input-preparation">
+    <rect x="20" y="100" width="418" height="176" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="group-label" x="229" y="130">BEFORE THE MODEL · tokenization</text>
+    <rect x="32" y="150" width="180" height="102" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="122" y="190">Text</text>
+    <text class="body" x="122" y="227">letters and spaces</text>
+    <rect x="246" y="150" width="180" height="102" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="336" y="190">Token IDs</text>
+    <text class="body" x="336" y="227">the model's input</text>
+  </g>
+
+  <!-- The three model stages match the article's lookup, block, and scoring steps. -->
+  <g id="forward-pass-focus">
+    <rect x="448" y="100" width="632" height="176" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="group-label" x="764" y="130">FORWARD PASS · this article</text>
+    <rect x="460" y="150" width="180" height="102" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="550" y="180">Starting</text>
+    <text class="label" x="550" y="205">vectors</text>
+    <text class="body" x="550" y="235">look up each ID</text>
+    <rect x="674" y="150" width="180" height="102" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="764" y="180">Transformer</text>
+    <text class="label" x="764" y="205">blocks</text>
+    <text class="body" x="764" y="235">update the vectors</text>
+    <rect x="888" y="150" width="180" height="102" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="978" y="180">Next-token</text>
+    <text class="label" x="978" y="205">scores</text>
+    <text class="body" x="978" y="235">normalize + score</text>
+  </g>
+
+  <!-- Shafts cross panel borders intentionally. The input arrow's shorter head clears the blue panel border. -->
+  <g id="left-to-right-flow">
+    <line class="connector" x1="213" y1="201" x2="233" y2="201"/>
+    <polygon class="head" points="245,201 232,194 232,208"/>
+    <line class="connector" x1="427" y1="201" x2="451" y2="201"/>
+    <polygon class="head" points="459,201 450,195 450,207"/>
+    <line class="connector" x1="641" y1="201" x2="661" y2="201"/>
+    <polygon class="head" points="673,201 660,194 660,208"/>
+    <line class="connector" x1="855" y1="201" x2="875" y2="201"/>
+    <polygon class="head" points="887,201 874,194 874,208"/>
+  </g>
+
+  <!-- Scoring is the endpoint here; selecting a token and training are separate operations. -->
+  <text class="note" x="550" y="312">Next, a decoding rule chooses one token from these scores.</text>
+  <text class="note" x="550" y="342">The forward pass uses learned weights; it does not update them.</text>
+</svg>

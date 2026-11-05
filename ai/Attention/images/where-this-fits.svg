@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="527" viewBox="0 0 1100 527" role="img" aria-labelledby="title desc">
+<title id="title">Attention brings context into each token’s vector</title>
+<desc id="desc">Text becomes token IDs, starting vectors, transformer blocks, and next-token scores. The inset expands a Llama-style transformer block: attention first mixes information from the current and earlier positions; a multilayer perceptron then processes each position separately. Both components produce updates added to the running vectors. Normalization and addition paths are omitted from this overview.</desc>
+<!-- Shared typography and connector colors match the article's existing diagrams. -->
+<defs><style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+.title { font-size: 28px; font-weight: 700; }
+.subtitle { font-size: 19px; fill: #475569; }
+.label { font-size: 21px; font-weight: 700; }
+.body { font-size: 20px; }
+.note { font-size: 19px; fill: #475569; }
+.connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+.head { fill: #64748b; }
+</style></defs>
+<rect width="1100" height="527" fill="#ffffff"/>
+<!-- The high-level route locates attention before showing its role inside a block. -->
+<text class="title" x="28" y="43" text-anchor="start">Attention brings context into each token’s vector</text>
+<text class="subtitle" x="28" y="77" text-anchor="start">Read left to right, then look inside a block below.</text>
+<!-- Common model route; only the article focus is emphasized. -->
+<g id="model-route">
+<rect x="28" y="112" width="142" height="84" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+<text class="label" x="99.0" y="161" text-anchor="middle">Text</text>
+<rect x="207" y="112" width="145" height="84" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+<text class="label" x="279.5" y="161" text-anchor="middle">Token IDs</text>
+<rect x="389" y="112" width="182" height="84" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+<text class="label" x="480.0" y="148" text-anchor="middle">Starting</text>
+<text class="label" x="480.0" y="176" text-anchor="middle">vectors</text>
+<rect x="608" y="112" width="238" height="84" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+<text class="label" x="727.0" y="148" text-anchor="middle">Transformer</text>
+<text class="label" x="727.0" y="176" text-anchor="middle">blocks</text>
+<rect x="883" y="112" width="189" height="84" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+<text class="label" x="977.5" y="148" text-anchor="middle">Next-token</text>
+<text class="label" x="977.5" y="176" text-anchor="middle">scores</text>
+</g>
+<!-- Each shaft ends inside its triangular head; tips meet the next box boundary. -->
+<g id="route-connectors">
+<line class="connector" x1="171" y1="154" x2="195" y2="154"/><polygon class="head" points="207,154 194,148 194,160"/>
+<line class="connector" x1="353" y1="154" x2="377" y2="154"/><polygon class="head" points="389,154 376,148 376,160"/>
+<line class="connector" x1="572" y1="154" x2="596" y2="154"/><polygon class="head" points="608,154 595,148 595,160"/>
+<line class="connector" x1="847" y1="154" x2="871" y2="154"/><polygon class="head" points="883,154 870,148 870,160"/>
+</g>
+<!-- The inset expands one block; the upper route already shows where blocks sit. -->
+<g id="one-block-inset">
+<rect x="28" y="231" width="1044" height="233" rx="12" fill="#ffffff" stroke="#9333ea" stroke-width="2"/>
+<text class="label" x="52" y="267" text-anchor="start">Inside each Llama-style transformer block</text>
+<rect x="52" y="290" width="470" height="102" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+<text class="label" x="287" y="322" text-anchor="middle">1. Attention — this article</text>
+<text class="body" x="287" y="353" text-anchor="middle">Mix information from the current</text>
+<text class="body" x="287" y="380" text-anchor="middle">and earlier token positions.</text>
+<rect x="574" y="290" width="474" height="102" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+<text class="label" x="811" y="322" text-anchor="middle">2. MLP (multilayer perceptron)</text>
+<text class="body" x="811" y="353" text-anchor="middle">Work on each position’s vector</text>
+<text class="body" x="811" y="380" text-anchor="middle">separately.</text>
+<!-- Overview arrow shows component order; normalization and additions are named below. -->
+<line class="connector" x1="523" y1="341" x2="562" y2="341"/><polygon class="head" points="574,341 561,335 561,347"/>
+<text class="body" x="550" y="432" text-anchor="middle">Both compute updates that are added to the running vectors.</text>
+</g>
+<!-- Clarify the intentionally simplified inset without crowding the process boxes. -->
+<text class="note" x="550" y="500" text-anchor="middle">Normalization and the addition paths are omitted from this overview.</text>
+</svg>

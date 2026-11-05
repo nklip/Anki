@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="838" viewBox="0 0 1040 838" role="img" aria-labelledby="title desc">
+  <title id="title">Step 2: enforce the refund rules in code</title>
+  <desc id="desc">A proposed refund first requires the order to belong to the authenticated customer. A mismatch is rejected. The refund must not exceed the amount paid, otherwise it is rejected. An otherwise valid refund above 100 dollars waits for human approval; an amount at or below 100 dollars can proceed. Pending or denied approval does not execute the refund. These are the example rules from the video.</desc>
+  <!-- Orange marks the required service checks; green is execution, red is rejection. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 20px; fill: #475569; }
+      .label { font-size: 23px; font-weight: 700; }
+      .copy { font-size: 20px; }
+      .small { font-size: 19px; fill: #475569; }
+      .connector { fill: none; stroke: #64748b; stroke-width: 2.5; stroke-linejoin: round; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="1040" height="838" fill="#ffffff"/>
+
+  <!-- A generated call is a proposal; identity comes from the authenticated session. -->
+  <text class="title" x="28" y="44">2 · Enforce the refund rules in code</text>
+  <text class="subtitle" x="28" y="78">A tool call is a request. The service authorizes it before money moves.</text>
+  <g id="proposed-refund">
+    <rect x="28" y="110" width="984" height="90" rx="14" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="label" x="52" y="147">Model proposes: refund(order 4821, $5,000)</text>
+    <text class="copy" x="52" y="179">Customer identity comes from the authenticated session, not the chat.</text>
+  </g>
+
+  <!-- Gate A: a failed ownership check ends this action before any later approval. -->
+  <g id="ownership-gate">
+    <rect x="28" y="246" width="620" height="92" rx="14" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="52" y="283">A · Does this customer own the order?</text>
+    <text class="copy" x="52" y="315">Compare the logged-in customer with the order record.</text>
+    <rect x="754" y="260" width="258" height="64" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+    <text class="label" x="883" y="301" text-anchor="middle">Reject</text>
+  </g>
+  <path class="connector" d="M338 201 V233"/>
+  <polygon class="head" points="338,246 331,232 345,232"/>
+  <path class="connector" d="M649 292 H741"/>
+  <polygon class="head" points="754,292 740,285 740,299"/>
+  <text class="small" x="701" y="277" text-anchor="middle">No</text>
+
+  <!-- Gate B uses the payment record rather than an amount asserted by the model. -->
+  <g id="paid-amount-gate">
+    <rect x="28" y="384" width="620" height="92" rx="14" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="52" y="421">B · Is the refund within the amount paid?</text>
+    <text class="copy" x="52" y="453">Read the payment record and compare the amounts.</text>
+    <rect x="754" y="398" width="258" height="64" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+    <text class="label" x="883" y="439" text-anchor="middle">Reject</text>
+  </g>
+  <path class="connector" d="M338 339 V371"/>
+  <polygon class="head" points="338,384 331,370 345,370"/>
+  <text class="small" x="358" y="368">Yes</text>
+  <path class="connector" d="M649 430 H741"/>
+  <polygon class="head" points="754,430 740,423 740,437"/>
+  <text class="small" x="701" y="415" text-anchor="middle">No</text>
+
+  <!-- Gate C adds approval only after ownership and amount have passed. -->
+  <g id="human-approval-gate">
+    <rect x="28" y="522" width="620" height="92" rx="14" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="52" y="559">C · Is the requested refund above $100?</text>
+    <text class="copy" x="52" y="591">Threshold from this example's store policy.</text>
+    <rect x="754" y="516" width="258" height="112" rx="12" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+    <text class="label" x="778" y="550">Human approval</text>
+    <text class="copy" x="778" y="582">Wait for a real person</text>
+    <text class="copy" x="778" y="609">to approve the action.</text>
+  </g>
+  <path class="connector" d="M338 477 V509"/>
+  <polygon class="head" points="338,522 331,508 345,508"/>
+  <text class="small" x="358" y="506">Yes</text>
+  <path class="connector" d="M649 568 H741"/>
+  <polygon class="head" points="754,568 740,561 740,575"/>
+  <text class="small" x="701" y="553" text-anchor="middle">Yes</text>
+
+  <!-- Both execution routes meet the box at separate ports; neither passes a failed gate. -->
+  <g id="execute-refund">
+    <rect x="28" y="696" width="620" height="92" rx="14" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="52" y="733">Execute the refund</text>
+    <text class="copy" x="52" y="765">Only after all required checks pass.</text>
+  </g>
+  <path class="connector" d="M338 615 V683"/>
+  <polygon class="head" points="338,696 331,682 345,682"/>
+  <text class="small" x="358" y="660">No</text>
+  <path id="approved-refund-connector" class="connector" d="M883 629 V742 H661"/>
+  <polygon class="head" points="648,742 662,735 662,749"/>
+  <text class="small" x="899" y="676">Approved</text>
+
+  <!-- Pending review has no execution route. -->
+  <text class="small" x="28" y="821">Denied or pending approval: no refund. Approval cannot override a failed ownership or amount check.</text>
+</svg>

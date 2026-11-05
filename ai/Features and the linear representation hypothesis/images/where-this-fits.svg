@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="450" viewBox="0 0 1100 450" role="img" aria-labelledby="title desc">
+  <title id="title">Feature research asks what the model's internal vectors represent</title>
+  <desc id="desc">Read the model's normal computation from left to right: text becomes token IDs, then starting vectors, which transformer blocks update before next-token scores are produced. A separate purple research branch inspects vectors inside the blocks. Researchers test whether directions in those vectors represent properties such as past tense. This is a hypothesis about existing computation, not an additional processing stage or a claim that vector slots have human labels.</desc>
+  <!-- Gray shows the model route; purple highlights the internal state studied in this article. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 22px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 20px; text-anchor: middle; }
+      .note { font-size: 19px; text-anchor: middle; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+      .research-connector { stroke: #9333ea; stroke-width: 2.5; stroke-dasharray: 6 5; fill: none; }
+    </style>
+  </defs>
+  <rect width="1100" height="450" fill="#ffffff"/>
+
+  <!-- The top row remains the ordinary computation; analysis branches away from it. -->
+  <text class="title" x="28" y="44">Where feature research looks inside the model</text>
+  <text class="subtitle" x="28" y="77">Read left to right. The purple branch is a separate research view.</text>
+  <g id="normal-model-route">
+    <rect x="28" y="112" width="140" height="104" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="98" y="154">Text</text>
+    <text class="note" x="98" y="185">your prompt</text>
+    <rect x="208" y="112" width="150" height="104" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="283" y="154">Token IDs</text>
+    <text class="note" x="283" y="185">piece numbers</text>
+    <rect x="398" y="112" width="178" height="104" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="487" y="143">Starting</text>
+    <text class="label" x="487" y="169">vectors</text>
+    <text class="note" x="487" y="197">one per token</text>
+    <rect x="616" y="112" width="210" height="104" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="721" y="143">Transformer</text>
+    <text class="label" x="721" y="169">blocks</text>
+    <text class="note" x="721" y="197">update vectors</text>
+    <rect x="866" y="112" width="206" height="104" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="969" y="143">Next-token</text>
+    <text class="label" x="969" y="169">scores</text>
+    <text class="note" x="969" y="197">one per choice</text>
+  </g>
+
+  <!-- Shafts extend one unit beneath each triangle base; heads stop at the target border. -->
+  <g id="normal-flow-arrows">
+    <line class="connector" x1="169" y1="164" x2="195" y2="164"/>
+    <polygon class="head" points="208,164 194,157 194,171"/>
+    <line class="connector" x1="359" y1="164" x2="385" y2="164"/>
+    <polygon class="head" points="398,164 384,157 384,171"/>
+    <line class="connector" x1="577" y1="164" x2="603" y2="164"/>
+    <polygon class="head" points="616,164 602,157 602,171"/>
+    <line class="connector" x1="827" y1="164" x2="853" y2="164"/>
+    <polygon class="head" points="866,164 852,157 852,171"/>
+  </g>
+
+  <!-- A dashed branch marks observation of internal vectors, not a sixth model stage. -->
+  <g id="research-view-branch">
+    <line class="research-connector" x1="721" y1="217" x2="721" y2="274"/>
+    <polygon fill="#9333ea" points="721,287 714,273 728,273"/>
+    <text class="subtitle" x="741" y="253">inspect internal vectors</text>
+    <rect x="28" y="287" width="1044" height="116" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="550" y="319">Research question: what do these vectors mean?</text>
+    <text class="body" x="550" y="352">Does a direction represent a property, such as past tense?</text>
+    <text class="body" x="550" y="383">Researchers test this idea: the linear representation hypothesis.</text>
+  </g>
+
+  <!-- The note prevents a literal one-slot-per-concept reading of the hypothesis. -->
+  <text class="note" x="550" y="434">A direction can involve many slots; a slot has no built-in human label.</text>
+</svg>

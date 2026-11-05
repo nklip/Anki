@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="690" viewBox="0 0 900 690" role="img" aria-labelledby="title desc">
+  <title id="title">Reuse requires a matching beginning of the prompt</title>
+  <desc id="desc">Two schematic comparisons of visible prompt content. In the shared-beginning layout, requests A and B both start with the same stable instructions and reference, followed by different questions. That unchanged leading material is a candidate for reuse. In the different-beginning layout, request A starts with timestamp 09:00 and request B with 09:01. The same instructions and reference follow, but their earlier context has changed, so they must be recomputed after the changed timestamp. Later matching text cannot skip an earlier change. Blocks do not show token counts, and cache eligibility and boundaries still apply.</desc>
+  <!-- Green marks the unchanged leading material; purple marks questions; blue later text still needs processing. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .label { font-size: 21px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 21px; text-anchor: middle; }
+      .row-label { font-size: 21px; }
+      .note { font-size: 19px; text-anchor: middle; }
+    </style>
+  </defs>
+  <rect width="900" height="690" fill="#ffffff"/>
+
+  <!-- This compares ordering of visible content, not hidden provider content or literal cache-sized prompts. -->
+  <text class="title" x="28" y="44">Reuse needs a matching beginning</text>
+  <text class="subtitle" x="28" y="76">Two visible prompt layouts · Block widths do not show token counts</text>
+
+  <!-- Stable material comes first in both requests; only the later question changes. -->
+  <g id="shared-beginning-layout">
+    <rect x="28" y="109" width="844" height="218" rx="12" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="heading" x="52" y="143">Shared beginning</text>
+    <text class="row-label" x="52" y="202">Request A</text>
+    <text class="row-label" x="52" y="268">Request B</text>
+    <rect x="190" y="166" width="430" height="56" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <rect x="620" y="166" width="228" height="56" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <rect x="190" y="232" width="430" height="56" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <rect x="620" y="232" width="228" height="56" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="body" x="405" y="202">Stable instructions + reference</text>
+    <text class="body" x="734" y="202">Question A</text>
+    <text class="body" x="405" y="268">Stable instructions + reference</text>
+    <text class="body" x="734" y="268">Question B</text>
+    <text class="note" x="450" y="314">The unchanged leading material is a candidate for reuse.</text>
+  </g>
+
+  <!-- The first visible field changes; no claim is made that every token inside that field differs. -->
+  <g id="different-beginning-layout">
+    <rect x="28" y="351" width="844" height="241" rx="12" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="heading" x="52" y="384">Different beginning</text>
+    <text class="row-label" x="52" y="448">Request A</text>
+    <text class="row-label" x="52" y="525">Request B</text>
+    <rect x="190" y="411" width="150" height="60" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <rect x="340" y="411" width="350" height="60" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <rect x="690" y="411" width="158" height="60" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <rect x="190" y="488" width="150" height="60" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <rect x="340" y="488" width="350" height="60" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <rect x="690" y="488" width="158" height="60" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="265" y="436">09:00</text>
+    <text class="note" x="265" y="460">timestamp</text>
+    <text class="note" x="515" y="436">Same instructions</text>
+    <text class="note" x="515" y="460">+ same reference</text>
+    <text class="body" x="769" y="448">Question A</text>
+    <text class="label" x="265" y="513">09:01</text>
+    <text class="note" x="265" y="537">timestamp</text>
+    <text class="note" x="515" y="513">Same instructions</text>
+    <text class="note" x="515" y="537">+ same reference</text>
+    <text class="body" x="769" y="525">Question B</text>
+    <text class="note" x="450" y="579">The timestamp changes first, so the later text needs recomputation.</text>
+  </g>
+
+  <!-- Matching is necessary but not sufficient: actual cache entries, eligibility, and boundaries still matter. -->
+  <text class="body" x="450" y="625">A match starts at the beginning; later matching text cannot skip a change.</text>
+  <text class="note" x="450" y="663">Illustrative content order; cache eligibility and boundaries still apply.</text>
+</svg>

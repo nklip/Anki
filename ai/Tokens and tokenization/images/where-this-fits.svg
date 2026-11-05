@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="334" viewBox="0 0 1100 334" role="img" aria-labelledby="title desc">
+  <title id="title">Tokenization prepares the model's input</title>
+  <desc id="desc">Read left to right. Before the model runs, the tokenizer splits text into pieces and assigns token IDs. The model looks up a starting vector for each ID, updates the vectors through transformer blocks, and produces next-token scores. The blue group marks tokenization, the focus of this article.</desc>
+  <!-- Shared typography and explicit colors keep the overview readable without a legend. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; text-anchor: middle; }
+      .title { font-size: 29px; font-weight: 700; text-anchor: start; }
+      .subtitle { font-size: 19px; fill: #475569; text-anchor: start; }
+      .group-label { font-size: 19px; font-weight: 700; }
+      .label { font-size: 21px; font-weight: 700; }
+      .body { font-size: 18px; fill: #475569; }
+      .note { font-size: 20px; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="1100" height="334" fill="#ffffff"/>
+
+  <!-- The two groups separate input preparation from the model's numerical work. -->
+  <text class="title" x="28" y="42">Tokenization prepares the model's input</text>
+  <text class="subtitle" x="28" y="74">Read left to right · the blue group is this article's focus</text>
+  <g id="tokenization-focus">
+    <rect x="20" y="100" width="418" height="176" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="group-label" x="229" y="130">TOKENIZATION · before the model</text>
+    <rect x="32" y="150" width="180" height="102" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="122" y="190">Text</text>
+    <text class="body" x="122" y="227">letters and spaces</text>
+    <rect x="246" y="150" width="180" height="102" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="336" y="190">Token IDs</text>
+    <text class="body" x="336" y="227">numbered pieces</text>
+  </g>
+
+  <!-- Context stages are muted; each label names the result of the preceding operation. -->
+  <g id="model-context">
+    <rect x="448" y="100" width="632" height="176" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="group-label" x="764" y="130">MODEL · uses the IDs</text>
+    <rect x="460" y="150" width="180" height="102" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="550" y="180">Starting</text>
+    <text class="label" x="550" y="205">vectors</text>
+    <text class="body" x="550" y="235">lists of numbers</text>
+    <rect x="674" y="150" width="180" height="102" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="764" y="180">Transformer</text>
+    <text class="label" x="764" y="205">blocks</text>
+    <text class="body" x="764" y="235">update the vectors</text>
+    <rect x="888" y="150" width="180" height="102" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="978" y="180">Next-token</text>
+    <text class="label" x="978" y="205">scores</text>
+    <text class="body" x="978" y="235">one per candidate</text>
+  </g>
+
+  <!-- Shafts cross group borders intentionally. The input arrow's shorter head clears the model panel border. -->
+  <g id="left-to-right-flow">
+    <line class="connector" x1="213" y1="201" x2="233" y2="201"/>
+    <polygon class="head" points="245,201 232,194 232,208"/>
+    <line class="connector" x1="427" y1="201" x2="451" y2="201"/>
+    <polygon class="head" points="459,201 450,195 450,207"/>
+    <line class="connector" x1="641" y1="201" x2="661" y2="201"/>
+    <polygon class="head" points="673,201 660,194 660,208"/>
+    <line class="connector" x1="855" y1="201" x2="875" y2="201"/>
+    <polygon class="head" points="887,201 874,194 874,208"/>
+  </g>
+
+  <!-- Explain the boundary without requiring the reader to know what an embedding is. -->
+  <text class="note" x="550" y="313">The tokenizer supplies IDs; the model looks up a starting vector for each ID.</text>
+</svg>

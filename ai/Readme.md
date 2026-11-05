@@ -9,17 +9,22 @@ lexical and semantic retrieval, reciprocal rank fusion, large language model pro
 Model Context Protocol (MCP), streaming, and temperature.
 
 ## Content
+ * [AI Guardrails](./AI%20Guardrails/Readme.md) - input screening, tool authorization, and output checks, with a refund workflow from KodeKloud
  * [Attention: queries, keys, values, and heads](./Attention/Readme.md) - query-key scores, scaling, causal masks, softmax, value mixtures, and parallel heads
  * [Codex commands](./Codex%20commands/Readme.md) - ten built-in slash commands for software engineering, learning, and writing
  * [Cosine Similarity](./Cosine%20similarity/Readme.md) - the geometry behind similarity scores and its role in retrieval
  * [Embeddings and position information](./Embeddings%20and%20position%20information/Readme.md) - token and contextual vectors, retrieval embeddings, added position vectors, and RoPE
  * [Features and the linear representation hypothesis](./Features%20and%20the%20linear%20representation%20hypothesis/Readme.md) - features, neurons, directions, projections, linear probes, and limits of the evidence
+ * [From logits to text: decoding and sampling](./Decoding%20and%20sampling/Readme.md) - softmax, greedy decoding, temperature, top-k, top-p, stopping, and reproducibility
+ * [In-context learning, context windows, and memory](./In-context%20learning%20and%20memory/Readme.md) - learning from examples, token budgets, saved history, external memory, retrieval, and compaction
  * [LLM Failure Modes](./LLM%20Failure%20Modes/Readme.md) - hallucination, error propagation, sycophancy, instruction drift, and knowledge conflict
  * [Markov table](./Markov%20table/Readme.md) - transition probabilities, n-gram models, and a worked text generator
  * [MLPs, nonlinearities, and mixture of experts](./MLPs%20and%20mixture%20of%20experts/Readme.md) - expansion, ReLU, gated MLPs, expert routing, and active versus total parameters
  * [Model, assistant, and agent: the system map](./Model%2C%20assistant%2C%20and%20agent/Readme.md) - the model, application runtime, tools, context, and saved state
  * [Preference tuning: RLHF and DPO](./Preference%20tuning/Readme.md) - preference pairs, reward models, direct updates, and the limits of preference scores
+ * [Prefill, decoding, and the KV cache](./Prefill%20and%20KV%20cache/Readme.md) - prompt processing, cached keys and values, token-by-token reuse, cache growth, and latency
  * [Pretraining: learning from next-token prediction](./Pretraining/Readme.md) - text-derived targets, prediction loss, useful patterns, and training data
+ * [Prompt caching across requests](./Prompt%20caching%20across%20requests/Readme.md) - shared prefixes, cache hits and misses, stable prompt layout, boundaries, and provider rules
  * [Prompt-writing guidelines](./Prompt-writing%20guidelines/Readme.md) - what makes a prompt specific, testable, and stable
  * [RAG pipeline](./RAG%20pipeline/Readme.md) - components and numbered walkthroughs of RAG and agentic RAG
  * [Reasoning training and distillation](./Reasoning%20training%20and%20distillation/Readme.md) - verifiable rewards, teacher-to-student training, and inference-time computation
@@ -32,7 +37,7 @@ Model Context Protocol (MCP), streaming, and temperature.
 
 ## AI agents learning plan
 
-**Series scope: 24 article-mode cards**, studied in the order below. Articles 1–14 are available; the remaining 10 are planned. The other existing cards above are supporting reading and are not included in this count.
+**Series scope: 24 article-mode cards**, studied in the order below. The first 18 articles are available; the remaining 6 are planned. The other existing cards above are supporting reading and are not included in this count.
 
 **For every article, prioritize clarity and simplicity.** Define unfamiliar terms before using them, keep one main lesson per article, and use small examples and diagrams that each explain one idea. Include technical detail only when it helps the learner understand the lesson.
 
@@ -68,10 +73,10 @@ Use a decoder-only transformer as the teaching baseline. Label model-specific ar
 
 | # | Proposed article | Central question and scope |
 | --- | --- | --- |
-| 15 | **From logits to text: decoding and sampling** | How is the next token selected? Explain logits, probabilities, greedy decoding, temperature, top-k, and top-p sampling with a tiny numerical example. Include stopping conditions and the limits of reproducibility. |
-| 16 | **Prefill, decoding, and the KV cache** | What work happens before and during generation? Compare processing the prompt with generating subsequent tokens. Explain cached attention keys and values (KV), cache growth, time to first token, and per-token latency. |
-| 17 | **Prompt caching across requests** | When can a later request reuse earlier computation? Explain shared prefixes, cache hits and misses, stable prompt layout, and provider-specific eligibility and retention. Compare prompt caching with caching a finished response. |
-| 18 | **In-context learning, context windows, and memory** | How can behavior adapt without updating weights? Separate examples in the prompt, the active context window, saved conversation state, external memory, and retrieval-augmented generation (RAG). Explain where each kind of information lives. |
+| 15 | **[From logits to text: decoding and sampling](./Decoding%20and%20sampling/Readme.md)** | How is the next token selected? Explain logits, probabilities, greedy decoding, temperature, top-k, and top-p sampling with a tiny numerical example. Include stopping conditions and the limits of reproducibility. |
+| 16 | **[Prefill, decoding, and the KV cache](./Prefill%20and%20KV%20cache/Readme.md)** | What work happens before and during generation? Compare processing the prompt with generating subsequent tokens. Explain cached attention keys and values (KV), cache growth, time to first token, and per-token latency. |
+| 17 | **[Prompt caching across requests](./Prompt%20caching%20across%20requests/Readme.md)** | When can a later request reuse earlier computation? Explain shared prefixes, cache hits and misses, stable prompt layout, and provider-specific eligibility and retention. Compare prompt caching with caching a finished response. |
+| 18 | **[In-context learning, context windows, and memory](./In-context%20learning%20and%20memory/Readme.md)** | How can behavior adapt without updating weights? Separate examples in the prompt, the active context window, saved conversation state, external memory, and retrieval-augmented generation (RAG). Explain where each kind of information lives. |
 
 ### 4. Agent execution and integration — 6 articles
 
@@ -86,16 +91,16 @@ Use a decoder-only transformer as the teaching baseline. Label model-specific ar
 
 ### Reuse the existing cards
 
-- Read [Cosine Similarity](./Cosine%20similarity/Readme.md) alongside articles 9 and 13 for vector geometry.
-- Read [Markov table](./Markov%20table/Readme.md) alongside articles 3 and 15 for a small probability-based text generator.
-- Read [RAG pipeline](./RAG%20pipeline/Readme.md) alongside articles 18 and 22 for the retrieval details.
-- Read [Prompt-writing guidelines](./Prompt-writing%20guidelines/Readme.md) alongside article 22 for prompt construction.
-- Read [LLM Failure Modes](./LLM%20Failure%20Modes/Readme.md) alongside article 23 for model-level failure patterns.
+- Read [Cosine Similarity](./Cosine%20similarity/Readme.md) alongside [Embeddings and position information](./Embeddings%20and%20position%20information/Readme.md) and [Features and the linear representation hypothesis](./Features%20and%20the%20linear%20representation%20hypothesis/Readme.md) for vector geometry.
+- Read [Markov table](./Markov%20table/Readme.md) alongside [Pretraining: learning from next-token prediction](./Pretraining/Readme.md) and [From logits to text: decoding and sampling](./Decoding%20and%20sampling/Readme.md) for a small probability-based text generator.
+- Read [RAG pipeline](./RAG%20pipeline/Readme.md) alongside [In-context learning, context windows, and memory](./In-context%20learning%20and%20memory/Readme.md) and the planned **Context engineering for long-running agents** for the retrieval details.
+- Read [Prompt-writing guidelines](./Prompt-writing%20guidelines/Readme.md) alongside the planned **Context engineering for long-running agents** for prompt construction.
+- Read [LLM Failure Modes](./LLM%20Failure%20Modes/Readme.md) alongside the planned **Agent reliability: evaluation and execution boundaries** for model-level failure patterns.
 - Use [Codex commands](./Codex%20commands/Readme.md) as an optional product-specific companion to the agent articles.
 
 ### Completion check
 
-After the sequence, explain one agent run at three levels: **training history**, **token-by-token model computation**, and **runtime actions and state**. Predict what changes when you alter the training data, prompt, sampling settings, reasoning effort, cache reuse, or tool implementation. Use article 24 to test these connections.
+After the sequence, explain one agent run at three levels: **training history**, **token-by-token model computation**, and **runtime actions and state**. Predict what changes when you alter the training data, prompt, sampling settings, reasoning effort, cache reuse, or tool implementation. Use the planned **A complete agent request, explained at every level** to test these connections.
 
 ## Curriculum sources
 

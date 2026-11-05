@@ -2,59 +2,56 @@
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-**A token embedding supplies a learned starting vector; position information helps the model use token order.** 
+**An embedding is the learned starting vector that a model gives each token. Position information lets the model also tell where each token sits.** Together they give the transformer blocks what they need: what each token is, and where it is.
 
-Transformer blocks turn starting vectors into context-dependent ones. We will separate these from retrieval embeddings, then compare two ways to represent position.
+## Where this fits
 
-A **vector** is an ordered list of numbers, such as `[2, 1]`. Its **dimensions** are the slots in that list: this vector has two. Our numbers are invented; real models use longer vectors.
+Embeddings are the first step inside the model, right after tokenization:
+
+Read left to right; the panels below show two ways to supply position information.
+
+![where-this-fits.svg](images/where-this-fits.svg)
+
+[The transformer forward pass](../The%20transformer%20forward%20pass/Readme.md) showed the lookup in one step. This article explains what the starting vectors carry, why context changes them, and how word order gets in.
 
 ## From token identity to context
 
-A **token embedding table** has one learned vector per token ID. Looking up an ID selects its row. Training changes the table's numbers; ordinary inference uses the existing table.
+A **token embedding table** holds one learned vector for each token ID, and looking up an ID returns its row. Training adjusts the table; using the model does not change it.
 
 ![token-and-context.svg](images/token-and-context.svg)
 
-Assume `bank` is one token with the same ID in `river bank` and `savings bank`. Both lookups return `[2, 1]`. The lookup does not choose a separate “river” or “money” meaning.
+A starting vector knows only *which* token this is, not what it means here. In the diagram, `bank` gets the same lookup vector, `[2, 1]`, in “river bank” and in “savings bank,” because the lookup cannot see the neighbors. The transformer blocks then mix in information from earlier tokens, so the later vectors at `bank` differ. A vector that depends on its context like this is a **contextual representation**, also called a **hidden state**.
 
-Inside the transformer, **attention** combines information from allowed token positions. The vector at `bank` can therefore develop differently after `river` than after `savings`. A later vector is a **contextual representation**, also called a hidden state. It depends on the input and the layer where we inspect it.
+Two points to keep apart:
 
-In a causal decoder, a position can use earlier tokens and itself, but not later tokens.
-
-The later vectors are calculated working values. The embedding-table row stays the same during these passes. The toy vector slots are not labels such as “water” and “money”.
+- The table row stays fixed; the later vectors are recalculated for every input and differ from layer to layer.
+- The individual slots have no assigned meaning. The toy numbers are not labeled “water” or “money.”
 
 ## Retrieval embeddings have a different job
 
-A **retrieval embedding** represents a whole query or passage for search. A retrieval model is trained so useful query–passage matches receive high similarity scores. For example, `How do I reset my password?` should match instructions for resetting a password.
+The word “embedding” also names a different tool. A **retrieval embedding** represents a whole question or passage as one vector, so that a search system can find text with similar meaning. For example, “How do I reset my password?” should land near a help page about resetting passwords. Retrieval models are trained specially for this matching, which is the search step in a [RAG pipeline](../RAG%20pipeline/Readme.md).
 
-This usually involves processing the text's tokens and combining information into one vector. It is more than looking up a token-table row. An arbitrary hidden state from a text-generating model is not automatically a good search vector.
+So a token embedding is a per-token starting point inside a language model, while a retrieval embedding summarizes a whole text for search. A hidden state from a text-generating model is not automatically a good search vector, and vectors from different systems cannot be compared just because they have the same length.
 
-Compare query and document vectors from a compatible embedding system. Two vectors having the same number of dimensions does not make their coordinates comparable.
+## Why the model needs position information
 
-## Adding a position vector
+“Dog bites person” and “person bites dog” contain the same tokens but mean different things. A token's table row says nothing about where the token occurs, so the model needs an explicit signal for order. Two common designs supply it.
 
-`dog bites person` and `person bites dog` contain the same words but mean different things. A token's table row alone does not say where it occurs. **Position information** gives the computation an explicit signal about location or distance.
-
-One design adds a position vector to the token vector before the transformer blocks:
+### Adding a position vector
 
 ![added-position-vector.svg](images/added-position-vector.svg)
 
-In the toy example, `[2, 1] + [0, 3] = [2, 4]`. Add matching numbers: `2 + 0 = 2`, then `1 + 3 = 4`. Another position gets a different position vector, so the same token starts differently.
+The original Transformer added a second vector, one per position, to each token's starting vector before the blocks. In the diagram, the same token vector `[2, 1]` becomes `[2, 4]` at position 1 but `[3, 0]` at position 2, because each position adds its own vector. Position vectors can be learned, or produced by a fixed formula; the original Transformer used smooth wave patterns (sines and cosines).
 
-Position vectors can be learned, or generated by a fixed rule. The original Transformer used sine and cosine waves—smooth number patterns with different repeating rates.
+### Rotary position embeddings (RoPE)
 
-## Rotary position embeddings: RoPE
-
-**Rotary position embeddings (RoPE)**, used in Llama-style models, apply position information inside attention. Attention creates **queries and keys**: vectors it compares to decide which positions to draw information from.
-
-RoPE rotates pairs of numbers in the query and key vectors according to their positions. Think of turning an arrow on a flat page. This is not adding a position vector to the token-table row.
+Llama-style models use **rotary position embeddings (RoPE)** instead, and nothing is added to the starting vector. Inside attention, each position makes a **query** and a **key**, the vectors that attention compares to decide where to look ([Attention: queries, keys, values, and heads](../Attention/Readme.md)). RoPE turns pairs of numbers in these vectors by an angle that grows with the token's position.
 
 ![rotary-position-gap.svg](images/rotary-position-gap.svg)
 
-For one number pair, imagine a toy rotation of **10° per position**. Degrees measure a turn; a full circle is 360°. A key at position 2 turns 20°, and a query at position 5 turns 50°. Their rotation difference is `50° − 20° = 30°`.
+The benefit is that the comparison depends on how far apart two tokens are, not on where they sit in the text. In the diagram's toy example, a key at position 2 and a query at position 5 end up 30° apart. Shift both one place later and they are still 30° apart, because the gap is still three positions. Real RoPE turns different pairs of numbers at different rates.
 
-Move both one position forward: the turns become 30° and 60°. The difference is still 30°, reflecting the same three-position gap. With unchanged query/key content, this lets their attention comparison depend on **relative position**. Real RoPE uses different rotation rates for different number pairs.
-
-The causal mask still blocks later positions. Position encoding and the mask serve different purposes: representing positions and controlling which positions are allowed.
+Position information and the causal mask are separate tools: position information says where tokens are, and the mask decides which tokens a position may look at.
 
 # Sources
 

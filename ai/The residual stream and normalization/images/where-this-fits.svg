@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="570" viewBox="0 0 1100 570" role="img" aria-labelledby="title desc">
+  <title id="title">The residual stream carries the vectors through the blocks</title>
+  <desc id="desc">Text becomes token IDs, then starting vectors, then passes through transformer blocks to produce next-token scores. In a Llama-style block, each running vector takes a direct path through two additions. A branch normalizes the vector before attention computes its update, and another branch normalizes the updated vector before the multilayer perceptron computes its update. The additions update the residual stream, which continues to the next block.</desc>
+  <!-- Blue follows the running vectors; gray provides the surrounding model route. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 21px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 20px; text-anchor: middle; }
+      .note { font-size: 19px; text-anchor: middle; fill: #475569; }
+      .plus { font-size: 30px; text-anchor: middle; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .stream-connector { stroke: #2563eb; stroke-width: 3; fill: none; }
+      .head { fill: #64748b; }
+      .stream-head { fill: #2563eb; }
+    </style>
+  </defs>
+  <rect width="1100" height="570" fill="#ffffff"/>
+  <!-- The map locates the running state without turning it into another processing stage. -->
+  <text class="title" x="28" y="44">The residual stream carries the vectors through the blocks</text>
+  <text class="subtitle" x="28" y="76">Read left to right · blue follows this article's running vectors</text>
+  <g id="model-route">
+    <rect x="28" y="108" width="150" height="86" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="103" y="144">Text</text>
+    <text class="body" x="103" y="174">“The cat”</text>
+    <rect x="218" y="108" width="150" height="86" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="293" y="144">Token IDs</text>
+    <text class="note" x="293" y="174">piece numbers</text>
+    <rect x="408" y="108" width="160" height="86" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="488" y="144">Starting</text>
+    <text class="body" x="488" y="174">vectors</text>
+    <rect x="608" y="108" width="224" height="86" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="720" y="144">Transformer blocks</text>
+    <text class="note" x="720" y="174">update the vectors</text>
+    <rect x="872" y="108" width="200" height="86" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="972" y="144">Next-token</text>
+    <text class="body" x="972" y="174">scores</text>
+  </g>
+  <!-- Manual shafts end one unit inside the arrowhead base; tips meet node borders. -->
+  <g id="overview-flow">
+    <path class="connector" d="M179 151 H205"/><polygon class="head" points="218,151 204,144 204,158"/>
+    <path class="connector" d="M369 151 H395"/><polygon class="head" points="408,151 394,144 394,158"/>
+    <path class="stream-connector" d="M569 151 H595"/><polygon class="stream-head" points="608,151 594,144 594,158"/>
+    <path class="connector" d="M833 151 H859"/><polygon class="head" points="872,151 858,144 858,158"/>
+  </g>
+  <!-- Detail panel: each component reads a normalized branch, then adds to the direct path. -->
+  <g id="one-pre-norm-block">
+    <rect x="28" y="228" width="1044" height="286" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="550" y="264">Inside one Llama-style block: keep the direct path and add updates</text>
+    <rect x="212" y="295" width="248" height="87" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="body" x="336" y="328">Normalize, then</text>
+    <text class="label" x="336" y="360">attention</text>
+    <rect x="590" y="295" width="248" height="87" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="body" x="714" y="319">Normalize, then</text>
+    <text class="label" x="714" y="345">MLP</text>
+    <text class="note" x="714" y="370">multilayer perceptron</text>
+    <rect x="48" y="416" width="132" height="62" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="body" x="114" y="442">Incoming</text>
+    <text class="body" x="114" y="466">vector</text>
+    <circle cx="460" cy="447" r="22" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="plus" x="460" y="457">+</text>
+    <circle cx="838" cy="447" r="22" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="plus" x="838" y="457">+</text>
+    <rect x="920" y="416" width="132" height="62" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="body" x="986" y="442">To the</text>
+    <text class="body" x="986" y="466">next block</text>
+    <text class="note" x="315" y="490">Residual stream</text>
+    <text class="note" x="644" y="490">Same path, updated vector</text>
+  </g>
+  <!-- Branches intentionally split from the blue stream; heads stop at additions. -->
+  <g id="read-and-add-flow">
+    <path class="stream-connector" d="M181 447 H425"/><polygon class="stream-head" points="438,447 424,440 424,454"/>
+    <path class="stream-connector" d="M483 447 H803"/><polygon class="stream-head" points="816,447 802,440 802,454"/>
+    <path class="stream-connector" d="M861 447 H907"/><polygon class="stream-head" points="920,447 906,440 906,454"/>
+    <path class="connector" d="M196 447 V338 H199"/><polygon class="head" points="212,338 198,331 198,345"/>
+    <path class="connector" d="M336 383 V398 H460 V412"/><polygon class="head" points="460,425 453,411 467,411"/>
+    <path class="connector" d="M548 447 V338 H577"/><polygon class="head" points="590,338 576,331 576,345"/>
+    <path class="connector" d="M714 383 V398 H838 V412"/><polygon class="head" points="838,425 831,411 845,411"/>
+  </g>
+  <!-- The scope note prevents interpreting the blue stream as extra computation. -->
+  <text class="note" x="550" y="548">There is one running vector per token. Normalization acts on the branches that read it.</text>
+</svg>

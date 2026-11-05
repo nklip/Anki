@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="700" viewBox="0 0 900 700" role="img" aria-labelledby="title desc">
+  <title id="title">Prefill builds the prompt cache and gives the first output token</title>
+  <desc id="desc">Start with an empty cache and known prompt tokens A, B, C. Process the prompt through the model. Positions can run together within each layer, but the causal mask restricts what each can read: A reads A, B reads A and B, and C reads A, B, C. Layers run in order. Save keys and values for all three prompt positions at each attention layer. The final representation at C yields next-token scores, from which D is chosen. D is not yet in the cache; processing D in the next decoding step adds its keys and values.</desc>
+  <!-- Shared styles; blue marks known inputs, purple computation, and green saved K/V. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 23px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 21px; text-anchor: middle; }
+      .note { font-size: 19px; text-anchor: middle; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="700" fill="#ffffff"/>
+
+  <!-- The prompt is known before generation begins; A–D label token IDs, not words. -->
+  <text class="title" x="28" y="44">Prefill: process the prompt, then choose D</text>
+  <text class="subtitle" x="28" y="77">A, B, C, D label tokens · Start with an empty key-value (KV) cache</text>
+  <g id="known-prompt">
+    <rect x="280" y="106" width="340" height="78" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="450" y="137">Known prompt</text>
+    <text class="body" x="450" y="168">A   B   C</text>
+  </g>
+
+  <!-- One panel summarizes the repeated layers; parallel positions still obey the causal mask. -->
+  <g id="prefill-model-pass">
+    <rect x="28" y="220" width="844" height="164" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="450" y="253">Run the prompt through the model</text>
+    <text class="body" x="450" y="286">Within each layer, process known positions together.</text>
+    <text class="body" x="170" y="322">A can read: A</text>
+    <text class="body" x="450" y="322">B can read: A, B</text>
+    <text class="body" x="730" y="322">C can read: A, B, C</text>
+    <text class="note" x="450" y="359">The causal mask blocks later positions. Layers run in order.</text>
+  </g>
+
+  <!-- Heads terminate at panel boundaries; shafts end inside their own triangular bases. -->
+  <g id="prefill-flow">
+    <line class="connector" x1="450" y1="185" x2="450" y2="207"/>
+    <polygon class="head" points="450,220 443,206 457,206"/>
+    <path class="connector" d="M450 385 V403 H230 V419"/>
+    <polygon class="head" points="230,432 223,418 237,418"/>
+    <path class="connector" d="M450 403 H669 V419"/>
+    <polygon class="head" points="669,432 662,418 676,418"/>
+  </g>
+
+  <!-- Caching happens at each attention layer; next-token selection follows the final layer. -->
+  <g id="prompt-cache-result">
+    <rect x="28" y="432" width="404" height="147" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="230" y="465">Save keys and values</text>
+    <text class="body" x="230" y="501">Layer 1: A, B, C → each has K, V</text>
+    <text class="body" x="230" y="533">Layer 2: A, B, C → each has K, V</text>
+    <text class="note" x="230" y="563">Repeat at every attention layer.</text>
+  </g>
+  <g id="first-output-token">
+    <rect x="466" y="432" width="406" height="147" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="669" y="465">Use the final position: C</text>
+    <text class="body" x="669" y="501">Next-token scores → choose D</text>
+    <text class="body" x="669" y="543">D is the first output token.</text>
+  </g>
+
+  <!-- The off-by-one note separates selecting D from subsequently computing its K/V. -->
+  <g id="chosen-versus-processed">
+    <rect x="28" y="607" width="844" height="67" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+    <text class="label" x="450" y="635">The cache still covers only A, B, C.</text>
+    <text class="note" x="450" y="661">D enters the cache when the next decoding step processes it.</text>
+  </g>
+</svg>

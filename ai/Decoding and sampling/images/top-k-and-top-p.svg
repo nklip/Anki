@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="756" viewBox="0 0 900 756" role="img" aria-labelledby="title desc">
+  <title id="title">Top-k keeps a token count; top-p reaches a probability target</title>
+  <desc id="desc">Two alternative filters are applied separately to the same toy distribution: A 50%, B 25%, C 15%, D 7%, and E 3%. Top-k with k equal to 2 keeps A and B, totaling 75%. Dividing by 0.75 gives approximately 66.7% and 33.3%. Top-p with p equal to 0.8 keeps the smallest highest-probability group reaching at least 80%: A and B total only 75%, so C is included and the total becomes 90%. Dividing by 0.90 gives approximately 55.6%, 27.8%, and 16.7%. Removed tokens have zero probability. After either filter, sample one surviving token using the new probabilities. Displayed percentages are rounded.</desc>
+  <!-- Blue marks the shared starting distribution; green keeps tokens and gray removes them. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 21px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 21px; text-anchor: middle; }
+      .note { font-size: 19px; text-anchor: middle; }
+      .token { font-size: 19px; font-weight: 700; text-anchor: middle; }
+      .muted { fill: #64748b; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="756" fill="#ffffff"/>
+
+  <!-- Both branches begin at this same distribution; neither filter receives the other's result. -->
+  <text class="title" x="28" y="44">Top-k counts tokens; top-p counts probability</text>
+  <text class="subtitle" x="28" y="76">Alternative filters: apply each separately to the same distribution below.</text>
+  <g id="shared-starting-distribution">
+    <rect x="28" y="107" width="844" height="118" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="450" y="136">Starting probabilities: highest first</text>
+    <text class="label" x="120" y="173">A</text>
+    <text class="label" x="285" y="173">B</text>
+    <text class="label" x="450" y="173">C</text>
+    <text class="label" x="615" y="173">D</text>
+    <text class="label" x="780" y="173">E</text>
+    <text class="body" x="120" y="207">50%</text>
+    <text class="body" x="285" y="207">25%</text>
+    <text class="body" x="450" y="207">15%</text>
+    <text class="body" x="615" y="207">7%</text>
+    <text class="body" x="780" y="207">3%</text>
+  </g>
+
+  <!-- Symmetric branches express alternatives; each shaft ends inside its own manual arrowhead base. -->
+  <g id="alternative-filter-flow">
+    <path class="connector" d="M450 226 V244 M231 244 H669 M231 244 V266 M669 244 V266"/>
+    <polygon class="head" points="231,279 224,265 238,265"/>
+    <polygon class="head" points="669,279 662,265 676,265"/>
+  </g>
+
+  <!-- Top-k keeps a fixed number of tokens and rescales only their original probability mass. -->
+  <g id="top-k-filter">
+    <rect x="28" y="279" width="406" height="327" rx="12" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="231" y="312">Top-k: k = 2</text>
+    <text class="note" x="231" y="341">k = number of tokens to keep</text>
+    <text class="body" x="231" y="380">Keep the top 2: A and B</text>
+    <text class="body" x="231" y="412">50% + 25% = 75%</text>
+    <text class="note" x="231" y="448">Divide kept probabilities by 0.75.</text>
+    <g id="top-k-result">
+      <rect x="52" y="468" width="65" height="72" rx="7" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+      <rect x="125" y="468" width="65" height="72" rx="7" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+      <rect x="198" y="468" width="65" height="72" rx="7" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+      <rect x="271" y="468" width="65" height="72" rx="7" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+      <rect x="344" y="468" width="65" height="72" rx="7" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+      <text class="token" x="84.5" y="493">A</text>
+      <text class="token" x="157.5" y="493">B</text>
+      <text class="token muted" x="230.5" y="493">C</text>
+      <text class="token muted" x="303.5" y="493">D</text>
+      <text class="token muted" x="376.5" y="493">E</text>
+      <text class="note" x="84.5" y="526">66.7%</text>
+      <text class="note" x="157.5" y="526">33.3%</text>
+      <text class="note muted" x="230.5" y="526">0%</text>
+      <text class="note muted" x="303.5" y="526">0%</text>
+      <text class="note muted" x="376.5" y="526">0%</text>
+    </g>
+    <text class="note" x="231" y="575">For A: 0.50 ÷ 0.75 ≈ 0.667</text>
+  </g>
+
+  <!-- Top-p includes the crossing token: A plus B is short of the 80% target, so C survives too. -->
+  <g id="top-p-filter">
+    <rect x="466" y="279" width="406" height="327" rx="12" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="669" y="312">Top-p: p = 0.8 (80%)</text>
+    <text class="note" x="669" y="341">p = target cumulative probability</text>
+    <text class="body" x="669" y="380">50% + 25% = 75% &lt; 80%</text>
+    <text class="body" x="669" y="412">Add C: 75% + 15% = 90%</text>
+    <text class="note" x="669" y="448">Divide kept probabilities by 0.90.</text>
+    <g id="top-p-result">
+      <rect x="490" y="468" width="65" height="72" rx="7" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+      <rect x="563" y="468" width="65" height="72" rx="7" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+      <rect x="636" y="468" width="65" height="72" rx="7" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+      <rect x="709" y="468" width="65" height="72" rx="7" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+      <rect x="782" y="468" width="65" height="72" rx="7" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+      <text class="token" x="522.5" y="493">A</text>
+      <text class="token" x="595.5" y="493">B</text>
+      <text class="token" x="668.5" y="493">C</text>
+      <text class="token muted" x="741.5" y="493">D</text>
+      <text class="token muted" x="814.5" y="493">E</text>
+      <text class="note" x="522.5" y="526">55.6%</text>
+      <text class="note" x="595.5" y="526">27.8%</text>
+      <text class="note" x="668.5" y="526">16.7%</text>
+      <text class="note muted" x="741.5" y="526">0%</text>
+      <text class="note muted" x="814.5" y="526">0%</text>
+    </g>
+    <text class="note" x="669" y="575">For A: 0.50 ÷ 0.90 ≈ 0.556</text>
+  </g>
+
+  <!-- Sampling is one subsequent choice after either alternative, not a combination of the two results. -->
+  <g id="sample-after-either-filter">
+    <rect x="28" y="633" width="844" height="60" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="body" x="450" y="669">After either filter, sample ONE token using the new probabilities.</text>
+  </g>
+  <text class="note" x="450" y="730">Gray tokens have 0%. Rounded percentages may not sum to exactly 100%.</text>
+</svg>

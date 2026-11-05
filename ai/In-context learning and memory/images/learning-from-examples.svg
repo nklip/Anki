@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600" role="img" aria-labelledby="title desc">
+  <title id="title">Examples guide behavior without updating model weights</title>
+  <desc id="desc">An invented prompt gives two demonstrations: red ball maps to ball, red; blue car maps to car, blue. The next item is green bike. A model uses its learned abilities to interpret the examples during inference, while its weights stay fixed. The intended answer is bike, green, following the demonstrated format. This is an illustration rather than an actual tested model response; examples do not guarantee correct behavior or uniquely determine a rule.</desc>
+  <!-- Blue marks supplied context, purple model computation, and green the intended output. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 23px; font-weight: 700; text-anchor: middle; }
+      .body { font-size: 21px; text-anchor: middle; }
+      .note { font-size: 19px; text-anchor: middle; }
+      .example { font-size: 24px; text-anchor: middle; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="600" fill="#ffffff"/>
+
+  <!-- Demonstrations and the unanswered item are input, so the expected completion is kept separate below. -->
+  <text class="title" x="28" y="44">Examples can guide a model during inference</text>
+  <text class="subtitle" x="28" y="77">In-context learning: use examples in the input to pick up a pattern.</text>
+  <g id="demonstrations-in-context">
+    <rect x="28" y="112" width="480" height="249" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="268" y="147">Context: examples + new item</text>
+    <text class="example" x="268" y="195">red ball → ball, red</text>
+    <text class="example" x="268" y="240">blue car → car, blue</text>
+    <rect x="58" y="269" width="420" height="62" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="2"/>
+    <text class="example" x="268" y="309">green bike → ?</text>
+  </g>
+  <g id="fixed-weights-model">
+    <rect x="600" y="112" width="272" height="249" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="736" y="150">Model</text>
+    <text class="body" x="736" y="198">Uses learned abilities</text>
+    <text class="body" x="736" y="230">to interpret the input</text>
+    <text class="label" x="736" y="285">Weights stay fixed.</text>
+    <text class="note" x="736" y="325">No training update</text>
+  </g>
+
+  <!-- Shafts end inside their head bases; tips meet container boundaries. -->
+  <g id="inference-flow">
+    <line class="connector" x1="509" y1="237" x2="587" y2="237"/>
+    <polygon class="head" points="600,237 586,230 586,244"/>
+    <line class="connector" x1="736" y1="362" x2="736" y2="405"/>
+    <polygon class="head" points="736,418 729,404 743,404"/>
+  </g>
+
+  <!-- The example's expected answer illustrates the desired pattern and makes no empirical performance claim. -->
+  <g id="intended-answer">
+    <rect x="28" y="418" width="844" height="107" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="450" y="453">Intended answer: bike, green</text>
+    <text class="body" x="450" y="494">Reverse the word pair and separate the words with a comma.</text>
+  </g>
+  <text class="note" x="450" y="568">Invented example. A few demonstrations do not guarantee the model’s response.</text>
+</svg>
