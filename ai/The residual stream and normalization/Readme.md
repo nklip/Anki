@@ -1,4 +1,4 @@
-# The residual stream and normalization
+# Internals: The residual stream and normalization
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 

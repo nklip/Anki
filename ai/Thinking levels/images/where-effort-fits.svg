@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="440" viewBox="0 0 1100 440" role="img" aria-labelledby="title desc">
+  <title id="title">Effort guides work inside a model call</title>
+  <desc id="desc">The runtime supplies context and an effort setting to the chosen model. The model may reason and revise using the same learned weights, then produces an answer or tool request. Effort is guidance rather than a guarantee of token usage or correctness. The runtime separately runs tools and enforces task limits.</desc>
+  <!-- Shared series typography; the individual labels carry each color's meaning. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .note { font-size: 19px; fill: #475569; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="1100" height="440" fill="#ffffff"/>
+  <!-- Heading states the lesson before the body introduces its parts. -->
+  <text class="title" x="28" y="43" text-anchor="start">Effort guides work inside a model call</text>
+  <text class="subtitle" x="28" y="76" text-anchor="start">Read left to right. Reasoning can happen before a reply and between tool calls.</text>
+  <!-- Runtime inputs; labels explain the color and role. -->
+  <g id="runtime-inputs">
+    <rect x="28" y="110" width="280" height="196" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="label" x="168.0" y="148" text-anchor="middle">Runtime supplies</text>
+  <text class="body" x="168.0" y="194" text-anchor="middle">context: current input</text>
+  <text class="body" x="168.0" y="233" text-anchor="middle">effort: work guidance</text>
+  <text class="note" x="168.0" y="274" text-anchor="middle">Example level: medium</text>
+  </g>
+  <!-- Model work; labels explain the color and role. -->
+  <g id="model-work">
+    <rect x="365" y="110" width="370" height="196" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text class="label" x="550.0" y="148" text-anchor="middle">Model does the work</text>
+  <text class="body" x="550.0" y="194" text-anchor="middle">may reason and revise</text>
+  <text class="body" x="550.0" y="233" text-anchor="middle">uses the same trained weights</text>
+  <text class="note" x="550.0" y="274" text-anchor="middle">Actual work varies by task.</text>
+  </g>
+  <!-- Model output; labels explain the color and role. -->
+  <g id="model-output">
+    <rect x="792" y="110" width="280" height="196" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+  <text class="label" x="932.0" y="148" text-anchor="middle">Model output</text>
+  <text class="body" x="932.0" y="199" text-anchor="middle">an answer</text>
+  <text class="body" x="932.0" y="235" text-anchor="middle">or a tool request</text>
+  <text class="note" x="932.0" y="274" text-anchor="middle">Answers can still be wrong.</text>
+  </g>
+  <!-- context-to-model-arrow: the shaft ends inside the head; the tip meets the target boundary. -->
+  <g id="context-to-model-arrow">
+    <line class="connector" x1="309" y1="208" x2="353" y2="208"/>
+    <polygon class="head" points="365,208 352,202 352,214"/>
+  </g>
+  <!-- model-to-output-arrow: the shaft ends inside the head; the tip meets the target boundary. -->
+  <g id="model-to-output-arrow">
+    <line class="connector" x1="736" y1="208" x2="780" y2="208"/>
+    <polygon class="head" points="792,208 779,202 779,214"/>
+  </g>
+  <!-- Runtime boundary; labels explain the color and role. -->
+  <g id="runtime-boundary">
+    <rect x="28" y="336" width="1044" height="76" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+  <text class="label" x="550.0" y="367" text-anchor="middle">The runtime still runs tools and enforces task limits.</text>
+  <text class="note" x="550.0" y="396" text-anchor="middle">Effort guides model work; it does not grant more tool calls or permissions.</text>
+  </g>
+</svg>

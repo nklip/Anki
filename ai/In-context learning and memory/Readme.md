@@ -1,4 +1,4 @@
-# In-context learning, context windows, and memory
+# Inference: In-context learning, context windows, and memory
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 

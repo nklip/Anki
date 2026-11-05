@@ -1,4 +1,4 @@
-# Prefill, decoding, and the KV cache
+# Inference: Prefill, decoding, and the KV cache
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 

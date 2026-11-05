@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="480" viewBox="0 0 1100 480" role="img" aria-labelledby="title desc">
+  <title id="title">MCP connects the application to the tool server</title>
+  <desc id="desc">The model exchanges tool calls and results with the application. An MCP client inside the application exchanges calls and results with an MCP server using Model Context Protocol. The server provides the read_file tool, reads permitted files, and returns text. The application remains responsible for coordinating the exchange with the model. Tools may also be connected directly without MCP.</desc>
+  <!-- MCP uses the same typography and semantic colors as the execution diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .note { font-size: 19px; fill: #475569; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="1100" height="480" fill="#ffffff"/>
+  <!-- Two directions are explicitly labeled rather than relying on color. -->
+  <text class="title" x="28" y="43">MCP is the connection to a tool server</text>
+  <text class="subtitle" x="28" y="76">Model Context Protocol (MCP): shared rules for exchanging messages</text>
+  <g id="model-boundary">
+    <rect x="28" y="124" width="200" height="252" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+    <text class="label" x="128" y="166" text-anchor="middle">Model</text>
+    <text class="body" x="128" y="221" text-anchor="middle">generates</text>
+    <text class="body" x="128" y="251" text-anchor="middle">tool requests</text>
+    <text class="body" x="128" y="306" text-anchor="middle">uses results</text>
+  </g>
+  <!-- The nested client is part of the application, never part of the neural model. -->
+  <g id="application-host">
+    <rect x="370" y="124" width="310" height="252" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="525" y="164" text-anchor="middle">Application</text>
+    <text class="note" x="525" y="196" text-anchor="middle">coordinates the exchange</text>
+    <rect x="394" y="224" width="262" height="124" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+    <text class="label" x="525" y="259" text-anchor="middle">MCP client</text>
+    <text class="body" x="525" y="294" text-anchor="middle">talks to the server</text>
+    <text class="note" x="525" y="325" text-anchor="middle">on the app's behalf</text>
+  </g>
+  <!-- The server exposes a real implementation with access to files or services. -->
+  <g id="tool-server">
+    <rect x="842" y="124" width="230" height="252" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="957" y="164" text-anchor="middle">MCP server</text>
+    <text class="body" x="957" y="208" text-anchor="middle">provides read_file</text>
+    <text class="body" x="957" y="258" text-anchor="middle">reads permitted files</text>
+    <text class="body" x="957" y="308" text-anchor="middle">returns file text</text>
+    <text class="note" x="957" y="350" text-anchor="middle">local or remote</text>
+  </g>
+  <!-- Requests travel right; results travel left. All arrowheads remain outside boxes. -->
+  <g id="model-application-exchange">
+    <text class="note" x="299" y="203" text-anchor="middle">tool call</text>
+    <line class="connector" x1="229" y1="222" x2="358" y2="222"/>
+    <polygon class="head" points="370,222 357,216 357,228"/>
+    <text class="note" x="299" y="296" text-anchor="middle">result</text>
+    <line class="connector" x1="369" y1="316" x2="240" y2="316"/>
+    <polygon class="head" points="228,316 241,310 241,322"/>
+  </g>
+  <!-- Client shafts cross the host boundary intentionally: the client lives inside the host. -->
+  <g id="mcp-exchange">
+    <text class="note" x="761" y="237" text-anchor="middle">MCP call</text>
+    <line class="connector" x1="657" y1="258" x2="830" y2="258"/>
+    <polygon class="head" points="842,258 829,252 829,264"/>
+    <text class="note" x="761" y="294" text-anchor="middle">MCP result</text>
+    <line class="connector" x1="841" y1="316" x2="668" y2="316"/>
+    <polygon class="head" points="656,316 669,310 669,322"/>
+  </g>
+  <!-- Discovery precedes use; direct integrations need no MCP client or server. -->
+  <text class="body" x="550" y="420" text-anchor="middle">The client can also ask the server which tools are available.</text>
+  <text class="note" x="550" y="452" text-anchor="middle">MCP is optional: an application can connect to tool code directly.</text>
+</svg>

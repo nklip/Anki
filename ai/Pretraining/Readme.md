@@ -1,4 +1,4 @@
-# Pretraining: learning from next-token prediction
+# Training: Pretraining - learning from next-token prediction
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 

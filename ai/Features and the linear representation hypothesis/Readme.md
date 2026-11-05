@@ -1,4 +1,4 @@
-# Features and the linear representation hypothesis
+# Internals: Features and the linear representation hypothesis
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 

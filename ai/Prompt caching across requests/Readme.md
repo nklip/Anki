@@ -1,4 +1,4 @@
-# Prompt caching across requests
+# Inference: Prompt caching across requests
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 

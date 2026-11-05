@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="526" viewBox="0 0 1100 526" role="img" aria-labelledby="title desc">
+  <title id="title">Permissions are enforced outside the model</title>
+  <desc id="desc">The model proposes an operation and its target. Software outside the model checks both against the granted permissions. In this task, read and create access is limited to the Website list; deleting tasks and accessing other lists are denied. The runtime and service access controls enforce these restrictions. An allowed action can still be incorrect, so outcome checks remain necessary.</desc>
+  <!-- Shared series typography; each panel states its own role. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .note { font-size: 19px; fill: #475569; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="1100" height="526" fill="#ffffff"/>
+  <!-- Heading states the lesson before the body introduces its parts. -->
+  <text class="title" x="28" y="43" text-anchor="start">Permissions are enforced outside the model</text>
+  <text class="subtitle" x="28" y="76" text-anchor="start">Example scope: read and create in Website only; no deletion or access to other lists.</text>
+  <!-- Proposed tool call; labels explain the color and role. -->
+  <g id="proposed-tool-call">
+    <rect x="28" y="169" width="280" height="222" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text class="label" x="168.0" y="209" text-anchor="middle">Model proposes a call</text>
+  <text class="body" x="168.0" y="259" text-anchor="middle">Operation + target</text>
+  <text class="body" x="168.0" y="306" text-anchor="middle">A proposal is not</text>
+  <text class="body" x="168.0" y="339" text-anchor="middle">permission to execute.</text>
+  </g>
+  <!-- Permission boundary; labels explain the color and role. -->
+  <g id="permission-boundary">
+    <rect x="380" y="169" width="352" height="222" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="label" x="556.0" y="209" text-anchor="middle">Software permission check</text>
+  <text class="body" x="556.0" y="259" text-anchor="middle">Is this operation allowed?</text>
+  <text class="body" x="556.0" y="306" text-anchor="middle">Is this list allowed?</text>
+  <text class="note" x="556.0" y="350" text-anchor="middle">Enforced outside the model</text>
+  </g>
+  <!-- proposal-to-boundary: shaft ends inside the head; the tip meets the target boundary. -->
+  <g id="proposal-to-boundary">
+    <line class="connector" x1="309" y1="280" x2="368" y2="280"/>
+    <polygon class="head" points="380,280 367,274 367,286"/>
+  </g>
+  <!-- Allowed operation; labels explain the color and role. -->
+  <g id="allowed-operation">
+    <rect x="824" y="112" width="248" height="143" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+  <text class="label" x="948.0" y="147" text-anchor="middle">Allowed: execute</text>
+  <text class="body" x="948.0" y="189" text-anchor="middle">Read or create</text>
+  <text class="body" x="948.0" y="224" text-anchor="middle">in Website</text>
+  </g>
+  <!-- Denied operation; labels explain the color and role. -->
+  <g id="denied-operation">
+    <rect x="824" y="312" width="248" height="143" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+  <text class="label" x="948.0" y="347" text-anchor="middle">Denied: stop</text>
+  <text class="body" x="948.0" y="389" text-anchor="middle">Delete tasks or</text>
+  <text class="body" x="948.0" y="424" text-anchor="middle">access other lists</text>
+  </g>
+  <!-- Branches have separate vertical routes; their heads meet target boundaries. -->
+  <path id="allow-connector" class="connector" d="M 733 224 H 778 V 184 H 812"/>
+  <polygon class="head" points="824,184 811,178 811,190"/>
+  <path id="deny-connector" class="connector" d="M 733 336 H 778 V 384 H 812"/>
+  <polygon class="head" points="824,384 811,378 811,390"/>
+  <text class="note" x="550" y="500" text-anchor="middle">Allowed actions still need outcome checks: permission does not prevent every mistake.</text>
+</svg>

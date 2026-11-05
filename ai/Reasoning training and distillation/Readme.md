@@ -1,4 +1,4 @@
-# Reasoning training and distillation
+# Training: Reasoning training and distillation
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 

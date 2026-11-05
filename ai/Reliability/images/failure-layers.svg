@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="538" viewBox="0 0 1100 538" role="img" aria-labelledby="title desc">
+  <title id="title">The whole system can fail in different places</title>
+  <desc id="desc">Three possible failures are compared. The model can select the wrong list. The runtime can repeat an already completed action or deliver a stale tool result. The tool or service can receive correct inputs but fail to store the task. Reviewing traces together with actual saved state helps investigate each layer; several layers may contribute to one failure.</desc>
+  <!-- Shared series typography; each panel states its own role. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .note { font-size: 19px; fill: #475569; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="1100" height="538" fill="#ffffff"/>
+  <!-- Heading states the lesson before the body introduces its parts. -->
+  <text class="title" x="28" y="43" text-anchor="start">The whole system can fail in different places</text>
+  <text class="subtitle" x="28" y="76" text-anchor="start">Three examples to investigate; these are not stages to follow.</text>
+  <!-- Model failure; labels explain the color and role. -->
+  <g id="model-failure">
+    <rect x="28" y="112" width="320" height="264" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="label" x="188.0" y="151" text-anchor="middle">Model decision</text>
+  <text class="body" x="188.0" y="201" text-anchor="middle">Chooses the wrong list</text>
+  <text class="body" x="188.0" y="243" text-anchor="middle">Requests creation in Personal</text>
+  <text class="note" x="188.0" y="312" text-anchor="middle">Inspect the chosen tool</text>
+  <text class="note" x="188.0" y="342" text-anchor="middle">and its inputs.</text>
+  </g>
+  <!-- Runtime failure; labels explain the color and role. -->
+  <g id="runtime-failure">
+    <rect x="390" y="112" width="320" height="264" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text class="label" x="550.0" y="151" text-anchor="middle">Runtime coordination</text>
+  <text class="body" x="550.0" y="201" text-anchor="middle">Repeats a completed action</text>
+  <text class="body" x="550.0" y="243" text-anchor="middle">or returns a stale result</text>
+  <text class="note" x="550.0" y="312" text-anchor="middle">Inspect dispatched calls</text>
+  <text class="note" x="550.0" y="342" text-anchor="middle">and matching results.</text>
+  </g>
+  <!-- Tool failure; labels explain the color and role. -->
+  <g id="tool-failure">
+    <rect x="752" y="112" width="320" height="264" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+  <text class="label" x="912.0" y="151" text-anchor="middle">Tool or service</text>
+  <text class="body" x="912.0" y="201" text-anchor="middle">Receives the correct request</text>
+  <text class="body" x="912.0" y="243" text-anchor="middle">but fails to store the task</text>
+  <text class="note" x="912.0" y="312" text-anchor="middle">Inspect service responses</text>
+  <text class="note" x="912.0" y="342" text-anchor="middle">and actual saved data.</text>
+  </g>
+  <!-- Diagnostic evidence; labels explain the color and role. -->
+  <g id="diagnostic-evidence">
+    <rect x="28" y="410" width="1044" height="100" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+  <text class="label" x="550.0" y="448" text-anchor="middle">Trace + saved state help locate the fault.</text>
+  <text class="body" x="550.0" y="484" text-anchor="middle">One failure may involve more than one layer.</text>
+  </g>
+</svg>

@@ -1,4 +1,4 @@
-# Embeddings and position information
+# Internals: Embeddings and position information
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 

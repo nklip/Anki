@@ -1,4 +1,4 @@
-# Supervised fine-tuning: learning to act as an assistant
+# Training: Supervised fine-tuning: learning to act as an assistant
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 

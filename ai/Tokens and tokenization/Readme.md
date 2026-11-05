@@ -1,4 +1,4 @@
-# Tokens and tokenization
+# Internals: Tokens and tokenization
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 

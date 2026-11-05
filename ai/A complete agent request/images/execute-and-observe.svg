@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="525" viewBox="0 0 1100 525" role="img" aria-labelledby="title desc">
+  <title id="title">A generated request becomes a real test result</title>
+  <desc id="desc">Step 3 executes the run_tests request identified as call_1. The runtime validates the inputs and permissions, then runs Python tests. One test expects three groups of four marbles, or twelve, but the function adds three and four to get seven. The runtime includes the failure and its matching call identifier in the next model input.</desc>
+  <!-- Shared series typography; each panel states its own role. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .note { font-size: 19px; fill: #475569; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="1100" height="525" fill="#ffffff"/>
+  <!-- Heading states the lesson before the body introduces its parts. -->
+  <text class="title" x="28" y="43" text-anchor="start">A generated request becomes a real test result</text>
+  <text class="subtitle" x="28" y="76" text-anchor="start">Step 3: generating a request and executing Python are separate events.</text>
+  <!-- Generated tool request; labels explain the color and role. -->
+  <g id="generated-tool-request">
+    <rect x="28" y="112" width="300" height="176" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text class="label" x="178.0" y="148" text-anchor="middle">Model request</text>
+  <text class="body" x="178.0" y="193" text-anchor="middle">Tool: run_tests</text>
+  <text class="note" x="178.0" y="238" text-anchor="middle">Identifier: call_1</text>
+  </g>
+  <!-- Checked execution; labels explain the color and role. -->
+  <g id="checked-execution">
+    <rect x="386" y="112" width="314" height="176" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="label" x="543.0" y="148" text-anchor="middle">Runtime + test tool</text>
+  <text class="note" x="543.0" y="193" text-anchor="middle">Check inputs and permission.</text>
+  <text class="body" x="543.0" y="238" text-anchor="middle">Execute the Python tests.</text>
+  </g>
+  <!-- Observed failure; labels explain the color and role. -->
+  <g id="observed-failure">
+    <rect x="758" y="112" width="314" height="176" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+  <text class="label" x="915.0" y="148" text-anchor="middle">One test failure</text>
+  <text class="body" x="915.0" y="193" text-anchor="middle">Expected 12; got 7</text>
+  <text class="note" x="915.0" y="238" text-anchor="middle">Actual result of running code</text>
+  </g>
+  <!-- request-to-runtime: shaft ends inside the head; the tip meets the target boundary. -->
+  <g id="request-to-runtime">
+    <line class="connector" x1="329" y1="202" x2="374" y2="202"/>
+    <polygon class="head" points="386,202 373,196 373,208"/>
+  </g>
+  <!-- execution-to-failure: shaft ends inside the head; the tip meets the target boundary. -->
+  <g id="execution-to-failure">
+    <line class="connector" x1="701" y1="202" x2="746" y2="202"/>
+    <polygon class="head" points="758,202 745,196 745,208"/>
+  </g>
+  <!-- Returned observation; labels explain the color and role. -->
+  <g id="returned-observation">
+    <rect x="28" y="341" width="1044" height="120" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+  <text class="label" x="550.0" y="375" text-anchor="middle">Next model input includes call_1 and its failure result.</text>
+  <text class="body" x="550.0" y="412" text-anchor="middle">Three bags of four: 4 + 4 + 4 = 12 marbles.</text>
+  <text class="body" x="550.0" y="444" text-anchor="middle">The buggy code adds the counts: 3 + 4 = 7.</text>
+  </g>
+  <!-- failure-enters-context: the vertical shaft ends inside its downward head. -->
+  <g id="failure-enters-context">
+    <line class="connector" x1="915" y1="289" x2="915" y2="329"/>
+    <polygon class="head" points="915,341 909,328 921,328"/>
+  </g>
+  <text class="note" x="550" y="499" text-anchor="middle">The model sees the test failure because the runtime sends the result back.</text>
+</svg>

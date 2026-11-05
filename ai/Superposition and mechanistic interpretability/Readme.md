@@ -1,4 +1,4 @@
-# Superposition and mechanistic interpretability
+# Internals: Superposition and mechanistic interpretability
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 

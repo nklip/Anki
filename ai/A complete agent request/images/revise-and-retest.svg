@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="611" viewBox="0 0 1100 611" role="img" aria-labelledby="title desc">
+  <title id="title">Edit, receive the result, then test again</title>
+  <desc id="desc">Read downward. With the failure in context, the model requests replacing addition with multiplication. The runtime checks and saves the edit, then returns saved. A later model call requests tests. The runtime executes the saved code and returns both passing results: three times four is twelve and zero times four is zero. The results enter later model calls; the model weights stay fixed.</desc>
+  <!-- Original simplified SVG inspired by the concepts in the official figure, not a reproduction.
+       Source: https://www.anthropic.com/research/building-effective-agents
+       Figure: https://www-cdn.anthropic.com/images/4zrzovbb/website/4b9a1f4eb63d5962a6e1746ac26bbc857cf3474f-2400x1666.png -->
+  <!-- Shared definitions preserve the visual language of the AI series. -->
+  <defs><style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+    .title { font-size: 28px; font-weight: 700; }
+    .subtitle, .note { font-size: 19px; fill: #475569; }
+    .label { font-size: 22px; font-weight: 700; }
+    .body { font-size: 20px; }
+    .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+    .head { fill: #64748b; }
+    .lifeline { stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 5 5; }
+  </style></defs>
+  <rect width="1100" height="611" fill="#ffffff"/>
+  <!-- Heading states the lesson and reading order. -->
+  <text class="title" x="28" y="43" text-anchor="start">Edit, receive the result, then test again</text>
+  <text class="subtitle" x="28" y="76" text-anchor="start">Step 4: read downward. Start with the failure: expected 12, got 7.</text>
+  <!-- model column; labels remain inside this panel. -->
+  <g id="model-column">
+    <rect x="28" y="106" width="250" height="60" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text class="label" x="153.0" y="140" text-anchor="middle">Model calls</text>
+  </g>
+  <!-- execution column; labels remain inside this panel. -->
+  <g id="execution-column">
+    <rect x="778" y="106" width="294" height="60" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="label" x="925.0" y="140" text-anchor="middle">Runtime + tools</text>
+  </g>
+  <!-- Lifelines represent time, not flow arrows. Execution panels cover their own lifeline. -->
+  <line class="lifeline" x1="153" y1="167" x2="153" y2="554"/>
+  <line class="lifeline" x1="925" y1="167" x2="925" y2="554"/>
+  <text class="label" x="530" y="203" text-anchor="middle">1. Request: replace + with *</text>
+  <!-- edit-request: the shaft ends inside its head; the nose meets the target boundary. -->
+  <g id="edit-request"><path class="connector" d="M154 224 L913 224"/><polygon class="head" points="925,224 912,218 912,230"/></g>
+  <!-- execute edit; labels remain inside this panel. -->
+  <g id="execute-edit">
+    <rect x="778" y="244" width="294" height="50" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="label" x="925.0" y="278" text-anchor="middle">Check and save the edit</text>
+  </g>
+  <text class="label" x="530" y="325" text-anchor="middle">2. Result: saved; not yet tested</text>
+  <!-- edit-result-to-model: the shaft ends inside its head; the nose meets the target boundary. -->
+  <g id="edit-result-to-model"><path class="connector" d="M924 346 L165 346"/><polygon class="head" points="153,346 166,340 166,352"/></g>
+  <text class="label" x="530" y="395" text-anchor="middle">3. Next model call requests tests</text>
+  <!-- test-request: the shaft ends inside its head; the nose meets the target boundary. -->
+  <g id="test-request"><path class="connector" d="M154 416 L913 416"/><polygon class="head" points="925,416 912,410 912,422"/></g>
+  <!-- execute tests; labels remain inside this panel. -->
+  <g id="execute-tests">
+    <rect x="778" y="436" width="294" height="50" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="label" x="925.0" y="470" text-anchor="middle">Run the saved code</text>
+  </g>
+  <text class="label" x="530" y="518" text-anchor="middle">4. Tests pass: 3 × 4 = 12; 0 × 4 = 0</text>
+  <!-- test-results-to-model: the shaft ends inside its head; the nose meets the target boundary. -->
+  <g id="test-results-to-model"><path class="connector" d="M924 539 L165 539"/><polygon class="head" points="153,539 166,533 166,545"/></g>
+  <text class="note" x="550" y="583" text-anchor="middle">Each result enters a later model call. The context changes; the weights stay fixed.</text>
+</svg>

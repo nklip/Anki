@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="465" viewBox="0 0 1100 465" role="img" aria-labelledby="title desc">
+  <title id="title">The runtime turns the task and files into context</title>
+  <desc id="desc">The file marbles.py contains a function returning bags plus per_bag. The supplied tests expect 12 for three bags of four and 0 for zero bags of four. Allowed file tools read both source and tests. The runtime prepares the model context from the user goal, instructions, file contents, and tool descriptions with their input rules. The model does not see disk contents merely from their names.</desc>
+  <!-- Shared series typography; each panel states its own role. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .note { font-size: 19px; fill: #475569; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="1100" height="465" fill="#ffffff"/>
+  <!-- Heading states the lesson before the body introduces its parts. -->
+  <text class="title" x="28" y="43" text-anchor="start">The runtime turns the task and files into context</text>
+  <text class="subtitle" x="28" y="76" text-anchor="start">Step 1: the model receives selected information about the task.</text>
+  <!-- Source files; labels explain the color and role. -->
+  <g id="source-files">
+    <rect x="28" y="112" width="306" height="205" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+  <text class="label" x="181.0" y="148" text-anchor="middle">Files on disk</text>
+  <text class="body" x="181.0" y="192" text-anchor="middle">marbles.py</text>
+  <text class="body" x="181.0" y="230" text-anchor="middle">return bags + per_bag</text>
+  <text class="note" x="181.0" y="276" text-anchor="middle">Supplied tests: 12 and 0</text>
+  </g>
+  <!-- Runtime preparation; labels explain the color and role. -->
+  <g id="runtime-preparation">
+    <rect x="397" y="112" width="294" height="205" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="label" x="544.0" y="148" text-anchor="middle">Runtime reads files</text>
+  <text class="body" x="544.0" y="192" text-anchor="middle">Allowed file tools</text>
+  <text class="body" x="544.0" y="230" text-anchor="middle">return their contents.</text>
+  <text class="note" x="544.0" y="276" text-anchor="middle">Build the next input.</text>
+  </g>
+  <!-- Assembled context; labels explain the color and role. -->
+  <g id="assembled-context">
+    <rect x="754" y="112" width="318" height="205" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+  <text class="label" x="913.0" y="148" text-anchor="middle">Context for the model</text>
+  <text class="body" x="913.0" y="192" text-anchor="middle">Goal + instructions</text>
+  <text class="body" x="913.0" y="230" text-anchor="middle">Code + supplied tests</text>
+  <text class="note" x="913.0" y="276" text-anchor="middle">Tool descriptions + input rules</text>
+  </g>
+  <!-- files-read-by-runtime: shaft ends inside the head; the tip meets the target boundary. -->
+  <g id="files-read-by-runtime">
+    <line class="connector" x1="335" y1="213" x2="385" y2="213"/>
+    <polygon class="head" points="397,213 384,207 384,219"/>
+  </g>
+  <!-- runtime-assembles-context: shaft ends inside the head; the tip meets the target boundary. -->
+  <g id="runtime-assembles-context">
+    <line class="connector" x1="692" y1="213" x2="742" y2="213"/>
+    <polygon class="head" points="754,213 741,207 741,219"/>
+  </g>
+  <!-- Context purpose; labels explain the color and role. -->
+  <g id="context-purpose">
+    <rect x="28" y="351" width="1044" height="86" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+  <text class="label" x="550.0" y="384" text-anchor="middle">Goal: count all marbles in equal-sized bags, then run the tests.</text>
+  <text class="note" x="550.0" y="417" text-anchor="middle">A filename alone does not supply the code; the runtime includes the read results.</text>
+  </g>
+</svg>

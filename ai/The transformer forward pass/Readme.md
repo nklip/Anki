@@ -1,4 +1,4 @@
-# The transformer forward pass
+# Internals: The transformer forward pass
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 

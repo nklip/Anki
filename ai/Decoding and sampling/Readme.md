@@ -1,4 +1,4 @@
-# From logits to text: decoding and sampling
+# Inference: From logits to text with decoding and sampling
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 

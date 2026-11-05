@@ -1,4 +1,4 @@
-# Model, assistant, and agent: the system map
+# Training: Model, assistant, and agent - the system map
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 

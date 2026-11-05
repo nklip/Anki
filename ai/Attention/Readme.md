@@ -1,4 +1,4 @@
-# Attention: queries, keys, values, and heads
+# Internals: Attention - queries, keys, values, and heads
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 

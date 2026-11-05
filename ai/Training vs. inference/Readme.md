@@ -1,4 +1,4 @@
-# Training vs. inference
+# Training: Training vs. Inference
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 

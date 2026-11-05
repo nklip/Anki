@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="508" viewBox="0 0 1100 508" role="img" aria-labelledby="title desc">
+  <title id="title">Check the saved file before finishing</title>
+  <desc id="desc">A fresh file read returns the saved text. The model compares it with the requested time, 11:00. In this example the check passes, so the model reports the verified change. If the file still says 10:00, more work is needed and can continue only if the runtime permits it.</desc>
+  <!-- Shared typography and colors match neighboring AI articles. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 28px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .note { font-size: 19px; fill: #475569; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="1100" height="508" fill="#ffffff"/>
+  <!-- Heading states the primary lesson and the reading order. -->
+  <text class="title" x="28" y="43" text-anchor="start">Check the saved file before finishing</text>
+  <text class="subtitle" x="28" y="76" text-anchor="start">Read left to right, then follow Yes or No. The check uses the new tool result.</text>
+  <!-- Verification read; keep labels clear of panel borders. -->
+  <g id="verification-read">
+    <rect x="28" y="112" width="310" height="154" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+  <text class="label" x="183.0" y="148" text-anchor="middle">Read the file again</text>
+  <text class="body" x="183.0" y="192" text-anchor="middle">Model requests read_file;</text>
+  <text class="body" x="183.0" y="231" text-anchor="middle">runtime runs it.</text>
+  </g>
+  <!-- Verification result; keep labels clear of panel borders. -->
+  <g id="verification-result">
+    <rect x="395" y="112" width="310" height="154" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text class="label" x="550.0" y="148" text-anchor="middle">Returned contents</text>
+  <text class="body" x="550.0" y="192" text-anchor="middle">In the successful run:</text>
+  <text class="body" x="550.0" y="231" text-anchor="middle">Meeting starts at 11:00.</text>
+  </g>
+  <!-- Goal check; keep labels clear of panel borders. -->
+  <g id="goal-check">
+    <rect x="762" y="112" width="310" height="154" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
+  <text class="label" x="917.0" y="148" text-anchor="middle">Model checks the goal</text>
+  <text class="body" x="917.0" y="192" text-anchor="middle">Does the saved text</text>
+  <text class="body" x="917.0" y="231" text-anchor="middle">show 11:00?</text>
+  </g>
+  <!-- reread-result-arrow: shaft ends inside its head; the nose meets the target boundary. -->
+  <g id="reread-result-arrow">
+    <path class="connector" d="M339 189 L383 189"/>
+    <polygon class="head" points="395,189 382,183 382,195"/>
+  </g>
+  <!-- result-check-arrow: shaft ends inside its head; the nose meets the target boundary. -->
+  <g id="result-check-arrow">
+    <path class="connector" d="M706 189 L750 189"/>
+    <polygon class="head" points="762,189 749,183 749,195"/>
+  </g>
+  <!-- Continue if allowed; keep labels clear of panel borders. -->
+  <g id="continue-if-allowed">
+    <rect x="28" y="374" width="540" height="106" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
+  <text class="label" x="298.0" y="409" text-anchor="middle">No: work remains</text>
+  <text class="body" x="298.0" y="442" text-anchor="middle">Investigate or correct, if limits allow.</text>
+  <text class="note" x="298.0" y="470" text-anchor="middle">Otherwise pause or report incomplete work.</text>
+  </g>
+  <!-- Verified finish; keep labels clear of panel borders. -->
+  <g id="verified-finish">
+    <rect x="642" y="374" width="430" height="106" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+  <text class="label" x="857.0" y="409" text-anchor="middle">Yes: finish this task</text>
+  <text class="body" x="857.0" y="442" text-anchor="middle">Report the verified file change.</text>
+  <text class="note" x="857.0" y="470" text-anchor="middle">No further tool call is needed.</text>
+  </g>
+  <!-- verified-exit-arrow: shaft ends inside its head; the nose meets the target boundary. -->
+  <g id="verified-exit-arrow">
+    <path class="connector" d="M957 267 L957 362"/>
+    <polygon class="head" points="957,374 951,361 963,361"/>
+  </g>
+  <text class="body" x="979" y="327" text-anchor="start">Yes</text>
+  <!-- continue-branch-arrow: shaft ends inside its head; the nose meets the target boundary. -->
+  <g id="continue-branch-arrow">
+    <path class="connector" d="M817 267 L817 315 L298 315 L298 362"/>
+    <polygon class="head" points="298,374 292,361 304,361"/>
+  </g>
+  <text class="note" x="550" y="301" text-anchor="middle">No: for example, still 10:00</text>
+</svg>
