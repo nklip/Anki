@@ -1,54 +1,45 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="538" viewBox="0 0 1100 538" role="img" aria-labelledby="title desc">
-  <title id="title">The whole system can fail in different places</title>
-  <desc id="desc">Three possible failures are compared. The model can select the wrong list. The runtime can repeat an already completed action or deliver a stale tool result. The tool or service can receive correct inputs but fail to store the task. Reviewing traces together with actual saved state helps investigate each layer; several layers may contribute to one failure.</desc>
-  <!-- Shared series typography; each panel states its own role. -->
-  <defs>
-    <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-      .title { font-size: 28px; font-weight: 700; }
-      .subtitle { font-size: 19px; fill: #475569; }
-      .label { font-size: 22px; font-weight: 700; }
-      .body { font-size: 20px; }
-      .note { font-size: 19px; fill: #475569; }
-      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
-      .head { fill: #64748b; }
-    </style>
-  </defs>
-  <rect width="1100" height="538" fill="#ffffff"/>
-  <!-- Heading states the lesson before the body introduces its parts. -->
-  <text class="title" x="28" y="43" text-anchor="start">The whole system can fail in different places</text>
-  <text class="subtitle" x="28" y="76" text-anchor="start">Three examples to investigate; these are not stages to follow.</text>
-  <!-- Model failure; labels explain the color and role. -->
-  <g id="model-failure">
-    <rect x="28" y="112" width="320" height="264" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-  <text class="label" x="188.0" y="151" text-anchor="middle">Model decision</text>
-  <text class="body" x="188.0" y="201" text-anchor="middle">Chooses the wrong list</text>
-  <text class="body" x="188.0" y="243" text-anchor="middle">Requests creation in Personal</text>
-  <text class="note" x="188.0" y="312" text-anchor="middle">Inspect the chosen tool</text>
-  <text class="note" x="188.0" y="342" text-anchor="middle">and its inputs.</text>
-  </g>
-  <!-- Runtime failure; labels explain the color and role. -->
-  <g id="runtime-failure">
-    <rect x="390" y="112" width="320" height="264" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
-  <text class="label" x="550.0" y="151" text-anchor="middle">Runtime coordination</text>
-  <text class="body" x="550.0" y="201" text-anchor="middle">Repeats a completed action</text>
-  <text class="body" x="550.0" y="243" text-anchor="middle">or returns a stale result</text>
-  <text class="note" x="550.0" y="312" text-anchor="middle">Inspect dispatched calls</text>
-  <text class="note" x="550.0" y="342" text-anchor="middle">and matching results.</text>
-  </g>
-  <!-- Tool failure; labels explain the color and role. -->
-  <g id="tool-failure">
-    <rect x="752" y="112" width="320" height="264" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
-  <text class="label" x="912.0" y="151" text-anchor="middle">Tool or service</text>
-  <text class="body" x="912.0" y="201" text-anchor="middle">Receives the correct request</text>
-  <text class="body" x="912.0" y="243" text-anchor="middle">but fails to store the task</text>
-  <text class="note" x="912.0" y="312" text-anchor="middle">Inspect service responses</text>
-  <text class="note" x="912.0" y="342" text-anchor="middle">and actual saved data.</text>
-  </g>
-  <!-- Diagnostic evidence; labels explain the color and role. -->
-  <g id="diagnostic-evidence">
-    <rect x="28" y="410" width="1044" height="100" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
-  <text class="label" x="550.0" y="448" text-anchor="middle">Trace + saved state help locate the fault.</text>
-  <text class="body" x="550.0" y="484" text-anchor="middle">One failure may involve more than one layer.</text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="865.909" viewBox="0 0 1100 635" role="img" aria-labelledby="title desc">
+<title id="title">Model, orchestration, and tool failure layers</title>
+<desc id="desc">Three panels distinguish the model choosing the wrong target, the runtime dispatching or pairing incorrectly, and the tool or service failing. Traces and saved outcomes help identify contributions from multiple layers.</desc>
+<!-- Source-native artwork. Uniform scaling preserves the 1500 px landscape canvas. -->
+<defs><style>text {font-family: Arial, Helvetica, sans-serif;}</style></defs>
+<rect width="1100" height="635" fill="#ffffff"/>
+<text x="30" y="44" font-size="28" font-weight="700" text-anchor="start" fill="#172033">Find which layer contributed to a failure</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">Runtime = the application coordinating model calls and tools. Orchestration = that coordination.</text>
+<!-- Model decision; preserve text and arrow clearance. -->
+<g id="model-decision">
+<rect x="30" y="125" width="320" height="310" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="50" y="168" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Model decision</text>
+<text x="50" y="214" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Chooses the wrong target:</text>
+<text x="50" y="249" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Personal instead of Website.</text>
+<text x="50" y="310" font-size="21" font-weight="700" text-anchor="start" fill="#172033">Evidence to inspect</text>
+<text x="50" y="350" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Inspect the proposed</text>
+<text x="50" y="382" font-size="20" font-weight="400" text-anchor="start" fill="#172033">operation and target.</text>
+</g>
+<!-- Runtime orchestration; preserve text and arrow clearance. -->
+<g id="runtime-orchestration">
+<rect x="390" y="125" width="320" height="310" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="410" y="168" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Runtime orchestration</text>
+<text x="410" y="214" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Sends the request twice</text>
+<text x="410" y="249" font-size="21" font-weight="400" text-anchor="start" fill="#172033">or pairs the wrong result.</text>
+<text x="410" y="310" font-size="21" font-weight="700" text-anchor="start" fill="#172033">Evidence to inspect</text>
+<text x="410" y="350" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Inspect dispatch, call IDs,</text>
+<text x="410" y="382" font-size="20" font-weight="400" text-anchor="start" fill="#172033">result routing, and retries.</text>
+</g>
+<!-- Tool or service; preserve text and arrow clearance. -->
+<g id="tool-or-service">
+<rect x="750" y="125" width="320" height="310" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="770" y="168" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Tool or service</text>
+<text x="770" y="214" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Rejects the request</text>
+<text x="770" y="249" font-size="21" font-weight="400" text-anchor="start" fill="#172033">or fails while saving.</text>
+<text x="770" y="310" font-size="21" font-weight="700" text-anchor="start" fill="#172033">Evidence to inspect</text>
+<text x="770" y="350" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Inspect tool errors and</text>
+<text x="770" y="382" font-size="20" font-weight="400" text-anchor="start" fill="#172033">the actual stored data.</text>
+</g>
+<!-- Shared investigation; preserve text and arrow clearance. -->
+<g id="shared-investigation">
+<rect x="30" y="485" width="1040" height="115" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="50" y="527" font-size="26" font-weight="700" text-anchor="start" fill="#172033">One failed task can involve more than one layer.</text>
+<text x="50" y="568" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Use the trace to locate behavior, then compare it with an independent outcome check.</text>
+</g>
 </svg>

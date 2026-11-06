@@ -1,62 +1,120 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="482" viewBox="0 0 1100 482" role="img" aria-labelledby="title desc">
-  <title id="title">The MLP processes each position after attention</title>
-  <desc id="desc">The model route runs from text through token IDs and starting vectors to repeated transformer blocks and next-token scores. Inside a decoder-only transformer block, attention gathers information from allowed positions. The multilayer perceptron, or MLP, then processes each position separately. Both components add updates to the running vectors. Normalization and additions are omitted from this high-level map.</desc>
-  <!-- Gray shows context; orange highlights the MLP's place within a block. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1250" viewBox="0 0 1200 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Shared transformer map and mlps and mixture of experts</title>
+  <desc id="desc">The highlighted region locates the MLP or mixture of experts in the model or its analysis. Text is tokenized, embedded, processed through pre-norm residual blocks with attention and MLPs, then scored. Selection and decoding follow. Separate dashed research branches inspect features or mechanisms. The lower panel explains the highlighted topic with a worked example.</desc>
+  <!-- Shared font and palette; all artwork remains editable SVG. -->
   <defs>
-    <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-      .title { font-size: 28px; font-weight: 700; }
-      .subtitle { font-size: 19px; fill: #475569; }
-      .label { font-size: 21px; font-weight: 700; text-anchor: middle; }
-      .body { font-size: 20px; text-anchor: middle; }
-      .note { font-size: 19px; text-anchor: middle; fill: #475569; }
-      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
-      .head { fill: #64748b; }
-    </style>
+    <style>text {font-family: Arial, Helvetica, sans-serif;}</style>
   </defs>
-  <rect width="1100" height="482" fill="#ffffff"/>
-  <!-- Shared overview keeps the highlighted component in its full model context. -->
-  <text class="title" x="28" y="44">The MLP processes each position after attention</text>
-  <text class="subtitle" x="28" y="76">Read left to right · orange highlights this article's part of the model</text>
-  <g id="model-route">
-    <rect x="28" y="108" width="150" height="86" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
-    <text class="label" x="103" y="144">Text</text>
-    <text class="body" x="103" y="174">“The cat”</text>
-    <rect x="218" y="108" width="150" height="86" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
-    <text class="label" x="293" y="144">Token IDs</text>
-    <text class="note" x="293" y="174">piece numbers</text>
-    <rect x="408" y="108" width="160" height="86" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
-    <text class="label" x="488" y="144">Starting</text>
-    <text class="body" x="488" y="174">vectors</text>
-    <rect x="608" y="108" width="224" height="86" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
-    <text class="label" x="720" y="144">Transformer blocks</text>
-    <text class="note" x="720" y="174">attention, then MLP</text>
-    <rect x="872" y="108" width="200" height="86" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
-    <text class="label" x="972" y="144">Next-token</text>
-    <text class="body" x="972" y="174">scores</text>
+  <rect width="1200" height="1000" fill="#fff"/>
+  <g id="shared-flow">
+    <!-- Shared concept map: stable topic names and geometry; only one region receives focus styling. -->
+    <text x="28" y="42" font-size="28" font-weight="700" fill="#172033" text-anchor="start">Where it fits · inside a text-generating transformer</text>
+    <text x="28" y="73" font-size="19" font-weight="400" fill="#64748b" text-anchor="start">Colored outline: this topic. Gray: surrounding computation. Dashed branches: research.</text>
+    <rect x="340" y="96" width="832" height="432" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" id="forward-pass-region"/>
+    <text x="366" y="124" font-size="20" font-weight="700" fill="#172033" text-anchor="start">Forward pass: token IDs → next-token scores</text>
+    <rect x="28" y="142" width="86" height="84" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="71.0" y="191.0" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Text</text>
+    <rect x="142" y="142" width="174" height="84" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5" id="tokenizer-region"/>
+    <text x="229.0" y="178.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Tokenizer</text>
+    <text x="229.0" y="203.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">text → token IDs</text>
+    <rect x="366" y="142" width="182" height="84" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5" id="embedding-region"/>
+    <text x="457.0" y="178.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Embeddings</text>
+    <text x="457.0" y="203.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">ID → vector</text>
+    <rect x="578" y="142" width="252" height="84" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="704.0" y="178.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Repeated blocks</text>
+    <text x="704.0" y="203.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">update each vector</text>
+    <rect x="860" y="142" width="288" height="84" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="1004.0" y="178.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Final norm + projection</text>
+    <text x="1004.0" y="203.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">vector → scores (logits)</text>
+    <path data-connector="true" d="M114 184 L133.0 184.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="142,184 132.0,188.0 132.0,180.0" fill="#64748b"/>
+    <path data-connector="true" d="M316 184 L357.0 184.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="366,184 356.0,188.0 356.0,180.0" fill="#64748b"/>
+    <path data-connector="true" d="M548 184 L569.0 184.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="578,184 568.0,188.0 568.0,180.0" fill="#64748b"/>
+    <path data-connector="true" d="M830 184 L851.0 184.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="860,184 850.0,188.0 850.0,180.0" fill="#64748b"/>
+    <!-- The scoring output leaves the model; selecting a token is a separate operation. -->
+    <path data-connector="true" d="M1004 226 V250 H171 V280" fill="none" stroke="#64748b" stroke-width="2"/>
+    <path data-connector="true" d="M171 280 L171.0 289.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="171,298 167.0,288.0 175.0,288.0" fill="#64748b"/>
+    <rect x="28" y="298" width="286" height="110" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="171.0" y="335.0" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Choose one token ID</text>
+    <text x="171.0" y="360.0" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">decode IDs → text</text>
+    <text x="171.0" y="385.0" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">append ID; run again</text>
+    <text x="28" y="445" font-size="18" font-weight="700" fill="#172033" text-anchor="start">Llama-style pre-norm model.</text>
+    <text x="28" y="474" font-size="18" font-weight="400" fill="#64748b" text-anchor="start">Norm = rescale a vector.</text>
+    <text x="28" y="502" font-size="18" font-weight="400" fill="#64748b" text-anchor="start">+ = add an update.</text>
+    <!-- Expanded repeated block; bypasses carry each original vector unchanged to addition. -->
+    <rect x="366" y="278" width="782" height="234" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5" id="residual-region"/>
+    <text x="386" y="307" font-size="20" font-weight="700" fill="#172033" text-anchor="start">Residual stream + normalization · one block enlarged</text>
+    <text x="500" y="340" font-size="18" font-weight="400" fill="#64748b" text-anchor="start">Position enters attention</text>
+    <rect x="386" y="360" width="82" height="70" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="427.0" y="402.0" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Norm</text>
+    <rect x="494" y="360" width="164" height="70" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5" id="attention-region"/>
+    <text x="576.0" y="389.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Attention</text>
+    <text x="576.0" y="414.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">mix positions</text>
+    <rect x="740" y="360" width="82" height="70" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="781.0" y="402.0" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Norm</text>
+    <rect x="848" y="360" width="172" height="70" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="3" data-focus="true" id="mlp-region"/>
+    <text x="934.0" y="389.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">MLP / MoE</text>
+    <text x="934.0" y="414.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">work per token</text>
+    <circle cx="694" cy="395" r="18" fill="#fff" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="694" y="403" font-size="27" font-weight="400" fill="#172033" text-anchor="middle">+</text>
+    <circle cx="1060" cy="395" r="18" fill="#fff" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="1060" y="403" font-size="27" font-weight="400" fill="#172033" text-anchor="middle">+</text>
+    <path data-connector="true" d="M468 395 L485.0 395.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="494,395 484.0,399.0 484.0,391.0" fill="#64748b"/>
+    <path data-connector="true" d="M658 395 L667.0 395.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="676,395 666.0,399.0 666.0,391.0" fill="#64748b"/>
+    <path data-connector="true" d="M712 395 L731.0 395.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="740,395 730.0,399.0 730.0,391.0" fill="#64748b"/>
+    <path data-connector="true" d="M822 395 L839.0 395.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="848,395 838.0,399.0 838.0,391.0" fill="#64748b"/>
+    <path data-connector="true" d="M1020 395 L1033.0 395.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="1042,395 1032.0,399.0 1032.0,391.0" fill="#64748b"/>
+    <path data-connector="true" d="M1078 395 L1121.0 395.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="1130,395 1120.0,399.0 1120.0,391.0" fill="#64748b"/>
+    <path data-connector="true" d="M378 395 H386 M378 395 V480 H694 V451" fill="none" stroke="#64748b" stroke-width="2"/>
+    <path data-connector="true" d="M694 451 L694.0 422.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="694,413 698.0,423.0 690.0,423.0" fill="#64748b"/>
+    <path data-connector="true" d="M728 395 V480 H1060 V451" fill="none" stroke="#64748b" stroke-width="2"/>
+    <path data-connector="true" d="M1060 451 L1060.0 422.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="1060,413 1064.0,423.0 1056.0,423.0" fill="#64748b"/>
+    <text x="532" y="460" font-size="18" font-weight="400" fill="#64748b" text-anchor="middle">carry input unchanged</text>
+    <text x="887" y="460" font-size="18" font-weight="400" fill="#64748b" text-anchor="middle">carry updated vector</text>
+    <text x="750" y="504" font-size="18" font-weight="400" fill="#64748b" text-anchor="middle">MLP: per-token network · MoE: mixture of experts</text>
+    <!-- Dashed branches observe activations; these boxes are not extra forward-pass stages. -->
+    <path data-connector="true" d="M756 528 V554 H553 V566" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="5 4"/>
+    <path data-connector="true" d="M553 566 L553.0 571.0" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="5 4"/>
+    <polygon points="553,580 549.0,570.0 557.0,570.0" fill="#64748b"/>
+    <path data-connector="true" d="M756 554 H961 V566" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="5 4"/>
+    <path data-connector="true" d="M961 566 L961.0 571.0" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="5 4"/>
+    <polygon points="961,580 957.0,570.0 965.0,570.0" fill="#64748b"/>
+    <text x="28" y="559" font-size="20" font-weight="700" fill="#172033" text-anchor="start">Separate research views</text>
+    <text x="28" y="590" font-size="18" font-weight="400" fill="#64748b" text-anchor="start">Dashed lines: inspect or test</text>
+    <text x="28" y="616" font-size="18" font-weight="400" fill="#64748b" text-anchor="start">internal working vectors.</text>
+    <rect x="366" y="580" width="374" height="82" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5" id="feature-research-region"/>
+    <text x="553.0" y="615.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Features + directions</text>
+    <text x="553.0" y="640.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">What is represented?</text>
+    <rect x="774" y="580" width="374" height="82" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5" id="mechanism-research-region"/>
+    <text x="961.0" y="615.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Superposition + circuits</text>
+    <text x="961.0" y="640.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">How is it stored and used?</text>
   </g>
-  <!-- Shafts end inside the separate arrowhead bases; tips meet target borders. -->
-  <g id="overview-flow">
-    <path class="connector" d="M179 151 H205"/><polygon class="head" points="218,151 204,144 204,158"/>
-    <path class="connector" d="M369 151 H395"/><polygon class="head" points="408,151 394,144 394,158"/>
-    <path class="connector" d="M569 151 H595"/><polygon class="head" points="608,151 594,144 594,158"/>
-    <path class="connector" d="M833 151 H859"/><polygon class="head" points="872,151 858,144 858,158"/>
+  <g id="topic-detail">
+    <!-- Topic-specific worked example; the upper concept map provides its context. -->
+    <path data-connector="true" d="M28 692 H1172" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="28" y="733" font-size="25" font-weight="700" fill="#172033" text-anchor="start">MLPs + experts · transform each token’s vector</text>
+    <rect x="28" y="775" width="522" height="138" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="289.0" y="813.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Dense MLP · same weights for every position</text>
+    <text x="289.0" y="838.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">[2, 1] → [3, −1, 2] → [3, 0, 2] → [5, 3]</text>
+    <text x="289.0" y="863.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">expand → nonlinear rule → project back</text>
+    <text x="289.0" y="888.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">Toy values; ReLU is the nonlinear rule here.</text>
+    <rect x="594" y="775" width="578" height="138" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="883.0" y="813.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Sparse MoE · router selects a few MLPs</text>
+    <text x="883.0" y="838.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">token → router → experts 1 and 3</text>
+    <text x="883.0" y="863.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">0.75 × expert 1 + 0.25 × expert 3 → update</text>
+    <text x="883.0" y="888.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">Other experts are stored but inactive for this token.</text>
+    <text x="28" y="956" font-size="20" font-weight="700" fill="#172033" text-anchor="start">Both paths produce a same-width update for one token; attention already supplied context.</text>
   </g>
-  <!-- Enlarged block separates information sharing from per-position processing. -->
-  <g id="two-jobs-in-one-block">
-    <rect x="28" y="228" width="1044" height="180" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
-    <text class="label" x="550" y="263">Inside each block in this decoder-only model</text>
-    <rect x="56" y="286" width="450" height="96" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
-    <text class="label" x="281" y="318">1. Attention</text>
-    <text class="body" x="281" y="350">Gathers information from</text>
-    <text class="body" x="281" y="374">current and earlier positions</text>
-    <rect x="594" y="286" width="450" height="96" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
-    <text class="label" x="819" y="318">2. MLP (multilayer perceptron)</text>
-    <text class="body" x="819" y="350">Works on the information</text>
-    <text class="body" x="819" y="374">at each position separately</text>
-    <path class="connector" d="M507 334 H581"/><polygon class="head" points="594,334 580,327 580,341"/>
-  </g>
-  <!-- Explicit simplification keeps the overview from replacing the detailed block diagram. -->
-  <text class="note" x="550" y="441">Both jobs add updates to the running vectors. The next block repeats these two jobs.</text>
-  <text class="note" x="550" y="468">Normalization and the additions are omitted here to show the order clearly.</text>
 </svg>

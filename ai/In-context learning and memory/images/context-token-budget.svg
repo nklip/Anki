@@ -1,59 +1,54 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="620" viewBox="0 0 900 620" role="img" aria-labelledby="title desc">
-  <title id="title">Plan a context window with room for input and new output</title>
-  <desc id="desc">An invented shared context window holds 4,000 tokens. The input uses 500 tokens for instructions, tools, and formatting, 1,500 for selected messages including the question, and 500 for retrieved notes. The input total is 2,500. Reserving capacity for up to 1,000 generated tokens leaves 500 spare. The output reservation and spare capacity are not input tokens or material the model has already generated. Colored input segments use 2,500 of 4,000 units; white segments show the remaining capacity.</desc>
-  <!-- Each 100-unit segment width equals 500 tokens; white segments are unoccupied capacity. -->
-  <defs>
-    <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-      .title { font-size: 29px; font-weight: 700; }
-      .subtitle { font-size: 19px; fill: #475569; }
-      .label { font-size: 23px; font-weight: 700; text-anchor: middle; }
-      .body { font-size: 21px; }
-      .note { font-size: 19px; text-anchor: middle; }
-      .number { font-size: 26px; text-anchor: middle; }
-      .math { font-size: 25px; text-anchor: middle; }
-    </style>
-  </defs>
-  <rect width="900" height="620" fill="#ffffff"/>
-
-  <!-- This is a capacity illustration, not a named model's specification or a measured tokenizer result. -->
-  <text class="title" x="28" y="44">Plan space for input and new output</text>
-  <text class="subtitle" x="28" y="77">Invented 4,000-token window · Input and generation share the limit</text>
-  <g id="capacity-bar">
-    <text class="label" x="300" y="126">Input: 2,500</text>
-    <text class="note" x="650" y="126">Output reserve</text>
-    <text class="note" x="800" y="126">Spare</text>
-    <rect x="50" y="148" width="100" height="68" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-    <rect x="150" y="148" width="300" height="68" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
-    <rect x="450" y="148" width="100" height="68" fill="#d1fae5" stroke="#059669" stroke-width="2"/>
-    <rect x="550" y="148" width="200" height="68" fill="#ffffff" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4"/>
-    <rect x="750" y="148" width="100" height="68" fill="#ffffff" stroke="#64748b" stroke-width="2" stroke-dasharray="7 4"/>
-    <text class="number" x="100" y="191">500</text>
-    <text class="number" x="300" y="191">1,500</text>
-    <text class="number" x="500" y="191">500</text>
-    <text class="number" x="650" y="191">1,000</text>
-    <text class="number" x="800" y="191">500</text>
-  </g>
-
-  <!-- The legend defines every segment, including the empty reservation and margin. -->
-  <g id="budget-components">
-    <rect x="50" y="248" width="22" height="22" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
-    <text class="body" x="90" y="267">500 input tokens: instructions, tools, and formatting</text>
-    <rect x="50" y="288" width="22" height="22" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
-    <text class="body" x="90" y="307">1,500 input tokens: selected messages, including the question</text>
-    <rect x="50" y="328" width="22" height="22" fill="#d1fae5" stroke="#059669" stroke-width="2"/>
-    <text class="body" x="90" y="347">500 input tokens: retrieved notes</text>
-    <rect x="50" y="368" width="22" height="22" fill="#ffffff" stroke="#c2410c" stroke-width="2" stroke-dasharray="5 3"/>
-    <text class="body" x="90" y="387">Reserve for up to 1,000 new output tokens</text>
-    <rect x="50" y="408" width="22" height="22" fill="#ffffff" stroke="#64748b" stroke-width="2" stroke-dasharray="5 3"/>
-    <text class="body" x="90" y="427">500 tokens of spare capacity</text>
-  </g>
-
-  <!-- Two arithmetic lines connect the colored input sum to the leftover capacity. -->
-  <g id="capacity-arithmetic">
-    <rect x="28" y="456" width="844" height="106" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
-    <text class="math" x="450" y="497">Input: 500 + 1,500 + 500 = 2,500 tokens</text>
-    <text class="math" x="450" y="538">Spare: 4,000 − 2,500 − 1,000 = 500 tokens</text>
-  </g>
-  <text class="note" x="450" y="599">White segments are empty capacity. All counts are illustrative.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="968.181818181818182" viewBox="0 0 1100 710" role="img" aria-labelledby="title desc">
+<title id="title">Context, tokens, and context-window capacity</title>
+<desc id="desc">A 4,000-token toy budget contains 2,800 input tokens, 1,000 tokens reserved for output, and 200 spare. Dashed regions are empty capacity, not existing tokens. Cached input still counts.</desc>
+<!-- Shared typography; all teaching content remains editable SVG text. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1100" height="710" fill="#ffffff"/>
+<text x="30" y="44" font-size="30" font-weight="700" text-anchor="start" fill="#172033">The context window is a capacity limit</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">Context is the supplied input plus output generated so far. The window is how much can fit.</text>
+<!-- Token unit. -->
+<g id="token-unit">
+<rect x="30" y="111" width="1040" height="85" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="50" y="146" font-size="22" font-weight="700" text-anchor="start" fill="#172033">Token = a unit of encoded input or output, often a word or a piece of a word.</text>
+<text x="50" y="178" font-size="20" font-weight="400" text-anchor="start" fill="#172033">The application budgets tokens; displayed characters and words are not interchangeable with tokens.</text>
+</g>
+<text x="30" y="237" font-size="26" font-weight="700" text-anchor="start" fill="#172033">Toy context window: 4,000 tokens</text>
+<rect x="30" y="264" width="156.0" height="72" fill="#dbeafe" stroke="#64748b" stroke-width="1.5"/><rect x="186.0" y="264" width="364.0" height="72" fill="#bfdbfe" stroke="#64748b" stroke-width="1.5"/><rect x="550.0" y="264" width="208.0" height="72" fill="#93c5fd" stroke="#64748b" stroke-width="1.5"/><rect x="758.0" y="264" width="260.0" height="72" fill="#ffffff" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6 4"/><rect x="1018.0" y="264" width="52.0" height="72" fill="#ffffff" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6 4"/><!-- Instructions. -->
+<g id="instructions">
+<rect x="30" y="370" width="192" height="107" rx="12" fill="#dbeafe" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="46" y="405" font-size="20" font-weight="700" text-anchor="start" fill="#172033">Instructions</text>
+<text x="46" y="444" font-size="23" font-weight="700" text-anchor="start" fill="#172033">600 tokens</text>
+</g>
+<!-- Selected history. -->
+<g id="selected-history">
+<rect x="242" y="370" width="192" height="107" rx="12" fill="#bfdbfe" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="258" y="405" font-size="20" font-weight="700" text-anchor="start" fill="#172033">Selected history</text>
+<text x="258" y="444" font-size="23" font-weight="700" text-anchor="start" fill="#172033">1,400 tokens</text>
+</g>
+<!-- Retrieved notes. -->
+<g id="retrieved-notes">
+<rect x="454" y="370" width="192" height="107" rx="12" fill="#93c5fd" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="470" y="405" font-size="20" font-weight="700" text-anchor="start" fill="#172033">Retrieved notes</text>
+<text x="470" y="444" font-size="23" font-weight="700" text-anchor="start" fill="#172033">800 tokens</text>
+</g>
+<!-- Reply reserve. -->
+<g id="reply-reserve">
+<rect x="666" y="370" width="192" height="107" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="682" y="405" font-size="20" font-weight="700" text-anchor="start" fill="#172033">Reply reserve</text>
+<text x="682" y="444" font-size="23" font-weight="700" text-anchor="start" fill="#172033">1,000 tokens</text>
+</g>
+<!-- Spare. -->
+<g id="spare">
+<rect x="878" y="370" width="192" height="107" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="894" y="405" font-size="20" font-weight="700" text-anchor="start" fill="#172033">Spare</text>
+<text x="894" y="444" font-size="23" font-weight="700" text-anchor="start" fill="#172033">200 tokens</text>
+</g>
+<!-- Budget accounting. -->
+<g id="budget-accounting">
+<rect x="30" y="510" width="1040" height="130" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="50" y="548" font-size="24" font-weight="700" text-anchor="start" fill="#172033">2,800 supplied input + 1,000 reply reserve + 200 spare = 4,000 capacity</text>
+<text x="50" y="585" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Dashed space is still empty. Generated output consumes space as it grows.</text>
+<text x="50" y="616" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Cached input still occupies the window; a cache does not make its tokens disappear.</text>
+</g>
+<text x="30" y="679" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Illustrative budget. Real context and output limits depend on the model and service.</text>
 </svg>

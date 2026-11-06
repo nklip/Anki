@@ -1,58 +1,78 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="611" viewBox="0 0 1100 611" role="img" aria-labelledby="title desc">
-  <title id="title">Edit, receive the result, then test again</title>
-  <desc id="desc">Read downward. With the failure in context, the model requests replacing addition with multiplication. The runtime checks and saves the edit, then returns saved. A later model call requests tests. The runtime executes the saved code and returns both passing results: three times four is twelve and zero times four is zero. The results enter later model calls; the model weights stay fixed.</desc>
-  <!-- Original simplified SVG inspired by the concepts in the official figure, not a reproduction.
-       Source: https://www.anthropic.com/research/building-effective-agents
-       Figure: https://www-cdn.anthropic.com/images/4zrzovbb/website/4b9a1f4eb63d5962a6e1746ac26bbc857cf3474f-2400x1666.png -->
-  <!-- Shared definitions preserve the visual language of the AI series. -->
-  <defs><style>
-    text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-    .title { font-size: 28px; font-weight: 700; }
-    .subtitle, .note { font-size: 19px; fill: #475569; }
-    .label { font-size: 22px; font-weight: 700; }
-    .body { font-size: 20px; }
-    .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
-    .head { fill: #64748b; }
-    .lifeline { stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 5 5; }
-  </style></defs>
-  <rect width="1100" height="611" fill="#ffffff"/>
-  <!-- Heading states the lesson and reading order. -->
-  <text class="title" x="28" y="43" text-anchor="start">Edit, receive the result, then test again</text>
-  <text class="subtitle" x="28" y="76" text-anchor="start">Step 4: read downward. Start with the failure: expected 12, got 7.</text>
-  <!-- model column; labels remain inside this panel. -->
-  <g id="model-column">
-    <rect x="28" y="106" width="250" height="60" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
-  <text class="label" x="153.0" y="140" text-anchor="middle">Model calls</text>
-  </g>
-  <!-- execution column; labels remain inside this panel. -->
-  <g id="execution-column">
-    <rect x="778" y="106" width="294" height="60" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-  <text class="label" x="925.0" y="140" text-anchor="middle">Runtime + tools</text>
-  </g>
-  <!-- Lifelines represent time, not flow arrows. Execution panels cover their own lifeline. -->
-  <line class="lifeline" x1="153" y1="167" x2="153" y2="554"/>
-  <line class="lifeline" x1="925" y1="167" x2="925" y2="554"/>
-  <text class="label" x="530" y="203" text-anchor="middle">1. Request: replace + with *</text>
-  <!-- edit-request: the shaft ends inside its head; the nose meets the target boundary. -->
-  <g id="edit-request"><path class="connector" d="M154 224 L913 224"/><polygon class="head" points="925,224 912,218 912,230"/></g>
-  <!-- execute edit; labels remain inside this panel. -->
-  <g id="execute-edit">
-    <rect x="778" y="244" width="294" height="50" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-  <text class="label" x="925.0" y="278" text-anchor="middle">Check and save the edit</text>
-  </g>
-  <text class="label" x="530" y="325" text-anchor="middle">2. Result: saved; not yet tested</text>
-  <!-- edit-result-to-model: the shaft ends inside its head; the nose meets the target boundary. -->
-  <g id="edit-result-to-model"><path class="connector" d="M924 346 L165 346"/><polygon class="head" points="153,346 166,340 166,352"/></g>
-  <text class="label" x="530" y="395" text-anchor="middle">3. Next model call requests tests</text>
-  <!-- test-request: the shaft ends inside its head; the nose meets the target boundary. -->
-  <g id="test-request"><path class="connector" d="M154 416 L913 416"/><polygon class="head" points="925,416 912,410 912,422"/></g>
-  <!-- execute tests; labels remain inside this panel. -->
-  <g id="execute-tests">
-    <rect x="778" y="436" width="294" height="50" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-  <text class="label" x="925.0" y="470" text-anchor="middle">Run the saved code</text>
-  </g>
-  <text class="label" x="530" y="518" text-anchor="middle">4. Tests pass: 3 × 4 = 12; 0 × 4 = 0</text>
-  <!-- test-results-to-model: the shaft ends inside its head; the nose meets the target boundary. -->
-  <g id="test-results-to-model"><path class="connector" d="M924 539 L165 539"/><polygon class="head" points="153,539 166,533 166,545"/></g>
-  <text class="note" x="550" y="583" text-anchor="middle">Each result enters a later model call. The context changes; the weights stay fixed.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="906.818182" viewBox="0 0 1100 665" role="img" aria-labelledby="title desc">
+<title id="title">Edit the code and test the saved revision</title>
+<desc id="desc">The model requests multiplication, the runtime authorizes an edit, and the tool writes the file. After that result enters a new context, a later model request runs both supplied tests against the saved revision. Both pass.</desc>
+<!-- Shared native text and typography. Shafts end inside separate arrowhead bases. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1100" height="665" fill="#ffffff"/>
+<text x="30" y="44" font-size="29" font-weight="700" text-anchor="start" fill="#172033">Revise the file, then make a later request to test the saved version</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">Each row is a separate model request, tool execution, and returned result. Read the upper row first.</text>
+<!-- Edit request; preserve reading order and text clearance. -->
+<g id="edit-request">
+<rect x="30" y="126" width="300" height="195" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="164" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Model requests edit</text>
+<text x="50" y="205" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Context includes failing tests.</text>
+<text x="50" y="237" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Replace + with *</text>
+<text x="50" y="269" font-size="20" font-weight="400" text-anchor="start" fill="#172033">in total_items.</text>
+<text x="50" y="301" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Inputs specify the change.</text>
+</g>
+<!-- Actual edit; preserve reading order and text clearance. -->
+<g id="actual-edit">
+<rect x="400" y="126" width="300" height="195" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="420" y="164" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Runtime + edit tool</text>
+<text x="420" y="205" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Check inputs and permission.</text>
+<text x="420" y="237" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Write marbles.py:</text>
+<text x="420" y="269" font-size="20" font-weight="400" text-anchor="start" fill="#172033">return bags * per_bag</text>
+<text x="420" y="301" font-size="20" font-weight="400" text-anchor="start" fill="#172033">* means multiplication.</text>
+</g>
+<!-- Edit result; preserve reading order and text clearance. -->
+<g id="edit-result">
+<rect x="770" y="126" width="300" height="195" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="790" y="164" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Edit result</text>
+<text x="790" y="205" font-size="20" font-weight="400" text-anchor="start" fill="#172033">The file was written.</text>
+<text x="790" y="237" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Return the matched receipt.</text>
+<text x="790" y="269" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Include it in the next input.</text>
+<text x="790" y="301" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Tests still need to run.</text>
+</g>
+<!-- Edit flow; preserve reading order and text clearance. -->
+<g id="edit-flow">
+<path data-connector="true" d="M 330,228 L 389,228" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="400,228 388,234 388,222" fill="#64748b"/>
+<path data-connector="true" d="M 700,228 L 759,228" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="770,228 758,234 758,222" fill="#64748b"/>
+</g>
+<!-- Retest request; preserve reading order and text clearance. -->
+<g id="retest-request">
+<rect x="30" y="386" width="300" height="195" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="424" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Later model request</text>
+<text x="50" y="465" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Tool: run_tests</text>
+<text x="50" y="497" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Path argument: marbles.py</text>
+<text x="50" y="529" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Test the saved file.</text>
+<text x="50" y="561" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Use the new test output.</text>
+</g>
+<!-- Test execution; preserve reading order and text clearance. -->
+<g id="test-execution">
+<rect x="400" y="386" width="300" height="195" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="420" y="424" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Runtime + test tool</text>
+<text x="420" y="465" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Check and execute again.</text>
+<text x="420" y="497" font-size="20" font-weight="400" text-anchor="start" fill="#172033">(3, 4): expected 12, got 12</text>
+<text x="420" y="529" font-size="20" font-weight="400" text-anchor="start" fill="#172033">(0, 4): expected 0, got 0</text>
+<text x="420" y="561" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Both supplied tests pass.</text>
+</g>
+<!-- Test result; preserve reading order and text clearance. -->
+<g id="test-result">
+<rect x="770" y="386" width="300" height="195" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="790" y="424" font-size="24" font-weight="700" text-anchor="start" fill="#172033">New test result</text>
+<text x="790" y="465" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Return the fresh test report.</text>
+<text x="790" y="497" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Include it in the next input.</text>
+<text x="790" y="529" font-size="20" font-weight="400" text-anchor="start" fill="#172033">The model can now report</text>
+<text x="790" y="561" font-size="20" font-weight="400" text-anchor="start" fill="#172033">what this run checked.</text>
+</g>
+<!-- Retest flow; preserve reading order and text clearance. -->
+<g id="retest-flow">
+<path data-connector="true" d="M 330,488 L 389,488" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="400,488 388,494 388,482" fill="#64748b"/>
+<path data-connector="true" d="M 700,488 L 759,488" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="770,488 758,494 758,482" fill="#64748b"/>
+</g>
+<text x="30" y="632" font-size="21" font-weight="700" text-anchor="start" fill="#172033">The changed file and new tool results are state changes. The model weights remain fixed.</text>
 </svg>

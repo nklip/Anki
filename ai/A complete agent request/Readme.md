@@ -1,78 +1,86 @@
-# Agents: A complete agent request, explained at every level
+# Agents: A complete request, from input to checked result
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-**An agent alternates model computation with tool execution.** The model requests actions; software executes them and returns evidence. Follow one repair to a checked file.
+**An agent alternates model computation with tool execution.** Task: “Fix `total_items` in `marbles.py` to count marbles in equal-sized bags, and run its tests.”
 
-Our task: **“Fix `total_items` in `marbles.py` to count marbles in equal-sized bags, and run its tests.”** The file starts with:
+## Where this fits
+
+The shared map highlights **the final report**: the result delivered after a complete run. The worked repair follows every stage, connecting a changed file and test evidence to a limited claim of completion.
+
+![where-this-fits.svg](images/where-this-fits.svg)
+
+## Before the run
 
 ```python
 def total_items(bags, per_bag):
     return bags + per_bag
 ```
 
-`bags` counts bags; `per_bag` counts marbles in each. `return` gives back the answer. Adding these numbers is the bug.
+`bags` counts bags; `per_bag` counts marbles per bag; `return` gives the answer. Adding the inputs is the bug.
 
-**Training** shaped language skills and instruction following by changing **weights**, saved numerical settings. We follow a Llama-style decoder-only transformer, which continues a token sequence. **Inference** uses those weights, which stay fixed here.
+**Training** changes **weights**, saved numerical settings. **Inference** uses fixed weights to compute temporary **activations**; **tools** execute outside the model. This toy Llama-style causal model continues a token sequence; it is not a benchmark.
 
-## Step 1 — Prepare the model's input
+![training-inference-tools.svg](images/training-inference-tools.svg)
+
+## Step 1 — Assemble the input
 
 ![assemble-the-input.svg](images/assemble-the-input.svg)
 
-The **runtime**, the coordinating application, reads the file and supplied tests through allowed tools. It assembles the **context**, the model input: the goal, instructions, file contents, and tool descriptions with input rules.
+The **runtime**, the coordinating application, obtains the file and tests through tools. Follow four inputs into the **context**, input for one model call. Tool definitions describe operations and input rules; they do not execute code ([Tool calls](../Tool%20calls/Readme.md)).
 
-A filename alone would not reveal its contents. Tool descriptions explain how to request actions; executable tools live outside the model.
+## Step 2 — Compute and generate a request
 
-## Step 2 — Calculate and generate a request
+![chat-tokens-embeddings.svg](images/chat-tokens-embeddings.svg)
+
+Follow chat formatting → tokenizer → embedding lookup. **Tokens** are pieces or special markers; **IDs** identify those tokens. A **vector** is a number list. Splits, IDs, and vectors here are invented.
 
 ![inside-the-model-call.svg](images/inside-the-model-call.svg)
 
-Read the top row, then the lower row. Chat formatting marks who said what. A **tokenizer** turns text into numbered pieces called **tokens**, which need not be whole words.
+**Attention** mixes information from current and earlier positions. Position information represents token order. Repeated model blocks transform the vectors; the last position produces **logits**, scores for possible next tokens.
 
-An embedding lookup turns each token ID into a **vector**, a list of numbers. Transformer blocks update them: **attention** mixes information from current and earlier positions; other learned calculations transform each position's information. Position information supplies order.
+![scores-and-selection.svg](images/scores-and-selection.svg)
 
-The last position's vector produces **logits**, next-token scores. **Softmax** turns them into probabilities. **Greedy decoding** takes the favorite; **sampling** draws randomly, like a raffle giving likely tokens more tickets. These chances concern tokens, not whether the repair is correct.
+**Softmax** converts scores to probabilities. **Greedy decoding** picks the highest score; **sampling** draws using the probabilities. These toy token probabilities are not repair-confidence scores ([Decoding](../Decoding%20and%20sampling/Readme.md)).
 
-The chosen token joins the sequence, and generation repeats. A **cache** reuses saved attention calculations. Here, the output becomes a structured request to run tests. Generating it has not executed Python.
+![kv-cache-timing.svg](images/kv-cache-timing.svg)
 
-## Step 3 — Execute and return the failure
+A **key-value (KV) cache** stores attention numbers for processed positions. Only processing C adds its keys and values; selecting C does not. Generation repeats until a request is complete; producing `run_tests` has not run Python.
+
+## Step 3 — Execute and observe the failure
 
 ![execute-and-observe.svg](images/execute-and-observe.svg)
 
-The runtime checks the tool's inputs and permissions, then runs the test tool. One test reports **expected 12, got 7**. Three bags holding four marbles each contain **4 + 4 + 4 = 12**. The buggy function instead calculates **3 + 4 = 7**.
+The runtime checks **arguments** (inputs) for format (**validation**) and permission (**authorization**), then runs tests. A **call ID** matches result to request before it enters the next context.
 
-The runtime pairs the result with its tool-call identifier and includes it in the next input. The model observes the failure through this result.
+Read both rows: three bags of four require **4 + 4 + 4 = 12**, but addition gives **3 + 4 = 7**. Zero bags require zero; addition gives four.
 
-## Step 4 — Revise, then test again
+## Step 4 — Revise and retest
 
 ![revise-and-retest.svg](images/revise-and-retest.svg)
 
-Read downward: requests go right; results return left. With the failure in context, the model requests replacing `+` with `*`. The runtime checks and applies the edit:
+Read the upper row, then the lower. The model requests replacing `+` with `*`; the runtime checks and applies the edit:
 
 ```python
 def total_items(bags, per_bag):
     return bags * per_bag
 ```
 
-Python's `*` means multiplication: `3 * 4` counts three groups of four. After the edit result, a later model call requests tests again. The runtime runs them: three bags of four give 12; zero bags of four give zero. Both pass.
-
-Each model call uses the computation from step 2. The context and **activations**, temporary numbers computed for that input, change. The file changes when the editing tool runs. **Test feedback does not update the model's weights.**
+`*` means multiplication. After the edit result, a later call requests fresh tests: `(3, 4)` gives 12 and `(0, 4)` gives zero. Both pass. The file, context, and activations change; **test feedback does not update model weights** ([Agent loop](../The%20agent%20loop/Readme.md)).
 
 ## Step 5 — Report the checked result
 
 ![checked-final-answer.svg](images/checked-final-answer.svg)
 
-The next model call receives the passing results and produces a final reply: **“Changed addition to multiplication in `marbles.py`. Both supplied tests pass.”** The runtime delivers it and ends this run.
-
-This reports evidence from those tests, not proof for every possible input. Training shaped the model's behavior; inference generated requests and replies; tools changed and checked the file. Those are three different kinds of work.
+Follow evidence → reply → scope. With the new test results, the model reports: **“Changed addition to multiplication in `marbles.py`. Both supplied tests pass.”** The runtime delivers it and ends this run. These tests do not prove correctness for every input.
 
 # Sources
 
 - [Ouyang et al.: instruction training](https://arxiv.org/abs/2203.02155)
-- [Brown et al.: learning from context](https://arxiv.org/abs/2005.14165)
-- [Hugging Face: chat tokens](https://huggingface.co/docs/transformers/chat_templating)
-- [Meta: transformer and cache](https://github.com/meta-llama/llama3/blob/main/llama/model.py)
+- [Hugging Face: chat formatting](https://huggingface.co/docs/transformers/chat_templating)
+- [Meta: model computation](https://github.com/meta-llama/llama3/blob/main/llama/model.py)
 - [Hugging Face: decoding](https://huggingface.co/docs/transformers/en/generation_strategies)
+- [Hugging Face: KV caching](https://huggingface.co/docs/transformers/en/cache_explanation)
 - [Claude: tool execution](https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works)
-- [Anthropic: outcomes](https://www.anthropic.com/research/demystifying-evals-for-ai-agents)
-- [Anthropic: coding-agent sequence (diagram reference)](https://www.anthropic.com/research/building-effective-agents)
+- [Anthropic: outcome evidence](https://www.anthropic.com/research/demystifying-evals-for-ai-agents)
+- [Anthropic: coding-agent diagram](https://www.anthropic.com/research/building-effective-agents)

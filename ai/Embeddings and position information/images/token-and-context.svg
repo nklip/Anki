@@ -1,67 +1,64 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="596" viewBox="0 0 900 596" role="img" aria-labelledby="title desc">
-  <title id="title">The same token can develop different representations</title>
-  <desc id="desc">In two invented examples, bank has token ID 17 and the same lookup vector [2, 1]. Transformer blocks process the full phrase river bank in the first case and savings bank in the second. The later vector at bank is [3, 0] in the first example and [0, 3] in the second. Weights stay unchanged. The values are illustrative and the dimensions are not assigned labels such as water and money.</desc>
-  <!-- Purple shows table lookup values, orange the blocks, and green later activations. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="916.363636363636364" viewBox="0 0 1100 672" role="img" aria-labelledby="title desc">
+  <title id="title">The lookup is fixed; the working vector gains context</title>
+  <desc id="desc">Token ID 17 selects row 17, vector 2,1, from a learned embedding table. In two prefixes river bank and savings bank, the same token gets the same initial vector but different illustrative hidden states at a later layer. A vector is a list of numbers.</desc>
+  <!-- Typography and palette shared across the internals series. -->
   <defs>
-    <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-      .title { font-size: 29px; font-weight: 700; }
-      .subtitle { font-size: 19px; fill: #475569; }
-      .label { font-size: 21px; font-weight: 700; text-anchor: middle; }
-      .body { font-size: 21px; text-anchor: middle; }
-      .value { font-size: 30px; text-anchor: middle; }
-      .note { font-size: 19px; text-anchor: middle; }
-      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
-      .head { fill: #64748b; }
-    </style>
+    <style>text { font-family: Arial, Helvetica, sans-serif; }</style>
   </defs>
-  <rect width="900" height="596" fill="#ffffff"/>
-
-  <!-- Only bank is tracked; full phrases, including the earlier token, enter the blocks. -->
-  <text class="title" x="28" y="44">Same token, different context</text>
-  <text class="subtitle" x="28" y="76">Focus on bank; other token vectors also enter the transformer blocks.</text>
-  <text class="label" x="140.5" y="136">Lookup vector</text>
-  <text class="label" x="450" y="136">Same model weights</text>
-  <text class="label" x="761" y="136">Later vector at bank</text>
-
-  <!-- The first input provides river as earlier context. -->
-  <g id="river-context">
-    <rect x="28" y="175" width="225" height="110" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
-    <text class="body" x="140.5" y="211">bank · ID 17</text>
-    <text class="value" x="140.5" y="257">[2, 1]</text>
-    <rect x="335" y="175" width="230" height="110" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
-    <text class="body" x="450" y="216">Blocks process</text>
-    <text class="label" x="450" y="253">river bank</text>
-    <rect x="650" y="175" width="222" height="110" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-    <text class="value" x="761" y="241">[3, 0]</text>
-  </g>
-
-  <!-- The second input changes context without changing the token-table row. -->
-  <g id="savings-context">
-    <rect x="28" y="334" width="225" height="110" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
-    <text class="body" x="140.5" y="370">bank · ID 17</text>
-    <text class="value" x="140.5" y="416">[2, 1]</text>
-    <rect x="335" y="334" width="230" height="110" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
-    <text class="body" x="450" y="375">Blocks process</text>
-    <text class="label" x="450" y="412">savings bank</text>
-    <rect x="650" y="334" width="222" height="110" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-    <text class="value" x="761" y="400">[0, 3]</text>
-  </g>
-
-  <!-- Shafts end inside triangle bases; tips meet target edges without entering the fill. -->
-  <g id="context-flow">
-    <line class="connector" x1="254" y1="230" x2="322" y2="230"/>
-    <polygon class="head" points="335,230 321,223 321,237"/>
-    <line class="connector" x1="566" y1="230" x2="637" y2="230"/>
-    <polygon class="head" points="650,230 636,223 636,237"/>
-    <line class="connector" x1="254" y1="389" x2="322" y2="389"/>
-    <polygon class="head" points="335,389 321,382 321,396"/>
-    <line class="connector" x1="566" y1="389" x2="637" y2="389"/>
-    <polygon class="head" points="650,389 636,382 636,396"/>
-  </g>
-
-  <!-- Explicit qualifiers keep the illustrative numbers from implying named semantic axes. -->
-  <text class="note" x="450" y="498">Same token ID → same lookup vector.</text>
-  <text class="note" x="450" y="532">Different earlier context → potentially different later vector.</text>
-  <text class="note" x="450" y="566">Toy IDs and numbers; the vector slots have no assigned meaning.</text>
+  <rect width="1100" height="672" fill="#ffffff"/>
+  <text x="32" y="46" font-size="30" font-weight="700" fill="#172033" text-anchor="start">The lookup is fixed; the working vector gains context</text>
+  <text x="32" y="79" font-size="18" font-weight="400" fill="#64748b" text-anchor="start">LOCATION  Token IDs → embedding-table lookup → transformer blocks → contextual vectors</text>
+  <!-- A table lookup uses the ID, never the surrounding words. -->
+  <text x="32" y="128" font-size="22" font-weight="700" fill="#2563eb" text-anchor="start">TOKEN EMBEDDING TABLE · learned rows indexed by ID</text>
+  <rect x="32" y="160" width="192" height="58" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="128.0" y="198" font-size="27" font-weight="600" fill="#172033" text-anchor="middle">ID 17</text>
+  <path data-connector="true" d="M244 189 L292.0 189.0" fill="none" stroke="#64748b" stroke-width="2"/>
+  <polygon points="303,189 291.0,194.0 291.0,184.0" fill="#64748b"/>
+  <rect x="324" y="145" width="394" height="155" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="358" y="182" font-size="23" font-weight="600" fill="#172033" text-anchor="start">16</text>
+  <text x="494" y="182" font-size="23" font-weight="600" fill="#172033" text-anchor="start">[0, 3]</text>
+  <rect x="337" y="198" width="368" height="39" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="358" y="225" font-size="23" font-weight="600" fill="#172033" text-anchor="start">17</text>
+  <text x="494" y="225" font-size="23" font-weight="600" fill="#172033" text-anchor="start">[2, 1]</text>
+  <text x="358" y="268" font-size="23" font-weight="600" fill="#172033" text-anchor="start">18</text>
+  <text x="494" y="268" font-size="23" font-weight="600" fill="#172033" text-anchor="start">[1, −1]</text>
+  <path data-connector="true" d="M738 222 L787.0 222.0" fill="none" stroke="#64748b" stroke-width="2"/>
+  <polygon points="798,222 786.0,227.0 786.0,217.0" fill="#64748b"/>
+  <rect x="819" y="193" width="249" height="58" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="943.5" y="231" font-size="29" font-weight="600" fill="#172033" text-anchor="middle">[2, 1]</text>
+  <text x="819" y="280" font-size="18" font-weight="400" fill="#172033" text-anchor="start">A vector = a list of numbers</text>
+  <!-- Hidden states at a chosen later layer depend on the prefix, unlike lookup rows. -->
+  <text x="32" y="360" font-size="21" font-weight="700" fill="#2563eb" text-anchor="start">CONTEXTUAL REPRESENTATION / HIDDEN STATE · a later working vector</text>
+  <rect x="32" y="392" width="235" height="58" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="149.5" y="430" font-size="24" font-weight="600" fill="#172033" text-anchor="middle">river bank</text>
+  <path data-connector="true" d="M285 421 L317.0 421.0" fill="none" stroke="#64748b" stroke-width="2"/>
+  <polygon points="328,421 316.0,426.0 316.0,416.0" fill="#64748b"/>
+  <rect x="348" y="392" width="180" height="58" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="438.0" y="430" font-size="26" font-weight="600" fill="#172033" text-anchor="middle">[2, 1]</text>
+  <path data-connector="true" d="M548 421 L577.0 421.0" fill="none" stroke="#64748b" stroke-width="2"/>
+  <polygon points="588,421 576.0,426.0 576.0,416.0" fill="#64748b"/>
+  <rect x="608" y="392" width="224" height="58" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="720" y="429" font-size="20" font-weight="600" fill="#172033" text-anchor="middle">Transformer blocks</text>
+  <path data-connector="true" d="M851 421 L880.0 421.0" fill="none" stroke="#64748b" stroke-width="2"/>
+  <polygon points="891,421 879.0,426.0 879.0,416.0" fill="#64748b"/>
+  <rect x="911" y="392" width="157" height="58" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="989.5" y="430" font-size="25" font-weight="600" fill="#172033" text-anchor="middle">[4, 1]</text>
+  <rect x="32" y="500" width="235" height="58" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="149.5" y="538" font-size="24" font-weight="600" fill="#172033" text-anchor="middle">savings bank</text>
+  <path data-connector="true" d="M285 529 L317.0 529.0" fill="none" stroke="#64748b" stroke-width="2"/>
+  <polygon points="328,529 316.0,534.0 316.0,524.0" fill="#64748b"/>
+  <rect x="348" y="500" width="180" height="58" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="438.0" y="538" font-size="26" font-weight="600" fill="#172033" text-anchor="middle">[2, 1]</text>
+  <path data-connector="true" d="M548 529 L577.0 529.0" fill="none" stroke="#64748b" stroke-width="2"/>
+  <polygon points="588,529 576.0,534.0 576.0,524.0" fill="#64748b"/>
+  <rect x="608" y="500" width="224" height="58" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="720" y="537" font-size="20" font-weight="600" fill="#172033" text-anchor="middle">Transformer blocks</text>
+  <path data-connector="true" d="M851 529 L880.0 529.0" fill="none" stroke="#64748b" stroke-width="2"/>
+  <polygon points="891,529 879.0,534.0 879.0,524.0" fill="#64748b"/>
+  <rect x="911" y="500" width="157" height="58" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="989.5" y="538" font-size="25" font-weight="600" fill="#172033" text-anchor="middle">[1, 5]</text>
+  <text x="348" y="476" font-size="19" font-weight="400" fill="#64748b" text-anchor="start">Same starting vector</text>
+  <text x="896" y="476" font-size="19" font-weight="400" fill="#64748b" text-anchor="start">Different context</text>
+  <text x="32" y="608" font-size="20" font-weight="400" fill="#172033" text-anchor="start">Rows track only bank; blocks also receive vectors for the other prefix tokens.</text>
+  <text x="32" y="642" font-size="20" font-weight="400" fill="#172033" text-anchor="start">Toy values: bank is one token here. Weights stay fixed during use; working vectors change.</text>
 </svg>

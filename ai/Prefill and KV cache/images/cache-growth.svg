@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1100 660" role="img" aria-labelledby="title desc">
+<title id="title">Full attention keeps more cache as the sequence grows</title><desc id="desc">A tiny two-layer model caches two numbers for each key and two for each value in each layer. Three positions require 48 bytes at two bytes per number, and appending a fourth position increases this to 64 bytes. The formula counts layers, positions, separate key/value vectors, numbers per vector, and bytes per number. Modern variants may allocate or retain cache differently.</desc>
+<!-- Shared typography and palette; blue identifies the state under discussion. -->
+<defs><style>text{font-family:Arial,Helvetica,sans-serif;font-size:21px;fill:#172033}.title{font-size:30px;font-weight:700}.head{font-size:23px;font-weight:700}.small{font-size:18px}.muted{fill:#64748b}.blue{fill:#2563eb}.mono{font-family:monospace;font-size:22px}</style></defs>
+<rect width="1100" height="660" fill="white"/>
+<text x="40" y="48" class="title" text-anchor="start">Full attention keeps more cache as the sequence grows</text>
+<text x="40" y="82" class="small muted" text-anchor="start">Toy model: two layers, one key and one value per token in each layer.</text>
+<!-- A concrete position-by-layer grid shows exactly which two cache entries are added for input D. -->
+<text x="40" y="133" class="head" text-anchor="start">After prefill: A B C</text>
+<text x="600" y="133" class="head" text-anchor="start">After the next run: A B C D</text>
+<text x="40" y="189" class="small" text-anchor="start">Layer 1</text>
+<rect  x="40" y="202" width="101" height="48" rx="7" fill="white" stroke="#cbd5e1" stroke-width="2"/>
+<text x="90.5" y="233" class="small" text-anchor="middle">A: K, V</text>
+<rect  x="152" y="202" width="101" height="48" rx="7" fill="white" stroke="#cbd5e1" stroke-width="2"/>
+<text x="202.5" y="233" class="small" text-anchor="middle">B: K, V</text>
+<rect  x="264" y="202" width="101" height="48" rx="7" fill="white" stroke="#cbd5e1" stroke-width="2"/>
+<text x="314.5" y="233" class="small" text-anchor="middle">C: K, V</text>
+<text x="40" y="284" class="small" text-anchor="start">Layer 2</text>
+<rect  x="40" y="297" width="101" height="48" rx="7" fill="white" stroke="#cbd5e1" stroke-width="2"/>
+<text x="90.5" y="328" class="small" text-anchor="middle">A: K, V</text>
+<rect  x="152" y="297" width="101" height="48" rx="7" fill="white" stroke="#cbd5e1" stroke-width="2"/>
+<text x="202.5" y="328" class="small" text-anchor="middle">B: K, V</text>
+<rect  x="264" y="297" width="101" height="48" rx="7" fill="white" stroke="#cbd5e1" stroke-width="2"/>
+<text x="314.5" y="328" class="small" text-anchor="middle">C: K, V</text>
+<text x="600" y="189" class="small" text-anchor="start">Layer 1</text>
+<rect  x="600" y="202" width="101" height="48" rx="7" fill="white" stroke="#cbd5e1" stroke-width="2"/>
+<text x="650.5" y="233" class="small" text-anchor="middle">A: K, V</text>
+<rect  x="712" y="202" width="101" height="48" rx="7" fill="white" stroke="#cbd5e1" stroke-width="2"/>
+<text x="762.5" y="233" class="small" text-anchor="middle">B: K, V</text>
+<rect  x="824" y="202" width="101" height="48" rx="7" fill="white" stroke="#cbd5e1" stroke-width="2"/>
+<text x="874.5" y="233" class="small" text-anchor="middle">C: K, V</text>
+<rect  x="936" y="202" width="101" height="48" rx="7" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="986.5" y="233" class="small blue" text-anchor="middle">D: K, V</text>
+<text x="600" y="284" class="small" text-anchor="start">Layer 2</text>
+<rect  x="600" y="297" width="101" height="48" rx="7" fill="white" stroke="#cbd5e1" stroke-width="2"/>
+<text x="650.5" y="328" class="small" text-anchor="middle">A: K, V</text>
+<rect  x="712" y="297" width="101" height="48" rx="7" fill="white" stroke="#cbd5e1" stroke-width="2"/>
+<text x="762.5" y="328" class="small" text-anchor="middle">B: K, V</text>
+<rect  x="824" y="297" width="101" height="48" rx="7" fill="white" stroke="#cbd5e1" stroke-width="2"/>
+<text x="874.5" y="328" class="small" text-anchor="middle">C: K, V</text>
+<rect  x="936" y="297" width="101" height="48" rx="7" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="986.5" y="328" class="small blue" text-anchor="middle">D: K, V</text>
+<path data-connector="true" d="M410 259 H544" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<polygon points="541,252 555,259 541,266" fill="#2563eb"/>
+<text x="428" y="226" class="small blue" text-anchor="start">input D</text>
+<text x="40" y="387" class="head" text-anchor="start">48 bytes</text>
+<text x="600" y="387" class="head blue" text-anchor="start">64 bytes = 48 bytes + 16 new bytes</text>
+<!-- Explicit unit-carrying factors prevent the toy size from being mistaken for a real model estimate. -->
+<rect id="cache-size-calculation" x="40" y="422" width="1020" height="143" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="62" y="458" class="head" text-anchor="start">Count the stored numbers</text>
+<text x="62" y="499" class="" text-anchor="start">2 layers × 4 tokens × 2 (K and V) × 2 numbers × 2 bytes = 64 bytes</text>
+<text x="62" y="539" class="small" text-anchor="start">Here each key and each value is a vector of two numbers, such as [0.2, 0.8].</text>
+<text x="40" y="604" class="small muted" text-anchor="start">For full attention, the newest query still reads every saved position at each layer.</text>
+<text x="40" y="632" class="small muted" text-anchor="start">Actual sizes depend on model design and number precision; storage and retention strategies can differ.</text>
+</svg>

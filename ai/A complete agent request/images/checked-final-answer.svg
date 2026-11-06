@@ -1,61 +1,52 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="450" viewBox="0 0 1100 450" role="img" aria-labelledby="title desc">
-  <title id="title">The final answer reports what was checked</title>
-  <desc id="desc">Step 5 starts with the saved edit result and two passing test results in context. The model generates a final reply saying addition was changed to multiplication in marbles.py and both supplied tests pass. The runtime delivers that reply and ends the run. The claim is limited to the checked cases, not all possible inputs. Learned weights stay fixed; context and temporary activations change.</desc>
-  <!-- Shared series typography; each panel states its own role. -->
-  <defs>
-    <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-      .title { font-size: 28px; font-weight: 700; }
-      .subtitle { font-size: 19px; fill: #475569; }
-      .label { font-size: 22px; font-weight: 700; }
-      .body { font-size: 20px; }
-      .note { font-size: 19px; fill: #475569; }
-      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
-      .head { fill: #64748b; }
-    </style>
-  </defs>
-  <rect width="1100" height="450" fill="#ffffff"/>
-  <!-- Heading states the lesson before the body introduces its parts. -->
-  <text class="title" x="28" y="43" text-anchor="start">The final answer reports what was checked</text>
-  <text class="subtitle" x="28" y="76" text-anchor="start">Step 5: tool evidence supports the completion report.</text>
-  <!-- Verified run evidence; labels explain the color and role. -->
-  <g id="verified-run-evidence">
-    <rect x="28" y="112" width="304" height="189" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-  <text class="label" x="180.0" y="148" text-anchor="middle">Evidence in context</text>
-  <text class="body" x="180.0" y="194" text-anchor="middle">Edit reported saved</text>
-  <text class="body" x="180.0" y="235" text-anchor="middle">Both supplied tests passed</text>
-  <text class="note" x="180.0" y="276" text-anchor="middle">Results from the tool runs</text>
-  </g>
-  <!-- Final model call; labels explain the color and role. -->
-  <g id="final-model-call">
-    <rect x="394" y="112" width="294" height="189" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
-  <text class="label" x="541.0" y="148" text-anchor="middle">Final model call</text>
-  <text class="note" x="541.0" y="194" text-anchor="middle">Generate a checked report.</text>
-  <text class="body" x="541.0" y="235" text-anchor="middle">Same trained weights</text>
-  <text class="note" x="541.0" y="276" text-anchor="middle">New input and activations</text>
-  </g>
-  <!-- Delivered answer; labels explain the color and role. -->
-  <g id="delivered-answer">
-    <rect x="750" y="112" width="322" height="189" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-  <text class="label" x="911.0" y="148" text-anchor="middle">Reply delivered</text>
-  <text class="body" x="911.0" y="194" text-anchor="middle">“Changed + to * in marbles.py.</text>
-  <text class="body" x="911.0" y="235" text-anchor="middle">Both supplied tests pass.”</text>
-  <text class="note" x="911.0" y="276" text-anchor="middle">The runtime ends this run.</text>
-  </g>
-  <!-- evidence-to-final-call: shaft ends inside the head; the tip meets the target boundary. -->
-  <g id="evidence-to-final-call">
-    <line class="connector" x1="333" y1="207" x2="382" y2="207"/>
-    <polygon class="head" points="394,207 381,201 381,213"/>
-  </g>
-  <!-- answer-to-user: shaft ends inside the head; the tip meets the target boundary. -->
-  <g id="answer-to-user">
-    <line class="connector" x1="689" y1="207" x2="738" y2="207"/>
-    <polygon class="head" points="750,207 737,201 737,213"/>
-  </g>
-  <!-- Claim boundary; labels explain the color and role. -->
-  <g id="claim-boundary">
-    <rect x="28" y="337" width="1044" height="86" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
-  <text class="label" x="550.0" y="370" text-anchor="middle">This verifies the tested cases, not every possible input.</text>
-  <text class="note" x="550.0" y="403" text-anchor="middle">Training shaped behavior; inference generated requests; tools edited and tested the file.</text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="845.454545" viewBox="0 0 1100 620" role="img" aria-labelledby="title desc">
+<title id="title">From checked tool outcomes to a bounded final claim</title>
+<desc id="desc">Evidence of the saved multiplication change and two fresh passing tests supports a final report of exactly those results. The runtime delivers the response and stops. Passing supplied tests is not proof for every possible input.</desc>
+<!-- Shared native text and typography. Shafts end inside separate arrowhead bases. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1100" height="620" fill="#ffffff"/>
+<text x="30" y="44" font-size="29" font-weight="700" text-anchor="start" fill="#172033">Report only what the recorded outcome supports</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">A final answer is a claim to the user. Its strength should match the evidence returned by tools.</text>
+<!-- Checked evidence; preserve reading order and text clearance. -->
+<g id="checked-evidence">
+<rect x="30" y="130" width="320" height="280" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="168" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Recorded evidence</text>
+<text x="50" y="209" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Saved file uses multiplication.</text>
+<text x="50" y="241" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Fresh test results:</text>
+<text x="50" y="273" font-size="20" font-weight="400" text-anchor="start" fill="#172033">(3, 4) → 12, expected 12</text>
+<text x="50" y="305" font-size="20" font-weight="400" text-anchor="start" fill="#172033">(0, 4) → 0, expected 0</text>
+<text x="50" y="337" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Both supplied tests pass.</text>
+</g>
+<!-- Supported report; preserve reading order and text clearance. -->
+<g id="supported-report">
+<rect x="390" y="130" width="320" height="280" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="410" y="168" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Final model reply</text>
+<text x="410" y="209" font-size="20" font-weight="400" text-anchor="start" fill="#172033">“Changed addition to</text>
+<text x="410" y="241" font-size="20" font-weight="400" text-anchor="start" fill="#172033">multiplication in marbles.py.</text>
+<text x="410" y="273" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Both supplied tests pass.”</text>
+<text x="410" y="305" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Runtime delivers the reply</text>
+<text x="410" y="337" font-size="20" font-weight="400" text-anchor="start" fill="#172033">and ends this run.</text>
+</g>
+<!-- Scope of claim; preserve reading order and text clearance. -->
+<g id="scope-of-claim">
+<rect x="750" y="130" width="320" height="280" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="770" y="168" font-size="24" font-weight="700" text-anchor="start" fill="#172033">What this establishes</text>
+<text x="770" y="209" font-size="20" font-weight="400" text-anchor="start" fill="#172033">The requested edit was made.</text>
+<text x="770" y="241" font-size="20" font-weight="400" text-anchor="start" fill="#172033">These two tests passed.</text>
+<text x="770" y="273" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Untested inputs remain</text>
+<text x="770" y="305" font-size="20" font-weight="400" text-anchor="start" fill="#172033">outside this evidence.</text>
+<text x="770" y="337" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Tests are not universal proof.</text>
+</g>
+<!-- Evidence to report; preserve reading order and text clearance. -->
+<g id="evidence-to-report">
+<path data-connector="true" d="M 350,270 L 379,270" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="390,270 378,276 378,264" fill="#64748b"/>
+<path data-connector="true" d="M 710,270 L 739,270" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="750,270 738,276 738,264" fill="#64748b"/>
+</g>
+<!-- Completed loop; preserve reading order and text clearance. -->
+<g id="completed-loop">
+<rect x="30" y="462" width="1040" height="119" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="504" font-size="25" font-weight="700" text-anchor="start" fill="#172033">Generated request → executed action → observed result → supported reply</text>
+<text x="50" y="548" font-size="21" font-weight="400" text-anchor="start" fill="#172033">A sentence saying “fixed” would not establish that the file changed or that any test ran.</text>
+</g>
 </svg>

@@ -1,94 +1,51 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="580" viewBox="0 0 1100 580" role="img" aria-labelledby="title desc">
-  <title id="title">A model call builds its output one token at a time</title>
-  <desc id="desc">Chat messages become token IDs, which select embedding vectors. Transformer blocks combine attention, per-position transformations, and position information. The last position produces logits for possible next tokens. Softmax gives probabilities; greedy decoding or sampling selects a token. That token joins the sequence, which is processed again using the same weights and cached attention results. Once a structured run_tests request is complete, it can be handed to the runtime, but no test has yet executed.</desc>
-  <!-- Shared series typography; each panel states its own role. -->
-  <defs>
-    <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-      .title { font-size: 28px; font-weight: 700; }
-      .subtitle { font-size: 19px; fill: #475569; }
-      .label { font-size: 22px; font-weight: 700; }
-      .body { font-size: 20px; }
-      .note { font-size: 19px; fill: #475569; }
-      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
-      .head { fill: #64748b; }
-    </style>
-  </defs>
-  <rect width="1100" height="580" fill="#ffffff"/>
-  <!-- Heading states the lesson before the body introduces its parts. -->
-  <text class="title" x="28" y="43" text-anchor="start">A model call builds its output one token at a time</text>
-  <text class="subtitle" x="28" y="76" text-anchor="start">Step 2: the broad path through a Llama-style model; individual blocks are simplified.</text>
-  <!-- Formatted token input; labels explain the color and role. -->
-  <g id="formatted-token-input">
-    <rect x="28" y="112" width="300" height="165" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-  <text class="label" x="178.0" y="148" text-anchor="middle">Chat → token IDs</text>
-  <text class="body" x="178.0" y="192" text-anchor="middle">Roles mark who said what.</text>
-  <text class="note" x="178.0" y="235" text-anchor="middle">Tokenizer numbers the pieces.</text>
-  </g>
-  <!-- Vectors and blocks; labels explain the color and role. -->
-  <g id="vectors-and-blocks">
-    <rect x="386" y="112" width="314" height="165" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
-  <text class="label" x="543.0" y="148" text-anchor="middle">Vectors → blocks</text>
-  <text class="body" x="543.0" y="189" text-anchor="middle">Look up number lists.</text>
-  <text class="note" x="543.0" y="222" text-anchor="middle">Mix and transform information.</text>
-  <text class="note" x="543.0" y="255" text-anchor="middle">Use position information.</text>
-  </g>
-  <!-- Next token scores; labels explain the color and role. -->
-  <g id="next-token-scores">
-    <rect x="758" y="112" width="314" height="165" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
-  <text class="label" x="915.0" y="148" text-anchor="middle">Next-token scores</text>
-  <text class="body" x="915.0" y="192" text-anchor="middle">Use the last position.</text>
-  <text class="note" x="915.0" y="235" text-anchor="middle">Scores are called logits.</text>
-  </g>
-  <!-- tokens-to-vectors: shaft ends inside the head; the tip meets the target boundary. -->
-  <g id="tokens-to-vectors">
-    <line class="connector" x1="329" y1="197" x2="374" y2="197"/>
-    <polygon class="head" points="386,197 373,191 373,203"/>
-  </g>
-  <!-- blocks-to-scores: shaft ends inside the head; the tip meets the target boundary. -->
-  <g id="blocks-to-scores">
-    <line class="connector" x1="701" y1="197" x2="746" y2="197"/>
-    <polygon class="head" points="758,197 745,191 745,203"/>
-  </g>
-  <!-- Token selection; labels explain the color and role. -->
-  <g id="token-selection">
-    <rect x="758" y="347" width="314" height="165" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-  <text class="label" x="915.0" y="383" text-anchor="middle">Choose one token</text>
-  <text class="note" x="915.0" y="424" text-anchor="middle">Softmax gives probabilities.</text>
-  <text class="note" x="915.0" y="457" text-anchor="middle">Pick the favorite or sample.</text>
-  <text class="note" x="915.0" y="490" text-anchor="middle">Chances are not truth scores.</text>
-  </g>
-  <!-- scores-to-choice: the vertical shaft ends inside its downward head. -->
-  <g id="scores-to-choice">
-    <line class="connector" x1="915" y1="278" x2="915" y2="335"/>
-    <polygon class="head" points="915,347 909,334 921,334"/>
-  </g>
-  <!-- Generated sequence; labels explain the color and role. -->
-  <g id="generated-sequence">
-    <rect x="386" y="347" width="314" height="165" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-  <text class="label" x="543.0" y="383" text-anchor="middle">Append the token</text>
-  <text class="body" x="543.0" y="427" text-anchor="middle">Repeat for the next token.</text>
-  <text class="note" x="543.0" y="470" text-anchor="middle">Cached attention saves work.</text>
-  </g>
-  <!-- choice-to-sequence: shaft ends inside the head; the tip meets the target boundary. -->
-  <g id="choice-to-sequence">
-    <line class="connector" x1="757" y1="430" x2="712" y2="430"/>
-    <polygon class="head" points="700,430 713,424 713,436"/>
-  </g>
-  <!-- Completed request; labels explain the color and role. -->
-  <g id="completed-request">
-    <rect x="28" y="347" width="300" height="165" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
-  <text class="label" x="178.0" y="383" text-anchor="middle">When the request is ready</text>
-  <text class="body" x="178.0" y="427" text-anchor="middle">Tool: run_tests</text>
-  <text class="note" x="178.0" y="470" text-anchor="middle">Python has not run yet.</text>
-  </g>
-  <!-- sequence-to-request: shaft ends inside the head; the tip meets the target boundary. -->
-  <g id="sequence-to-request">
-    <line class="connector" x1="385" y1="430" x2="340" y2="430"/>
-    <polygon class="head" points="328,430 341,424 341,436"/>
-  </g>
-  <!-- Repeated generation reuses the same weights; this arrow returns to model computation. -->
-  <path id="next-token-connector" class="connector" d="M 543 346 V 289"/>
-  <polygon class="head" points="543,277 537,290 549,290"/>
-  <text class="note" x="550" y="553" text-anchor="middle">Read left to right across the top, then right to left below. Repeat until the request is complete.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900.000000" viewBox="0 0 1100 660" role="img" aria-labelledby="title desc">
+<title id="title">Attention, position information, activations, and logits</title>
+<desc id="desc">Position information informs causal attention, which combines only current and earlier positions. Per-position transformations compute activations. Repeating these blocks leads to the final vector at the last position, which produces next-token scores called logits.</desc>
+<!-- Shared native text and typography. Shafts end inside separate arrowhead bases. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1100" height="660" fill="#ffffff"/>
+<text x="30" y="44" font-size="29" font-weight="700" text-anchor="start" fill="#172033">Model blocks turn context into next-token scores</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">A block groups calculations. Embedding vectors enter these blocks; this is a simplified causal model.</text>
+<!-- Attention; preserve reading order and text clearance. -->
+<g id="attention">
+<rect x="30" y="126" width="500" height="204" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="50" y="164" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Causal attention</text>
+<text x="50" y="205" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Mix information from current</text>
+<text x="50" y="237" font-size="20" font-weight="400" text-anchor="start" fill="#172033">and earlier positions. At position 2,</text>
+<text x="50" y="269" font-size="20" font-weight="400" text-anchor="start" fill="#172033">use positions 0, 1, 2; never future 3.</text>
+</g>
+<!-- Position; preserve reading order and text clearance. -->
+<g id="position">
+<rect x="630" y="126" width="440" height="204" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="650" y="164" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Position supplies order</text>
+<text x="650" y="205" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Position information enters attention.</text>
+<text x="650" y="237" font-size="20" font-weight="400" text-anchor="start" fill="#172033">“bags hold marbles” and</text>
+<text x="650" y="269" font-size="20" font-weight="400" text-anchor="start" fill="#172033">“marbles hold bags” differ in order.</text>
+</g>
+<!-- Per position transform; preserve reading order and text clearance. -->
+<g id="per-position-transform">
+<rect x="30" y="390" width="500" height="190" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="428" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Per-position calculations</text>
+<text x="50" y="469" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Transform each position’s vector.</text>
+<text x="50" y="501" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Intermediate numbers are activations.</text>
+<text x="50" y="533" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Repeat with attention across blocks.</text>
+</g>
+<!-- Block output; preserve reading order and text clearance. -->
+<g id="block-output">
+<rect x="630" y="390" width="440" height="190" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="650" y="428" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Final vector → logits</text>
+<text x="650" y="469" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Use the final vector at the last position.</text>
+<text x="650" y="501" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Produce one score per possible token.</text>
+<text x="650" y="533" font-size="20" font-weight="400" text-anchor="start" fill="#172033">These next-token scores are logits.</text>
+</g>
+<!-- Computation path; preserve reading order and text clearance. -->
+<g id="computation-path">
+<path data-connector="true" d="M 630,230 L 541,230" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="530,230 542,224 542,236" fill="#64748b"/>
+<path data-connector="true" d="M 280,330 L 280,379" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="280,390 274,378 286,378" fill="#64748b"/>
+<path data-connector="true" d="M 530,485 L 619,485" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="630,485 618,491 618,479" fill="#64748b"/>
+</g>
+<text x="30" y="628" font-size="21" font-weight="700" text-anchor="start" fill="#172033">Model computation generates output information. It does not run the test tool.</text>
 </svg>

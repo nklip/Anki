@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="852.272727" viewBox="0 0 1100 625" role="img" aria-labelledby="title desc">
+<title id="title">Chat formatting, tokenizer, tokens, identifiers, and embedding vectors</title>
+<desc id="desc">Chat formatting preserves roles and boundaries using control markers. A tokenizer maps text pieces to token IDs. Each ID selects a learned embedding vector. Splits, identifiers, and three-dimensional vectors are illustrative.</desc>
+<!-- Shared native text and typography. Shafts end inside separate arrowhead bases. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1100" height="625" fill="#ffffff"/>
+<text x="30" y="44" font-size="29" font-weight="700" text-anchor="start" fill="#172033">Chat structure becomes tokens, then numbered vector lookups</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">All token splits, IDs, and vectors shown here are invented teaching examples, not a real tokenizer output.</text>
+<!-- Chat formatting; preserve reading order and text clearance. -->
+<g id="chat-formatting">
+<rect x="30" y="126" width="280" height="260" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="164" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Chat formatting</text>
+<text x="50" y="205" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Role: user</text>
+<text x="50" y="237" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Content: Fix marbles.py</text>
+<text x="50" y="269" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Control markers identify</text>
+<text x="50" y="301" font-size="20" font-weight="400" text-anchor="start" fill="#172033">the speaker and message</text>
+<text x="50" y="333" font-size="20" font-weight="400" text-anchor="start" fill="#172033">boundaries.</text>
+</g>
+<!-- Tokenization; preserve reading order and text clearance. -->
+<g id="tokenization">
+<rect x="410" y="126" width="280" height="260" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="430" y="164" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Tokenizer</text>
+<text x="430" y="205" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Converts text to tokens:</text>
+<text x="430" y="237" font-size="20" font-weight="400" text-anchor="start" fill="#172033">pieces such as Fix</text>
+<text x="430" y="269" font-size="20" font-weight="400" text-anchor="start" fill="#172033">or part of marbles.py.</text>
+<text x="430" y="301" font-size="20" font-weight="400" text-anchor="start" fill="#172033">A token ID is its number:</text>
+<text x="430" y="333" font-size="20" font-weight="400" text-anchor="start" fill="#172033">toy example: Fix → 41</text>
+</g>
+<!-- Embedding lookup; preserve reading order and text clearance. -->
+<g id="embedding-lookup">
+<rect x="790" y="126" width="280" height="260" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="810" y="164" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Embedding lookup</text>
+<text x="810" y="205" font-size="20" font-weight="400" text-anchor="start" fill="#172033">ID 41 selects a learned</text>
+<text x="810" y="237" font-size="20" font-weight="400" text-anchor="start" fill="#172033">row in a table:</text>
+<text x="810" y="269" font-size="20" font-weight="400" text-anchor="start" fill="#172033">[0.2, −0.4, 0.1]</text>
+<text x="810" y="301" font-size="20" font-weight="400" text-anchor="start" fill="#172033">This vector is an ordered</text>
+<text x="810" y="333" font-size="20" font-weight="400" text-anchor="start" fill="#172033">list of numbers.</text>
+</g>
+<!-- Formatted input path; preserve reading order and text clearance. -->
+<g id="formatted-input-path">
+<path data-connector="true" d="M 310,256 L 399,256" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="410,256 398,262 398,250" fill="#64748b"/>
+<path data-connector="true" d="M 690,256 L 779,256" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="790,256 778,262 778,250" fill="#64748b"/>
+</g>
+<!-- Embedding table; preserve reading order and text clearance. -->
+<g id="embedding-table">
+<rect x="30" y="438" width="1040" height="153" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="477" font-size="25" font-weight="700" text-anchor="start" fill="#172033">A lookup selects the vector stored for that token ID.</text>
+<text x="50" y="518" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Toy table: ID 41 → [0.2, −0.4, 0.1];  ID 73 → [0.8, 0.1, −0.2]</text>
+<text x="50" y="552" font-size="21" font-weight="400" text-anchor="start" fill="#172033">These initial vectors enter the model’s blocks, which compute context-dependent activations.</text>
+</g>
+</svg>

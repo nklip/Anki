@@ -1,61 +1,54 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="440" viewBox="0 0 1100 440" role="img" aria-labelledby="title desc">
-  <title id="title">Effort guides work inside a model call</title>
-  <desc id="desc">The runtime supplies context and an effort setting to the chosen model. The model may reason and revise using the same learned weights, then produces an answer or tool request. Effort is guidance rather than a guarantee of token usage or correctness. The runtime separately runs tools and enforces task limits.</desc>
-  <!-- Shared series typography; the individual labels carry each color's meaning. -->
-  <defs>
-    <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-      .title { font-size: 28px; font-weight: 700; }
-      .subtitle { font-size: 19px; fill: #475569; }
-      .label { font-size: 22px; font-weight: 700; }
-      .body { font-size: 20px; }
-      .note { font-size: 19px; fill: #475569; }
-      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
-      .head { fill: #64748b; }
-    </style>
-  </defs>
-  <rect width="1100" height="440" fill="#ffffff"/>
-  <!-- Heading states the lesson before the body introduces its parts. -->
-  <text class="title" x="28" y="43" text-anchor="start">Effort guides work inside a model call</text>
-  <text class="subtitle" x="28" y="76" text-anchor="start">Read left to right. Reasoning can happen before a reply and between tool calls.</text>
-  <!-- Runtime inputs; labels explain the color and role. -->
-  <g id="runtime-inputs">
-    <rect x="28" y="110" width="280" height="196" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-  <text class="label" x="168.0" y="148" text-anchor="middle">Runtime supplies</text>
-  <text class="body" x="168.0" y="194" text-anchor="middle">context: current input</text>
-  <text class="body" x="168.0" y="233" text-anchor="middle">effort: work guidance</text>
-  <text class="note" x="168.0" y="274" text-anchor="middle">Example level: medium</text>
-  </g>
-  <!-- Model work; labels explain the color and role. -->
-  <g id="model-work">
-    <rect x="365" y="110" width="370" height="196" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
-  <text class="label" x="550.0" y="148" text-anchor="middle">Model does the work</text>
-  <text class="body" x="550.0" y="194" text-anchor="middle">may reason and revise</text>
-  <text class="body" x="550.0" y="233" text-anchor="middle">uses the same trained weights</text>
-  <text class="note" x="550.0" y="274" text-anchor="middle">Actual work varies by task.</text>
-  </g>
-  <!-- Model output; labels explain the color and role. -->
-  <g id="model-output">
-    <rect x="792" y="110" width="280" height="196" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-  <text class="label" x="932.0" y="148" text-anchor="middle">Model output</text>
-  <text class="body" x="932.0" y="199" text-anchor="middle">an answer</text>
-  <text class="body" x="932.0" y="235" text-anchor="middle">or a tool request</text>
-  <text class="note" x="932.0" y="274" text-anchor="middle">Answers can still be wrong.</text>
-  </g>
-  <!-- context-to-model-arrow: the shaft ends inside the head; the tip meets the target boundary. -->
-  <g id="context-to-model-arrow">
-    <line class="connector" x1="309" y1="208" x2="353" y2="208"/>
-    <polygon class="head" points="365,208 352,202 352,214"/>
-  </g>
-  <!-- model-to-output-arrow: the shaft ends inside the head; the tip meets the target boundary. -->
-  <g id="model-to-output-arrow">
-    <line class="connector" x1="736" y1="208" x2="780" y2="208"/>
-    <polygon class="head" points="792,208 779,202 779,214"/>
-  </g>
-  <!-- Runtime boundary; labels explain the color and role. -->
-  <g id="runtime-boundary">
-    <rect x="28" y="336" width="1044" height="76" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
-  <text class="label" x="550.0" y="367" text-anchor="middle">The runtime still runs tools and enforces task limits.</text>
-  <text class="note" x="550.0" y="396" text-anchor="middle">Effort guides model work; it does not grant more tool calls or permissions.</text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="787.5" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+<title id="title">Effort guides inference-time computation</title>
+<desc id="desc">Input enters a model call with fixed trained weights. Effort guides the work in that call, which can produce text or a tool request. Tool execution remains outside the model.</desc>
+<!-- Shared typography and native vector artwork; intrinsic width is 1500 pixels. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1200" height="630" fill="#ffffff"/>
+<text x="30" y="44" font-size="30" font-weight="700" text-anchor="start" fill="#172033">Effort guides work during inference</text>
+<text x="30" y="80" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">Inference-time compute = computing work spent while the model is being used.</text>
+<!-- Call input; keep labels clear of connector corridors. -->
+<g id="call-input">
+<rect x="30" y="150" width="260" height="170" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.8"/>
+<text x="50" y="188" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Input for this call</text>
+<text x="50" y="231" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Question + evidence</text>
+<text x="50" y="262" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Relevant tool results</text>
+<text x="50" y="293" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Instructions</text>
+</g>
+<!-- Model call; keep labels clear of connector corridors. -->
+<g id="model-call">
+<rect x="360" y="126" width="480" height="250" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.8"/>
+<text x="380" y="165" font-size="25" font-weight="700" text-anchor="start" fill="#172033">Model call</text>
+<rect x="380" y="189" width="210" height="155" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.8"/>
+<text x="400" y="226" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Weights</text>
+<text x="400" y="266" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Learned numbers</text>
+<text x="400" y="298" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Stay fixed here</text>
+<rect x="610" y="189" width="210" height="155" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.8"/>
+<text x="630" y="226" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Current work</text>
+<text x="630" y="266" font-size="19" font-weight="400" text-anchor="start" fill="#172033">May reason, revise,</text>
+<text x="630" y="298" font-size="19" font-weight="400" text-anchor="start" fill="#172033">or compare options</text>
+</g>
+<!-- Model output; keep labels clear of connector corridors. -->
+<g id="model-output">
+<rect x="910" y="150" width="260" height="170" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.8"/>
+<text x="930" y="188" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Generated output</text>
+<text x="930" y="231" font-size="20" font-weight="400" text-anchor="start" fill="#172033">A reply or a request</text>
+<text x="930" y="262" font-size="20" font-weight="400" text-anchor="start" fill="#172033">to use an external tool</text>
+<text x="930" y="293" font-size="20" font-weight="400" text-anchor="start" fill="#172033">No tool runs here.</text>
+</g>
+<!-- Effort guidance; keep labels clear of connector corridors. -->
+<g id="effort-guidance">
+<rect x="360" y="439" width="480" height="103" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<text x="380" y="478" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Effort = soft guidance about work</text>
+<text x="380" y="516" font-size="19" font-weight="400" text-anchor="start" fill="#172033">It does not promise a fixed token count or time.</text>
+</g>
+<!-- Flow; keep labels clear of connector corridors. -->
+<g id="flow">
+<path data-connector="true" d="M 290,235 L 349,235" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="360,235 348,241 348,229" fill="#64748b"/>
+<path data-connector="true" d="M 840,235 L 899,235" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="910,235 898,241 898,229" fill="#64748b"/>
+<path data-connector="true" d="M 715,439 L 715,387" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="715,376 721,388 709,388" fill="#64748b"/>
+</g>
+<text x="30" y="596" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Different systems spend extra compute differently. The runtime still executes tools and enforces limits.</text>
 </svg>

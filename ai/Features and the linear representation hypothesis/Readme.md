@@ -2,72 +2,67 @@
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-**The linear representation hypothesis is the idea that a model stores many of the things it tracks, such as “this text is in French” or “this verb is in the past tense,” as directions in its internal vectors.** If it holds, you can read such a property by measuring how far a vector points that way. It is a hypothesis, supported in many tests but not always true.
+**The linear representation hypothesis says that many properties a model represents correspond to directions in its internal vectors.** This is a useful research hypothesis, not a rule that every concept must follow. The diagrams move from properties and numerical slots to reading directions and testing their influence.
 
 ## Where this fits
 
-The earlier articles explained what a model computes. This article and [Superposition and mechanistic interpretability](../Superposition%20and%20mechanistic%20interpretability/Readme.md) ask what those numbers mean:
+**Interpretability** studies what internal computations represent and do. A vector is a list of numbers; **activations** are the working values calculated for an input.
 
-Read the model's route from left to right. The purple branch shows researchers inspecting its internal vectors.
+The upper map highlights a research view of these activations, separate from the model's ordinary computation. The lower panel measures a candidate feature direction. [Superposition and mechanistic interpretability](../Superposition%20and%20mechanistic%20interpretability/Readme.md) explores overlapping directions and tests of their use.
 
 ![where-this-fits.svg](images/where-this-fits.svg)
 
-This is **interpretability** research. It studies the vectors in [the residual stream](../The%20residual%20stream%20and%20normalization/Readme.md) that carry each token's information between blocks. None of their numbers has a label: when the model reads “She walked home,” no slot is marked “past tense.”
-
 ## Features and neurons
 
-A **feature** is a property of the input that the model represents, such as past tense, French text, or a plural noun. It need not have a human name.
+A **feature** is a property represented by the model, such as past tense or French text. A **neuron** is one numerical slot in an MLP's expanded vector; this multilayer perceptron transforms each token separately. The two panels distinguish the property from the place where a number is stored.
 
-As in the MLP article, a **neuron** is one slot in the expanded middle of an MLP. One neuron per feature, such as a “French neuron,” would be easy to read, and some neurons come close. But many respond to several unrelated things, and one feature is often spread across many neurons. So researchers look for directions instead of single slots.
+![feature-and-neuron.svg](images/feature-and-neuron.svg)
 
-## The hypothesis: features are directions
+A feature can involve many neurons; one neuron can respond to several features. Neither a slot in the token's running vector nor a neuron comes with a human concept label.
 
-Think of a vector as an arrow. A **direction** is where the arrow points, and it can be diagonal, using many slots at once. The hypothesis makes three claims:
+## The hypothesis: directions, strength, and addition
 
-1. Each feature has its own direction.
-2. A stronger feature means a longer step along that direction.
-3. When several features are present, their steps simply add up.
+A **direction** describes where a vector points. Under the linear picture, each feature contributes a scaled direction: stronger activity means a larger contribution, and contributions add. Follow the three plots using their common scale.
 
-“Linear” describes only this way of storing features. The model still needs nonlinear steps such as ReLU to work out whether a feature is present at all.
+![linear-feature-addition.svg](images/linear-feature-addition.svg)
 
-## Reading a feature: measure along its direction
+The model still uses nonlinear computation to decide which features are active. “Linear” here describes a proposed representation, not the entire model.
+
+## Projection: measure along a direction
+
+A **projection** is the part of a vector along a chosen direction. For a **unit direction**, whose length is 1, a **dot product** measures signed distance along that direction: multiply matching coordinates and add. The graph and two arithmetic panels separate the scalar measurement from the projected vector.
 
 ![direction-and-projection.svg](images/direction-and-projection.svg)
 
-To read a feature, measure how far a vector reaches along its direction, like the shadow a stick casts on a line. In the diagram, the arrow to `x = [2, 1]` is a token's vector and the “line along u” is a feature's direction. The dashed line drops from `x` at a right angle to the point labeled “projection”: the part of `x` that lies along `u`. The “Measure along u” box turns it into one number with a **dot product**, the multiply-and-add comparison that [attention](../Attention/Readme.md) also uses.
+Here `x = [2, 1]`, `u = [0.6, 0.8]`, and `x · u = 2`. The projected point is `2u = [1.2, 1.6]`. This measurement is not a probability. Overlapping directions can leak into each other's measurements.
 
-The bottom box adds two cautions: “unit direction” means length 1, not one slot, and the result is a position along a line, not a probability.
+## Linear probes: test what can be read
 
-If two features' directions overlap, measuring one also picks up some of the other. Researchers suspect that real models track more features than they have slots, which forces overlaps, as the next article explains.
+A **linear probe** is a small external model trained to predict labels from saved activations. A simple binary probe learns a direction and cutoff. The language model stays fixed. Read training examples on the left, then the held-out check on the right.
 
-## Finding directions: linear probes
+![linear-probe.svg](images/linear-probe.svg)
 
-Nobody knows a real feature's direction in advance. A **linear probe** finds one from examples. Researchers run the model on sentences labeled, say, past or present tense, save the vectors at one layer, and train a tiny separate model to split the two groups with a direction and a cutoff. The language model itself does not change.
+Check new examples, random-label controls, and an untrained-model baseline. A successful probe shows the property is recoverable; it does not show the language model uses it to answer.
 
-A probe needs checks: test it on new sentences, see how well it learns random labels (pure memorizing), and compare it with a probe on an untrained copy of the model, which should do clearly worse.
+## Interventions and steering: test influence
 
-Passing these checks shows that the property is **recoverable** at that spot. It does not show that the model **uses** it, just as a spreadsheet can hold a column that no formula reads. In one study, how well a probe read a property did not predict how much the model suffered when that property was erased.
-
-## Testing use: interventions
+An **intervention** changes an internal value before the remaining model uses it. **Steering** is an intervention that adds a chosen direction. Compare the unedited top lane with the edited bottom lane.
 
 ![probe-and-intervention.svg](images/probe-and-intervention.svg)
 
-The diagram contrasts two experiments; the model's weights stay fixed in both. In “Read a copy,” a probe reads the vector and the model continues with the original, so the answer cannot change. In “Change the activation,” an **intervention** edits the vector during the run, and the output is compared with an unedited run. A change of the predicted kind is evidence of **causal influence**.
-
-A common edit, **steering**, adds some of a feature's direction. In one study, Llama 2 completed “Long live the” with “king.” Adding its male-to-female direction made “queen” the top word, while the choice between “King” and “king” stayed the same. The diagram's last line warns that a good reading direction is not automatically a good steering direction: where features overlap, a probe can tilt its direction to avoid the overlap.
+A predicted output change supports causal influence. Check unrelated effects too: an edit can disturb other information. A direction that reads a property well need not be the best direction for changing it.
 
 ## Evidence and limits
 
-- **Support:** in Llama 2, nearly all of 27 tested concepts, such as plural nouns and English-to-French, behaved approximately like directions.
-- **Not every feature is one direction:** days of the week and months of the year sit on circles in some models, which use them for prompts like “Two days from Monday is.”
-- **A readable direction is a finding, not a full explanation** of how the model computes or uses the feature.
+Experiments in Llama 2 found approximately linear behavior for many tested concepts. Other work found circular representations for days and months. A readable direction is therefore evidence about one representation, not a complete explanation of the model's computation.
 
 # Sources
 
-- [Toy Models of Superposition: features, neurons, and directions](https://transformer-circuits.pub/2022/toy_model/index.html)
-- [Designing and Interpreting Probes with Control Tasks](https://arxiv.org/abs/1909.03368)
+- [Meta: Llama architecture](https://github.com/meta-llama/llama3/blob/main/llama/model.py)
+- [Anthropic: Toy Models of Superposition — features and directions; visual reference](https://transformer-circuits.pub/2022/toy_model/index.html)
+- [The Linear Representation Hypothesis](https://arxiv.org/html/2311.03658v2)
 - [Probing Classifiers: baselines and limitations](https://aclanthology.org/2022.cl-1.7/)
+- [Designing and Interpreting Probes with Control Tasks](https://arxiv.org/abs/1909.03368)
 - [Amnesic Probing: decoding versus causal use](https://arxiv.org/abs/2006.00995)
-- [The Linear Representation Hypothesis: Llama 2 concepts and steering](https://arxiv.org/html/2311.03658v2)
-- [The Geometry of Truth: probe directions and causal effects](https://arxiv.org/abs/2310.06824)
+- [The Geometry of Truth: readout versus steering](https://arxiv.org/abs/2310.06824)
 - [Not All Language Model Features Are One-Dimensionally Linear](https://arxiv.org/abs/2405.14860)

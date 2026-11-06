@@ -1,54 +1,48 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="382" viewBox="0 0 1100 382" role="img" aria-labelledby="title desc">
-  <title id="title">An edit result is progress toward the goal</title>
-  <desc id="desc">The model has observed 10:00 and the user wants 11:00. It requests an edit. The runtime checks and runs the editing tool, which reports Saved. That result enters the next context, but verifying the saved file remains unfinished.</desc>
-  <!-- Shared typography and colors match neighboring AI articles. -->
-  <defs>
-    <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-      .title { font-size: 28px; font-weight: 700; }
-      .subtitle { font-size: 19px; fill: #475569; }
-      .label { font-size: 22px; font-weight: 700; }
-      .body { font-size: 20px; }
-      .note { font-size: 19px; fill: #475569; }
-      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
-      .head { fill: #64748b; }
-    </style>
-  </defs>
-  <rect width="1100" height="382" fill="#ffffff"/>
-  <!-- Heading states the primary lesson and the reading order. -->
-  <text class="title" x="28" y="43" text-anchor="start">An edit result is progress toward the goal</text>
-  <text class="subtitle" x="28" y="76" text-anchor="start">The model requests a replacement. The runtime checks and executes it.</text>
-  <!-- Known original; keep labels clear of panel borders. -->
-  <g id="known-original">
-    <rect x="28" y="112" width="310" height="166" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-  <text class="label" x="183.0" y="148" text-anchor="middle">Known starting point</text>
-  <text class="body" x="183.0" y="192" text-anchor="middle">Observed time: 10:00</text>
-  <text class="body" x="183.0" y="232" text-anchor="middle">Requested time: 11:00</text>
-  </g>
-  <!-- Runtime edit; keep labels clear of panel borders. -->
-  <g id="runtime-edit">
-    <rect x="395" y="112" width="310" height="166" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-  <text class="label" x="550.0" y="148" text-anchor="middle">Runtime runs the edit</text>
-  <text class="body" x="550.0" y="192" text-anchor="middle">Replace 10:00 with 11:00</text>
-  <text class="body" x="550.0" y="232" text-anchor="middle">in notes.txt</text>
-  </g>
-  <!-- Edit feedback; keep labels clear of panel borders. -->
-  <g id="edit-feedback">
-    <rect x="762" y="112" width="310" height="166" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
-  <text class="label" x="917.0" y="148" text-anchor="middle">Tool result: “Saved”</text>
-  <text class="body" x="917.0" y="192" text-anchor="middle">Next model input includes</text>
-  <text class="body" x="917.0" y="232" text-anchor="middle">the edit success message.</text>
-  </g>
-  <!-- edit-request-arrow: shaft ends inside its head; the nose meets the target boundary. -->
-  <g id="edit-request-arrow">
-    <path class="connector" d="M339 195 L383 195"/>
-    <polygon class="head" points="395,195 382,189 382,201"/>
-  </g>
-  <!-- edit-result-arrow: shaft ends inside its head; the nose meets the target boundary. -->
-  <g id="edit-result-arrow">
-    <path class="connector" d="M706 195 L750 195"/>
-    <polygon class="head" points="762,195 749,189 749,201"/>
-  </g>
-  <text class="body" x="550" y="322" text-anchor="middle">Recorded state: edit reported saved; checking the saved file is still pending.</text>
-  <text class="note" x="550" y="355" text-anchor="middle">The next action should address the unfinished part of the user’s request.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="790.909091" viewBox="0 0 1100 580" role="img" aria-labelledby="title desc">
+<title id="title">An action produces feedback but may leave verification pending</title>
+<desc id="desc">An editing request replaces the observed 10:00 with 11:00. The tool writes the file and reports Saved. The run records that feedback; a separate verification remains required.</desc>
+<!-- Shared native text and typography. Shafts end inside separate arrowhead bases. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1100" height="580" fill="#ffffff"/>
+<text x="30" y="44" font-size="29" font-weight="700" text-anchor="start" fill="#172033">Act: an edit changes the file and returns feedback</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">An action is work requested through a tool. Feedback is what comes back after the attempt.</text>
+<!-- Edit request; preserve reading order and text clearance. -->
+<g id="edit-request">
+<rect x="30" y="126" width="280" height="246" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="164" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Known before the edit</text>
+<text x="50" y="205" font-size="20" font-weight="400" text-anchor="start" fill="#172033">notes.txt was read.</text>
+<text x="50" y="237" font-size="20" font-weight="400" text-anchor="start" fill="#172033">It says 10:00.</text>
+<text x="50" y="269" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Goal requires 11:00.</text>
+</g>
+<!-- Edit execution; preserve reading order and text clearance. -->
+<g id="edit-execution">
+<rect x="410" y="126" width="280" height="246" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="430" y="164" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Allowed edit</text>
+<text x="430" y="205" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Model requests:</text>
+<text x="430" y="237" font-size="20" font-weight="400" text-anchor="start" fill="#172033">replace 10:00 with 11:00</text>
+<text x="430" y="269" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Runtime checks inputs.</text>
+<text x="430" y="301" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Tool writes the change.</text>
+</g>
+<!-- Edit result; preserve reading order and text clearance. -->
+<g id="edit-result">
+<rect x="790" y="126" width="280" height="246" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="810" y="164" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Returned feedback</text>
+<text x="810" y="205" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Tool reports: “Saved.”</text>
+<text x="810" y="237" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Runtime records the result.</text>
+<text x="810" y="269" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Next context includes it.</text>
+<text x="810" y="301" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Verification is still pending.</text>
+</g>
+<!-- Edit flow; preserve reading order and text clearance. -->
+<g id="edit-flow">
+<path data-connector="true" d="M 310,252 L 399,252" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="410,252 398,258 398,246" fill="#64748b"/>
+<path data-connector="true" d="M 690,252 L 779,252" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="790,252 778,258 778,246" fill="#64748b"/>
+</g>
+<!-- State transition; preserve reading order and text clearance. -->
+<g id="state-transition">
+<rect x="30" y="420" width="1040" height="125" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="460" font-size="26" font-weight="700" text-anchor="start" fill="#172033">State: original contents observed → edit reported saved</text>
+<text x="50" y="503" font-size="21" font-weight="400" text-anchor="start" fill="#172033">A successful tool receipt is progress. The task also asked for a check of the saved file.</text>
+</g>
 </svg>

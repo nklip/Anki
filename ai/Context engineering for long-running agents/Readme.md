@@ -2,66 +2,70 @@
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-**Context engineering means choosing and maintaining the information each model call needs to make its next decision.** A long task needs more than a good opening prompt: goals, useful evidence, and unfinished work must remain available as the run continues.
+**Context engineering means choosing and maintaining the information each model call needs for its next decision.** Goals, evidence, and unfinished work must remain available as a long task progresses.
 
 ## Where this fits
 
-In [the agent loop](../The%20agent%20loop/Readme.md), the **runtime**, the application coordinating the work, prepares each model input. That input is the model's **context**. Its size is limited by the **context window**, measured in **tokens**, pieces of text.
+The shared map highlights **context preparation**. Follow the arrows from context to a model call, then through tool results or an outcome check. The lower example keeps a website task’s goal, constraints, and remaining work available.
 
-Our example: update a website so every weekday opening time is **11:00**, while leaving weekend hours unchanged. The task spans several page files and many tool calls.
+![where-this-fits.svg](images/where-this-fits.svg)
 
-## What belongs in the next input?
+## Select useful information for this call
 
-Read left to right: the runtime selects useful information from a larger pool. The homepage is already checked; the contact page still needs work.
+The **runtime** is the application coordinating calls. It builds the **context**, the model’s input information. Our task is to set every website page’s weekday opening time to **11:00**, keeping weekends unchanged.
 
 ![next-call-context.svg](images/next-call-context.svg)
 
-- **Instructions:** the goal, constraints, and what counts as finished.
-- **Tool descriptions:** what each available tool does and which inputs it accepts.
-- **Progress:** verified changes, remaining work, and unresolved questions.
-- **Retrieved evidence:** relevant material read from files or other sources, with locations so it can be checked again.
+Read from the available pool to the four selected panels. **Instructions** state the goal and constraints. **Tool descriptions** explain available operations and inputs. **Progress** records checked work and remaining work. **Retrieved evidence** is relevant material brought back from files or other sources.
 
-Useful tool results contain enough detail for the next action. Here, the contact page's weekday and weekend hours matter; a huge unrelated search log does not. A file path tells the agent where to look, but does not supply the file's contents.
+A path locates evidence; it does not provide file contents. Select context again after new results.
 
-The aim is **enough relevant information**, not the shortest possible input. Removing the weekend constraint would save space but damage the task.
+## Keep within the context window
 
-## Summaries and saved notes
+The **context window** is the model’s capacity for input and generated output. It is measured in **tokens**, encoded units often representing words or word pieces.
 
-**Compaction** replaces older conversation history with a shorter account. Keep decisions and constraints, checked outcomes, unfinished work, and pointers to evidence. Summarizing is lossy: details can disappear.
+![context-window-budget.svg](images/context-window-budget.svg)
+
+The toy budget is 3,600 input + 2,000 output reserve + 2,400 spare = 8,000. Dashed space is empty. Real limits vary by model. Freeing room must not remove the weekend constraint.
+
+## Compact history without losing the task
+
+**Compaction** replaces older history with a shorter summary, often keeping recent messages alongside it. The window stays the same size; omitted details may need retrieval.
 
 ![compaction-and-notes.svg](images/compaction-and-notes.svg)
 
-“Hours updated” is a dangerous summary here. It hides which pages were checked and which remain. The better note in the diagram preserves those distinctions.
+The useful summary preserves the goal, weekend constraint, verified homepage, unfinished contact page, and evidence location. “Hours updated” hides the distinction between completed and pending work.
 
-**Saved notes** live outside the active context, for example in a progress file. The runtime must save them, then read the needed parts into a later model input. A note sitting on disk is not automatically visible to the model.
+**Saved notes** persist outside the active context. The runtime must write them and later read relevant text into a new input. A note is **stale** when it no longer reflects current state.
 
-Notes can become stale. “Homepage checked” records an earlier check; if the file later changes, reread and check it again. Notes help recover the task's state, but do not prove that today's files are correct.
+![saved-notes-and-freshness.svg](images/saved-notes-and-freshness.svg)
 
-## Subagent handoffs
+Follow save → store → read, then the freshness row. If someone edits the homepage after a check, reread it before relying on “homepage verified.” A saved claim is not a new check ([Context and memory](../In-context%20learning%20and%20memory/Readme.md)).
 
-A **subagent** is another agent given a focused part of the work. In a design with separate contexts, the lead agent sends the goal, constraints, and relevant evidence; the worker returns a compact report.
+## Give subagents a clear handoff
+
+A **subagent** is another agent assigned part of the work. A **handoff** transfers an assignment and relevant information. In this design, each worker has a separate context.
 
 ![subagent-handoff.svg](images/subagent-handoff.svg)
 
-For this task, a worker can search for other pages containing opening times. Its report should identify the pages, what it found, and what it did not check. “All done” would lose the evidence and uncertainty.
+The brief asks a worker to find opening hours without editing files. Its report returns paths, observations, and unchecked work. Do not assume it sees the lead’s whole conversation. The lead needs evidence, not just “all done.”
 
-The lead need not receive every intermediate search result. It does need enough information to decide what to inspect or change next. Do not assume the worker automatically sees the lead's whole conversation.
+## Preserve useful reusable prefixes
 
-## Keep reusable prompt prefixes
-
-A **prefix** is the beginning of an input. [Prompt caching](../Prompt%20caching%20across%20requests/Readme.md) can reuse computation for an unchanged prefix, subject to the service's cache rules.
+A **prefix** is the beginning of an input. **Prompt caching** can reuse computation for an eligible unchanged prefix across requests.
 
 ![stable-prefix.svg](images/stable-prefix.svg)
 
-Keep reusable instructions and tool definitions stable near the beginning; put changing progress and fresh results later. Replacing old history with a summary changes that later portion. An eligible unchanged prefix may still be reused, while the changed portion needs fresh processing.
+Read the rows: stable instructions and tool definitions stay first; progress, results, and summaries change later. Similar meaning is not exact matching. An early change breaks reuse from that point, subject to cache rules.
 
-“Same meaning” is not an exact match. Rewording early instructions can break reuse from that point onward. Cached input still occupies context space; caching does not restore facts omitted by a summary. Update incorrect or stale information even when doing so reduces cache reuse.
+Caching does not enlarge the window or restore omitted facts. Update wrong or stale content even when doing so reduces reuse ([Prompt caching](../Prompt%20caching%20across%20requests/Readme.md)).
 
 # Sources
 
-- [Anthropic: context selection diagram and context engineering](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents)
-- [Anthropic: useful tool descriptions and results](https://www.anthropic.com/research/writing-tools-for-agents)
+- [Anthropic: context-curation diagram and context engineering](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents)
+- [Anthropic: tool descriptions and useful results](https://www.anthropic.com/research/writing-tools-for-agents)
+- [Claude: context windows](https://platform.claude.com/docs/en/build-with-claude/context-windows)
 - [Claude: compaction](https://platform.claude.com/docs/en/build-with-claude/compaction)
 - [Claude: external memory](https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool)
-- [Anthropic: subagent coordination](https://www.anthropic.com/research/multi-agent-research-system)
-- [Claude: prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)
+- [Anthropic: separate subagent contexts and reports](https://www.anthropic.com/research/multi-agent-research-system)
+- [Claude: prefix caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)

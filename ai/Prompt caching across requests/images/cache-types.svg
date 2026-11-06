@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="825" viewBox="0 0 1120 616" role="img" aria-labelledby="title desc">
+<title id="title">Three caches save different things</title>
+<desc id="desc">A per-request KV cache stores attention state as one answer is generated. Prompt caching reuses prefix state across requests and still generates a new answer. A response cache returns a stored complete answer.</desc>
+<!-- Shared typography; all labels remain editable text. -->
+<defs>
+<style>text{font-family:Arial,Helvetica,sans-serif}</style>
+</defs>
+<rect width="1120" height="616" fill="#ffffff"/>
+<text x="28" y="40" font-size="28" font-weight="700" text-anchor="start" fill="#172033">
+<tspan x="28" dy="0">Three caches save different things</tspan>
+</text>
+<text x="28" y="74" font-size="21" font-weight="400" text-anchor="start" fill="#64748b">
+<tspan x="28" dy="0">KV = keys and values: saved attention data for tokens already processed.</tspan>
+</text>
+<!-- per-request: keep title and arrows in separate vertical bands. -->
+<g id="per-request">
+<rect x="28" y="96" width="1064" height="141" rx="14" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="50" y="131" font-size="24" font-weight="700" text-anchor="start" fill="#172033">
+<tspan x="50" dy="0">Per-request KV cache: reuse while generating one reply</tspan>
+</text>
+</g>
+<g id="read-prompt">
+<rect x="50" y="151" width="290" height="62" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="195.0" y="189.0" font-size="22" font-weight="600" text-anchor="middle" fill="#172033">
+<tspan x="195.0" dy="0">Process prompt</tspan>
+</text>
+</g>
+<g id="keep-kv">
+<path data-connector="true" d="M340 182 H405" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<polygon points="415,182 403,175 403,189" fill="#2563eb"/>
+</g>
+<g id="ongoing-kv">
+<rect x="415" y="151" width="290" height="62" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="560.0" y="189.0" font-size="22" font-weight="600" text-anchor="middle" fill="#172033">
+<tspan x="560.0" dy="0">Keep attention data</tspan>
+</text>
+</g>
+<g id="next-token">
+<path data-connector="true" d="M705 182 H770" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<polygon points="780,182 768,175 768,189" fill="#2563eb"/>
+</g>
+<g id="continue-reply">
+<rect x="780" y="151" width="290" height="62" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="925.0" y="189.0" font-size="22" font-weight="600" text-anchor="middle" fill="#172033">
+<tspan x="925.0" dy="0">Generate next token</tspan>
+</text>
+</g>
+<!-- prompt-cache: keep title and arrows in separate vertical bands. -->
+<g id="prompt-cache">
+<rect x="28" y="255" width="1064" height="141" rx="14" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="50" y="290" font-size="24" font-weight="700" text-anchor="start" fill="#172033">
+<tspan x="50" dy="0">Prompt cache: reuse prefix attention data in another request</tspan>
+</text>
+</g>
+<g id="earlier-request">
+<rect x="50" y="310" width="290" height="62" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="195.0" y="348.0" font-size="22" font-weight="600" text-anchor="middle" fill="#172033">
+<tspan x="195.0" dy="0">Earlier request</tspan>
+</text>
+</g>
+<g id="save-prefix">
+<path data-connector="true" d="M340 341 H405" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<polygon points="415,341 403,334 403,348" fill="#2563eb"/>
+</g>
+<g id="cross-request-kv">
+<rect x="415" y="310" width="290" height="62" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="560.0" y="348.0" font-size="22" font-weight="600" text-anchor="middle" fill="#172033">
+<tspan x="560.0" dy="0">Saved prefix data</tspan>
+</text>
+</g>
+<g id="new-request">
+<path data-connector="true" d="M705 341 H770" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<polygon points="780,341 768,334 768,348" fill="#2563eb"/>
+</g>
+<g id="new-answer">
+<rect x="780" y="310" width="290" height="62" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="925.0" y="348.0" font-size="22" font-weight="600" text-anchor="middle" fill="#172033">
+<tspan x="925.0" dy="0">Later: fresh answer</tspan>
+</text>
+</g>
+<!-- response-cache: keep title and arrows in separate vertical bands. -->
+<g id="response-cache">
+<rect x="28" y="414" width="1064" height="141" rx="14" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="50" y="449" font-size="24" font-weight="700" text-anchor="start" fill="#172033">
+<tspan x="50" dy="0">Response cache: return a stored answer</tspan>
+</text>
+</g>
+<g id="prior-answer">
+<rect x="50" y="469" width="290" height="62" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="195.0" y="507.0" font-size="22" font-weight="600" text-anchor="middle" fill="#172033">
+<tspan x="195.0" dy="0">Generate answer</tspan>
+</text>
+</g>
+<g id="save-response">
+<path data-connector="true" d="M340 500 H405" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<polygon points="415,500 403,493 403,507" fill="#2563eb"/>
+</g>
+<g id="stored-answer">
+<rect x="415" y="469" width="290" height="62" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="560.0" y="507.0" font-size="22" font-weight="600" text-anchor="middle" fill="#172033">
+<tspan x="560.0" dy="0">Save complete answer</tspan>
+</text>
+</g>
+<g id="return-response">
+<path data-connector="true" d="M705 500 H770" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<polygon points="780,500 768,493 768,507" fill="#2563eb"/>
+</g>
+<g id="same-answer">
+<rect x="780" y="469" width="290" height="62" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="925.0" y="507.0" font-size="22" font-weight="600" text-anchor="middle" fill="#172033">
+<tspan x="925.0" dy="0">Later: stored answer</tspan>
+</text>
+</g>
+<text x="28" y="593" font-size="21" font-weight="400" text-anchor="start" fill="#172033">
+<tspan x="28" dy="0">Prompt caching saves computation; it does not teach the model new knowledge.</tspan>
+</text>
+</svg>

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="617.5" viewBox="0 0 1200 494" role="img" aria-labelledby="title desc">
+  <title id="title">Turning scores into probabilities is different from choosing a token</title>
+  <desc id="desc">Toy vocabulary: only A and B. No temperature or probability filtering is applied.</desc>
+  <!-- Shared typography; editable geometry and real text. -->
+  <defs>
+    <style>text {font-family:Arial, Helvetica, sans-serif;}</style>
+  </defs>
+  <rect width="1200" height="494" fill="#fff"/>
+  <text x="28" y="44" font-size="28" font-weight="700" fill="#172033" text-anchor="start">Turning scores into probabilities is different from choosing a token</text>
+  <text x="28" y="78" font-size="20" font-weight="400" fill="#64748b" text-anchor="start">Toy vocabulary: only A and B. No temperature or probability filtering is applied.</text>
+  <!-- Two-token toy vocabulary makes exact softmax probabilities easy to check. -->
+  <rect x="28" y="112" width="350" height="270" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="422" y="112" width="350" height="270" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="816" y="112" width="356" height="270" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="52" y="151" font-size="23" font-weight="700" fill="#172033" text-anchor="start">LOGITS</text>
+  <text x="446" y="151" font-size="23" font-weight="700" fill="#172033" text-anchor="start">SOFTMAX</text>
+  <text x="840" y="151" font-size="23" font-weight="700" fill="#172033" text-anchor="start">DECODING RULE</text>
+  <text x="52" y="191" font-size="22" font-weight="400" fill="#172033" text-anchor="start">A: ln(3) ≈ 1.10</text>
+  <text x="52" y="225" font-size="22" font-weight="400" fill="#172033" text-anchor="start">B: ln(1) = 0</text>
+  <text x="52" y="270" font-size="19" font-weight="400" fill="#64748b" text-anchor="start">Raw preference scores</text>
+  <text x="446" y="191" font-size="21" font-weight="400" fill="#172033" text-anchor="start">Exponentiate: [3, 1]</text>
+  <text x="446" y="225" font-size="21" font-weight="400" fill="#172033" text-anchor="start">Divide by sum: 4</text>
+  <rect x="446" y="253" width="225" height="24" rx="0" fill="#2563eb" stroke="#2563eb" stroke-width="0"/>
+  <text x="690" y="273" font-size="19" font-weight="400" fill="#172033" text-anchor="start">75%</text>
+  <rect x="446" y="297" width="75" height="24" rx="0" fill="#94a3b8" stroke="#94a3b8" stroke-width="0"/>
+  <text x="540" y="317" font-size="19" font-weight="400" fill="#172033" text-anchor="start">25%</text>
+  <text x="446" y="356" font-size="19" font-weight="400" fill="#172033" text-anchor="start">Probabilities sum to 100%.</text>
+  <text x="840" y="196" font-size="22" font-weight="700" fill="#172033" text-anchor="start">Greedy: choose A.</text>
+  <text x="840" y="239" font-size="21" font-weight="400" fill="#172033" text-anchor="start">Sampling: draw using</text>
+  <text x="840" y="268" font-size="21" font-weight="400" fill="#172033" text-anchor="start">75% for A, 25% for B.</text>
+  <text x="840" y="329" font-size="21" font-weight="700" fill="#172033" text-anchor="start">One selected token ID</text>
+  <path data-connector="true" d="M378 246 L413.0 246.0" fill="none" stroke="#2563eb" stroke-width="2"/>
+  <polygon points="422,246 412.0,250.0 412.0,242.0" fill="#2563eb"/>
+  <path data-connector="true" d="M772 246 L807.0 246.0" fill="none" stroke="#2563eb" stroke-width="2"/>
+  <polygon points="816,246 806.0,250.0 806.0,242.0" fill="#2563eb"/>
+  <text x="28" y="428" font-size="21" font-weight="700" fill="#172033" text-anchor="start">Where it fits: scores leave the forward pass; the generation routine chooses the next token.</text>
+  <text x="28" y="464" font-size="20" font-weight="400" fill="#64748b" text-anchor="start">ln means natural logarithm. Greedy decoding can compare logits directly without softmax.</text>
+</svg>

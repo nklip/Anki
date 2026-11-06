@@ -6,52 +6,60 @@
 
 ## Where this fits
 
-Every transformer block does two jobs in order: attention, then the MLP ([The transformer forward pass](../The%20transformer%20forward%20pass/Readme.md)):
+Each token, a piece of text, has a vector: a list of numbers. Attention supplies context from other positions. The MLP transforms that vector and adds its result to the token's running information.
+
+The upper map highlights this per-token computation. The lower panel compares a dense MLP with a few selected experts. [Attention](../Attention/Readme.md) covers how context reaches each position.
 
 ![where-this-fits.svg](images/where-this-fits.svg)
 
-Read left to right; the enlarged block highlights the MLP as its second job.
-
-A useful division of labor: attention *moves* information between positions ([Attention: queries, keys, values, and heads](../Attention/Readme.md)), and the MLP *works on* the information that each position now holds. Like attention, the MLP adds its result to [the residual stream](../The%20residual%20stream%20and%20normalization/Readme.md). In a standard, **dense** model, every position uses the same MLP weights within a block, and each block has its own MLP.
-
 ## What an MLP does
+
+An MLP first **expands** each token vector into more slots, applies a nonlinear rule, then **projects back** to the original vector width. A **projection** uses learned weighted sums to make new coordinates. A **neuron** is one intermediate slot. Follow the circles; expansion adds slots, not tokens:
 
 ![dense-mlp-example.svg](images/dense-mlp-example.svg)
 
-An MLP has three stages, which the diagram follows from left to right:
+The invented example goes from 2 slots to 3 and back to 2. In a **dense** MLP, every token uses the same full computation within that block; different blocks have different weights. Each row below reuses those weights independently:
 
-1. **Expand:** learned weights turn the vector into a longer one, giving more room to work. Expansion means more slots per token, not more tokens.
-2. **Apply a nonlinear rule** to each slot separately. The diagram uses **ReLU (rectified linear unit)**: keep positive numbers, and replace negative ones with zero.
-3. **Project back:** learned weights shrink the result to the original size. That result is the MLP's update.
+![dense-weight-sharing.svg](images/dense-weight-sharing.svg)
 
-In the diagram, a two-slot vector is expanded to three slots, ReLU zeroes the negative slot, and the result is projected back to two slots. The recipes are invented and only show the shape. Here a **projection** simply means a learned multiply-and-add recipe that produces new numbers. Each slot of the expanded middle is called a **neuron**; real MLPs have several times more neurons than the vector has slots.
+## Nonlinearity, ReLU, and SiLU
 
-## Why the nonlinear rule matters
+A **nonlinear activation** bends the input–output rule. **ReLU (rectified linear unit)** keeps positive numbers and replaces negative ones with zero. **SiLU (sigmoid linear unit)**, also called Swish, bends smoothly and can preserve small negative values. Each gets its own graph:
 
-Multiply-and-add steps stacked on top of each other collapse into a single multiply-and-add: doubling and then tripling is just multiplying by six. Without something else, a deeper network would add nothing new. A nonlinear rule such as ReLU breaks this collapse, because it treats negative and positive numbers differently. That lets stacked layers build behavior that no single multiply-and-add recipe can express.
+![nonlinear-activations.svg](images/nonlinear-activations.svg)
 
-## Gated MLPs
+Why add the bend? Without it, multiplying by two and then three is just multiplying by six. More generally, stacked linear transformations collapse into one. A nonlinear rule lets depth express new kinds of functions.
+
+## Gates and SwiGLU
+
+A **gate** multiplies each content coordinate by a calculated control value. **SwiGLU** is a gated MLP design that uses SiLU on its gate branch. Two learned projections read the same input, then their outputs are multiplied coordinate by coordinate:
 
 ![gated-mlp.svg](images/gated-mlp.svg)
 
-Llama-style models use a **gated** MLP called **SwiGLU**. Two learned branches read the same input: one produces content, and the other produces **gate values** that control how much of each content number passes through. In the diagram, the gate halves the first number and doubles the second, so a gate can weaken or strengthen a value, not only switch it on or off. The gate branch uses **SiLU** (also called Swish), a smooth rule without ReLU's sharp corner at zero. The product is then projected back, as before.
+The example gate `[0.5, 2]` changes content `[2, 4]` to `[1, 8]`: one slot is halved and another doubled. These are illustrative values after SiLU. Gates are not restricted to on/off or to the range 0–1. The product is projected back to form the MLP update.
 
-## Mixture of experts: choose which MLPs run
+## Experts, routing, and a sparse mixture
 
-A **sparse mixture of experts (MoE)** replaces the single MLP with several MLPs, called **experts**, plus a small learned **router**. For each token, the router picks a few experts, runs only those, and blends their outputs.
+A **sparse mixture of experts (MoE)** offers several MLPs, called **experts**, while a learned **router** chooses a few for each token. “Sparse” means only a subset runs. Follow the selected paths; the gray experts do no work for this token:
 
 ![sparse-expert-routing.svg](images/sparse-expert-routing.svg)
 
-In the diagram, the router picks experts 1 and 3 of four for this token and weights them 75% and 25%; experts 2 and 4 do not run. Another token may pick different experts. Experts are ordinary neural networks inside the model, not separate chatbots with assigned specialties.
+The example selects experts 1 and 3, with blend weights 75% and 25%. Another token may choose differently. An expert is an internal neural network, not a separate chatbot with an assigned specialty.
 
-The point is to give a model many parameters while each token uses only some of them. Mixtral 8x7B, for example, picks two of eight experts in each layer, so each token has access to 47 billion parameters but uses only about 13 billion. All experts must still be stored, and routing adds overhead, so using fewer parameters per token does not cut memory or time in the same proportion.
+## Active versus total parameters
+
+**Total parameters** count all stored weights. **Active parameters** count those used for one token. The diagram separates stored experts from the selected subset:
+
+![active-and-total-parameters.svg](images/active-and-total-parameters.svg)
+
+Mixtral 8×7B selects two of eight experts per layer: about 46.7 billion parameters are stored and 12.9 billion are active per token, including shared components. All experts still require storage; routing adds overhead, so memory and elapsed time do not shrink in the same proportion.
 
 # Sources
 
-- [Transformer: position-wise MLPs](https://arxiv.org/html/1706.03762v7)
+- [Google: position-wise MLPs, §3.3](https://arxiv.org/html/1706.03762v7)
 - [PyTorch: ReLU](https://docs.pytorch.org/docs/2.15/generated/torch.nn.ReLU.html) and [SiLU](https://docs.pytorch.org/docs/2.15/generated/torch.nn.SiLU.html)
-- [LLaMA: pre-norm and SwiGLU](https://arxiv.org/html/2302.13971v1)
-- [GLU variants: gated MLP equations](https://arxiv.org/html/2002.05202v1)
-- [Transformer Circuits: neurons and the residual stream](https://transformer-circuits.pub/2021/framework/index.html)
-- [Mixtral: routing, active parameters, and memory](https://arxiv.org/html/2401.04088v1)
-- [Switch Transformers: sparse computation and communication costs](https://arxiv.org/abs/2101.03961)
+- [Meta: Llama 3 gated feedforward implementation](https://github.com/meta-llama/llama3/blob/main/llama/model.py)
+- [Google: GLU variants and SwiGLU equations](https://arxiv.org/html/2002.05202v1)
+- [Mistral: expert-routing diagram, Figure 1](https://arxiv.org/html/2401.04088v1)
+- [Mistral: total and active parameters](https://mistral.ai/news/mixtral-of-experts/)
+- [Switch Transformers: sparse computation costs](https://arxiv.org/abs/2101.03961)

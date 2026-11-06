@@ -1,65 +1,43 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="548" viewBox="0 0 1100 548" role="img" aria-labelledby="title desc">
-  <title id="title">Action, feedback, then another decision</title>
-  <desc id="desc">The user supplies a goal. A model call chooses an action. The runtime checks and runs the tool, then returns its result in the next context. The model can finish or ask for input; the runtime can also stop at a limit. Runtime state keeps the goal, earlier calls and results, and remaining limits.</desc>
-  <!-- Original simplified SVG inspired by the concepts in the official figure, not a reproduction.
-       Source: https://www.anthropic.com/research/building-effective-agents
-       Figure: https://www-cdn.anthropic.com/images/4zrzovbb/website/58d9f10c985c4eb5d53798dea315f7bb5ab6249e-2401x1000.png -->
-  <!-- Shared definitions preserve the visual language of the AI series. -->
-  <defs><style>
-    text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-    .title { font-size: 28px; font-weight: 700; }
-    .subtitle, .note { font-size: 19px; fill: #475569; }
-    .label { font-size: 22px; font-weight: 700; }
-    .body { font-size: 20px; }
-    .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
-    .head { fill: #64748b; }
-    .lifeline { stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 5 5; }
-  </style></defs>
-  <rect width="1100" height="548" fill="#ffffff"/>
-  <!-- Heading states the lesson and reading order. -->
-  <text class="title" x="28" y="43" text-anchor="start">Action, feedback, then another decision</text>
-  <text class="subtitle" x="28" y="76" text-anchor="start">Follow the return arrow: the next decision uses what the tool actually reported.</text>
-  <!-- user goal; labels remain inside this panel. -->
-  <g id="user-goal">
-    <rect x="28" y="130" width="230" height="130" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-  <text class="label" x="143.0" y="164" text-anchor="middle">User goal</text>
-  <text class="body" x="143.0" y="202" text-anchor="middle">Set time to 11:00;</text>
-  <text class="body" x="143.0" y="234" text-anchor="middle">check the saved file.</text>
-  </g>
-  <!-- model choice; labels remain inside this panel. -->
-  <g id="model-choice">
-    <rect x="354" y="130" width="300" height="130" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
-  <text class="label" x="504.0" y="164" text-anchor="middle">Model call</text>
-  <text class="body" x="504.0" y="204" text-anchor="middle">Uses current context</text>
-  <text class="body" x="504.0" y="236" text-anchor="middle">Chooses what is next</text>
-  </g>
-  <!-- runtime action; labels remain inside this panel. -->
-  <g id="runtime-action">
-    <rect x="760" y="130" width="312" height="130" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-  <text class="label" x="916.0" y="164" text-anchor="middle">Runtime + tool</text>
-  <text class="body" x="916.0" y="204" text-anchor="middle">Check the request.</text>
-  <text class="body" x="916.0" y="236" text-anchor="middle">Run the allowed action.</text>
-  </g>
-  <text class="note" x="306" y="172" text-anchor="middle">goal</text>
-  <!-- goal-to-model: the shaft ends inside its head; the nose meets the target boundary. -->
-  <g id="goal-to-model"><path class="connector" d="M259 195 L342 195"/><polygon class="head" points="354,195 341,189 341,201"/></g>
-  <text class="note" x="707" y="172" text-anchor="middle">action</text>
-  <!-- request-action: the shaft ends inside its head; the nose meets the target boundary. -->
-  <g id="request-action"><path class="connector" d="M655 195 L748 195"/><polygon class="head" points="760,195 747,189 747,201"/></g>
-  <text class="body" x="780" y="302" text-anchor="middle">Result → next context</text>
-  <!-- observed-result-feedback: the shaft ends inside its head; the nose meets the target boundary. -->
-  <g id="observed-result-feedback"><path class="connector" d="M916 261 L916 319 L610 319 L610 272"/><polygon class="head" points="610,260 604,273 616,273"/></g>
-  <!-- finish or pause; labels remain inside this panel. -->
-  <g id="finish-or-pause">
-    <rect x="354" y="376" width="718" height="104" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
-  <text class="label" x="713.0" y="410" text-anchor="middle">Finish, pause, or stop at a limit</text>
-  <text class="body" x="713.0" y="450" text-anchor="middle">Report checked results and anything unfinished.</text>
-  </g>
-  <text class="note" x="452" y="347" text-anchor="start">finish / ask</text>
-  <!-- model-exit: the shaft ends inside its head; the nose meets the target boundary. -->
-  <g id="model-exit"><path class="connector" d="M430 261 L430 364"/><polygon class="head" points="430,376 424,363 436,363"/></g>
-  <text class="note" x="979" y="347" text-anchor="end">limit</text>
-  <!-- runtime-limit-exit: the shaft ends inside its head; the nose meets the target boundary. -->
-  <g id="runtime-limit-exit"><path class="connector" d="M1000 261 L1000 364"/><polygon class="head" points="1000,376 994,363 1006,363"/></g>
-  <text class="note" x="550" y="520" text-anchor="middle">Runtime state = goal + earlier calls and results + remaining limits.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="845.454545" viewBox="0 0 1100 620" role="img" aria-labelledby="title desc">
+<title id="title">Runtime state and per-call context in an agent loop</title>
+<desc id="desc">The runtime retains the goal, observed file content, edit receipt, unfinished check, and limits. It selects relevant input for the next model call, whose result updates the working state.</desc>
+<!-- Shared native text and typography. Shafts end inside separate arrowhead bases. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1100" height="620" fill="#ffffff"/>
+<text x="30" y="44" font-size="29" font-weight="700" text-anchor="start" fill="#172033">The runtime keeps state and selects the next context</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">State is the run’s working record. Context is the information supplied to one model call.</text>
+<!-- Run state; preserve reading order and text clearance. -->
+<g id="run-state">
+<rect x="30" y="124" width="400" height="260" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="162" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Runtime state</text>
+<text x="50" y="203" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Goal: change time; check saved file</text>
+<text x="50" y="235" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Observed: notes.txt says 10:00</text>
+<text x="50" y="267" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Latest result: edit reported Saved</text>
+<text x="50" y="299" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Pending: verify stored contents</text>
+<text x="50" y="331" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Remaining tool attempts: 2</text>
+</g>
+<!-- Selected context; preserve reading order and text clearance. -->
+<g id="selected-context">
+<rect x="520" y="124" width="550" height="260" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="540" y="162" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Next model input = selected context</text>
+<text x="540" y="203" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Instructions + the user’s goal</text>
+<text x="540" y="235" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Relevant call history and matching results</text>
+<text x="540" y="267" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Available tools and their input rules</text>
+<text x="540" y="299" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Model can now request a verification read.</text>
+</g>
+<!-- State context exchange; preserve reading order and text clearance. -->
+<g id="state-context-exchange">
+<path data-connector="true" d="M 430,258 L 509,258" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="520,258 508,264 508,252" fill="#64748b"/>
+<text x="449" y="233" font-size="18" font-weight="400" text-anchor="start" fill="#172033">select</text>
+<path data-connector="true" d="M 800,384 L 800,435 L 240,435 L 240,395" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="240,384 246,396 234,396" fill="#64748b"/>
+<text x="300" y="422" font-size="20" font-weight="400" text-anchor="start" fill="#172033">New calls and results update the run’s state.</text>
+</g>
+<!-- Visible state boundary; preserve reading order and text clearance. -->
+<g id="visible-state-boundary">
+<rect x="30" y="476" width="1040" height="113" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="515" font-size="23" font-weight="700" text-anchor="start" fill="#172033">A note or result in storage helps only after relevant information reaches the input.</text>
+<text x="50" y="552" font-size="20" font-weight="400" text-anchor="start" fill="#172033">The runtime also tracks limits and pending work. The model’s learned weights stay fixed in this loop.</text>
+</g>
 </svg>

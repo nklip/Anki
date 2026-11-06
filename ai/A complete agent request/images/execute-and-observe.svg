@@ -1,65 +1,61 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="525" viewBox="0 0 1100 525" role="img" aria-labelledby="title desc">
-  <title id="title">A generated request becomes a real test result</title>
-  <desc id="desc">Step 3 executes the run_tests request identified as call_1. The runtime validates the inputs and permissions, then runs Python tests. One test expects three groups of four marbles, or twelve, but the function adds three and four to get seven. The runtime includes the failure and its matching call identifier in the next model input.</desc>
-  <!-- Shared series typography; each panel states its own role. -->
-  <defs>
-    <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-      .title { font-size: 28px; font-weight: 700; }
-      .subtitle { font-size: 19px; fill: #475569; }
-      .label { font-size: 22px; font-weight: 700; }
-      .body { font-size: 20px; }
-      .note { font-size: 19px; fill: #475569; }
-      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
-      .head { fill: #64748b; }
-    </style>
-  </defs>
-  <rect width="1100" height="525" fill="#ffffff"/>
-  <!-- Heading states the lesson before the body introduces its parts. -->
-  <text class="title" x="28" y="43" text-anchor="start">A generated request becomes a real test result</text>
-  <text class="subtitle" x="28" y="76" text-anchor="start">Step 3: generating a request and executing Python are separate events.</text>
-  <!-- Generated tool request; labels explain the color and role. -->
-  <g id="generated-tool-request">
-    <rect x="28" y="112" width="300" height="176" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
-  <text class="label" x="178.0" y="148" text-anchor="middle">Model request</text>
-  <text class="body" x="178.0" y="193" text-anchor="middle">Tool: run_tests</text>
-  <text class="note" x="178.0" y="238" text-anchor="middle">Identifier: call_1</text>
-  </g>
-  <!-- Checked execution; labels explain the color and role. -->
-  <g id="checked-execution">
-    <rect x="386" y="112" width="314" height="176" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-  <text class="label" x="543.0" y="148" text-anchor="middle">Runtime + test tool</text>
-  <text class="note" x="543.0" y="193" text-anchor="middle">Check inputs and permission.</text>
-  <text class="body" x="543.0" y="238" text-anchor="middle">Execute the Python tests.</text>
-  </g>
-  <!-- Observed failure; labels explain the color and role. -->
-  <g id="observed-failure">
-    <rect x="758" y="112" width="314" height="176" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
-  <text class="label" x="915.0" y="148" text-anchor="middle">One test failure</text>
-  <text class="body" x="915.0" y="193" text-anchor="middle">Expected 12; got 7</text>
-  <text class="note" x="915.0" y="238" text-anchor="middle">Actual result of running code</text>
-  </g>
-  <!-- request-to-runtime: shaft ends inside the head; the tip meets the target boundary. -->
-  <g id="request-to-runtime">
-    <line class="connector" x1="329" y1="202" x2="374" y2="202"/>
-    <polygon class="head" points="386,202 373,196 373,208"/>
-  </g>
-  <!-- execution-to-failure: shaft ends inside the head; the tip meets the target boundary. -->
-  <g id="execution-to-failure">
-    <line class="connector" x1="701" y1="202" x2="746" y2="202"/>
-    <polygon class="head" points="758,202 745,196 745,208"/>
-  </g>
-  <!-- Returned observation; labels explain the color and role. -->
-  <g id="returned-observation">
-    <rect x="28" y="341" width="1044" height="120" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-  <text class="label" x="550.0" y="375" text-anchor="middle">Next model input includes call_1 and its failure result.</text>
-  <text class="body" x="550.0" y="412" text-anchor="middle">Three bags of four: 4 + 4 + 4 = 12 marbles.</text>
-  <text class="body" x="550.0" y="444" text-anchor="middle">The buggy code adds the counts: 3 + 4 = 7.</text>
-  </g>
-  <!-- failure-enters-context: the vertical shaft ends inside its downward head. -->
-  <g id="failure-enters-context">
-    <line class="connector" x1="915" y1="289" x2="915" y2="329"/>
-    <polygon class="head" points="915,341 909,328 921,328"/>
-  </g>
-  <text class="note" x="550" y="499" text-anchor="middle">The model sees the test failure because the runtime sends the result back.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="906.818182" viewBox="0 0 1100 665" role="img" aria-labelledby="title desc">
+<title id="title">Executing tests exposes the addition bug</title>
+<desc id="desc">A run_tests request with call ID T1 passes validation and authorization before execution. The test tool reports expected 12 versus actual 7 for three bags of four, and expected 0 versus actual 4 for zero bags. Matched results enter the next input.</desc>
+<!-- Shared native text and typography. Shafts end inside separate arrowhead bases. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1100" height="665" fill="#ffffff"/>
+<text x="30" y="44" font-size="29" font-weight="700" text-anchor="start" fill="#172033">Execute the test request and return the actual failures</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">A tool call requests work. The runtime checks it before invoking executable test code.</text>
+<!-- Call request; preserve reading order and text clearance. -->
+<g id="call-request">
+<rect x="30" y="125" width="320" height="206" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="163" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Model request</text>
+<text x="50" y="204" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Tool: run_tests</text>
+<text x="50" y="236" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Path argument: marbles.py</text>
+<text x="50" y="268" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Call ID: T1</text>
+<text x="50" y="300" font-size="20" font-weight="400" text-anchor="start" fill="#172033">The ID labels this request.</text>
+</g>
+<!-- Runtime checks; preserve reading order and text clearance. -->
+<g id="runtime-checks">
+<rect x="390" y="125" width="320" height="206" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="410" y="163" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Runtime checks</text>
+<text x="410" y="204" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Validation: inputs fit rules.</text>
+<text x="410" y="236" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Authorization: action allowed.</text>
+<text x="410" y="268" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Then invoke the test tool.</text>
+<text x="410" y="300" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Tool code runs Python.</text>
+</g>
+<!-- Matched result; preserve reading order and text clearance. -->
+<g id="matched-result">
+<rect x="750" y="125" width="320" height="206" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="770" y="163" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Returned observation</text>
+<text x="770" y="204" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Actual test report below</text>
+<text x="770" y="236" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Return it for call ID T1.</text>
+<text x="770" y="268" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Include it in the next input.</text>
+<text x="770" y="300" font-size="20" font-weight="400" text-anchor="start" fill="#172033">The model can use this result.</text>
+</g>
+<!-- Execution path; preserve reading order and text clearance. -->
+<g id="execution-path">
+<path data-connector="true" d="M 350,230 L 379,230" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="390,230 378,236 378,224" fill="#64748b"/>
+<path data-connector="true" d="M 710,230 L 739,230" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="750,230 738,236 738,224" fill="#64748b"/>
+</g>
+<!-- Failed test evidence; preserve reading order and text clearance. -->
+<g id="failed-test-evidence">
+<rect x="30" y="380" width="1040" height="207" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="419" font-size="25" font-weight="700" text-anchor="start" fill="#172033">Current code: return bags + per_bag</text>
+<text x="50" y="466" font-size="22" font-weight="700" text-anchor="start" fill="#172033">Input (bags, per_bag)</text>
+<text x="420" y="466" font-size="22" font-weight="700" text-anchor="start" fill="#172033">Expected</text>
+<text x="650" y="466" font-size="22" font-weight="700" text-anchor="start" fill="#172033">Actual</text>
+<text x="875" y="466" font-size="22" font-weight="700" text-anchor="start" fill="#172033">Result</text>
+<text x="50" y="510" font-size="22" font-weight="400" text-anchor="start" fill="#172033">(3, 4)</text>
+<text x="420" y="510" font-size="22" font-weight="400" text-anchor="start" fill="#172033">12</text>
+<text x="650" y="510" font-size="22" font-weight="400" text-anchor="start" fill="#172033">7</text>
+<text x="875" y="510" font-size="22" font-weight="700" text-anchor="start" fill="#172033">Fail</text>
+<text x="50" y="553" font-size="22" font-weight="400" text-anchor="start" fill="#172033">(0, 4)</text>
+<text x="420" y="553" font-size="22" font-weight="400" text-anchor="start" fill="#172033">0</text>
+<text x="650" y="553" font-size="22" font-weight="400" text-anchor="start" fill="#172033">4</text>
+<text x="875" y="553" font-size="22" font-weight="700" text-anchor="start" fill="#172033">Fail</text>
+</g>
+<text x="30" y="632" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Three bags of four contain 4 + 4 + 4 = 12 marbles. Adding the two inputs gives 3 + 4 = 7.</text>
 </svg>

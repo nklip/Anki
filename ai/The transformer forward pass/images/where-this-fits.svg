@@ -1,67 +1,129 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="364" viewBox="0 0 1100 364" role="img" aria-labelledby="title desc">
-  <title id="title">The forward pass turns token IDs into scores</title>
-  <desc id="desc">Read left to right. Tokenization first converts text into token IDs. In the highlighted forward pass, embedding lookup produces starting vectors, repeated transformer blocks update them, and final normalization and an output projection produce next-token scores. A later decoding rule chooses a token. The model's learned weights stay fixed during this inference run.</desc>
-  <!-- Shared typography follows the neighboring diagrams; blue labels the scope of this article. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1250" viewBox="0 0 1200 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Shared transformer map and the transformer forward pass</title>
+  <desc id="desc">The highlighted region locates the forward pass in the model or its analysis. Text is tokenized, embedded, processed through pre-norm residual blocks with attention and MLPs, then scored. Selection and decoding follow. Separate dashed research branches inspect features or mechanisms. The lower panel explains the highlighted topic with a worked example.</desc>
+  <!-- Shared font and palette; all artwork remains editable SVG. -->
   <defs>
-    <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; text-anchor: middle; }
-      .title { font-size: 29px; font-weight: 700; text-anchor: start; }
-      .subtitle { font-size: 19px; fill: #475569; text-anchor: start; }
-      .group-label { font-size: 19px; font-weight: 700; }
-      .label { font-size: 21px; font-weight: 700; }
-      .body { font-size: 18px; fill: #475569; }
-      .note { font-size: 20px; }
-      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
-      .head { fill: #64748b; }
-    </style>
+    <style>text {font-family: Arial, Helvetica, sans-serif;}</style>
   </defs>
-  <rect width="1100" height="364" fill="#ffffff"/>
-
-  <!-- Token IDs are the input boundary; the blue panel begins with the lookup operation. -->
-  <text class="title" x="28" y="42">The forward pass turns token IDs into scores</text>
-  <text class="subtitle" x="28" y="74">Read left to right · Llama-style model · the blue group is this article's focus</text>
-  <g id="input-preparation">
-    <rect x="20" y="100" width="418" height="176" rx="14" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
-    <text class="group-label" x="229" y="130">BEFORE THE MODEL · tokenization</text>
-    <rect x="32" y="150" width="180" height="102" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
-    <text class="label" x="122" y="190">Text</text>
-    <text class="body" x="122" y="227">letters and spaces</text>
-    <rect x="246" y="150" width="180" height="102" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
-    <text class="label" x="336" y="190">Token IDs</text>
-    <text class="body" x="336" y="227">the model's input</text>
+  <rect width="1200" height="1000" fill="#fff"/>
+  <g id="shared-flow">
+    <!-- Shared concept map: stable topic names and geometry; only one region receives focus styling. -->
+    <text x="28" y="42" font-size="28" font-weight="700" fill="#172033" text-anchor="start">Where it fits · inside a text-generating transformer</text>
+    <text x="28" y="73" font-size="19" font-weight="400" fill="#64748b" text-anchor="start">Colored outline: this topic. Gray: surrounding computation. Dashed branches: research.</text>
+    <rect x="340" y="96" width="832" height="432" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="3" data-focus="true" id="forward-pass-region"/>
+    <text x="366" y="124" font-size="20" font-weight="700" fill="#172033" text-anchor="start">Forward pass: token IDs → next-token scores</text>
+    <rect x="28" y="142" width="86" height="84" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="71.0" y="191.0" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Text</text>
+    <rect x="142" y="142" width="174" height="84" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5" id="tokenizer-region"/>
+    <text x="229.0" y="178.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Tokenizer</text>
+    <text x="229.0" y="203.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">text → token IDs</text>
+    <rect x="366" y="142" width="182" height="84" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5" id="embedding-region"/>
+    <text x="457.0" y="178.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Embeddings</text>
+    <text x="457.0" y="203.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">ID → vector</text>
+    <rect x="578" y="142" width="252" height="84" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="704.0" y="178.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Repeated blocks</text>
+    <text x="704.0" y="203.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">update each vector</text>
+    <rect x="860" y="142" width="288" height="84" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="1004.0" y="178.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Final norm + projection</text>
+    <text x="1004.0" y="203.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">vector → scores (logits)</text>
+    <path data-connector="true" d="M114 184 L133.0 184.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="142,184 132.0,188.0 132.0,180.0" fill="#64748b"/>
+    <path data-connector="true" d="M316 184 L357.0 184.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="366,184 356.0,188.0 356.0,180.0" fill="#64748b"/>
+    <path data-connector="true" d="M548 184 L569.0 184.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="578,184 568.0,188.0 568.0,180.0" fill="#64748b"/>
+    <path data-connector="true" d="M830 184 L851.0 184.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="860,184 850.0,188.0 850.0,180.0" fill="#64748b"/>
+    <!-- The scoring output leaves the model; selecting a token is a separate operation. -->
+    <path data-connector="true" d="M1004 226 V250 H171 V280" fill="none" stroke="#64748b" stroke-width="2"/>
+    <path data-connector="true" d="M171 280 L171.0 289.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="171,298 167.0,288.0 175.0,288.0" fill="#64748b"/>
+    <rect x="28" y="298" width="286" height="110" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="171.0" y="335.0" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Choose one token ID</text>
+    <text x="171.0" y="360.0" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">decode IDs → text</text>
+    <text x="171.0" y="385.0" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">append ID; run again</text>
+    <text x="28" y="445" font-size="18" font-weight="700" fill="#172033" text-anchor="start">Llama-style pre-norm model.</text>
+    <text x="28" y="474" font-size="18" font-weight="400" fill="#64748b" text-anchor="start">Norm = rescale a vector.</text>
+    <text x="28" y="502" font-size="18" font-weight="400" fill="#64748b" text-anchor="start">+ = add an update.</text>
+    <!-- Expanded repeated block; bypasses carry each original vector unchanged to addition. -->
+    <rect x="366" y="278" width="782" height="234" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5" id="residual-region"/>
+    <text x="386" y="307" font-size="20" font-weight="700" fill="#172033" text-anchor="start">Residual stream + normalization · one block enlarged</text>
+    <text x="500" y="340" font-size="18" font-weight="400" fill="#64748b" text-anchor="start">Position enters attention</text>
+    <rect x="386" y="360" width="82" height="70" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="427.0" y="402.0" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Norm</text>
+    <rect x="494" y="360" width="164" height="70" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5" id="attention-region"/>
+    <text x="576.0" y="389.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Attention</text>
+    <text x="576.0" y="414.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">mix positions</text>
+    <rect x="740" y="360" width="82" height="70" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="781.0" y="402.0" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Norm</text>
+    <rect x="848" y="360" width="172" height="70" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5" id="mlp-region"/>
+    <text x="934.0" y="389.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">MLP / MoE</text>
+    <text x="934.0" y="414.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">work per token</text>
+    <circle cx="694" cy="395" r="18" fill="#fff" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="694" y="403" font-size="27" font-weight="400" fill="#172033" text-anchor="middle">+</text>
+    <circle cx="1060" cy="395" r="18" fill="#fff" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="1060" y="403" font-size="27" font-weight="400" fill="#172033" text-anchor="middle">+</text>
+    <path data-connector="true" d="M468 395 L485.0 395.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="494,395 484.0,399.0 484.0,391.0" fill="#64748b"/>
+    <path data-connector="true" d="M658 395 L667.0 395.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="676,395 666.0,399.0 666.0,391.0" fill="#64748b"/>
+    <path data-connector="true" d="M712 395 L731.0 395.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="740,395 730.0,399.0 730.0,391.0" fill="#64748b"/>
+    <path data-connector="true" d="M822 395 L839.0 395.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="848,395 838.0,399.0 838.0,391.0" fill="#64748b"/>
+    <path data-connector="true" d="M1020 395 L1033.0 395.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="1042,395 1032.0,399.0 1032.0,391.0" fill="#64748b"/>
+    <path data-connector="true" d="M1078 395 L1121.0 395.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="1130,395 1120.0,399.0 1120.0,391.0" fill="#64748b"/>
+    <path data-connector="true" d="M378 395 H386 M378 395 V480 H694 V451" fill="none" stroke="#64748b" stroke-width="2"/>
+    <path data-connector="true" d="M694 451 L694.0 422.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="694,413 698.0,423.0 690.0,423.0" fill="#64748b"/>
+    <path data-connector="true" d="M728 395 V480 H1060 V451" fill="none" stroke="#64748b" stroke-width="2"/>
+    <path data-connector="true" d="M1060 451 L1060.0 422.0" fill="none" stroke="#64748b" stroke-width="2"/>
+    <polygon points="1060,413 1064.0,423.0 1056.0,423.0" fill="#64748b"/>
+    <text x="532" y="460" font-size="18" font-weight="400" fill="#64748b" text-anchor="middle">carry input unchanged</text>
+    <text x="887" y="460" font-size="18" font-weight="400" fill="#64748b" text-anchor="middle">carry updated vector</text>
+    <text x="750" y="504" font-size="18" font-weight="400" fill="#64748b" text-anchor="middle">MLP: per-token network · MoE: mixture of experts</text>
+    <!-- Dashed branches observe activations; these boxes are not extra forward-pass stages. -->
+    <path data-connector="true" d="M756 528 V554 H553 V566" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="5 4"/>
+    <path data-connector="true" d="M553 566 L553.0 571.0" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="5 4"/>
+    <polygon points="553,580 549.0,570.0 557.0,570.0" fill="#64748b"/>
+    <path data-connector="true" d="M756 554 H961 V566" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="5 4"/>
+    <path data-connector="true" d="M961 566 L961.0 571.0" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="5 4"/>
+    <polygon points="961,580 957.0,570.0 965.0,570.0" fill="#64748b"/>
+    <text x="28" y="559" font-size="20" font-weight="700" fill="#172033" text-anchor="start">Separate research views</text>
+    <text x="28" y="590" font-size="18" font-weight="400" fill="#64748b" text-anchor="start">Dashed lines: inspect or test</text>
+    <text x="28" y="616" font-size="18" font-weight="400" fill="#64748b" text-anchor="start">internal working vectors.</text>
+    <rect x="366" y="580" width="374" height="82" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5" id="feature-research-region"/>
+    <text x="553.0" y="615.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Features + directions</text>
+    <text x="553.0" y="640.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">What is represented?</text>
+    <rect x="774" y="580" width="374" height="82" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5" id="mechanism-research-region"/>
+    <text x="961.0" y="615.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Superposition + circuits</text>
+    <text x="961.0" y="640.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">How is it stored and used?</text>
   </g>
-
-  <!-- The three model stages match the article's lookup, block, and scoring steps. -->
-  <g id="forward-pass-focus">
-    <rect x="448" y="100" width="632" height="176" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-    <text class="group-label" x="764" y="130">FORWARD PASS · this article</text>
-    <rect x="460" y="150" width="180" height="102" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
-    <text class="label" x="550" y="180">Starting</text>
-    <text class="label" x="550" y="205">vectors</text>
-    <text class="body" x="550" y="235">look up each ID</text>
-    <rect x="674" y="150" width="180" height="102" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
-    <text class="label" x="764" y="180">Transformer</text>
-    <text class="label" x="764" y="205">blocks</text>
-    <text class="body" x="764" y="235">update the vectors</text>
-    <rect x="888" y="150" width="180" height="102" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
-    <text class="label" x="978" y="180">Next-token</text>
-    <text class="label" x="978" y="205">scores</text>
-    <text class="body" x="978" y="235">normalize + score</text>
+  <g id="topic-detail">
+    <!-- Topic-specific worked example; the upper concept map provides its context. -->
+    <path data-connector="true" d="M28 692 H1172" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="28" y="733" font-size="25" font-weight="700" fill="#172033" text-anchor="start">Forward pass · compute scores before choosing a token</text>
+    <rect x="28" y="775" width="236" height="100" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="146.0" y="819.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">IDs → vectors</text>
+    <text x="146.0" y="844.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">[12, 87] → 2 rows</text>
+    <rect x="320" y="775" width="264" height="100" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="452.0" y="819.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Blocks update rows</text>
+    <text x="452.0" y="844.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">weights stay fixed</text>
+    <rect x="640" y="775" width="240" height="100" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="760.0" y="819.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Last row → logits</text>
+    <text x="760.0" y="844.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">sat: 7 · ran: 2</text>
+    <rect x="936" y="775" width="236" height="100" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="1054.0" y="819.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Outside the model</text>
+    <text x="1054.0" y="844.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">choose a token</text>
+    <path data-connector="true" d="M264 825 L311.0 825.0" fill="none" stroke="#2563eb" stroke-width="2"/>
+    <polygon points="320,825 310.0,829.0 310.0,821.0" fill="#2563eb"/>
+    <path data-connector="true" d="M584 825 L631.0 825.0" fill="none" stroke="#2563eb" stroke-width="2"/>
+    <polygon points="640,825 630.0,829.0 630.0,821.0" fill="#2563eb"/>
+    <path data-connector="true" d="M880 825 L927.0 825.0" fill="none" stroke="#2563eb" stroke-width="2"/>
+    <polygon points="936,825 926.0,829.0 926.0,821.0" fill="#2563eb"/>
+    <text x="28" y="920" font-size="22" font-weight="700" fill="#172033" text-anchor="start">Activations change during the run; learned weights do not.</text>
+    <text x="28" y="954" font-size="20" font-weight="400" fill="#64748b" text-anchor="start">Toy scores are raw numbers. A decoding rule uses them to select the next ID.</text>
   </g>
-
-  <!-- Shafts cross panel borders intentionally. The input arrow's shorter head clears the blue panel border. -->
-  <g id="left-to-right-flow">
-    <line class="connector" x1="213" y1="201" x2="233" y2="201"/>
-    <polygon class="head" points="245,201 232,194 232,208"/>
-    <line class="connector" x1="427" y1="201" x2="451" y2="201"/>
-    <polygon class="head" points="459,201 450,195 450,207"/>
-    <line class="connector" x1="641" y1="201" x2="661" y2="201"/>
-    <polygon class="head" points="673,201 660,194 660,208"/>
-    <line class="connector" x1="855" y1="201" x2="875" y2="201"/>
-    <polygon class="head" points="887,201 874,194 874,208"/>
-  </g>
-
-  <!-- Scoring is the endpoint here; selecting a token and training are separate operations. -->
-  <text class="note" x="550" y="312">Next, a decoding rule chooses one token from these scores.</text>
-  <text class="note" x="550" y="342">The forward pass uses learned weights; it does not update them.</text>
 </svg>

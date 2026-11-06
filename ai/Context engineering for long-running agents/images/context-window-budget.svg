@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="837.5" viewBox="0 0 1200 670" role="img" aria-labelledby="title desc">
+<title id="title">Context content and context-window capacity</title>
+<desc id="desc">A toy 8,000-token context window holds 3,600 selected input tokens, reserves 2,000 for output, and leaves 2,400 spare. Empty capacity is drawn dashed; caching does not remove tokens from the window.</desc>
+<!-- Shared typography and native vector artwork; intrinsic width is 1500 pixels. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1200" height="670" fill="#ffffff"/>
+<text x="30" y="44" font-size="30" font-weight="700" text-anchor="start" fill="#172033">Context is information; the window is its capacity</text>
+<text x="30" y="80" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">A token is an encoded unit, often a word or word piece. Capacity is counted in tokens.</text>
+<!-- Window budget; keep labels clear of connector corridors. -->
+<g id="window-budget">
+<text x="30" y="134" font-size="26" font-weight="700" text-anchor="start" fill="#172033">Toy context window: 8,000 tokens</text>
+<rect x="30" y="165" width="486" height="72" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/><rect x="516" y="165" width="270" height="72" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2" stroke-dasharray="7 5"/><rect x="786" y="165" width="324" height="72" fill="#ffffff" stroke="#64748b" stroke-width="2" stroke-dasharray="7 5"/></g>
+<!-- Selected input; keep labels clear of connector corridors. -->
+<g id="selected-input">
+<rect x="30" y="278" width="340" height="165" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.8"/>
+<text x="50" y="316" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Selected input</text>
+<text x="50" y="354" font-size="25" font-weight="700" text-anchor="start" fill="#172033">3,600 tokens</text>
+<text x="50" y="393" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Goal, tools, messages,</text>
+<text x="50" y="421" font-size="20" font-weight="400" text-anchor="start" fill="#172033">progress and file excerpts</text>
+</g>
+<!-- Output reserve; keep labels clear of connector corridors. -->
+<g id="output-reserve">
+<rect x="430" y="278" width="340" height="165" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.8"/>
+<text x="450" y="316" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Output reserve</text>
+<text x="450" y="354" font-size="25" font-weight="700" text-anchor="start" fill="#172033">2,000 tokens</text>
+<text x="450" y="393" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Empty room for generated</text>
+<text x="450" y="421" font-size="20" font-weight="400" text-anchor="start" fill="#172033">work and the reply</text>
+</g>
+<!-- Spare capacity; keep labels clear of connector corridors. -->
+<g id="spare-capacity">
+<rect x="830" y="278" width="340" height="165" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.8"/>
+<text x="850" y="316" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Spare capacity</text>
+<text x="850" y="354" font-size="25" font-weight="700" text-anchor="start" fill="#172033">2,400 tokens</text>
+<text x="850" y="393" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Still unused in</text>
+<text x="850" y="421" font-size="20" font-weight="400" text-anchor="start" fill="#172033">this toy budget</text>
+</g>
+<!-- Capacity rule; keep labels clear of connector corridors. -->
+<g id="capacity-rule">
+<rect x="30" y="484" width="1140" height="110" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.8"/>
+<text x="50" y="524" font-size="26" font-weight="700" text-anchor="start" fill="#172033">3,600 + 2,000 + 2,400 = 8,000</text>
+<text x="50" y="565" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Dashed space is empty. Generating output consumes room; cached input still occupies the window.</text>
+</g>
+<text x="30" y="636" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">The runtime can select a smaller input; it cannot enlarge this model limit by summarizing or caching.</text>
+</svg>

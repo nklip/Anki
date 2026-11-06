@@ -2,55 +2,60 @@
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-**Prompt caching lets a later request reuse the prefill work for a prompt beginning that it shares with an earlier request. The model still reads the new part of the prompt and writes a fresh reply.**
+**Prompt caching reuses computation for an unchanged beginning of a prompt across requests. The model still processes the new ending and generates a fresh answer.**
 
 ## Where this fits
 
-Every request runs prefill and then decoding, as [Prefill, decoding, and the KV cache](../Prefill%20and%20KV%20cache/Readme.md) explains. Without prompt caching, the KV cache is discarded when the request ends. Prompt caching keeps the work for a prompt's beginning, so the next request that starts the same way can skip that part of prefill:
+The shared map highlights **prefix reuse across requests**. Follow the arrows from context assembly through model computation and token selection. The lower example separates reused prefix work from a new suffix and a fresh answer.
 
 ![where-this-fits.svg](images/where-this-fits.svg)
 
-Read the top row from left to right: only the prefill box changes, while decoding and the reply take the same work as before. The row below compares three kinds of cache that people often confuse: the KV cache inside one request, the prompt cache across requests, and a response cache that returns a stored answer.
+## Prefix, cache hit, and cache miss
 
-## A cache hit, step by step
-
-Picture asking several questions about one long document. The instructions and the document stay the same; only the question changes.
+A **token** is a text piece or special marker processed by the model. A **prefix** is the beginning of a prompt; its remaining ending is the **suffix**. For example, keep instructions and a reference document fixed, then ask different questions about it. A **cache hit** finds usable saved work. A **cache miss** computes that work again.
 
 ![shared-prefix-reuse.svg](images/shared-prefix-reuse.svg)
 
-Read the diagram from top to bottom. The first request processes everything and saves the work for its beginning, the **prefix**. A later request starts with the identical prefix, so the service finds a match, a **cache hit**. It reuses the saved work, processes only the new question, and then generates a new answer. If no usable match exists, that is a **cache miss**, and the service computes the prefix again.
+The saved work is attention data for already processed tokens: **keys and values (KV)**. Prompt caching reuses this data across requests. A per-request KV cache reuses it while writing one answer. A **response cache** instead returns a stored answer. None of these teaches the model new knowledge.
 
-The diagram's bottom line warns about a common trap. Reusing 1,024 of 1,280 input tokens means that 80% of the input was cached, not that the request became 80% faster or cheaper. The reply still has to be written token by token, and prompt caching speeds up only the prefill phase.
+![cache-types.svg](images/cache-types.svg)
 
-## Why the beginning must match exactly
+## Exact matching and a stable layout
 
-Matching works on the exact tokens from the very start of the prompt, not on similar meaning. Each token's saved work depends on everything before it, so one change near the start makes everything after it different, even text that looks identical.
+An **exact prefix match** means the same tokens in the same order from the start. Each token's saved state depends on earlier tokens: matching text after an early change cannot repair the prefix. Similar meaning is insufficient.
 
 ![stable-prefix-layout.svg](images/stable-prefix-layout.svg)
 
-The upper panel shows a good layout: stable instructions and reference material first, the changing question last, so both requests share their beginning. In the lower panel, a timestamp comes first and differs between the requests, so nothing after it can be reused.
+Put stable instructions and documents first, changing questions last. Preserve wording and order; append messages instead of editing earlier ones. Tools, images, model choice, and relevant settings can also affect whether a prefix matches.
 
-The practical rule follows: put stable material first and changing material last, keep its wording and order the same, and add new messages to the end of a conversation instead of editing earlier ones.
+## Where reuse stops
 
-## Provider rules, checked 2026-11-05
+A **reuse boundary** is an endpoint the system can save and look up. The longest identical text is not necessarily the amount reusable: systems have eligible endpoints and minimum lengths. In this vLLM example, ten tokens match, but only eight fill complete matching cache blocks.
 
-A hit also depends on the provider: the prefix must be long enough, use the same model and compatible settings, and still be stored. Two examples:
+![reuse-boundary.svg](images/reuse-boundary.svg)
 
-- **OpenAI, GPT-5.6 and later:** caching starts at 1,024 prompt tokens. Saved prefixes last at least 30 minutes by default, or 12 hours if you choose that in the Responses API. These lifetimes decide cache-read pricing; they do not promise reuse or lower latency.
-- **Claude Messages API:** you turn caching on with `cache_control`. The minimum length depends on the model, and entries last 5 minutes by default, or 1 hour at extra cost.
+## Retention, expiration, and eviction
 
-Rules change, so check your model's documentation. Then measure cached-token counts, cost, and **time to first token**, the wait until the reply starts, before you assume a saving.
+**Retention** describes how long cached work is kept or remains eligible under a policy. **Expiration** follows a time limit; **eviction** removes work, for example to make space. A matching prefix may therefore miss. Provider pricing lifetimes and physical storage availability can differ.
 
-## What prompt caching is not
+![cache-lifetime.svg](images/cache-lifetime.svg)
 
-- It does not store answers: the reply is always generated fresh.
-- It does not train the model or change its weights.
-- It does not make replies repeatable: the same prompt can still produce a different reply.
-- It does not shrink the input: cached tokens still count toward the model's context window, its limited input space.
+Provider examples, checked **2026-11-06**:
+
+- **OpenAI, GPT-5.6 and later:** a minimum of 1,024 visible input tokens; automatic caching or explicit eligible endpoints. The default minimum lifetime is 30 minutes; Responses also offers 12 hours. This lifetime governs cached-read pricing, without guaranteeing physical reuse or lower latency.
+- **Claude Messages API:** opt in with `cache_control`. Minimum length depends on the model. The default lifetime is 5 minutes; a 1-hour option has different write pricing.
+
+## Measure the benefit
+
+**Cached-input share** is cached tokens divided by total input tokens. **Time to first token** is the wait until the answer starts. Neither predicts the whole request's time or cost: generating the answer still takes work, and prices distinguish cache reads, writes, and output.
+
+![cache-measurements.svg](images/cache-measurements.svg)
+
+Measure all of them. Cached tokens still occupy the prompt's available space, and a cache hit does not guarantee the same answer. For the computation within a request, see [Prefill, decoding, and the KV cache](../Prefill%20and%20KV%20cache/Readme.md).
 
 # Sources
 
 - [OpenAI: prompt caching, boundaries, lifetimes, and usage](https://developers.openai.com/api/docs/guides/prompt-caching)
 - [Claude: prompt caching and model-specific limits](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)
 - [vLLM: automatic prefix caching and performance limits](https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/)
-- [vLLM: prefix matching and cache eviction](https://docs.vllm.ai/en/latest/design/prefix_caching/)
+- [vLLM: prefix-block diagrams and eviction](https://docs.vllm.ai/en/latest/design/prefix_caching/)

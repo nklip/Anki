@@ -1,55 +1,63 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600" role="img" aria-labelledby="title desc">
-  <title id="title">Examples guide behavior without updating model weights</title>
-  <desc id="desc">An invented prompt gives two demonstrations: red ball maps to ball, red; blue car maps to car, blue. The next item is green bike. A model uses its learned abilities to interpret the examples during inference, while its weights stay fixed. The intended answer is bike, green, following the demonstrated format. This is an illustration rather than an actual tested model response; examples do not guarantee correct behavior or uniquely determine a rule.</desc>
-  <!-- Blue marks supplied context, purple model computation, and green the intended output. -->
-  <defs>
-    <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-      .title { font-size: 29px; font-weight: 700; }
-      .subtitle { font-size: 19px; fill: #475569; }
-      .label { font-size: 23px; font-weight: 700; text-anchor: middle; }
-      .body { font-size: 21px; text-anchor: middle; }
-      .note { font-size: 19px; text-anchor: middle; }
-      .example { font-size: 24px; text-anchor: middle; }
-      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
-      .head { fill: #64748b; }
-    </style>
-  </defs>
-  <rect width="900" height="600" fill="#ffffff"/>
-
-  <!-- Demonstrations and the unanswered item are input, so the expected completion is kept separate below. -->
-  <text class="title" x="28" y="44">Examples can guide a model during inference</text>
-  <text class="subtitle" x="28" y="77">In-context learning: use examples in the input to pick up a pattern.</text>
-  <g id="demonstrations-in-context">
-    <rect x="28" y="112" width="480" height="249" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-    <text class="label" x="268" y="147">Context: examples + new item</text>
-    <text class="example" x="268" y="195">red ball → ball, red</text>
-    <text class="example" x="268" y="240">blue car → car, blue</text>
-    <rect x="58" y="269" width="420" height="62" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="2"/>
-    <text class="example" x="268" y="309">green bike → ?</text>
-  </g>
-  <g id="fixed-weights-model">
-    <rect x="600" y="112" width="272" height="249" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
-    <text class="label" x="736" y="150">Model</text>
-    <text class="body" x="736" y="198">Uses learned abilities</text>
-    <text class="body" x="736" y="230">to interpret the input</text>
-    <text class="label" x="736" y="285">Weights stay fixed.</text>
-    <text class="note" x="736" y="325">No training update</text>
-  </g>
-
-  <!-- Shafts end inside their head bases; tips meet container boundaries. -->
-  <g id="inference-flow">
-    <line class="connector" x1="509" y1="237" x2="587" y2="237"/>
-    <polygon class="head" points="600,237 586,230 586,244"/>
-    <line class="connector" x1="736" y1="362" x2="736" y2="405"/>
-    <polygon class="head" points="736,418 729,404 743,404"/>
-  </g>
-
-  <!-- The example's expected answer illustrates the desired pattern and makes no empirical performance claim. -->
-  <g id="intended-answer">
-    <rect x="28" y="418" width="844" height="107" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-    <text class="label" x="450" y="453">Intended answer: bike, green</text>
-    <text class="body" x="450" y="494">Reverse the word pair and separate the words with a comma.</text>
-  </g>
-  <text class="note" x="450" y="568">Invented example. A few demonstrations do not guarantee the model’s response.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="852.272727272727273" viewBox="0 0 1100 625" role="img" aria-labelledby="title desc">
+<title id="title">In-context learning and demonstrations</title>
+<desc id="desc">Two demonstrations guide a new response while model weights stay fixed. Separate panels define zero-shot, one-shot, and few-shot prompting.</desc>
+<!-- Shared typography; all teaching content remains editable SVG text. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1100" height="625" fill="#ffffff"/>
+<text x="30" y="44" font-size="30" font-weight="700" text-anchor="start" fill="#172033">In-context learning: examples guide this answer</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">A demonstration is an example input paired with its desired output.</text>
+<!-- Demonstrations. -->
+<g id="demonstrations">
+<rect x="30" y="120" width="350" height="220" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5" />
+<text x="50" y="157" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Examples in the input</text>
+<text x="50" y="200" font-size="22" font-weight="400" text-anchor="start" fill="#172033">red ball → ball, red</text>
+<text x="50" y="248" font-size="22" font-weight="400" text-anchor="start" fill="#172033">blue car → car, blue</text>
+<text x="50" y="296" font-size="22" font-weight="400" text-anchor="start" fill="#172033">New item: green bike → ?</text>
+</g>
+<!-- Fixed model. -->
+<g id="fixed-model">
+<rect x="440" y="120" width="270" height="220" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="460" y="157" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Model computation</text>
+<text x="460" y="202" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Uses learned abilities</text>
+<text x="460" y="246" font-size="21" font-weight="400" text-anchor="start" fill="#172033">to infer a pattern.</text>
+<text x="460" y="290" font-size="21" font-weight="400" text-anchor="start" fill="#172033">No weight update.</text>
+</g>
+<!-- Intended answer. -->
+<g id="intended-answer">
+<rect x="770" y="120" width="300" height="220" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5" />
+<text x="790" y="157" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Intended answer</text>
+<text x="790" y="209" font-size="28" font-weight="700" text-anchor="start" fill="#172033">bike, green</text>
+<text x="790" y="255" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Reverse the word pair;</text>
+<text x="790" y="287" font-size="20" font-weight="400" text-anchor="start" fill="#172033">separate with a comma.</text>
+</g>
+<!-- Learning flow. -->
+<g id="learning-flow">
+<path data-connector="true" d="M 380,230 L 429,230" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="440,230 428,236 428,224" fill="#64748b"/>
+<path data-connector="true" d="M 710,230 L 759,230" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="770,230 758,236 758,224" fill="#64748b"/>
+</g>
+<text x="30" y="389" font-size="25" font-weight="700" text-anchor="start" fill="#172033">How many demonstrations are supplied?</text>
+<!-- Zero shot. -->
+<g id="zero-shot">
+<rect x="30" y="419" width="320" height="130" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="50" y="454" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Zero-shot</text>
+<text x="50" y="493" font-size="20" font-weight="400" text-anchor="start" fill="#172033">No examples</text>
+<text x="50" y="523" font-size="20" font-weight="400" text-anchor="start" fill="#172033">“Reverse these two words.”</text>
+</g>
+<!-- One shot. -->
+<g id="one-shot">
+<rect x="390" y="419" width="320" height="130" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="410" y="454" font-size="24" font-weight="700" text-anchor="start" fill="#172033">One-shot</text>
+<text x="410" y="493" font-size="20" font-weight="400" text-anchor="start" fill="#172033">One example</text>
+<text x="410" y="523" font-size="20" font-weight="400" text-anchor="start" fill="#172033">red ball → ball, red</text>
+</g>
+<!-- Few shot. -->
+<g id="few-shot">
+<rect x="750" y="419" width="320" height="130" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="770" y="454" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Few-shot</text>
+<text x="770" y="493" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Several examples</text>
+<text x="770" y="523" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Both example pairs above</text>
+</g>
+<text x="30" y="592" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Toy example: multiple rules can fit a few examples, so the intended answer is not guaranteed.</text>
 </svg>

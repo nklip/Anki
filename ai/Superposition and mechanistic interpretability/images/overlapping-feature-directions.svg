@@ -1,70 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="655" viewBox="0 0 900 655" role="img" aria-labelledby="title desc">
-  <title id="title">Three feature directions share two slots</title>
-  <desc id="desc">Toy features A, B, and C add vectors [1,0], [0,1], and [1,1]. A detector for C that averages both slots gives 0.5 on A alone, even though C is off. A and B together give the same vector as C alone, making these two states indistinguishable from the vector.</desc>
-  <!-- Palette matches the series; the vector plot uses equal horizontal and vertical scales. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="780" viewBox="0 0 1000 520" role="img" aria-labelledby="title desc">
+  <title id="title">Superposition: three features share two dimensions</title>
+  <desc id="desc">Where: the representation inside a residual or neuron activation vector.</desc>
+  <!-- Shared typography and palette; all graphics are editable vectors. -->
   <defs>
-    <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-      .title { font-size: 29px; font-weight: 700; }
-      .label { font-size: 22px; font-weight: 700; }
-      .body { font-size: 21px; }
-      .small { font-size: 19px; fill: #475569; }
-      .math { font-size: 27px; font-weight: 700; }
-      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
-      .head { fill: #64748b; }
-      .vector-connector { stroke-width: 3; fill: none; }
-    </style>
+    <style>text {font-family:Arial,Helvetica,sans-serif;fill:#172033} .t {font-size:28px;font-weight:700} .h {font-size:22px;font-weight:700} .b {font-size:20px} .s {font-size:18px;fill:#64748b} .m {font-size:24px;font-weight:700}</style>
   </defs>
-  <rect width="900" height="655" fill="#ffffff"/>
-  <!-- Binary activity is an explicit toy assumption, not a claim about real feature values. -->
-  <g id="heading">
-    <text x="30" y="43" class="title">Three feature directions share two slots</text>
-    <text x="30" y="78" class="small">Invented features: on means add the vector; off means add nothing.</text>
-  </g>
-  <!-- Vector shafts share an origin intentionally. All heads are clear of labels and other vectors. -->
-  <g id="feature-vectors">
-    <path class="vector-connector" stroke="#2563eb" d="M80 350 H257"/>
-    <polygon fill="#2563eb" points="270,350 256,343 256,357"/>
-    <path class="vector-connector" stroke="#c2410c" d="M80 350 V173"/>
-    <polygon fill="#c2410c" points="80,160 73,174 87,174"/>
-    <path class="vector-connector" stroke="#9333ea" d="M80 350 L261 169"/>
-    <polygon fill="#9333ea" points="270,160 265.1,174.8 255.2,164.9"/>
-    <text x="284" y="357" class="label">A = [1, 0]</text>
-    <text x="32" y="133" class="label">B = [0, 1]</text>
-    <text x="284" y="165" class="label">C = [1, 1]</text>
-    <text x="105" y="249" class="small">slot 2</text>
-    <text x="143" y="386" class="small">slot 1</text>
-    <text x="48" y="378" class="small">0</text>
-    <text x="30" y="424" class="body">Each arrow is one feature's contribution.</text>
-  </g>
-  <!-- A simple linear readout illustrates cross-talk without claiming a classification error. -->
-  <g id="interference-example">
-    <rect x="475" y="115" width="395" height="315" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
-    <text x="497" y="150" class="label">A simple readout for C</text>
-    <text x="497" y="183" class="body">Add both slots; divide by 2.</text>
-    <text x="497" y="230" class="label">C alone:</text>
-    <text x="497" y="266" class="math">(1 + 1) ÷ 2 = 1</text>
-    <text x="497" y="313" class="label">A alone, with C off:</text>
-    <text x="497" y="349" class="math">(1 + 0) ÷ 2 = 0.5</text>
-    <text x="497" y="387" class="body">A leaks into C's readout.</text>
-    <text x="497" y="415" class="small">A cutoff may reject this small signal.</text>
-  </g>
-  <!-- Two different feature states converge on the identical encoded vector. -->
-  <g id="exact-collision" text-anchor="middle">
-    <rect x="30" y="475" width="250" height="100" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-    <text x="155" y="509" class="label">A and B on</text>
-    <text x="155" y="550" class="body">[1, 0] + [0, 1]</text>
-    <rect x="350" y="475" width="200" height="100" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
-    <text x="450" y="509" class="label">Same vector</text>
-    <text x="450" y="550" class="math">[1, 1]</text>
-    <rect x="620" y="475" width="250" height="100" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
-    <text x="745" y="509" class="label">C alone on</text>
-    <text x="745" y="550" class="body">[1, 1]</text>
-  </g>
-  <!-- Shafts terminate inside their arrowhead bases; tips meet result-panel boundaries. -->
-  <g id="collision-flow">
-    <path class="connector" d="M280 525 H337"/><polygon class="head" points="350,525 336,518 336,532"/>
-    <path class="connector" d="M620 525 H563"/><polygon class="head" points="550,525 564,518 564,532"/>
-  </g>
-  <text x="450" y="623" text-anchor="middle" class="body">No readout of this vector alone can distinguish these two toy states.</text>
+  <rect width="1000" height="520" fill="#ffffff"/>
+  <text x="28" y="42" class="t">Superposition: three features share two dimensions</text>
+  <text x="28" y="76" class="s">Where: the representation inside a residual or neuron activation vector.</text>
+  <!-- Equal scales make C exactly A+B in this deliberately ambiguous toy example. -->
+  <text x="28" y="132" class="h">Dimensions = numerical slots</text>
+  <path data-connector="true" d="M90 350 L259.0 350.0" stroke="#2563eb" stroke-width="2.5" fill="none"/>
+  <polygon points="270,350 258.0,355.0 258.0,345.0" fill="#2563eb"/>
+  <path data-connector="true" d="M90 350 L90.0 181.0" stroke="#c2410c" stroke-width="2.5" fill="none"/>
+  <polygon points="90,170 95.0,182.0 85.0,182.0" fill="#c2410c"/>
+  <path data-connector="true" d="M90 350 L262.22182540694797 177.77817459305203" stroke="#7c3aed" stroke-width="2.5" fill="none"/>
+  <polygon points="270,170 265.0502525316941,182.02081528017132 257.9791847198287,174.94974746830584" fill="#7c3aed"/>
+  <text x="280" y="357" class="h" style="fill:#2563eb">A [1, 0]</text>
+  <text x="28" y="156" class="h" style="fill:#c2410c">B [0, 1]</text>
+  <text x="280" y="177" class="h" style="fill:#7c3aed">C [1, 1]</text>
+  <text x="90" y="390" class="s">Two independent axes</text>
+  <rect x="520" y="112" width="452" height="294" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="544" y="151" class="h">Same two-slot result</text>
+  <text x="544" y="206" class="b">A and B active:</text>
+  <text x="544" y="244" class="m" style="fill:#2563eb">[1, 0] + [0, 1] = [1, 1]</text>
+  <text x="544" y="306" class="b">Only C active:</text>
+  <text x="544" y="344" class="m" style="fill:#7c3aed">[1, 1]</text>
+  <text x="500" y="452" class="b" text-anchor="middle">Two different feature states can give the same activation.</text>
+  <text x="500" y="489" class="s" text-anchor="middle">This exact tie is a toy case; real feature overlaps are often partial.</text>
 </svg>

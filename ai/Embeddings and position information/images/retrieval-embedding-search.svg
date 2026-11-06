@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="879.545454545454545" viewBox="0 0 1100 645" role="img" aria-labelledby="title desc">
+  <title id="title">Retrieval embeddings find text before generation</title>
+  <desc id="desc">A retrieval model makes one vector for a query and compatible vectors for passages. A schematic two-dimensional plot places a password reset passage near its query. The retrieved text is inserted into a prompt and tokenized for the generator; a search vector is not a per-token lookup embedding.</desc>
+  <!-- Typography and palette shared across the internals series. -->
+  <defs>
+    <style>text { font-family: Arial, Helvetica, sans-serif; }</style>
+  </defs>
+  <rect width="1100" height="645" fill="#ffffff"/>
+  <text x="32" y="46" font-size="30" font-weight="700" fill="#172033" text-anchor="start">Retrieval embeddings find text before generation</text>
+  <text x="32" y="79" font-size="18" font-weight="400" fill="#64748b" text-anchor="start">LOCATION  Search system outside the generator → selected text → tokenizer → generator</text>
+  <!-- Original scatter layout informed by Sentence Transformers semantic-search illustration. -->
+  <text x="32" y="130" font-size="22" font-weight="700" fill="#2563eb" text-anchor="start">RETRIEVAL EMBEDDING · one vector for a whole query or passage</text>
+  <rect x="32" y="160" width="420" height="220" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="56" y="201" font-size="23" font-weight="600" fill="#172033" text-anchor="start">“How do I reset my password?”</text>
+  <text x="56" y="243" font-size="21" font-weight="400" fill="#172033" text-anchor="start">Retrieval model</text>
+  <path data-connector="true" d="M226 259 L226.0 278.0" fill="none" stroke="#64748b" stroke-width="2"/>
+  <polygon points="226,289 221.0,277.0 231.0,277.0" fill="#64748b"/>
+  <rect x="56" y="295" width="340" height="58" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="226.0" y="333" font-size="23" font-weight="600" fill="#172033" text-anchor="middle">one query vector</text>
+  <rect x="504" y="160" width="564" height="278" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="528" y="197" font-size="21" font-weight="700" fill="#172033" text-anchor="start">Shared search space · schematic 2D view</text>
+  <line x1="547" y1="398" x2="1015" y2="398" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="547" y1="398" x2="547" y2="227" stroke="#94a3b8" stroke-width="2"/>
+  <circle cx="618" cy="344" r="6" fill="#cbd5e1"/>
+  <circle cx="702" cy="375" r="6" fill="#cbd5e1"/>
+  <circle cx="787" cy="291" r="6" fill="#cbd5e1"/>
+  <circle cx="945" cy="350" r="6" fill="#cbd5e1"/>
+  <circle cx="847" cy="371" r="6" fill="#cbd5e1"/>
+  <circle cx="636" cy="286" r="6" fill="#cbd5e1"/>
+  <circle cx="884" cy="253" r="8" fill="#2563eb"/>
+  <circle cx="910" cy="273" r="8" fill="#7c3aed"/>
+  <text x="712" y="232" font-size="19" font-weight="600" fill="#2563eb" text-anchor="start">Password-reset help page</text>
+  <text x="923" y="298" font-size="19" font-weight="600" fill="#7c3aed" text-anchor="start">Query</text>
+  <path data-connector="true" d="M472 256 L488.0 256.0" fill="none" stroke="#64748b" stroke-width="2"/>
+  <polygon points="499,256 487.0,261.0 487.0,251.0" fill="#64748b"/>
+  <text x="32" y="422" font-size="22" font-weight="400" fill="#172033" text-anchor="start">Nearby vectors suggest a useful match.</text>
+  <rect x="32" y="475" width="1036" height="137" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="56" y="514" font-size="24" font-weight="600" fill="#172033" text-anchor="start">Retrieved passage</text>
+  <path data-connector="true" d="M295 505 L357.0 505.0" fill="none" stroke="#64748b" stroke-width="2"/>
+  <polygon points="368,505 356.0,510.0 356.0,500.0" fill="#64748b"/>
+  <text x="397" y="514" font-size="24" font-weight="600" fill="#172033" text-anchor="start">Add text to the prompt</text>
+  <path data-connector="true" d="M695 505 L754.0 505.0" fill="none" stroke="#64748b" stroke-width="2"/>
+  <polygon points="765,505 753.0,510.0 753.0,500.0" fill="#64748b"/>
+  <text x="794" y="514" font-size="24" font-weight="600" fill="#172033" text-anchor="start">Generator model</text>
+  <text x="56" y="565" font-size="21" font-weight="400" fill="#172033" text-anchor="start">The passage is tokenized again; its retrieval vector is not used as a token embedding.</text>
+  <text x="56" y="595" font-size="20" font-weight="400" fill="#172033" text-anchor="start">A hidden state from a text generator is not automatically a good search vector.</text>
+</svg>

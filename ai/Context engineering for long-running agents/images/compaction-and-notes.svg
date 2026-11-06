@@ -1,67 +1,42 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="610" viewBox="0 0 1100 610" role="img" aria-labelledby="title desc">
-  <title id="title">Shorter history and durable notes do different jobs</title>
-  <desc id="desc">Top: compaction replaces older conversation history with a summary that preserves the weekday goal, weekend constraint, checked homepage, unfinished contact-page edit, unchecked mobile page, and evidence locations. Bottom: separately, the runtime can save a progress note outside active context and read it into a later input. Compaction can lose details, and saved notes can become stale.</desc>
-  <!-- Shared series typography; each panel states its own role. -->
-  <defs>
-    <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-      .title { font-size: 28px; font-weight: 700; }
-      .subtitle { font-size: 19px; fill: #475569; }
-      .label { font-size: 22px; font-weight: 700; }
-      .body { font-size: 20px; }
-      .note { font-size: 19px; fill: #475569; }
-      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
-      .head { fill: #64748b; }
-    </style>
-  </defs>
-  <rect width="1100" height="610" fill="#ffffff"/>
-  <!-- Heading states the lesson before the body introduces its parts. -->
-  <text class="title" x="28" y="43" text-anchor="start">Shorter history and durable notes do different jobs</text>
-  <text class="subtitle" x="28" y="76" text-anchor="start">A useful record preserves the goal, checked outcomes, unfinished work, and evidence locations.</text>
-  <!-- Older history; labels explain the color and role. -->
-  <g id="older-history">
-    <rect x="28" y="112" width="400" height="256" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
-  <text class="label" x="228.0" y="147" text-anchor="middle">Older conversation history</text>
-  <text class="body" x="228.0" y="190" text-anchor="middle">Original request + many turns</text>
-  <text class="body" x="228.0" y="228" text-anchor="middle">Read and edited home.html</text>
-  <text class="body" x="228.0" y="266" text-anchor="middle">Checked homepage hours</text>
-  <text class="body" x="228.0" y="304" text-anchor="middle">Read contact.html</text>
-  <text class="body" x="228.0" y="342" text-anchor="middle">Search logs and tool results</text>
-  </g>
-  <!-- Compact summary; labels explain the color and role. -->
-  <g id="compact-summary">
-    <rect x="550" y="112" width="522" height="256" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-  <text class="label" x="811.0" y="147" text-anchor="middle">Useful compact summary</text>
-  <text class="body" x="811.0" y="189" text-anchor="middle">Goal: weekdays 11:00; preserve weekends</text>
-  <text class="body" x="811.0" y="227" text-anchor="middle">home.html: updated and checked</text>
-  <text class="body" x="811.0" y="265" text-anchor="middle">contact.html: still 10:00; edit pending</text>
-  <text class="body" x="811.0" y="303" text-anchor="middle">mobile.html: not checked</text>
-  <text class="body" x="811.0" y="341" text-anchor="middle">Evidence: page files; reread as needed</text>
-  </g>
-  <text class="note" x="489" y="222" text-anchor="middle">compact</text>
-  <!-- history-to-summary: shaft ends inside the head; the tip meets the target boundary. -->
-  <g id="history-to-summary">
-    <line class="connector" x1="429" y1="250" x2="538" y2="250"/>
-    <polygon class="head" points="550,250 537,244 537,256"/>
-  </g>
-  <text class="label" x="28" y="415" text-anchor="start">Persistence is a separate step: save useful state, then reload it when needed.</text>
-  <!-- Saved note file; labels explain the color and role. -->
-  <g id="saved-note-file">
-    <rect x="28" y="449" width="400" height="100" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
-  <text class="label" x="228.0" y="486" text-anchor="middle">Progress file outside context</text>
-  <text class="body" x="228.0" y="521" text-anchor="middle">The runtime saves the note.</text>
-  </g>
-  <!-- Later model input; labels explain the color and role. -->
-  <g id="later-model-input">
-    <rect x="550" y="449" width="522" height="100" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-  <text class="label" x="811.0" y="486" text-anchor="middle">A later model input</text>
-  <text class="body" x="811.0" y="521" text-anchor="middle">The runtime reads the needed note.</text>
-  </g>
-  <text class="note" x="489" y="475" text-anchor="middle">reload</text>
-  <!-- saved-note-to-later-input: shaft ends inside the head; the tip meets the target boundary. -->
-  <g id="saved-note-to-later-input">
-    <line class="connector" x1="429" y1="505" x2="538" y2="505"/>
-    <polygon class="head" points="550,505 537,499 537,511"/>
-  </g>
-  <text class="note" x="550" y="586" text-anchor="middle">A summary can omit details. A saved note can become stale. Keep evidence locations.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="818.75" viewBox="0 0 1200 655" role="img" aria-labelledby="title desc">
+<title id="title">Compaction preserves useful task state in a shorter summary</title>
+<desc id="desc">Older website-editing history becomes a compact summary retaining the goal, weekend constraint, verified homepage, unfinished contact page, and evidence location. A vague summary would lose important task state.</desc>
+<!-- Shared typography and native vector artwork; intrinsic width is 1500 pixels. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1200" height="655" fill="#ffffff"/>
+<text x="30" y="44" font-size="30" font-weight="700" text-anchor="start" fill="#172033">Compaction replaces older history with a summary</text>
+<text x="30" y="80" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">Compaction makes room inside the same context window; summaries can omit useful details.</text>
+<!-- History before; keep labels clear of connector corridors. -->
+<g id="history-before">
+<rect x="30" y="132" width="470" height="290" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.8"/>
+<text x="50" y="175" font-size="26" font-weight="700" text-anchor="start" fill="#172033">Older conversation</text>
+<text x="50" y="224" font-size="20" font-weight="400" text-anchor="start" fill="#172033">User: weekdays should be 11:00.</text>
+<text x="50" y="261" font-size="20" font-weight="400" text-anchor="start" fill="#172033">User: keep weekends unchanged.</text>
+<text x="50" y="298" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Read homepage; changed and checked.</text>
+<text x="50" y="335" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Read contact page: weekdays 10:00.</text>
+<text x="50" y="372" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Contact edit is still pending.</text>
+</g>
+<!-- Summary after; keep labels clear of connector corridors. -->
+<g id="summary-after">
+<rect x="640" y="132" width="530" height="290" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<text x="660" y="175" font-size="26" font-weight="700" text-anchor="start" fill="#172033">Useful compact summary</text>
+<text x="660" y="224" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Goal: weekdays 11:00; preserve weekends.</text>
+<text x="660" y="261" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Homepage change verified.</text>
+<text x="660" y="298" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Contact page still needs editing.</text>
+<text x="660" y="335" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Evidence: contact.html, hours section.</text>
+<text x="660" y="372" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Reread if the file has changed.</text>
+</g>
+<!-- Compaction flow; keep labels clear of connector corridors. -->
+<g id="compaction-flow">
+<path data-connector="true" d="M 500,277 L 629,277" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="640,277 628,283 628,271" fill="#64748b"/>
+<text x="516" y="253" font-size="19" font-weight="400" text-anchor="start" fill="#172033">summarize</text>
+</g>
+<!-- Loss warning; keep labels clear of connector corridors. -->
+<g id="loss-warning">
+<rect x="30" y="468" width="1140" height="112" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.8"/>
+<text x="50" y="507" font-size="24" font-weight="700" text-anchor="start" fill="#172033">“Hours updated” loses the distinction between checked work and unfinished work.</text>
+<text x="50" y="549" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Keep constraints, evidence locations, decisions and remaining work. Retrieve omitted details when needed.</text>
+</g>
+<text x="30" y="622" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">A shorter summary is useful only if the next call still has the information needed for its decision.</text>
 </svg>

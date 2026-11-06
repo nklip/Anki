@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="753" viewBox="0 0 1000 502" role="img" aria-labelledby="title desc">
+  <title id="title">Softmax makes weights; a weighted sum mixes values</title>
+  <desc id="desc">Softmax makes weights; a weighted sum mixes values. Where: attention head → masked scores → weights → head output</desc>
+  <!-- Shared type and palette; arrows use separate heads with covered shaft joins. -->
+  <defs>
+    <style>text { font-family: Arial, Helvetica, sans-serif; } .connector { fill: none; stroke: #64748b; stroke-width: 2; } </style>
+  </defs>
+  <rect width="1000" height="502" fill="#ffffff"/>
+  <text x="28" y="42" font-size="28" text-anchor="start" fill="#172033" font-weight="700">Softmax makes weights; a weighted sum mixes values</text>
+  <text x="28" y="76" font-size="18" text-anchor="start" fill="#64748b">Where: attention head → masked scores → weights → head output</text>
+  <!-- Exact toy example: exp(0)=1 and exp(ln 3)=3. The blocked position contributes zero. -->
+  <rect x="28" y="112" width="944" height="168" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="50" y="144" font-size="22" text-anchor="start" fill="#172033" font-weight="700">Softmax: exponentiate each allowed score, then divide by the total</text>
+  <text x="190" y="181" font-size="20" text-anchor="middle" fill="#172033" font-weight="700">The</text>
+  <text x="190" y="217" font-size="22" text-anchor="middle" fill="#172033">0 → 1</text>
+  <text x="190" y="253" font-size="26" text-anchor="middle" fill="#2563eb" font-weight="700">25%</text>
+  <text x="500" y="181" font-size="20" text-anchor="middle" fill="#172033" font-weight="700">cat</text>
+  <text x="500" y="217" font-size="22" text-anchor="middle" fill="#172033">ln 3 ≈ 1.10 → 3</text>
+  <text x="500" y="253" font-size="26" text-anchor="middle" fill="#2563eb" font-weight="700">75%</text>
+  <text x="810" y="181" font-size="20" text-anchor="middle" fill="#172033" font-weight="700">sat (blocked)</text>
+  <text x="810" y="217" font-size="22" text-anchor="middle" fill="#172033">−∞ → 0</text>
+  <text x="810" y="253" font-size="26" text-anchor="middle" fill="#2563eb" font-weight="700">0%</text>
+  <text x="500" y="307" font-size="20" text-anchor="middle" fill="#172033">1 + 3 + 0 = 4; divide each by 4. All weights add to 100%.</text>
+  <rect x="28" y="337" width="944" height="115" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="50" y="368" font-size="22" text-anchor="start" fill="#172033" font-weight="700">Weighted sum: blend the values, coordinate by coordinate</text>
+  <text x="500" y="413" font-size="28" text-anchor="middle" fill="#172033" font-weight="700">0.25 × [4, 0] + 0.75 × [0, 8] = [1, 6]</text>
+  <text x="500" y="480" font-size="18" text-anchor="middle" fill="#64748b">These are weights over source positions, not probabilities of the next vocabulary token.</text>
+</svg>

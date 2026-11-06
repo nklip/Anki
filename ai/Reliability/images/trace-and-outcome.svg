@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="900" viewBox="0 0 1100 660" role="img" aria-labelledby="title desc">
+<title id="title">Trace and saved outcome are different evidence</title>
+<desc id="desc">The trace records a create request, a Saved tool reply, and a Done final reply. An independent inspection finds two tasks, so the outcome fails even though the trace contains success messages.</desc>
+<!-- Source-native artwork. Uniform scaling preserves the 1500 px landscape canvas. -->
+<defs><style>text {font-family: Arial, Helvetica, sans-serif;}</style></defs>
+<rect width="1100" height="660" fill="#ffffff"/>
+<text x="30" y="44" font-size="28" font-weight="700" text-anchor="start" fill="#172033">A trace explains a run; the outcome shows what remains</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">Trace = recorded events such as model requests, tool calls, replies, permissions, and timing.</text>
+<!-- Trace; preserve text and arrow clearance. -->
+<g id="trace">
+<rect x="30" y="120" width="1040" height="216" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="50" y="157" font-size="25" font-weight="700" text-anchor="start" fill="#172033">Trace excerpt: the event record</text>
+</g>
+<rect x="50" y="181" width="290" height="124" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+<text x="68" y="218" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Model request</text>
+<text x="68" y="254" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Create one task</text>
+<text x="68" y="284" font-size="20" font-weight="400" text-anchor="start" fill="#172033">in Website.</text>
+<rect x="405" y="181" width="290" height="124" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+<text x="423" y="218" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Runtime + tool</text>
+<text x="423" y="254" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Request accepted.</text>
+<text x="423" y="284" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Tool says “Saved.”</text>
+<rect x="760" y="181" width="290" height="124" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+<text x="778" y="218" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Model reply</text>
+<text x="778" y="254" font-size="20" font-weight="400" text-anchor="start" fill="#172033">“Done.”</text>
+<text x="778" y="284" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Run ends.</text>
+<!-- Trace order; preserve text and arrow clearance. -->
+<g id="trace-order">
+<path data-connector="true" d="M 340,240 L 394,240" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="405,240 393,246 393,234" fill="#64748b"/>
+<path data-connector="true" d="M 695,240 L 749,240" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="760,240 748,246 748,234" fill="#64748b"/>
+</g>
+<!-- Outcome check; preserve text and arrow clearance. -->
+<g id="outcome-check">
+<rect x="30" y="389" width="510" height="191" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="50" y="430" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Outcome: inspect stored lists</text>
+<text x="50" y="472" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Website actually contains two new tasks.</text>
+<text x="50" y="506" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Possible cause: duplicate execution.</text>
+<text x="50" y="540" font-size="20" font-weight="400" text-anchor="start" fill="#172033">This fails the “exactly one” requirement.</text>
+</g>
+<!-- Diagnosis; preserve text and arrow clearance. -->
+<g id="diagnosis">
+<rect x="600" y="389" width="470" height="191" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="620" y="430" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Compare both forms of evidence</text>
+<text x="620" y="472" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Trace: investigate whether a retry happened.</text>
+<text x="620" y="506" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Saved state: establish the duplicate effect.</text>
+<text x="620" y="540" font-size="20" font-weight="400" text-anchor="start" fill="#172033">A logged “Saved” is not a state check.</text>
+</g>
+<text x="30" y="628" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">Keep enough trace detail to diagnose behavior without collecting unnecessary secrets or personal data.</text>
+</svg>

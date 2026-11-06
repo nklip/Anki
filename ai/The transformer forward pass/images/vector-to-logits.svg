@@ -1,69 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="646" viewBox="0 0 900 646" role="img" aria-labelledby="title desc">
-  <title id="title">The final vector becomes next-token scores</title>
-  <desc id="desc">After the last transformer block and final normalization, use the vector at the last position to continue the input. In an invented example, the normalized vector is [2, 1]. The output matrix row for sat is [3, 1], giving 2 times 3 plus 1 times 1 equals 7. The row for ran is [0, 2], giving 2 times 0 plus 1 times 2 equals 2. These raw scores are logits, not probabilities. The real output projection scores all vocabulary entries.</desc>
-  <!-- Orange is normalization, purple is learned weights, green is computed output. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="643.75" viewBox="0 0 1200 515" role="img" aria-labelledby="title desc">
+  <title id="title">A projection turns a vector into vocabulary scores</title>
+  <desc id="desc">The same multiply-and-add operation also appears throughout the transformer blocks.</desc>
+  <!-- Shared typography; editable geometry and real text. -->
   <defs>
-    <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-      .title { font-size: 30px; font-weight: 700; }
-      .subtitle { font-size: 19px; fill: #475569; }
-      .label { font-size: 21px; font-weight: 700; text-anchor: middle; }
-      .body { font-size: 20px; text-anchor: middle; }
-      .value { font-size: 29px; font-weight: 700; text-anchor: middle; }
-      .math { font-size: 23px; text-anchor: middle; }
-      .note { font-size: 19px; text-anchor: middle; }
-      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
-      .head { fill: #64748b; }
-    </style>
+    <style>text {font-family:Arial, Helvetica, sans-serif;}</style>
   </defs>
-  <rect width="900" height="646" fill="#ffffff"/>
-
-  <!-- Generation uses the last position; earlier positions still have their own vectors. -->
-  <text class="title" x="28" y="44">The final vector becomes next-token scores</text>
-  <text class="subtitle" x="28" y="76">Continue “The cat” · invented values · only two vocabulary entries shown</text>
-  <g id="final-normalization">
-    <rect x="28" y="112" width="230" height="94" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-    <text class="body" x="143" y="150">Last block's vector</text>
-    <text class="body" x="143" y="179">at “cat”</text>
-    <rect x="337" y="112" width="226" height="94" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
-    <text class="body" x="450" y="150">Final</text>
-    <text class="body" x="450" y="179">normalization</text>
-    <rect x="642" y="112" width="230" height="94" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-    <text class="value" x="757" y="151">[2, 1]</text>
-    <text class="note" x="757" y="181">Normalized vector</text>
-  </g>
-
-  <!-- Shafts terminate inside manual heads; tips meet target edges. -->
-  <g id="normalization-connectors">
-    <line class="connector" x1="259" y1="159" x2="324" y2="159"/>
-    <polygon class="head" points="337,159 323,152 323,166"/>
-    <line class="connector" x1="564" y1="159" x2="629" y2="159"/>
-    <polygon class="head" points="642,159 628,152 628,166"/>
-  </g>
-
-  <!-- The shared input vector is repeated in each recipe to show matching pairs. -->
-  <text class="label" x="450" y="253">Output projection: multiply matching pairs, then add</text>
-  <g id="output-projection-table">
-    <rect x="28" y="278" width="844" height="253" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
-    <text class="label" x="100" y="313">Token</text>
-    <text class="label" x="278" y="313">Learned row</text>
-    <text class="label" x="548" y="313">Use vector [2, 1]</text>
-    <text class="label" x="790" y="313">Logit</text>
-    <line x1="29" y1="334" x2="871" y2="334" stroke="#cbd5e1"/>
-    <line x1="29" y1="431" x2="871" y2="431" stroke="#cbd5e1"/>
-    <text class="math" x="100" y="393">sat</text>
-    <rect x="205" y="354" width="146" height="59" rx="9" fill="#f3e8ff" stroke="#9333ea"/>
-    <text class="math" x="278" y="392">[3, 1]</text>
-    <text class="math" x="548" y="393">2 × 3 + 1 × 1</text>
-    <text class="value" x="790" y="393">7</text>
-    <text class="math" x="100" y="489">ran</text>
-    <rect x="205" y="450" width="146" height="59" rx="9" fill="#f3e8ff" stroke="#9333ea"/>
-    <text class="math" x="278" y="488">[0, 2]</text>
-    <text class="math" x="548" y="489">2 × 0 + 1 × 2</text>
-    <text class="value" x="790" y="489">2</text>
-  </g>
-
-  <!-- Logits remain raw scores until the decoding process converts or compares them. -->
-  <text class="note" x="450" y="574">One score per vocabulary token, predicting what could come next.</text>
-  <text class="note" x="450" y="606">Logits are raw scores, not probabilities or guarantees of truth.</text>
+  <rect width="1200" height="515" fill="#fff"/>
+  <text x="28" y="44" font-size="28" font-weight="700" fill="#172033" text-anchor="start">A projection turns a vector into vocabulary scores</text>
+  <text x="28" y="78" font-size="20" font-weight="400" fill="#64748b" text-anchor="start">The same multiply-and-add operation also appears throughout the transformer blocks.</text>
+  <!-- Show the row-by-row calculation instead of treating projection as a black box. -->
+  <rect x="28" y="136" width="250" height="114" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="153.0" y="187.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Input vector</text>
+  <text x="153.0" y="212.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">x = [2, 1]</text>
+  <rect x="352" y="136" width="478" height="114" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="591.0" y="187.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">OUTPUT PROJECTION · learned rows</text>
+  <text x="591.0" y="212.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">sat: [3, 1] · ran: [0, 2]</text>
+  <rect x="904" y="136" width="268" height="114" rx="10" fill="#fff" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="1038.0" y="187.5" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">LOGITS · raw scores</text>
+  <text x="1038.0" y="212.5" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">sat: 7 · ran: 2</text>
+  <path data-connector="true" d="M278 193 L343.0 193.0" fill="none" stroke="#2563eb" stroke-width="2"/>
+  <polygon points="352,193 342.0,197.0 342.0,189.0" fill="#2563eb"/>
+  <path data-connector="true" d="M830 193 L895.0 193.0" fill="none" stroke="#2563eb" stroke-width="2"/>
+  <polygon points="904,193 894.0,197.0 894.0,189.0" fill="#2563eb"/>
+  <rect x="28" y="290" width="1144" height="116" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="52" y="329" font-size="24" font-weight="700" fill="#172033" text-anchor="start">Multiply matching coordinates, then add:</text>
+  <text x="52" y="375" font-size="23" font-weight="400" fill="#172033" text-anchor="start">sat: 2 × 3 + 1 × 1 = 7</text>
+  <text x="640" y="375" font-size="23" font-weight="400" fill="#172033" text-anchor="start">ran: 2 × 0 + 1 × 2 = 2</text>
+  <text x="28" y="450" font-size="21" font-weight="700" fill="#172033" text-anchor="start">Where it fits: after final normalization, score every vocabulary token using the last position.</text>
+  <text x="28" y="485" font-size="20" font-weight="400" fill="#64748b" text-anchor="start">Only two vocabulary rows are shown. Logits can be negative and need not sum to 1.</text>
 </svg>

@@ -4,13 +4,10 @@
 Anki-ready cards on model training, transformer internals, inference, retrieval, and agent runtimes, each with its own teaching diagrams.
 
 Every card lives in its own folder as `Readme.md`, with its diagrams in a sibling `images/` directory.
-Reusable diagrams that no card links yet are kept in [`svg`](./svg/) and cover embeddings, vector search,
-lexical and semantic retrieval, reciprocal rank fusion, large language model processing,
-Model Context Protocol (MCP), streaming, and temperature.
 
 ## Content
  * [A complete agent request, explained at every level](./A%20complete%20agent%20request/Readme.md) - a Python repair through context, tokens, transformer computation, tool execution, test feedback, and a checked answer
- * [Agent reliability: evaluation and execution boundaries](./Agent%20reliability/Readme.md) - outcome checks, traces, failure layers, safe retries, prompt injection, and enforced permissions
+ * [Agent reliability: evaluation and execution boundaries](./Reliability/Readme.md) - outcome checks, traces, failure layers, safe retries, prompt injection, and enforced permissions
  * [AI Guardrails](./AI%20Guardrails/Readme.md) - input screening, tool authorization, and output checks, with a refund workflow from KodeKloud
  * [Attention: queries, keys, values, and heads](./Attention/Readme.md) - query-key scores, scaling, causal masks, softmax, value mixtures, and parallel heads
  * [Codex commands](./Codex%20commands/Readme.md) - ten built-in slash commands for software engineering, learning, and writing
@@ -36,7 +33,7 @@ Model Context Protocol (MCP), streaming, and temperature.
  * [The agent loop: act, observe, continue, stop](./The%20agent%20loop/Readme.md) - feedback, changing task state, verification, retries, budgets, and fixed workflows
  * [The residual stream and normalization](./The%20residual%20stream%20and%20normalization/Readme.md) - additive updates, pre-norm branches, LayerNorm, and RMSNorm
  * [The transformer forward pass](./The%20transformer%20forward%20pass/Readme.md) - embedding lookup, transformer blocks, residual updates, and next-token scores
- * [Thinking levels and inference-time compute](./Thinking%20levels%20and%20inference-time%20compute/Readme.md) - reasoning effort, adaptive computation, reasoning tokens, cost, latency, and provider controls
+ * [Thinking levels and inference-time compute](./Thinking%20levels/Readme.md) - reasoning effort, adaptive computation, reasoning tokens, cost, latency, and provider controls
  * [Tokens and tokenization](./Tokens%20and%20tokenization/Readme.md) - token IDs, vocabulary, BPE merges, bytes, and token counts
  * [Tool calls: from model output to execution](./Tool%20calls/Readme.md) - tool definitions, arguments, execution checks, matching results, and the MCP integration boundary
  * [Training vs. inference](./Training%20vs.%20inference/Readme.md) - weight updates, forward passes, gradients, and a one-weight example
@@ -89,7 +86,7 @@ Use a decoder-only transformer as the teaching baseline. Label model-specific ar
 | # | Proposed article | Central question and scope |
 | --- | --- | --- |
 | 19 | **[Agents: Tool calls from model output to execution](./Tool%20calls/Readme.md)** | Who actually executes a requested action? Trace a tool definition, generated arguments, validation, runtime execution, a matching result, and the next model call. Place Model Context Protocol (MCP) at the integration boundary. |
-| 20 | **[Agents: loop - act, observe, continue, stop](./The%20agent%20loop/Readme.md)** | How does a sequence of model calls accomplish a task? Cover tool results, state transitions, retries, budgets, and stopping criteria. Compare fixed workflows with model-directed action selection. |
+| 20 | **[Agents: Loop - act, observe, continue, stop](./The%20agent%20loop/Readme.md)** | How does a sequence of model calls accomplish a task? Cover tool results, state transitions, retries, budgets, and stopping criteria. Compare fixed workflows with model-directed action selection. |
 | 21 | **[Agents: Thinking levels](./Thinking%20levels/Readme.md)** | What does a reasoning-effort control change? Cover reasoning tokens, adaptive compute, latency and cost, and provider-specific effort settings. Separate effort from model size, temperature, answer verbosity, and a guaranteed correctness level. |
 | 22 | **[Agents: Context engineering for long-running agents](./Context%20engineering%20for%20long-running%20agents/Readme.md)** | What should the next model call see? Cover instructions, tool descriptions, retrieved evidence, compaction, saved notes, and subagent handoffs. Trace the effects on information loss and reusable prompt prefixes. |
 | 23 | **[Agents: Reliability - evaluation and execution boundaries](./Reliability/Readme.md)** | How do you tell whether the whole system works? Separate model, tool, and orchestration failures. Cover outcome-based evaluations, traces, external verification, retry side effects, prompt injection, and enforced tool permissions. |
@@ -101,7 +98,7 @@ Use a decoder-only transformer as the teaching baseline. Label model-specific ar
 - Read [Markov table](./Markov%20table/Readme.md) alongside [Pretraining: learning from next-token prediction](./Pretraining/Readme.md) and [From logits to text: decoding and sampling](./Decoding%20and%20sampling/Readme.md) for a small probability-based text generator.
 - Read [RAG pipeline](./RAG%20pipeline/Readme.md) alongside [In-context learning, context windows, and memory](./In-context%20learning%20and%20memory/Readme.md) and [Context engineering for long-running agents](./Context%20engineering%20for%20long-running%20agents/Readme.md) for the retrieval details.
 - Read [Prompt-writing guidelines](./Prompt-writing%20guidelines/Readme.md) alongside [Context engineering for long-running agents](./Context%20engineering%20for%20long-running%20agents/Readme.md) for prompt construction.
-- Read [LLM Failure Modes](./LLM%20Failure%20Modes/Readme.md) alongside [Agent reliability: evaluation and execution boundaries](./Agent%20reliability/Readme.md) for model-level failure patterns.
+- Read [LLM Failure Modes](./LLM%20Failure%20Modes/Readme.md) alongside [Agent reliability: evaluation and execution boundaries](./Reliability/Readme.md) for model-level failure patterns.
 - Use [Codex commands](./Codex%20commands/Readme.md) as an optional product-specific companion to the agent articles.
 
 ### Completion check

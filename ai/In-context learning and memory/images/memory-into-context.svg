@@ -1,71 +1,48 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="710" viewBox="0 0 900 710" role="img" aria-labelledby="title desc">
-  <title id="title">Stored information must be supplied in the active context</title>
-  <desc id="desc">Saved conversation messages and external notes or documents are separate sources outside the active context. An application selects messages or retrieves information, then adds the current instructions and question. In this illustrative example, the active context contains instructions, the question How do I build this project, selected older messages, and the retrieved note Project uses Maven. The model uses the supplied context with fixed weights to generate an answer that may use the note. Storage does not mean inclusion, and retrieval may miss useful information.</desc>
-  <!-- Blue marks archived conversation, purple external documents, and green the assembled context. -->
-  <defs>
-    <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-      .title { font-size: 29px; font-weight: 700; }
-      .subtitle { font-size: 19px; fill: #475569; }
-      .label { font-size: 21px; font-weight: 700; text-anchor: middle; }
-      .body { font-size: 21px; text-anchor: middle; }
-      .note { font-size: 19px; text-anchor: middle; }
-      .item { font-size: 21px; font-weight: 700; }
-      .detail { font-size: 19px; }
-      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
-      .head { fill: #64748b; }
-    </style>
-  </defs>
-  <rect width="900" height="710" fill="#ffffff"/>
-
-  <!-- Both stores are outside the model's active input; the example note is not a claim about a real project. -->
-  <text class="title" x="28" y="44">Stored information must enter the active context</text>
-  <text class="subtitle" x="28" y="76">An application chooses what the model receives for this call.</text>
-  <g id="external-information-sources">
-    <rect x="28" y="110" width="404" height="88" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-    <text class="label" x="230" y="145">Saved conversation</text>
-    <text class="note" x="230" y="180">Older messages in the chat archive</text>
-    <rect x="468" y="110" width="404" height="88" rx="12" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
-    <text class="label" x="670" y="145">Notes / documents</text>
-    <text class="note" x="670" y="180">Example note: “Project uses Maven.”</text>
-  </g>
-
-  <!-- Selection and retrieval occur before the context reaches the model; neither store is automatically included. -->
-  <g id="application-selection">
-    <path class="connector" d="M230 199 V225 H340 V247"/>
-    <polygon class="head" points="340,260 333,246 347,246"/>
-    <path class="connector" d="M670 199 V225 H560 V247"/>
-    <polygon class="head" points="560,260 553,246 567,246"/>
-    <rect x="200" y="260" width="500" height="82" rx="12" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
-    <text class="label" x="450" y="292">Application selects or retrieves</text>
-    <text class="note" x="450" y="321">and adds current instructions + question</text>
-  </g>
-
-  <!-- The bounded context contains selected material, including an explicit copy of the retrieved note. -->
-  <g id="active-context-for-call">
-    <line class="connector" x1="450" y1="343" x2="450" y2="369"/>
-    <polygon class="head" points="450,382 443,368 457,368"/>
-    <rect x="28" y="382" width="844" height="142" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-    <text class="label" x="450" y="413">Active context for this call</text>
-    <text class="item" x="54" y="453">Instructions + current question</text>
-    <text class="item" x="510" y="453">Selected messages + notes</text>
-    <text class="detail" x="54" y="493">Question: “How do I build this project?”</text>
-    <text class="detail" x="510" y="493">Retrieved note: “Project uses Maven.”</text>
-  </g>
-
-  <!-- The model receives the assembled context; there is no direct store-to-answer shortcut or weight update. -->
-  <g id="model-and-answer">
-    <path class="connector" d="M450 525 V543 H320 V555"/>
-    <polygon class="head" points="320,568 313,554 327,554"/>
-    <rect x="110" y="568" width="420" height="74" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-    <text class="label" x="320" y="612">Model: weights stay fixed</text>
-    <line class="connector" x1="531" y1="605" x2="637" y2="605"/>
-    <polygon class="head" points="650,605 636,598 636,612"/>
-    <rect x="650" y="568" width="222" height="74" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-    <text class="label" x="761" y="599">Answer</text>
-    <text class="note" x="761" y="627">May use Maven</text>
-  </g>
-
-  <!-- Retrieval and selection are fallible; stored content is not automatically visible to the model. -->
-  <text class="note" x="450" y="685">Stored does not mean included; retrieval may miss useful information.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="872.727272727272727" viewBox="0 0 1100 640" role="img" aria-labelledby="title desc">
+<title id="title">External memory requires writing and selecting information</title>
+<desc id="desc">A separate write action stores a project note. On a later call the application selects it and supplies it with the question. Information shown in a chat interface need not be present in the current model input.</desc>
+<!-- Shared typography; all teaching content remains editable SVG text. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1100" height="640" fill="#ffffff"/>
+<text x="30" y="44" font-size="30" font-weight="700" text-anchor="start" fill="#172033">Saved memory needs a write and a later read</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">The application is the program around the model. It manages storage and constructs each input.</text>
+<!-- Write to memory. -->
+<g id="write-to-memory">
+<text x="30" y="125" font-size="25" font-weight="700" text-anchor="start" fill="#172033">SAVE · a separate storage action</text>
+<rect x="30" y="151" width="410" height="140" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="50" y="187" font-size="24" font-weight="700" text-anchor="start" fill="#172033">New information</text>
+<text x="50" y="227" font-size="20" font-weight="400" text-anchor="start" fill="#172033">“This project uses Maven.”</text>
+<text x="50" y="257" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Mentioning it is not a storage operation.</text>
+<rect x="590" y="151" width="480" height="140" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5" />
+<text x="610" y="187" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Persistent storage</text>
+<text x="610" y="227" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Application writes a project note.</text>
+<text x="610" y="257" font-size="20" font-weight="400" text-anchor="start" fill="#172033">The note can survive beyond this call.</text>
+<path data-connector="true" d="M 440,215 L 579,215" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="590,215 578,221 578,209" fill="#64748b"/>
+<text x="472" y="195" font-size="20" font-weight="400" text-anchor="start" fill="#172033">write</text>
+</g>
+<!-- Read from memory. -->
+<g id="read-from-memory">
+<text x="30" y="344" font-size="25" font-weight="700" text-anchor="start" fill="#172033">USE · select saved information for a new call</text>
+<rect x="30" y="375" width="290" height="183" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="50" y="412" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Stored notes / chats</text>
+<text x="50" y="453" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Project: uses Maven</text>
+<text x="50" y="486" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Old chat: many messages</text>
+<text x="50" y="519" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Other project: uses Gradle</text>
+<rect x="410" y="375" width="290" height="183" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5" />
+<text x="430" y="412" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Selected input</text>
+<text x="430" y="453" font-size="19" font-weight="400" text-anchor="start" fill="#172033">Question: how to build?</text>
+<text x="430" y="486" font-size="19" font-weight="400" text-anchor="start" fill="#172033">Note: project uses Maven</text>
+<text x="430" y="519" font-size="19" font-weight="400" text-anchor="start" fill="#172033">Other notes stay outside.</text>
+<rect x="790" y="375" width="280" height="183" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="810" y="412" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Model reply</text>
+<text x="810" y="453" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Possible answer:</text>
+<text x="810" y="486" font-size="20" font-weight="400" text-anchor="start" fill="#172033">“Run mvn package.”</text>
+<text x="810" y="519" font-size="20" font-weight="400" text-anchor="start" fill="#172033">No training update.</text>
+<path data-connector="true" d="M 320,475 L 399,475" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="410,475 398,481 398,469" fill="#64748b"/>
+<path data-connector="true" d="M 700,475 L 779,475" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="790,475 778,481 778,469" fill="#64748b"/>
+</g>
+<text x="30" y="607" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Saved history, visible chat history, and the current model input can contain different information.</text>
 </svg>

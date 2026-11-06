@@ -1,60 +1,40 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="466" viewBox="0 0 1100 466" role="img" aria-labelledby="title desc">
-  <title id="title">Keep the beginning stable when it remains useful</title>
-  <desc id="desc">Before and after compaction, identical instructions and tool definitions form the same input prefix. That prefix may reuse cached computation if eligible. The later long conversation history is replaced by a summary and fresh evidence, which need fresh processing. The boxes are a conceptual layout, not measured token counts. All input still occupies context space.</desc>
-  <!-- Shared series typography; each panel states its own role. -->
-  <defs>
-    <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-      .title { font-size: 28px; font-weight: 700; }
-      .subtitle { font-size: 19px; fill: #475569; }
-      .label { font-size: 22px; font-weight: 700; }
-      .body { font-size: 20px; }
-      .note { font-size: 19px; fill: #475569; }
-      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
-      .head { fill: #64748b; }
-    </style>
-  </defs>
-  <rect width="1100" height="466" fill="#ffffff"/>
-  <!-- Heading states the lesson before the body introduces its parts. -->
-  <text class="title" x="28" y="43" text-anchor="start">Keep the beginning stable when it remains useful</text>
-  <text class="subtitle" x="28" y="76" text-anchor="start">Blue: unchanged prefix. Orange: old history. Green: new summary and evidence.</text>
-  <text class="label" x="28" y="182" text-anchor="start">Before</text>
-  <!-- Prefix before; labels explain the color and role. -->
-  <g id="prefix-before">
-    <rect x="150" y="126" width="465" height="92" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-  <text class="label" x="382.5" y="161" text-anchor="middle">Stable instructions + tools</text>
-  <text class="body" x="382.5" y="195" text-anchor="middle">Exact same content and order</text>
-  </g>
-  <!-- History before; labels explain the color and role. -->
-  <g id="history-before">
-    <rect x="635" y="126" width="437" height="92" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
-  <text class="label" x="853.5" y="161" text-anchor="middle">Long conversation history</text>
-  <text class="body" x="853.5" y="195" text-anchor="middle">Older messages + tool results</text>
-  </g>
-  <text class="label" x="28" y="358" text-anchor="start">After</text>
-  <!-- Prefix after; labels explain the color and role. -->
-  <g id="prefix-after">
-    <rect x="150" y="302" width="465" height="92" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-  <text class="label" x="382.5" y="337" text-anchor="middle">Stable instructions + tools</text>
-  <text class="body" x="382.5" y="371" text-anchor="middle">Exact same content and order</text>
-  </g>
-  <!-- History after; labels explain the color and role. -->
-  <g id="history-after">
-    <rect x="635" y="302" width="437" height="92" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-  <text class="label" x="853.5" y="337" text-anchor="middle">Summary + fresh evidence</text>
-  <text class="body" x="853.5" y="371" text-anchor="middle">Changed portion needs fresh processing</text>
-  </g>
-  <!-- unchanged-prefix: the vertical shaft ends inside its downward head. -->
-  <g id="unchanged-prefix">
-    <line class="connector" x1="382" y1="219" x2="382" y2="290"/>
-    <polygon class="head" points="382,302 376,289 388,289"/>
-  </g>
-  <!-- changed-history: the vertical shaft ends inside its downward head. -->
-  <g id="changed-history">
-    <line class="connector" x1="853" y1="219" x2="853" y2="290"/>
-    <polygon class="head" points="853,302 847,289 859,289"/>
-  </g>
-  <text class="note" x="471" y="265" text-anchor="middle">may reuse</text>
-  <text class="note" x="950" y="265" text-anchor="middle">process again</text>
-  <text class="note" x="550" y="440" text-anchor="middle">Prefix reuse depends on cache rules. All input still occupies context space.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="875" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+<title id="title">Stable prefixes and changing context state</title>
+<desc id="desc">Three calls preserve identical instructions and tool definitions while progress, tool results, or summaries change later. Eligible exact prefix computation may be reused; summary changes still need fresh work.</desc>
+<!-- Shared typography and native vector artwork; intrinsic width is 1500 pixels. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1200" height="700" fill="#ffffff"/>
+<text x="30" y="44" font-size="30" font-weight="700" text-anchor="start" fill="#172033">Keep stable instructions before changing task state</text>
+<text x="30" y="80" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">Prefix = the beginning of the input. Prompt caching can reuse computation for an eligible exact match.</text>
+<!-- Earlier call; keep labels clear of connector corridors. -->
+<g id="earlier-call">
+<text x="30" y="178" font-size="21" font-weight="700" text-anchor="start" fill="#172033">Earlier</text>
+<rect x="170" y="140" width="550" height="77" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<text x="445" y="187" font-size="22" font-weight="700" text-anchor="middle" fill="#172033">Same instructions + tool definitions</text>
+<rect x="760" y="140" width="410" height="77" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.8"/>
+<text x="965" y="187" font-size="21" font-weight="700" text-anchor="middle" fill="#172033">Earlier progress + older results</text>
+</g>
+<!-- Later call; keep labels clear of connector corridors. -->
+<g id="later-call">
+<text x="30" y="303" font-size="21" font-weight="700" text-anchor="start" fill="#172033">Later</text>
+<rect x="170" y="265" width="550" height="77" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<text x="445" y="312" font-size="22" font-weight="700" text-anchor="middle" fill="#172033">Same instructions + tool definitions</text>
+<rect x="760" y="265" width="410" height="77" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.8"/>
+<text x="965" y="312" font-size="21" font-weight="700" text-anchor="middle" fill="#172033">New progress + fresh results</text>
+</g>
+<!-- After compaction; keep labels clear of connector corridors. -->
+<g id="after-compaction">
+<text x="30" y="428" font-size="21" font-weight="700" text-anchor="start" fill="#172033">Compacted</text>
+<rect x="170" y="390" width="550" height="77" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<text x="445" y="437" font-size="22" font-weight="700" text-anchor="middle" fill="#172033">Same instructions + tool definitions</text>
+<rect x="760" y="390" width="410" height="77" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.8"/>
+<text x="965" y="437" font-size="21" font-weight="700" text-anchor="middle" fill="#172033">Compacted summary + recent results</text>
+</g>
+<!-- Prefix reuse rule; keep labels clear of connector corridors. -->
+<g id="prefix-reuse-rule">
+<rect x="30" y="514" width="1140" height="110" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.8"/>
+<text x="50" y="554" font-size="23" font-weight="700" text-anchor="start" fill="#172033">The unchanged eligible prefix may be reused; changed text needs fresh processing.</text>
+<text x="50" y="594" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Similar meaning is not exact matching. Update stale or wrong content even when that reduces reuse.</text>
+</g>
+<text x="30" y="668" font-size="21" font-weight="400" text-anchor="start" fill="#64748b">Caching saves computation. It does not restore omitted facts, add context capacity, or verify a saved note.</text>
 </svg>

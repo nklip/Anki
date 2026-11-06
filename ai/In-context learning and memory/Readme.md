@@ -2,53 +2,61 @@
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-**A model can pick up a task from examples in its prompt without any change to its weights. But it can use only what is in its context right now: anything saved elsewhere helps only after the application puts it back into the context.**
+**Examples in the input can guide an answer without retraining the model. Saved notes can help too, after the application includes them in the input. Neither mechanism enlarges the model’s limited context window.**
 
 ## Where this fits
 
-The earlier articles followed one call to the model. This one asks what that call can see, and where everything else is kept:
+The shared map highlights **context assembly**: choosing this call’s input. Follow the arrows through optional prefix reuse, model computation, and token selection. Below, a saved note becomes useful input.
 
 ![where-this-fits.svg](images/where-this-fits.svg)
 
-Read the top row from left to right. Information can sit outside the model, in saved chats, notes, or files. The **application**, the program around the model, selects what to include and places it in the **context window**: everything the model can see on this call. The model, whose weights stay fixed, reads the context and writes the reply. The row below lists the three places where information can live.
-
 ## Learning from examples without training
 
-**In-context learning** means picking up a task or pattern from examples in the current input. The examples change the model's working numbers, its activations, not its learned weights ([Training vs. inference](../Training%20vs.%20inference/Readme.md)).
+**In-context learning** means inferring a task or pattern from the current input. A **demonstration** pairs an example input with its desired output. **Zero-shot** supplies no demonstrations, **one-shot** supplies one, and **few-shot** supplies several.
 
 ![learning-from-examples.svg](images/learning-from-examples.svg)
 
-In the diagram, two examples show a word pair reversed and joined with a comma, so the intended answer for “green bike” is “bike, green.” The model works this out from the context, using abilities it gained in training; nothing is trained now. A few examples can fit more than one rule, so the answer is not guaranteed. Plain instructions can guide the model too, with no examples at all.
+Here, “red ball → ball, red” and “blue car → car, blue” suggest “green bike → bike, green.” These are invented examples. A few examples can fit several rules; the answer is not guaranteed.
 
-## The context window is limited working space
+**Weights** are numbers learned during training. **Activations** are working numbers computed from the input using those weights. Examples change the computation; ordinary inference does not update the weights. Learned knowledge can also influence the answer ([Training vs. inference](../Training%20vs.%20inference/Readme.md)).
 
-The context window holds instructions, chat messages, tool results, documents, and the reply as it is being written. It is measured in **tokens** ([Tokens and tokenization](../Tokens%20and%20tokenization/Readme.md)), and input and output share the space.
+![weights-context-and-storage.svg](images/weights-context-and-storage.svg)
+
+## Context is content; the window is capacity
+
+**Context** is the supplied input plus output generated so far. The **context window** is its capacity, measured in **tokens**: encoded units that can represent words or word pieces ([Tokens and tokenization](../Tokens%20and%20tokenization/Readme.md)). Instructions, selected messages, documents, and tool results all take space.
 
 ![context-token-budget.svg](images/context-token-budget.svg)
 
-The bar shows a toy window of 4,000 tokens. The solid segments are input: instructions, selected messages, and retrieved notes. The dashed segments are still empty: room kept for the reply, plus some spare. Real limits differ by model, and some models also set a separate limit for output.
+The dashed areas are empty capacity. As the reply grows, it consumes room. Cached input still counts. Actual context and output limits depend on the model and service. More capacity does not guarantee better use of the information; long-context experiments have found sensitivity to where relevant facts appear.
 
-More room is not automatically better. As the context grows, models can lose accuracy and miss facts, especially facts in the middle of a long input. Choosing what goes in matters as much as how much fits.
+## External memory needs saving and selection
 
-## “Memory” means storage outside the model
-
-A model does not remember earlier chats by itself. What feels like memory is the application saving information and bringing it back. A chat window can even show old messages that are no longer in the model's context.
+The **application** is the program around the model. **External memory** is information it keeps in files, notes, or saved messages beyond one call. Writing a note and later reading it into context are separate actions; merely mentioning a fact in a reply does not persist it.
 
 ![memory-into-context.svg](images/memory-into-context.svg)
 
-Read the diagram from top to bottom. A saved conversation and a note, “Project uses Maven,” sit in storage. When you ask “How do I build this project?”, the application selects the note and puts it into the active context with your question, so the model can use it. Searching a store and adding the results to the model's input is called **retrieval-augmented generation (RAG)**.
+A chat interface can show messages that the application no longer supplies to the model. Saved history, visible history, and current input can differ.
 
-Retrieval can miss a useful note or bring back an outdated one, and a saved note can be wrong. Saving a new note is a separate step that the application must take; a fact that the model merely writes in a reply is not stored.
+**Retrieval-augmented generation (RAG)** retrieves source material, adds it to the input, and generates an answer using that material. A **retriever** searches for useful passages; the model then receives the selected text with the question.
 
-## When the context fills up
+![retrieval-augmented-generation.svg](images/retrieval-augmented-generation.svg)
 
-Long conversations eventually outgrow the window. Applications then keep the recent messages, retrieve older details when needed, or use **compaction**: they replace a long history with a shorter summary, which can lose details. The caches from [Prefill, decoding, and the KV cache](../Prefill%20and%20KV%20cache/Readme.md) and [Prompt caching across requests](../Prompt%20caching%20across%20requests/Readme.md) save computing work. They do not enlarge the window or serve as long-term memory.
+Retrieval can miss a note or find an outdated one; the model can misread a good source.
+
+## Compaction makes room by replacing history
+
+**Compaction** replaces a long history with a shorter summary, often keeping recent messages alongside it. The window stays the same size. Summaries can omit details, so an application may retain the original history in storage for later retrieval.
+
+![context-compaction.svg](images/context-compaction.svg)
+
+[KV caching](../Prefill%20and%20KV%20cache/Readme.md) and [prompt caching](../Prompt%20caching%20across%20requests/Readme.md) reuse computed work. They do not replace an external note store or increase context capacity.
 
 # Sources
 
-- [Brown et al.: Language Models are Few-Shot Learners](https://arxiv.org/abs/2005.14165)
+- [OpenAI / Brown et al.: in-context learning and demonstrations](https://arxiv.org/abs/2005.14165)
 - [Claude: context windows and token accounting](https://platform.claude.com/docs/en/build-with-claude/context-windows)
 - [Anthropic: context selection, notes, and compaction](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents)
-- [Claude: external memory and application-managed storage](https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool)
+- [Claude: application-managed memory](https://platform.claude.com/docs/en/agents-and-tools/tool-use/memory-tool)
 - [Lewis et al.: Retrieval-Augmented Generation](https://arxiv.org/abs/2005.11401)
 - [Liu et al.: Lost in the Middle](https://arxiv.org/abs/2307.03172)

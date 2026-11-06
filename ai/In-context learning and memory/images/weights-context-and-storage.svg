@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="927.272727272727273" viewBox="0 0 1100 680" role="img" aria-labelledby="title desc">
+<title id="title">Weights, activations, external memory, and computation caches</title>
+<desc id="desc">Three panels separate training-learned weights, input-dependent activations, and persistent external memory. A separate cache panel explains retained computation and its limits.</desc>
+<!-- Shared typography; all teaching content remains editable SVG text. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1100" height="680" fill="#ffffff"/>
+<text x="30" y="44" font-size="30" font-weight="700" text-anchor="start" fill="#172033">Three places information can live</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">Keep learned model parameters, current computation, and external storage separate.</text>
+<!-- Model weights. -->
+<g id="model-weights">
+<rect x="30" y="127" width="320" height="296" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="50" y="168" font-size="25" font-weight="700" text-anchor="start" fill="#172033">Model weights</text>
+<text x="50" y="214" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Numbers learned in training</text>
+<text x="50" y="246" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Encode learned capabilities</text>
+<text x="50" y="278" font-size="20" font-weight="400" text-anchor="start" fill="#172033">and patterns.</text>
+<text x="50" y="356" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Ordinary inference reads them;</text>
+<text x="50" y="388" font-size="20" font-weight="400" text-anchor="start" fill="#172033">it does not update them.</text>
+</g>
+<!-- Activations. -->
+<g id="activations">
+<rect x="390" y="127" width="320" height="296" rx="12" fill="#eff6ff" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="410" y="168" font-size="25" font-weight="700" text-anchor="start" fill="#172033">Activations</text>
+<text x="410" y="214" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Working numbers computed</text>
+<text x="410" y="246" font-size="20" font-weight="400" text-anchor="start" fill="#172033">from this call’s input</text>
+<text x="410" y="278" font-size="20" font-weight="400" text-anchor="start" fill="#172033">using the model weights.</text>
+<text x="410" y="356" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Different context can produce</text>
+<text x="410" y="388" font-size="20" font-weight="400" text-anchor="start" fill="#172033">different working numbers.</text>
+</g>
+<!-- External memory. -->
+<g id="external-memory">
+<rect x="750" y="127" width="320" height="296" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="770" y="168" font-size="25" font-weight="700" text-anchor="start" fill="#172033">External memory</text>
+<text x="770" y="214" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Notes, files, saved messages</text>
+<text x="770" y="246" font-size="20" font-weight="400" text-anchor="start" fill="#172033">kept by the application</text>
+<text x="770" y="278" font-size="20" font-weight="400" text-anchor="start" fill="#172033">outside the model.</text>
+<text x="770" y="356" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Useful after the application</text>
+<text x="770" y="388" font-size="20" font-weight="400" text-anchor="start" fill="#172033">puts relevant text into input.</text>
+</g>
+<!-- Cache is computation. -->
+<g id="cache-is-computation">
+<rect x="30" y="467" width="1040" height="136" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="50" y="508" font-size="26" font-weight="700" text-anchor="start" fill="#172033">A cache retains computed work for reuse</text>
+<text x="50" y="546" font-size="20" font-weight="400" text-anchor="start" fill="#172033">KV caches retain attention keys and values; prompt caches can reuse matching prefix computation.</text>
+<text x="50" y="578" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Those caches do not replace a saved note store, train the weights, or increase the context window.</text>
+</g>
+<text x="30" y="645" font-size="21" font-weight="700" text-anchor="start" fill="#172033">In-context learning changes the computation for this input; it does not write new model weights.</text>
+</svg>

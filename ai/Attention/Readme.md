@@ -6,52 +6,55 @@
 
 ## Where this fits
 
-Attention is the first of the two jobs inside every transformer block; the MLP is the second ([The transformer forward pass](../The%20transformer%20forward%20pass/Readme.md)):
+A transformer block updates one vector, a list of numbers, per token position. Attention gathers information across allowed positions; the MLP (multilayer perceptron) then processes each position separately.
 
-Read the top row from left to right, then look inside a block: attention gathers context before the MLP processes each position.
+The upper map highlights attention inside a block. The lower panel calculates one position's mixture of information.
 
 ![where-this-fits.svg](images/where-this-fits.svg)
 
-It is the only step where information moves between token positions. Without it, each token would be processed on its own, and `bank` could never learn whether `river` or `savings` came before it ([Embeddings and position information](../Embeddings%20and%20position%20information/Readme.md)).
-
 ## Queries, keys, and values
 
-A library search is a helpful picture. Every position produces three vectors:
-
-- a **query (Q):** what this position is looking for;
-- a **key (K):** a label describing what this position holds, for queries to match;
-- a **value (V):** the information this position hands over when it is used.
+A learned **projection** forms new coordinates from weighted sums of the input numbers. Each position uses projections to produce three vectors: **query (Q)** says what to match; **key (K)** says what can be matched; **value (V)** carries information to pass on. The three panels give each role its own example.
 
 ![query-key-value-roles.svg](images/query-key-value-roles.svg)
 
-The diagram shows one position's vector feeding three learned recipes, one for each role. Queries are compared with keys to decide the **mixing weights**, and the values are what gets mixed. The recipes are learned during training, while the queries, keys, and values themselves are calculated fresh for every input. Unlike a library search, attention does not fetch one book: it blends several, in different amounts.
+Q and K determine the mixing weights; V supplies the contents. The projection weights stay fixed during use, while Q, K, and V depend on the input.
 
-## How one position decides what to read
+## Match and scale
 
-Take the text `The cat sat`, pretend each word is one token, and follow the position `cat`:
+A **dot product** multiplies matching coordinates and adds the results. **Scaling** divides that score by the square root of the query/key width, keeping long vectors from producing excessively large scores. Follow the arithmetic from the query and key to one score:
 
-1. **Match.** The query at `cat` is compared with the key of every position. A close match gives a high score. The comparison is a **dot product**: multiply matching numbers and add them up.
-2. **Mask.** When the model writes text, later tokens do not exist yet, so a position may only look at itself and earlier positions. The **causal mask** blocks `sat`, leaving `The` and `cat`.
-3. **Turn scores into weights.** **Softmax** turns the allowed scores into weights that add up to 100%, for example 30% for `The` and 70% for `cat`. Real attention also scales the scores down first, so that long vectors do not produce extreme weights.
-4. **Blend the values.** The result at `cat` is the values mixed by those weights: mostly its own value, plus some of the value at `The`.
+![dot-product-and-scaling.svg](images/dot-product-and-scaling.svg)
 
-Every position does the same with its own query, so each gets its own blend. The weights are not probabilities of the next word: they only say how much each earlier position contributes here, and they are recalculated for every input. In Llama-style models, queries and keys are first turned by position (RoPE), so the match also reflects how far apart two tokens are.
+In Llama-style models, rotary position embeddings (RoPE) first rotate pairs of Q and K coordinates by position, so the comparison also reflects token spacing. See [Embeddings and position information](../Embeddings%20and%20position%20information/Readme.md) for a geometric example.
+
+## Block future positions
+
+The **causal mask** makes later positions unavailable. Read a row to see which positions that token can use. Even when training processes a whole sequence at once, `cat` cannot read `sat`:
+
+![causal-mask.svg](images/causal-mask.svg)
+
+## Make weights and blend values
+
+**Softmax** converts scores into nonnegative weights that sum to 1 (100%). A **weighted sum** multiplies each value by its weight and adds the results. The upper panel calculates the weights; the lower panel uses them:
+
+![softmax-and-value-mixture.svg](images/softmax-and-value-mixture.svg)
+
+The diagram uses invented numbers. `ln 3` is the score whose exponential is 3, so the allowed scores produce exact weights of 25% and 75%. A masked score of negative infinity contributes zero. These weights describe source positions, not next-word probabilities.
 
 ## Several heads at once
 
+An **attention head** is one learned way of matching and mixing. **Multi-head attention** runs several in parallel. **Concatenation** joins their outputs end to end; an **attention output projection** maps that joined vector back to the width of the token's running vector:
+
 ![multiple-attention-heads.svg](images/multiple-attention-heads.svg)
 
-One set of weights can express only one way of mixing. **Multi-head attention** runs several heads side by side, each with its own learned recipes, so different heads can follow different relationships. In the diagram, two heads read the same vectors, and each produces its own blend for `cat`. Their outputs are joined end to end, and a learned **attention output projection** turns the joined result back into one update of the original size. That update is added to the running vector of [the residual stream](../The%20residual%20stream%20and%20normalization/Readme.md).
-
-Heads are not given human jobs such as “the grammar head”; whatever they do is learned. Some newer designs let several heads share the same keys and values to make text generation faster.
-
-This output projection only combines the heads. The projection that scores vocabulary tokens, from [The transformer forward pass](../The%20transformer%20forward%20pass/Readme.md), comes later, after all the blocks.
+The resulting update is added to the running vector. Heads are not assigned jobs such as “grammar head.” Some architectures share keys and values across heads. This projection combines heads; the later vocabulary projection scores next tokens.
 
 # Sources
 
-- [Attention Is All You Need: attention and heads, §3.2](https://arxiv.org/html/1706.03762v7)
+- [Google: attention and multi-head diagrams, Figure 2 and §3.2](https://arxiv.org/html/1706.03762v7)
 - [PyTorch: scaled dot-product attention and masking](https://docs.pytorch.org/docs/2.15/generated/torch.nn.functional.scaled_dot_product_attention.html)
 - [PyTorch: softmax](https://docs.pytorch.org/docs/2.15/generated/torch.nn.Softmax.html)
 - [Meta: Llama 3 attention and residual updates](https://github.com/meta-llama/llama3/blob/main/llama/model.py)
-- [Transformer Circuits: attention heads move information](https://transformer-circuits.pub/2021/framework/index.html)
-- [GQA: sharing keys and values between query heads](https://arxiv.org/abs/2305.13245)
+- [Anthropic: attention heads move information](https://transformer-circuits.pub/2021/framework/index.html)
+- [GQA: sharing keys and values between heads](https://arxiv.org/abs/2305.13245)

@@ -1,129 +1,69 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="3024" height="4352" viewBox="0 0 3024 4352" role="img" aria-labelledby="title desc">
-  <title id="title">The five-step tool calling flow</title>
-  <desc id="desc">Developer and model exchange messages in five steps. First, the developer sends the get_weather location tool definition and asks for Paris weather. Second, the model requests get_weather for paris. Third, the developer executes that function and obtains temperature 14. Fourth, the developer returns all prior messages and the temperature result. Fifth, the model answers that it is currently 14 degrees Celsius in Paris.</desc>
-  <!-- Editable reconstruction of OpenAI's official five-step function-calling figure.
-       Source: https://developers.openai.com/api/docs/guides/function-calling?api-mode=responses
-       PNG etalon: https://cdn.openai.com/API/docs/images/function-calling-diagram-steps.png
-       Canvas, weather example, palette, step order, routing, and open arrowheads follow the etalon. -->
-  <!-- Shared typography, exact sampled colors, and soft card shadow.
-       Editable Helvetica Neue text approximates the reference's proprietary Söhne font;
-       Arial is the portable fallback. No publisher font or raster image is embedded. -->
-  <defs>
-    <style>
-      text { font-family: 'Helvetica Neue', Arial, sans-serif; font-weight: 500; text-anchor: middle; fill: #202123; }
-      .heading { font-size: 96px; letter-spacing: -1.92px; fill: #000000; }
-      .body { font-size: 72px; letter-spacing: -1.44px; }
-      .number { font-family: 'Arial Rounded MT Bold', 'Arial Rounded Bold', Arial, sans-serif; font-weight: 700; font-size: 112px; fill: #ffffff; }
-      .connector { fill: none; stroke: #202123; stroke-width: 12; }
-      .arrowhead { fill: none; stroke: #202123; stroke-width: 12; stroke-linecap: round; stroke-linejoin: round; }
-    </style>
-    <filter id="card-shadow" x="-10%" y="-10%" width="120%" height="125%">
-      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#000000" flood-opacity="0.25"/>
-    </filter>
-  </defs>
-  <!-- Rounded canvas retains the reference's transparent corner cutouts. -->
-  <rect width="3024" height="4352" rx="128" fill="#f9f9f9"/>
-  <!-- Participant headers and lifelines; the function card intentionally covers the developer lifeline. -->
-  <text class="heading" x="643.2" y="272">Developer</text>
-  <text class="heading" x="2379.2" y="272">Model</text>
-  <rect x="627.2" y="412" width="32" height="3759.2" fill="#ececec"/>
-  <rect x="2363.2" y="412" width="32" height="3759.2" fill="#ececec"/>
-
-  <!-- Activation pair 1: rounded black bars mark the exchange endpoints. -->
-  <rect x="627.2" y="660" width="32" height="240" rx="16" fill="#000000"/>
-  <rect x="2363.2" y="660" width="32" height="240" rx="16" fill="#000000"/>
-  <!-- Activation pair 2: rounded black bars mark the exchange endpoints. -->
-  <rect x="627.2" y="1364" width="32" height="240" rx="16" fill="#000000"/>
-  <rect x="2363.2" y="1364" width="32" height="240" rx="16" fill="#000000"/>
-  <!-- Activation pair 3: rounded black bars mark the exchange endpoints. -->
-  <rect x="627.2" y="3104" width="32" height="240" rx="16" fill="#000000"/>
-  <rect x="2363.2" y="3104" width="32" height="240" rx="16" fill="#000000"/>
-  <!-- Activation pair 4: rounded black bars mark the exchange endpoints. -->
-  <rect x="627.2" y="3808" width="32" height="240" rx="16" fill="#000000"/>
-  <rect x="2363.2" y="3808" width="32" height="240" rx="16" fill="#000000"/>
-  <!-- Exchange 1: shafts stop at card edges; open arrowheads remain outside every panel. -->
-  <path id="step-1-connector-left" class="connector" d="M724 780 H891.2"/>
-  <path id="step-1-connector-right" class="connector" d="M2139.2 780 H2296"/>
-  <path id="step-1-arrowhead" class="arrowhead" d="M2258 742 L2296 780 L2258 818"/>
-  <!-- Exchange 2: shafts stop at card edges; open arrowheads remain outside every panel. -->
-  <path id="step-2-connector-left" class="connector" d="M724 1484 H888"/>
-  <path id="step-2-connector-right" class="connector" d="M2136 1484 H2296"/>
-  <path id="step-2-arrowhead" class="arrowhead" d="M762 1446 L724 1484 L762 1522"/>
-  <!-- Exchange 4: shafts stop at card edges; open arrowheads remain outside every panel. -->
-  <path id="step-4-connector-left" class="connector" d="M724 3224 H891.2"/>
-  <path id="step-4-connector-right" class="connector" d="M2139.2 3224 H2296"/>
-  <path id="step-4-arrowhead" class="arrowhead" d="M2258 3186 L2296 3224 L2258 3262"/>
-  <!-- Exchange 5: shafts stop at card edges; open arrowheads remain outside every panel. -->
-  <path id="step-5-connector-left" class="connector" d="M724 3928 H888"/>
-  <path id="step-5-connector-right" class="connector" d="M2136 3928 H2296"/>
-  <path id="step-5-arrowhead" class="arrowhead" d="M762 3890 L724 3928 L762 3966"/>
-  <!-- Step 1: Tool Definitions + Messages. -->
-  <g id="step-1">
-    <rect x="891.2" y="412" width="1248" height="736" rx="64" fill="#ffffff" filter="url(#card-shadow)"/>
-    <text class="body" x="1515.2" y="556">Tool Definitions + Messages</text>
-    <rect x="971.2" y="620" width="1088" height="208" rx="64" fill="#e1e1e1"/>
-    <text class="body" x="1515.2" y="748">get_weather(location)</text>
-    <rect x="971.2" y="876" width="1088" height="208" rx="64" fill="#b1ecfd"/>
-    <text class="body" x="1515.2" y="1004">What’s the weather in Paris?</text>
-  </g>
-  <!-- Step 1 badge is drawn over the card corner, with the reference white rim. -->
-  <g id="step-1-badge">
-    <circle cx="903.2" cy="428" r="88" fill="#000000" stroke="#ffffff" stroke-width="8"/>
-    <text class="number" x="903.2" y="466">1</text>
-  </g>
-  <!-- Step 2: Tool Calls. -->
-  <g id="step-2">
-    <rect x="888" y="1248" width="1248" height="472" rx="64" fill="#ffffff" filter="url(#card-shadow)"/>
-    <text class="body" x="1515.2" y="1392">Tool Calls</text>
-    <rect x="963.2" y="1446.4" width="1104" height="208" rx="64" fill="#d2f5d8"/>
-    <text class="body" x="1515.2" y="1574.4">get_weather(“paris”)</text>
-  </g>
-  <!-- Step 2 badge is drawn over the card corner, with the reference white rim. -->
-  <g id="step-2-badge">
-    <circle cx="903.2" cy="1264" r="88" fill="#000000" stroke="#ffffff" stroke-width="8"/>
-    <text class="number" x="903.2" y="1302">2</text>
-  </g>
-  <!-- Step 3: Execute Function Code. -->
-  <g id="step-3">
-    <rect x="139.2" y="1820.8" width="1008" height="880" rx="64" fill="#ffffff" filter="url(#card-shadow)"/>
-    <text class="body" x="643.2" y="1964.8">Execute Function Code</text>
-    <rect x="209.6" y="2020.8" width="867.2" height="208" rx="64" fill="#ffc7c2"/>
-    <text class="body" x="643.2" y="2148.8">get_weather(“paris”)</text>
-    <!-- Local execution yields the result below; the downward arrow stays in the gap. -->
-    <path id="execute-result-connector" class="connector" d="M643.2 2260.8 V2396.8"/>
-    <path id="execute-result-arrowhead" class="arrowhead" d="M605.2 2358.8 L643.2 2396.8 L681.2 2358.8"/>
-    <rect x="207.2" y="2431.2" width="872" height="208" rx="64" fill="#e1e1e1"/>
-    <text class="body" x="643.2" y="2559.2">{“temperature”: 14}</text>
-  </g>
-  <!-- Step 3 badge is drawn over the card corner, with the reference white rim. -->
-  <g id="step-3-badge">
-    <circle cx="151.2" cy="1836.8" r="88" fill="#000000" stroke="#ffffff" stroke-width="8"/>
-    <text class="number" x="151.2" y="1874.8">3</text>
-  </g>
-  <!-- Step 4: Results. -->
-  <g id="step-4">
-    <rect x="891.2" y="2856" width="1248" height="736" rx="64" fill="#ffffff" filter="url(#card-shadow)"/>
-    <text class="body" x="1515.2" y="3000">Results</text>
-    <rect x="971.2" y="3064" width="1088" height="208" rx="64" fill="#e1e1e1"/>
-    <text class="body" x="1515.2" y="3192">All Prior Messages</text>
-    <rect x="971.2" y="3320" width="1088" height="208" rx="64" fill="#b1ecfd"/>
-    <text class="body" x="1515.2" y="3448">{“temperature”: 14}</text>
-  </g>
-  <!-- Step 4 badge is drawn over the card corner, with the reference white rim. -->
-  <g id="step-4-badge">
-    <circle cx="899.2" cy="2872" r="88" fill="#000000" stroke="#ffffff" stroke-width="8"/>
-    <text class="number" x="899.2" y="2910">4</text>
-  </g>
-  <!-- Step 5: Final Response. -->
-  <g id="step-5">
-    <rect x="888" y="3688" width="1248" height="480" rx="64" fill="#ffffff" filter="url(#card-shadow)"/>
-    <text class="body" x="1515.2" y="3832">Final Response</text>
-    <rect x="963.2" y="3896" width="1104" height="208" rx="64" fill="#d2f5d8"/>
-    <text class="body" x="1515.2" y="4024">It’s currently 14°C in Paris.</text>
-  </g>
-  <!-- Step 5 badge is drawn over the card corner, with the reference white rim. -->
-  <g id="step-5-badge">
-    <circle cx="899.2" cy="3704" r="88" fill="#000000" stroke="#ffffff" stroke-width="8"/>
-    <text class="number" x="899.2" y="3742">5</text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="811.363636" viewBox="0 0 1100 595" role="img" aria-labelledby="title desc">
+<title id="title">A complete file-reading tool exchange</title>
+<desc id="desc">A question and definition reach the model, which requests read_file with notes.txt and call identifier A1. The runtime checks and executes the tool, returns the matched result, and makes a subsequent model call.</desc>
+<!-- Shared native text and typography. Shafts end inside separate arrowhead bases. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1100" height="595" fill="#ffffff"/>
+<text x="30" y="44" font-size="29" font-weight="700" text-anchor="start" fill="#172033">Follow one file lookup from request to evidence</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">Task: read the meeting time in notes.txt. Each box is a stage in one tool exchange.</text>
+<!-- Input; preserve reading order and text clearance. -->
+<g id="input">
+<rect x="30" y="133" width="180" height="250" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="46" y="171" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Input</text>
+<text x="46" y="215" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Question +</text>
+<text x="46" y="250" font-size="18" font-weight="400" text-anchor="start" fill="#172033">read_file definition</text>
+<text x="46" y="285" font-size="18" font-weight="400" text-anchor="start" fill="#172033">are sent to</text>
+<text x="46" y="320" font-size="18" font-weight="400" text-anchor="start" fill="#172033">the model.</text>
+</g>
+<!-- Tool call; preserve reading order and text clearance. -->
+<g id="tool-call">
+<rect x="250" y="133" width="180" height="250" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="266" y="171" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Tool call</text>
+<text x="266" y="215" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Model requests</text>
+<text x="266" y="250" font-size="18" font-weight="400" text-anchor="start" fill="#172033">read_file</text>
+<text x="266" y="285" font-size="18" font-weight="400" text-anchor="start" fill="#172033">path: notes.txt</text>
+<text x="266" y="320" font-size="18" font-weight="400" text-anchor="start" fill="#172033">call ID: A1</text>
+</g>
+<!-- Execute; preserve reading order and text clearance. -->
+<g id="execute">
+<rect x="470" y="133" width="180" height="250" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="486" y="171" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Execute</text>
+<text x="486" y="215" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Runtime checks</text>
+<text x="486" y="250" font-size="18" font-weight="400" text-anchor="start" fill="#172033">the request, then</text>
+<text x="486" y="285" font-size="18" font-weight="400" text-anchor="start" fill="#172033">tool code reads</text>
+<text x="486" y="320" font-size="18" font-weight="400" text-anchor="start" fill="#172033">the permitted file.</text>
+</g>
+<!-- Tool result; preserve reading order and text clearance. -->
+<g id="tool-result">
+<rect x="690" y="133" width="180" height="250" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="706" y="171" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Tool result</text>
+<text x="706" y="215" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Result for A1:</text>
+<text x="706" y="250" font-size="18" font-weight="400" text-anchor="start" fill="#172033">“Meeting starts</text>
+<text x="706" y="285" font-size="18" font-weight="400" text-anchor="start" fill="#172033">at 10:00.”</text>
+<text x="706" y="320" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Runtime returns it.</text>
+</g>
+<!-- Next call; preserve reading order and text clearance. -->
+<g id="next-call">
+<rect x="910" y="133" width="180" height="250" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="926" y="171" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Next call</text>
+<text x="926" y="215" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Receives the</text>
+<text x="926" y="250" font-size="18" font-weight="400" text-anchor="start" fill="#172033">matched result;</text>
+<text x="926" y="285" font-size="18" font-weight="400" text-anchor="start" fill="#172033">can answer or</text>
+<text x="926" y="320" font-size="18" font-weight="400" text-anchor="start" fill="#172033">request more work.</text>
+</g>
+<path data-connector="true" d="M 210,270 L 239,270" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="250,270 238,276 238,264" fill="#64748b"/>
+<path data-connector="true" d="M 430,270 L 459,270" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="470,270 458,276 458,264" fill="#64748b"/>
+<path data-connector="true" d="M 650,270 L 679,270" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="690,270 678,276 678,264" fill="#64748b"/>
+<path data-connector="true" d="M 870,270 L 899,270" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="910,270 898,276 898,264" fill="#64748b"/>
+<!-- Request is not execution; preserve reading order and text clearance. -->
+<g id="request-is-not-execution">
+<rect x="30" y="431" width="1060" height="130" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="471" font-size="27" font-weight="700" text-anchor="start" fill="#172033">Generating a request does not run the tool.</text>
+<text x="50" y="511" font-size="21" font-weight="400" text-anchor="start" fill="#172033">The runtime must invoke real code and include the result in a later model input.</text>
+<text x="50" y="542" font-size="21" font-weight="400" text-anchor="start" fill="#172033">The returned file text is evidence; a filename alone is not its contents.</text>
+</g>
 </svg>

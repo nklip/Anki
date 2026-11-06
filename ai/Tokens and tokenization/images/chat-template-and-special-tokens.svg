@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="834.545454545454545" viewBox="0 0 1100 612" role="img" aria-labelledby="title desc">
+  <title id="title">Chat structure becomes part of the token sequence</title>
+  <desc id="desc">A toy chat template adds a user marker and end marker around Hi. Each reserved special marker and ordinary content piece has a vocabulary ID. Real models define their own templates and markers.</desc>
+  <!-- Typography and palette shared across the internals series. -->
+  <defs>
+    <style>text { font-family: Arial, Helvetica, sans-serif; }</style>
+  </defs>
+  <rect width="1100" height="612" fill="#ffffff"/>
+  <text x="32" y="46" font-size="30" font-weight="700" fill="#172033" text-anchor="start">Chat structure becomes part of the token sequence</text>
+  <text x="32" y="79" font-size="18" font-weight="400" fill="#64748b" text-anchor="start">LOCATION  Messages → chat template → tokenizer → model input</text>
+  <!-- Role spelling and IDs are explicitly illustrative, not a provider format. -->
+  <rect x="32" y="119" width="318" height="308" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="56" y="160" font-size="21" font-weight="700" fill="#2563eb" text-anchor="start">CHAT TEMPLATE</text>
+  <text x="56" y="193" font-size="18" font-weight="400" fill="#172033" text-anchor="start">Formats messages as one stream</text>
+  <rect x="56" y="220" width="270" height="58" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="191.0" y="258" font-size="24" font-weight="600" fill="#172033" text-anchor="middle">user: Hi</text>
+  <path data-connector="true" d="M190 293 L190.0 323.0" fill="none" stroke="#64748b" stroke-width="2"/>
+  <polygon points="190,334 185.0,322.0 195.0,322.0" fill="#64748b"/>
+  <rect x="56" y="346" width="270" height="58" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="191.0" y="384" font-size="22" font-weight="600" fill="#172033" text-anchor="middle">&lt;user&gt; Hi &lt;end&gt;</text>
+  <path data-connector="true" d="M369 268 L410.0 268.0" fill="none" stroke="#64748b" stroke-width="2"/>
+  <polygon points="421,268 409.0,273.0 409.0,263.0" fill="#64748b"/>
+  <rect x="443" y="119" width="625" height="308" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="467" y="160" font-size="21" font-weight="700" fill="#2563eb" text-anchor="start">SPECIAL TOKEN</text>
+  <text x="467" y="193" font-size="20" font-weight="400" fill="#172033" text-anchor="start">One reserved vocabulary entry marks structure</text>
+  <rect x="467" y="220" width="176" height="58" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="555.0" y="258" font-size="23" font-weight="600" fill="#172033" text-anchor="middle">&lt;user&gt;</text>
+  <path data-connector="true" d="M555 288 L555.0 310.0" fill="none" stroke="#2563eb" stroke-width="2"/>
+  <polygon points="555,321 550.0,309.0 560.0,309.0" fill="#2563eb"/>
+  <text x="555" y="357" font-size="25" font-weight="600" fill="#2563eb" text-anchor="middle">ID 90</text>
+  <rect x="664" y="220" width="176" height="58" rx="12" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+  <text x="752.0" y="258" font-size="23" font-weight="600" fill="#172033" text-anchor="middle">Hi</text>
+  <path data-connector="true" d="M752 288 L752.0 310.0" fill="none" stroke="#64748b" stroke-width="2"/>
+  <polygon points="752,321 747.0,309.0 757.0,309.0" fill="#64748b"/>
+  <text x="752" y="357" font-size="25" font-weight="600" fill="#64748b" text-anchor="middle">ID 12</text>
+  <rect x="861" y="220" width="176" height="58" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="949.0" y="258" font-size="23" font-weight="600" fill="#172033" text-anchor="middle">&lt;end&gt;</text>
+  <path data-connector="true" d="M949 288 L949.0 310.0" fill="none" stroke="#2563eb" stroke-width="2"/>
+  <polygon points="949,321 944.0,309.0 954.0,309.0" fill="#2563eb"/>
+  <text x="949" y="357" font-size="25" font-weight="600" fill="#2563eb" text-anchor="middle">ID 91</text>
+  <rect x="32" y="442" width="1036" height="109" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="56" y="481" font-size="27" font-weight="600" fill="#172033" text-anchor="start">The model receives:  [90, 12, 91]</text>
+  <text x="56" y="521" font-size="21" font-weight="400" fill="#172033" text-anchor="start">Toy format: markers and ordinary content all occupy token positions.</text>
+  <text x="32" y="588" font-size="18" font-weight="400" fill="#64748b" text-anchor="start">Use the model’s actual template. Marker names and whether they are special tokens depend on the model.</text>
+</svg>

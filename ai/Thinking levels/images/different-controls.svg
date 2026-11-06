@@ -1,50 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="510" viewBox="0 0 1100 510" role="img" aria-labelledby="title desc">
-  <title id="title">Four controls answer different questions</title>
-  <desc id="desc">Model choice selects the trained model. Reasoning effort guides how much problem-solving work is spent during use. Temperature controls randomness in next-token selection. Verbosity controls the detail of the visible answer. These purposes differ, but providers can couple their effects and support different settings.</desc>
-  <!-- Shared series typography; the individual labels carry each color's meaning. -->
-  <defs>
-    <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-      .title { font-size: 28px; font-weight: 700; }
-      .subtitle { font-size: 19px; fill: #475569; }
-      .label { font-size: 22px; font-weight: 700; }
-      .body { font-size: 20px; }
-      .note { font-size: 19px; fill: #475569; }
-      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
-      .head { fill: #64748b; }
-    </style>
-  </defs>
-  <rect width="1100" height="510" fill="#ffffff"/>
-  <!-- Heading states the lesson before the body introduces its parts. -->
-  <text class="title" x="28" y="43" text-anchor="start">Four controls answer different questions</text>
-  <text class="subtitle" x="28" y="76" text-anchor="start">Read each panel as one question about the request.</text>
-  <!-- Model choice; labels explain the color and role. -->
-  <g id="model-choice">
-    <rect x="28" y="112" width="506" height="150" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-  <text class="label" x="281.0" y="147" text-anchor="middle">Model choice</text>
-  <text class="body" x="281.0" y="186" text-anchor="middle">Which trained model handles the task?</text>
-  <text class="note" x="281.0" y="224" text-anchor="middle">Changing effort does not enlarge a model.</text>
-  </g>
-  <!-- Reasoning effort; labels explain the color and role. -->
-  <g id="reasoning-effort">
-    <rect x="566" y="112" width="506" height="150" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
-  <text class="label" x="819.0" y="147" text-anchor="middle">Reasoning effort</text>
-  <text class="body" x="819.0" y="186" text-anchor="middle">How much problem-solving work to spend?</text>
-  <text class="note" x="819.0" y="224" text-anchor="middle">Guidance, not guaranteed correctness.</text>
-  </g>
-  <!-- Temperature; labels explain the color and role. -->
-  <g id="temperature">
-    <rect x="28" y="292" width="506" height="150" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
-  <text class="label" x="281.0" y="327" text-anchor="middle">Temperature</text>
-  <text class="body" x="281.0" y="366" text-anchor="middle">How randomly is the next token selected?</text>
-  <text class="note" x="281.0" y="404" text-anchor="middle">This is not a thinking-depth control.</text>
-  </g>
-  <!-- Verbosity; labels explain the color and role. -->
-  <g id="verbosity">
-    <rect x="566" y="292" width="506" height="150" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-  <text class="label" x="819.0" y="327" text-anchor="middle">Verbosity</text>
-  <text class="body" x="819.0" y="366" text-anchor="middle">How detailed should the visible answer be?</text>
-  <text class="note" x="819.0" y="404" text-anchor="middle">A concise answer can follow long reasoning.</text>
-  </g>
-  <text class="note" x="550" y="483" text-anchor="middle">Distinct purposes; available settings and interactions depend on the provider and model.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="750" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
+<title id="title">Model choice, reasoning effort, temperature, and verbosity</title>
+<desc id="desc">Four labeled panels separate learned model selection, inference effort, probability spreading for sampling, and visible explanation length. These controls are not guaranteed to act independently.</desc>
+<!-- Shared typography and native vector artwork; intrinsic width is 1500 pixels. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1200" height="600" fill="#ffffff"/>
+<text x="30" y="44" font-size="30" font-weight="700" text-anchor="start" fill="#172033">Four controls change different things</text>
+<text x="30" y="80" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">Their effects can overlap; supported controls depend on the model and service.</text>
+<!-- Model choice size; keep labels clear of connector corridors. -->
+<g id="model-choice-size">
+<rect x="30" y="124" width="540" height="176" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<text x="50" y="167" font-size="26" font-weight="700" text-anchor="start" fill="#172033">Model choice / size</text>
+<text x="50" y="215" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Selects learned weights and model design.</text>
+<text x="50" y="250" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Effort does not add learned weights.</text>
+</g>
+<!-- Reasoning effort; keep labels clear of connector corridors. -->
+<g id="reasoning-effort">
+<rect x="630" y="124" width="540" height="176" rx="12" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.8"/>
+<text x="650" y="167" font-size="26" font-weight="700" text-anchor="start" fill="#172033">Reasoning effort</text>
+<text x="650" y="215" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Guides work spent during this request.</text>
+<text x="650" y="250" font-size="21" font-weight="400" text-anchor="start" fill="#172033">It can affect token use and waiting time.</text>
+</g>
+<!-- Temperature; keep labels clear of connector corridors. -->
+<g id="temperature">
+<rect x="30" y="343" width="540" height="176" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<text x="50" y="386" font-size="26" font-weight="700" text-anchor="start" fill="#172033">Temperature</text>
+<text x="50" y="434" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Changes the spread of token probabilities.</text>
+<text x="50" y="469" font-size="21" font-weight="400" text-anchor="start" fill="#172033">It adjusts sampling, not learned knowledge.</text>
+</g>
+<!-- Verbosity; keep labels clear of connector corridors. -->
+<g id="verbosity">
+<rect x="630" y="343" width="540" height="176" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+<text x="650" y="386" font-size="26" font-weight="700" text-anchor="start" fill="#172033">Verbosity</text>
+<text x="650" y="434" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Guides how much explanation is shown.</text>
+<text x="650" y="469" font-size="21" font-weight="400" text-anchor="start" fill="#172033">A short reply can follow substantial reasoning.</text>
+</g>
+<text x="30" y="569" font-size="20" font-weight="400" text-anchor="start" fill="#172033">A hard output cap separately limits generated tokens. Provider effort controls can also change reply length.</text>
 </svg>

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="954.545454545454545" viewBox="0 0 1100 700" role="img" aria-labelledby="title desc">
+<title id="title">Greedy decoding versus sampling</title><desc id="desc">Greedy decoding selects cat, the most probable token. Sampling assigns intervals proportional to probabilities; an illustrative draw of 0.80 lies in dog’s interval. Whichever token is selected is appended, and the next forward pass produces fresh probabilities.</desc>
+<!-- Shared typography; all geometry and text remain editable. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1100" height="700" fill="#ffffff"/>
+<!-- Both decisions use the same one-step probability distribution. -->
+<g id="heading">
+<text x="32" y="44" font-size="28" font-weight="700" fill="#172033" text-anchor="start">Greedy decoding and sampling choose in different ways</text><text x="32" y="77" font-size="21" font-weight="400" fill="#64748b" text-anchor="start">Toy next-token probabilities: cat 66.5%, dog 24.5%, fox 9.0%.</text>
+</g>
+<!-- The longest bar wins; the result is a single token. -->
+<g id="greedy">
+<rect x="32" y="105" width="1036" height="190" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/><text x="56" y="143" font-size="24" font-weight="700" fill="#172033" text-anchor="start">Greedy decoding</text><text x="56" y="175" font-size="21" font-weight="400" fill="#172033" text-anchor="start">Pick the highest probability.</text><text x="402" y="143" font-size="21" font-weight="700" fill="#172033" text-anchor="start">cat</text><rect x="460" y="123" width="266" height="25" rx="3" fill="#2563eb"/><text x="746" y="143" font-size="21" font-weight="400" fill="#172033" text-anchor="start">66.5%</text><text x="402" y="192" font-size="21" font-weight="400" fill="#172033" text-anchor="start">dog</text><rect x="460" y="172" width="98" height="25" rx="3" fill="#94a3b8"/><text x="578" y="192" font-size="21" font-weight="400" fill="#172033" text-anchor="start">24.5%</text><text x="402" y="241" font-size="21" font-weight="400" fill="#172033" text-anchor="start">fox</text><rect x="460" y="221" width="36" height="25" rx="3" fill="#94a3b8"/><text x="516" y="241" font-size="21" font-weight="400" fill="#172033" text-anchor="start">9.0%</text><rect x="888" y="169" width="146" height="72" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/><text x="961" y="213" font-size="25" font-weight="700" fill="#172033" text-anchor="middle">cat</text><path data-connector="true" d="M800 205 H875" fill="none" stroke="#64748b" stroke-width="2.5"/><polygon points="888,205 874,198 874,212" fill="#64748b"/>
+</g>
+<!-- Intervals have widths proportional to probabilities; the invented draw lies in dog. -->
+<g id="sampling">
+<rect x="32" y="321" width="1036" height="273" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/><text x="56" y="360" font-size="24" font-weight="700" fill="#172033" text-anchor="start">Sampling</text><text x="56" y="393" font-size="21" font-weight="400" fill="#172033" text-anchor="start">Draw a random value between 0 and 1; select the interval it lands in.</text><rect x="76" y="425" width="532" height="60" rx="3" fill="#bfdbfe"/><rect x="608" y="425" width="196" height="60" rx="3" fill="#2563eb"/><rect x="804" y="425" width="72" height="60" rx="3" fill="#cbd5e1"/><text x="342" y="462" font-size="22" font-weight="700" fill="#172033" text-anchor="middle">cat</text><text x="706" y="462" font-size="22" font-weight="700" fill="#ffffff" text-anchor="middle">dog</text><text x="840" y="462" font-size="21" font-weight="700" fill="#172033" text-anchor="middle">fox</text><text x="76" y="514" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">0</text><text x="608" y="514" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">0.665</text><text x="804" y="514" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">0.910</text><text x="876" y="514" font-size="18" font-weight="400" fill="#172033" text-anchor="middle">1</text><text x="716" y="561" font-size="22" font-weight="700" fill="#172033" text-anchor="middle">Toy draw 0.80 → dog</text><path d="M716 525 V486" stroke="#2563eb" stroke-width="2.5"/><circle cx="716" cy="485" r="5" fill="#2563eb"/>
+</g>
+<!-- The chosen token changes the next input; probabilities are recomputed. -->
+<g id="next-step">
+<text x="32" y="635" font-size="23" font-weight="700" fill="#172033" text-anchor="start">Chosen token → append to text → run the model again → fresh probabilities</text><text x="32" y="672" font-size="21" font-weight="400" fill="#64748b" text-anchor="start">Greedy choices need no random draw. Neither method guarantees a correct reply.</text>
+</g>
+
+</svg>

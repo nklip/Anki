@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="927.272727272727273" viewBox="0 0 1100 680" role="img" aria-labelledby="title desc">
+<title id="title">Context compaction saves space but can omit details</title>
+<desc id="desc">A 2,500-token history is replaced with a 400-token summary, freeing 2,100 tokens without enlarging the context window. A call-to-Dana instruction is lost in the example summary.</desc>
+<!-- Shared typography; all teaching content remains editable SVG text. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1100" height="680" fill="#ffffff"/>
+<text x="30" y="44" font-size="30" font-weight="700" text-anchor="start" fill="#172033">Compaction replaces history with a shorter summary</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">The application makes room by changing the input. The model’s context capacity stays the same.</text>
+<!-- History before. -->
+<g id="history-before">
+<rect x="30" y="130" width="450" height="290" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="50" y="170" font-size="26" font-weight="700" text-anchor="start" fill="#172033">Before: detailed history</text>
+<text x="50" y="208" font-size="21" font-weight="700" text-anchor="start" fill="#172033">Illustrative budget: 2,500 tokens</text>
+<text x="50" y="254" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Excerpt:</text>
+<text x="50" y="291" font-size="23" font-weight="400" text-anchor="start" fill="#172033">Project uses Maven.</text>
+<text x="50" y="333" font-size="23" font-weight="400" text-anchor="start" fill="#172033">Release tag is v2.1.</text>
+<text x="50" y="375" font-size="23" font-weight="400" text-anchor="start" fill="#172033">Call Dana before the release.</text>
+</g>
+<!-- Summary after. -->
+<g id="summary-after">
+<rect x="620" y="130" width="450" height="290" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5" />
+<text x="640" y="170" font-size="26" font-weight="700" text-anchor="start" fill="#172033">After: shorter summary</text>
+<text x="640" y="208" font-size="21" font-weight="700" text-anchor="start" fill="#172033">Illustrative budget: 400 tokens</text>
+<text x="640" y="254" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Excerpt:</text>
+<text x="640" y="291" font-size="23" font-weight="400" text-anchor="start" fill="#172033">Maven project; release v2.1.</text>
+<text x="640" y="346" font-size="19" font-weight="400" text-anchor="start" fill="#64748b">Omitted from the summary:</text>
+<text x="640" y="385" font-size="22" font-weight="400" text-anchor="start" fill="#64748b">Call Dana before release.</text>
+</g>
+<!-- Summarization. -->
+<g id="summarization">
+<path data-connector="true" d="M 480,280 L 609,280" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="620,280 608,286 608,274" fill="#64748b"/>
+<text x="501" y="255" font-size="18" font-weight="400" text-anchor="start" fill="#172033">summarize</text>
+</g>
+<!-- Space and loss. -->
+<g id="space-and-loss">
+<rect x="30" y="466" width="1040" height="136" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="50" y="506" font-size="26" font-weight="700" text-anchor="start" fill="#172033">2,500 − 400 = 2,100 tokens freed for other input or output</text>
+<text x="50" y="545" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Recent messages can stay alongside the summary. Keep the original history in storage if needed.</text>
+<text x="50" y="577" font-size="20" font-weight="400" text-anchor="start" fill="#172033">A summary is lossy: omitted details must be retrieved again or they may be unavailable on the next call.</text>
+</g>
+<text x="30" y="644" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Budget numbers illustrate a larger conversation; the short excerpts above are not the full text.</text>
+</svg>

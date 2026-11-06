@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="811.363636363636364" viewBox="0 0 1100 595" role="img" aria-labelledby="title desc">
+<title id="title">Two waits: first response, then gaps between tokens</title><desc id="desc">An illustrative client timeline starts at request submission, then observes D at 500 milliseconds, E at 560 milliseconds, and F at 620 milliseconds. Time to first token is 500 milliseconds. Each observed inter-token gap is 60 milliseconds. The first interval can include queueing, prefill, token selection, and network delays; the later intervals include subsequent model runs, selection, and delivery.</desc>
+<!-- Shared typography and palette; blue identifies the state under discussion. -->
+<defs><style>text{font-family:Arial,Helvetica,sans-serif;font-size:21px;fill:#172033}.title{font-size:30px;font-weight:700}.head{font-size:23px;font-weight:700}.small{font-size:18px}.muted{fill:#64748b}.blue{fill:#2563eb}.mono{font-family:monospace;font-size:22px}</style></defs>
+<rect width="1100" height="595" fill="white"/>
+<text x="40" y="48" class="title" text-anchor="start">Two waits: first response, then gaps between tokens</text>
+<text x="40" y="82" class="small muted" text-anchor="start">Example client measurements, not to scale; these numbers are not a model benchmark.</text>
+<!-- Event ticks use a broken time axis: long and short intervals are labeled explicitly, not drawn to scale. -->
+<text x="120" y="146" class="head" text-anchor="middle">Request sent</text>
+<text x="660" y="146" class="head" text-anchor="middle">D arrives</text>
+<text x="840" y="146" class="head" text-anchor="middle">E arrives</text>
+<text x="1020" y="146" class="head" text-anchor="middle">F arrives</text>
+<line x1="120" y1="208" x2="1020" y2="208" stroke="#64748b" stroke-width="3"/>
+<line x1="120" y1="190" x2="120" y2="226" stroke="#2563eb" stroke-width="3"/>
+<text x="120" y="260" class="" text-anchor="middle">0 ms</text>
+<line x1="660" y1="190" x2="660" y2="226" stroke="#2563eb" stroke-width="3"/>
+<text x="660" y="260" class="" text-anchor="middle">500 ms</text>
+<line x1="840" y1="190" x2="840" y2="226" stroke="#2563eb" stroke-width="3"/>
+<text x="840" y="260" class="" text-anchor="middle">560 ms</text>
+<line x1="1020" y1="190" x2="1020" y2="226" stroke="#2563eb" stroke-width="3"/>
+<text x="1020" y="260" class="" text-anchor="middle">620 ms</text>
+<text x="375" y="195" class="small muted" text-anchor="middle">waiting for the first output token</text>
+<path data-connector="true" d="M120 302 H637" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<polygon points="634,295 648,302 634,309" fill="#2563eb"/>
+<path data-connector="true" d="M672 302 H817" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<polygon points="814,295 828,302 814,309" fill="#2563eb"/>
+<path data-connector="true" d="M852 302 H1009" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<polygon points="1006,295 1020,302 1006,309" fill="#2563eb"/>
+<text x="370" y="340" class="head blue" text-anchor="middle">TTFT = 500 ms</text>
+<text x="750" y="340" class="head blue" text-anchor="middle">60 ms</text>
+<text x="930" y="340" class="head blue" text-anchor="middle">60 ms</text>
+<!-- Dedicated definition panels distinguish total first-token wait from subsequent measured gaps. -->
+<rect id="time-to-first-token" x="40" y="384" width="500" height="169" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="62" y="422" class="head" text-anchor="start">Time to first token (TTFT)</text>
+<text x="62" y="460" class="small" text-anchor="start">Request submission → first output arrival.</text>
+<text x="62" y="489" class="small" text-anchor="start">May include queueing, prefill, selection,</text>
+<text x="62" y="518" class="small" text-anchor="start">and network delay.</text>
+<rect id="inter-token-latency" x="570" y="384" width="490" height="169" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="592" y="422" class="head" text-anchor="start">Inter-token latency (ITL)</text>
+<text x="592" y="460" class="small" text-anchor="start">One output arrival → the next arrival.</text>
+<text x="592" y="489" class="small" text-anchor="start">Includes the next model run, selection,</text>
+<text x="592" y="518" class="small" text-anchor="start">and delivery; gaps need not be equal.</text>
+</svg>

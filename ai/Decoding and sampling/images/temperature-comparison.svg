@@ -1,67 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600" role="img" aria-labelledby="title desc">
-  <title id="title">Temperature changes sampling chances while preserving the ranking</title>
-  <desc id="desc">Three distributions use the same logits, 2, 1, and 0 for cat, dog, and fox. Divide these scores by a positive temperature T before softmax. At T=0.5, scaled logits are 4, 2, 0 and probabilities are approximately 86.7%, 11.7%, and 1.6%. At T=1, probabilities are 66.5%, 24.5%, and 9%. At T=2, scaled logits are 1, 0.5, 0 and probabilities are approximately 50.6%, 30.7%, and 18.6%. Lower temperature concentrates the choices; higher temperature spreads them out. Cat remains the highest-probability token throughout.</desc>
-  <!-- Every probability bar uses the same width scale: 190 units represents 100 percent. -->
-  <defs>
-    <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-      .title { font-size: 29px; font-weight: 700; }
-      .subtitle { font-size: 19px; fill: #475569; }
-      .label { font-size: 23px; font-weight: 700; text-anchor: middle; }
-      .body { font-size: 21px; text-anchor: middle; }
-      .note { font-size: 19px; text-anchor: middle; }
-      .left { font-size: 21px; }
-      .right { font-size: 21px; text-anchor: end; }
-    </style>
-  </defs>
-  <rect width="900" height="600" fill="#ffffff"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="834.545454545454545" viewBox="0 0 1100 612" role="img" aria-labelledby="title desc">
+<title id="title">Temperature reshapes sampling probabilities</title><desc id="desc">The same logits 2, 1, 0 at temperatures 0.5, 1, and 2 yield approximately 86.7/11.7/1.6, 66.5/24.5/9.0, and 50.6/30.7/18.6 percent. All charts share a common 0 to 100 percent scale. Positive temperature preserves the token ranking.</desc>
+<!-- Shared typography; all geometry and text remain editable. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1100" height="612" fill="#ffffff"/>
+<!-- Every panel starts with the same three logits. -->
+<g id="heading">
+<text x="32" y="44" font-size="29" font-weight="700" fill="#172033" text-anchor="start">Temperature changes the spread of probabilities</text><text x="32" y="77" font-size="20" font-weight="400" fill="#64748b" text-anchor="start">Divide logits by positive T, then apply softmax. Original logits: cat 2, dog 1, fox 0.</text>
+</g>
+<!-- All bars share the same 100-percent track width. -->
+<g id="temperature-0-5">
+<rect x="32" y="108" width="328" height="397" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/><text x="196" y="149" font-size="27" font-weight="700" fill="#172033" text-anchor="middle">T = 0.5</text><text x="52" y="186" font-size="20" font-weight="400" fill="#172033" text-anchor="start">Scaled logits: 4, 2, 0</text><text x="52" y="223" font-size="18" font-weight="400" fill="#64748b" text-anchor="start">Probability (0–100%)</text><text x="52" y="273" font-size="21" font-weight="700" fill="#172033" text-anchor="start">cat</text><rect x="104" y="251" width="190" height="27" rx="3" fill="#e2e8f0"/><rect x="104" y="251" width="164.73" height="27" rx="3" fill="#2563eb"/><text x="318" y="301" font-size="20" font-weight="400" fill="#172033" text-anchor="end">86.7%</text><text x="52" y="348" font-size="21" font-weight="700" fill="#172033" text-anchor="start">dog</text><rect x="104" y="326" width="190" height="27" rx="3" fill="#e2e8f0"/><rect x="104" y="326" width="22.229999999999997" height="27" rx="3" fill="#2563eb"/><text x="318" y="376" font-size="20" font-weight="400" fill="#172033" text-anchor="end">11.7%</text><text x="52" y="423" font-size="21" font-weight="700" fill="#172033" text-anchor="start">fox</text><rect x="104" y="401" width="190" height="27" rx="3" fill="#e2e8f0"/><rect x="104" y="401" width="3.04" height="27" rx="3" fill="#2563eb"/><text x="318" y="451" font-size="20" font-weight="400" fill="#172033" text-anchor="end">1.6%</text><text x="196" y="480" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Sharper: favorite dominates</text>
+</g>
+<!-- All bars share the same 100-percent track width. -->
+<g id="temperature-1">
+<rect x="386" y="108" width="328" height="397" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/><text x="550" y="149" font-size="27" font-weight="700" fill="#172033" text-anchor="middle">T = 1</text><text x="406" y="186" font-size="20" font-weight="400" fill="#172033" text-anchor="start">Scaled logits: 2, 1, 0</text><text x="406" y="223" font-size="18" font-weight="400" fill="#64748b" text-anchor="start">Probability (0–100%)</text><text x="406" y="273" font-size="21" font-weight="700" fill="#172033" text-anchor="start">cat</text><rect x="458" y="251" width="190" height="27" rx="3" fill="#e2e8f0"/><rect x="458" y="251" width="126.35" height="27" rx="3" fill="#2563eb"/><text x="672" y="301" font-size="20" font-weight="400" fill="#172033" text-anchor="end">66.5%</text><text x="406" y="348" font-size="21" font-weight="700" fill="#172033" text-anchor="start">dog</text><rect x="458" y="326" width="190" height="27" rx="3" fill="#e2e8f0"/><rect x="458" y="326" width="46.55" height="27" rx="3" fill="#2563eb"/><text x="672" y="376" font-size="20" font-weight="400" fill="#172033" text-anchor="end">24.5%</text><text x="406" y="423" font-size="21" font-weight="700" fill="#172033" text-anchor="start">fox</text><rect x="458" y="401" width="190" height="27" rx="3" fill="#e2e8f0"/><rect x="458" y="401" width="17.099999999999998" height="27" rx="3" fill="#2563eb"/><text x="672" y="451" font-size="20" font-weight="400" fill="#172033" text-anchor="end">9.0%</text><text x="550" y="480" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Unchanged distribution</text>
+</g>
+<!-- All bars share the same 100-percent track width. -->
+<g id="temperature-2">
+<rect x="740" y="108" width="328" height="397" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/><text x="904" y="149" font-size="27" font-weight="700" fill="#172033" text-anchor="middle">T = 2</text><text x="760" y="186" font-size="20" font-weight="400" fill="#172033" text-anchor="start">Scaled logits: 1, 0.5, 0</text><text x="760" y="223" font-size="18" font-weight="400" fill="#64748b" text-anchor="start">Probability (0–100%)</text><text x="760" y="273" font-size="21" font-weight="700" fill="#172033" text-anchor="start">cat</text><rect x="812" y="251" width="190" height="27" rx="3" fill="#e2e8f0"/><rect x="812" y="251" width="96.14" height="27" rx="3" fill="#2563eb"/><text x="1026" y="301" font-size="20" font-weight="400" fill="#172033" text-anchor="end">50.6%</text><text x="760" y="348" font-size="21" font-weight="700" fill="#172033" text-anchor="start">dog</text><rect x="812" y="326" width="190" height="27" rx="3" fill="#e2e8f0"/><rect x="812" y="326" width="58.33" height="27" rx="3" fill="#2563eb"/><text x="1026" y="376" font-size="20" font-weight="400" fill="#172033" text-anchor="end">30.7%</text><text x="760" y="423" font-size="21" font-weight="700" fill="#172033" text-anchor="start">fox</text><rect x="812" y="401" width="190" height="27" rx="3" fill="#e2e8f0"/><rect x="812" y="401" width="35.34" height="27" rx="3" fill="#2563eb"/><text x="1026" y="451" font-size="20" font-weight="400" fill="#172033" text-anchor="end">18.6%</text><text x="904" y="480" font-size="20" font-weight="700" fill="#172033" text-anchor="middle">Flatter: alternatives gain</text>
+</g>
+<!-- Positive temperature preserves ordering; displayed shares are rounded. -->
+<g id="takeaway">
+<text x="32" y="547" font-size="22" font-weight="700" fill="#172033" text-anchor="start">“cat” remains first in every panel. Positive temperature preserves the ranking.</text><text x="32" y="584" font-size="21" font-weight="400" fill="#64748b" text-anchor="start">It changes sampling frequencies; it does not add knowledge or guarantee correctness.</text>
+</g>
 
-  <!-- Define the common input and transformation before comparing the results. -->
-  <text class="title" x="28" y="44">Temperature changes how spread out choices are</text>
-  <text class="subtitle" x="28" y="77">Same logits [2, 1, 0] for cat, dog, fox · Divide by T, then apply softmax</text>
-  <g id="low-temperature">
-    <rect x="28" y="108" width="268" height="346" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
-    <text class="label" x="162" y="143">T = 0.5</text>
-    <text class="body" x="162" y="177">Scores: [4, 2, 0]</text>
-    <text class="left" x="57" y="218">cat</text><text class="right" x="267" y="218">86.7%</text>
-    <rect x="57" y="231" width="190" height="16" rx="3" fill="#dbeafe"/><rect x="57" y="231" width="164.7" height="16" rx="3" fill="#2563eb"/>
-    <text class="left" x="57" y="284">dog</text><text class="right" x="267" y="284">11.7%</text>
-    <rect x="57" y="297" width="190" height="16" rx="3" fill="#dbeafe"/><rect x="57" y="297" width="22.3" height="16" rx="3" fill="#2563eb"/>
-    <text class="left" x="57" y="350">fox</text><text class="right" x="267" y="350">1.6%</text>
-    <rect x="57" y="363" width="190" height="16" rx="3" fill="#dbeafe"/><rect x="57" y="363" width="3.0" height="16" rx="1" fill="#2563eb"/>
-    <text class="label" x="162" y="424">More concentrated</text>
-  </g>
-
-  <!-- The middle column is the unmodified distribution, not a different model. -->
-  <g id="unit-temperature">
-    <rect x="316" y="108" width="268" height="346" rx="12" fill="#faf5ff" stroke="#9333ea" stroke-width="2"/>
-    <text class="label" x="450" y="143">T = 1</text>
-    <text class="body" x="450" y="177">Scores: [2, 1, 0]</text>
-    <text class="left" x="345" y="218">cat</text><text class="right" x="555" y="218">66.5%</text>
-    <rect x="345" y="231" width="190" height="16" rx="3" fill="#f3e8ff"/><rect x="345" y="231" width="126.4" height="16" rx="3" fill="#9333ea"/>
-    <text class="left" x="345" y="284">dog</text><text class="right" x="555" y="284">24.5%</text>
-    <rect x="345" y="297" width="190" height="16" rx="3" fill="#f3e8ff"/><rect x="345" y="297" width="46.5" height="16" rx="3" fill="#9333ea"/>
-    <text class="left" x="345" y="350">fox</text><text class="right" x="555" y="350">9.0%</text>
-    <rect x="345" y="363" width="190" height="16" rx="3" fill="#f3e8ff"/><rect x="345" y="363" width="17.1" height="16" rx="3" fill="#9333ea"/>
-    <text class="label" x="450" y="424">Unchanged</text>
-  </g>
-
-  <!-- Higher temperature spreads probability while keeping the same token order. -->
-  <g id="high-temperature">
-    <rect x="604" y="108" width="268" height="346" rx="12" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-    <text class="label" x="738" y="143">T = 2</text>
-    <text class="body" x="738" y="177">Scores: [1, 0.5, 0]</text>
-    <text class="left" x="633" y="218">cat</text><text class="right" x="843" y="218">50.6%</text>
-    <rect x="633" y="231" width="190" height="16" rx="3" fill="#d1fae5"/><rect x="633" y="231" width="96.2" height="16" rx="3" fill="#059669"/>
-    <text class="left" x="633" y="284">dog</text><text class="right" x="843" y="284">30.7%</text>
-    <rect x="633" y="297" width="190" height="16" rx="3" fill="#d1fae5"/><rect x="633" y="297" width="58.4" height="16" rx="3" fill="#059669"/>
-    <text class="left" x="633" y="350">fox</text><text class="right" x="843" y="350">18.6%</text>
-    <rect x="633" y="363" width="190" height="16" rx="3" fill="#d1fae5"/><rect x="633" y="363" width="35.4" height="16" rx="3" fill="#059669"/>
-    <text class="label" x="738" y="424">More spread out</text>
-  </g>
-
-  <!-- Shared legend and conclusion clarify the bar encoding and temperature's limit. -->
-  <text class="note" x="450" y="491">Each pale bar spans 0–100%. Dark fill shows the token’s probability.</text>
-  <text class="body" x="450" y="529">“Cat” stays first: positive temperature does not change a greedy choice.</text>
-  <text class="note" x="450" y="571">Percentages are rounded; displayed totals may differ slightly from 100%.</text>
 </svg>

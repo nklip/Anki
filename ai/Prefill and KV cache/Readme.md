@@ -2,55 +2,61 @@
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-**A model answers a prompt in two phases. Prefill reads the whole prompt at once; decoding then writes the reply one token at a time. The key-value (KV) cache saves work from earlier tokens, so each new token does not repeat it.**
+**Prefill processes the prompt; decoding repeatedly processes newly selected tokens. A key-value (KV) cache saves earlier tokens’ keys and values so those tokens need not run through the model again.** This article follows ordinary token-by-token generation with full attention.
 
 ## Where this fits
 
-[The transformer forward pass](../The%20transformer%20forward%20pass/Readme.md) described one run of the model. A real request needs many runs, and they fall into two phases:
+The shared map highlights **model execution**. Follow the arrows from context assembly through model computation and token selection. The lower example shows when each token’s keys and values enter the cache.
 
 ![where-this-fits.svg](images/where-this-fits.svg)
 
-Read the top row from left to right. One request starts with a prompt, here the tokens `A B C`. **Prefill** runs the whole prompt through the model and produces the first new token, `D`. **Decoding** then runs the model once per new token, using a choosing rule from [From logits to text: decoding and sampling](../Decoding%20and%20sampling/Readme.md). The box below both phases is the KV cache: prefill fills it, and each decoding step reads it and adds the new token.
-
 ## What the cache holds
 
-In [Attention: queries, keys, values, and heads](../Attention/Readme.md), every position makes a query, a key, and a value. A new token's query is compared with the keys of all earlier tokens, and their values are blended. In a model that writes left to right, earlier tokens never look at later ones, so their keys and values never change once they are computed.
+A **token** is a text piece or special marker represented by an ID. **Attention** mixes information from positions using vectors, which are lists of numbers. A **query (Q)** describes what a position looks for; a **key (K)** describes what another position can match; a **value (V)** supplies its information. Query–key matches determine how values are mixed.
 
-The **KV cache** stores those keys and values, separately for each attention layer, so they need not be recomputed for every new token. Old queries are not kept, because only the newest token's query does the comparing. It holds working numbers for this request, not a finished answer, and it does not change the model's weights.
+![query-key-value-cache.svg](images/query-key-value-cache.svg)
+
+Read the three panels, then the rows beneath them. The **KV cache** saves keys and values separately for every attention layer. Old queries are not needed for the next token's attention. The cache holds this request's working results, not a finished answer or learned model weights.
+
+In **causal attention**, a position reads only itself and earlier positions. With the same model, preceding context, and position assignments, adding later tokens does not change those earlier keys and values. The next diagram makes that rule visible. [Attention](../Attention/Readme.md) explains the matching calculation in more depth.
 
 ## Step 1 — Prefill the prompt
 
 ![prefill-first-token.svg](images/prefill-first-token.svg)
 
-Read the diagram from top to bottom. The whole prompt `A B C` is processed together, layer by layer, while the causal mask still keeps each token from reading later ones. Two things come out. Every layer's cache now holds keys and values for `A`, `B`, and `C`, and the last position, `C`, produces the scores that choose `D`. The bottom box notes that `D` is chosen but not yet in the cache.
+**Prefill** processes the known prompt `A B C`, layer by layer. Positions can run in parallel within a layer, while the triangular **causal mask** blocks reads of future positions. Letters here stand for token IDs.
+
+Every layer caches keys and values for `A B C`. The final prompt position produces **logits**, one score per possible next token. A separate selection rule chooses `D`. **Choosing D does not cache D:** it has not entered a model run yet.
 
 ## Step 2 — Decode with saved work
 
 ![decode-with-cache.svg](images/decode-with-cache.svg)
 
-To get the next token, only `D` goes through the model. At each layer, `D` computes its own query, key, and value. Its key and value are added to the cache, and its query is compared with all four saved keys, `A` to `D`. After the last layer, the scores choose `E`, and the cycle repeats.
+The **decoding phase** processes the newly selected token `D`. At each layer, compute its Q, K, and V; append its K and V to that layer's cache; then let its query read the keys and values for `A B C D`. After all layers, new logits select `E`, which enters the following run.
 
-Each step needs the token chosen in the step before, so decoding is one step after another. The cache does not change that; it removes the repeated work for the earlier tokens.
+Model decoding here means repeated model execution. A *decoding strategy* can instead mean the rule for selecting tokens from scores. Each ordinary step depends on the previous choice; caching removes repeated work for old tokens, not this dependency.
 
-## The cache grows with every token
+## Cache size and remaining work
 
-The cache holds an entry for every token at every layer, so it grows as the text gets longer and with every request served at the same time. The amounts are real: NVIDIA estimates about 2 GB of cache for one 4,096-token sequence in Llama 2 7B, beside about 14 GB for the model's weights. Serving systems therefore manage cache memory carefully, for example by keeping only recent tokens in some layers or storing the numbers with less precision.
+**Full attention** means each new position can read every available earlier position, as well as itself. Its cache keeps growing as processed tokens accumulate.
 
-The cache also does not make long text free. Each new token's query still has to read every saved key and value.
+![cache-growth.svg](images/cache-growth.svg)
 
-## Why the first token takes longer
+Follow the two layer rows: processing `D` adds its key and value at both layers. The tiny example grows from 48 to 64 bytes. Real sizes also depend on model design, number precision, and how many sequences are served. Each new query still reads the saved keys and values.
 
-Two waits describe how fast a reply feels:
+This is the full-attention baseline. Some models retain only recent positions in particular layers; some systems reserve cache memory in advance. Logical cache contents and physically allocated memory therefore need not grow identically.
 
-- **Time to first token (TTFT):** from sending the request until the first output token arrives. It includes prefill, so a long prompt usually means a longer wait, plus any time spent queueing or on the network.
-- **Inter-token latency:** the time between later tokens. Each decoding step is usually limited by how fast the model's weights and the cache can be read from memory.
+## First-token wait and later gaps
 
-This is why a reply can pause before it starts and then stream at a steady pace. Reusing work across separate requests is a different technique, covered in [Prompt caching across requests](../Prompt%20caching%20across%20requests/Readme.md).
+**Time to first token (TTFT)** is the wait from submitting a request to receiving its first output token. **Inter-token latency (ITL)** is the gap between subsequent output-token arrivals.
+
+![first-token-and-token-gaps.svg](images/first-token-and-token-gaps.svg)
+
+Read the event ticks: first `D`, then `E`, then `F`. TTFT can include queueing, prefill, selection, and network delay. Later gaps include the next model run and delivery; they need not be equal. [Prompt caching across requests](../Prompt%20caching%20across%20requests/Readme.md) explains how a later request can reuse prompt work.
 
 # Sources
 
-- [Hugging Face: how caching works](https://huggingface.co/docs/transformers/en/cache_explanation)
-- [NVIDIA: prefill, decoding, and cache memory](https://developer.nvidia.com/blog/mastering-llm-techniques-inference-optimization/)
-- [Meta: Llama 3 attention and layer computations](https://github.com/meta-llama/llama3/blob/main/llama/model.py)
-- [Hugging Face: cache strategies and trade-offs](https://huggingface.co/docs/transformers/en/kv_cache)
-- [NVIDIA: first-token and inter-token latency](https://developer.nvidia.com/blog/llm-benchmarking-fundamental-concepts/)
+- [Hugging Face: how KV caching works](https://huggingface.co/docs/transformers/en/cache_explanation)
+- [NVIDIA: inference phases and KV-cache illustration](https://developer.nvidia.com/blog/mastering-llm-techniques-inference-optimization/)
+- [Hugging Face: cache strategies](https://huggingface.co/docs/transformers/en/kv_cache)
+- [NVIDIA: latency definitions and timeline illustration](https://developer.nvidia.com/blog/llm-benchmarking-fundamental-concepts/)

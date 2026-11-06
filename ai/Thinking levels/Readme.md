@@ -2,60 +2,71 @@
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-**A reasoning-effort setting guides how much work a model spends solving a request. Higher effort can help with harder tasks, often at the cost of more waiting and more tokens. It does not guarantee a correct answer.**
+**A reasoning-effort setting guides how much work a model spends on a request. More work can help with difficult tasks, but can cost more time and tokens without guaranteeing a correct answer.**
 
 ## Where this fits
 
-[The agent loop](../The%20agent%20loop/Readme.md) repeatedly calls a model and runs tools. Effort affects work inside those model calls. The **runtime**, the application code coordinating the loop, still runs tools and enforces the task's limits.
+The shared map highlights **the model call**. Follow the arrows from context to a model call, then through tool results or an outcome check. The lower example separates reasoning work from the length of the visible reply.
+
+![where-this-fits.svg](images/where-this-fits.svg)
+
+## Effort changes work during use
+
+**Inference-time compute** is computation spent while using the model: for example, reasoning longer, revising an attempt, or comparing candidates. **Effort** is soft guidance about that work, not one universal algorithm. **Weights**, the numbers learned in training, stay fixed during ordinary inference.
 
 ![where-effort-fits.svg](images/where-effort-fits.svg)
 
-Read left to right. The model receives the current **context**, its input information, plus an effort setting. It produces an answer or a tool request. Raising effort does not enlarge the model or change its **weights**, the numerical settings learned in training.
+Follow input → model call → output. The **runtime**, the coordinating application, executes requested tools and enforces limits outside the model ([The agent loop](../The%20agent%20loop/Readme.md)).
 
-**Inference-time compute** means computing work spent during use. It can include longer reasoning, revising an attempt, or generating several candidates and checking them. An effort setting is one way to influence that work; it does not specify one universal algorithm.
+## Generated work and visible text
 
-## What “thinking” means here
-
-A **token** is a piece of text. **Reasoning tokens** are generated for intermediate work, such as considering an approach or checking a result, rather than forming the final reply. Reasoning can also happen between tool calls.
-
-The interface may hide this work or show a summary. A displayed summary is not a complete record of the model's internal computation. A short answer can therefore follow substantial reasoning, while a long answer can mostly be explanation.
-
-**Adaptive reasoning** means the model adjusts its work to the request. At the same effort level, copying a meeting time from a note may take little reasoning, while resolving a schedule with conflicting constraints may take more. A level such as `high` is guidance, not an exact promise of seconds or tokens.
-
-## Short replies can still involve lots of work
-
-These are invented counts for two runs, not measurements or promised counts for particular effort levels. Purple shows reasoning; green shows the visible reply.
+A **token** is an encoded unit, often a word or word piece. **Reasoning tokens** support intermediate work; **reply tokens** form the visible answer. Reasoning can happen between tool calls too.
 
 ![reasoning-and-reply-tokens.svg](images/reasoning-and-reply-tokens.svg)
 
-Run A uses **100 reasoning tokens + 50 reply tokens = 150 tokens**. Run B uses **300 + 50 = 350**. Just add the two piles. Both replies have 50 tokens, but B generates 200 more tokens overall. This toy count leaves out input and formatting tokens.
+Both invented runs show 50 reply tokens. Their totals are 100 + 50 = 150 and 300 + 50 = 350, so the second generates 200 more tokens. The bars omit input and formatting tokens; they do not measure time or price.
 
-OpenAI and Claude bill reasoning tokens as output tokens, even when that reasoning is hidden. More reasoning can increase **latency**, the time you wait, and cost. Token counts alone do not give an exact time or price: the model, service, and other work matter too.
+A **reasoning summary** is a displayed account of the work, not the raw internal token stream or a complete record of computation.
 
-An output-token cap can include reasoning as well as the visible reply. If reasoning uses up the allowance, the response may end before a useful answer appears. Effort guidance and a hard cap serve different purposes.
+![reasoning-output-and-summary.svg](images/reasoning-output-and-summary.svg)
 
-## Four controls with different jobs
+The three panels separate hidden work, an optional summary, and the answer. Visible length does not reveal the amount of reasoning.
 
-The diagram separates what each control is intended to change. They are not necessarily independent: a provider's effort control can also affect reply length or tool use.
+## Adaptive work and hard limits
+
+**Adaptive reasoning** varies work with the request. Copying a stated time and resolving conflicting schedules can use different amounts at the same effort level.
+
+![adaptive-reasoning.svg](images/adaptive-reasoning.svg)
+
+An **output budget** is a hard cap on generated tokens. With reasoning models, it can include reasoning as well as visible output.
+
+![output-token-budget.svg](images/output-token-budget.svg)
+
+Read both bars against the same 500-token toy cap. If reasoning consumes the allowance, output may stop before a useful answer. Effort guidance and a cap serve different jobs.
+
+## Controls are not interchangeable
+
+**Model choice** selects learned weights and model design. **Temperature** changes the spread of next-token probabilities for sampling. **Verbosity** guides visible explanation length. Effort guides work on the request.
 
 ![different-controls.svg](images/different-controls.svg)
 
-## Provider settings, checked 2026-11-05
+These effects can overlap; a provider’s effort setting can also affect reply length or tool use. Changing effort does not enlarge the model or add knowledge. [Decoding and sampling](../Decoding%20and%20sampling/Readme.md) explains temperature in detail.
 
-- **OpenAI Responses:** `reasoning.effort` supports model-dependent levels, such as `low`, `medium`, and `high`. Supported values and defaults vary by model.
-- **Claude Messages:** `output_config.effort` guides token spending across thinking, reply text, and tool calls. With adaptive thinking, the model decides when and how deeply to reason.
+## Measure the tradeoff
 
-The same level name does not mean the same amount of work across models or providers. Check the available controls in the chosen model's documentation.
+An **evaluation** tests representative tasks against success checks. **Latency** is waiting time. Compare checked correctness, latency, token usage, and monetary cost while holding the model and inputs fixed.
 
-## Choose effort by results
+![effort-evaluation.svg](images/effort-evaluation.svg)
 
-Compare settings on representative tasks while keeping the model and prompt the same. Check correctness, waiting time, and token usage. Use higher effort when the improvement justifies its cost. Extra work cannot guarantee success or replace missing evidence, useful tools, and checking the result.
+The invented comparison improves from 16 to 18 passes out of 20, with more tokens and waiting. Repeat trials; one sample does not guarantee future performance. Extra effort cannot replace missing evidence or outcome checks.
+
+Provider examples, checked **2026-11-06**: OpenAI Responses uses `reasoning.effort`; Claude Messages uses `output_config.effort`. Supported levels and defaults vary by model. Both bill generated reasoning as output tokens, including hidden work. Equal level names do not promise equal work across providers.
 
 # Sources
 
-- [OpenAI: reasoning effort, tokens, and output limits](https://developers.openai.com/api/docs/guides/reasoning)
+- [OpenAI: effort, reasoning tokens, summaries, and output limits](https://developers.openai.com/api/docs/guides/reasoning)
 - [Claude: effort and its effects](https://platform.claude.com/docs/en/build-with-claude/effort)
-- [Claude: adaptive reasoning](https://platform.claude.com/docs/en/build-with-claude/thinking-steering-and-cost)
-- [Claude: thinking output and billing](https://platform.claude.com/docs/en/build-with-claude/thinking)
-- [OpenAI: temperature and verbosity](https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create)
+- [Claude: adaptive thinking, caps, and billing](https://platform.claude.com/docs/en/build-with-claude/thinking-steering-and-cost)
+- [Claude: thinking summaries](https://platform.claude.com/docs/en/build-with-claude/thinking)
 - [Snell et al.: allocating inference-time computation](https://arxiv.org/html/2408.03314v1)
+- [Hugging Face: temperature and generation settings](https://huggingface.co/docs/transformers/en/main_classes/text_generation)

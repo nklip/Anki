@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="940.909090909090909" viewBox="0 0 1100 690" role="img" aria-labelledby="title desc">
+<title id="title">A KV cache saves keys and values at each layer</title><desc id="desc">Query, key, and value vectors have separate jobs. The current query matches cached keys to decide how to combine cached values. Keys and values are saved separately in every attention layer; old queries are not needed for the next token.</desc>
+<!-- Shared typography and palette; blue identifies the state under discussion. -->
+<defs><style>text{font-family:Arial,Helvetica,sans-serif;font-size:21px;fill:#172033}.title{font-size:30px;font-weight:700}.head{font-size:23px;font-weight:700}.small{font-size:18px}.muted{fill:#64748b}.blue{fill:#2563eb}.mono{font-family:monospace;font-size:22px}</style></defs>
+<rect width="1100" height="690" fill="white"/>
+<text x="40" y="48" class="title" text-anchor="start">A KV cache saves keys and values at each layer</text>
+<text x="40" y="82" class="small muted" text-anchor="start">Tiny made-up vectors illustrate the structure; real models use many more numbers.</text>
+<!-- Three dedicated term panels use the same positions A, B, and C for corresponding key/value rows. -->
+<rect id="query-panel" x="40" y="115" width="270" height="300" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<rect id="key-panel" x="355" y="115" width="330" height="300" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<rect id="value-panel" x="730" y="115" width="330" height="300" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+<text x="60" y="151" class="head" text-anchor="start">Query (Q)</text>
+<text x="60" y="184" class="" text-anchor="start">What should this</text>
+<text x="60" y="213" class="" text-anchor="start">position look for?</text>
+<rect  x="78" y="236" width="194" height="61" rx="8" fill="white" stroke="#cbd5e1" stroke-width="2"/>
+<text x="175" y="274" class="mono" text-anchor="middle">[1, 0]</text>
+<text x="60" y="344" class="small" text-anchor="start">Used for this step.</text>
+<text x="60" y="369" class="small" text-anchor="start">Old queries are not</text>
+<text x="60" y="394" class="small" text-anchor="start">saved in the KV cache.</text>
+<text x="375" y="151" class="head" text-anchor="start">Key (K)</text>
+<text x="375" y="184" class="small" text-anchor="start">What can this position match?</text>
+<text x="750" y="151" class="head" text-anchor="start">Value (V)</text>
+<text x="750" y="184" class="small" text-anchor="start">What information can it add?</text>
+<rect  x="375" y="215" width="290" height="45" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="395" y="245" class="head blue" text-anchor="start">A</text>
+<text x="532" y="245" class="mono" text-anchor="middle">[1, 0]</text>
+<rect  x="750" y="215" width="290" height="45" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="770" y="245" class="head blue" text-anchor="start">A</text>
+<text x="907" y="245" class="mono" text-anchor="middle">[2, 0]</text>
+<rect  x="375" y="270" width="290" height="45" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="395" y="300" class="head blue" text-anchor="start">B</text>
+<text x="532" y="300" class="mono" text-anchor="middle">[0, 1]</text>
+<rect  x="750" y="270" width="290" height="45" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="770" y="300" class="head blue" text-anchor="start">B</text>
+<text x="907" y="300" class="mono" text-anchor="middle">[0, 2]</text>
+<rect  x="375" y="325" width="290" height="45" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="395" y="355" class="head blue" text-anchor="start">C</text>
+<text x="532" y="355" class="mono" text-anchor="middle">[1, 1]</text>
+<rect  x="750" y="325" width="290" height="45" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="770" y="355" class="head blue" text-anchor="start">C</text>
+<text x="907" y="355" class="mono" text-anchor="middle">[1, 1]</text>
+<path data-connector="true" d="M310 266 H344" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<polygon points="341,259 355,266 341,273" fill="#2563eb"/>
+<path data-connector="true" d="M685 266 H719" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<polygon points="716,259 730,266 716,273" fill="#2563eb"/>
+<text x="375" y="396" class="small" text-anchor="start">Compare Q with these keys.</text>
+<text x="750" y="396" class="small" text-anchor="start">Mix values by their relevance.</text>
+<!-- Repeated cache rows show layer-specific state, not one shared key/value vector for the whole model. -->
+<text x="40" y="460" class="head" text-anchor="start">KV cache = these saved K and V vectors, separately at every attention layer</text>
+<text x="60" y="518" class="head" text-anchor="start">Layer 1</text>
+<rect  x="200" y="487" width="200" height="47" rx="7" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="300" y="518" class="" text-anchor="middle">A: key + value</text>
+<rect  x="425" y="487" width="200" height="47" rx="7" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="525" y="518" class="" text-anchor="middle">B: key + value</text>
+<rect  x="650" y="487" width="200" height="47" rx="7" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="750" y="518" class="" text-anchor="middle">C: key + value</text>
+<text x="60" y="584" class="head" text-anchor="start">Layer 2</text>
+<rect  x="200" y="553" width="200" height="47" rx="7" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="300" y="584" class="" text-anchor="middle">A: key + value</text>
+<rect  x="425" y="553" width="200" height="47" rx="7" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="525" y="584" class="" text-anchor="middle">B: key + value</text>
+<rect  x="650" y="553" width="200" height="47" rx="7" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+<text x="750" y="584" class="" text-anchor="middle">C: key + value</text>
+<text x="895" y="511" class="small" text-anchor="start">Same positions,</text>
+<text x="895" y="537" class="small" text-anchor="start">different vectors</text>
+<text x="895" y="563" class="small" text-anchor="start">in each layer.</text>
+<text x="40" y="660" class="small muted" text-anchor="start">Cache = request working state. Model weights = learned numbers that stay fixed during inference.</text>
+</svg>

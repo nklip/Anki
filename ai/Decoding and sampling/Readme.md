@@ -2,58 +2,68 @@
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-**After each forward pass, the model has a score for every token in its vocabulary. Decoding is the rule that turns those scores into one chosen token, again and again, until the reply is finished.** This rule decides whether the same model answers in a careful, repeatable way or in a more varied one.
+**Decoding chooses one next token from the model’s scores.** A **token** is a text piece or special marker. Repeating the choice builds a reply. Sampling settings change which continuations are likely; they do not guarantee factual accuracy.
 
 ## Where this fits
 
-[The transformer forward pass](../The%20transformer%20forward%20pass/Readme.md) ends with **logits**, raw scores for each possible next token. Decoding is the step that comes after them:
+The shared map highlights **token selection**. Follow the arrows from context assembly through model computation and token selection. The lower example turns model scores into a chosen token, then returns it to the model.
 
 ![where-this-fits.svg](images/where-this-fits.svg)
 
-Read the top row from left to right. The last box picks one token. The loop arrow shows what happens next: the token is added to the text, and the model runs again for the token after it. The panel below opens the decoding step: turn the scores into probabilities, optionally reshape them, then pick.
+## From scores to probabilities
 
-## Scores become probabilities
+A **logit** is a raw score for a possible next token. Scores can be negative or positive; a higher score favors that token. **Softmax** converts the scores into **probabilities**, shares that total 100%, by raising *e* (about 2.718) to each score and dividing by the sum.
 
-A logit can be any number, positive or negative; a higher score means the model favors that token more. **Softmax** turns the logits into **probabilities**: positive shares that add up to 100% and keep the same order. For example, if “cat,” “dog,” and “fox” score 2, 1, and 0, softmax gives them about 66.5%, 24.5%, and 9%.
+![logits-to-probabilities.svg](images/logits-to-probabilities.svg)
 
-These are chances for the next token only. A 66.5% chance for “cat” says nothing about whether a statement is true.
+Follow one row: “cat” has score 2, which becomes 7.389, then about 66.5% of the total. This is its next-token probability, not a confidence score for a statement’s truth. The diagram uses three possible tokens to expose the arithmetic.
 
-## Two ways to choose
+## Greedy decoding and sampling
 
-- **Greedy decoding** always takes the most likely token, here “cat.” It is predictable, but the best choice at each step does not guarantee the best whole reply, or a correct one.
-- **Sampling** draws a token at random, weighted by the probabilities, like a raffle in which “cat” holds most of the tickets. “Cat” usually wins, but “dog” or “fox” sometimes do, which makes replies more varied.
+**Greedy decoding** picks the highest-probability token. **Sampling** draws a token randomly, weighted by its probability. A larger share means a greater chance, not a guaranteed selection.
 
-Whichever token wins joins the text, and the next pass produces fresh scores. Greedy decoding therefore does not mean repeating “cat” forever.
+![greedy-and-sampling.svg](images/greedy-and-sampling.svg)
 
-## Temperature: how adventurous sampling is
+Greedy picks “cat”; the illustrative random draw lands in “dog.” Either choice joins the text, and a fresh model pass produces the next scores. Locally highest probabilities do not guarantee the best whole reply.
 
-**Temperature** reshapes the probabilities before sampling. A low temperature sharpens them, so the favorite wins even more often; a high temperature flattens them, so unlikely tokens get more chances.
+## Temperature changes the spread
+
+**Temperature**, written `T`, divides the logits before softmax. A smaller positive value sharpens the distribution; a larger value flattens it.
 
 ![temperature-comparison.svg](images/temperature-comparison.svg)
 
-The diagram shows the same three scores at three temperatures. Compare the bars: at `T = 0.5`, “cat” takes about 87%; at `T = 1`, nothing changes; at `T = 2`, the shares are more even. “Cat” stays first in every panel, so temperature never changes a greedy choice. It changes how often sampling picks something else, not what the model knows.
+All three panels start with the same scores. At `T = 0.5`, “cat” gets about 87%; at `T = 2`, about 51%. Positive temperature preserves the ranking, so it changes sampling frequencies without changing the highest-scoring token. It does not add knowledge.
 
-## Top-k and top-p: cut off the long tail
+## Top-k and top-p filter candidates
 
-A real vocabulary has many thousands of tokens, and most of them are very unlikely at any given step. Two common filters remove the unlikely ones before sampling:
+These filters remove unlikely candidates before sampling:
 
 ![top-k-and-top-p.svg](images/top-k-and-top-p.svg)
 
-- **Top-k** keeps a fixed number of the most likely tokens. In the diagram, `k = 2` keeps A and B.
-- **Top-p**, also called **nucleus sampling**, keeps the smallest group of top tokens whose chances add up to at least `p`. With `p = 0.8`, the target is 80% of the probability, not 80% of the tokens: A and B reach only 75%, so C joins them. How many tokens survive depends on the scores at that step.
+- **Top-k** keeps a fixed number of the most likely tokens. Here `k = 2` keeps A and B.
+- **Top-p**, also called **nucleus sampling**, keeps the smallest group of highest-probability tokens whose combined share reaches `p`. Here `p = 0.8` targets 80% of probability, not 80% of tokens. A and B reach only 75%, so C must join them.
 
-After filtering, the survivors' chances are scaled up so that they again add up to 100%, and one token is drawn from them.
+The remaining shares are **renormalized**: divided by their total so they sum to 100% again. The lower bars show this rescaling. Then one surviving token is sampled. Top-p’s number of survivors can change at every step.
 
-## When generation stops, and why runs differ
+## Stopping conditions
 
-Generation stops when the model picks a special **end-of-sequence (EOS)** token, when a chosen stop text appears, or when a length limit is reached. A length limit can cut a sentence in half.
+Generation can stop when the model selects an **end-of-sequence (EOS)** special token, when generated text matches a configured **stop string**, or when a **length limit** is reached.
 
-Sampling uses a random-number generator. Fixing its starting value, the **seed**, can repeat the same choices in a controlled setup, but not across different software versions or hardware. Even greedy runs can differ there, because tiny numerical differences can change the scores.
+![stopping-conditions.svg](images/stopping-conditions.svg)
+
+The three lanes show different triggers. A length cap counts generated tokens and may leave an unfinished sentence; it does not mean the model chose to end its answer.
+
+## Seeds and repeatability
+
+A **seed** initializes the random-number generator used by sampling. In a reproducible setup, the same seed can repeat its stream of draws.
+
+![seed-and-reproducibility.svg](images/seed-and-reproducibility.svg)
+
+Read the repeated rows: equal draws and probabilities produce equal choices. But the seed alone is insufficient: the model, prompt, settings, and execution must also match. Different hardware, software, or nondeterministic operations can change results, including greedy results.
 
 # Sources
 
-- [Hugging Face: decoding strategies](https://huggingface.co/docs/transformers/en/generation_strategies)
+- [Hugging Face: decoding strategies and published diagrams](https://huggingface.co/blog/how-to-generate)
 - [PyTorch: softmax](https://docs.pytorch.org/docs/2.15/generated/torch.nn.Softmax.html)
-- [Hugging Face: temperature and sampling filters](https://huggingface.co/docs/transformers/en/internal/generation_utils)
-- [Hugging Face: generation settings and stopping](https://huggingface.co/docs/transformers/en/main_classes/text_generation)
+- [Hugging Face: generation settings, filters, and stopping](https://huggingface.co/docs/transformers/en/main_classes/text_generation)
 - [PyTorch: reproducibility](https://docs.pytorch.org/docs/2.15/notes/randomness.html)

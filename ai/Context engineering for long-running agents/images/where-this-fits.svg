@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1165" viewBox="0 0 1500 1165" role="img" aria-labelledby="title desc">
+<title id="title">Where this fits: Context engineering for long-running agents</title>
+<desc id="desc">One possible runtime design: prepare context, call the model, validate and execute tools, control the loop, check outcomes, and report. Tool results and failed checks can lead to further work; limits can end the run with an incomplete result. Only Context engineering for long-running agents has a highlighted frame. A lower worked example explains this topic.</desc>
+<!-- Native text and shared typography preserve editability at any display size. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1500" height="1165" fill="#ffffff"/>
+<text x="50" y="44" font-size="36" font-weight="700" text-anchor="start" fill="#172033">Where this fits: one agent run</text>
+<text x="50" y="80" font-size="24" font-weight="400" text-anchor="start" fill="#64748b">One runtime design. Start at context; blue marks this topic in the shared map.</text>
+<!-- Shared flow; keep labels and connectors in their own clear lanes. -->
+<g id="shared-flow">
+<!-- Context; keep labels and connectors in their own clear lanes. -->
+<g id="context">
+<rect x="50" y="145" width="400" height="150" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="3" data-focus="true"/>
+<text x="70" y="180" font-size="28" font-weight="700" text-anchor="start" fill="#172033">Prepare context</text>
+<text x="70" y="216" font-size="22" font-weight="400" text-anchor="start" fill="#172033">Goal, constraints + tool information</text>
+<text x="70" y="248" font-size="22" font-weight="400" text-anchor="start" fill="#172033">Relevant files / saved notes</text>
+<text x="70" y="280" font-size="22" font-weight="400" text-anchor="start" fill="#172033">Current progress + results</text>
+</g>
+<!-- Model; keep labels and connectors in their own clear lanes. -->
+<g id="model">
+<rect x="550" y="145" width="400" height="150" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="570" y="180" font-size="28" font-weight="700" text-anchor="start" fill="#172033">Model call</text>
+<text x="570" y="216" font-size="22" font-weight="400" text-anchor="start" fill="#172033">Use the supplied context</text>
+<text x="570" y="248" font-size="22" font-weight="400" text-anchor="start" fill="#172033">Spend inference effort</text>
+<text x="570" y="280" font-size="22" font-weight="400" text-anchor="start" fill="#172033">Propose an action or a reply</text>
+</g>
+<!-- Tool; keep labels and connectors in their own clear lanes. -->
+<g id="tool">
+<rect x="1050" y="145" width="400" height="150" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="1070" y="180" font-size="28" font-weight="700" text-anchor="start" fill="#172033">Validate and execute</text>
+<text x="1070" y="216" font-size="22" font-weight="400" text-anchor="start" fill="#172033">Check inputs, limits, permissions</text>
+<text x="1070" y="248" font-size="22" font-weight="400" text-anchor="start" fill="#172033">Run the allowed tool</text>
+<text x="1070" y="280" font-size="22" font-weight="400" text-anchor="start" fill="#172033">Return a result with its call ID</text>
+</g>
+<!-- Report; keep labels and connectors in their own clear lanes. -->
+<g id="report">
+<rect x="50" y="420" width="400" height="150" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="70" y="455" font-size="28" font-weight="700" text-anchor="start" fill="#172033">Report the result</text>
+<text x="70" y="491" font-size="22" font-weight="400" text-anchor="start" fill="#172033">State what was checked</text>
+<text x="70" y="523" font-size="22" font-weight="400" text-anchor="start" fill="#172033">Include limits or unfinished work</text>
+<text x="70" y="555" font-size="22" font-weight="400" text-anchor="start" fill="#172033">Deliver the reply and end the run</text>
+</g>
+<!-- Check; keep labels and connectors in their own clear lanes. -->
+<g id="check">
+<rect x="550" y="420" width="400" height="150" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="570" y="455" font-size="28" font-weight="700" text-anchor="start" fill="#172033">Check the outcome</text>
+<text x="570" y="491" font-size="22" font-weight="400" text-anchor="start" fill="#172033">Compare evidence with the goal</text>
+<text x="570" y="523" font-size="22" font-weight="400" text-anchor="start" fill="#172033">Pass → report</text>
+<text x="570" y="555" font-size="22" font-weight="400" text-anchor="start" fill="#172033">Missing / failed checks → loop</text>
+</g>
+<!-- Loop; keep labels and connectors in their own clear lanes. -->
+<g id="loop">
+<rect x="1050" y="420" width="400" height="150" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="1070" y="455" font-size="28" font-weight="700" text-anchor="start" fill="#172033">Control the loop</text>
+<text x="1070" y="491" font-size="22" font-weight="400" text-anchor="start" fill="#172033">Record state + observations</text>
+<text x="1070" y="523" font-size="22" font-weight="400" text-anchor="start" fill="#172033">Enforce budgets and stop rules</text>
+<text x="1070" y="555" font-size="22" font-weight="400" text-anchor="start" fill="#172033">Continue or end the run</text>
+</g>
+<!-- Direct flow; keep labels and connectors in their own clear lanes. -->
+<g id="direct-flow">
+<path data-connector="true" d="M 450,235 L 539,235" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="550,235 538,241 538,229" fill="#64748b"/>
+<path data-connector="true" d="M 950,235 L 1039,235" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="1050,235 1038,241 1038,229" fill="#64748b"/>
+<path data-connector="true" d="M 1250,295 L 1250,409" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="1250,420 1244,408 1256,408" fill="#64748b"/>
+<text x="1270" y="361" font-size="22" font-weight="400" text-anchor="start" fill="#172033">tool result</text>
+<path data-connector="true" d="M 750,295 L 750,409" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="750,420 744,408 756,408" fill="#64748b"/>
+<text x="770" y="361" font-size="22" font-weight="400" text-anchor="start" fill="#172033">reply candidate</text>
+<path data-connector="true" d="M 550,500 L 461,500" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="450,500 462,494 462,506" fill="#64748b"/>
+<path data-connector="true" d="M 950,500 L 1039,500" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="1050,500 1038,506 1038,494" fill="#64748b"/>
+</g>
+<!-- Halt path; keep labels and connectors in their own clear lanes. -->
+<g id="halt-path">
+<path data-connector="true" d="M 1250,570 L 1250,630 L 250,630 L 250,581" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="250,570 256,582 244,582" fill="#64748b"/>
+<text x="750" y="611" font-size="22" font-weight="400" text-anchor="middle" fill="#172033">Limit / cancellation: report unfinished work</text>
+</g>
+<!-- Continuation path; keep labels and connectors in their own clear lanes. -->
+<g id="continuation-path">
+<path data-connector="true" d="M 1450,525 L 1480,525 L 1480,690 L 20,690 L 20,235 L 39,235" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="50,235 38,241 38,229" fill="#64748b"/>
+<text x="750" y="675" font-size="22" font-weight="400" text-anchor="middle" fill="#172033">Continue: updated state becomes the next input</text>
+</g>
+<!-- Responsibility boundary; keep labels and connectors in their own clear lanes. -->
+<g id="responsibility-boundary">
+<rect x="50" y="735" width="1400" height="86" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="70" y="770" font-size="25" font-weight="700" text-anchor="start" fill="#172033">Runtime = the application coordinating the run. Tools execute outside the model.</text>
+<text x="70" y="804" font-size="23" font-weight="400" text-anchor="start" fill="#172033">The model’s weights stay fixed here. A tool result supplies evidence; it does not automatically establish success.</text>
+</g>
+</g>
+<text x="50" y="877" font-size="30" font-weight="700" text-anchor="start" fill="#172033">Select the facts needed for the next decision</text>
+<!-- Topic worked example; keep labels and connectors in their own clear lanes. -->
+<g id="topic-worked-example">
+<rect x="50" y="920" width="400" height="168" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5" />
+<text x="70" y="958" font-size="27" font-weight="700" text-anchor="start" fill="#172033">Larger information pool</text>
+<text x="70" y="996" font-size="23" font-weight="400" text-anchor="start" fill="#172033">Goal: weekdays at 11:00</text>
+<text x="70" y="1028" font-size="23" font-weight="400" text-anchor="start" fill="#172033">Homepage already checked</text>
+<text x="70" y="1060" font-size="23" font-weight="400" text-anchor="start" fill="#172033">Contact page still pending</text>
+<rect x="550" y="920" width="400" height="168" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5" />
+<text x="570" y="958" font-size="27" font-weight="700" text-anchor="start" fill="#172033">Next-call context</text>
+<text x="570" y="996" font-size="23" font-weight="400" text-anchor="start" fill="#172033">Keep the weekday goal.</text>
+<text x="570" y="1028" font-size="23" font-weight="400" text-anchor="start" fill="#172033">Keep “weekends unchanged.”</text>
+<text x="570" y="1060" font-size="23" font-weight="400" text-anchor="start" fill="#172033">Include contact-page evidence.</text>
+<rect x="1050" y="920" width="400" height="168" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5" />
+<text x="1070" y="958" font-size="27" font-weight="700" text-anchor="start" fill="#172033">Next useful action</text>
+<text x="1070" y="996" font-size="23" font-weight="400" text-anchor="start" fill="#172033">Inspect or update the</text>
+<text x="1070" y="1028" font-size="23" font-weight="400" text-anchor="start" fill="#172033">remaining contact page.</text>
+<text x="1070" y="1060" font-size="23" font-weight="400" text-anchor="start" fill="#172033">Check the saved result.</text>
+<path data-connector="true" d="M 450,1005 L 539,1005" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="550,1005 538,1011 538,999" fill="#64748b"/>
+<path data-connector="true" d="M 950,1005 L 1039,1005" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="1050,1005 1038,1011 1038,999" fill="#64748b"/>
+<text x="50" y="1130" font-size="22" font-weight="400" text-anchor="start" fill="#172033">A progress note must be read into context to help; preserving a constraint can matter more than saving tokens.</text>
+</g>
+</svg>

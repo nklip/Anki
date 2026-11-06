@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="859.090909" viewBox="0 0 1100 630" role="img" aria-labelledby="title desc">
+<title id="title">Logits, softmax, greedy decoding, and sampling</title>
+<desc id="desc">Toy logits 2, 1, and 0 yield rounded softmax probabilities 66.5, 24.5, and 9.0 percent. Greedy decoding selects A; sampling draws from this distribution. The numbers are not probabilities of task success.</desc>
+<!-- Shared native text and typography. Shafts end inside separate arrowhead bases. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1100" height="630" fill="#ffffff"/>
+<text x="30" y="44" font-size="29" font-weight="700" text-anchor="start" fill="#172033">Logits become probabilities; a decoding rule chooses one token</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">Toy three-token vocabulary. Scores and probabilities illustrate selection, not repair accuracy.</text>
+<!-- Logits softmax; preserve reading order and text clearance. -->
+<g id="logits-softmax">
+<rect x="30" y="124" width="500" height="325" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="164" font-size="25" font-weight="700" text-anchor="start" fill="#172033">Logits = raw next-token scores</text>
+<text x="50" y="205" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Softmax converts scores to probabilities.</text>
+<text x="70" y="254" font-size="22" font-weight="700" text-anchor="start" fill="#172033">Candidate</text>
+<text x="260" y="254" font-size="22" font-weight="700" text-anchor="start" fill="#172033">Logit</text>
+<text x="370" y="254" font-size="22" font-weight="700" text-anchor="start" fill="#172033">Probability</text>
+</g>
+<text x="90" y="302" font-size="23" font-weight="700" text-anchor="start" fill="#172033">A</text>
+<text x="280" y="302" font-size="23" font-weight="400" text-anchor="start" fill="#172033">2</text>
+<text x="392" y="302" font-size="23" font-weight="400" text-anchor="start" fill="#172033">66.5%</text>
+<text x="90" y="351" font-size="23" font-weight="700" text-anchor="start" fill="#172033">B</text>
+<text x="280" y="351" font-size="23" font-weight="400" text-anchor="start" fill="#172033">1</text>
+<text x="392" y="351" font-size="23" font-weight="400" text-anchor="start" fill="#172033">24.5%</text>
+<text x="90" y="400" font-size="23" font-weight="700" text-anchor="start" fill="#172033">C</text>
+<text x="280" y="400" font-size="23" font-weight="400" text-anchor="start" fill="#172033">0</text>
+<text x="392" y="400" font-size="23" font-weight="400" text-anchor="start" fill="#172033">9.0%</text>
+<!-- Greedy selection; preserve reading order and text clearance. -->
+<g id="greedy-selection">
+<rect x="640" y="124" width="430" height="145" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="660" y="162" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Greedy decoding</text>
+<text x="660" y="203" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Choose the highest score.</text>
+<text x="660" y="235" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Here it selects token A.</text>
+</g>
+<!-- Sampling selection; preserve reading order and text clearance. -->
+<g id="sampling-selection">
+<rect x="640" y="304" width="430" height="145" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="660" y="342" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Sampling</text>
+<text x="660" y="383" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Draw using the probabilities.</text>
+<text x="660" y="415" font-size="20" font-weight="400" text-anchor="start" fill="#172033">A is likelier; B or C can be drawn.</text>
+</g>
+<!-- Selection path; preserve reading order and text clearance. -->
+<g id="selection-path">
+<path data-connector="true" d="M 530,220 L 629,220" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="640,220 628,226 628,214" fill="#64748b"/>
+<path data-connector="true" d="M 530,380 L 629,380" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="640,380 628,386 628,374" fill="#64748b"/>
+</g>
+<!-- Probability limit; preserve reading order and text clearance. -->
+<g id="probability-limit">
+<rect x="30" y="493" width="1040" height="105" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="533" font-size="24" font-weight="700" text-anchor="start" fill="#172033">66.5% means a token-selection probability in this toy distribution.</text>
+<text x="50" y="571" font-size="21" font-weight="400" text-anchor="start" fill="#172033">It is not a 66.5% chance that the program is correct. Tools must check the actual outcome.</text>
+</g>
+</svg>

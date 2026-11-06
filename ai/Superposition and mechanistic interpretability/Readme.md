@@ -2,56 +2,74 @@
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-**Superposition is the idea that a model stores more features than its vectors have slots, by letting their directions overlap. Mechanistic interpretability is the effort to explain, step by step, how a model's internal computations produce its behavior.**
+**Superposition means representing more features than a vector has dimensions, using overlapping directions. Mechanistic interpretability seeks to explain how internal computations produce behavior.** We start with overlap, then examine tools for finding features and testing proposed mechanisms.
 
 ## Where this fits
 
-[Features and the linear representation hypothesis](../Features%20and%20the%20linear%20representation%20hypothesis/Readme.md) described a **feature**, a property the model represents such as past tense, as a direction in the model's vectors. In that linear picture, features add their directions, scaled by how strongly they are active. This article asks what happens when there are more features than slots, how researchers untangle them, and how they test an explanation of a whole computation:
+A **feature** is a property represented by the model. The model's **activations** are working numbers calculated for an input; a vector groups numbers into an ordered list.
 
-Read the model's route from left to right. The purple branch shows the two research questions explored here.
+The upper map highlights research on these internal values, separate from the model's ordinary computation. The lower panel connects packed feature directions, a tool for separating them, and controlled tests of their role.
 
 ![where-this-fits.svg](images/where-this-fits.svg)
 
-## More features than slots
+## Dimensions and superposition
 
-A model's vector has a fixed number of slots, called **dimensions**, usually thousands. Yet a model may want to track far more things than that: names, topics, languages, grammar, and much more. The **superposition hypothesis** says that a model packs the extra features into the same space by giving them overlapping directions.
+A **dimension** is one numerical coordinate or slot. In this toy, three feature directions share two dimensions. The right panel shows the ambiguity: A plus B produces the same vector as C alone.
 
 ![overlapping-feature-directions.svg](images/overlapping-feature-directions.svg)
 
-The diagram shows the smallest possible case. Three invented features, A, B, and C, share two slots. When a feature is on, it adds its own arrow: A points along slot 1, B along slot 2, and C diagonally between them. Each feature alone is easy to recognize. But the bottom row shows the catch: A and B together produce exactly the same vector as C alone, so nothing can tell those two situations apart from that vector by itself. Such an exact tie is special to this toy; real overlaps are usually partial.
+The exact collision is a toy case. Spreading one feature across several slots alone does not prove superposition. [Features and the linear representation hypothesis](../Features%20and%20the%20linear%20representation%20hypothesis/Readme.md) examines the direction-based picture.
 
-## Interference, and why sparsity helps
+## Interference
 
-Partial overlap causes **interference**: one feature leaks into the measurement meant for another. In the diagram's “simple readout for C,” feature A alone produces half of C's full signal, even though C is off. A cutoff can ignore such a small leak, but it cannot fix an exact tie.
+**Interference** occurs when one feature contributes to a measurement intended for another. The C readout below averages both coordinates, so A alone produces half of C's full signal even when C is absent.
 
-Overlap is affordable when features are **sparse**, meaning that each one is rarely active. Most tokens are not about Martin Luther King or part of a sentence about music, so features like these seldom need to be read at the same time. Toy models show this trade-off clearly; it is not free, unlimited storage.
+![interference-readout.svg](images/interference-readout.svg)
 
-Superposition is one explanation for **polysemantic neurons**, neurons that respond to several unrelated things, but not the only possible cause. Likewise, a feature spread across several slots does not prove superposition by itself.
+A cutoff can reject some small leaks. It cannot distinguish two feature states that yield exactly the same vector.
 
-## Sparse autoencoders: listing the features
+## Sparsity
 
-If features overlap, how can researchers find them? A **sparse autoencoder (SAE)** is a separate tool trained on a model's saved vectors, while the model itself stays unchanged.
+**Sparsity** means few features are active for a given input. Read each row as one input and each column as one feature. Fewer simultaneous features make interference easier to tolerate, as demonstrated in toy models.
+
+![sparse-feature-activity.svg](images/sparse-feature-activity.svg)
+
+## Polysemantic neurons
+
+A **neuron** is one numerical slot inside a network. A **polysemantic neuron** responds to several unrelated properties. The toy bars show one neuron responding to both French and code. Superposition is one possible explanation, not the only one.
+
+![polysemantic-neuron.svg](images/polysemantic-neuron.svg)
+
+## Sparse autoencoders: candidate features
+
+A **sparse autoencoder (SAE)** is a separate analysis model trained on saved language-model activations. Follow the top lane, then the four definition panels:
+
+- The **encoder** maps the activation to candidate feature values.
+- The **sparse code** contains many slots but few nonzero values.
+- The **decoder** combines active directions from its learned **dictionary** to rebuild the input.
+- **Reconstruction error** is the difference between the original and rebuilt vectors.
 
 ![sparse-autoencoder.svg](images/sparse-autoencoder.svg)
 
-Read the diagram from left to right. The **encoder** turns a saved vector into a long list of candidate feature slots with only a few switched on, called a **sparse code**. The **decoder** rebuilds the original vector by adding the directions of the active slots, taken from a learned collection called the **dictionary**. Training rewards an accurate rebuild that uses as few active slots as possible, and the SAE learns the dictionary itself; nobody supplies concept names.
+Only the SAE is trained here. The language model stays fixed. SAE training balances reconstruction with sparse activity; names for candidate features are interpretations researchers must test.
 
-The box “The same [1, 1] can also come from A + B” holds the main warning: the vector is rebuilt perfectly with C alone, but it could also have come from A plus B. A good rebuild does not prove that the SAE found the real cause. Real SAEs also leave some **reconstruction error**, and their candidate features can miss or blend real structure. A readable label on a slot is a hypothesis to test.
+Even perfect reconstruction need not identify the true cause: C alone and A plus B both rebuild `[1, 1]`. Real SAEs also leave error and can miss or blend important structure.
 
-## From features to mechanisms
+## Circuits and causal tests
 
-Features are like the model's vocabulary; mechanistic interpretability wants its sentences. A **circuit** is a set of internal components and connections that together carry out one computation.
+A **circuit** is a set of connected internal components implementing a computation. **Mechanistic interpretability** asks how such mechanisms cause behavior. The top path is a toy hypothesis; the three lower panels define experiments for testing it.
 
 ![testing-a-circuit.svg](images/testing-a-circuit.svg)
 
-The diagram uses the prompt “Anna and Ben arrived. Ben gave the map to ___,” where the right answer is Anna. To test a proposed circuit, researchers compare three runs: a **baseline** that changes nothing, an **ablation** that switches off a suspected contribution, and **activation patching**, which swaps in a vector from a different run. If the explanation is right, the scores for “Anna” and “Ben” change in the predicted way.
+A **baseline** leaves the run unchanged. An **ablation** removes a suspected contribution. **Activation patching** replaces an internal value with one from another run. Specify the donor input, target location, and predicted score change, then compare with the baseline.
 
-These tests show cause and effect, not just that something lights up near the answer. They still need care: backup pathways can hide an ablation's effect, and a clumsy edit can break unrelated computations. Researchers have traced and tested a circuit for this name task in GPT-2 small. That is real progress on one behavior, not a full account of the model.
+Backup paths can hide an effect; edits may damage unrelated computation. A tested name-handling circuit in GPT-2 small explains one behavior, not the whole model.
 
 # Sources
 
-- [Toy Models of Superposition](https://transformer-circuits.pub/2022/toy_model/index.html)
+- [Meta: Llama architecture](https://github.com/meta-llama/llama3/blob/main/llama/model.py)
+- [Anthropic: Toy Models of Superposition (visual reference)](https://transformer-circuits.pub/2022/toy_model/index.html)
 - [Sparse Autoencoders Find Highly Interpretable Features](https://arxiv.org/abs/2309.08600)
-- [Scaling and Evaluating Sparse Autoencoders](https://arxiv.org/html/2406.04093v1)
+- [OpenAI: Scaling and Evaluating SAEs (Figure 1 reviewed)](https://arxiv.org/html/2406.04093v1)
 - [Interpretability in the Wild: circuits and causal tests](https://arxiv.org/html/2211.00593v1)
-- [Circuit Tracing: methods and limitations](https://transformer-circuits.pub/2025/attribution-graphs/methods.html)
+- [Anthropic: Circuit Tracing — methods and limitations](https://transformer-circuits.pub/2025/attribution-graphs/methods.html)

@@ -1,76 +1,119 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="530" viewBox="0 0 1100 530" role="img" aria-labelledby="title desc">
-  <title id="title">Decoding turns next-token scores into text</title>
-  <desc id="desc">Text becomes token IDs, the forward pass runs the whole model, and it produces next-token scores. Decoding, the step this article covers, picks one token. A loop arrow shows that the chosen token is added and the model runs again. An inset opens the decoding step: softmax turns scores into probabilities, optional temperature, top-k, or top-p reshaping changes the odds, and then greedy choice takes the top token or sampling makes a weighted draw. Generation stops at an end-of-sequence token, a stop text, or a length limit.</desc>
-  <!-- Shared typography and connector colors match the series' where-this-fits diagrams. -->
-  <defs>
-    <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
-      .title { font-size: 28px; font-weight: 700; }
-      .subtitle { font-size: 19px; fill: #475569; }
-      .label { font-size: 21px; font-weight: 700; }
-      .body { font-size: 20px; }
-      .note { font-size: 19px; fill: #475569; }
-      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
-      .head { fill: #64748b; }
-    </style>
-  </defs>
-  <rect width="1100" height="530" fill="#ffffff"/>
-  <!-- Heading states the lesson and the reading order. -->
-  <text class="title" x="28" y="43" text-anchor="start">Decoding turns next-token scores into text</text>
-  <text class="subtitle" x="28" y="76" text-anchor="start">Read left to right, then follow the loop back. This article covers the decoding step.</text>
-  <!-- Common model route; only the decoding box is emphasized and labeled as this article. -->
-  <g id="model-route">
-    <rect x="28" y="108" width="150" height="88" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
-    <text class="label" x="103" y="146" text-anchor="middle">Text</text>
-    <text class="note" x="103" y="176" text-anchor="middle">your prompt</text>
-    <rect x="216" y="108" width="160" height="88" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
-    <text class="label" x="296" y="146" text-anchor="middle">Token IDs</text>
-    <text class="note" x="296" y="176" text-anchor="middle">piece numbers</text>
-    <rect x="414" y="108" width="200" height="88" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
-    <text class="label" x="514" y="146" text-anchor="middle">Forward pass</text>
-    <text class="note" x="514" y="176" text-anchor="middle">the whole model</text>
-    <rect x="652" y="108" width="190" height="88" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
-    <text class="label" x="747" y="144" text-anchor="middle">Next-token</text>
-    <text class="label" x="747" y="172" text-anchor="middle">scores</text>
-    <rect x="880" y="108" width="192" height="88" rx="12" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
-    <text class="label" x="976" y="146" text-anchor="middle">Decoding</text>
-    <text class="note" x="976" y="176" text-anchor="middle">this article</text>
-  </g>
-  <!-- Each shaft ends inside its triangular head; tips meet the next box boundary. -->
-  <g id="route-connectors">
-    <line class="connector" x1="179" y1="152" x2="204" y2="152"/><polygon class="head" points="216,152 203,146 203,158"/>
-    <line class="connector" x1="377" y1="152" x2="402" y2="152"/><polygon class="head" points="414,152 401,146 401,158"/>
-    <line class="connector" x1="615" y1="152" x2="640" y2="152"/><polygon class="head" points="652,152 639,146 639,158"/>
-    <line class="connector" x1="843" y1="152" x2="868" y2="152"/><polygon class="head" points="880,152 867,146 867,158"/>
-  </g>
-  <!-- The loop returns from decoding to the token IDs; its label sits below the horizontal run. -->
-  <g id="generation-loop">
-    <path class="connector" d="M976 197 V236 H296 V209"/>
-    <polygon class="head" points="296,196 290,209 302,209"/>
-    <text class="note" x="636" y="264" text-anchor="middle">add the chosen token, then run the model again</text>
-  </g>
-  <!-- Inset opens the decoding box; the matching border ties it to the emphasized route box. -->
-  <g id="decoding-inset">
-    <rect x="28" y="290" width="1044" height="176" rx="12" fill="#ffffff" stroke="#c2410c" stroke-width="2"/>
-    <text class="label" x="52" y="326" text-anchor="start">Inside the decoding step</text>
-    <rect x="52" y="344" width="300" height="102" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
-    <text class="label" x="202" y="380" text-anchor="middle">1. Softmax</text>
-    <text class="body" x="202" y="410" text-anchor="middle">scores become</text>
-    <text class="body" x="202" y="436" text-anchor="middle">probabilities</text>
-    <rect x="400" y="344" width="300" height="102" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
-    <text class="label" x="550" y="380" text-anchor="middle">2. Optional reshaping</text>
-    <text class="body" x="550" y="410" text-anchor="middle">temperature, top-k, top-p</text>
-    <text class="body" x="550" y="436" text-anchor="middle">change the odds</text>
-    <rect x="748" y="344" width="300" height="102" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
-    <text class="label" x="898" y="380" text-anchor="middle">3. Pick one token</text>
-    <text class="body" x="898" y="410" text-anchor="middle">greedy: the top token</text>
-    <text class="body" x="898" y="436" text-anchor="middle">sampling: a weighted draw</text>
-  </g>
-  <!-- Inset arrows run between box borders and stay clear of the box text. -->
-  <g id="inset-connectors">
-    <line class="connector" x1="353" y1="395" x2="388" y2="395"/><polygon class="head" points="400,395 387,389 387,401"/>
-    <line class="connector" x1="701" y1="395" x2="736" y2="395"/><polygon class="head" points="748,395 735,389 735,401"/>
-  </g>
-  <!-- Stopping rule answers the beginner question "when does the loop end?". -->
-  <text class="note" x="550" y="502" text-anchor="middle">Generation stops at an end-of-sequence token, a stop text, or a length limit.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1275" viewBox="0 0 1200 1020" role="img" aria-labelledby="title desc">
+<title id="title">Where this fits: Decoding and sampling</title>
+<desc id="desc">A common request lifecycle with context assembly, optional prefix reuse, model prefill and decode with a KV cache, token selection, a continuation loop, and stopping. Only Decoding and sampling is highlighted. The lower example illustrates that topic.</desc>
+<!-- Shared typography; all teaching content remains editable SVG text. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1200" height="1020" fill="#ffffff"/>
+<text x="30" y="44" font-size="30" font-weight="700" text-anchor="start" fill="#172033">Where this fits: the request lifecycle</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">Follow the arrows. The blue frame marks this topic; the same map appears in related explanations.</text>
+<!-- Shared flow. -->
+<g id="shared-flow">
+<!-- Context assembly. -->
+<g id="context-assembly">
+<rect x="30" y="130" width="250" height="160" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="50" y="166" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Assemble context</text>
+<text x="50" y="200" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Instructions + question</text>
+<text x="50" y="230" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Examples / history</text>
+<text x="50" y="260" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Retrieved notes or files</text>
+</g>
+<!-- Prefix reuse. -->
+<g id="prefix-reuse">
+<rect x="320" y="130" width="250" height="160" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="340" y="166" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Check prefix cache</text>
+<text x="340" y="200" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Optional reuse across calls</text>
+<text x="340" y="230" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Match: reuse prefix work</text>
+<text x="340" y="260" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Miss: compute the input</text>
+</g>
+<!-- Model execution. -->
+<g id="model-execution">
+<rect x="610" y="130" width="300" height="350" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="630" y="166" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Model execution</text>
+<rect x="630" y="190" width="260" height="90" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="650" y="222" font-size="22" font-weight="700" text-anchor="start" fill="#172033">Prefill → scores</text>
+<text x="650" y="256" font-size="19" font-weight="400" text-anchor="start" fill="#172033">Process uncached input</text>
+<rect x="630" y="315" width="260" height="90" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="650" y="348" font-size="22" font-weight="700" text-anchor="start" fill="#172033">Decode → scores</text>
+<text x="650" y="382" font-size="19" font-weight="400" text-anchor="start" fill="#172033">Process chosen token</text>
+<text x="630" y="438" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Both use a per-request KV cache.</text>
+<text x="630" y="465" font-size="18" font-weight="400" text-anchor="start" fill="#172033">KV = attention keys and values</text>
+</g>
+<!-- Token selection. -->
+<g id="token-selection">
+<rect x="950" y="130" width="220" height="170" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="3" data-focus="true"/>
+<text x="970" y="166" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Select a token</text>
+<text x="970" y="200" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Read model scores</text>
+<text x="970" y="230" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Greedy choice or</text>
+<text x="970" y="260" font-size="18" font-weight="400" text-anchor="start" fill="#172033">weighted sampling</text>
+</g>
+<!-- Reply. -->
+<g id="reply">
+<rect x="1020" y="405" width="150" height="75" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="1095" y="437" font-size="22" font-weight="700" text-anchor="middle" fill="#172033">Reply ends</text>
+<text x="1095" y="465" font-size="18" font-weight="400" text-anchor="middle" fill="#172033">Stop condition</text>
+</g>
+<!-- External inputs. -->
+<g id="external-inputs">
+<rect x="30" y="350" width="250" height="130" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="50" y="386" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Saved chats / notes</text>
+<text x="50" y="422" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Select relevant information</text>
+<text x="50" y="452" font-size="18" font-weight="400" text-anchor="start" fill="#172033">to include in this call.</text>
+<rect x="320" y="350" width="250" height="130" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="340" y="386" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Prior prefix state</text>
+<text x="340" y="422" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Saved computation from</text>
+<text x="340" y="452" font-size="18" font-weight="400" text-anchor="start" fill="#172033">an earlier request.</text>
+<path data-connector="true" d="M 155,350 L 155,301" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="155,290 161,302 149,302" fill="#64748b"/>
+<text x="170" y="328" font-size="18" font-weight="400" text-anchor="start" fill="#172033">read</text>
+<path data-connector="true" d="M 445,350 L 445,301" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="445,290 451,302 439,302" fill="#64748b"/>
+<text x="460" y="328" font-size="18" font-weight="400" text-anchor="start" fill="#172033">look up</text>
+</g>
+<!-- Request flow. -->
+<g id="request-flow">
+<path data-connector="true" d="M 280,220 L 309,220" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="320,220 308,226 308,214" fill="#64748b"/>
+<path data-connector="true" d="M 570,235 L 619,235" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="630,235 618,241 618,229" fill="#64748b"/>
+<path data-connector="true" d="M 890,220 L 939,220" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="950,220 938,226 938,214" fill="#64748b"/>
+<path data-connector="true" d="M 890,360 L 925,360 L 925,270 L 939,270" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="950,270 938,276 938,264" fill="#64748b"/>
+<path data-connector="true" d="M 980,300 L 980,540 L 590,540 L 590,360 L 619,360" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="630,360 618,366 618,354" fill="#64748b"/>
+<text x="605" y="524" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Continue: feed the chosen token back</text>
+<path data-connector="true" d="M 1110,300 L 1110,394" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="1110,405 1104,393 1116,393" fill="#64748b"/>
+<text x="1125" y="361" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Stop</text>
+</g>
+<!-- Information boundaries. -->
+<g id="information-boundaries">
+<rect x="30" y="580" width="1140" height="88" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" />
+<text x="50" y="614" font-size="21" font-weight="700" text-anchor="start" fill="#172033">Model weights stay fixed during inference. The context window limits input plus generated output.</text>
+<text x="50" y="648" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Saved notes add information to the input. Caches reuse computation; they do not expand that window.</text>
+</g>
+</g>
+<text x="30" y="721" font-size="26" font-weight="700" text-anchor="start" fill="#172033">Scores become one chosen token</text>
+<!-- Topic worked example. -->
+<g id="topic-worked-example">
+<rect x="30" y="766" width="340" height="178" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5" />
+<text x="50" y="802" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Model scores</text>
+<text x="50" y="839" font-size="21" font-weight="400" text-anchor="start" fill="#172033">cat: 2   dog: 1   fox: 0</text>
+<text x="50" y="871" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Softmax turns scores</text>
+<text x="50" y="903" font-size="21" font-weight="400" text-anchor="start" fill="#172033">into probabilities.</text>
+<rect x="430" y="766" width="340" height="178" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5" />
+<text x="450" y="802" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Selection rule</text>
+<text x="450" y="839" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Greedy picks cat.</text>
+<text x="450" y="871" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Sampling may pick dog.</text>
+<text x="450" y="903" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Choice is not a fact check.</text>
+<rect x="830" y="766" width="340" height="178" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5" />
+<text x="850" y="802" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Next step</text>
+<text x="850" y="839" font-size="21" font-weight="400" text-anchor="start" fill="#172033">Feed that token back</text>
+<text x="850" y="871" font-size="21" font-weight="400" text-anchor="start" fill="#172033">unless a stop condition</text>
+<text x="850" y="903" font-size="21" font-weight="400" text-anchor="start" fill="#172033">ends the reply.</text>
+<path data-connector="true" d="M 370,850 L 419,850" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="430,850 418,856 418,844" fill="#64748b"/>
+<path data-connector="true" d="M 770,850 L 819,850" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="830,850 818,856 818,844" fill="#64748b"/>
+<text x="30" y="987" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Same scores can lead to different continuations under different selection rules.</text>
+</g>
 </svg>

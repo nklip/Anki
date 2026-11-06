@@ -2,62 +2,63 @@
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-**An embedding is the learned starting vector that a model gives each token. Position information lets the model also tell where each token sits.** Together they give the transformer blocks what they need: what each token is, and where it is.
+**A token embedding supplies a token's starting vector; position information supplies its place in the sequence.** A **vector** is an ordered list of numbers. Transformer blocks turn starting vectors into working representations that depend on surrounding text.
 
 ## Where this fits
 
-Embeddings are the first step inside the model, right after tokenization:
+Tokenization assigns numeric IDs to text pieces; embedding lookup turns those IDs into vectors. Attention later mixes information between positions.
 
-Read left to right; the panels below show two ways to supply position information.
+The upper map highlights the embedding entry point. The lower panel distinguishes token identity from two position designs: adding position vectors before the blocks or applying rotations inside attention.
 
 ![where-this-fits.svg](images/where-this-fits.svg)
 
-[The transformer forward pass](../The%20transformer%20forward%20pass/Readme.md) showed the lookup in one step. This article explains what the starting vectors carry, why context changes them, and how word order gets in.
+## Token embeddings and contextual representations
 
-## From token identity to context
+A **token embedding table** stores one learned vector per token ID. A **token embedding** is the row selected by an ID. Training adjusts the table; ordinary use leaves it fixed. The first panel shows an ID selecting its row.
 
-A **token embedding table** holds one learned vector for each token ID, and looking up an ID returns its row. Training adjusts the table; using the model does not change it.
+A **contextual representation**, also called a **hidden state**, is a later working vector that depends on the input around that token. The second panel shows why it differs from the lookup row.
 
 ![token-and-context.svg](images/token-and-context.svg)
 
-A starting vector knows only *which* token this is, not what it means here. In the diagram, `bank` gets the same lookup vector, `[2, 1]`, in “river bank” and in “savings bank,” because the lookup cannot see the neighbors. The transformer blocks then mix in information from earlier tokens, so the later vectors at `bank` differ. A vector that depends on its context like this is a **contextual representation**, also called a **hidden state**.
-
-Two points to keep apart:
-
-- The table row stays fixed; the later vectors are recalculated for every input and differ from layer to layer.
-- The individual slots have no assigned meaning. The toy numbers are not labeled “water” or “money.”
+In this toy, `bank` is one token and always starts with `[2, 1]`. After the blocks process “river bank” or “savings bank,” its vectors differ. These numbers are invented: individual slots are not labeled “water” or “money.” Hidden states are recalculated for each input and change across layers; the embedding-table row stays fixed.
 
 ## Retrieval embeddings have a different job
 
-The word “embedding” also names a different tool. A **retrieval embedding** represents a whole question or passage as one vector, so that a search system can find text with similar meaning. For example, “How do I reset my password?” should land near a help page about resetting passwords. Retrieval models are trained specially for this matching, which is the search step in a [RAG pipeline](../RAG%20pipeline/Readme.md).
+A **retrieval embedding** represents a whole query or passage as one vector for search. A compatible retrieval model places useful matches near one another in its search space.
 
-So a token embedding is a per-token starting point inside a language model, while a retrieval embedding summarizes a whole text for search. A hidden state from a text-generating model is not automatically a good search vector, and vectors from different systems cannot be compared just because they have the same length.
+![retrieval-embedding-search.svg](images/retrieval-embedding-search.svg)
 
-## Why the model needs position information
+Read left to right: a password-reset question becomes a query vector, a nearby passage is selected, and that passage's **text** goes into the generator's prompt. It is then tokenized normally. This happens outside the generator's token embedding lookup, as in [retrieval-augmented generation (RAG)](../RAG%20pipeline/Readme.md).
 
-“Dog bites person” and “person bites dog” contain the same tokens but mean different things. A token's table row says nothing about where the token occurs, so the model needs an explicit signal for order. Two common designs supply it.
+A hidden state from a text generator is not automatically a good search vector. Vectors from unrelated systems are not comparable merely because they have the same length.
+
+## Positional encoding: supplying order
+
+**Positional encoding** supplies numbers that distinguish positions. “Dog bites person” and “person bites dog” use the same words in different orders, so identity alone does not describe the sentence. There are different ways to add order information.
 
 ### Adding a position vector
 
+A **position vector** is a list of numbers assigned to a position. In the original Transformer, it is added to the token vector before the first block.
+
 ![added-position-vector.svg](images/added-position-vector.svg)
 
-The original Transformer added a second vector, one per position, to each token's starting vector before the blocks. In the diagram, the same token vector `[2, 1]` becomes `[2, 4]` at position 1 but `[3, 0]` at position 2, because each position adds its own vector. Position vectors can be learned, or produced by a fixed formula; the original Transformer used smooth wave patterns (sines and cosines).
+Add matching slots: `[2, 1] + [0, 3] = [2, 4]`. Move the same token to another position and a different position vector changes the sum. These toy values show the arithmetic. Position vectors can be learned or made by a fixed rule; the original Transformer used sine and cosine waves.
 
 ### Rotary position embeddings (RoPE)
 
-Llama-style models use **rotary position embeddings (RoPE)** instead, and nothing is added to the starting vector. Inside attention, each position makes a **query** and a **key**, the vectors that attention compares to decide where to look ([Attention: queries, keys, values, and heads](../Attention/Readme.md)). RoPE turns pairs of numbers in these vectors by an angle that grows with the token's position.
+**Rotary position embeddings (RoPE)** rotate pairs of numbers inside attention. A **query (Q)** represents what a position seeks; a **key (K)** represents what another position offers to match. RoPE rotates Q and K according to their positions before their comparison.
 
 ![rotary-position-gap.svg](images/rotary-position-gap.svg)
 
-The benefit is that the comparison depends on how far apart two tokens are, not on where they sit in the text. In the diagram's toy example, a key at position 2 and a query at position 5 end up 30° apart. Shift both one place later and they are still 30° apart, because the gap is still three positions. Real RoPE turns different pairs of numbers at different rates.
+The toy isolates position with identical starting directions and a turn of 10° per position. Key 2 and query 5 differ by 30°; shifting both to 3 and 6 keeps that gap. Real RoPE rotates different pairs at different rates, and the comparison still depends on token content.
 
-Position information and the causal mask are separate tools: position information says where tokens are, and the mask decides which tokens a position may look at.
+Llama-style models use RoPE inside attention, so no position vector is added to the starting embedding. Position information tells attention **where** tokens are; the rule that blocks future positions separately decides **which** positions may be read. See [Attention](../Attention/Readme.md) for the matching and masking calculation.
 
 # Sources
 
 - [PyTorch: embedding-table lookup](https://docs.pytorch.org/docs/2.15/generated/torch.nn.Embedding.html)
 - [Meta: Llama 3 embeddings, attention, and RoPE](https://github.com/meta-llama/llama3/blob/main/llama/model.py)
 - [Sentence-BERT: embeddings for text comparison](https://arxiv.org/abs/1908.10084)
-- [Sentence Transformers: semantic search](https://sbert.net/examples/sentence_transformer/applications/semantic-search/README.html)
-- [Attention Is All You Need: positional encoding, §3.5](https://arxiv.org/html/1706.03762v7)
+- [Sentence Transformers: semantic search and published search-space diagram](https://sbert.net/examples/sentence_transformer/applications/semantic-search/README.html)
+- [Google: Transformer architecture diagram and positional encoding, §3.5](https://arxiv.org/html/1706.03762v7)
 - [RoFormer: rotary position embeddings, §3](https://arxiv.org/html/2104.09864v5)
