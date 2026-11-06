@@ -108,13 +108,13 @@ It is possible to have a non-uniform key distribution on the ring. For instance,
 
 A virtual node refers to a real node, and each server is represented by multiple virtual nodes on the ring.
 
-In the image below, both `server 0` and `server 1` have 3 virtual nodes. The number 3 is arbitrarily chosen, and in real-world systems, the number of virtual nodes is much larger. Instead of using `s0`, we have `s0_0`, `s0_1`, and `s0_2` to represent server 0 on the ring. Similarly, `s1_0`, `s1_1`, and `s1_2` represent server 1 on the ring. With virtual nodes, each server is responsible for multiple partitions. Partitions (edges) with the label `s0` are managed by server 0. On the other hand, partitions with the label s1 are managed by server 1.
+In the image below, both `server 0` and `server 1` have 3 virtual nodes. The number 3 is arbitrarily chosen, and in real-world systems, the number of virtual nodes is much larger. Instead of using `s0`, we have `s0_0`, `s0_1`, and `s0_2` to represent server 0 on the ring. Similarly, `s1_0`, `s1_1`, and `s1_2` represent `server 1` on the ring. With virtual nodes, each server is responsible for multiple partitions. Partitions (edges) with the label `s0` are managed by server 0. On the other hand, partitions with the label s1 are managed by `server 1`.
 
 <p align="center">
   <img src="./images/virtual-nodes-1.svg" alt="virtual-nodes-1.svg" width="1000">
 </p>
 
-To find which server a key is stored on, we go clockwise from the key’s location and find the first virtual node encountered on the ring. In the image below, to find out which server `k0` is stored on, we go clockwise from `k0`’s location and find virtual node `s1_1`, which refers to server 1.
+To find which server a key is stored on, we go clockwise from the key’s location and find the first virtual node encountered on the ring. In the image below, to find out which server `k0` is stored on, we go clockwise from `k0`’s location and find virtual node `s1_1`, which refers to `server 1`.
 
 <p align="center">
   <img src="./images/virtual-nodes-2.svg" alt="virtual-nodes-2.svg" width="1000">
