@@ -16,7 +16,11 @@ The **runtime** is the application coordinating calls. It builds the **context**
 
 ![next-call-context.svg](images/next-call-context.svg)
 
-Read from the available pool to the four selected panels. **Instructions** state the goal and constraints. **Tool descriptions** explain available operations and inputs. **Progress** records checked work and remaining work. **Retrieved evidence** is relevant material brought back from files or other sources.
+Read from the available pool to the four selected panels:
+* **Instructions** state the goal and constraints.
+* **Tool descriptions** explain available operations and inputs.
+* **Progress** records checked work and remaining work.
+* **Retrieved evidence** is relevant material brought back from files or other sources.
 
 A path locates evidence; it does not provide file contents. Select context again after new results.
 

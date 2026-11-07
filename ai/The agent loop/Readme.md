@@ -12,7 +12,9 @@ The shared map highlights **loop control**. Follow the arrows from context to a 
 
 ## State and context
 
-**State** is the run's working record: goal, earlier calls and results, unfinished work, and remaining limits. **Context** is the information supplied to one model call. The runtime selects it from that state and other relevant sources.
+**State** is the run's working record: goal, earlier calls and results, unfinished work, and remaining limits.
+
+**Context** is the information supplied to one model call. The runtime selects it from that state and other relevant sources.
 
 ![agent-loop.svg](images/agent-loop.svg)
 
