@@ -30,6 +30,8 @@ Gateway API requires its **Custom Resource Definitions (CRDs)** and a compatible
 
 ## Choose the exposure
 
+It's not mandatory to use Ingress or Gateway API to access Service. You can choose from below options:
+
 | Service type | What it provides |
 | --- | --- |
 | `ClusterIP` | A cluster-internal virtual IP; the default type. |
