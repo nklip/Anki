@@ -6,7 +6,7 @@ Anki-ready cards on **distributed systems**, each with its own teaching diagrams
 Each topic has its own folder, with diagrams in its `images/` directory.
 
 ## Content
- * [Apache Flink](./Apache%20Flink/Readme.md) — stateful stream processing, event time, windows, checkpoints, parallelism, and recovery guarantees.
+ * [Apache Flink](./Apache%20Flink/Readme.md) — implementation languages, common uses, a live sales example, and streaming alternatives.
  * [Apache Kafka](./Apache%20Kafka/Readme.md) — partitioned logs, consumer groups, durability, deployments, and event-driven patterns.
  * [Apache Kafka. Connect](./Apache%20Kafka.%20Connect/Readme.md) — source and sink connectors, workers and tasks, CDC, recovery, delivery boundaries, and the outbox pattern.
  * [Apache Kafka. Delivery and transactions](./Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md) — offset commits, replay, idempotence, Kafka transactions, Spring integration, and recovery boundaries.
