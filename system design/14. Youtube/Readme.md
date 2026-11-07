@@ -75,10 +75,11 @@ Now that we understand each component individually, let us examine how the video
 - [2] Transcoding servers fetch videos from the original storage and start transcoding.
 - [3] Once transcoding is complete, the following two steps are executed in parallel:
     - [3a] Transcoded videos are sent to transcoded storage.
+        - [3a.1] Transcoded videos are distributed to the CDN.
     - [3b] Transcoding completion events are queued in the completion queue.
-- [3a.1] Transcoded videos are distributed to the CDN.
-- [3b.1] The completion handler contains a bunch of workers that continuously pull event data from the queue.
-- [3b.1.a] and [3b.1.b] The completion handler updates the metadata database and cache when video transcoding is complete.
+        - [3b.1] The completion handler contains a bunch of workers that continuously pull event data from the queue.
+            - [3b.1.a] The completion handler updates the Metadata DB when video transcoding is complete.
+            - [3b.1.b] The completion handler updates the Metadata Cache when video transcoding is complete.
 - [4] API servers inform the client that the video has been successfully uploaded and is ready for streaming.
 
 #### **Update the metadata**
@@ -144,7 +145,7 @@ The architecture has six main components: preprocessor, DAG scheduler, resource 
 1. **Preprocessor**
 
     The preprocessor has 4 responsibilities:
-    1. Video splitting. The video stream is split or further split into smaller segments aligned with Group of Pictures (GOP) boundaries. A GOP is a group / chunk of frames arranged in a specific order. Each chunk is an independently playable unit, usually a few seconds in length.
+    1. Video splitting. The video stream is split or further split into smaller segments aligned with **Group of Pictures (GOP)** boundaries. A GOP is a group / chunk of frames arranged in a specific order. Each chunk is an independently playable unit, usually a few seconds in length.
     2. Some old mobile devices or browsers might not support video splitting. The preprocessor splits videos by GOP alignment for old clients.
     3. DAG generation. The preprocessor generates a DAG based on configuration files client programmers write. The image below shows two configuration files which can create a DAG representation.
         <div style="margin-left: 3em;">
@@ -203,7 +204,7 @@ The architecture has six main components: preprocessor, DAG scheduler, resource 
 
 #### **Parallelize video uploading**
 
-Split videos into smaller chunks for faster, resumable uploads.
+Split videos (by Group of Pictures alignment) into smaller chunks for faster, resumable uploads.
 
 <img src="./images/video-split.svg" alt="video-split.svg" width="1000">
 
