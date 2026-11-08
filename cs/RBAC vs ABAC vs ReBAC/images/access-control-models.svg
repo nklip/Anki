@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="726" viewBox="0 0 1100 726" role="img" aria-labelledby="title desc">
+  <title id="title">Three ways to decide whether Alice may read a budget document</title>
+  <desc id="desc">Read each row from left to right. Role-based access control: Alice has the FinanceReader role, which permits reading budget documents. Attribute-based access control: Alice and the document have matching Finance departments and the request is during working hours, satisfying the read rule. Relationship-based access control: Alice is a viewer of a folder containing the budget document; the policy lets folder viewers read contained documents. Each example allows this read request under a separate policy.</desc>
+
+  <!-- Shared type hierarchy and connector style; row colors distinguish models only. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172b3a; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 21px; fill: #486171; }
+      .heading { font-size: 24px; font-weight: 700; }
+      .label { font-size: 21px; text-anchor: middle; }
+      .small { font-size: 18px; text-anchor: middle; fill: #365366; }
+      .note { font-size: 20px; fill: #365366; }
+      .result { font-size: 21px; font-weight: 700; text-anchor: middle; fill: #176344; }
+      .flow { fill: none; stroke: #365366; stroke-width: 2.5; }
+      .head { fill: #365366; }
+      .node { fill: #fff; stroke: #aabac5; stroke-width: 1.5; }
+      .allow { fill: #edf8f1; stroke: #80b89a; stroke-width: 1.5; }
+    </style>
+  </defs>
+
+  <!-- One shared question keeps the three separate example policies comparable. -->
+  <rect id="background" width="1100" height="726" fill="#fff" />
+  <text class="title" x="28" y="43">May Alice read this budget document?</text>
+  <text class="subtitle" x="28" y="76">Three separate example policies. Follow each row from left to right.</text>
+
+  <!-- RBAC: role assignment leads to a permission. Arrow tips stop before node borders. -->
+  <g id="rbac-row">
+    <rect x="28" y="100" width="1044" height="182" rx="14" fill="#eff7fc" stroke="#b0d1e4" />
+    <text class="heading" x="48" y="135">RBAC · Role-based access control</text>
+    <rect class="node" x="48" y="164" width="120" height="62" rx="9" />
+    <text class="label" x="108" y="202">Alice</text>
+    <rect class="node" x="290" y="164" width="215" height="62" rx="9" />
+    <text class="label" x="397.5" y="190">FinanceReader</text>
+    <text class="small" x="397.5" y="213">role</text>
+    <rect class="node" x="618" y="164" width="234" height="62" rx="9" />
+    <text class="label" x="735" y="190">Read budget docs</text>
+    <text class="small" x="735" y="213">permission</text>
+    <rect class="allow" x="925" y="164" width="127" height="62" rx="9" />
+    <text class="result" x="988.5" y="202">ALLOW</text>
+    <!-- Each shaft ends 2 units inside its triangle base, hiding the join. -->
+    <path id="role-assignment-shaft" class="flow" data-connector="true" d="M176 195H268" />
+    <polygon class="head" points="280,195 266,187 266,203" />
+    <path id="role-permission-shaft" class="flow" data-connector="true" d="M513 195H596" />
+    <polygon class="head" points="608,195 594,187 594,203" />
+    <path id="role-result-shaft" class="flow" data-connector="true" d="M860 195H903" />
+    <polygon class="head" points="915,195 901,187 901,203" />
+    <text class="small" x="228" y="177">has role</text>
+    <text class="small" x="560" y="177">grants</text>
+    <text class="note" x="48" y="259">The permission comes through Alice's assigned role.</text>
+  </g>
+
+  <!-- ABAC: concrete attributes feed an explicit AND rule for the requested action. -->
+  <g id="abac-row">
+    <rect x="28" y="298" width="1044" height="200" rx="14" fill="#fff8eb" stroke="#dfc895" />
+    <text class="heading" x="48" y="333">ABAC · Attribute-based access control</text>
+    <rect class="node" x="48" y="352" width="392" height="100" rx="9" />
+    <text class="label" x="244" y="380">Alice's department: Finance</text>
+    <text class="label" x="244" y="409">Document's department: Finance</text>
+    <text class="label" x="244" y="438">Working hours: yes</text>
+    <rect class="node" x="518" y="352" width="334" height="100" rx="9" />
+    <text class="label" x="685" y="380">Allow read when:</text>
+    <text class="label" x="685" y="409">departments match</text>
+    <text class="label" x="685" y="438">AND within working hours</text>
+    <rect class="allow" x="925" y="371" width="127" height="62" rx="9" />
+    <text class="result" x="988.5" y="409">ALLOW</text>
+    <path id="attributes-rule-shaft" class="flow" data-connector="true" d="M448 402H496" />
+    <polygon class="head" points="508,402 494,394 494,410" />
+    <path id="attributes-result-shaft" class="flow" data-connector="true" d="M860 402H903" />
+    <polygon class="head" points="915,402 901,394 901,410" />
+    <text class="note" x="48" y="478">Both conditions must hold for this example rule to allow reading.</text>
+  </g>
+
+  <!-- ReBAC: labeled relations form a path; the note states the required inheritance policy. -->
+  <g id="rebac-row">
+    <rect x="28" y="514" width="1044" height="184" rx="14" fill="#f7f2fc" stroke="#c9b5e2" />
+    <text class="heading" x="48" y="549">ReBAC · Relationship-based access control</text>
+    <rect class="node" x="48" y="580" width="120" height="62" rx="9" />
+    <text class="label" x="108" y="618">Alice</text>
+    <rect class="node" x="320" y="580" width="185" height="62" rx="9" />
+    <text class="label" x="412.5" y="618">Folder</text>
+    <rect class="node" x="658" y="580" width="194" height="62" rx="9" />
+    <text class="label" x="755" y="618">Budget document</text>
+    <rect class="allow" x="925" y="580" width="127" height="62" rx="9" />
+    <text class="result" x="988.5" y="618">ALLOW</text>
+    <path id="viewer-relation-shaft" class="flow" data-connector="true" d="M176 611H298" />
+    <polygon class="head" points="310,611 296,603 296,619" />
+    <path id="folder-relation-shaft" class="flow" data-connector="true" d="M513 611H636" />
+    <polygon class="head" points="648,611 634,603 634,619" />
+    <path id="relationship-result-shaft" class="flow" data-connector="true" d="M860 611H903" />
+    <polygon class="head" points="915,611 901,603 901,619" />
+    <text class="small" x="243" y="590">is viewer of</text>
+    <text class="small" x="580" y="590">contains</text>
+    <text class="note" x="48" y="676">Policy: a folder's viewers may read documents inside it.</text>
+  </g>
+</svg>

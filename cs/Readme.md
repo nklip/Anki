@@ -34,6 +34,7 @@ Every card lives in its own folder as `Readme.md`, with its diagrams in a siblin
  * [Protocols. SSE](./Protocols.%20SSE/Readme.md) - one HTTP response that never ends, the four wire-format fields, automatic reconnection with Last-Event-ID, and the five patterns built on top
  * [Protocols. SSH](./Protocols.%20SSH/Readme.md) - server verification, user authentication, and encrypted remote commands
  * [Protocols. WebSocket](./Protocols.%20WebSocket/Readme.md) - the upgrade handshake, frames and masking, what proxies and load balancers do to a long-lived connection, and the five patterns built on top
+ * [RBAC vs ABAC vs ReBAC](./RBAC%20vs%20ABAC%20vs%20ReBAC/Readme.md) - access decisions based on roles, attributes, or relationships, with a shared document example
  * [REST naming convention](./REST%20naming%20convention/Readme.md) - how to name resources, collections, and actions in an HTTP API
  * [SOLID](./SOLID/Readme.md) - the five design principles, the problem each one solves, and how to spot a violation
  * [STAR](./STAR/Readme.md) - the situation, task, action, and result structure for behavioural interview answers
