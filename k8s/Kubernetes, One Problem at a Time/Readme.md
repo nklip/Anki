@@ -61,6 +61,12 @@ So you install a compatible **Ingress controller**. It reads the rules and progr
 
 The Ingress API is frozen. Kubernetes recommends **Gateway API** for new capabilities; it also needs a compatible implementation. The existing [Ingress card](../Ingress/Readme.md#gateway-api-version) shows how Gateway resources express the same routing story.
 
+### How the first three pieces fit together
+
+Read this overview as two connected paths. On the **left**, Kubernetes keeps the declared Pods running on worker nodes. On the **right**, browser traffic reaches those Pods through the external entry point and the Service. The diagram uses a separate `checkout` example with **four replicas** and the label `app=checkout`; the shop story above starts with three replicas and `app: web`.
+
+![k8s-cluster.svg](images/k8s-cluster.svg)
+
 Customers can now reach the right application. Next, you deploy that application in staging and discover that reaching it is not enough: it must also use the right environment's settings.
 
 ## Step 4 — ConfigMap and Secret
@@ -183,6 +189,7 @@ During a traffic spike, HPA may request more replicas, a ReplicaSet creates Pods
 
 # Sources
 
+- [Kubernetes — Cluster components and their responsibilities](https://kubernetes.io/docs/concepts/overview/components/)
 - [Kubernetes — Pods and container grouping](https://kubernetes.io/docs/concepts/workloads/pods/)
 - [Kubernetes — Pod lifecycle, container restarts, and replacement](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)
 - [Kubernetes — Deployments and ReplicaSets](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)

@@ -20,7 +20,11 @@ The two containers below run on the same node. They share a network and the expl
 
 ## Scale Pods, not containers inside a Pod
 
-To run three independent copies of a web application, normally use three Pods managed by a Deployment. Putting three web containers into one Pod couples their placement and lifecycle instead of creating independently managed replicas.
+To run four independent copies of a web application, normally use four Pods managed by a [Deployment](../Deployments/Readme.md). Putting four web containers into one Pod couples their placement and lifecycle instead of creating independently managed replicas.
+
+Focus on the **worker-node section at the bottom** of the cluster overview below. Pods A–D are four application replicas, with two Pods on each worker node. Each Pod runs entirely on one node; separate replicas can share a node or run on different nodes.
+
+![k8s-cluster.svg](images/k8s-cluster.svg)
 
 ### A replacement is a new Pod
 

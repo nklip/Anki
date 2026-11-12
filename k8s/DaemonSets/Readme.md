@@ -8,7 +8,11 @@ What does a DaemonSet maintain, and when should you use one instead of a Replica
 
 # Back
 
-**A DaemonSet aims to run one copy of its Pod on every eligible node.** A Pod runs one or more containers together; a node is a machine that runs Pods. Use a DaemonSet for services each machine needs, such as log collectors, node monitoring agents, or network helpers.
+* A Pod runs one or more containers together.
+* A Node is a machine that runs Pods.
+* A **DaemonSet** aims to run one copy of its Pod on every eligible node.
+
+Use a DaemonSet for services each machine needs, such as log collectors, node monitoring agents, or network helpers.
 
 ## Coverage follows the nodes
 

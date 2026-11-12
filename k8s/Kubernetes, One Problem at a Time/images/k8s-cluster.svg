@@ -1,0 +1,407 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2486" height="3002" viewBox="0 0 2486 3002" role="img" aria-labelledby="title desc">
+<title id="title">Kubernetes Explained for Busy Engineers</title>
+<desc id="desc">Editable vector recreation of the supplied ByteByteGo diagram. On the left, an engineer, CI, or GitOps updates a Deployment specification that is applied to the API server. The control plane maintains application Pods on two worker nodes, each with a container runtime, kubelet, and kube-proxy. On the right, browser traffic reaches an Ingress or Gateway, then a Service selecting the four Pods labelled app=checkout. The original simplified component model and branding are preserved.</desc>
+<!-- Reference: k8s-cluster.png. Diagram labels are live text; icons use editable vector geometry. -->
+<!-- Reusable icon symbols preserve the supplied artwork without embedded bitmap data. Rounded strokes and padded viewports keep arrow tips intact. -->
+<defs>
+<symbol id="icon-engineer" viewBox="0 0 153 155">
+      <g transform="translate(-540 -337)">
+        <!-- Hair, face, clothing, and laptop use separate editable shapes. -->
+        <path d="M561 427 V382 C561 362 577 346 597 346 C617 346 633 362 633 382 V427 Z" fill="#fd7da0"/>
+        <path d="M561 393 Q597 428 633 393 V427 H561 Z" fill="#db4b86"/>
+        <path d="M561 427 V382 C561 362 577 346 597 346 C617 346 633 362 633 382 V427" fill="none" stroke="#000000" stroke-width="6.5" stroke-linejoin="round"/>
+        <path d="M548 477 V449 Q548 426 573 426 H585 L597 434 L609 426 H624 V477 Z" fill="#51bfd9"/>
+        <path d="M597 434 L609 426 H624 V477 H592 V468 L597 458 Z" fill="#0595b7"/>
+        <path d="M548 477 V449 Q548 426 573 426 H585 L597 434 L609 426 H624 V477 Z M568 450 V477" fill="none" stroke="#000000" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/>
+        <path d="M586 410 V424 L597 433 L608 424 V410 Z" fill="#f7b073" stroke="#000000" stroke-width="5.5" stroke-linejoin="round"/>
+        <path d="M577 381 H598 Q604 381 604 375 Q604 381 610 381 H617 V393 C617 406 608 415 597 415 C586 415 577 406 577 393 Z" fill="#fde0be"/>
+        <path d="M577 381 H598 Q604 381 604 375 Q604 381 610 381 H617 V394 H577 Z" fill="#f7b073"/>
+        <path d="M577 381 H598 Q604 381 604 375 Q604 381 610 381 H617 V393 C617 406 608 415 597 415 C586 415 577 406 577 393 Z" fill="none" stroke="#000000" stroke-width="5.5" stroke-linejoin="round"/>
+        <path d="M615 470 V440 Q615 427 628 427 H668 Q681 427 681 440 V470 Z" fill="#7dd7ec" stroke="#000000" stroke-width="6" stroke-linejoin="round"/>
+        <path d="M612 470 H685 V477 Q685 484 678 484 H619 Q612 484 612 477 Z" fill="#93b2f4" stroke="#000000" stroke-width="6" stroke-linejoin="round"/>
+        <path d="M635 440 L628 447 L635 454 M651 439 L648 455 M663 440 L670 447 L663 454" fill="none" stroke="#ffffff" stroke-width="4.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </symbol>
+<symbol id="icon-ci" viewBox="0 0 162 155">
+  <!-- Clean geometric reconstruction; stroke extents stay inside the symbol viewport. -->
+  <g transform="translate(-887 -336)">
+    <g fill="none" stroke="#000000" stroke-width="3.5" stroke-linejoin="round">
+      <path d="M968 428 V460 M904 460 V443 H1032 V460"/>
+    </g>
+    <path d="M925.499 374.112 A44 44 0 1 1 924.136 388.952" fill="#a9defc" stroke="#000000" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M924.5 380 V382" fill="none" stroke="#000000" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M942 380 Q947 375 952 380 L964 392 L985 367 Q990 361 995 366 Q1000 371 995 377 L970 404 Q964 410 958 404 L941 388 Q937 384 942 380 Z" fill="#f7f5fb" stroke="#000000" stroke-width="3.5" stroke-linejoin="round"/>
+    <g stroke="#000000" stroke-width="3.5">
+      <rect x="891" y="458" width="25" height="25" rx="11" fill="#6cbcba"/>
+      <rect x="956" y="458" width="25" height="25" rx="11" fill="#74d1d1"/>
+      <rect x="1019" y="458" width="25" height="25" rx="11" fill="#74d1d1"/>
+    </g>
+    <path d="M959 462 L976 478 Q970 482 965 480 Q958 478 958 471 Z" fill="#6cbcba"/>
+  </g>
+</symbol>
+<symbol id="icon-gitops" viewBox="0 0 128 127">
+  <!-- Clean geometric reconstruction; stroke extents stay inside the symbol viewport. -->
+  <g transform="translate(-1293 -339)">
+    <g fill="none" stroke="#000000" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+      <path id="gitops-forward-shaft" d="M1319 380 V426 Q1319 438 1331 438 H1354"/>
+      <path id="gitops-forward-head" d="M1341 422 L1356 438 L1341 454"/>
+      <path id="gitops-return-shaft" d="M1393 423 V378 Q1393 366 1381 366 H1359"/>
+      <path id="gitops-return-head" d="M1372 350 L1357 366 L1372 382"/>
+    </g>
+    <g fill="#d7dfff" stroke="#000000" stroke-width="6" stroke-linejoin="round">
+      <rect x="1303" y="349" width="32" height="32" rx="3"/>
+      <rect x="1377" y="423" width="32" height="31" rx="3"/>
+    </g>
+  </g>
+</symbol>
+<symbol id="icon-yaml" viewBox="0 0 122 152">
+  <!-- Clean geometric reconstruction; stroke extents stay inside the symbol viewport. -->
+  <g transform="translate(-704 -743)">
+    <path d="M726 750 H787 L818 781 V875 Q818 886 807 886 H725 Q714 886 714 875 V762 Q714 750 726 750 Z" fill="#cbe5ff" stroke="#0e0e0e" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M787 750 V769 Q787 780 798 780 H818 M714 846 H818" fill="none" stroke="#0e0e0e" stroke-width="3.5" stroke-linejoin="round"/>
+    <!-- YAML stays live text in the diagram's label layer. -->
+    <path d="M732 768 H747 M759 768 H784 M732 783 H759 M771 783 H779 M732 798 H740 M751 798 H801 M732 813 H778 M790 813 H801 M732 828 H754 M766 828 H801" fill="none" stroke="#0e0e0e" stroke-width="3.5" stroke-linecap="round"/>
+  </g>
+</symbol>
+<symbol id="icon-browser" viewBox="0 0 222 184">
+  <!-- Clean geometric reconstruction; stroke extents stay inside the symbol viewport. -->
+  <g transform="translate(-1943 -720)">
+    <!-- Rounded browser chrome is constructed directly; the cursor remains a separate foreground shape. -->
+    <rect x="1954" y="732" width="168" height="134" rx="17" fill="#ffffff"/>
+    <path d="M1971 732 H2105 Q2122 732 2122 749 V768 H1954 V749 Q1954 732 1971 732 Z" fill="#7dd7ec"/>
+    <g fill="#ffffff"><circle cx="1972" cy="750" r="4.5"/><circle cx="1990" cy="750" r="4.5"/><circle cx="2008" cy="750" r="4.5"/></g>
+    <g fill="#d2dcfd">
+      <rect x="1972" y="786" width="33" height="45"/>
+      <rect x="2024" y="786" width="31" height="62"/>
+      <rect x="2073" y="786" width="31" height="62"/>
+      <rect x="1968" y="844" width="42" height="9" rx="4.5"/>
+      <path d="M2073 814 C2088 803 2104 813 2122 820 V866 H2078 C2063 839 2060 827 2073 814 Z"/>
+    </g>
+    <path d="M2073 814 C2087 805 2096 810 2104 813 V848 H2073 Z" fill="#93b2f4"/>
+    <rect x="1954" y="732" width="168" height="134" rx="17" fill="none" stroke="#000000" stroke-width="9"/>
+    <path d="M2085 830 L2147 851 L2128 863 L2151 886 L2139 896 L2116 873 L2104 892 Z" fill="#fdcb50" stroke="#000000" stroke-width="8" stroke-linejoin="round"/>
+  </g>
+</symbol>
+<symbol id="icon-api" viewBox="0 0 104 105">
+      <g transform="translate(-878 -1301)">
+        <!-- Circuit branches remain continuous beneath the cloud. -->
+        <path d="M904 1360 V1369 L895.5 1376 V1389 M917 1360 V1369 L913 1374 V1380 M930 1360 V1389 M943 1360 V1369 L947.5 1374 V1380 M956 1360 V1369 L965 1376 V1389" fill="none" stroke="#51ca59" stroke-width="5" stroke-linejoin="round"/>
+        <g fill="#fd7da0" stroke="#000000" stroke-width="3.5">
+          <circle cx="895.5" cy="1393.5" r="4.5"/><circle cx="913" cy="1383.5" r="4.5"/><circle cx="930" cy="1393.5" r="4.5"/><circle cx="947.5" cy="1383.5" r="4.5"/><circle cx="965" cy="1393.5" r="4.5"/>
+        </g>
+        <path d="M903 1360 C893 1360 887 1354 887 1346 C887 1338 893 1332 901 1331 C901 1323 907 1317 915 1317 Q919 1317 922 1320 C927 1312 933 1308 940 1309 C953 1310 961 1318 962 1330 C970 1332 975 1338 975 1346 C975 1354 969 1360 960 1360 Z" fill="#27b977"/>
+        <path d="M940 1309 C953 1310 961 1318 962 1330 C970 1332 975 1338 975 1346 C975 1354 969 1360 960 1360 H942 C929 1347 927 1326 940 1309 Z" fill="#67d16d"/>
+        <path d="M903 1360 C893 1360 887 1354 887 1346 C887 1338 893 1332 901 1331 C901 1323 907 1317 915 1317 Q919 1317 922 1320 C927 1312 933 1308 940 1309 C953 1310 961 1318 962 1330 C970 1332 975 1338 975 1346 C975 1354 969 1360 960 1360 Z" fill="none" stroke="#000000" stroke-width="3.5" stroke-linejoin="round"/>
+      </g>
+    </symbol>
+<symbol id="icon-controller" viewBox="0 0 137 140">
+  <!-- Clean geometric reconstruction; stroke extents stay inside the symbol viewport. -->
+  <g transform="translate(-532 -1617)">
+    <g fill="none" stroke="#040404" stroke-width="3.3" stroke-linecap="round" stroke-linejoin="round">
+      <path id="controller-clockwise-shaft" d="M540.5 1669 C558 1615 625 1611 650.5 1662"/>
+      <path id="controller-clockwise-head" d="M637 1655 L651 1663 L657 1648"/>
+      <path id="controller-return-shaft" d="M650.5 1715.5 C633 1754 568 1755 542 1707"/>
+      <path id="controller-return-head" d="M536 1721 L542 1707 L555.5 1714"/>
+    </g>
+    <path d="M591.72 1654.23 L590.87 1647.28 L600.13 1647.28 L599.28 1654.23 L604.56 1655.35 L610.05 1657.63 L614.59 1660.57 L618.90 1655.06 L625.44 1661.60 L619.93 1665.91 L622.87 1670.45 L625.15 1675.94 L626.27 1681.22 L633.22 1680.37 L633.22 1689.63 L626.27 1688.78 L625.15 1694.06 L622.87 1699.55 L619.93 1704.09 L625.44 1708.40 L618.90 1714.94 L614.59 1709.43 L610.05 1712.37 L604.56 1714.65 L599.28 1715.77 L600.13 1722.72 L590.87 1722.72 L591.72 1715.77 L586.44 1714.65 L580.95 1712.37 L576.41 1709.43 L572.10 1714.94 L565.56 1708.40 L571.07 1704.09 L568.13 1699.55 L565.85 1694.06 L564.73 1688.78 L557.78 1689.63 L557.78 1680.37 L564.73 1681.22 L565.85 1675.94 L568.13 1670.45 L571.07 1665.91 L565.56 1661.60 L572.10 1655.06 L576.41 1660.57 L580.95 1657.63 L586.44 1655.35 Z" fill="#35b535" stroke="#040404" stroke-width="3" stroke-linejoin="miter"/>
+    <circle cx="595.5" cy="1685" r="24" fill="#ffffff" stroke="#040404" stroke-width="3"/>
+  </g>
+</symbol>
+<symbol id="icon-scheduler" viewBox="0 0 145 138">
+  <!-- Clean geometric reconstruction; stroke extents stay inside the symbol viewport. -->
+  <g transform="translate(-850 -1607)">
+    <circle cx="923" cy="1676" r="47" fill="none" stroke="#000000" stroke-width="4.5"/>
+    <g stroke="#000000" stroke-width="4.5" stroke-linejoin="round">
+      <path d="M886 1616 C871 1616 860 1627 866 1644 L886 1678 L906 1644 C912 1627 901 1616 886 1616 Z" fill="#50c958"/>
+      <path d="M960 1616 C945 1616 934 1627 940 1644 L960 1678 L980 1644 C986 1627 975 1616 960 1616 Z" fill="#54c755"/>
+      <path d="M923 1669 C908 1669 897 1680 903 1697 L923 1732 L943 1697 C949 1680 938 1669 923 1669 Z" fill="#67d16d"/>
+    </g>
+    <g fill="#ffffff"><circle cx="886" cy="1637" r="8"/><circle cx="960" cy="1637" r="8"/><circle cx="923" cy="1690" r="8"/></g>
+  </g>
+</symbol>
+<symbol id="icon-etcd" viewBox="0 0 145 156">
+      <g transform="translate(-1181 -1610)">
+        <!-- Cylinder bands and the overlapping key silhouettes share clean borders. -->
+        <path d="M1191 1633 H1274 V1698 L1251 1716 V1729 C1225 1735 1191 1729 1191 1716 Z" fill="#50ca58"/>
+        <path d="M1191 1661 C1191 1679 1274 1679 1274 1661 V1691 C1274 1709 1191 1709 1191 1691 Z" fill="#f2f2f2"/>
+        <g fill="none" stroke="#000000" stroke-width="4" stroke-linecap="round">
+          <path d="M1191 1633 V1698 M1191 1716 C1191 1727 1214 1731 1242 1730.5 M1274 1633 V1688"/>
+          <path d="M1191 1661 C1191 1679 1274 1679 1274 1661 M1191 1691 C1191 1709 1274 1709 1274 1691"/>
+        </g>
+        <circle cx="1191" cy="1707" r="2" fill="#000000"/>
+        <ellipse cx="1232.5" cy="1633" rx="41.5" ry="14.5" fill="#f2f2f2" stroke="#000000" stroke-width="4"/>
+        <path d="M1281 1707 L1312 1724 L1313 1731 L1303 1732 L1302 1724 L1297 1725 L1293 1722 L1292 1716 L1287 1717 L1279 1711 Z" fill="#fdcb50" stroke="#000000" stroke-width="3.5" stroke-linejoin="round"/>
+        <path d="M1281 1707 L1290 1712 L1285 1716 L1279 1711 Z" fill="#fd8f01"/>
+        <circle cx="1271" cy="1698" r="17.5" fill="#fd8f01" stroke="#000000" stroke-width="3.5"/>
+        <path d="M1251 1714 V1723 L1255 1727 L1251 1731 V1735 L1255 1739 L1251 1743 V1745 L1257 1751 L1263 1745 V1714 Z" fill="#fdcb50" stroke="#000000" stroke-width="3.5" stroke-linejoin="round"/>
+        <path d="M1253 1716 H1261 V1722 H1253 Z" fill="#fd8f01"/>
+        <circle cx="1257" cy="1698" r="17.5" fill="#fd8f01"/>
+        <path d="M1257 1680.5 A17.5 17.5 0 0 1 1267 1712 C1252 1710 1248 1696 1257 1680.5 Z" fill="#fdcb50"/>
+        <circle cx="1257" cy="1698" r="17.5" fill="none" stroke="#000000" stroke-width="3.5"/>
+        <circle cx="1257" cy="1692" r="4.5" fill="#dd795c"/>
+        <path d="M1257 1690 V1681 C1257 1667 1271 1670 1272 1680" fill="none" stroke="#000000" stroke-width="3.5" stroke-linecap="round"/>
+      </g>
+    </symbol>
+<symbol id="icon-gateway" viewBox="0 0 176 173">
+  <!-- Clean geometric reconstruction; stroke extents stay inside the symbol viewport. -->
+  <g transform="translate(-1951 -1172)">
+    <!-- Separate constant-width arrows, server outlines, and globe avoid tracing slivers. -->
+    <g fill="#e4f1ff" stroke="#373737" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M1976 1181 H1969 Q1963 1181 1963 1187 V1200 Q1963 1206 1969 1206 H2111 Q2117 1206 2117 1200 V1187 Q2117 1181 2111 1181 H1987"/>
+      <rect x="1963" y="1310" width="154" height="25" rx="6"/>
+      <path d="M1974 1194 H1981 M2016 1194 H2063 M2080 1206 V1199 M2093 1206 V1199 M2106 1206 V1199
+               M1974 1323 H1981 M2016 1323 H2063 M2080 1335 V1328 M2093 1335 V1328 M2106 1335 V1328"/>
+    </g>
+    <circle cx="2040" cy="1259" r="38" fill="#7dd7ec" stroke="#191919" stroke-width="5.5"/>
+    <g fill="none" stroke="#191919" stroke-width="4.5" stroke-linejoin="round">
+      <path d="M2040 1221 C2013 1245 2013 1273 2040 1297 C2067 1273 2067 1245 2040 1221"/>
+      <path d="M2006 1242 H2074 M2002 1259 H2078 M2006 1276 H2074"/>
+    </g>
+    <g fill="none" stroke="#373737" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+      <path id="gateway-down-shaft" d="M1976 1229 V1286"/>
+      <path id="gateway-down-head" d="M1968 1280 L1976 1288 L1984 1280"/>
+      <path id="gateway-up-shaft" d="M2104 1287 V1230"/>
+      <path id="gateway-up-head" d="M2096 1236 L2104 1228 L2112 1236"/>
+    </g>
+  </g>
+</symbol>
+<symbol id="icon-service" viewBox="0 0 201 187">
+      <g transform="translate(-1939 -1615)">
+        <!-- Symmetric circuit routes and circular terminals avoid trace fragments. -->
+        <g fill="none" stroke="#7dd7ec" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1969.5 1654.5 H1999.5 V1679.5 M2018.5 1662.5 V1679.5 M2039.5 1636 V1679.5 M2059.5 1662.5 V1679.5 M2108.5 1654.5 H2078.5 V1679.5"/>
+          <path d="M1954.5 1692.5 H1984.5 M1954.5 1726 H1984.5 M2093.5 1692.5 H2123.5 M2093.5 1726 H2123.5"/>
+          <path d="M1969.5 1763.5 H1999.5 V1739.5 M2018.5 1755.5 V1739.5 M2039.5 1782 V1739.5 M2059.5 1755.5 V1739.5 M2108.5 1763.5 H2078.5 V1739.5"/>
+        </g>
+        <g fill="#7dd7ec" stroke="#021011" stroke-width="8">
+          <circle cx="2039.5" cy="1636" r="7.5"/>
+          <circle cx="1969.5" cy="1654.5" r="7.5"/>
+          <circle cx="2108.5" cy="1654.5" r="7.5"/>
+          <circle cx="1954.5" cy="1692.5" r="7.5"/>
+          <circle cx="2123.5" cy="1692.5" r="7.5"/>
+          <circle cx="1954.5" cy="1726" r="7.5"/>
+          <circle cx="2123.5" cy="1726" r="7.5"/>
+          <circle cx="1969.5" cy="1763.5" r="7.5"/>
+          <circle cx="2108.5" cy="1763.5" r="7.5"/>
+          <circle cx="2039.5" cy="1782" r="7.5"/>
+        </g>
+        <rect x="1984.5" y="1679.5" width="109" height="60" rx="1" fill="#7dd7ec"/>
+        <path d="M1984.5 1679.5 H1999.5 Q1998 1695 2004 1709.5 Q2039 1737 2093.5 1721 V1739.5 H1984.5 Z" fill="#49c9d7"/>
+        <rect x="1984.5" y="1679.5" width="109" height="60" rx="1" fill="none" stroke="#021011" stroke-width="8"/>
+        <path d="M1984.5 1709.5 H2093.5" fill="none" stroke="#021011" stroke-width="8"/>
+        <g fill="#021011"><circle cx="1999.5" cy="1694.5" r="4"/><circle cx="1999.5" cy="1724.5" r="4"/></g>
+        <g fill="#f8fcff"><rect x="2026" y="1690.5" width="56" height="8" rx="4"/><rect x="2026" y="1720.5" width="56" height="8" rx="4"/></g>
+      </g>
+    </symbol>
+<symbol id="icon-pod" viewBox="0 0 116 115">
+  <!-- Clean geometric reconstruction; stroke extents stay inside the symbol viewport. -->
+  <g transform="translate(-284 -2259)">
+    <path d="M342 2269 L386 2290 Q389 2292 389 2297 V2343 Q389 2347 385 2349 L346 2367 Q342 2369 338 2367 L298 2349 Q294 2347 294 2343 V2297 Q294 2293 298 2291 Z" fill="#9cb1ff" stroke="#000000" stroke-width="5.5" stroke-linejoin="round"/>
+    <path d="M296 2292 L342 2269 L387 2292 L342 2314 Z" fill="#ffffff" stroke="#000000" stroke-width="5.5" stroke-linejoin="round"/>
+    <path d="M342 2314 V2366" fill="none" stroke="#000000" stroke-width="5.5"/>
+  </g>
+</symbol>
+<symbol id="icon-runtime" viewBox="0 0 127 139">
+      <g transform="translate(-267 -2449)">
+        <!-- Six-tooth gear; the cube uses one outer contour and three shared edges. -->
+        <path d="M324 2461 H336 L339 2481 Q351 2484 360 2492 L377 2485 L383 2496 L367 2509 Q370 2518 367 2527 L383 2540 L377 2551 L360 2544 Q351 2553 339 2556 L336 2575 H324 L321 2556 Q309 2553 300 2544 L283 2551 L277 2540 L293 2527 Q290 2518 293 2509 L277 2496 L283 2485 L300 2492 Q309 2484 321 2481 Z" fill="#9cb1ff" stroke="#212121" stroke-width="5.5" stroke-linejoin="round"/>
+        <path d="M330 2499 L351 2506 V2531 L330 2538 L309 2531 V2506 Z" fill="#feca5f" stroke="#212121" stroke-width="5.5" stroke-linejoin="round"/>
+        <path d="M309 2506 L330 2513 L351 2506 M330 2513 V2538" fill="none" stroke="#212121" stroke-width="5.5" stroke-linejoin="round"/>
+      </g>
+    </symbol>
+<symbol id="icon-kubelet" viewBox="0 0 118 123">
+      <g transform="translate(-253 -2681)">
+        <!-- Rack rails, status lights, and the gear retain round, unbroken outlines. -->
+        <rect x="273.5" y="2712" width="81" height="47" fill="#6864f7" stroke="#000000" stroke-width="4.5"/>
+        <g fill="#d2dcfd">
+          <rect x="263.5" y="2689.5" width="100" height="25"/><rect x="263.5" y="2723" width="100" height="25"/><rect x="263.5" y="2756.5" width="72" height="25"/>
+        </g>
+        <path d="M296 2748 C310 2719 342 2715 363.5 2731 V2748 Z M296 2756.5 H335.5 V2781.5 H305 Q297 2770 296 2756.5 Z" fill="#93b2f4"/>
+        <g fill="none" stroke="#000000" stroke-width="4.5" stroke-linejoin="round">
+          <rect x="263.5" y="2689.5" width="100" height="25"/><rect x="263.5" y="2723" width="100" height="25"/><rect x="263.5" y="2756.5" width="72" height="25"/>
+        </g>
+        <g fill="#a8d478" stroke="#000000" stroke-width="3.5">
+          <circle cx="275.5" cy="2702" r="4.5"/><circle cx="292" cy="2702" r="4.5"/>
+          <circle cx="275.5" cy="2735.5" r="4.5"/><circle cx="292" cy="2735.5" r="4.5"/>
+          <circle cx="275.5" cy="2769" r="4.5"/><circle cx="292" cy="2769" r="4.5"/>
+        </g>
+        <rect x="315" y="2698.5" width="41" height="7" fill="#ffffff"/>
+        <circle cx="334.5" cy="2760.5" r="29.5" fill="#fdcb50"/>
+        <path d="M327 2732 C303 2752 319 2785 354 2780 A29.5 29.5 0 1 1 327 2732 Z" fill="#fd8f01"/>
+        <circle cx="334.5" cy="2760.5" r="29.5" fill="none" stroke="#000000" stroke-width="4.5"/>
+        <path d="M331.55 2743.76 L330.77 2739.33 L338.23 2739.33 L337.45 2743.76 L341.01 2744.79 L344.25 2746.57 L346.83 2742.89 L352.11 2748.17 L348.43 2750.75 L350.21 2753.99 L351.24 2757.55 L355.67 2756.77 L355.67 2764.23 L351.24 2763.45 L350.21 2767.01 L348.43 2770.25 L352.11 2772.83 L346.83 2778.11 L344.25 2774.43 L341.01 2776.21 L337.45 2777.24 L338.23 2781.67 L330.77 2781.67 L331.55 2777.24 L327.99 2776.21 L324.75 2774.43 L322.17 2778.11 L316.89 2772.83 L320.57 2770.25 L318.79 2767.01 L317.76 2763.45 L313.33 2764.23 L313.33 2756.77 L317.76 2757.55 L318.79 2753.99 L320.57 2750.75 L316.89 2748.17 L322.17 2742.89 L324.75 2746.57 L327.99 2744.79 Z" fill="#93b2f4" stroke="#000000" stroke-width="4" stroke-linejoin="round"/>
+        <circle cx="334.5" cy="2760.5" r="9" fill="#ffffff"/>
+      </g>
+    </symbol>
+<symbol id="icon-proxy" viewBox="0 0 139 139">
+  <!-- Clean geometric reconstruction; stroke extents stay inside the symbol viewport. -->
+  <g transform="translate(-603 -2666)">
+    <!-- The original trace started at y=2678 and removed the arrow tip at y=2673.
+         Keep seven pixels above the round tip and padding below all three rings. -->
+    <g fill="none" stroke="#000000" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round">
+      <!-- Shafts end beneath the arrowhead and the blue rings, avoiding visible tails. -->
+      <path id="proxy-branch-shaft" d="M624.5 2761 V2750 Q624.5 2732 642.5 2732 H693.5 Q711.5 2732 711.5 2750 V2761"/>
+      <path id="proxy-center-shaft" d="M667.5 2761 V2677"/>
+      <path id="proxy-up-head" d="M651.5 2693.5 L667.5 2676 L683.5 2693.5"/>
+    </g>
+    <g fill="#ffffff" stroke="#016fbd" stroke-width="7.5">
+      <circle cx="624.5" cy="2774.5" r="12"/>
+      <circle cx="667.5" cy="2774.5" r="12"/>
+      <circle cx="711.5" cy="2774.5" r="12"/>
+    </g>
+  </g>
+</symbol>
+<symbol id="icon-brand" viewBox="0 0 54 70">
+      <g transform="translate(-2107 -64)">
+        <!-- Original ByteByteGo mark, with clean shared outlines. -->
+        <path d="M2116 123 V87 Q2116 73 2128 73 H2137 Q2151 73 2151 88 V97 Q2151 123 2125 123 Z" fill="#ffffff"/>
+        <path d="M2127 82 H2148 V97 Q2148 120 2127 121 Z" fill="#8ddeb9"/>
+        <g fill="none" stroke="#484848" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M2116 123 V87 Q2116 73 2128 73 H2137 Q2151 73 2151 88 V97 Q2151 123 2125 123 Z"/>
+          <path d="M2116 83 Q2127 85 2135 93 Q2143 84 2151 83 M2116 98 C2132 100 2134 116 2121 123"/>
+        </g>
+      </g>
+    </symbol>
+</defs>
+<rect id="canvas" x="0" y="0" width="2486" height="3002" rx="0" fill="#ffffff"/>
+<!-- Header and original ByteByteGo attribution. -->
+<rect id="title-accent" x="36" y="34" width="20" height="106" rx="10" fill="#19ab7e"/>
+<rect id="title-highlight" x="70" y="28" width="980" height="136" rx="24" fill="#0c9585"/>
+<use href="#icon-brand" x="2107" y="64" width="54" height="70"/>
+<!-- Specification authors: engineer, CI, and GitOps. -->
+<rect id="authors-frame" x="411" y="207" width="1086" height="382" rx="8" fill="#ffffff" stroke="#9ac2fa" stroke-width="2"/>
+<rect id="authors-title" x="410" y="206" width="1088" height="80" rx="8" fill="#0b63ce"/>
+<rect id="authors-panel" x="437" y="313" width="1030" height="250" rx="14" fill="#ffffff" stroke="#111827" stroke-width="3"/>
+<path id="authors-separator-1" d="M776 332 V545" fill="none" stroke="#cbd8e9" stroke-width="2.5" stroke-dasharray="8 10"/>
+<path id="authors-separator-2" d="M1150 332 V545" fill="none" stroke="#cbd8e9" stroke-width="2.5" stroke-dasharray="8 10"/>
+<use href="#icon-engineer" x="540" y="337" width="153" height="155"/>
+<use href="#icon-ci" x="887" y="336" width="162" height="155"/>
+<use href="#icon-gitops" x="1293" y="339" width="128" height="127"/>
+<!-- Cluster boundary and the original placement of control-plane and worker groups. -->
+<rect id="cluster-boundary" x="58" y="1087" width="2374" height="1871" rx="14" fill="#f8fcff" stroke="#7399ba" stroke-width="3" stroke-dasharray="8 8"/>
+<rect id="control-plane-boundary" x="424" y="1208" width="960" height="662" rx="14" fill="#fcfcfc" stroke="#000000" stroke-width="3" stroke-dasharray="8 8"/>
+<rect id="api-server-panel" x="698" y="1240" width="480" height="214" rx="14" fill="#ffffff" stroke="#2fae58" stroke-width="4"/>
+<rect id="controller-panel" x="456" y="1512" width="288" height="326" rx="14" fill="#ffffff" stroke="#2fae58" stroke-width="4"/>
+<rect id="scheduler-panel" x="780" y="1512" width="288" height="326" rx="14" fill="#ffffff" stroke="#2fae58" stroke-width="4"/>
+<rect id="etcd-panel" x="1116" y="1512" width="236" height="326" rx="14" fill="#ffffff" stroke="#2fae58" stroke-width="4"/>
+<use href="#icon-api" x="878" y="1301" width="104" height="105"/>
+<use href="#icon-controller" x="532" y="1617" width="137" height="140"/>
+<use href="#icon-scheduler" x="850" y="1607" width="145" height="138"/>
+<use href="#icon-etcd" x="1181" y="1610" width="145" height="156"/>
+<rect id="workers-boundary" x="110" y="2086" width="1528" height="826" rx="14" fill="#ffffff" stroke="#000000" stroke-width="3" stroke-dasharray="8 8"/>
+<rect id="worker-1" x="138" y="2126" width="710" height="758" rx="16" fill="#ffffff" stroke="#2f75d6" stroke-width="4"/>
+<rect id="runtime-1" x="158" y="2444" width="670" height="148" rx="16" fill="#ffffff" stroke="#2f75d6" stroke-width="4"/>
+<rect id="kubelet-1" x="158" y="2616" width="314" height="246" rx="16" fill="#ffffff" stroke="#2f75d6" stroke-width="4"/>
+<rect id="proxy-1" x="508" y="2616" width="320" height="246" rx="16" fill="#ffffff" stroke="#2f75d6" stroke-width="4"/>
+<use href="#icon-runtime" x="267" y="2449" width="127" height="139"/>
+<use href="#icon-kubelet" x="253" y="2681" width="118" height="123"/>
+<use href="#icon-proxy" x="603" y="2666" width="139" height="139"/>
+<use href="#icon-pod" x="284" y="2259" width="116" height="115"/>
+<use href="#icon-pod" x="622" y="2259" width="116" height="115"/>
+<rect id="worker-2" x="900" y="2126" width="710" height="758" rx="16" fill="#ffffff" stroke="#2f75d6" stroke-width="4"/>
+<rect id="runtime-2" x="920" y="2444" width="670" height="148" rx="16" fill="#ffffff" stroke="#2f75d6" stroke-width="4"/>
+<rect id="kubelet-2" x="920" y="2616" width="314" height="246" rx="16" fill="#ffffff" stroke="#2f75d6" stroke-width="4"/>
+<rect id="proxy-2" x="1270" y="2616" width="320" height="246" rx="16" fill="#ffffff" stroke="#2f75d6" stroke-width="4"/>
+<use href="#icon-runtime" x="1011" y="2449" width="127" height="139"/>
+<use href="#icon-kubelet" x="1015" y="2681" width="118" height="123"/>
+<use href="#icon-proxy" x="1365" y="2666" width="139" height="139"/>
+<use href="#icon-pod" x="1046" y="2259" width="116" height="115"/>
+<use href="#icon-pod" x="1384" y="2259" width="116" height="115"/>
+<!-- Dashed selector group intentionally crosses the worker boundaries to collect all matching Pods. -->
+<rect id="matching-pods" x="158" y="2206" width="1458" height="210" rx="6" fill="none" stroke="#111111" stroke-width="4" stroke-dasharray="10 10"/>
+<path id="pod-divider-1" d="M496 2220 V2406" fill="none" stroke="#8c8f93" stroke-width="2.5" stroke-dasharray="10 8"/>
+<path id="pod-divider-2" d="M1258 2220 V2406" fill="none" stroke="#8c8f93" stroke-width="2.5" stroke-dasharray="10 8"/>
+<path id="selected-pods-bracket" d="M1618 2194 H1674 V2424 H1618" fill="none" stroke="#111111" stroke-width="4"/>
+<!-- Application access lane. Shaft segments leave label areas clear. Open arrowheads and short central stems match the reference; tips remain outside target panels. -->
+<rect id="traffic-title" x="1732" y="550" width="614" height="86" rx="10" fill="#109cbc"/>
+<path id="traffic-to-client-shaft" d="M2040 636 V643 M2040 671 V700" fill="none" stroke="#111111" stroke-width="4"/>
+<path id="traffic-to-client-head" d="M2040 706 V718 M2030 698 L2040 718 L2050 698" fill="none" stroke="#111111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="client-to-gateway-shaft" d="M2040 1008 V1038 M2040 1068 V1100" fill="none" stroke="#111111" stroke-width="4"/>
+<path id="client-to-gateway-head" d="M2040 1100 V1108 M2030 1088 L2040 1108 L2050 1088" fill="none" stroke="#111111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="gateway-to-service-shaft" d="M2040 1468 V1498 M2040 1524 V1530" fill="none" stroke="#111111" stroke-width="4"/>
+<path id="gateway-to-service-head" d="M2040 1524 V1534 M2030 1518 L2040 1534 L2050 1518" fill="none" stroke="#111111" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="service-to-pods-shaft" d="M2050 2015 V2114 M2050 2173 V2268 Q2050 2314 2004 2314 H1691" fill="none" stroke="#000000" stroke-width="6" stroke-dasharray="10 10"/>
+<path id="service-to-pods-head" d="M1697 2314 H1689 M1707 2296 L1689 2314 L1707 2332" fill="none" stroke="#000000" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<use href="#icon-browser" x="1943" y="720" width="222" height="184"/>
+<use href="#icon-gateway" x="1951" y="1172" width="176" height="173"/>
+<use href="#icon-service" x="1939" y="1615" width="201" height="187"/>
+<!-- Desired-state lane: dashed connectors are split at label panels so no shaft crosses the text. -->
+<!-- Explicit dash segments preserve the PNG phase across overlaid label panels. -->
+<path id="authors-to-spec-shaft" d="M922 563 V566 M922 597 V601 M922 655 V660" fill="none" stroke="#000000" stroke-width="6"/>
+<path id="authors-to-spec-head" d="M922 678 V683 M904 666 L922 683 L940 666" fill="none" stroke="#000000" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<rect id="deployment-spec" x="642" y="688" width="624" height="262" rx="16" fill="#fafcff" stroke="#2f75d6" stroke-width="4"/>
+<use href="#icon-yaml" x="704" y="743" width="122" height="152"/>
+<path id="spec-to-api-shaft" d="M922 950 V953 M922 984 V1003 M922 1060 V1062 M922 1093 V1122 M922 1153 V1182" fill="none" stroke="#000000" stroke-width="6"/>
+<path id="spec-to-api-head" d="M922 1195 V1203 M904 1185 L922 1203 L940 1185" fill="none" stroke="#000000" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="control-to-workers-shaft" d="M922 1871 V1874 M922 1905 V1935 M922 1993 V1996 M922 2027 V2056" fill="none" stroke="#000000" stroke-width="6"/>
+<path id="control-to-workers-head" d="M922 2072 V2080 M904 2062 L922 2080 L940 2062" fill="none" stroke="#000000" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<!-- Explanatory label backgrounds; no reference text is converted to outlines. -->
+<rect id="writes-label" x="729" y="601" width="408" height="54" rx="8" fill="#f5f7fa" stroke="#e3e6eb" stroke-width="2.5"/>
+<rect id="applied-label" x="779" y="1003" width="350" height="56" rx="8" fill="#f5f7fa" stroke="#e3e6eb" stroke-width="2.5"/>
+<rect id="keeps-running-label" x="681" y="1937" width="511" height="56" rx="8" fill="#f5f7fa" stroke="#e3e6eb" stroke-width="2.5"/>
+<rect id="stable-service-label" x="1872" y="1830" width="340" height="64" rx="8" fill="#bee8f2"/>
+<rect id="selector-label" x="1769" y="2115" width="618" height="56" rx="8" fill="#f5f7fa" stroke="#e3e6eb" stroke-width="2.5"/>
+<!-- Live typography. Per-label transforms preserve each original glyph bounding box and line break. -->
+<g id="label-1"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#ffffff" transform="translate(106 60) scale(0.877413 0.922222)">Kubernetes Explained</text></g>
+<g id="label-2"><text x="0" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(1063 60) scale(0.875417 0.913043)">for Busy Engineers</text></g>
+<g id="label-3"><text x="-3" y="70" font-family="Chalkboard SE, Arial, sans-serif" font-size="100" font-weight="400" fill="#4b4b4b" transform="translate(2169 80) scale(0.487476 0.483871)">ByteByteGo</text></g>
+<g id="label-4"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#ffffff" transform="translate(452 230) scale(0.406972 0.413043)">How Kubernetes creates and keeps the app running</text></g>
+<g id="label-5"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(544 506) scale(0.347722 0.358696)">Engineer</text></g>
+<g id="label-6"><text x="-4" y="73" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(954 507) scale(0.333333 0.333333)">CI</text></g>
+<g id="label-7"><text x="-4" y="73" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(1286 506) scale(0.349845 0.362637)">GitOps</text></g>
+<g id="label-8"><text x="-1" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(777 617) scale(0.286109 0.300000)">writes or updates spec</text></g>
+<g id="label-9"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(867 749) scale(0.389294 0.388889)">Deployment spec</text></g>
+<g id="label-10"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="500" fill="#111827" transform="translate(866 832) scale(0.337209 0.324324)">Desired state</text></g>
+<g id="label-11"><text x="-3" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="500" fill="#111827" transform="translate(866 870) scale(0.335539 0.329670)">checkout: v2 4 replicas</text></g>
+<g id="label-12"><text x="-3" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(803 1019) scale(0.306370 0.322222)">applied to API server</text></g>
+<g id="label-13"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#ffffff" transform="translate(1800 577) scale(0.405588 0.411111)">How users reach the app</text></g>
+<g id="label-14"><text x="-7" y="73" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(1904 919) scale(0.363517 0.413333)">Browser / Client</text></g>
+<g id="label-15"><text x="-7" y="73" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(74 1044) scale(0.369967 0.346667)">Kubernetes Cluster</text></g>
+<g id="label-16"><text x="-4" y="73" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(140 1157) scale(0.405616 0.386667)">Control Plane</text></g>
+<g id="label-17"><text x="1" y="73" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(837 1259) scale(0.405567 0.386667)">API Server</text></g>
+<g id="label-18"><text x="-4" y="73" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="500" fill="#111827" transform="translate(790 1419) scale(0.311579 0.315217)">Cluster API endpoint</text></g>
+<g id="label-19"><text x="-4" y="73" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(514 1534) scale(0.370763 0.346667)">Controller</text></g>
+<g id="label-20"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(525 1578) scale(0.368675 0.369565)">Manager</text></g>
+<g id="label-21"><text x="-2" y="73" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(837 1556) scale(0.369520 0.346667)">Scheduler</text></g>
+<g id="label-22"><text x="-3" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(1196 1556) scale(0.369458 0.356164)">etcd</text></g>
+<g id="label-23"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="500" fill="#111827" transform="translate(515 1764) scale(0.288625 0.285714)">Keeps actual</text></g>
+<g id="label-24"><text x="-3" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="500" fill="#111827" transform="translate(514 1797) scale(0.294017 0.290323)">state aligned</text></g>
+<g id="label-25"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="500" fill="#111827" transform="translate(822 1763) scale(0.289586 0.290323)">Places pending</text></g>
+<g id="label-26"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="500" fill="#111827" transform="translate(825 1798) scale(0.285298 0.270270)">Pods on nodes</text></g>
+<g id="label-27"><text x="-3" y="73" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="500" fill="#111827" transform="translate(1191 1764) scale(0.293515 0.266667)">Stores</text></g>
+<g id="label-28"><text x="-3" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="500" fill="#111827" transform="translate(1150 1798) scale(0.297345 0.270270)">cluster state</text></g>
+<g id="label-29"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(735 1953) scale(0.306758 0.315217)">keeps desired Pods running</text></g>
+<g id="label-30"><text x="-7" y="73" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(1876 1125) scale(0.387135 0.397849)">Ingress / Gateway</text></g>
+<g id="label-31"><text x="-7" y="73" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="500" fill="#111827" transform="translate(1918 1360) scale(0.316537 0.282609)">External HTTP(S)</text></g>
+<g id="label-32"><text x="-3" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="500" fill="#111827" transform="translate(1963 1397) scale(0.317719 0.311828)">entry point</text></g>
+<g id="label-33"><text x="-2" y="73" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(1972 1555) scale(0.395415 0.386667)">Service</text></g>
+<g id="label-34"><text x="-2" y="73" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(1896 1849) scale(0.306080 0.318681)">Stable app endpoint</text></g>
+<g id="label-35"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="500" fill="#111827" transform="translate(1904 1917) scale(0.310190 0.311828)">Routes to matching</text></g>
+<g id="label-36"><text x="-6" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="500" fill="#111827" transform="translate(1963 1954) scale(0.308140 0.301075)">ready Pods</text></g>
+<g id="label-37"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(1791 2131) scale(0.306952 0.322222)">Matches Pods with label app=checkout</text></g>
+<g id="label-38"><text x="0" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(135 2033) scale(0.407407 0.397260)">Worker Nodes</text></g>
+<g id="label-39"><text x="0" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(359 2153) scale(0.382055 0.369863)">Worker Node 1</text></g>
+<g id="label-40"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(300 2221) scale(0.336918 0.342466)">Pod A</text></g>
+<g id="label-41"><text x="-3" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(253 2383) scale(0.267647 0.266667)">app=checkout</text></g>
+<g id="label-42"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(639 2221) scale(0.328520 0.342466)">Pod B</text></g>
+<g id="label-43"><text x="-3" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(591 2383) scale(0.267647 0.266667)">app=checkout</text></g>
+<g id="label-44"><text x="-4" y="73" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(430 2483) scale(0.366704 0.360000)">Container Runtime</text></g>
+<g id="label-45"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="500" fill="#111827" transform="translate(430 2529) scale(0.311741 0.310811)">Runs containers</text></g>
+<g id="label-46"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(259 2633) scale(0.333333 0.315068)">kubelet</text></g>
+<g id="label-47"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(584 2633) scale(0.335206 0.322222)">kube-proxy</text></g>
+<g id="label-48"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="500" fill="#111827" transform="translate(244 2820) scale(0.301619 0.297297)">Runs Pods</text></g>
+<g id="label-49"><text x="-3" y="73" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="500" fill="#111827" transform="translate(573 2819) scale(0.321145 0.306667)">Service traffic</text></g>
+<g id="label-50"><text x="0" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(1119 2152) scale(0.385816 0.383562)">Worker Node 2</text></g>
+<g id="label-51"><text x="-7" y="73" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(1062 2221) scale(0.332143 0.333333)">Pod C</text></g>
+<g id="label-52"><text x="-3" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(1015 2383) scale(0.267647 0.266667)">app=checkout</text></g>
+<g id="label-53"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(1400 2221) scale(0.328571 0.342466)">Pod D</text></g>
+<g id="label-54"><text x="-3" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(1353 2383) scale(0.267647 0.266667)">app=checkout</text></g>
+<g id="label-55"><text x="-4" y="73" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(1192 2483) scale(0.366704 0.360000)">Container Runtime</text></g>
+<g id="label-56"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="500" fill="#111827" transform="translate(1192 2529) scale(0.311741 0.310811)">Runs containers</text></g>
+<g id="label-57"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(1021 2633) scale(0.333333 0.315068)">kubelet</text></g>
+<g id="label-58"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="700" fill="#111827" transform="translate(1346 2633) scale(0.335206 0.322222)">kube-proxy</text></g>
+<g id="label-59"><text x="-7" y="72" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="500" fill="#111827" transform="translate(1006 2820) scale(0.301619 0.297297)">Runs Pods</text></g>
+<g id="label-60"><text x="-3" y="73" font-family="Helvetica Neue, Arial, sans-serif" font-size="100" font-weight="500" fill="#111827" transform="translate(1335 2819) scale(0.321145 0.306667)">Service traffic</text></g>
+<g id="label-61"><text x="0" y="72" font-family="Arial Narrow, Arial, sans-serif" font-size="100" font-weight="700" fill="#111111" transform="translate(736 853) scale(0.270270 0.361111)">YAML</text></g>
+<g id="label-62"><text x="-2" y="70" font-family="Chalkboard SE, Arial, sans-serif" font-size="100" font-weight="500" fill="#111111" transform="translate(910 1329) scale(0.253086 0.256757)">API</text></g>
+</svg>
