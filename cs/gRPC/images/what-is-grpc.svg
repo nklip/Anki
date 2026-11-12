@@ -1,0 +1,390 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="3900" height="3900" viewBox="0 0 1600 1600" role="img" aria-labelledby="title desc">
+  <title id="title">What is gRPC? — ByteByteGo infographic</title>
+  <desc id="desc">Editable recreation of ByteByteGo's infographic. The top compares local calls and remote procedure calls, shows an illustrative Protocol Buffers contract, and lists use cases. The lower left follows steps 1 to 13 from an Order Service client through encoding, the gRPC runtime, HTTP/2, and a Payment Service server, then back. The lower right preserves the source's qualitative pros and cons. The accompanying card explains the source's terminology typo, incomplete proto example, and omitted reverse transport arrow.</desc>
+
+  <!-- Shared fonts, paint, and vector artwork. Source: https://assets.bytebytego.com/diagrams/0054-what-is-grpc.png . -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #000; }
+      .hand { font-family: 'Comic Sans MS', 'Chalkboard SE', cursive; }
+      .rounded { font-family: 'Arial Rounded MT Bold', 'Arial Rounded MT', Arial, sans-serif; }
+      .heading { font-family: 'Comic Sans MS', 'Chalkboard SE', cursive; font-size: 34px; font-weight: bold; }
+      .label { font-size: 24px; text-anchor: middle; }
+      .small { font-size: 20px; }
+      .step { font-size: 25px; fill: white; font-weight: bold; text-anchor: middle; }
+      .white { fill: #fff; }
+      .ink { fill: none; stroke: #080a06; stroke-width: 2.7; stroke-linecap: round; stroke-linejoin: round; }
+      .flow { fill: none; stroke: #000; stroke-width: 3.2; stroke-dasharray: 12 13; }
+    </style>
+    <linearGradient id="board-shading" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#11896a"/>
+      <stop offset="1" stop-color="#138766"/>
+    </linearGradient>
+    <linearGradient id="sticker-shading" x1="0.25" y1="0" x2="0.65" y2="1">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="0.58" stop-color="#eee"/>
+      <stop offset="1" stop-color="#c9c9c9"/>
+    </linearGradient>
+    <filter id="sticker-shadow" x="-20%" y="-25%" width="150%" height="175%">
+      <feDropShadow dx="8" dy="12" stdDeviation="9" flood-color="#666" flood-opacity="0.35"/>
+    </filter>
+    <pattern id="board-grain" width="9" height="9" patternUnits="userSpaceOnUse">
+      <path d="M0 9 L9 0 M-2 2 L2 -2 M7 11 L11 7" fill="none" stroke="#459575" stroke-width="0.7" opacity="0.15"/>
+    </pattern>
+    <pattern id="icon-hatching" width="5" height="5" patternUnits="userSpaceOnUse">
+      <path d="M0 5 L5 0" fill="none" stroke="#e8dca7" stroke-width="0.6" opacity="0.3"/>
+    </pattern>
+    <g id="bytebytego-emblem">
+      <path d="M3 62 V15 Q3 2 17 2 H29 Q43 2 43 16 V31 Q43 61 17 62 Z" fill="#f3faff" stroke="#252827" stroke-width="6" stroke-linejoin="round"/>
+      <path d="M11 14 Q23 6 41 14 V31 Q41 57 15 59 Q27 45 16 34 Z" fill="#56c38c"/>
+      <path d="M4 14 Q17 15 25 26 Q32 16 42 14 M4 33 Q24 39 14 56 L7 60" fill="none" stroke="#252827" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <g id="microservice-node">
+      <path d="M0 -10 L10 -4 V7 L0 13 L-10 7 V-4 Z" fill="#a8a5f8"/>
+      <path d="M0 -10 L10 -4 V7 L0 13 Z" fill="#7c7ce9"/>
+    </g>
+    <g id="solar-panel">
+      <path d="M-12 -10 H10 L16 6 H-7 Z" fill="#557cff"/>
+      <path d="M-9 -5 H12 M-7 0 H14 M-3 -10 L2 6 M4 -10 L9 6" fill="none" stroke="#a2b4ff" stroke-width="0.8"/>
+      <path d="M3 6 L1 13 M-5 13 H7" fill="none" stroke="#3a62ff" stroke-width="2"/>
+    </g>
+    <!-- Unstroked outer triangles give an exact visible nose, independent of miter joins. -->
+    <g id="red-arrowhead">
+      <path d="M-14 0 H14 L0 14 Z" fill="#000"/>
+      <path d="M-7 3 H7 L0 10 Z" fill="#b00000"/>
+    </g>
+  </defs>
+
+  <!-- Canvas and title; preserve the original square canvas and source attribution. -->
+  <rect width="1600" height="1600" fill="#f3faff"/>
+  <rect x="16" y="14" width="24" height="107" rx="12" fill="#6adeb8"/>
+  <text class="rounded" x="65" y="90" font-size="87">What is gRPC?</text>
+  <use href="#bytebytego-emblem" transform="translate(1215 21)"/>
+  <text class="rounded" x="1276" y="74" font-size="53" fill="#252827" style="fill:#252827">ByteByteGo</text>
+
+  <!-- Five panels retain the PNG's reading order, boundaries, and palette. -->
+  <rect id="local-versus-remote-panel" x="16" y="149" width="725" height="545" rx="20" fill="#f4c4a1" stroke="#229bd0" stroke-width="2"/>
+  <rect id="data-format-panel" x="756" y="149" width="376" height="546" rx="20" fill="#bed4a4" stroke="#a2bf85" stroke-width="2"/>
+  <rect id="use-cases-panel" x="1144" y="149" width="434" height="545" rx="20" fill="#f7f3dc" stroke="#bca62a" stroke-width="2"/>
+  <rect id="call-lifecycle-panel" x="16" y="714" width="864" height="868" rx="20" fill="#e1d5e7" stroke="#1261ab" stroke-width="2"/>
+  <rect id="tradeoffs-panel" x="894" y="714" width="688" height="868" rx="20" fill="#aedc85" stroke="#5a9d1c" stroke-width="2"/>
+
+  <!-- Highlighter strokes remain vector paths; layered translucent edges mimic the source's marker ink. -->
+  <g id="section-highlights" fill="none" stroke-linecap="butt">
+    <path d="M82 181 L337 181" stroke="#75eeb5" stroke-width="34" opacity="0.45"/>
+    <path d="M91 180 L326 181" stroke="#76f4ad" stroke-width="43" opacity="0.65"/>
+    <path d="M164 187 L337 183" stroke="#7bffb7" stroke-width="29"/>
+    <path d="M375 183 L451 185" stroke="#79edf0" stroke-width="34" opacity="0.8"/>
+    <path d="M384 181 L450 186" stroke="#68ffff" stroke-width="30"/>
+    <path d="M316 231 Q442 244 569 232 T738 230" stroke="#70f0f3" stroke-width="37" opacity="0.8"/>
+    <path d="M327 226 Q442 240 570 231 T734 230" stroke="#65ffff" stroke-width="32"/>
+    <path d="M889 199 L1108 198" stroke="#64d6db" stroke-width="42" opacity="0.5"/>
+    <path d="M897 201 L1102 203" stroke="#42cde0" stroke-width="34"/>
+    <path d="M1288 190 L1449 185 M1282 207 L1488 197" stroke="#ffaf1c" stroke-width="31" opacity="0.6"/>
+    <path d="M1291 195 L1479 197" stroke="#ffa500" stroke-width="34" opacity="0.85"/>
+    <path d="M137 768 L697 759 M146 780 L715 776" stroke="#d4fc61" stroke-width="28" opacity="0.6"/>
+    <path d="M148 767 Q372 779 502 762 L695 759" stroke="#ceff50" stroke-width="31"/>
+    <path d="M1116 775 L1386 770 M1115 783 L1395 776" stroke="#ff745a" stroke-width="36" opacity="0.6"/>
+    <path d="M1123 774 L1386 780" stroke="#ff514d" stroke-width="37"/>
+  </g>
+
+  <!-- Local and remote call comparison. Green dashed guides point toward their respective examples. -->
+  <text class="heading" x="181" y="197" style="font-size:32px">Local call</text>
+  <text class="hand" x="342" y="196" font-size="32" font-weight="bold">vs</text>
+  <text class="heading" x="385" y="197">RPC</text>
+  <text class="heading" x="331" y="241" font-size="33" style="font-size:33px">(Remote Procedural Call)</text>
+  <path id="local-guide" d="M255 208 L220 257" stroke="#009b68" stroke-width="3" stroke-dasharray="11 13" stroke-linecap="round" fill="none"/>
+  <path id="remote-guide" d="M444 250 L570 271" stroke="#00aaa6" stroke-width="3" stroke-dasharray="12 13" stroke-linecap="round" fill="none"/>
+  <rect x="42" y="277" width="295" height="392" rx="8" fill="#f9f4e0" stroke="#0079a2" stroke-width="2" stroke-dasharray="8 4"/>
+  <rect x="422" y="277" width="294" height="161" rx="8" fill="#f9f4e0" stroke="#e1793a" stroke-width="2" stroke-dasharray="8 4"/>
+  <rect x="422" y="528" width="294" height="141" rx="8" fill="#f9f4e0" stroke="#e1793a" stroke-width="2" stroke-dasharray="8 4"/>
+  <text x="189" y="314" text-anchor="middle" font-size="30" font-weight="bold">Process</text>
+  <text x="569" y="314" text-anchor="middle" font-size="30" font-weight="bold">Server A</text>
+  <text x="569" y="563" text-anchor="middle" font-size="30" font-weight="bold">Server B</text>
+  <g id="service-highlights" fill="none" stroke="#ffb953" stroke-linecap="butt">
+    <path d="M148 375 L230 376 M110 409 L271 400" stroke-width="13" opacity="0.75"/>
+    <path d="M122 406 L257 393 M127 622 L251 606" stroke-width="15" opacity="0.65"/>
+    <path d="M139 605 L247 593" stroke-width="10" opacity="0.5"/>
+    <path d="M525 355 L618 358 M504 380 L638 382" stroke-width="12" opacity="0.75"/>
+    <path d="M505 619 L625 601 M520 641 L618 632" stroke-width="13" opacity="0.7"/>
+  </g>
+  <g id="hand-drawn-service-outlines" fill="none" stroke="#53534c" stroke-width="4">
+    <path d="M211 350 C130 343 79 372 90 409 C97 447 240 444 286 415 C335 385 231 338 116 357"/>
+    <path d="M217 571 C161 566 88 592 97 623 C105 660 243 643 277 618 C305 586 238 570 187 576"/>
+    <path d="M570 330 C512 328 472 348 477 369 C481 399 571 408 622 395 C695 377 684 330 570 330 M566 409 Q578 410 589 408"/>
+    <path d="M612 581 C557 574 479 596 486 631 C491 669 575 658 628 632 C692 599 612 576 573 584"/>
+  </g>
+  <text class="label" x="189" y="380"><tspan x="189">Order</tspan><tspan x="189" dy="28">Management</tspan></text>
+  <text class="label" x="189" y="613">Payment</text>
+  <text class="label" x="569" y="362"><tspan x="569">Order</tspan><tspan x="569" dy="28">Service</tspan></text>
+  <text class="label" x="569" y="612"><tspan x="569">Payment</tspan><tspan x="569" dy="28">Service</tspan></text>
+  <!-- Shafts are interrupted around labels; each red head joins its own shaft at the base. -->
+  <path id="local-call-shaft" class="flow" d="M189 433 V483 M189 517 V547"/>
+  <use href="#red-arrowhead" transform="translate(189 546)"/>
+  <text class="small" x="189" y="507" text-anchor="middle">local function call</text>
+  <path id="remote-call-shaft-upper" class="flow" d="M574 411 V453"/>
+  <path d="M510 482 Q509 475 532 471 Q534 459 557 462 Q570 450 591 455 Q607 458 609 469 Q629 468 630 484 Q628 495 610 498 Q588 509 573 501 Q548 509 536 500 Q505 501 510 482 Z" fill="#349b49" stroke="#000" stroke-width="2"/>
+  <text class="hand" x="572" y="494" font-size="34" font-weight="bold" text-anchor="middle" style="fill:#fff7d8">RPC</text>
+  <path id="remote-call-shaft-lower" d="M573 508 V514" fill="none" stroke="#000" stroke-width="3.2"/>
+  <use href="#red-arrowhead" transform="translate(573 513)"/>
+
+  <!-- Data contract: intentionally retains the source's illustrative, non-compilable proto sketch. -->
+  <text class="heading" x="897" y="215">Data Format</text>
+  <rect x="794" y="277" width="294" height="295" rx="8" fill="#f9f4e0" stroke="#00acdc" stroke-width="2" stroke-dasharray="8 4"/>
+  <rect x="856" y="256" width="170" height="46" rx="8" fill="#9adc37" stroke="#000" stroke-width="2"/>
+  <text class="label" x="941" y="286">order.proto</text>
+  <text class="small" x="811" y="351">message Order {</text>
+  <text class="small" x="829" y="376" xml:space="preserve"><tspan fill="#2460ff">string</tspan><tspan> order_id;</tspan></text>
+  <text class="small" x="829" y="401" xml:space="preserve"><tspan fill="#ff4949">required</tspan><tspan fill="#2460ff"> double</tspan><tspan> price;</tspan></text>
+  <text class="small" x="829" y="426" xml:space="preserve"><tspan fill="#2460ff">string</tspan><tspan> user_id;</tspan></text>
+  <text class="small" x="829" y="451" xml:space="preserve"><tspan fill="#ff4949">repeated</tspan><tspan fill="#2460ff"> string</tspan><tspan> products;</tspan></text>
+  <text class="small" x="829" y="476" xml:space="preserve"><tspan fill="#ff4949">optional</tspan><tspan fill="#2460ff"> string</tspan><tspan> description;</tspan></text>
+  <text class="small" x="811" y="501">}</text>
+  <text class="hand" x="941" y="620" text-anchor="middle" font-size="26">Strongly Typed Contracts!</text>
+
+  <!-- Use-case illustrations are editable vector shapes and real text, without embedded raster images. -->
+  <text class="heading" x="1305" y="204" style="fill:#350079">Use Cases</text>
+  <g id="microservices-icon">
+    <g stroke="#696be8" stroke-width="5" stroke-linecap="round">
+      <path d="M1243 324 V331 M1243 384 V391 M1212 342 L1220 347 M1266 369 L1273 373 M1212 374 L1220 370 M1266 346 L1273 342"/>
+    </g>
+    <use href="#microservice-node" transform="translate(1243 317)"/>
+    <use href="#microservice-node" transform="translate(1207 338)"/>
+    <use href="#microservice-node" transform="translate(1278 338)"/>
+    <use href="#microservice-node" transform="translate(1207 379)"/>
+    <use href="#microservice-node" transform="translate(1278 379)"/>
+    <use href="#microservice-node" transform="translate(1243 397)"/>
+    <path d="M1226 350 L1243 340 L1260 350 L1243 360 Z" fill="#ffe900"/>
+    <path d="M1226 350 L1243 360 V379 L1226 369 Z" fill="#ffc400"/>
+    <path d="M1243 360 L1260 350 V369 L1243 379 Z" fill="#ff8d00"/>
+  </g>
+  <g id="live-update-icon">
+    <rect x="1400" y="299" width="114" height="112" fill="url(#icon-hatching)"/>
+    <path d="M1449 312 C1416 322 1408 348 1416 373 M1426 390 C1455 413 1488 400 1497 382 M1504 365 C1510 338 1491 316 1470 311" fill="none" stroke="#405d66" stroke-width="5" stroke-linecap="round"/>
+    <path d="M1449 315 C1424 323 1414 347 1421 372 M1427 386 C1454 407 1485 397 1494 379 M1501 362 C1505 337 1488 319 1468 315" fill="none" stroke="#0fe0af" stroke-width="3" stroke-linecap="round"/>
+    <path d="M1408 368 L1428 364 L1423 387 Z M1484 376 L1503 371 L1498 394 Z M1454 310 L1474 305 L1467 326 Z" fill="#5be7c6" stroke="#405d66" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M1453 332 H1460 L1462 338 L1468 340 L1473 336 L1479 343 L1475 348 L1477 354 L1484 356 L1483 363 L1476 365 L1473 371 L1476 376 L1469 381 L1464 377 L1457 378 L1454 384 L1447 381 L1447 375 L1441 371 L1435 372 L1431 365 L1437 360 L1437 354 L1432 351 L1436 344 L1442 344 L1447 339 L1447 333 Z" fill="#8ed3ee" stroke="#435e68" stroke-width="2.4"/>
+    <circle cx="1457" cy="357" r="13" fill="#f7f3dc" stroke="#435e68" stroke-width="2.4"/>
+    <path d="M1457 349 A8 8 0 0 1 1464 360" fill="none" stroke="#81c9df" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <text class="label" x="1243" y="438">Microservice</text>
+  <text class="label" x="1460" y="438">Live Update</text>
+  <g id="iot-icon">
+    <rect x="1171" y="469" width="135" height="138" fill="url(#icon-hatching)"/>
+    <circle cx="1240" cy="536" r="53" fill="#ffe369" opacity="0.8"/>
+    <circle cx="1240" cy="536" r="15" fill="#ffe769" stroke="#ffb700" stroke-width="2"/>
+    <path d="M1240 511 V518 M1240 555 V566 M1213 536 H1221 M1260 536 H1271 M1222 518 L1228 524 M1253 549 L1260 556 M1221 555 L1228 548 M1253 524 L1260 517" fill="none" stroke="#ffb700" stroke-width="2"/>
+    <path d="M1216 508 L1221 479 H1237 L1238 495 H1255 V508 Z" fill="#3b67ff"/>
+    <path d="M1237 495 H1255 V508 H1237 Z" fill="#829aff"/>
+    <path d="M1244 475 H1249 V495 H1244 Z M1269 486 H1273 V508 H1269 Z M1280 486 H1284 V508 H1280 Z M1292 486 H1296 V519 H1292 Z" fill="#517bff"/>
+    <path d="M1262 507 H1290 V520 H1262 Z" fill="#7092ff"/>
+    <path d="M1185 522 H1198 V507 H1207 V540 H1185 Z" fill="#527eff"/>
+    <path d="M1201 493 V509" stroke="#436cff" stroke-width="1.6"/>
+    <path d="M1189 527 H1196 M1189 531 H1196 M1189 535 H1200 M1200 513 H1204 M1200 517 H1204" stroke="#9eb1ff" stroke-width="1"/>
+    <path d="M1181 562 H1214 V575 H1181 Z" fill="#3c68ff"/>
+    <path d="M1178 562 L1193 549 H1205 L1221 562 Z" fill="#7693ff"/>
+    <path d="M1188 550 V545 H1193 V550 M1202 563 V575" stroke="#456eff" stroke-width="3"/>
+    <use href="#solar-panel" transform="translate(1230 582)"/>
+    <use href="#solar-panel" transform="translate(1253 582)"/>
+    <path d="M1281 552 V588" stroke="#4f76ff" stroke-width="3"/>
+    <path d="M1281 548 L1279 539 L1283 525 L1285 539 Z M1281 548 L1273 555 L1259 557 L1275 547 Z M1281 548 L1292 550 L1303 559 L1286 554 Z" fill="#6988ff"/>
+    <circle cx="1281" cy="550" r="3.5" fill="#4367ff"/>
+  </g>
+  <g id="polyglot-word-cloud" font-family="Arial, sans-serif" font-weight="bold">
+    <text x="1457" y="565" font-size="22" style="fill:#70202a">Python</text>
+    <text x="1463" y="595" font-size="24" style="fill:#b30000">Ruby</text>
+    <text x="1449" y="603" font-size="20" transform="rotate(-90 1449 603)" style="fill:#272144">Haskell</text>
+    <text x="1556" y="546" font-size="22" transform="rotate(-90 1556 546)" style="fill:#8d2836">Java</text>
+    <text x="1364" y="558" font-size="22" style="fill:#242044">PHP</text>
+    <text x="1402" y="580" font-size="15" style="fill:#b57412">Lua</text>
+    <text x="1404" y="533" font-size="13" style="fill:#29203a">C++</text>
+    <text x="1478" y="537" font-size="23" style="fill:#a52b13">Go</text>
+    <text x="1363" y="531" font-size="18" style="fill:#302145">C</text>
+    <text x="1459" y="511" font-size="11" style="fill:#231d3e">Groovy</text>
+    <text x="1440" y="527" font-size="9" style="fill:#98590f">Clojure</text>
+    <text x="1417" y="514" font-size="12" style="fill:#8f251c">Erlang</text>
+    <text x="1538" y="558" font-size="10" style="fill:#211b35">OCaml</text>
+    <text x="1538" y="572" font-size="10" style="fill:#29233d">BASIC</text>
+    <text x="1537" y="586" font-size="10" style="fill:#3b243b">Visual</text>
+    <text x="1532" y="603" font-size="9" transform="rotate(-90 1532 603)" style="fill:#4c213b">Pascal</text>
+    <text x="1531" y="543" font-size="11" transform="rotate(-90 1531 543)" style="fill:#292139">Scala</text>
+    <text x="1382" y="599" font-size="8" style="fill:#51253f">AppleScript</text>
+    <text x="1357" y="567" font-size="12" transform="rotate(-90 1357 567)" style="fill:#4b2241">Assembly</text>
+    <text x="1328" y="583" font-size="15" style="fill:#a3341a">language</text>
+    <text x="1342" y="567" font-size="10" transform="rotate(-90 1342 567)" style="fill:#2c2047">JavaScript</text>
+    <text x="1399" y="536" font-size="9" transform="rotate(-90 1399 536)" style="fill:#7a1f2c">Scheme</text>
+    <text x="1407" y="546" font-size="8" style="fill:#991e24">Rust</text>
+    <text x="1408" y="500" font-size="5" style="fill:#4d1f29">Haxe Forth C</text>
+    <text x="1362" y="501" font-size="6" style="fill:#45273c">SQL Logo Lisp</text>
+    <text x="1411" y="563" font-size="6" style="fill:#bf281c">Eiffel</text>
+    <text x="1461" y="542" font-size="6" style="fill:#2e2442">Bash</text>
+    <text x="1501" y="510" font-size="7" style="fill:#4e293a">Prolog</text>
+    <text x="1362" y="510" font-size="5" style="fill:#532334">ColdFusion</text>
+    <text x="1377" y="535" font-size="6" style="fill:#ae5b15">APL</text>
+    <text x="1352" y="594" font-size="5" style="fill:#46293a">Tcl</text>
+    <text x="1501" y="500" font-size="5" style="fill:#b35e12">MySQL</text>
+    <text x="1537" y="595" font-size="5" style="fill:#532334">Fortran</text>
+    <text x="1545" y="603" font-size="5" style="fill:#532334">MATLAB</text>
+  </g>
+  <text class="label" x="1243" y="652">IoT</text>
+  <text class="label" x="1460" y="652">Polyglot Env</text>
+
+  <!-- Lifecycle: source numbering and the two service stacks are preserved. -->
+  <text class="heading" x="147" y="778" style="font-size:32.5px">How do we transmit data via gRPC?</text>
+  <rect x="42" y="809" width="317" height="760" rx="20" fill="#fcf7ff" stroke="#9c68ea" stroke-width="2"/>
+  <rect x="541" y="809" width="317" height="760" rx="20" fill="#fcf7ff" stroke="#b27e10" stroke-width="2"/>
+  <g id="client-stack" fill="#9569de" stroke="#000" stroke-width="2">
+    <rect x="93" y="822" width="215" height="77" rx="7"/>
+    <rect x="74" y="1029" width="252" height="77" rx="7"/>
+    <rect x="93" y="1235" width="215" height="77" rx="7"/>
+    <rect x="93" y="1443" width="215" height="77" rx="7"/>
+  </g>
+  <g id="server-stack" fill="#5aeaff" stroke="#000" stroke-width="2">
+    <rect x="592" y="822" width="215" height="77" rx="7"/>
+    <rect x="574" y="1029" width="251" height="77" rx="7"/>
+    <rect x="592" y="1235" width="215" height="77" rx="7"/>
+    <rect x="592" y="1443" width="215" height="77" rx="7"/>
+  </g>
+  <text class="label white" x="200" y="852"><tspan x="200">Client</tspan><tspan x="200" dy="28">Application</tspan></text>
+  <text class="label white" x="200" y="1074">Encoding/Decoding</text>
+  <text class="label white" x="200" y="1280">gRPC Runtime</text>
+  <text class="label white" x="200" y="1487">Transport</text>
+  <text class="label" x="699" y="852"><tspan x="699">Server</tspan><tspan x="699" dy="28">Application</tspan></text>
+  <text class="label" x="699" y="1074">Encoding/Decoding</text>
+  <text class="label" x="699" y="1280">gRPC Runtime</text>
+  <text class="label" x="699" y="1487">Transport</text>
+  <text class="label" x="200" y="1556" font-weight="bold">Order Service</text>
+  <text class="label" x="699" y="1556" font-weight="bold">Payment Service</text>
+
+  <!-- Request/response shafts have intentional gaps for text; arrowheads never cover a label. -->
+  <g id="client-flow-shafts" class="flow">
+    <path id="client-request-1-shaft" d="M282 900 V948 M282 982 V1015"/>
+    <path id="client-request-2-shaft" d="M282 1107 V1144 M282 1185 V1222"/>
+    <path id="client-request-3-shaft" d="M282 1313 V1354 M282 1390 V1429"/>
+    <path id="client-response-11-shaft" d="M122 1442 V1398 M122 1363 V1325"/>
+    <path id="client-response-12-shaft" d="M122 1234 V1196 M122 1159 V1119"/>
+    <path id="client-response-13-shaft" d="M122 1028 V992 M122 952 V912"/>
+  </g>
+  <g id="server-flow-shafts" class="flow">
+    <path id="server-response-8-shaft" d="M783 900 V946 M783 982 V1015"/>
+    <path id="server-response-9-shaft" d="M783 1107 V1144 M783 1190 V1222"/>
+    <path id="server-response-10-shaft" d="M783 1313 V1354 M783 1390 V1429"/>
+    <path id="server-request-5-shaft" d="M622 1442 V1399 M622 1364 V1325"/>
+    <path id="server-request-6-shaft" d="M622 1234 V1195 M622 1160 V1119"/>
+    <path id="server-request-7-shaft" d="M622 1028 V991 M622 952 V912"/>
+  </g>
+  <!-- Solid terminal segments prevent a dash gap at a head's base; the last unit is hidden beneath its triangle. -->
+  <path id="lifecycle-arrow-shaft-joins" d="M282 1010 V1015 M282 1216 V1221 M282 1424 V1429 M783 1010 V1015 M783 1216 V1221 M783 1424 V1429 M122 919 V913 M122 1126 V1120 M122 1332 V1326 M622 919 V913 M622 1126 V1120 M622 1332 V1326" fill="none" stroke="#000" stroke-width="3.2"/>
+  <!-- Red triangles sit wholly in the inter-layer gaps, with their unstroked tips meeting box boundaries. -->
+  <g id="lifecycle-arrowheads">
+    <use href="#red-arrowhead" transform="translate(282 1014)"/>
+    <use href="#red-arrowhead" transform="translate(282 1220)"/>
+    <use href="#red-arrowhead" transform="translate(282 1428)"/>
+    <use href="#red-arrowhead" transform="translate(783 1014)"/>
+    <use href="#red-arrowhead" transform="translate(783 1220)"/>
+    <use href="#red-arrowhead" transform="translate(783 1428)"/>
+    <use href="#red-arrowhead" transform="translate(122 914) rotate(180)"/>
+    <use href="#red-arrowhead" transform="translate(122 1121) rotate(180)"/>
+    <use href="#red-arrowhead" transform="translate(122 1327) rotate(180)"/>
+    <use href="#red-arrowhead" transform="translate(622 914) rotate(180)"/>
+    <use href="#red-arrowhead" transform="translate(622 1121) rotate(180)"/>
+    <use href="#red-arrowhead" transform="translate(622 1327) rotate(180)"/>
+  </g>
+  <g id="lifecycle-step-discs" fill="#00b89e" stroke="#000" stroke-width="2">
+    <circle cx="230" cy="963" r="14.5"/><circle cx="209" cy="1163" r="14.5"/>
+    <circle cx="241" cy="1375" r="14.5"/><circle cx="463" cy="1418" r="14.5"/>
+    <circle cx="566" cy="1381" r="14.5"/><circle cx="560" cy="1150" r="14.5"/>
+    <circle cx="560" cy="970" r="14.5"/><circle cx="737" cy="963" r="14.5"/>
+    <circle cx="722" cy="1149" r="14.5"/><circle cx="743" cy="1373" r="14.5"/>
+    <circle cx="66" cy="1379" r="14.5"/><circle cx="67" cy="1175" r="14.5"/>
+    <circle cx="73" cy="971" r="14.5"/>
+  </g>
+  <g id="lifecycle-step-numbers" class="step">
+    <text class="step" x="230" y="972">1</text><text class="step" x="209" y="1172">2</text>
+    <text class="step" x="241" y="1384">3</text><text class="step" x="463" y="1427">4</text>
+    <text class="step" x="566" y="1390">5</text><text class="step" x="560" y="1159">6</text>
+    <text class="step" x="560" y="979">7</text><text class="step" x="737" y="972">8</text>
+    <text class="step" x="722" y="1158">9</text><text class="step" x="743" y="1382" style="font-size:21px">10</text>
+    <text class="step" x="66" y="1388" style="font-size:21px">11</text><text class="step" x="67" y="1184" style="font-size:21px">12</text>
+    <text class="step" x="73" y="980" style="font-size:21px">13</text>
+  </g>
+  <g id="lifecycle-step-labels" class="small">
+    <text class="small" x="252" y="970">rpc call</text>
+    <text x="226" y="1175" font-size="24" font-weight="bold">client stub</text>
+    <text class="small" x="263" y="1381">send</text>
+    <text class="small" x="585" y="1388">receive</text>
+    <text class="small" x="563" y="1185">decode stub</text>
+    <text class="small" x="579" y="977">local call</text>
+    <text class="small" x="758" y="970">return</text>
+    <text class="small" x="729" y="1174">encode stub</text>
+    <text class="small" x="763" y="1381">send</text>
+    <text class="small" x="86" y="1388">receive</text>
+    <text class="small" x="86" y="1181">decode</text>
+    <text class="small" x="95" y="977">result</text>
+  </g>
+  <!-- The source only draws the outbound network arrow. Its shaft crosses the cloud but leaves a text gap. -->
+  <path id="http2-cloud" d="M371 1476 Q376 1464 401 1462 Q407 1443 445 1449 Q462 1431 491 1440 Q507 1445 507 1457 Q533 1456 535 1474 Q539 1491 508 1496 Q486 1509 463 1500 Q441 1513 411 1502 Q369 1504 371 1476 Z" fill="#fff5c2" stroke="#000" stroke-width="2"/>
+  <path id="network-transport-shaft" class="flow" d="M311 1479 H399 M522 1479 H578"/>
+  <use href="#red-arrowhead" transform="translate(577 1479) rotate(-90)"/>
+  <text class="hand" x="459" y="1488" text-anchor="middle" font-size="29">HTTP 2</text>
+
+  <!-- Qualitative tradeoffs reproduced verbatim from the PNG, with attribution in the card. -->
+  <text class="heading" x="1158" y="787" style="fill:white">Pros &amp; Cons</text>
+  <rect x="964" y="884" width="546" height="271" rx="3" fill="#f3f3ec"/>
+  <rect x="969" y="889" width="534" height="260" fill="url(#board-shading)" stroke="#353735" stroke-width="11" stroke-linejoin="round"/>
+  <rect x="976" y="896" width="520" height="246" fill="url(#board-grain)"/>
+  <rect x="1115" y="832" width="233" height="61" rx="20" fill="#e2d693" stroke="#000" stroke-width="4"/>
+  <text x="1231" y="874" font-size="42" text-anchor="middle">Pros</text>
+  <text x="1033" y="963" font-size="28" class="white"><tspan x="1033">- High performance</tspan><tspan x="1033" dy="33">- Language agnostic</tspan><tspan x="1033" dy="33">- Strongly typed interfaces</tspan><tspan x="1033" dy="33">- Streaming support</tspan><tspan x="1033" dy="33">- Efficient data serialization</tspan></text>
+  <rect x="964" y="1266" width="546" height="270" rx="3" fill="#f3f3ec"/>
+  <rect x="969" y="1271" width="534" height="259" fill="url(#board-shading)" stroke="#353735" stroke-width="11" stroke-linejoin="round"/>
+  <rect x="976" y="1278" width="520" height="245" fill="url(#board-grain)"/>
+  <rect x="1115" y="1212" width="233" height="61" rx="20" fill="#77aa49" stroke="#000" stroke-width="4"/>
+  <text x="1231" y="1256" font-size="42" text-anchor="middle">Cons</text>
+  <text x="1006" y="1361" font-size="28" class="white"><tspan x="1006">- Complexity &amp; learning curve</tspan><tspan x="1006" dy="33">- Smaller community than REST</tspan><tspan x="1006" dy="33">- Firewall and proxy limitations</tspan><tspan x="1006" dy="33">- Limited human readability</tspan></text>
+
+  <!-- Hand-drawn guides between sections: open heads follow the original curved routes. -->
+  <path id="overview-to-format-arrow-shaft" d="M535 169 C591 126 680 120 756 123" fill="none" stroke="#060904" stroke-width="4" stroke-linecap="round" stroke-dasharray="12 13"/>
+  <path d="M735 103 L758 123 L734 138" fill="none" stroke="#060904" stroke-width="4" stroke-linecap="round"/>
+  <path id="format-to-use-cases-arrow-shaft" d="M941 154 C1000 111 1084 104 1162 108" fill="none" stroke="#060904" stroke-width="4" stroke-linecap="round" stroke-dasharray="12 13"/>
+  <path d="M1142 88 L1164 108 L1140 123" fill="none" stroke="#060904" stroke-width="4" stroke-linecap="round"/>
+  <path id="use-cases-to-tradeoffs-arrow-shaft" d="M1504 668 C1542 706 1551 768 1543 830" fill="none" stroke="#060904" stroke-width="4" stroke-linecap="round" stroke-dasharray="8 10"/>
+  <path d="M1522 809 L1543 832 L1565 810" fill="none" stroke="#060904" stroke-width="4" stroke-linecap="round"/>
+  <path id="tradeoffs-to-lifecycle-arrow-shaft" d="M1010 826 C944 847 851 814 790 780" fill="none" stroke="#060904" stroke-width="4" stroke-linecap="round" stroke-dasharray="12 13"/>
+  <path d="M816 776 L788 779 L800 807" fill="none" stroke="#060904" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Decorative speakers retain the original positions and do not carry additional teaching claims. -->
+  <g id="local-call-speaker" class="ink">
+    <path d="M74 137 Q88 125 104 133 Q122 143 112 157 Q101 174 84 168 Q68 164 72 145 Z" fill="#f9f4e0"/>
+    <path d="M74 140 L88 141 L85 151 Q74 151 74 140 M93 140 L110 138 Q110 151 100 151 Z M88 143 L93 142 M88 150 L85 155 L92 157 M88 161 Q96 167 104 158"/>
+    <path d="M91 170 Q85 197 96 224 L102 241 L103 283 Q104 292 118 293 M88 224 L81 243 L80 285 Q78 292 64 293 M85 177 Q75 195 62 206 L78 213 L86 219 L78 223 M97 178 L110 219 L118 181 L122 182 L124 178"/>
+  </g>
+  <g id="data-format-speaker" class="ink">
+    <path d="M799 106 Q810 94 823 99 Q838 112 833 130 Q827 152 808 147 Q791 144 792 125 Q791 114 799 106 Z" fill="#f9f4e0"/>
+    <path d="M807 113 L808 119 M823 111 L823 117 M805 123 Q815 141 829 125 M812 136 Q818 148 826 134 M819 151 Q824 168 818 189 M813 160 Q806 180 797 166 L786 144 Q784 138 778 141 L770 140 M826 152 Q839 155 847 118 Q849 114 855 117 L863 114 M814 197 Q825 219 823 231 L815 248 L827 255 M824 195 Q843 188 849 204 L851 211 L861 204"/>
+  </g>
+  <g id="use-cases-speaker" class="ink">
+    <path d="M1185 125 Q1198 110 1208 119 Q1225 131 1211 146 Q1196 156 1184 142 Q1179 135 1185 125 Z" fill="#f9f4e0"/>
+    <path d="M1198 125 L1199 130 M1208 127 L1209 131 M1197 134 Q1201 140 1204 139 M1202 153 Q1207 177 1202 206 M1192 157 Q1170 180 1179 192 L1187 197 M1186 195 Q1184 184 1192 193 L1196 198 M1208 157 L1223 177 Q1238 164 1238 153 M1202 209 Q1217 220 1218 268 L1231 272 M1194 232 L1181 259 Q1176 267 1189 274"/>
+    <path d="M1234 133 L1243 135 L1238 158 L1228 156 Z" fill="#d6e4e0" stroke-width="1.7"/>
+    <circle cx="1233" cy="154" r="1" fill="#000" stroke="none"/>
+    <path d="M1170 204 L1209 199 L1214 228 L1173 233 Z" fill="#272c25" stroke-width="1.5"/>
+    <path d="M1171 218 L1212 213 M1188 215 Q1187 210 1191 213 L1193 220 Q1190 224 1189 220 Z" stroke="#dbe3d8" stroke-width="1"/>
+  </g>
+  <g id="lifecycle-speaker" class="ink">
+    <path d="M65 700 Q73 687 86 690 Q99 690 106 706 Q105 714 93 718 Q76 720 65 709 Q62 707 65 700 Z" fill="#f9f4e0"/>
+    <path d="M86 694 L89 698 M91 694 L94 697 M81 707 Q83 714 89 713 M93 716 Q104 724 97 730 L93 726 L91 719 M94 731 Q99 740 103 752 M87 723 Q80 738 83 752 M86 757 Q74 785 77 814 Q74 821 59 821 M90 765 Q100 776 97 812 Q96 821 108 822 M83 728 Q72 739 67 754 L88 756 M103 728 Q108 738 108 752 L104 757 L111 755"/>
+  </g>
+  <g id="tradeoffs-speaker" class="ink">
+    <path d="M1014 729 Q1017 716 1030 712 Q1047 711 1055 732 Q1055 748 1045 756 Q1032 764 1020 752 Q1010 743 1014 729 Z" fill="#f9f4e0"/>
+    <path d="M1027 726 L1027 733 M1039 726 L1039 733 M1026 744 Q1029 740 1034 743 Q1044 740 1043 746 Q1039 752 1028 749 Z M1034 763 Q1040 787 1034 806 M1030 811 Q1024 825 1026 847 L1015 847 M1036 811 L1035 846 Q1036 850 1047 849 M1019 749 Q1012 760 1003 772 Q996 761 1011 741 L1003 736 L1000 730 M1039 764 Q1055 785 1064 772 Q1075 760 1057 742 L1065 739 L1066 736"/>
+  </g>
+
+  <!-- Source-branded central sticker; kept above panel edges but clear of the lifecycle title and connectors. -->
+  <g id="central-source-sticker" filter="url(#sticker-shadow)">
+    <path d="M715 695 Q713 669 740 664 Q758 656 776 672 Q796 668 821 669 Q839 660 855 667 Q876 672 892 665 Q916 655 932 671 Q962 669 974 691 Q985 714 967 736 Q960 753 944 756 Q931 776 913 765 Q893 770 878 757 Q862 770 848 757 Q825 761 809 756 Q790 763 770 755 Q742 762 727 741 Q711 732 715 713 Z" fill="url(#sticker-shading)"/>
+    <text class="hand" x="843" y="705" text-anchor="middle" font-size="30" font-weight="bold">What is gRPC?</text>
+    <use href="#bytebytego-emblem" transform="translate(764 716) scale(.46)"/>
+    <text class="rounded" x="791" y="739" font-size="26" style="fill:#4e5150">ByteByteGo</text>
+  </g>
+</svg>
