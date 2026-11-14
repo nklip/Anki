@@ -1,55 +1,60 @@
-# Training: Supervised fine-tuning: learning to act as an assistant
+# Training: Supervised fine-tuning
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-**Supervised fine-tuning (SFT) further trains a model on examples of desired responses. It changes the model's learned numerical settings, or weights, to make it better at responding in those ways.**
+**Supervised fine-tuning (SFT) further trains a model on examples of desired responses. It changes the model's learned numerical settings, or weights, so that it responds in those ways in later conversations.**
 
-Start with an example, then see how the same approach can teach tool use.
+Start with where SFT sits among the training stages, then see the whole process, then zoom in on one example.
 
-## A demonstration shows what to do
+## Where this fits
 
-Pretraining gives the model broad practice predicting text. Assistant SFT focuses that practice on selected requests and good responses. For example:
+Pretraining teaches a model to continue text, one **token** at a time. A token is a piece of text: a word, part of a word, or punctuation. That goal is different from following a request, so later stages train the same weights further. See [Pretraining - learning from next-token prediction](../Pretraining/Readme.md).
 
-- **User:** Rewrite “Send the file” politely.
-- **Desired assistant:** Please send the file.
+![where-this-fits.svg](images/where-this-fits.svg)
 
-This pair is a **demonstration**: an example to learn from. “Supervised” means training has a supplied target answer. It does not mean a person watches and corrects every live conversation.
+Read the three stages from left to right. The stage marked “this article” is SFT. Compare the rows: the stages differ in what they learn from and what they practice. This order is common, not mandatory. [Preference tuning: RLHF and DPO](../Preference%20tuning/Readme.md) is the next topic.
 
-A **chat template** converts messages into one token sequence, adding markers for roles such as user and assistant and for message boundaries. A **token** is a piece of text: a word, part of a word, or punctuation. The markers tell the model who is speaking; exact formats vary by model.
+## The whole process in one picture
 
-## Learning still uses next-token prediction
+A **demonstration** is an example to learn from: a request paired with a desired response. “Supervised” means every example supplies its target answer. It does not mean a person watches and corrects live conversations.
 
-The desired response supplies the next-token targets. In this simplified diagram, each word and the full stop is one token. Every row uses the recorded earlier text, not the model's previous guesses.
+![sft-overview.svg](images/sft-overview.svg)
+
+Read downward. A pretrained model and the demonstrations go in. The training loop predicts, scores, and adjusts, again and again. A **loss** is a penalty score: it is small when the model gives the desired tokens a high chance. What comes out is the same model with changed weights.
+
+The “LATER” box shows why this matters. A request that was never a demonstration can still get a response in the demonstrated manner. Training shapes patterns in the weights. It does not build a list of answers to look up.
+
+## Zoom in: the desired response supplies the targets
+
+SFT keeps pretraining's exercise: predict the next token. A **chat template** first converts the messages into one token sequence, adding markers for roles such as user and assistant; exact formats vary by model.
+
+This simplified diagram shows the same demonstration, with each word as one token. Every row predicts from the recorded earlier text, not from the model's own guesses.
 
 ![assistant-training-targets.svg](images/assistant-training-targets.svg)
 
-The model assigns chances to possible next tokens. When the target is `Please`, giving it a higher chance earns a smaller **loss**, meaning a penalty score. Training combines these penalties and adjusts trainable weights to try to reduce them. Repeat over many demonstrations, and the model can learn patterns for answering new requests.
-
-In an **assistant-only loss** setup, only assistant tokens count toward the penalty. User messages remain visible as earlier context. A **loss mask** selects which tokens are scored; it does not hide the prompt. Other SFT setups score more of the sequence, so assistant-only scoring is a choice, not the definition of SFT.
-
-During ordinary inference, the model generates its own response with fixed weights. Adding examples to a prompt changes the current context; SFT changes learned parameters that can be used in later conversations.
+In an **assistant-only loss** setup, only assistant tokens count toward the penalty. A **loss mask** selects which tokens are scored; it does not hide the user's message, which stays visible as context. Other SFT setups score more of the sequence, so this is a choice, not the definition of SFT.
 
 ## Demonstrations can include tool use
 
-A training example can contain tool descriptions, an assistant's tool request, the recorded tool result, and a final assistant reply. Read this fictional order lookup from top to bottom. Orange messages are the assistant behavior being taught; blue messages supply context.
+A demonstration can also contain tool descriptions, the assistant's tool request, the recorded tool result, and a final reply. Read this fictional order lookup from top to bottom. Boxes labeled “training targets” are the behavior being taught; boxes labeled “context” only supply input.
 
 ![tool-use-demonstration.svg](images/tool-use-demonstration.svg)
 
-The model can learn when to request a tool, how to write its arguments, and how to answer using its result. **Arguments** are inputs to a tool; here, the order number is the input.
-
-Learning this pattern does not give the model direct access to an order database. During actual use, the application must execute the requested tool and return the result. A tool call is a model-generated request for an action.
+The model can learn when to request a tool, how to write its **arguments** (its inputs; here, the order number), and how to answer from the result. It does not gain access to an order database. A tool call is only a model-generated request: in actual use, the application must run the tool and return the result.
 
 ## What changes, and what to check
 
-SFT can improve instruction following, response style, formatting, and task performance. Instruction-tuning research has shown improvements on tasks outside the training set, so its effects can extend beyond copying a style. The model still builds on its starting abilities, and results depend on the training examples.
+SFT can improve instruction following, response style, formatting, and task performance. Instruction-tuning research found improvements on task types outside the training set, so the effect goes beyond copying a style.
 
-The target is the **chosen response**, not a built-in truth detector. Bad demonstrations can teach bad patterns. Check the trained model on requests kept out of training, including whether its answers are correct and follow the instructions. A lower training penalty alone does not prove it is a better assistant.
+The target is the **chosen response**, not a truth detector: bad demonstrations teach bad patterns. Check the trained model on requests kept out of training: are its answers correct, and do they follow the instructions? A lower training loss alone does not prove a better assistant.
 
-SFT teaches “respond like this example.” Preference training, covered next, uses judgments such as “this response is better than that one.” These are different training signals.
+Adding examples to a prompt changes only the current context. SFT changes weights, which every later conversation uses.
 
 ## Check your understanding
 
-If user tokens do not count toward the loss, does the model ignore the user's question? **No.** It still uses the question to predict the assistant's reply; only the choice of tokens being scored has changed.
+If user tokens do not count toward the loss, does the model ignore the user's question? **No.** It still reads the question to predict the reply; only the choice of scored tokens changes.
+
+Does SFT need a new kind of exercise? **No.** It keeps next-token prediction; the demonstrations change what the model practices.
 
 # Sources
 

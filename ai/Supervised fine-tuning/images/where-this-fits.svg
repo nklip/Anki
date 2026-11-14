@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="578" viewBox="0 0 900 578" role="img" aria-labelledby="title desc">
+  <title id="title">Where this fits: three training stages</title>
+  <desc id="desc">Three training stages in one common order, each further changing the same model's weights. Stage 1, pretraining, learns from large collections of text, practices predicting the token that comes next, and results in broad abilities: the model continues text. Stage 2, supervised fine-tuning, is this article: it learns from demonstrations, each a request with a desired response, practices predicting the tokens of the desired response, and results in a model that responds the way the demonstrations do. Stage 3, preference tuning, learns from comparisons of a chosen and a rejected response, practices favoring the response that was judged better, and results in a model that leans toward preferred responses. After training, at inference, the model answers new requests and its weights stay fixed.</desc>
+  <!-- Folder style: 900 wide, Arial, gray route boxes; the heavy blue frame marks this article's stage. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .tag { font-size: 17px; fill: #475569; }
+      .name { font-size: 20px; font-weight: 700; }
+      .row { font-size: 15px; font-weight: 700; fill: #475569; letter-spacing: 0.5px; }
+      .copy { font-size: 18px; }
+      .label { font-size: 19px; font-weight: 700; }
+      .note { font-size: 19px; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="578" fill="#ffffff"/>
+
+  <text class="title" x="28" y="44">Where this fits: three training stages</text>
+  <text class="subtitle" x="28" y="76">One common order. Each stage further changes the same model's weights.</text>
+
+  <!-- Stage 1. All three stage boxes share the same row baselines so the rows can be compared across. -->
+  <g id="stage-pretraining">
+    <rect x="28" y="100" width="264" height="330" rx="13" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+    <text class="tag" x="44" y="130">Stage 1</text>
+    <text class="name" x="44" y="158">Pretraining</text>
+    <line x1="44" y1="174" x2="276" y2="174" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text class="row" x="44" y="200">LEARNS FROM</text>
+    <text class="copy" x="44" y="224">Large collections</text>
+    <text class="copy" x="44" y="247">of text</text>
+    <text class="row" x="44" y="281">PRACTICES</text>
+    <text class="copy" x="44" y="305">Predicting the token</text>
+    <text class="copy" x="44" y="328">that comes next</text>
+    <text class="row" x="44" y="362">RESULT</text>
+    <text class="copy" x="44" y="386">Broad abilities:</text>
+    <text class="copy" x="44" y="409">it continues text</text>
+  </g>
+
+  <!-- Stage 2 is the focus; its own text says "this article", so the frame color is not the only cue. -->
+  <g id="stage-supervised-fine-tuning">
+    <rect x="318" y="100" width="264" height="330" rx="13" fill="#eff6ff" stroke="#2563eb" stroke-width="3" data-focus="true"/>
+    <text class="tag" x="334" y="130">Stage 2 · this article</text>
+    <text class="name" x="334" y="158">Supervised fine-tuning</text>
+    <line x1="334" y1="174" x2="566" y2="174" stroke="#93c5fd" stroke-width="1.5"/>
+    <text class="row" x="334" y="200">LEARNS FROM</text>
+    <text class="copy" x="334" y="224">Demonstrations: a request</text>
+    <text class="copy" x="334" y="247">with a desired response</text>
+    <text class="row" x="334" y="281">PRACTICES</text>
+    <text class="copy" x="334" y="305">Predicting the tokens of</text>
+    <text class="copy" x="334" y="328">the desired response</text>
+    <text class="row" x="334" y="362">RESULT</text>
+    <text class="copy" x="334" y="386">It responds the way</text>
+    <text class="copy" x="334" y="409">the demonstrations do</text>
+  </g>
+
+  <!-- Stage 3. -->
+  <g id="stage-preference-tuning">
+    <rect x="608" y="100" width="264" height="330" rx="13" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+    <text class="tag" x="624" y="130">Stage 3</text>
+    <text class="name" x="624" y="158">Preference tuning</text>
+    <line x1="624" y1="174" x2="856" y2="174" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text class="row" x="624" y="200">LEARNS FROM</text>
+    <text class="copy" x="624" y="224">Comparisons: a chosen</text>
+    <text class="copy" x="624" y="247">and a rejected response</text>
+    <text class="row" x="624" y="281">PRACTICES</text>
+    <text class="copy" x="624" y="305">Favoring the response</text>
+    <text class="copy" x="624" y="328">that was judged better</text>
+    <text class="row" x="624" y="362">RESULT</text>
+    <text class="copy" x="624" y="386">It leans toward</text>
+    <text class="copy" x="624" y="409">preferred responses</text>
+  </g>
+
+  <!-- Stage order. Shafts end one unit inside the triangle bases; tips meet the next box border. -->
+  <line class="connector" x1="293" y1="265" x2="306" y2="265"/>
+  <polygon class="head" points="318,265 305,258 305,272"/>
+  <line class="connector" x1="583" y1="265" x2="596" y2="265"/>
+  <polygon class="head" points="608,265 595,258 595,272"/>
+
+  <!-- After the last stage the model is used; the arrow leaves stage 3 and stops at the band border. -->
+  <line class="connector" x1="740" y1="431" x2="740" y2="458"/>
+  <polygon class="head" points="740,470 733,457 747,457"/>
+  <g id="after-training">
+    <rect x="28" y="470" width="844" height="80" rx="13" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+    <text class="label" x="50" y="502">AFTER TRAINING · the model in use (inference)</text>
+    <text class="note" x="50" y="532">The model answers new requests. Its weights now stay fixed.</text>
+  </g>
+</svg>

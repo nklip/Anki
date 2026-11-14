@@ -20,7 +20,7 @@ Every card lives in its own folder as `Readme.md`, with its diagrams in a siblin
  * [LLM Failure Modes](./LLM%20Failure%20Modes/Readme.md) - hallucination, error propagation, sycophancy, instruction drift, and knowledge conflict
  * [Markov table](./Markov%20table/Readme.md) - transition probabilities, n-gram models, and a worked text generator
  * [MLPs, nonlinearities, and mixture of experts](./MLPs%20and%20mixture%20of%20experts/Readme.md) - expansion, ReLU, gated MLPs, expert routing, and active versus total parameters
- * [Model, assistant, and agent: the system map](./Model%2C%20assistant%2C%20and%20agent/Readme.md) - the model, application runtime, tools, context, and saved state
+ * [Model, assistant, and agent](./Model%2C%20assistant%2C%20and%20agent/Readme.md) - the model, application runtime, tools, context, and saved state
  * [Preference tuning: RLHF and DPO](./Preference%20tuning/Readme.md) - preference pairs, reward models, direct updates, and the limits of preference scores
  * [Prefill, decoding, and the KV cache](./Prefill%20and%20KV%20cache/Readme.md) - prompt processing, cached keys and values, token-by-token reuse, cache growth, and latency
  * [Pretraining: learning from next-token prediction](./Pretraining/Readme.md) - text-derived targets, prediction loss, useful patterns, and training data
@@ -29,7 +29,7 @@ Every card lives in its own folder as `Readme.md`, with its diagrams in a siblin
  * [RAG pipeline](./RAG%20pipeline/Readme.md) - components and numbered walkthroughs of RAG and agentic RAG
  * [Reasoning training and distillation](./Reasoning%20training%20and%20distillation/Readme.md) - verifiable rewards, teacher-to-student training, and inference-time computation
  * [Superposition and mechanistic interpretability](./Superposition%20and%20mechanistic%20interpretability/Readme.md) - overlapping features, interference, sparse autoencoders, and causal tests of circuits
- * [Supervised fine-tuning: learning to act as an assistant](./Supervised%20fine-tuning/Readme.md) - demonstrations, assistant-only scoring, chat formatting, and tool-use training
+ * [Supervised fine-tuning](./Supervised%20fine-tuning/Readme.md) - demonstrations, assistant-only scoring, chat formatting, and tool-use training
  * [The agent loop: act, observe, continue, stop](./The%20agent%20loop/Readme.md) - feedback, changing task state, verification, retries, budgets, and fixed workflows
  * [The residual stream and normalization](./The%20residual%20stream%20and%20normalization/Readme.md) - additive updates, pre-norm branches, LayerNorm, and RMSNorm
  * [The transformer forward pass](./The%20transformer%20forward%20pass/Readme.md) - embedding lookup, transformer blocks, residual updates, and next-token scores
@@ -52,10 +52,10 @@ Use a decoder-only transformer as the teaching baseline. Label model-specific ar
 
 | # | Proposed article | Central question and scope |
 | --- | --- | --- |
-| 1 | **[Training: Model, assistant, and agent - the system map](./Model%2C%20assistant%2C%20and%20agent/Readme.md)** | What surrounds the model? Map learned parameters, inference, messages, the runtime that coordinates actions, tools, external state, and the user interface. Preview one request across these boundaries. |
+| 1 | **[Training: Model, assistant, and agent](./Model%2C%20assistant%2C%20and%20agent/Readme.md)** | What surrounds the model? Map learned parameters, inference, messages, the runtime that coordinates actions, tools, external state, and the user interface. Preview one request across these boundaries. |
 | 2 | **[Training: Training vs. Inference](./Training%20vs.%20inference/Readme.md)** | What changes when a model learns versus when it answers? Explain parameters, activations, a forward pass, loss, backpropagation, and an optimizer update. Contrast ordinary inference with weight updates. |
 | 3 | **[Training: Pretraining - learning from next-token prediction](./Pretraining/Readme.md)** | How does a prediction objective produce useful capabilities? Cover training targets, data mixture and quality, generalization, memorization, and continued pretraining. Distinguish the objective from the capabilities it can support. |
-| 4 | **[Training: Supervised fine-tuning: learning to act as an assistant](./Supervised%20fine-tuning/Readme.md)** | What do examples of desired behavior change? Cover supervised fine-tuning (SFT), instruction-response and tool-use demonstrations, chat formatting, and changes to behavior and capabilities. |
+| 4 | **[Training: Supervised fine-tuning](./Supervised%20fine-tuning/Readme.md)** | What do examples of desired behavior change? Cover supervised fine-tuning (SFT), instruction-response and tool-use demonstrations, chat formatting, and changes to behavior and capabilities. |
 | 5 | **[Training: Preference tuning - RLHF and DPO](./Preference%20tuning/Readme.md)** | How do preferences influence answers? Compare reinforcement learning from human feedback (RLHF), a learned reward model, and direct preference optimization (DPO). Separate preference scores from factual correctness. |
 | 6 | **[Training: Reasoning training and distillation](./Reasoning%20training%20and%20distillation/Readme.md)** | How are reasoning behaviors encouraged and transferred? Cover reinforcement learning (RL) with verifiable rewards, reasoning trajectories, distillation, and the limitations of the training signal. Compare training changes with spending more compute at inference. |
 

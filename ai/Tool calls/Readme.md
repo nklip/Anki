@@ -2,59 +2,45 @@
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-**A tool call is a model-generated request, not an executed action.** Software checks the request, invokes real functionality, and returns the result. Follow a lookup of the meeting time in `notes.txt`.
+**A tool call is a model-generated request, not an executed action.**
+
+Software checks the request, invokes real functionality, and returns the result. Follow a lookup of the meeting time in `notes.txt`.
 
 ## Where this fits
 
-The shared map highlights **tool execution**. Follow the arrows from context to a model call, then through tool results or an outcome check. The lower example follows a request through checked execution to a matching result.
+In the shared map, the highlighted box “Validate and execute” is this topic. Follow the arrows from context to a model call, then through tool results or an outcome check. The lower example previews a request that a check stops: the tool does not run, and the error comes back as the result.
 
 ![where-this-fits.svg](images/where-this-fits.svg)
 
-## Model, runtime, tool, and API
+## One tool call in five steps
 
-A **tool** is callable functionality, such as reading a file. The **runtime** is the application code coordinating model calls, checks, and tool execution. An **application programming interface (API)** lets programs request functionality from each other.
-
-![tool-roles.svg](images/tool-roles.svg)
-
-Read the participants from left to right, then follow results back. The model generates the request; executable code reads the file. Tools can run locally or on a remote service. The example uses an application-run file tool.
-
-## Definitions and arguments
-
-A **tool definition** gives a name, description, and input rules. An **input schema** specifies those rules: required fields and allowed value types. Here, `read_file` requires a `path` containing text, called a **string**.
-
-![definition-and-arguments.svg](images/definition-and-arguments.svg)
-
-**Arguments** are the values supplied for one invocation: `{"path": "notes.txt"}` chooses a file. The definition describes what can be called; the arguments specify what this call asks for. Sending a definition does not give the model the file's contents or execute the code.
-
-## Follow a complete exchange
+A **tool** is callable functionality, such as reading a file. The **runtime** is the application code that talks to the model and runs tools. The model only generates text, so the two take turns.
 
 ![tool-calling-flow.svg](images/tool-calling-flow.svg)
 
-Follow the five stages. The runtime supplies the question and definition. The model requests `read_file` for `notes.txt`. After checks, the tool reads the file. Its **result**, “Meeting starts at 10:00,” is included in a later model input, or **context**. The model can now answer using the returned evidence or request more work.
+Read the five numbered steps from top to bottom. Each arrow points to the receiver.
 
-## Validation and authorization are separate
+1. **The runtime sends a question and a tool definition.** A **tool definition** gives a tool's name, description, and input rules. It tells the model that `read_file` exists. It does not hand over file contents or run any code.
+2. **The model replies with a tool call.** The call names the tool and supplies **arguments**, the values for this one invocation: the path `notes.txt`. It also carries a **call identifier (call ID)**, here `R7`. Nothing has run yet.
+3. **The runtime checks the call, then runs the tool.** **Validation** asks whether the arguments follow the input rules. **Authorization** asks whether reading this file is permitted. Only then does real code open the file. The model takes no part in this step.
+4. **The runtime sends the result back.** The **result** carries the same call ID, so the model can match it to its request. It joins the earlier messages in the next model input, or **context**.
+5. **The model answers** from the returned text, or requests another tool.
 
-**Validation** checks whether inputs satisfy the rules. **Authorization** checks whether this operation on this target is permitted.
+Three rules keep this safe:
 
-![execution-checks.svg](images/execution-checks.svg)
+- Enforce the checks in software. An instruction to the model is not an access control.
+- If a check or the tool fails, return the error, such as “access denied” or “file not found,” as the result. Never invent file contents. The lower example in the map shows this case.
+- When several calls are open, match results by call ID, not by arrival order.
 
-Read the rows: `42` fails the text rule; `secrets.txt` is text but is forbidden by the example policy; `notes.txt` passes both checks. A valid, allowed request can still name a missing file or fail during execution. Enforce checks in software; a model instruction is not an access control.
-
-## Match the result to its request
-
-A **call identifier (call ID)** labels one tool invocation. The returned result must identify the request it answers, especially when several calls use the same tool.
-
-![matching-tool-results.svg](images/matching-tool-results.svg)
-
-Match by ID, not arrival order. A failure should return an error result, such as “file not found,” so the model can correct the request or investigate. Do not turn a failed read into invented file contents. Field names and message formats differ between model APIs.
+Field names and message formats differ between model providers.
 
 ## Where MCP fits
 
-**Model Context Protocol (MCP)** defines communication rules connecting applications to tools and other context sources. The **host** is the application; its **client** component talks to a **server**, the program exposing those capabilities.
+**Model Context Protocol (MCP)** defines communication rules that connect applications to tools and other context sources. MCP calls the application the **host**; here, that is the runtime. Its **client** component talks to a **server**, the program that holds the tool code.
 
 ![mcp-integration.svg](images/mcp-integration.svg)
 
-Follow the upper request and result arrows, then the two lower panels. **Tool discovery** asks what is available (`tools/list`); **invocation** requests a particular tool with arguments (`tools/call`). The host supplies relevant definitions and results to the model. A server may run locally or remotely. MCP is optional: direct tool integrations also work, and both need permission checks.
+Read from top to bottom. The numbers 1 to 5 are the same five steps, and MCP adds the two exchanges on the left side. **Tool discovery** comes first: the client asks what is available (`tools/list`), and the runtime passes the returned definitions to the model in step 1. **Tool invocation** replaces the direct call in step 3: after the runtime's checks, the client sends `tools/call` with the arguments, and the server runs the tool. Nothing changes on the model's side. A server may run locally or remotely. MCP is optional: direct tool integrations also work, and both need permission checks.
 
 [The agent loop](../The%20agent%20loop/Readme.md) explains how repeated exchanges pursue a goal. [Reliability](../Reliability/Readme.md) separates tool receipts from verified outcomes.
 

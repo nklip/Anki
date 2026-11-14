@@ -2,7 +2,9 @@
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-**Tokenization turns text into an ordered list of token IDs.** A **token** is one piece of text: a word, part of a word, punctuation, or even part of a character. The model receives numeric IDs, not visible letters.
+**Tokenization turns text into an ordered list of token IDs.**
+
+A **token** is one piece of text: a word, part of a word, punctuation, or even part of a character. The model receives numeric IDs, not visible letters.
 
 ## Where this fits
 

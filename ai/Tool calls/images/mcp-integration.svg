@@ -1,60 +1,162 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="852.272727" viewBox="0 0 1100 625" role="img" aria-labelledby="title desc">
-<title id="title">MCP host, client, server, discovery, and invocation</title>
-<desc id="desc">The application hosts an MCP client that communicates with a server. Tool discovery returns definitions; invocation sends arguments and returns a result. The model remains separate and MCP is an optional integration.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1622.727273" viewBox="0 0 1100 1190" role="img" aria-labelledby="title desc">
+<title id="title">MCP: the runtime reaches tools through a server</title>
+<desc id="desc">A sequence between three participants: an MCP server that holds the tool code, local or remote; the runtime, which is application code and contains an MCP client; and the model, which only generates text. First, tool discovery: the client sends tools/list, a request for the tool list, and the server returns definitions such as read_file. Discovery comes first, so the runtime knows which definitions it can send to the model. Step 1: the runtime sends the question and the read_file definition to the model. Step 2: the model replies with tool call R7, read_file with path notes.txt. Step 3, tool invocation: the runtime checks the call first, then its MCP client sends tools/call with read_file and path notes.txt; the server runs the tool code and returns the result Meeting starts at 10:00. Step 4: the runtime sends tool result R7 to the model. Step 5: the model replies with the final answer. MCP is optional: a runtime can call tool code directly, and permission checks still apply. The MCP client is part of the runtime; there is no MCP client inside the model.</desc>
+<!-- Same lifeline style and step numbers as tool-calling-flow.svg. The model stays on the right; MCP messages are on the left side. -->
 <!-- Shared native text and typography. Shafts end inside separate arrowhead bases. -->
 <defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
-<rect width="1100" height="625" fill="#ffffff"/>
-<text x="30" y="44" font-size="29" font-weight="700" text-anchor="start" fill="#172033">MCP standardizes the connection to a tool server</text>
-<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">Model Context Protocol (MCP) is a set of communication rules for applications and context providers.</text>
-<!-- Mcp participants; preserve reading order and text clearance. -->
-<g id="mcp-participants">
-<rect x="30" y="125" width="235" height="240" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
-<text x="50" y="163" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Model</text>
-<text x="50" y="204" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Requests a tool</text>
-<text x="50" y="236" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Uses results</text>
-<text x="50" y="268" font-size="20" font-weight="400" text-anchor="start" fill="#172033">No MCP client inside</text>
-<text x="50" y="300" font-size="20" font-weight="400" text-anchor="start" fill="#172033">the neural model.</text>
-<rect x="395" y="125" width="310" height="240" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
-<text x="415" y="163" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Application / host</text>
-<text x="415" y="204" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Coordinates the run</text>
-<text x="415" y="236" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Contains an MCP client:</text>
-<text x="415" y="268" font-size="20" font-weight="400" text-anchor="start" fill="#172033">a component that talks</text>
-<text x="415" y="300" font-size="20" font-weight="400" text-anchor="start" fill="#172033">to the server.</text>
-<rect x="835" y="125" width="235" height="240" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
-<text x="855" y="163" font-size="24" font-weight="700" text-anchor="start" fill="#172033">MCP server</text>
-<text x="855" y="204" font-size="20" font-weight="400" text-anchor="start" fill="#172033">A program exposing</text>
-<text x="855" y="236" font-size="20" font-weight="400" text-anchor="start" fill="#172033">tools and other context</text>
-<text x="855" y="268" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Local or remote</text>
-<text x="855" y="300" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Returns results.</text>
+<rect width="1100" height="1190" fill="#ffffff"/>
+<text x="30" y="44" font-size="29" font-weight="700" text-anchor="start" fill="#172033">MCP: the runtime reaches tools through a server</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">Numbers 1 to 5 are the five steps of a tool call. MCP adds the messages on the left side.</text>
+
+<!-- Lifelines sit under everything else. -->
+<g id="lifelines">
+<line x1="150" y1="186" x2="150" y2="1062" stroke="#e2e8f0" stroke-width="6"/>
+<line x1="550" y1="186" x2="550" y2="1062" stroke="#e2e8f0" stroke-width="6"/>
+<line x1="950" y1="186" x2="950" y2="1062" stroke="#e2e8f0" stroke-width="6"/>
 </g>
-<!-- Mcp exchange; preserve reading order and text clearance. -->
-<g id="mcp-exchange">
-<path data-connector="true" d="M 265,240 L 384,240" fill="none" stroke="#64748b" stroke-width="2.5"/>
-<polygon points="395,240 383,246 383,234" fill="#64748b"/>
-<text x="280" y="218" font-size="18" font-weight="400" text-anchor="start" fill="#172033">tool call</text>
-<path data-connector="true" d="M 395,320 L 276,320" fill="none" stroke="#64748b" stroke-width="2.5"/>
-<polygon points="265,320 277,314 277,326" fill="#64748b"/>
-<text x="284" y="299" font-size="18" font-weight="400" text-anchor="start" fill="#172033">result</text>
-<path data-connector="true" d="M 705,240 L 824,240" fill="none" stroke="#64748b" stroke-width="2.5"/>
-<polygon points="835,240 823,246 823,234" fill="#64748b"/>
-<text x="719" y="218" font-size="18" font-weight="400" text-anchor="start" fill="#172033">MCP call</text>
-<path data-connector="true" d="M 835,320 L 716,320" fill="none" stroke="#64748b" stroke-width="2.5"/>
-<polygon points="705,320 717,314 717,326" fill="#64748b"/>
-<text x="715" y="299" font-size="18" font-weight="400" text-anchor="start" fill="#172033">MCP result</text>
+
+<!-- Participants. The MCP client is drawn as a part inside the runtime box. -->
+<g id="participant-server">
+<rect x="30" y="104" width="240" height="82" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="150" y="137" font-size="23" font-weight="700" text-anchor="middle" fill="#172033">MCP server</text>
+<text x="150" y="164" font-size="18" font-weight="400" text-anchor="middle" fill="#64748b">tool code, local or remote</text>
 </g>
-<!-- Discovery; preserve reading order and text clearance. -->
-<g id="discovery">
-<rect x="30" y="416" width="500" height="130" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
-<text x="50" y="454" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Tool discovery</text>
-<text x="50" y="495" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Client asks tools/list.</text>
-<text x="50" y="527" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Server returns available definitions.</text>
+<g id="participant-runtime">
+<rect x="380" y="104" width="340" height="82" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="550" y="132" font-size="23" font-weight="700" text-anchor="middle" fill="#172033">Runtime</text>
+<rect x="396" y="144" width="144" height="32" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="468" y="166" font-size="17" font-weight="700" text-anchor="middle" fill="#172033">MCP client</text>
+<text x="554" y="166" font-size="18" font-weight="400" text-anchor="start" fill="#64748b">+ application code</text>
 </g>
-<!-- Invocation; preserve reading order and text clearance. -->
-<g id="invocation">
-<rect x="570" y="416" width="500" height="130" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
-<text x="590" y="454" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Tool invocation</text>
-<text x="590" y="495" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Client sends tools/call with arguments.</text>
-<text x="590" y="527" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Server executes the tool and returns its result.</text>
+<g id="participant-model">
+<rect x="830" y="104" width="240" height="82" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="950" y="137" font-size="23" font-weight="700" text-anchor="middle" fill="#172033">Model</text>
+<text x="950" y="164" font-size="18" font-weight="400" text-anchor="middle" fill="#64748b">only generates text</text>
 </g>
-<text x="30" y="592" font-size="21" font-weight="700" text-anchor="start" fill="#172033">MCP is optional: a runtime can call tool code directly. Permission checks still apply.</text>
+
+<!-- Activation bars: one pair per message, centered on that message's arrow. -->
+<g id="activation-bars" stroke="#475569" stroke-width="8" stroke-linecap="round">
+<line x1="150" y1="262" x2="150" y2="298"/>
+<line x1="550" y1="262" x2="550" y2="298"/>
+<line x1="150" y1="326" x2="150" y2="362"/>
+<line x1="550" y1="326" x2="550" y2="362"/>
+<line x1="550" y1="428" x2="550" y2="472"/>
+<line x1="950" y1="428" x2="950" y2="472"/>
+<line x1="550" y1="536" x2="550" y2="580"/>
+<line x1="950" y1="536" x2="950" y2="580"/>
+<line x1="150" y1="676" x2="150" y2="712"/>
+<line x1="550" y1="676" x2="550" y2="712"/>
+<line x1="150" y1="770" x2="150" y2="806"/>
+<line x1="550" y1="770" x2="550" y2="806"/>
+<line x1="550" y1="872" x2="550" y2="916"/>
+<line x1="950" y1="872" x2="950" y2="916"/>
+<line x1="550" y1="980" x2="550" y2="1024"/>
+<line x1="950" y1="980" x2="950" y2="1024"/>
+</g>
+
+<!-- Tool discovery: MCP exchange before step 1. Upper arrow goes to the server, lower arrow comes back. -->
+<g id="mcp-discovery">
+<path data-connector="true" d="M 546,280 L 500,280" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<path data-connector="true" d="M 200,280 L 167,280" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="156,280 168,274 168,286" fill="#64748b"/>
+<path data-connector="true" d="M 154,344 L 200,344" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<path data-connector="true" d="M 500,344 L 533,344" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="544,344 532,350 532,338" fill="#64748b"/>
+<rect x="200" y="208" width="300" height="178" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+<text x="220" y="237" font-size="20" font-weight="700" text-anchor="start" fill="#172033">Tool discovery</text>
+<rect x="215" y="252" width="270" height="56" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+<text x="227" y="274" font-size="16" font-weight="700" text-anchor="start" fill="#64748b">Client sends tools/list</text>
+<text x="227" y="297" font-size="18" font-weight="400" text-anchor="start" fill="#172033">a request for the tool list</text>
+<rect x="215" y="316" width="270" height="56" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+<text x="227" y="338" font-size="16" font-weight="700" text-anchor="start" fill="#64748b">Server returns definitions</text>
+<text x="227" y="361" font-size="18" font-weight="400" text-anchor="start" fill="#172033">read_file(path): reads a file</text>
+<!-- Note in the idle model-side gap. -->
+<text x="600" y="282" font-size="18" font-weight="400" text-anchor="start" fill="#64748b">Discovery comes first. Then the</text>
+<text x="600" y="306" font-size="18" font-weight="400" text-anchor="start" fill="#64748b">runtime knows which definitions</text>
+<text x="600" y="330" font-size="18" font-weight="400" text-anchor="start" fill="#64748b">it can send to the model.</text>
+</g>
+
+<!-- Step 1: runtime to model. -->
+<g id="step-1-request">
+<path data-connector="true" d="M 554,450 L 600,450" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<path data-connector="true" d="M 900,450 L 933,450" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="944,450 932,456 932,444" fill="#64748b"/>
+<rect x="600" y="406" width="300" height="88" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="632" y="435" font-size="20" font-weight="700" text-anchor="start" fill="#172033">Question + definitions</text>
+<rect x="615" y="446" width="270" height="36" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="627" y="470" font-size="18" font-weight="400" text-anchor="start" fill="#172033">read_file definition + question</text>
+<circle cx="600" cy="406" r="18" fill="#172033"/>
+<text x="600" y="413" font-size="19" font-weight="700" text-anchor="middle" fill="#ffffff">1</text>
+</g>
+
+<!-- Step 2: model to runtime. -->
+<g id="step-2-tool-call">
+<path data-connector="true" d="M 946,558 L 900,558" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<path data-connector="true" d="M 600,558 L 567,558" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="556,558 568,552 568,564" fill="#64748b"/>
+<rect x="600" y="514" width="300" height="88" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="632" y="543" font-size="20" font-weight="700" text-anchor="start" fill="#172033">Tool call R7</text>
+<rect x="615" y="554" width="270" height="36" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="627" y="578" font-size="18" font-weight="400" text-anchor="start" fill="#172033">read_file, path: "notes.txt"</text>
+<circle cx="600" cy="514" r="18" fill="#172033"/>
+<text x="600" y="521" font-size="19" font-weight="700" text-anchor="middle" fill="#ffffff">2</text>
+</g>
+
+<!-- Step 3 with MCP: the invocation goes to the server, which runs the tool code. -->
+<g id="step-3-mcp-invocation">
+<path data-connector="true" d="M 546,694 L 500,694" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<path data-connector="true" d="M 200,694 L 167,694" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="156,694 168,688 168,700" fill="#64748b"/>
+<path data-connector="true" d="M 154,788 L 200,788" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<path data-connector="true" d="M 500,788 L 533,788" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="544,788 532,794 532,782" fill="#64748b"/>
+<rect x="200" y="622" width="300" height="208" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+<text x="232" y="651" font-size="20" font-weight="700" text-anchor="start" fill="#172033">Tool invocation</text>
+<rect x="215" y="666" width="270" height="56" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+<text x="227" y="688" font-size="16" font-weight="700" text-anchor="start" fill="#64748b">Client sends tools/call</text>
+<text x="227" y="711" font-size="18" font-weight="400" text-anchor="start" fill="#172033">read_file, path: "notes.txt"</text>
+<text x="227" y="747" font-size="18" font-weight="400" text-anchor="start" fill="#64748b">The server runs the tool code.</text>
+<rect x="215" y="760" width="270" height="56" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+<text x="227" y="782" font-size="16" font-weight="700" text-anchor="start" fill="#64748b">Server returns the result</text>
+<text x="227" y="805" font-size="18" font-weight="400" text-anchor="start" fill="#172033">“Meeting starts at 10:00.”</text>
+<circle cx="200" cy="622" r="18" fill="#172033"/>
+<text x="200" y="629" font-size="19" font-weight="700" text-anchor="middle" fill="#ffffff">3</text>
+<!-- Note in the idle model-side gap: the checks stay in the runtime. -->
+<text x="600" y="702" font-size="18" font-weight="400" text-anchor="start" fill="#64748b">The runtime checks the call first.</text>
+<text x="600" y="726" font-size="18" font-weight="400" text-anchor="start" fill="#64748b">Then its MCP client sends</text>
+<text x="600" y="750" font-size="18" font-weight="400" text-anchor="start" fill="#64748b">tools/call to the server.</text>
+</g>
+
+<!-- Step 4: runtime to model. -->
+<g id="step-4-result">
+<path data-connector="true" d="M 554,894 L 600,894" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<path data-connector="true" d="M 900,894 L 933,894" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="944,894 932,900 932,888" fill="#64748b"/>
+<rect x="600" y="850" width="300" height="88" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="632" y="879" font-size="20" font-weight="700" text-anchor="start" fill="#172033">Tool result R7</text>
+<rect x="615" y="890" width="270" height="36" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="627" y="914" font-size="18" font-weight="400" text-anchor="start" fill="#172033">“Meeting starts at 10:00.”</text>
+<circle cx="600" cy="850" r="18" fill="#172033"/>
+<text x="600" y="857" font-size="19" font-weight="700" text-anchor="middle" fill="#ffffff">4</text>
+</g>
+
+<!-- Step 5: model to runtime. -->
+<g id="step-5-answer">
+<path data-connector="true" d="M 946,1002 L 900,1002" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<path data-connector="true" d="M 600,1002 L 567,1002" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="556,1002 568,996 568,1008" fill="#64748b"/>
+<rect x="600" y="958" width="300" height="88" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="632" y="987" font-size="20" font-weight="700" text-anchor="start" fill="#172033">Final answer</text>
+<rect x="615" y="998" width="270" height="36" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="627" y="1022" font-size="18" font-weight="400" text-anchor="start" fill="#172033">“The meeting starts at 10:00.”</text>
+<circle cx="600" cy="958" r="18" fill="#172033"/>
+<text x="600" y="965" font-size="19" font-weight="700" text-anchor="middle" fill="#ffffff">5</text>
+</g>
+
+<!-- Limits of MCP; keep both lines when the sequence above changes. -->
+<g id="mcp-limits">
+<rect x="30" y="1084" width="1040" height="82" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="1117" font-size="21" font-weight="700" text-anchor="start" fill="#172033">MCP is optional: a runtime can call tool code directly. Permission checks still apply.</text>
+<text x="50" y="1147" font-size="20" font-weight="400" text-anchor="start" fill="#172033">The MCP client is part of the runtime. There is no MCP client inside the model.</text>
+</g>
 </svg>
