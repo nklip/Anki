@@ -237,40 +237,133 @@ TCC fits operations with meaningful reservations, such as funds, seats, or inven
 
 ## Self-check
 
+Try answering each question before expanding its answer.
+
 1. Why are there two phases despite three operation names?
+
+   <details>
+   <summary>Answer</summary>
+
+   Try is phase one. Confirm and Cancel are alternative outcomes of phase two.
+
+   </details>
+
 2. What prevents a duplicate Try from reserving A's dollar twice?
+
+   <details>
+   <summary>Answer</summary>
+
+   A stable branch identity and a local transaction that checks recorded state and applies any balance/reservation update while preventing concurrent duplicates.
+
+   </details>
+
 3. Why must an empty Cancel leave a durable record?
+
+   <details>
+   <summary>Answer</summary>
+
+   A delayed Try must discover that the branch was canceled and refuse to reserve anything.
+
+   </details>
+
 4. Why is Cancel unsafe after a Confirm response is lost?
+
+   <details>
+   <summary>Answer</summary>
+
+   The participant might already have confirmed. Recover the outcome and continue the recorded decision instead of creating conflicting effects.
+
+   </details>
+
 5. Does reserving A's dollar give a concurrent cross-service read a single snapshot of the transfer?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. Between debit and credit, a read can see A = $0 and C = $0. The reservation prevents competing spending of that dollar when spending paths enforce it; it does not provide a global snapshot.
+
+   </details>
+
 6. What does phase one leave behind in database 2PC versus TCC?
+
+   <details>
+   <summary>Answer</summary>
+
+   Database 2PC leaves prepared database transactions awaiting resolution; TCC leaves committed business reservations.
+
+   </details>
+
 7. What distinguishes TCC from a general Saga?
+
+   <details>
+   <summary>Answer</summary>
+
+   TCC requires reserve/finalize/release operations, while a Saga can coordinate broader committed actions and their compensations.
+
+   </details>
+
 8. What is the failure called when one participant confirms but another expires its reservation and cancels?
+
+   <details>
+   <summary>Answer</summary>
+
+   A heuristic mixed outcome: part confirmed, part canceled, violating the intended all-or-nothing outcome across participants. Jakarta Transactions uses `HeuristicMixedException` for the analogous committed/rolled-back split.
+
+   </details>
+
 9. Why is checking hotel availability during Try insufficient when the hotel cannot hold a room?
+
+   <details>
+   <summary>Answer</summary>
+
+   Another customer can buy the last room before Confirm. A local pending record does not reserve the external hotel's inventory, so Try has not secured completion.
+
+   </details>
+
 10. How does the term distributed transaction differ from two-phase commit?
+
+    <details>
+    <summary>Answer</summary>
+
+    Distributed transaction describes work spanning independent transactional resources; 2PC is one protocol for coordinating their commit-or-rollback outcome.
+
+    </details>
+
 11. Why must the coordinator record its chosen second phase before sending Confirm or Cancel requests?
+
+    <details>
+    <summary>Answer</summary>
+
+    Sending first and crashing before recording leaves the replacement worker without a durable decision, even though participants may already have acted. Recording first ensures the worker knows which second phase to finish after a crash.
+
+    </details>
+
 12. Why does an Oracle `RESERVABLE` column alone not implement the TCC hold used in this wallet?
+
+    <details>
+    <summary>Answer</summary>
+
+    In an ordinary database transaction, the native reservation becomes a balance update at commit or is discarded at rollback. The wallet's TCC hold must survive Try's local commit as durable business state, with later Confirm and Cancel handlers; that application design can use either Oracle Database or PostgreSQL.
+
+    </details>
+
 13. Why does a reservation remain visible even after its database lock is released?
+
+    <details>
+    <summary>Answer</summary>
+
+    The committed reservation reduces what competing operations can use. Short database lock duration does not make the held resource available or provide global isolation.
+
+    </details>
+
 14. Does reaching a recovery deadline authorize Cancel after Confirm was chosen?
 
-<details>
-<summary>Check your answers</summary>
+    <details>
+    <summary>Answer</summary>
 
-1. Try is phase one. Confirm and Cancel are alternative outcomes of phase two.
-2. A stable branch identity and a local transaction that checks recorded state and applies any balance/reservation update while preventing concurrent duplicates.
-3. A delayed Try must discover that the branch was canceled and refuse to reserve anything.
-4. The participant might already have confirmed. Recover the outcome and continue the recorded decision instead of creating conflicting effects.
-5. No. Between debit and credit, a read can see A = $0 and C = $0. The reservation prevents competing spending of that dollar when spending paths enforce it; it does not provide a global snapshot.
-6. Database 2PC leaves prepared database transactions awaiting resolution; TCC leaves committed business reservations.
-7. TCC requires reserve/finalize/release operations, while a Saga can coordinate broader committed actions and their compensations.
-8. A heuristic mixed outcome: part confirmed, part canceled, violating the intended all-or-nothing outcome across participants. Jakarta Transactions uses `HeuristicMixedException` for the analogous committed/rolled-back split.
-9. Another customer can buy the last room before Confirm. A local pending record does not reserve the external hotel's inventory, so Try has not secured completion.
-10. Distributed transaction describes work spanning independent transactional resources; 2PC is one protocol for coordinating their commit-or-rollback outcome.
-11. Sending first and crashing before recording leaves the replacement worker without a durable decision, even though participants may already have acted. Recording first ensures the worker knows which second phase to finish after a crash.
-12. In an ordinary database transaction, the native reservation becomes a balance update at commit or is discarded at rollback. The wallet's TCC hold must survive Try's local commit as durable business state, with later Confirm and Cancel handlers; that application design can use either Oracle Database or PostgreSQL.
-13. The committed reservation reduces what competing operations can use. Short database lock duration does not make the held resource available or provide global isolation.
-14. No. Recover the chosen outcome and escalate unresolved work. A monitoring deadline is not permission to reverse a confirmation that may already have executed elsewhere.
+    No. Recover the chosen outcome and escalate unresolved work. A monitoring deadline is not permission to reverse a confirmation that may already have executed elsewhere.
 
-</details>
+    </details>
 
 # Sources
 

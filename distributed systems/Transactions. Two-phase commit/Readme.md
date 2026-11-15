@@ -225,50 +225,169 @@ Keeping the invariant inside such a database lets the database supply commit coo
 
 ## Self-check
 
-Try answering before revealing the explanations.
+Try answering each question before expanding its answer.
 
 1. What failure can leave the transfer half complete when A's and C's databases commit independently?
+
+   <details>
+   <summary>Answer</summary>
+
+   The application can commit A's debit and crash before committing C's credit. Separate successful local transactions do not give the transfer one atomic outcome.
+
+   </details>
+
 2. What work belongs to A's branch in the example transfer?
+
+   <details>
+   <summary>Answer</summary>
+
+   A's local transaction containing its part of the transfer: the $1 debit. C's credit belongs to a different branch.
+
+   </details>
+
 3. What does an initial write's `ok` reply establish?
+
+   <details>
+   <summary>Answer</summary>
+
+   The write executed inside its local transaction. The reply does not establish that the branch is prepared or committed.
+
+   </details>
+
 4. What must a participant make durable before it votes YES?
+
+   <details>
+   <summary>Answer</summary>
+
+   Enough prepared state to recover and finish its branch after a crash. It also retains the resources required for completion, such as the update's row lock. The work remains uncommitted.
+
+   </details>
+
 5. After COMMIT is durably recorded, how should the coordinator handle a lost completion reply from C?
+
+   <details>
+   <summary>Answer</summary>
+
+   Establish whether C finished and continue delivering the same COMMIT decision if needed. A lost reply does not justify switching to ABORT or starting a new transfer.
+
+   </details>
+
 6. Why does aborting A's prepared debit require no new refund transaction?
+
+   <details>
+   <summary>Answer</summary>
+
+   That debit never committed. Rolling back the original branch discards its pending change; compensation would instead counteract already committed work.
+
+   </details>
+
 7. Why must the coordinator save COMMIT before announcing it?
+
+   <details>
+   <summary>Answer</summary>
+
+   A crash might occur after one participant has received COMMIT. The durable record lets recovery continue that decision instead of forgetting it and allowing a conflicting outcome elsewhere.
+
+   </details>
+
 8. Which two histories can look like the same timeout to a prepared participant?
+
+   <details>
+   <summary>Answer</summary>
+
+   The coordinator might have stopped before deciding, or it might have recorded COMMIT and delivered it to another participant. Silence cannot distinguish those histories, so the prepared participant must obtain outcome evidence rather than guess.
+
+   </details>
+
 9. What does atomic commit leave unspecified about concurrent cross-database reads?
+
+   <details>
+   <summary>Answer</summary>
+
+   Whether those reads share a consistent snapshot and how they interact with concurrent work. Those guarantees require suitable isolation and read coordination in addition to atomic commit.
+
+   </details>
+
 10. Which PostgreSQL command completes `tr-42-a` after the coordinator chooses COMMIT?
+
+    <details>
+    <summary>Answer</summary>
+
+    `COMMIT PREPARED 'tr-42-a';`, issued outside a transaction block. It resolves that prepared branch; it does not rerun the debit.
+
+    </details>
+
 11. What causes PostgreSQL's `prepared transactions are disabled` error?
+
+    <details>
+    <summary>Answer</summary>
+
+    `max_prepared_transactions` is `0`, its default. Enabling prepared transactions requires a nonzero value at server start and a transaction manager that tracks and resolves them.
+
+    </details>
+
 12. What is being removed during Oracle's Forget phase?
+
+    <details>
+    <summary>Answer</summary>
+
+    Transaction-status records that are no longer needed after all participants report successful commit. The committed business data stays in place.
+
+    </details>
+
 13. What is `XAResource.forget(Xid)` used for?
+
+    <details>
+    <summary>Answer</summary>
+
+    It lets the resource manager forget a heuristically completed branch's record. It is not a command to commit or roll back an unresolved prepared branch.
+
+    </details>
+
 14. What remains pending before completion in database 2PC, TCC, and Saga?
+
+    <details>
+    <summary>Answer</summary>
+
+    2PC has prepared, uncommitted database branches; TCC has business reservations committed by local Try operations; Saga has unfinished workflow work after independently committed actions, which may later need compensation.
+
+    </details>
+
 15. When is the coordination cost of 2PC worth paying?
+
+    <details>
+    <summary>Answer</summary>
+
+    When work must have an atomic outcome across compatible transactional resources and the system can accept the messaging, durable-write, lock-retention, and recovery costs. Work that fits one local transaction avoids the distributed coordination requirement.
+
+    </details>
+
 16. Does a Kafka transaction automatically commit an external database update?
+
+    <details>
+    <summary>Answer</summary>
+
+    No. Its native transaction covers Kafka records and included consumer offsets. Coordinating an external database needs another design, such as an outbox for outgoing messages.
+
+    </details>
+
 17. What assumptions are hidden in the five-participant availability calculation?
+
+    <details>
+    <summary>Answer</summary>
+
+    Every participant is required, their availability events are independent, and the coordinator and network are excluded. The result is an illustrative all-available probability, not a production availability guarantee.
+
+    </details>
+
 18. What different jobs do Paxos and 2PC perform in the Spanner example?
 
-<details>
-<summary>Check your answers</summary>
+    <details>
+    <summary>Answer</summary>
 
-1. The application can commit A's debit and crash before committing C's credit. Separate successful local transactions do not give the transfer one atomic outcome.
-2. A's local transaction containing its part of the transfer: the $1 debit. C's credit belongs to a different branch.
-3. The write executed inside its local transaction. The reply does not establish that the branch is prepared or committed.
-4. Enough prepared state to recover and finish its branch after a crash. It also retains the resources required for completion, such as the update's row lock. The work remains uncommitted.
-5. Establish whether C finished and continue delivering the same COMMIT decision if needed. A lost reply does not justify switching to ABORT or starting a new transfer.
-6. That debit never committed. Rolling back the original branch discards its pending change; compensation would instead counteract already committed work.
-7. A crash might occur after one participant has received COMMIT. The durable record lets recovery continue that decision instead of forgetting it and allowing a conflicting outcome elsewhere.
-8. The coordinator might have stopped before deciding, or it might have recorded COMMIT and delivered it to another participant. Silence cannot distinguish those histories, so the prepared participant must obtain outcome evidence rather than guess.
-9. Whether those reads share a consistent snapshot and how they interact with concurrent work. Those guarantees require suitable isolation and read coordination in addition to atomic commit.
-10. `COMMIT PREPARED 'tr-42-a';`, issued outside a transaction block. It resolves that prepared branch; it does not rerun the debit.
-11. `max_prepared_transactions` is `0`, its default. Enabling prepared transactions requires a nonzero value at server start and a transaction manager that tracks and resolves them.
-12. Transaction-status records that are no longer needed after all participants report successful commit. The committed business data stays in place.
-13. It lets the resource manager forget a heuristically completed branch's record. It is not a command to commit or roll back an unresolved prepared branch.
-14. 2PC has prepared, uncommitted database branches; TCC has business reservations committed by local Try operations; Saga has unfinished workflow work after independently committed actions, which may later need compensation.
-15. When work must have an atomic outcome across compatible transactional resources and the system can accept the messaging, durable-write, lock-retention, and recovery costs. Work that fits one local transaction avoids the distributed coordination requirement.
-16. No. Its native transaction covers Kafka records and included consumer offsets. Coordinating an external database needs another design, such as an outbox for outgoing messages.
-17. Every participant is required, their availability events are independent, and the coordinator and network are excluded. The result is an illustrative all-available probability, not a production availability guarantee.
-18. Paxos replicates transaction-manager state within each group; 2PC coordinates an atomic outcome across the participating groups.
+    Paxos replicates transaction-manager state within each group; 2PC coordinates an atomic outcome across the participating groups.
 
-</details>
+    </details>
 
 # Sources
 

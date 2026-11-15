@@ -112,20 +112,34 @@ A queue absorbs bursts but cannot make sustained excess work disappear. If arriv
 
 ## Self-check
 
-Try answering before revealing the explanations.
+Try answering each question before expanding its answer.
 
 1. Why won't three workers sharing one queue implement three independent subscriptions?
+
+   <details>
+   <summary>Answer</summary>
+
+   Workers on one queue share its deliveries: each delivery goes to one worker. Each independent subscriber needs its own subscription or queue to receive the event.
+
+   </details>
+
 2. Why can running the same calls in parallel reduce response latency without reducing total downstream work?
+
+   <details>
+   <summary>Answer</summary>
+
+   The calls overlap in time, so the wait is approximately the slowest required branch plus coordination overhead. All calls still execute: three sequential calls and three parallel calls both make three downstream calls.
+
+   </details>
+
 3. In fanout on write and fanout on read, what is the input and what are the destinations?
 
-<details>
-<summary>Check your answers</summary>
+   <details>
+   <summary>Answer</summary>
 
-1. Workers on one queue share its deliveries: each delivery goes to one worker. Each independent subscriber needs its own subscription or queue to receive the event.
-2. The calls overlap in time, so the wait is approximately the slowest required branch plus coordination overhead. All calls still execute: three sequential calls and three parallel calls both make three downstream calls.
-3. On write, one published post triggers updates to many followers' home feeds. On read, one feed request triggers queries for many followed authors' timelines; fan-in combines the returned candidates.
+   On write, one published post triggers updates to many followers' home feeds. On read, one feed request triggers queries for many followed authors' timelines; fan-in combines the returned candidates.
 
-</details>
+   </details>
 
 # Sources
 

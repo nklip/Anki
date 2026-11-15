@@ -147,40 +147,124 @@ Large datasets with infrequent updates are a common fit when storage efficiency 
 
 ## Self-check
 
-Try answering before revealing the explanations.
+Try answering each question before expanding its answer.
 
 1. Which surviving fragment sets can reconstruct a Reed–Solomon `4 + 2` stripe?
+
+   <details>
+   <summary>Answer</summary>
+
+   Any four valid fragments from the same stripe and version, with the identifiers and coding information needed to decode them. They can be data fragments, parity fragments, or a mixture.
+
+   </details>
+
 2. How can `4 + 2` have 50% storage overhead yet use 50% less storage than three-copy replication?
+
+   <details>
+   <summary>Answer</summary>
+
+   For 1 GB of original data, `4 + 2` stores 1.5 GB: 0.5 GB extra is 50% of the original. Three complete replicas store 3 GB, so 1.5 GB is 50% less than that replicated total.
+
+   </details>
+
 3. What does “systematic” tell you about the four data fragments after encoding?
+
+   <details>
+   <summary>Answer</summary>
+
+   They retain the original data unchanged. The encoder adds calculated parity fragments alongside them.
+
+   </details>
+
 4. Why would a second identical copy of the toy XOR parity not allow recovery of both missing data fragments?
+
+   <details>
+   <summary>Answer</summary>
+
+   The duplicate supplies the same coding relationship again. One XOR equation cannot determine both unknown data fragments; another identical copy adds no independent information.
+
+   </details>
+
 5. Why can a `4 + 2` stripe with three fragments in one rack fail after losing only that rack?
+
+   <details>
+   <summary>Answer</summary>
+
+   Losing that rack removes three fragments, leaving only three. Complete reconstruction requires four valid survivors, regardless of whether the loss is described as one rack or three fragments.
+
+   </details>
+
 6. How does a degraded read differ from repair?
+
+   <details>
+   <summary>Answer</summary>
+
+   A degraded read reconstructs unavailable requested data to answer a read. Repair also writes replacement fragments to restore redundancy for later failures.
+
+   </details>
+
 7. What must happen before a corrupted fragment can be treated as a known erasure?
+
+   <details>
+   <summary>Answer</summary>
+
+   The corruption must be detected and the bad fragment identified so it can be excluded. Ceph BlueStore checksums and deep scrubbing provide a concrete detection mechanism; enough valid fragments must still remain for reconstruction.
+
+   </details>
+
 8. Why can a healthy range read avoid reading all fragments and calculating parity?
+
+   <details>
+   <summary>Answer</summary>
+
+   A systematic code retains the original data fragments, so a healthy read can fetch the requested bytes directly from the relevant data fragments.
+
+   </details>
+
 9. Why can Ceph stop serving client I/O with four valid survivors of a `4 + 2` stripe?
+
+   <details>
+   <summary>Answer</summary>
+
+   The mathematical decoding threshold is separate from the service's operating policy. With `min_size=5`, four survivors do not meet that policy; `ceph -s` can show a PG as `peered`, unable to serve client I/O while recovery may continue.
+
+   </details>
+
 10. Where does erasure coding belong in the S3-like design, and what is one documented implementation example?
+
+    <details>
+    <summary>Answer</summary>
+
+    It belongs in the data-storage layer, with fragments placed on data nodes. Documented examples include Ceph erasure-coded data pools, HDFS Reed–Solomon `6 + 3`, and Backblaze's published `17 + 3` layout.
+
+    </details>
+
 11. Why does “survives any two fragment losses” not establish a claim of “11 nines” annual durability?
+
+    <details>
+    <summary>Answer</summary>
+
+    The fragment-loss budget alone says nothing about how often failures happen or how long repairs take. A durability estimate also needs assumptions about correlated failures, detection, and repair time.
+
+    </details>
+
 12. Why can erasure coding fail to recover an object that was overwritten with the wrong value?
+
+    <details>
+    <summary>Answer</summary>
+
+    Fragments consistently encoding the new wrong value contain no retained copy of the old value. Recovering the old object needs another source, such as a backup or retained version.
+
+    </details>
+
 13. How does the failure erasure coding addresses differ from the failure WAL addresses?
 
-<details>
-<summary>Check your answers</summary>
+    <details>
+    <summary>Answer</summary>
 
-1. Any four valid fragments from the same stripe and version, with the identifiers and coding information needed to decode them. They can be data fragments, parity fragments, or a mixture.
-2. For 1 GB of original data, `4 + 2` stores 1.5 GB: 0.5 GB extra is 50% of the original. Three complete replicas store 3 GB, so 1.5 GB is 50% less than that replicated total.
-3. They retain the original data unchanged. The encoder adds calculated parity fragments alongside them.
-4. The duplicate supplies the same coding relationship again. One XOR equation cannot determine both unknown data fragments; another identical copy adds no independent information.
-5. Losing that rack removes three fragments, leaving only three. Complete reconstruction requires four valid survivors, regardless of whether the loss is described as one rack or three fragments.
-6. A degraded read reconstructs unavailable requested data to answer a read. Repair also writes replacement fragments to restore redundancy for later failures.
-7. The corruption must be detected and the bad fragment identified so it can be excluded. Ceph BlueStore checksums and deep scrubbing provide a concrete detection mechanism; enough valid fragments must still remain for reconstruction.
-8. A systematic code retains the original data fragments, so a healthy read can fetch the requested bytes directly from the relevant data fragments.
-9. The mathematical decoding threshold is separate from the service's operating policy. With `min_size=5`, four survivors do not meet that policy; `ceph -s` can show a PG as `peered`, unable to serve client I/O while recovery may continue.
-10. It belongs in the data-storage layer, with fragments placed on data nodes. Documented examples include Ceph erasure-coded data pools, HDFS Reed–Solomon `6 + 3`, and Backblaze's published `17 + 3` layout.
-11. The fragment-loss budget alone says nothing about how often failures happen or how long repairs take. A durability estimate also needs assumptions about correlated failures, detection, and repair time.
-12. Fragments consistently encoding the new wrong value contain no retained copy of the old value. Recovering the old object needs another source, such as a backup or retained version.
-13. Erasure coding reconstructs missing fragments. WAL records changes before their data-file writes so an engine can recover interrupted updates; it does not itself provide the fragment-loss guarantee.
+    Erasure coding reconstructs missing fragments. WAL records changes before their data-file writes so an engine can recover interrupted updates; it does not itself provide the fragment-loss guarantee.
 
-</details>
+    </details>
 
 # Sources
 

@@ -190,50 +190,169 @@ CORS governs cross-origin browser access; it does not grant S3 permissions. A pe
 
 ## Self-check
 
-Answer from memory before opening the key. Explain the cause of each result, not just which service or error name applies.
+Try answering each question before expanding its answer. Explain the cause of each result, not just which service or error name applies.
 
 1. Who creates and who validates the client's signature for an S3 presigned URL versus a CloudFront signed URL?
+
+   <details>
+   <summary>Answer</summary>
+
+   The backend signs the S3 request with AWS credentials, and S3 validates it. For CloudFront, the backend signs a policy with a private key, and CloudFront validates it with the corresponding trusted public key.
+
+   </details>
+
 2. Why must the backend check the user's entitlement before issuing either kind of URL?
+
+   <details>
+   <summary>Answer</summary>
+
+   The receiving service verifies delegated permission; it does not independently check the website's purchase records or login entitlement. An unchecked signing endpoint could issue access to someone who should not receive it.
+
+   </details>
+
 3. Can an S3 presigned `PUT` URL also authorize a `GET` of the same object? Why?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. The HTTP method participates in the S3 signature. Changing `PUT` to `GET` changes the request being verified.
+
+   </details>
+
 4. Why does replacing an S3 hostname with a CloudFront hostname fail to convert the URL?
+
+   <details>
+   <summary>Answer</summary>
+
+   The S3 presigner includes the host in the signed request, and CloudFront expects a different signature format and trust model. A hostname replacement supplies neither a valid new S3 signature nor a CloudFront policy signature.
+
+   </details>
+
 5. What does OAC authorize, and why does enabling it alone not restrict CloudFront viewers?
+
+   <details>
+   <summary>Answer</summary>
+
+   OAC authenticates CloudFront's requests to the origin, where the bucket policy grants the relevant access. Viewer restrictions belong to the CloudFront cache behavior; origin access alone does not require a viewer to present a signed URL.
+
+   </details>
+
 6. Why can't S3's current permission checks protect a CloudFront request served entirely from a fresh edge cache entry?
+
+   <details>
+   <summary>Answer</summary>
+
+   S3 receives no request on that cache hit, so it has no opportunity to evaluate the viewer's request. CloudFront must enforce viewer authorization before serving cached bytes.
+
+   </details>
+
 7. A URL expires at 12:05, but the file remains cached and fresh until 13:00. What happens to a request with that URL at 12:06?
+
+   <details>
+   <summary>Answer</summary>
+
+   CloudFront rejects the expired URL. The cached file's freshness does not extend the URL's permission. A newly authorized URL could still use that cached file.
+
+   </details>
+
 8. A download begins at 12:04 and the URL expires at 12:05. Can the download finish? What if it needs a new range request at 12:06?
+
+   <details>
+   <summary>Answer</summary>
+
+   The existing download can finish after expiry. A new range request at 12:06 needs fresh authorization because expiry is checked per HTTP request.
+
+   </details>
+
 9. A backend requests a one-hour S3 URL using credentials that expire in twenty minutes. How long can those credentials support the URL?
+
+   <details>
+   <summary>Answer</summary>
+
+   At most twenty minutes, and applicable policies or revocation can stop access sooner. The requested URL lifetime does not extend the signing credentials.
+
+   </details>
+
 10. Does logging out of the course website revoke an already issued URL in the basic designs here? What remains unchanged?
+
+    <details>
+    <summary>Answer</summary>
+
+    No. Logout alone does not change the URL's signature, expiry, or service-side authorization. A short lifetime plus entitlement checks before renewal limits continued use.
+
+    </details>
+
 11. Does assigning a fresh S3 object key make an upload URL single-use? What can a repeated `PUT` do?
+
+    <details>
+    <summary>Answer</summary>
+
+    No. A fresh key avoids accidentally targeting another upload, but repeated valid `PUT` requests can replace the current object at that same key.
+
+    </details>
+
 12. Does a signed `Content-Type: video/mp4` prove that the uploaded bytes form a valid video?
+
+    <details>
+    <summary>Answer</summary>
+
+    No. The signature constrains the header value, not the file's validity as a video. Application validation must inspect the upload separately.
+
+    </details>
+
 13. Why does starting to sign new CloudFront URLs with a new key not automatically revoke old URLs?
+
+    <details>
+    <summary>Answer</summary>
+
+    The old public key may still be trusted. Removing its relevant trust after deployment affects the URLs relying on it; using a new key for new signatures leaves that old trust unchanged.
+
+    </details>
+
 14. When would signed cookies be more convenient than a signed URL for every file?
+
+    <details>
+    <summary>Answer</summary>
+
+    When an authorized client needs many related files, such as video segments, and can send the cookies. A policy can cover that set without adding signing parameters to each URL.
+
+    </details>
+
 15. Does one ordinary S3 `PutObject` presigned URL establish a multipart upload workflow?
+
+    <details>
+    <summary>Answer</summary>
+
+    No. Multipart upload needs separate initiation, part-upload, and completion operations. Presigned `UploadPart` requests must identify the upload and part number.
+
+    </details>
+
 16. What is the difference between S3's `SignatureDoesNotMatch`, `ExpiredToken`, and `AccessDenied` with `HeadersNotSigned: if-range`?
+
+    <details>
+    <summary>Answer</summary>
+
+    `SignatureDoesNotMatch` means the signature does not match the request being checked; compare signed inputs, clocks, and request modification. `ExpiredToken` points to expired signing credentials. `HeadersNotSigned: if-range` means a present `If-Range` also needed signing because `Range` was signed; generate a new URL with the required header included.
+
+    </details>
+
 17. CloudFront returns HTTP 403 after the application appends a query parameter to a signed URL. What must change, and why is HTTP 403 alone insufficient to diagnose every CloudFront failure?
+
+    <details>
+    <summary>Answer</summary>
+
+    Include the intended query parameter before generating the signature. HTTP 403 identifies a denial, but the cause could instead be viewer configuration, policy validity, or S3 origin access; inspect the error and failing layer.
+
+    </details>
+
 18. Can a CloudFront custom policy using `IpAddress` be used on a distribution with IPv6 enabled?
 
-<details>
-<summary>Check your answers</summary>
+    <details>
+    <summary>Answer</summary>
 
-1. The backend signs the S3 request with AWS credentials, and S3 validates it. For CloudFront, the backend signs a policy with a private key, and CloudFront validates it with the corresponding trusted public key.
-2. The receiving service verifies delegated permission; it does not independently check the website's purchase records or login entitlement. An unchecked signing endpoint could issue access to someone who should not receive it.
-3. No. The HTTP method participates in the S3 signature. Changing `PUT` to `GET` changes the request being verified.
-4. The S3 presigner includes the host in the signed request, and CloudFront expects a different signature format and trust model. A hostname replacement supplies neither a valid new S3 signature nor a CloudFront policy signature.
-5. OAC authenticates CloudFront's requests to the origin, where the bucket policy grants the relevant access. Viewer restrictions belong to the CloudFront cache behavior; origin access alone does not require a viewer to present a signed URL.
-6. S3 receives no request on that cache hit, so it has no opportunity to evaluate the viewer's request. CloudFront must enforce viewer authorization before serving cached bytes.
-7. CloudFront rejects the expired URL. The cached file's freshness does not extend the URL's permission. A newly authorized URL could still use that cached file.
-8. The existing download can finish after expiry. A new range request at 12:06 needs fresh authorization because expiry is checked per HTTP request.
-9. At most twenty minutes, and applicable policies or revocation can stop access sooner. The requested URL lifetime does not extend the signing credentials.
-10. No. Logout alone does not change the URL's signature, expiry, or service-side authorization. A short lifetime plus entitlement checks before renewal limits continued use.
-11. No. A fresh key avoids accidentally targeting another upload, but repeated valid `PUT` requests can replace the current object at that same key.
-12. No. The signature constrains the header value, not the file's validity as a video. Application validation must inspect the upload separately.
-13. The old public key may still be trusted. Removing its relevant trust after deployment affects the URLs relying on it; using a new key for new signatures leaves that old trust unchanged.
-14. When an authorized client needs many related files, such as video segments, and can send the cookies. A policy can cover that set without adding signing parameters to each URL.
-15. No. Multipart upload needs separate initiation, part-upload, and completion operations. Presigned `UploadPart` requests must identify the upload and part number.
-16. `SignatureDoesNotMatch` means the signature does not match the request being checked; compare signed inputs, clocks, and request modification. `ExpiredToken` points to expired signing credentials. `HeadersNotSigned: if-range` means a present `If-Range` also needed signing because `Range` was signed; generate a new URL with the required header included.
-17. Include the intended query parameter before generating the signature. HTTP 403 identifies a denial, but the cause could instead be viewer configuration, policy validity, or S3 origin access; inspect the error and failing layer.
-18. No. AWS instructs you not to enable IPv6 for that distribution. The condition supports IPv4; separate distributions can accommodate other content that needs IPv6.
+    No. AWS instructs you not to enable IPv6 for that distribution. The condition supports IPv4; separate distributions can accommodate other content that needs IPv6.
 
-</details>
+    </details>
 
 # Sources
 

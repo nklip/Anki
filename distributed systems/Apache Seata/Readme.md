@@ -112,34 +112,97 @@ The following is a practical guide derived from the documented mechanisms:
 
 ## Self-check
 
-Try answering before revealing the explanations.
+Try answering each question before expanding its answer.
 
 1. Why does rolling back the account database fail to undo an inventory change already committed in another database?
+
+   <details>
+   <summary>Answer</summary>
+
+   Each database has its own local transaction boundary. Rolling back one database cannot discard a change already committed in another; that earlier effect needs coordinated recovery.
+
+   </details>
+
 2. Which roles define the global boundary, coordinate completion, and perform branch completion? What connects the branches to the same global transaction?
+
+   <details>
+   <summary>Answer</summary>
+
+   The TM defines the boundary, the TC coordinates completion, and each RM performs branch completion. The propagated XID identifies the shared global transaction.
+
+   </details>
+
 3. Why must an AT business update and its undo record commit in the same local transaction?
+
+   <details>
+   <summary>Answer</summary>
+
+   A committed update must have a durable undo record. Committing them separately could leave business data changed without the information needed to restore it.
+
+   </details>
+
 4. What are the before-image and after-image used for during AT rollback? What happens to undo logs on global commit?
+
+   <details>
+   <summary>Answer</summary>
+
+   The after-image lets the RM check whether current data still matches the recorded change; the before-image supplies values for corrective SQL. A mismatch can require recovery handling. On global commit, business updates remain and undo logs can be cleaned up asynchronously.
+
+   </details>
+
 5. In the failed checkout, what can an ordinary read observe before AT rollback completes? What is this default global isolation level called?
+
+   <details>
+   <summary>Answer</summary>
+
+   Stock can be 9 and the order present while the balance remains $100, even though rollback will later restore stock and remove the order. Seata calls AT's default global isolation **read uncommitted**: local changes have committed, but the global outcome is unresolved.
+
+   </details>
+
 6. What remains pending after AT's local commit versus XA's prepare?
+
+   <details>
+   <summary>Answer</summary>
+
+   AT has locally committed data and undo records awaiting global completion, with global locks coordinating participating writes. XA has prepared, uncommitted branches that retain database resources until commit or rollback.
+
+   </details>
+
 7. Which mode would you consider for supported SQL updates with automatic undo, explicit business reservations, a long compensatable workflow, and compatible resources that can remain prepared?
+
+   <details>
+   <summary>Answer</summary>
+
+   Respectively: AT, TCC, Saga, and XA. These are candidates based on their mechanisms; compatibility, acceptable intermediate states, and resource-retention costs still need checking.
+
+   </details>
+
 8. How does recorded TCC branch state help with duplicate Confirm/Cancel calls, empty rollback, and a late Try?
+
+   <details>
+   <summary>Answer</summary>
+
+   Completed status lets repeated Confirm/Cancel calls avoid applying the effect again. Missing Try state identifies empty rollback. Recording cancellation lets a late Try reject the request rather than leave a stranded reservation.
+
+   </details>
+
 9. Is `@GlobalTransactional` sufficient to adopt AT? Does it automatically cover an email or arbitrary payment-provider call?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. AT also needs a reachable coordinator, client integration, a transaction boundary, XID propagation, supported proxied data sources, and undo-log tables. External effects need their own transaction or compensation contract; AT cannot generate SQL undo for an arbitrary external call.
+
+   </details>
+
 10. Does a checkout timeout prove every branch rolled back? What should recovery establish?
 
-<details>
-<summary>Check your answers</summary>
+    <details>
+    <summary>Answer</summary>
 
-1. Each database has its own local transaction boundary. Rolling back one database cannot discard a change already committed in another; that earlier effect needs coordinated recovery.
-2. The TM defines the boundary, the TC coordinates completion, and each RM performs branch completion. The propagated XID identifies the shared global transaction.
-3. A committed update must have a durable undo record. Committing them separately could leave business data changed without the information needed to restore it.
-4. The after-image lets the RM check whether current data still matches the recorded change; the before-image supplies values for corrective SQL. A mismatch can require recovery handling. On global commit, business updates remain and undo logs can be cleaned up asynchronously.
-5. Stock can be 9 and the order present while the balance remains $100, even though rollback will later restore stock and remove the order. Seata calls AT's default global isolation **read uncommitted**: local changes have committed, but the global outcome is unresolved.
-6. AT has locally committed data and undo records awaiting global completion, with global locks coordinating participating writes. XA has prepared, uncommitted branches that retain database resources until commit or rollback.
-7. Respectively: AT, TCC, Saga, and XA. These are candidates based on their mechanisms; compatibility, acceptable intermediate states, and resource-retention costs still need checking.
-8. Completed status lets repeated Confirm/Cancel calls avoid applying the effect again. Missing Try state identifies empty rollback. Recording cancellation lets a late Try reject the request rather than leave a stranded reservation.
-9. No. AT also needs a reachable coordinator, client integration, a transaction boundary, XID propagation, supported proxied data sources, and undo-log tables. External effects need their own transaction or compensation contract; AT cannot generate SQL undo for an arbitrary external call.
-10. No. A response may be missing while completion is still unresolved. Recovery must establish transaction status and finish the required outcome; a timeout alone is not evidence of successful rollback.
+    No. A response may be missing while completion is still unresolved. Recovery must establish transaction status and finish the required outcome; a timeout alone is not evidence of successful rollback.
 
-</details>
+    </details>
 
 # Sources
 

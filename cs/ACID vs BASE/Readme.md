@@ -152,28 +152,79 @@ For an application that sells products, a possible design is to enforce purchase
 
 ## Self-check
 
+Try answering each question before expanding its answer.
+
 1. A transaction debits 10 units and credits 9, committing both changes together. Which ACID property can hold, and which intended rule is broken?
+
+   <details>
+   <summary>Answer</summary>
+
+   Atomicity can hold because both changes commit together. The intended consistency rule that the combined balance stays unchanged is broken: one unit is missing.
+
+   </details>
+
 2. PostgreSQL returns SQLSTATE `40001`. What is the failure called, and what must the application retry?
+
+   <details>
+   <summary>Answer</summary>
+
+   A serialization failure (`serialization_failure`). Retry the whole transaction, including the reads and decisions that selected its writes.
+
+   </details>
+
 3. Why is the right-hand `Wait` bracket shorter? Does that prove asynchronous replication is always faster?
+
+   <details>
+   <summary>Answer</summary>
+
+   The right client does not wait for the replica acknowledgement. The bracket lengths illustrate that dependency; they are not performance measurements.
+
+   </details>
+
 4. Which PostgreSQL setting and value wait for an update to become visible on the required synchronous standbys?
+
+   <details>
+   <summary>Answer</summary>
+
+   `synchronous_commit = remote_apply`, with synchronous standbys configured. `synchronous_commit` is the setting; `remote_apply` is the value.
+
+   </details>
+
 5. Can an acknowledged transaction be lost after a crash with `synchronous_commit = off`?
+
+   <details>
+   <summary>Answer</summary>
+
+   Yes. Success can be returned before the WAL is durable, so a crash can lose those recent changes.
+
+   </details>
+
 6. West's product description changes without another user edit. How does this illustrate soft state, and what conditions allow eventual convergence? Does “Basically Available” promise 100% uptime?
+
+   <details>
+   <summary>Answer</summary>
+
+   Background replication changes West's local view: soft state. If updates stop and communication and reconciliation complete, the replicas converge. Basically Available aims to keep useful operations working through partial failures; it does not promise 100% uptime.
+
+   </details>
+
 7. East reports a successful write during a partition. Why can West not guarantee both a linearizable read and completion of every read request?
+
+   <details>
+   <summary>Answer</summary>
+
+   West cannot learn the new value while the link is broken. Returning the old value breaks linearizability; withholding the read result sacrifices guaranteed completion if the partition persists.
+
+   </details>
+
 8. Can one application use local ACID transactions and asynchronously updated replicas? Does ACID alone determine its CAP category?
 
-<details>
-<summary>Check your answers</summary>
+   <details>
+   <summary>Answer</summary>
 
-1. Atomicity can hold because both changes commit together. The intended consistency rule that the combined balance stays unchanged is broken: one unit is missing.
-2. A serialization failure (`serialization_failure`). Retry the whole transaction, including the reads and decisions that selected its writes.
-3. The right client does not wait for the replica acknowledgement. The bracket lengths illustrate that dependency; they are not performance measurements.
-4. `synchronous_commit = remote_apply`, with synchronous standbys configured. `synchronous_commit` is the setting; `remote_apply` is the value.
-5. Yes. Success can be returned before the WAL is durable, so a crash can lose those recent changes.
-6. Background replication changes West's local view: soft state. If updates stop and communication and reconciliation complete, the replicas converge. Basically Available aims to keep useful operations working through partial failures; it does not promise 100% uptime.
-7. West cannot learn the new value while the link is broken. Returning the old value breaks linearizability; withholding the read result sacrifices guaranteed completion if the partition persists.
-8. Yes. Local transaction guarantees and replica freshness concern different boundaries. CAP behaviour also depends on which operations the distributed service allows during partitions.
+   Yes. Local transaction guarantees and replica freshness concern different boundaries. CAP behaviour also depends on which operations the distributed service allows during partitions.
 
-</details>
+   </details>
 
 # Sources
 
