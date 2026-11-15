@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="976.363636" viewBox="0 0 1100 716" role="img" aria-labelledby="title desc">
+<title id="title">Inference: one request, one token per model run</title>
+<desc id="desc">A request flows from left to right. The input, also called the context, holds instructions, the question, documents, and earlier messages. A model run uses fixed weights to turn the tokens so far into scores for the next token. A rule selects one next token from the scores. If the reply is not finished, the chosen token is added to the input and the model runs again. The reply is the chosen tokens as text, and it ends at a stop condition. Example with three model runs: the model reads Name the capital of France and the rule selects Paris; the model reads the question plus Paris and the rule selects a full stop; the model reads the question plus Paris and the full stop, and the rule selects an end marker, so the reply stops. Inference uses the weights that training produced and does not change them. Words stand for tokens here.</desc>
+<!-- Shared native text and typography. Shafts end inside separate arrowhead bases. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1100" height="716" fill="#ffffff"/>
+<text x="30" y="44" font-size="29" font-weight="700" text-anchor="start" fill="#172033">Inference: one request, one token per model run</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">Start at the input. Follow the loop until the reply stops. The weights do not change.</text>
+
+<!-- Request flow; the heavier blue frame marks the only step that uses the model. -->
+<g id="request-flow">
+<rect x="30" y="110" width="230" height="150" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="48" y="146" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Input</text>
+<text x="48" y="180" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Instructions, question,</text>
+<text x="48" y="206" font-size="18" font-weight="400" text-anchor="start" fill="#172033">documents, earlier</text>
+<text x="48" y="232" font-size="18" font-weight="400" text-anchor="start" fill="#172033">messages: the context</text>
+<rect x="310" y="110" width="250" height="150" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+<text x="328" y="146" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Model run</text>
+<text x="328" y="180" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Fixed weights turn the</text>
+<text x="328" y="206" font-size="18" font-weight="400" text-anchor="start" fill="#172033">tokens so far into scores</text>
+<text x="328" y="232" font-size="18" font-weight="400" text-anchor="start" fill="#172033">for the next token.</text>
+<rect x="610" y="110" width="230" height="150" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="628" y="146" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Select a token</text>
+<text x="628" y="180" font-size="18" font-weight="400" text-anchor="start" fill="#172033">A rule picks one next</text>
+<text x="628" y="206" font-size="18" font-weight="400" text-anchor="start" fill="#172033">token from the scores.</text>
+<rect x="890" y="110" width="180" height="150" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="908" y="146" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Reply</text>
+<text x="908" y="180" font-size="18" font-weight="400" text-anchor="start" fill="#172033">The chosen tokens</text>
+<text x="908" y="206" font-size="18" font-weight="400" text-anchor="start" fill="#172033">as text. It ends at</text>
+<text x="908" y="232" font-size="18" font-weight="400" text-anchor="start" fill="#172033">a stop condition.</text>
+<path data-connector="true" d="M 260,185 L 299,185" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="310,185 298,191 298,179" fill="#64748b"/>
+<path data-connector="true" d="M 560,185 L 599,185" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="610,185 598,191 598,179" fill="#64748b"/>
+<path data-connector="true" d="M 840,185 L 879,185" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="890,185 878,191 878,179" fill="#64748b"/>
+<!-- Loop: leaves "Select a token", runs under the boxes, and re-enters "Model run" from below. The label sits under the path. -->
+<path data-connector="true" d="M 725,260 L 725,296 L 435,296 L 435,271" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="435,260 429,272 441,272" fill="#64748b"/>
+<text x="580" y="324" font-size="18" font-weight="400" text-anchor="middle" fill="#172033">Not finished? Add the chosen token to the input and run the model again.</text>
+</g>
+
+<!-- Worked example: three passes around the loop. -->
+<g id="worked-example">
+<text x="30" y="376" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Example: three model runs produce “Paris.”</text>
+<text x="190" y="404" font-size="16" font-weight="700" text-anchor="start" fill="#64748b">THE MODEL READS</text>
+<text x="770" y="404" font-size="16" font-weight="700" text-anchor="start" fill="#64748b">THE RULE SELECTS</text>
+<rect x="30" y="414" width="1040" height="52" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="447" font-size="20" font-weight="700" text-anchor="start" fill="#172033">Run 1</text>
+<text x="190" y="447" font-size="19" font-weight="400" text-anchor="start" fill="#172033">“Name the capital of France.”</text>
+<path data-connector="true" d="M 690,440 L 739,440" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="750,440 738,446 738,434" fill="#64748b"/>
+<text x="770" y="447" font-size="19" font-weight="400" text-anchor="start" fill="#172033">“Paris”</text>
+<rect x="30" y="476" width="1040" height="52" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="509" font-size="20" font-weight="700" text-anchor="start" fill="#172033">Run 2</text>
+<text x="190" y="509" font-size="19" font-weight="400" text-anchor="start" fill="#172033">“Name the capital of France.” + “Paris”</text>
+<path data-connector="true" d="M 690,502 L 739,502" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="750,502 738,508 738,496" fill="#64748b"/>
+<text x="770" y="509" font-size="19" font-weight="400" text-anchor="start" fill="#172033">“.”</text>
+<rect x="30" y="538" width="1040" height="52" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="571" font-size="20" font-weight="700" text-anchor="start" fill="#172033">Run 3</text>
+<text x="190" y="571" font-size="19" font-weight="400" text-anchor="start" fill="#172033">“Name the capital of France.” + “Paris.”</text>
+<path data-connector="true" d="M 690,564 L 739,564" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="750,564 738,570 738,558" fill="#64748b"/>
+<text x="770" y="571" font-size="19" font-weight="400" text-anchor="start" fill="#172033">end marker: the reply stops</text>
+</g>
+
+<!-- What inference does not do. -->
+<g id="fixed-weights-note">
+<rect x="30" y="612" width="1040" height="80" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="645" font-size="21" font-weight="700" text-anchor="start" fill="#172033">Inference uses the weights that training produced. It does not change them.</text>
+<text x="50" y="674" font-size="19" font-weight="400" text-anchor="start" fill="#172033">Words stand for tokens here. A real token can be smaller than a word.</text>
+</g>
+</svg>

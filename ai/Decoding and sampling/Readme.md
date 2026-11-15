@@ -6,7 +6,7 @@
 
 ## Where this fits
 
-The shared map highlights **token selection**. Follow the arrows from context assembly through model computation and token selection. The lower example turns model scores into a chosen token, then returns it to the model.
+This is the first and narrowest of four views of inference: one token. [What happens when a model answers](../Inference%20and%20inference%20engineering/Readme.md) maps all four. In the shared map, the highlighted box “Select a token” is this topic. Follow the arrows from “Assemble context” through “Model execution” to it. The lower example turns model scores into a chosen token, then returns it to the model.
 
 ![where-this-fits.svg](images/where-this-fits.svg)
 
@@ -60,6 +60,8 @@ A **seed** initializes the random-number generator used by sampling. In a reprod
 ![seed-and-reproducibility.svg](images/seed-and-reproducibility.svg)
 
 Read the repeated rows: equal draws and probabilities produce equal choices. But the seed alone is insufficient: the model, prompt, settings, and execution must also match. Different hardware, software, or nondeterministic operations can change results, including greedy results.
+
+Here, **decoding** means the rule that selects a token. Next, [Prefill, decoding, and the KV cache](../Prefill%20and%20KV%20cache/Readme.md) widens the view to one whole reply. There, the decoding phase is the part of a request in which the model runs once per new token.
 
 # Sources
 

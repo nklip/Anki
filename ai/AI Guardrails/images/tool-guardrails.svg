@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="838" viewBox="0 0 1040 838" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="1046" viewBox="0 0 1040 1046" role="img" aria-labelledby="title desc">
   <title id="title">Step 2: enforce the refund rules in code</title>
-  <desc id="desc">A proposed refund first requires the order to belong to the authenticated customer. A mismatch is rejected. The refund must not exceed the amount paid, otherwise it is rejected. An otherwise valid refund above 100 dollars waits for human approval; an amount at or below 100 dollars can proceed. Pending or denied approval does not execute the refund. These are the example rules from the video.</desc>
+  <desc id="desc">A proposed refund first requires the order to belong to the authenticated customer. A mismatch is rejected. The refund must not exceed the amount paid, otherwise it is rejected. An otherwise valid refund of 100 dollars or less can proceed; a larger one waits for human approval. An approved refund executes; a denied one does not, and a pending one does not run. Every outcome returns to the model as the tool result: refunded, rejected, or pending. Example: 5000 dollars is above 100 dollars, so there is no automatic refund; the request is rejected, or it waits for approval. These are the example rules from the video.</desc>
   <!-- Orange marks the required service checks; green is execution, red is rejection. -->
   <defs>
     <style>
@@ -14,7 +14,7 @@
       .head { fill: #64748b; }
     </style>
   </defs>
-  <rect width="1040" height="838" fill="#ffffff"/>
+  <rect width="1040" height="1046" fill="#ffffff"/>
 
   <!-- A generated call is a proposal; identity comes from the authenticated session. -->
   <text class="title" x="28" y="44">2 · Enforce the refund rules in code</text>
@@ -57,7 +57,7 @@
   <!-- Gate C adds approval only after ownership and amount have passed. -->
   <g id="human-approval-gate">
     <rect x="28" y="522" width="620" height="92" rx="14" fill="#fff7ed" stroke="#c2410c" stroke-width="2"/>
-    <text class="label" x="52" y="559">C · Is the requested refund above $100?</text>
+    <text class="label" x="52" y="559">C · Is the refund $100 or less?</text>
     <text class="copy" x="52" y="591">Threshold from this example's store policy.</text>
     <rect x="754" y="516" width="258" height="112" rx="12" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
     <text class="label" x="778" y="550">Human approval</text>
@@ -69,9 +69,9 @@
   <text class="small" x="358" y="506">Yes</text>
   <path class="connector" d="M649 568 H741"/>
   <polygon class="head" points="754,568 740,561 740,575"/>
-  <text class="small" x="701" y="553" text-anchor="middle">Yes</text>
+  <text class="small" x="701" y="553" text-anchor="middle">No</text>
 
-  <!-- Both execution routes meet the box at separate ports; neither passes a failed gate. -->
+  <!-- "Yes" always continues downward. Both execution routes meet the box at separate top ports. -->
   <g id="execute-refund">
     <rect x="28" y="696" width="620" height="92" rx="14" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
     <text class="label" x="52" y="733">Execute the refund</text>
@@ -79,11 +79,34 @@
   </g>
   <path class="connector" d="M338 615 V683"/>
   <polygon class="head" points="338,696 331,682 345,682"/>
-  <text class="small" x="358" y="660">No</text>
-  <path id="approved-refund-connector" class="connector" d="M883 629 V742 H661"/>
-  <polygon class="head" points="648,742 662,735 662,749"/>
-  <text class="small" x="899" y="676">Approved</text>
+  <text class="small" x="358" y="660">Yes</text>
+  <path id="approved-refund-connector" class="connector" d="M800 629 V660 H560 V683"/>
+  <polygon class="head" points="560,696 553,682 567,682"/>
+  <text class="small" x="680" y="648" text-anchor="middle">Approved</text>
+
+  <!-- The approval decision has a second exit: a denial ends without a refund. -->
+  <g id="denied-refund">
+    <rect x="754" y="696" width="258" height="92" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+    <text class="label" x="883" y="733" text-anchor="middle">No refund</text>
+    <text class="small" x="883" y="765" text-anchor="middle">The approver said no.</text>
+  </g>
+  <path id="denied-refund-connector" class="connector" d="M940 629 V683"/>
+  <polygon class="head" points="940,696 933,682 947,682"/>
+  <text class="small" x="956" y="668">Denied</text>
+
+  <!-- Purple marks what goes back to the model, as in the proposal box at the top. -->
+  <g id="result-to-model">
+    <rect x="28" y="812" width="984" height="78" rx="14" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+    <text class="label" x="52" y="845">Every outcome returns to the model as the tool result</text>
+    <text class="copy" x="52" y="875">Refunded, rejected, or pending. The reply must report that result, not assume success.</text>
+  </g>
+
+  <g id="follow-the-example">
+    <rect x="28" y="910" width="984" height="76" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="52" y="942">Follow the example</text>
+    <text class="copy" x="52" y="971">$5,000 is above $100: no automatic refund. The request is rejected, or it waits for approval.</text>
+  </g>
 
   <!-- Pending review has no execution route. -->
-  <text class="small" x="28" y="821">Denied or pending approval: no refund. Approval cannot override a failed ownership or amount check.</text>
+  <text class="small" x="28" y="1020">Approval cannot override a failed ownership or amount check. While approval is pending, no refund runs.</text>
 </svg>

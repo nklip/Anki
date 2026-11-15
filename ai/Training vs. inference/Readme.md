@@ -20,7 +20,9 @@ Our machine has one knob, named `w`, and follows this rule:
 prediction = w × input
 ```
 
-The **input** is the number we give the machine. The **prediction** is the answer it produces. The **weight** `w` is the number we can adjust.
+* The **input** is the number we give the machine.
+* The **prediction** is the answer it produces.
+* The **weight** `w` is the number we can adjust.
 
 For example, with `w = 2`, input `2` produces `4`. With `w = 3`, the same input produces `6`.
 

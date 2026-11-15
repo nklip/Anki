@@ -17,6 +17,7 @@ Every card lives in its own folder as `Readme.md`, with its diagrams in a siblin
  * [Features and the linear representation hypothesis](./Features%20and%20the%20linear%20representation%20hypothesis/Readme.md) - features, neurons, directions, projections, linear probes, and limits of the evidence
  * [From logits to text: decoding and sampling](./Decoding%20and%20sampling/Readme.md) - softmax, greedy decoding, temperature, top-k, top-p, stopping, and reproducibility
  * [In-context learning, context windows, and memory](./In-context%20learning%20and%20memory/Readme.md) - learning from examples, token budgets, saved history, external memory, retrieval, and compaction
+ * [Inference and inference engineering](./Inference%20and%20inference%20engineering/Readme.md) - one request as a token loop with fixed weights, four scopes from one token to the application, and the questions an inference engineer asks
  * [LLM Failure Modes](./LLM%20Failure%20Modes/Readme.md) - hallucination, error propagation, sycophancy, instruction drift, and knowledge conflict
  * [Markov table](./Markov%20table/Readme.md) - transition probabilities, n-gram models, and a worked text generator
  * [MLPs, nonlinearities, and mixture of experts](./MLPs%20and%20mixture%20of%20experts/Readme.md) - expansion, ReLU, gated MLPs, expert routing, and active versus total parameters
@@ -40,7 +41,7 @@ Every card lives in its own folder as `Readme.md`, with its diagrams in a siblin
 
 ## AI agents learning plan
 
-**Series scope: 24 article-mode cards**, studied in the order below. All 24 articles are available. The other existing cards above are supporting reading and are not included in this count.
+**Series scope: 25 article-mode cards**, studied in the order below. All 25 articles are available. The other existing cards above are supporting reading and are not included in this count.
 
 **For every article, prioritize clarity and simplicity.** Define unfamiliar terms before using them, keep one main lesson per article, and use small examples and diagrams that each explain one idea. Include technical detail only when it helps the learner understand the lesson.
 
@@ -72,25 +73,26 @@ Use a decoder-only transformer as the teaching baseline. Label model-specific ar
 | 13 | **[Internals: Features and the linear representation hypothesis](./Features%20and%20the%20linear%20representation%20hypothesis/Readme.md)** | What might a direction in an activation space represent? Define features, neurons, directions, projections, and linear probes. Explain the hypothesis, its supporting evidence, and the limits of interpreting a successful probe. |
 | 14 | **[Internals: Superposition and mechanistic interpretability](./Superposition%20and%20mechanistic%20interpretability/Readme.md)** | How can representations contain more features than dimensions? Cover overlapping directions, interference, polysemantic neurons, and sparse autoencoders. Distinguish descriptive correlations from evidence obtained by interventions. |
 
-### 3. Inference and context — 4 articles
+### 3. Inference and context — 5 articles
 
 | # | Proposed article | Central question and scope |
 | --- | --- | --- |
-| 15 | **[Inference: From logits to text with decoding and sampling](./Decoding%20and%20sampling/Readme.md)** | How is the next token selected? Explain logits, probabilities, greedy decoding, temperature, top-k, and top-p sampling with a tiny numerical example. Include stopping conditions and the limits of reproducibility. |
-| 16 | **[Inference: Prefill, decoding, and the KV cache](./Prefill%20and%20KV%20cache/Readme.md)** | What work happens before and during generation? Compare processing the prompt with generating subsequent tokens. Explain cached attention keys and values (KV), cache growth, time to first token, and per-token latency. |
-| 17 | **[Inference: Prompt caching across requests](./Prompt%20caching%20across%20requests/Readme.md)** | When can a later request reuse earlier computation? Explain shared prefixes, cache hits and misses, stable prompt layout, and provider-specific eligibility and retention. Compare prompt caching with caching a finished response. |
-| 18 | **[Inference: In-context learning, context windows, and memory](./In-context%20learning%20and%20memory/Readme.md)** | How can behavior adapt without updating weights? Separate examples in the prompt, the active context window, saved conversation state, external memory, and retrieval-augmented generation (RAG). Explain where each kind of information lives. |
+| 15 | **[Inference: What happens when a model answers](./Inference%20and%20inference%20engineering/Readme.md)** | What is inference, and how do the next four articles connect? Define inference for a language model as a token loop with fixed weights. Map four scopes: one token, one reply, many requests, and the application. Introduce inference engineering and its speed, cost, and reliability questions. |
+| 16 | **[Inference: From logits to text with decoding and sampling](./Decoding%20and%20sampling/Readme.md)** | How is the next token selected? Explain logits, probabilities, greedy decoding, temperature, top-k, and top-p sampling with a tiny numerical example. Include stopping conditions and the limits of reproducibility. |
+| 17 | **[Inference: Prefill, decoding, and the KV cache](./Prefill%20and%20KV%20cache/Readme.md)** | What work happens before and during generation? Compare processing the prompt with generating subsequent tokens. Explain cached attention keys and values (KV), cache growth, time to first token, and per-token latency. |
+| 18 | **[Inference: Prompt caching across requests](./Prompt%20caching%20across%20requests/Readme.md)** | When can a later request reuse earlier computation? Explain shared prefixes, cache hits and misses, stable prompt layout, and provider-specific eligibility and retention. Compare prompt caching with caching a finished response. |
+| 19 | **[Inference: In-context learning, context windows, and memory](./In-context%20learning%20and%20memory/Readme.md)** | How can behavior adapt without updating weights? Separate examples in the prompt, the active context window, saved conversation state, external memory, and retrieval-augmented generation (RAG). Explain where each kind of information lives. |
 
 ### 4. Agents — 6 articles
 
 | # | Proposed article | Central question and scope |
 | --- | --- | --- |
-| 19 | **[Agents: Tool calls from model output to execution](./Tool%20calls/Readme.md)** | Who actually executes a requested action? Trace a tool definition, generated arguments, validation, runtime execution, a matching result, and the next model call. Place Model Context Protocol (MCP) at the integration boundary. |
-| 20 | **[Agents: Loop - act, observe, continue, stop](./The%20agent%20loop/Readme.md)** | How does a sequence of model calls accomplish a task? Cover tool results, state transitions, retries, budgets, and stopping criteria. Compare fixed workflows with model-directed action selection. |
-| 21 | **[Agents: Thinking levels](./Thinking%20levels/Readme.md)** | What does a reasoning-effort control change? Cover reasoning tokens, adaptive compute, latency and cost, and provider-specific effort settings. Separate effort from model size, temperature, answer verbosity, and a guaranteed correctness level. |
-| 22 | **[Agents: Context engineering for long-running agents](./Context%20engineering%20for%20long-running%20agents/Readme.md)** | What should the next model call see? Cover instructions, tool descriptions, retrieved evidence, compaction, saved notes, and subagent handoffs. Trace the effects on information loss and reusable prompt prefixes. |
-| 23 | **[Agents: Reliability - evaluation and execution boundaries](./Reliability/Readme.md)** | How do you tell whether the whole system works? Separate model, tool, and orchestration failures. Cover outcome-based evaluations, traces, external verification, retry side effects, prompt injection, and enforced tool permissions. |
-| 24 | **[Agents: A complete agent request, explained at every level](./A%20complete%20agent%20request/Readme.md)** | Can you connect the whole stack? Follow a small coding task through context assembly, tokenization, transformer computation, sampling, a tool call, test feedback, another iteration, and a checked answer. Identify what training shaped and what changes during the run. |
+| 20 | **[Agents: Tool calls from model output to execution](./Tool%20calls/Readme.md)** | Who actually executes a requested action? Trace a tool definition, generated arguments, validation, runtime execution, a matching result, and the next model call. Place Model Context Protocol (MCP) at the integration boundary. |
+| 21 | **[Agents: Loop - act, observe, continue, stop](./The%20agent%20loop/Readme.md)** | How does a sequence of model calls accomplish a task? Cover tool results, state transitions, retries, budgets, and stopping criteria. Compare fixed workflows with model-directed action selection. |
+| 22 | **[Agents: Thinking levels](./Thinking%20levels/Readme.md)** | What does a reasoning-effort control change? Cover reasoning tokens, adaptive compute, latency and cost, and provider-specific effort settings. Separate effort from model size, temperature, answer verbosity, and a guaranteed correctness level. |
+| 23 | **[Agents: Context engineering for long-running agents](./Context%20engineering%20for%20long-running%20agents/Readme.md)** | What should the next model call see? Cover instructions, tool descriptions, retrieved evidence, compaction, saved notes, and subagent handoffs. Trace the effects on information loss and reusable prompt prefixes. |
+| 24 | **[Agents: Reliability - evaluation and execution boundaries](./Reliability/Readme.md)** | How do you tell whether the whole system works? Separate model, tool, and orchestration failures. Cover outcome-based evaluations, traces, external verification, retry side effects, prompt injection, and enforced tool permissions. |
+| 25 | **[Agents: A complete agent request, explained at every level](./A%20complete%20agent%20request/Readme.md)** | Can you connect the whole stack? Follow a small coding task through context assembly, tokenization, transformer computation, sampling, a tool call, test feedback, another iteration, and a checked answer. Identify what training shaped and what changes during the run. |
 
 ### Reuse the existing cards
 

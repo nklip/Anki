@@ -6,7 +6,7 @@
 
 ## Where this fits
 
-The shared map highlights **prefix reuse across requests**. Follow the arrows from context assembly through model computation and token selection. The lower example separates reused prefix work from a new suffix and a fresh answer.
+After one reply ([Prefill, decoding, and the KV cache](../Prefill%20and%20KV%20cache/Readme.md)), this article covers several requests. In the shared map, the highlighted box “Check prefix cache” is this topic. Follow the arrows from “Assemble context” to “Select a token.” The lower example separates reused prefix work from a new suffix and a fresh answer.
 
 ![where-this-fits.svg](images/where-this-fits.svg)
 
@@ -51,7 +51,9 @@ Provider examples, checked **2026-11-06**:
 
 ![cache-measurements.svg](images/cache-measurements.svg)
 
-Measure all of them. Cached tokens still occupy the prompt's available space, and a cache hit does not guarantee the same answer. For the computation within a request, see [Prefill, decoding, and the KV cache](../Prefill%20and%20KV%20cache/Readme.md).
+Measure all of them. Cached tokens still occupy the prompt's available space, and a cache hit does not guarantee the same answer.
+
+Next, [In-context learning, context windows, and memory](../In-context%20learning%20and%20memory/Readme.md) asks what the application puts into each request.
 
 # Sources
 

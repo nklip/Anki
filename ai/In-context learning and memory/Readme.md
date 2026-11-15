@@ -6,7 +6,7 @@
 
 ## Where this fits
 
-The shared map highlights **context assembly**: choosing this call’s input. Follow the arrows through optional prefix reuse, model computation, and token selection. Below, a saved note becomes useful input.
+This is the widest of the four views of inference: what the application puts into each request. In the shared map, the highlighted box “Assemble context” is this topic: choosing this call’s input. Follow the arrows through “Check prefix cache,” “Model execution,” and “Select a token.” Below, a saved note becomes useful input.
 
 ![where-this-fits.svg](images/where-this-fits.svg)
 
@@ -51,6 +51,8 @@ Retrieval can miss a note or find an outdated one; the model can misread a good 
 ![context-compaction.svg](images/context-compaction.svg)
 
 [KV caching](../Prefill%20and%20KV%20cache/Readme.md) and [prompt caching](../Prompt%20caching%20across%20requests/Readme.md) reuse computed work. They do not replace an external note store or increase context capacity.
+
+Next, the agents group starts with [Tool calls from model output to execution](../Tool%20calls/Readme.md): the model asks for an action, and software performs it.
 
 # Sources
 

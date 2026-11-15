@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="678" viewBox="0 0 1040 678" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="800" viewBox="0 0 1040 800" role="img" aria-labelledby="title desc">
   <title id="title">Step 3: validate the reply and use approved facts</title>
-  <desc id="desc">An illustrative draft promises a shipping-fee waiver and a 60-day return window. The authoritative policy has no waiver and specifies 30 days. A model-assisted check can flag unsupported claims but may be wrong. Application code reads approved values from policy and fills a controlled response. Only a checked response reaches the customer.</desc>
+  <desc id="desc">An illustrative draft promises a shipping-fee waiver and a 60-day return window. The authoritative policy has no waiver and specifies 30 days. Method A: a model screens the draft by comparing it with the policy; it can flag the waiver, but it can be wrong. Method B: application code reads 30 days from the policy and fills the reply with that value; this is stronger for exact values. If a check fails, the reply is replaced, withheld, or sent for review. If the checks pass, the reply is released with a 30-day return window and no invented waiver. Example: the 5000-dollar refund has not run, so the reply must say that and must not say that the refund is paid.</desc>
   <!-- Purple marks generated text; green marks approved policy data and the released reply. -->
   <defs>
     <style>
@@ -14,7 +14,7 @@
       .head { fill: #64748b; }
     </style>
   </defs>
-  <rect width="1040" height="678" fill="#ffffff"/>
+  <rect width="1040" height="800" fill="#ffffff"/>
 
   <!-- Contrast an explicitly illustrative draft with the video's 30-day example policy. -->
   <text class="title" x="28" y="44">3 · Validate the reply and use approved facts</text>
@@ -32,32 +32,51 @@
     <text class="copy" x="616" y="218">Return window: 30 days</text>
   </g>
 
-  <!-- Both sources feed one output checkpoint; its two methods have different limits. -->
+  <!-- The draft and the policy both feed method A; the policy alone feeds method B. -->
   <g id="output-checkpoint">
-    <rect x="28" y="296" width="984" height="154" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
-    <line x1="520" y1="318" x2="520" y2="428" stroke="#cbd5e1" stroke-width="2"/>
-    <text class="label" x="52" y="336">Model-assisted comparison</text>
-    <text class="copy" x="52" y="376">Flag claims unsupported by the policy.</text>
-    <text class="copy" x="52" y="409">The reviewer can still make mistakes.</text>
-    <text class="label" x="544" y="336">Application code supplies facts</text>
-    <text class="copy" x="544" y="376">Read the 30-day value from policy.</text>
-    <text class="copy" x="544" y="409">Fill a controlled response with that value.</text>
+    <rect x="28" y="306" width="984" height="160" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <line x1="520" y1="328" x2="520" y2="444" stroke="#cbd5e1" stroke-width="2"/>
+    <text class="label" x="52" y="346">A · A model screens the draft</text>
+    <text class="copy" x="52" y="384">Compare the draft with the policy.</text>
+    <text class="copy" x="52" y="415">It can flag the waiver. It can be wrong.</text>
+    <text class="small" x="52" y="446">Useful screening, not proof.</text>
+    <text class="label" x="544" y="346">B · Code supplies exact facts</text>
+    <text class="copy" x="544" y="384">Read 30 days from the policy.</text>
+    <text class="copy" x="544" y="415">Fill the reply with that value.</text>
+    <text class="small" x="544" y="446">Stronger for exact values.</text>
   </g>
-  <path class="connector" d="M238 241 V283"/>
-  <polygon class="head" points="238,296 231,282 245,282"/>
-  <path class="connector" d="M802 241 V283"/>
-  <polygon class="head" points="802,296 795,282 809,282"/>
+  <path class="connector" d="M238 241 V293"/>
+  <polygon class="head" points="238,306 231,292 245,292"/>
+  <path class="connector" d="M802 241 V293"/>
+  <polygon class="head" points="802,306 795,292 809,292"/>
+  <!-- Policy also enters method A: the elbow runs in the gap above the checkpoint and stays clear of all text. -->
+  <path id="policy-to-screening-connector" class="connector" d="M640 241 V272 H400 V293"/>
+  <polygon class="head" points="400,306 393,292 407,292"/>
 
-  <!-- The checked response is released only after the required policy handling. -->
-  <path class="connector" d="M520 451 V511"/>
-  <polygon class="head" points="520,524 513,510 527,510"/>
-  <text class="small" x="540" y="491">Release after required checks</text>
+  <!-- Fork above the outcome boxes, as in step 1; shafts never pass through their labels. -->
+  <path class="connector" d="M520 467 V500 H238 V525"/>
+  <polygon class="head" points="238,538 231,524 245,524"/>
+  <path class="connector" d="M520 500 H802 V525"/>
+  <polygon class="head" points="802,538 795,524 809,524"/>
+  <g id="failed-output">
+    <rect x="28" y="538" width="420" height="110" rx="14" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+    <text class="label" x="52" y="575">Fails: replace or withhold</text>
+    <text class="small" x="52" y="605">Do not deliver a flagged draft.</text>
+    <text class="small" x="52" y="631">Or send it for review first.</text>
+  </g>
   <g id="checked-customer-reply">
-    <rect x="28" y="524" width="984" height="94" rx="14" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
-    <text class="label" x="52" y="562">Checked reply: return window is 30 days</text>
-    <text class="copy" x="52" y="597">No invented waiver. Any refund confirmation must match the actual tool result.</text>
+    <rect x="592" y="538" width="420" height="110" rx="14" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="616" y="575">Passes: release the reply</text>
+    <text class="small" x="616" y="605">Return window: 30 days.</text>
+    <text class="small" x="616" y="631">No invented waiver.</text>
   </g>
 
-  <!-- Failure handling prevents treating a flagged draft as deliverable text. -->
-  <text class="small" x="28" y="657">If verification fails: replace or withhold the reply, or route it for review before delivery.</text>
+  <g id="follow-the-example">
+    <rect x="28" y="670" width="984" height="76" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="52" y="702">Follow the example</text>
+    <text class="copy" x="52" y="731">The $5,000 refund has not run. The reply must say that, not “your refund is paid.”</text>
+  </g>
+
+  <!-- Why the order of the checkpoints matters. -->
+  <text class="small" x="28" y="779">An output check cannot undo a refund that already ran. That is why the tool checks come first.</text>
 </svg>

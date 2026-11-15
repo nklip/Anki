@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="826" viewBox="0 0 900 826" role="img" aria-labelledby="title desc">
+  <title id="title">Preference tuning in one picture</title>
+  <desc id="desc">Read downward. Two inputs go in: a starting model, often the model that supervised fine-tuning produced, and preference pairs, for example the prompt Rewrite Send the file politely with the chosen response A, Please send the file, and the rejected response B, Send the file now. Training uses one of two common methods. RLHF learns a scorer first: pairs train a scorer called a reward model, the model answers and the scorer rates, and weights move toward higher scores. DPO learns from the pairs directly: read one recorded pair, measure how likely A and B are, and weights move to favor A over B. The output is a preference-tuned model: the same model, but its weights have changed. Later, for the new prompt Rewrite Call me politely, the response Please call me is favored and the response Call me now is less likely. This is a lean, not a guarantee, and preferred does not mean correct. Illustration only.</desc>
+  <!-- Folder colors: blue is a prompt, green is the chosen response, orange is the rejected one, gray is neutral. Every box also says its role in words. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 19px; font-weight: 700; }
+      .copy { font-size: 19px; }
+      .step { font-size: 18px; }
+      .plus { font-size: 34px; font-weight: 700; fill: #475569; text-anchor: middle; }
+      .note { font-size: 19px; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="826" fill="#ffffff"/>
+
+  <text class="title" x="28" y="44">Preference tuning in one picture</text>
+  <text class="subtitle" x="28" y="76">Read downward: what goes in, which method trains, and what comes out.</text>
+
+  <!-- Inputs. The model boxes sit in the same left column before and after training: same model, changed weights. -->
+  <g id="input-starting-model">
+    <rect x="28" y="100" width="312" height="174" rx="13" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="50" y="163">STARTING MODEL</text>
+    <text class="copy" x="50" y="195">Often the model that</text>
+    <text class="copy" x="50" y="221">SFT produced.</text>
+  </g>
+  <text class="plus" x="370" y="199">+</text>
+  <g id="input-preference-pairs">
+    <rect x="400" y="100" width="472" height="174" rx="13" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="418" y="130">PREFERENCE PAIRS · one of many</text>
+    <rect x="418" y="142" width="436" height="36" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+    <text class="copy" x="430" y="167">Prompt: Rewrite “Send the file” politely.</text>
+    <rect x="418" y="184" width="436" height="36" rx="8" fill="#ecfdf5" stroke="#059669" stroke-width="1.5"/>
+    <text class="copy" x="430" y="209">A · chosen: Please send the file.</text>
+    <rect x="418" y="226" width="436" height="36" rx="8" fill="#fff7ed" stroke="#c2410c" stroke-width="1.5"/>
+    <text class="copy" x="430" y="251">B · rejected: Send the file now.</text>
+  </g>
+
+  <!-- Both inputs feed the training band. Shafts end one unit inside the triangle bases; tips meet the band border. -->
+  <line class="connector" x1="184" y1="275" x2="184" y2="302"/>
+  <polygon class="head" points="184,314 177,301 191,301"/>
+  <line class="connector" x1="636" y1="275" x2="636" y2="302"/>
+  <polygon class="head" points="636,314 629,301 643,301"/>
+
+  <!-- Training band: two alternative methods side by side, not two steps in sequence. -->
+  <g id="training-methods">
+    <rect x="28" y="314" width="844" height="212" rx="13" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="50" y="346">TRAINING · one of two common methods</text>
+    <g id="method-rlhf">
+      <rect x="50" y="364" width="389" height="142" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+      <text class="label" x="66" y="394">RLHF · learn a scorer first</text>
+      <text class="step" x="66" y="424">1. Pairs train a scorer (reward model).</text>
+      <text class="step" x="66" y="451">2. The model answers; the scorer rates.</text>
+      <text class="step" x="66" y="478">3. Weights move toward higher scores.</text>
+    </g>
+    <g id="method-dpo">
+      <rect x="461" y="364" width="389" height="142" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+      <text class="label" x="477" y="394">DPO · learn from the pairs directly</text>
+      <text class="step" x="477" y="424">1. Read one recorded pair.</text>
+      <text class="step" x="477" y="451">2. Measure how likely A and B are.</text>
+      <text class="step" x="477" y="478">3. Weights move to favor A over B.</text>
+    </g>
+  </g>
+
+  <!-- Output: the arrow leaves the band above the tuned-model box. -->
+  <line class="connector" x1="184" y1="527" x2="184" y2="554"/>
+  <polygon class="head" points="184,566 177,553 191,553"/>
+  <g id="output-tuned-model">
+    <rect x="28" y="566" width="312" height="174" rx="13" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="50" y="629">PREFERENCE-TUNED MODEL</text>
+    <text class="copy" x="50" y="661">The same model, but its</text>
+    <text class="copy" x="50" y="687">weights have changed.</text>
+  </g>
+  <line class="connector" x1="341" y1="653" x2="388" y2="653"/>
+  <polygon class="head" points="400,653 387,646 387,660"/>
+  <g id="later-use">
+    <rect x="400" y="566" width="472" height="174" rx="13" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="418" y="596">LATER · a new request</text>
+    <rect x="418" y="608" width="436" height="36" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+    <text class="copy" x="430" y="633">Prompt: Rewrite “Call me” politely.</text>
+    <rect x="418" y="650" width="436" height="36" rx="8" fill="#ecfdf5" stroke="#059669" stroke-width="1.5"/>
+    <text class="copy" x="430" y="675">Favored: Please call me.</text>
+    <rect x="418" y="692" width="436" height="36" rx="8" fill="#fff7ed" stroke="#c2410c" stroke-width="1.5"/>
+    <text class="copy" x="430" y="717">Less likely: Call me now.</text>
+  </g>
+
+  <!-- State the lesson and mark the example as an illustration. -->
+  <text class="note" x="450" y="774" text-anchor="middle">A lean, not a guarantee: the preferred kind of response becomes more likely.</text>
+  <text class="subtitle" x="450" y="802" text-anchor="middle">Illustration only. Preferred does not mean correct.</text>
+</svg>

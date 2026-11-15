@@ -2,54 +2,54 @@
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-**Reasoning training aims to improve problem solving by changing a model's learned numerical settings, or weights. Distillation trains a student model using a teacher model's outputs.**
+**Reasoning training aims to improve problem solving by changing a model's learned numerical settings, or weights. Distillation trains a student model on a teacher model's outputs.**
 
-See how rewards encourage useful attempts, how a teacher supplies examples, and how both differ from extra thinking time during use.
+Start with where these two recipes sit, then see both in one picture, then zoom in on each.
 
-## What the model practices
+## Where this fits
 
-Here, a **reasoning trajectory** is one generated attempt: intermediate steps followed by a final answer. The intermediate text is often called a **chain of thought**. It may include breaking a problem into parts, trying a method, or checking a result.
+Each earlier stage has its own source for the training signal: text, demonstrations, or comparisons. These two recipes reuse the same tools with a new source. Reasoning training uses **reinforcement learning (RL)**, as RLHF does in [Preference tuning - RLHF and DPO](../Preference%20tuning/Readme.md), but a rule supplies the score. Distillation uses [Supervised fine-tuning](../Supervised%20fine-tuning/Readme.md) (SFT), but a model writes the demonstrations.
 
-**Supervised fine-tuning (SFT)** can teach from worked solutions.
+![where-this-fits.svg](images/where-this-fits.svg)
 
-**Reinforcement learning (RL)** can encourage attempts that earn higher rewards. Recipes may combine these approaches.
+Read the top row first: the three earlier stages. Then compare the two boxes marked “This article” row by row.
 
-## Learning from answers that can be checked
+## Both recipes in one picture
 
-With **verifiable rewards**, a checker scores an attempt using a rule, such as matching a known math answer or running code tests. The checker applies the stated rule without needing a person to compare responses.
+A **reasoning trajectory** is one generated attempt: intermediate steps, often called a **chain of thought**, followed by a final answer.
 
-Consider three bags with four marbles each. Adding `4 + 4 + 4` gives `12`. In this toy setup, the checker gives **1 point** for the correct final answer and **0 points** otherwise. These are training scores, not probabilities.
+![reasoning-and-distillation-overview.svg](images/reasoning-and-distillation-overview.svg)
 
-The model generates attempts, the checker scores them, and RL uses those scores to update the model's weights. Repeating this across many problems can make higher-scoring approaches more likely.
+Read downward. In part 1, the model attempts a problem, a rule checks the answer, and RL moves the weights toward higher-scoring attempts. In part 2, the trained model acts as a **teacher**: it writes worked solutions, selected ones become SFT examples, and a **student** learns to predict their **tokens**, meaning pieces of text. The student is often smaller, so it is cheaper to run. Later it answers without the teacher.
+
+The two parts also work separately. DeepSeek-R1 used both: RL with rule-based math and code rewards, then SFT for its smaller distilled models.
+
+## Zoom in: answers that can be checked
+
+With **verifiable rewards**, a checker scores an attempt by a rule, such as matching a known math answer or running code tests. No person has to compare responses.
+
+Consider three bags with four marbles each. In this toy setup, the checker gives **1 point** for the final answer `12` and **0 points** otherwise. These are training scores, not probabilities.
 
 ![verifiable-reward-training.svg](images/verifiable-reward-training.svg)
 
-This is **outcome supervision**: feedback on the final result. It does not verify each intermediate step. A lucky answer with faulty working can still earn the point. **Process supervision** instead gives feedback on intermediate steps.
+This is **outcome supervision**: feedback on the final result only. A lucky answer with faulty working still earns the point. **Process supervision** instead gives feedback on intermediate steps.
 
-For example, DeepSeek-R1 combined SFT and RL, including rule-based math and code rewards. Its smaller distilled models used SFT.
+## Zoom in: what distillation transfers
 
-## Distillation: learn from a teacher
+Distillation teaches behavior through training; it does not copy the teacher's weights. Part 2 of the picture above is **output-based distillation**: the student learns from the teacher's text. Other forms match the teacher's probabilities: how it spreads chances among possible outputs.
 
-A **teacher** supplies training targets; a **student** learns from them. The student is often smaller so it can be cheaper to run. Distillation teaches behavior through training; it does not copy the teacher's weights.
-
-Below, the teacher generates worked solutions. Selected solutions become SFT examples: the student practices predicting their next **tokens**, meaning pieces of text. Later, the student can answer without calling the teacher.
-
-![reasoning-distillation.svg](images/reasoning-distillation.svg)
-
-This is **output-based distillation**, using intermediate steps and final answers. Other forms match the teacher's probabilities: how it spreads chances among possible outputs.
-
-The goal is useful behavior on new problems. A student is not guaranteed to match all of its teacher's abilities. Check performance on problems that were kept out of training.
+A student is not guaranteed to match all of its teacher's abilities. Check it on problems kept out of training.
 
 ## Training versus extra thinking time
 
-**Inference-time compute** means work spent producing an answer during use. Extra work can mean generating more intermediate tokens, revising an attempt, or trying several solutions and selecting one.
+**Inference-time compute** means work spent producing an answer during use: generating more intermediate tokens, revising an attempt, or trying several solutions and selecting one.
 
 | What happens? | Do model weights change? |
 | --- | --- |
 | RL training or student training | Yes: learning updates the model. |
 | More computation during ordinary inference | No: the model does more work with the same weights. |
 
-Training can make that extra work more useful. Giving a model more time does not itself teach it a new lasting skill, and a longer response is not automatically a better solution. Benefits depend on the task, model, and how the work is used.
+Training can make that extra work more useful. More time does not itself teach a lasting skill, and a longer response is not automatically a better solution.
 
 ## What the training signal misses
 
@@ -60,6 +60,8 @@ Training can make that extra work more useful. Giving a model more time does not
 ## Check your understanding
 
 A student studies teacher solutions, then tries three approaches to a new problem. When do its weights change? **During student training.** Trying more approaches at ordinary inference uses the learned weights without updating them.
+
+In part 1, who supplies the training score? **A checker rule,** not a person and not a learned reward model.
 
 # Sources
 

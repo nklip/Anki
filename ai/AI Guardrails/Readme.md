@@ -12,7 +12,7 @@ A **large language model (LLM)** generates replies and can propose a **tool call
 
 A **system prompt** gives the model instructions. Those instructions help guide behavior, but they do not enforce access permissions. For example, an instruction to respect refund limits still needs a corresponding check in the refund service.
 
-Read the main path left to right. A proposed action takes the lower branch through the tool checks; its result returns to the model before the final reply is checked. Requests that need no tool skip that branch.
+Read the main path left to right. A proposed action takes the lower branch through the tool checks; its result returns to the model before the final reply is checked. Requests that need no tool skip that branch. Each checkpoint also has a stop path: the two boxes that start with “Fails” and the “Not allowed” branch, whose result also returns to the model. The strip at the bottom follows one example request through all three checkpoints, and each step diagram below repeats it.
 
 ![guardrails-overview.svg](images/guardrails-overview.svg)
 
@@ -30,7 +30,7 @@ The input checks inspect different properties:
 - **Scope:** reject requests outside the application's intended subject.
 - **Instruction manipulation:** a **classifier**, a model that assigns categories or scores, can flag a likely **prompt injection**—text attempting to redirect the assistant away from its intended behavior.
 
-The application then blocks the request, asks for a revision, or forwards the permitted, possibly masked text. Detection can miss an attack or reject an innocent message. Passing this checkpoint therefore does not authorize a refund.
+The application then blocks the request, asks for a revision, or forwards the permitted, possibly masked text. Detection can miss an attack or reject an innocent message. Passing this checkpoint therefore does not authorize a refund. The “Follow the example” strip assumes exactly that miss: the request passes.
 
 ## Step 2 — Enforce rules at the tool
 
@@ -42,9 +42,11 @@ Suppose the input check misses the attack and the model proposes a refund. Befor
 | --- | --- | --- |
 | Does the order belong to this customer? | Authenticated login and order ownership | Reject a mismatch. A role claimed in chat grants no authority. |
 | Is the refund within the amount paid? | Payment record | Reject an excessive amount. |
-| Is the refund above $100? | Requested amount and configured policy | Hold it until a real person approves. |
+| Is the refund $100 or less? | Requested amount and configured policy | If not, hold it until a real person approves. |
 
-The result is an executed refund, a rejection, or a pending approval. The model receives that result; a pending request must not become a claim that payment succeeded.
+Read the questions from A to C: “Yes” always continues downward. The result is an executed refund, a rejection, or a pending approval, and a person can also deny a held refund. The model receives that result; a pending request must not become a claim that payment succeeded.
+
+The example's $5,000 is above $100, so it cannot run automatically. It is rejected at A or B, or it waits for approval.
 
 These checks work only if **every execution path goes through them**. Keep authorization in the service that owns the resource, give tools only the permissions they need, and do not expose an alternate unchecked refund operation. Human approval does not override a failed ownership or amount check.
 
@@ -54,9 +56,9 @@ These checks work only if **every execution path goes through them**. Keep autho
 
 A draft exists, but the customer has not received it. Even a harmless request can produce an unsupported promise.
 
-A second model can compare the draft with company policy and flag a claim such as an unauthorized shipping-fee waiver. This is useful screening, but the reviewer can also be wrong.
+The diagram shows two methods, A and B. In method A, a second model compares the draft with company policy and flags a claim such as an unauthorized shipping-fee waiver. This is useful screening, but the reviewer can also be wrong.
 
-For exact facts, the video recommends a stronger construction: **read the approved value from the database or policy rules and use it in the response**. The diagram's invented 60-day draft illustrates the mismatch with the video's 30-day policy. Application code can fill a controlled response field with `30 days`; it need not ask another model to guess which number is correct. Refund status should similarly come from the tool's actual result.
+For exact facts, the video recommends a stronger construction, method B: **read the approved value from the database or policy rules and use it in the response**. The diagram's invented 60-day draft illustrates the mismatch with the video's 30-day policy. Application code can fill a controlled response field with `30 days`; it need not ask another model to guess which number is correct. Refund status should similarly come from the tool's actual result: in the example the refund has not run, so the reply must say so.
 
 Release the reply only after the required checks. If it fails, replace or withhold it, or send it for review. An output check cannot undo a refund that already happened; that is why the tool checkpoint comes before execution.
 

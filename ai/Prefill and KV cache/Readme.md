@@ -6,7 +6,7 @@
 
 ## Where this fits
 
-The shared map highlights **model execution**. Follow the arrows from context assembly through model computation and token selection. The lower example shows when each token’s keys and values enter the cache.
+After one token ([From logits to text with decoding and sampling](../Decoding%20and%20sampling/Readme.md)), this article covers one whole reply. In the shared map, the highlighted box “Model execution” is this topic. Follow the arrows from “Assemble context.” The lower example shows when each token’s keys and values enter the cache.
 
 ![where-this-fits.svg](images/where-this-fits.svg)
 

@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="616" viewBox="0 0 1040 616" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="712" viewBox="0 0 1040 712" role="img" aria-labelledby="title desc">
   <title id="title">Step 1: screen the request before the main model</title>
-  <desc id="desc">A request asks for a 5000-dollar refund for order 4821 and claims authority. Input checks can mask sensitive data, reject out-of-scope topics, and classify suspicious instructions. The application either blocks or asks for revision, or passes checked text to the model. A passing input check grants no permission to issue a refund.</desc>
+  <desc id="desc">A request asks for a 5000-dollar refund for order 4821 and claims authority. Input checks can mask sensitive data, reject out-of-scope topics, and classify suspicious instructions. The application either blocks or asks for revision, or passes checked text to the model. A passing input check grants no permission to issue a refund. Example: suppose the classifier misses this request; the text passes, and the model proposes the refund.</desc>
   <!-- Blue groups the input checks; red and green distinguish labeled outcomes. -->
   <defs>
     <style>
@@ -14,7 +14,7 @@
       .head { fill: #64748b; }
     </style>
   </defs>
-  <rect width="1040" height="616" fill="#ffffff"/>
+  <rect width="1040" height="712" fill="#ffffff"/>
 
   <!-- State before: neither the text nor its claimed authority has been trusted. -->
   <text class="title" x="28" y="44">1 · Screen the request before the main model</text>
@@ -60,5 +60,10 @@
   </g>
 
   <!-- A successful screening result must not be mistaken for tool authorization. -->
-  <text class="small" x="28" y="599">A classifier can miss an attack. Every proposed refund still needs the tool checks.</text>
+  <g id="follow-the-example">
+    <rect x="28" y="586" width="984" height="76" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="52" y="618">Follow the example</text>
+    <text class="copy" x="52" y="647">Suppose the classifier misses this request. The text passes, and the model proposes the refund.</text>
+  </g>
+  <text class="small" x="28" y="695">A classifier can miss an attack. Every proposed refund still needs the tool checks.</text>
 </svg>

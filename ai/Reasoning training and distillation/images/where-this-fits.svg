@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="766" viewBox="0 0 900 766" role="img" aria-labelledby="title desc">
+  <title id="title">Where this fits: two more training recipes</title>
+  <desc id="desc">The top row shows three earlier training stages in one common order: stage 1, pretraining, learns from text; stage 2, supervised fine-tuning, learns from demonstrations; stage 3, preference tuning, learns from comparisons. Below are two more recipes, both covered by this article, that reuse those tools with a new source for the training signal. Part 1, reasoning training, learns from the model's own attempts, scored by a checker rule; it practices writing attempts that earn higher scores; the aimed result is better problem solving, which is not a guarantee; it reuses reinforcement learning, as RLHF does. Part 2, distillation, learns from a teacher model's worked solutions; it practices predicting the tokens of the teacher's text; the result is a student, often smaller, that behaves more like the teacher; it reuses supervised fine-tuning. After training, at inference, the model answers new requests and its weights stay fixed.</desc>
+  <!-- Same style as the three-stage map in the two sibling articles; here both heavy blue frames are this article's topics. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .tag { font-size: 17px; fill: #475569; }
+      .name { font-size: 20px; font-weight: 700; }
+      .row { font-size: 15px; font-weight: 700; fill: #475569; letter-spacing: 0.5px; }
+      .copy { font-size: 18px; }
+      .label { font-size: 19px; font-weight: 700; }
+      .note { font-size: 19px; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="766" fill="#ffffff"/>
+
+  <text class="title" x="28" y="44">Where this fits: two more training recipes</text>
+  <text class="subtitle" x="28" y="76">Both reuse tools from the earlier stages. Only the source of the training signal is new.</text>
+
+  <!-- Earlier stages, compact: one line each. -->
+  <g id="earlier-stages">
+    <rect x="28" y="100" width="264" height="92" rx="13" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+    <text class="tag" x="44" y="126">Stage 1</text>
+    <text class="name" x="44" y="152">Pretraining</text>
+    <text class="copy" x="44" y="177">Learns from text</text>
+    <rect x="318" y="100" width="264" height="92" rx="13" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+    <text class="tag" x="334" y="126">Stage 2</text>
+    <text class="name" x="334" y="152">Supervised fine-tuning</text>
+    <text class="copy" x="334" y="177">Learns from demonstrations</text>
+    <rect x="608" y="100" width="264" height="92" rx="13" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+    <text class="tag" x="624" y="126">Stage 3</text>
+    <text class="name" x="624" y="152">Preference tuning</text>
+    <text class="copy" x="624" y="177">Learns from comparisons</text>
+    <!-- Stage order. Shafts end one unit inside the triangle bases; tips meet the next box border. -->
+    <line class="connector" x1="293" y1="146" x2="306" y2="146"/>
+    <polygon class="head" points="318,146 305,139 305,153"/>
+    <line class="connector" x1="583" y1="146" x2="596" y2="146"/>
+    <polygon class="head" points="608,146 595,139 595,153"/>
+  </g>
+
+  <text class="label" x="28" y="230">TWO MORE RECIPES · they reuse the tools above</text>
+
+  <!-- Part 1. Both recipe boxes share the same row baselines so the rows can be compared across. -->
+  <g id="recipe-reasoning-training">
+    <rect x="28" y="246" width="411" height="390" rx="13" fill="#eff6ff" stroke="#2563eb" stroke-width="3" data-focus="true"/>
+    <text class="tag" x="46" y="276">This article · part 1</text>
+    <text class="name" x="46" y="304">Reasoning training</text>
+    <line x1="46" y1="320" x2="421" y2="320" stroke="#93c5fd" stroke-width="1.5"/>
+    <text class="row" x="46" y="346">LEARNS FROM</text>
+    <text class="copy" x="46" y="370">The model's own attempts,</text>
+    <text class="copy" x="46" y="393">scored by a checker rule</text>
+    <text class="row" x="46" y="427">PRACTICES</text>
+    <text class="copy" x="46" y="451">Writing attempts that</text>
+    <text class="copy" x="46" y="474">earn higher scores</text>
+    <text class="row" x="46" y="508">RESULT</text>
+    <text class="copy" x="46" y="532">Better problem solving</text>
+    <text class="copy" x="46" y="555">(the aim, not a guarantee)</text>
+    <text class="row" x="46" y="589">REUSES</text>
+    <text class="copy" x="46" y="613">Reinforcement learning, as RLHF does</text>
+  </g>
+
+  <!-- Part 2. -->
+  <g id="recipe-distillation">
+    <rect x="461" y="246" width="411" height="390" rx="13" fill="#eff6ff" stroke="#2563eb" stroke-width="3" data-focus="true"/>
+    <text class="tag" x="479" y="276">This article · part 2</text>
+    <text class="name" x="479" y="304">Distillation</text>
+    <line x1="479" y1="320" x2="854" y2="320" stroke="#93c5fd" stroke-width="1.5"/>
+    <text class="row" x="479" y="346">LEARNS FROM</text>
+    <text class="copy" x="479" y="370">A teacher model's</text>
+    <text class="copy" x="479" y="393">worked solutions</text>
+    <text class="row" x="479" y="427">PRACTICES</text>
+    <text class="copy" x="479" y="451">Predicting the tokens of</text>
+    <text class="copy" x="479" y="474">the teacher's text</text>
+    <text class="row" x="479" y="508">RESULT</text>
+    <text class="copy" x="479" y="532">A student, often smaller, that</text>
+    <text class="copy" x="479" y="555">behaves more like the teacher</text>
+    <text class="row" x="479" y="589">REUSES</text>
+    <text class="copy" x="479" y="613">Supervised fine-tuning</text>
+  </g>
+
+  <g id="after-training">
+    <rect x="28" y="660" width="844" height="80" rx="13" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+    <text class="label" x="50" y="692">AFTER TRAINING · the model in use (inference)</text>
+    <text class="note" x="50" y="722">The model answers new requests. Its weights now stay fixed.</text>
+  </g>
+</svg>

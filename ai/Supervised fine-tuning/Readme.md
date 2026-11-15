@@ -12,7 +12,7 @@ Pretraining teaches a model to continue text, one **token** at a time. A token i
 
 ![where-this-fits.svg](images/where-this-fits.svg)
 
-Read the three stages from left to right. The stage marked “this article” is SFT. Compare the rows: the stages differ in what they learn from and what they practice. This order is common, not mandatory. [Preference tuning: RLHF and DPO](../Preference%20tuning/Readme.md) is the next topic.
+Read the three stages from left to right. The stage marked “this article” is SFT. Compare the rows: the stages differ in what they learn from and what they practice. This order is common, not mandatory. [Preference tuning - RLHF and DPO](../Preference%20tuning/Readme.md) is the next topic.
 
 ## The whole process in one picture
 

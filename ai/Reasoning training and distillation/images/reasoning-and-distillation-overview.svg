@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="790" viewBox="0 0 900 790" role="img" aria-labelledby="title desc">
+  <title id="title">Reasoning training and distillation in one picture</title>
+  <desc id="desc">Read downward. Part 1, reasoning training, repeats across many problems in three steps. Attempt: the model writes steps and a final answer. Check: a rule scores the answer, right is 1 and wrong is 0. Adjust: weights move toward higher-scoring attempts. The trained model can become the teacher. Part 2, distillation, has three steps. Teacher writes: worked solutions with steps and answers. Select: keep the solutions that pass a check. Student learns: supervised fine-tuning to predict the teacher's recorded text. The output is a student model with its own weights, often smaller and cheaper. Later, in use, the student answers new problems alone; no teacher is needed and its weights stay fixed. This is one common recipe; DeepSeek-R1 used both parts, and each part also works without the other. Scores and teacher text can both be wrong, so test on new problems.</desc>
+  <!-- Same layout language as the overview diagrams of the two sibling articles: bands with three steps, model boxes in the left column. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 19px; font-weight: 700; }
+      .copy { font-size: 19px; }
+      .step { font-size: 18px; }
+      .note { font-size: 19px; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="790" fill="#ffffff"/>
+
+  <text class="title" x="28" y="44">Reasoning training and distillation in one picture</text>
+  <text class="subtitle" x="28" y="76">Read downward: part 1 makes a stronger model, part 2 teaches a student from it.</text>
+
+  <!-- Part 1: reinforcement-learning loop with a return path. -->
+  <g id="part-1-reasoning-training">
+    <rect x="28" y="100" width="844" height="222" rx="13" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="50" y="132">PART 1 · REASONING TRAINING · repeated across many problems</text>
+    <g id="step-attempt">
+      <rect x="50" y="150" width="244" height="110" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+      <text class="label" x="66" y="180">1 · Attempt</text>
+      <text class="step" x="66" y="210">The model writes steps</text>
+      <text class="step" x="66" y="234">and a final answer.</text>
+    </g>
+    <g id="step-check">
+      <rect x="328" y="150" width="244" height="110" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+      <text class="label" x="344" y="180">2 · Check</text>
+      <text class="step" x="344" y="210">A rule scores the answer:</text>
+      <text class="step" x="344" y="234">right = 1, wrong = 0.</text>
+    </g>
+    <g id="step-adjust">
+      <rect x="606" y="150" width="244" height="110" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+      <text class="label" x="622" y="180">3 · Adjust</text>
+      <text class="step" x="622" y="210">Weights move toward</text>
+      <text class="step" x="622" y="234">higher-scoring attempts.</text>
+    </g>
+    <line class="connector" x1="295" y1="205" x2="316" y2="205"/>
+    <polygon class="head" points="328,205 315,198 315,212"/>
+    <line class="connector" x1="573" y1="205" x2="594" y2="205"/>
+    <polygon class="head" points="606,205 593,198 593,212"/>
+    <!-- Return path: leaves step 3, runs under the steps, and ends below step 1. Its label sits under the path, clear of it. -->
+    <path class="connector" d="M 728,261 L 728,280 L 172,280 L 172,272"/>
+    <polygon class="head" points="172,260 165,273 179,273"/>
+    <text class="step" x="450" y="306" text-anchor="middle">repeat with the next problems</text>
+  </g>
+
+  <!-- Hand-over between the parts; the label sits to the right of the shaft, clear of it. -->
+  <line class="connector" x1="184" y1="323" x2="184" y2="366"/>
+  <polygon class="head" points="184,378 177,365 191,365"/>
+  <text class="note" x="206" y="356">The trained model can become the teacher.</text>
+
+  <!-- Part 2: a one-pass pipeline, no loop. -->
+  <g id="part-2-distillation">
+    <rect x="28" y="378" width="844" height="170" rx="13" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="50" y="410">PART 2 · DISTILLATION · a student learns from the teacher</text>
+    <g id="step-teacher-writes">
+      <rect x="50" y="428" width="244" height="100" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+      <text class="label" x="66" y="458">1 · Teacher writes</text>
+      <text class="step" x="66" y="486">Worked solutions:</text>
+      <text class="step" x="66" y="510">steps and answers.</text>
+    </g>
+    <g id="step-select">
+      <rect x="328" y="428" width="244" height="100" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+      <text class="label" x="344" y="458">2 · Select</text>
+      <text class="step" x="344" y="486">Keep the solutions</text>
+      <text class="step" x="344" y="510">that pass a check.</text>
+    </g>
+    <g id="step-student-learns">
+      <rect x="606" y="428" width="244" height="100" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+      <text class="label" x="622" y="458">3 · Student learns</text>
+      <text class="step" x="622" y="486">SFT: predict the</text>
+      <text class="step" x="622" y="510">teacher's recorded text.</text>
+    </g>
+    <line class="connector" x1="295" y1="478" x2="316" y2="478"/>
+    <polygon class="head" points="328,478 315,471 315,485"/>
+    <line class="connector" x1="573" y1="478" x2="594" y2="478"/>
+    <polygon class="head" points="606,478 593,471 593,485"/>
+  </g>
+
+  <!-- Output: the arrow leaves part 2 above the student box. -->
+  <line class="connector" x1="184" y1="549" x2="184" y2="576"/>
+  <polygon class="head" points="184,588 177,575 191,575"/>
+  <g id="output-student-model">
+    <rect x="28" y="588" width="312" height="112" rx="13" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="50" y="624">STUDENT MODEL</text>
+    <text class="copy" x="50" y="654">Its own weights; often</text>
+    <text class="copy" x="50" y="680">smaller and cheaper.</text>
+  </g>
+  <line class="connector" x1="341" y1="644" x2="388" y2="644"/>
+  <polygon class="head" points="400,644 387,637 387,651"/>
+  <g id="later-use">
+    <rect x="400" y="588" width="472" height="112" rx="13" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="418" y="624">LATER, IN USE</text>
+    <text class="copy" x="418" y="654">The student answers new problems alone.</text>
+    <text class="copy" x="418" y="680">No teacher needed. Its weights stay fixed.</text>
+  </g>
+
+  <!-- Scope and limits of the picture. -->
+  <text class="note" x="450" y="736" text-anchor="middle">One common recipe: DeepSeek-R1 used both parts. Each part also works without the other.</text>
+  <text class="subtitle" x="450" y="764" text-anchor="middle">Simplified. Scores and teacher text can both be wrong, so test on new problems.</text>
+</svg>

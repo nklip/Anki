@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="752" viewBox="0 0 900 752" role="img" aria-labelledby="title desc">
+  <title id="title">Pretraining in one picture</title>
+  <desc id="desc">Read downward. Two inputs go in: a new model, whose weights start as random numbers, and training text, for example the sentence The cat sleeps; the text itself supplies the answers. A training loop repeats across the whole collection in three steps. Predict: the model rates each possible next token, given the text so far. Score: if the real next token is unlikely, the loss, a penalty, is large. Adjust: change the weights a little so that the loss gets smaller. The output is a pretrained model: its weights now hold patterns of the text. Later, for the new text The capital of France is, a likely continuation is Paris. The model continues text; it was not trained to follow requests, and later stages add that. Illustration only; a likely continuation is not always a true one.</desc>
+  <!-- Folder colors: blue is input text, orange is the target or continuation, green is the result, gray is neutral. Every box also says its role in words. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #17243a; }
+      .title { font-size: 29px; font-weight: 700; }
+      .subtitle { font-size: 19px; fill: #475569; }
+      .label { font-size: 19px; font-weight: 700; }
+      .copy { font-size: 19px; }
+      .step { font-size: 18px; }
+      .plus { font-size: 34px; font-weight: 700; fill: #475569; text-anchor: middle; }
+      .note { font-size: 19px; }
+      .connector { stroke: #64748b; stroke-width: 2.5; fill: none; }
+      .head { fill: #64748b; }
+    </style>
+  </defs>
+  <rect width="900" height="752" fill="#ffffff"/>
+
+  <text class="title" x="28" y="44">Pretraining in one picture</text>
+  <text class="subtitle" x="28" y="76">Read downward: what goes in, what training repeats, and what comes out.</text>
+
+  <!-- Inputs. The model boxes sit in the same left column before and after training: same model, changed weights. -->
+  <g id="input-new-model">
+    <rect x="28" y="100" width="312" height="130" rx="13" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="50" y="140">NEW MODEL</text>
+    <text class="copy" x="50" y="172">Its weights start as</text>
+    <text class="copy" x="50" y="198">random numbers.</text>
+  </g>
+  <text class="plus" x="370" y="177">+</text>
+  <g id="input-training-text">
+    <rect x="400" y="100" width="472" height="130" rx="13" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="418" y="130">TRAINING TEXT · one sentence of many</text>
+    <rect x="418" y="142" width="436" height="36" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+    <text class="copy" x="430" y="167">The cat sleeps.</text>
+    <text class="copy" x="418" y="210">The text itself supplies the answers.</text>
+  </g>
+
+  <!-- Both inputs feed the loop. Shafts end one unit inside the triangle bases; tips meet the band border. -->
+  <line class="connector" x1="184" y1="231" x2="184" y2="258"/>
+  <polygon class="head" points="184,270 177,257 191,257"/>
+  <line class="connector" x1="636" y1="231" x2="636" y2="258"/>
+  <polygon class="head" points="636,270 629,257 643,257"/>
+
+  <!-- Training loop band with three steps and a return path. -->
+  <g id="training-loop">
+    <rect x="28" y="270" width="844" height="230" rx="13" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="50" y="302">TRAINING LOOP · repeated across the whole collection</text>
+    <g id="step-predict">
+      <rect x="50" y="320" width="244" height="120" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+      <text class="label" x="66" y="350">1 · Predict</text>
+      <text class="step" x="66" y="378">The model rates each</text>
+      <text class="step" x="66" y="401">possible next token,</text>
+      <text class="step" x="66" y="424">given the text so far.</text>
+    </g>
+    <g id="step-score">
+      <rect x="328" y="320" width="244" height="120" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+      <text class="label" x="344" y="350">2 · Score</text>
+      <text class="step" x="344" y="378">Real next token unlikely?</text>
+      <text class="step" x="344" y="401">Then the loss (penalty)</text>
+      <text class="step" x="344" y="424">is large.</text>
+    </g>
+    <g id="step-adjust">
+      <rect x="606" y="320" width="244" height="120" rx="10" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+      <text class="label" x="622" y="350">3 · Adjust</text>
+      <text class="step" x="622" y="378">Change the weights a</text>
+      <text class="step" x="622" y="401">little so that the loss</text>
+      <text class="step" x="622" y="424">gets smaller.</text>
+    </g>
+    <line class="connector" x1="295" y1="380" x2="316" y2="380"/>
+    <polygon class="head" points="328,380 315,373 315,387"/>
+    <line class="connector" x1="573" y1="380" x2="594" y2="380"/>
+    <polygon class="head" points="606,380 593,373 593,387"/>
+    <!-- Return path: leaves step 3, runs under the steps, and ends below step 1. Its label sits under the path, clear of it. -->
+    <path class="connector" d="M 728,441 L 728,460 L 172,460 L 172,452"/>
+    <polygon class="head" points="172,440 165,453 179,453"/>
+    <text class="step" x="450" y="486" text-anchor="middle">repeat with the next piece of text</text>
+  </g>
+
+  <!-- Output: the arrow leaves the loop above the pretrained model box. -->
+  <line class="connector" x1="184" y1="501" x2="184" y2="528"/>
+  <polygon class="head" points="184,540 177,527 191,527"/>
+  <g id="output-pretrained-model">
+    <rect x="28" y="540" width="312" height="130" rx="13" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+    <text class="label" x="50" y="580">PRETRAINED MODEL</text>
+    <text class="copy" x="50" y="612">Its weights now hold</text>
+    <text class="copy" x="50" y="638">patterns of the text.</text>
+  </g>
+  <line class="connector" x1="341" y1="605" x2="388" y2="605"/>
+  <polygon class="head" points="400,605 387,598 387,612"/>
+  <g id="later-use">
+    <rect x="400" y="540" width="472" height="130" rx="13" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="418" y="570">LATER · new text</text>
+    <rect x="418" y="582" width="436" height="36" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+    <text class="copy" x="430" y="607">Text so far: The capital of France is</text>
+    <rect x="418" y="624" width="436" height="36" rx="8" fill="#fff7ed" stroke="#c2410c" stroke-width="1.5"/>
+    <text class="copy" x="430" y="649">Likely continuation: Paris</text>
+  </g>
+
+  <!-- State the result and its limit, and mark the example as an illustration. -->
+  <text class="note" x="450" y="704" text-anchor="middle">The model continues text. It was not trained to follow requests: later stages add that.</text>
+  <text class="subtitle" x="450" y="732" text-anchor="middle">Illustration only. A likely continuation is not always a true one.</text>
+</svg>

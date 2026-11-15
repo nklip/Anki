@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="748" viewBox="0 0 1280 748" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="808" viewBox="0 0 1280 808" role="img" aria-labelledby="title desc">
   <title id="title">AI guardrails: three checkpoints around the model</title>
-  <desc id="desc">Read left to right: customer request, input checks, AI model, output checks, customer reply. If the model proposes a tool call, application code checks identity, amount, and approval before the refund service runs. The service result returns to the model. Blocked input or output receives a controlled response; blocked or pending actions do not execute.</desc>
+  <desc id="desc">Read left to right: customer request, input checks, AI model, output checks, customer reply. If the model proposes a tool call, application code checks identity, amount, and approval before the refund service runs. Each checkpoint has a stop path. Failed input checks lead to a controlled message. Failed output checks lead to a replaced or withheld reply. An action that is not allowed does not execute, and that result returns to the model with the results of executed actions. Example: for a 5000-dollar refund request, check 1 misses it, check 2 rejects or holds it, and check 3 keeps a false refund-paid claim out of the reply.</desc>
   <!-- Shared typography and palette: blue input, purple model, orange action, green output. -->
   <defs>
     <style>
@@ -14,7 +14,7 @@
       .head { fill: #64748b; }
     </style>
   </defs>
-  <rect width="1280" height="748" fill="#ffffff"/>
+  <rect width="1280" height="808" fill="#ffffff"/>
 
   <!-- The main reading path stays in one horizontal row. -->
   <text class="title" x="32" y="47">AI guardrails: three checkpoints around the model</text>
@@ -81,7 +81,25 @@
   <!-- Result return runs left of the action box and enters a separate model port. -->
   <path id="tool-result-connector" class="connector" d="M1099 565 V650 H514 V324 H566 V301"/>
   <polygon class="head" points="566,288 559,302 573,302"/>
-  <text class="small" x="620" y="630">Tool result returns to the model</text>
+  <text class="small" x="620" y="676">Result returns to the model: executed, rejected, or pending</text>
+  <!-- A call that is not allowed never reaches the service; its result joins the same return path. -->
+  <path id="not-allowed-connector" class="connector" d="M712 587 V650"/>
+  <circle cx="712" cy="650" r="5" fill="#64748b"/>
+  <text class="small" x="728" y="626">Not allowed</text>
+
+  <!-- Stop paths of the input and output checkpoints; tips meet the red box borders. -->
+  <g id="input-stop-path">
+    <path class="connector" d="M340 289 V313"/>
+    <polygon class="head" points="340,326 333,312 347,312"/>
+    <rect x="180" y="326" width="296" height="60" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+    <text class="copy" x="328" y="363" text-anchor="middle">Fails → controlled message</text>
+  </g>
+  <g id="output-stop-path">
+    <path class="connector" d="M960 289 V313"/>
+    <polygon class="head" points="960,326 953,312 967,312"/>
+    <rect x="890" y="326" width="296" height="60" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+    <text class="copy" x="1038" y="363" text-anchor="middle">Fails → replace or withhold</text>
+  </g>
 
   <!-- This note explains the trust boundary without adding another process stage. -->
   <g id="enforcement-note">
@@ -92,6 +110,10 @@
     <text class="copy" x="56" y="553">the refund actually happens.</text>
   </g>
 
-  <!-- Failure behavior applies at the checkpoint where the request stops. -->
-  <text class="small" x="32" y="700">Blocked input or output: return a controlled message. Blocked or pending action: do not execute.</text>
+  <!-- One request traced through all three checkpoints; the step diagrams repeat this strip. -->
+  <g id="follow-the-example">
+    <rect x="32" y="700" width="1216" height="80" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <text class="label" x="56" y="733">Follow the example: a $5,000 refund request</text>
+    <text class="copy" x="56" y="763">Check 1 misses it. Check 2 rejects or holds it. Check 3 keeps a false “refund paid” out of the reply.</text>
+  </g>
 </svg>
