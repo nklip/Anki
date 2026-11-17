@@ -52,7 +52,9 @@ For a process article, each step should state:
 4. The state after the step.
 5. Why the step matters.
 
-Name process sections `## Step 1 — Clear action`, `## Step 2 — Clear action`, and so on. This lets the validator confirm that every step section contains its own `.svg` reference. Use `###` subsections for details within each step; named sub-items within a subsection may use `#### **Named sub-item**`, following the shared heading rule. A `Use case:` prefix is optional. Numbered process steps remain at `##`, including steps with bold labels.
+Choose step-heading levels from the article's hierarchy. Use `## Step 1 — Clear action`, `## Step 2 — Clear action`, and so on when the steps form the main sections. When a process belongs inside a broader `##` section, use `### Step 1 — Clear action`, `### Step 2 — Clear action`, and so on beneath it. Keep steps in the same sequence at the same level, including steps with bold labels. Do not flatten meaningful groups just because their subsections are numbered steps.
+
+Both forms require each step's own `.svg` reference. Main-section steps may have `###` detail subsections; named sub-items within any `###` subsection, including a nested step, may use `#### **Named sub-item**`, following the shared heading rule. A `Use case:` prefix is optional.
 
 Keep closely related details together. Do not hide the main flow beneath tuning options, historical notes, or implementation trivia.
 
@@ -62,4 +64,4 @@ Before finishing, run:
 python3 scripts/check_anki_card.py --mode complex path/to/card.md
 ```
 
-The validator confirms the minimum visual count and checks SVG presence in `## Step …` sections. It reports numbered step headings at incorrect levels and requires each step's own SVG, including when its label is wrapped in `**` or `__`. A fenced image example or an image in a later step or peer section does not satisfy that requirement. Manually confirm that every step diagram actually explains that step and sits immediately under its heading.
+The validator confirms the minimum visual count and checks SVG presence in both `## Step …` sections and `### Step …` subsections within a `##` section. It reports orphaned level-three steps and step headings at deeper levels, including when their labels are wrapped in `**` or `__`. A fenced image example or an image in a later step, peer section, or parent section does not satisfy a step's diagram requirement. Manually confirm that every step diagram actually explains that step and sits immediately under its heading.

@@ -35,21 +35,17 @@ class CardValidationTests(unittest.TestCase):
         self.index.write_text("# Subject\n\n## Content\n", encoding="utf-8")
         self.navigation = "<sub>[Back to Subject](../Readme.md#content)</sub>"
 
-    def card(self, body: str = "", mode: str = "complex") -> str:
-        boundaries = (
-            "# Front\n\nWhat changes and why?\n\n# Back\n\n"
-            if mode == "simple" else ""
-        )
+    def card(self, body: str = "") -> str:
         return (
             f"# A teaching topic\n\n{self.navigation}\n\n"
-            f"{boundaries}The operation changes the stored state.\n\n"
+            "The operation changes the stored state.\n\n"
             "![overview.svg](images/overview.svg)\n\n"
             "![comparison.svg](images/comparison.svg)\n\n"
             f"{body}\n\n# Sources\n\n"
             "- [Official reference](https://example.com/reference)\n"
         )
 
-    def errors(self, text: str, mode: str = "auto", **options: bool) -> list[str]:
+    def errors(self, text: str, mode: str = "complex", **options: bool) -> list[str]:
         return validator.validate_text(text, self.card_path, mode, **options)
 
     def assert_error(self, errors: list[str], *parts: str) -> None:
@@ -73,7 +69,7 @@ class CardValidationTests(unittest.TestCase):
     def test_valid_simple_and_complex_cards(self) -> None:
         for mode in ("simple", "complex"):
             with self.subTest(mode=mode):
-                self.assertEqual([], self.errors(self.card(mode=mode), mode))
+                self.assertEqual([], self.errors(self.card(), mode))
 
     def test_bold_sub_items_within_subsections_are_allowed(self) -> None:
         for mode in ("simple", "complex"):
@@ -86,9 +82,9 @@ class CardValidationTests(unittest.TestCase):
                             "Repeat the update after a failure.\n\n"
                             "#### **Use case: Resuming after restart**\n\nResume the work."
                         )
-                        text = self.card(body, mode=mode)
-                        self.assertEqual([], self.errors(text))
-                        self.assertEqual([], self.errors(text.replace("\n", "\r\n")))
+                        text = self.card(body)
+                        self.assertEqual([], self.errors(text, mode))
+                        self.assertEqual([], self.errors(text.replace("\n", "\r\n"), mode))
 
     def test_named_sub_items_need_no_prefix_and_may_include_inline_code(self) -> None:
         for mode in ("simple", "complex"):
@@ -100,7 +96,7 @@ class CardValidationTests(unittest.TestCase):
             ):
                 with self.subTest(mode=mode, label=label):
                     body = f"## Behavior\n\n### Details\n\n#### {label}"
-                    self.assertEqual([], self.errors(self.card(body, mode=mode)))
+                    self.assertEqual([], self.errors(self.card(body), mode))
 
     def test_level_four_requires_fully_bold_text(self) -> None:
         for mode in ("simple", "complex"):
@@ -114,7 +110,7 @@ class CardValidationTests(unittest.TestCase):
             ):
                 with self.subTest(mode=mode, label=label):
                     body = f"## Behavior\n\n### Retry handling\n\n#### {label}"
-                    self.assert_error(self.errors(self.card(body, mode=mode)), "fully bold")
+                    self.assert_error(self.errors(self.card(body), mode), "fully bold")
 
     def test_heading_diagnostics_omit_closing_atx_sequences(self) -> None:
         for heading in (
@@ -136,7 +132,7 @@ class CardValidationTests(unittest.TestCase):
                 with self.subTest(mode=mode, prefix=prefix):
                     body = prefix + "\n\n#### **Use case: Retrying an update**"
                     self.assert_error(
-                        self.errors(self.card(body, mode=mode)), "nested within a ### subsection"
+                        self.errors(self.card(body), mode), "nested within a ### subsection"
                     )
 
     def test_levels_five_and_six_remain_invalid(self) -> None:
@@ -147,7 +143,7 @@ class CardValidationTests(unittest.TestCase):
                         "## Behavior\n\n### Retry handling\n\n"
                         f"{'#' * level} **Use case: Retrying an update**"
                     )
-                    self.assert_error(self.errors(self.card(body, mode=mode)), "too deep")
+                    self.assert_error(self.errors(self.card(body), mode), "too deep")
 
     def test_fenced_heading_examples_do_not_affect_use_case_nesting(self) -> None:
         for mode in ("simple", "complex"):
@@ -159,133 +155,139 @@ class CardValidationTests(unittest.TestCase):
                         f"## Behavior\n\n### Retry handling\n\n{example}\n\n"
                         "#### **Use case: Retrying an update**"
                     )
-                    self.assertEqual([], self.errors(self.card(body, mode=mode)))
+                    self.assertEqual([], self.errors(self.card(body), mode))
 
-    def test_auto_mode_accepts_both_structures_without_comments(self) -> None:
-        for mode in ("simple", "complex"):
-            with self.subTest(mode=mode):
-                text = self.card(mode=mode)
-                self.assertNotIn("<!--", text)
-                self.assertEqual(mode, validator.detect_mode(text))
-                self.assertEqual([], validator.validate_text(text, self.card_path))
-                self.assertEqual([], self.errors(text, "auto"))
+    def test_explicit_mode_is_required_by_the_api(self) -> None:
+        with self.assertRaises(TypeError):
+            validator.validate_text(self.card(), self.card_path)
+        for mode in ("auto", "", "article"):
+            with self.subTest(mode=mode), self.assertRaises(ValueError):
+                validator.validate_text(self.card(), self.card_path, mode)
 
-    def test_crlf_cards_preserve_structure_and_counted_sections(self) -> None:
-        body = "## Explanation\n\n```markdown\n# Front\n\n## Back\n\n# Sources\n```"
-        for mode in ("simple", "complex"):
-            for heading_suffix in ("", " \t"):
-                with self.subTest(mode=mode, heading_suffix=heading_suffix):
-                    text = self.card(body, mode=mode).replace(
-                        "The operation changes the stored state.",
-                        "**State updates were introduced in Example Platform 1.0.**",
-                    )
-                    for heading in ("# Front", "# Back", "# Sources"):
-                        text = text.replace(heading + "\n", heading + heading_suffix + "\n")
-                    crlf = text.replace("\n", "\r\n")
-                    self.assertEqual(mode, validator.detect_mode(crlf))
-                    for selected_mode in ("auto", mode):
-                        self.assertEqual([], self.errors(crlf, selected_mode, require_version_lead=True))
-                    self.assertEqual(
-                        validator.countable_text(text),
-                        validator.countable_text(crlf).replace("\r\n", "\n"),
-                    )
-
-    def test_article_body_starts_after_navigation_without_card_boundaries(self) -> None:
+    def test_shared_structure_passes_both_explicit_modes(self) -> None:
         text = self.card()
+        self.assertNotIn("<!--", text)
         self.assertNotIn("# Front", text)
         self.assertNotIn("# Back", text)
         self.assertIn(self.navigation + "\n\nThe operation", text)
-        self.assertEqual([], self.errors(text))
+        for mode in ("simple", "complex"):
+            self.assertEqual([], self.errors(text, mode))
 
-    def test_partial_boundary_pair_is_an_invalid_simple_card(self) -> None:
-        for missing in ("# Front", "# Back"):
-            with self.subTest(missing=missing):
-                text = self.card(mode="simple").replace(missing + "\n", "", 1)
-                self.assertEqual("simple", validator.detect_mode(text))
-                self.assert_error(self.errors(text), "missing required heading", missing)
-
-    def test_level_two_boundaries_select_simple_mode_and_fail_validation(self) -> None:
-        for front, back in (("##", "##"), ("##", "#"), ("#", "##"), ("##", ""), ("", "##")):
-            for comment in ("", "<!-- Card mode: simple. Validate with --mode simple. -->"):
-                with self.subTest(front=front, back=back, comment=comment):
-                    text = self.card(comment, mode="simple").replace(
-                        "![comparison.svg](images/comparison.svg)\n\n", "", 1
-                    )
-                    for name, level in (("Front", front), ("Back", back)):
-                        text = text.replace(f"# {name}\n", f"{level} {name}\n" if level else "", 1)
-                    self.assertEqual("simple", validator.detect_mode(text))
-                    errors = self.errors(text)
-                    self.assertEqual(self.errors(text, "simple"), errors)
-                    for name, level in (("Front", front), ("Back", back)):
-                        missing = f"missing required heading: # {name}"
-                        if level == "##":
-                            self.assertIn(f"boundary '## {name}' must use '# {name}'", errors)
-                            self.assertNotIn(missing, errors)
-                        elif not level:
-                            self.assertIn(missing, errors)
-                    self.assertFalse(any("header order" in error for error in errors), errors)
-                    self.assertFalse(any("local visual" in error for error in errors), errors)
+    def test_crlf_cards_preserve_structure_and_body_budget(self) -> None:
+        body = "## Explanation\n\n```markdown\n# Front\n\n## Back\n\n# Sources\n```"
+        for mode in ("simple", "complex"):
+            for suffix in ("", " \t"):
+                with self.subTest(mode=mode, suffix=suffix):
+                    text = self.card(body).replace(
+                        "The operation changes the stored state.",
+                        "**State updates were introduced in Example Platform 1.0.**",
+                    ).replace("# Sources\n", "# Sources" + suffix + "\n")
                     crlf = text.replace("\n", "\r\n")
-                    self.assertEqual("simple", validator.detect_mode(crlf))
-                    self.assertEqual(errors, self.errors(crlf))
+                    self.assertEqual([], self.errors(crlf, mode, require_version_lead=True))
+                    self.assertEqual(validator.countable_text(text), validator.countable_text(crlf))
 
-    def test_boundary_level_diagnostic_requires_an_exact_visible_heading(self) -> None:
-        for name in ("Front", "Back", "Sources"):
-            for replacement in (
-                f"## {name} details", f"```markdown\n## {name}\n```",
-                f"<!--\n## {name}\n-->",
-            ):
-                with self.subTest(name=name, replacement=replacement):
-                    text = self.card(mode="simple").replace(f"# {name}\n", replacement + "\n", 1)
-                    errors = self.errors(text)
-                    self.assertIn(f"missing required heading: # {name}", errors)
-                    self.assertNotIn(f"boundary '## {name}' must use '# {name}'", errors)
+    def test_legacy_boundaries_are_rejected_in_both_modes(self) -> None:
+        for mode in ("simple", "complex"):
+            for heading in ("# Front", "# Back", "## Front", "## Back"):
+                for suffix in ("", " \t", " ##"):
+                    with self.subTest(mode=mode, heading=heading, suffix=suffix):
+                        text = self.card(heading + suffix)
+                        errors = self.errors(text, mode)
+                        self.assert_error(errors, "boundary", heading, "not allowed")
+                        self.assertEqual(1, len(errors), errors)
+                        self.assertEqual(errors, self.errors(text.replace("\n", "\r\n"), mode))
 
-    def test_mode_detection_requires_exact_boundary_names_at_supported_levels(self) -> None:
-        for heading in (
-            "### Front", "### Back", "# Front details", "# Back details",
-            "## Front details", "## Back details",
-        ):
-            with self.subTest(heading=heading):
-                self.assertEqual("complex", validator.detect_mode(self.card(heading)))
+    def test_legacy_boundary_rule_requires_exact_names_at_supported_levels(self) -> None:
+        for mode in ("simple", "complex"):
+            for heading in ("### Front", "### Back", "# Front details", "# Back details",
+                            "## Front details", "## Back details"):
+                with self.subTest(mode=mode, heading=heading):
+                    self.assertEqual([], self.errors(self.card(heading), mode))
 
-    def test_fenced_boundary_examples_do_not_select_simple_mode(self) -> None:
+    def test_fenced_legacy_boundaries_are_literal_examples(self) -> None:
         boundaries = "# Front\n\n# Back\n\n## Front\n\n## Back"
-        for name, example in self.fenced_examples(boundaries).items():
-            with self.subTest(fence=name):
-                text = self.card(example)
-                self.assertEqual("complex", validator.detect_mode(text))
-                self.assertEqual([], self.errors(text))
-
-    def test_explicit_mode_rejects_the_other_structure(self) -> None:
-        errors = self.errors(self.card(), "simple")
-        for heading in ("# Front", "# Back"):
-            self.assert_error(errors, "missing required heading", heading)
-        errors = self.errors(self.card(mode="simple"), "complex")
-        for heading in ("# Front", "# Back"):
-            self.assert_error(errors, "complex", heading)
-
-    def test_mode_specific_visual_minimum_is_inferred(self) -> None:
         for mode in ("simple", "complex"):
-            with self.subTest(mode=mode):
-                text = self.card(mode=mode).replace(
-                    "![comparison.svg](images/comparison.svg)\n\n", "", 1
-                )
-                if mode == "simple":
-                    self.assertEqual([], self.errors(text))
-                else:
-                    self.assert_error(self.errors(text), "requires at least 2", "found 1")
+            for name, example in self.fenced_examples(boundaries).items():
+                with self.subTest(mode=mode, fence=name):
+                    self.assertEqual([], self.errors(self.card(example), mode))
 
-    def test_only_inferred_simple_mode_has_a_character_limit(self) -> None:
+    def test_sources_requires_a_real_final_level_one_section(self) -> None:
         for mode in ("simple", "complex"):
-            with self.subTest(mode=mode):
-                oversized = "x" * (validator.SIMPLE_CHARACTER_LIMIT + 1)
-                errors = self.errors(self.card(oversized, mode=mode))
-                if mode == "simple":
-                    limit = validator.SIMPLE_CHARACTER_LIMIT
-                    self.assert_error(errors, f"allows at most {limit}")
-                else:
-                    self.assertEqual([], errors)
+            for replacement in ("", "# Sources details", "```markdown\n# Sources\n```"):
+                with self.subTest(mode=mode, replacement=replacement):
+                    text = self.card().replace("# Sources", replacement)
+                    self.assert_error(self.errors(text, mode), "missing required heading", "# Sources")
+            wrong_level = self.card().replace("# Sources", "## Sources")
+            self.assert_error(self.errors(wrong_level, mode), "## Sources", "must use '# Sources'")
+            self.assert_error(self.errors(self.card() + "\n# Sources\n", mode), "exactly one", "Sources")
+            self.assert_error(self.errors(self.card() + "\n# Appendix\n", mode), "Sources", "final level-one")
+
+    def test_source_links_outside_sources_do_not_supply_the_required_citation(self) -> None:
+        source = "- [Official reference](https://example.com/reference)"
+        text = self.card(source).replace("# Sources\n\n" + source, "# Sources\n")
+        for mode in ("simple", "complex"):
+            self.assert_error(self.errors(text, mode), "Sources", "HTTP(S)")
+
+    def test_visual_minimum_uses_the_explicit_mode(self) -> None:
+        text = self.card().replace("![comparison.svg](images/comparison.svg)\n\n", "", 1)
+        self.assertEqual([], self.errors(text, "simple"))
+        self.assert_error(self.errors(text, "complex"), "requires at least 2", "found 1")
+
+    def test_only_explicit_simple_mode_has_a_character_limit(self) -> None:
+        text = self.card("x" * (validator.SIMPLE_CHARACTER_LIMIT + 1))
+        self.assert_error(self.errors(text, "simple"), f"allows at most {validator.SIMPLE_CHARACTER_LIMIT}")
+        self.assertEqual([], self.errors(text, "complex"))
+
+    def test_simple_budget_counts_unicode_body_characters_at_the_exact_limit(self) -> None:
+        base = self.card("PAD")
+        padding = validator.SIMPLE_CHARACTER_LIMIT - len(validator.countable_text(base)) + len("PAD")
+        for character in ("x", "界", "🧠"):
+            for newline in ("\n", "\r\n"):
+                with self.subTest(character=character, newline=repr(newline)):
+                    text = base.replace("PAD", character * padding).replace("\n", newline)
+                    self.assertEqual(3500, len(validator.countable_text(text)))
+                    self.assertEqual([], self.errors(text, "simple"))
+                    too_long = text.replace(character * padding, character * (padding + 1))
+                    self.assert_error(self.errors(too_long, "simple"), "teaching body", "found 3501")
+
+    def test_title_navigation_and_final_sources_do_not_consume_the_body_budget(self) -> None:
+        text = self.card()
+        enlarged = text.replace("# A teaching topic", "# " + "t" * 5000)
+        enlarged = enlarged.replace(self.navigation, self.navigation.replace("Subject", "n" * 5000))
+        enlarged += "\n" + "s" * 5000
+        self.assertEqual(validator.countable_text(text), validator.countable_text(enlarged))
+        self.assertEqual([], self.errors(enlarged, "simple"))
+
+    def test_all_body_markdown_counts_including_fenced_boundary_lookalikes(self) -> None:
+        literal = (
+            "## Example\n\n```markdown\n# Front\n# Back\n# Sources\n"
+            + self.navigation + "\n![step.svg](images/step.svg)\n```"
+        )
+        text = self.card(literal)
+        expected = (
+            "The operation changes the stored state.\n\n"
+            "![overview.svg](images/overview.svg)\n\n"
+            "![comparison.svg](images/comparison.svg)\n\n" + literal
+        )
+        self.assertEqual(expected, validator.countable_text(text))
+        oversized = text.replace("# Front\n", "# Front\n" + "x" * 3500 + "\n")
+        self.assert_error(self.errors(oversized, "simple"), "allows at most")
+
+    def test_nonfinal_sources_and_legacy_front_do_not_hide_body_characters(self) -> None:
+        for heading in ("# Sources", "# Front"):
+            with self.subTest(heading=heading):
+                body = heading + "\n\n" + "x" * 3500 + "\n\n# Explanation"
+                text = self.card(body)
+                self.assertIn(body, validator.countable_text(text))
+                self.assert_error(self.errors(text, "simple"), "allows at most")
+
+    def test_comment_boundaries_cannot_shorten_the_body_budget(self) -> None:
+        body = "<!--\n# Sources\n-->\n\n" + "x" * 3500
+        text = self.card(body)
+        self.assertIn(body, validator.countable_text(text))
+        errors = self.errors(text, "simple")
+        self.assert_error(errors, "HTML comments")
+        self.assert_error(errors, "allows at most")
 
     def test_comments_are_rejected_in_either_mode(self) -> None:
         for mode in ("simple", "complex"):
@@ -297,15 +299,14 @@ class CardValidationTests(unittest.TestCase):
                 "<!-- An unclosed note",
             ):
                 with self.subTest(mode=mode, comment=comment):
-                    self.assert_error(self.errors(self.card(comment, mode=mode)), "HTML comment")
+                    self.assert_error(self.errors(self.card(comment), mode), "HTML comment")
 
-    def test_comment_contents_cannot_select_mode_or_supply_structure(self) -> None:
+    def test_comments_cannot_supply_legacy_boundaries(self) -> None:
         comment = "<!--\n# Front\n\n# Back\n\n## Front\n\n## Back\n-->"
         text = self.card(comment)
-        self.assertEqual("complex", validator.detect_mode(text))
         errors = self.errors(text)
         self.assert_error(errors, "HTML comment")
-        self.assertFalse(any("missing required heading" in error for error in errors), errors)
+        self.assertFalse(any("is not allowed" in error for error in errors), errors)
 
     def test_comments_cannot_supply_visuals_or_sources(self) -> None:
         images = "![overview.svg](images/overview.svg)\n\n![comparison.svg](images/comparison.svg)"
@@ -321,64 +322,174 @@ class CardValidationTests(unittest.TestCase):
         for mode in ("simple", "complex"):
             for name, example in self.fenced_examples("<!-- A literal comment -->").items():
                 with self.subTest(mode=mode, fence=name):
-                    self.assertEqual([], self.errors(self.card(example, mode=mode)))
+                    self.assertEqual([], self.errors(self.card(example), mode))
+
+    def test_authoring_boilerplate_is_rejected_in_both_modes(self) -> None:
+        examples = {
+            "fact/source verification": (
+                "Facts checked against AWS documentation on 17 November 2026.",
+                "The claims were fact-checked against the official docs.",
+                "Primary sources checked on 2026-09-17; examples use the documented rules.",
+                "Official AWS documentation and resources, checked September 18, 2026:",
+                "Official documentation consulted on September 16, 2026.",
+                "Original article sources checked on 2026-09-17.",
+                "**Verification date:** 2026-11-17.",
+                "Last verified: November 17, 2026.",
+                "Accessed on 17 November 2026.",
+                "This September 2026 snapshot was verified on September 17, 2026.",
+            ),
+            "local-note migration history": (
+                "Migrated and rewritten from “AWS IAM” in the local “AWS (sorting)” deck "
+                "(note ID `1644236779110`).",
+                "This article was rewritten from the local Anki note about scaling.",
+                "Migrated from the Anki deck named AWS.",
+                "- Original study note: **Java (sorting) → wait()**, including its images.",
+                "Source record: local Anki note ID `1470247887577`.",
+            ),
+            "diagram production/provenance": (
+                "Both SVGs are newly drawn, editable vectors.",
+                "Their layouts and labels are newly drawn.",
+                "The layouts were redrawn for this card.",
+                "The four local diagrams are original teaching illustrations.",
+                "- Diagram icon provenance: reused editable server geometry.",
+                "## Diagram provenance",
+                "Diagram provenance and adaptations are identified below.",
+            ),
+        }
+        for mode in ("simple", "complex"):
+            for reason, snippets in examples.items():
+                for snippet in snippets:
+                    with self.subTest(mode=mode, snippet=snippet):
+                        errors = self.errors(self.card(snippet), mode)
+                        self.assert_error(errors, "authoring boilerplate", reason, "line ")
+
+    def test_boilerplate_normalization_preserves_wrapped_text_and_line_numbers(self) -> None:
+        snippets = (
+            "**Facts** checked against\n[AWS documentation](https://example.com/docs) "
+            "on 17 November 2026.",
+            "- **Original study note:**\n  Java concurrency.",
+            "<em>Primary sources</em> checked\non 2026-09-17.",
+            "The SVGs are **newly\ndrawn**, editable vectors.",
+            "- Local Anki **note ID**\n  `1470247887577`.",
+        )
+        for snippet in snippets:
+            for mode in ("simple", "complex"):
+                with self.subTest(mode=mode, snippet=snippet):
+                    text = self.card("Earlier teaching prose.\n\n" + snippet)
+                    line = text[:text.index(snippet)].count("\n") + 1
+                    errors = self.errors(text, mode)
+                    self.assertEqual(1, len(errors), errors)
+                    self.assert_error(errors, f"line {line}:", "authoring boilerplate")
+                    self.assertEqual(errors, self.errors(text.replace("\n", "\r\n"), mode))
+
+    def test_boilerplate_in_sources_is_also_rejected(self) -> None:
+        for mode in ("simple", "complex"):
+            for suffix in (
+                "\nPrimary sources checked on 2026-09-17.\n",
+                " (accessed on 2026-11-17)",
+                " — accessed: November 17, 2026",
+            ):
+                with self.subTest(mode=mode, suffix=suffix):
+                    text = self.card().rstrip() + suffix + "\n"
+                    self.assert_error(self.errors(text, mode), "authoring boilerplate", "verification")
+
+    def test_boilerplate_rules_do_not_join_separate_paragraphs(self) -> None:
+        for separator in ("\n\n", "\n \n", "\r\n\r\n", "\r\n \r\n"):
+            with self.subTest(separator=repr(separator)):
+                text = self.card("Facts" + separator + "checked against AWS documentation.")
+                self.assertEqual([], self.errors(text))
+
+    def test_fenced_boilerplate_remains_a_literal_example(self) -> None:
+        snippets = (
+            "Facts checked against AWS documentation on 17 November 2026.\n"
+            "Migrated from the local AWS deck.\n"
+            "Local Anki note ID `1470247887577`.\n"
+            "Both SVGs are newly drawn."
+        )
+        for mode in ("simple", "complex"):
+            for name, example in self.fenced_examples(snippets).items():
+                with self.subTest(mode=mode, fence=name):
+                    self.assertEqual([], self.errors(self.card(example), mode))
+
+    def test_teaching_facts_checks_examples_and_attribution_remain_valid(self) -> None:
+        snippets = (
+            "**The feature became final in JDK 25 with JEP 512.**",
+            "The release date was September 16, 2025. This article covers Java SE 26.",
+            "The database was migrated from a local server to a managed cluster.",
+            "Sources are checked at runtime before the request is accepted.",
+            "Claims are verified using the issuer's public key.",
+            "Facts are checked against database constraints at runtime.",
+            "The runtime checks arguments against the method's declared types.",
+            "This diagram illustrates the article's example.",
+            "The diagram provenance system records transformations of input data.",
+            "The CPU values and four-instance result are an explicitly hypothetical example.",
+            "Illustration adapted from Jane Doe, licensed under CC BY 4.0.",
+            "- [Original diagram — Jane Doe, CC BY 4.0](https://example.com/diagram)",
+            "- [Java SE 26 API documentation](https://example.com/docs)",
+            "- [Release notes, November 17, 2026](https://example.com/release)",
+            "- [Source](https://example.com/Facts%20checked%20against%20documentation)",
+        )
+        for mode in ("simple", "complex"):
+            for snippet in snippets:
+                with self.subTest(mode=mode, snippet=snippet):
+                    self.assertEqual([], self.errors(self.card(snippet), mode))
 
     def test_version_lead_is_required_at_the_start_of_each_mode_body(self) -> None:
         ordinary_lead = "The operation changes the stored state."
         version_lead = "**State updates were introduced in Example Platform 1.0.**"
         for mode in ("simple", "complex"):
             with self.subTest(mode=mode):
-                text = self.card(mode=mode)
+                text = self.card()
                 versioned = text.replace(ordinary_lead, version_lead + "\n\n" + ordinary_lead)
-                self.assertEqual([], self.errors(versioned, require_version_lead=True))
-                self.assert_error(self.errors(text, require_version_lead=True), "standalone bold sentence")
+                self.assertEqual([], self.errors(versioned, mode, require_version_lead=True))
+                self.assert_error(self.errors(text, mode, require_version_lead=True), "standalone bold sentence")
                 late_lead = text.replace(ordinary_lead, ordinary_lead + "\n\n" + version_lead)
-                self.assert_error(self.errors(late_lead, require_version_lead=True), "standalone bold sentence")
+                self.assert_error(self.errors(late_lead, mode, require_version_lead=True), "standalone bold sentence")
 
-    def test_cli_defaults_to_inferred_mode_and_accepts_explicit_auto(self) -> None:
+    def test_cli_accepts_both_explicit_modes(self) -> None:
+        self.card_path.write_text(self.card(), encoding="utf-8")
         for mode in ("simple", "complex"):
-            body = "## Behavior\n\n### Retry handling\n\n#### **Use case: Retrying an update**"
-            self.card_path.write_text(self.card(body, mode=mode), encoding="utf-8")
-            for flags in ([], ["--mode", "auto"]):
-                with self.subTest(mode=mode, flags=flags):
-                    result = subprocess.run(
-                        [sys.executable, str(SCRIPT), *flags, str(self.card_path)],
-                        capture_output=True, text=True, check=False,
-                    )
-                    self.assertEqual(0, result.returncode, result.stderr)
-                    self.assertIn(f"OK ({mode},", result.stdout)
+            with self.subTest(mode=mode):
+                result = subprocess.run(
+                    [sys.executable, str(SCRIPT), "--mode", mode, str(self.card_path)],
+                    capture_output=True, text=True, check=False,
+                )
+                self.assertEqual(0, result.returncode, result.stderr)
+                self.assertIn(f"OK ({mode},", result.stdout)
 
-    def test_cli_reports_partial_boundary_pair_as_invalid_simple(self) -> None:
-        text = self.card(mode="simple").replace("# Back\n", "", 1)
-        self.card_path.write_text(text, encoding="utf-8")
-        result = subprocess.run(
-            [sys.executable, str(SCRIPT), str(self.card_path)],
-            capture_output=True, text=True, check=False,
-        )
-        self.assertEqual(1, result.returncode)
-        self.assertIn("missing required heading: # Back", result.stderr)
-
-    def test_cli_reports_level_two_boundaries_without_requiring_an_extra_visual(self) -> None:
-        text = self.card(mode="simple").replace(
-            "![comparison.svg](images/comparison.svg)\n\n", "", 1
-        )
-        for heading in ("# Front", "# Back", "# Sources"):
-            text = text.replace(heading, "#" + heading, 1)
-        self.card_path.write_text(text, encoding="utf-8")
+    def test_cli_requires_mode_and_rejects_auto(self) -> None:
+        self.card_path.write_text(self.card(), encoding="utf-8")
         for flags in ([], ["--mode", "auto"]):
             with self.subTest(flags=flags):
                 result = subprocess.run(
                     [sys.executable, str(SCRIPT), *flags, str(self.card_path)],
                     capture_output=True, text=True, check=False,
                 )
-                self.assertEqual(1, result.returncode)
-                for heading in ("# Front", "# Back", "# Sources"):
-                    self.assertIn(f"boundary {'#' + heading!r} must use {heading!r}", result.stderr)
-                    self.assertNotIn(f"missing required heading: {heading}", result.stderr)
-                self.assertNotIn("header order", result.stderr)
-                self.assertNotIn("local visual", result.stderr)
+                self.assertEqual(2, result.returncode)
+                self.assertIn("--mode", result.stderr)
+                self.assertNotIn("OK (", result.stdout)
 
-    def test_every_supported_step_depth_still_requires_a_diagram(self) -> None:
+    def test_cli_self_test_needs_no_mode_or_card_path(self) -> None:
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--self-test"],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertIn("Self-test passed", result.stdout)
+
+    def test_cli_reports_legacy_boundaries_for_both_modes(self) -> None:
+        self.card_path.write_text(self.card("# Front\n\n# Back"), encoding="utf-8")
+        for mode in ("simple", "complex"):
+            with self.subTest(mode=mode):
+                result = subprocess.run(
+                    [sys.executable, str(SCRIPT), "--mode", mode, str(self.card_path)],
+                    capture_output=True, text=True, check=False,
+                )
+                self.assertEqual(1, result.returncode)
+                self.assertIn("boundary '# Front' is not allowed", result.stderr)
+                self.assertIn("boundary '# Back' is not allowed", result.stderr)
+
+    def test_every_recognized_step_depth_still_requires_a_diagram(self) -> None:
         for level in range(2, 7):
             for marker in ("", "**", "__"):
                 with self.subTest(level=level, marker=marker):
@@ -390,27 +501,30 @@ class CardValidationTests(unittest.TestCase):
                     errors = self.errors(text)
                     self.assert_error(errors, "Step 1", "own local .svg")
                     self.assertFalse(any("requires at least" in error for error in errors))
-                    if level != 2:
+                    if level > 3:
                         self.assert_error(errors, "Step 1", "must use", "## Step")
-                    self.assertEqual(1 if level == 2 else 2, len(errors), errors)
+                    self.assertEqual(1 if level <= 3 else 2, len(errors), errors)
                     self.assertEqual(errors, self.errors(text.replace("\n", "\r\n")))
 
     def test_crlf_step_diagnostics_and_section_boundaries_match_lf(self) -> None:
         for level in (2, 3):
             with self.subTest(level=level):
                 text = self.card(
+                    "## Process\n\n"
                     f"{'#' * level} Step 1 — Read\n\nRead the value.\n\n"
                     "## Example\n\n![step.svg](images/step.svg)"
                 )
                 errors = self.errors(text)
                 self.assert_error(errors, "Step 1", "own local .svg")
+                self.assertEqual(1, len(errors), errors)
                 self.assertEqual(errors, self.errors(text.replace("\n", "\r\n")))
 
     def test_step_with_a_diagram_still_reports_incorrect_level(self) -> None:
-        for level in range(3, 7):
+        for level in range(4, 7):
             for marker in ("", "**", "__"):
                 with self.subTest(level=level, marker=marker):
                     errors = self.errors(self.card(
+                        "## Process\n\n### Details\n\n"
                         f"{'#' * level} {marker}Step 1 — Read{marker}\n\n"
                         "![step.svg](images/step.svg)"
                     ))
@@ -427,13 +541,54 @@ class CardValidationTests(unittest.TestCase):
             with self.subTest(marker=marker):
                 formatted = body.replace("Step 1 — Read", f"{marker}Step 1 — Read{marker}")
                 formatted = formatted.replace("Step 2 — Write", f"{marker}Step 2 — Write{marker}")
-                self.assertEqual([], self.errors(self.card(formatted)))
+                text = self.card(formatted)
+                self.assertEqual([], self.errors(text))
+                self.assertEqual([], self.errors(text.replace("\n", "\r\n")))
+
+    def test_level_three_steps_within_level_two_sections_pass(self) -> None:
+        body = (
+            "## Recovery process\n\n### Overview\n\nRead before writing.\n\n"
+            "### Step 1 — Read\n\n![step.svg](images/step.svg)\n\n"
+            "#### **Detail**\n\nObserve the value.\n\n"
+            "### Step 2 — Write\n\n![step.svg](images/step.svg)\n\n"
+            "## Retry process\n\n### Step 1 — Read\n\n![step.svg](images/step.svg)"
+        )
+        for marker in ("", "**", "__"):
+            with self.subTest(marker=marker):
+                formatted = body.replace("Step 1 — Read", f"{marker}Step 1 — Read{marker}")
+                formatted = formatted.replace("Step 2 — Write", f"{marker}Step 2 — Write{marker}")
+                text = self.card(formatted)
+                self.assertEqual([], self.errors(text))
+                self.assertEqual([], self.errors(text.replace("\n", "\r\n")))
+
+    def test_level_three_steps_require_a_current_level_two_section(self) -> None:
+        prefixes = {
+            "no parent": "",
+            "level-one parent": "# New chapter\n\n",
+            "level-one reset": "## Previous process\n\n# New chapter\n\n",
+        }
+        prefixes.update({
+            f"fenced parent: {name}": example + "\n\n"
+            for name, example in self.fenced_examples("## Literal process").items()
+        })
+        for name, prefix in prefixes.items():
+            for marker in ("", "**", "__"):
+                with self.subTest(parent=name, marker=marker):
+                    text = self.card(
+                        prefix + f"### {marker}Step 1 — Read{marker}\n\n"
+                        "![step.svg](images/step.svg)"
+                    )
+                    errors = self.errors(text)
+                    self.assert_error(errors, "Step 1", "##", "section")
+                    self.assertEqual(1, len(errors), errors)
+                    self.assertEqual(errors, self.errors(text.replace("\n", "\r\n")))
 
     def test_mixed_depth_steps_cannot_borrow_the_next_step_diagram(self) -> None:
-        for first_level, second_level in ((2, 3), (3, 2), (3, 4), (4, 3)):
+        for first_level, second_level in ((2, 2), (2, 3), (3, 2), (3, 3), (3, 4), (4, 3)):
             for first_marker, second_marker in (("", ""), ("", "**"), ("**", "__"), ("__", "")):
                 with self.subTest(levels=(first_level, second_level), markers=(first_marker, second_marker)):
                     errors = self.errors(self.card(
+                        "## Process\n\n"
                         f"{'#' * first_level} {first_marker}Step 1 — Read{first_marker}\n\n"
                         "No diagram here.\n\n"
                         f"{'#' * second_level} {second_marker}Step 2 — Write{second_marker}\n\n"
@@ -442,12 +597,19 @@ class CardValidationTests(unittest.TestCase):
                     self.assert_error(errors, "Step 1", "own local .svg")
                     self.assertFalse(any("Step 2" in error and "own local .svg" in error for error in errors))
 
-    def test_non_step_sibling_diagram_cannot_satisfy_previous_step(self) -> None:
-        errors = self.errors(self.card(
-            "## Step 1 — Read\n\nNo diagram here.\n\n"
-            "## Comparison\n\n![step.svg](images/step.svg)"
-        ))
-        self.assert_error(errors, "Step 1", "own local .svg")
+    def test_non_step_peer_or_parent_diagram_cannot_satisfy_previous_step(self) -> None:
+        for step_level in (2, 3):
+            for following_level in range(1, step_level + 1):
+                with self.subTest(step_level=step_level, following_level=following_level):
+                    text = self.card(
+                        "## Process\n\n"
+                        f"{'#' * step_level} Step 1 — Read\n\nNo diagram here.\n\n"
+                        f"{'#' * following_level} Comparison\n\n![step.svg](images/step.svg)"
+                    )
+                    errors = self.errors(text)
+                    self.assert_error(errors, "Step 1", "own local .svg")
+                    self.assertEqual(1, len(errors), errors)
+                    self.assertEqual(errors, self.errors(text.replace("\n", "\r\n")))
 
     def test_steps_inside_fences_are_literal_examples(self) -> None:
         content = "\n\n".join(
@@ -460,10 +622,14 @@ class CardValidationTests(unittest.TestCase):
                 self.assertFalse(any("Step" in error for error in errors), errors)
 
     def test_fenced_diagram_cannot_satisfy_a_real_step(self) -> None:
-        for name, example in self.fenced_examples("![step.svg](images/step.svg)").items():
-            with self.subTest(fence=name):
-                errors = self.errors(self.card(f"## Step 1 — Read\n\n{example}"))
-                self.assert_error(errors, "Step 1", "own local .svg")
+        for level in (2, 3):
+            for name, example in self.fenced_examples("![step.svg](images/step.svg)").items():
+                with self.subTest(level=level, fence=name):
+                    errors = self.errors(self.card(
+                        f"## Process\n\n{'#' * level} Step 1 — Read\n\n{example}"
+                    ))
+                    self.assert_error(errors, "Step 1", "own local .svg")
+                    self.assertEqual(1, len(errors), errors)
 
     def test_fenced_images_do_not_satisfy_global_visual_minimum(self) -> None:
         images = "![overview.svg](images/overview.svg)\n\n![comparison.svg](images/comparison.svg)"
@@ -496,31 +662,23 @@ class CardValidationTests(unittest.TestCase):
                 self.assert_error(errors, "exactly one", "navigation")
                 self.assertFalse(any("header order" in error for error in errors), errors)
 
-    def test_header_order_diagnostic_survives_missing_or_level_two_front(self) -> None:
-        for replacement in ("", "## Front"):
-            with self.subTest(front=replacement):
-                text = self.card(mode="simple").replace("# Front", replacement)
-                text = text.replace(
-                    f"{self.navigation}\n\n",
-                    f"Intervening prose\n\n{self.navigation}\n\n",
-                )
-                errors = self.errors(text)
-                expected = (
-                    "boundary '## Front' must use '# Front'" if replacement
-                    else "missing required heading: # Front"
-                )
-                self.assertIn(expected, errors)
-                self.assert_error(errors, "header order")
+    def test_header_order_requires_navigation_immediately_after_title(self) -> None:
+        for mode in ("simple", "complex"):
+            for intervening in ("Intervening prose", "## Topic"):
+                with self.subTest(mode=mode, intervening=intervening):
+                    text = self.card().replace(self.navigation, intervening + "\n\n" + self.navigation)
+                    self.assert_error(self.errors(text, mode), "header order")
 
-    def test_level_two_front_still_requires_correct_navigation_spacing(self) -> None:
-        for separator in ("\n", "\n\nIntervening prose\n\n"):
-            with self.subTest(separator=separator):
-                text = self.card(mode="simple").replace(
-                    self.navigation + "\n\n# Front", self.navigation + separator + "## Front"
-                )
-                errors = self.errors(text)
-                self.assertIn("boundary '## Front' must use '# Front'", errors)
-                self.assert_error(errors, "header order")
+    def test_header_requires_blank_lines_and_nonempty_teaching_body(self) -> None:
+        for mode in ("simple", "complex"):
+            for text in (
+                self.card().replace("# A teaching topic\n\n", "# A teaching topic\n"),
+                self.card().replace(self.navigation + "\n\n", self.navigation + "\n"),
+                "# A teaching topic\n\n" + self.navigation + "\n\n# Sources\n\n"
+                "- [Official reference](https://example.com/reference)\n",
+            ):
+                with self.subTest(mode=mode, text=text):
+                    self.assert_error(self.errors(text, mode), "header order")
 
     def test_missing_readme_diagnostic_excludes_fragment(self) -> None:
         self.index.unlink()

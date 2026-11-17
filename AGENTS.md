@@ -34,16 +34,15 @@ Entry point: [`.agents/skills/anki-card-creation/SKILL.md`](.agents/skills/anki-
 
 Use this skill when creating or revising Anki-ready Markdown cards in this repository. It covers research quality, beginner-friendly teaching structure, simple and complex modes, source placement, code examples, local visuals, and final card validation.
 
-- Default new cards to simple mode; use complex mode (also called article mode) when the user selects either name or clearly requests comprehensive treatment. When revising, infer the mode from the existing structure unless the user selects a mode.
-- Simple mode uses `# Front` and `# Back`; complex/article mode omits both. Neither mode generates HTML comments in Markdown prose, including mode metadata. Both modes end with `# Sources`.
+- Default new cards to simple mode; use complex mode (also called article mode) when the user selects either name or clearly requests comprehensive treatment. When revising, follow the selected or established mode, using the lesson's scope when none is recorded.
+- Both modes use title, navigation, teaching body, and final `# Sources`, without Front/Back boundary headings or HTML comments in Markdown prose. Simple mode keeps a 3,500-character teaching-body limit and requires at least one local visual; article mode requires at least two and has no character limit.
 - Verify factual claims using authoritative sources, or the fallback evidence rule defined by the skill.
 - Use local teaching visuals from the card's sibling `images/` directory and link them with relative paths.
 - Do not use this skill for exporting `.apkg` decks or other Anki package formats.
 
-Validate from the repository root. The default mode is `auto`: any exact `Front` or `Back` heading at level one or two, outside fenced code and HTML comments, indicates simple mode; none indicates complex/article mode. Simple mode requires both `# Front` and `# Back`; a missing boundary or a level-two boundary is a formatting error. Mode comments do not select the mode. Explicit mode flags check the selected format:
+Validate from the repository root with an explicit mode. The shared document layout does not identify simple versus article mode, so the validator requires `--mode simple` or `--mode complex` and does not infer the mode from headings or length. Simple mode counts the teaching body only, excluding the opening title, navigation, and Sources:
 
 ```bash
-python3 .agents/skills/anki-card-creation/scripts/check_anki_card.py path/to/card.md
 python3 .agents/skills/anki-card-creation/scripts/check_anki_card.py --mode simple path/to/card.md
 python3 .agents/skills/anki-card-creation/scripts/check_anki_card.py --mode complex path/to/card.md
 ```

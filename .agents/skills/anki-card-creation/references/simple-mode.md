@@ -8,15 +8,11 @@ Create one focused card that teaches a single core idea without assuming prior k
 
 Requirements:
 
-- Follow the shared order: title, one standalone upward navigation line without a list marker, then `# Front`, separated by blank lines with no other intervening content. Use `# Back` for teaching content and final `# Sources` for citations. Do not generate HTML comments in Markdown prose, including mode metadata; fenced code examples are unaffected.
-- The teaching content must contain **at most 3,500 Unicode characters**. The `# Front` and
-  `# Sources` sections are excluded from that count: the Front is a prompt rather than teaching,
-  and a card must never have to drop a citation to stay in budget. The navigation line is also excluded. Everything else — the Back,
-  its headings, tables, code, and image links — counts. Measure it with the bundled validator;
-  do not treat bytes or words as characters.
+- Use the same layout as an article: title, one standalone upward navigation line without a list marker, teaching body, then final `# Sources`. Separate these with blank lines. Do not add Front/Back boundary headings or a separate question section. Do not generate HTML comments in Markdown prose, including mode metadata; fenced code examples are unaffected.
+- The teaching body must contain **at most 3,500 Unicode characters**. Exclude the opening title, navigation line, and final `# Sources` section. Count the body Markdown, including prose, headings, tables, code, and image links; trim only outer whitespace and normalize CRLF line endings to LF. Measure it with the bundled validator, not bytes or words. A card must never have to drop a citation to stay in budget.
 - Include at least **one** local SVG or image from the sibling `images/` directory. Prefer one purpose-built SVG that carries the central explanation.
-- Ask one focused question on the Front.
-- Begin the Back with a direct answer in one short paragraph. For a versioned feature, its first line must follow the shared bold feature-and-release rule and pass `--require-version-lead`.
+- Make the title identify one focused topic or question.
+- Begin the body immediately after the navigation line with a direct answer in one short paragraph. For a versioned feature, its first line must follow the shared bold feature-and-release rule and pass `--require-version-lead`.
 - Include only the definitions, example, limitation, or warning needed to make that answer understandable.
 - Keep the `# Sources` list compact while still meeting the shared verification rule.
 

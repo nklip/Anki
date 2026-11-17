@@ -10,10 +10,11 @@ Create a self-contained Markdown card that teaches someone who does not already 
 ## Select a mode
 
 - Default new cards to **simple mode**. Read [references/simple-mode.md](references/simple-mode.md).
-- Use **complex mode**, also called **article mode**, when the user requests either name or explicitly asks for comprehensive, multi-stage, or step-by-step treatment. Read [references/complex-mode.md](references/complex-mode.md). Both names select the same mode; use `--mode complex` for explicit validation.
-- When revising, follow the user's selected mode or infer it from the existing structure: any exact `Front` or `Back` heading at level one or two, outside fenced code and HTML comments, indicates simple mode; none indicates complex/article mode. Simple mode requires both `# Front` and `# Back`; a missing boundary or a level-two boundary is a formatting error. Mode comments do not select the mode.
+- Use **complex mode**, also called **article mode**, when the user requests either name or explicitly asks for comprehensive, multi-stage, or step-by-step treatment. Read [references/complex-mode.md](references/complex-mode.md). Both names select the same mode.
+- When revising, follow the user's selected mode or the established mode in the subject index or task context. If none is recorded, choose from the lesson's scope: one focused idea is simple; comprehensive treatment is complex. Both modes use the same Markdown structure, so the absence of Front/Back headings does not identify a mode. Do not add mode metadata to the document.
+- Pass the selected mode explicitly to the validator: `--mode simple` or `--mode complex`. When revising a legacy card with Front/Back sections, convert the requested file to the shared structure while preserving its teaching content.
 
-Do not silently relax simple mode's 3,500-character limit, which counts the Back only — `# Front` and `# Sources` are excluded. Narrow a simple-mode card to its core lesson instead of changing its mode merely to exceed the limit.
+Do not silently relax simple mode's 3,500-character limit. It counts the teaching body, excluding the opening title, navigation line, and final `# Sources` section. Narrow a simple-mode card to its core lesson instead of changing its mode merely to exceed the limit.
 
 ## Research before drafting
 
@@ -26,9 +27,11 @@ Open and read the sources rather than relying on remembered facts or search snip
 
 Put all citations in the final `# Sources` section. Do not scatter citations through the teaching content.
 
+Keep research and production history out of the finished study material. Do not add verification announcements or dates, local Anki note/deck IDs, migration or rewriting history, or commentary about creating, redrawing, or adapting diagrams. This applies throughout the card, including `# Sources`, captions, and image descriptions. Keep concise source links and required attribution, useful version scope and release dates, and qualifications that explain an example's assumptions. Verification remains required; its work log does not belong in the lesson.
+
 ## Lead sentence for versioned features
 
-When the card is about a feature that was added, previewed, finalized, or made generally available in a particular release, make the first nonblank line of the teaching content a standalone bold sentence. This is under `# Back` in simple mode and immediately after the navigation line in complex/article mode. The sentence states:
+When the card is about a feature that was added, previewed, finalized, or made generally available in a particular release, make the first nonblank line of the teaching content a standalone bold sentence immediately after the navigation line in either mode. The sentence states:
 
 1. The feature's official name.
 2. The exact lifecycle event, using wording such as **introduced**, **first previewed**, **became final**, or **became generally available**.
@@ -54,22 +57,16 @@ Use the lifecycle wording from the authoritative source. Do not describe a previ
 
 Immediately after the level-one title, add exactly one standalone upward navigation line containing a `Back to …` link wrapped in `<sub>`, without a leading list marker, as shown in the template below. Link to the subject's root/index README, such as `system design/Readme.md`, using the real subject name in the label, the target's actual filename case, and a path relative to the card's directory. Include `#content` only when the target has a `Content` anchor; otherwise use the correct existing anchor or omit the fragment. If the subject has no index README, link to the repository's `README.md` with the label `Back to Anki Flashcards`.
 
-Separate the title, navigation line, and following content with blank lines; allow no other content between the title and navigation line. In simple mode, `# Front` follows the navigation line with no intervening content. In complex/article mode, the teaching content follows the navigation line directly, without `# Front` or `# Back`.
+Separate the title, navigation line, and following content with blank lines; allow no other content between the title and navigation line. In both modes, the teaching content follows the navigation line directly. Do not add `# Front`, `# Back`, or equivalent boundary sections. A simple card is a short explanation in the same layout as an article, without a separate question-and-answer wrapper.
 
 Add or update the navigation link whenever creating or revising a card. Neither mode may contain HTML comments in Markdown prose, including mode metadata. Fenced code examples and XML comments in separate SVG assets are unaffected. The navigation line does not count toward the simple-mode character limit.
 
-Use this simple-mode order, adapting the navigation label and target to the card's location. This example is for a card one directory below `system design/Readme.md`; the article template is in [references/complex-mode.md](references/complex-mode.md):
+Use this shared order, adapting the navigation label and target to the card's location. This compact example is for a card one directory below `system design/Readme.md`; expand its teaching sections as needed in article mode:
 
 ```markdown
 # Clear topic title
 
 <sub>[Back to System Design](../Readme.md#content)</sub>
-
-# Front
-
-A focused question that tells the learner what they should be able to explain.
-
-# Back
 
 **For a versioned feature: official feature name + lifecycle event + release/version.**
 
@@ -90,14 +87,15 @@ An example or qualification needed to understand the core answer.
 - [Descriptive source title](https://example.com/source)
 ```
 
-Use level-one headings for simple mode's `# Front` and `# Back`, and for both modes' final `# Sources` section. Keep the simple-mode Front concise and put its teaching content on the Back.
+Use level-one headings for the opening title and final `# Sources` section in both modes. In simple mode, make the title identify the focused topic or question and begin the body with the direct answer.
 
 ## Writing and formatting
 
+- Write in natural, simple language in both simple cards and complex/article mode. Use familiar words and direct, conversational phrasing, as if explaining the topic to a beginner. Avoid stiff or inflated wording and unnecessary jargon. Simplify the wording without losing technical accuracy or important qualifications.
 - Define a term before using it to explain another term. Expand abbreviations on first use.
 - Prefer short sentences, concrete examples, and explicit cause-and-effect language.
 - Explain both **what happens** and **why it matters**. State common misconceptions only when they help prevent a likely error.
-- Use level-two headings (`##`) for teaching sections within the Back or article body, including process steps, and level-three headings (`###`) for subsections. Within a `###` subsection, optionally use level-four headings for named sub-items, such as use cases, components, patterns, or failure scenarios. Enclose the entire heading text in one bold span, for example `#### **Retrying a failed update**`; a `Use case:` prefix is optional. Inline code may appear inside the bold span. Numbered process steps still use `## Step N …`, even when their labels are bold. Do not use levels five or six.
+- Use level-two headings (`##`) for teaching sections and level-three headings (`###`) for subsections. Numbered process steps follow that hierarchy: use `## Step N …` when steps are main sections, or `### Step N …` when the process belongs within a `##` section. Preserve meaningful grouping in long articles; numbering or bold labels do not require promoting a subsection. Within a `###` subsection, optionally use level-four headings for named sub-items, such as use cases, components, patterns, or failure scenarios. Enclose the entire heading text in one bold span, for example `#### **Retrying a failed update**`; a `Use case:` prefix is optional. Inline code may appear inside the bold span. Do not use levels five or six.
 - Use bold text for emphasis and the required version lead. Use lists for sequences or sets, and tables only when rows genuinely make comparison easier.
 - Use inline code for identifiers, options, values, and short expressions.
 - Give every fenced block an appropriate language tag. Java source must use lowercase `java`; shell commands should use `bash`; plain output or conceptual pseudocode should use `text`.
@@ -116,10 +114,9 @@ Place each visual immediately after the paragraph or heading that introduces wha
 
 ## Final validation
 
-Run the validator from this skill directory. Its default `--mode auto` follows the shared mode-selection rule; use `--mode simple` or `--mode complex` to check a selected format explicitly. Heading recognition accepts LF and CRLF line endings. HTML comments outside fenced code are invalid in both modes, including mode metadata. Fenced code examples do not count as headings, navigation, comments, sources, or teaching visuals; their text still counts toward a simple-mode Back's character budget. Local navigation checks verify the exact case of each path component and the existence of the README fragment, including heading anchors and explicit HTML anchors:
+Run the validator from this skill directory with the selected `--mode simple` or `--mode complex`; mode selection is required because the document layouts are identical. The validator does not infer a mode from length or headings. Heading recognition accepts LF and CRLF line endings. HTML comments outside fenced code are invalid in both modes, including mode metadata. Fenced code examples do not count as headings, navigation, comments, sources, or teaching visuals; their text still counts toward the simple-mode teaching-body budget. Local navigation checks verify the exact case of each path component and the existence of the README fragment, including heading anchors and explicit HTML anchors:
 
 ```bash
-python3 scripts/check_anki_card.py path/to/card.md
 python3 scripts/check_anki_card.py --mode simple path/to/card.md
 python3 scripts/check_anki_card.py --mode complex path/to/card.md
 python3 scripts/check_anki_card.py --mode simple --require-version-lead path/to/versioned-feature-card.md
@@ -136,13 +133,15 @@ The README fragment checker supports standalone ATX (`## Heading`) and Setext he
 
 Also verify:
 
-- The title and exactly one standalone navigation line without a list marker appear first, separated by blank lines. The navigation line is followed by simple mode's `# Front` or the article body, with a blank line and no intervening metadata.
+- The title and exactly one standalone navigation line without a list marker appear first, separated by blank lines. The teaching body follows the navigation line, with a blank line and no intervening metadata.
 - The navigation label names the actual subject or repository, and the destination is the intended subject index or repository README.
-- Simple mode uses `# Front` and `# Back`; complex/article mode omits both. Both modes have final `# Sources`, `##` teaching sections, and `###` subsections, with optional bold `####` named sub-items nested within subsections. The validator checks level-four bold formatting and nesting; manually confirm that each sub-item belongs within its parent subsection.
+- Both modes omit Front/Back boundary headings and have final `# Sources`, `##` teaching sections, and `###` subsections, with optional bold `####` named sub-items nested within subsections. The validator checks level-four bold formatting and nesting; manually confirm that each sub-item belongs within its parent subsection.
 - Neither mode contains HTML comments outside fenced code, including mode metadata.
-- The opening teaching paragraph states the core answer; in simple mode it answers the Front directly.
+- The opening teaching paragraph states the core answer to the title's topic or question.
+- The prose sounds natural, uses simple language, and explains necessary technical terms without sacrificing accuracy.
 - A versioned feature card starts with the required bold feature-and-release sentence and passes `--require-version-lead`.
 - Every factual statement is supported by the chosen evidence path.
+- No authoring or process commentary remains. The validator catches common verification, local-note history, and diagram-production phrases; review other wording manually.
 - Every visual is referenced, rendered, inspected, and easy for a novice to interpret.
 - Each Java code fence uses `java`, and practical snippets compile or run as claimed.
 - Every Markdown image alt text contains the linked image's exact filename, including its extension.

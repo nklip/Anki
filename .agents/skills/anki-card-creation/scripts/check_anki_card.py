@@ -30,6 +30,59 @@ VERSION_EVENT_RE = re.compile(
     r"\b(?:added|introduced|previewed|released|finalized|became|available)\b",
     re.IGNORECASE,
 )
+DATE_PATTERN = (
+    r"(?:\d{4}-\d{2}-\d{2}|\d{1,2}\s+[A-Za-z]+\s+\d{4}|"
+    r"(?:January|February|March|April|May|June|July|August|September|October|"
+    r"November|December)\s+\d{1,2},?\s+\d{4})"
+)
+# These are specific editorial statements, not a vocabulary blacklist. In
+# particular, checks at runtime, release dates, version scope, and ordinary
+# diagram explanations do not describe how the study material was authored.
+AUTHORING_BOILERPLATE_RULES = (
+    ("fact/source verification", re.compile(
+        r"(?:^|(?<=[.!?;:(—])\s*)\s*(?:"
+        r"(?:(?:all|the|these|key|technical|primary|official|original\s+article)\s+)*"
+        r"(?:facts?|claims?|sources?)\s+"
+        r"(?:(?:were|are|have\s+been)\s+)?(?:fact[- ]checked|checked|verified|rechecked)"
+        r"(?:\s+against\s+[^.!?;]{0,100}\b(?:documentation|docs|sources?|references?|manuals?|"
+        r"specifications?)\b|\s+(?:on\s+|as\s+of\s+)?" + DATE_PATTERN +
+        r"|(?=\s*(?:[.;]|$)))"
+        r"|(?:official\s+)?(?:[\w'-]+\s+){0,3}documentation"
+        r"(?:\s+and\s+(?:resources|sources))?,?\s+"
+        r"(?:(?:was|were|has\s+been|have\s+been)\s+)?"
+        r"(?:consulted|checked|verified|accessed)\b"
+        r"|(?:this|the)\s+(?:[\w-]+\s+){0,5}"
+        r"(?:card|article|material|content|snapshot|explanation)\s+"
+        r"(?:was|has\s+been)\s+(?:last\s+)?(?:checked|verified|rechecked)\s+on\s*"
+        + DATE_PATTERN +
+        r"|(?:fact[- ]checking|verification|access)\s+date\s*:\s*" + DATE_PATTERN +
+        r"|(?:last\s+)?(?:fact[- ]checked|checked|verified|rechecked|accessed)"
+        r"\s*(?:(?:on|as\s+of)\s+|:\s*)?" + DATE_PATTERN + r")",
+        re.IGNORECASE | re.MULTILINE,
+    )),
+    ("local-note migration history", re.compile(
+        r"\blocal\s+(?:Anki\s+)?note\s+ID\s*[:#]?\s*\d+\b"
+        r"|(?:^|(?<=[.!?;])\s+)\s*(?:"
+        r"original\s+(?:study\s+|Anki\s+)?note\s*:"
+        r"|(?:(?:this|the)\s+(?:card|article|lesson)\s+"
+        r"(?:was|has\s+been)\s+)?"
+        r"(?:migrated(?:\s+and\s+rewritten)?|rewritten)\s+from\b"
+        r"[^.!?;]{0,180}\b(?:local\b[^.!?;]{0,100}\b(?:note|deck)"
+        r"|Anki\s+(?:note|deck))\b)",
+        re.IGNORECASE | re.MULTILINE,
+    )),
+    ("diagram production/provenance", re.compile(
+        r"\b(?:local\s+)?(?:diagram|illustration|icon)s?\s+"
+        r"(?:icon\s+)?provenance(?=\s*(?::|$)|\s+(?:and\s+adaptations\s+)?"
+        r"(?:is|are)\s+(?:identified|listed|documented)\b)"
+        r"|\b(?:diagrams?|SVGs?|illustrations?|visuals?)\s+"
+        r"(?:are|were|have\s+been)\s+(?:all\s+)?"
+        r"(?:newly\s+drawn|redrawn|original\s+teaching\s+illustrations?)\b"
+        r"|\blayouts?(?:\s+and\s+labels)?\s+"
+        r"(?:are|were|have\s+been)\s+(?:newly\s+)?(?:drawn|redrawn)\b",
+        re.IGNORECASE | re.MULTILINE,
+    )),
+)
 ALLOWED_IMAGE_SUFFIXES = {".svg", ".png", ".jpg", ".jpeg", ".webp", ".gif"}
 SIMPLE_CHARACTER_LIMIT = 3500
 JAVA_HINTS = (
@@ -48,11 +101,6 @@ def fenced_blocks(text: str) -> tuple[list[tuple[str, str]], list[str]]:
     """Return fenced blocks and syntax errors without parsing Markdown extensions."""
     _, blocks, errors = scan_fenced_code(text)
     return blocks, errors
-
-
-def card_headings(text: str) -> list[re.Match[str]]:
-    """Find Markdown headings, ignoring literal examples inside fenced code."""
-    return list(HEADING_RE.finditer(mask_comments(mask_fenced_code(text))))
 
 
 def heading_label(heading: re.Match[str]) -> str:
@@ -76,42 +124,68 @@ def mask_comments(text: str) -> str:
     return HTML_COMMENT_RE.sub(lambda match: re.sub(r"[^\r\n]", " ", match[0]), text)
 
 
-def detect_mode(text: str) -> str:
-    """Infer mode from card boundaries, including incomplete or misleveled pairs."""
-    return "simple" if any(
-        match.groups() in {("#", "Front"), ("#", "Back"), ("##", "Front"), ("##", "Back")}
-        for match in card_headings(text)
-    ) else "complex"
+def authoring_boilerplate_errors(structural_text: str) -> list[str]:
+    """Check unfenced prose with source offsets intact, including wrapped text.
+
+    The caller has masked fences and comments. Ignore image markup and link
+    destinations; retain link labels and inline text, including numeric note
+    IDs in backticks. This intentionally is not a full Markdown/NLP parser.
+    """
+    def blank(match: re.Match[str]) -> str:
+        return re.sub(r"[^\r\n]", " ", match[0])
+
+    prose = IMAGE_RE.sub(blank, structural_text)
+    prose = re.sub(
+        r"\[([^\]]+)\]\((?:[^()\r\n]|\([^()\r\n]*\))*\)",
+        lambda match: " " + match[1] + " " * (len(match[0]) - len(match[1]) - 1),
+        prose,
+    )
+    prose = re.sub(r"</?[A-Za-z][^>]*>", blank, prose)
+    prose = re.sub(r"[*_`]", " ", prose)
+    prose = re.sub(r"(?m)^[ \t]*(?:#{1,6}[ \t]+|[-+>][ \t]+|\d+[.)][ \t]+)", blank, prose)
+
+    errors: list[str] = []
+    seen: set[tuple[int, str]] = set()
+    # Keep rule context inside a paragraph/list, without joining across blank
+    # lines or fenced blocks. Single line wraps remain searchable whitespace.
+    for paragraph in re.finditer(r"(?:[^\r\n]*\S[^\r\n]*(?:\r?\n|$))+", prose):
+        for reason, pattern in AUTHORING_BOILERPLATE_RULES:
+            for match in pattern.finditer(paragraph[0]):
+                start = paragraph.start() + match.start()
+                start += len(match[0]) - len(match[0].lstrip())
+                line = prose.count("\n", 0, start) + 1
+                if (line, reason) not in seen:
+                    errors.append(
+                        f"line {line}: authoring boilerplate ({reason}); "
+                        "remove the process note; keep teaching content, source links, "
+                        "and required attribution"
+                    )
+                    seen.add((line, reason))
+    return errors
 
 
 def countable_text(text: str) -> str:
-    """Return the teaching content that counts toward the simple-mode budget.
+    """Return body Markdown, excluding the title, navigation, and final Sources.
 
-    The Front is a prompt rather than teaching content, and Sources are a
-    verification requirement whose length must not push a card over budget.
-    Both sections and the navigation link are excluded.
+    Every body character counts, including code and image references. Trim
+    only outer whitespace and normalize CRLF to LF before counting Unicode
+    characters. Fenced/commented lookalikes cannot change the body boundaries.
     """
-    structural_text = mask_fenced_code(text)
-    spans = [match.span() for match in NAVIGATION_RE.finditer(structural_text)]
-    headings = list(HEADING_RE.finditer(structural_text))
-    for index, match in enumerate(headings):
-        if match.groups() not in {("#", "Front"), ("#", "Sources")}:
-            continue
-        following = next(
-            (heading for heading in headings[index + 1:]
-             if len(heading.group(1)) <= len(match.group(1))),
-            None,
-        )
-        spans.append((match.start(), following.start() if following else len(text)))
-
-    kept = []
-    cursor = 0
-    for start, end in sorted(spans):
-        if start > cursor:
-            kept.append(text[cursor:start])
-        cursor = max(cursor, end)
-    kept.append(text[cursor:])
-    return "".join(kept)
+    structural_text = mask_comments(mask_fenced_code(text))
+    title = re.match(r"^# [^\r\n]+\r?\n", structural_text)
+    start = title.end() if title else 0
+    navigation_links = list(NAVIGATION_RE.finditer(structural_text))
+    if len(navigation_links) == 1:
+        navigation = navigation_links[0]
+        if navigation.start() >= start and not text[start:navigation.start()].strip():
+            start = navigation.end()
+    first_level_headings = [
+        heading for heading in HEADING_RE.finditer(structural_text) if heading.group(1) == "#"
+    ]
+    end = len(text)
+    if first_level_headings and heading_label(first_level_headings[-1]) == "Sources":
+        end = max(start, first_level_headings[-1].start())
+    return text[start:end].replace("\r\n", "\n").strip()
 
 
 def navigation_case_error(directory: Path, relative_path: Path) -> str | None:
@@ -140,55 +214,46 @@ def navigation_case_error(directory: Path, relative_path: Path) -> str | None:
 def validate_text(
     text: str,
     card_path: Path,
-    mode: str = "auto",
+    mode: str,
     *,
     check_local_files: bool = True,
     require_version_lead: bool = False,
 ) -> list[str]:
     errors: list[str] = []
     structural_text, blocks, fence_errors = scan_fenced_code(text)
-    if mode == "auto":
-        mode = detect_mode(text)
     if mode not in {"simple", "complex"}:
         raise ValueError(f"unsupported card mode: {mode}")
     if HTML_COMMENT_RE.search(structural_text):
         errors.append(
             "HTML comments are not allowed outside fenced code; "
-            "remove mode comments and use the Front/Back headings to identify simple mode"
+            "remove mode comments and select the mode explicitly"
         )
     structural_text = mask_comments(structural_text)
+    errors.extend(authoring_boilerplate_errors(structural_text))
 
-    title = re.match(r"^# [^\n]+\n", text)
+    title = re.match(r"^# [^\r\n]+\r?\n", text)
     if not title:
         errors.append("the first line must be one level-one title")
 
     headings = list(HEADING_RE.finditer(structural_text))
-    required = ["# Front", "# Back", "# Sources"] if mode == "simple" else ["# Sources"]
-    required_matches = [
-        next((match for match in headings if " ".join(match.groups()) == heading), None)
-        for heading in required
+    sources = [
+        heading for heading in headings
+        if heading.group(1) == "#" and heading_label(heading) == "Sources"
     ]
-    positions = [match.start() if match else -1 for match in required_matches]
-    level_two_boundaries = {}
-    for heading, position in zip(required, positions):
-        if position < 0:
-            level_two = next(
-                (match for match in headings if match.groups() == ("##", heading[2:])), None
+    if not sources:
+        if any(heading.group(1) == "##" and heading_label(heading) == "Sources"
+               for heading in headings):
+            errors.append("boundary '## Sources' must use '# Sources'")
+        else:
+            errors.append("missing required heading: # Sources")
+    elif len(sources) > 1:
+        errors.append("include exactly one required heading: # Sources")
+    for heading in headings:
+        if len(heading.group(1)) <= 2 and heading_label(heading) in {"Front", "Back"}:
+            errors.append(
+                f"boundary {heading.group(1) + ' ' + heading_label(heading)!r} is not allowed; "
+                "both modes place teaching content directly after the navigation link"
             )
-            if level_two is not None:
-                level_two_boundaries[heading] = level_two
-                errors.append(f"boundary {'#' + heading!r} must use {heading!r}")
-            else:
-                errors.append(f"missing required heading: {heading}")
-    if all(position >= 0 for position in positions) and positions != sorted(positions):
-        errors.append("required headings must appear in the order Front, Back, Sources")
-    for heading in required:
-        if sum(" ".join(match.groups()) == heading for match in headings) > 1:
-            errors.append(f"include exactly one required heading: {heading}")
-    front = next((match for match in headings if match.groups() == ("#", "Front")), None)
-    back = next((match for match in headings if match.groups() == ("#", "Back")), None)
-    if mode == "complex" and (front is not None or back is not None):
-        errors.append("complex (article) mode must not contain # Front or # Back headings")
 
     navigation_links = list(NAVIGATION_RE.finditer(structural_text))
     navigation = navigation_links[0] if len(navigation_links) == 1 else None
@@ -225,10 +290,7 @@ def validate_text(
                     if unquote(url.fragment) not in anchors:
                         errors.append(f"navigation README anchor does not exist: {target}")
 
-    # Check placement independently of level so a correctly placed ## Front
-    # gets only its boundary diagnostic, while real ordering errors remain visible.
-    header_front = front if front is not None else level_two_boundaries.get("# Front")
-    header_parts = (title, navigation, header_front) if mode == "simple" else (title, navigation)
+    header_parts = (title, navigation)
     invalid_header = any(
         previous is not None and following is not None and (
             following.start() < previous.end()
@@ -236,14 +298,15 @@ def validate_text(
         )
         for previous, following in zip(header_parts, header_parts[1:])
     )
-    if mode == "complex" and navigation is not None:
+    if navigation is not None:
         remainder = text[navigation.end():]
-        if not re.match(r"[ \t]*\r?\n", remainder) or not remainder.strip():
+        body_end = sources[0].start() if sources else len(text)
+        if (not re.match(r"[ \t]*\r?\n", remainder)
+                or not text[navigation.end():body_end].strip()):
             invalid_header = True
     if invalid_header:
-        ending = "# Front" if mode == "simple" else "article content"
         errors.append(
-            f"header order must be title, navigation link, {ending}, "
+            "header order must be title, navigation link, teaching content, "
             "with a blank line between each and no intervening content"
         )
 
@@ -274,14 +337,15 @@ def validate_text(
                 "and bold #### headings for named sub-items within subsections"
             )
 
-    first_level_headings = [match.group(2) for match in headings if match.group(1) == "#"]
-    if first_level_headings and first_level_headings[-1].strip() != "Sources":
+    first_level_headings = [heading_label(match) for match in headings if match.group(1) == "#"]
+    if first_level_headings and first_level_headings[-1] != "Sources":
         errors.append("# Sources must be the final level-one section")
-    if not SOURCE_RE.search(structural_text):
+    source_text = structural_text[sources[-1].end():] if sources else ""
+    if not SOURCE_RE.search(source_text):
         errors.append("# Sources must contain at least one Markdown link to an HTTP(S) source")
 
     if require_version_lead:
-        body_start = back if mode == "simple" else navigation
+        body_start = navigation
         first_body_line = ""
         if body_start:
             for line in text[body_start.end():].splitlines():
@@ -291,9 +355,9 @@ def validate_text(
                     first_body_line = line.strip()
                     break
         if not re.fullmatch(r"\*\*\S(?:.*\S)?\*\*", first_body_line):
-            body_name = "Back" if mode == "simple" else "article body"
             errors.append(
-                f"a versioned feature card must start the {body_name} with one standalone bold sentence"
+                "a versioned feature card must start the teaching body "
+                "with one standalone bold sentence"
             )
         else:
             lead_text = first_body_line[2:-2]
@@ -309,7 +373,7 @@ def validate_text(
     if mode == "simple" and character_count > SIMPLE_CHARACTER_LIMIT:
         errors.append(
             f"simple mode allows at most {SIMPLE_CHARACTER_LIMIT} characters "
-            f"outside Front and Sources; found {character_count}"
+            f"in the teaching body; found {character_count}"
         )
 
     images = IMAGE_RE.findall(structural_text)
@@ -340,14 +404,23 @@ def validate_text(
         step_matches = [heading for heading in headings if is_step_heading(heading)]
         for step_match in step_matches:
             heading = heading_label(step_match)
-            if step_match.group(1) != "##":
+            level = len(step_match.group(1))
+            # A level-three step belongs to the nearest preceding level-two
+            # section, unless a level-one heading has closed that section.
+            parent = next((match for match in reversed(headings)
+                           if match.start() < step_match.start()
+                           and len(match.group(1)) < level), None)
+            if level != 2 and not (
+                level == 3 and parent is not None and parent.group(1) == "##"
+            ):
                 errors.append(
-                    f"step heading {heading!r} must use ## Step N … "
+                    f"step heading {heading!r} must use ## Step N … or "
+                    "### Step N … nested within a ## section "
                     f"(found {step_match.group(1)})"
                 )
             section_start = step_match.end()
             # Stop at the next peer/parent section or any subsequent step,
-            # including a subsequent step at an incorrect, deeper level.
+            # so nested steps cannot supply a previous step's own diagram.
             boundary = next((match for match in headings
                              if match.start() > step_match.start()
                              and (len(match.group(1)) <= len(step_match.group(1))
@@ -376,12 +449,6 @@ def run_self_test() -> None:
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What is an atomic update?
-
-# Back
-
 An atomic update is observed as one indivisible action.
 
 ![atomic-update.svg](images/atomic-update.svg)
@@ -397,9 +464,23 @@ counter.incrementAndGet();
     complex_card = simple.replace(
         "![atomic-update.svg](images/atomic-update.svg)",
         "![before.svg](images/before.svg)\n\n![after.svg](images/after.svg)",
-    ).replace("# Front\n\nWhat is an atomic update?\n\n# Back\n\n", "")
+    )
     assert not validate_text(simple, Path("card.md"), "simple", check_local_files=False)
     assert not validate_text(complex_card, Path("card.md"), "complex", check_local_files=False)
+
+    # Editorial announcements are not study content; literal examples stay valid.
+    boilerplate = "**Facts** checked against\nAWS documentation on 17 November 2026."
+    for mode, card in (("simple", simple), ("complex", complex_card)):
+        with_boilerplate = card.replace("# Sources", boilerplate + "\n\n# Sources")
+        assert any("authoring boilerplate" in error for error in validate_text(
+            with_boilerplate, Path("card.md"), mode, check_local_files=False,
+        ))
+        literal_boilerplate = card.replace(
+            "# Sources", f"```markdown\n{boilerplate}\n```\n\n# Sources"
+        )
+        assert not validate_text(
+            literal_boilerplate, Path("card.md"), mode, check_local_files=False,
+        )
 
     # Navigation is required immediately after the title and is outside the budget.
     navigation = "<sub>[Back to Java](../Readme.md#content)</sub>"
@@ -439,8 +520,8 @@ counter.incrementAndGet();
         fallback = simple.replace(navigation, "<sub>[Back to Anki Flashcards](../../README.md)</sub>")
         assert not validate_text(fallback, card_path, "simple")
 
-    # Valid card boundaries still require exact level-one headings.
-    for heading in ("# Front", "# Back", "# Sources"):
+    # Sources still requires the exact level-one heading.
+    for heading in ("# Sources",):
         for replacement in ("#" + heading, heading + " details"):
             expected = (
                 f"boundary {replacement!r} must use {heading!r}"
@@ -478,21 +559,18 @@ counter.incrementAndGet();
         )
         assert "#### Literal heading" in countable_text(with_literal_headings)
 
-    # Examples in code cannot supply missing card boundaries.
-    fake_front = simple.replace("# Front", "```markdown\n# Front\n```")
-    assert any("missing required heading: # Front" in error for error in validate_text(
-        fake_front, Path("card.md"), "simple", check_local_files=False,
-    ))
-
-    # Infer mode from real boundaries, with no hidden metadata.
+    # Both modes use the shared layout, with no legacy boundaries or metadata.
     simple_comment = "<!-- Card mode: simple. Validate with --mode simple. -->"
     complex_comment = "<!-- Card mode: complex. Validate with --mode complex. -->"
     for mode, card in (("simple", simple), ("complex", complex_card)):
-        assert detect_mode(card) == mode
-        assert not validate_text(card, Path("card.md"), check_local_files=False)
+        assert not validate_text(card, Path("card.md"), mode, check_local_files=False)
         crlf_card = card.replace("\n", "\r\n")
-        assert detect_mode(crlf_card) == mode
-        assert not validate_text(crlf_card, Path("card.md"), check_local_files=False)
+        assert not validate_text(crlf_card, Path("card.md"), mode, check_local_files=False)
+        for heading in ("# Front", "# Back", "## Front", "## Back"):
+            legacy = card.replace("# Sources", heading + "\n\n# Sources")
+            assert any("is not allowed" in error for error in validate_text(
+                legacy, Path("card.md"), mode, check_local_files=False,
+            ))
         for comment in (simple_comment, complex_comment, "<!-- Editorial note -->"):
             with_comment = card.replace("# Sources", comment + "\n\n# Sources")
             assert any("HTML comments" in error for error in validate_text(
@@ -502,25 +580,7 @@ counter.incrementAndGet();
             assert not validate_text(
                 literal_comment, Path("card.md"), mode, check_local_files=False,
             )
-    for heading in ("# Front", "# Back"):
-        incomplete = simple.replace(heading, "")
-        assert detect_mode(incomplete) == "simple"
-        assert any(f"missing required heading: {heading}" in error for error in validate_text(
-            incomplete, Path("card.md"), check_local_files=False,
-        ))
-    wrong_level_card = simple.replace("# Front", "## Front").replace("# Back", "## Back")
-    assert detect_mode(wrong_level_card) == "simple"
-    boundary_errors = validate_text(wrong_level_card, Path("card.md"), check_local_files=False)
-    assert boundary_errors == [
-        "boundary '## Front' must use '# Front'",
-        "boundary '## Back' must use '# Back'",
-    ]
-    assert any("missing required heading: # Front" in error for error in validate_text(
-        complex_card, Path("card.md"), "simple", check_local_files=False,
-    ))
-    assert any("must not contain # Front or # Back" in error for error in validate_text(
-        simple, Path("card.md"), "complex", check_local_files=False,
-    ))
+    assert not validate_text(complex_card, Path("card.md"), "simple", check_local_files=False)
 
     # Local image alt text names the linked file, with optional teaching context.
     descriptive_alt = simple.replace(
@@ -540,10 +600,10 @@ counter.incrementAndGet();
                        missing_filename, Path("card.md"), "simple", check_local_files=False
                    ))
 
-    # The budget applies to the Back only; padding goes there, not into Sources.
+    # The budget applies to the body only; padding goes there, not into Sources.
     padded = simple.replace("# Sources", "PAD\n\n# Sources")
     body = len(countable_text(padded))
-    at_simple_limit = padded.replace("PAD", "P" * (SIMPLE_CHARACTER_LIMIT - body + 3))
+    at_simple_limit = padded.replace("PAD", "界" * (SIMPLE_CHARACTER_LIMIT - body + 3))
     assert len(countable_text(at_simple_limit)) == SIMPLE_CHARACTER_LIMIT
     assert not validate_text(
         at_simple_limit, Path("card.md"), "simple", check_local_files=False
@@ -580,37 +640,44 @@ counter.incrementAndGet();
     )
     assert not validate_text(process_card, Path("card.md"), "complex", check_local_files=False)
 
-    missing_step_svg = process_card.replace("![write.svg](images/write.svg)", "Step explanation")
-    assert any("requires its own local .svg" in error for error in validate_text(
-        missing_step_svg, Path("card.md"), "complex", check_local_files=False
+    nested_process_card = process_card.replace(
+        "## Step 1", "## A grouped process\n\n### Step 1"
+    ).replace("## Step 2", "### Step 2")
+    assert not validate_text(
+        nested_process_card, Path("card.md"), "complex", check_local_files=False
+    )
+    orphaned_steps = process_card.replace("## Step", "### Step")
+    assert any("nested within a ## section" in error for error in validate_text(
+        orphaned_steps, Path("card.md"), "complex", check_local_files=False
     ))
+    for card in (process_card, nested_process_card):
+        missing_step_svg = card.replace("![write.svg](images/write.svg)", "Step explanation")
+        assert any("requires its own local .svg" in error for error in validate_text(
+            missing_step_svg, Path("card.md"), "complex", check_local_files=False
+        ))
 
     no_image = simple.replace("![atomic-update.svg](images/atomic-update.svg)\n\n", "")
     assert any("requires at least" in error for error in validate_text(
         no_image, Path("card.md"), "simple", check_local_files=False
     ))
 
-    # A huge Front or Sources section must not push a card over budget.
-    fat_front = simple.replace(
-        "What is an atomic update?", "What is an atomic update? " + "q" * 5000
-    )
-    assert not validate_text(fat_front, Path("card.md"), "simple", check_local_files=False)
-    nested_front = fat_front.replace("What is an atomic update?", "## Prompt details")
-    assert not validate_text(nested_front, Path("card.md"), "simple", check_local_files=False)
-    fat_back_section = simple.replace(
+    # A huge opening title or Sources section must not push a card over budget.
+    fat_title = simple.replace("# Atomic update", "# " + "t" * 5000)
+    assert not validate_text(fat_title, Path("card.md"), "simple", check_local_files=False)
+    fat_body_section = simple.replace(
         "An atomic update", "## Explanation\n\n" + "x" * 5000 + "\n\nAn atomic update"
     )
     assert any(f"allows at most {SIMPLE_CHARACTER_LIMIT}" in error for error in validate_text(
-        fat_back_section, Path("card.md"), "simple", check_local_files=False,
+        fat_body_section, Path("card.md"), "simple", check_local_files=False,
     ))
     fat_sources = simple.replace(
         "- [Java API](https://example.com/api)",
         "- [Java API](https://example.com/api)\n\n  " + "s" * 5000,
     )
     assert not validate_text(fat_sources, Path("card.md"), "simple", check_local_files=False)
-    assert "Front" not in countable_text(simple)
     assert "Sources" not in countable_text(simple)
-    assert "Atomic update" in countable_text(simple)
+    assert "Atomic update" not in countable_text(simple)
+    assert "An atomic update" in countable_text(simple)
 
     bare_fence = simple.replace("```java", "```", 1)
     assert any("no language tag" in error for error in validate_text(
@@ -623,13 +690,13 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("card", nargs="?", type=Path, help="Markdown card to validate")
     parser.add_argument(
-        "--mode", choices=("auto", "simple", "complex"), default="auto",
-        help="infer mode from Front/Back headings by default, or enforce a selected mode",
+        "--mode", choices=("simple", "complex"),
+        help="required for card validation; select the intended size and visual requirements",
     )
     parser.add_argument(
         "--require-version-lead",
         action="store_true",
-        help="require a bold opening line in the Back or article body naming a feature lifecycle event and version",
+        help="require a bold opening body line naming a feature lifecycle event and version",
     )
     parser.add_argument("--self-test", action="store_true")
     args = parser.parse_args()
@@ -639,6 +706,8 @@ def main() -> int:
         return 0
     if args.card is None:
         parser.error("card path is required unless --self-test is used")
+    if args.mode is None:
+        parser.error("--mode simple or --mode complex is required unless --self-test is used")
     if args.card.suffix.lower() != ".md":
         print(f"ERROR: expected an .md file: {args.card}", file=sys.stderr)
         return 2
@@ -647,7 +716,7 @@ def main() -> int:
         return 2
 
     text = args.card.read_text(encoding="utf-8")
-    mode = detect_mode(text) if args.mode == "auto" else args.mode
+    mode = args.mode
     errors = validate_text(
         text,
         args.card,

@@ -25,10 +25,13 @@ Run all three passes; report only after the first two are done, and say explicit
 Run from the repository root:
 
 ```bash
-python3 .agents/skills/anki-card-creation/scripts/check_anki_card.py "path/to/card.md"
+python3 .agents/skills/anki-card-creation/scripts/check_anki_card.py --mode simple "path/to/card.md"
+python3 .agents/skills/anki-card-creation/scripts/check_anki_card.py --mode complex "path/to/article.md"
 python3 .agents/skills/svg-creation/scripts/check_svg.py --strict "path/to/diagram.svg"
 git diff --check
 ```
+
+Use the card validator command for the selected or established mode. Both modes share a layout without Front/Back boundary headings; do not infer mode from their absence or switch modes to bypass the simple-card length limit.
 
 Two things the card validator does **not** check, so check them yourself:
 
