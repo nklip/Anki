@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-How does time complexity describe an algorithm's growth as input size increases?
-
-# Back
-
 **Time complexity** describes how the number of basic operations an algorithm performs grows with input size `n`. For an array, `n` usually means its number of elements. Here, assume each array access or comparison takes constant time.
 
 **Big-O, `O(f(n))`, gives an upper bound:** for sufficiently large `n`, the work is at most a fixed constant times `f(n)`. It hides constant factors and lower-order terms: `3n² + 5n + 7` is `O(n²)`. **Theta, `Θ(n²)`, states the tight growth rate** by bounding the work both above and below by constant multiples of `n²`.

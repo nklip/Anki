@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-How does FTP transfer files using separate control and data connections?
-
-# Back
-
 **FTP (File Transfer Protocol)** lets a client upload files to a server and download files from it. It uses separate **TCP (Transmission Control Protocol)** connections for instructions and the data being transferred.
 
 ## Two connections, two jobs

@@ -2,12 +2,6 @@
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-# Front
-
-Which ten built-in Codex slash commands are useful for software engineering, learning, and writing?
-
-# Back
-
 **Use slash commands to plan work, review code, configure a chat, manage its context, and pursue a goal.** Type `/` in the chat composer and select a command. Then describe the actual task when needed.
 
 **Scope:** Codex in the desktop app. Availability depends on your environment and access; the command-line interface (CLI) and editor extension can differ. These are ten practical picks, not a measured popularity ranking.

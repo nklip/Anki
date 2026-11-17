@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-How does a Kubernetes Service provide access to Pods when their addresses change?
-
-# Back
-
 **A Service gives clients a stable way to reach a changing set of backends.** A typical Service has a virtual Internet Protocol (**IP**) address and a Domain Name System (**DNS**) name, while its selected Pods may be replaced.
 
 ## Selection connects the pieces

@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What does `SequencedMap` add to Java maps, and what does `reversed()` return?
-
-# Back
-
 **`SequencedMap` was introduced in JDK 21 as part of Sequenced Collections (JEP 431).**
 
 `SequencedMap<K, V>` extends `Map<K, V>` with a defined first-to-last order of **entries** (key–value pairs), operations at both ends, and a reversed view. It does not extend `SequencedCollection`.

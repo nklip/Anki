@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-How does a ring buffer reuse array slots, and how does a growable circular array differ?
-
-# Back
-
 A **ring buffer (circular buffer)** reuses array slots by wrapping indices from the end back to `0`. **Classic ring buffers have fixed capacity; growable circular arrays such as `ArrayDeque` add resizing.** Used as a **first in, first out (FIFO) queue**, it removes the oldest stored item first.
 
 ## Fixed-capacity example

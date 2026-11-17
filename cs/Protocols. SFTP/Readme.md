@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-How does SFTP transfer files securely, and how does it differ from FTP and FTPS?
-
-# Back
-
 **SFTP (SSH File Transfer Protocol)** transfers and manages remote files, normally over **SSH (Secure Shell)**. SSH encrypts the traffic so network observers cannot read its contents and checks **integrity** to detect tampering. File operations, replies, and file data share **one protected connection**.
 
 ## How a transfer works

@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What does **visibility** mean in Java concurrency, and how is it guaranteed between threads?
-
-# Back
-
 **Visibility means that a write performed by one thread is guaranteed to be observable by another thread when the two actions are connected by a happens-before relationship.**
 
 ![concurrency-visibility-happens-before.svg](images/concurrency-visibility-happens-before.svg)

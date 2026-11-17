@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-Which Java date-and-time objects can be shared between threads, and which ones need protection?
-
-# Back
-
 **Immutable `java.time` values and `DateTimeFormatter` can be shared between threads; mutable legacy date/time objects require protection when shared.**
 
 `DateTimeFormatter` is also thread-safe, so the same instance may be shared. Legacy mutable objects such as `SimpleDateFormat` must not be used concurrently without protection.

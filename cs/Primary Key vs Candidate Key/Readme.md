@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-What is the difference between a candidate key and a primary key in a relational table?
-
-# Back
-
 A **candidate key** is a minimal set of columns that identifies each row: no two rows can have the same value in it, and no column in it is extra. A table can have several candidate keys. The **primary key** is the one candidate key that the designer chooses as the main identifier of the rows. **Every primary key is a candidate key, but a table has only one primary key.**
 
 ## Test each column set

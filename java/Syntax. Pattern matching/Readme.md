@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What mental model unifies Java pattern matching, and how do type, record, and `switch` patterns differ?
-
-# Back
-
 **Pattern Matching for `instanceof` became final in JDK 16 with JEP 394.**
 
 **Record Patterns and Pattern Matching for `switch` became final in JDK 21 with JEP 440 and JEP 441, respectively.**

@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What is a monad, and how does Java's `Optional` demonstrate the pattern?
-
-# Back
-
 A **monad** is a composable context `M<T>` for sequencing dependent computations while preserving the context's rule. With `Optional<T>`, the rule is: if no value exists, later transformations are skipped and the result stays empty.
 
 ![java-monad-optional.svg](images/java-monad-optional.svg)

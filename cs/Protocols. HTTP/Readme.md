@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-How does HTTP let a client interact with a server?
-
-# Back
-
 **HTTP (Hypertext Transfer Protocol)** defines how applications exchange **requests and responses**. A **client**, such as a browser, asks a **server** to act on a **resource**—something identified by an address, such as a page or a book record. The server returns the result.
 
 ## Follow one exchange

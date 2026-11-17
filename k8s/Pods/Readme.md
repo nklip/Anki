@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-What is a Pod, and what do containers inside the same Pod share?
-
-# Back
-
 **A Pod is Kubernetes' smallest deployable unit: one or more closely cooperating containers scheduled together on one node.** A single application container per Pod is common.
 
 ## One shared network, optional shared volumes

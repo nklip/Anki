@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-What is Trie?
-
-# Back
-
 **A trie (prefix tree) is a tree data structure that stores strings, such as words, along character paths.** Words with the same beginning share nodes, supporting exact-word and prefix lookups.
 
 ## How it works

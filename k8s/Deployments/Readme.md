@@ -2,8 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Back
-
 A **Deployment** manages application Pods through **ReplicaSets**, which maintain the requested Pod counts. You declare the desired state; the Deployment controller manages updates. Avoid directly editing ReplicaSets owned by a Deployment.
 
 ## Where Deployments and ReplicaSets fit

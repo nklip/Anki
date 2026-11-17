@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-How do Cache Aside, Read Through, Write Through, Write Back, and Write Around move data between an application, a cache, and a database?
-
-# Back
-
 **Caching strategies decide who loads missing data and when writes reach the database.** A cache holds data for faster reads; a **hit** finds it, a **miss** does not.
 
 **Read policies** (Cache Aside, Read Through) are about who fills the cache after a miss. **Write policies** (Write Through, Write Back, Write Around) are about when the database receives a write, and if the write updates the cache. A system usually uses one of each, for example Read Through with Write Through. Read each sequence top to bottom; dashed arrows are replies.

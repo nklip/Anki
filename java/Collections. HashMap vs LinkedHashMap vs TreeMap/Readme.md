@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-When should you choose `HashMap`, `LinkedHashMap`, or `TreeMap`?
-
-# Back
-
 **Use `HashMap` when order does not matter, `LinkedHashMap` to preserve insertion order, and `TreeMap` to keep keys sorted.** All three associate each unique key with one value. **Encounter order** means the order in which iteration visits entries.
 
 ## The choice and its cost

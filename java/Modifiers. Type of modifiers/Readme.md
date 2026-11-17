@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What are Java modifiers, what are their two practical categories, and why can the same modifier not be used on every declaration?
-
-# Back
-
 Java modifiers appear before a declaration and answer one of two practical questions: **who may access it?** or **how must it behave?**
 
 ![modifiers-types-overview.svg](images/modifiers-types-overview.svg)

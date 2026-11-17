@@ -2,12 +2,6 @@
 
 <sub>[Back to Distributed Systems](../Readme.md#content)</sub>
 
-# Front
-
-How does Apache Spark process large datasets across multiple machines?
-
-# Back
-
 **Apache Spark is an open-source engine that processes large datasets in parallel across a cluster (a group of computers).** It splits data into **partitions** (chunks) and coordinates work on them, so a calculation can use several machines.
 
 ## Who uses Spark, and for what?

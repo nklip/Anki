@@ -2,13 +2,7 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-How does a Merkle tree find the single block two replicas disagree on, or prove that one block of data belongs to a data set, without reading everything?
-
-# Back
-
-A **Merkle tree**, or hash tree, condenses a whole data set into one **root hash**. Each leaf holds the hash of one data block; each parent holds the hash of its children joined together. Changing any byte changes every hash above it up to the root, so comparing or proving data costs about `log2 n` hashes instead of `n` blocks. Ralph Merkle described the idea as *tree authentication* in a 1979 paper.
+A **Merkle tree**, or hash tree, condenses a whole data set into one **root hash**. Each leaf holds the hash of one data block; each parent holds the hash of its children joined together. Changing any byte changes every hash above it up to the root, so finding a single differing block or proving one block belongs costs about `log2 n` hashes instead of `n` blocks. Ralph Merkle described the idea as *tree authentication* in a 1979 paper.
 
 ## How it is built
 
@@ -28,7 +22,7 @@ A **Merkle tree**, or hash tree, condenses a whole data set into one **root hash
 
 ## Comparing two copies
 
-Two replicas exchange root hashes. Equal roots mean equal leaves and no synchronization. Unequal roots mean descending only into the children whose hashes differ, so the mismatched bucket is isolated in about `log2 n` comparisons and only that bucket is transferred. Each branch can be checked on its own, without downloading the whole data set. Both sides must bucket their keys the same way, or equal data gives different roots.
+Two replicas exchange root hashes. Equal roots mean equal leaves and no synchronization. When only one bucket differs, descending into children whose hashes differ isolates it in about `log2 n` comparisons, and only that bucket is transferred. Each branch can be checked on its own, without downloading the whole data set. Both sides must bucket their keys the same way, or equal data gives different roots.
 
 ![merkle-tree.svg](images/merkle-tree.svg)
 

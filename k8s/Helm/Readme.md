@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-How do Helm charts, values, and releases make Kubernetes applications reusable?
-
-# Back
-
 **Helm is a package manager for Kubernetes: it installs and upgrades applications described by charts.** A chart can generate several related Kubernetes objects, such as a Deployment and a Service.
 
 ## Package, configuration, installation

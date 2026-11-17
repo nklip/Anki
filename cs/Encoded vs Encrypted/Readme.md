@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-How do encoding, encryption, and digital signatures differ, and why doesn't Base64 protect secrets?
-
-# Back
-
 **Encoding** changes how data is represented so it can be stored or transmitted; decoding needs no secret.
 
 **Encryption** protects confidentiality: recovering the original data requires the correct decryption key.

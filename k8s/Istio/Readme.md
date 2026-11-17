@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-Where does Istio fit inside a Kubernetes cluster, and how does it manage service traffic?
-
-# Back
-
 **Istio is a service mesh: an infrastructure layer that controls, secures, and observes communication between services.** In Kubernetes, it adds management components and traffic proxies alongside your application workloads.
 
 ## Two roles inside the cluster

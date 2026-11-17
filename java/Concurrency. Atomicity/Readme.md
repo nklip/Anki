@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What does **atomicity** mean in Java concurrency, and why is `count++` unsafe when threads share a counter?
-
-# Back
-
 **Atomicity means a shared-state operation appears to happen as one indivisible action: another thread can observe the state before or after it, but cannot interleave with a partial update.**
 
 The diagram follows two threads that each increment the same counter once.

@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What does `import module` do in Java, and how is it different from an ordinary import or `requires`?
-
-# Back
-
 **Module import declarations became final in JDK 25 with JEP 511.**
 
 A module import makes the accessible API of a named module available by simple type names in one compilation unit—a source file being compiled.

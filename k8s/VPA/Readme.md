@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-How does the Vertical Pod Autoscaler (VPA) size containers compared with the Horizontal Pod Autoscaler (HPA)?
-
-# Back
-
 **The Vertical Pod Autoscaler (VPA) recommends and can adjust container requests for central processing unit (CPU) capacity and memory based on observed usage.** It is a separately installed Kubernetes add-on that helps match resource settings to an application's needs.
 
 ## What changes?

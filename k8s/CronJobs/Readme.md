@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-How does a CronJob schedule work, and how does it handle overlapping or missed runs?
-
-# Back
-
 **CronJob became stable in Kubernetes v1.21.**
 
 A **CronJob** creates Jobs on a recurring schedule. Each Job manages the Pods that perform a finite task, such as generating a daily report.

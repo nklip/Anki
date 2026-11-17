@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-What is a container, and how does container deployment differ from installing applications directly on a host?
-
-# Back
-
 **A container is an isolated application environment created from an image. Containers still run on a host; ordinary Linux containers share its kernel while keeping their application files and dependencies separate.**
 
 ## Core terms

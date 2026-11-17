@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-How can Java's `ArrayDeque` act as either a queue or a stack?
-
-# Back
-
 **`ArrayDeque` was introduced in Java 6 as a resizable-array implementation of `Deque`.**
 
 A **deque** is a double-ended queue: you can insert, inspect, or remove elements at either end. `ArrayDeque` grows as needed. The ends you choose determine whether it behaves as a queue or a stack.

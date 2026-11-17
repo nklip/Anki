@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-How does SOAP structure messages exchanged between a client and a web service?
-
-# Back
-
 **SOAP** (originally *Simple Object Access Protocol*) is a protocol for exchanging structured messages using **XML (Extensible Markup Language)**. It defines a standard message envelope and processing rules so applications can understand the same message structure.
 
 ## Inside a SOAP message

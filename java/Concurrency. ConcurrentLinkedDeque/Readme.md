@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-When would you choose Java's `ConcurrentLinkedDeque` over `ConcurrentLinkedQueue`, and how do the ends you use determine removal order?
-
-# Back
-
 **`ConcurrentLinkedDeque` was introduced in Java 7 as a thread-safe double-ended queue (deque).**
 
 Compared with [`ConcurrentLinkedQueue`](../Concurrency.%20ConcurrentLinkedQueue/Readme.md), it adds insertion, inspection, and removal at **either end**. Choose it for front insertion, back removal, or a shared stack. For first-in, first-out (FIFO) work, prefer the queue's narrower API: it offers no front-insertion or back-removal methods, making the intended order harder to misuse.

@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-What is standalone Envoy, and where does it fit inside a Kubernetes cluster compared with Istio?
-
-# Back
-
 **Standalone Envoy means running and configuring Envoy Proxy directly, without a service-mesh control plane such as Istio's `istiod`.**
 
 A proxy receives requests and forwards them to a destination. Envoy can route traffic, balance load, retry requests, check backend health, and collect traffic metrics.

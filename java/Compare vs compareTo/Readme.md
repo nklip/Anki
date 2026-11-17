@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What is the difference between `Comparator.compare` and `Comparable.compareTo`, and when should each be used?
-
-# Back
-
 **`compareTo` defines a type's natural ordering; `compare` applies a separate ordering strategy.**
 
 ![compare-vs-compareto.svg](images/compare-vs-compareto.svg)

@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What does `transient` do during Java object serialization, and what value does the field have after deserialization?
-
-# Back
-
 `transient` excludes a field from Java's **default object-serialization field set**. The live object still contains the value; the default serialized form does not.
 
 ![modifiers-transient-serialization.svg](images/modifiers-transient-serialization.svg)

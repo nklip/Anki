@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What changed with compact source files and instance `main` methods in Java 25?
-
-# Back
-
 **Compact source files and instance `main` methods became final in JDK 25 with JEP 512.**
 
 **Java 25 lets a small program omit an explicit class declaration and use `void main()` as its entry point.** The compiler still creates a class, and the launcher creates an object before calling an instance `main` method. This feature is final in Java 25, not preview.

@@ -2,12 +2,6 @@
 
 <sub>[Back to Distributed Systems](../Readme.md#content)</sub>
 
-# Front
-
-Why use sticky sessions, how do the three common pinning mechanisms work and fail, what are the four costs, and what is the stateless alternative?
-
-# Back
-
 **Sticky sessions (session affinity)** route a client's related requests to the **same application server** while affinity is valid and the server is available. This keeps requests near session state: data remembered between requests, such as a shopping cart.
 
 ## Why pin a client?

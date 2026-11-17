@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What does `_` mean in Java unnamed variables and patterns, where is it allowed, and can its value be read?
-
-# Back
-
 **Unnamed Variables & Patterns became final in JDK 22 with JEP 456.**
 
 `_` means: “the syntax requires this slot, but its value is intentionally unused.” It creates no usable name, so later code cannot read or assign `_`.

@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-Which seven naming conventions make REST resource paths clear and consistent?
-
-# Back
-
 Use clear resource names, show relationships in paths, and put filters in query parameters. Express actions with HTTP (Hypertext Transfer Protocol) methods, such as `GET` or `POST`.
 
 **REST (Representational State Transfer) is an architectural style**.

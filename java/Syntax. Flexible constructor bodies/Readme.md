@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What may a Java constructor do before `super(...)` or `this(...)`, and what remains forbidden?
-
-# Back
-
 **Flexible constructor bodies became final in JDK 25 with JEP 513.**
 
 They allow safe statements before an explicit `super(...)` or `this(...)` call. This first phase is the **prologue**; statements after the constructor invocation form the **epilogue**.

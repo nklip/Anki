@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-How does the Horizontal Pod Autoscaler decide to change a workload's replica count?
-
-# Back
-
 **The Horizontal Pod Autoscaler (HPA) periodically compares observed metrics with a target and changes a scalable workload's desired replica count.** It can target a Deployment or StatefulSet. It changes the number of Pods, not the size of existing Pods or the number of nodes.
 
 ## Understand a utilization target

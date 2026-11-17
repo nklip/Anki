@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-What does a DaemonSet maintain, and when should you use one instead of a ReplicaSet?
-
-# Back
-
 * A Pod runs one or more containers together.
 * A Node is a machine that runs Pods.
 * A **DaemonSet** aims to run one copy of its Pod on every eligible node.

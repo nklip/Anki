@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-How does a sealed hierarchy control inheritance, and what do `final`, `sealed`, and `non-sealed` mean for each permitted branch?
-
-# Back
-
 **Sealed classes became final in JDK 17 with JEP 409.**
 
 A `sealed` class or interface names the types allowed to **directly** extend or implement it. This is useful when a domain has a controlled set of alternatives.

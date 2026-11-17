@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What is double-brace initialization in Java, why is it discouraged, and what should replace it?
-
-# Back
-
 **Double-brace initialization is an idiom—not a collection literal—and should usually be avoided.** It creates an anonymous subclass and runs an instance initializer while constructing that subclass.
 
 ![syntax-double-brace-initialization.svg](images/syntax-double-brace-initialization.svg)

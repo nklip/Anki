@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-How does the operator pattern extend Kubernetes?
-
-# Back
-
 **An operator combines custom resources with a controller that automates application-specific operations, without changing Kubernetes itself.** It turns operational knowledge—such as how to configure database replication, take backups, or perform upgrades—into software.
 
 ## What is a CRD?

@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-How do POP3 and IMAP differ when you use the same mailbox on a laptop and a phone?
-
-# Back
-
 **POP3 (Post Office Protocol version 3)** downloads messages for an app to manage as local copies. **IMAP (Internet Message Access Protocol)** lets apps access a shared server mailbox and synchronize its folders and message state, such as read/unread status.
 
 Both access stored mail after **SMTP (Simple Mail Transfer Protocol)** delivers it. For example, Bob uses `bob@gmail.com` on a laptop and a phone. These protocols let him retrieve messages when his devices reconnect; neither replaces SMTP for sending mail.

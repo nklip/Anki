@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What does ordering mean in Java concurrency, and how does *happens-before* make cross-thread observations predictable?
-
-# Back
-
 **Ordering means constraints on which actions must be observable before other actions; it does not mean that all threads share one global timeline.**
 
 The Java Memory Model uses three related ideas:

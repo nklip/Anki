@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-When is NFS useful, and how does it let several machines work with the same files?
-
-# Back
-
 **NFS (Network File System)** is a protocol for accessing files on another computer through ordinary file paths. A client **mounts** a shared directory: it attaches that remote directory to its own directory tree. NFS is useful when several machines need the **same shared files**, while applications expect to open, read, and write files as usual.
 
 ## How it works

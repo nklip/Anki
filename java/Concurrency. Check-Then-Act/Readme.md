@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-Why can **check-then-act** fail when Java threads share state, and how do you make it safe?
-
-# Back
-
 **Check-then-act means checking a condition and then acting on the result.** Another thread can change the shared state between those steps, making the decision stale. This is a **race condition**: correctness depends on how the threads' operations overlap. Make the check and action **atomic**—one indivisible operation relative to competing operations.
 
 ## Example: reserve a seat only if it is free

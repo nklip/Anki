@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What does `var` do in Java, where can it be used, and does it make a variable dynamically typed?
-
-# Back
-
 **Local-Variable Type Inference was introduced in JDK 10 with JEP 286.**
 
 `var` tells the compiler to infer a local variable's **static type** from its initializer. Only the type spelling is omitted; Java remains statically typed, and the inferred type is fixed for that variable.

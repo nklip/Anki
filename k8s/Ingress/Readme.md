@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-What does Ingress do, and why does an Ingress object need a controller?
-
-# Back
-
 **Ingress declares web routing rules from outside a cluster to Services, usually using hostnames and paths.** It handles Hypertext Transfer Protocol (**HTTP**) and its secure form (**HTTPS**). An **Ingress controller** implements the rules by configuring a proxy or load balancer. Creating the object alone does not create functioning routing.
 
 ## Rules versus the traffic path

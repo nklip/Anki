@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-How do labels and label selectors work together to group Kubernetes objects?
-
-# Back
-
 **Labels are key-value tags on Kubernetes objects; label selectors are rules that find objects with matching tags.** Many objects can share the same labels, so a selector can identify a group.
 
 ## Attach labels to an object

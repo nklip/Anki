@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What does a Java text block produce, and how do its delimiters, indentation, final newline, and escapes affect the result?
-
-# Back
-
 **Text blocks became final in JDK 15 with JEP 378.**
 
 A text block is a multiline spelling of an ordinary `String`. It starts with `"""` followed by a required line terminator; content cannot begin on the opening delimiter's line.

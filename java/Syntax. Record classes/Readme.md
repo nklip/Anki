@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What is a Java record class, what does its header generate, and why is a record only shallowly immutable?
-
-# Back
-
 **Records became final in JDK 16 with JEP 395.**
 
 A record is a restricted class for representing a fixed set of values with little boilerplate. Its header is both the complete state description and the basis of its public API.

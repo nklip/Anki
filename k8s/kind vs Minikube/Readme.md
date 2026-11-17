@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-How do kind and Minikube compare, and when should you choose each?
-
-# Back
-
 **As a rule of thumb, choose kind for disposable automated test clusters; choose Minikube for interactive learning with built-in helpers or a virtual-machine driver.** This recommendation follows their documented workflows; it is not a hard limit on either tool.
 
 Both run real Kubernetes locally. A **node** is an environment that runs Kubernetes components. A **driver/provider** supplies that environment.

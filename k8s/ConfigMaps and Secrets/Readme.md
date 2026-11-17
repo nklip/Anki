@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-When should configuration go in a ConfigMap rather than a Secret, and what protection does a Secret provide?
-
-# Back
-
 **Use a ConfigMap for non-confidential configuration and a Secret for sensitive values.** Both let you supply configuration independently of a container image. A Secret is a dedicated sensitive-data object, not an automatic guarantee of encryption or safe access.
 
 ## Keep the values in the right place

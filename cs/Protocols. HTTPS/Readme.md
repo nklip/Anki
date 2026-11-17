@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-How does HTTPS use public, private, and shared keys to protect a browser's connection?
-
-# Back
-
 **HTTPS (Hypertext Transfer Protocol Secure)** is **HTTP (Hypertext Transfer Protocol)** protected by **TLS (Transport Layer Security)**. TLS authenticates the server, encrypts messages, and detects tampering in transit. The default server port is **443**.
 
 ## Which keys does the browser get?

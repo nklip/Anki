@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-What is SSH used for, and how does a secure session work?
-
-# Back
-
 **SSH (Secure Shell)** is a protocol for secure remote login and command execution over an untrusted network. It verifies identities, **encrypts** data so network observers cannot read it, and checks **integrity** so changes to the data are detected.
 
 ## Typical uses

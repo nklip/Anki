@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-How do primitive patterns prevent lossy conversions, how do they expand `switch`, and are they final in JDK 27?
-
-# Back
-
 **Primitive Types in Patterns, `instanceof`, and `switch` was previewed for a fifth time in JDK 27 with JEP 532.**
 
 It allows primitive types in pattern contexts, extends `instanceof` to test primitive conversions, and lets `switch` use every primitive selector type. It is still **not final**.

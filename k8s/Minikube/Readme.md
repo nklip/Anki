@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-What does Minikube do, and how do its driver, container runtime, and kubectl fit together?
-
-# Back
-
 **Minikube creates and manages a local Kubernetes cluster for learning, development, and testing.** It runs real Kubernetes on your computer, so you can practise deploying applications without first setting up a remote cluster.
 
 A **node** is a machine environment that runs Kubernetes components. The **control plane** manages the cluster; **Pods** group application containers. By default, Minikube starts one node that hosts the control plane and can run your application Pods. It also supports multiple nodes.

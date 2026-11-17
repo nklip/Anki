@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-What design problem does each SOLID principle address?
-
-# Back
-
 **SOLID** names five design principles for keeping changes local, replacements reliable, and business rules independent of technical details. A **module** is a unit of code; a **client** uses it. An **interface** lists operations; its **contract** includes their promised behavior.
 
 ## S — Single Responsibility Principle

@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-How does gRPC let one service call a method in another service?
-
-# Back
-
 **gRPC is an open-source remote procedure call (RPC) framework:** a client calls a generated local object, while the actual method runs in another service. It normally uses **Protocol Buffers (Protobuf)** to define and encode messages, and **HTTP/2 (Hypertext Transfer Protocol version 2)** to carry them over the network.
 
 ## From a method call to a network request

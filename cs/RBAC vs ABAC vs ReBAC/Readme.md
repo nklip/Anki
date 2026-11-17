@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-How do RBAC, ABAC, and ReBAC decide whether someone can access a resource?
-
-# Back
-
 * **Role-based access control (RBAC)** checks permissions granted through roles.
 * **Attribute-based access control (ABAC)** checks rules over attributes.
 * **Relationship-based access control (ReBAC)** checks relationships to a resource.

@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-How does a Bloom filter test set membership, and why can it return false positives but no false negatives?
-
-# Back
-
 A **Bloom filter** is a space-efficient probabilistic data structure, conceived by Burton Howard Bloom in 1970, that is used to test whether an element is a member of a set. False positive matches are possible, but false negatives are not – in other words, a query returns either **possibly present** or **definitely absent**. A positive can be wrong (**false positive**); a correctly maintained standard filter never reports an inserted item absent (**no false negatives**).
 
 ## How it works

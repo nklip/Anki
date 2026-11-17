@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-How does Karpenter adjust Kubernetes node capacity to fit application demand?
-
-# Back
-
 **Karpenter is an open-source Kubernetes node autoscaler and lifecycle manager.** It provisions suitable nodes when Pods cannot be scheduled, and can remove or replace nodes to reduce cost. A **node** is a machine that runs **Pods**, the units Kubernetes uses to run application containers.
 
 ## Where Karpenter fits

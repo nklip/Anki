@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What is Atomikos, and when does a Java application need it?
-
-# Back
-
 **Atomikos is an embeddable Java transaction manager that coordinates one transaction across multiple resources**, such as two databases. TransactionsEssentials needs no application server.
 
 ## The problem it solves

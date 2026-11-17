@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-How do roles and bindings control access to Kubernetes resources?
-
-# Back
-
 **Role-Based Access Control (RBAC) grants identities permission to perform specific actions on Kubernetes resources.** Authentication establishes who is calling; authorization decides what that identity may do.
 
 ## Rules describe what; bindings say who

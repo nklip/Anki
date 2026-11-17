@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-How does a Job run a finite task, and why must the task tolerate retries?
-
-# Back
-
 **A Job manages Pods for work that should finish, such as a report or batch calculation.** It tracks successful completions and can retry failed attempts within configured limits.
 
 ## Completion is the goal

@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-What is kind, and how does it run Kubernetes locally?
-
-# Back
-
 **kind (Kubernetes IN Docker) creates local Kubernetes clusters whose nodes run as containers.** It runs real Kubernetes for learning, development, and automated tests, including continuous integration (CI).
 
 ## How it works

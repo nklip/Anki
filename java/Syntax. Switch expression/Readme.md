@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-How does a Java `switch` expression produce a value, and when are `yield` and exhaustive cases required?
-
-# Back
-
 **Switch Expressions became final in JDK 14 with JEP 361.**
 
 A `switch` expression selects one arm and produces one value. That value can be assigned, returned, or passed to another expression.

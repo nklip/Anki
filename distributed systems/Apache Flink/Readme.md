@@ -2,12 +2,6 @@
 
 <sub>[Back to Distributed Systems](../Readme.md#content)</sub>
 
-# Front
-
-What is Apache Flink, what is it written in, and when would you use it or an alternative?
-
-# Back
-
 **Apache Flink processes streams of events across multiple machines, keeping information between events so it can update results as new data arrives.**
 
 It is open source and written mainly in **Java**, with **Scala** used in parts of its implementation.

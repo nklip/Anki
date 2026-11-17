@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-What does a Kubernetes Namespace isolate, and what does it leave shared?
-
-# Back
-
 **A Namespace scopes the names and organization of namespaced resources inside one cluster.** It gives teams or environments separate places for objects, but does not by itself provide network isolation or a separate cluster.
 
 ## Same name, different scope

@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-What does `kubectl` do, and how do you use it to inspect and update a Kubernetes application?
-
-# Back
-
 **`kubectl` is the command-line client for the Kubernetes API (application programming interface).** It sends requests to the cluster's API server to inspect or change Kubernetes objects.
 
 ## Choose the target, then send a request

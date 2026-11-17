@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What does `SequencedCollection` add to Java collections, and what does `reversed()` return?
-
-# Back
-
 **Sequenced Collections were introduced in JDK 21 with JEP 431.**
 
 `SequencedCollection<E>` represents a collection with a defined first-to-last encounter order and uniform operations at both ends.

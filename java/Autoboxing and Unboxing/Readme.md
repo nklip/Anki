@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What do autoboxing and unboxing do, and which `null` and equality mistakes can they cause?
-
-# Back
-
 **Autoboxing and unboxing were introduced in J2SE 5.0 through JSR 201.**
 
 **Autoboxing** converts a primitive value to its corresponding wrapper reference; **unboxing** converts a wrapper reference back to its primitive value.

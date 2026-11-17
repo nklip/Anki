@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What does `SequencedSet` add to Java sets, and what does `reversed()` return?
-
-# Back
-
 **`SequencedSet` was introduced in JDK 21 as part of Sequenced Collections (JEP 431).**
 
 `SequencedSet<E>` extends both `Set<E>` and `SequencedCollection<E>`: it combines **unique elements** with a defined first-to-last order, operations at both ends, and a reversed view.

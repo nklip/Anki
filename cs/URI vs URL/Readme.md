@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-What is the difference between a URI and a URL?
-
-# Back
-
 In RFC 3986 terminology, a **URI (Uniform Resource Identifier)** identifies a **resource**, such as a page or a book. A **URL (Uniform Resource Locator)** is a URI that also describes how to locate and access the resource. **Every URL is a URI, but not every URI is a URL.**
 
 ## Compare two examples

@@ -2,12 +2,6 @@
 
 <sub>[Back to Artificial Intelligence](../Readme.md#content)</sub>
 
-# Front
-
-Which six habits help you write a clear prompt, and how do they differ from methods that generate several outputs?
-
-# Back
-
 **Give context, specify constraints, ask it to think first, break into steps, show examples, and set role or tone.** These habits shape a message; methods that generate several outputs organize repeated generation.
 
 The diagram's left panel gives a suggested order, not a measured ranking; the right introduces Self-consistency (sample and vote) and Self-Refine (draft, critique, revise).

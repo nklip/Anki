@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What access is implied when an interface or one of its members has no access modifier, and what changed in Java 9?
-
-# Back
-
 **Private interface methods were introduced in Java SE 9 by JEP 213, “Milling Project Coin.”**
 
 A top-level interface and the members inside it use different defaults: the interface itself has **package access** when `public` is omitted, but its fields, methods, and member types are implicitly **public** when they have no access modifier.

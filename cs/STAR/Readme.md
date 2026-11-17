@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-How do you use STAR to answer a behavioural interview question, and which common pitfalls weaken the answer?
-
-# Back
-
 **STAR** means **Situation, Task, Action, Result**: a structure for explaining a specific past experience so the interviewer can understand your contribution and its outcome. Use it for questions such as “Tell me about a time you improved a process.”
 
 The diagrams follow **one fictional software example**. A **test suite** is a collection of automated software checks. Read each diagram from a vague answer on the left to a specific answer on the right. Use your own real experience in an interview; these numbers are illustrative.

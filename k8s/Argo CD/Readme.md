@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-How does Argo CD deploy Kubernetes applications using GitOps?
-
-# Back
-
 **Argo CD is a continuous delivery tool for Kubernetes that uses Git to describe the desired application state.** This approach is called **GitOps**: configuration changes are committed to Git, and Argo CD compares that configuration with the live cluster and can synchronize the two.
 
 ## From Git to the cluster

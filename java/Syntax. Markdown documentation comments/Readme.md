@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-How do Markdown documentation comments work, and what rule keeps one comment together?
-
-# Back
-
 **Markdown documentation comments were introduced in JDK 23 with JEP 467.**
 
 They let the standard `javadoc` tool read Markdown from consecutive lines beginning with `///` and turn it into API documentation.

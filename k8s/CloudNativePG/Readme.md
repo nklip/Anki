@@ -2,12 +2,6 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-# Front
-
-What does CloudNativePG (CNPG) do in Kubernetes?
-
-# Back
-
 **CloudNativePG (CNPG) is an open-source Kubernetes operator that deploys and manages PostgreSQL databases.** An **operator** is software that watches your declared configuration and keeps the running system aligned with it, using knowledge of the application.
 
 ## How it works

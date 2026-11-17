@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What does Java's “Write Once, Run Anywhere” (WORA) mean, and what are its limits?
-
-# Back
-
 **Write Once, Run Anywhere** means Java source is normally compiled into portable Java Virtual Machine (JVM) bytecode, not one operating system's machine code. The same compatible `.class` files can run wherever a suitable JVM and required libraries exist.
 
 ![java-wora.svg](images/java-wora.svg)

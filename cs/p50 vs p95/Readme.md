@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-What do p50 and p95 request latencies tell you, and how can you measure them automatically?
-
-# Back
-
 **Latency** is how long a request takes. A **percentile** is a cutoff in measurements sorted from smallest to largest. **p50** is the 50th percentile, or **median**: it describes a typical request. **p95** is the 95th percentile: about 95% of requests take no longer than this value; about 5% take longer.
 
 ## Read an example

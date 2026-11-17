@@ -2,12 +2,6 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-# Front
-
-What is a **daemon thread** in Java, and how does it affect application shutdown?
-
-# Back
-
 A **daemon thread does not keep the Java Virtual Machine (JVM) alive**. When the last live **non-daemon thread** finishes, JVM shutdown begins even if daemon threads still have work to do.
 
 ## How it works

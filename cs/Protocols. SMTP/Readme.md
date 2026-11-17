@@ -2,12 +2,6 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-# Front
-
-What does SMTP do in email delivery, and why do mail apps use IMAP or POP3 to read mail?
-
-# Back
-
 **SMTP (Simple Mail Transfer Protocol)** sends email from a mail app to a mail server and relays it between mail servers toward the recipient's mailbox. Separate mailbox-access protocols provide the commands to read mail already stored there.
 
 ## Follow a message
