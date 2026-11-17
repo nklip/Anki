@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="scp-title scp-desc">
+  <title id="scp-title">An SCP sets a limit; IAM grants permission</title>
+  <desc id="scp-desc">A production member account sits under the organization root, Workloads organizational unit, and Production organizational unit. Each level retains the FullAWSAccess service control policy. Production also denies ec2:TerminateInstances. An example IAM role can start instances because its IAM policy grants the action and the SCPs permit it. The role cannot terminate instances even though IAM allows it, because the Production SCP denies it. It cannot stop instances because no IAM policy grants that action. These simplified examples assume no other grants, restrictions, or unmet service requirements.</desc>
+  <!-- Conceptual visual reference: https://docs.aws.amazon.com/images/organizations/latest/userguide/images/scp_deny_1.png
+       Rules: https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_evaluation.html
+       IAM: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html
+       The account path matches the hierarchy diagram; the table is a teaching example, not a complete policy evaluator. -->
+  <!-- Shared styles and manual arrows. Shafts end two units inside their arrowhead bases. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172d46; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4c647e; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <rect width="1200" height="1000" fill="#fff"/>
+  <!-- Expand policy abbreviations before showing the example. -->
+  <text x="32" y="48" class="title">An SCP sets a limit; IAM grants permission</text>
+  <text x="32" y="86" class="body">SCP = service control policy · IAM = Identity and Access Management</text>
+  <text x="32" y="122" class="body">Example: each level keeps FullAWSAccess; Production adds a Deny for termination.</text>
+  <text x="32" y="166" class="heading">Read the account's policy path from left to right</text>
+
+  <!-- Each box represents an attachment level, not a chronological authorization step. -->
+  <g id="root-level">
+    <rect x="32" y="198" width="244" height="176" rx="12" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="52" y="240" class="heading">Organization root</text>
+    <text x="52" y="288" class="body">FullAWSAccess</text>
+    <text x="52" y="334" class="small">SCP allows all actions</text>
+  </g>
+  <g id="workloads-level">
+    <rect x="328" y="198" width="244" height="176" rx="12" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="348" y="240" class="heading">Workloads OU</text>
+    <text x="348" y="288" class="body">FullAWSAccess</text>
+    <text x="348" y="334" class="small">SCP allows all actions</text>
+  </g>
+  <g id="production-level">
+    <rect x="624" y="198" width="244" height="176" rx="12" fill="#fff2e1" stroke="#dcb77e" stroke-width="2"/>
+    <text x="644" y="240" class="heading">Production OU</text>
+    <text x="644" y="288" class="body">FullAWSAccess</text>
+    <text x="644" y="334" class="body">+ Deny termination</text>
+  </g>
+  <g id="account-level">
+    <rect x="920" y="198" width="248" height="176" rx="12" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="940" y="240" class="heading">Application account</text>
+    <text x="940" y="288" class="body">FullAWSAccess</text>
+    <text x="940" y="334" class="small">Member account</text>
+  </g>
+  <!-- Tips meet outer target strokes. Connectors stay inside the gaps between boxes. -->
+  <path id="root-to-workloads-arrow" class="connector" data-connector="true" d="M277 284 H315"/>
+  <polygon id="workloads-head" points="313,277 327,284 313,291" fill="#52677c"/>
+  <path id="workloads-to-production-arrow" class="connector" data-connector="true" d="M573 284 H611"/>
+  <polygon id="production-head" points="609,277 623,284 609,291" fill="#52677c"/>
+  <path id="production-to-account-arrow" class="connector" data-connector="true" d="M869 284 H907"/>
+  <polygon id="account-head" points="905,277 919,284 905,291" fill="#52677c"/>
+  <text x="32" y="414" class="body">OU = organizational unit. A child account cannot override an inherited SCP Deny.</text>
+
+  <!-- A comparison table makes the missing-grant and explicit-deny cases visibly different. -->
+  <text x="32" y="470" class="heading">An example role in the production application account makes three requests</text>
+  <g id="permission-results">
+    <rect x="32" y="498" width="1136" height="284" rx="12" fill="#f8fafc" stroke="#b8c7d8" stroke-width="2"/>
+    <path d="M33 554 H1167 M33 630 H1167 M33 706 H1167" fill="none" stroke="#b8c7d8" stroke-width="1.5"/>
+    <text x="52" y="535" class="heading">Requested action</text>
+    <text x="400" y="535" class="heading">IAM policy</text>
+    <text x="620" y="535" class="heading">Applicable SCPs</text>
+    <text x="956" y="535" class="heading">Result</text>
+    <text x="52" y="600" class="body">ec2:StartInstances</text>
+    <text x="400" y="600" class="body">Allows</text>
+    <text x="620" y="600" class="body">Permit</text>
+    <text x="956" y="600" class="heading">Allowed*</text>
+    <text x="52" y="676" class="body">ec2:TerminateInstances</text>
+    <text x="400" y="676" class="body">Allows</text>
+    <text x="620" y="676" class="body">Explicit Deny</text>
+    <text x="956" y="676" class="heading">Denied</text>
+    <text x="52" y="752" class="body">ec2:StopInstances</text>
+    <text x="400" y="752" class="body">No Allow</text>
+    <text x="620" y="752" class="body">Permit</text>
+    <text x="956" y="752" class="heading">Denied</text>
+  </g>
+
+  <!-- Scope avoids implying that SCP permission alone is sufficient for arbitrary AWS requests. -->
+  <g id="permission-lesson">
+    <rect x="32" y="818" width="1136" height="150" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="52" y="858" class="heading">FullAWSAccess leaves room for permission. It does not grant that permission.</text>
+    <text x="52" y="900" class="body">An explicit SCP Deny wins even if the role has IAM AdministratorAccess.</text>
+    <text x="52" y="942" class="small">*Simplified examples: no other grants, restrictions, or unmet service requirements.</text>
+  </g>
+</svg>

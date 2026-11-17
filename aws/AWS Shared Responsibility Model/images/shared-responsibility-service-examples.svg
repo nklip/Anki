@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="services-title services-desc">
+  <title id="services-title">The service changes which security work you do</title>
+  <desc id="services-desc">Four service examples compare AWS work with customer work. For EC2, AWS runs the physical host and virtualization; the customer patches the guest operating system and applications and configures access. For standard RDS, AWS performs operating-system and database maintenance, while the customer configures database access, backup retention, and maintenance choices. For Lambda Event Functions using a supported managed runtime with automatic updates, AWS patches the runtime; the customer secures code, libraries, and permissions and upgrades before support ends. Container-image deployments require the customer to rebuild and redeploy. For S3, AWS operates and patches the storage service while the customer configures data access and protection. Every example still requires customer decisions about data, access, and recovery.</desc>
+  <!-- Conceptual reference: the customer/AWS ownership layers in the shared responsibility model.
+       https://aws.amazon.com/compliance/shared-responsibility-model/
+       https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-security.html
+       https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_UpgradeDBInstance.Maintenance.html
+       https://docs.aws.amazon.com/lambda/latest/dg/runtime-management-shared.html
+       https://docs.aws.amazon.com/AmazonS3/latest/userguide/security.html -->
+  <!-- Shared typography; orange labels identify AWS work and blue labels identify customer work. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172d46; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4c647e; }
+      .aws { font-size: 20px; font-weight: 700; fill: #8b4a00; }
+      .customer { font-size: 20px; font-weight: 700; fill: #245c91; }
+    </style>
+  </defs>
+  <rect width="1200" height="1000" fill="#fff"/>
+  <!-- Service names define each example's scope. Labels make ownership independent of color. -->
+  <text x="32" y="48" class="title">The service changes which security work you do</text>
+  <text x="32" y="86" class="body">AWS runs the infrastructure. Your work depends on what the service manages for you.</text>
+
+  <!-- EC2: distinguish the guest system from the physical host under it. -->
+  <g id="ec2-responsibilities">
+    <rect x="32" y="126" width="552" height="354" rx="12" fill="#f8fafc" stroke="#b8c7d8" stroke-width="2"/>
+    <text x="56" y="168" class="heading">Amazon EC2 · virtual server</text>
+    <text x="56" y="210" class="aws">AWS</text>
+    <text x="56" y="242" class="body">Runs the physical host and virtualization.</text>
+    <text x="56" y="290" class="customer">You</text>
+    <text x="56" y="324" class="body">Patch the guest OS and installed apps.</text>
+    <text x="56" y="358" class="body">Set access, credentials, and firewall rules.</text>
+    <text x="56" y="414" class="small">OS = operating system. The guest OS is</text>
+    <text x="56" y="442" class="small">Linux or Windows inside your virtual server.</text>
+  </g>
+
+  <!-- Standard RDS delegates patch execution without erasing maintenance decisions. -->
+  <g id="rds-responsibilities">
+    <rect x="616" y="126" width="552" height="354" rx="12" fill="#f8fafc" stroke="#b8c7d8" stroke-width="2"/>
+    <text x="640" y="168" class="heading">Amazon RDS · managed database</text>
+    <text x="640" y="210" class="aws">AWS</text>
+    <text x="640" y="242" class="body">Performs OS and database-engine maintenance.</text>
+    <text x="640" y="290" class="customer">You</text>
+    <text x="640" y="324" class="body">Set database access and backup retention.</text>
+    <text x="640" y="358" class="body">Review updates and schedule maintenance.</text>
+    <text x="640" y="414" class="small">Standard RDS is shown here.</text>
+    <text x="640" y="442" class="small">RDS Custom has a different responsibility split.</text>
+  </g>
+
+  <!-- Lambda scope and image-deployment exception are visible, not hidden in metadata. -->
+  <g id="lambda-responsibilities">
+    <rect x="32" y="508" width="552" height="354" rx="12" fill="#f8fafc" stroke="#b8c7d8" stroke-width="2"/>
+    <text x="56" y="550" class="heading">AWS Lambda · Event Function</text>
+    <text x="56" y="592" class="aws">AWS</text>
+    <text x="56" y="624" class="body">Runs servers; patches the managed runtime.*</text>
+    <text x="56" y="672" class="customer">You</text>
+    <text x="56" y="706" class="body">Secure your code, libraries, and permissions.</text>
+    <text x="56" y="740" class="body">Upgrade before runtime support ends.</text>
+    <text x="56" y="788" class="small">*Supported runtime with Auto updates enabled.</text>
+    <text x="56" y="824" class="small">Container image? You rebuild and redeploy it.</text>
+  </g>
+
+  <!-- S3 separates the managed storage platform from the customer's access choices. -->
+  <g id="s3-responsibilities">
+    <rect x="616" y="508" width="552" height="354" rx="12" fill="#f8fafc" stroke="#b8c7d8" stroke-width="2"/>
+    <text x="640" y="550" class="heading">Amazon S3 · object storage</text>
+    <text x="640" y="592" class="aws">AWS</text>
+    <text x="640" y="624" class="body">Runs and patches the storage service.</text>
+    <text x="640" y="672" class="customer">You</text>
+    <text x="640" y="706" class="body">Set who may read, write, or delete objects.</text>
+    <text x="640" y="740" class="body">Choose data-protection and recovery settings.</text>
+    <text x="640" y="788" class="small">Objects hold data, such as uploaded files.</text>
+    <text x="640" y="824" class="small">There is no S3 server OS for you to patch.</text>
+  </g>
+
+  <!-- The shared conclusion applies across all four examples. -->
+  <g id="service-comparison-lesson">
+    <rect x="32" y="894" width="1136" height="74" rx="12" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="56" y="940" class="heading">Every example still needs your decisions about data, access, and recovery.</text>
+  </g>
+</svg>

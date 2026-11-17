@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="748" viewBox="0 0 1200 748" role="img" aria-labelledby="private-title private-desc">
+  <title id="private-title">Private API access and private backend access are separate choices</title>
+  <desc id="private-desc">Two examples read from left to right. A client inside a Virtual Private Cloud reaches a private REST API in API Gateway through an interface VPC endpoint. Separately, an internet client reaches a public HTTP API in API Gateway, which uses a VPC link to reach an internal Application Load Balancer and its application inside a VPC. A private backend connection does not make the client-facing API private. Both examples still need appropriate authorization.</desc>
+  <!-- Conceptual references: private clients and private backends in Anki api_gateway.png.
+       https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-private-apis.html
+       https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-private.html
+       This comparison separates the two network relationships rather than copying the source layout. -->
+  <!-- Shared styles; blue clients, purple API Gateway, green private network resources. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4b6074; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Title and reading direction. -->
+  <rect width="1200" height="748" fill="#fff"/>
+  <text x="32" y="47" class="title" text-anchor="start">Private API access and private backend access are separate choices</text>
+  <text x="32" y="82" class="body" text-anchor="start">Read each example from left to right. The VPC outlines show where the private network resources live.</text>
+  <!-- Example A: VPC endpoint is on the caller-to-API path. -->
+  <text x="32" y="134" class="heading" text-anchor="start">A. Private API endpoint: clients reach the API through a VPC endpoint</text>
+  <rect id="caller-vpc" x="32" y="156" width="710" height="191" rx="12" fill="#f5faf7" stroke="#8dbca0" stroke-width="2"/>
+  <text x="52" y="185" class="small" text-anchor="start">Your VPC</text>
+  <rect id="private-client" x="52" y="205" width="260" height="110" rx="10" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="72" y="244" class="heading" text-anchor="start">Client in the VPC</text>
+  <text x="72" y="281" class="body" text-anchor="start">Calls the private API</text>
+  <rect id="interface-endpoint" x="410" y="205" width="300" height="110" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="430" y="244" class="heading" text-anchor="start">Interface VPC endpoint</text>
+  <text x="430" y="281" class="body" text-anchor="start">Private entry to the service</text>
+  <rect id="private-rest-api" x="840" y="205" width="328" height="110" rx="10" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="860" y="244" class="heading" text-anchor="start">API Gateway</text>
+  <text x="860" y="281" class="body" text-anchor="start">Private REST API</text>
+  <!-- Shafts stop under triangle bases. Crossing the VPC outline marks traffic leaving the caller network for the service. -->
+  <path id="client-to-endpoint-arrow" class="connector" data-connector="true" d="M313 260 H397"/>
+  <polygon points="395,253 409,260 395,267" fill="#52677c"/>
+  <path id="endpoint-to-private-api-arrow" class="connector" data-connector="true" d="M711 260 H827"/>
+  <polygon points="825,253 839,260 825,267" fill="#52677c"/>
+  <text x="52" y="380" class="body" text-anchor="start">Private REST APIs use this client-side network path. An ordinary public internet path cannot reach them.</text>
+  <!-- Example B: VPC link is on the API-to-backend path; the frontend remains public. -->
+  <text x="32" y="435" class="heading" text-anchor="start">B. Private integration: a public API reaches a backend inside a VPC</text>
+  <rect id="backend-vpc" x="820" y="457" width="368" height="191" rx="12" fill="#f5faf7" stroke="#8dbca0" stroke-width="2"/>
+  <text x="840" y="486" class="small" text-anchor="start">Your VPC</text>
+  <rect id="internet-client" x="52" y="506" width="260" height="110" rx="10" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="72" y="545" class="heading" text-anchor="start">Internet client</text>
+  <text x="72" y="582" class="body" text-anchor="start">Calls the public API</text>
+  <rect id="public-http-api" x="410" y="506" width="300" height="110" rx="10" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="430" y="545" class="heading" text-anchor="start">API Gateway</text>
+  <text x="430" y="582" class="body" text-anchor="start">Public HTTP API</text>
+  <rect id="private-backend" x="840" y="506" width="328" height="110" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="860" y="545" class="heading" text-anchor="start">Internal load balancer</text>
+  <text x="860" y="582" class="body" text-anchor="start">Routes to your application</text>
+  <path id="internet-to-public-api-arrow" class="connector" data-connector="true" d="M313 561 H397"/>
+  <polygon points="395,554 409,561 395,568" fill="#52677c"/>
+  <text x="775" y="535" class="small" text-anchor="middle">VPC link</text>
+  <path id="api-to-private-backend-arrow" class="connector" data-connector="true" d="M711 561 H827"/>
+  <polygon points="825,554 839,561 825,568" fill="#52677c"/>
+  <!-- Final takeaway and abbreviations; both paths still have access-control decisions. -->
+  <text x="32" y="683" class="body" text-anchor="start">A private backend does not make the API private to callers. Both examples still need authorization.</text>
+  <text x="32" y="719" class="small" text-anchor="start">VPC = Virtual Private Cloud. API = application programming interface. HTTP and REST are API product types.</text>
+</svg>

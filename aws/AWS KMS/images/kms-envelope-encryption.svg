@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="910" viewBox="0 0 1200 910" role="img" aria-labelledby="envelope-title envelope-desc">
+  <title id="envelope-title">Envelope encryption: KMS protects the key; the application encrypts the file</title>
+  <desc id="envelope-desc">The write row shows an application calling GenerateDataKey. KMS returns a plaintext data key and an encrypted copy of that same key. The application encrypts the file locally and stores the encrypted file together with the encrypted data key. Later, the application sends only the encrypted data key to KMS Decrypt. After authorization, KMS returns the same plaintext data key. The encrypted file bypasses KMS and is decrypted locally by the application. The application removes the plaintext data key from memory after each use. The symmetric KMS key material stays in KMS, and KMS responses travel over encrypted connections.</desc>
+  <!-- Conceptual references: source Anki SSE-KMS.png and SSE-KMS_decryption.png.
+       Generic application flow isolates envelope encryption from service-specific caching.
+       https://docs.aws.amazon.com/kms/latest/developerguide/data-keys.html
+       https://docs.aws.amazon.com/kms/latest/APIReference/API_GenerateDataKey.html
+       https://docs.aws.amazon.com/kms/latest/APIReference/API_Decrypt.html -->
+  <!-- Shared typography and palette: purple KMS, blue application, green stored or recovered data. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4b6074; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Main lesson; plaintext is defined before the flows use the term. -->
+  <rect width="1200" height="910" fill="#fff"/>
+  <text x="32" y="47" class="title" text-anchor="start">KMS protects the data key; the application encrypts the file</text>
+  <text x="32" y="82" class="body" text-anchor="start">Envelope encryption. Plaintext means unencrypted. Read each row from left to right.</text>
+  <!-- Write path: the application's request is named in the lane heading. -->
+  <text x="32" y="132" class="heading" text-anchor="start">WRITE: the application calls GenerateDataKey</text>
+  <rect id="kms-generate-data-key" x="32" y="159" width="328" height="224" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="52" y="195" class="heading" text-anchor="start">KMS: GenerateDataKey</text>
+  <text x="52" y="235" class="body" text-anchor="start">Creates one random data key</text>
+  <text x="52" y="275" class="body" text-anchor="start">Returns its plaintext form</text>
+  <text x="52" y="304" class="body" text-anchor="start">and an encrypted copy</text>
+  <text x="52" y="354" class="small" text-anchor="start">Two forms of the same key</text>
+  <rect id="application-encrypts-file" x="420" y="159" width="338" height="224" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="440" y="195" class="heading" text-anchor="start">Application</text>
+  <text x="440" y="235" class="body" text-anchor="start">Uses plaintext data key</text>
+  <text x="440" y="275" class="heading" text-anchor="start">Encrypts the file locally</text>
+  <text x="440" y="324" class="small" text-anchor="start">Removes plaintext data key</text>
+  <text x="440" y="353" class="small" text-anchor="start">from memory after use</text>
+  <rect id="stored-package" x="820" y="159" width="348" height="224" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="840" y="195" class="heading" text-anchor="start">Stored together</text>
+  <text x="840" y="242" class="body" text-anchor="start">Encrypted file</text>
+  <text x="840" y="273" class="heading" text-anchor="start">+</text>
+  <text x="840" y="304" class="body" text-anchor="start">Encrypted data key</text>
+  <text x="840" y="354" class="small" text-anchor="start">Keep both for later decryption</text>
+  <!-- Manual arrows hide shaft ends inside triangle bases; tips meet outer target borders. -->
+  <path id="generated-key-response-arrow" class="connector" data-connector="true" d="M361 271 H407"/>
+  <polygon points="405,264 419,271 405,278" fill="#52677c"/>
+  <path id="save-package-arrow" class="connector" data-connector="true" d="M759 271 H807"/>
+  <polygon points="805,264 819,271 805,278" fill="#52677c"/>
+  <!-- Read path: stored file and encrypted key have different destinations. -->
+  <text x="32" y="447" class="heading" text-anchor="start">READ LATER: recover the data key, then decrypt the file</text>
+  <rect id="load-stored-package" x="32" y="476" width="328" height="218" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="52" y="512" class="heading" text-anchor="start">Application loads both</text>
+  <text x="52" y="553" class="body" text-anchor="start">Encrypted data key</text>
+  <text x="52" y="586" class="small" text-anchor="start">Send this part to KMS</text>
+  <text x="52" y="632" class="body" text-anchor="start">Encrypted file</text>
+  <text x="52" y="665" class="small" text-anchor="start">Keep this part outside KMS</text>
+  <rect id="kms-decrypt-data-key" x="420" y="476" width="338" height="218" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="440" y="512" class="heading" text-anchor="start">KMS: Decrypt</text>
+  <text x="440" y="553" class="body" text-anchor="start">Checks permission to use key</text>
+  <text x="440" y="586" class="body" text-anchor="start">Decrypts the data key</text>
+  <text x="440" y="632" class="small" text-anchor="start">Returns the same data key</text>
+  <text x="440" y="661" class="small" text-anchor="start">in plaintext form</text>
+  <rect id="application-decrypts-file" x="820" y="476" width="348" height="218" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="840" y="512" class="heading" text-anchor="start">Application</text>
+  <text x="840" y="553" class="body" text-anchor="start">Uses recovered data key</text>
+  <text x="840" y="586" class="heading" text-anchor="start">Decrypts the file locally</text>
+  <text x="840" y="632" class="small" text-anchor="start">Removes plaintext data key</text>
+  <text x="840" y="661" class="small" text-anchor="start">from memory after use</text>
+  <path id="encrypted-data-key-request-arrow" class="connector" data-connector="true" d="M361 564 H407"/>
+  <polygon points="405,557 419,564 405,571" fill="#52677c"/>
+  <path id="decrypted-data-key-response-arrow" class="connector" data-connector="true" d="M759 564 H807"/>
+  <polygon points="805,557 819,564 805,571" fill="#52677c"/>
+  <!-- The encrypted file bypasses KMS. The upward head meets the application box from below. -->
+  <path id="file-bypasses-kms-arrow" class="connector" data-connector="true" d="M196 695 V757 H994 V707"/>
+  <polygon points="987,709 994,695 1001,709" fill="#52677c"/>
+  <text x="373" y="738" class="body" text-anchor="start">Encrypted file goes directly to the application</text>
+  <!-- Boundary and transport facts prevent confusing a data key with the protecting KMS key. -->
+  <rect id="key-boundary-takeaway" x="32" y="793" width="1136" height="91" rx="10" fill="#fff5e5" stroke="#d8b57e" stroke-width="2"/>
+  <text x="52" y="826" class="body" text-anchor="start">The same symmetric KMS key protects and recovers the data key. Its plaintext material stays inside KMS.</text>
+  <text x="52" y="861" class="small" text-anchor="start">KMS = Key Management Service. KMS requests and responses travel over encrypted connections.</text>
+</svg>

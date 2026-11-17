@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="670" viewBox="0 0 1200 670" role="img" aria-labelledby="vpc-paths-title vpc-paths-desc">
+<title id="vpc-paths-title">Public and private subnets use different internet paths</title>
+<desc id="vpc-paths-desc">Two IPv4 cases. A public-subnet EC2 instance with a public address reaches the internet through an internet gateway. A private-subnet instance without a public address uses a zonal public NAT gateway in a public subnet and then an internet gateway. Replies can return through NAT, but outside hosts cannot start a connection through NAT to the private instance.</desc>
+<!-- Teaching adaptation of https://docs.aws.amazon.com/vpc/latest/userguide/vpc-example-private-subnets-nat.html and its vpc-example-private-subnets.png. Newly drawn layout and labels, not a pixel reproduction. -->
+<!-- Shared typography and semantic palette: blue for application subnets, green for public paths, purple for gateways. -->
+<defs><style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+.title { font-size: 29px; font-weight: 700; }
+.heading { font-size: 22px; font-weight: 700; }
+.body { font-size: 20px; }
+.small { font-size: 18px; fill: #4b6074; }
+.code { font-family: monospace; font-size: 18px; }
+</style></defs>
+<rect width="1200" height="670" fill="#ffffff"/>
+<text x="32" y="47" class="title" text-anchor="start">Public and private subnets use different internet paths</text>
+<text x="32" y="81" class="small" text-anchor="start">IPv4 examples • arrows show outbound requests • network rules must also permit the traffic</text>
+<!-- Public path; route label sits above the connector with a clear text gap. -->
+<rect x="32" y="108" width="1136" height="220" rx="12" fill="#f8fbf9" stroke="#bdd6c7" stroke-width="2"/>
+<text x="52" y="143" class="heading" text-anchor="start">Public subnet: direct route to an internet gateway</text>
+<rect x="52" y="174" width="295" height="102" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+<text x="72" y="207" class="heading" text-anchor="start">EC2 instance</text>
+<text x="72" y="238" class="small" text-anchor="start">Has a public IPv4 address</text>
+<text x="72" y="263" class="small" text-anchor="start">and a private IPv4 address</text>
+<rect x="610" y="174" width="250" height="102" rx="12" fill="#f4effa" stroke="#baa6cf" stroke-width="2"/>
+<text x="735" y="217" class="heading" text-anchor="middle">Internet gateway</text>
+<text x="735" y="249" class="small" text-anchor="middle">Attached to the VPC</text>
+<rect x="1000" y="174" width="148" height="102" rx="12" fill="#ffffff" stroke="#c8d4df" stroke-width="2"/>
+<text x="1074" y="233" class="heading" text-anchor="middle">Internet</text>
+<path data-connector="true" d="M348 237 H598" fill="none" stroke="#52677c" stroke-width="3"/><polygon points="596,230 610,237 596,244" fill="#52677c"/>
+<text x="478" y="200" class="code" text-anchor="middle">0.0.0.0/0</text>
+<text x="478" y="222" class="small" text-anchor="middle">→ internet gateway</text>
+<path data-connector="true" d="M862 237 H988" fill="none" stroke="#52677c" stroke-width="3"/><polygon points="986,230 1000,237 986,244" fill="#52677c"/>
+<text x="52" y="308" class="small" text-anchor="start">A public subnet alone does not give an instance a public address or open its ports.</text>
+<!-- Private path uses the zonal public NAT pattern. All heads meet the left border of the next node. -->
+<rect x="32" y="350" width="1136" height="229" rx="12" fill="#f7faff" stroke="#b8cbe1" stroke-width="2"/>
+<text x="52" y="385" class="heading" text-anchor="start">Private subnet: outbound access through NAT</text>
+<rect x="52" y="418" width="235" height="106" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+<text x="72" y="451" class="heading" text-anchor="start">EC2 instance</text>
+<text x="72" y="481" class="small" text-anchor="start">No public IPv4 address</text>
+<text x="72" y="508" class="code" text-anchor="start">Private: 10.0.2.10</text>
+<rect x="470" y="418" width="250" height="106" rx="12" fill="#f4effa" stroke="#baa6cf" stroke-width="2"/>
+<text x="595" y="452" class="heading" text-anchor="middle">Zonal public NAT</text>
+<text x="595" y="481" class="small" text-anchor="middle">In a public subnet</text>
+<text x="595" y="507" class="small" text-anchor="middle">Uses an Elastic IP</text>
+<rect x="792" y="418" width="198" height="106" rx="12" fill="#f4effa" stroke="#baa6cf" stroke-width="2"/>
+<text x="891" y="455" class="heading" text-anchor="middle">Internet</text>
+<text x="891" y="483" class="heading" text-anchor="middle">gateway</text>
+<rect x="1050" y="418" width="98" height="106" rx="12" fill="#ffffff" stroke="#c8d4df" stroke-width="2"/>
+<text x="1099" y="477" class="small" text-anchor="middle">Internet</text>
+<path data-connector="true" d="M288 493 H458" fill="none" stroke="#52677c" stroke-width="3"/><polygon points="456,486 470,493 456,500" fill="#52677c"/>
+<text x="379" y="447" class="code" text-anchor="middle">0.0.0.0/0</text>
+<text x="379" y="475" class="small" text-anchor="middle">→ NAT gateway</text>
+<path data-connector="true" d="M721 493 H780" fill="none" stroke="#52677c" stroke-width="3"/><polygon points="778,486 792,493 778,500" fill="#52677c"/>
+<path data-connector="true" d="M991 493 H1038" fill="none" stroke="#52677c" stroke-width="3"/><polygon points="1036,486 1050,493 1036,500" fill="#52677c"/>
+<text x="52" y="558" class="small" text-anchor="start">Replies return through NAT. An internet host cannot start a connection through it to the private instance.</text>
+<!-- Scope notes distinguish this teaching example from newer regional NAT gateway deployment. -->
+<text x="32" y="614" class="small" text-anchor="start">NAT = network address translation. An Elastic IP is a static public IPv4 address.</text>
+<text x="32" y="642" class="small" text-anchor="start">This shows zonal NAT. Regional NAT gateways can serve multiple zones without a hosting public subnet.</text>
+</svg>

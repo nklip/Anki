@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-labelledby="cloudwatch-flow-title cloudwatch-flow-desc">
+  <title id="cloudwatch-flow-title">CloudWatch: use metrics to monitor and logs to investigate</title>
+  <desc id="cloudwatch-flow-desc">Two example paths read from left to right. AWS service metrics or custom application metrics go to CloudWatch metrics, then a metric alarm checks a rule and can run a configured notification or scaling action. Application or system logs need configured collection; CloudWatch Logs stores those events, Logs Insights queries them, and a person reads error details to investigate. Metrics are numbers over time; logs are detailed event messages. A metric alarm is one example alarm type, and the CloudWatch agent is an optional collector installed on a server.</desc>
+  <!-- New teaching adaptation of the collect, monitor, act, and analyze ideas in
+       the existing Anki media CW-Overview.png and cloud_watch.png, inspected via
+       /tmp/anki-source-CW-Overview.png and /tmp/anki-source-cloud_watch.png.
+       This is a simplified conceptual adaptation, not a pixel recreation.
+       Factual sources verified 2026-11-17:
+       https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html
+       https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html -->
+  <!-- Shared styles: blue sources, purple CloudWatch tools, green outcomes.
+       Text labels repeat these roles so color is not required for understanding. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4b6074; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Canvas and lesson: follow either row from its source to its useful outcome. -->
+  <rect width="1200" height="650" fill="#fff"/>
+  <text x="32" y="47" class="title" text-anchor="start">CloudWatch: use metrics to monitor and logs to investigate</text>
+  <text x="32" y="81" class="body" text-anchor="start">Two example paths. Read each row from left to right.</text>
+  <text x="32" y="132" class="heading" text-anchor="start">1. Collect</text>
+  <text x="322" y="132" class="heading" text-anchor="start">2. Store</text>
+  <text x="612" y="132" class="heading" text-anchor="start">3. Monitor or query</text>
+  <text x="902" y="132" class="heading" text-anchor="start">4. Use the result</text>
+  <!-- Metrics row: one metric alarm example, with actions explicitly configured. -->
+  <rect id="metric-source" x="32" y="161" width="245" height="158" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="154.5" y="196" class="heading" text-anchor="middle">AWS service metrics</text>
+  <text x="154.5" y="229" class="small" text-anchor="middle">e.g. EC2 cloud servers</text>
+  <text x="154.5" y="265" class="body" text-anchor="middle">or custom metrics</text>
+  <text x="154.5" y="293" class="small" text-anchor="middle">sent by your application</text>
+  <rect id="cloudwatch-metrics" x="322" y="161" width="245" height="158" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="444.5" y="196" class="heading" text-anchor="middle">CloudWatch metrics</text>
+  <text x="444.5" y="233" class="body" text-anchor="middle">Numbers over time</text>
+  <text x="444.5" y="276" class="heading" text-anchor="middle">CPU use: 82%</text>
+  <rect id="metric-alarm" x="612" y="161" width="245" height="158" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="734.5" y="196" class="heading" text-anchor="middle">Metric alarm</text>
+  <text x="734.5" y="233" class="body" text-anchor="middle">Checks a rule</text>
+  <text x="734.5" y="276" class="small" text-anchor="middle">e.g. high CPU use</text>
+  <rect id="configured-action" x="902" y="161" width="266" height="158" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="1035" y="196" class="heading" text-anchor="middle">Configured action</text>
+  <text x="1035" y="233" class="body" text-anchor="middle">Send a notification</text>
+  <text x="1035" y="266" class="body" text-anchor="middle">or scale capacity</text>
+  <text x="1035" y="295" class="small" text-anchor="middle">using a scaling policy</text>
+  <!-- Logs row: collection is configured; queries reveal stored event detail. -->
+  <rect id="log-source" x="32" y="361" width="245" height="158" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="154.5" y="396" class="heading" text-anchor="middle">App / system logs</text>
+  <text x="154.5" y="433" class="small" text-anchor="middle">Detailed event messages</text>
+  <text x="154.5" y="476" class="small" text-anchor="middle">Set up collection first</text>
+  <rect id="cloudwatch-logs" x="322" y="361" width="245" height="158" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="444.5" y="396" class="heading" text-anchor="middle">CloudWatch Logs</text>
+  <text x="444.5" y="433" class="body" text-anchor="middle">Store log events</text>
+  <text x="444.5" y="476" class="small" text-anchor="middle">14:03 request failed</text>
+  <rect id="logs-insights" x="612" y="361" width="245" height="158" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="734.5" y="396" class="heading" text-anchor="middle">Logs Insights query</text>
+  <text x="734.5" y="433" class="body" text-anchor="middle">Search and analyze</text>
+  <text x="734.5" y="466" class="body" text-anchor="middle">log events</text>
+  <rect id="investigation" x="902" y="361" width="266" height="158" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="1035" y="396" class="heading" text-anchor="middle">Investigation</text>
+  <text x="1035" y="433" class="body" text-anchor="middle">Read error details</text>
+  <text x="1035" y="466" class="body" text-anchor="middle">to find a cause</text>
+  <!-- Manual arrows: each shaft ends inside its own triangular base.
+       Tips stop at the outer edge of each target stroke, without entering a box. -->
+  <path id="metric-collection-arrow" class="connector" data-connector="true" d="M278 240 H309"/>
+  <polygon points="307,233 321,240 307,247" fill="#52677c"/>
+  <path id="metric-monitor-arrow" class="connector" data-connector="true" d="M568 240 H599"/>
+  <polygon points="597,233 611,240 597,247" fill="#52677c"/>
+  <path id="metric-action-arrow" class="connector" data-connector="true" d="M858 240 H889"/>
+  <polygon points="887,233 901,240 887,247" fill="#52677c"/>
+  <path id="log-collection-arrow" class="connector" data-connector="true" d="M278 440 H309"/>
+  <polygon points="307,433 321,440 307,447" fill="#52677c"/>
+  <path id="log-query-arrow" class="connector" data-connector="true" d="M568 440 H599"/>
+  <polygon points="597,433 611,440 597,447" fill="#52677c"/>
+  <path id="log-investigation-arrow" class="connector" data-connector="true" d="M858 440 H889"/>
+  <polygon points="887,433 901,440 887,447" fill="#52677c"/>
+  <!-- Definitions and scope keep the two lanes useful without implying exhaustive capabilities. -->
+  <text x="32" y="558" class="small" text-anchor="start">CPU = processor. AWS = Amazon Web Services. A metric alarm is one CloudWatch alarm type.</text>
+  <text x="32" y="591" class="small" text-anchor="start">CloudWatch agent = an optional server collector you install and configure for system metrics and logs.</text>
+  <text x="32" y="624" class="small" text-anchor="start">Many AWS services send metrics automatically; custom metrics, log collection, and alarm actions need setup.</text>
+</svg>

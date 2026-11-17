@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="704" viewBox="0 0 1200 704" role="img" aria-labelledby="read-permissions-title read-permissions-desc">
+  <title id="read-permissions-title">Reading an S3 object encrypted with KMS needs storage and key permissions</title>
+  <desc id="read-permissions-desc">Three same-account roles try to download an existing current object version from a general purpose S3 bucket using server-side encryption with a customer managed KMS key. The key policy enables IAM permissions, the key is usable, and all other policy conditions are satisfied. ReportReader has both s3:GetObject and kms:Decrypt, so the readable object is returned. StorageOnly lacks kms:Decrypt, so the read fails. KeyUserOnly lacks s3:GetObject, so the read also fails. Storage access and permission to use the encryption key are separate decisions.</desc>
+  <!-- Conceptual references: Anki SSE-KMS_decryption.png and the key-policy/IAM
+       permissions comparison in Screenshot 2022-04-27 at 00.40.38.png.
+       https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingKMSEncryption.html
+       https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html -->
+  <!-- Shared typography and explicit outcome labels; color is supplemental. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4b6074; }
+      .allowed { font-size: 22px; font-weight: 700; fill: #256446; }
+      .missing { font-size: 22px; font-weight: 700; fill: #80511d; }
+    </style>
+  </defs>
+  <!-- Scenario and assumptions bound the example to one common authorization pattern. -->
+  <rect width="1200" height="704" fill="#fff"/>
+  <text x="32" y="47" class="title" text-anchor="start">Reading an encrypted S3 object needs storage and key permissions</text>
+  <text x="32" y="82" class="body" text-anchor="start">Example: download the current object from a general purpose bucket using S3 server-side encryption with KMS.</text>
+  <rect id="permission-assumptions" x="32" y="105" width="1136" height="90" rx="10" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="52" y="139" class="body" text-anchor="start">Same account; the customer managed key's policy enables IAM permissions.</text>
+  <text x="52" y="173" class="small" text-anchor="start">Assume the object exists, the key is usable, and no other policy restriction blocks the request.</text>
+  <!-- Column headings describe the two independent permission checks and their combined result. -->
+  <text x="52" y="234" class="heading" text-anchor="start">Application role</text>
+  <text x="298" y="234" class="heading" text-anchor="start">S3 permission</text>
+  <text x="541" y="234" class="heading" text-anchor="start">KMS permission</text>
+  <text x="815" y="234" class="heading" text-anchor="start">Download result</text>
+  <text x="298" y="263" class="small" text-anchor="start">s3:GetObject</text>
+  <text x="541" y="263" class="small" text-anchor="start">kms:Decrypt</text>
+  <!-- Both allows: the storage service can return decrypted content to the authorized reader. -->
+  <rect id="reader-role" x="32" y="284" width="228" height="88" rx="10" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="52" y="336" class="heading" text-anchor="start">ReportReader</text>
+  <rect x="278" y="284" width="225" height="88" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="298" y="336" class="allowed" text-anchor="start">Allowed</text>
+  <rect x="521" y="284" width="256" height="88" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="541" y="336" class="allowed" text-anchor="start">Allowed</text>
+  <rect id="read-succeeds" x="795" y="284" width="373" height="88" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="815" y="322" class="heading" text-anchor="start">Readable object returned</text>
+  <text x="815" y="352" class="small" text-anchor="start">S3 decrypts it for the reader</text>
+  <!-- Storage access alone cannot supply the missing KMS authorization. -->
+  <rect id="storage-only-role" x="32" y="390" width="228" height="88" rx="10" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="52" y="442" class="heading" text-anchor="start">StorageOnly</text>
+  <rect x="278" y="390" width="225" height="88" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="298" y="442" class="allowed" text-anchor="start">Allowed</text>
+  <rect x="521" y="390" width="256" height="88" rx="10" fill="#fff5e5" stroke="#d8b57e" stroke-width="2"/>
+  <text x="541" y="442" class="missing" text-anchor="start">Not allowed</text>
+  <rect id="read-fails-kms" x="795" y="390" width="373" height="88" rx="10" fill="#fff5e5" stroke="#d8b57e" stroke-width="2"/>
+  <text x="815" y="428" class="heading" text-anchor="start">Read fails</text>
+  <text x="815" y="458" class="small" text-anchor="start">Missing permission to use the key</text>
+  <!-- Key access alone cannot authorize retrieval of an S3 object. -->
+  <rect id="key-only-role" x="32" y="496" width="228" height="88" rx="10" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="52" y="548" class="heading" text-anchor="start">KeyUserOnly</text>
+  <rect x="278" y="496" width="225" height="88" rx="10" fill="#fff5e5" stroke="#d8b57e" stroke-width="2"/>
+  <text x="298" y="548" class="missing" text-anchor="start">Not allowed</text>
+  <rect x="521" y="496" width="256" height="88" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="541" y="548" class="allowed" text-anchor="start">Allowed</text>
+  <rect id="read-fails-s3" x="795" y="496" width="373" height="88" rx="10" fill="#fff5e5" stroke="#d8b57e" stroke-width="2"/>
+  <text x="815" y="534" class="heading" text-anchor="start">Read fails</text>
+  <text x="815" y="564" class="small" text-anchor="start">Missing permission to read the object</text>
+  <!-- Plain-language takeaway and acronym definitions make the table stand alone. -->
+  <text x="32" y="623" class="body" text-anchor="start">Storage access does not grant key use. Key use does not grant storage access.</text>
+  <text x="32" y="655" class="small" text-anchor="start">S3 = Simple Storage Service. KMS = Key Management Service.</text>
+  <text x="32" y="684" class="small" text-anchor="start">IAM = Identity and Access Management; its policies give permissions to roles and users.</text>
+</svg>

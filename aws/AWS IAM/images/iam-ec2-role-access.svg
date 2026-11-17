@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="694" viewBox="0 0 1200 694" role="img" aria-labelledby="iam-ec2-role-access-title iam-ec2-role-access-desc">
+<title id="iam-ec2-role-access-title">An EC2 application uses a role to read S3</title>
+<desc id="iam-ec2-role-access-desc">ReportReader has a trust policy for EC2 and a permissions policy for reading a specific S3 prefix. An instance profile associates the role with EC2. The SDK retrieves temporary credentials from instance metadata and signs S3 requests, which remain subject to authorization.</desc>
+<!-- Original teaching adaptation of https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2.html and its roles-usingrole-ec2roleinstance.png diagram. Layout and wording are simplified for this article; this is not a pixel reproduction. -->
+<!-- Shared typography; manual arrowheads overlap only their own shaft joins. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+.title { font-size: 29px; font-weight: 700; }
+.heading { font-size: 22px; font-weight: 700; }
+.body { font-size: 20px; }
+.small { font-size: 18px; fill: #4b6074; }
+.code { font-family: monospace; font-size: 18px; }
+</style></defs>
+<rect width="1200" height="694" fill="#ffffff"/>
+<!-- Two separate policies belong to the same reusable role. -->
+<text x="32" y="47" class="title" text-anchor="start">An EC2 application uses a role to read S3</text><text x="32" y="81" class="small" text-anchor="start">Trust controls who can assume the role. Permissions control what its session can do.</text><rect x="32" y="111" width="1136" height="202" rx="12" fill="#f8f5fc" stroke="#baabd2" stroke-width="2"/><text x="52" y="148" class="heading" text-anchor="start">IAM role: ReportReader</text><rect x="52" y="168" width="520" height="121" rx="12" fill="#ffffff" stroke="#c8d4df" stroke-width="2"/><text x="72" y="201" class="heading" text-anchor="start">Trust policy</text><text x="72" y="238" class="body" text-anchor="start">Allows the EC2 service to assume this role.</text>
+<text x="72" y="266" class="body" text-anchor="start">It does not grant access to S3.</text><rect x="596" y="168" width="552" height="121" rx="12" fill="#ffffff" stroke="#c8d4df" stroke-width="2"/><text x="616" y="201" class="heading" text-anchor="start">Permissions policy</text><text x="616" y="238" class="body" text-anchor="start">Allows s3:GetObject for reports/* in one bucket.</text>
+<text x="616" y="266" class="body" text-anchor="start">It does not grant upload or delete access.</text>
+<!-- The profile association is configuration; the app uses delivered credentials for its requests. -->
+<path data-connector="true" d="M270 317 V338" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="263,336 270,350 277,336" fill="#52677c"/><text x="298" y="341" class="small" text-anchor="start">associated through an instance profile</text><rect x="32" y="354" width="606" height="274" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/><text x="52" y="391" class="heading" text-anchor="start">EC2 instance</text><rect x="52" y="411" width="254" height="176" rx="12" fill="#ffffff" stroke="#c8d4df" stroke-width="2"/><text x="72" y="446" class="heading" text-anchor="start">Role credentials</text><text x="72" y="483" class="body" text-anchor="start">Temporary; provided</text>
+<text x="72" y="512" class="body" text-anchor="start">by instance metadata</text>
+<text x="72" y="541" class="body" text-anchor="start">and refreshed by AWS.</text><rect x="366" y="411" width="252" height="176" rx="12" fill="#ffffff" stroke="#c8d4df" stroke-width="2"/><text x="386" y="446" class="heading" text-anchor="start">Application</text><text x="386" y="483" class="body" text-anchor="start">The SDK retrieves</text>
+<text x="386" y="512" class="body" text-anchor="start">credentials and uses</text>
+<text x="386" y="541" class="body" text-anchor="start">them to sign requests.</text><path data-connector="true" d="M309 510 H350" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="348,503 362,510 348,517" fill="#52677c"/><text x="52" y="612" class="small" text-anchor="start">Instance profile = the container that attaches the role to EC2.</text><rect x="868" y="411" width="300" height="176" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/><text x="888" y="446" class="heading" text-anchor="start">Amazon S3 bucket</text><text x="888" y="483" class="body" text-anchor="start">reports/november.csv</text>
+<text x="888" y="512" class="body" text-anchor="start">S3 checks permission</text>
+<text x="888" y="541" class="body" text-anchor="start">before returning data.</text><path data-connector="true" d="M641 510 H852" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="850,503 864,510 850,517" fill="#52677c"/><text x="751" y="452" class="small" text-anchor="middle">Signed request</text>
+<text x="751" y="479" class="small" text-anchor="middle">s3:GetObject</text>
+<!-- Scope note: permissions remain subject to all applicable controls. -->
+<text x="32" y="666" class="small" text-anchor="start">SDK = software development kit. No long-term IAM user key is stored in the application.</text>
+</svg>

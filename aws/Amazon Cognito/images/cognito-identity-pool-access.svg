@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="identity-title identity-desc">
+  <title id="identity-title">An identity pool gives an app temporary AWS credentials</title>
+  <desc id="identity-desc">A photo app has already signed in with a Cognito user pool. It sends its ID token to an identity pool through GetId and GetCredentialsForIdentity. The identity pool checks the token, selects an allowed IAM role, and returns temporary credentials. The app then uses an AWS software development kit to sign a PutObject upload request directly to Amazon S3. S3 checks the request and permissions. An example role policy allows uploads only to the user's own photo prefix, assuming no other grants, restrictions, or unmet requirements. The identity pool does not forward the uploaded file.</desc>
+  <!-- Conceptual reference: the identity-pool credential broker and S3 branch in the source Cognito overview image.
+       https://docs.aws.amazon.com/cognito/latest/developerguide/authentication-flow.html
+       https://docs.aws.amazon.com/cognitoidentity/latest/APIReference/API_Credentials.html
+       https://docs.aws.amazon.com/cognito/latest/developerguide/iam-roles.html -->
+  <!-- Shared styles. All manual arrow shafts end two units inside their head bases. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172d46; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4c647e; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <rect width="1200" height="1000" fill="#fff"/>
+  <!-- Introduce the concrete example and expand abbreviations before their use. -->
+  <text x="32" y="48" class="title">An identity pool gives an app temporary AWS credentials</text>
+  <text x="32" y="84" class="body">Example: a signed-in photo app uploads directly to Amazon S3.</text>
+  <text x="32" y="114" class="small">IAM = Identity and Access Management · SDK = software development kit</text>
+  <text x="32" y="152" class="heading">1 · Exchange sign-in proof for credentials</text>
+
+  <!-- Phase one keeps credential issuance separate from the later file upload. -->
+  <g id="app-with-id-token">
+    <rect x="32" y="174" width="360" height="270" rx="12" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="56" y="216" class="heading">Browser or mobile app</text>
+    <text x="56" y="258" class="body">Signed in with a user pool</text>
+    <text x="56" y="296" class="body">Has an ID token</text>
+    <text x="56" y="350" class="body">Receives AWS credentials</text>
+    <text x="56" y="389" class="body">Uses them in the next request</text>
+  </g>
+  <g id="identity-pool">
+    <rect x="808" y="174" width="360" height="270" rx="12" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="832" y="216" class="heading">Cognito identity pool</text>
+    <text x="832" y="258" class="body">Checks the trusted ID token</text>
+    <text x="832" y="296" class="body">Chooses an allowed IAM role</text>
+    <text x="832" y="350" class="body">Obtains temporary credentials</text>
+    <text x="832" y="389" class="body">for that role</text>
+  </g>
+  <!-- API names label the enhanced flow. Both requests include the login proof. -->
+  <text x="600" y="222" class="body" text-anchor="middle">GetId, then</text>
+  <text x="600" y="250" class="body" text-anchor="middle">GetCredentialsForIdentity</text>
+  <path id="proof-to-pool-arrow" class="connector" data-connector="true" d="M393 272 H795"/>
+  <polygon id="proof-to-pool-head" points="793,265 807,272 793,279" fill="#52677c"/>
+  <text x="600" y="306" class="small" text-anchor="middle">ID token in both requests</text>
+  <text x="600" y="354" class="body" text-anchor="middle">Temporary AWS credentials</text>
+  <path id="credentials-to-app-arrow" class="connector" data-connector="true" d="M807 376 H405"/>
+  <polygon id="credentials-to-app-head" points="407,369 393,376 407,383" fill="#52677c"/>
+
+  <!-- The same app now calls S3 directly. The identity pool is not a data proxy. -->
+  <text x="32" y="492" class="heading">2 · Use the credentials to sign an AWS request</text>
+  <g id="app-signs-request">
+    <rect x="32" y="526" width="510" height="210" rx="12" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="56" y="568" class="heading">The app holds four credential fields</text>
+    <text x="56" y="610" class="body">Access key ID + secret access key</text>
+    <text x="56" y="648" class="body">Session token + expiration time</text>
+    <text x="56" y="698" class="body">An AWS SDK uses them to sign the upload.</text>
+  </g>
+  <g id="s3-permission-check">
+    <rect x="734" y="526" width="434" height="210" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="758" y="568" class="heading">Amazon S3</text>
+    <text x="758" y="610" class="body">Checks the signed request</text>
+    <text x="758" y="648" class="body">Applies IAM + resource policies</text>
+    <text x="758" y="698" class="body">Stores the file only if allowed</text>
+  </g>
+  <text x="638" y="586" class="body" text-anchor="middle">Signed</text>
+  <text x="638" y="614" class="body" text-anchor="middle">PutObject</text>
+  <path id="signed-upload-arrow" class="connector" data-connector="true" d="M543 638 H721"/>
+  <polygon id="signed-upload-head" points="719,631 733,638 719,645" fill="#52677c"/>
+  <text x="638" y="682" class="small" text-anchor="middle">Upload a file</text>
+
+  <!-- Permissions are an explicit example configuration, never an automatic sign-in benefit. -->
+  <g id="limited-role-example">
+    <rect x="32" y="778" width="1136" height="190" rx="12" fill="#fff2e1" stroke="#dcb77e" stroke-width="2"/>
+    <text x="56" y="818" class="heading">The role's policy limits what the app can do</text>
+    <text x="56" y="862" class="body">Own photo prefix → upload allowed*</text>
+    <text x="640" y="862" class="body">Other users' prefixes → no permission*</text>
+    <text x="56" y="906" class="body">A prefix is the beginning of an object key, similar to a folder path.</text>
+    <text x="56" y="942" class="small">*Example policy; no other grants, restrictions, or unmet requirements.</text>
+  </g>
+</svg>

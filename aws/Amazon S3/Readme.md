@@ -157,4 +157,4 @@ Costs depend on stored data and storage class, requests, applicable retrieval an
 - [AWS: Managing Object Lock](https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock-managing.html)
 - [AWS: S3 event notifications and destinations](https://docs.aws.amazon.com/AmazonS3/latest/userguide/EventNotifications.html)
 - [AWS: Billing reports and S3 charge categories](https://docs.aws.amazon.com/AmazonS3/latest/userguide/aws-billing-reports.html)
-- [AWS Architecture Icons](https://aws.amazon.com/architecture/icons/) — official July 31, 2026 SVG package; S3 service, Bucket, Object, IAM Permissions, Encrypted Data, SSL padlock, and Generic Application artwork. Original vector geometry and colors are preserved in the local diagrams; the overview uses a flat background without gradients or blue corners.
+- [AWS Architecture Icons](https://aws.amazon.com/architecture/icons/) — July 31, 2026 package.

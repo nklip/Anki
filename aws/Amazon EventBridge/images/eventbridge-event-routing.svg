@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="788" viewBox="0 0 1200 788" role="img" aria-labelledby="routing-title routing-desc">
+  <title id="routing-title">Custom Event Bus: publish once, reach both consumers</title>
+  <desc id="routing-desc">A shop publishes an OrderPlaced event for paid order A123 to an EventBridge Custom Event Bus. The bus retains the event. A shipping subscriber matches paid OrderPlaced events and sends this event to a Lambda function. An analytics subscriber matches all OrderPlaced events and sends this event to an Amazon Simple Queue Service queue. Each consumer creates its own subscriber, which has its own filter and one target. Both filters match this event, so both targets receive it.</desc>
+  <!-- Conceptual reference: source → bus → filtering → target relationships in the Anki event_bridge.png.
+       Current subscriber and retention model:
+       https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-custom-bus.html
+       https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-custom-bus-what-is.html
+       This diagram specifically shows Custom Event Bus, not Custom Event Bus - Classic. -->
+  <!-- Shared palette: blue producer, purple bus and subscriptions, green destinations. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172d46; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4c647e; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Read left to right; the branch means the same event can match independent subscribers. -->
+  <rect width="1200" height="788" fill="#ffffff"/>
+  <text x="32" y="47" class="title">Custom Event Bus: publish once, reach both consumers</text>
+  <text x="32" y="82" class="body">The shop sends an event to the bus. Each consumer chooses which events it wants.</text>
+  <text x="32" y="144" class="heading">Producer</text>
+  <text x="320" y="144" class="heading">Event bus</text>
+  <text x="610" y="144" class="heading">Subscribers</text>
+  <text x="950" y="144" class="heading">Targets</text>
+
+  <!-- One concrete event keeps the filtering result easy to follow. -->
+  <rect id="shop-producer" x="32" y="268" width="230" height="236" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="52" y="305" class="heading">The shop</text>
+  <text x="52" y="343" class="body">Publishes:</text>
+  <text x="52" y="380" class="heading">OrderPlaced</text>
+  <text x="52" y="427" class="body">orderId: A123</text>
+  <text x="52" y="465" class="body">status: paid</text>
+
+  <!-- Retention belongs to this Custom Event Bus and does not imply optional Classic archives. -->
+  <rect id="orders-bus" x="320" y="268" width="210" height="236" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="340" y="305" class="heading">Orders bus</text>
+  <text x="340" y="356" class="body">Retains events</text>
+  <text x="340" y="390" class="body">for the period</text>
+  <text x="340" y="424" class="body">you choose.</text>
+  <text x="340" y="472" class="small">Routes to matches</text>
+
+  <!-- Each consumer owns a subscriber with its own filter and exactly one target. -->
+  <rect id="shipping-subscriber" x="610" y="184" width="280" height="180" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="630" y="222" class="heading">Shipping subscriber</text>
+  <text x="630" y="261" class="body">Matches OrderPlaced</text>
+  <text x="630" y="294" class="body">with status = paid</text>
+  <text x="630" y="337" class="small">Created by the shipping team</text>
+  <rect id="analytics-subscriber" x="610" y="416" width="280" height="180" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="630" y="454" class="heading">Analytics subscriber</text>
+  <text x="630" y="493" class="body">Matches every</text>
+  <text x="630" y="526" class="body">OrderPlaced event</text>
+  <text x="630" y="569" class="small">Created by the analytics team</text>
+
+  <!-- Destinations receive separate deliveries of this same matching event. -->
+  <rect id="shipping-target" x="950" y="184" width="218" height="180" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="970" y="222" class="heading">Shipping</text>
+  <text x="970" y="261" class="body">Lambda function</text>
+  <text x="970" y="304" class="small">Receives this event</text>
+  <text x="970" y="337" class="small">Runs shipping code</text>
+  <rect id="analytics-target" x="950" y="416" width="218" height="180" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="970" y="454" class="heading">Analytics queue</text>
+  <text x="970" y="493" class="body">Amazon SQS</text>
+  <text x="970" y="536" class="small">Receives this event</text>
+  <text x="970" y="569" class="small">Holds it for a worker</text>
+
+  <!-- Each shaft ends two units inside its triangle base; tips meet the target's outside stroke. -->
+  <path id="publish-event-arrow" class="connector" data-connector="true" d="M263 386 H307"/>
+  <polygon points="305,379 319,386 305,393" fill="#52677c"/>
+  <!-- Shared trunk deliberately branches outside the bus and away from all labels. -->
+  <path id="bus-branch-shaft" class="connector" data-connector="true" d="M531 386 H570 M570 274 V506"/>
+  <path id="shipping-filter-arrow" class="connector" data-connector="true" d="M570 274 H597"/>
+  <polygon points="595,267 609,274 595,281" fill="#52677c"/>
+  <path id="analytics-filter-arrow" class="connector" data-connector="true" d="M570 506 H597"/>
+  <polygon points="595,499 609,506 595,513" fill="#52677c"/>
+  <path id="shipping-delivery-arrow" class="connector" data-connector="true" d="M891 274 H937"/>
+  <polygon points="935,267 949,274 935,281" fill="#52677c"/>
+  <path id="analytics-delivery-arrow" class="connector" data-connector="true" d="M891 506 H937"/>
+  <polygon points="935,499 949,506 935,513" fill="#52677c"/>
+
+  <!-- The takeaway explains fan-out without requiring knowledge of messaging terminology. -->
+  <rect id="routing-takeaway" x="32" y="632" width="1136" height="102" rx="12" fill="#fff7e8" stroke="#dfc28b" stroke-width="2"/>
+  <text x="52" y="671" class="heading">Each subscriber has its own filter and one target.</text>
+  <text x="52" y="708" class="body">This paid order matches both filters, so both targets receive the event.</text>
+  <text x="32" y="769" class="small">SQS = Simple Queue Service. Lambda runs your code when invoked.</text>
+</svg>

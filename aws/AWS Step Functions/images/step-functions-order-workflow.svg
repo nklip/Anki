@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="order-title order-desc">
+  <title id="order-title">Step Functions coordinates an order</title>
+  <desc id="order-desc">One successful execution processes order A123. Step Functions runs three Task states in order: reserve stock, charge the customer, and arrange shipment. Each Task calls a service and receives a result. The inventory and payment services use Lambda functions; the shipping service uses an API. The services perform the work. This workflow keeps the reservation, payment, and tracking identifiers in its final output. A tracking identifier means shipping has been arranged, not that the parcel has been delivered.</desc>
+  <!-- Conceptual order-workflow reference: Anki image step_functions.png.
+       Service and state-machine semantics:
+       https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html
+       https://docs.aws.amazon.com/step-functions/latest/dg/concepts-statemachines.html -->
+  <!-- Shared typography and palette. Every manual shaft ends two units inside its triangle base. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172d46; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4c647e; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <rect width="1200" height="1000" fill="#ffffff"/>
+  <!-- The scope explicitly excludes the error branches from this successful execution. -->
+  <text x="32" y="48" class="title">Step Functions coordinates an order</text>
+  <text x="32" y="84" class="body">One execution = one run for order A123. Successful path shown.</text>
+
+  <!-- Coordinator band: the workflow definition determines state order and data handling. -->
+  <g id="step-functions-workflow">
+    <rect x="32" y="118" width="1136" height="374" rx="12" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="56" y="158" class="heading">Step Functions · controls the order of tasks</text>
+    <rect x="56" y="182" width="1088" height="72" rx="10" fill="#ffffff" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="76" y="213" class="heading">Start with input: orderId = A123</text>
+    <text x="76" y="241" class="body">A state machine is the workflow definition. A Task state calls a service to do work.</text>
+
+    <rect id="reserve-task" x="56" y="300" width="320" height="156" rx="10" fill="#ffffff" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="76" y="338" class="heading">1  Reserve stock</text>
+    <text x="76" y="376" class="body">Task state</text>
+    <text x="76" y="418" class="body">Keep reservationId</text>
+
+    <rect id="charge-task" x="440" y="300" width="320" height="156" rx="10" fill="#ffffff" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="460" y="338" class="heading">2  Charge customer</text>
+    <text x="460" y="376" class="body">Task state</text>
+    <text x="460" y="418" class="body">Keep paymentId</text>
+
+    <rect id="shipment-task" x="824" y="300" width="320" height="156" rx="10" fill="#ffffff" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="844" y="338" class="heading">3  Arrange shipment</text>
+    <text x="844" y="376" class="body">Task state</text>
+    <text x="844" y="418" class="body">Keep trackingId</text>
+  </g>
+  <!-- Sequence arrows meet outer box strokes. Each task finishes before the next starts. -->
+  <path id="input-to-first-task-arrow" class="connector" data-connector="true" d="M216 255 V287"/>
+  <polygon points="209,285 216,299 223,285" fill="#52677c"/>
+  <path id="reserve-to-charge-arrow" class="connector" data-connector="true" d="M377 378 H427"/>
+  <polygon points="425,371 439,378 425,385" fill="#52677c"/>
+  <path id="charge-to-shipment-arrow" class="connector" data-connector="true" d="M761 378 H811"/>
+  <polygon points="809,371 823,378 809,385" fill="#52677c"/>
+
+  <!-- Worker band: the examples deliberately include an API as well as Lambda functions. -->
+  <g id="services-performing-work">
+    <rect x="32" y="552" width="1136" height="192" rx="12" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="56" y="720" class="heading">Services perform the work; a Task can call Lambda or an API.</text>
+    <rect id="inventory-service" x="56" y="580" width="320" height="98" rx="10" fill="#ffffff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="76" y="616" class="heading">Inventory Lambda</text>
+    <text x="76" y="651" class="body">Holds the items in stock.</text>
+    <rect id="payment-service" x="440" y="580" width="320" height="98" rx="10" fill="#ffffff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="460" y="616" class="heading">Payment Lambda</text>
+    <text x="460" y="651" class="body">Charges the customer.</text>
+    <rect id="shipping-service" x="824" y="580" width="320" height="98" rx="10" fill="#ffffff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="844" y="616" class="heading">Shipping API</text>
+    <text x="844" y="651" class="body">Arranges the shipment.</text>
+  </g>
+
+  <!-- Call and result shafts intentionally cross the two band boundaries. The corridor is clear of text. -->
+  <g id="task-service-calls">
+    <path id="inventory-call-arrow" class="connector" data-connector="true" d="M136 457 V567"/>
+    <polygon points="129,565 136,579 143,565" fill="#52677c"/>
+    <path id="inventory-result-arrow" class="connector" data-connector="true" d="M296 579 V469"/>
+    <polygon points="289,471 296,457 303,471" fill="#52677c"/>
+    <text x="76" y="528" class="body">Call</text>
+    <text x="307" y="528" class="body">Result</text>
+
+    <path id="payment-call-arrow" class="connector" data-connector="true" d="M520 457 V567"/>
+    <polygon points="513,565 520,579 527,565" fill="#52677c"/>
+    <path id="payment-result-arrow" class="connector" data-connector="true" d="M680 579 V469"/>
+    <polygon points="673,471 680,457 687,471" fill="#52677c"/>
+    <text x="460" y="528" class="body">Call</text>
+    <text x="691" y="528" class="body">Result</text>
+
+    <path id="shipping-call-arrow" class="connector" data-connector="true" d="M904 457 V567"/>
+    <polygon points="897,565 904,579 911,565" fill="#52677c"/>
+    <path id="shipping-result-arrow" class="connector" data-connector="true" d="M1064 579 V469"/>
+    <polygon points="1057,471 1064,457 1071,471" fill="#52677c"/>
+    <text x="844" y="528" class="body">Call</text>
+    <text x="1075" y="528" class="body">Result</text>
+  </g>
+
+  <!-- Final accumulated data is an explicit choice of this workflow, not an automatic merge guarantee. -->
+  <g id="completed-execution-output">
+    <rect x="32" y="776" width="1136" height="190" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="56" y="814" class="heading">Execution output after shipping is arranged</text>
+    <text x="56" y="847" class="body">This workflow is configured to keep the input and each service result.</text>
+    <text x="56" y="885" class="body">orderId: A123</text>
+    <text x="304" y="885" class="body">reservationId: R17</text>
+    <text x="600" y="885" class="body">paymentId: P52</text>
+    <text x="884" y="885" class="body">trackingId: T81</text>
+    <text x="56" y="935" class="body">The shipment has a tracking ID. The parcel will be delivered later.</text>
+  </g>
+</svg>

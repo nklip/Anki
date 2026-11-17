@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800" role="img" aria-labelledby="route53-dns-title route53-dns-desc">
+  <title id="route53-dns-title">Route 53 finds the address; the browser connects to the application</title>
+  <desc id="route53-dns-desc">First, the browser asks a recursive DNS resolver for the address of www.example.com. The resolver checks its cache. If it needs a fresh answer, it queries the authoritative Route 53 name servers, which return the example IP address 192.0.2.44. The resolver returns the answer to the browser. Second, the browser uses that address to open an encrypted HTTPS connection directly to the application. Website requests and responses do not pass through Route 53. DNS means Domain Name System; an IP address is a numeric network destination. This address is reserved for documentation.</desc>
+  <!-- Conceptual source: https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/welcome-dns-service.html
+       Reference image: https://docs.aws.amazon.com/images/Route53/latest/DeveloperGuide/images/how-route-53-routes-traffic.png -->
+  <!-- Shared styles: blue client and resolver, purple authoritative DNS, green application. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4b6074; }
+      .dns-connector { fill: none; stroke: #80649c; stroke-width: 2.5; }
+      .web-connector { fill: none; stroke: #3d8159; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Canvas and primary lesson. -->
+  <rect width="1200" height="800" fill="#fff"/>
+  <text x="32" y="47" class="title" text-anchor="start">Route 53 finds the address; the browser connects to the application</text>
+  <text x="32" y="81" class="body" text-anchor="start">DNS (Domain Name System) finds addresses for names. An IP address is a numeric network destination.</text>
+
+  <!-- DNS lane: the resolver mediates all browser-to-authoritative DNS lookup. -->
+  <text x="32" y="133" class="heading" text-anchor="start">1. Find the IP address with DNS</text>
+  <rect id="dns-browser" x="32" y="158" width="250" height="204" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="157" y="200" class="heading" text-anchor="middle">Browser</text>
+  <text x="157" y="250" class="body" text-anchor="middle">www.example.com</text>
+  <text x="157" y="285" class="small" text-anchor="middle">Needs an IP address</text>
+  <text x="157" y="335" class="small" text-anchor="middle">Receives 192.0.2.44</text>
+
+  <rect id="recursive-resolver" x="460" y="158" width="280" height="204" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="600" y="200" class="heading" text-anchor="middle">Recursive resolver</text>
+  <text x="600" y="239" class="body" text-anchor="middle">Looks up names for you</text>
+  <text x="600" y="279" class="body" text-anchor="middle">Checks its DNS cache</text>
+  <text x="600" y="312" class="small" text-anchor="middle">A cache stores answers</text>
+  <text x="600" y="337" class="small" text-anchor="middle">for a limited time.</text>
+
+  <rect id="route53-authoritative" x="918" y="158" width="250" height="204" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="1043" y="200" class="heading" text-anchor="middle">Amazon Route 53</text>
+  <text x="1043" y="239" class="body" text-anchor="middle">Authoritative DNS</text>
+  <text x="1043" y="272" class="small" text-anchor="middle">Holds your DNS records</text>
+  <text x="1043" y="312" class="small" text-anchor="middle">www.example.com</text>
+  <text x="1043" y="337" class="body" text-anchor="middle">Address: 192.0.2.44</text>
+
+  <!-- Manual DNS shafts end inside their own triangular bases. Tips meet outer node strokes. -->
+  <text x="371" y="203" class="small" text-anchor="middle">Name query</text>
+  <path id="browser-query-shaft" class="dns-connector" data-connector="true" d="M283 224 H447"/>
+  <polygon points="445,217 459,224 445,231" fill="#80649c"/>
+  <text x="371" y="308" class="small" text-anchor="middle">IP address</text>
+  <path id="browser-answer-shaft" class="dns-connector" data-connector="true" d="M459 329 H295"/>
+  <polygon points="297,322 283,329 297,336" fill="#80649c"/>
+  <text x="829" y="178" class="small" text-anchor="middle">If not cached:</text>
+  <text x="829" y="203" class="small" text-anchor="middle">name query</text>
+  <path id="authoritative-query-shaft" class="dns-connector" data-connector="true" d="M741 224 H905"/>
+  <polygon points="903,217 917,224 903,231" fill="#80649c"/>
+  <text x="829" y="308" class="small" text-anchor="middle">DNS answer</text>
+  <path id="authoritative-answer-shaft" class="dns-connector" data-connector="true" d="M917 329 H753"/>
+  <polygon points="755,322 741,329 755,336" fill="#80649c"/>
+
+  <!-- Supporting cache and discovery details are kept outside the arrow corridors. -->
+  <text x="32" y="397" class="small" text-anchor="start">A valid cached answer can be returned immediately, without asking Route 53 again.</text>
+  <text x="32" y="425" class="small" text-anchor="start">When needed, the resolver first discovers the authoritative name servers through the DNS hierarchy.</text>
+
+  <!-- Website lane repeats the same browser and sends traffic directly to the application. -->
+  <text x="32" y="475" class="heading" text-anchor="start">2. Use the address to connect to the website</text>
+  <rect id="web-browser" x="32" y="501" width="250" height="150" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="157" y="537" class="heading" text-anchor="middle">Same browser</text>
+  <text x="157" y="577" class="body" text-anchor="middle">Uses 192.0.2.44</text>
+  <text x="157" y="612" class="small" text-anchor="middle">for www.example.com</text>
+  <rect id="application" x="918" y="501" width="250" height="150" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="1043" y="537" class="heading" text-anchor="middle">Application</text>
+  <text x="1043" y="577" class="body" text-anchor="middle">at 192.0.2.44</text>
+  <text x="1043" y="612" class="small" text-anchor="middle">Web server in this example</text>
+
+  <!-- Direct request and response arrows bypass both DNS nodes. -->
+  <text x="600" y="530" class="body" text-anchor="middle">HTTPS request (encrypted web connection)</text>
+  <path id="https-request-shaft" class="web-connector" data-connector="true" d="M283 551 H905"/>
+  <polygon points="903,544 917,551 903,558" fill="#3d8159"/>
+  <text x="600" y="591" class="body" text-anchor="middle">Website content</text>
+  <path id="https-response-shaft" class="web-connector" data-connector="true" d="M917 613 H295"/>
+  <polygon points="297,606 283,613 297,620" fill="#3d8159"/>
+
+  <!-- Main takeaway and documentation-only example scope. -->
+  <rect id="takeaway" x="32" y="692" width="1136" height="60" rx="10" fill="#f3f6f8"/>
+  <text x="600" y="729" class="heading" text-anchor="middle">Route 53 answers DNS queries; it does not carry the website’s HTTP/HTTPS traffic.</text>
+  <text x="32" y="781" class="small" text-anchor="start">192.0.2.44 is an example address reserved for documentation.</text>
+</svg>

@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="824" viewBox="0 0 1200 824" role="img" aria-labelledby="efs-shared-title efs-shared-desc">
+  <title id="efs-shared-title">Amazon EFS lets different servers use one shared file system</title>
+  <desc id="efs-shared-desc">Three Linux application servers in different Availability Zones mount the same Regional Elastic File System at the local path /shared. Each server connects through a mount target in its own zone. The mount targets are network endpoints, not separate data copies. All three servers can access the same /uploads/photo.jpg file. Regional EFS stores data redundantly across at least three Availability Zones.</desc>
+  <!-- Conceptual references: the Regional architecture and the mounting stage of the source Anki efs.png.
+       https://docs.aws.amazon.com/efs/latest/ug/how-it-works.html
+       https://docs.aws.amazon.com/images/efs/latest/ug/images/efs-ec2-how-it-works-Regional_china-world.png
+       This diagram shows shared storage relationships, not physical placement of storage servers. -->
+  <!-- Shared palette: blue clients, purple network endpoints, green shared storage. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4b6074; }
+      .file { font-family: monospace; font-size: 18px; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Start at the application servers, then follow the access paths downward. -->
+  <rect width="1200" height="824" fill="#fff"/>
+  <text x="32" y="47" class="title" text-anchor="start">Amazon EFS: different servers, one shared file system</text>
+  <text x="32" y="82" class="body" text-anchor="start">Each server mounts the same network file system at /shared.</text>
+  <rect id="aws-region" x="32" y="116" width="1136" height="606" rx="12" fill="#fafbfc" stroke="#b9c5d1" stroke-width="2"/>
+  <text x="52" y="153" class="heading" text-anchor="start">One AWS Region — three separate Availability Zones</text>
+  <!-- Zone boundaries group clients with their local mount targets. -->
+  <rect id="zone-a" x="52" y="179" width="344" height="318" rx="12" fill="#fff" stroke="#b9c5d1" stroke-width="2" stroke-dasharray="6 5"/>
+  <rect id="zone-b" x="428" y="179" width="344" height="318" rx="12" fill="#fff" stroke="#b9c5d1" stroke-width="2" stroke-dasharray="6 5"/>
+  <rect id="zone-c" x="804" y="179" width="344" height="318" rx="12" fill="#fff" stroke="#b9c5d1" stroke-width="2" stroke-dasharray="6 5"/>
+  <text x="224" y="214" class="heading" text-anchor="middle">Availability Zone A</text>
+  <text x="600" y="214" class="heading" text-anchor="middle">Availability Zone B</text>
+  <text x="976" y="214" class="heading" text-anchor="middle">Availability Zone C</text>
+  <!-- All clients expose the same remote file under the same example local mount path. -->
+  <rect id="linux-client-a" x="72" y="237" width="304" height="103" rx="10" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <rect id="linux-client-b" x="448" y="237" width="304" height="103" rx="10" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <rect id="linux-client-c" x="824" y="237" width="304" height="103" rx="10" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="224" y="271" class="heading" text-anchor="middle">Linux app server A</text>
+  <text x="600" y="271" class="heading" text-anchor="middle">Linux app server B</text>
+  <text x="976" y="271" class="heading" text-anchor="middle">Linux app server C</text>
+  <text x="224" y="313" class="file" text-anchor="middle">/shared/uploads/photo.jpg</text>
+  <text x="600" y="313" class="file" text-anchor="middle">/shared/uploads/photo.jpg</text>
+  <text x="976" y="313" class="file" text-anchor="middle">/shared/uploads/photo.jpg</text>
+  <!-- Request arrows have separate triangular heads. Shafts end two units inside each head base. -->
+  <path id="client-a-to-target-arrow" class="connector" data-connector="true" d="M224 341 V377"/>
+  <polygon points="217,375 224,389 231,375" fill="#52677c"/>
+  <path id="client-b-to-target-arrow" class="connector" data-connector="true" d="M600 341 V377"/>
+  <polygon points="593,375 600,389 607,375" fill="#52677c"/>
+  <path id="client-c-to-target-arrow" class="connector" data-connector="true" d="M976 341 V377"/>
+  <polygon points="969,375 976,389 983,375" fill="#52677c"/>
+  <text x="244" y="368" class="small" text-anchor="start">read / write</text>
+  <text x="620" y="368" class="small" text-anchor="start">read / write</text>
+  <text x="996" y="368" class="small" text-anchor="start">read / write</text>
+  <!-- Mount targets supply network endpoints, not independent file systems. -->
+  <rect id="mount-target-a" x="72" y="390" width="304" height="84" rx="10" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <rect id="mount-target-b" x="448" y="390" width="304" height="84" rx="10" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <rect id="mount-target-c" x="824" y="390" width="304" height="84" rx="10" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="224" y="423" class="heading" text-anchor="middle">Mount target A</text>
+  <text x="600" y="423" class="heading" text-anchor="middle">Mount target B</text>
+  <text x="976" y="423" class="heading" text-anchor="middle">Mount target C</text>
+  <text x="224" y="453" class="body" text-anchor="middle">Network endpoint</text>
+  <text x="600" y="453" class="body" text-anchor="middle">Network endpoint</text>
+  <text x="976" y="453" class="body" text-anchor="middle">Network endpoint</text>
+  <!-- Connections intentionally cross zone outlines to reach one logical Regional file system. -->
+  <path id="target-a-to-files-arrow" class="connector" data-connector="true" d="M224 475 V535"/>
+  <polygon points="217,533 224,547 231,533" fill="#52677c"/>
+  <path id="target-b-to-files-arrow" class="connector" data-connector="true" d="M600 475 V535"/>
+  <polygon points="593,533 600,547 607,533" fill="#52677c"/>
+  <path id="target-c-to-files-arrow" class="connector" data-connector="true" d="M976 475 V535"/>
+  <polygon points="969,533 976,547 983,533" fill="#52677c"/>
+  <!-- One shared storage box prevents a misleading one-copy-per-mount-target interpretation. -->
+  <rect id="regional-shared-files" x="52" y="548" width="1096" height="148" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="600" y="585" class="heading" text-anchor="middle">One Regional EFS file system</text>
+  <text x="600" y="622" class="file" text-anchor="middle">/uploads/photo.jpg</text>
+  <text x="600" y="662" class="body" text-anchor="middle">Same shared files · Data stored redundantly across at least 3 Availability Zones</text>
+  <!-- Definitions and the endpoint distinction keep the image understandable on its own. -->
+  <text x="32" y="759" class="body" text-anchor="start">Mount targets provide network access; they are not separate copies of your files.</text>
+  <text x="32" y="793" class="small" text-anchor="start">EFS = Elastic File System. Clients use Network File System (NFS) traffic on network port 2049.</text>
+</svg>

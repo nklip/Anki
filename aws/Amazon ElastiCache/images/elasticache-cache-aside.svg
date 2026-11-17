@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="844" viewBox="0 0 1200 844" role="img" aria-labelledby="cache-aside-title cache-aside-desc">
+  <title id="cache-aside-title">Cache aside: the application checks the cache before the database</title>
+  <desc id="cache-aside-desc">Two paths for reading product 42. On a cache hit, the application asks ElastiCache, receives the unexpired cached product, and returns it without querying the database. On a cache miss, the application receives no cached value, reads the product from the authoritative database, stores a copy in ElastiCache with a time to live of 60 seconds, and returns the product. The application performs these actions; ElastiCache does not automatically query the database. A cache hit does not prove that the cached value is current.</desc>
+  <!-- Conceptual references: Anki elasti_cache.png and cache-patterns.png show an application using ElastiCache alongside a database.
+       Cache-aside and TTL behavior: https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/Strategies.html
+       The visual uses a control-flow sequence to avoid implying that ElastiCache fetches database rows itself. -->
+  <!-- Shared typography, pastel palette, and manual-arrow geometry match the neighboring AWS diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172d46; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4c647e; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <rect width="1200" height="844" fill="#fff"/>
+  <!-- The example key names one product; the two panels are alternative outcomes of a read. -->
+  <text x="32" y="48" class="title">Cache aside: check the cache before the database</text>
+  <text x="32" y="84" class="body">The application needs product:42. Follow the matching path from left to right.</text>
+
+  <!-- Hit: the unexpired copy is returned without a database query. -->
+  <g id="cache-hit-path">
+    <rect x="32" y="120" width="1136" height="268" rx="12" fill="#f8fafc" stroke="#b8c7d8" stroke-width="2"/>
+    <text x="52" y="160" class="heading">Cache hit · the key exists and has not expired</text>
+    <rect x="52" y="194" width="330" height="142" rx="10" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="72" y="232" class="heading">Application checks cache</text>
+    <text x="72" y="270" class="body">Read key: product:42</text>
+    <text x="72" y="307" class="small">The application starts the lookup.</text>
+    <rect x="437" y="194" width="330" height="142" rx="10" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="457" y="232" class="heading">ElastiCache returns copy</text>
+    <text x="457" y="270" class="body">Title: “Blue mug”</text>
+    <text x="457" y="307" class="body">Price: £12</text>
+    <rect x="822" y="194" width="324" height="142" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="842" y="232" class="heading">Application returns data</text>
+    <text x="842" y="270" class="body">Use the cached product.</text>
+    <text x="842" y="307" class="body">No database query.</text>
+    <text x="52" y="369" class="small">A hit means the copy is available. It does not prove the database still contains the same value.</text>
+  </g>
+  <!-- Each arrow shows control moving to the next action. Tips touch target outer strokes; shafts end under the head bases. -->
+  <path id="hit-lookup-arrow" class="connector" data-connector="true" d="M383 265 H424"/>
+  <polygon points="422,258 436,265 422,272" fill="#52677c"/>
+  <path id="hit-response-arrow" class="connector" data-connector="true" d="M768 265 H809"/>
+  <polygon points="807,258 821,265 807,272" fill="#52677c"/>
+
+  <!-- Miss: four application-controlled actions, with the database as the source of truth. -->
+  <g id="cache-miss-path">
+    <rect x="32" y="414" width="1136" height="296" rx="12" fill="#fffaf2" stroke="#dcb77e" stroke-width="2"/>
+    <text x="52" y="454" class="heading">Cache miss · the key is absent or expired</text>
+    <rect x="52" y="488" width="236" height="158" rx="10" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="72" y="525" class="heading">1. Cache lookup</text>
+    <text x="72" y="563" class="body">App asks for the key.</text>
+    <text x="72" y="598" class="body">ElastiCache returns</text>
+    <text x="72" y="627" class="body">“not found.”</text>
+    <rect x="338" y="488" width="236" height="158" rx="10" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="358" y="525" class="heading">2. Read database</text>
+    <text x="358" y="563" class="body">App reads product 42</text>
+    <text x="358" y="598" class="body">from the database.</text>
+    <text x="358" y="627" class="small">This is the source of truth.</text>
+    <rect x="624" y="488" width="236" height="158" rx="10" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="644" y="525" class="heading">3. Fill cache</text>
+    <text x="644" y="563" class="body">App stores a copy</text>
+    <text x="644" y="598" class="body">under product:42.</text>
+    <text x="644" y="627" class="body">Example TTL: 60 sec.</text>
+    <rect x="910" y="488" width="236" height="158" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="930" y="525" class="heading">4. Return data</text>
+    <text x="930" y="563" class="body">App returns the</text>
+    <text x="930" y="598" class="body">product it read</text>
+    <text x="930" y="627" class="body">from the database.</text>
+    <text x="52" y="687" class="small">Next time, the cached copy may satisfy the read. The application handles every database read and cache fill.</text>
+  </g>
+  <!-- The miss sequence uses separate arrowheads so none can protrude into a box or cross a label. -->
+  <path id="miss-to-database-arrow" class="connector" data-connector="true" d="M289 567 H325"/>
+  <polygon points="323,560 337,567 323,574" fill="#52677c"/>
+  <path id="database-to-cache-fill-arrow" class="connector" data-connector="true" d="M575 567 H611"/>
+  <polygon points="609,560 623,567 609,574" fill="#52677c"/>
+  <path id="cache-fill-to-response-arrow" class="connector" data-connector="true" d="M861 567 H897"/>
+  <polygon points="895,560 909,567 895,574" fill="#52677c"/>
+
+  <!-- Definition and responsibility clarify both expiry and the lack of automatic database synchronization. -->
+  <rect x="32" y="736" width="1136" height="76" rx="12" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+  <text x="52" y="767" class="body">TTL = time to live: how long this cached copy may remain before it expires.</text>
+  <text x="52" y="797" class="body">ElastiCache does not automatically fetch database rows or notice changes to them.</text>
+</svg>

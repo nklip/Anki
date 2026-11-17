@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="780" viewBox="0 0 1200 780" role="img" aria-labelledby="changes-title changes-desc">
+  <title id="changes-title">CloudFormation: review whether an update will replace a resource</title>
+  <desc id="changes-desc">Two independent changes to an Amazon S3 bucket illustrate why a change set matters. Changing an Environment tag from dev to prod previews Modify with Replacement False; after successful execution the same bucket and its objects remain. Changing BucketName previews Modify with Replacement True; execution creates a new, empty bucket. In this example UpdateReplacePolicy is Retain, so the old bucket and its objects remain outside the stack's management and continue to incur storage charges. CloudFormation does not copy the objects into the replacement bucket. Creating a change set does not change live resources; executing it applies the changes.</desc>
+  <!-- Conceptual workflow reference:
+       https://docs.aws.amazon.com/images/AWSCloudFormation/latest/UserGuide/images/update-stack-changesets-diagram.png
+       https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-changesets.html
+       Property and retention sources:
+       https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-s3-bucket.html
+       https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-attribute-updatereplacepolicy.html -->
+  <!-- Shared styles: blue proposed edits, purple preview, green unchanged identity, amber replacement. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4b6074; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Lesson and explicit preview boundary apply to both independent rows. -->
+  <rect width="1200" height="780" fill="#fff"/>
+  <text x="32" y="47" class="title" text-anchor="start">CloudFormation: review whether an update will replace a resource</text>
+  <text x="32" y="82" class="body" text-anchor="start">Two independent changes to an S3 bucket. S3 stores files as objects.</text>
+  <rect id="preview-boundary" x="32" y="105" width="1136" height="54" rx="10" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="52" y="139" class="body" text-anchor="start">A change set previews the update. Live resources change only when you execute it.</text>
+  <text x="32" y="198" class="heading" text-anchor="start">Proposed template edit</text>
+  <text x="390" y="198" class="heading" text-anchor="start">Change-set preview</text>
+  <text x="762" y="198" class="heading" text-anchor="start">After successful execution</text>
+  <text x="32" y="226" class="small" text-anchor="start">Choose one of these examples</text>
+  <text x="390" y="226" class="small" text-anchor="start">Review before you proceed</text>
+  <text x="762" y="226" class="small" text-anchor="start">The effect depends on the property</text>
+  <!-- Tag update: resource identity and stored objects do not change. -->
+  <rect id="tag-edit" x="32" y="250" width="300" height="166" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="52" y="285" class="heading" text-anchor="start">Change a tag</text>
+  <text x="52" y="322" class="body" text-anchor="start">Environment: dev → prod</text>
+  <text x="52" y="363" class="small" text-anchor="start">A tag is a key-value label</text>
+  <text x="52" y="391" class="small" text-anchor="start">attached to the bucket.</text>
+  <rect id="tag-preview" x="390" y="250" width="310" height="166" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="410" y="285" class="heading" text-anchor="start">Modify</text>
+  <text x="410" y="322" class="body" text-anchor="start">Replacement: False</text>
+  <text x="410" y="363" class="small" text-anchor="start">Same physical resource</text>
+  <text x="410" y="391" class="small" text-anchor="start">Tag update: no interruption</text>
+  <rect id="tag-result" x="762" y="250" width="406" height="166" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="782" y="285" class="heading" text-anchor="start">Same bucket</text>
+  <text x="782" y="327" class="body" text-anchor="start">Objects stay in place.</text>
+  <text x="782" y="368" class="body" text-anchor="start">Environment tag becomes prod.</text>
+  <!-- Bucket-name update: a replacement is a different physical bucket, not a data move. -->
+  <rect id="name-edit" x="32" y="445" width="300" height="192" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="52" y="480" class="heading" text-anchor="start">Change BucketName</text>
+  <text x="52" y="521" class="body" text-anchor="start">Specify a different</text>
+  <text x="52" y="551" class="body" text-anchor="start">bucket name.</text>
+  <text x="52" y="602" class="small" text-anchor="start">This requires a replacement.</text>
+  <rect id="name-preview" x="390" y="445" width="310" height="192" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="410" y="480" class="heading" text-anchor="start">Modify</text>
+  <text x="410" y="521" class="body" text-anchor="start">Replacement: True</text>
+  <text x="410" y="562" class="small" text-anchor="start">A new physical resource</text>
+  <text x="410" y="602" class="small" text-anchor="start">Plan for data and app changes.</text>
+  <rect id="name-result" x="762" y="445" width="406" height="192" rx="12" fill="#fff5e5" stroke="#d8b57e" stroke-width="2"/>
+  <text x="782" y="480" class="heading" text-anchor="start">New bucket, new identity</text>
+  <text x="782" y="521" class="body" text-anchor="start">New bucket starts empty.</text>
+  <text x="782" y="558" class="body" text-anchor="start">Old bucket and files stay.*</text>
+  <text x="782" y="602" class="small" text-anchor="start">No automatic copy of objects.</text>
+  <!-- Shafts stop inside triangular bases; tips touch the outer target stroke without entering it. -->
+  <path id="tag-edit-to-preview-arrow" class="connector" data-connector="true" d="M333 333 H377"/>
+  <polygon points="375,326 389,333 375,340" fill="#52677c"/>
+  <path id="tag-preview-to-result-arrow" class="connector" data-connector="true" d="M701 333 H749"/>
+  <polygon points="747,326 761,333 747,340" fill="#52677c"/>
+  <path id="name-edit-to-preview-arrow" class="connector" data-connector="true" d="M333 541 H377"/>
+  <polygon points="375,534 389,541 375,548" fill="#52677c"/>
+  <path id="name-preview-to-result-arrow" class="connector" data-connector="true" d="M701 541 H749"/>
+  <polygon points="747,534 761,541 747,548" fill="#52677c"/>
+  <!-- Retention is an explicit example assumption, not the replacement default. -->
+  <rect id="retention-assumption" x="32" y="660" width="1136" height="94" rx="10" fill="#fff5e5" stroke="#d8b57e" stroke-width="2"/>
+  <text x="52" y="695" class="body" text-anchor="start">* This example sets UpdateReplacePolicy: Retain to keep the old bucket and its objects.</text>
+  <text x="52" y="731" class="small" text-anchor="start">The retained old bucket is no longer managed by the stack, and storage charges continue.</text>
+</svg>

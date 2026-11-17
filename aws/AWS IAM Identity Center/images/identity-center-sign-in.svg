@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="sign-in-title sign-in-desc">
+  <title id="sign-in-title">IAM Identity Center: directory sync and sign-in do different jobs</title>
+  <desc id="sign-in-desc">An external company identity provider synchronizes Alex and the Developers group into IAM Identity Center with SCIM. An administrator assigns the intended account roles and applications. Later, Alex opens the AWS access portal and is redirected to the company identity provider, which checks the credentials and any required extra verification. It returns a SAML sign-in proof through the browser. IAM Identity Center validates the proof and matches Alex to the stored user. The portal displays Alex's assigned AWS accounts and roles, and applications. This example uses the permission-set approach for account roles. The Identity Center directory and Microsoft Active Directory are other identity-source choices. Directory synchronization does not sign a user in, and successful sign-in does not grant every permission.</desc>
+  <!-- Conceptual reference: the identity-provider, Identity Center, and account-access flow in
+       https://docs.aws.amazon.com/prescriptive-guidance/latest/designing-control-tower-landing-zone/authentication.html
+       SAML authentication and SCIM provisioning semantics:
+       https://docs.aws.amazon.com/singlesignon/latest/userguide/manage-your-identity-source-idp.html
+       https://docs.aws.amazon.com/singlesignon/latest/userguide/other-idps.html -->
+  <!-- Shared typography and palette; manual shafts end two units inside their head bases. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172d46; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4c647e; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <rect width="1200" height="1000" fill="#fff"/>
+  <!-- The two processes share identity records, but happen for different reasons. -->
+  <text x="32" y="48" class="title">IAM Identity Center: directory sync and sign-in</text>
+  <text x="32" y="84" class="body">SCIM syncs identity records. SAML carries proof that a person signed in.</text>
+
+  <!-- Provisioning happens before assignments; the middle corridor carries only directory records. -->
+  <g id="directory-provisioning">
+    <rect x="32" y="118" width="1136" height="208" rx="12" fill="#f8fafc" stroke="#b8c7d8" stroke-width="2"/>
+    <text x="56" y="156" class="heading">Before sign-in: make users and groups available</text>
+    <rect id="company-directory" x="56" y="180" width="344" height="102" rx="10" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="76" y="216" class="heading">Company identity provider</text>
+    <text x="76" y="256" class="body">Alex belongs to Developers.</text>
+    <rect id="stored-identity-records" x="800" y="180" width="344" height="102" rx="10" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="820" y="216" class="heading">IAM Identity Center</text>
+    <text x="820" y="256" class="body">Stores the user + group records.</text>
+    <text x="600" y="208" text-anchor="middle" class="body">SCIM directory sync</text>
+    <text x="600" y="268" text-anchor="middle" class="small">This does not sign Alex in.</text>
+    <text x="56" y="310" class="body">An administrator then assigns account access and applications to the user or group.</text>
+  </g>
+  <!-- The arrow tip stops at the outer stroke of the stored-records box. -->
+  <path id="scim-sync-arrow" class="connector" data-connector="true" d="M401 232 H787"/>
+  <polygon id="scim-sync-head" points="785,225 799,232 785,239" fill="#52677c"/>
+
+  <!-- Browser redirects and the SAML response are summarized as a left-to-right sign-in sequence. -->
+  <g id="user-authentication">
+    <rect x="32" y="350" width="1136" height="246" rx="12" fill="#f8fafc" stroke="#b8c7d8" stroke-width="2"/>
+    <text x="56" y="390" class="heading">At sign-in: prove who Alex is</text>
+    <rect id="alex-opens-portal" x="56" y="420" width="280" height="144" rx="10" fill="#fff2e1" stroke="#dcb77e" stroke-width="2"/>
+    <text x="76" y="456" class="heading">Alex opens the portal</text>
+    <text x="76" y="496" class="body">The portal redirects Alex</text>
+    <text x="76" y="528" class="body">to the company IdP.</text>
+    <rect id="company-sign-in" x="420" y="420" width="330" height="144" rx="10" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="440" y="456" class="heading">Company IdP</text>
+    <text x="440" y="494" class="body">Checks login and required</text>
+    <text x="440" y="524" class="body">extra verification.</text>
+    <text x="440" y="552" class="small">IdP = identity provider</text>
+    <rect id="validate-saml-proof" x="834" y="420" width="310" height="144" rx="10" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="854" y="456" class="heading">IAM Identity Center</text>
+    <text x="854" y="494" class="body">Validates SAML sign-in proof.</text>
+    <text x="854" y="528" class="body">Matches Alex to stored user.</text>
+    <text x="56" y="584" class="small">The SAML proof returns through the browser; the company password stays with the IdP.</text>
+  </g>
+  <!-- Short arrows have no labels in their clearance corridors. -->
+  <path id="redirect-to-idp-arrow" class="connector" data-connector="true" d="M337 492 H407"/>
+  <polygon id="redirect-to-idp-head" points="405,485 419,492 405,499" fill="#52677c"/>
+  <path id="saml-proof-arrow" class="connector" data-connector="true" d="M751 492 H821"/>
+  <polygon id="saml-proof-head" points="819,485 833,492 819,499" fill="#52677c"/>
+
+  <!-- The vertical flow crosses only the band border and stays clear of both captions. -->
+  <text x="56" y="619" class="body">Successful sign-in opens the portal with Alex’s assigned access.</text>
+  <path id="open-assigned-access-arrow" class="connector" data-connector="true" d="M989 565 V617"/>
+  <polygon id="open-assigned-access-head" points="982,615 989,629 996,615" fill="#52677c"/>
+
+  <!-- Account roles and applications are distinct portal choices, not automatically shared permissions. -->
+  <g id="assigned-portal-choices">
+    <rect x="32" y="630" width="1136" height="206" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="56" y="668" class="heading">AWS access portal</text>
+    <rect id="assigned-accounts" x="56" y="690" width="520" height="120" rx="10" fill="#fff" stroke="#8dbca0" stroke-width="2"/>
+    <text x="76" y="725" class="heading">AWS accounts + roles</text>
+    <text x="76" y="760" class="body">Choose an assigned account and role.</text>
+    <text x="76" y="793" class="body">Use that role’s permissions with temporary access.</text>
+    <rect id="assigned-applications" x="624" y="690" width="520" height="120" rx="10" fill="#fff" stroke="#8dbca0" stroke-width="2"/>
+    <text x="644" y="725" class="heading">Applications</text>
+    <text x="644" y="760" class="body">Open an assigned application.</text>
+    <text x="644" y="793" class="body">Its own access rules still apply.</text>
+  </g>
+
+  <!-- Scope note distinguishes the illustrated external-provider choice from the other sources. -->
+  <g id="identity-source-scope">
+    <rect x="32" y="860" width="1136" height="108" rx="12" fill="#fff2e1" stroke="#dcb77e" stroke-width="2"/>
+    <text x="56" y="895" class="heading">This example uses an external identity provider, such as Microsoft Entra ID or Okta.</text>
+    <text x="56" y="928" class="body">Other identity-source choices: Identity Center directory or Microsoft Active Directory.</text>
+    <text x="56" y="957" class="body">Choose one identity source for the instance. Signing in does not grant every permission.</text>
+  </g>
+</svg>

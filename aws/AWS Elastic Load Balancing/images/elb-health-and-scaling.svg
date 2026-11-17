@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="865" viewBox="0 0 1200 865" role="img" aria-labelledby="elb-health-title elb-health-desc">
+<title id="elb-health-title">Health checks change routing; Auto Scaling replaces instances</title>
+<desc id="elb-health-desc">Three stages distinguish request routing from instance replacement. After target A reaches the configured failed-health-check threshold, an Application Load Balancer sends new requests to healthy target B while A still exists. With an attached target group and Elastic Load Balancing health checks enabled, EC2 Auto Scaling replaces unhealthy A. Replacement C is registered and must become healthy before receiving ALB requests. This example assumes B remains healthy; if all registered targets are unhealthy, ALB can fail open.</desc>
+<!-- Original teaching example based on AWS documentation:
+https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html
+https://docs.aws.amazon.com/autoscaling/ec2/userguide/health-checks-overview.html
+https://docs.aws.amazon.com/autoscaling/ec2/userguide/autoscaling-load-balancer.html -->
+<!-- Shared typography and semantic palette: purple ALB, blue targets, green healthy, red unhealthy. -->
+<defs><style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+.title { font-size: 29px; font-weight: 700; }
+.heading { font-size: 22px; font-weight: 700; }
+.body { font-size: 20px; }
+.small { font-size: 18px; fill: #4b6074; }
+</style></defs>
+<rect width="1200" height="865" fill="#ffffff"/>
+<!-- Read from top to bottom; the instance labels identify the same targets across stages. -->
+<text x="32" y="47" class="title" text-anchor="start">Health checks change routing; Auto Scaling replaces instances</text>
+<text x="32" y="81" class="small" text-anchor="start">ALB = Application Load Balancer. In this example, each target is an EC2 instance running the application.</text>
+<!-- Stage 1: failing checks change A's health status, while B remains available. -->
+<rect id="failed-checks-stage" x="32" y="108" width="1136" height="160" rx="12" fill="#f7f9fc" stroke="#c8d4df" stroke-width="2"/>
+<text x="52" y="145" class="heading" text-anchor="start">1  Health checks mark A unhealthy</text>
+<text x="52" y="185" class="body" text-anchor="start">A reaches the configured number of</text>
+<text x="52" y="215" class="body" text-anchor="start">consecutive failed health checks.</text>
+<rect id="failed-target-a" x="675" y="165" width="214" height="76" rx="12" fill="#fff0ef" stroke="#d29a96" stroke-width="2"/>
+<text x="782" y="195" class="heading" text-anchor="middle">Target A</text>
+<text x="782" y="223" class="body" text-anchor="middle">Unhealthy</text>
+<rect id="healthy-target-b" x="925" y="165" width="220" height="76" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+<text x="1035" y="195" class="heading" text-anchor="middle">Target B</text>
+<text x="1035" y="223" class="body" text-anchor="middle">Healthy</text>
+<!-- Stage 2: the only traffic arrow goes to B; A is deliberately still drawn as an existing instance. -->
+<rect id="routing-stage" x="32" y="288" width="1136" height="245" rx="12" fill="#fbfcfe" stroke="#c8d4df" stroke-width="2"/>
+<text x="52" y="325" class="heading" text-anchor="start">2  ALB sends new requests to B</text>
+<rect id="routing-alb" x="52" y="365" width="255" height="100" rx="12" fill="#f4effa" stroke="#baa6cf" stroke-width="2"/>
+<text x="179.5" y="405" class="heading" text-anchor="middle">ALB</text>
+<text x="179.5" y="438" class="small" text-anchor="middle">Selects healthy targets</text>
+<rect id="bypassed-target-a" x="674" y="346" width="250" height="70" rx="12" fill="#fff0ef" stroke="#d29a96" stroke-width="2"/>
+<text x="799" y="375" class="body" text-anchor="middle">A · unhealthy</text>
+<text x="799" y="401" class="small" text-anchor="middle">No new ALB requests</text>
+<text x="948" y="387" class="body" text-anchor="start">A still exists.</text>
+<rect id="receiving-target-b" x="674" y="438" width="250" height="70" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+<text x="799" y="480" class="body" text-anchor="middle">B · healthy</text>
+<text x="948" y="466" class="body" text-anchor="start">Receives new</text>
+<text x="948" y="493" class="body" text-anchor="start">requests</text>
+<!-- The shaft terminates inside its head base; the head tip meets the outside edge of B's border. -->
+<path id="new-request-arrow" data-connector="true" d="M308 415 H520 V473 H661" fill="none" stroke="#4f8162" stroke-width="3"/>
+<polygon id="new-request-arrowhead" points="659,466 673,473 659,480" fill="#4f8162"/>
+<text x="406" y="394" class="small" text-anchor="middle">New requests</text>
+<!-- Stage 3 is optional: enabling ELB checks is a prerequisite for replacement on this health signal. -->
+<rect id="replacement-stage" x="32" y="555" width="1136" height="218" rx="12" fill="#f7faff" stroke="#b8cbe1" stroke-width="2"/>
+<text x="52" y="592" class="heading" text-anchor="start">3  Optional: EC2 Auto Scaling replaces A</text>
+<text x="52" y="622" class="small" text-anchor="start">Requires an attached target group and ELB health checks enabled for the Auto Scaling group.</text>
+<rect id="auto-scaling-controller" x="52" y="649" width="285" height="95" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+<text x="194.5" y="686" class="body" text-anchor="middle">EC2 Auto Scaling</text>
+<text x="194.5" y="716" class="small" text-anchor="middle">Replaces unhealthy A</text>
+<rect id="registered-replacement-c" x="515" y="649" width="260" height="95" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+<text x="645" y="686" class="body" text-anchor="middle">Replacement C</text>
+<text x="645" y="716" class="small" text-anchor="middle">Registered target</text>
+<rect id="healthy-replacement-c" x="965" y="649" width="180" height="95" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+<text x="1055" y="686" class="body" text-anchor="middle">Healthy C</text>
+<text x="1055" y="716" class="small" text-anchor="middle">Gets ALB traffic</text>
+<!-- Replacement and health-state arrows use the same hidden shaft-to-head join as the traffic arrow. -->
+<path id="launch-replacement-arrow" data-connector="true" d="M338 711 H502" fill="none" stroke="#52677c" stroke-width="3"/>
+<polygon id="launch-replacement-arrowhead" points="500,704 514,711 500,718" fill="#52677c"/>
+<text x="426" y="685" class="small" text-anchor="middle">Launches</text>
+<path id="initial-health-check-arrow" data-connector="true" d="M776 711 H952" fill="none" stroke="#52677c" stroke-width="3"/>
+<polygon id="initial-health-check-arrowhead" points="950,704 964,711 950,718" fill="#52677c"/>
+<text x="870" y="662" class="small" text-anchor="middle">Passes its</text>
+<text x="870" y="685" class="small" text-anchor="middle">initial health check</text>
+<!-- Scope and capacity notes distinguish routing, replacement, and demand-based scaling. -->
+<text x="32" y="808" class="small" text-anchor="start">EC2 Auto Scaling manages instance count; scaling policies can add or remove instances as demand changes.</text>
+<text x="32" y="840" class="small" text-anchor="start">Scope: B stays healthy. If all registered targets are unhealthy, ALB can fail open and route to all of them.</text>
+</svg>

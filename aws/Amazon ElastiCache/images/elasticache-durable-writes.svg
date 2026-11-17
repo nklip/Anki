@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="864" viewBox="0 0 1200 864" role="img" aria-labelledby="durable-title durable-desc">
+  <title id="durable-title">Durable writes differ in when success is returned</title>
+  <desc id="durable-desc">For eligible node-based ElastiCache Valkey clusters with durability enabled, compare two write sequences. Synchronous mode receives a write, persists it in a transactional log across at least two Availability Zones, then returns success. Asynchronous mode receives a write, returns success, then persists it in the log. A failure before persistence can lose up to ten seconds of uncommitted writes in asynchronous mode. Durability does not disable key expiration, deletion, or eviction.</desc>
+  <!-- Conceptual reference: AWS durability buffer illustration,
+       https://docs.aws.amazon.com/images/AmazonElastiCache/latest/dg/images/durability-async-buffer.png.
+       Compare acknowledgement timing using https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/durability.html
+       and https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/Durability.Options.html.
+       This is an explanatory sequence, not a network-topology diagram or pixel recreation. -->
+  <!-- Shared palette and typography; each manual shaft ends two units inside its arrowhead base. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172d46; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4c647e; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <rect width="1200" height="864" fill="#ffffff"/>
+  <!-- Scope and reading order prevent these guarantees being applied to every ElastiCache cache. -->
+  <text x="32" y="48" class="title">When does “write succeeded” mean “safely stored”?</text>
+  <text x="32" y="84" class="body">Eligible node-based Valkey 9.0+ clusters with durability enabled. Read each row left to right.</text>
+
+  <!-- Synchronous row: persistence precedes acknowledgement. -->
+  <g id="synchronous-writes">
+    <rect x="32" y="120" width="1136" height="242" rx="12" fill="#f8fafc" stroke="#b8c7d8" stroke-width="2"/>
+    <text x="52" y="158" class="heading">Synchronous · persist first, then return success</text>
+    <rect x="52" y="190" width="292" height="112" rx="10" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="72" y="228" class="heading">Write arrives</text>
+    <text x="72" y="262" class="body">The application sends</text>
+    <text x="72" y="288" class="body">a change to ElastiCache.</text>
+    <rect x="454" y="190" width="292" height="112" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="474" y="228" class="heading">Log stores the write</text>
+    <text x="474" y="262" class="body">Persisted across at least</text>
+    <text x="474" y="288" class="body">two Availability Zones.</text>
+    <rect x="856" y="190" width="292" height="112" rx="10" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="876" y="228" class="heading">Success returned</text>
+    <text x="876" y="262" class="body">The application receives</text>
+    <text x="876" y="288" class="body">the acknowledgment.</text>
+    <text x="52" y="339" class="body">Acknowledged writes survive failures. Waiting for the log adds write latency.</text>
+  </g>
+  <!-- Tips meet the outer strokes of destination boxes, without entering the shapes. -->
+  <path id="sync-arrival-to-log-arrow" class="connector" data-connector="true" d="M345 246 H441"/>
+  <polygon points="439,239 453,246 439,253" fill="#52677c"/>
+  <path id="sync-log-to-success-arrow" class="connector" data-connector="true" d="M747 246 H843"/>
+  <polygon points="841,239 855,246 841,253" fill="#52677c"/>
+
+  <!-- Asynchronous row swaps log persistence and acknowledgement. Amber marks the uncommitted interval. -->
+  <g id="asynchronous-writes">
+    <rect x="32" y="386" width="1136" height="270" rx="12" fill="#fffaf2" stroke="#dcb77e" stroke-width="2"/>
+    <text x="52" y="424" class="heading">Asynchronous · return success before persistence</text>
+    <rect x="52" y="456" width="292" height="112" rx="10" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="72" y="494" class="heading">Write arrives</text>
+    <text x="72" y="528" class="body">The application sends</text>
+    <text x="72" y="554" class="body">a change to ElastiCache.</text>
+    <rect x="454" y="456" width="292" height="112" rx="10" fill="#fff0d8" stroke="#dcb77e" stroke-width="2"/>
+    <text x="474" y="494" class="heading">Success returned</text>
+    <text x="474" y="528" class="body">The write may still be</text>
+    <text x="474" y="554" class="body">waiting for persistence.</text>
+    <rect x="856" y="456" width="292" height="112" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="876" y="494" class="heading">Log stores the write</text>
+    <text x="876" y="528" class="body">The pending write</text>
+    <text x="876" y="554" class="body">becomes durable.</text>
+    <text x="52" y="604" class="body">A failure before persistence can lose up to 10 seconds of uncommitted writes.</text>
+    <text x="52" y="636" class="small">If the pending-write backlog exceeds 10 seconds, new writes are rejected until it catches up.</text>
+  </g>
+  <!-- All arrows represent sequence; the log is not a substitute for cache expiry settings. -->
+  <path id="async-arrival-to-success-arrow" class="connector" data-connector="true" d="M345 512 H441"/>
+  <polygon points="439,505 453,512 439,519" fill="#52677c"/>
+  <path id="async-success-to-log-arrow" class="connector" data-connector="true" d="M747 512 H843"/>
+  <polygon points="841,505 855,512 841,519" fill="#52677c"/>
+
+  <!-- Definitions and limits make this a standalone teaching illustration. -->
+  <rect x="32" y="684" width="1136" height="130" rx="12" fill="#f8fafc" stroke="#b8c7d8" stroke-width="2"/>
+  <text x="52" y="718" class="heading">The log keeps a durable record of writes</text>
+  <text x="52" y="752" class="body">Availability Zones are isolated locations within a Region. The log stores data across zones.</text>
+  <text x="52" y="786" class="body">Expiry, deletion, and memory-eviction policies can still remove keys, even with durability enabled.</text>
+  <text x="32" y="846" class="small">This optional durability feature is not available for ElastiCache Serverless.</text>
+</svg>

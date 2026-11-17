@@ -28,7 +28,7 @@ The migration also includes checking compatibility, preparing the target cluster
 
 ## How an instance-based cluster works
 
-A cluster separates **compute** from **storage**. Instances execute database operations; the shared **cluster volume** stores the data. An **Availability Zone (AZ)** is an isolated location within an AWS Region. The SVG recreates the supplied AWS diagram, with small label-placement adjustments for readability.
+A cluster separates **compute** from **storage**. Instances execute database operations; the shared **cluster volume** stores the data. An **Availability Zone (AZ)** is an isolated location within an AWS Region.
 
 Read from the endpoints at the top toward the storage at the bottom. Yellow arrows show writes from the primary; blue arrows show reads into the instances. The six small blocks represent data copies in the shared volume.
 

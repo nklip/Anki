@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="730" viewBox="0 0 1200 730" role="img" aria-labelledby="vpc-structure-title vpc-structure-desc">
+<title id="vpc-structure-title">One VPC spans zones; each subnet stays in one</title>
+<desc id="vpc-structure-desc">One AWS Region contains a VPC with the IPv4 range 10.0.0.0/16. Six separate subnet ranges are grouped into two Availability Zones. Each zone has public, private application, and private database subnets. Creating these subnets does not create application replicas.</desc>
+<!-- Teaching adaptation of https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html and its subnet-diagram.png. Newly drawn layout and labels, not a pixel reproduction. -->
+<!-- Shared typography and semantic palette: blue for application subnets, green for public paths, purple for gateways. -->
+<defs><style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+.title { font-size: 29px; font-weight: 700; }
+.heading { font-size: 22px; font-weight: 700; }
+.body { font-size: 20px; }
+.small { font-size: 18px; fill: #4b6074; }
+.code { font-family: monospace; font-size: 18px; }
+</style></defs>
+<rect width="1200" height="730" fill="#ffffff"/>
+<!-- Region and VPC boundaries; columns group subnets by zone, not entire physical zones inside the VPC. -->
+<text x="32" y="47" class="title" text-anchor="start">One VPC spans zones; each subnet stays in one</text>
+<text x="32" y="81" class="small" text-anchor="start">VPC = virtual private cloud. Subnets are separate address ranges within that network.</text>
+<rect x="32" y="108" width="1136" height="546" rx="12" fill="#f7f9fc" stroke="#a4bbd0" stroke-width="2"/>
+<text x="54" y="142" class="heading" text-anchor="start">One AWS Region</text>
+<rect x="54" y="165" width="1092" height="467" rx="12" fill="#ffffff" stroke="#859cc1" stroke-width="2"/>
+<text x="76" y="200" class="heading" text-anchor="start">Your VPC • IPv4 address range: 10.0.0.0/16</text>
+<!-- Subnets placed in Availability Zone A; every address block is distinct. -->
+<rect x="76" y="222" width="502" height="388" rx="12" fill="#fbfcfe" stroke="#c8d4df" stroke-width="2"/>
+<text x="94" y="255" class="heading" text-anchor="start">Subnets in Availability Zone A</text>
+<rect x="94" y="278" width="466" height="96" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+<text x="110" y="308" class="body" text-anchor="start">Public subnet</text>
+<text x="110" y="336" class="code" text-anchor="start">10.0.1.0/24</text>
+<text x="110" y="360" class="small" text-anchor="start">Direct route to an internet gateway</text>
+<rect x="94" y="385" width="466" height="96" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+<text x="110" y="415" class="body" text-anchor="start">Private application subnet</text>
+<text x="110" y="443" class="code" text-anchor="start">10.0.2.0/24</text>
+<text x="110" y="467" class="small" text-anchor="start">Example app address: 10.0.2.10</text>
+<rect x="94" y="492" width="466" height="96" rx="12" fill="#f4effa" stroke="#baa6cf" stroke-width="2"/>
+<text x="110" y="522" class="body" text-anchor="start">Private database subnet</text>
+<text x="110" y="550" class="code" text-anchor="start">10.0.3.0/24</text>
+<text x="110" y="574" class="small" text-anchor="start">Example database address: 10.0.3.20</text>
+<!-- Subnets placed in Availability Zone B; every address block is distinct. -->
+<rect x="622" y="222" width="502" height="388" rx="12" fill="#fbfcfe" stroke="#c8d4df" stroke-width="2"/>
+<text x="640" y="255" class="heading" text-anchor="start">Subnets in Availability Zone B</text>
+<rect x="640" y="278" width="466" height="96" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+<text x="656" y="308" class="body" text-anchor="start">Public subnet</text>
+<text x="656" y="336" class="code" text-anchor="start">10.0.11.0/24</text>
+<text x="656" y="360" class="small" text-anchor="start">Direct route to an internet gateway</text>
+<rect x="640" y="385" width="466" height="96" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+<text x="656" y="415" class="body" text-anchor="start">Private application subnet</text>
+<text x="656" y="443" class="code" text-anchor="start">10.0.12.0/24</text>
+<text x="656" y="467" class="small" text-anchor="start">Space for application resources</text>
+<rect x="640" y="492" width="466" height="96" rx="12" fill="#f4effa" stroke="#baa6cf" stroke-width="2"/>
+<text x="656" y="522" class="body" text-anchor="start">Private database subnet</text>
+<text x="656" y="550" class="code" text-anchor="start">10.0.13.0/24</text>
+<text x="656" y="574" class="small" text-anchor="start">Space for database resources</text>
+<!-- Explicit takeaway prevents a layout from being mistaken for a deployed resilient application. -->
+<text x="32" y="688" class="body" text-anchor="start">Public and private describe routes, not which Availability Zone a subnet belongs to.</text>
+<text x="32" y="718" class="small" text-anchor="start">Subnets provide places to run resources. Replicas and recovery still need their own configuration.</text>
+</svg>

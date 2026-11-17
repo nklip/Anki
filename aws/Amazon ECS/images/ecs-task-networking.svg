@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="830" viewBox="0 0 1200 830" role="img" aria-labelledby="network-title network-desc">
+  <title id="network-title">Task addresses and host port mappings let containers reuse the same application port</title>
+  <desc id="network-desc">Two Linux examples show containers listening on port 8080. With awsvpc networking, task A uses 10.0.1.21 and task B uses 10.0.1.22, so callers use each task's own address with port 8080. With bridge networking on one EC2 host at 10.0.1.10, callers instead use different assigned host ports, 49160 and 49161. Each host port maps to port 8080 in a different container. These are illustrative IPv4 addresses and assigned ports, not required values.</desc>
+  <!-- Conceptual reference: Anki port_mapping.webp; new comparison includes task networking.
+       https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_PortMapping.html
+       https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-networking-awsvpc.html
+       https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-networking.html -->
+  <!-- Shared palette: blue caller, purple mapping, green running container or task. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .caller { font-size: 20px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4b6074; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Lesson and shared assumptions before comparing address models. -->
+  <rect width="1200" height="830" fill="#fff"/>
+  <text x="32" y="47" class="title" text-anchor="start">Two ways to reach containers that listen on the same port</text>
+  <text x="32" y="82" class="body" text-anchor="start">Linux examples: both application copies listen on port 8080. Read each traffic path from left to right.</text>
+  <!-- Per-task network interfaces allow the same port at different task addresses. -->
+  <text x="32" y="135" class="heading" text-anchor="start">awsvpc: each task has its own network address</text>
+  <rect id="awsvpc-caller" x="32" y="166" width="260" height="204" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="52" y="205" class="caller" text-anchor="start">Client or load balancer</text>
+  <text x="52" y="248" class="body" text-anchor="start">Uses the task's address</text>
+  <text x="52" y="281" class="body" text-anchor="start">and application port</text>
+  <text x="52" y="337" class="small" text-anchor="start">Fargate requires awsvpc</text>
+  <rect id="awsvpc-task-a" x="650" y="166" width="518" height="88" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="670" y="201" class="heading" text-anchor="start">Task A — own address: 10.0.1.21</text>
+  <text x="670" y="235" class="body" text-anchor="start">Application container listens on 8080</text>
+  <rect id="awsvpc-task-b" x="650" y="282" width="518" height="88" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="670" y="317" class="heading" text-anchor="start">Task B — own address: 10.0.1.22</text>
+  <text x="670" y="351" class="body" text-anchor="start">Application container listens on 8080</text>
+  <text x="330" y="192" class="body" text-anchor="start">10.0.1.21:8080</text>
+  <text x="330" y="308" class="body" text-anchor="start">10.0.1.22:8080</text>
+  <!-- Manual shafts end beneath triangle bases; tips meet the outer target borders. -->
+  <path id="awsvpc-to-task-a-arrow" class="connector" data-connector="true" d="M293 215 H637"/>
+  <polygon points="635,208 649,215 635,222" fill="#52677c"/>
+  <path id="awsvpc-to-task-b-arrow" class="connector" data-connector="true" d="M293 331 H637"/>
+  <polygon points="635,324 649,331 635,338" fill="#52677c"/>
+  <text x="32" y="405" class="body" text-anchor="start">Different task addresses allow both tasks to use port 8080. No dynamic host-port remapping is needed.</text>
+  <!-- Dynamic bridge mappings expose different ports on the same host address. -->
+  <text x="32" y="460" class="heading" text-anchor="start">bridge on EC2: different host ports lead to different containers</text>
+  <rect id="ec2-host" x="500" y="481" width="668" height="245" rx="12" fill="#f5faf7" stroke="#8dbca0" stroke-width="2"/>
+  <text x="520" y="511" class="small" text-anchor="start">One EC2 host — address: 10.0.1.10</text>
+  <rect id="bridge-caller" x="32" y="536" width="260" height="170" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="52" y="574" class="caller" text-anchor="start">Client or load balancer</text>
+  <text x="52" y="614" class="body" text-anchor="start">Uses the host's address</text>
+  <text x="52" y="647" class="body" text-anchor="start">and assigned host port</text>
+  <rect id="host-port-a" x="520" y="536" width="240" height="74" rx="10" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="540" y="566" class="heading" text-anchor="start">Host port 49160</text>
+  <text x="540" y="593" class="small" text-anchor="start">Assigned for container A</text>
+  <rect id="host-port-b" x="520" y="632" width="240" height="74" rx="10" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="540" y="662" class="heading" text-anchor="start">Host port 49161</text>
+  <text x="540" y="689" class="small" text-anchor="start">Assigned for container B</text>
+  <rect id="bridge-container-a" x="900" y="536" width="248" height="74" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="920" y="566" class="heading" text-anchor="start">Container A</text>
+  <text x="920" y="593" class="body" text-anchor="start">Listens on 8080</text>
+  <rect id="bridge-container-b" x="900" y="632" width="248" height="74" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="920" y="662" class="heading" text-anchor="start">Container B</text>
+  <text x="920" y="689" class="body" text-anchor="start">Listens on 8080</text>
+  <text x="307" y="550" class="small" text-anchor="start">10.0.1.10:49160</text>
+  <text x="307" y="646" class="small" text-anchor="start">10.0.1.10:49161</text>
+  <!-- Inbound shafts intentionally cross the host outline; arrowheads stop at port boxes. -->
+  <path id="bridge-host-a-arrow" class="connector" data-connector="true" d="M293 573 H507"/>
+  <polygon points="505,566 519,573 505,580" fill="#52677c"/>
+  <path id="bridge-host-b-arrow" class="connector" data-connector="true" d="M293 669 H507"/>
+  <polygon points="505,662 519,669 505,676" fill="#52677c"/>
+  <path id="bridge-container-a-arrow" class="connector" data-connector="true" d="M761 573 H887"/>
+  <polygon points="885,566 899,573 885,580" fill="#52677c"/>
+  <path id="bridge-container-b-arrow" class="connector" data-connector="true" d="M761 669 H887"/>
+  <polygon points="885,662 899,669 885,676" fill="#52677c"/>
+  <!-- Example scope and abbreviations. -->
+  <text x="32" y="766" class="body" text-anchor="start">These addresses and assigned ports are examples. Network routes and security rules must also allow traffic.</text>
+  <text x="32" y="804" class="small" text-anchor="start">EC2 = Elastic Compute Cloud. An address plus a port identifies the destination for a connection.</text>
+</svg>

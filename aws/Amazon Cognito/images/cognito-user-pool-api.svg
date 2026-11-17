@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="user-pool-title user-pool-desc">
+  <title id="user-pool-title">A Cognito user pool protects your API</title>
+  <desc id="user-pool-desc">A browser or mobile app signs the user in with a Cognito user pool. In the authorization-code flow, Cognito returns a code and the app exchanges it for ID, access, and refresh tokens using PKCE. The app sends its access token to an API Gateway HTTP API. A JWT authorizer checks the signature, issuer, expiry, expected audience or client, and the required photos/read scope. The backend also checks whether this user is allowed to read the requested photo. This path needs no identity pool. The backend uses its own AWS role for any downstream AWS calls.</desc>
+  <!-- Conceptual references: Anki cognito.png and user_pool_app_client.png.
+       Cognito user pools and authorization-code flow:
+       https://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html
+       https://docs.aws.amazon.com/cognito/latest/developerguide/using-pkce-in-authorization-code.html
+       Native HTTP API JWT authorizer, including audience/client and scope checks:
+       https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-jwt-authorizer.html -->
+  <!-- Shared typography and palette; manual shafts stop two units inside their triangle bases. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172d46; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4c647e; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <rect width="1200" height="1000" fill="#ffffff"/>
+  <!-- The title separates signing in from deciding which data a user may access. -->
+  <text x="32" y="48" class="title">A Cognito user pool protects your API</text>
+  <text x="32" y="84" class="body">A user pool signs people in. Your API still decides what they can do.</text>
+
+  <!-- Sign-in band. Two arrows summarize the exchange; the caption states the code-first order. -->
+  <g id="sign-in-and-token-exchange">
+    <rect x="32" y="118" width="1136" height="276" rx="12" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="56" y="157" class="heading">1  Get tokens after signing in</text>
+    <rect id="public-app-client" x="56" y="183" width="320" height="143" rx="10" fill="#ffffff" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="76" y="219" class="heading">Browser / mobile app</text>
+    <text x="76" y="257" class="body">Public app client</text>
+    <text x="76" y="295" class="body">No client secret stored here.</text>
+    <rect id="cognito-user-pool" x="824" y="183" width="320" height="143" rx="10" fill="#ffffff" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="844" y="219" class="heading">Cognito user pool</text>
+    <text x="844" y="257" class="body">Signs the user in.</text>
+    <text x="844" y="295" class="body">Issues tokens after exchange.</text>
+    <text x="600" y="214" class="body" text-anchor="middle">Sign-in + code exchange</text>
+    <text x="600" y="278" class="body" text-anchor="middle">ID + access + refresh tokens</text>
+    <text x="56" y="349" class="body">Cognito first returns a code. The app exchanges it for tokens using PKCE.</text>
+    <text x="56" y="376" class="body">PKCE checks a one-time proof from the app before returning tokens.</text>
+  </g>
+  <!-- Arrow tips meet the outer node strokes; return tokens flow back to the app. -->
+  <path id="sign-in-exchange-arrow" class="connector" data-connector="true" d="M377 232 H811"/>
+  <polygon id="sign-in-exchange-head" points="809,225 823,232 809,239" fill="#52677c"/>
+  <path id="tokens-to-app-arrow" class="connector" data-connector="true" d="M823 296 H389"/>
+  <polygon id="tokens-to-app-head" points="391,289 377,296 391,303" fill="#52677c"/>
+
+  <!-- Request band. Token validity and the application's ownership check are separate gates. -->
+  <g id="protected-api-request">
+    <rect x="32" y="408" width="1136" height="390" rx="12" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="56" y="448" class="heading">2  Use the access token to request a photo</text>
+    <rect id="app-api-request" x="56" y="474" width="300" height="246" rx="10" fill="#ffffff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="76" y="512" class="heading">App requests a photo</text>
+    <text x="76" y="554" class="body">GET /photos/42</text>
+    <text x="76" y="596" class="body">Authorization: Bearer</text>
+    <text x="76" y="626" class="heading">&lt;access token&gt;</text>
+    <text x="76" y="683" class="body">Send the access token.</text>
+
+    <rect id="http-api-authorizer" x="420" y="474" width="344" height="246" rx="10" fill="#ffffff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="440" y="512" class="heading">API Gateway HTTP API</text>
+    <text x="440" y="554" class="body">JWT authorizer checks:</text>
+    <text x="440" y="596" class="body">Signature, issuer, expiry</text>
+    <text x="440" y="628" class="body">Expected audience / client</text>
+    <text x="440" y="660" class="body">Required photos/read scope</text>
+
+    <rect id="backend-ownership-check" x="828" y="474" width="316" height="246" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="848" y="512" class="heading">Your backend</text>
+    <text x="848" y="554" class="body">Checks: is photo 42</text>
+    <text x="848" y="586" class="body">owned by this user?</text>
+    <text x="848" y="638" class="body">Only returns allowed data.</text>
+    <text x="848" y="683" class="body">A valid token is not enough.</text>
+    <text x="56" y="763" class="body">JWT = JSON Web Token. Its claims describe the user; scopes name API permissions.</text>
+  </g>
+  <!-- Horizontal request arrows use the clear gaps between the three responsibility boxes. -->
+  <path id="access-token-to-api-arrow" class="connector" data-connector="true" d="M357 598 H407"/>
+  <polygon id="access-token-to-api-head" points="405,591 419,598 405,605" fill="#52677c"/>
+  <path id="authorized-request-to-backend-arrow" class="connector" data-connector="true" d="M765 598 H815"/>
+  <polygon id="authorized-request-to-backend-head" points="813,591 827,598 813,605" fill="#52677c"/>
+
+  <!-- Scope note keeps the token/API path distinct from identity-pool AWS credentials. -->
+  <g id="no-identity-pool-needed">
+    <rect x="32" y="830" width="1136" height="136" rx="12" fill="#fff2e1" stroke="#dcb77e" stroke-width="2"/>
+    <text x="56" y="869" class="heading">No identity pool is needed for this API path.</text>
+    <text x="56" y="905" class="body">Your backend uses its own AWS role when it calls services such as S3.</text>
+    <text x="56" y="940" class="body">Successful sign-in does not give a user access to everyone’s photos.</text>
+  </g>
+</svg>

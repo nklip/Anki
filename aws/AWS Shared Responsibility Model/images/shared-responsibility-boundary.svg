@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="boundary-title boundary-desc">
+  <title id="boundary-title">AWS secures the foundation. You secure how you use it.</title>
+  <desc id="boundary-desc">The shared responsibility model separates customer responsibilities in the cloud from AWS responsibilities for the cloud's underlying infrastructure. Customers protect data and access, their application code, and service configuration. AWS protects physical facilities, infrastructure networks, and the host software that runs services. The operating-system boundary depends on the service: on EC2, the customer patches the guest operating system inside the virtual server; managed services transfer more software management to AWS, while their specific patching requirements still need to be checked.</desc>
+  <!-- Conceptual reference: shared_model.jpg, a layered AWS shared-responsibility chart.
+       https://aws.amazon.com/compliance/shared-responsibility-model/
+       https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/shared-responsibility.html
+       This ownership stack is not a process; it intentionally has no directional arrows. -->
+  <!-- Shared typography and owner colors. Blue identifies customer duties; orange identifies AWS duties. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172d46; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4c647e; }
+    </style>
+  </defs>
+  <rect width="1200" height="1000" fill="#fff"/>
+  <!-- Start with the core division before listing individual duties. -->
+  <text x="32" y="48" class="title">AWS secures the foundation. You secure how you use it.</text>
+  <text x="32" y="86" class="body">Shared responsibility means each side has specific security tasks.</text>
+
+  <!-- Customer layer: three distinct choices remain with the application owner. -->
+  <g id="customer-responsibilities">
+    <rect x="32" y="120" width="1136" height="320" rx="12" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="56" y="160" class="heading">YOU · Security “in” the cloud</text>
+    <g id="data-and-access">
+      <rect x="56" y="190" width="344" height="172" rx="10" fill="#fff" stroke="#9dbce3" stroke-width="2"/>
+      <text x="76" y="228" class="heading">Data and access</text>
+      <text x="76" y="270" class="body">Choose who may read,</text>
+      <text x="76" y="300" class="body">change, or delete data.</text>
+      <text x="76" y="336" class="body">Protect secrets and keys.</text>
+    </g>
+    <g id="application-security">
+      <rect x="428" y="190" width="344" height="172" rx="10" fill="#fff" stroke="#9dbce3" stroke-width="2"/>
+      <text x="448" y="228" class="heading">Your application</text>
+      <text x="448" y="270" class="body">Secure your code and</text>
+      <text x="448" y="300" class="body">the libraries you include.</text>
+      <text x="448" y="336" class="body">Enforce your data rules.</text>
+    </g>
+    <g id="service-configuration">
+      <rect x="800" y="190" width="344" height="172" rx="10" fill="#fff" stroke="#9dbce3" stroke-width="2"/>
+      <text x="820" y="228" class="heading">Service configuration</text>
+      <text x="820" y="270" class="body">Set permissions, encryption,</text>
+      <text x="820" y="300" class="body">and network access options.</text>
+      <text x="820" y="336" class="body">Choose recovery settings.</text>
+    </g>
+    <text x="56" y="408" class="body">These duties remain even when AWS manages more of the software.</text>
+  </g>
+
+  <!-- This qualification prevents the old chart from implying all OS patching belongs to the customer. -->
+  <g id="service-dependent-boundary">
+    <rect x="32" y="466" width="1136" height="216" rx="12" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="56" y="508" class="heading">The operating-system boundary depends on the service</text>
+    <text x="56" y="552" class="heading">On an EC2 virtual server</text>
+    <text x="56" y="588" class="body">You patch the guest operating system (OS).</text>
+    <text x="56" y="628" class="body">Guest OS = the OS inside your virtual server.</text>
+    <text x="640" y="552" class="heading">With a managed service</text>
+    <text x="640" y="588" class="body">AWS takes care of more software layers.</text>
+    <text x="640" y="628" class="body">Check that service's patching requirements.</text>
+  </g>
+
+  <!-- AWS foundation: these infrastructure duties support the service above them. -->
+  <g id="aws-responsibilities">
+    <rect x="32" y="708" width="1136" height="260" rx="12" fill="#fff2e1" stroke="#dcb77e" stroke-width="2"/>
+    <text x="56" y="748" class="heading">AWS · Security “of” the cloud</text>
+    <g id="physical-foundation">
+      <rect x="56" y="778" width="344" height="164" rx="10" fill="#fff" stroke="#dcb77e" stroke-width="2"/>
+      <text x="76" y="818" class="heading">Physical foundation</text>
+      <text x="76" y="858" class="body">Data centers, servers,</text>
+      <text x="76" y="888" class="body">storage, power and cooling</text>
+      <text x="76" y="922" class="small">Protects physical access.</text>
+    </g>
+    <g id="infrastructure-network">
+      <rect x="428" y="778" width="344" height="164" rx="10" fill="#fff" stroke="#dcb77e" stroke-width="2"/>
+      <text x="448" y="818" class="heading">Underlying network</text>
+      <text x="448" y="858" class="body">AWS's physical network</text>
+      <text x="448" y="888" class="body">and infrastructure devices</text>
+      <text x="448" y="922" class="small">Maintains these components.</text>
+    </g>
+    <g id="host-software">
+      <rect x="800" y="778" width="344" height="164" rx="10" fill="#fff" stroke="#dcb77e" stroke-width="2"/>
+      <text x="820" y="818" class="heading">Host software</text>
+      <text x="820" y="858" class="body">Host OS and virtualization</text>
+      <text x="820" y="888" class="body">that run the service</text>
+      <text x="820" y="922" class="small">Host = underlying physical server.</text>
+    </g>
+  </g>
+</svg>

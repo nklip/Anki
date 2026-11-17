@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="952" viewBox="0 0 1200 952" role="img" aria-labelledby="choices-title choices-desc">
+  <title id="choices-title">Choose an event bus, a pipe, or Scheduler by what starts the work</title>
+  <desc id="choices-desc">Three examples read from left to right. An application event enters an event bus and matching filters send it to a worker function and a reporting queue. An order message moves from a message queue through one pipe, with optional filtering and enrichment, to one Step Functions workflow. A scheduled time causes Scheduler to call a report function. A bus supports several destinations, a pipe connects one source to one target, and Scheduler starts work when time arrives.</desc>
+  <!-- Conceptual sources: the Anki event_bridge.png source/bus/target illustration
+       and event_bridge_scheduler.png schedule/pattern/target illustration.
+       Current behavior: https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-what-is.html
+       https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-pipes.html
+       https://docs.aws.amazon.com/scheduler/latest/UserGuide/schedule-types.html -->
+  <!-- Shared typography and palette match the event-routing diagram. Manual shafts end inside head bases. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172d46; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4c647e; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <rect width="1200" height="952" fill="#fff"/>
+  <!-- Overall reading instruction; each horizontal panel is an alternative, not a process stage. -->
+  <text x="32" y="48" class="title">What starts the work?</text>
+  <text x="32" y="84" class="body">Read each example left to right. Choose the connection that fits the job.</text>
+
+  <!-- Event bus: two independently matched routes. The branch conveys copies to interested destinations. -->
+  <g id="event-bus-choice">
+    <rect x="32" y="120" width="1136" height="246" rx="12" fill="#f8fafc" stroke="#b8c7d8" stroke-width="2"/>
+    <text x="52" y="158" class="heading">Event bus · several consumers react to an event</text>
+    <rect x="52" y="204" width="260" height="110" rx="10" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="72" y="244" class="heading">Application events</text>
+    <text x="72" y="280" class="body">Example: OrderPlaced</text>
+    <rect x="430" y="204" width="340" height="110" rx="10" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="450" y="244" class="heading">Event bus</text>
+    <text x="450" y="280" class="body">Route by matching filters</text>
+    <rect x="906" y="188" width="240" height="62" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="926" y="226" class="body">Worker function</text>
+    <rect x="906" y="274" width="240" height="62" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="926" y="312" class="body">Reporting queue</text>
+    <text x="52" y="345" class="small">An event can match several destinations, one destination, or none.</text>
+  </g>
+  <!-- Arrow tips meet target outer strokes. The shared split is intentional; no heads sit at the junction. -->
+  <path id="app-to-bus-arrow" class="connector" data-connector="true" d="M313 259 H417"/>
+  <polygon points="415,252 429,259 415,266" fill="#52677c"/>
+  <path id="bus-route-split" class="connector" d="M771 259 H826 M826 219 V305"/>
+  <path id="bus-to-worker-arrow" class="connector" data-connector="true" d="M826 219 H893"/>
+  <polygon points="891,212 905,219 891,226" fill="#52677c"/>
+  <path id="bus-to-reporting-arrow" class="connector" data-connector="true" d="M826 305 H893"/>
+  <polygon points="891,298 905,305 891,312" fill="#52677c"/>
+
+  <!-- Pipe: single supported source and target, with optional event processing between them. -->
+  <g id="pipe-choice">
+    <rect x="32" y="390" width="1136" height="222" rx="12" fill="#f8fafc" stroke="#b8c7d8" stroke-width="2"/>
+    <text x="52" y="428" class="heading">Pipe · move messages along one connection</text>
+    <rect x="52" y="458" width="260" height="106" rx="10" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="72" y="497" class="heading">Message queue</text>
+    <text x="72" y="533" class="body">Order messages in SQS</text>
+    <rect x="430" y="458" width="340" height="106" rx="10" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="450" y="497" class="heading">EventBridge Pipe</text>
+    <text x="450" y="533" class="body">Optional filter / enrichment</text>
+    <rect x="906" y="458" width="240" height="106" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="926" y="497" class="heading">Order workflow</text>
+    <text x="926" y="533" class="body">Step Functions</text>
+    <text x="52" y="592" class="small">One source, one target. Enrichment adds data, such as a shipping address.</text>
+  </g>
+  <!-- Horizontal pipe arrows use the same head geometry and inset as the event-bus row. -->
+  <path id="queue-to-pipe-arrow" class="connector" data-connector="true" d="M313 511 H417"/>
+  <polygon points="415,504 429,511 415,518" fill="#52677c"/>
+  <path id="pipe-to-workflow-arrow" class="connector" data-connector="true" d="M771 511 H893"/>
+  <polygon points="891,504 905,511 891,518" fill="#52677c"/>
+
+  <!-- Scheduler: time is the trigger. It can call a target directly without routing through a bus. -->
+  <g id="scheduler-choice">
+    <rect x="32" y="636" width="1136" height="222" rx="12" fill="#fffaf2" stroke="#dcb77e" stroke-width="2"/>
+    <text x="52" y="674" class="heading">Scheduler · start work because it is time</text>
+    <rect x="52" y="704" width="260" height="106" rx="10" fill="#fff0d8" stroke="#dcb77e" stroke-width="2"/>
+    <text x="72" y="743" class="heading">Time is reached</text>
+    <text x="72" y="779" class="body">Example: daily at 09:00</text>
+    <rect x="430" y="704" width="340" height="106" rx="10" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="450" y="743" class="heading">EventBridge Scheduler</text>
+    <text x="450" y="779" class="body">Call the configured target</text>
+    <rect x="906" y="704" width="240" height="106" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="926" y="743" class="heading">Report function</text>
+    <text x="926" y="779" class="body">AWS Lambda</text>
+    <text x="52" y="838" class="small">One-time or recurring schedules; 60-second precision, not an exact-second timer.</text>
+  </g>
+  <!-- Scheduler arrows make the time-to-invocation relationship explicit. -->
+  <path id="time-to-scheduler-arrow" class="connector" data-connector="true" d="M313 757 H417"/>
+  <polygon points="415,750 429,757 415,764" fill="#52677c"/>
+  <path id="scheduler-to-function-arrow" class="connector" data-connector="true" d="M771 757 H893"/>
+  <polygon points="891,750 905,757 891,764" fill="#52677c"/>
+
+  <!-- Abbreviation and outcome keep the illustration understandable without the surrounding article. -->
+  <text x="32" y="899" class="small">SQS = Amazon Simple Queue Service. Step Functions coordinates work; Lambda runs application code.</text>
+  <text x="32" y="930" class="small">These tools can be combined: for example, a pipe can deliver to a bus for routing to several consumers.</text>
+</svg>

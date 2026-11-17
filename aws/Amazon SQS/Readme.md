@@ -136,8 +136,6 @@ The Java library supports storing every payload in S3 or offloading only larger 
 
 # Sources
 
-Official AWS documentation and resources, checked September 18, 2026:
-
 - [What is Amazon SQS? — architecture and message lifecycle](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html)
 - [Standard queues — delivery, ordering, and scaling](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues.html)
 - [FIFO queues](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-fifo-queues.html)
@@ -159,4 +157,4 @@ Official AWS documentation and resources, checked September 18, 2026:
 - [Amazon SQS pricing — requests, data transfer, S3, and KMS](https://aws.amazon.com/sqs/pricing/)
 - [Managing large messages with the Extended Client Libraries](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-managing-large-messages.html)
 - [Extended Client Library for Java — S3 offloading behavior](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-s3-messages.html)
-- [AWS Architecture Icons — official SVG artwork used in the diagrams](https://aws.amazon.com/architecture/icons/) — July 31, 2026 package; original icon geometry and colors preserved.
+- [AWS Architecture Icons](https://aws.amazon.com/architecture/icons/) — July 31, 2026 package.

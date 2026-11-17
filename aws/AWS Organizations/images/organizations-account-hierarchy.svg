@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="hierarchy-title hierarchy-desc">
+  <title id="hierarchy-title">AWS Organizations groups whole AWS accounts</title>
+  <desc id="hierarchy-desc">An example organization has one administrative root and five AWS accounts. The root contains the management account, a Security organizational unit, and a Workloads organizational unit. Security contains Audit and Log archive member accounts. Workloads contains Development and Production organizational units, each with an application member account. Resources stay inside their accounts. The organization root is a container, distinct from an account's root user. Service control policies do not restrict identities in the management account.</desc>
+  <!-- Conceptual references: Anki organizations.png and AWS AccountOuDiagram.png.
+       https://docs.aws.amazon.com/organizations/latest/userguide/orgs_getting-started_concepts.html
+       https://docs.aws.amazon.com/organizations/latest/userguide/orgs_best-practices_mgmt-acct.html
+       This is one example arrangement; management account placement at the root is not mandatory. -->
+  <!-- Blue containers represent organizational units; green boxes are member accounts, not individual resources. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172d46; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4c647e; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <rect width="1200" height="1000" fill="#ffffff"/>
+  <!-- Start at the single administrative root, then follow the three branches. -->
+  <text x="32" y="48" class="title">AWS Organizations groups whole AWS accounts</text>
+  <text x="32" y="84" class="body">Example organization: five accounts with different responsibilities.</text>
+  <g id="organization-root">
+    <rect x="418" y="124" width="364" height="102" rx="12" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="600" y="166" class="heading" text-anchor="middle">Organization root</text>
+    <text x="600" y="205" class="body" text-anchor="middle">The top-level container</text>
+  </g>
+  <!-- Shared branch line denotes containment, not network traffic. Each shaft ends under its triangle base. -->
+  <path id="root-containment-branches" class="connector" data-connector="true" d="M600 227 V258 M183 258 H945 M183 258 V287 M535 258 V287 M945 258 V287"/>
+  <polygon id="management-head" points="176,285 183,299 190,285" fill="#52677c"/>
+  <polygon id="security-head" points="528,285 535,299 542,285" fill="#52677c"/>
+  <polygon id="workloads-head" points="938,285 945,299 952,285" fill="#52677c"/>
+
+  <!-- Management is a full account. Its controls and recommended use differ from member accounts. -->
+  <g id="management-account">
+    <rect x="32" y="300" width="302" height="430" rx="12" fill="#fff2e1" stroke="#dcb77e" stroke-width="2"/>
+    <text x="54" y="342" class="heading">Management account</text>
+    <text x="54" y="382" class="body">Central organization</text>
+    <text x="54" y="412" class="body">administration and billing</text>
+    <text x="54" y="468" class="body">Keep application workloads</text>
+    <text x="54" y="498" class="body">in member accounts.</text>
+    <rect x="52" y="538" width="262" height="170" rx="10" fill="#ffffff" stroke="#dcb77e" stroke-width="2"/>
+    <text x="70" y="576" class="heading">Policy exception</text>
+    <text x="70" y="613" class="body">Service control policies</text>
+    <text x="70" y="643" class="body">do not restrict identities</text>
+    <text x="70" y="673" class="body">in this account.</text>
+  </g>
+
+  <!-- Security contains two sibling member accounts. Containment replaces arrows inside this group. -->
+  <g id="security-ou">
+    <rect x="368" y="300" width="334" height="430" rx="12" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="390" y="342" class="heading">Security OU</text>
+    <text x="390" y="382" class="body">OU = organizational unit</text>
+    <rect id="audit-account" x="390" y="416" width="290" height="128" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="410" y="454" class="heading">Audit account</text>
+    <text x="410" y="490" class="body">Member account</text>
+    <text x="410" y="522" class="small">Security tools live here.</text>
+    <rect id="log-archive-account" x="390" y="574" width="290" height="128" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="410" y="612" class="heading">Log archive account</text>
+    <text x="410" y="648" class="body">Member account</text>
+    <text x="410" y="680" class="small">Central log storage lives here.</text>
+  </g>
+
+  <!-- Two nested OUs separate development from production; both remain children of Workloads. -->
+  <g id="workloads-ou">
+    <rect x="722" y="300" width="446" height="430" rx="12" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="744" y="342" class="heading">Workloads OU</text>
+    <text x="744" y="382" class="body">Contains two nested OUs</text>
+    <g id="development-ou">
+      <rect x="740" y="416" width="198" height="286" rx="10" fill="#ffffff" stroke="#9dbce3" stroke-width="2"/>
+      <text x="754" y="455" class="body" font-weight="700">Development OU</text>
+      <rect id="development-account" x="754" y="494" width="170" height="190" rx="9" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+      <text x="770" y="532" class="body" font-weight="700">Application</text>
+      <text x="770" y="560" class="body" font-weight="700">account</text>
+      <text x="770" y="600" class="small">Member account</text>
+      <text x="770" y="642" class="small">Development</text>
+      <text x="770" y="668" class="small">resources</text>
+    </g>
+    <g id="production-ou">
+      <rect x="952" y="416" width="198" height="286" rx="10" fill="#ffffff" stroke="#9dbce3" stroke-width="2"/>
+      <text x="966" y="455" class="body" font-weight="700">Production OU</text>
+      <rect id="production-account" x="966" y="494" width="170" height="190" rx="9" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+      <text x="982" y="532" class="body" font-weight="700">Application</text>
+      <text x="982" y="560" class="body" font-weight="700">account</text>
+      <text x="982" y="600" class="small">Member account</text>
+      <text x="982" y="642" class="small">Production</text>
+      <text x="982" y="668" class="small">resources</text>
+    </g>
+  </g>
+
+  <!-- Reading rules clarify the group/account boundary and the two meanings of root. -->
+  <g id="hierarchy-reading-rules">
+    <rect x="32" y="764" width="1136" height="204" rx="12" fill="#f8fafc" stroke="#b8c7d8" stroke-width="2"/>
+    <text x="54" y="806" class="heading">An OU groups accounts. Resources stay inside each account.</text>
+    <text x="54" y="850" class="body">Nested accounts inherit applicable policies from the root and their parent OUs.</text>
+    <text x="54" y="894" class="body">The organization root is a container. An account's root user is a sign-in identity.</text>
+    <text x="54" y="938" class="body">Each account in this organization has one parent: the root or one OU.</text>
+  </g>
+</svg>

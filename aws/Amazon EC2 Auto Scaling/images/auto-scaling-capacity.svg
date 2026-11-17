@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-labelledby="capacity-title capacity-desc">
+<title id="capacity-title">EC2 Auto Scaling: minimum, desired, maximum</title>
+<desc id="capacity-desc">An example Auto Scaling group has a minimum of two, a desired capacity of three, and a maximum of six equally sized instances. Minimum and maximum bound the desired count during normal scaling. In the settled snapshot, three solid blue instances are running. Three dashed boxes show room to add instances, not precreated idle servers or reserved EC2 capacity. Actual running capacity can lag the desired count, and some replacement operations temporarily exceed the maximum.</desc>
+<!-- New simplified teaching adaptation of the source note's auto_scaling_2.png;
+     this is not a pixel recreation. The three definition panels avoid suggesting
+     that the minimum identifies a special protected subset of running instances.
+     Sources:
+     https://docs.aws.amazon.com/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html
+     https://docs.aws.amazon.com/autoscaling/ec2/userguide/auto-scaling-groups.html
+     https://docs.aws.amazon.com/autoscaling/ec2/userguide/instance-maintenance-policy-overview-and-considerations.html -->
+<!-- Shared typography and semantic palette: blue instances and desired count,
+     orange minimum, purple maximum. Brackets group counts; there are no arrows. -->
+<defs>
+  <style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+    .title { font-size: 29px; font-weight: 700; }
+    .setting { font-size: 28px; font-weight: 700; }
+    .heading { font-size: 22px; font-weight: 700; }
+    .body { font-size: 20px; }
+    .small { font-size: 18px; fill: #4b6074; }
+  </style>
+</defs>
+<rect width="1200" height="650" fill="#ffffff"/>
+
+<!-- Read the settings left to right, then compare the goal with the settled group. -->
+<text x="32" y="47" class="title" text-anchor="start">EC2 Auto Scaling: minimum, desired, maximum</text>
+<text x="32" y="81" class="body" text-anchor="start">The desired count is the goal; minimum and maximum bound normal scaling.</text>
+
+<!-- Minimum is a bound on the goal, not a promise that specific instances stay alive. -->
+<rect id="minimum-setting" x="32" y="110" width="362" height="126" rx="12" fill="#fff5e8" stroke="#d6ad76" stroke-width="2"/>
+<text x="52" y="151" class="setting" text-anchor="start">Minimum = 2</text>
+<text x="52" y="187" class="body" text-anchor="start">Lowest desired count</text>
+<text x="52" y="215" class="small" text-anchor="start">for normal scaling</text>
+
+<!-- Desired capacity is the controller's current goal. -->
+<rect id="desired-setting" x="419" y="110" width="362" height="126" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+<text x="439" y="151" class="setting" text-anchor="start">Desired = 3</text>
+<text x="439" y="187" class="body" text-anchor="start">Current goal:</text>
+<text x="439" y="215" class="small" text-anchor="start">maintain 3 instances</text>
+
+<!-- Maximum limits normal desired-capacity changes; it does not reserve servers. -->
+<rect id="maximum-setting" x="806" y="110" width="362" height="126" rx="12" fill="#f4effa" stroke="#baa6cf" stroke-width="2"/>
+<text x="826" y="151" class="setting" text-anchor="start">Maximum = 6</text>
+<text x="826" y="187" class="body" text-anchor="start">Highest desired count</text>
+<text x="826" y="215" class="small" text-anchor="start">for normal scaling</text>
+
+<!-- Group snapshot: solid objects exist; dashed objects are only possible additions. -->
+<rect id="group-snapshot" x="32" y="261" width="1136" height="237" rx="12" fill="#f7f9fc" stroke="#c8d4df" stroke-width="2"/>
+<text x="52" y="298" class="heading" text-anchor="start">Auto Scaling group</text>
+<text x="1148" y="298" class="small" text-anchor="end">After scaling has settled • equal-sized instances</text>
+<rect id="running-instance-1" x="62" y="326" width="156" height="90" rx="10" fill="#dcecff" stroke="#4a7db8" stroke-width="2"/>
+<text x="140" y="362" class="body" text-anchor="middle">Instance 1</text>
+<text x="140" y="392" class="small" text-anchor="middle">Running</text>
+<rect id="running-instance-2" x="246" y="326" width="156" height="90" rx="10" fill="#dcecff" stroke="#4a7db8" stroke-width="2"/>
+<text x="324" y="362" class="body" text-anchor="middle">Instance 2</text>
+<text x="324" y="392" class="small" text-anchor="middle">Running</text>
+<rect id="running-instance-3" x="430" y="326" width="156" height="90" rx="10" fill="#dcecff" stroke="#4a7db8" stroke-width="2"/>
+<text x="508" y="362" class="body" text-anchor="middle">Instance 3</text>
+<text x="508" y="392" class="small" text-anchor="middle">Running</text>
+<rect id="possible-addition-1" x="614" y="326" width="156" height="90" rx="10" fill="#ffffff" stroke="#8d799e" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="692" y="378" class="small" text-anchor="middle">Not created</text>
+<rect id="possible-addition-2" x="798" y="326" width="156" height="90" rx="10" fill="#ffffff" stroke="#8d799e" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="876" y="378" class="small" text-anchor="middle">Not created</text>
+<rect id="possible-addition-3" x="982" y="326" width="156" height="90" rx="10" fill="#ffffff" stroke="#8d799e" stroke-width="2" stroke-dasharray="8 6"/>
+<text x="1060" y="378" class="small" text-anchor="middle">Not created</text>
+
+<!-- Count brackets stop above their captions and do not identify particular minimum instances. -->
+<path id="running-count-bracket" d="M62 432 V442 H586 V432" fill="none" stroke="#4a7db8" stroke-width="2"/>
+<text x="324" y="474" class="body" text-anchor="middle">3 running = desired count</text>
+<path id="headroom-count-bracket" d="M614 432 V442 H1138 V432" fill="none" stroke="#8d799e" stroke-width="2"/>
+<text x="876" y="474" class="body" text-anchor="middle">Room to add 3 • no idle servers</text>
+
+<!-- Supporting notes distinguish configured goals from actual and reserved capacity. -->
+<rect id="capacity-notes" x="32" y="520" width="1136" height="104" rx="12" fill="#fbfcfe" stroke="#c8d4df" stroke-width="2"/>
+<text x="52" y="552" class="small" text-anchor="start">Maximum 6 permits growth to 6; it does not reserve EC2 capacity.</text>
+<text x="52" y="580" class="small" text-anchor="start">The running count can lag the desired count while instances launch or terminate.</text>
+<text x="52" y="608" class="small" text-anchor="start">Some replacement operations can temporarily put the actual count above the maximum.</text>
+</svg>

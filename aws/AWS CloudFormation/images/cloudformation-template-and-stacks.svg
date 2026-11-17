@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="668" viewBox="0 0 1200 668" role="img" aria-labelledby="template-stacks-title template-stacks-desc">
+  <title id="template-stacks-title">One CloudFormation template can create separate stacks</title>
+  <desc id="template-stacks-desc">A reusable template defines a resource with logical ID ReportsBucket and accepts an Environment input. CloudFormation uses that template in two separate stack creations in one AWS account and Region. The dev stack uses Environment dev and has its own S3 bucket A. The prod stack uses Environment prod and has a different S3 bucket B. Both use the logical ID ReportsBucket, but the actual bucket names and stored files are separate. Changing one stack does not automatically update the other.</desc>
+  <!-- Conceptual reference: source Anki cloudformation.png, showing template to
+       CloudFormation to provisioned resources. Storage of the template is omitted
+       here so the diagram can focus on reusable definitions versus live resources.
+       https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-overview.html
+       https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html -->
+  <!-- Shared styles match nearby AWS lessons; labels make colors nonessential. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4b6074; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Reading order: one definition, two separate stack creations, distinct buckets. -->
+  <rect width="1200" height="668" fill="#fff"/>
+  <text x="32" y="47" class="title" text-anchor="start">One CloudFormation template can create separate stacks</text>
+  <text x="32" y="82" class="body" text-anchor="start">Example: two stacks in one AWS account and Region, with different Environment input values.</text>
+  <!-- The template is a definition; the names below summarize fields rather than executable YAML. -->
+  <rect id="reusable-template" x="32" y="187" width="326" height="272" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="52" y="225" class="heading" text-anchor="start">Reusable template file</text>
+  <text x="52" y="258" class="small" text-anchor="start">YAML or JSON structured text</text>
+  <text x="52" y="307" class="body" text-anchor="start">Resource: ReportsBucket</text>
+  <text x="52" y="341" class="body" text-anchor="start">Type: S3 bucket</text>
+  <text x="52" y="389" class="body" text-anchor="start">Input: Environment</text>
+  <text x="52" y="423" class="body" text-anchor="start">Output: BucketName</text>
+  <!-- CloudFormation creates and configures real resources in each stack operation. -->
+  <rect id="cloudformation-service" x="426" y="237" width="282" height="172" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="567" y="277" class="heading" text-anchor="middle">CloudFormation</text>
+  <text x="567" y="320" class="body" text-anchor="middle">Create two stacks</text>
+  <text x="567" y="360" class="small" text-anchor="middle">Creates and configures</text>
+  <text x="567" y="387" class="small" text-anchor="middle">their resources</text>
+  <!-- Stack boundaries each contain their own physical resource. A and B are diagram labels. -->
+  <rect id="dev-stack" x="813" y="132" width="355" height="177" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="833" y="169" class="heading" text-anchor="start">Development stack: dev</text>
+  <text x="833" y="202" class="body" text-anchor="start">Environment = dev</text>
+  <text x="833" y="245" class="heading" text-anchor="start">ReportsBucket: bucket A</text>
+  <text x="833" y="279" class="small" text-anchor="start">Its own generated name and files</text>
+  <rect id="prod-stack" x="813" y="337" width="355" height="177" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="833" y="374" class="heading" text-anchor="start">Production stack: prod</text>
+  <text x="833" y="407" class="body" text-anchor="start">Environment = prod</text>
+  <text x="833" y="450" class="heading" text-anchor="start">ReportsBucket: bucket B</text>
+  <text x="833" y="484" class="small" text-anchor="start">Its own generated name and files</text>
+  <!-- Shafts stop inside triangle bases; heads stop at each target's outer border.
+       A shared branch is intentional: the same template serves two distinct operations. -->
+  <path id="template-to-service-arrow" class="connector" data-connector="true" d="M359 323 H413"/>
+  <polygon points="411,316 425,323 411,330" fill="#52677c"/>
+  <path id="service-to-dev-arrow" class="connector" data-connector="true" d="M709 323 H760 V220 H800"/>
+  <polygon points="798,213 812,220 798,227" fill="#52677c"/>
+  <path id="service-to-prod-arrow" class="connector" data-connector="true" d="M760 323 V425 H800"/>
+  <polygon points="798,418 812,425 798,432" fill="#52677c"/>
+  <!-- Takeaway distinguishes logical identity and real data ownership. -->
+  <rect id="template-stack-takeaway" x="32" y="543" width="1136" height="89" rx="10" fill="#f3f5f8" stroke="#b9c4d0" stroke-width="2"/>
+  <text x="52" y="576" class="body" text-anchor="start">ReportsBucket is the logical ID in both stacks. Bucket A and bucket B are separate real resources.</text>
+  <text x="52" y="609" class="small" text-anchor="start">S3 = Simple Storage Service. Reusing a template does not share or copy the buckets' files.</text>
+</svg>

@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="rule-title rule-desc">
+  <title id="rule-title">A Config rule reports a problem; fixing it is a separate action</title>
+  <desc id="rule-desc">A deployed security group allows SSH on TCP port 22 from all IPv4 addresses. The restricted-ssh AWS Config rule evaluates the configuration and reports NON_COMPLIANT. This evaluation does not change the security group or block traffic. Recording and evaluation can take time, and a security-group setting alone does not prove network reachability. A person can fix the resource, or separately configured Systems Manager Automation can run a remediation. The example response checks current settings, removes unwanted public SSH, and preserves approved access. Config then records and evaluates the changed configuration. COMPLIANT means only that this particular check passes.</desc>
+  <!-- Conceptual reference: config.png and code_config.png, showing recorded settings flowing into rule evaluation.
+       https://docs.aws.amazon.com/config/latest/developerguide/restricted-ssh.html
+       https://docs.aws.amazon.com/config/latest/developerguide/evaluate-config_components.html
+       https://docs.aws.amazon.com/config/latest/developerguide/setup-autoremediation.html -->
+  <!-- Shared styles; manual shafts end two units inside the bases of their arrowheads. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172d46; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4c647e; }
+      .bad { font-size: 22px; font-weight: 700; fill: #943f3f; }
+      .good { font-size: 20px; font-weight: 700; fill: #246947; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <rect width="1200" height="1000" fill="#fff"/>
+  <!-- Identify the subject and define the network terms before the example. -->
+  <text x="32" y="48" class="title">A Config rule reports a problem; fixing it is a separate action</text>
+  <text x="32" y="86" class="body">Example: a security group has a rule allowing remote login from any IPv4 address.</text>
+  <text x="32" y="116" class="small">SSH = Secure Shell, a remote-login protocol · TCP = Transmission Control Protocol</text>
+
+  <!-- The upper row is detective evaluation of a change that already exists. -->
+  <g id="deployed-security-group">
+    <rect x="32" y="152" width="344" height="226" rx="12" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="56" y="194" class="heading">1 · Live security group</text>
+    <text x="56" y="236" class="body">SSH on TCP port 22</text>
+    <text x="56" y="272" class="body">Source: 0.0.0.0/0</text>
+    <text x="56" y="310" class="body">All IPv4 sources</text>
+    <text x="56" y="350" class="small">Change is already deployed.</text>
+  </g>
+  <g id="rule-evaluation">
+    <rect x="428" y="152" width="344" height="226" rx="12" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="452" y="194" class="heading">2 · Rule evaluation</text>
+    <text x="452" y="236" class="heading">restricted-ssh</text>
+    <text x="452" y="272" class="body">Checks the recorded settings.</text>
+    <text x="452" y="310" class="body">Change or periodic trigger</text>
+    <text x="452" y="350" class="small">ID: INCOMING_SSH_DISABLED</text>
+  </g>
+  <g id="noncompliant-result">
+    <rect x="824" y="152" width="344" height="226" rx="12" fill="#fbeeee" stroke="#d5a1a1" stroke-width="2"/>
+    <text x="848" y="194" class="heading">3 · Report</text>
+    <text x="848" y="244" class="bad">NON_COMPLIANT</text>
+    <text x="848" y="292" class="body">Public SSH setting detected.</text>
+    <text x="848" y="330" class="body">The rule does not change it.</text>
+  </g>
+  <!-- Tips meet target outer strokes. Routes occupy the gaps between responsibility boxes. -->
+  <path id="recorded-settings-arrow" class="connector" data-connector="true" d="M377 270 H415"/>
+  <polygon id="recorded-settings-head" points="413,263 427,270 413,277" fill="#52677c"/>
+  <path id="evaluation-result-arrow" class="connector" data-connector="true" d="M773 270 H811"/>
+  <polygon id="evaluation-result-head" points="809,263 823,270 809,277" fill="#52677c"/>
+
+  <!-- This band prevents a detective rule from being mistaken for an inline firewall or network test. -->
+  <g id="detection-limits">
+    <rect x="32" y="414" width="1136" height="108" rx="12" fill="#fff2e1" stroke="#dcb77e" stroke-width="2"/>
+    <text x="56" y="456" class="heading">A bad setting can take effect before Config reports it.</text>
+    <text x="56" y="496" class="body">Recording can take time. Routes and other controls also affect actual network reachability.</text>
+  </g>
+
+  <!-- The lower row is a chosen response, not an automatic consequence of every rule evaluation. -->
+  <text x="32" y="566" class="heading">Fixing it is a separate action</text>
+  <text x="32" y="600" class="body">Example response: check current state before removing unwanted public SSH access.</text>
+  <g id="optional-response">
+    <rect x="32" y="626" width="344" height="230" rx="12" fill="#f8fafc" stroke="#b8c7d8" stroke-width="2"/>
+    <text x="56" y="668" class="heading">Choose a response</text>
+    <text x="56" y="710" class="body">Fix it manually, or run</text>
+    <text x="56" y="742" class="body">configured Systems Manager</text>
+    <text x="56" y="774" class="body">Automation.</text>
+    <text x="56" y="824" class="small">Runbook = instructions for a fix.</text>
+  </g>
+  <g id="change-current-settings">
+    <rect x="428" y="626" width="344" height="230" rx="12" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="452" y="668" class="heading">Check, then change</text>
+    <text x="452" y="710" class="body">Read the current configuration.</text>
+    <text x="452" y="752" class="body">Remove unwanted public SSH.</text>
+    <text x="452" y="794" class="body">Preserve approved access.</text>
+  </g>
+  <g id="updated-evaluation">
+    <rect x="824" y="626" width="344" height="230" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="848" y="668" class="heading">Evaluate updated state</text>
+    <text x="848" y="710" class="body">Config records the change.</text>
+    <text x="848" y="752" class="body">The rule checks it again.</text>
+    <text x="848" y="804" class="good">COMPLIANT</text>
+    <text x="848" y="834" class="small">if this check passes</text>
+  </g>
+  <path id="response-to-action-arrow" class="connector" data-connector="true" d="M377 746 H415"/>
+  <polygon id="response-to-action-head" points="413,739 427,746 413,753" fill="#52677c"/>
+  <path id="action-to-reevaluation-arrow" class="connector" data-connector="true" d="M773 746 H811"/>
+  <polygon id="action-to-reevaluation-head" points="809,739 823,746 809,753" fill="#52677c"/>
+
+  <!-- A result belongs to the selected rule, not to every possible security requirement. -->
+  <g id="rule-result-scope">
+    <rect x="32" y="894" width="1136" height="74" rx="12" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="56" y="940" class="heading">A passing rule proves only that this particular check passed.</text>
+  </g>
+</svg>

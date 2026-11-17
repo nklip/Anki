@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="522" viewBox="0 0 1200 522" role="img" aria-labelledby="iam-request-and-permission-title iam-request-and-permission-desc">
+<title id="iam-request-and-permission-title">IAM checks identity and permission for a request</title>
+<desc id="iam-request-and-permission-desc">A caller is authenticated using credentials. AWS then evaluates applicable policies for the requested action and resource. S3 performs the action only if authorized. This is a conceptual decision flow, not a network proxy.</desc>
+<!-- Original teaching adaptation of https://docs.aws.amazon.com/IAM/latest/UserGuide/intro-structure.html and its intro-diagram _policies_800.png diagram. Layout and wording are simplified for this article; this is not a pixel reproduction. -->
+<!-- Shared typography; manual arrowheads overlap only their own shaft joins. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+.title { font-size: 29px; font-weight: 700; }
+.heading { font-size: 22px; font-weight: 700; }
+.body { font-size: 20px; }
+.small { font-size: 18px; fill: #4b6074; }
+.code { font-family: monospace; font-size: 18px; }
+</style></defs>
+<rect width="1200" height="522" fill="#ffffff"/>
+<!-- Header and reading direction. -->
+<text x="32" y="47" class="title" text-anchor="start">IAM checks identity and permission for a request</text><text x="32" y="81" class="small" text-anchor="start">Example: an application asks Amazon S3 to read one report.</text>
+<!-- Four stages describe authorization, not a network path through an IAM proxy. -->
+<rect x="32" y="118" width="240" height="188" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/><rect x="322" y="118" width="240" height="188" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/><rect x="612" y="118" width="260" height="188" rx="12" fill="#fff6e8" stroke="#ddb370" stroke-width="2"/><rect x="922" y="118" width="246" height="188" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/><text x="52" y="153" class="heading" text-anchor="start">Caller</text><text x="52" y="192" class="body" text-anchor="start">Application using</text>
+<text x="52" y="221" class="body" text-anchor="start">a role session</text>
+<text x="52" y="250" class="body" text-anchor="start">Principal = caller</text><text x="342" y="153" class="heading" text-anchor="start">Authentication</text><text x="342" y="192" class="body" text-anchor="start">Who is calling?</text>
+<text x="342" y="221" class="body" text-anchor="start">AWS checks</text>
+<text x="342" y="250" class="body" text-anchor="start">the credentials.</text><text x="632" y="153" class="heading" text-anchor="start">Authorization</text><text x="632" y="192" class="body" text-anchor="start">May it read this file?</text>
+<text x="632" y="221" class="body" text-anchor="start">AWS checks</text>
+<text x="632" y="250" class="body" text-anchor="start">applicable policies.</text><text x="942" y="153" class="heading" text-anchor="start">Amazon S3</text><text x="942" y="192" class="body" text-anchor="start">Allowed: return file.</text>
+<text x="942" y="221" class="body" text-anchor="start">Denied: reject</text>
+<text x="942" y="250" class="body" text-anchor="start">this request.</text><path data-connector="true" d="M275 215 H306" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="304,208 318,215 304,222" fill="#52677c"/><path data-connector="true" d="M565 215 H596" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="594,208 608,215 594,222" fill="#52677c"/><path data-connector="true" d="M875 215 H906" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="904,208 918,215 904,222" fill="#52677c"/>
+<!-- Request context supplies the action, target resource, and conditions for evaluation. -->
+<rect x="32" y="340" width="780" height="154" rx="12" fill="#f3f6fa" stroke="#c8d4df" stroke-width="2"/><text x="52" y="375" class="heading" text-anchor="start">The request carries more than an identity</text><text x="52" y="412" class="body" text-anchor="start">Action: s3:GetObject = read an object</text>
+<text x="52" y="440" class="body" text-anchor="start">Resource: reports/november.csv in the example bucket</text>
+<text x="52" y="468" class="body" text-anchor="start">Context: details such as the connection and request time</text><rect x="838" y="340" width="330" height="154" rx="12" fill="#fff6e8" stroke="#ddb370" stroke-width="2"/><text x="858" y="375" class="heading" text-anchor="start">The key distinction</text><text x="858" y="412" class="body" text-anchor="start">Valid credentials identify you.</text>
+<text x="858" y="440" class="body" text-anchor="start">They do not give permission</text>
+<text x="858" y="468" class="body" text-anchor="start">to perform every action.</text>
+</svg>

@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="752" viewBox="0 0 1200 752" role="img" aria-labelledby="cloudtrail-alert-title cloudtrail-alert-desc">
+  <title id="cloudtrail-alert-title">CloudTrail saves records; CloudWatch turns them into alerts</title>
+  <desc id="cloudtrail-alert-desc">An AWS API request to change an S3 bucket policy is recorded by a CloudTrail trail that selects that management event. The trail delivers audit log files to S3. An optional configured path sends the events to CloudWatch Logs, where a metric filter counts matching PutBucketPolicy requests. A CloudWatch alarm enters ALARM when the count is at least one in a five-minute period and sends a notification through Amazon SNS. This example counts requests, including failed requests. A trail's separate SNS log-delivery notification only announces new log files.</desc>
+  <!-- Conceptual references: Anki media trail-to-sns.png;
+       https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudwatch-alarms-for-cloudtrail.html
+       https://docs.aws.amazon.com/awscloudtrail/latest/userguide/configure-sns-notifications-for-cloudtrail.html -->
+  <!-- Shared palette: blue request, purple recording and monitoring, green outcomes. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4b6074; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Main lesson and request-to-storage path. -->
+  <rect width="1200" height="752" fill="#fff"/>
+  <text x="32" y="47" class="title" text-anchor="start">CloudTrail saves records; CloudWatch turns them into alerts</text>
+  <text x="32" y="82" class="body" text-anchor="start">Example: alert on a request to change an S3 bucket's access policy, even if the request fails.</text>
+  <rect id="api-request" x="32" y="140" width="292" height="176" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="178" y="176" class="heading" text-anchor="middle">AWS API request</text>
+  <text x="178" y="217" class="body" text-anchor="middle">PutBucketPolicy</text>
+  <text x="178" y="256" class="small" text-anchor="middle">Request to change a bucket's</text>
+  <text x="178" y="283" class="small" text-anchor="middle">access policy</text>
+  <rect id="configured-trail" x="424" y="140" width="300" height="176" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="574" y="176" class="heading" text-anchor="middle">CloudTrail trail</text>
+  <text x="574" y="217" class="body" text-anchor="middle">Records selected events</text>
+  <text x="574" y="256" class="small" text-anchor="middle">A bucket policy request</text>
+  <text x="574" y="283" class="small" text-anchor="middle">is a management event</text>
+  <rect id="s3-audit-logs" x="824" y="140" width="344" height="176" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="996" y="176" class="heading" text-anchor="middle">S3 audit log files</text>
+  <text x="996" y="217" class="body" text-anchor="middle">Keep records for later review</text>
+  <text x="996" y="268" class="small" text-anchor="middle">S3 = AWS object storage</text>
+  <!-- Manual shafts end inside their own heads; tips meet outer target borders. -->
+  <path id="request-to-trail-arrow" class="connector" data-connector="true" d="M325 228 H411"/>
+  <polygon points="409,221 423,228 409,235" fill="#52677c"/>
+  <path id="trail-to-s3-arrow" class="connector" data-connector="true" d="M725 228 H811"/>
+  <polygon points="809,221 823,228 809,235" fill="#52677c"/>
+  <!-- Optional branch routes through the gap above the alert chain, clear of labels. -->
+  <path id="trail-to-cloudwatch-arrow" class="connector" data-connector="true" d="M574 317 V380 H157 V427"/>
+  <polygon points="150,425 157,439 164,425" fill="#52677c"/>
+  <text x="604" y="375" class="body" text-anchor="start">Optional alert path: configure each part below</text>
+  <!-- Alert chain: record to count to threshold to notification. -->
+  <rect id="cloudwatch-logs" x="32" y="440" width="250" height="192" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="157" y="476" class="heading" text-anchor="middle">CloudWatch Logs</text>
+  <text x="157" y="517" class="body" text-anchor="middle">Stores the event records</text>
+  <text x="157" y="559" class="small" text-anchor="middle">Time, caller, operation,</text>
+  <text x="157" y="587" class="small" text-anchor="middle">and other event details</text>
+  <rect id="metric-filter" x="327" y="440" width="250" height="192" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="452" y="476" class="heading" text-anchor="middle">Metric filter</text>
+  <text x="452" y="516" class="small" text-anchor="middle">Match PutBucketPolicy</text>
+  <text x="452" y="554" class="body" text-anchor="middle">Add 1 per matching event</text>
+  <text x="452" y="592" class="small" text-anchor="middle">Metric = request count</text>
+  <rect id="cloudwatch-alarm" x="622" y="440" width="250" height="192" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="747" y="476" class="heading" text-anchor="middle">CloudWatch alarm</text>
+  <text x="747" y="517" class="body" text-anchor="middle">Count ≥ 1 in 5 minutes</text>
+  <text x="747" y="559" class="small" text-anchor="middle">Entering ALARM triggers</text>
+  <text x="747" y="587" class="small" text-anchor="middle">the configured notification</text>
+  <rect id="sns-notification" x="917" y="440" width="251" height="192" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="1042.5" y="476" class="heading" text-anchor="middle">Amazon SNS</text>
+  <text x="1042.5" y="517" class="body" text-anchor="middle">Sends the alarm message</text>
+  <text x="1042.5" y="559" class="small" text-anchor="middle">For example, email to</text>
+  <text x="1042.5" y="587" class="small" text-anchor="middle">confirmed subscribers</text>
+  <!-- All horizontal heads share the same outer-border and hidden-base geometry. -->
+  <path id="logs-to-filter-arrow" class="connector" data-connector="true" d="M283 536 H314"/>
+  <polygon points="312,529 326,536 312,543" fill="#52677c"/>
+  <path id="filter-to-alarm-arrow" class="connector" data-connector="true" d="M578 536 H609"/>
+  <polygon points="607,529 621,536 607,543" fill="#52677c"/>
+  <path id="alarm-to-sns-arrow" class="connector" data-connector="true" d="M873 536 H904"/>
+  <polygon points="902,529 916,536 902,543" fill="#52677c"/>
+  <!-- Separate delivery notices from security-rule alerts; define abbreviations. -->
+  <text x="32" y="679" class="small" text-anchor="start">A trail's separate SNS delivery notice only says “new log files arrived”; it does not check this alarm rule.</text>
+  <text x="32" y="718" class="small" text-anchor="start">API = application programming interface. SNS = Simple Notification Service.</text>
+</svg>

@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="tracking-title tracking-desc">
+<title id="tracking-title">Target tracking adds servers to share the work</title>
+<desc id="tracking-desc">An illustrative scale-out from two equal EC2 instances at 80 percent average CPU utilization to four at 40 percent. CloudWatch reports the metric to a target tracking policy with a 50 percent target. The teaching estimate is two times 80 divided by 50, or 3.2, rounded up to four. Each Availability Zone starts with one instance and ends with two. The same work is spread evenly after startup; this is not a guaranteed scaling outcome.</desc>
+<!-- New teaching adaptation of the two-zone before/after model in these AWS images, not a pixel recreation:
+https://docs.aws.amazon.com/images/autoscaling/ec2/userguide/images/termination-policy-default-diagram.png
+https://docs.aws.amazon.com/images/autoscaling/ec2/userguide/images/termination-policy-default-2-diagram.png
+Numbers and the target-tracking policy are added for this hypothetical example. -->
+<!-- Shared styles: blue existing servers, green added servers, purple policy; labels carry the meaning too. -->
+<defs><style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+.title { font-size: 29px; font-weight: 700; }
+.heading { font-size: 22px; font-weight: 700; }
+.body { font-size: 20px; }
+.small { font-size: 18px; fill: #4b6074; }
+</style></defs>
+<rect width="1200" height="700" fill="#fff"/>
+<!-- Main reading order is left to right: measured state, decision, settled outcome. -->
+<text x="32" y="47" class="title" text-anchor="start">Target tracking adds servers to share the work</text>
+<text x="32" y="81" class="small" text-anchor="start">One EC2 Auto Scaling group: minimum 2, maximum 6. CPU = central processing unit; % shows its utilization.</text>
+<!-- Before: two instances, one in each zone. -->
+<rect id="before-panel" x="32" y="114" width="320" height="450" rx="12" fill="#f7f9fc" stroke="#c8d4df" stroke-width="2"/>
+<text x="52" y="151" class="heading" text-anchor="start">Before: 2 instances</text>
+<rect x="52" y="190" width="280" height="146" rx="10" fill="#fff" stroke="#c8d4df" stroke-width="2"/>
+<text x="72" y="220" class="body" text-anchor="start">Availability Zone A</text>
+<rect x="72" y="244" width="240" height="72" rx="8" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+<text x="192" y="273" class="body" text-anchor="middle">Instance A</text>
+<text x="192" y="300" class="heading" text-anchor="middle">80% CPU</text>
+<rect x="52" y="350" width="280" height="146" rx="10" fill="#fff" stroke="#c8d4df" stroke-width="2"/>
+<text x="72" y="380" class="body" text-anchor="start">Availability Zone B</text>
+<rect x="72" y="404" width="240" height="72" rx="8" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+<text x="192" y="433" class="body" text-anchor="middle">Instance B</text>
+<text x="192" y="460" class="heading" text-anchor="middle">80% CPU</text>
+<text x="192" y="539" class="body" text-anchor="middle">Desired capacity = 2</text>
+<!-- Middle: a teaching calculation, deliberately not a claim about AWS's exact algorithm. -->
+<rect id="policy-panel" x="408" y="114" width="344" height="450" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+<text x="428" y="151" class="heading" text-anchor="start">Target tracking policy</text>
+<text x="580" y="206" class="body" text-anchor="middle">CloudWatch reports</text>
+<text x="580" y="237" class="heading" text-anchor="middle">80% average CPU</text>
+<text x="580" y="286" class="body" text-anchor="middle">Target: 50% average CPU</text>
+<rect id="illustrative-calculation" x="428" y="317" width="304" height="112" rx="8" fill="#fff" stroke="#baa6cf" stroke-width="2"/>
+<text x="580" y="346" class="small" text-anchor="middle">Illustrative estimate</text>
+<text x="580" y="379" class="heading" text-anchor="middle">2 × 80 ÷ 50 = 3.2</text>
+<text x="580" y="408" class="body" text-anchor="middle">Round up to 4 instances</text>
+<text x="580" y="477" class="body" text-anchor="middle">Raise desired capacity</text>
+<text x="580" y="508" class="heading" text-anchor="middle">from 2 to 4</text>
+<text x="580" y="539" class="small" text-anchor="middle">Launch two more instances</text>
+<!-- After: same work redistributed; new C and D are explicitly labelled. -->
+<rect id="after-panel" x="808" y="114" width="360" height="450" rx="12" fill="#f7f9fc" stroke="#c8d4df" stroke-width="2"/>
+<text x="828" y="151" class="heading" text-anchor="start">After: 4 instances</text>
+<rect x="828" y="190" width="320" height="146" rx="10" fill="#fff" stroke="#c8d4df" stroke-width="2"/>
+<text x="848" y="220" class="body" text-anchor="start">Availability Zone A</text>
+<rect x="848" y="244" width="130" height="72" rx="8" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+<text x="913" y="273" class="body" text-anchor="middle">A</text>
+<text x="913" y="300" class="heading" text-anchor="middle">40% CPU</text>
+<rect x="998" y="244" width="130" height="72" rx="8" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+<text x="1063" y="273" class="body" text-anchor="middle">C · new</text>
+<text x="1063" y="300" class="heading" text-anchor="middle">40% CPU</text>
+<rect x="828" y="350" width="320" height="146" rx="10" fill="#fff" stroke="#c8d4df" stroke-width="2"/>
+<text x="848" y="380" class="body" text-anchor="start">Availability Zone B</text>
+<rect x="848" y="404" width="130" height="72" rx="8" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+<text x="913" y="433" class="body" text-anchor="middle">B</text>
+<text x="913" y="460" class="heading" text-anchor="middle">40% CPU</text>
+<rect x="998" y="404" width="130" height="72" rx="8" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+<text x="1063" y="433" class="body" text-anchor="middle">D · new</text>
+<text x="1063" y="460" class="heading" text-anchor="middle">40% CPU</text>
+<text x="988" y="539" class="body" text-anchor="middle">Desired capacity = 4</text>
+<!-- Heads stop at the outer border edge; shafts end inside their own triangular bases. -->
+<path id="measurement-arrow" data-connector="true" d="M353 337 H395" fill="none" stroke="#52677c" stroke-width="2.5"/>
+<polygon points="393,330 407,337 393,344" fill="#52677c"/>
+<path id="scale-out-arrow" data-connector="true" d="M753 337 H795" fill="none" stroke="#52677c" stroke-width="2.5"/>
+<polygon points="793,330 807,337 793,344" fill="#52677c"/>
+<!-- Visible assumptions distinguish this model from a guaranteed performance or scaling result. -->
+<text x="32" y="607" class="body" text-anchor="start">Assume equal-sized instances, unchanged work, and even load distribution after startup.</text>
+<text x="32" y="638" class="small" text-anchor="start">Four instances share the work: 2 × 80 ÷ 4 = 40% each. Three would average about 53%, above the target.</text>
+<text x="32" y="669" class="small" text-anchor="start">Example only. Real scaling takes time, follows configured limits, and keeps responding to new measurements.</text>
+</svg>

@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="710" viewBox="0 0 1200 710" role="img" aria-labelledby="ebs-scope-title ebs-scope-desc">
+  <title id="ebs-scope-title">An EBS volume belongs to one zone; a snapshot can restore a new volume in another</title>
+  <desc id="ebs-scope-desc">Inside one AWS Region, an EC2 virtual server in Availability Zone A reads and writes an EBS volume in the same zone. A snapshot captures a backup of the volume. The regional snapshot can create a new, independent volume in Availability Zone B, where another EC2 server can attach it. Snapshot data is stored across Availability Zones in the Region. This is a restore operation, not automatic application failover.</desc>
+  <!-- Concept reference: Anki elastic_block_store.webp separates EC2 from EBS storage.
+       Scope and restore: https://docs.aws.amazon.com/ebs/latest/userguide/ebs-volumes.html
+       https://docs.aws.amazon.com/ebs/latest/userguide/ebs-snapshots.html -->
+  <!-- Shared visual language: blue compute, purple live storage, green backup. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4b6074; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+      .backup-flow { fill: none; stroke: #3d8159; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Region contains both zone-local volumes and the regional backup. -->
+  <rect width="1200" height="710" fill="#fff"/>
+  <text x="32" y="47" class="title">A volume is a live disk; a snapshot is a backup you can restore</text>
+  <text x="32" y="81" class="body">EBS = Elastic Block Store. EC2 = Elastic Compute Cloud, which runs virtual servers.</text>
+  <rect x="32" y="110" width="1136" height="530" rx="14" fill="#fafbfd" stroke="#bac8d5" stroke-width="2"/>
+  <text x="54" y="145" class="heading">One AWS Region</text>
+  <rect id="zone-a" x="52" y="165" width="515" height="210" rx="12" fill="#fff" stroke="#bac8d5" stroke-width="2"/>
+  <text x="74" y="201" class="heading">Availability Zone A</text>
+  <rect id="zone-b" x="633" y="165" width="515" height="210" rx="12" fill="#fff" stroke="#bac8d5" stroke-width="2"/>
+  <text x="655" y="201" class="heading">Availability Zone B</text>
+  <!-- An ordinary attachment connects compute and storage in the same zone. -->
+  <rect id="source-server" x="74" y="225" width="190" height="110" rx="10" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="169" y="263" text-anchor="middle" class="heading">EC2 instance</text>
+  <text x="169" y="301" text-anchor="middle" class="body">Runs your app</text>
+  <rect id="source-volume" x="355" y="225" width="190" height="110" rx="10" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="450" y="263" text-anchor="middle" class="heading">EBS volume</text>
+  <text x="450" y="301" text-anchor="middle" class="body">Stores blocks</text>
+  <text x="309.5" y="259" text-anchor="middle" class="small">read/write</text>
+  <!-- Double-ended attachment arrows stop at outer node borders. -->
+  <path id="source-attachment" data-connector="true" class="connector" d="M279 281 H340"/>
+  <path d="M280 274 L265 281 L280 288 Z M339 274 L354 281 L339 288 Z" fill="#52677c"/>
+  <rect id="restored-volume" x="655" y="225" width="190" height="110" rx="10" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="750" y="263" text-anchor="middle" class="heading">New volume</text>
+  <text x="750" y="301" text-anchor="middle" class="body">Restored data</text>
+  <rect id="destination-server" x="936" y="225" width="190" height="110" rx="10" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="1031" y="263" text-anchor="middle" class="heading">EC2 instance</text>
+  <text x="1031" y="301" text-anchor="middle" class="body">Uses new disk</text>
+  <text x="890.5" y="259" text-anchor="middle" class="small">read/write</text>
+  <path id="restored-attachment" data-connector="true" class="connector" d="M860 281 H921"/>
+  <path d="M861 274 L846 281 L861 288 Z M920 274 L935 281 L920 288 Z" fill="#52677c"/>
+  <!-- Backup connectors cross zone boundaries intentionally. Shafts stop inside heads. -->
+  <path id="snapshot-creation-flow" data-connector="true" class="backup-flow" d="M450 336 V433 H540 V460"/>
+  <path d="M532 458 L540 474 L548 458 Z" fill="#3d8159"/>
+  <text x="215" y="429" class="heading">Create snapshot</text>
+  <text x="215" y="456" class="small">Capture a point in time</text>
+  <path id="snapshot-restore-flow" data-connector="true" class="backup-flow" d="M660 474 V433 H750 V350"/>
+  <path d="M742 352 L750 336 L758 352 Z" fill="#3d8159"/>
+  <text x="800" y="429" class="heading">Restore new volume</text>
+  <text x="800" y="456" class="small">Choose its Availability Zone</text>
+  <!-- Regional snapshot is not an attached disk or a running replica. -->
+  <rect id="regional-snapshot" x="425" y="475" width="350" height="110" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="600" y="513" text-anchor="middle" class="heading">EBS snapshot</text>
+  <text x="600" y="546" text-anchor="middle" class="body">Backup managed by AWS</text>
+  <text x="600" y="573" text-anchor="middle" class="small">Stored in Amazon S3</text>
+  <text x="600" y="617" text-anchor="middle" class="body">Regional snapshot data is stored across Availability Zones.</text>
+  <!-- Operational consequence; restore and application recovery are separate actions. -->
+  <text x="32" y="679" class="heading">Attach within a zone. Restore to create another disk. Application recovery still needs setup.</text>
+</svg>

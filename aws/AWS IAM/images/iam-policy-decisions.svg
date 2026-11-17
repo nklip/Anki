@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="668" viewBox="0 0 1200 668" role="img" aria-labelledby="iam-policy-decisions-title iam-policy-decisions-desc">
+<title id="iam-policy-decisions-title">Allow, missing permission, and explicit Deny</title>
+<desc id="iam-policy-decisions-desc">Three independent requests: reading a permitted report is allowed; deleting is implicitly denied when no policy grants it; reading a private report is explicitly denied by a matching bucket policy even when an Allow also matches.</desc>
+<!-- Original teaching adaptation of https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html. Layout and wording are simplified for this article; this is not a pixel reproduction. -->
+<!-- Shared typography; manual arrowheads overlap only their own shaft joins. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+.title { font-size: 29px; font-weight: 700; }
+.heading { font-size: 22px; font-weight: 700; }
+.body { font-size: 20px; }
+.small { font-size: 18px; fill: #4b6074; }
+.code { font-family: monospace; font-size: 18px; }
+</style></defs>
+<rect width="1200" height="668" fill="#ffffff"/>
+<!-- Scope limits make the example valid without claiming to implement the full IAM evaluator. -->
+<text x="32" y="47" class="title" text-anchor="start">Allow, missing permission, and explicit Deny</text><text x="32" y="81" class="small" text-anchor="start">Same-account S3 example. Only the shown grants apply; other applicable controls permit access.</text><rect x="32" y="109" width="1136" height="76" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/><text x="52" y="140" class="heading" text-anchor="start">Starting policy: Allow s3:GetObject on amzn-s3-demo-bucket/reports/*</text><text x="52" y="168" class="small" text-anchor="start">GetObject reads an object. DeleteObject deletes one. Each row below is a separate request.</text><text x="52" y="225" class="small" text-anchor="start">REQUEST</text><text x="460" y="225" class="small" text-anchor="start">POLICY MATCH</text><text x="948" y="225" class="small" text-anchor="start">RESULT</text>
+<!-- Independent request and its resulting decision. -->
+<rect x="32" y="248" width="1136" height="102" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/><text x="52" y="306" class="body" text-anchor="start">Read reports/november.csv</text><text x="460" y="287" class="body" text-anchor="start">Matching Allow</text>
+<text x="460" y="316" class="body" text-anchor="start">No matching Deny</text><path data-connector="true" d="M389 301 H426" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="424,294 438,301 424,308" fill="#52677c"/><path data-connector="true" d="M868 301 H906" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="904,294 918,301 904,308" fill="#52677c"/><text x="948" y="291" class="heading" text-anchor="start">ALLOWED</text>
+<!-- Independent request and its resulting decision. -->
+<rect x="32" y="370" width="1136" height="102" rx="12" fill="#fff6e8" stroke="#ddb370" stroke-width="2"/><text x="52" y="428" class="body" text-anchor="start">Delete reports/november.csv</text><text x="460" y="409" class="body" text-anchor="start">No Allow for DeleteObject</text>
+<text x="460" y="438" class="body" text-anchor="start">No matching Deny</text><path data-connector="true" d="M389 423 H426" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="424,416 438,423 424,430" fill="#52677c"/><path data-connector="true" d="M868 423 H906" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="904,416 918,423 904,430" fill="#52677c"/><text x="948" y="413" class="heading" text-anchor="start">DENIED</text><text x="948" y="443" class="small" text-anchor="start">Implicit deny</text>
+<!-- Independent request and its resulting decision. -->
+<rect x="32" y="492" width="1136" height="102" rx="12" fill="#fceff0" stroke="#d8a0a8" stroke-width="2"/><text x="52" y="550" class="body" text-anchor="start">Read reports/private/pay.csv</text><text x="460" y="531" class="body" text-anchor="start">Allow matches, but a bucket policy</text>
+<text x="460" y="560" class="body" text-anchor="start">explicitly denies this private prefix</text><path data-connector="true" d="M389 545 H426" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="424,538 438,545 424,552" fill="#52677c"/><path data-connector="true" d="M868 545 H906" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="904,538 918,545 904,552" fill="#52677c"/><text x="948" y="535" class="heading" text-anchor="start">DENIED</text><text x="948" y="565" class="small" text-anchor="start">Explicit deny</text><text x="32" y="638" class="small" text-anchor="start">A read-only Allow does not cancel permissions granted elsewhere. A matching explicit Deny wins.</text>
+</svg>

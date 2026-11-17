@@ -2,17 +2,11 @@
 
 <sub>[Back to AWS](../Readme.md#content)</sub>
 
-# Front
-
-How do you match the main AWS database services to an application's data and workload?
-
-# Back
-
 **Choose by the data model and access pattern:** how the data is organized, and how the application reads or changes it. Different parts of an application can use different database services.
 
 ## Match the workload
 
-Read each row from left to right: database type or capability, typical need, then an AWS service to consider. Amazon RDS means **Relational Database Service**. This September 2026 snapshot was verified on September 17, 2026; it is a starting map, not an exhaustive catalog.
+Read each row from left to right: database type or capability, typical need, then an AWS service to consider. Amazon RDS means **Relational Database Service**. This September 2026 overview is a starting map, not an exhaustive catalog.
 
 Rows are sorted **alphabetically (A–Z) by the Type / capability name**.
 

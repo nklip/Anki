@@ -194,4 +194,4 @@ Lambda fits bounded event-driven work such as API handlers, file processing, and
 - [Asynchronous destinations and dead-letter queues](https://docs.aws.amazon.com/lambda/latest/dg/invocation-async-retain-records.html)
 - [Durable invocation — individual invocations versus overall execution](https://docs.aws.amazon.com/lambda/latest/dg/durable-invoking.html)
 - [AWS Lambda pricing](https://aws.amazon.com/lambda/pricing/)
-- [AWS Architecture Icons — official SVG artwork used in the diagrams](https://aws.amazon.com/architecture/icons/) — July 31, 2026 package; icon geometry and colors preserved. Original package paths are recorded in each SVG.
+- [AWS Architecture Icons](https://aws.amazon.com/architecture/icons/) — July 31, 2026 package.

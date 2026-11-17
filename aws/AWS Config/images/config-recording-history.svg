@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="recording-title recording-desc">
+  <title id="recording-title">AWS Config records how resource settings change</title>
+  <desc id="recording-desc">A security group's allowed source range changes. A configured AWS Config recorder captures the selected resource's settings as configuration items, which include its identifier, type, recording time, settings, and relationships. Two recorded states show security group sg-app allowing inbound TCP port 22 first from an approved private range, 10.20.0.0/16, and later from all IPv4 addresses, 0.0.0.0/0. The group is associated with EC2 instance i-app. Configuration history files and snapshots are delivered to Amazon S3. This example uses continuous recording for selected supported resource types in one account and Region. Recording can lag behind changes and does not measure network reachability or traffic, or back up application data.</desc>
+  <!-- Conceptual references: the recording and S3 delivery branches in config.png and code_config.png.
+       https://docs.aws.amazon.com/config/latest/developerguide/how-does-config-work.html
+       https://docs.aws.amazon.com/config/latest/developerguide/config-concepts.html
+       https://docs.aws.amazon.com/config/latest/developerguide/select-resources.html -->
+  <!-- Shared typography and manual arrows. Shafts end two units inside their head bases. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172d46; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4c647e; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <rect width="1200" height="1000" fill="#fff"/>
+  <!-- Scope qualifies the diagram before the resource-to-record flow begins. -->
+  <text x="32" y="48" class="title">AWS Config records how resource settings change</text>
+  <text x="32" y="84" class="body">A security group is a firewall. This example changes its allowed source range.</text>
+  <text x="32" y="116" class="small">Continuous recording example · selected supported resource types in one account and Region</text>
+
+  <!-- Each top box is a distinct part of the recording process. -->
+  <g id="changed-resource">
+    <rect x="32" y="158" width="300" height="212" rx="12" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="56" y="198" class="heading">Security group sg-app</text>
+    <text x="56" y="240" class="body">Inbound TCP port 22</text>
+    <text x="56" y="280" class="body">Before: 10.20.0.0/16</text>
+    <text x="56" y="318" class="body">After: 0.0.0.0/0</text>
+    <text x="56" y="348" class="small">Only the source range changes.</text>
+  </g>
+  <g id="configured-recorder">
+    <rect x="402" y="158" width="300" height="212" rx="12" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="426" y="198" class="heading">Configured recorder</text>
+    <text x="426" y="240" class="body">Watches selected resources.</text>
+    <text x="426" y="280" class="body">Reads resource settings.</text>
+    <text x="426" y="320" class="body">Creates configuration items.</text>
+  </g>
+  <g id="configuration-item">
+    <rect x="772" y="158" width="396" height="212" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="796" y="198" class="heading">Configuration item (CI)</text>
+    <text x="796" y="240" class="body">Resource ID, type, recording time</text>
+    <text x="796" y="280" class="body">Settings and relationships</text>
+    <text x="796" y="320" class="body">One recorded resource state</text>
+  </g>
+  <!-- Horizontal arrow tips meet outer target strokes. -->
+  <path id="resource-to-recorder-arrow" class="connector" data-connector="true" d="M333 264 H389"/>
+  <polygon id="recorder-head" points="387,257 401,264 387,271" fill="#52677c"/>
+  <path id="recorder-to-item-arrow" class="connector" data-connector="true" d="M703 264 H759"/>
+  <polygon id="item-head" points="757,257 771,264 757,271" fill="#52677c"/>
+
+  <!-- Recorded items form a history. The downward arrow stays in the clear inter-panel corridor. -->
+  <path id="item-to-history-arrow" class="connector" data-connector="true" d="M970 371 V425"/>
+  <polygon id="history-head" points="963,423 970,437 977,423" fill="#52677c"/>
+  <g id="resource-history">
+    <rect x="32" y="438" width="1136" height="272" rx="12" fill="#f8fafc" stroke="#b8c7d8" stroke-width="2"/>
+    <text x="56" y="480" class="heading">History of sg-app</text>
+    <text x="674" y="480" class="body">Related EC2 virtual server: i-app</text>
+    <rect id="earlier-state" x="56" y="512" width="470" height="150" rx="10" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="80" y="550" class="heading">Earlier recorded state</text>
+    <text x="80" y="588" class="body">Inbound: TCP 22 from 10.20.0.0/16</text>
+    <text x="80" y="632" class="small">10.20.0.0/16 = approved private range</text>
+    <rect id="later-state" x="674" y="512" width="470" height="150" rx="10" fill="#fff2e1" stroke="#dcb77e" stroke-width="2"/>
+    <text x="698" y="550" class="heading">Later recorded state</text>
+    <text x="698" y="588" class="body">Inbound: TCP 22 from 0.0.0.0/0</text>
+    <text x="698" y="632" class="small">0.0.0.0/0 = all IPv4 addresses</text>
+    <text x="600" y="560" class="small" text-anchor="middle">Changed</text>
+    <text x="56" y="692" class="small">TCP port 22 is the standard port for Secure Shell (SSH) remote login.</text>
+  </g>
+  <!-- Time direction is explicit; this arrow compares recorded states, not network traffic. -->
+  <path id="earlier-to-later-arrow" class="connector" data-connector="true" d="M527 588 H661"/>
+  <polygon id="later-state-head" points="659,581 673,588 659,595" fill="#52677c"/>
+
+  <!-- S3 receives configuration files, not copies of the application data inside resources. -->
+  <path id="history-to-s3-arrow" class="connector" data-connector="true" d="M600 711 V767"/>
+  <polygon id="s3-head" points="593,765 600,779 607,765" fill="#52677c"/>
+  <text x="634" y="752" class="small">Delivery</text>
+  <g id="s3-delivery">
+    <rect x="32" y="780" width="1136" height="104" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="56" y="820" class="heading">Amazon S3 stores configuration history files and snapshots</text>
+    <text x="56" y="858" class="body">A configuration snapshot is a collection of recorded resource settings.</text>
+  </g>
+  <!-- Limits make the recorded model distinct from traffic monitoring and data backups. -->
+  <text x="32" y="924" class="body">Recording can lag behind a change. Config records settings, not network reachability or traffic.</text>
+  <text x="32" y="960" class="body">Configuration history and snapshots are not backups of your application's data.</text>
+</svg>

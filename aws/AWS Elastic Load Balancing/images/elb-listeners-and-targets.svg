@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="elb-routing-title elb-routing-desc">
+<title id="elb-routing-title">An ALB chooses a group, then a target</title>
+<desc id="elb-routing-desc">An Application Load Balancer accepts HTTPS on port 443. Rule priority 10 sends paths matching /api/* to an API target group. Otherwise the default rule sends requests to the website target group. Each group contains two example servers; an ordinary forwarded request goes to one selected target, not every server.</desc>
+<!-- Simplified teaching adaptation of https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html and component_architecture.png; also elb_components.png in the original Anki note. New layout and labels; not a pixel reproduction. -->
+<!-- Shared type and colors. Manual arrow shafts stop under their heads; tips meet target boundaries. -->
+<defs><style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+.title { font-size: 29px; font-weight: 700; }
+.heading { font-size: 22px; font-weight: 700; }
+.body { font-size: 20px; }
+.small { font-size: 18px; fill: #4b6074; }
+.code { font-family: monospace; font-size: 18px; }
+</style></defs>
+<rect width="1200" height="680" fill="#fff"/>
+<text x="32" y="47" class="title" text-anchor="start">An ALB chooses a group, then a target</text>
+<text x="32" y="81" class="small" text-anchor="start">ALB = Application Load Balancer • API = application programming interface</text>
+<!-- Client request enters the single illustrated listener. -->
+<rect x="32" y="164" width="230" height="145" rx="10" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+<text x="52" y="202" class="heading" text-anchor="start">Client</text>
+<text x="52" y="237" class="body" text-anchor="start">HTTPS request</text>
+<text x="52" y="269" class="code" text-anchor="start">/api/orders</text>
+<rect x="320" y="112" width="450" height="460" rx="10" fill="#f8f5fc" stroke="#baa6cf" stroke-width="2"/>
+<text x="342" y="147" class="heading" text-anchor="start">Application Load Balancer</text>
+<rect x="342" y="172" width="406" height="90" rx="10" fill="#fff" stroke="#baa6cf" stroke-width="2"/>
+<text x="362" y="206" class="heading" text-anchor="start">Listener: HTTPS on port 443</text>
+<text x="362" y="239" class="small" text-anchor="start">Accepts the client connection</text>
+<path data-connector="true" d="M263 222 H330" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="328,215 342,222 328,229" fill="#52677c"/>
+<!-- Rule priority is a decision order, not a broadcast to both groups. -->
+<path data-connector="true" d="M545 263 V296" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="538,294 545,308 552,294" fill="#52677c"/>
+<text x="570" y="291" class="small" text-anchor="start">Evaluate rules</text>
+<rect x="342" y="308" width="406" height="86" rx="10" fill="#fff" stroke="#baa6cf" stroke-width="2"/>
+<text x="362" y="341" class="body" text-anchor="start">Rule 10: path matches /api/*</text>
+<text x="362" y="374" class="small" text-anchor="start">Forward to the API target group</text>
+<path data-connector="true" d="M545 395 V454" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="538,452 545,466 552,452" fill="#52677c"/>
+<text x="568" y="435" class="small" text-anchor="start">No match</text>
+<rect x="342" y="466" width="406" height="84" rx="10" fill="#fff" stroke="#baa6cf" stroke-width="2"/>
+<text x="362" y="499" class="heading" text-anchor="start">Default rule</text>
+<text x="362" y="531" class="small" text-anchor="start">Forward to the website target group</text>
+<!-- Target groups are logical collections. Boxes inside them are individual application targets. -->
+<rect x="842" y="270" width="326" height="147" rx="10" fill="#eef7f2" stroke="#9fc5b0" stroke-width="2"/>
+<text x="862" y="302" class="heading" text-anchor="start">API target group</text>
+<text x="862" y="332" class="small" text-anchor="start">Choose one healthy target*</text>
+<rect x="862" y="353" width="132" height="43" rx="7" fill="#fff" stroke="#9fc5b0" stroke-width="2"/>
+<text x="928" y="381" class="body" text-anchor="middle">API A</text>
+<rect x="1016" y="353" width="132" height="43" rx="7" fill="#fff" stroke="#9fc5b0" stroke-width="2"/>
+<text x="1082" y="381" class="body" text-anchor="middle">API B</text>
+<rect x="842" y="451" width="326" height="147" rx="10" fill="#eef7f2" stroke="#9fc5b0" stroke-width="2"/>
+<text x="862" y="483" class="heading" text-anchor="start">Website target group</text>
+<text x="862" y="513" class="small" text-anchor="start">Choose one healthy target*</text>
+<rect x="862" y="534" width="132" height="43" rx="7" fill="#fff" stroke="#9fc5b0" stroke-width="2"/>
+<text x="928" y="562" class="body" text-anchor="middle">Web A</text>
+<rect x="1016" y="534" width="132" height="43" rx="7" fill="#fff" stroke="#9fc5b0" stroke-width="2"/>
+<text x="1082" y="562" class="body" text-anchor="middle">Web B</text>
+<path data-connector="true" d="M749 362 H830" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="828,355 842,362 828,369" fill="#52677c"/>
+<path data-connector="true" d="M749 508 H830" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="828,501 842,508 828,515" fill="#52677c"/>
+<!-- Plain-language takeaway and failure scope keep the standalone diagram precise. -->
+<text x="32" y="615" class="body" text-anchor="start">Each arrow is a routing option. One forwarded request goes to one selected server, not to all of them.</text>
+<text x="32" y="646" class="small" text-anchor="start">*Normal routing is shown. The all-unhealthy fail-open exception is explained in the health-check section.</text>
+</svg>

@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="710" viewBox="0 0 1200 710" role="img" aria-labelledby="failover-title failover-desc">
+  <title id="failover-title">DNS failover changes fresh answers, not existing cached answers</title>
+  <desc id="failover-desc">Three snapshots follow one resolver. At zero seconds it caches the primary address for sixty seconds. At twenty seconds Route 53 has detected the primary failure and answers fresh queries with the healthy secondary. This resolver still holds the primary address. After its cache expires at sixty seconds, its next lookup gets the secondary. Times are illustrative, not a recovery guarantee. TTL means time to live, the permitted cache lifetime.</desc>
+  <!-- Concept references: Anki route_53_failover_routing_policy.png and route_53_health_checks.png.
+       DNS behavior: https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/health-checks-how-route-53-chooses-records.html
+       Cache behavior: https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-values-basic.html -->
+  <!-- Shared palette and typography; labels carry meaning independently of color. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4b6074; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Lesson and scenario assumptions; the secondary is healthy throughout. -->
+  <rect width="1200" height="710" fill="#fff"/>
+  <text x="32" y="47" class="title">DNS failover changes fresh answers, not cached answers</text>
+  <text x="32" y="82" class="body">Follow one resolver over time. TTL = time to live: how long it may keep an answer.</text>
+  <rect x="32" y="109" width="1136" height="91" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="54" y="144" class="heading">Failover policy: primary first; use the healthy secondary if the primary fails.</text>
+  <text x="54" y="177" class="body">Example: the resolver stores a primary answer with TTL = 60 seconds.</text>
+  <!-- Snapshot cards. Horizontal arrows mean time passes, not a DNS packet path. -->
+  <rect id="cached-primary" x="32" y="228" width="350" height="345" rx="12" fill="#f7f9fc" stroke="#bac8d5" stroke-width="2"/>
+  <text x="54" y="264" class="heading">0 s: primary is healthy</text>
+  <text x="54" y="296" class="small">Resolver receives an answer.</text>
+  <text x="54" y="337" class="body">Route 53 answers:</text>
+  <rect x="54" y="352" width="306" height="43" rx="7" fill="#edf4ff" stroke="#9ebde0"/>
+  <text x="207" y="380" text-anchor="middle" class="heading">Primary address</text>
+  <text x="54" y="431" class="body">This resolver's cache:</text>
+  <rect x="54" y="446" width="306" height="43" rx="7" fill="#edf4ff" stroke="#9ebde0"/>
+  <text x="207" y="474" text-anchor="middle" class="heading">Primary · 60 s left</text>
+  <text x="54" y="526" class="body">Clients connect to primary.</text>
+  <text x="54" y="553" class="small">That destination is working.</text>
+  <rect id="stale-primary" x="425" y="228" width="350" height="345" rx="12" fill="#f7f9fc" stroke="#bac8d5" stroke-width="2"/>
+  <text x="447" y="264" class="heading">20 s: failure detected</text>
+  <text x="447" y="296" class="small">Primary is now unhealthy.</text>
+  <text x="447" y="337" class="body">Route 53 answers fresh queries:</text>
+  <rect x="447" y="352" width="306" height="43" rx="7" fill="#eaf6ef" stroke="#8dbca0"/>
+  <text x="600" y="380" text-anchor="middle" class="heading">Secondary address</text>
+  <text x="447" y="431" class="body">This resolver's cache:</text>
+  <rect x="447" y="446" width="306" height="43" rx="7" fill="#fff5df" stroke="#d6b668"/>
+  <text x="600" y="474" text-anchor="middle" class="heading">Primary · 40 s left</text>
+  <text x="447" y="526" class="body">Clients can still get primary.</text>
+  <text x="447" y="553" class="small">Those connections may fail.</text>
+  <rect id="refreshed-secondary" x="818" y="228" width="350" height="345" rx="12" fill="#f7f9fc" stroke="#bac8d5" stroke-width="2"/>
+  <text x="840" y="264" class="heading">60 s: old answer expires</text>
+  <text x="840" y="296" class="small">Next lookup asks Route 53 again.</text>
+  <text x="840" y="337" class="body">Route 53 answers:</text>
+  <rect x="840" y="352" width="306" height="43" rx="7" fill="#eaf6ef" stroke="#8dbca0"/>
+  <text x="993" y="380" text-anchor="middle" class="heading">Secondary address</text>
+  <text x="840" y="431" class="body">This resolver's new cache:</text>
+  <rect x="840" y="446" width="306" height="43" rx="7" fill="#eaf6ef" stroke="#8dbca0"/>
+  <text x="993" y="474" text-anchor="middle" class="heading">Secondary address</text>
+  <text x="840" y="526" class="body">Clients can connect to secondary.</text>
+  <text x="840" y="553" class="small">Existing connections do not move.</text>
+  <!-- Time arrows: shafts end inside triangle bases; tips meet outer card borders. -->
+  <path id="time-arrow-one" data-connector="true" class="connector" d="M383 400 H410"/>
+  <path d="M408 392 L424 400 L408 408 Z" fill="#52677c"/>
+  <path id="time-arrow-two" data-connector="true" class="connector" d="M776 400 H803"/>
+  <path d="M801 392 L817 400 L801 408 Z" fill="#52677c"/>
+  <!-- Timing qualification and operational consequence. -->
+  <rect x="32" y="600" width="1136" height="80" rx="12" fill="#f7f9fc"/>
+  <text x="54" y="632" class="heading">Recovery depends on failure detection, cache expiry, and client retries.</text>
+  <text x="54" y="661" class="body">Illustrative times only. Lowering TTL does not erase answers already cached with an older TTL.</text>
+</svg>

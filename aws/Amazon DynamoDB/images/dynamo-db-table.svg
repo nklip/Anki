@@ -1,82 +1,99 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="501" height="257" viewBox="0 0 501 257" role="img" aria-labelledby="diagram-title diagram-desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1250" viewBox="0 0 1500 1250" role="img" aria-labelledby="diagram-title diagram-desc">
   <title id="diagram-title">DynamoDB table: items, attributes, and a composite primary key</title>
   <desc id="diagram-desc">Four order items share the CustomerID partition key CUST-001 and have distinct OrderID sort keys ORD-001 through ORD-004. The partition key and sort key together identify each item. Other attributes are OrderValue, OrderDate, and OrderItems.</desc>
-  <!-- Shared typography and palette reproduce the PNG; all labels remain editable. -->
+  <!-- Shared typography and palette; the 1.2:1 canvas uses a taller table layout. -->
   <defs>
     <style>
-      text { font-family: Arial, Helvetica, sans-serif; fill: #000; font-size: 12px; }
-      .annotation { fill: #c60; font-size: 14px; }
-      .heading { font-weight: 700; }
-      .grid { fill: none; stroke: #000; stroke-width: 1; }
-      .connector { fill: none; stroke: #000; stroke-width: 1; }
+      text { font-family: Arial, Helvetica, sans-serif; fill: #000; font-size: 32px; }
+      .title { font-size: 48px; font-weight: 700; }
+      .subtitle { font-size: 30px; }
+      .annotation { fill: #c60; font-size: 34px; }
+      .heading { font-size: 34px; font-weight: 700; }
+      .item-list { font-size: 30px; }
+      .key-summary { font-weight: 700; }
+      .grid { fill: none; stroke: #000; stroke-width: 3; }
+      .connector { fill: none; stroke: #000; stroke-width: 3; }
     </style>
-    <!-- Canonical isosceles head: tip (0,0), base center (-8,0), half-width 4.
-         Both sloping sides measure sqrt(80); rotation preserves symmetry.
-         Row heads use a uniform 0.875 scale to clear the dashed table boundary. -->
-    <path id="symmetric-arrowhead" d="M0 0L-8 -4L-8 4Z" fill="#000"/>
+    <!-- Tip is (0,0); the shaft ends inside the solid triangle to hide its join. -->
+    <path id="symmetric-arrowhead" d="M0 0L-16 -8L-16 8Z" fill="#000"/>
   </defs>
-  <!-- Table boundary and cell fills; header and item grid retain the original spacing. -->
-  <rect width="501" height="257" fill="#fff"/>
-  <rect id="table-boundary" x="60.5" y="51.5" width="440" height="205" fill="none" stroke="#000" stroke-width="1" stroke-dasharray="3 3"/>
-  <rect x="70.5" y="66.5" width="80" height="30" fill="#d4e1f5"/>
-  <rect x="150.5" y="66.5" width="80" height="30" fill="#ffce9f"/>
-  <rect x="70.5" y="106.5" width="80" height="120" fill="#d4e1f5"/>
-  <rect x="150.5" y="106.5" width="80" height="120" fill="#ffce9f"/>
-  <path id="header-grid" class="grid" d="M70.5 66.5H470.5V96.5H70.5Z M150.5 66.5V96.5 M230.5 66.5V96.5 M310.5 66.5V96.5 M390.5 66.5V96.5"/>
-  <path id="item-grid" class="grid" d="M70.5 106.5H490.5V226.5H70.5Z M150.5 106.5V226.5 M230.5 106.5V226.5 M310.5 106.5V226.5 M390.5 106.5V226.5 M70.5 136.5H490.5 M70.5 166.5H490.5 M70.5 196.5H490.5"/>
-  <!-- Each head rotates by atan2(tip-start); its symmetry axis is the shaft centerline.
-       Shafts stop exactly 2 units behind their tips, under the filled heads, to hide joins.
-       All original start/tip positions are preserved; cell arrows meet the outer border edge. -->
+  <!-- Title and reading guide occupy the space above the column callouts. -->
+  <rect width="1500" height="1250" fill="#fff"/>
+  <text class="title" x="40" y="68">DynamoDB table</text>
+  <text class="subtitle" x="40" y="119">Each row is an item. Each column is an attribute.</text>
+  <!-- A dashed boundary encloses the table; key columns retain their original colors. -->
+  <rect id="table-boundary" x="160" y="320" width="1315" height="750" fill="none" stroke="#000" stroke-width="3" stroke-dasharray="9 9"/>
+  <rect x="200" y="352" width="240" height="664" fill="#d4e1f5"/>
+  <rect x="440" y="352" width="210" height="664" fill="#ffce9f"/>
+  <path id="table-grid" class="grid" d="M200 352H1450V1016H200Z M440 352V1016 M650 352V1016 M870 352V1016 M1120 352V1016 M200 472H1450 M200 608H1450 M200 744H1450 M200 880H1450"/>
+  <!-- Attribute arrows meet the top outside edge of the header; no arrow crosses a label. -->
   <g id="attribute-connectors">
-    <path id="partition-shaft" class="connector" d="M110.5 35L110.5 64"/>
-    <use id="partition-head" href="#symmetric-arrowhead" transform="translate(110.5 66) rotate(90)"/>
-    <path id="sort-shaft" class="connector" d="M190.5 35L190.5 64"/>
-    <use id="sort-head" href="#symmetric-arrowhead" transform="translate(190.5 66) rotate(90)"/>
-    <path id="date-shaft" class="connector" d="M330.5 30L330.5 64"/>
-    <use id="date-head" href="#symmetric-arrowhead" transform="translate(330.5 66) rotate(90)"/>
-    <path id="value-shaft" class="connector" d="M315.3 30L278.457293314 64.630220384"/>
-    <use id="value-head" href="#symmetric-arrowhead" transform="translate(277 66) rotate(136.773058200791)"/>
-    <path id="items-shaft" class="connector" d="M351.4 30L408.295885085 64.953103465"/>
-    <use id="items-head" href="#symmetric-arrowhead" transform="translate(410 66) rotate(31.563840010835)"/>
-    <path id="table-shaft" class="connector" d="M460.7 30L462.042595029 47.006203703"/>
-    <use id="table-head" href="#symmetric-arrowhead" transform="translate(462.2 49) rotate(85.486011541999)"/>
+    <path id="partition-shaft" class="connector" d="M320 231L320.000 345.500"/>
+    <use id="partition-head" href="#symmetric-arrowhead" transform="translate(320 350.5) rotate(90.000000)"/>
+    <path id="sort-shaft" class="connector" d="M545 231L545.000 345.500"/>
+    <use id="sort-head" href="#symmetric-arrowhead" transform="translate(545 350.5) rotate(90.000000)"/>
+    <path id="value-shaft" class="connector" d="M900 231L763.803 347.254"/>
+    <use id="value-head" href="#symmetric-arrowhead" transform="translate(760 350.5) rotate(139.516876)"/>
+    <path id="date-shaft" class="connector" d="M995 231L995.000 345.500"/>
+    <use id="date-head" href="#symmetric-arrowhead" transform="translate(995 350.5) rotate(90.000000)"/>
+    <path id="items-attribute-shaft" class="connector" d="M1090 231L1280.737 347.887"/>
+    <use id="items-attribute-head" href="#symmetric-arrowhead" transform="translate(1285 350.5) rotate(31.500822)"/>
+    <path id="table-shaft" class="connector" d="M1400 287L1400.000 313.500"/>
+    <use id="table-head" href="#symmetric-arrowhead" transform="translate(1400 318.5) rotate(90.000000)"/>
   </g>
-  <!-- Item shafts intentionally cross the dashed table boundary; symmetric heads remain clear. -->
+  <!-- A shared vertical rail groups the items. Equal horizontal branches meet each row center.
+       Shafts intentionally cross the dashed table boundary; the heads stay clear of it. -->
   <g id="item-connectors">
-    <path id="row-one-shaft" class="connector" d="M40 136.5L68.211145618 122.394427191"/>
-    <use id="row-one-head" href="#symmetric-arrowhead" transform="translate(70 121.5) rotate(-26.565051177078) scale(0.875)"/>
-    <path id="row-two-shaft" class="connector" d="M40 147.5L68.013473722 150.768238601"/>
-    <use id="row-two-head" href="#symmetric-arrowhead" transform="translate(70 151) rotate(6.654425046007) scale(0.875)"/>
-    <path id="row-three-shaft" class="connector" d="M34 157.5L68.335899411 180.390599608"/>
-    <use id="row-three-head" href="#symmetric-arrowhead" transform="translate(70 181.5) rotate(33.690067525980) scale(0.875)"/>
-    <path id="row-four-shaft" class="connector" d="M27.5 157.5L68.763071950 209.928373772"/>
-    <use id="row-four-head" href="#symmetric-arrowhead" transform="translate(70 211.5) rotate(51.795944016019) scale(0.875)"/>
+    <path id="items-grouping-rail" class="connector" d="M140 540V948 M116 744H140"/>
+    <path id="row-1-shaft" class="connector" d="M140 540H193.5"/>
+    <use id="row-1-head" href="#symmetric-arrowhead" transform="translate(198.5 540)"/>
+    <path id="row-2-shaft" class="connector" d="M140 676H193.5"/>
+    <use id="row-2-head" href="#symmetric-arrowhead" transform="translate(198.5 676)"/>
+    <path id="row-3-shaft" class="connector" d="M140 812H193.5"/>
+    <use id="row-3-head" href="#symmetric-arrowhead" transform="translate(198.5 812)"/>
+    <path id="row-4-shaft" class="connector" d="M140 948H193.5"/>
+    <use id="row-4-head" href="#symmetric-arrowhead" transform="translate(198.5 948)"/>
   </g>
-  <!-- Intentional correction: PNG says “Primary Key” above CustomerID. In this composite-key example it is the Partition Key; CustomerID + OrderID form the primary key. -->
-  <g id="annotations" text-anchor="middle">
-    <text class="annotation" x="110" y="14">Partition<tspan x="110" dy="15">Key</tspan></text>
-    <text class="annotation" x="190" y="14">Sort<tspan x="190" dy="15">Key</tspan></text>
-    <text class="annotation" x="330" y="22">Attributes</text>
-    <text class="annotation" x="460" y="22">Table</text>
-    <text class="annotation" x="19" y="152">Items</text>
+  <!-- Labels are drawn after connectors, with generous clearance from their starting points. -->
+  <g id="annotations" class="annotation" text-anchor="middle">
+    <text class="annotation" x="320" y="205">Partition key</text>
+    <text class="annotation" x="545" y="205">Sort key</text>
+    <text class="annotation" x="995" y="205">Attributes</text>
+    <text class="annotation" x="1400" y="266">Table</text>
+    <text class="annotation" x="63" y="755">Items</text>
   </g>
-  <!-- Attribute names, left to right, align with the five data columns. -->
-  <g id="attribute-names" class="heading" text-anchor="middle">
-    <text x="110" y="86">CustomerID</text>
-    <text x="190" y="86">OrderID</text>
-    <text x="270" y="86">OrderValue</text>
-    <text x="350" y="86">OrderDate</text>
-    <text x="430" y="86">OrderItems</text>
+  <!-- Attribute headings align with each data column. -->
+  <g id="attribute-names" text-anchor="middle">
+    <text class="heading" x="320" y="424">CustomerID</text>
+    <text class="heading" x="545" y="424">OrderID</text>
+    <text class="heading" x="760" y="424">OrderValue</text>
+    <text class="heading" x="995" y="424">OrderDate</text>
+    <text class="heading" x="1285" y="424">OrderItems</text>
   </g>
-  <!-- The four original example items preserve their values and per-cell wrapping. -->
+  <!-- Four original example items; values and list contents are preserved. -->
   <g id="order-items" text-anchor="middle">
-    <text x="110" y="126">CUST-001</text><text x="190" y="126">ORD-001</text><text x="270" y="126">95.96</text><text x="350" y="126">13/05/2021</text>
-    <text x="440" y="118">[television,<tspan x="440" dy="15">washing machine]</tspan></text>
-    <text x="110" y="156">CUST-001</text><text x="190" y="156">ORD-002</text><text x="270" y="156">95.96</text><text x="350" y="156">13/05/2021</text>
-    <text x="440" y="148">[television,<tspan x="440" dy="15">computer]</tspan></text>
-    <text x="110" y="186">CUST-001</text><text x="190" y="186">ORD-003</text><text x="270" y="186">95.96</text><text x="350" y="186">13/05/2021</text>
-    <text x="440" y="186">[fruits, groceries]</text>
-    <text x="110" y="216">CUST-001</text><text x="190" y="216">ORD-004</text><text x="270" y="216">95.96</text><text x="350" y="216">13/05/2021</text>
-    <text x="440" y="208">[laptop,<tspan x="440" dy="15">stationary ]</tspan></text>
+    <text x="320" y="551">CUST-001</text>
+    <text x="545" y="551">ORD-001</text>
+    <text x="760" y="551">95.96</text>
+    <text x="995" y="551">13/05/2021</text>
+    <text class="item-list" x="1285" y="530">[television,<tspan x="1285" dy="42">washing machine]</tspan></text>
+    <text x="320" y="687">CUST-001</text>
+    <text x="545" y="687">ORD-002</text>
+    <text x="760" y="687">95.96</text>
+    <text x="995" y="687">13/05/2021</text>
+    <text class="item-list" x="1285" y="666">[television,<tspan x="1285" dy="42">computer]</tspan></text>
+    <text x="320" y="823">CUST-001</text>
+    <text x="545" y="823">ORD-003</text>
+    <text x="760" y="823">95.96</text>
+    <text x="995" y="823">13/05/2021</text>
+    <text class="item-list" x="1285" y="822">[fruits, groceries]</text>
+    <text x="320" y="959">CUST-001</text>
+    <text x="545" y="959">ORD-004</text>
+    <text x="760" y="959">95.96</text>
+    <text x="995" y="959">13/05/2021</text>
+    <text class="item-list" x="1285" y="938">[laptop,<tspan x="1285" dy="42">stationary ]</tspan></text>
   </g>
+  <!-- The composite-key explanation is separate from the table to avoid crowded headers. -->
+  <text class="key-summary" x="200" y="1130">Primary key = CustomerID + OrderID</text>
+  <text x="200" y="1184">The pair identifies one item, even when CustomerID repeats.</text>
 </svg>

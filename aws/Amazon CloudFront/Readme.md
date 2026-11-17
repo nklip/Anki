@@ -2,12 +2,6 @@
 
 <sub>[Back to AWS](../Readme.md#content)</sub>
 
-# Front
-
-How does Amazon CloudFront use edge caches to speed up web content delivery?
-
-# Back
-
 **Amazon CloudFront is a content delivery network (CDN)** that serves web content through worldwide **edge locations**—serving sites with caches. Reusing cached responses near viewers reduces latency (delay) and requests to the original content source.
 
 ## The delivery model

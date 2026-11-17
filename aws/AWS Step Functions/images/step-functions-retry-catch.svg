@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="retry-title retry-desc">
+  <title id="retry-title">Retry repeats a task; Catch chooses a recovery path</title>
+  <desc id="retry-desc">For order A123, the ReserveStock task reports the example application error InventoryBusy. With MaxAttempts 2, IntervalSeconds 2, and BackoffRate 2, Step Functions waits two seconds before retry one and four seconds before retry two. In this example all three attempts fail. A matching Catch then selects RecordFailure, which saves the error for review before a Fail state ends the execution. If an attempt succeeds, the task instead continues along its normal success path. Catch does not automatically undo earlier work.</desc>
+  <!-- Conceptual reference: the retry loop and Catch recovery branch in Anki step_functions.png.
+       Rules: https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html
+       This example uses a made-up application error and no randomized delay. -->
+  <!-- Shared typography and semantic colors; manual heads use a two-unit shaft overlap at their bases. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172d46; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4c647e; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <rect width="1200" height="1000" fill="#fff"/>
+  <!-- Subject and example error are introduced before the execution trace. -->
+  <text x="32" y="48" class="title">Retry repeats a task; Catch chooses a recovery path</text>
+  <text x="32" y="84" class="body">Order A123 · ReserveStock reports InventoryBusy, an example application error.</text>
+  <g id="retry-rule">
+    <rect x="32" y="120" width="1136" height="158" rx="12" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="52" y="158" class="heading">Retry rule for InventoryBusy</text>
+    <text x="52" y="204" class="heading">MaxAttempts: 2</text>
+    <text x="52" y="244" class="body">Two retries after the first try</text>
+    <text x="445" y="204" class="heading">IntervalSeconds: 2</text>
+    <text x="445" y="244" class="body">Wait 2 seconds before retry 1</text>
+    <text x="841" y="204" class="heading">BackoffRate: 2</text>
+    <text x="841" y="244" class="body">Double the next wait</text>
+  </g>
+
+  <!-- All attempts fail in this trace. Delays begin after the preceding failure; task duration is not shown. -->
+  <text x="32" y="320" class="heading">Follow the failed attempts from left to right</text>
+  <g id="initial-attempt">
+    <rect x="52" y="350" width="270" height="174" rx="12" fill="#fff2e1" stroke="#dcb77e" stroke-width="2"/>
+    <text x="76" y="394" class="heading">Initial attempt</text>
+    <text x="76" y="438" class="body">ReserveStock</text>
+    <text x="76" y="482" class="body">Fails: InventoryBusy</text>
+  </g>
+  <g id="first-retry">
+    <rect x="465" y="350" width="270" height="174" rx="12" fill="#fff2e1" stroke="#dcb77e" stroke-width="2"/>
+    <text x="489" y="394" class="heading">Retry 1</text>
+    <text x="489" y="438" class="body">ReserveStock again</text>
+    <text x="489" y="482" class="body">Fails: InventoryBusy</text>
+  </g>
+  <g id="second-retry">
+    <rect x="878" y="350" width="270" height="174" rx="12" fill="#fff2e1" stroke="#dcb77e" stroke-width="2"/>
+    <text x="902" y="394" class="heading">Retry 2</text>
+    <text x="902" y="438" class="body">ReserveStock again</text>
+    <text x="902" y="482" class="body">Fails: InventoryBusy</text>
+  </g>
+  <!-- Heads touch each target's outer stroke; shafts terminate inside the broad triangle base. -->
+  <text x="393" y="402" class="body" text-anchor="middle">Wait 2 s</text>
+  <path id="first-retry-arrow" class="connector" data-connector="true" d="M323 437 H452"/>
+  <polygon id="first-retry-head" points="450,430 464,437 450,444" fill="#52677c"/>
+  <text x="806" y="402" class="body" text-anchor="middle">Wait 4 s</text>
+  <path id="second-retry-arrow" class="connector" data-connector="true" d="M736 437 H865"/>
+  <polygon id="second-retry-head" points="863,430 877,437 863,444" fill="#52677c"/>
+
+  <!-- The Catch transition leaves the final failed attempt; its label stays left of the vertical route. -->
+  <text x="52" y="578" class="heading">Retries are exhausted. Catch matches InventoryBusy.</text>
+  <path id="catch-arrow" class="connector" data-connector="true" d="M1013 525 V613"/>
+  <polygon id="catch-head" points="1006,611 1013,625 1020,611" fill="#52677c"/>
+  <g id="recovery-state">
+    <rect x="52" y="626" width="1096" height="166" rx="12" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="76" y="668" class="heading">RecordFailure · a separate state selected by Catch</text>
+    <text x="76" y="710" class="body">Save the order ID and error so the application can review the failed order.</text>
+    <text x="76" y="752" class="body">In this example, a Fail state then marks the workflow execution as failed.</text>
+  </g>
+
+  <!-- These limits distinguish the failed trace from successful retries and from transaction rollback. -->
+  <g id="reading-notes">
+    <rect x="32" y="826" width="1136" height="142" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="52" y="866" class="heading">If any attempt succeeds, continue along the normal success path.</text>
+    <text x="52" y="906" class="body">MaxAttempts: 2 means up to 3 total attempts. Delays here have no random jitter.</text>
+    <text x="52" y="944" class="body">Catch does not undo earlier work. Any cleanup or refund must be implemented separately.</text>
+  </g>
+</svg>

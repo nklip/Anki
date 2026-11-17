@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="770" viewBox="0 0 1200 770" role="img" aria-labelledby="alarm-title alarm-desc">
+<title id="alarm-title">Two high periods out of three put this alarm in ALARM</title>
+<desc id="alarm-desc">A CloudWatch metric alarm watches one instance's average CPU utilization. Each period is one minute; at least two of three periods must be above 80 percent. With complete data, 85, 60, and 90 percent contain two breaches, producing ALARM. One minute later, the window contains 60, 90, and 50 percent: only one breach, producing OK. The breaching periods need not be consecutive. Missing-data behavior is outside this example.</desc>
+<!-- New adaptation of the evaluation-window lesson in AWS alarm_graph.png:
+https://docs.aws.amazon.com/images/AmazonCloudWatch/latest/monitoring/images/alarm_graph.png
+This changes the original 3-of-3 graph into a 2-of-3 CPU example; it is not a pixel recreation. -->
+<!-- Shared typography; red means above the threshold and blue means within it. Every cell also has a text label. -->
+<defs><style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+.title { font-size: 29px; font-weight: 700; }
+.heading { font-size: 22px; font-weight: 700; }
+.number { font-size: 30px; font-weight: 700; }
+.body { font-size: 20px; }
+.small { font-size: 18px; fill: #4b6074; }
+</style></defs>
+<rect width="1200" height="770" fill="#fff"/>
+<!-- Rule stays constant while the three-period window moves forward. -->
+<text x="32" y="47" class="title" text-anchor="start">Two high periods out of three put this alarm in ALARM</text>
+<text x="32" y="81" class="small" text-anchor="start">One instance · CPU = central processing unit · all expected one-minute averages are present.</text>
+<rect id="alarm-rule" x="32" y="108" width="1136" height="90" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+<text x="52" y="146" class="heading" text-anchor="start">Threshold: average CPU &gt; 80%</text>
+<text x="52" y="176" class="small" text-anchor="start">Exactly 80% does not breach this rule.</text>
+<text x="570" y="146" class="heading" text-anchor="start">Evaluate 3 periods; need 2 breaches</text>
+<text x="570" y="176" class="small" text-anchor="start">Each period = 60 seconds. High periods need not be consecutive.</text>
+<!-- First complete evaluation: two non-adjacent breaches. -->
+<rect id="first-window" x="32" y="222" width="1136" height="210" rx="12" fill="#f7f9fc" stroke="#c8d4df" stroke-width="2"/>
+<text x="52" y="259" class="heading" text-anchor="start">First evaluation: periods 1, 2, 3</text>
+<rect x="52" y="278" width="190" height="126" rx="10" fill="#fff0ef" stroke="#d29a96" stroke-width="2"/>
+<text x="147" y="307" class="small" text-anchor="middle">Period 1</text>
+<text x="147" y="347" class="number" text-anchor="middle">85%</text>
+<text x="147" y="381" class="body" text-anchor="middle">Above 80%</text>
+<rect x="270" y="278" width="190" height="126" rx="10" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+<text x="365" y="307" class="small" text-anchor="middle">Period 2</text>
+<text x="365" y="347" class="number" text-anchor="middle">60%</text>
+<text x="365" y="381" class="body" text-anchor="middle">Within threshold</text>
+<rect x="488" y="278" width="190" height="126" rx="10" fill="#fff0ef" stroke="#d29a96" stroke-width="2"/>
+<text x="583" y="307" class="small" text-anchor="middle">Period 3</text>
+<text x="583" y="347" class="number" text-anchor="middle">90%</text>
+<text x="583" y="381" class="body" text-anchor="middle">Above 80%</text>
+<rect id="alarm-result" x="816" y="278" width="332" height="126" rx="10" fill="#fff0ef" stroke="#d29a96" stroke-width="2"/>
+<text x="982" y="316" class="body" text-anchor="middle">2 of 3 breach</text>
+<text x="982" y="358" class="number" text-anchor="middle">ALARM</text>
+<text x="982" y="386" class="small" text-anchor="middle">Rule is satisfied</text>
+<!-- Each shaft stops inside its own head base; the tip meets the result box's outer stroke edge. -->
+<path id="first-result-arrow" data-connector="true" d="M679 341 H803" fill="none" stroke="#52677c" stroke-width="2.5"/>
+<polygon points="801,334 815,341 801,348" fill="#52677c"/>
+<!-- Next evaluation reuses periods 2 and 3 and adds period 4; period 1 is no longer counted. -->
+<rect id="next-window" x="32" y="452" width="1136" height="210" rx="12" fill="#f7f9fc" stroke="#c8d4df" stroke-width="2"/>
+<text x="52" y="489" class="heading" text-anchor="start">One minute later: periods 2, 3, 4</text>
+<rect x="52" y="508" width="190" height="126" rx="10" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+<text x="147" y="537" class="small" text-anchor="middle">Period 2</text>
+<text x="147" y="577" class="number" text-anchor="middle">60%</text>
+<text x="147" y="611" class="body" text-anchor="middle">Within threshold</text>
+<rect x="270" y="508" width="190" height="126" rx="10" fill="#fff0ef" stroke="#d29a96" stroke-width="2"/>
+<text x="365" y="537" class="small" text-anchor="middle">Period 3</text>
+<text x="365" y="577" class="number" text-anchor="middle">90%</text>
+<text x="365" y="611" class="body" text-anchor="middle">Above 80%</text>
+<rect x="488" y="508" width="190" height="126" rx="10" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+<text x="583" y="537" class="small" text-anchor="middle">Period 4 · new</text>
+<text x="583" y="577" class="number" text-anchor="middle">50%</text>
+<text x="583" y="611" class="body" text-anchor="middle">Within threshold</text>
+<rect id="ok-result" x="816" y="508" width="332" height="126" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+<text x="982" y="546" class="body" text-anchor="middle">1 of 3 breaches</text>
+<text x="982" y="588" class="number" text-anchor="middle">OK</text>
+<text x="982" y="616" class="small" text-anchor="middle">Rule is no longer satisfied</text>
+<path id="next-result-arrow" data-connector="true" d="M679 571 H803" fill="none" stroke="#52677c" stroke-width="2.5"/>
+<polygon points="801,564 815,571 801,578" fill="#52677c"/>
+<!-- Caveats keep the window example separate from data collection and missing-data policy. -->
+<text x="32" y="705" class="body" text-anchor="start">A one-minute alarm period requires suitable source data; it does not make the source publish faster.</text>
+<text x="32" y="738" class="small" text-anchor="start">If data is missing, CloudWatch may use earlier points and the alarm's missing-data setting. Missing is not zero.</text>
+</svg>

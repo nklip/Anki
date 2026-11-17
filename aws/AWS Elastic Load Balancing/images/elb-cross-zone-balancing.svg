@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" role="img" aria-labelledby="elb-cross-zone-title elb-cross-zone-desc">
+<title id="elb-cross-zone-title">Cross-zone balancing changes which targets a node can use</title>
+<desc id="elb-cross-zone-desc">Comparison with two healthy targets in Zone A and eight in Zone B. Assume half the arriving traffic reaches each load balancer node and each node splits its share evenly among eligible targets. With cross-zone disabled, each target in A receives 25 percent and each in B 6.25 percent. With it enabled, both nodes can use all ten targets, each receiving 10 percent in this simplified example.</desc>
+<!-- Simplified teaching adaptation of https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html and the cross-zone diagrams also present in the original Anki note. New layout and labels; not a pixel reproduction. -->
+<!-- Shared type and colors. Manual arrow shafts stop under their heads; tips meet target boundaries. -->
+<defs><style>
+text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+.title { font-size: 29px; font-weight: 700; }
+.heading { font-size: 22px; font-weight: 700; }
+.body { font-size: 20px; }
+.small { font-size: 18px; fill: #4b6074; }
+.code { font-family: monospace; font-size: 18px; }
+</style></defs>
+<rect width="1200" height="650" fill="#fff"/>
+<text x="32" y="47" class="title" text-anchor="start">Cross-zone balancing changes which targets a node can use</text>
+<text x="32" y="81" class="small" text-anchor="start">Assume: all targets healthy, 50% of arrivals per node, and an even split among each node’s eligible targets.</text>
+<!-- Two cases share identical target counts; only eligible target scope changes. -->
+<rect x="32" y="110" width="552" height="450" rx="10" fill="#fbfcfe" stroke="#c8d4df" stroke-width="2"/>
+<rect x="608" y="110" width="560" height="450" rx="10" fill="#fbfcfe" stroke="#c8d4df" stroke-width="2"/>
+<text x="52" y="148" class="heading" text-anchor="start">Cross-zone OFF</text>
+<text x="628" y="148" class="heading" text-anchor="start">Cross-zone ON</text>
+<text x="52" y="180" class="small" text-anchor="start">Each node uses targets in its own zone.</text>
+<text x="628" y="180" class="small" text-anchor="start">Either node can use targets in both zones.</text>
+<rect x="52" y="207" width="238" height="84" rx="10" fill="#f4effa" stroke="#baa6cf" stroke-width="2"/>
+<text x="171.0" y="239" class="heading" text-anchor="middle">Node in Zone A</text>
+<text x="171.0" y="273" class="small" text-anchor="middle">50% of arrivals</text>
+<rect x="326" y="207" width="238" height="84" rx="10" fill="#f4effa" stroke="#baa6cf" stroke-width="2"/>
+<text x="445.0" y="239" class="heading" text-anchor="middle">Node in Zone B</text>
+<text x="445.0" y="273" class="small" text-anchor="middle">50% of arrivals</text>
+<rect x="628" y="207" width="226" height="84" rx="10" fill="#f4effa" stroke="#baa6cf" stroke-width="2"/>
+<text x="741.0" y="239" class="heading" text-anchor="middle">Node in Zone A</text>
+<text x="741.0" y="273" class="small" text-anchor="middle">50% of arrivals</text>
+<rect x="922" y="207" width="226" height="84" rx="10" fill="#f4effa" stroke="#baa6cf" stroke-width="2"/>
+<text x="1035.0" y="239" class="heading" text-anchor="middle">Node in Zone B</text>
+<text x="1035.0" y="273" class="small" text-anchor="middle">50% of arrivals</text>
+<!-- OFF: direct vertical arrows end at separate eligible pools. -->
+<path data-connector="true" d="M171.0 292 V353" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="164.0,351 171.0,365 178.0,351" fill="#52677c"/>
+<rect x="52" y="365" width="238" height="151" rx="10" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+<text x="171.0" y="398" class="heading" text-anchor="middle">Zone A only</text>
+<text x="171.0" y="436" class="body" text-anchor="middle">2 healthy targets</text>
+<text x="171.0" y="477" class="heading" text-anchor="middle">25% per target</text>
+<path data-connector="true" d="M445.0 292 V353" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="438.0,351 445.0,365 452.0,351" fill="#52677c"/>
+<rect x="326" y="365" width="238" height="151" rx="10" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+<text x="445.0" y="398" class="heading" text-anchor="middle">Zone B only</text>
+<text x="445.0" y="436" class="body" text-anchor="middle">8 healthy targets</text>
+<text x="445.0" y="477" class="heading" text-anchor="middle">6.25% per target</text>
+<!-- ON: both nodes enter a shared eligibility scope, not a new router or appliance. -->
+<path data-connector="true" d="M741 292 V325" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="734,323 741,337 748,323" fill="#52677c"/>
+<path data-connector="true" d="M1035 292 V325" fill="none" stroke="#52677c" stroke-width="2.5"/><polygon points="1028,323 1035,337 1042,323" fill="#52677c"/>
+<rect x="628" y="337" width="520" height="179" rx="10" fill="#eef7f2" stroke="#9fc5b0" stroke-width="2"/>
+<text x="888" y="371" class="heading" text-anchor="middle">All 10 targets are eligible</text>
+<text x="758" y="414" class="body" text-anchor="middle">Zone A: 2 targets</text>
+<text x="1016" y="414" class="body" text-anchor="middle">Zone B: 8 targets</text>
+<rect x="664" y="438" width="448" height="56" rx="10" fill="#fff" stroke="#9fc5b0" stroke-width="2"/>
+<text x="888" y="474" class="heading" text-anchor="middle">10% per target</text>
+<!-- Percentages depend on the stated assumptions; cross-zone alone does not promise equal load. -->
+<text x="32" y="598" class="small" text-anchor="start">AZ = Availability Zone. A node is an AWS-managed part of the load balancer in an enabled zone.</text>
+<text x="32" y="629" class="small" text-anchor="start">These percentages illustrate the rule. Real traffic also depends on routing algorithms and connections.</text>
+</svg>

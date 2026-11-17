@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="752" viewBox="0 0 1200 752" role="img" aria-labelledby="efs-zone-title efs-zone-desc">
+  <title id="efs-zone-title">EFS Regional and One Zone respond differently to a zone failure</title>
+  <desc id="efs-zone-desc">Two examples show Availability Zone A becoming unavailable. Regional EFS stores file data in at least three zones, so copies in zones B and C remain available. One Zone EFS stores data only in zone A, so its files become unavailable and may be lost if that zone is destroyed. Applications still need working clients and network access in surviving zones.</desc>
+  <!-- Conceptual comparison based on the Regional and One Zone architecture images at
+       https://docs.aws.amazon.com/efs/latest/ug/how-it-works.html
+       and the data-resilience descriptions at https://docs.aws.amazon.com/efs/latest/ug/features.html.
+       Storage placement is schematic, not a map of physical servers or a pixel recreation. -->
+  <!-- Shared type, palette, and connector geometry match the companion shared-file-system diagram. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172d46; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4c647e; }
+      .zone { font-size: 21px; font-weight: 700; }
+      .bad { fill: #963e39; }
+      .good { fill: #28694c; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <rect width="1200" height="752" fill="#ffffff"/>
+  <!-- The same failed zone is used in both examples so placement is the only changing condition. -->
+  <text x="32" y="48" class="title">EFS: where files live determines resilience to a zone failure</text>
+  <text x="32" y="84" class="body">Example: Availability Zone A becomes unavailable. Compare the remaining live file data.</text>
+
+  <!-- Regional row: unavailable zone A still has redundant storage, but it cannot serve this example. -->
+  <g id="regional-zone-failure">
+    <rect x="32" y="120" width="1136" height="252" rx="12" fill="#f8fafc" stroke="#b8c7d8" stroke-width="2"/>
+    <text x="52" y="157" class="heading">Regional — file data stored redundantly across at least 3 zones</text>
+    <rect x="52" y="192" width="210" height="144" rx="10" fill="#fff0ed" stroke="#d99a91" stroke-width="2"/>
+    <text x="72" y="225" class="zone">Zone A fails</text>
+    <text x="72" y="271" class="body">File data</text>
+    <text x="72" y="305" class="body bad">Unavailable here</text>
+    <rect x="282" y="192" width="210" height="144" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="302" y="225" class="zone">Zone B</text>
+    <text x="302" y="271" class="body">File data</text>
+    <text x="302" y="305" class="body good">Available</text>
+    <rect x="512" y="192" width="210" height="144" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="532" y="225" class="zone">Zone C</text>
+    <text x="532" y="271" class="body">File data</text>
+    <text x="532" y="305" class="body good">Available</text>
+    <rect x="850" y="192" width="298" height="144" rx="10" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="870" y="225" class="heading">Files remain available</text>
+    <text x="870" y="270" class="body">Use surviving zones</text>
+    <text x="870" y="301" class="body">for clients and access.</text>
+    <!-- Shaft extends two units into the head base; the nose meets the target's outer stroke boundary. -->
+    <text x="786" y="240" class="small" text-anchor="middle">Result</text>
+    <path id="regional-outcome-arrow" class="connector" data-connector="true" d="M723 272 H837"/>
+    <polygon points="835,265 849,272 835,279" fill="#52677c"/>
+  </g>
+
+  <!-- One Zone row: other zones show absence of this file system's live storage, not failed storage. -->
+  <g id="one-zone-failure">
+    <rect x="32" y="402" width="1136" height="252" rx="12" fill="#f8fafc" stroke="#b8c7d8" stroke-width="2"/>
+    <text x="52" y="439" class="heading">One Zone — file data stored redundantly within 1 zone</text>
+    <rect x="52" y="474" width="210" height="144" rx="10" fill="#fff0ed" stroke="#d99a91" stroke-width="2"/>
+    <text x="72" y="507" class="zone">Zone A fails</text>
+    <text x="72" y="553" class="body">All live file data</text>
+    <text x="72" y="587" class="body bad">Unavailable</text>
+    <rect x="282" y="474" width="210" height="144" rx="10" fill="#f0f3f7" stroke="#bac5d0" stroke-width="2" stroke-dasharray="6 5"/>
+    <text x="302" y="507" class="zone">Zone B</text>
+    <text x="302" y="553" class="body">No file data</text>
+    <text x="302" y="587" class="body">for this file system</text>
+    <rect x="512" y="474" width="210" height="144" rx="10" fill="#f0f3f7" stroke="#bac5d0" stroke-width="2" stroke-dasharray="6 5"/>
+    <text x="532" y="507" class="zone">Zone C</text>
+    <text x="532" y="553" class="body">No file data</text>
+    <text x="532" y="587" class="body">for this file system</text>
+    <rect x="850" y="474" width="298" height="144" rx="10" fill="#fff0ed" stroke="#d99a91" stroke-width="2"/>
+    <text x="870" y="507" class="heading">Files unavailable</text>
+    <text x="870" y="552" class="body">Data may be lost if</text>
+    <text x="870" y="583" class="body">the zone is destroyed.</text>
+    <text x="786" y="522" class="small" text-anchor="middle">Result</text>
+    <path id="one-zone-outcome-arrow" class="connector" data-connector="true" d="M723 554 H837"/>
+    <polygon points="835,547 849,554 835,561" fill="#52677c"/>
+  </g>
+  <!-- Recovery scope: data redundancy does not replace application failover or retained backups. -->
+  <text x="32" y="694" class="body">Applications still need working clients and network paths. Backups provide a separate recovery path.</text>
+  <text x="32" y="729" class="small">EFS = Elastic File System. Availability Zones are separate infrastructure locations within one AWS Region.</text>
+</svg>

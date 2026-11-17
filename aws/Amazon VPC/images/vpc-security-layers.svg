@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="880" viewBox="0 0 1200 880" role="img" aria-labelledby="vpc-security-title vpc-security-desc">
+  <title id="vpc-security-title">A route finds the path; security rules must also allow the connection</title>
+  <desc id="vpc-security-desc">An EC2 application at 10.0.2.10 connects to a PostgreSQL database at 10.0.3.20 on TCP port 5432 in a different subnet of the same VPC. The VPC local route supplies the path. App outbound and database inbound security-group rules, and both subnet network ACLs, must allow the request. Security groups track the connection and allow replies, but stateless ACLs require return rules.</desc>
+  <!-- Original teaching diagram based on https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html, https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html, and https://docs.aws.amazon.com/vpc/latest/userguide/subnet-route-tables.html. -->
+  <!-- Shared typography and colors. Arrowheads are separate so their noses stop at resource boundaries. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 21px; font-weight: 700; }
+      .body { font-size: 19px; }
+      .small { font-size: 18px; fill: #4b6074; }
+      .check-title { font-size: 19px; font-weight: 700; }
+      .check { font-size: 18px; }
+    </style>
+  </defs>
+  <rect width="1200" height="880" fill="#ffffff"/>
+  <!-- Heading names the two independent requirements before showing the example. -->
+  <text x="32" y="47" class="title">A route finds the path; security rules must also allow it</text>
+  <text x="32" y="81" class="small">Example: an application connects to a PostgreSQL database in another subnet of the same VPC.</text>
+  <!-- VPC and subnet containment: purple resource borders mark security-group association, not proxy appliances. -->
+  <rect x="32" y="105" width="1136" height="304" rx="12" fill="#f7f9fc" stroke="#b2c1d1" stroke-width="2"/>
+  <text x="52" y="139" class="heading">VPC: 10.0.0.0/16</text>
+  <text x="350" y="139" class="body">Route in both subnet tables: 10.0.0.0/16 → local (within this VPC)</text>
+  <rect x="52" y="164" width="370" height="222" rx="10" fill="#ffffff" stroke="#a7b7c8" stroke-width="2"/>
+  <rect x="778" y="164" width="370" height="222" rx="10" fill="#ffffff" stroke="#a7b7c8" stroke-width="2"/>
+  <text x="72" y="196" class="heading">Application subnet: 10.0.2.0/24</text>
+  <text x="798" y="196" class="heading">Database subnet: 10.0.3.0/24</text>
+  <rect id="app-resource" x="72" y="218" width="330" height="94" rx="8" fill="#edf4ff" stroke="#936eb7" stroke-width="2.5"/>
+  <text x="92" y="253" class="heading">EC2 application</text>
+  <text x="92" y="286" class="body">10.0.2.10 · app security group</text>
+  <rect id="database-resource" x="798" y="218" width="330" height="94" rx="8" fill="#eaf6ef" stroke="#936eb7" stroke-width="2.5"/>
+  <text x="818" y="253" class="heading">PostgreSQL database</text>
+  <text x="818" y="286" class="body">10.0.3.20 · DB security group</text>
+  <!-- Request and reply shafts intentionally cross subnet borders; heads only meet their resource border. -->
+  <text x="600" y="226" class="small" text-anchor="middle">Request to database port 5432</text>
+  <path id="request-arrow" data-connector="true" d="M404 245 H785" fill="none" stroke="#2769a8" stroke-width="2.5"/>
+  <polygon points="784,238 797,245 784,252" fill="#2769a8"/>
+  <path id="reply-arrow" data-connector="true" d="M796 289 H415" fill="none" stroke="#398363" stroke-width="2.5"/>
+  <polygon points="416,282 403,289 416,296" fill="#398363"/>
+  <text x="600" y="324" class="small" text-anchor="middle">Reply to the app's temporary port</text>
+  <text x="72" y="352" class="small">Network ACL checks traffic</text>
+  <text x="72" y="376" class="small">as it enters or leaves this subnet.</text>
+  <text x="798" y="352" class="small">Network ACL checks traffic</text>
+  <text x="798" y="376" class="small">as it enters or leaves this subnet.</text>
+  <!-- Checklist boxes are logical checks, deliberately disconnected from packet arrows. -->
+  <rect x="32" y="433" width="1136" height="235" rx="12" fill="#f8f5fc" stroke="#baabd2" stroke-width="2"/>
+  <text x="52" y="468" class="heading">The new request must pass all four checks</text>
+  <text x="52" y="497" class="small">These are logical checks, not four proxy devices. A route alone does not grant permission.</text>
+  <rect x="52" y="516" width="254" height="132" rx="8" fill="#ffffff" stroke="#c9badb" stroke-width="1.5"/>
+  <text x="68" y="545" class="check-title">App security group</text>
+  <text x="68" y="578" class="check">Allows outbound traffic</text>
+  <text x="68" y="602" class="check">to the database on</text>
+  <text x="68" y="626" class="check">TCP port 5432.</text>
+  <rect x="332" y="516" width="254" height="132" rx="8" fill="#ffffff" stroke="#c9badb" stroke-width="1.5"/>
+  <text x="348" y="545" class="check-title">App subnet ACL</text>
+  <text x="348" y="578" class="check">Allows outbound traffic</text>
+  <text x="348" y="602" class="check">to the database on</text>
+  <text x="348" y="626" class="check">TCP port 5432.</text>
+  <rect x="612" y="516" width="254" height="132" rx="8" fill="#ffffff" stroke="#c9badb" stroke-width="1.5"/>
+  <text x="628" y="545" class="check-title">Database subnet ACL</text>
+  <text x="628" y="578" class="check">Allows inbound traffic</text>
+  <text x="628" y="602" class="check">from the app on</text>
+  <text x="628" y="626" class="check">TCP port 5432.</text>
+  <rect x="892" y="516" width="256" height="132" rx="8" fill="#ffffff" stroke="#c9badb" stroke-width="1.5"/>
+  <text x="908" y="545" class="check-title">Database security group</text>
+  <text x="908" y="578" class="check">Allows inbound TCP 5432</text>
+  <text x="908" y="602" class="check">from resources with</text>
+  <text x="908" y="626" class="check">the app security group.</text>
+  <!-- Return traffic uses connection tracking for security groups, but explicit ACL return allowances. -->
+  <rect x="32" y="691" width="1136" height="144" rx="12" fill="#eef7f2" stroke="#9fc5b0" stroke-width="2"/>
+  <text x="52" y="726" class="heading">The reply needs a path back, too</text>
+  <text x="52" y="757" class="body">Security groups are stateful: they remember this connection and allow its reply traffic.</text>
+  <text x="52" y="786" class="body">Network ACLs are stateless: DB-subnet outbound and app-subnet inbound rules must allow replies.</text>
+  <text x="52" y="815" class="small">The reply goes to the app's temporary client port (for example, 50000), not to port 5432 on the app.</text>
+  <!-- Abbreviations are expanded in the image so it remains understandable outside the article. -->
+  <text x="32" y="863" class="small">VPC = Virtual Private Cloud. ACL = access control list. TCP = Transmission Control Protocol. DB = database.</text>
+</svg>

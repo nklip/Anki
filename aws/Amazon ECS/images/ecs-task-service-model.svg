@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="861" viewBox="0 0 1200 861" role="img" aria-labelledby="task-service-title task-service-desc">
+  <title id="task-service-title">An ECS service keeps the desired number of task copies running</title>
+  <desc id="task-service-desc">A container image packages the application and its dependencies and is stored in a registry. A task definition names that image and defines how one task should run. Within a regional cluster, a service uses a task definition and a desired count of two to maintain two running task copies. Each example task contains one application container. If task B stops, the service starts replacement task C when resources are available. Once it is running, task A and task C restore the desired count of two. A cluster is a logical group, not one server.</desc>
+  <!-- Conceptual references: ecs.png and ecs-ec2-vs-fargate-1.jpeg from the source Anki topic.
+       https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definitions.html
+       https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs_services.html
+       The task-copy model is independent of the chosen compute capacity. -->
+  <!-- Shared typography and palette: blue configuration, purple service, green running tasks, amber interruption. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4b6074; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Start with the desired state, then show the objects that describe and maintain it. -->
+  <rect width="1200" height="861" fill="#fff"/>
+  <text x="32" y="47" class="title" text-anchor="start">An ECS service keeps the desired number of task copies running</text>
+  <text x="32" y="82" class="body" text-anchor="start">Example: keep two copies of an orders application running. Read from the blueprint to the running tasks.</text>
+  <!-- The definition references an image; it does not contain a live container. -->
+  <rect id="container-image" x="32" y="120" width="330" height="145" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="52" y="155" class="heading" text-anchor="start">Container image</text>
+  <text x="52" y="195" class="body" text-anchor="start">Application + dependencies</text>
+  <text x="52" y="235" class="small" text-anchor="start">Stored in an image registry</text>
+  <rect id="task-definition" x="420" y="120" width="748" height="145" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="440" y="155" class="heading" text-anchor="start">Task definition: orders:7</text>
+  <text x="440" y="195" class="body" text-anchor="start">Blueprint: names the image, resources, network, and permissions</text>
+  <text x="440" y="235" class="small" text-anchor="start">Describes one task; it does not run anything by itself. “7” is the revision.</text>
+  <!-- Manual arrow shafts end inside their triangle bases; tips meet outer target borders. -->
+  <path id="image-reference-arrow" class="connector" data-connector="true" d="M363 192 H407"/>
+  <polygon points="405,185 419,192 405,199" fill="#52677c"/>
+  <!-- A regional cluster groups the service and its tasks. The incoming connector avoids its heading. -->
+  <rect id="regional-cluster" x="32" y="310" width="1136" height="272" rx="12" fill="#fafbfc" stroke="#b9c5d1" stroke-width="2"/>
+  <text x="430" y="344" class="heading" text-anchor="start">Cluster: a logical group in one AWS Region</text>
+  <rect id="orders-service" x="52" y="375" width="340" height="155" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="72" y="412" class="heading" text-anchor="start">Service: orders</text>
+  <text x="72" y="452" class="body" text-anchor="start">Uses task definition orders:7</text>
+  <text x="72" y="493" class="heading" text-anchor="start">Desired count = 2 tasks</text>
+  <path id="definition-to-service-arrow" class="connector" data-connector="true" d="M650 266 V287 H222 V362"/>
+  <polygon points="215,360 222,374 229,360" fill="#52677c"/>
+  <rect id="running-task-group" x="470" y="375" width="678" height="155" rx="12" fill="#f4faf6" stroke="#8dbca0" stroke-width="2"/>
+  <text x="490" y="410" class="heading" text-anchor="start">Two running copies of the task definition</text>
+  <rect id="running-task-a" x="490" y="430" width="294" height="80" rx="8" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="510" y="459" class="heading" text-anchor="start">Task A</text>
+  <text x="510" y="491" class="body" text-anchor="start">App container</text>
+  <rect id="running-task-b" x="814" y="430" width="314" height="80" rx="8" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="834" y="459" class="heading" text-anchor="start">Task B</text>
+  <text x="834" y="491" class="body" text-anchor="start">App container</text>
+  <path id="service-maintains-tasks-arrow" class="connector" data-connector="true" d="M393 452 H457"/>
+  <polygon points="455,445 469,452 455,459" fill="#52677c"/>
+  <text x="52" y="561" class="small" text-anchor="start">A task runs one or more containers together. The cluster is not a single server.</text>
+  <!-- Failure/recovery row is an example over time, not a second service or a promise of immediate recovery. -->
+  <text x="32" y="626" class="heading" text-anchor="start">If a task stops, the service works to restore the desired count</text>
+  <rect id="task-b-stops" x="32" y="649" width="328" height="133" rx="12" fill="#fff5e5" stroke="#d8b57e" stroke-width="2"/>
+  <text x="52" y="684" class="heading" text-anchor="start">Task B stops</text>
+  <text x="52" y="724" class="body" text-anchor="start">Task A is still running</text>
+  <text x="52" y="760" class="small" text-anchor="start">Only 1 running task remains</text>
+  <rect id="service-replacement" x="420" y="649" width="338" height="133" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="440" y="684" class="heading" text-anchor="start">Service starts task C</text>
+  <text x="440" y="724" class="body" text-anchor="start">Uses the same task definition</text>
+  <text x="440" y="760" class="small" text-anchor="start">Needs available resources</text>
+  <rect id="desired-count-restored" x="820" y="649" width="348" height="133" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="840" y="684" class="heading" text-anchor="start">Task A + task C run</text>
+  <text x="840" y="724" class="body" text-anchor="start">2 running tasks again</text>
+  <text x="840" y="760" class="small" text-anchor="start">Replacement can take time</text>
+  <path id="stopped-task-detected-arrow" class="connector" data-connector="true" d="M361 715 H407"/>
+  <polygon points="405,708 419,715 405,722" fill="#52677c"/>
+  <path id="replacement-running-arrow" class="connector" data-connector="true" d="M759 715 H807"/>
+  <polygon points="805,708 819,715 805,722" fill="#52677c"/>
+  <!-- Terminology footer supports reading the diagram on its own. -->
+  <text x="32" y="824" class="small" text-anchor="start">ECS = Elastic Container Service. The desired count is the number of task copies the service should maintain.</text>
+</svg>

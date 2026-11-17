@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="618" viewBox="0 0 1200 618" role="img" aria-labelledby="coverage-title coverage-desc">
+  <title id="coverage-title">CloudTrail: bucket settings and object access need different coverage</title>
+  <desc id="coverage-desc">Compare the same two activities across Event history and a configured trail. Changing an S3 bucket policy is a management event: Event history records it automatically for 90 days in the event's Region, and trails include management events by default. Reading an object is a data event: Event history never includes it, and a trail records it only when matching S3 object data events are enabled. Event history and trails are separate recording options, not stages of one pipeline.</desc>
+  <!-- Conceptual reference: CloudTrail store, monitor, and analyze overview in
+       the source Anki image cloud_trail-d314033178a16dbbd99111038789685e42f23278.png.
+       Coverage sources:
+       https://docs.aws.amazon.com/awscloudtrail/latest/userguide/view-cloudtrail-events.html
+       https://docs.aws.amazon.com/AmazonS3/latest/userguide/cloudtrail-logging-s3-info.html
+       https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-data-events-with-cloudtrail.html -->
+  <!-- Shared typography and semantic colors; explicit labels carry every meaning. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4b6074; }
+      .yes { font-size: 22px; font-weight: 700; fill: #256446; }
+      .conditional { font-size: 22px; font-weight: 700; fill: #80511d; }
+    </style>
+  </defs>
+  <!-- Title and reading instruction; the grid compares destinations without implying a flow. -->
+  <rect width="1200" height="618" fill="#fff"/>
+  <text x="32" y="47" class="title" text-anchor="start">CloudTrail: bucket settings and object access need different coverage</text>
+  <text x="32" y="82" class="body" text-anchor="start">Read across each row. Event history and a trail are separate ways to keep activity records.</text>
+  <text x="52" y="135" class="heading" text-anchor="start">Example AWS activity</text>
+  <text x="435" y="135" class="heading" text-anchor="start">Event history</text>
+  <text x="815" y="135" class="heading" text-anchor="start">Trail: log files in S3</text>
+  <text x="52" y="164" class="small" text-anchor="start">S3 = Simple Storage Service</text>
+  <text x="435" y="164" class="small" text-anchor="start">Available automatically</text>
+  <text x="815" y="164" class="small" text-anchor="start">You configure collection</text>
+  <!-- Management row: bucket policy settings are captured without data-event selection. -->
+  <rect id="management-example" x="32" y="188" width="365" height="148" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="52" y="221" class="heading" text-anchor="start">Change a bucket policy</text>
+  <text x="52" y="253" class="body" text-anchor="start">PutBucketPolicy</text>
+  <text x="52" y="286" class="small" text-anchor="start">Sets rules for bucket access</text>
+  <text x="52" y="315" class="heading" text-anchor="start">Management event</text>
+  <rect id="management-history" x="415" y="188" width="362" height="148" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="435" y="224" class="yes" text-anchor="start">Recorded automatically</text>
+  <text x="435" y="263" class="body" text-anchor="start">Last 90 days</text>
+  <text x="435" y="299" class="small" text-anchor="start">Look in the event's AWS Region</text>
+  <rect id="management-trail" x="795" y="188" width="373" height="148" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="815" y="224" class="yes" text-anchor="start">Included by default</text>
+  <text x="815" y="263" class="body" text-anchor="start">Keep logs in your S3 bucket</text>
+  <text x="815" y="299" class="small" text-anchor="start">Check the trail's event filters</text>
+  <!-- Data row: object activity requires explicit collection and is absent from Event history. -->
+  <rect id="data-example" x="32" y="358" width="365" height="148" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="52" y="391" class="heading" text-anchor="start">Read an object in the bucket</text>
+  <text x="52" y="423" class="body" text-anchor="start">GetObject</text>
+  <text x="52" y="456" class="small" text-anchor="start">Retrieves a stored file's contents</text>
+  <text x="52" y="485" class="heading" text-anchor="start">Data event</text>
+  <rect id="data-history" x="415" y="358" width="362" height="148" rx="12" fill="#f3f5f8" stroke="#b9c4d0" stroke-width="2"/>
+  <text x="435" y="394" class="heading" text-anchor="start">Not included</text>
+  <text x="435" y="433" class="body" text-anchor="start">No data events in Event history</text>
+  <text x="435" y="469" class="small" text-anchor="start">Even when a trail records them</text>
+  <rect id="data-trail" x="795" y="358" width="373" height="148" rx="12" fill="#fff5e5" stroke="#d8b57e" stroke-width="2"/>
+  <text x="815" y="394" class="conditional" text-anchor="start">Only if selected</text>
+  <text x="815" y="433" class="body" text-anchor="start">Enable S3 object data events</text>
+  <text x="815" y="469" class="small" text-anchor="start">Include this bucket and read activity</text>
+  <!-- Takeaway applies to the common investigation mistake shown by the two rows. -->
+  <rect id="coverage-takeaway" x="32" y="531" width="1136" height="64" rx="10" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="52" y="570" class="body" text-anchor="start">Seeing a bucket policy change does not mean you also collected reads of the objects inside that bucket.</text>
+</svg>

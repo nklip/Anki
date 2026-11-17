@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="request-flow-title request-flow-desc">
+  <title id="request-flow-title">API Gateway handles the request; Lambda runs your application code</title>
+  <desc id="request-flow-desc">An HTTP API receives GET /orders/42 from a client. API Gateway matches the route GET /orders/{id}, applies the configured access check, and invokes a Lambda integration. The Lambda function checks whether the caller may read this order, reads the data, and prepares a response. The response returns through API Gateway to the client. If the gateway access check rejects the request, the application function is not invoked.</desc>
+  <!-- Conceptual reference: api_gateway.png from the source Anki topic.
+       Focus the client/gateway/backend architecture on one HTTP API Lambda request.
+       https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-routes.html
+       https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html -->
+  <!-- Shared typography; blue client, purple gateway, green application backend. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #162b42; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4b6074; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <!-- Title and example boundary establish the reading order. -->
+  <rect width="1200" height="720" fill="#fff"/>
+  <text x="32" y="46" class="title" text-anchor="start">API Gateway handles the request; Lambda runs your application code</text>
+  <text x="32" y="81" class="body" text-anchor="start">Example: an HTTP API with a configured access check and a Lambda backend.</text>
+  <text x="32" y="126" class="heading" text-anchor="start">REQUEST: read left to right</text>
+  <!-- Request row. API Gateway selects a route and integration, while Lambda owns the order logic. -->
+  <rect id="request-client" x="32" y="148" width="272" height="242" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="52" y="184" class="heading" text-anchor="start">Client</text>
+  <text x="52" y="227" class="heading" text-anchor="start">GET /orders/42</text>
+  <text x="52" y="265" class="body" text-anchor="start">Asks to read order 42</text>
+  <text x="52" y="323" class="small" text-anchor="start">A browser, mobile app,</text>
+  <text x="52" y="352" class="small" text-anchor="start">or another service</text>
+  <rect id="request-api-gateway" x="365" y="148" width="420" height="242" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="385" y="184" class="heading" text-anchor="start">Amazon API Gateway</text>
+  <text x="385" y="227" class="body" text-anchor="start">Matches GET /orders/{id}</text>
+  <text x="385" y="257" class="small" text-anchor="start">The path variable {id} is 42</text>
+  <text x="385" y="301" class="body" text-anchor="start">Applies the configured access check</text>
+  <text x="385" y="342" class="body" text-anchor="start">Uses a Lambda integration</text>
+  <text x="385" y="371" class="small" text-anchor="start">An integration connects a route to its backend</text>
+  <rect id="request-lambda-backend" x="846" y="148" width="322" height="242" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="866" y="184" class="heading" text-anchor="start">Your Lambda function</text>
+  <text x="866" y="227" class="body" text-anchor="start">Runs application logic</text>
+  <text x="866" y="269" class="small" text-anchor="start">Checks whether this caller</text>
+  <text x="866" y="298" class="small" text-anchor="start">may read this particular order</text>
+  <text x="866" y="342" class="body" text-anchor="start">Reads the order data</text>
+  <text x="866" y="371" class="small" text-anchor="start">Prepares the response</text>
+  <!-- Separate shaft/head joins keep tips outside node boundaries. -->
+  <path id="client-request-arrow" class="connector" data-connector="true" d="M305 269 H352"/>
+  <polygon points="350,262 364,269 350,276" fill="#52677c"/>
+  <path id="invoke-lambda-arrow" class="connector" data-connector="true" d="M786 269 H833"/>
+  <polygon points="831,262 845,269 831,276" fill="#52677c"/>
+  <!-- Response row reads in the opposite direction. The vertical arrow ties backend work to its result. -->
+  <text x="32" y="432" class="heading" text-anchor="start">RESPONSE: read right to left</text>
+  <rect id="client-receives-response" x="32" y="455" width="272" height="109" rx="12" fill="#edf4ff" stroke="#9ebde0" stroke-width="2"/>
+  <text x="52" y="494" class="heading" text-anchor="start">Client receives result</text>
+  <text x="52" y="532" class="body" text-anchor="start">Displays order 42</text>
+  <rect id="gateway-returns-response" x="365" y="455" width="420" height="109" rx="12" fill="#f7f3fb" stroke="#baa6cf" stroke-width="2"/>
+  <text x="385" y="494" class="heading" text-anchor="start">API Gateway</text>
+  <text x="385" y="532" class="body" text-anchor="start">Returns the HTTP response to the client</text>
+  <rect id="lambda-response" x="846" y="455" width="322" height="109" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+  <text x="866" y="494" class="heading" text-anchor="start">Example successful result</text>
+  <text x="866" y="532" class="body" text-anchor="start">200 OK + order details</text>
+  <path id="backend-result-arrow" class="connector" data-connector="true" d="M1007 391 V442"/>
+  <polygon points="1000,440 1007,454 1014,440" fill="#52677c"/>
+  <path id="lambda-to-gateway-response-arrow" class="connector" data-connector="true" d="M845 510 H798"/>
+  <polygon points="800,503 786,510 800,517" fill="#52677c"/>
+  <path id="gateway-to-client-response-arrow" class="connector" data-connector="true" d="M364 510 H317"/>
+  <polygon points="319,503 305,510 319,517" fill="#52677c"/>
+  <!-- Rejection is an alternate outcome before the application integration is invoked. -->
+  <rect id="rejected-request-outcome" x="32" y="592" width="1136" height="75" rx="10" fill="#fff5e5" stroke="#d8b57e" stroke-width="2"/>
+  <text x="52" y="623" class="body" text-anchor="start">If the gateway access check rejects the request, it returns an error to the client.</text>
+  <text x="52" y="652" class="body" text-anchor="start">The application function is not invoked for that request.</text>
+  <text x="32" y="702" class="small" text-anchor="start">API = application programming interface. HTTP = Hypertext Transfer Protocol.</text>
+</svg>

@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="assignments-title assignments-desc">
+  <title id="assignments-title">One person can have different access in different AWS accounts</title>
+  <desc id="assignments-desc">Alex belongs to the Developers group. An administrator assigns Developers the example DevFiles permission set in Development and the example ProdView permission set in Production. IAM Identity Center provisions a separate IAM role in each target account. The development role grants listing, reading, and writing development bucket objects. The production role grants listing and reading production bucket objects. Alex chooses an account and role and uses temporary credentials for that role. Other applicable AWS policies still affect requests.</desc>
+  <!-- Conceptual source: the identity federation and IAM policy distribution diagram at
+       https://docs.aws.amazon.com/prescriptive-guidance/latest/designing-control-tower-landing-zone/authentication.html
+       Permission-set behavior: https://docs.aws.amazon.com/singlesignon/latest/userguide/permissionsetsconcept.html
+       This expands policy distribution into two concrete group/account assignments. -->
+  <!-- Shared typography and colors; separate arrowheads hide the shaft endpoints. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172d46; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; fill: #4c647e; }
+      .connector { fill: none; stroke: #52677c; stroke-width: 2.5; }
+    </style>
+  </defs>
+  <rect width="1200" height="1000" fill="#ffffff"/>
+  <!-- Starting point: one group, two explicit assignments. -->
+  <text x="32" y="48" class="title">One person, different access in each AWS account</text>
+  <text x="32" y="84" class="body">Permission-set access needs three parts: who + which permissions + which account.</text>
+  <g id="alex-group-membership">
+    <rect x="32" y="118" width="1136" height="130" rx="12" fill="#f2edfb" stroke="#b6a2d5" stroke-width="2"/>
+    <text x="56" y="158" class="heading">Alex belongs to the Developers group.</text>
+    <text x="56" y="197" class="body">The administrator makes the two separate assignments below in IAM Identity Center.</text>
+    <text x="56" y="229" class="small">DevFiles and ProdView are example names. Their policies define the actual permissions.</text>
+  </g>
+  <!-- Development column: assignment first, generated role second. -->
+  <g id="development-assignment-and-role">
+    <rect x="32" y="274" width="552" height="558" rx="12" fill="#edf4ff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="56" y="313" class="heading">Development account</text>
+    <rect id="dev-assignment" x="56" y="337" width="504" height="147" rx="10" fill="#ffffff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="78" y="374" class="body">Group: Developers</text>
+    <text x="78" y="417" class="body">Permission set: DevFiles</text>
+    <text x="78" y="460" class="body">Target account: Development</text>
+    <text x="340" y="530" class="body">Provision role</text>
+    <rect id="dev-generated-role" x="56" y="560" width="504" height="235" rx="10" fill="#ffffff" stroke="#9dbce3" stroke-width="2"/>
+    <text x="78" y="599" class="heading">IAM role in Development</text>
+    <text x="78" y="635" class="body">AWSReservedSSO_DevFiles_…</text>
+    <text x="78" y="684" class="heading">This role grants:</text>
+    <text x="78" y="722" class="body">List, read, and write objects</text>
+    <text x="78" y="754" class="body">in the development S3 bucket.</text>
+  </g>
+  <!-- Production column uses a different permission set and a separate IAM role. -->
+  <g id="production-assignment-and-role">
+    <rect x="616" y="274" width="552" height="558" rx="12" fill="#eaf6ef" stroke="#8dbca0" stroke-width="2"/>
+    <text x="640" y="313" class="heading">Production account</text>
+    <rect id="prod-assignment" x="640" y="337" width="504" height="147" rx="10" fill="#ffffff" stroke="#8dbca0" stroke-width="2"/>
+    <text x="662" y="374" class="body">Group: Developers</text>
+    <text x="662" y="417" class="body">Permission set: ProdView</text>
+    <text x="662" y="460" class="body">Target account: Production</text>
+    <text x="924" y="530" class="body">Provision role</text>
+    <rect id="prod-generated-role" x="640" y="560" width="504" height="235" rx="10" fill="#ffffff" stroke="#8dbca0" stroke-width="2"/>
+    <text x="662" y="599" class="heading">IAM role in Production</text>
+    <text x="662" y="635" class="body">AWSReservedSSO_ProdView_…</text>
+    <text x="662" y="684" class="heading">This role grants:</text>
+    <text x="662" y="722" class="body">List and read objects</text>
+    <text x="662" y="754" class="body">in the production S3 bucket.</text>
+  </g>
+  <!-- Arrow tips meet the role boxes' outer top strokes at y=559.
+       Shafts stop two units inside the heads' bases at y=545. -->
+  <path id="dev-role-connector" class="connector" data-connector="true" d="M308 485 V547"/>
+  <polygon id="dev-role-head" points="301,545 308,559 315,545" fill="#52677c"/>
+  <path id="prod-role-connector" class="connector" data-connector="true" d="M892 485 V547"/>
+  <polygon id="prod-role-head" points="885,545 892,559 899,545" fill="#52677c"/>
+  <!-- Outcome and scope: permissions belong to the selected role session. -->
+  <g id="selected-role-outcome">
+    <rect x="32" y="858" width="1136" height="110" rx="12" fill="#fff2e1" stroke="#dcb77e" stroke-width="2"/>
+    <text x="56" y="897" class="heading">Alex chooses an account and role, then uses temporary credentials for that role.</text>
+    <text x="56" y="937" class="body">S3 stores files as objects in buckets. Other applicable AWS policies still affect requests.</text>
+  </g>
+</svg>
