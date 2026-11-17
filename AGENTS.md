@@ -56,6 +56,22 @@ python3 -m unittest discover -s .agents/skills/anki-card-creation/scripts/tests
 
 For cards about versioned features, follow the skill's version-lead rule and add `--require-version-lead` to validation.
 
+### `anki-publish`
+
+Entry point: [`.agents/skills/anki-publish/SKILL.md`](.agents/skills/anki-publish/SKILL.md)
+
+Use this skill when the user asks to publish or update a repository card or article in the Anki desktop app. It resolves the related deck and existing note, preserves VS Code Markdown preview styling and local media, and updates content in place without changing review scheduling. Editing Markdown alone does not authorize publication.
+
+- Preserve existing note/card identities, decks, tags, templates, due dates, and review state. Never delete and recreate a note to refresh its content.
+- Use the guarded AnkiConnect helper and its before/after verification. Follow the skill's identity, rendering, and recovery references; do not infer deck names or note identity from a title alone.
+- For content creation followed by publication, complete `anki-card-creation` and any required `svg-creation` work first, then use `anki-publish`.
+
+Validate helper changes with:
+
+```bash
+python3 -m unittest discover -s .agents/skills/anki-publish/scripts -p 'test_*.py'
+```
+
 ### `svg-creation`
 
 Entry point: [`.agents/skills/svg-creation/SKILL.md`](.agents/skills/svg-creation/SKILL.md)  
