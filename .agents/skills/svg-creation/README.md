@@ -48,6 +48,8 @@ The checker automatically detects the Node.js and `sharp` runtime bundled with C
 
 ## Validate an SVG
 
+For new diagram layouts, first check the [Anki image sizes](references/svg-folder-style.md#anki-image-sizes): select the small, medium, or large minimum width and calculate height from the 1.2:1 landscape ratio, with the documented existing-image and exact-reference exceptions. This is an authoring check; the structural validator does not infer a diagram's size class.
+
 Run the strict check from the skill directory. A same-stem PNG beside the SVG is compared automatically:
 
 ```bash

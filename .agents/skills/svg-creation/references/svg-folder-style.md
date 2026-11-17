@@ -10,6 +10,21 @@ Read this reference when creating or substantially editing diagrams in the selec
 - Inspect nearby SVGs in the same `images/` folder before introducing a new canvas size, font family, palette, component shape, or connector convention. Prefer a coherent folder over a one-off visual style.
 - Preserve accessible metadata and useful XML comments found in well-maintained neighbors. Do not copy omissions from older or minimal examples.
 
+## Anki image sizes
+
+Use these defaults for new standalone teaching-diagram layouts. Minimum widths refer to the root SVG's intrinsic pixel dimensions, not its `viewBox` coordinates or its displayed width after Anki fits it to the screen. Choose the class from the amount of information and space needed for readable labels, rather than copying the dimensions of an older neighboring image.
+
+| Size class | Typical content | Minimum width | Dimensions at that width |
+| --- | --- | --- | --- |
+| Small / minor | A compact relationship or a few labeled elements | 800 px | 800 × 667 px |
+| Medium | Several steps, a comparison, or a moderate table | 1200 px | 1200 × 1000 px |
+| Large | A detailed table, architecture, or several related groups | 1500 px | 1500 × 1250 px |
+
+- Widths are minimums, not fixed sizes. Increase the width when the content needs more room, then calculate `height = round(width / 1.2)`. For example, a width of 1800 px requires a height of 1500 px. This is a landscape width-to-height ratio of 1.2:1, allowing whole-pixel rounding.
+- Set explicit root `width` and `height` in pixels, with a `viewBox` of the same proportions; prefer `viewBox="0 0 W H"` using the chosen dimensions for new artwork. Arrange the content within that canvas. Do not stretch shapes or text, crop content, or add empty padding merely to meet the ratio.
+- Keep the composition compact by reflowing groups and adjusting their layout within the chosen proportions. If the content is too dense, use a larger class or width and recheck the labels at the actual Anki display size.
+- Apply these defaults to new layouts. For repairs to an existing diagram or exact recreation of a supplied PNG etalon, preserve its dimensions and proportions unless the user requests resizing or a new layout. Explicit user dimensions take precedence. Do not resize existing repository images merely because the skill's defaults changed.
+
 ## Visual language
 
 - Use a high-contrast background and readable text unless the neighboring diagrams establish another accessible theme.
@@ -22,7 +37,7 @@ Read this reference when creating or substantially editing diagrams in the selec
 - Use an explicit visual sequence when the subject changes state: for example, before → rule → after, source → transformation → result, or step 1 → step 2 → step 3. Use visible labels rather than expecting color or position alone to explain the sequence.
 - Define unfamiliar notation and make color semantics consistent. If the viewer must memorize a branch rule to read the image, place that rule next to the branch while keeping arrows clear of its text.
 - Treat whitespace as a semantic resource, not default padding. Large gaps are acceptable only when they separate conceptual groups, protect readability, or provide a necessary routing corridor.
-- After the first render, look for an empty center, oversized container, long connector corridor, or canvas margin that visually outweighs the information. Reflow or compress the layout and tighten the `viewBox`. Do not fill unused space with decoration or redundant text.
+- After the first render, look for an empty center, oversized container, long connector corridor, or canvas margin that visually outweighs the information. Reflow or compress the layout. For new layouts, any canvas adjustment must follow the sizing rules above; existing-image and exact-reference canvases remain unchanged unless the task calls for changing them. Do not fill unused space with decoration or redundant text.
 - Keep one dominant lesson and a small number of supporting details. A compact diagram is successful when it remains calm and readable, not when every coordinate is occupied.
 
 ## Arrow routing and layering

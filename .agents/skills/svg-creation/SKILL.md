@@ -15,6 +15,7 @@ Before running the validator outside the bundled Codex environment, install the 
 - Each card and article owns exactly one `images/` directory, holding that topic's diagrams directly. A new card or article gets its own `images/`; never nest an asset directory inside another, so `images/images/` must never exist. This repository no longer uses an `svg/` folder. Keep a recreated SVG beside its PNG etalon when practical so same-stem validation works automatically.
 - If several candidate `images/` directories exist, infer the intended one from the referenced source, named topic, repository convention, or surrounding task. Ask only when those signals do not identify one safely. If the topic has none, create its own `<topic>/images/` beside its `Readme.md` rather than reusing another topic's folder or adding a subfolder to one.
 - Inspect a few SVGs in the selected `images/` folder before choosing dimensions, typography, colors, or arrow conventions. Read [references/svg-folder-style.md](references/svg-folder-style.md) when matching or establishing its visual system.
+- For new diagram layouts, use landscape dimensions with a minimum root SVG width of **800 px for small/minor images, 1200 px for medium images, or 1500 px for large images**. Set **height = width / 1.2**, rounded to the nearest whole pixel. Read [Anki image sizes](references/svg-folder-style.md#anki-image-sizes) for choosing a size class, canvas setup, and existing-image/reference handling. Older neighboring images do not override these defaults.
 - Establish a positive `viewBox`, a visible reading order, and a compact layout grid before placing detailed content. Reserve margins for titles, legends, labels, and arrowheads without creating a dominant unused region.
 
 ## Author maintainable SVG
@@ -32,8 +33,9 @@ Before running the validator outside the bundled Codex environment, install the 
 
 - Assume the viewer is learning the subject for the first time. The rendered diagram must be understandable without surrounding prose or access to its XML comments.
 - State the lesson in the title or subtitle, make the starting point and reading direction obvious, and visibly connect each transformation, relationship, or sequence to its outcome.
+- Keep visible text and accessibility descriptions about the subject. Omit verification dates and commentary about drawing, recreating, or adapting the image. Preserve necessary attribution and version scope; keep repair notes and source references in XML comments when useful.
 - Explain domain terms, abbreviations, symbols, color meanings, or branch rules that a new learner cannot safely infer. Prefer short labels and a clear before/rule/after structure over dense explanatory paragraphs.
-- Use empty space only to separate groups, establish hierarchy, or clarify routing. A large blank center, oversized panel, or loose canvas is a defect when it carries no meaning. Reflow the content, shorten routes, resize panels, or tighten the `viewBox`; do not add decorative filler merely to occupy space.
+- Use empty space only to separate groups, establish hierarchy, or clarify routing. A large blank center, oversized panel, or loose canvas is a defect when it carries no meaning. Reflow the content, shorten routes, or resize panels; do not add decorative filler merely to occupy space. For new layouts, canvas adjustments must retain the selected minimum root width and aspect ratio. Preserve existing/reference canvases unless the task calls for changing them.
 - Preserve one primary lesson per diagram. Supporting notes should resolve likely beginner questions rather than compete with the main flow.
 
 ## Prevent text collisions
@@ -57,6 +59,8 @@ Before running the validator outside the bundled Codex environment, install the 
 - Never rely on a zero-length connector for orientation. Inspect heads at horizontal, vertical, and diagonal angles and near every canvas edge.
 
 ## Validate the final SVG
+
+For a new diagram layout using the sizing defaults, first verify its root width against the chosen size class and its root height against `round(width / 1.2)`. Apply the existing-image and exact-reference exceptions described above. Inspect readability at the intended Anki display width as well as at full size; responsive fitting can make even a large SVG's labels too small. The structural checker does not infer the size class or enforce these authoring defaults.
 
 1. Run `python3 scripts/check_svg.py --strict path/to/file.svg`. When a same-stem PNG is beside the SVG, the checker automatically renders and compares them. Treat every mismatch warning as actionable.
 2. If the etalon has another name or location, pass `--reference path/to/etalon.png`. For a reference-backed batch, use `--reference-mode required` and optionally `--reference-dir path/to/pngs` so a missing etalon fails validation.
