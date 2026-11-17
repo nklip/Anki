@@ -107,7 +107,7 @@ This section reuses the CAP material and diagram from System Design's **Chapter 
 - **A — Availability:** every request received by a non-failing node eventually completes with the operation's result. Rejecting a valid read merely because peers are unreachable does not satisfy this guarantee. CAP does not specify a response-time deadline or an uptime percentage.
 - **P — Partition tolerance:** the model allows network communication between groups of nodes to fail, potentially indefinitely. The nodes themselves can still be alive and reachable by their clients.
 
-The second diagram reuses Chapter 6's circles. Read **CP** and **AP** as shorthand for the guarantees prioritized during a partition; **CA** assumes partitions are outside the guarantee. The circles are a mnemonic, not a free choice to make network failures disappear.
+The second diagram summarizes the CAP trade-offs. Read **CP** and **AP** as shorthand for the guarantees prioritized during a partition; **CA** assumes partitions are outside the guarantee. The circles are a mnemonic, not a free choice to make network failures disappear.
 
 ![cap.svg](images/cap.svg)
 
@@ -240,5 +240,5 @@ Try answering each question before expanding its answer.
 - [Werner Vogels — Eventually Consistent, Revisited: convergence and client guarantees](https://www.allthingsdistributed.com/2008/12/eventually_consistent.html)
 - [Seth Gilbert and Nancy Lynch — Perspectives on the CAP Theorem](https://groups.csail.mit.edu/tds/papers/Gilbert/Brewer2.pdf)
 - [Eric Brewer — CAP Twelve Years Later: How the Rules Have Changed](https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed/)
-- [System Design, Chapter 6 — CAP theorem section and reused CAP diagram](../../system%20design/06.%20Key-Value%20Store/Readme.md#cap-theorem)
-- [phoenixNAP — replication diagram reference, recreated as SVG with a transparent canvas](https://phoenixnap.com/kb/wp-content/uploads/2025/03/transaction-replication-synchronous-vs-asynchronous.png)
+- [System Design, Chapter 6 — CAP theorem section and CAP diagram](../../system%20design/06.%20Key-Value%20Store/Readme.md#cap-theorem)
+- [phoenixNAP — replication diagram reference](https://phoenixnap.com/kb/wp-content/uploads/2025/03/transaction-replication-synchronous-vs-asynchronous.png)

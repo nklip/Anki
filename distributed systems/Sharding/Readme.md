@@ -492,7 +492,7 @@ Start at the top row when the problem is one very large table: pruning and cheap
 
 # Sources
 
-Primary sources checked on 2026-09-23. PostgreSQL behaviour was read in the version 18 documentation, and its three quoted error messages and its rule for pruning hash partitions in the `REL_18_6` source; `SPLIT PARTITION` and `MERGE PARTITIONS` were read in the version 19 beta documentation. Citus facts come from its documentation and the v14.2.0 source; its distribution-column guidance was read in both the published page and the documentation's source file, `sharding/data_modeling.rst` in the `citus_docs` repository. Its default shard count, the placement of co-located shards, the pruning rule for hash-distributed tables, the notice left after copying local rows, and the error for a primary key without the distribution column were confirmed in the v14.2.0 source. The SQL examples follow the documented syntax but were not executed for this article.
+Version scope: PostgreSQL 18 (`REL_18_6` source), PostgreSQL 19 beta for `SPLIT PARTITION` and `MERGE PARTITIONS`, and Citus 14.2.0.
 
 - [PostgreSQL 18: Table Partitioning](https://www.postgresql.org/docs/18/ddl-partitioning.html)
 - [PostgreSQL 18: CREATE TABLE — list partition values, hash partition moduli, default partitions](https://www.postgresql.org/docs/18/sql-createtable.html)

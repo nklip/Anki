@@ -48,7 +48,7 @@ For this fixed-capacity design, a full buffer must **reject the new item, wait f
 
 ## Java examples
 
-The first two are standard-library implementations, verified in **OpenJDK 25**; the others require libraries.
+The first two are standard-library implementations in **OpenJDK 25**; the others require libraries.
 
 | Type | How it uses circular storage |
 | --- | --- |

@@ -391,8 +391,8 @@ The logarithmic bound is about key-based operations. `containsValue` scans mappi
 
 # Sources
 
-- [HowToDoInJava — Java ConcurrentSkipListMap](https://howtodoinjava.com/java/collections/concurrentskiplistmap/) — requested starting article and diagram provenance; explanations above correct its claims about range views, complexity, and concurrency.
-- Original diagrams recreated as SVG: [class hierarchy](https://howtodoinjava.com/wp-content/uploads/2023/04/img-e1681419842511.png), [linked list](https://howtodoinjava.com/wp-content/uploads/2023/04/image-4.png), [shortcut layer](https://howtodoinjava.com/wp-content/uploads/2023/04/image-5.png), [skip-list levels](https://howtodoinjava.com/wp-content/uploads/2022/09/skiplist3-e1681474361934.png). The source's duplicate hierarchy thumbnail is represented by the same SVG; vertical arrowheads in the levels diagram stop at node borders for clarity.
+- [HowToDoInJava — Java ConcurrentSkipListMap](https://howtodoinjava.com/java/collections/concurrentskiplistmap/)
+- Diagram references: [class hierarchy](https://howtodoinjava.com/wp-content/uploads/2023/04/img-e1681419842511.png), [linked list](https://howtodoinjava.com/wp-content/uploads/2023/04/image-4.png), [shortcut layer](https://howtodoinjava.com/wp-content/uploads/2023/04/image-5.png), [skip-list levels](https://howtodoinjava.com/wp-content/uploads/2022/09/skiplist3-e1681474361934.png).
 - [Java SE 25 `ConcurrentSkipListMap` API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ConcurrentSkipListMap.html)
 - [Java SE 25 `NavigableMap` API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/NavigableMap.html) — neighboring keys, range bounds, and endpoint operations.
 - [Java SE 25 `SortedMap` API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/SortedMap.html) — ordering, comparison equality, and the `SequencedMap` hierarchy.

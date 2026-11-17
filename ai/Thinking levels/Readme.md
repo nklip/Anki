@@ -60,7 +60,7 @@ An **evaluation** tests representative tasks against success checks. **Latency**
 
 The invented comparison improves from 16 to 18 passes out of 20, with more tokens and waiting. Repeat trials; one sample does not guarantee future performance. Extra effort cannot replace missing evidence or outcome checks.
 
-Provider examples, checked **2026-11-06**: OpenAI Responses uses `reasoning.effort`; Claude Messages uses `output_config.effort`. Supported levels and defaults vary by model. Both bill generated reasoning as output tokens, including hidden work. Equal level names do not promise equal work across providers.
+Provider examples: OpenAI Responses uses `reasoning.effort`; Claude Messages uses `output_config.effort`. Supported levels and defaults vary by model. Both bill generated reasoning as output tokens, including hidden work. Equal level names do not promise equal work across providers.
 
 # Sources
 

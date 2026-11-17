@@ -220,8 +220,7 @@ Use these monitor methods to understand or maintain intrinsic-lock coordination.
 
 # Sources
 
-- Original study note: **Java (sorting) → wait(), notify() and notifyAll()**, local Anki note ID `1470247887577`, including its three syntax images. Used as the starting material; expanded and corrected against the sources below.
-- [Diagram reference: NotifyVsNotifyAll.png, adapted with corrected lock-acquisition captions and Java thread-state names](https://i0.wp.com/vkd.pfs.mybluehost.me/website_6d0f205d//index.php/wp-content/uploads/2016/03/NotifyVsNotifyAll.png?w=1300)
+- [Diagram reference: NotifyVsNotifyAll.png](https://i0.wp.com/vkd.pfs.mybluehost.me/website_6d0f205d//index.php/wp-content/uploads/2016/03/NotifyVsNotifyAll.png?w=1300)
 - [Java SE 25 Object API: wait, notify, and notifyAll](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#wait(long,int))
 - [Java Language Specification 25, §17.1–17.4: Threads and Locks](https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html)
 - [Oracle Java Tutorials: Guarded Blocks](https://docs.oracle.com/javase/tutorial/essential/concurrency/guardmeth.html)

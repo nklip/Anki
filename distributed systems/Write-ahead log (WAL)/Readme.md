@@ -246,9 +246,9 @@ Try answering each question before expanding its answer.
 
 # Sources
 
-Primary sources checked on 2026-09-17; PostgreSQL references are pinned to version 18.
+Version scope: PostgreSQL 18.
 
-Accounts A and B, their balances, transaction `T1`, and the illustrated write/crash timing are teaching examples. The SQL illustrates the transaction boundary and was not executed against a live database.
+Accounts A and B, their balances, transaction `T1`, and the illustrated write/crash timing are teaching examples. The SQL illustrates the transaction boundary.
 
 - [PostgreSQL 18 — Write-Ahead Logging](https://www.postgresql.org/docs/18/wal-intro.html)
 - [PostgreSQL 18 — Transactions](https://www.postgresql.org/docs/18/tutorial-transactions.html)
@@ -266,4 +266,5 @@ Accounts A and B, their balances, transaction `T1`, and the illustrated write/cr
 - [SQLite — Write-Ahead Logging](https://sqlite.org/wal.html)
 - [RocksDB — Write Ahead Log](https://github.com/facebook/rocksdb/wiki/Write-Ahead-Log-%28WAL%29)
 - [Amazon Builders' Library — Making retries safe with idempotent APIs](https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/)
-- Local diagram provenance: [System Design — database](../../system%20design/01.%20Scaling/images/database.svg) supplies the laptop, server, and database geometry reused as editable vectors. [Distributed Message Queue — adding a partition](../../system%20design/19.%20Distributed%20Message%20Queue/images/partition-increase.svg) supplies the yellow new-message and green persisted-message palette, adapted here for buffered and durable WAL records.
+- [System Design — database](../../system%20design/01.%20Scaling/images/database.svg)
+- [Distributed Message Queue — adding a partition](../../system%20design/19.%20Distributed%20Message%20Queue/images/partition-increase.svg)

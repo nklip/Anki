@@ -70,5 +70,5 @@ The **funnel** converts strings into UTF-8 bytes for hashing. `100_000` is the e
 - [Apache Cassandra documentation — Bloom filters and avoided disk reads](https://cassandra.apache.org/doc/latest/cassandra/managing/operating/bloom_filters.html)
 - [Guava 33.7.1 — BloomFilter API contracts and sizing implementation](https://github.com/google/guava/blob/v33.7.1/guava/src/com/google/common/hash/BloomFilter.java)
 - [Guava 33.7.1 — String funnel and character encoding](https://github.com/google/guava/blob/v33.7.1/guava/src/com/google/common/hash/Funnels.java)
-- [Repository system design chapter 1 — Reused server SVG icon](../../system%20design/01.%20Scaling/images/single-server.svg)
-- [Repository system design chapter 16 — Reused database SVG icon](../../system%20design/16.%20Proximity%20Service/images/final-design.svg)
+- [Repository system design chapter 1 — Server SVG icon](../../system%20design/01.%20Scaling/images/single-server.svg)
+- [Repository system design chapter 16 — Database SVG icon](../../system%20design/16.%20Proximity%20Service/images/final-design.svg)

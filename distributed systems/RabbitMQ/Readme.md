@@ -8,7 +8,7 @@ The RabbitMQ broker is developed primarily in **Erlang**; its command-line tools
 
 The model is **publisher → exchange → queue → consumer**: route, hold, then process. We will follow an order event, examine failures, compare Kafka, and study production cases.
 
-Scope: RabbitMQ **4.3**, using **AMQP 0-9-1** (Advanced Message Queuing Protocol); Kafka **4.3**. Other supported protocols have different APIs. Documentation checked on 2026-09-25; production reports are historical snapshots.
+Scope: RabbitMQ **4.3**, using **AMQP 0-9-1** (Advanced Message Queuing Protocol); Kafka **4.3**. Other supported protocols have different APIs. Production reports are historical snapshots.
 
 1. [Why a message broker exists](#1-why-a-message-broker-exists)
 2. [The vocabulary and the model](#2-the-vocabulary-and-the-model)

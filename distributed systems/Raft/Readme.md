@@ -305,9 +305,7 @@ The algorithm does not change — each group runs its own elections, commit rule
 
 # Sources
 
-Primary sources checked on 2026-09-22; the paper and dissertation were read as text. The dissertation supersedes the paper on membership changes, read-only queries and Pre-Vote. The command sequence `x←3, y←1, y←9, x←2, x←0` follows the paper's Figure 6 and the old-term commit diagram simplifies its Figure 8; server names, terms and log contents are teaching examples.
-
-The snapshot-transfer explanation in §6 was checked against §7 and Figure 13 of the paper on 2026-09-26.
+The dissertation supersedes the paper on membership changes, read-only queries, and Pre-Vote.
 
 - [In Search of an Understandable Consensus Algorithm (Extended Version) — Diego Ongaro and John Ousterhout](https://raft.github.io/raft.pdf)
 - [Consensus: Bridging Theory and Practice — Diego Ongaro's PhD dissertation](https://github.com/ongardie/dissertation)

@@ -246,7 +246,7 @@ Writing these conventions correctly by hand is harder than it looks, mostly beca
 
 # Sources
 
-Primary documentation checked on 2026-09-21 and pinned to ZooKeeper 3.9.6, the current release line, except where a statement is attributed to another project's own documentation. The technical overview is the backbone; the programmer's guide, recipes, and internals supply the detail behind the patterns. The `report-worker` fleet, the znode paths, and the diagrams are teaching examples. The sequence-counter behaviour was read from the 3.9.6 server source rather than inferred from the prose.
+Version scope: ZooKeeper 3.9.6, except where another project is named.
 
 - [Apache ZooKeeper 3.9 documentation](https://zookeeper.apache.org/doc/r3.9.6/index.html)
 - [ZooKeeper technical overview](https://zookeeper.apache.org/doc/r3.9.6/zookeeperOver.html) — the data model and hierarchical namespace, ephemeral nodes, conditional updates and watches, the five guarantees, the simple API, the replicated in-memory database with updates logged to disk, leader and follower roles, majority availability, and the 10:1 read-to-write observation.
@@ -264,4 +264,5 @@ Primary documentation checked on 2026-09-21 and pinned to ZooKeeper 3.9.6, the c
 - [Flink ZooKeeper HA services](https://nightlies.apache.org/flink/flink-docs-release-2.3/docs/deployment/ha/zookeeper_ha/) — leader election plus a pointer to state, with metadata in `high-availability.storageDir`.
 - [Apache Kafka 4.0.0 release announcement](https://kafka.apache.org/blog/2025/03/18/apache-kafka-4.0.0-release-announcement/) — the first major release operating entirely without ZooKeeper.
 - [ClickHouse Keeper](https://clickhouse.com/docs/guides/sre/keeper/clickhouse-keeper) — a Raft-based replacement with a compatible client protocol and an incompatible interserver protocol.
-- Local icon sources: [System Design: message queue](../../system%20design/01.%20Scaling/images/message-queue.svg) supplies the server and envelope symbols and [System Design: database](../../system%20design/01.%20Scaling/images/database.svg) supplies the laptop symbol and database geometry, copied as editable vector shapes into this article's diagrams with the database label omitted.
+- [System Design: message queue](../../system%20design/01.%20Scaling/images/message-queue.svg)
+- [System Design: database](../../system%20design/01.%20Scaling/images/database.svg)

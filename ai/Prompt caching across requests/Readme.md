@@ -40,7 +40,7 @@ A **reuse boundary** is an endpoint the system can save and look up. The longest
 
 ![cache-lifetime.svg](images/cache-lifetime.svg)
 
-Provider examples, checked **2026-11-06**:
+Provider examples:
 
 - **OpenAI, GPT-5.6 and later:** a minimum of 1,024 visible input tokens; automatic caching or explicit eligible endpoints. The default minimum lifetime is 30 minutes; Responses also offers 12 hours. This lifetime governs cached-read pricing, without guaranteeing physical reuse or lower latency.
 - **Claude Messages API:** opt in with `cache_control`. Minimum length depends on the model. The default lifetime is 5 minutes; a 1-hour option has different write pricing.

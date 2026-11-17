@@ -4,7 +4,7 @@
 
 **Erasure coding protects data by splitting it into fragments and adding calculated recovery fragments, so missing pieces can be rebuilt without storing several complete copies.** It trades extra computation and repair traffic for lower storage overhead than replication.
 
-This article explains the `k + m` model and storage costs, follows encoding, placement, and recovery, then examines read and write behavior, where erasure coding is used, and its limits. The diagrams adapt the SVGs from this repository's S3-like Object Storage chapter. The examples use systematic Reed–Solomon coding; not every erasure-code family has the same recovery properties.
+This article explains the `k + m` model and storage costs, follows encoding, placement, and recovery, then examines read and write behavior, where erasure coding is used, and its limits. The examples use systematic Reed–Solomon coding; not every erasure-code family has the same recovery properties.
 
 ## The core model: k data fragments plus m parity fragments
 
@@ -268,7 +268,7 @@ Try answering each question before expanding its answer.
 
 # Sources
 
-Primary sources checked on 2026-09-17; Ceph references are pinned to Squid, Hadoop to 3.4.3, and PostgreSQL to version 18.
+Version scope: Ceph Squid, Hadoop 3.4.3, and PostgreSQL 18.
 
 The 1 GB object, `4 + 2` and `8 + 4` layouts, and toy XOR calculation are teaching examples, not claims about a product's default configuration. Storage calculations omit padding, metadata, and other implementation overhead.
 

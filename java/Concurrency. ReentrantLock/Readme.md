@@ -6,7 +6,7 @@
 
 `ReentrantLock`, in `java.util.concurrent.locks`, gives one thread exclusive access to a protected operation. The owner can acquire the same lock again, but must balance every successful acquisition with an `unlock()`.
 
-Use it when you need timed or interruptible acquisition, an explicit fairness policy, or several condition queues. The article moves from ownership and safe acquisition to memory visibility, fairness, and `Condition` waiting. It then compares `synchronized`, including virtual-thread behavior, reviews common mistakes, and closes with a memory aid. API behavior is checked against Java SE 26; the examples use Java 8-compatible syntax and APIs.
+Use it when you need timed or interruptible acquisition, an explicit fairness policy, or several condition queues. The article moves from ownership and safe acquisition to memory visibility, fairness, and `Condition` waiting. It then compares `synchronized`, including virtual-thread behavior, reviews common mistakes, and closes with a memory aid. API behavior follows Java SE 26; the examples use Java 8-compatible syntax and APIs.
 
 ## One shared lock, one owner
 

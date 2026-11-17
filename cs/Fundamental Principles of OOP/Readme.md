@@ -154,7 +154,7 @@ Meow
 
 An **abstract class** cannot be instantiated directly. It can supply shared fields and implemented methods while leaving some operations for concrete subclasses. **An abstract class may implement an interface without implementing all its abstract methods.** `Animal` inherits the abstract `sound()` requirement from `SoundMaker`; it does not have to repeat the declaration. It supplies the name-related state and behavior, while `Dog` and `Cat` implement `sound()`.
 
-A **concrete class** is a class that is not abstract. It must provide or inherit implementations of all required abstract methods. These changes to the example show the rule in action. The diagnostic excerpts below were checked with `javac` 25; wording can vary between compiler versions.
+A **concrete class** is a class that is not abstract. It must provide or inherit implementations of all required abstract methods. These changes to the example show the rule in action. The diagnostic excerpts below use `javac` 25; wording can vary between compiler versions.
 
 | Change to the example | Compiler diagnostic |
 | --- | --- |

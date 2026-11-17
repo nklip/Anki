@@ -217,9 +217,9 @@ Use an **abstract entity root** when you need root queries or associations such 
 
 ### Production examples, ranked by project popularity
 
-The following open-source Java systems use Hibernate. Rank is by **GitHub stars retrieved on 2026-09-08**, among the verified examples below. Stars measure project interest, not installations or the frequency of a mapping strategy. Each example was checked in a released version for an actual mapped hierarchy and Hibernate integration; tutorials and provider tests were excluded. Source links pin the inspected revisions, and Hibernate versions vary by project.
+The following open-source Java systems use Hibernate. Rank is by **GitHub stars retrieved on 2026-09-08**, among the examples below. Stars measure project interest, not installations or the frequency of a mapping strategy. The examples are released applications with mapped hierarchies and Hibernate integration; tutorials and provider tests are excluded. Source links pin the revisions, and Hibernate versions vary by project.
 
-| Rank | System and purpose | GitHub stars | Verified mapping | Concrete example and database shape |
+| Rank | System and purpose | GitHub stars | Mapping | Concrete example and database shape |
 |---|---|---:|---|---|
 | 1 | Apollo 2.5.2 — configuration management | 29,802 | `@MappedSuperclass` | `BaseEntity` → `App`: shared ID and audit mappings become columns in `App`'s table; `BaseEntity` is not an entity root. |
 | 2 | ThingsBoard 4.3.1.4 — Internet of Things platform | 22,383 | `@MappedSuperclass` | `AbstractDeviceEntity` → `DeviceEntity`: the device table receives inherited device fields without a parent-entity table. |
@@ -230,7 +230,7 @@ The following open-source Java systems use Hibernate. Rank is by **GitHub stars 
 
 Apollo also places `@Inheritance(TABLE_PER_CLASS)` on its non-entity `BaseEntity`; this does not turn the mapped superclass into a `TABLE_PER_CLASS` entity hierarchy. Inspect the entity root, not just a matching annotation.
 
-Among the candidates verified in this research, use **OpenRemote** as the `SINGLE_TABLE` reference, **Broadleaf** as the highest-ranked `JOINED` reference, **Axelor** for `TABLE_PER_CLASS`, and **Apollo** for mapping reuse. These examples show how the strategies appear in real application domains; the ranking is not an exhaustive census of Java systems.
+Among these examples, use **OpenRemote** as the `SINGLE_TABLE` reference, **Broadleaf** as the highest-ranked `JOINED` reference, **Axelor** for `TABLE_PER_CLASS`, and **Apollo** for mapping reuse. These examples show how the strategies appear in real application domains; the ranking is not an exhaustive census of Java systems.
 
 Before choosing:
 

@@ -468,8 +468,6 @@ Use shared state to recognize retries or reduce overlapping work. Decide where t
 
 # Sources
 
-Original article sources checked on 2026-09-08; pattern request sequences and branch conditions rechecked on 2026-09-24. The application topologies, numbered flows, example keys, TTLs, and placement recommendations are design examples derived from these mechanisms.
-
 - [Redis FAQ: the name means REmote DIctionary Server](https://redis.io/docs/latest/develop/get-started/faq/#where-does-the-name-redis-come-from)
 - [Redis keys and values: naming conventions and expiration](https://redis.io/docs/latest/develop/using-commands/keyspace/)
 - [Redis TTL: remaining lifetime and special return values](https://redis.io/docs/latest/commands/ttl/)

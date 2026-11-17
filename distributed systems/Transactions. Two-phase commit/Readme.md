@@ -12,7 +12,7 @@ This article follows chapter 27's wallet example: transfer **$1 from account A t
 
 The reason for this choice is **atomic updates across several records**: all required changes succeed together, or none takes effect. For example, an application can make an order record and its inventory update part of the same database transaction. The database handles the shared outcome, so the application does not need a later compensation merely to repair a partially committed pair of database writes.
 
-In the documentation checked in **September 2026**, `TransactWriteItems` supports **up to 100 write actions per request**, affecting distinct items with a combined size of at most **4 MB**, across tables in the same AWS account and Region. This illustrates where 2PC fits: compatible resources managed within a database transaction boundary. An external airline booking or card-payment API remains outside that boundary.
+As of **September 2026**, `TransactWriteItems` supports **up to 100 write actions per request**, affecting distinct items with a combined size of at most **4 MB**, across tables in the same AWS account and Region. This illustrates where 2PC fits: compatible resources managed within a database transaction boundary. An external airline booking or card-payment API remains outside that boundary.
 
 ## Why two independent commits are insufficient
 
@@ -391,17 +391,12 @@ Try answering each question before expanding its answer.
 
 # Sources
 
-Primary sources checked on 2026-09-14. Transfer `tr-42`, its branch identifiers, the example balances, and the timeline durations are teaching examples used to illustrate the sourced protocol rules. Diagram provenance and adaptations are identified below.
-
-Coverage review also used [Timofei Ivankov — Distributed transactions in microservices: from Saga to Two-Phase Commit (Habr, Russian)](https://habr.com/ru/articles/906484/). Integration and availability examples were checked against the primary sources below; atomic commit remains distinct from isolation.
-
-The DynamoDB practice example and its sources were checked on 2026-09-16. The order/inventory pair is an illustrative application of its atomic-write API.
-
+- [Timofei Ivankov — Distributed transactions in microservices: from Saga to Two-Phase Commit (Habr, Russian)](https://habr.com/ru/articles/906484/)
 - [AWS Database Blog — Optimize Amazon DynamoDB transaction resilience: internal two-phase commit coordination](https://aws.amazon.com/blogs/database/optimize-amazon-dynamodb-transaction-resilience/)
 - [Amazon DynamoDB — Managing complex workflows with transactions: atomic updates and prepare/commit operations](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/transactions.html)
 - [Amazon DynamoDB — Transactions: API limits, same-account/Region scope, and isolation guarantees](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/transaction-apis.html)
-- [System Design chapter 27: Digital Wallet](../../system%20design/27.%20Digital%20Wallet/Readme.md) — wallet example, database architecture, protocol timeline, and coordinator-crash SVG. The local `distributed-transactions-relational-dbs.svg` adapts the [chapter's architecture diagram](../../system%20design/27.%20Digital%20Wallet/images/distributed-transactions-relational-dbs.svg): C's starting balance changes from $1 to $0, and the partition-directory label is corrected from `Zookeeper` to `ZooKeeper`. The local SVG's accessible description and comments use the same corrected spelling.
-- [Transactions. Try-Confirm/Cancel](../Transactions.%20Try-Confirm-Cancel/Readme.md) and [Transactions. Saga](../Transactions.%20Saga/Readme.md) — reused comparison SVG, clarified lock endpoints, and step-diagram visual conventions.
+- [System Design chapter 27: Digital Wallet](../../system%20design/27.%20Digital%20Wallet/Readme.md) — wallet example, [database architecture](../../system%20design/27.%20Digital%20Wallet/images/distributed-transactions-relational-dbs.svg), protocol timeline, and coordinator crash.
+- [Transactions. Try-Confirm/Cancel](../Transactions.%20Try-Confirm-Cancel/Readme.md) and [Transactions. Saga](../Transactions.%20Saga/Readme.md)
 - [Microsoft Open Specifications: Two-Phase Commit Protocol](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-tpsod/e34079f0-22de-4c03-9cb8-84c2448a4613)
 - [Oracle Database: Distributed Transactions Concepts](https://docs.oracle.com/en/database/oracle/oracle-database/18/admin/distributed-transactions-concepts.html)
 - [Microsoft: How Distributed Transactions Work](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ms685033(v=vs.85))

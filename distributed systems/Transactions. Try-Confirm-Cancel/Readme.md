@@ -191,7 +191,7 @@ The table and subsections below compare TCC with database 2PC and Saga, explain 
 
 **Database 2PC keeps database transactions prepared but uncommitted; TCC commits its reservations before the final decision.** This changes both what remains pending and how cancellation works.
 
-Two stacked panels reuse chapter 27's wallet timelines: database 2PC above and TCC below. Each panel has Coordinator, Database A, and Database C rows, with time moving left to right. Both show a successful $1 transfer. Follow the spans between the labeled lock and unlock ticks to track account balance row locks; the span labeled **A's $1 remains reserved** (shown in blue) separately tracks A's committed business reservation. Other short locks needed for phase records are omitted.
+Two stacked panels compare wallet timelines: database 2PC above and TCC below. Each panel has Coordinator, Database A, and Database C rows, with time moving left to right. Both show a successful $1 transfer. Follow the spans between the labeled lock and unlock ticks to track account balance row locks; the span labeled **A's $1 remains reserved** (shown in blue) separately tracks A's committed business reservation. Other short locks needed for phase records are omitted.
 
 ![tcc-versus-2pc-locks.svg](images/tcc-versus-2pc-locks.svg)
 
@@ -367,17 +367,12 @@ Try answering each question before expanding its answer.
 
 # Sources
 
-Primary sources checked on 2026-09-14. Transfer `tr-42`, the state table, the explicit pending-dollar interpretation, and the seat/hotel comparison are teaching examples derived from the reservation and recovery rules below.
-
-Coverage review also used [Timofei Ivankov — Distributed transactions in microservices: from Saga to Two-Phase Commit (Habr, Russian)](https://habr.com/ru/articles/906484/). The visibility and expiry discussion retains the qualifications required by the primary protocol sources.
-
-The Ant Group example and its three sources below were checked on 2026-09-16.
-
+- [Timofei Ivankov — Distributed transactions in microservices: from Saga to Two-Phase Commit (Habr, Russian)](https://habr.com/ru/articles/906484/)
 - [Ant Group / Alipay+ — April 2022 partnership announcement, “About Ant Group”: ownership and operation of Alipay](https://docs.alipayplus.com/alipayplus/alipayplus/news/2c2p_Ant_Group)
 - [Ant Group engineers / SOFAStack — Seata in overseas banking: TCC account services and balance reservations (July 26, 2022; Chinese)](https://www.sofastack.tech/blog/seata-in-practice-in-ant-international-banking/)
 - [Alibaba Group — 2017 11.11 results: 1.48 billion Alipay payments and 256,000 payments per second at peak (November 12, 2017)](https://www.alibabagroup.com/en-US/document-1491865679421243392)
-- [System Design — chapter 27, Digital Wallet](../../system%20design/27.%20Digital%20Wallet/Readme.md). Diagram provenance: [Try](../../system%20design/27.%20Digital%20Wallet/images/tcc-try-phase.svg), [Confirm](../../system%20design/27.%20Digital%20Wallet/images/tcc-confirm-phase.svg), [Cancel](../../system%20design/27.%20Digital%20Wallet/images/tcc-cancel-phase.svg), [phase-status tables](../../system%20design/27.%20Digital%20Wallet/images/phase-status-tables.svg), and [out-of-order execution](../../system%20design/27.%20Digital%20Wallet/images/out-of-order-execution.svg). Local copies preserve the chapter's flows and simplify the ordering caption. They also fix two errors: Confirm's `unlock A` label belongs to C and must read `unlock C`; Cancel's `lock C` label belongs to A and must read `lock A`. The phase-status diagram also corrects the caption from `Zookeeper` to `ZooKeeper`. The linked chapter originals still contain these errors.
-- [Chapter 27 — two-phase commit timeline](../../system%20design/27.%20Digital%20Wallet/images/2pc-protocol.svg). The new lock comparison adapts this timeline and the chapter's Confirm timeline, places each 2PC unlock before its commit acknowledgement, and adds a separate TCC reservation span.
+- [System Design — chapter 27, Digital Wallet](../../system%20design/27.%20Digital%20Wallet/Readme.md): [Try](../../system%20design/27.%20Digital%20Wallet/images/tcc-try-phase.svg), [Confirm](../../system%20design/27.%20Digital%20Wallet/images/tcc-confirm-phase.svg), [Cancel](../../system%20design/27.%20Digital%20Wallet/images/tcc-cancel-phase.svg), [phase-status tables](../../system%20design/27.%20Digital%20Wallet/images/phase-status-tables.svg), and [out-of-order execution](../../system%20design/27.%20Digital%20Wallet/images/out-of-order-execution.svg).
+- [Chapter 27 — two-phase commit timeline](../../system%20design/27.%20Digital%20Wallet/images/2pc-protocol.svg)
 - [Apache Seata — TCC mode: service-level operations and reservation semantics](https://seata.apache.org/docs/user/mode/tcc/)
 - [Apache Seata — Saga mode: local commits and compensating actions](https://seata.apache.org/docs/user/mode/saga/)
 - [Apache Seata — TCC developer guide: custom branch prepare, commit, and rollback](https://seata.apache.org/docs/dev/mode/tcc-mode/)

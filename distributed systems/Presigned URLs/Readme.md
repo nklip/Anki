@@ -356,7 +356,7 @@ Try answering each question before expanding its answer. Explain the cause of ea
 
 # Sources
 
-Primary sources checked on 2026-09-15. The course website, `course-files` bucket, `courses/42/intro.mp4` object key, `media.example.com` domain, schematic URLs, and 12:05/13:00 timeline are illustrative teaching examples derived from the documented rules. The four local diagrams are original teaching illustrations, not AWS architecture diagrams or production measurements.
+The example URLs and timestamps are illustrative.
 
 - [AWS Prescriptive Guidance — purpose, request-time authorization, and avoiding application byte relays](https://docs.aws.amazon.com/prescriptive-guidance/latest/presigned-url-best-practices/overview.html)
 - [Amazon S3 — presigned URL permissions, expiration, and signature-age restrictions](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html)

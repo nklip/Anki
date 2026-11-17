@@ -50,7 +50,7 @@ NODE_PATH=~/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_m
 
 ### 2. Facts
 
-Open the primary sources; never validate a claim from memory. Prefer specifications, official API documentation, proposal documents, and version-matched source code. Then check the *citation itself*: confirm a linked line range still contains what the text claims, and that a linked anchor resolves. A dated verification note in `# Sources` claims the work was done — make it true.
+Open the primary sources; never validate a claim from memory. Prefer specifications, official API documentation, proposal documents, and version-matched source code. Then check the *citation itself*: confirm a linked line range still contains what the text claims, and that a linked anchor resolves. Keep verification reports and dates out of the study material; apply the content rule in `AGENTS.md`.
 
 ### 3. Learning review
 

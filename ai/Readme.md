@@ -47,7 +47,7 @@ Every card lives in its own folder as `Readme.md`, with its diagrams in a siblin
 
 **Length assumption: “5k” means 5,000 characters per article.** Aim for 3,500–4,500 characters and keep the complete Markdown file, including sources and image links, at or below 5,000. Separate SVG asset contents are outside that Markdown budget. Each article should have one central question, a small worked example, and the two complementary local teaching visuals required by article mode.
 
-Use a decoder-only transformer as the teaching baseline. Label model-specific architecture and training choices explicitly. Treat training stages as recipe components whose order and use vary, and distinguish interpretability hypotheses from established architecture. Recheck provider-specific caching and reasoning controls when drafting those articles; the sources below were checked on 2026-11-03.
+Use a decoder-only transformer as the teaching baseline. Label model-specific architecture and training choices explicitly. Treat training stages as recipe components whose order and use vary, and distinguish interpretability hypotheses from established architecture. Recheck provider-specific caching and reasoning controls when drafting those articles.
 
 ### 1. System overview and training — 6 articles
 

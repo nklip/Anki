@@ -206,9 +206,11 @@ Try answering each question before expanding its answer.
 
 # Sources
 
-Official documentation consulted on September 16, 2026; the unversioned documentation pages displayed **v2.6**. Database support and configuration details should be checked against the deployed release. The diagrams illustrate the documented roles and AT behavior using SVG icons reused from the System Design material below.
+Version scope: Apache Seata 2.6. Database support and configuration details depend on the deployed release.
 
-- Diagram icon provenance: [Scaling — server icon](../../system%20design/01.%20Scaling/images/single-server.svg), [Notification System — database cylinder](../../system%20design/10.%20Notification%20System/images/improved-design.svg), and [Payment System — document icon](../../system%20design/26.%20Payment%20System/images/settlement-report.svg). Geometry is embedded as editable SVG symbols; the server icon is recolored for the coordinator role, and the architecture's database rim is adjusted for clear arrow endpoints.
+- [Scaling — server icon](../../system%20design/01.%20Scaling/images/single-server.svg)
+- [Notification System — database cylinder](../../system%20design/10.%20Notification%20System/images/improved-design.svg)
+- [Payment System — document icon](../../system%20design/26.%20Payment%20System/images/settlement-report.svg)
 
 - [Apache Seata — What is Seata? Purpose, transaction modes, and AT isolation](https://seata.apache.org/docs/overview/what-is-seata/)
 - [Apache Software Foundation — Seata proposal: identifies the Java and Go codebases](https://cwiki.apache.org/confluence/spaces/INCUBATOR/pages/263430285/Seata%2BProposal)

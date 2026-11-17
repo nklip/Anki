@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1380" viewBox="0 0 1440 1380" role="img" aria-labelledby="title desc">
   <title id="title">Choosing RabbitMQ, Kafka, or another messaging system</title>
-  <desc id="desc">Start with the main requirement. Prefer RabbitMQ classic or quorum queues for routed tasks and individual completion. Prefer Kafka with ordinary consumer groups for retained event history, independent readers, replay, and its integration and processing tools. Consider Amazon SQS for managed AWS queues, ActiveMQ Artemis for Java messaging APIs and protocol integration, Redpanda for Kafka-compatible streaming, or Pulsar for streaming with flexible subscription types. RabbitMQ Streams and Kafka share groups overlap these roles. Recommendations are starting points inferred from the linked official documentation, checked on 14 October 2026.</desc>
+  <desc id="desc">Start with the main requirement. Prefer RabbitMQ classic or quorum queues for routed tasks and individual completion. Prefer Kafka with ordinary consumer groups for retained event history, independent readers, replay, and its integration and processing tools. Consider Amazon SQS for managed AWS queues, ActiveMQ Artemis for Java messaging APIs and protocol integration, Redpanda for Kafka-compatible streaming, or Pulsar for streaming with flexible subscription types. RabbitMQ Streams and Kafka share groups overlap these roles. Recommendations are starting points; choose according to your workload and deployment requirements.</desc>
 
   <!-- Match the neighboring RabbitMQ diagrams: Arial, pale blue panels, gray borders,
        black connectors, and a pale yellow note. Text remains editable SVG text. -->
@@ -103,7 +103,7 @@
   </g>
 
   <!-- Overlapping modes prevent turning this decision aid into false product limitations.
-       Kafka share-group behavior is verified against Kafka 4.3 documentation. -->
+       Kafka share-group behavior follows Kafka 4.3. -->
   <g id="overlapping-modes">
     <rect class="note" x="40" y="1052" width="1360" height="166"/>
     <text class="label" x="72" y="1088">Need both? Compare modes before adding another system.</text>
@@ -115,7 +115,7 @@
   <!-- Source links are clickable when opening the SVG directly. Recommendations above are
        a synthesis of documented features, not vendor rankings or throughput benchmarks. -->
   <text class="detail" x="720" y="1253" text-anchor="middle">Selection guide: validate retention, ordering, duplicate handling, throughput, and operating cost.</text>
-  <text class="small muted" x="40" y="1290">Official documentation · checked 2026-10-14 · RabbitMQ / Kafka modes: 4.3</text>
+  <text class="small muted" x="40" y="1290">RabbitMQ / Kafka modes: 4.3</text>
   <a href="https://www.rabbitmq.com/docs/queues"><text class="source" x="40" y="1324">RabbitMQ queues</text></a>
   <a href="https://www.rabbitmq.com/docs/exchanges"><text class="source" x="225" y="1324">Routing</text></a>
   <a href="https://www.rabbitmq.com/docs/streams"><text class="source" x="325" y="1324">RabbitMQ Streams</text></a>

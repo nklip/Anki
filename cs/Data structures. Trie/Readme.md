@@ -59,4 +59,4 @@ Java SE 26 has no standard Collections trie. Apache Commons Collections provides
 - [Linux Kernel documentation — LC-trie and longest-prefix route lookup](https://docs.kernel.org/networking/fib_trie.html)
 - [Java SE 26 — Collections Framework](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/doc-files/coll-index.html)
 - [Apache Commons Collections — PatriciaTrie](https://commons.apache.org/proper/commons-collections/apidocs/org/apache/commons/collections4/trie/PatriciaTrie.html)
-- [Repository chapter 13 — Search Autocomplete, adapted trie diagram](../../system%20design/13.%20Search%20Autocomplete/Readme.md)
+- [Repository chapter 13 — Search Autocomplete, trie diagram](../../system%20design/13.%20Search%20Autocomplete/Readme.md)

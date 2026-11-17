@@ -37,7 +37,7 @@ The infographic's “Remote Procedural Call” means **Remote Procedure Call**. 
 
 # Sources
 
-- [ByteByteGo — What is gRPC? (source infographic, recreated as SVG)](https://bytebytego.com/guides/what-is-grpc/)
+- [ByteByteGo — What is gRPC? (source infographic)](https://bytebytego.com/guides/what-is-grpc/)
 - [gRPC — Introduction: service contracts, generated code, and Protocol Buffers](https://grpc.io/docs/what-is-grpc/introduction/)
 - [gRPC — Core concepts: stubs, call lifecycle, and streaming](https://grpc.io/docs/what-is-grpc/core-concepts/)
 - [gRPC — FAQ: framework and HTTP/2 transport](https://grpc.io/docs/what-is-grpc/faq/)

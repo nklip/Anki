@@ -241,7 +241,7 @@ The interview distinction to explain is **editing versus joining, followed by ow
   mutable editing, capacity, snapshots, overloads and equality.
 
 - [Oracle Java tutorial — The StringBuilder Class](https://docs.oracle.com/javase/tutorial/java/data/buffers.html)
-  construction, length versus capacity and editing examples; this older tutorial is used only for behavior checked against the current API.
+  construction, length versus capacity and editing examples.
 
 - [Java SE 26 — StringBuffer](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/StringBuffer.html)
   synchronization boundaries and mutable-source caveat.

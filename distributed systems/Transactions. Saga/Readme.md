@@ -467,12 +467,9 @@ Use a saga when the operation really spans independent databases and the busines
 
 # Sources
 
-Primary sources checked on 2026-09-14. The practice section and its sources were checked on 2026-09-16; classifying Skipper's compensation mechanism as saga-like is an interpretation of Airbnb's documented behavior, not terminology used in that article. Microsoft's saga recommendation is covered by its Architecture Center source listed below.
+The SQL walkthrough uses PostgreSQL 18.6.
 
-The two-database SQL walkthrough was added on 2026-10-26. Every SQL statement and error message in it was run on a local PostgreSQL 18.6 server, and the behavior it relies on was checked against the PostgreSQL 18 documentation below. The account names, balances, transfer ID, and message names are illustrative.
-
-Coverage review also used [Timofei Ivankov — Distributed transactions in microservices: from Saga to Two-Phase Commit (Habr, Russian)](https://habr.com/ru/articles/906484/). Added concepts were checked against the primary sources below; its broad claims about Saga atomicity and synchronous APIs are qualified in the teaching text.
-
+- [Timofei Ivankov — Distributed transactions in microservices: from Saga to Two-Phase Commit (Habr, Russian)](https://habr.com/ru/articles/906484/)
 - [Garcia-Molina and Salem — Sagas: definition, the guarantee of T1 … Tn or T1 … Tj, Cj … C1, and semantic compensation](https://www.cs.princeton.edu/techreports/1987/070.pdf)
 - [Princeton — Sagas publication record: authors and 1987 date](https://www.cs.princeton.edu/research/techreps/598)
 - [Merriam-Webster — saga: ordinary meaning and word history](https://www.merriam-webster.com/dictionary/saga)
@@ -504,7 +501,7 @@ Coverage review also used [Timofei Ivankov — Distributed transactions in micro
 - [Apache Seata — Saga mode: orchestration, retries, and application-defined compensation](https://seata.apache.org/docs/user/mode/saga/)
 - [Apache Seata — TCC mode: service-level operations and application-defined handlers](https://seata.apache.org/docs/user/mode/tcc/)
 - [Oracle MicroTx — Try-Confirm/Cancel: reservations and prerequisites for confirmation](https://docs.oracle.com/en/database/oracle/transaction-manager-for-microservices/24.2/tmmdg/tcc-transaction-model.html)
-- [Transactions. Try-Confirm/Cancel — companion article](../Transactions.%20Try-Confirm-Cancel/Readme.md). The local `tcc-versus-saga.svg` is reused from its [comparison diagram](../Transactions.%20Try-Confirm-Cancel/images/tcc-versus-saga.svg), with the accessible title aligned to the visible headline; the booking example applies the reservation and compensation rules in the sources above.
-- [System Design — Digital Wallet: the same transfer across Raft-replicated account partitions](../../system%20design/27.%20Digital%20Wallet/Readme.md). The local `saga-plan.svg` redraws the chapter's [saga.svg](../../system%20design/27.%20Digital%20Wallet/images/saga.svg) flow for the Alice and Bob example, without its credit-reversal branch.
+- [Transactions. Try-Confirm/Cancel — companion article](../Transactions.%20Try-Confirm-Cancel/Readme.md) and [TCC versus Saga comparison](../Transactions.%20Try-Confirm-Cancel/images/tcc-versus-saga.svg)
+- [System Design — Digital Wallet: the same transfer across Raft-replicated account partitions](../../system%20design/27.%20Digital%20Wallet/Readme.md) and [Saga flow](../../system%20design/27.%20Digital%20Wallet/images/saga.svg)
 - [System Design — Hotel Reservation System: data consistency among services](../../system%20design/22.%20Hotel%20Reservation%20System/Readme.md)
 - [Raft — consensus and replicated state machines](https://raft.github.io/)

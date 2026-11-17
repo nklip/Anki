@@ -4,6 +4,10 @@ This repository contains Anki-ready Markdown study cards and their local teachin
 
 This file applies to the entire repository. More specific `AGENTS.md` files may add or override guidance for their own subdirectories if they are introduced later.
 
+## Keep study content focused on the subject
+
+Do not add authoring or process commentary to cards, articles, or learner-facing diagram text, including accessibility descriptions. Omit fact-checking announcements and dates, local Anki note/deck IDs and migration history, and narration about creating, redrawing, or adapting diagrams. Keep source links and required attribution, meaningful version scope and release dates, and qualifications needed to understand an example. Perform research and validation without appending a report of that work to the study material.
+
 ## Subagent model selection
 
 - Use `gpt-5.6-luna` with `low` reasoning effort for straightforward read-only subtasks, such as reading files or URLs, and extracting facts.

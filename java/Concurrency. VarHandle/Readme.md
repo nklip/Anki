@@ -200,7 +200,7 @@ Static methods such as `VarHandle.acquireFence()`, `releaseFence()`, and `fullFe
 
 ## Where VarHandle is used in production software
 
-These are concrete implementations in released software. The OpenJDK 25 and Elasticsearch 9 examples use the latest released updates checked on **2026-09-06**. Implementation choices can change between releases.
+These are concrete implementations in released software. The examples use OpenJDK 25 and Elasticsearch 9. Implementation choices can change between releases.
 
 | System or library | Component and actual use | Why it matters |
 |---|---|---|
