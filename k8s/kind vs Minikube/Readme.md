@@ -2,42 +2,36 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-**As a rule of thumb, choose kind for disposable automated test clusters; choose Minikube for interactive learning with built-in helpers or a virtual-machine driver.** This recommendation follows their documented workflows; it is not a hard limit on either tool.
+**Choose kind when each test run needs a fresh Kubernetes cluster. Choose Minikube when you want a dashboard for local practice or need each node to run in its own virtual machine (VM).** Either tool works for learning Kubernetes and for continuous integration (CI), where tests run automatically as code changes.
 
-Both run real Kubernetes locally. A **node** is an environment that runs Kubernetes components. A **driver/provider** supplies that environment.
+A **node** is a machine in the cluster. kind runs each node as a container, even when the container software itself runs inside a VM. In Minikube, the **driver** determines how the node runs.
 
-## Pros and cons
+## What changes in practice?
 
-An **addon** is an optional cluster component. A **LoadBalancer Service** exposes an application through a load balancer; local clusters need tooling to supply that behavior.
+A Kubernetes **Service** gives an app a stable network address. A Service of type `LoadBalancer` asks for a load balancer that can accept traffic from outside the cluster.
 
-| | kind | Minikube |
+| Task | kind | Minikube |
 | --- | --- | --- |
-| **Node environment** | Nodes are containers, hosted through Docker, Podman, or nerdctl. | Drivers support containers or virtual machines (VMs), depending on your operating system. |
-| **Pros** | Create/delete commands suit repeatable tests. A configuration file defines multi-node layouts. Designed around Kubernetes testing and continuous integration (CI). | Built-in addon management and dashboard access. Commands help expose local apps. `stop` and `start` preserve and resume a cluster. VM drivers provide another hosting option. |
-| **Cons** | Requires a compatible container environment. Accessing apps from your computer may need port mappings or extra tooling; LoadBalancer support uses a separate helper. | Setup and networking vary by driver and operating system. VM drivers need a VM manager. Some access helpers, such as `minikube tunnel`, must keep running. |
+| Run the nodes | Uses Docker, Podman, or nerdctl to create node containers. A configuration file can define several nodes. | Offers container and VM drivers. Available drivers depend on your operating system. Linux also has an advanced `none` driver that runs Kubernetes directly on the host. |
+| Repeat a test or resume a lab | Run `kind create cluster`, run the tests, then use `kind delete cluster`. The next run can start clean with the same configuration. | `minikube stop` keeps cluster data. Use `minikube start` to resume the lab and `minikube dashboard` to explore its resources in a browser. |
+| Reach a local app | Port mappings can send traffic from your computer to a node. Cloud Provider KIND is a separate tool for Services of type `LoadBalancer`. | For a Service of type `LoadBalancer`, keep `minikube tunnel` running so your computer can reach the Service at its external address. |
 
 ## How to choose
 
-Read the diagram from top to bottom. Stop at the first matching need:
-
-1. **Need a VM driver? → Minikube.** kind's nodes run as containers.
-2. **Mainly creating, testing, and deleting clusters in CI? → Prefer kind.** Its test-oriented workflow fits that job.
-3. **Want addons, a dashboard, and app-access helpers for local practice? → Prefer Minikube.** These conveniences reduce manual setup.
-4. **Only learning the basics? → Either.** Follow your team's or tutorial's tool; if starting fresh and wanting helpers, use Minikube.
+Start with any requirement for how the nodes run. Then follow the branch for the work you do most often. For a basic tutorial, following its choice lets you use its setup commands as written.
 
 ![kind-vs-minikube-choice.svg](images/kind-vs-minikube-choice.svg)
 
-### Keep the comparison fair
-
-**Both support multiple nodes; Minikube can also use containers.** Multi-node support alone does not decide the choice. Neither is intended for production hosting, and several local nodes still share your computer's resources.
+Both tools can run a multi-node cluster on one computer. That lets you practice how Kubernetes distributes work across nodes, while the nodes still share the computer’s CPU and memory.
 
 # Sources
 
 - [kind — Purpose and features](https://kind.sigs.k8s.io/)
 - [kind — Node configuration and host access](https://kind.sigs.k8s.io/docs/user/configuration/)
 - [kind — Local LoadBalancer support](https://kind.sigs.k8s.io/docs/user/loadbalancer/)
-- [kind — Production is outside its intended scope](https://kind.sigs.k8s.io/docs/contributing/1.0-roadmap/)
+- [Minikube — Drivers by operating system](https://minikube.sigs.k8s.io/docs/drivers/)
 - [Minikube — Getting started and developer tools](https://minikube.sigs.k8s.io/docs/start/)
 - [Minikube — Accessing applications](https://minikube.sigs.k8s.io/docs/handbook/accessing/)
 - [Minikube — Stop and resume](https://minikube.sigs.k8s.io/docs/commands/stop/)
 - [Minikube — Multiple nodes](https://minikube.sigs.k8s.io/docs/tutorials/multi_node/)
+- [Minikube — Continuous integration](https://minikube.sigs.k8s.io/docs/tutorials/continuous_integration/)

@@ -1,32 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="630" viewBox="0 0 960 630" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 960 800" role="img" aria-labelledby="title desc">
   <title id="title">Argo CD compares Git configuration with live Kubernetes resources</title>
-  <desc id="desc">An Application connects a Git repository, revision, and path to a target cluster and namespace. Git requests Deployment image shop:v2, but the live Deployment declares shop:v1. Argo CD reads Git and observes the cluster, detecting OutOfSync. A manual sync, or automatic sync when enabled, applies the desired configuration. When the live configuration matches, the application is Synced. Resource health is assessed separately.</desc>
+  <desc id="desc">An Argo CD Application manages one Kubernetes Deployment. A new Git commit requests image shop:v2 while the live Deployment still specifies shop:v1. Argo CD reports OutOfSync. A manual or automated sync applies shop:v2 to the Pod template. The Application can then show Synced because the configuration matches Git and Progressing because Kubernetes is still rolling out the new Pods.</desc>
 
   <!-- Shared typography and palette follow the neighboring Helm and CloudNativePG diagrams. -->
   <defs>
     <style>
       text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
-      .title { font-size: 28px; font-weight: 700; }
-      .subtitle { font-size: 18px; fill: #52677b; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 20px; fill: #476077; }
       .heading { font-size: 21px; font-weight: 700; }
       .body { font-size: 18px; }
       .small { font-size: 16px; fill: #52677b; }
       .code { font-family: monospace; font-size: 18px; }
+      .status { font-family: monospace; font-size: 24px; font-weight: 700; }
       .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }
       .sync { fill: none; stroke: #397c5a; stroke-width: 2.5; }
     </style>
   </defs>
 
-  <!-- The opening statement defines GitOps before introducing the resource model. -->
-  <rect width="960" height="630" fill="#ffffff"/>
-  <text x="32" y="43" class="title" text-anchor="start">Argo CD: compare Git with the cluster</text>
-  <text x="32" y="75" class="subtitle" text-anchor="start">GitOps: Git describes the desired configuration; Argo CD synchronizes resources.</text>
+  <!-- This example isolates one change in one managed Deployment. -->
+  <rect width="960" height="800" fill="#ffffff"/>
+  <text x="32" y="48" class="title" text-anchor="start">How Argo CD deploys a change from Git</text>
+  <text x="32" y="82" class="subtitle" text-anchor="start">A new commit changes the container image for the shop Deployment.</text>
 
   <!-- Application configuration binds the desired source to the deployment destination. -->
   <g id="application-binding">
     <rect x="32" y="112" width="896" height="66" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
-    <text x="480" y="140" class="body" font-weight="700" text-anchor="middle">Application connects a Git source to a destination</text>
-    <text x="480" y="165" class="small" text-anchor="middle">Repository + revision + path → Kubernetes cluster + namespace</text>
+    <text x="480" y="140" class="body" font-weight="700" text-anchor="middle">The shop Application manages one Deployment</text>
+    <text x="480" y="165" class="small" text-anchor="middle">It tracks the apps/shop directory on the main branch and deploys to the shop namespace.</text>
   </g>
 
   <!-- Desired and live Deployment image references intentionally differ before sync. -->
@@ -39,6 +40,7 @@
     <text x="142" y="395" class="small" text-anchor="middle">Version to deploy</text>
   </g>
 
+  <!-- Argo CD compares two inputs before applying the desired configuration. -->
   <g id="argo-controller">
     <rect x="370" y="214" width="220" height="214" rx="12" fill="#f5f3ff" stroke="#b7a4de" stroke-width="1.5"/>
     <text x="480" y="247" class="heading" text-anchor="middle">Argo CD</text>
@@ -49,39 +51,50 @@
     <text x="480" y="392" class="small" text-anchor="middle">v2 differs from v1</text>
   </g>
 
+  <!-- The live value is the image in the Pod template, independent of running Pods. -->
   <g id="target-cluster">
     <rect x="708" y="214" width="220" height="214" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
     <text x="818" y="247" class="heading" text-anchor="middle">Target cluster</text>
     <text x="818" y="275" class="small" text-anchor="middle">Live Deployment</text>
-    <text x="818" y="314" class="code" text-anchor="middle">image: shop:v1</text>
+    <text x="818" y="314" class="body" text-anchor="middle">Pod template</text>
+    <text x="818" y="346" class="code" text-anchor="middle">image: shop:v1</text>
     <text x="818" y="395" class="small" text-anchor="middle">State before sync</text>
   </g>
 
   <!-- All connector shafts end inside separate heads; tips meet panel boundaries. -->
   <g id="comparison-and-sync">
-    <text x="311" y="300" class="small" text-anchor="middle">read Git</text>
+    <text x="311" y="303" class="small" text-anchor="middle">desired state</text>
     <path id="git-read-shaft" class="connector" data-connector="true" d="M252 326 H361"/>
     <polygon id="git-read-head" points="370,326 359,320 359,332" fill="#52677b"/>
 
-    <text x="649" y="280" class="small" text-anchor="middle">sync</text>
-    <path id="sync-shaft" class="sync" data-connector="true" d="M590 300 H699"/>
-    <polygon id="sync-head" points="708,300 697,294 697,306" fill="#397c5a"/>
+    <text x="649" y="280" class="small" text-anchor="middle">live state</text>
+    <path id="observe-shaft" class="connector" data-connector="true" d="M708 300 H599"/>
+    <polygon id="observe-head" points="590,300 601,294 601,306" fill="#52677b"/>
 
-    <text x="649" y="350" class="small" text-anchor="middle">observe</text>
-    <path id="observe-shaft" class="connector" data-connector="true" d="M708 372 H599"/>
-    <polygon id="observe-head" points="590,372 601,366 601,378" fill="#52677b"/>
+    <text x="649" y="350" class="small" text-anchor="middle">apply v2</text>
+    <path id="sync-shaft" class="sync" data-connector="true" d="M590 372 H699"/>
+    <polygon id="sync-head" points="708,372 697,366 697,378" fill="#397c5a"/>
   </g>
 
-  <!-- A short outcome connector separates the before state from the state after sync. -->
-  <path id="sync-outcome-shaft" class="sync" data-connector="true" d="M818 428 V455"/>
-  <polygon id="sync-outcome-head" points="818,464 812,453 824,453" fill="#397c5a"/>
+  <!-- The vertical arrow marks a later snapshot of the same Deployment. -->
+  <text x="792" y="472" class="body" text-anchor="end">A manual or automated sync updates the Pod template.</text>
+  <path id="sync-outcome-shaft" class="sync" data-connector="true" d="M818 428 V499"/>
+  <polygon id="sync-outcome-head" points="818,507.25 812,497 824,497" fill="#397c5a"/>
+
+  <!-- Both readings describe the same instant while Kubernetes replaces the Pods. -->
   <g id="sync-outcome">
-    <rect x="32" y="464" width="896" height="112" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
-    <text x="480" y="495" class="heading" text-anchor="middle">After a successful sync</text>
-    <text x="480" y="526" class="body" text-anchor="middle">Live Deployment image: shop:v2 → configuration matches → Synced</text>
-    <text x="480" y="554" class="small" text-anchor="middle">Application health is assessed separately.</text>
-  </g>
+    <rect x="32" y="508" width="896" height="258" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+    <text x="480" y="552" class="heading" text-anchor="middle">While Kubernetes rolls out the new Pods</text>
+    <text x="480" y="583" class="body" text-anchor="middle">Argo CD can show both statuses at the same time.</text>
 
-  <!-- The sync policy qualifies the forward arrow; observation alone does not apply changes. -->
-  <text x="480" y="608" class="small" text-anchor="middle">Sync: a manual action, or automatic when enabled for the Application.</text>
+    <rect x="56" y="608" width="410" height="132" rx="9" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+    <text x="80" y="639" class="body" text-anchor="start">Sync status</text>
+    <text x="80" y="677" class="status" text-anchor="start">Synced</text>
+    <text x="80" y="714" class="body" text-anchor="start">Git and the Deployment both specify shop:v2.</text>
+
+    <rect x="494" y="608" width="410" height="132" rx="9" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+    <text x="518" y="639" class="body" text-anchor="start">Health</text>
+    <text x="518" y="677" class="status" text-anchor="start">Progressing</text>
+    <text x="518" y="714" class="body" text-anchor="start">The new Pods are still becoming available.</text>
+  </g>
 </svg>

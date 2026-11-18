@@ -2,38 +2,68 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-**gRPC is an open-source remote procedure call (RPC) framework:** a client calls a generated local object, while the actual method runs in another service. It normally uses **Protocol Buffers (Protobuf)** to define and encode messages, and **HTTP/2 (Hypertext Transfer Protocol version 2)** to carry them over the network.
+**gRPC lets one service call a typed method on another.** For example, the Order Service calls `Charge`, and the Payment Service runs it. This remote procedure call (RPC) usually travels over HTTP/2. A web API that returns JSON (JavaScript Object Notation) can use HTTP/2 as well.
 
-## From a method call to a network request
+## What both services agree on
 
-Suppose an **Order Service** needs the **Payment Service** to charge an order.
+By default, gRPC uses **Protocol Buffers (Protobuf)**. A file such as `payment.proto` defines the service, its methods, and the messages they accept and return.
 
-1. **Define the contract:** a `.proto` file describes the service methods and the fields and types of request and response messages.
-2. **Generate code:** `protoc` with a gRPC plugin generates message classes and client/server code. The **client stub** is the local object exposing the remote methods; developers implement the server's business logic.
-3. **Send the request:** calling the stub serializes the request—converts its structured data into bytes—and the gRPC runtime sends it over HTTP/2.
-4. **Run and reply:** the server decodes the request and calls its implementation. The response travels back through the same layers, and the client receives the decoded result or an error status.
+```proto
+syntax = "proto3";
+package payments;
 
-In the recreated ByteByteGo diagram, the upper left contrasts an in-process call with a call between services. Follow **1–7** in the lower left for the request and **8–13** for the result; the response also crosses the network, although the transport arrow only points right.
+service PaymentService {
+  rpc Charge(ChargeRequest) returns (ChargeReply);
+}
+
+message ChargeRequest {
+  string product_name = 1;
+  uint32 quantity = 2;
+  uint32 price_cents = 3;
+}
+
+message ChargeReply {
+  string payment_id = 1;
+}
+```
+
+The Protobuf compiler (`protoc`) and a gRPC plugin generate message types, server code, and a **client stub** (a local object exposing `Charge`). A developer writes the payment handler. A Python client and a Java server can share the contract.
+
+## Follow one call
+
+Start at step 1. A browser sends JSON to the Order Service, which calls Payment through its stub. A native gRPC client can start at step 2. In the byte table, `0A` identifies field 1 as length-delimited, `08` gives its length, and the next eight bytes spell `keyboard`. The integers have no separate length field.
 
 ![what-is-grpc.svg](images/what-is-grpc.svg)
 
-## Why use it?
+Follow the request down the left stack and up the right. At step 8, the handler runs. Follow the reply back to step 14. A successful **unary** call returns one message and finishes with gRPC status `OK`. An HTTP `200` response can still end with a gRPC error.
 
-The shared contract lets services written in different supported languages exchange typed messages. For example, a Java server can serve a Python client. Besides **unary calls** (one request, one response), gRPC supports **streaming**: multiple request messages, multiple response messages, or both directions independently.
+## What if the reply is late?
 
-## A remote call still has network failure modes
+A **deadline** limits how long the client waits. If the reply arrives too late, the client gets `DEADLINE_EXCEEDED` even if the payment went through. Retrying the charge could bill the customer twice.
 
-Local-looking syntax does not make the call local: transmission and server processing take time, and the call can fail. Set a **deadline**, the latest time the client will wait for completion; gRPC does not set one by default.
+## When should you choose gRPC?
 
-### Reading the source accurately
+| Situation | A practical choice | Why |
+| --- | --- | --- |
+| Services you control exchange frequent messages. | Native gRPC | One schema generates typed clients. Protobuf keeps messages compact, and either side can stream updates within one call. |
+| A public product catalog serves browsers and third-party clients. | REST-style HTTP API with JSON | Clients can use `fetch` or `curl`. A cache can reuse a response to `GET /products/42` when its headers allow it. |
+| A browser needs an existing gRPC service. | gRPC-Web | A proxy can translate browser calls for the existing backend. The official web client supports unary calls and, in text mode, server streaming. |
 
-The infographic's “Remote Procedural Call” means **Remote Procedure Call**. Its `order.proto` block is a conceptual sketch: real Protobuf fields need unique field numbers, and `required` is not valid in proto3. “IoT” means Internet of Things; “polyglot” means using multiple programming languages. The pros/cons panel is the author's qualitative summary, not a performance guarantee or a measured community comparison.
+## Where do HTTPS and HTTP versions fit?
+
+**HTTPS** means HTTP secured with Transport Layer Security (TLS). Both gRPC and JSON APIs can use it to encrypt traffic and authenticate the server. The HTTP version determines how messages travel.
+
+- **HTTP/1.1** works for a JSON endpoint serving older clients. An HTTP/1.1-only client needs a translating gateway to call a native gRPC backend. Responses on one HTTP/1.1 connection arrive in request order.
+- **HTTP/2** lets concurrent requests share one TCP connection on separate streams. It is the usual choice for native gRPC and also works for JSON APIs.
+- **HTTP/3** uses QUIC over UDP. It helps on lossy networks because a lost packet on one stream needn’t stall the others. For gRPC, check HTTP/3 support in the client, server, and any proxies. The .NET gRPC client is one implementation that supports it.
 
 # Sources
 
-- [ByteByteGo — What is gRPC? (source infographic)](https://bytebytego.com/guides/what-is-grpc/)
-- [gRPC — Introduction: service contracts, generated code, and Protocol Buffers](https://grpc.io/docs/what-is-grpc/introduction/)
-- [gRPC — Core concepts: stubs, call lifecycle, and streaming](https://grpc.io/docs/what-is-grpc/core-concepts/)
-- [gRPC — FAQ: framework and HTTP/2 transport](https://grpc.io/docs/what-is-grpc/faq/)
-- [gRPC — Deadlines](https://grpc.io/docs/guides/deadlines/)
-- [Protocol Buffers — Proto3 language guide: field numbers and cardinality](https://protobuf.dev/programming-guides/proto3/)
+- gRPC — [Service contracts and generated code](https://grpc.io/docs/what-is-grpc/introduction/), [call lifecycle and streaming](https://grpc.io/docs/what-is-grpc/core-concepts/), and [HTTP/2 wire protocol](https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md)
+- gRPC — [Deadlines](https://grpc.io/docs/guides/deadlines/) and [status codes](https://grpc.io/docs/guides/status-codes/)
+- Protocol Buffers — [Proto3 language guide](https://protobuf.dev/programming-guides/proto3/), [binary encoding](https://protobuf.dev/programming-guides/encoding/), and [JSON field names and types](https://protobuf.dev/programming-guides/json/)
+- [gRPC-Web — Browser client and supported streaming modes](https://github.com/grpc/grpc-web#streaming-support)
+- IETF — [HTTPS and server identity](https://www.rfc-editor.org/rfc/rfc9110.html#section-4.2.2) and [HTTP caching](https://www.rfc-editor.org/rfc/rfc9111.html#section-2)
+- IETF — [HTTP/1.1 response ordering](https://www.rfc-editor.org/rfc/rfc9112.html#section-9.3.2), [HTTP/2 streams](https://www.rfc-editor.org/rfc/rfc9113.html#section-5), and [HTTP/3 over QUIC](https://www.rfc-editor.org/rfc/rfc9114.html#section-2)
+- Microsoft — [Choosing between gRPC and JSON HTTP APIs](https://learn.microsoft.com/en-us/aspnet/core/grpc/comparison?view=aspnetcore-10.0) and [HTTP/3 in the .NET gRPC client](https://learn.microsoft.com/en-us/aspnet/core/grpc/troubleshoot?view=aspnetcore-10.0#configure-grpc-client-to-use-http3)
+- [ByteByteGo — What is gRPC?](https://bytebytego.com/guides/what-is-grpc/)

@@ -2,40 +2,39 @@
 
 <sub>[Back to Kubernetes](../Readme.md#content)</sub>
 
-**Argo CD is a continuous delivery tool for Kubernetes that uses Git to describe the desired application state.** This approach is called **GitOps**: configuration changes are committed to Git, and Argo CD compares that configuration with the live cluster and can synchronize the two.
+**Argo CD is a continuous delivery tool for Kubernetes.** It follows a **GitOps** workflow. You record the configuration you want in Git. Argo CD compares it with the resources in the cluster and can apply changes to bring those resources into line with Git.
 
 ## From Git to the cluster
 
-An **`Application`** is a custom resource: a Kubernetes object of a type added by Argo CD. For a Git-backed application, it specifies:
+An **`Application`** is a Kubernetes resource type added by Argo CD. For a Git-backed application, it connects a source to a destination.
 
-- **Source:** a Git repository, revision (such as a branch or commit), and path. These contain Kubernetes **manifests** (resource definitions), or inputs such as Helm charts or Kustomize configuration that generate them.
-- **Destination:** the Kubernetes cluster and namespace to deploy into.
+- The **source** identifies the repository, revision (such as a branch or commit), and path. At that path, Argo CD reads Kubernetes **manifests** (resource definitions) or generates them from inputs such as Helm charts or Kustomize configuration.
+- The **destination** identifies the target cluster. It can also supply a default namespace for resources that need one and omit it from their manifests.
 
-Read the diagram from left to right. Argo CD reads the desired configuration and observes live resources. A **sync** applies changes to move the application toward the desired state.
+In the diagram, the Application manages one Deployment. A new commit on the tracked branch changes its container image from `shop:v1` to `shop:v2`. The live Deployment still specifies `shop:v1`, so Argo CD reports **`OutOfSync`**. A **sync**, started manually or by policy, applies the new image to the Deployment's Pod template.
 
-![argo-cd-gitops-sync.svg](images/argo-cd-gitops-sync.svg)
+![argo-cd-gitops-sync.svg — Once the Deployment matches Git, sync status can be Synced while health is still Progressing.](images/argo-cd-gitops-sync.svg)
 
-For example, Git requests image `shop:v2`, but the live Deployment still declares `shop:v1`. Argo CD detects the difference and reports **`OutOfSync`**. A manual sync, or an enabled automatic sync, updates the Deployment's configuration.
-
-**`Synced` and `Healthy` answer different questions.** Sync status compares configuration; health assesses the state of the application's resources. Configuration can match Git while the application is still starting or has a problem.
+**Sync status and health answer different questions.** Once the live Deployment matches Git, Argo CD can report **`Synced`**. Kubernetes rolls out the new Pods, and health can still show **`Progressing`** while they start. When the rollout completes and the replicas are available, this Application can show **`Healthy`**.
 
 ## Choose what happens automatically
 
-- **Automated sync:** apply desired changes when differences are detected, according to the application's sync policy.
-- **Self-healing (`selfHeal`):** also trigger automatic sync when live resources drift from the desired state, for example after a manual cluster edit.
-- **Pruning (`prune`):** delete resources managed by the application that are no longer present in its desired configuration.
+- **Automated sync** can apply a new tracked revision when its desired configuration differs from the cluster.
+- **Self-healing** (`selfHeal`) lets a live change alone trigger an automated sync. For example, if someone changes the live image back to `shop:v1`, Argo CD can restore `shop:v2` without another commit.
+- **Automatic pruning** (`prune`) lets an automated sync delete managed resources removed from the desired configuration.
 
-Enabling automated sync alone does **not** enable self-healing or automatic pruning; both are off by default. A later sync can still overwrite a manual cluster edit even when self-healing is disabled.
+Self-healing and automatic pruning are both off by default, even with automated sync enabled. A later sync can still overwrite a manual cluster edit when self-healing is disabled.
 
 ## Where the build pipeline fits
 
-A **continuous integration (CI)** pipeline can build and publish a container image, then commit its new image reference to the configuration repository. Argo CD handles delivery of that configuration. With automated sync enabled, the pipeline can stop after updating Git; it does not need to call Argo CD to start deployment.
+A **continuous integration (CI)** pipeline can build and publish a container image, then push a commit with the new image reference to the tracked Git branch. With automated sync enabled, Argo CD can pick up that change and deploy it.
 
 # Sources
 
 - [Argo CD — Overview and GitOps workflow](https://argo-cd.readthedocs.io/en/stable/)
 - [Argo CD — Core concepts: desired state, live state, sync, and health](https://argo-cd.readthedocs.io/en/stable/core_concepts/)
-- [Argo CD — Declarative setup and Application source/destination](https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#applications)
+- [Argo CD — Application source and destination fields](https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/)
 - [Argo CD — Automated sync, self-healing, and pruning](https://argo-cd.readthedocs.io/en/stable/user-guide/auto_sync/)
 - [Argo CD — Resource health](https://argo-cd.readthedocs.io/en/stable/operator-manual/health/)
+- [Kubernetes — Updating a Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#updating-a-deployment)
 - [Argo CD — Automation from CI pipelines](https://argo-cd.readthedocs.io/en/stable/user-guide/ci_automation/)
