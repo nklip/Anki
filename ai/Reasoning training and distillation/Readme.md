@@ -59,9 +59,23 @@ Training can make that extra work more useful. More time does not itself teach a
 
 ## Check your understanding
 
-A student studies teacher solutions, then tries three approaches to a new problem. When do its weights change? **During student training.** Trying more approaches at ordinary inference uses the learned weights without updating them.
+1. A student learns from a teacher, then tries three answers at inference. When do its weights change?
 
-In part 1, who supplies the training score? **A checker rule,** not a person and not a learned reward model.
+   <details>
+   <summary>Answer</summary>
+
+   During training. The three attempts use fixed weights.
+
+   </details>
+
+2. What scores each answer in the marble example?
+
+   <details>
+   <summary>Answer</summary>
+
+   A rule gives one point for `12` and zero otherwise.
+
+   </details>
 
 # Sources
 

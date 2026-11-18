@@ -223,7 +223,7 @@ Keeping the invariant inside such a database lets the database supply commit coo
 
 **Three-phase commit (3PC)** introduces an extra pre-commit stage to reduce uncertainty before final commitment. Skeen's nonblocking model assumes working communication between surviving sites and reliable failure detection; an arbitrary network partition violates those assumptions. An extra exchange alone cannot make competing replacement coordinators safe during arbitrary communication failures. Gray and Lamport discuss this weakness in traditional 3PC designs and instead derive **Paxos Commit**, whose progress requires an available majority of its coordinators. Distinguish safe agreement under failure from guaranteed progress under every failure; replication does not remove that distinction.
 
-## Self-check
+## Check your understanding
 
 Try answering each question before expanding its answer.
 

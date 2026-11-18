@@ -164,11 +164,34 @@ Using examples in a prompt to guide an answer is called **in-context learning**.
 
 ## Check your understanding
 
-- The machine changes `w` from `2` to `2.8` using feedback: **training**.
-- It uses `w = 2.8` to calculate `2.8 × 3`: **inference**.
-- We check that prediction against a target without changing `w`: **evaluation**.
+For each case, decide whether the model is training, running inference, or being evaluated.
 
-The key question is: **Are we adjusting the model's saved settings, or using the settings it already has?**
+1. The machine uses feedback to change `w` from `2` to `2.8`. Which activity is this?
+
+   <details>
+   <summary>Answer</summary>
+
+   **Training.** Feedback changes the saved weight.
+
+   </details>
+
+2. The machine uses `w = 2.8` to calculate `2.8 × 3`. What is it doing?
+
+   <details>
+   <summary>Answer</summary>
+
+   **Inference.** It uses the saved weight to produce a prediction.
+
+   </details>
+
+3. We compare that prediction with a target and leave `w` unchanged. What are we doing?
+
+   <details>
+   <summary>Answer</summary>
+
+   **Evaluation.** We are checking the prediction’s accuracy.
+
+   </details>
 
 # Sources
 

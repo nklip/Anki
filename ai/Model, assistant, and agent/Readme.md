@@ -59,11 +59,18 @@ An agent repeats this loop as often as it needs, and it may switch tools, ask yo
 
 If an assistant greets you by name next week, the model did not learn your name. The application saved it and put it back into the context. Better context, not new training, made the reply better.
 
+In any AI application, find **the model, its context, the code that runs tools, and the stored state.** Then ask who picks the next step.
+
 ## Check your understanding
 
-A coding assistant says “the tests passed.” How do you know? **Look for the test tool's result.** The model's sentence is a claim. The test output is evidence, if it comes from this run and the answer reports it correctly.
+1. A coding assistant says “the tests passed.” How do you know?
 
-In any AI application, find **the model, its context, the code that runs tools, and the stored state.** Then ask who picks the next step.
+   <details>
+   <summary>Answer</summary>
+
+   **Check the test output from this run.** Does it show the tests passed as reported?
+
+   </details>
 
 # Sources
 

@@ -140,7 +140,7 @@ Raw row changes also expose storage structure. For a deliberate business event s
 
 Continue with [Apache Kafka. Connect](../Apache%20Kafka.%20Connect/Readme.md), [Apache Kafka. Delivery and transactions](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md), and [Patterns. Transactional Outbox](../Patterns.%20Transactional%20Outbox/Readme.md).
 
-## Self-check
+## Check your understanding
 
 Try answering each question before expanding its answer.
 

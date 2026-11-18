@@ -52,9 +52,23 @@ Adding examples to a prompt changes only the current context. SFT changes weight
 
 ## Check your understanding
 
-If user tokens do not count toward the loss, does the model ignore the user's question? **No.** It still reads the question to predict the reply; only the choice of scored tokens changes.
+1. Does masking user tokens in the loss hide the question from the model?
 
-Does SFT need a new kind of exercise? **No.** It keeps next-token prediction; the demonstrations change what the model practices.
+   <details>
+   <summary>Answer</summary>
+
+   No. It reads the question as context for the reply.
+
+   </details>
+
+2. Does SFT need a new prediction task?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. It predicts the next token. Demonstrations change what it practices.
+
+   </details>
 
 # Sources
 

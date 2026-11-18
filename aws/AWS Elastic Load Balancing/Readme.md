@@ -141,10 +141,41 @@ ALB access logging must be configured. Traditional access logs go to S3; newer C
 
 ## Check your understanding
 
-- **Does a request go to every server in a target group?** No. An ordinary forwarded request goes to one selected target.
-- **Does a healthy ALB guarantee a working application?** No. The targets, network path, and application dependencies must work too.
-- **Does a failed health check immediately create a replacement server?** No. Detection uses thresholds, and replacement needs a separately configured mechanism such as EC2 Auto Scaling.
-- **Does public HTTPS mean the targets need public addresses?** No. A public ALB can reach private EC2 targets, with a separately configured HTTP or HTTPS connection.
+1. Does a request go to every server in a target group?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. An ordinary forwarded request goes to one selected target.
+
+   </details>
+
+2. Does a healthy ALB guarantee a working application?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. The targets, network path, and application dependencies must work too.
+
+   </details>
+
+3. Does a failed health check immediately create a replacement server?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. Detection uses thresholds, and replacement needs a separately configured mechanism such as EC2 Auto Scaling.
+
+   </details>
+
+4. Does public HTTPS mean the targets need public addresses?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. A public ALB can reach private EC2 targets, with a separately configured HTTP or HTTPS connection.
+
+   </details>
 
 # Sources
 

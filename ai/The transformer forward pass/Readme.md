@@ -57,7 +57,16 @@ These raw scores are called **logits**. They are not probabilities: they can be 
 
 Append the selected ID and repeat. [Decoding and sampling](../Decoding%20and%20sampling/Readme.md) explains selection; [Prefill and the KV cache](../Prefill%20and%20KV%20cache/Readme.md) explains how saved calculations avoid repeating work.
 
-Check your understanding: after one forward pass, what changed? **Only the working values.** The weights change only during training.
+## Check your understanding
+
+1. After one forward pass, what changed?
+
+   <details>
+   <summary>Answer</summary>
+
+   **Only the working values.** The weights change only during training.
+
+   </details>
 
 # Sources
 

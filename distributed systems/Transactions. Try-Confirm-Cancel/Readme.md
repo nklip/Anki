@@ -235,7 +235,7 @@ For TCC coordination, **Oracle MicroTx** is a separate product. In its documente
 
 TCC fits operations with meaningful reservations, such as funds, seats, or inventory, when participating services can implement all three operations. Its cost is business logic for reservations, state transitions, retries, and recovery. A delivery that has already reached a customer cannot be turned into a releasable reservation merely by naming a method `Cancel`.
 
-## Self-check
+## Check your understanding
 
 Try answering each question before expanding its answer.
 

@@ -673,26 +673,6 @@ IntStream.range(0, 40).boxed().parallel()
 
 Here the downstream is `summingLong`, which does not care about order, so the swap is safe. With an order-sensitive downstream such as `toList()` it is a behaviour change, not an optimisation.
 
-## Interview drill
-
-| Question | Short answer |
-|---|---|
-| How many threads does a parallel stream use? | Common pool parallelism, `availableProcessors() - 1` by default, plus the calling thread, which also runs work |
-| How many tasks? | Roughly four leaves per worker; the tree splits while a chunk exceeds `estimateSize / (4 × parallelism)` |
-| Where does `filter` run relative to `map`? | In the same pass over the same element, inside one leaf — stages in a segment are fused, not run as separate phases |
-| Is the whole pipeline always one fused pass? | Only while every stage is stateless. Each stateful operation ends a segment, and a parallel pipeline with one is evaluated segment by segment |
-| How do you *show* fusion in an interview? | Put a `peek()` before and after a stage: stateless output interleaves per element, `sorted()` batches it |
-| Why is `Collectors.toList()` safe without synchronisation? | Each leaf accumulates into its own container; containers merge only after local accumulation ends |
-| When does a collector write into one shared container? | Parallel stream **and** `CONCURRENT` collector **and** (unordered stream **or** `UNORDERED` collector) |
-| `findFirst()` versus `findAny()`? | `findFirst()` must respect encounter order and cancels later tasks; `findAny()` may return any match and needs no ordering coordination |
-| Does `forEachOrdered` disable parallelism? | No. Upstream stages still run in parallel; only the actions are replayed in encounter order, and a leaf buffers only while an earlier leaf is outstanding |
-| Why is `LinkedList` a weak parallel source? | `trySplit()` copies elements into growing batch arrays (1024, 2048, 3072 …) instead of halving, so you keep only a fraction of the speedup |
-| Does a big `N` alone justify `parallel()`? | It usually does once total work `N × Q` is large enough — measured break-even was a few thousand elements even for a trivial sum — but the source and the merge decide how much you keep |
-| What is the worst realistic case? | Short-circuiting under encounter order: `filter().limit(n)` on an ordered stream was 9× slower in parallel |
-| Can you choose the pool? | Calls from an ordinary thread use the common pool; inside a fork/join computation subtasks stay in the current pool, so `customPool.submit(...)` works in practice — but pool selection is not part of the `Stream` contract |
-| Why did my `peek()` not run? | A terminal such as `count()` may compute the answer from the source size and skip traversal entirely |
-| Is `groupingByConcurrent` a free swap for `groupingBy`? | Only when the downstream ignores order. `groupingBy` merges per-leaf maps and keeps encounter order inside each group; the concurrent one shares a map and does not |
-
 ## API guarantee versus implementation detail
 
 | Safe to rely on | Do not treat as a permanent promise |
@@ -707,6 +687,143 @@ Here the downstream is `summingLong`, which does not care about order, so the sw
 ## One-sentence mental model
 
 > A parallel stream is one lazy pipeline run over many `Spliterator` chunks, scheduled by fork/join, with the terminal operation deciding how the partial results become the single answer you see.
+
+## Check your understanding
+
+1. How many threads does a parallel stream use?
+
+   <details>
+   <summary>Answer</summary>
+
+   Common pool parallelism, `availableProcessors() - 1` by default, plus the calling thread, which also runs work.
+
+   </details>
+
+2. How many tasks?
+
+   <details>
+   <summary>Answer</summary>
+
+   Roughly four leaves per worker; the tree splits while a chunk exceeds `estimateSize / (4 × parallelism)`.
+
+   </details>
+
+3. Where does `filter` run relative to `map`?
+
+   <details>
+   <summary>Answer</summary>
+
+   In the same pass over the same element, inside one leaf — stages in a segment are fused, not run as separate phases.
+
+   </details>
+
+4. Is the whole pipeline always one fused pass?
+
+   <details>
+   <summary>Answer</summary>
+
+   Only while every stage is stateless. Each stateful operation ends a segment, and a parallel pipeline with one is evaluated segment by segment.
+
+   </details>
+
+5. How do you *show* fusion in an interview?
+
+   <details>
+   <summary>Answer</summary>
+
+   Put a `peek()` before and after a stage: stateless output interleaves per element, `sorted()` batches it.
+
+   </details>
+
+6. Why is `Collectors.toList()` safe without synchronisation?
+
+   <details>
+   <summary>Answer</summary>
+
+   Each leaf accumulates into its own container; containers merge only after local accumulation ends.
+
+   </details>
+
+7. When does a collector write into one shared container?
+
+   <details>
+   <summary>Answer</summary>
+
+   Parallel stream **and** `CONCURRENT` collector **and** (unordered stream **or** `UNORDERED` collector).
+
+   </details>
+
+8. `findFirst()` versus `findAny()`?
+
+   <details>
+   <summary>Answer</summary>
+
+   `findFirst()` must respect encounter order and cancels later tasks; `findAny()` may return any match and needs no ordering coordination.
+
+   </details>
+
+9. Does `forEachOrdered` disable parallelism?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. Upstream stages still run in parallel; only the actions are replayed in encounter order, and a leaf buffers only while an earlier leaf is outstanding.
+
+   </details>
+
+10. Why is `LinkedList` a weak parallel source?
+
+    <details>
+    <summary>Answer</summary>
+
+    `trySplit()` copies elements into growing batch arrays (1024, 2048, 3072 …) instead of halving, so you keep only a fraction of the speedup.
+
+    </details>
+
+11. Does a big `N` alone justify `parallel()`?
+
+    <details>
+    <summary>Answer</summary>
+
+    It usually does once total work `N × Q` is large enough — measured break-even was a few thousand elements even for a trivial sum — but the source and the merge decide how much you keep.
+
+    </details>
+
+12. What is the worst realistic case?
+
+    <details>
+    <summary>Answer</summary>
+
+    Short-circuiting under encounter order: `filter().limit(n)` on an ordered stream was 9× slower in parallel.
+
+    </details>
+
+13. Can you choose the pool?
+
+    <details>
+    <summary>Answer</summary>
+
+    Calls from an ordinary thread use the common pool; inside a fork/join computation subtasks stay in the current pool, so `customPool.submit(...)` works in practice — but pool selection is not part of the `Stream` contract.
+
+    </details>
+
+14. Why did my `peek()` not run?
+
+    <details>
+    <summary>Answer</summary>
+
+    A terminal such as `count()` may compute the answer from the source size and skip traversal entirely.
+
+    </details>
+
+15. Is `groupingByConcurrent` a free swap for `groupingBy`?
+
+    <details>
+    <summary>Answer</summary>
+
+    Only when the downstream ignores order. `groupingBy` merges per-leaf maps and keeps encounter order inside each group; the concurrent one shares a map and does not.
+
+    </details>
 
 # Sources
 

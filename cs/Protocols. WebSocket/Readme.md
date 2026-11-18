@@ -297,7 +297,7 @@ So the accurate version of "chat uses WebSockets" is narrower and more useful th
 * **Not every problem needs one.** If the client never sends, Server-Sent Events is less machinery for the same result. If updates are rare and staleness is acceptable, polling is less machinery still. A WebSocket earns its complexity when traffic is genuinely two-way, or frequent enough that per-message HTTP overhead dominates. And if the client is a native mobile app rather than a browser, *Where it is actually used* gives a third reason to look elsewhere.
 * **Nothing about it is authenticated by default.** The handshake is an HTTP request, so it carries whatever HTTP authentication you attach to it — and nothing more. The `Sec-WebSocket-Key` exchange proves the peer speaks WebSocket, not who it is. Checking `Origin` and validating a token are both your server's work.
 
-## Self-check
+## Check your understanding
 
 1. HTTP/1.1 already keeps a TCP connection open across several requests. What did WebSockets actually add?
 

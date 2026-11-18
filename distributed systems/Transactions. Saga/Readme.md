@@ -346,7 +346,7 @@ Two-phase commit is about atomic commitment; on its own, it does not guarantee e
 
 Use a saga when the operation really spans independent databases and the business can live with pending work and compensation. If a rule must hold atomically across all the affected data, moving that data together, or using an atomic commit protocol, may be the better design.
 
-## Self-check
+## Check your understanding
 
 1. Why can one PostgreSQL transaction not move the dollar from database A to database B?
 

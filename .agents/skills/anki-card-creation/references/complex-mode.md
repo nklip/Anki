@@ -58,6 +58,34 @@ Both forms require each step's own `.svg` reference. Main-section steps may have
 
 Keep closely related details together. Do not hide the main flow beneath tuning options, historical notes, or implementation trivia.
 
+## Review questions
+
+When an article includes review questions, make `## Check your understanding` its last teaching section before `# Sources`. In a numbered article, give it the next section number and use the same title and updated anchor in the contents list. When revising an existing `Self-check` section, rename it and keep each answer with its question.
+
+Follow the [WAL article’s example](../../../../distributed%20systems/Write-ahead%20log%20%28WAL%29/Readme.md#7-check-your-understanding). Start a numbered list at 1. Leave each question visible and nest one closed `<details>` block beneath it with the exact label `<summary>Answer</summary>`. Indent the whole block to the start of the question text. Keep the blank lines shown below so Markdown inside the answer renders correctly. Favor questions that ask the reader to apply the lesson, with a short answer explaining why.
+
+```markdown
+## Check your understanding
+
+1. A changed page is ready to be written to its data file. What must PostgreSQL save first?
+
+   <details>
+   <summary>Answer</summary>
+
+   PostgreSQL must make the WAL records for that page’s changes durable. Recovery can then use them if the page write is interrupted.
+
+   </details>
+
+2. How can two transactions share one WAL synchronization?
+
+   <details>
+   <summary>Answer</summary>
+
+   Synchronizing through the later commit record also covers the earlier one because both records are in the same ordered log.
+
+   </details>
+```
+
 Before finishing, run:
 
 ```bash

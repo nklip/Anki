@@ -110,7 +110,7 @@ The following is a practical guide derived from the documented mechanisms:
 
 **Remember:** Seata supplies coordination and recovery infrastructure. The transaction mode, participant integration, and business rules determine the guarantees the application actually gets.
 
-## Self-check
+## Check your understanding
 
 Try answering each question before expanding its answer.
 

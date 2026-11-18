@@ -110,7 +110,7 @@ A queue absorbs bursts but cannot make sustained excess work disappear. If arriv
 
 **Observe completion, not just publication.** Monitor fanout size, per-destination failures, retries, backlog age, and end-to-end completion delay. For request fanout, trace the branches belonging to the same request. A fast publisher can coexist with consumers that are far behind.
 
-## Self-check
+## Check your understanding
 
 Try answering each question before expanding its answer.
 

@@ -298,30 +298,70 @@ Choose something else when:
 
 An unbounded thread-safe queue can still exhaust memory if producers continually outpace consumers. Thread safety is not backpressure.
 
-## Quick recall
-
-Predict each result before revealing the answers:
+## Check your understanding
 
 1. Only A is queued. Consumer 1 sees `isEmpty() == false`; Consumer 2 then polls A. What does Consumer 1's `poll()` return?
+
+   <details>
+   <summary>Answer</summary>
+
+   `null`, assuming no new insertion. The earlier check did not reserve A.
+
+   </details>
+
 2. Two producers overlap. Producer A starts first, but Producer B links its node first. Which element is ahead?
+
+   <details>
+   <summary>Answer</summary>
+
+   B. FIFO follows the established insertion order of overlapping offers.
+
+   </details>
+
 3. Does a `for` loop over the queue remove or reserve the elements it visits?
+
+   <details>
+   <summary>Answer</summary>
+
+   Neither. Iteration observes elements; `poll()` removes an element for consumption.
+
+   </details>
+
 4. Why can't `if (queue.size() < limit) queue.offer(task)` enforce a capacity limit?
+
+   <details>
+   <summary>Answer</summary>
+
+   The size observation and insertion are separate operations. Several producers can pass the check, and the count can already be stale.
+
+   </details>
+
 5. Does lock-free guarantee that each individual thread finishes within a bounded number of steps?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. Lock-free guarantees system-wide progress; wait-free would guarantee bounded completion for each operation. A particular thread can keep losing retries here.
+
+   </details>
+
 6. In the handoff example, can a consumer that retrieves the message print `0`? Is an added write of `43` after `offer()` covered by the same guarantee?
+
+   <details>
+   <summary>Answer</summary>
+
+   It must print `42` in the original example. The prior write is visible through the handoff; a later unsynchronized write of `43` is outside that guarantee.
+
+   </details>
+
 7. Does copying a queue while it changes guarantee a snapshot of one instant?
 
-<details>
-<summary>Show answers</summary>
+   <details>
+   <summary>Answer</summary>
 
-1. `null`, assuming no new insertion. The earlier check did not reserve A.
-2. B. FIFO follows the established insertion order of overlapping offers.
-3. Neither. Iteration observes elements; `poll()` removes an element for consumption.
-4. The size observation and insertion are separate operations. Several producers can pass the check, and the count can already be stale.
-5. No. Lock-free guarantees system-wide progress; wait-free would guarantee bounded completion for each operation. A particular thread can keep losing retries here.
-6. It must print `42` in the original example. The prior write is visible through the handoff; a later unsynchronized write of `43` is outside that guarantee.
-7. No. A copy can combine observations made at different times; an exact membership snapshot requires coordinated mutations.
+   No. A copy can combine observations made at different times; an exact membership snapshot requires coordinated mutations.
 
-</details>
+   </details>
 
 # Sources
 

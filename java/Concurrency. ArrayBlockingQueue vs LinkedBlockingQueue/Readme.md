@@ -273,11 +273,50 @@ Compare both with the **same capacity** and realistic producer/consumer counts, 
 
 ## Check your understanding
 
-- **Can a linked queue of capacity two block on a third insertion?** Yes, with `put()` when both slots are occupied.
-- **Does an unfair array queue reorder its elements?** No; it changes waiting-thread access policy.
-- **Does the array queue hold its lock while a consumer processes a returned job?** No.
-- **Do two linked-queue locks guarantee that producers never wait for consumers?** No; capacity, signalling, and operations needing both locks still coordinate them.
-- **Which choice prevents overload automatically?** Neither. Capacity and the application's saturation response must work together.
+1. Can a linked queue of capacity two block on a third insertion?
+
+   <details>
+   <summary>Answer</summary>
+
+   Yes, with `put()` when both slots are occupied.
+
+   </details>
+
+2. Does an unfair array queue reorder its elements?
+
+   <details>
+   <summary>Answer</summary>
+
+   No; it changes waiting-thread access policy.
+
+   </details>
+
+3. Does the array queue hold its lock while a consumer processes a returned job?
+
+   <details>
+   <summary>Answer</summary>
+
+   No.
+
+   </details>
+
+4. Do two linked-queue locks guarantee that producers never wait for consumers?
+
+   <details>
+   <summary>Answer</summary>
+
+   No; capacity, signalling, and operations needing both locks still coordinate them.
+
+   </details>
+
+5. Which choice prevents overload automatically?
+
+   <details>
+   <summary>Answer</summary>
+
+   Neither. Capacity and the application's saturation response must work together.
+
+   </details>
 
 # Sources
 

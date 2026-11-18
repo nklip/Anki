@@ -56,7 +56,14 @@ The objective is to predict the recorded continuation, which may be a fact, a mi
 
 ## Check your understanding
 
-In `The cat sleeps.`, why is `cat` the target after `The`? **Because it is what this example contains**, not because every sentence starting with `The` must continue with `cat`.
+1. In `The cat sleeps.`, why is `cat` the target after `The`?
+
+   <details>
+   <summary>Answer</summary>
+
+   **Because it is what this example contains**, not because every sentence starting with `The` must continue with `cat`.
+
+   </details>
 
 # Sources
 

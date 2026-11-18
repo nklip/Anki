@@ -251,7 +251,7 @@ Redis Pub/Sub, Kafka, NATS and a database's own `LISTEN`/`NOTIFY` all serve as t
 * **Nothing about it is authenticated by default.** It is an HTTP request, so it carries whatever HTTP authentication you attach to it — and since you cannot set a header, in a browser that means cookies. Checking the origin and validating a session are your server's work, exactly as for any other endpoint.
 * **Not every problem needs a stream.** If updates are rare and a little staleness is acceptable, polling is less machinery, survives every intermediary above without configuration, and cannot leak an open connection. SSE earns its complexity when updates are frequent enough, or timely enough, that asking repeatedly is the wrong shape.
 
-## Self-check
+## Check your understanding
 
 1. A colleague says SSE is "WebSockets over HTTP". What is wrong with that description?
 

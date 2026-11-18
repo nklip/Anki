@@ -313,18 +313,7 @@ Likewise, do not call an operation wait-free solely because one atomic instructi
 | “A fixed retry limit makes the update wait-free.” | Only if returning failure is part of the operation's contract; otherwise the requested update did not complete. |
 | “Wait-free is always fastest.” | No. Helping and bookkeeping can cost more than retries or locking. |
 
-## Check your understanding
-
-Try to explain the reason before reading the last column. These are reasoning examples; a finite stress test cannot establish a guarantee for every possible execution.
-
-| Situation | Classification | Why? |
-|---|---|---|
-| T1 holds A and waits for B; T2 holds B and waits for A | Deadlock | Each needs the other to release first. Fair admission cannot break the cycle. |
-| A spinlock always admits someone after release, but may bypass T1 forever | Deadlock-free; not starvation-free | Collective progress leaves one caller behind. |
-| A FIFO lock serves every queued request, provided predecessors keep running and release | Starvation-free; still blocking | A stopped owner can hold up everyone behind it. |
-| Any pending call finishes if it runs alone long enough, but two competing calls may continually invalidate one another and both retry forever | Obstruction-free; not lock-free | Isolation guarantees completion; continued contention need not produce any completion. |
-| Every failed counter CAS accompanies another successful update, but T1 may always lose | Lock-free; not wait-free | Competing updates progress; T1 may never finish. |
-| For a fixed participant count, a proven helping rule finishes each call within a uniform own-step limit, even if all other threads stop | Bounded wait-free, and therefore wait-free | Each continuing caller finishes independently of others, with an additional uniform limit on its work. |
+A finite stress test cannot establish a guarantee for every possible execution.
 
 ## Memory aid
 
@@ -342,6 +331,62 @@ Useful implications, not one five-term ranking:
 starvation-free ⇒ deadlock-free
 wait-free ⇒ lock-free ⇒ obstruction-free
 ```
+
+## Check your understanding
+
+1. T1 holds A and waits for B; T2 holds B and waits for A. What has happened, and could fair lock admission help?
+
+   <details>
+   <summary>Answer</summary>
+
+   Deadlock. Each needs the other to release first. Fair admission cannot break the cycle.
+
+   </details>
+
+2. A spinlock always admits someone after release, but may bypass T1 forever. What progress does the lock guarantee, and for whom?
+
+   <details>
+   <summary>Answer</summary>
+
+   Deadlock-free; not starvation-free. Collective progress leaves one caller behind.
+
+   </details>
+
+3. A FIFO lock serves every queued request, provided predecessors keep running and release. What does that guarantee for a waiter? What if the lock owner stops?
+
+   <details>
+   <summary>Answer</summary>
+
+   Starvation-free; still blocking. A stopped owner can hold up everyone behind it.
+
+   </details>
+
+4. Any pending call finishes if it runs alone long enough, but two competing calls may continually invalidate one another and both retry forever. Which progress guarantee does the operation meet?
+
+   <details>
+   <summary>Answer</summary>
+
+   Obstruction-free; not lock-free. Isolation guarantees completion; continued contention need not produce any completion.
+
+   </details>
+
+5. Every failed counter CAS accompanies another successful update, but T1 may always lose. Which progress guarantee holds for the counter? What does it promise T1?
+
+   <details>
+   <summary>Answer</summary>
+
+   Lock-free; not wait-free. Competing updates progress; T1 may never finish.
+
+   </details>
+
+6. For a fixed participant count, a proven helping rule finishes each call within a uniform own-step limit, even if all other threads stop. Which progress guarantee does this establish?
+
+   <details>
+   <summary>Answer</summary>
+
+   Bounded wait-free, and therefore wait-free. Each continuing caller finishes independently of others, with an additional uniform limit on its work.
+
+   </details>
 
 # Sources
 

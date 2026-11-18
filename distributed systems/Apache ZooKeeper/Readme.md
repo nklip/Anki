@@ -170,7 +170,7 @@ Writing these conventions correctly by hand is harder than it looks, mostly beca
 
 **The packaging is changing.** Kafka removed ZooKeeper in 4.0 and ClickHouse Keeper re-implemented its protocol in C++ over Raft; both point toward consensus built into the system rather than a second cluster to operate. That is a change in packaging, not a verdict on the model — HBase, Solr, and Hadoop's HA services still require an ensemble.
 
-## Self-check
+## Check your understanding
 
 1. Why can a znode hold data and have children at once, and what does that rule out?
 

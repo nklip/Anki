@@ -291,7 +291,7 @@ Java implements generics using **type erasure**: type parameters are replaced by
 
 Java specifies these rules as conversions; the label “coercion polymorphism” comes from the broader classification. The numeric value is converted to the required type; no subclass override is selected.
 
-## Self-check
+## Check your understanding
 
 1. Why does `Animal` compile without implementing `sound()`, while a concrete `Dog` without that method fails?
 

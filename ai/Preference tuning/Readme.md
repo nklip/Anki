@@ -54,9 +54,23 @@ Check the trained model on requests kept out of training, for correctness and ta
 
 ## Check your understanding
 
-If response A wins a comparison, must it be factually correct? **No.** The label says only that A was preferred to B; both could contain mistakes.
+1. If response A wins a comparison, must it be factually correct?
 
-Does RLHF need a person to rate every response during training? **No.** People supply comparisons; the reward model scores the rest.
+   <details>
+   <summary>Answer</summary>
+
+   **No.** The label says only that A was preferred to B; both could contain mistakes.
+
+   </details>
+
+2. Does RLHF need a person to rate every response during training?
+
+   <details>
+   <summary>Answer</summary>
+
+   **No.** People supply comparisons; the reward model scores the rest.
+
+   </details>
 
 # Sources
 

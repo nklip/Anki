@@ -140,10 +140,41 @@ There is no additional charge for the VPC itself. Components and usage can cost 
 
 ## Check your understanding
 
-- **Two instances are in different subnets of one VPC. Do they need NAT to talk?** No. Their private addresses can use the local route, subject to security rules.
-- **A private instance can download updates through NAT. Can anyone connect to it through that NAT?** No. NAT permits replies to connections started inside, not unsolicited connections from outside.
-- **The database allows the app's security group. Is the connection guaranteed?** No. The route, app's outbound rules, subnet ACLs, and database configuration must also permit it.
-- **Does an S3 endpoint make every object readable?** No. It supplies connectivity; permissions still control access.
+1. Two instances are in different subnets of one VPC. Do they need NAT to talk?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. Their private addresses can use the local route, subject to security rules.
+
+   </details>
+
+2. A private instance can download updates through NAT. Can anyone connect to it through that NAT?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. NAT permits replies to connections started inside, not unsolicited connections from outside.
+
+   </details>
+
+3. The database allows the app's security group. Is the connection guaranteed?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. The route, app's outbound rules, subnet ACLs, and database configuration must also permit it.
+
+   </details>
+
+4. Does an S3 endpoint make every object readable?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. It supplies connectivity; permissions still control access.
+
+   </details>
 
 # Sources
 

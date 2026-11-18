@@ -142,10 +142,41 @@ If you use IAM users with passwords, the account's **IAM password policy** contr
 
 ## Check your understanding
 
-- **The app can sign requests. Can it delete a report?** Only if its effective permissions allow deletion. Valid credentials alone are not enough.
-- **The role trusts EC2. Can the app now read S3?** Trust enables role assumption; the session still needs permission for the S3 action and resource.
-- **One policy allows reading, but the bucket explicitly denies this read. What happens?** The request is denied.
-- **The temporary credentials expire. Is the role deleted?** No. The role persists, and an authorized caller can obtain a new session.
+1. The app can sign requests. Can it delete a report?
+
+   <details>
+   <summary>Answer</summary>
+
+   Only if its effective permissions allow deletion. Valid credentials alone are not enough.
+
+   </details>
+
+2. The role trusts EC2. Can the app now read S3?
+
+   <details>
+   <summary>Answer</summary>
+
+   Trust enables role assumption; the session still needs permission for the S3 action and resource.
+
+   </details>
+
+3. One policy allows reading, but the bucket explicitly denies this read. What happens?
+
+   <details>
+   <summary>Answer</summary>
+
+   The request is denied.
+
+   </details>
+
+4. The temporary credentials expire. Is the role deleted?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. The role persists, and an authorized caller can obtain a new session.
+
+   </details>
 
 # Sources
 

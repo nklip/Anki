@@ -266,7 +266,7 @@ Use small correctness and authorization tests on changes, repeatable performance
 
 Quality goals pull against each other. A second server improves availability but costs money, and two-factor sign-in improves security but adds a step for users. Choose targets according to the product’s needs, then verify that the combined design meets them. The practical question is: **what must the user be able to do, under which conditions, and what evidence will show that the required quality holds?**
 
-## 9. Self-check
+## 9. Check your understanding
 
 1. “A customer cannot open another customer’s order.” Is this a functional or a non-functional requirement, and how do you test it?
 

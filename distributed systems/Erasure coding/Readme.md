@@ -145,7 +145,7 @@ Large datasets with infrequent updates are a common fit when storage efficiency 
 
 **Erasure coding and WAL solve different problems.** Erasure coding reconstructs missing fragments; a write-ahead log (WAL) records changes before their data-file writes so an engine can recover interrupted updates. Neither mechanism supplies the other's guarantee by itself.
 
-## Self-check
+## Check your understanding
 
 Try answering each question before expanding its answer.
 

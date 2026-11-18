@@ -150,9 +150,7 @@ For an application that sells products, a possible design is to enforce purchase
 - **BASE:** useful service through partial failures, evolving local state, eventual convergence.
 - **CAP:** when nodes cannot communicate, some operations must give up either the single-copy guarantee or guaranteed completion.
 
-## Self-check
-
-Try answering each question before expanding its answer.
+## Check your understanding
 
 1. A transaction debits 10 units and credits 9, committing both changes together. Which ACID property can hold, and which intended rule is broken?
 

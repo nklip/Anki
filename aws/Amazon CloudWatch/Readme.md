@@ -131,10 +131,41 @@ CloudWatch has more specialized tools as well, including Container Insights, Lam
 
 ## Check your understanding
 
-- **Does an EC2 CPU chart mean application logs are being collected?** No. Verify the log collection setup separately.
-- **Does one 90% reading trigger the example alarm?** Not by itself. It needs two breaching periods out of three.
-- **Does a dashboard send an alert automatically?** No. Configure an alarm and its action.
-- **Does a blank chart prove there were no errors?** No. First check that the source is publishing data and that the account, Region, dimensions, and time range are correct.
+1. Does an EC2 CPU chart mean application logs are being collected?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. Verify the log collection setup separately.
+
+   </details>
+
+2. Does one 90% reading trigger the example alarm?
+
+   <details>
+   <summary>Answer</summary>
+
+   Not by itself. It needs two breaching periods out of three.
+
+   </details>
+
+3. Does a dashboard send an alert automatically?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. Configure an alarm and its action.
+
+   </details>
+
+4. Does a blank chart prove there were no errors?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. First check that the source is publishing data and that the account, Region, dimensions, and time range are correct.
+
+   </details>
 
 # Sources
 

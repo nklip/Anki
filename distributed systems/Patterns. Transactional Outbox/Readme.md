@@ -168,7 +168,7 @@ This run is safe because instance 1 committed. If instance 1 had made the call a
 
 On the sending side, commit the business change and its outbox event in one transaction, and let a relay publish the event later. Expect some events to be published twice. On the receiving side, insert the message ID first, flush it with `saveAndFlush()`, and commit it with the business change, so a duplicate stops before it does any work. Calls outside the database still need idempotency keys.
 
-## Self-check
+## Check your understanding
 
 1. What goes wrong if the order service saves order `42` and then publishes `OrderCreated` straight to Kafka? Why must the outbox table live in the service's own database?
 

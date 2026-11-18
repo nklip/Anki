@@ -112,10 +112,41 @@ For example, increasing an ECS service's task count and increasing the number of
 
 ## Check your understanding
 
-- **Minimum 2, desired 3, maximum 6: how many servers should a settled group have?** Three. Six is room to grow, not six pre-created servers.
-- **One server fails, but demand has not changed: must desired capacity increase?** No. Replacement restores the existing target.
-- **Does attaching an ALB automatically enable replacement based on its health checks?** No. Enable ELB health checks on the Auto Scaling group.
-- **Does a 50% CPU target promise exactly 50% at every moment?** No. Measurements, startup time, changing demand, and whole-instance rounding affect the result.
+1. Minimum 2, desired 3, maximum 6: how many servers should a settled group have?
+
+   <details>
+   <summary>Answer</summary>
+
+   Three. Six is room to grow, not six pre-created servers.
+
+   </details>
+
+2. One server fails, but demand has not changed: must desired capacity increase?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. Replacement restores the existing target.
+
+   </details>
+
+3. Does attaching an ALB automatically enable replacement based on its health checks?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. Enable ELB health checks on the Auto Scaling group.
+
+   </details>
+
+4. Does a 50% CPU target promise exactly 50% at every moment?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. Measurements, startup time, changing demand, and whole-instance rounding affect the result.
+
+   </details>
 
 # Sources
 

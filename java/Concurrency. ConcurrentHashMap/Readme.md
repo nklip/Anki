@@ -641,31 +641,67 @@ The constructor interprets this as the expected number of mappings to accommodat
 | `ConcurrentHashMap` | Yes | No | None | Weakly consistent |
 | `ConcurrentSkipListMap` | Yes | No | Sorted | Weakly consistent |
 
-## Check your understanding
-
-Try answering before reading the answer key:
-
-1. A word's count is `0`. Why can two `get`-then-`put` increments leave it at `1`? Which operation fixes this?
-2. Can two atomic `compute` calls implement a transfer that every reader sees as one action?
-3. Does `computeIfAbsent` run its callback only once over the lifetime of a key?
-4. Why does storing an ordinary mutable list in this map not make concurrent list updates safe?
-5. Is copying a concurrently updated map enough to capture one instant? Is `LongAdder.sum()` a snapshot during increments?
-6. Can updates to two different keys block one another in OpenJDK 26?
-
-### Answer key
-
-1. Both threads can read `0` before either writes `1`. Use `merge(word, 1, Integer::sum)` for an atomic increment.
-2. No. Another thread can read between the two calls. Coordinate all relevant access or keep the related state in one atomically replaced immutable value.
-3. No. Removal, a `null` result, or an exception can allow a later call to compute again.
-4. The map protects and publishes the reference; the list still needs its own concurrency policy.
-5. Neither promises a snapshot while updates continue.
-6. Yes. Different keys may occupy the same bin and share update coordination.
-
 ## Interview summary
 
 `ConcurrentHashMap` supports concurrent access and atomic updates for individual mappings. Use `putIfAbsent`, `compute`, or `merge` for compound changes. Mutable values and rules spanning multiple keys need additional design. Traversal and aggregate counts are not whole-map snapshots during mutation.
 
 In OpenJDK 26, the implementation uses a table of bins, CAS for empty-bin `put`, bin-level coordination for occupied-bin updates, tree bins for heavy collisions, and cooperative resizing. Retrievals generally avoid locking.
+
+## Check your understanding
+
+1. A word's count is `0`. Why can two `get`-then-`put` increments leave it at `1`? Which operation fixes this?
+
+   <details>
+   <summary>Answer</summary>
+
+   Both threads can read `0` before either writes `1`. Use `merge(word, 1, Integer::sum)` for an atomic increment.
+
+   </details>
+
+2. Can two atomic `compute` calls implement a transfer that every reader sees as one action?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. Another thread can read between the two calls. Coordinate all relevant access or keep the related state in one atomically replaced immutable value.
+
+   </details>
+
+3. Does `computeIfAbsent` run its callback only once over the lifetime of a key?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. Removal, a `null` result, or an exception can allow a later call to compute again.
+
+   </details>
+
+4. Why does storing an ordinary mutable list in this map not make concurrent list updates safe?
+
+   <details>
+   <summary>Answer</summary>
+
+   The map protects and publishes the reference; the list still needs its own concurrency policy.
+
+   </details>
+
+5. Is copying a concurrently updated map enough to capture one instant? Is `LongAdder.sum()` a snapshot during increments?
+
+   <details>
+   <summary>Answer</summary>
+
+   Neither promises a snapshot while updates continue.
+
+   </details>
+
+6. Can updates to two different keys block one another in OpenJDK 26?
+
+   <details>
+   <summary>Answer</summary>
+
+   Yes. Different keys may occupy the same bin and share update coordination.
+
+   </details>
 
 # Sources
 

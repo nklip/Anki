@@ -4,7 +4,7 @@
 
 **A signed URL carries a time-limited permission to request a resource. An S3 presigned URL is validated by S3; a CDN signed URL is validated by the content delivery network before it serves the file.** Your application decides who deserves access and issues the URL. The client transfers the file through the service named in that URL, so your application need not relay the file bytes.
 
-This article uses **Amazon CloudFront** as the concrete CDN example. Other CDNs have their own signing formats and rules. We will compare the two trust models, explain private S3 access behind CloudFront, and separate access expiration from cache freshness. Then we will examine reuse and revocation, choose upload and download designs, diagnose common failures, and test understanding with a self-check.
+This article uses **Amazon CloudFront** as the concrete CDN example. Other CDNs have their own signing formats and rules. We will compare the two trust models, explain private S3 access behind CloudFront, and separate access expiration from cache freshness. Then we will examine reuse and revocation, choose upload and download designs, and diagnose common failures. You can [check your understanding](#check-your-understanding) at the end.
 
 ## The problem: private files without relaying every byte
 
@@ -188,7 +188,7 @@ Two header names help explain the partial-download error below. `Range` requests
 
 CORS governs cross-origin browser access; it does not grant S3 permissions. A permissive CORS rule cannot replace authorization, and an authorized request can still encounter a browser CORS failure.
 
-## Self-check
+## Check your understanding
 
 Try answering each question before expanding its answer. Explain the cause of each result, not just which service or error name applies.
 
