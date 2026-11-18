@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1100" height="522" viewBox="0 0 1100 522" role="img" aria-labelledby="title desc">
-<title id="title">3 · Persist pages and establish a recovery boundary</title>
+<title id="title">Step 3 — Write pages back and complete a checkpoint</title>
 <desc id="desc">Dirty A and B pages can be written after the necessary WAL is durable. A completed checkpoint records a redo starting position. Older WAL can be kept for replicas or archives.</desc>
 <!-- Shared visual definitions. Laptop, server, and database geometry is reused from system design/01. Scaling/images/database.svg. -->
 <!-- Palette adapted from system design/19. Distributed Message Queue/images/partition-increase.svg: yellow new messages and green persisted messages become buffered and durable WAL records here. -->
@@ -15,7 +15,7 @@
 </defs>
 <rect width="1100" height="522" fill="#fff"/>
 <!-- Lesson and reading direction. -->
-<text x="32" y="43" font-size="28" text-anchor="start" fill="#111" font-weight="700">3 · Persist pages and establish a recovery boundary</text>
+<text x="32" y="43" font-size="28" text-anchor="start" fill="#111" font-weight="700">Step 3 — Write pages back and complete a checkpoint</text>
 <text x="32" y="78" font-size="19" text-anchor="start" fill="#111" font-weight="400">This example writes pages after commit; background page writing can also happen earlier.</text>
 <!-- A guard in the middle expresses ordering, not copying the WAL into data files. -->
 <rect id="dirty" x="32" y="126" width="300" height="215" rx="10" fill="#f5f7f8" stroke="#81909a" stroke-width="2"/>
@@ -39,6 +39,6 @@
 <!-- A checkpoint is a recovery boundary, not a prerequisite for every commit. -->
 <rect id="checkpoint" x="32" y="375" width="1036" height="119" rx="10" fill="#fff" stroke="#81909a" stroke-width="2"/>
 <text x="56" y="411" font-size="22" text-anchor="start" fill="#111" font-weight="700">Completed checkpoint</text>
-<text x="56" y="447" font-size="20" text-anchor="start" fill="#111" font-weight="400">Records where REDO can begin; recovery can skip older persisted work.</text>
+<text x="56" y="447" font-size="20" text-anchor="start" fill="#111" font-weight="400">Redo can start at the WAL position recorded by this checkpoint.</text>
 <text x="56" y="478" font-size="19" text-anchor="start" fill="#111" font-weight="400">Keep older WAL if recovery, replicas, or archiving still need it.</text>
 </svg>

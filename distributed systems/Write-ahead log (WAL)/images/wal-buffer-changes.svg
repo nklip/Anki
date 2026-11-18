@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1100" height="523" viewBox="0 0 1100 523" role="img" aria-labelledby="title desc">
-<title id="title">1 · Change working pages and generate WAL</title>
+<title id="title">Step 1 — Change the pages in memory</title>
 <desc id="desc">A client transfers 20 from A to B. The engine changes pages in memory to A 80 and B 70 and generates log records. The data files remain A 100 and B 50; the transaction has not committed.</desc>
 <!-- Shared visual definitions. Laptop, server, and database geometry is reused from system design/01. Scaling/images/database.svg. -->
 <!-- Palette adapted from system design/19. Distributed Message Queue/images/partition-increase.svg: yellow new messages and green persisted messages become buffered and durable WAL records here. -->
@@ -15,7 +15,7 @@
 </defs>
 <rect width="1100" height="523" fill="#fff"/>
 <!-- Lesson and reading direction. -->
-<text x="32" y="43" font-size="28" text-anchor="start" fill="#111" font-weight="700">1 · Change working pages and generate WAL</text>
+<text x="32" y="43" font-size="28" text-anchor="start" fill="#111" font-weight="700">Step 1 — Change the pages in memory</text>
 <text x="32" y="78" font-size="19" text-anchor="start" fill="#111" font-weight="400">The updates create two kinds of working state; neither memory copy is durable.</text>
 <!-- The transaction begins with old balances in the data files. -->
 <rect id="client" x="32" y="126" width="230" height="247" rx="10" fill="#fff" stroke="#81909a" stroke-width="2"/>
@@ -37,8 +37,8 @@
 <text x="905" y="212" font-size="19" text-anchor="middle" fill="#111" font-weight="400">Dirty pages</text>
 <text x="905" y="240" font-size="20" text-anchor="middle" fill="#111" font-weight="400">A = 80     B = 70</text>
 <rect id="buffered-log" x="766" y="271" width="278" height="75" rx="10" fill="#fffdb5" stroke="#81909a" stroke-width="2"/>
-<text x="905" y="301" font-size="18" text-anchor="middle" fill="#111" font-weight="400">WAL: A change, B change</text>
-<text x="905" y="331" font-size="19" text-anchor="middle" fill="#111" font-weight="400">buffered ≠ durable</text>
+<text x="905" y="301" font-size="18" text-anchor="middle" fill="#111" font-weight="400">Buffered WAL records</text>
+<text x="905" y="331" font-size="17" text-anchor="middle" fill="#111" font-weight="400">Page A update · Page B update</text>
 <path id="make-memory-shaft" data-connector="true" d="M642 244 H733" fill="none" stroke="#147eae" stroke-width="2.5"/><polygon id="make-memory-head" points="742,244 729,238 729,250" fill="#147eae"/>
 <text x="692" y="216" font-size="18" text-anchor="middle" fill="#111" font-weight="400">produce</text>
 <!-- Unchanged persistent state clarifies why memory alone is insufficient. -->

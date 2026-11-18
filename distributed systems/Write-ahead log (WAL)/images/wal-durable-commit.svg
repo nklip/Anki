@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1100" height="510" viewBox="0 0 1100 510" role="img" aria-labelledby="title desc">
-<title id="title">2 · Synchronize the commit, then report success</title>
-<desc id="desc">WAL records for A 80, B 70, and T1 COMMIT are synchronized to storage before the engine replies that commit succeeded. Data files can still contain the old balances.</desc>
+<title id="title">Step 2 — Make the commit durable and reply</title>
+<desc id="desc">The database synchronizes WAL through the transfer’s commit record. This makes the earlier change records for accounts A and B durable before the client receives its reply. The data files can still contain the old balances.</desc>
 <!-- Shared visual definitions. Laptop, server, and database geometry is reused from system design/01. Scaling/images/database.svg. -->
 <!-- Palette adapted from system design/19. Distributed Message Queue/images/partition-increase.svg: yellow new messages and green persisted messages become buffered and durable WAL records here. -->
 <defs>
@@ -15,17 +15,17 @@
 </defs>
 <rect width="1100" height="510" fill="#fff"/>
 <!-- Lesson and reading direction. -->
-<text x="32" y="43" font-size="28" text-anchor="start" fill="#111" font-weight="700">2 · Synchronize the commit, then report success</text>
+<text x="32" y="43" font-size="28" text-anchor="start" fill="#111" font-weight="700">Step 2 — Make the commit durable and reply</text>
 <text x="32" y="78" font-size="19" text-anchor="start" fill="#111" font-weight="400">Synchronous local commit: change records and the commit record must all be durable.</text>
 <!-- WAL moves through the durability boundary before the client sees success. -->
 <rect id="buffer" x="32" y="126" width="300" height="231" rx="10" fill="#f5f7f8" stroke="#81909a" stroke-width="2"/>
 <text x="182" y="165" font-size="23" text-anchor="middle" fill="#111" font-weight="400">WAL buffer</text>
 <rect id="buffered-0" x="57.0" y="195" width="83.33333333333333" height="72" fill="#fffdb5" stroke="#888" stroke-width="1.5"/>
-<text x="98.66666666666666" y="224" font-size="17" text-anchor="middle" fill="#111" font-weight="400">A = 80</text>
-<text x="98.66666666666666" y="249" font-size="16" text-anchor="middle" fill="#111" font-weight="400">change</text>
+<text x="98.66666666666666" y="224" font-size="17" text-anchor="middle" fill="#111" font-weight="400">Page A</text>
+<text x="98.66666666666666" y="249" font-size="16" text-anchor="middle" fill="#111" font-weight="400">update</text>
 <rect id="buffered-1" x="140.33333333333331" y="195" width="83.33333333333333" height="72" fill="#fffdb5" stroke="#888" stroke-width="1.5"/>
-<text x="181.99999999999997" y="224" font-size="17" text-anchor="middle" fill="#111" font-weight="400">B = 70</text>
-<text x="181.99999999999997" y="249" font-size="16" text-anchor="middle" fill="#111" font-weight="400">change</text>
+<text x="181.99999999999997" y="224" font-size="17" text-anchor="middle" fill="#111" font-weight="400">Page B</text>
+<text x="181.99999999999997" y="249" font-size="16" text-anchor="middle" fill="#111" font-weight="400">update</text>
 <rect id="buffered-2" x="223.66666666666666" y="195" width="83.33333333333333" height="72" fill="#fffdb5" stroke="#888" stroke-width="1.5"/>
 <text x="265.3333333333333" y="224" font-size="17" text-anchor="middle" fill="#111" font-weight="400">COMMIT</text>
 <text x="265.3333333333333" y="249" font-size="16" text-anchor="middle" fill="#111" font-weight="400">T1</text>
@@ -33,11 +33,11 @@
 <rect id="durable" x="400" y="126" width="300" height="231" rx="10" fill="#edf8ed" stroke="#81909a" stroke-width="2"/>
 <text x="550" y="165" font-size="23" text-anchor="middle" fill="#111" font-weight="400">WAL on storage</text>
 <rect id="durable-0" x="425.0" y="195" width="83.33333333333333" height="72" fill="#bdf7bd" stroke="#888" stroke-width="1.5"/>
-<text x="466.6666666666667" y="224" font-size="17" text-anchor="middle" fill="#111" font-weight="400">A = 80</text>
-<text x="466.6666666666667" y="249" font-size="16" text-anchor="middle" fill="#111" font-weight="400">change</text>
+<text x="466.6666666666667" y="224" font-size="17" text-anchor="middle" fill="#111" font-weight="400">Page A</text>
+<text x="466.6666666666667" y="249" font-size="16" text-anchor="middle" fill="#111" font-weight="400">update</text>
 <rect id="durable-1" x="508.3333333333333" y="195" width="83.33333333333333" height="72" fill="#bdf7bd" stroke="#888" stroke-width="1.5"/>
-<text x="550.0" y="224" font-size="17" text-anchor="middle" fill="#111" font-weight="400">B = 70</text>
-<text x="550.0" y="249" font-size="16" text-anchor="middle" fill="#111" font-weight="400">change</text>
+<text x="550.0" y="224" font-size="17" text-anchor="middle" fill="#111" font-weight="400">Page B</text>
+<text x="550.0" y="249" font-size="16" text-anchor="middle" fill="#111" font-weight="400">update</text>
 <rect id="durable-2" x="591.6666666666666" y="195" width="83.33333333333333" height="72" fill="#bdf7bd" stroke="#888" stroke-width="1.5"/>
 <text x="633.3333333333333" y="224" font-size="17" text-anchor="middle" fill="#111" font-weight="400">COMMIT</text>
 <text x="633.3333333333333" y="249" font-size="16" text-anchor="middle" fill="#111" font-weight="400">T1</text>
@@ -54,5 +54,5 @@
 <rect id="data-files" x="32" y="389" width="1036" height="91" rx="10" fill="#edf7fc" stroke="#81909a" stroke-width="2"/>
 <use href="#database" x="52" y="401" width="45" height="62"/>
 <text x="120" y="425" font-size="22" text-anchor="start" fill="#111" font-weight="400">Data files may still hold A = 100 and B = 50.</text>
-<text x="120" y="459" font-size="18" text-anchor="start" fill="#111" font-weight="400">The durable WAL is enough to recover T1. Labels show meaning, not actual WAL bytes.</text>
+<text x="120" y="459" font-size="18" text-anchor="start" fill="#111" font-weight="400">With the data files and durable WAL, PostgreSQL can recover both updates.</text>
 </svg>
