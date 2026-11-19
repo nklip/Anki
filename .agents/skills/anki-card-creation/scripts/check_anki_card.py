@@ -6,11 +6,12 @@ from __future__ import annotations
 import argparse
 import re
 import sys
+from itertools import groupby
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from urllib.parse import unquote, urlsplit
 
-from markdown_anchors import CODE_SPAN_RE, markdown_anchors
+from markdown_anchors import CODE_SPAN_RE, add_heading_anchor, markdown_anchors, plain_heading
 from markdown_fences import mask_fenced_code, scan_fenced_code
 
 
@@ -23,6 +24,13 @@ NAVIGATION_RE = re.compile(
     re.MULTILINE,
 )
 STEP_LABEL_RE = re.compile(r"^(?:\*\*|__)?Step[ \t]+\d+\b")
+SECTION_NUMBER_RE = re.compile(r"^([0-9]+)\.[ \t]+")
+CONTENTS_ITEM_RE = re.compile(r" {0,3}([0-9]+)\.[ \t]+\[(.+)\]\(#([^\s)]+)\)[ \t]*")
+REVIEW_ITEM_RE = re.compile(r"^( {0,3})([0-9]+)\.[ \t]+(?=\S)", re.MULTILINE)
+DETAILS_BLOCK_RE = re.compile(
+    r"^[ \t]*<details\b[^>\r\n]*>[ \t]*\r?\n.*?(?:^[ \t]*</details>[ \t]*\r?$|\Z)",
+    re.MULTILINE | re.DOTALL,
+)
 BOLD_LABEL_RE = re.compile(
     r"\*\*(?!\s)(?:(?!\*\*).)+(?<!\s)\*\*|__(?!\s)(?:(?!__).)+(?<!\s)__"
 )
@@ -110,7 +118,88 @@ def heading_label(heading: re.Match[str]) -> str:
 
 def is_step_heading(heading: re.Match[str]) -> bool:
     """Recognize numbered steps, including labels with leading bold markup."""
-    return len(heading.group(1)) >= 2 and bool(STEP_LABEL_RE.match(heading_label(heading)))
+    label = heading_label(heading)
+    if heading.group(1) == "##":
+        label = SECTION_NUMBER_RE.sub("", label)
+    return len(heading.group(1)) >= 2 and bool(STEP_LABEL_RE.match(label))
+
+
+def review_question_errors(review: str, required: int) -> list[str]:
+    # Preserve offsets so each visible list item can be paired with its own answer.
+    visible = DETAILS_BLOCK_RE.sub(lambda m: re.sub(r"[^\r\n]", " ", m[0]), review)
+    items = list(REVIEW_ITEM_RE.finditer(visible))
+    if items:
+        list_indent = items[0][1]
+        items = [item for item in items if item[1] == list_indent]
+
+    errors = []
+    if len(items) < required:
+        errors.append(
+            f"Check your understanding needs at least {required} numbered review questions "
+            f"for {required} teaching sections; found {len(items)}"
+        )
+    for number, item in enumerate(items, 1):
+        if item[2] != str(number):
+            errors.append(f"review question {number} must start with {number}.")
+        end = items[number].start() if number < len(items) else len(review)
+        answers = DETAILS_BLOCK_RE.findall(review, item.end(), end)
+        if len(answers) == 1:
+            lines = [line.rstrip() for line in answers[0].splitlines() if line.strip()]
+            indent = " " * len(item[0])
+            if (lines[:2] == [indent + "<details>", indent + "<summary>Answer</summary>"]
+                    and lines[-1] == indent + "</details>"):
+                continue
+        errors.append(
+            f"review question {number} needs one indented, closed <details> answer "
+            "with <summary>Answer</summary>"
+        )
+    return errors
+
+
+def article_section_errors(article: str, headings: list[re.Match[str]]) -> list[str]:
+    """Check the article outline and review count. Topic coverage needs an author."""
+    errors = []
+    generated: set[str] = set()
+    sections = []
+    expected = []
+    reviews = []
+    for section in headings:
+        if section.start() >= len(article):
+            break
+        label = heading_label(section)
+        fragment = add_heading_anchor(label, generated)
+        if section[1] != "##":
+            continue
+        sections.append(section)
+        number = len(sections)
+        prefix = SECTION_NUMBER_RE.match(label)
+        if not prefix or prefix[1] != str(number):
+            errors.append(f"article section {label!r} must start with '## {number}. '")
+        title = plain_heading(SECTION_NUMBER_RE.sub("", label))
+        expected.append((str(number), title, fragment))
+        if title == "Check your understanding":
+            reviews.append(section)
+
+    if not sections:
+        return ["article mode requires numbered ## teaching sections and Check your understanding"]
+    intro = article[:sections[0].start()]
+    links = (CONTENTS_ITEM_RE.fullmatch(line) for line in intro.splitlines() if line.strip())
+    for is_link_list, group in groupby(links, key=bool):
+        if is_link_list:
+            contents = [(link[1], plain_heading(link[2]), unquote(link[3])) for link in group]
+            if contents == expected:
+                break
+    else:
+        errors.append("include a numbered contents list before the first ## section with "
+                      "one matching title and anchor per section, in order")
+
+    if reviews != [sections[-1]]:
+        errors.append("use exactly one 'Check your understanding' as the final numbered ## section")
+    elif len(sections) == 1:
+        errors.append("include a ## teaching section before Check your understanding")
+    else:
+        errors.extend(review_question_errors(article[reviews[0].end():], len(sections) - 1))
+    return errors
 
 
 def is_fully_bold_label(label: str) -> bool:
@@ -401,6 +490,8 @@ def validate_text(
             errors.append(f"visual file does not exist: {target}")
 
     if mode == "complex":
+        article_end = sources[0].start() if sources else len(structural_text)
+        errors.extend(article_section_errors(structural_text[:article_end], headings))
         step_matches = [heading for heading in headings if is_step_heading(heading)]
         for step_match in step_matches:
             heading = heading_label(step_match)
@@ -414,7 +505,7 @@ def validate_text(
                 level == 3 and parent is not None and parent.group(1) == "##"
             ):
                 errors.append(
-                    f"step heading {heading!r} must use ## Step N … or "
+                    f"step heading {heading!r} must use ## N. Step M … or "
                     "### Step N … nested within a ## section "
                     f"(found {step_match.group(1)})"
                 )
@@ -461,10 +552,43 @@ counter.incrementAndGet();
 
 - [Java API](https://example.com/api)
 """
+    process_contents = """1. [Step 1 — Read](#1-step-1--read)
+2. [Step 2 — Write](#2-step-2--write)
+3. [Check your understanding](#3-check-your-understanding)"""
+    process_sections = """## 1. Step 1 — Read
+
+![read.svg](images/read.svg)
+
+Read the current count with `get()`.
+
+## 2. Step 2 — Write
+
+![write.svg](images/write.svg)
+
+Increment the counter in one atomic operation."""
+    review = """## 3. Check your understanding
+
+1. Can another thread change the value after your read?
+
+   <details>
+   <summary>Answer</summary>
+
+   Yes. The read observes the value at one moment.
+
+   </details>
+
+2. Two threads each increment the counter once. What is the net change?
+
+   <details>
+   <summary>Answer</summary>
+
+   The count rises by two because both increments take effect.
+
+   </details>"""
     complex_card = simple.replace(
         "![atomic-update.svg](images/atomic-update.svg)",
-        "![before.svg](images/before.svg)\n\n![after.svg](images/after.svg)",
-    )
+        f"{process_contents}\n\n{process_sections}",
+    ).replace("# Sources", f"{review}\n\n# Sources")
     assert not validate_text(simple, Path("card.md"), "simple", check_local_files=False)
     assert not validate_text(complex_card, Path("card.md"), "complex", check_local_files=False)
 
@@ -476,7 +600,7 @@ counter.incrementAndGet();
             with_boilerplate, Path("card.md"), mode, check_local_files=False,
         ))
         literal_boilerplate = card.replace(
-            "# Sources", f"```markdown\n{boilerplate}\n```\n\n# Sources"
+            "```java", f"```markdown\n{boilerplate}\n```\n\n```java"
         )
         assert not validate_text(
             literal_boilerplate, Path("card.md"), mode, check_local_files=False,
@@ -534,9 +658,8 @@ counter.incrementAndGet();
 
     # Bold named sub-items may use #### within ### subsections; code remains literal.
     for mode, card in (("simple", simple), ("complex", complex_card)):
-        with_sections = card.replace(
-            "An atomic update", "## Explanation\n\n### Key detail\n\nAn atomic update"
-        )
+        parent = "## Explanation\n\n" if mode == "simple" else ""
+        with_sections = card.replace("```java", f"{parent}### Key detail\n\n```java")
         assert not validate_text(with_sections, Path("card.md"), mode, check_local_files=False)
         with_use_case = with_sections.replace(
             "### Key detail", "### Key detail\n\n#### **Use case: Updating a counter**"
@@ -552,7 +675,7 @@ counter.incrementAndGet();
                        card + "\n# Appendix\n", Path("card.md"), mode, check_local_files=False,
                    ))
         with_literal_headings = card.replace(
-            "# Sources", "```markdown\n#### Literal heading\n# Front\n# Back\n```\n\n# Sources"
+            "```java", "```markdown\n#### Literal heading\n# Front\n# Back\n```\n\n```java"
         )
         assert not validate_text(
             with_literal_headings, Path("card.md"), mode, check_local_files=False
@@ -576,7 +699,7 @@ counter.incrementAndGet();
             assert any("HTML comments" in error for error in validate_text(
                 with_comment, Path("card.md"), mode, check_local_files=False,
             ))
-            literal_comment = card.replace("# Sources", f"```html\n{comment}\n```\n\n# Sources")
+            literal_comment = card.replace("```java", f"```html\n{comment}\n```\n\n```java")
             assert not validate_text(
                 literal_comment, Path("card.md"), mode, check_local_files=False,
             )
@@ -633,24 +756,21 @@ counter.incrementAndGet();
         require_version_lead=True,
     ))
 
-    process_card = complex_card.replace(
-        "# Sources",
-        "## Step 1 — Read\n\n![read.svg](images/read.svg)\n\n"
-        "## Step 2 — Write\n\n![write.svg](images/write.svg)\n\n# Sources",
+    grouped_contents = """1. [Working with a counter](#1-working-with-a-counter)
+2. [Check your understanding](#2-check-your-understanding)"""
+    nested_process_card = complex_card.replace(process_contents, grouped_contents).replace(
+        "## 1. Step 1", "## 1. Working with a counter\n\n### Step 1"
+    ).replace("## 2. Step 2", "### Step 2").replace(
+        "## 3. Check your understanding", "## 2. Check your understanding"
     )
-    assert not validate_text(process_card, Path("card.md"), "complex", check_local_files=False)
-
-    nested_process_card = process_card.replace(
-        "## Step 1", "## A grouped process\n\n### Step 1"
-    ).replace("## Step 2", "### Step 2")
     assert not validate_text(
         nested_process_card, Path("card.md"), "complex", check_local_files=False
     )
-    orphaned_steps = process_card.replace("## Step", "### Step")
+    orphaned_steps = nested_process_card.replace("## 1. Working with a counter\n\n", "")
     assert any("nested within a ## section" in error for error in validate_text(
         orphaned_steps, Path("card.md"), "complex", check_local_files=False
     ))
-    for card in (process_card, nested_process_card):
+    for card in (complex_card, nested_process_card):
         missing_step_svg = card.replace("![write.svg](images/write.svg)", "Step explanation")
         assert any("requires its own local .svg" in error for error in validate_text(
             missing_step_svg, Path("card.md"), "complex", check_local_files=False

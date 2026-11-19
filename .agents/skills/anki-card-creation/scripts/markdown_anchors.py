@@ -58,7 +58,7 @@ class _HTMLText(HTMLParser):
                 self.anchors.add(value)
 
 
-def _plain_heading(text: str) -> str:
+def plain_heading(text: str) -> str:
     """Get the visible text for ordinary heading inline syntax."""
     # Protect code and escaped punctuation before stripping HTML/Markdown.
     literals: list[str] = []
@@ -102,6 +102,18 @@ def _slug(text: str) -> str:
     )
 
 
+def add_heading_anchor(heading: str, generated: set[str]) -> str:
+    """Allocate the heading's fragment in document order."""
+    base = _slug(plain_heading(heading))
+    candidate = base
+    suffix = 0
+    while candidate in generated:
+        suffix += 1
+        candidate = f"{base}-{suffix}"
+    generated.add(candidate)
+    return candidate
+
+
 def markdown_anchors(text: str) -> set[str]:
     """Return decoded, case-sensitive fragment names in a local README.
 
@@ -116,32 +128,21 @@ def markdown_anchors(text: str) -> set[str]:
     html_text = CODE_SPAN_RE.sub(_blank, visible)
     html_text = re.sub(r"\\<", "&lt;", html_text)
     explicit.feed(html_text)
-    anchors = explicit.anchors
     generated: set[str] = set()
     paragraph: list[str] = []
-
-    def add_heading(heading: str) -> None:
-        base = _slug(_plain_heading(heading))
-        candidate = base
-        suffix = 0
-        while candidate in generated:
-            suffix += 1
-            candidate = f"{base}-{suffix}"
-        generated.add(candidate)
-        anchors.add(candidate)
 
     for line in visible.splitlines():
         heading = ATX_RE.match(line)
         if heading:
             content = heading.group(1) or ""
             content = re.sub(r"[ \t]+#+[ \t]*$", "", content)
-            add_heading(content.strip())
+            add_heading_anchor(content.strip(), generated)
             paragraph = []
         elif SETEXT_RE.match(line) and paragraph:
-            add_heading(" ".join(paragraph))
+            add_heading_anchor(" ".join(paragraph), generated)
             paragraph = []
         elif not line.strip() or BLOCK_START_RE.match(line) or SETEXT_RE.match(line):
             paragraph = []
         else:
             paragraph.append(line.strip())
-    return anchors
+    return explicit.anchors | generated

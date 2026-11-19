@@ -11,33 +11,61 @@ Requirements:
 - Follow the shared order: title, one standalone upward navigation line without a list marker, then teaching content, separated by blank lines with no other intervening content. Omit `# Front` and `# Back`; end with `# Sources`. Do not generate HTML comments in article prose, including mode metadata comments. Fenced code examples and XML comments in separate SVG assets are unaffected.
 - There is no character limit, but every section must contribute to understanding or prevent a material misconception.
 - Include at least **two** local SVGs or images with different teaching purposes, such as structure plus behavior, or before-state plus after-state.
-- If the article teaches a step-by-step process, every numbered or named step must have its own local `.svg` diagram in the sibling `images/` directory, linked immediately under that step's heading. A general overview image does not replace step-specific SVGs.
+- If the article teaches a step-by-step process, give each process step a heading and link that step's own local `.svg` from the sibling `images/` directory immediately below its heading.
 - Begin the teaching content immediately after the navigation line with the direct answer and a short roadmap of the explanation. For a versioned feature, the first nonblank line after navigation must follow the shared bold feature-and-release rule and pass `--require-version-lead`.
 - Introduce terminology and the static model before describing state changes or edge cases.
 - Prefer this teaching order when it fits: core idea → vocabulary → structure → process → example → limitations or misconceptions → concise summary.
 
-Use this structure, adapting the navigation link to the article's location:
+## Numbered sections and lists
+
+After the introduction, add an ordered contents list with one link per `##` heading, including the final review. Use the section title as the link text and the numbered heading's actual Markdown anchor as the target. Number the headings consecutively from 1. Keep the opening title, nested `###` subsections, and final `# Sources` outside this sequence. Follow the layout in [Training. Supervised fine-tuning](../../../../ai/Training.%20Supervised%20fine-tuning/Readme.md).
+
+Within a section, use a numbered list when the reader should follow stages, actions, or diagram elements in order. Start each list at 1. For example, the fine-tuning article walks the reader through one diagram with three short bold labels, **Predict**, **Score**, and **Adjust**. Use paragraphs for a continuous explanation.
+
+For example, a two-section article has two contents entries for the lesson and a third for the review.
 
 ```markdown
-# Clear topic title
+# How a queue works
 
 <sub>[Back to System Design](../Readme.md#content)</sub>
 
-**For a versioned feature: official feature name + lifecycle event + release/version.**
+A queue serves items in arrival order. Follow two tickets as they enter and leave.
 
-The core answer and a short roadmap of the explanation.
+1. [Where tickets enter](#1-where-tickets-enter)
+2. [Which ticket leaves first](#2-which-ticket-leaves-first)
+3. [Check your understanding](#3-check-your-understanding)
 
-## Structure
+## 1. Where tickets enter
 
-Explain the model and how to read the visual.
+New tickets join the back. In the diagram, B arrives while A is waiting.
 
-![topic-structure.svg](images/topic-structure.svg)
+![queue-arrival.svg](images/queue-arrival.svg)
 
-## Behavior
+## 2. Which ticket leaves first
 
-Explain what changes and why it matters.
+The next ticket leaves from the front. Once A leaves, B moves to the front.
 
-![topic-behavior.svg](images/topic-behavior.svg)
+![queue-departure.svg](images/queue-departure.svg)
+
+## 3. Check your understanding
+
+1. A and B are waiting. Where does a new ticket C go?
+
+   <details>
+   <summary>Answer</summary>
+
+   C joins the back, behind B.
+
+   </details>
+
+2. Once A leaves, which ticket will be served next, and why?
+
+   <details>
+   <summary>Answer</summary>
+
+   B is next because it arrived before C and is now at the front.
+
+   </details>
 
 # Sources
 
@@ -52,7 +80,7 @@ For a process article, each step should state:
 4. The state after the step.
 5. Why the step matters.
 
-Choose step-heading levels from the article's hierarchy. Use `## Step 1 — Clear action`, `## Step 2 — Clear action`, and so on when the steps form the main sections. When a process belongs inside a broader `##` section, use `### Step 1 — Clear action`, `### Step 2 — Clear action`, and so on beneath it. Keep steps in the same sequence at the same level, including steps with bold labels. Do not flatten meaningful groups just because their subsections are numbered steps.
+Choose step-heading levels from the article's hierarchy. A main-section step keeps its article number, for example `## 2. Step 1 — Read the value` after an overview. When a process belongs inside a broader `##` section, use `### Step 1 — Clear action`, `### Step 2 — Clear action`, and so on beneath it. Keep steps in the same sequence at the same level, including steps with bold labels.
 
 Both forms require each step's own `.svg` reference. Main-section steps may have `###` detail subsections; named sub-items within any `###` subsection, including a nested step, may use `#### **Named sub-item**`, following the shared heading rule. A `Use case:` prefix is optional.
 
@@ -60,31 +88,11 @@ Keep closely related details together. Do not hide the main flow beneath tuning 
 
 ## Review questions
 
-When an article includes review questions, make `## Check your understanding` its last teaching section before `# Sources`. In a numbered article, give it the next section number and use the same title and updated anchor in the contents list. When revising an existing `Self-check` section, rename it and keep each answer with its question.
+End every article with `## N. Check your understanding` immediately before `# Sources`. Write at least one distinct question for each preceding `##` teaching section, in section order. Ask about the idea or decision that section taught. Add more questions where a section teaches several important ideas. A subsection's material can be tested through its parent.
 
-Follow the [WAL article’s example](../../../../distributed%20systems/Write-ahead%20log%20%28WAL%29/Readme.md#7-check-your-understanding). Start a numbered list at 1. Leave each question visible and nest one closed `<details>` block beneath it with the exact label `<summary>Answer</summary>`. Indent the whole block to the start of the question text. Keep the blank lines shown below so Markdown inside the answer renders correctly. Favor questions that ask the reader to apply the lesson, with a short answer explaining why.
+Number the questions from 1. Leave each prompt visible and nest a closed `<details>` block beneath it with the exact label `<summary>Answer</summary>`. Indent the block to the start of the question text and keep the blank lines shown in the queue example. Favor questions that ask the reader to apply the lesson, with a short answer explaining why. When revising a `Self-check` section, carry its questions and answers into the numbered review and fill gaps in coverage.
 
-```markdown
-## Check your understanding
-
-1. A changed page is ready to be written to its data file. What must PostgreSQL save first?
-
-   <details>
-   <summary>Answer</summary>
-
-   PostgreSQL must make the WAL records for that page’s changes durable. Recovery can then use them if the page write is interrupted.
-
-   </details>
-
-2. How can two transactions share one WAL synchronization?
-
-   <details>
-   <summary>Answer</summary>
-
-   Synchronizing through the later commit record also covers the earlier one because both records are in the same ordered log.
-
-   </details>
-```
+During final review, match each teaching heading to a question that a reader could answer from that section. The validator checks section numbering, contents links, and the minimum number of review prompts. Several questions on the same section can pass a count while leaving another section untested.
 
 Before finishing, run:
 
@@ -92,4 +100,4 @@ Before finishing, run:
 python3 scripts/check_anki_card.py --mode complex path/to/card.md
 ```
 
-The validator confirms the minimum visual count and checks SVG presence in both `## Step …` sections and `### Step …` subsections within a `##` section. It reports orphaned level-three steps and step headings at deeper levels, including when their labels are wrapped in `**` or `__`. A fenced image example or an image in a later step, peer section, or parent section does not satisfy a step's diagram requirement. Manually confirm that every step diagram actually explains that step and sits immediately under its heading.
+The validator also confirms the minimum visual count and checks SVG presence in both main-section steps and `### Step …` subsections. It reports orphaned level-three steps and step headings at deeper levels, including when their labels are wrapped in `**` or `__`. A fenced image example or an image in a later step, peer section, or parent section does not satisfy a step's diagram requirement. Manually confirm that every step diagram actually explains that step and sits immediately under its heading.

@@ -7,6 +7,7 @@ from pathlib import Path
 import subprocess
 import sys
 from tempfile import TemporaryDirectory
+from textwrap import dedent, indent
 import unittest
 
 
@@ -17,6 +18,29 @@ assert SPEC is not None and SPEC.loader is not None
 validator = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = validator
 SPEC.loader.exec_module(validator)
+
+
+ARTICLE_CONTENTS = (
+    "1. [Stored state](#1-stored-state)\n"
+    "2. [What survives?](#2-what-survives)\n"
+    "3. [Check your understanding](#3-check-your-understanding)"
+)
+ARTICLE_SECTIONS = (
+    "## 1. **Stored `state`**\n\nThe old value is zero.\n\n"
+    "### A second update\n\nAn update changes it to one.\n\n"
+    "## 2. What survives?\n\nA saved update survives a restart."
+)
+ARTICLE_REVIEW = "## 3. Check your understanding"
+FIRST_ITEM = (
+    "1. Predict the value after an update.\n\n"
+    "   <details>\n   <summary>Answer</summary>\n\n"
+    "   The value changes to one.\n\n   </details>"
+)
+SECOND_ITEM = (
+    "2. What value will you see after restarting?\n\n"
+    "   <details>\n   <summary>Answer</summary>\n\n"
+    "   The saved value is one.\n\n   </details>"
+)
 
 
 class CardValidationTests(unittest.TestCase):
@@ -35,7 +59,7 @@ class CardValidationTests(unittest.TestCase):
         self.index.write_text("# Subject\n\n## Content\n", encoding="utf-8")
         self.navigation = "<sub>[Back to Subject](../Readme.md#content)</sub>"
 
-    def card(self, body: str = "") -> str:
+    def simple_card(self, body: str = "") -> str:
         return (
             f"# A teaching topic\n\n{self.navigation}\n\n"
             "The operation changes the stored state.\n\n"
@@ -45,8 +69,46 @@ class CardValidationTests(unittest.TestCase):
             "- [Official reference](https://example.com/reference)\n"
         )
 
+    @staticmethod
+    def review_item(number: int, title: str) -> str:
+        indent = " " * len(f"{number}. ")
+        return (
+            f"{number}. Explain {title.lower()} in your own words.\n\n"
+            f"{indent}<details>\n{indent}<summary>Answer</summary>\n\n"
+            f"{indent}The update changes the stored value.\n\n{indent}</details>"
+        )
+
+    def card(self, body: str = "") -> str:
+        """Supply an article outline for tests exercising other validator rules."""
+        lines = body.split("\n")
+        visible = validator.mask_comments(validator.mask_fenced_code(body))
+        sections = []
+        for index, line in enumerate(visible.splitlines()):
+            heading = validator.HEADING_RE.fullmatch(line)
+            if heading and heading[1] == "##":
+                title = validator.heading_label(heading)
+                if title not in {"Front", "Back", "Sources"}:
+                    sections.append((index, title))
+        if not sections:
+            sections.append((len(lines) + 1, "Stored state"))
+            lines.extend(["", "## Stored state", "", "The new value replaces the old one."])
+        review = "\n\n".join(self.review_item(i, title) for i, (_, title) in enumerate(sections, 1))
+        sections.append((len(lines) + 1, "Check your understanding"))
+        lines.extend(["", "## Check your understanding", "", review])
+        contents = []
+        for number, (index, title) in enumerate(sections, 1):
+            lines[index] = f"## {number}. {title}"
+            anchor, = validator.markdown_anchors(lines[index])
+            contents.append(f"{number}. [{title}](#{anchor})")
+        return self.simple_card("\n".join(contents + [""] + lines))
+
     def errors(self, text: str, mode: str = "complex", **options: bool) -> list[str]:
         return validator.validate_text(text, self.card_path, mode, **options)
+
+    def article_example(self) -> str:
+        return self.simple_card("\n\n".join((
+            ARTICLE_CONTENTS, ARTICLE_SECTIONS, ARTICLE_REVIEW, FIRST_ITEM, SECOND_ITEM,
+        )))
 
     def assert_error(self, errors: list[str], *parts: str) -> None:
         self.assertTrue(
@@ -67,9 +129,115 @@ class CardValidationTests(unittest.TestCase):
         }
 
     def test_valid_simple_and_complex_cards(self) -> None:
-        for mode in ("simple", "complex"):
-            with self.subTest(mode=mode):
-                self.assertEqual([], self.errors(self.card(), mode))
+        self.assertEqual([], self.errors(self.simple_card(), "simple"))
+        self.assertEqual([], self.errors(self.card(), "complex"))
+
+    def test_article_counts_main_sections_and_accepts_more_prompts_than_sections(self) -> None:
+        article = self.article_example()
+        extra = self.review_item(3, "when to save the new value")
+        for text in (article, article.replace(SECOND_ITEM, SECOND_ITEM + "\n\n" + extra)):
+            self.assertEqual([], self.errors(text))
+            self.assertEqual([], self.errors(text.replace("\n", "\r\n")))
+
+    def test_article_rules_leave_simple_mode_optional(self) -> None:
+        text = self.simple_card("## Stored state\n\nAn update replaces the old value.")
+        self.assertEqual([], self.errors(text, "simple"))
+        self.assertTrue(self.errors(text, "complex"))
+
+    def test_two_digit_prompt_aligns_the_answer_under_its_text(self) -> None:
+        first_nine = [FIRST_ITEM, SECOND_ITEM] + [
+            self.review_item(i, "when an update is saved") for i in range(3, 10)
+        ]
+        last = (
+            "10. Describe the recovery.\n\n"
+            "    <details>\n    <summary>Answer</summary>\n\n"
+            "    The saved value survives.\n\n    </details>"
+        )
+        article = self.article_example().replace(
+            FIRST_ITEM + "\n\n" + SECOND_ITEM, "\n\n".join([*first_nine, last])
+        )
+        self.assertEqual([], self.errors(article))
+        self.assertTrue(self.errors(article.replace(last, last.replace("\n    ", "\n   "))))
+
+    def test_article_headings_are_numbered_consecutively_from_one(self) -> None:
+        article = self.article_example()
+        for original, replacement in (
+            ("## 1. ", "## "), ("## 1. ", "## 0. "),
+            ("## 2. ", "## 1. "), ("## 2. ", "## 4. "),
+            ("## 3. ", "## 4. "),
+        ):
+            with self.subTest(original=original, replacement=replacement):
+                self.assertTrue(self.errors(article.replace(original, replacement)))
+
+    def test_article_requires_the_final_check_your_understanding_section(self) -> None:
+        article = self.article_example()
+        renamed = article.replace("Check your understanding", "Summary").replace(
+            "check-your-understanding", "summary"
+        )
+        after_review = article.replace(
+            ARTICLE_CONTENTS, ARTICLE_CONTENTS + "\n4. [Appendix](#4-appendix)"
+        ).replace("# Sources", "## 4. Appendix\n\nA further example.\n\n# Sources")
+        for text in (renamed, after_review):
+            self.assertTrue(self.errors(text))
+
+    def test_article_contents_links_match_sections_in_order(self) -> None:
+        article = self.article_example()
+        first, second, review = ARTICLE_CONTENTS.splitlines()
+        variants = {
+            "absent": "",
+            "unordered": "\n".join("- " + line[3:] for line in (first, second, review)),
+            "skipped number": ARTICLE_CONTENTS.replace("2. [", "4. ["),
+            "order": "\n".join((second.replace("2. ", "1. "), first.replace("1. ", "2. "), review)),
+            "missing review": first + "\n" + second,
+            "wrong label": ARTICLE_CONTENTS.replace("[Stored state]", "[Recovery]"),
+            "unnumbered fragment": ARTICLE_CONTENTS.replace("#1-stored-state", "#stored-state"),
+            "different local heading": ARTICLE_CONTENTS.replace("#1-stored-state", "#2-what-survives"),
+            "fenced example": "```markdown\n" + ARTICLE_CONTENTS + "\n```",
+        }
+        for name, contents in variants.items():
+            with self.subTest(name=name):
+                self.assertTrue(self.errors(article.replace(ARTICLE_CONTENTS, contents)))
+        in_section = article.replace(ARTICLE_CONTENTS, "").replace(
+            "The old value is zero.", "The old value is zero.\n\n" + ARTICLE_CONTENTS
+        )
+        self.assertTrue(self.errors(in_section))
+
+    def test_only_top_level_review_prompts_count_toward_coverage(self) -> None:
+        article = self.article_example()
+        nested = indent(SECOND_ITEM, "   ")
+        variants = {
+            "no second prompt": FIRST_ITEM,
+            "nested list": FIRST_ITEM + "\n\n" + nested,
+            "inside an answer": FIRST_ITEM.replace("   </details>", nested + "\n\n   </details>"),
+            "blockquote": FIRST_ITEM + "\n\n" + indent(SECOND_ITEM, "> "),
+            "fenced list": FIRST_ITEM + "\n\n~~~markdown\n" + SECOND_ITEM + "\n~~~",
+        }
+        for name, review in variants.items():
+            with self.subTest(name=name):
+                text = article.replace(FIRST_ITEM + "\n\n" + SECOND_ITEM, review)
+                self.assertTrue(self.errors(text))
+        outside_review = article.replace(SECOND_ITEM, "").replace(
+            "The old value is zero.", SECOND_ITEM + "\n\nThe old value is zero."
+        )
+        self.assertTrue(self.errors(outside_review))
+
+    def test_each_visible_review_prompt_has_its_own_closed_expandable_answer(self) -> None:
+        article = self.article_example()
+        prompt, answer = SECOND_ITEM.split("\n\n", 1)
+        variants = {
+            "missing answer": prompt,
+            "plain answer": prompt + "\n\n   The saved value is one.",
+            "wrong label": SECOND_ITEM.replace(">Answer<", ">Solution<"),
+            "expanded answer": SECOND_ITEM.replace("<details>", "<details open>"),
+            "unclosed answer": SECOND_ITEM.replace("   </details>", ""),
+            "unindented answer": prompt + "\n\n" + dedent(answer),
+            "fenced answer": prompt + "\n\n   ```html\n" + answer + "\n   ```",
+        }
+        for name, replacement in variants.items():
+            with self.subTest(name=name):
+                self.assertTrue(self.errors(article.replace(SECOND_ITEM, replacement)))
+        shared_answer = FIRST_ITEM.split("\n\n", 1)[0] + "\n\n" + SECOND_ITEM
+        self.assertTrue(self.errors(article.replace(FIRST_ITEM + "\n\n" + SECOND_ITEM, shared_answer)))
 
     def test_bold_sub_items_within_subsections_are_allowed(self) -> None:
         for mode in ("simple", "complex"):
@@ -194,7 +362,7 @@ class CardValidationTests(unittest.TestCase):
                         text = self.card(heading + suffix)
                         errors = self.errors(text, mode)
                         self.assert_error(errors, "boundary", heading, "not allowed")
-                        self.assertEqual(1, len(errors), errors)
+                        self.assertEqual(1, sum("boundary" in error for error in errors), errors)
                         self.assertEqual(errors, self.errors(text.replace("\n", "\r\n"), mode))
 
     def test_legacy_boundary_rule_requires_exact_names_at_supported_levels(self) -> None:
@@ -263,7 +431,7 @@ class CardValidationTests(unittest.TestCase):
             "## Example\n\n```markdown\n# Front\n# Back\n# Sources\n"
             + self.navigation + "\n![step.svg](images/step.svg)\n```"
         )
-        text = self.card(literal)
+        text = self.simple_card(literal)
         expected = (
             "The operation changes the stored state.\n\n"
             "![overview.svg](images/overview.svg)\n\n"
@@ -502,7 +670,7 @@ class CardValidationTests(unittest.TestCase):
                     self.assert_error(errors, "Step 1", "own local .svg")
                     self.assertFalse(any("requires at least" in error for error in errors))
                     if level > 3:
-                        self.assert_error(errors, "Step 1", "must use", "## Step")
+                        self.assert_error(errors, "Step 1", "must use", "##")
                     self.assertEqual(1 if level <= 3 else 2, len(errors), errors)
                     self.assertEqual(errors, self.errors(text.replace("\n", "\r\n")))
 
@@ -528,7 +696,7 @@ class CardValidationTests(unittest.TestCase):
                         f"{'#' * level} {marker}Step 1 — Read{marker}\n\n"
                         "![step.svg](images/step.svg)"
                     ))
-                    self.assert_error(errors, "Step 1", "must use", "## Step")
+                    self.assert_error(errors, "Step 1", "must use", "##")
                     self.assertEqual(1, len(errors), errors)
 
     def test_level_two_steps_with_diagrams_pass(self) -> None:

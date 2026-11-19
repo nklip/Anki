@@ -11,7 +11,7 @@ Create a self-contained Markdown card that teaches someone who does not already 
 
 - Default new cards to **simple mode**. Read [references/simple-mode.md](references/simple-mode.md).
 - Use **complex mode**, also called **article mode**, when the user requests either name or explicitly asks for comprehensive, multi-stage, or step-by-step treatment. Read [references/complex-mode.md](references/complex-mode.md). Both names select the same mode.
-- When an article includes review questions, use the [Check your understanding format](references/complex-mode.md#review-questions) for its heading, numbered questions, and expandable answers.
+- In article mode, link the numbered `##` sections from an ordered contents list. End the teaching body with [Check your understanding](references/complex-mode.md#review-questions), with at least one question about each preceding `##` section.
 - When revising, follow the user's selected mode or the established mode in the subject index or task context. If none is recorded, choose from the lesson's scope: one focused idea is simple; comprehensive treatment is complex. Both modes use the same Markdown structure, so the absence of Front/Back headings does not identify a mode. Do not add mode metadata to the document.
 - Pass the selected mode explicitly to the validator: `--mode simple` or `--mode complex`. When revising a legacy card with Front/Back sections, convert the requested file to the shared structure while preserving its teaching content.
 
@@ -62,7 +62,7 @@ Separate the title, navigation line, and following content with blank lines; all
 
 Add or update the navigation link whenever creating or revising a card. Neither mode may contain HTML comments in Markdown prose, including mode metadata. Fenced code examples and XML comments in separate SVG assets are unaffected. The navigation line does not count toward the simple-mode character limit.
 
-Use this shared order, adapting the navigation label and target to the card's location. This compact example is for a card one directory below `system design/Readme.md`; expand its teaching sections as needed in article mode:
+Use this shared order, adapting the navigation label and target to the card's location. This simple-mode example is for a card one directory below `system design/Readme.md`. For the numbered article template, see [complex mode](references/complex-mode.md).
 
 ```markdown
 # Clear topic title
@@ -96,7 +96,7 @@ Use level-one headings for the opening title and final `# Sources` section in bo
 - Define a term before using it to explain another term. Expand abbreviations on first use.
 - Prefer short sentences, concrete examples, and explicit cause-and-effect language.
 - Explain both **what happens** and **why it matters**. State common misconceptions only when they help prevent a likely error.
-- Use level-two headings (`##`) for teaching sections and level-three headings (`###`) for subsections. Numbered process steps follow that hierarchy: use `## Step N …` when steps are main sections, or `### Step N …` when the process belongs within a `##` section. Preserve meaningful grouping in long articles; numbering or bold labels do not require promoting a subsection. Within a `###` subsection, optionally use level-four headings for named sub-items, such as use cases, components, patterns, or failure scenarios. Enclose the entire heading text in one bold span, for example `#### **Retrying a failed update**`; a `Use case:` prefix is optional. Inline code may appear inside the bold span. Do not use levels five or six.
+- Use level-two headings (`##`) for teaching sections and level-three headings (`###`) for subsections. Put process steps at the level where they belong. In articles, apply the [article section numbering](references/complex-mode.md) to main-section steps too. Within a `###` subsection, optionally use level-four headings for named sub-items, such as use cases, components, patterns, or failure scenarios. Enclose the entire heading text in one bold span, for example `#### **Retrying a failed update**`; a `Use case:` prefix is optional. Inline code may appear inside the bold span. Do not use levels five or six.
 - Use bold text for emphasis and the required version lead. Use lists for sequences or sets, and tables only when rows genuinely make comparison easier.
 - Use inline code for identifiers, options, values, and short expressions.
 - Give every fenced block an appropriate language tag. Java source must use lowercase `java`; shell commands should use `bash`; plain output or conceptual pseudocode should use `text`.
@@ -115,7 +115,7 @@ Place each visual immediately after the paragraph or heading that introduces wha
 
 ## Final validation
 
-Run the validator from this skill directory with the selected `--mode simple` or `--mode complex`; mode selection is required because the document layouts are identical. The validator does not infer a mode from length or headings. Heading recognition accepts LF and CRLF line endings. HTML comments outside fenced code are invalid in both modes, including mode metadata. Fenced code examples do not count as headings, navigation, comments, sources, or teaching visuals; their text still counts toward the simple-mode teaching-body budget. Local navigation checks verify the exact case of each path component and the existence of the README fragment, including heading anchors and explicit HTML anchors:
+Run the validator from this skill directory with the selected `--mode simple` or `--mode complex`. Mode selection is explicit. Heading recognition accepts LF and CRLF line endings. HTML comments outside fenced code are invalid in both modes, including mode metadata. Fenced code examples do not count as headings, navigation, comments, sources, or teaching visuals; their text still counts toward the simple-mode teaching-body budget. Local navigation checks verify the exact case of each path component and the existence of the README fragment, including heading anchors and explicit HTML anchors:
 
 ```bash
 python3 scripts/check_anki_card.py --mode simple path/to/card.md
