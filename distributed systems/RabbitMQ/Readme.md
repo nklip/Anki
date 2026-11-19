@@ -2,370 +2,406 @@
 
 <sub>[Back to Distributed Systems](../Readme.md#content)</sub>
 
-**RabbitMQ is an open-source message broker that routes and holds messages for applications to process.** It separates sending work from executing it and distributes events to interested systems.
+**RabbitMQ is a message broker.** It accepts a message from one application and holds it in a queue until another application can act on it. Imagine buying a book online. Checkout can give you an order number while the warehouse software is still offline. When it comes back, it can pick up the message and create a packing task.
 
-The RabbitMQ broker is developed primarily in **Erlang**; its command-line tools are written in **Elixir**.
+Follow that order from checkout to the warehouse, then see what happens if a worker crashes or orders arrive faster than the warehouse can handle them.
 
-The model is **publisher → exchange → queue → consumer**: route, hold, then process. We will follow an order event, examine failures, compare Kafka, and study production cases.
-
-Scope: RabbitMQ **4.3**, using **AMQP 0-9-1** (Advanced Message Queuing Protocol); Kafka **4.3**. Other supported protocols have different APIs. Production reports are historical snapshots.
-
-1. [Why a message broker exists](#1-why-a-message-broker-exists)
-2. [The vocabulary and the model](#2-the-vocabulary-and-the-model)
+1. [Why put a queue between checkout and the warehouse?](#1-why-put-a-queue-between-checkout-and-the-warehouse)
+2. [Follow one order through RabbitMQ](#2-follow-one-order-through-rabbitmq)
 3. [How exchanges route messages](#3-how-exchanges-route-messages)
 4. [Publishing, delivery, and acknowledgements](#4-publishing-delivery-and-acknowledgements)
 5. [Crashes, duplicates, and database transactions](#5-crashes-duplicates-and-database-transactions)
-6. [Retries, load, and ordering](#6-retries-load-and-ordering)
-7. [Queue types and broker failures](#7-queue-types-and-broker-failures)
+6. [Queue types and broker failures](#6-queue-types-and-broker-failures)
+7. [Retries, load, and ordering](#7-retries-load-and-ordering)
 8. [RabbitMQ versus Apache Kafka](#8-rabbitmq-versus-apache-kafka)
 9. [Where RabbitMQ fits](#9-where-rabbitmq-fits)
 10. [Real production examples](#10-real-production-examples)
 11. [Check your understanding](#11-check-your-understanding)
 
-## 1. Why a message broker exists
+## 1. Why put a queue between checkout and the warehouse?
 
-Checkout calling receipt, warehouse, and audit services synchronously waits for them. A slow dependency delays the customer; another reaction adds another call.
+Suppose checkout calls the warehouse directly and waits for it to create a packing task. A ten-minute warehouse outage now prevents checkout from completing that call. The shop would like to accept the order while the warehouse catches up.
 
-With messaging, checkout records an order and publishes `OrderCreated` for later processing. The response means **order accepted**, not fulfilment completed. The outbox (§5) keeps the database write and publication consistent.
+Checkout saves the order and **publishes** (sends) a message announcing that the order was created. A **queue** in RabbitMQ holds that message for a warehouse program called a **worker**. Checkout can now respond to the customer while the worker creates the packing task later. This is **asynchronous processing**. How long work can wait depends on the queue’s storage and expiry limits.
 
-A queue solves three related problems:
+A queue also gives the warehouse time to catch up after a rush. If 500 orders arrive each second and workers finish 300, the **backlog** of unfinished orders grows by 200 each second. It shrinks only when workers finish orders faster than new ones arrive.
 
-1. **Time separation:** producers and consumers need not be online simultaneously if messages are retained safely.
-2. **Load buffering:** workers drain bursts at a sustainable rate.
-3. **Work distribution:** workers share jobs without the producer choosing a worker machine.
+## 2. Follow one order through RabbitMQ
 
-Costs include delayed results, duplicates, recovery, and another service. Queues only absorb temporary overload: 500 jobs/s arriving and 300/s completing grow the backlog by 200/s.
+The warehouse needs a packing task for order 42. A separate audit service needs a record that the order was placed. Checkout can tell both by publishing one **event**, a message describing something that already happened.
 
-## 2. The vocabulary and the model
+```json
+{"type": "OrderCreated", "order_id": 42, "event_id": "E17"}
+```
 
-| Term | Meaning in this article |
-|---|---|
-| **Message** | Payload and metadata: a command (`GenerateInvoice`) or fact (`OrderCreated`). |
-| **Publisher / producer** | An application that sends messages to RabbitMQ. |
-| **Broker / node** | A RabbitMQ server process; a cluster has cooperating nodes. |
-| **Exchange** | Routes using its type and bindings; does not store the backlog. |
-| **Binding** | Connects an exchange to a queue, possibly with a key or pattern. |
-| **Routing key** | A publisher-supplied label such as `order.created`, used by some exchange types. |
-| **Queue** | Stores pending messages; its type determines storage and recovery (§7). |
-| **Quorum queue** | A queue copied across nodes. Each copy is a **replica**; a **quorum** is a majority, more than half (e.g. two of three replicas). |
-| **Consumer / worker** | An application that receives messages from a queue and processes them. |
-| **Consumer acknowledgement / ack** | The worker reports completion, allowing RabbitMQ to remove that queue’s copy. |
-| **Publisher confirm** | RabbitMQ tells the publisher it accepted responsibility, independently of worker completion (§4). |
-
-Applications keep connections open. A **channel** is a logical session within a TCP connection. Protocol operations use channels; closing a connection closes them.
-
-Applications or tooling declare the **topology**—exchanges, queues, bindings—before publication. Queues hold messages for offline consumers, subject to retention and resource policies.
-
-## 3. How exchanges route messages
-
-The `orders` topic exchange receives event `E17` with routing key `order.created`. Two bindings match, so both queues get a copy.
+`42` identifies the order. `E17` identifies this particular event about it. Alongside the body, checkout sends a **routing key**, the label `order.created`. In the diagram, follow `E17` across the top branch to the warehouse, then follow the lower branch to see what audit receives.
 
 ![rabbitmq-routing.svg](images/rabbitmq-routing.svg)
 
-| Type | Rule | Example |
+1. **Publisher.** Checkout sends the event once. *Producer* is another name for the sending application.
+2. **Exchange.** Inside RabbitMQ, the exchange named `orders` decides which queues should receive the message. A rule connecting an exchange to a queue is a **binding**. Here, both queues have a matching rule.
+3. **Queue.** RabbitMQ puts a copy of `E17` in `fulfilment.work` and another in `audit.work`. If the audit service is offline, its copy can wait while the warehouse gets on with packing.
+4. **Consumer.** A warehouse worker receives the fulfilment copy and creates a packing task. An audit worker receives the other copy and writes an audit entry. Each worker runs application code.
+
+**Add a worker to share the work. Add a queue when another service needs its own copy.** Either warehouse worker can create the packing task, so they share `fulfilment.work`. If the audit worker shared that queue too, it could take the only delivery and leave the warehouse without a packing task.
+
+## 3. How exchanges route messages
+
+Why did both queues receive `E17`? The `orders` exchange is a **topic exchange**. It compares the routing key with each binding’s pattern. Fulfilment asks for `order.created`. Audit asks for `order.#`, which matches `order` followed by any number of dot-separated words. The key `order.created` matches both. The exchange chooses the destinations, and the queues hold the copies.
+
+The **exchange type** determines how RabbitMQ interprets a binding. Applications or deployment tools set up the exchanges, queues, and bindings before publishing. Together these are called the **topology**.
+
+| Exchange type | How it chooses queues | Example |
 |---|---|---|
-| **Direct** | Exact key match; multiple queues can match. | `invoice` reaches queues bound with `invoice`. |
-| **Fanout** | All bound queues; ignore key. | Broadcast a deployment event. |
-| **Topic** | Match dot-separated words. | `order.*` matches `order.created`; `order.#` also matches `order.payment.failed`. |
-| **Headers** | Match headers, not the routing key. | Match format and region. |
+| **Direct** | The binding key must equal the routing key. | Every queue bound with `invoice` gets a message labelled `invoice`. |
+| **Fanout** | Sends a copy to every bound queue, whatever the key. | Every subscribed service needs the same deployment notice. |
+| **Topic** | `*` matches exactly one word and `#` matches zero or more. | `order.*` matches `order.created`. For `order.payment.failed`, use a pattern such as `order.#`. |
+| **Headers** | Tests named message attributes called *headers*. | Route using headers for region and document format. |
 
-In topic patterns, `*` matches exactly one word and `#` matches zero or more. A RabbitMQ **topic exchange routes messages**; a Kafka **topic stores event logs**.
+Sending one event to several independent services is the [message fanout pattern](../Patterns.%20Fanout/Readme.md#message-fanout-independent-reactions). Here, a topic exchange does it because two bindings match `order.created`. A fanout exchange would send *every* event to both bound queues.
 
-The **default exchange** (`""`) binds queues by name. Publishing “directly to a queue” uses it with the queue name as routing key.
-
-**Consumers on one queue share work.** Fulfilment workers compete for its deliveries; audit needs a separate queue and binding for independent [fanout](../Patterns.%20Fanout/Readme.md).
+For a **command** such as `GenerateInvoice`, the sender is asking for work to be done. If it already knows the queue name, it can use the **default exchange** (named `""`). RabbitMQ automatically binds each queue to this exchange with its own name as the routing key. That is how sending “directly to a queue” works.
 
 ## 4. Publishing, delivery, and acknowledgements
 
-Two questions need answers: **“Did the broker take responsibility?”** and **“Did the worker finish?”** Time runs downward. The diagram uses a quorum queue (§7); delivery can race with the publisher confirm.
+Suppose both queues received `E17` while the warehouse workers were offline. RabbitMQ can confirm the publication to checkout. Later, a worker can acknowledge that it saved the packing task. Look at who sends each signal and what they know at that moment.
+
+| Signal | Who sends it to whom? | What it tells the recipient in this example |
+|---|---|---|
+| **Publisher confirm** | RabbitMQ → checkout | RabbitMQ finished handling the publication. Every queue that matched accepted its copy. A confirm is possible even if none matched. |
+| **Manual consumer acknowledgement** (*ack*) | Warehouse worker → RabbitMQ | The worker reports it has finished this delivery. RabbitMQ can remove the fulfilment copy. Audit can acknowledge its copy separately. |
+
+Read the arrows downward. The queue shown here is a **quorum queue**. It keeps copies on multiple servers, and a majority must accept the message before RabbitMQ confirms a routed publication. The worker’s delivery and the publisher’s confirm can arrive in either order.
 
 ![rabbitmq-acknowledgements.svg](images/rabbitmq-acknowledgements.svg)
 
-### Push and pull consumption
+### How the worker receives an order
 
-**RabbitMQ supports both push and pull consumption for classic and quorum queues. Push is the usual, recommended default approach.** With AMQP 0-9-1, the application chooses the model through the API it calls:
+These examples use **RabbitMQ 4.3** and **Advanced Message Queuing Protocol (AMQP) 0-9-1**, the rules the client and broker use to communicate. A worker opens a network connection and a **channel**, a session within that connection.
 
-- **Push — `basic.consume`:** the application subscribes once, and RabbitMQ sends available messages to its handler without a separate request for each message. For example, a fulfilment worker subscribes at startup and receives orders as they arrive.
-- **Pull — `basic.get`:** the application requests one message at a time. Each call returns a message or an empty result; it must call again to receive more. This is **polling**, and repeated requests waste resources when the queue is empty. RabbitMQ discourages it for normal workloads; integration tests are one use case.
+**The worker chooses push or pull by the call it makes.**
 
-Here, “default” means the standard recommended consumption pattern. The client still explicitly subscribes or polls; opening a connection alone does not start delivery. Both models support manual or automatic acknowledgements, described below.
+RabbitMQ recommends push for long-running workers.
 
-### Publisher confirms
+For a classic or quorum queue, RabbitMQ waits for the worker to subscribe or request a message.
 
-Enable **confirm mode** on the publishing channel. For quorum queues, confirmation requires acceptance by a majority of each destination queue’s replicas. It does **not** mean a consumer processed the event.
+- For **push**, the worker calls `basic.consume` once to subscribe to `fulfilment.work`. RabbitMQ then sends orders as they become available. This is the recommended choice for a long-running worker.
+- For **pull**, the worker calls `basic.get` each time it wants one message. An empty queue gives an empty answer. This is useful for a one-off check, but repeatedly polling an empty queue wastes resources.
 
-An **unroutable message can receive a positive confirm**. With default `mandatory=false`, it is discarded unless an **alternate exchange**, a configured fallback for unroutable messages, handles it. Use `mandatory=true` and a return handler to detect no matching queue. Treat a return as failure even if confirmed. This cannot verify every intended subscriber binding.
+### Who chooses when an order is acknowledged?
 
-### Consumer acknowledgements
+The **worker** also chooses the acknowledgement mode. Its client library sends that setting to RabbitMQ once per push subscription or with each pull request. **Manual acknowledgement is the default in RabbitMQ’s AMQP 0-9-1 method definitions** (`no-ack=false`). For example, Python’s Pika client defaults to `auto_ack=False` for both calls.
 
-With **manual acknowledgements**, ack only after safely recording the required result. RabbitMQ can then remove that queue’s copy; other queues’ copies are independent.
+- With **manual acknowledgement**, the warehouse worker saves the packing task, commits it, then calls `basic.ack` with the **delivery tag** RabbitMQ supplied. It must use the channel that received the delivery because tags are local to that channel. Using the wrong channel can close it with an unknown-delivery-tag error.
+- To select **automatic acknowledgement** in Pika, the developer passes `auto_ack=True` when subscribing or fetching. RabbitMQ considers the order delivered as soon as it sends it. If the worker crashes before saving the packing task, the work can be lost.
 
-With **automatic acknowledgements**, RabbitMQ considers sending sufficient, without waiting for processing. A worker failure can lose work. Choose the mode explicitly in the client API.
+### What if no queue matches?
 
-A **delivery tag** identifies a delivery on one channel, not a business event. Ack on that channel: using the wrong one can raise `PRECONDITION_FAILED - unknown delivery tag` and close it.
+A publisher enables confirms on its channel. Even an unroutable publication can receive a positive confirm. By default, RabbitMQ discards it if no queue matches and no **alternate exchange** can route it. An alternate exchange is a fallback destination for routing.
 
-**At-least-once delivery** means eventual delivery, possibly repeated, under the assumed recoverable failures. Use confirms, retries, durable storage, and manual acks. Expiry, rejection, retry limits, or unrecoverable loss can still remove work. Business effects are not automatically exactly once.
+To detect that case, publish with `mandatory=true` and handle returned messages. RabbitMQ returns an unroutable mandatory message before confirming it. If the audit binding works but the fulfilment binding is missing, one queue *did* match, so there is no return. Check the bindings when both services must receive the event.
 
 ## 5. Crashes, duplicates, and database transactions
 
-A worker commits a fulfilment update, then crashes before its ack reaches RabbitMQ. Those are separate operations: the broker cannot infer that the database commit succeeded.
+Warehouse worker A saves a packing task for order 42, then crashes before RabbitMQ receives its ack. The database already has the task. RabbitMQ still sees an unfinished delivery. When the broker detects that the channel or connection has closed, it puts the message back on the queue. Worker B can receive `E17` again. This is **redelivery**.
+
+Follow `E17` across the crash in the diagram. Both workers try to record the same event ID in the database. What happens on the second attempt depends on whether the first transaction committed.
 
 ![rabbitmq-redelivery.svg](images/rabbitmq-redelivery.svg)
 
-Channel or connection closure requeues unacknowledged deliveries for another attempt. Detection takes time; an application exception alone need not close the connection or trigger retry.
+An **idempotent consumer** can handle the same event twice with the same result as handling it once. Give the database a uniqueness rule on `(consumer_name, event_id)`. Both warehouse workers use the name `fulfilment`. Each first tries to insert `(fulfilment, E17)` and, if that succeeds, creates the packing task in **the same transaction**. The worker acknowledges its delivery after the transaction commits. Audit uses a different consumer name, so it can record its own work for `E17`.
 
-An **idempotent consumer** repeats an event safely. Store a unique `(consumer_name, event_id)` with the business update in **one transaction**, preventing concurrent duplicates. Ack known duplicates without repeating the change. A separate “processed” transaction before the update risks lost work; afterward, duplicate effects.
+This also works if two workers receive copies of `E17` at the same time. In PostgreSQL, the second insert waits for the first transaction. If the first commits, the second gets a duplicate-key error for `(fulfilment, E17)`. That worker rolls back and acknowledges its delivery without creating another packing task. If the first rolls back, the second can insert the pair and create the task.
 
-This protects only that database. External email or payment calls need deduplication or idempotency at their destination.
+A publisher can also lose its confirm and send the event again. Reuse `E17` for the retry. RabbitMQ sets `redelivered=true` when it delivers a message again after requeuing it. A fresh publication can arrive with `redelivered=false` even though the application has already seen `E17`. Use the stable event ID for duplicate detection.
 
-Lost confirms can cause duplicate publication; reuse the event ID. **`redelivered=true`** means RabbitMQ previously delivered and requeued this message. A repeated publication is a separate broker message: its first delivery can have `redelivered=false` despite the same event ID.
+### At-most-once, at-least-once, and exactly-once
 
-### The database-to-broker gap
+For order 42, a delivery is one attempt to hand `E17` to a worker. The business result is a packing task saved in the warehouse database. Two deliveries can produce one task. Push and pull can both use either acknowledgement mode.
 
-Saving an order before publishing risks a crash between them. Publishing first risks emitting an event for a transaction that rolls back.
-
-The [transactional outbox](../Patterns.%20Transactional%20Outbox/Readme.md) stores order and event together. A relay publishes committed events, handles returns/confirms, and records progress. Crashes can repeat publication. Confirms alone cannot make database writes and publishes atomic.
-
-## 6. Retries, load, and ordering
-
-### Distinguish retryable failures from poison messages
-
-A temporarily unavailable dependency may recover. A **poison message**, such as an invalid payload, repeatedly fails the same handler.
-
-A **dead-letter exchange (DLX)** routes messages removed by rejection without requeue, expiry, or a delivery limit. A **dead-letter queue (DLQ)** is bound to it. Without a DLX, rejection without requeue discards work. Verify bindings too. The `x-death` header records dead-letter history; log the event ID and application error separately.
-
-For **quorum queues in 4.3**, these returns differ:
-
-| Return with `requeue=true` | Effect on the failed-delivery counter (`x-delivery-count`) |
-|---|---|
-| `basic.reject` | Increments it; counts toward `delivery-limit`. |
-| `basic.nack` | Does not increment it; repeated nacks can continue indefinitely. |
-
-The default **`delivery-limit` is 20**. Exceeding it dead-letters the message if configured; otherwise it is dropped. This counts failed deliveries, not every assignment to a consumer. Crashes and connection loss also count; consumer timeouts do not.
-
-RabbitMQ 4.3 adds **built-in delayed retry**, recommended for avoiding rapid requeue loops. It is disabled by default. A queue policy can set `delayed-retry-type=all` and `delayed-retry-min` in milliseconds; `delayed-retry-max` optionally caps backoff. Delay slows retries but does not impose a retry budget on nacks. Classify permanent errors and bound application retries.
-
-Default dead-letter transfer can lose messages if the target is unavailable. Source quorum queues can use `dead-letter-strategy=at-least-once` with `overflow=reject-publish`, a DLX, and the `stream_queue` feature flag enabled. Messages remain until transfer is confirmed; duplicates and resource costs remain. Assign ownership for monitoring the DLQ and republishing repaired messages.
-
-### Limit work in progress
-
-**Prefetch** limits unacknowledged deliveries. `basic.qos(N, global=false)` applies per new consumer: with `N=10`, delivery waits at ten unacknowledged messages. It limits in-flight work, not messages/s. Too low reduces throughput; too high can overload workers or reserve work for slow ones.
-
-Rising `messages_ready` suggests missing consumers or arrivals outpacing processing. High `messages_unacknowledged` suggests slow/stuck handlers, missing acks, or excessive prefetch. Check completion rate, redeliveries, returns, and job age to distinguish them. Memory or disk alarms can block publishers.
-
-### Acknowledgement timeout
-
-In **4.3, only quorum queues** enforce this timeout: **30 minutes** by default (`consumer_timeout=1800000` ms). Checks run roughly once a minute. On timeout, AMQP 0-9-1 consumers supporting `consumer_cancel_notify` are cancelled; otherwise the channel closes with `PRECONDITION_FAILED`. Unacknowledged messages return for redelivery.
-
-Timeout returns **do not increment the delivery counter**, so its limit cannot stop repeated timeouts. For long jobs, set a suitable queue policy `consumer-timeout` or split work into shorter durable units; do not ack unfinished work just to avoid timeout. Recover cancelled consumers or closed channels deliberately.
-
-### Delivery order is not completion order
-
-One channel’s publishes enter a queue in order; multiple channels interleave. Priorities and redelivery affect observed order; concurrent workers can finish later jobs first.
-
-For sequential work per order, consistently route the order ID to one queue and process that queue serially with one active consumer. This costs parallelism and still needs careful retry handling.
-
-## 7. Queue types and broker failures
-
-**Durability** concerns surviving restarts; **replication** concerns keeping copies on multiple nodes. A durable classic queue does not become replicated merely because its node joins a cluster.
-
-| Structure | Storage and consumption | Typical fit |
+| Guarantee | How it works | What a worker crash can mean for order 42 |
 |---|---|---|
-| **Classic queue** | One replica in 4.3; ack removes messages. Durable and temporary forms exist. | Work without replication needs, including temporary reply queues. |
-| **Quorum queue** | Durable, replicated using Raft; ack removes messages. | Important work surviving a minority of replica failures. |
-| **Stream** | Persistent replicated log; age/size retention removes messages, not reads. | Replay, large fanout, retained backlogs. |
+| **At-most-once delivery** | With automatic acknowledgement, RabbitMQ considers this queue copy delivered as soon as it sends it. | If the worker crashes before saving the task, the warehouse can end up with **zero packing tasks**. |
+| **At-least-once delivery** | With manual acknowledgement, the worker saves the task before sending its ack. If its connection closes first, RabbitMQ can deliver the message again. | If the worker crashes after saving the task but before the ack reaches RabbitMQ, another worker can repeat the insert and leave **two packing tasks**. |
+| **Exactly-once processing** | Classic and quorum queues cannot guarantee that the worker runs exactly once. The warehouse can ensure an **exactly-once database effect** by inserting the unique event ID and the task in one transaction. | A second worker can receive `E17` and attempt the same insert. Once one transaction commits, the database contains **one packing task** for the event. |
 
-For classic queues, use durable queues, persistent messages, and confirms. Quorum queues always persist messages; the persistent flag still matters if dead-lettering routes them to a classic queue. **Wait for confirms to establish acceptance.**
+The delivery rows describe one published copy in one queue. For at-least-once delivery from checkout through a recoverable failure, checkout must route the message to the intended durable queue, wait for a publisher confirm, and retry unconfirmed sends. Use persistent messages with a durable classic queue. The queue must retain the message until a worker succeeds. Expiry or a policy that drops failed messages can still discard it. An external payment needs its own duplicate protection, such as an idempotency key accepted by the payment service.
 
-This diagram shows one queue with three replicas. Two are needed for a majority.
+**RabbitMQ Streams** can also produce an *effectively-once* result when an application reads from one stream and writes one result per processing step to another. For example, one active publisher with a stable name uses each input’s position (its **offset**) as the output’s publishing ID. After a crash it resumes from the last ID the target stream stored. Repeated writes with the same ID are filtered out, so the output appears once even if the code runs again. This guarantee covers the write to the target stream.
+
+### What if checkout crashes before publishing?
+
+If checkout saves order 42 and crashes before sending `E17`, RabbitMQ has nothing to deliver. Sending first creates the opposite risk. The warehouse could receive an event for an order whose database transaction later fails.
+
+A [transactional outbox](../Patterns.%20Transactional%20Outbox/Readme.md#how-it-works) saves the order and an outgoing event in the same database transaction. A separate program called a **relay** reads committed outbox entries, publishes them, and records which sends succeeded after checking returns and confirms. If it crashes after publication but before recording success, it can send `E17` again. The worker’s uniqueness rule handles that case.
+
+## 6. Queue types and broker failures
+
+Suppose a queue holds 50 orders when its server goes down. If the server restarts with its disk intact, **durability** lets it recover stored work. If that disk is permanently lost, recovery requires another copy. **Replication** keeps copies on different servers. Each running RabbitMQ server is a **node**. Several cooperating nodes form a **cluster**.
+
+| RabbitMQ 4.3 structure | What happens to the data? | When it fits |
+|---|---|---|
+| **Classic queue** | Lives on one node. For restart safety use a durable queue, publish persistent messages, and wait for confirms. If the disk is lost, so is its only copy. | Work that can use a single copy, including temporary reply queues. |
+| **Quorum queue** | A durable queue that copies messages across nodes. A majority must accept each routed message before the publisher gets a confirm. | Packing tasks that must survive the loss of one machine in a three-replica setup. |
+| **Stream** | A persistent, replicated sequence of messages that readers can revisit. Age and size limits determine how long history remains available. | An audit reader needs to replay past orders. |
+
+In the diagram, each **replica** is a copy of the *same queue*. The leader coordinates updates. If its machine fails, the other two replicas can elect a new leader when they can communicate. Two of three is a majority, or **quorum**. With only one replica reachable, this queue cannot continue serving work.
 
 ![rabbitmq-quorum.svg](images/rabbitmq-quorum.svg)
 
-After leader failure, a majority can elect a replacement; delivery pauses meanwhile. Clients on the failed node must reconnect. One of three replicas is insufficient. Spread replicas across failure domains: three processes on one machine cannot survive its loss. See [Raft](../Raft/Readme.md).
+Delivery pauses while the surviving replicas [elect a new leader using Raft](../Raft/Readme.md#3-leader-election). Clients using the failed node must reconnect to a surviving one. Put replicas on separate machines if the queue must survive a machine failure. Joining a cluster leaves a classic queue with a single copy.
 
-Stream readers use **offsets**, positions in the retained log, to resume or replay. Disabling queue acknowledgements does not create a stream. **Superstreams** partition a logical stream for scale.
+Quorum queues persist messages regardless of the publisher’s persistence flag. If a quorum queue later [dead-letters a message](#7-retries-load-and-ordering) into a classic queue, the message keeps its original flag. To survive a restart there, the classic queue must be durable and the publisher must have marked the message as persistent.
+
+A stream reader can resume from an **offset**, a position in the stored sequence. A **superstream** splits one logical stream into parts so several nodes can share its load.
+
+## 7. Retries, load, and ordering
+
+### When should a worker retry?
+
+If the warehouse database is temporarily offline, give it time to recover before trying `E17` again. If a message is missing its required order ID, the same worker code will fail every time. A message that keeps causing failures is a **poison message**. An application error alone may leave its delivery unacknowledged. The worker must decide whether to retry it or set it aside.
+
+To give up on a delivery, the worker sends a **negative acknowledgement** using `basic.reject` (a *reject*) or `basic.nack` (a *nack*). Both take a `requeue` flag. With `requeue=true`, the worker asks RabbitMQ to put the message back on the queue for another attempt.
+
+On a **RabbitMQ 4.3 quorum queue**, `basic.reject` with requeue counts as a failed delivery and increases `x-delivery-count`. A `basic.nack` with requeue leaves that counter unchanged, so repeated nacks can continue indefinitely. A worker crash or connection loss also counts as a failure.
+
+For a permanently malformed order, use `requeue=false`. A configured **dead-letter exchange (DLX)** can then route the message to a **dead-letter queue (DLQ)** for inspection. Without a DLX the broker discards it. Message expiry or exceeding the quorum queue’s default `delivery-limit` of 20 can also trigger dead-lettering. The `x-death` header records that history. Log the event ID and application error so someone can repair and resubmit the job.
+
+### Quorum queue retry settings
+
+Built-in delayed retry is off by default for RabbitMQ 4.3 quorum queues. A queue policy with `delayed-retry-type=all` and `delayed-retry-min` in milliseconds spaces out retries. The optional `delayed-retry-max` caps the delay. Set an application retry limit if you need to cap attempts that use nacks.
+
+By default, a dead-letter transfer can lose work when its destination is unavailable. A source quorum queue can retain a message until the destination confirms receipt. That requires `dead-letter-strategy=at-least-once`, `overflow=reject-publish`, a configured DLX and the `stream_queue` feature flag enabled. Keep the destination binding in place. Pending transfers use storage, and transfer retries can produce duplicates.
+
+### How much work can one worker hold?
+
+With manual acknowledgements, **prefetch** limits the number of deliveries a subscribed worker may have outstanding. A per-consumer prefetch of 10 (`basic.qos` with `global=false`) lets RabbitMQ send ten orders. Once ten are awaiting acks, it waits. One ack frees a slot for one more delivery. A small limit can leave workers idle. A large one can leave a slow worker holding work that another worker could handle.
+
+Two queue measurements help explain a delay. **Ready** (`messages_ready`) counts messages still waiting to be delivered. **Unacknowledged** (`messages_unacknowledged`) counts messages already sent for which RabbitMQ is waiting for an ack. If ready messages pile up and the queue shows zero consumers, check that the workers are running and subscribed. If many deliveries stay unacknowledged, check whether workers are slow, stuck, or forgetting to acknowledge. Memory or disk alarms can also block publishers.
+
+### What happens when a worker takes too long?
+
+In RabbitMQ 4.3, only quorum queues enforce the consumer acknowledgement timeout. The default is **30 minutes**. On timeout, RabbitMQ cancels an AMQP 0-9-1 consumer that supports cancellation notifications (`consumer_cancel_notify`). Otherwise it closes the channel with `PRECONDITION_FAILED`. Outstanding deliveries return for another attempt. Timeout returns do not increase the failed-delivery counter.
+
+For a genuinely long job, choose an appropriate `consumer-timeout` policy or split the job into shorter pieces that can each be saved safely. Recover the cancelled subscription or closed channel so the worker can receive work again.
+
+### Can the second order finish first?
+
+Yes. A single publishing channel sends messages into a queue in order. If worker A gets a large order and worker B gets a small one, B can finish first. Messages from multiple publishing channels can interleave, and priorities or redelivery can also change the order workers observe. When updates for one order must run in sequence, route them consistently to the same queue and process them one at a time with one active consumer. A retry must also preserve their sequence.
 
 ## 8. RabbitMQ versus Apache Kafka
 
-Compare **RabbitMQ classic/quorum queues with Kafka ordinary consumer groups**. Kafka **partitions** are ordered logs. A **consumer group** shares partitions among its members; separate groups track independent progress. See [Apache Kafka](../Apache%20Kafka/Readme.md).
+Suppose the warehouse finished last week’s packing tasks. Today a new analytics service wants to read those original events. An acknowledged copy in a RabbitMQ work queue is gone. A Kafka **topic** holds a history in one or more **partitions**, each an ordered sequence of records. Analytics can start at an earlier offset as long as those records are still retained.
+
+Read the top of the diagram as workers sharing jobs. At the bottom, two Kafka **consumer groups** read the same partition. Each group saves its own next position, so one group can be ahead of the other. The Kafka lesson explains [how readers share partitions within a group](../Apache%20Kafka/Readme.md#sharing-work-versus-independent-subscriptions).
 
 ![rabbitmq-kafka-comparison.svg](images/rabbitmq-kafka-comparison.svg)
 
-| Question | RabbitMQ classic/quorum queues | Kafka with ordinary consumer groups |
+| Question | RabbitMQ classic or quorum queues | Kafka 4.3 ordinary consumer groups |
 |---|---|---|
-| What does completion change? | An ack allows that queue’s message copy to be removed. | An offset commit saves the group’s progress; it does not delete the record. |
-| Can a new reader replay completed work? | Not acknowledged copies; keep a separate history. | Retained records, subject to retention and compaction. |
-| How do workers share work? | Multiple consumers share one queue. | One member per partition at a time; surplus consumers idle. |
-| How do independent applications get all events? | A queue and binding per application. | A group per application. |
-| Where is routing expressed? | Exchanges and bindings select queues. | Producers choose topics/partitions, often by key. |
-| How is data delivered? | Usually broker push through `basic.consume`; polling with `basic.get` also exists. | Consumers fetch records from brokers. |
-| What is the ordering boundary? | Queue enqueue order, with the concurrency and redelivery limits in §6. | Partition order; no global order across partitions. |
+| What does finishing change? | An ack lets that queue remove its copy. | Committing an offset saves the group’s position. Records remain subject to retention or compaction policies. |
+| How do workers share work? | Several consumers can take deliveries from one queue. | A partition has one assigned reader per group at a time. Extra readers can sit idle. |
+| How do two applications receive the same event? | Bind one queue for each application. | Give each application its own consumer group. |
+| Who chooses the destination and starts delivery? | The publisher names an exchange. Bindings select queues. Workers usually subscribe for push delivery. | The producer selects a topic and a partition, often by key. Consumers fetch records. |
+| Where does ordering apply? | Within a queue, subject to the concurrency and retry effects above. | Within a partition. Different partitions have independent order. |
 
-Two other consumption models change the comparison:
-
-1. **RabbitMQ Streams retain logs for replay**, with their own clients and retention settings.
-2. **Kafka share groups acknowledge individual records and share partitions among consumers.** Queues for Kafka became production-ready in **4.2**. It suits independent records rather than strict ordering; the ordinary-group assignment row does not apply.
-
-Neither product makes arbitrary external effects exactly once. See [Delivery and transactions](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md#2-delivery-guarantees).
-
-Start with your main requirement in the diagram below, then compare the alternatives within that branch.
-
-![rabbitmq-kafka-choice.svg](images/rabbitmq-kafka-choice.svg)
+A RabbitMQ **topic exchange** matches labels to queues. A Kafka **topic** stores records. Both products also offer other models. **RabbitMQ Streams** retain history for replay. **Kafka share groups**, production-ready since Kafka 4.2, let multiple workers share records from a partition and acknowledge them individually. External effects such as payments still need their own duplicate protection. The Kafka transactions lesson explains [what happens when a consumer calls an external service](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md#database-writes-and-service-calls).
 
 ## 9. Where RabbitMQ fits
 
-| Requirement | Why RabbitMQ can fit | What to decide explicitly |
-|---|---|---|
-| Generate invoices, thumbnails, or reports in the background | Workers share jobs and acknowledge completion. | Job IDs, retries, result storage, and an acknowledgement timeout suitable for job duration (§6). |
-| Notify several systems about an event | Exchanges copy to independent queues. | Queue per responsibility, schema, publication consistency. |
-| Route requests by service or region | Bindings replace hardcoded worker addresses. | Routing ownership and missing-binding detection. |
-| Absorb spikes or downstream outages | Backlog waits for consumer recovery or scaling. | Storage limits, expiry, admission control, recovery capacity. |
+Ask what should happen *after* the first worker succeeds. If the next invoice worker should move on to a different job, follow the work-queue branch on the left. If a newly added reader needs to reconstruct last month’s sales, follow the retained-history branch on the right.
 
-For short work needing an immediate answer, a direct API may be simpler. RabbitMQ request/reply still needs deadlines and failure handling.
+![rabbitmq-kafka-choice.svg](images/rabbitmq-kafka-choice.svg)
 
-Amazon Simple Queue Service (**SQS**) offers a managed queue model. Amazon MQ offers managed RabbitMQ brokers when protocol compatibility matters. Their APIs and operating models differ.
+The lower boxes narrow the choice. On the left, Amazon Simple Queue Service (SQS) provides a managed queue, while Artemis supports Java’s standard messaging interfaces. On the right, Redpanda supports Kafka clients, and Pulsar lets consumers share work or read independently through separate subscriptions.
+
+The **“Need both?”** panel applies when one service needs tasks and another needs history. RabbitMQ can keep tasks in queues and history in **RabbitMQ Streams**. Kafka can retain records while share groups distribute work. **Kafka Streams**, in the upper-right box, is a library an application uses to process Kafka records, for example to total sales by day.
+
+| Requirement | A design choice |
+|---|---|
+| Generate invoices, thumbnails, or reports in the background | Let workers share a job queue. Give each job an ID and save the result before acknowledging it. |
+| Let several services react to each order | Give each service its own queue and binding. Each can fall behind or recover independently. |
+| Route requests by service or region | Put that information in the routing key and bind the intended queues. Check for missing routes. |
+| Absorb a temporary spike | Give the queue enough storage to hold the backlog and the workers enough capacity to drain it afterward. |
+
+If the caller needs an immediate result, a direct service call may be simpler. Sending a request and waiting for a reply through RabbitMQ still requires a deadline and a way to handle a missing reply.
+
+The open-source RabbitMQ server is written primarily in Erlang, and its command-line tools use Elixir. You can run the broker yourself or use a managed RabbitMQ service such as Amazon MQ.
 
 ## 10. Real production examples
 
-These dated reports illustrate problems solved, not current architectures or sizing guarantees. SQS illustrates the same task-queue use case in another MQ service, not RabbitMQ behavior.
+### LAIKA gave new employees phone extensions
 
-### LAIKA: account provisioning and IT automation — 2019 report
+At the animation studio LAIKA, creating a user account produced an event. The phone system listened for it and assigned an extension. Other listeners could react to the same event as the studio added onboarding tasks. The account system could announce one fact without knowing how to configure a phone. LAIKA’s 2019 account also describes using RabbitMQ to control virtual machines.
 
-LAIKA used RabbitMQ to integrate systems as staff joined and left productions. A new-user event triggered phone-extension provisioning. Further listeners automated other tasks; messaging also supported virtual-machine operations.
+### Bloomberg routed requests by service name
 
-**Problem solved:** one event triggered independent integrations without direct calls to each. The §3 model uses separate queues for such reactions.
+At RabbitMQ Summit 2019, Bloomberg engineer David Liu described how each calling application chose where to send a market-data request. The application put the destination’s service ID in the routing key. Consumers declared their queues, and a topic exchange routed each request to the queue matching the caller’s choice.
 
-### Bloomberg: routing financial-data requests — RabbitMQ Summit 2019
+### McGraw-Hill used a work queue for reports
 
-Bloomberg engineers described their managed RabbitMQ platform and derivatives market-data service. Applications put a service identifier in the routing key; topic exchanges routed requests across many deployments.
+McGraw-Hill’s 2021 report illustrates the same task-queue pattern with **Amazon SQS**. In the original system, a monitoring process called **Watchdog** polled PostgreSQL for pending reports and started Spark clusters to process them. The clusters repeatedly started and shut down. Adding clusters opened more database connections, increasing contention. In a test of 2,030 simulated reports, 142 missed a four-hour deadline.
 
-**Problem solved:** applications addressed logical services while bindings handled changing destinations. The engineers’ talk demonstrates routing beyond job buffering.
-
-### McGraw-Hill: report jobs with Amazon SQS — 2021 report
-
-A report pipeline’s Postgres polling and repeated Spark cluster startup limited throughput. McGraw-Hill and AWS used SQS to carry job IDs to consumers inside Spark clusters.
-
-In testing, 142 of 2,030 reports missed a four-hour deadline. After redesign, all finished within four hours using at most five Spark clusters: a whole-system result, not a broker benchmark.
-
-**Problem solved:** distributing report jobs with less database contention. The team considered Kafka but chose SQS because completed tasks could be removed, whereas consuming Kafka records did not remove them. That 2021 comparison predates Kafka share groups. The report also identified a database/queue dual-write gap (§5).
+After the redesign, Watchdog monitored SQS for pending work, and consumers inside the Spark clusters took job IDs from the queues. The same test finished all 2,030 reports within four hours with at most five clusters. The team wanted to remove completed tasks and chose SQS over the Kafka model it considered at the time. It also identified the risk of saving a job in the database separately from sending its ID to the queue, the same gap checkout faces with `E17`.
 
 ## 11. Check your understanding
 
-Try answering each question before expanding its answer.
-
-1. Two services need every `OrderCreated` event but share a queue. What is wrong?
+1. Checkout accepts 500 orders each second and the warehouse finishes 300. What does the customer gain from the queue, and what happens to the backlog?
 
    <details>
    <summary>Answer</summary>
 
-   Give independent services separate queues and bindings; replicas of one service share its queue.
+   The customer can receive an order number before packing finishes. The backlog grows by 200 orders each second until the rates change.
 
    </details>
 
-2. Does a publisher confirm prove processing completed or a queue matched?
+2. Either of two warehouse workers can create a packing task for order 42. Audit must also record the event. How many queues are needed, and who gets `E17`?
 
    <details>
    <summary>Answer</summary>
 
-   Neither. Confirms cover acceptance, even if unroutable. Handle mandatory returns; verify all required subscriber bindings.
+   Two queues. Either warehouse worker gets the delivery from `fulfilment.work`. The audit worker receives a separate copy from `audit.work`.
 
    </details>
 
-3. A worker commits an update, then crashes before acking. How do you protect the effect?
+3. Which of `order`, `order.created`, and `order.payment.failed` match `order.*`? Which match `order.#`?
 
    <details>
    <summary>Answer</summary>
 
-   Expect redelivery. Store a unique consumer/event ID with the update in one transaction, then ack. Protect external effects at their destination.
+   Only `order.created` matches `order.*` because the star stands for one word. All three match `order.#` because the hash can stand for zero, one, or several words.
 
    </details>
 
-4. Does a durable classic queue in a cluster survive permanent loss of its hosting disk?
+4. Checkout gets a positive confirm. Could the warehouse still be offline? What if neither queue matched?
 
    <details>
    <summary>Answer</summary>
 
-   No. Durability is not replication. Use a replicated type, such as quorum queues, and appropriate replica placement for that failure.
+   Yes. A routed message can wait in its queue after confirmation. An unroutable publication can also receive a confirm. With `mandatory=true` the publisher gets a return if no queue receives the message. A missing fulfilment binding can go unnoticed if the audit binding still works.
 
    </details>
 
-5. Quorum-queue workers in 4.3 repeatedly nack a malformed message with requeue. Will the default limit stop them? What changes with reject?
+5. How can a warehouse worker wait for new orders without repeatedly asking an empty queue?
 
    <details>
    <summary>Answer</summary>
 
-   Nacks do not advance the limit; rejects do. Exceeding the default failed-delivery limit of 20 dead-letters or, without a DLX, drops the message. Enable delayed retry to slow loops, but also bound retries and route permanent failures to a monitored DLQ.
+   Subscribe once with `basic.consume`. RabbitMQ pushes available deliveries. With `basic.get` the worker has to ask again for each one.
 
    </details>
 
-6. A manual-ack consumer with prefetch 10 stops acknowledging. What happens immediately, and later on a quorum queue?
+6. Worker A saved a packing task and crashed before its ack reached RabbitMQ. How can at-least-once delivery of `E17` still produce exactly one packing task?
 
    <details>
    <summary>Answer</summary>
 
-   Delivery waits at ten unacknowledged messages. A quorum queue’s timeout defaults to 30 minutes: the consumer is cancelled or its channel closes, and messages return. Timeouts do not advance the delivery limit. Classic queues have no such timeout in 4.3.
+   Both workers first try to insert the unique pair `(fulfilment, E17)` in the transaction that creates the packing task. A has already committed, so B’s insert gets a duplicate-key error for that pair. B rolls back and acknowledges its delivery.
 
    </details>
 
-7. Analytics needs last week’s processed events. Which models fit?
+7. Checkout saves an order and crashes before publishing. What would let another process finish the send?
 
    <details>
    <summary>Answer</summary>
 
-   Kafka or RabbitMQ Streams with enough retained history. Acknowledged ordinary queue copies are gone.
+   Save an outgoing event in the same transaction as the order. A relay can later publish that outbox entry. Retries reuse the event ID.
 
    </details>
 
-8. Checkout crashes after saving an order but before publishing. Do confirms fix it?
+8. A broker machine loses its disk. How does recovery differ for a durable classic queue and a quorum queue with replicas on three separate machines?
 
    <details>
    <summary>Answer</summary>
 
-   No publish occurred. Commit an outbox event with the order, then relay it. Relay retries still require consumer idempotence.
+   The classic queue’s only copy was on the lost disk. The two surviving quorum queue replicas can elect a leader if they can communicate and continue serving confirmed work.
 
    </details>
 
-9. Which of `order`, `order.created`, and `order.payment.failed` match `order.*` and `order.#`?
+9. A malformed order keeps coming back. Will repeatedly calling `basic.nack` with `requeue=true` reach the default quorum queue delivery limit in 4.3?
 
    <details>
    <summary>Answer</summary>
 
-   `order.*` matches only `order.created`: `*` replaces exactly one word. `order.#` matches all three: `#` replaces zero or more words.
+   No. A nack leaves the failure counter unchanged. A reject with requeue increments it. For a permanent error, reject without requeue and use a configured dead-letter route so someone can inspect the message.
 
    </details>
+
+10. A subscribed quorum queue worker has prefetch 10 and stops acknowledging. What happens as it reaches ten outstanding orders? What can happen later?
+
+    <details>
+    <summary>Answer</summary>
+
+    RabbitMQ pauses new deliveries to that worker. If the acknowledgement timeout expires, the consumer is cancelled or its channel closes, and outstanding deliveries return to the queue.
+
+    </details>
+
+11. A new analytics service needs last week’s completed orders. Where could it read them?
+
+    <details>
+    <summary>Answer</summary>
+
+    From a Kafka topic or RabbitMQ stream that still retains those records. An ordinary work queue can remove its copy once the worker acknowledges it.
+
+    </details>
+
+12. An invoice takes a minute to generate. What would let a customer request one now and download it later?
+
+    <details>
+    <summary>Answer</summary>
+
+    Put a job ID on a work queue and return it to the caller. A worker can generate the invoice, save the result under that ID, and then acknowledge the delivery.
+
+    </details>
+
+13. At LAIKA, why was a new-account event enough to trigger phone setup?
+
+    <details>
+    <summary>Answer</summary>
+
+    The phone system listened for that event and knew how to assign an extension. The account service only needed to announce that it had created a user.
+
+    </details>
 
 # Sources
 
-- [RabbitMQ: Erlang server and Elixir CLI build requirements](https://www.rabbitmq.com/docs/build-server)
-- [RabbitMQ: AMQP 0-9-1 model explained](https://www.rabbitmq.com/tutorials/amqp-concepts)
-- [RabbitMQ: work queues tutorial](https://www.rabbitmq.com/tutorials/tutorial-two-python)
-- [RabbitMQ: publish/subscribe tutorial](https://www.rabbitmq.com/tutorials/tutorial-three-python)
-- [RabbitMQ: topic routing tutorial](https://www.rabbitmq.com/tutorials/tutorial-five-python)
-- [RabbitMQ 4.3: exchanges](https://www.rabbitmq.com/docs/exchanges)
-- [RabbitMQ 4.3: alternate exchanges](https://www.rabbitmq.com/docs/ae)
-- [RabbitMQ 4.3: channels](https://www.rabbitmq.com/docs/channels)
-- [RabbitMQ 4.3: publishers and unroutable messages](https://www.rabbitmq.com/docs/publishers)
-- [RabbitMQ 4.3: consumer acknowledgements and publisher confirms](https://www.rabbitmq.com/docs/confirms)
-- [RabbitMQ 4.3: reliability and recovery](https://www.rabbitmq.com/docs/reliability)
-- [RabbitMQ 4.3: queues, durability, and ordering](https://www.rabbitmq.com/docs/queues)
-- [RabbitMQ 4.3: consumers, push subscriptions, and pull polling](https://www.rabbitmq.com/docs/consumers)
-- [RabbitMQ Java client: push subscriptions and retrieving individual messages](https://www.rabbitmq.com/client-libraries/java-api-guide)
-- [RabbitMQ 4.3: consumer prefetch](https://www.rabbitmq.com/docs/consumer-prefetch)
-- [RabbitMQ 4.3: dead-letter exchanges and transfer safety](https://www.rabbitmq.com/docs/dlx)
-- [RabbitMQ 4.3: quorum queues](https://www.rabbitmq.com/docs/quorum-queues)
-- [RabbitMQ 4.3 release: delayed retry and consumer timeouts](https://www.rabbitmq.com/blog/2026/04/23/rabbitmq-4.3-release)
-- [RabbitMQ 4.3: clustering and replica placement](https://www.rabbitmq.com/docs/clustering)
-- [RabbitMQ 4.3: streams and superstreams](https://www.rabbitmq.com/docs/streams)
-- [RabbitMQ 4.3: monitoring](https://www.rabbitmq.com/docs/monitoring)
-- [RabbitMQ 4.3: memory and disk alarms](https://www.rabbitmq.com/docs/alarms)
-- [Chris Richardson: idempotent consumer pattern](https://microservices.io/patterns/communication-style/idempotent-consumer.html)
-- [Chris Richardson: transactional outbox pattern](https://microservices.io/patterns/data/transactional-outbox.html)
-- [Apache Kafka 4.3: introduction, topics, and partitions](https://kafka.apache.org/43/getting-started/introduction/)
-- [Apache Kafka 4.3: design, consumption, and delivery semantics](https://kafka.apache.org/43/design/design/)
-- [Apache Kafka 4.3: topic retention and compaction configuration](https://kafka.apache.org/43/configuration/topic-configs/)
-- [Apache Kafka: production-ready share groups in the 4.2 upgrade notes](https://kafka.apache.org/43/getting-started/upgrade/#notable-changes-in-420)
-- [Apache Kafka 4.3: KafkaShareConsumer API](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/consumer/KafkaShareConsumer.html)
-- [RabbitMQ: LAIKA’s IT integration case study, 16 December 2019](https://www.rabbitmq.com/blog/2019/12/16/laika-gets-creative-with-rabbitmq-as-the-animation-companys-it-nervous-system)
-- [Bloomberg engineers: Growing a Farm of Rabbits, 2019 talk transcript](https://www.cloudamqp.com/blog/growing-a-farm-of-rabbits.html)
-- [AWS and McGraw-Hill: increasing application throughput with Amazon SQS, 22 December 2021](https://aws.amazon.com/blogs/architecture/increasing-mcgraw-hills-application-throughput-with-amazon-sqs/)
-- [AWS: Amazon MQ and managed message brokers](https://docs.aws.amazon.com/amazon-mq/latest/developer-guide/welcome.html)
+- [RabbitMQ’s AMQP 0-9-1 model explained](https://www.rabbitmq.com/tutorials/amqp-concepts)
+- [RabbitMQ’s AMQP 0-9-1 method definitions and default field values](https://github.com/rabbitmq/rabbitmq-codegen/blob/main/amqp-rabbitmq-0.9.1.json)
+- [Pika’s subscription, polling, and acknowledgement options](https://pika.readthedocs.io/en/stable/modules/adapters/blocking.html)
+- [RabbitMQ work queues tutorial](https://www.rabbitmq.com/tutorials/tutorial-two-python)
+- [RabbitMQ topic routing tutorial](https://www.rabbitmq.com/tutorials/tutorial-five-python)
+- [Exchanges in RabbitMQ 4.3](https://www.rabbitmq.com/docs/4.3/exchanges)
+- [Alternate exchanges in RabbitMQ 4.3](https://www.rabbitmq.com/docs/4.3/ae)
+- [RabbitMQ channels](https://www.rabbitmq.com/docs/channels)
+- [RabbitMQ 4.3 consumer acknowledgements and publisher confirms](https://www.rabbitmq.com/docs/4.3/confirms)
+- [RabbitMQ 4.3 consumers and acknowledgement timeouts](https://www.rabbitmq.com/docs/4.3/consumers)
+- [RabbitMQ 4.3 reliability and recovery](https://www.rabbitmq.com/docs/4.3/reliability)
+- [The idempotent consumer pattern](https://microservices.io/patterns/communication-style/idempotent-consumer.html)
+- [How PostgreSQL resolves concurrent inserts of a unique key](https://www.postgresql.org/docs/current/index-unique-checks.html)
+- [The transactional outbox pattern](https://microservices.io/patterns/data/transactional-outbox.html)
+- [Idempotent requests in the Stripe payment API](https://docs.stripe.com/api/idempotent_requests)
+- [RabbitMQ 4.3 queues, durability, and ordering](https://www.rabbitmq.com/docs/4.3/queues)
+- [RabbitMQ 4.3 quorum queues, retries, and delivery limits](https://www.rabbitmq.com/docs/4.3/quorum-queues)
+- [RabbitMQ 4.3 clustering and replica placement](https://www.rabbitmq.com/docs/4.3/clustering)
+- [RabbitMQ 4.3 streams and superstreams](https://www.rabbitmq.com/docs/4.3/streams)
+- [RabbitMQ 4.3 effectively-once stream processing](https://www.rabbitmq.com/docs/4.3/stream-effectively-once-processing)
+- [RabbitMQ 4.3 dead-letter exchanges](https://www.rabbitmq.com/docs/4.3/dlx)
+- [RabbitMQ 4.3 consumer prefetch](https://www.rabbitmq.com/docs/4.3/consumer-prefetch)
+- [RabbitMQ 4.3 monitoring](https://www.rabbitmq.com/docs/4.3/monitoring)
+- [RabbitMQ 4.3 memory and disk alarms](https://www.rabbitmq.com/docs/4.3/alarms)
+- [Apache Kafka 4.3 topics, partitions, and consumer groups](https://kafka.apache.org/43/getting-started/introduction/)
+- [Apache Kafka 4.3 consumer design and delivery semantics](https://kafka.apache.org/43/design/design/)
+- [Apache Kafka 4.3 topic retention and compaction](https://kafka.apache.org/43/configuration/topic-configs/)
+- [Production-ready Kafka share groups in the Kafka 4.2 upgrade notes](https://kafka.apache.org/43/getting-started/upgrade/#notable-changes-in-420)
+- [Kafka 4.3 share consumer API](https://kafka.apache.org/43/javadoc/org/apache/kafka/clients/consumer/KafkaShareConsumer.html)
+- [Kafka Streams client library](https://kafka.apache.org/43/streams/core-concepts/)
+- [Amazon Simple Queue Service](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html)
+- [Java messaging interfaces in Apache Artemis](https://artemis.apache.org/components/artemis/documentation/latest/using-jms.html)
+- [Kafka client compatibility in Redpanda](https://docs.redpanda.com/streaming/current/develop/kafka-clients/)
+- [Apache Pulsar subscription types](https://pulsar.apache.org/docs/5.0.x/concepts-messaging/)
+- [RabbitMQ request/reply tutorial](https://www.rabbitmq.com/tutorials/tutorial-six-python)
+- [RabbitMQ server and command-line tool build requirements](https://www.rabbitmq.com/docs/build-server)
+- [Amazon MQ managed message brokers](https://docs.aws.amazon.com/amazon-mq/latest/developer-guide/welcome.html)
+- [LAIKA’s account provisioning with RabbitMQ (2019)](https://www.rabbitmq.com/blog/2019/12/16/laika-gets-creative-with-rabbitmq-as-the-animation-companys-it-nervous-system)
+- [Bloomberg engineers on routing financial-data requests (2019)](https://www.cloudamqp.com/blog/growing-a-farm-of-rabbits/)
+- [McGraw-Hill and AWS on distributing report jobs with SQS (2021)](https://aws.amazon.com/blogs/architecture/increasing-mcgraw-hills-application-throughput-with-amazon-sqs/)

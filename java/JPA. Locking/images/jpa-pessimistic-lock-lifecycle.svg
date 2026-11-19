@@ -1,116 +1,111 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="860" viewBox="0 0 1400 860" role="img" aria-labelledby="diagram-title diagram-description">
-  <title id="diagram-title">Lifecycle and outcomes of a JPA pessimistic write lock</title>
-  <desc id="diagram-description">Transaction one requests a pessimistic write lock, the provider obtains and retains a database lock, and transaction two requests a conflicting lock. Transaction two may acquire the lock after release, receive LockTimeoutException for statement-level rollback, or receive PessimisticLockException for transaction-level rollback.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000"
+     role="img" aria-labelledby="diagram-title diagram-description" font-family="Inter, Arial, sans-serif">
+  <title id="diagram-title">Pessimistic locking lets checkouts take turns</title>
+  <desc id="diagram-description">The bars on the database lifeline show which checkout holds the write lock on the row for product 42. T1 acquires the lock and reads eight units. T2 requests the same lock and waits for find() to return. T1 subtracts two units, commits six units and releases the lock. T2 then acquires the lock and reads the six remaining units. It subtracts one unit, commits five units and releases the lock. If the request fails, LockTimeoutException leaves the JPA rollback-only flag unchanged. PessimisticLockException marks the transaction for rollback. After a database lock timeout, PostgreSQL requires a rollback of the transaction or a rollback to an earlier savepoint. MySQL InnoDB rolls back only the waiting statement by default.</desc>
 
-  <!-- Orange identifies held database locks, green identifies successful acquisition, and red distinguishes failure scope. -->
+  <!-- The marker noses extend four pixels past their shaft endpoints to meet the lifeline or lock bar. -->
+  <defs>
+    <marker id="t1-head" markerWidth="16" markerHeight="14" viewBox="0 0 16 14" refX="12" refY="7"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L16 7 L0 14 Z" fill="#356da8"/>
+    </marker>
+    <marker id="t2-head" markerWidth="16" markerHeight="14" viewBox="0 0 16 14" refX="12" refY="7"
+            orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L16 7 L0 14 Z" fill="#7651a5"/>
+    </marker>
+  </defs>
   <style>
-    .heading { font-family: Inter, Arial, sans-serif; font-weight: 700; fill: #17212b; }
-    .body { font-family: Inter, Arial, sans-serif; fill: #2f3a45; }
-    .muted { font-family: Inter, Arial, sans-serif; fill: #596673; }
-    .mono { font-family: "SFMono-Regular", Consolas, monospace; fill: #23303d; }
-    .light { font-family: Inter, Arial, sans-serif; font-weight: 700; fill: #ffffff; }
+    .participant { fill: #ffffff; font-size: 24px; font-weight: 700; text-anchor: middle; }
+    .detail { fill: #ffffff; font-size: 19px; text-anchor: middle; }
+    .lifeline { fill: none; stroke: #9eacb9; stroke-width: 2; stroke-dasharray: 6 7; }
+    .message { fill: #243340; font-size: 23px; text-anchor: middle; }
+    .confirm { fill: #263a4a; font-size: 23px; font-weight: 700; text-anchor: middle; }
+    .t1 { fill: none; stroke: #356da8; stroke-width: 3; marker-end: url(#t1-head); }
+    .t2 { fill: none; stroke: #7651a5; stroke-width: 3; marker-end: url(#t2-head); }
+    .reply { stroke-dasharray: 10 5; }
+    .alternative { fill: #76451e; font-size: 24px; font-weight: 700; }
+    .exception { fill: #322e29; font-size: 24px; font-weight: 700; }
+    .scope { fill: #494037; font-size: 22px; }
   </style>
 
-  <rect width="1400" height="860" fill="#ffffff"/>
-  <text x="700" y="48" text-anchor="middle" class="heading" font-size="32">A pessimistic lock is acquired now and held until the transaction ends</text>
-  <text x="700" y="80" text-anchor="middle" class="muted" font-size="18">The provider and database choose the physical mechanism; portable code relies on the JPA outcome.</text>
+  <!-- The subtitle names the exact lock mode applied to both reads. -->
+  <rect width="1200" height="1000" fill="#ffffff"/>
+  <text x="48" y="64" font-size="40" font-weight="700" fill="#17212b">Pessimistic locking lets checkouts take turns</text>
+  <text x="48" y="105" font-size="23" fill="#465b70">Both transactions call find() with PESSIMISTIC_WRITE to lock the same product row.</text>
 
-  <!-- Swimlane headers identify the two transactions and the shared resource. -->
-  <g id="swimlane-headers">
-    <rect x="40" y="108" width="370" height="54" rx="10" fill="#356da8"/>
-    <rect x="515" y="108" width="370" height="54" rx="10" fill="#b56032"/>
-    <rect x="990" y="108" width="370" height="54" rx="10" fill="#7651a5"/>
-    <text x="225" y="142" text-anchor="middle" class="light" font-size="19">TRANSACTION T1</text>
-    <text x="700" y="142" text-anchor="middle" class="light" font-size="19">DATABASE / PROVIDER</text>
-    <text x="1175" y="142" text-anchor="middle" class="light" font-size="19">TRANSACTION T2</text>
+  <!-- Participant boxes anchor the same three lifelines throughout the successful sequence. -->
+  <g id="participants">
+    <rect x="44" y="140" width="202" height="62" rx="10" fill="#356da8"/>
+    <rect x="499" y="140" width="202" height="62" rx="10" fill="#465b70"/>
+    <rect x="954" y="140" width="202" height="62" rx="10" fill="#7651a5"/>
+    <text x="145" y="166" class="participant">Checkout 1</text>
+    <text x="600" y="166" class="participant">Database</text>
+    <text x="1055" y="166" class="participant">Checkout 2</text>
+    <text x="145" y="190" class="detail">T1 · wants 2 units</text>
+    <text x="600" y="190" class="detail">Product 42</text>
+    <text x="1055" y="190" class="detail">T2 · wants 1 unit</text>
+    <path class="lifeline" d="M145 202V793 M600 202V793 M1055 202V793"/>
   </g>
 
-  <!-- T1 obtains the lock before reading or changing protected state. -->
-  <g id="t1-acquires-lock">
-    <rect x="40" y="190" width="370" height="92" rx="10" fill="#eef5ff" stroke="#356da8" stroke-width="2"/>
-    <text x="65" y="222" class="heading" font-size="17">T1 requests the entity</text>
-    <text x="65" y="252" class="mono" font-size="14">find(..., PESSIMISTIC_WRITE)</text>
-
-    <rect x="515" y="190" width="370" height="92" rx="10" fill="#fff3e8" stroke="#b56032" stroke-width="3"/>
-    <text x="700" y="222" text-anchor="middle" class="heading" font-size="17">Database lock obtained immediately</text>
-    <text x="700" y="252" text-anchor="middle" class="body" font-size="15">It is associated with T1’s transaction.</text>
-
-    <rect x="990" y="190" width="370" height="92" rx="10" fill="#f7f9fb" stroke="#b8c2cc" stroke-width="2"/>
-    <text x="1175" y="222" text-anchor="middle" class="heading" font-size="17">T2 has not requested the lock</text>
-    <text x="1175" y="252" text-anchor="middle" class="muted" font-size="15">No conflict has occurred yet.</text>
-
-    <!-- Request arrow stays between the boxes; its tip meets the database boundary. -->
-    <path d="M416 236H495" fill="none" stroke="#356da8" stroke-width="4"/>
-    <polygon points="495,226 515,236 495,246" fill="#356da8"/>
+  <!-- Lock bars on the database lifeline take the color of the checkout that owns the lock. -->
+  <g id="database-lock-ownership" text-anchor="end" font-size="22" font-weight="700">
+    <rect x="593" y="261" width="14" height="286" rx="2" fill="#d8e8f8" stroke="#356da8" stroke-width="2"/>
+    <rect x="593" y="594" width="14" height="149" rx="2" fill="#e9e0f3" stroke="#7651a5" stroke-width="2"/>
+    <text x="585" y="352" fill="#356da8">T1 holds the lock</text>
+    <text x="585" y="690" fill="#7651a5">T2 holds the lock</text>
   </g>
 
-  <!-- The competing request cannot pass the incompatible lock while T1 remains active. -->
-  <g id="t2-contends">
-    <rect x="40" y="320" width="370" height="92" rx="10" fill="#eef5ff" stroke="#356da8" stroke-width="2"/>
-    <text x="225" y="352" text-anchor="middle" class="heading" font-size="17">T1 reads and changes state</text>
-    <text x="225" y="382" text-anchor="middle" class="body" font-size="15">Keep this protected work short.</text>
-
-    <rect x="515" y="320" width="370" height="92" rx="10" fill="#fff3e8" stroke="#b56032" stroke-width="3"/>
-    <text x="700" y="352" text-anchor="middle" class="heading" font-size="17">The incompatible lock is still held</text>
-    <text x="700" y="382" text-anchor="middle" class="body" font-size="15">T2 cannot successfully modify or delete the row.</text>
-
-    <rect x="990" y="320" width="370" height="92" rx="10" fill="#f4f0fa" stroke="#7651a5" stroke-width="2"/>
-    <text x="1015" y="352" class="heading" font-size="17">T2 requests the same entity</text>
-    <text x="1015" y="382" class="mono" font-size="14">find(..., PESSIMISTIC_WRITE)</text>
-
-    <!-- T2 request arrow points left and remains outside both boxes until its target tip. -->
-    <path d="M984 366H905" fill="none" stroke="#7651a5" stroke-width="4"/>
-    <polygon points="905,356 885,366 905,376" fill="#7651a5"/>
+  <!-- The amber interval on T2's lifeline spans the outstanding request and stops at its reply. -->
+  <g id="pending-request">
+    <rect x="1049" y="374" width="12" height="237" rx="3" fill="#f8d991" stroke="#aa711b" stroke-width="2"/>
+    <text x="1027" y="476" text-anchor="end" fill="#855212" font-size="24" font-weight="700">T2 waits for find() to return</text>
+    <text x="1027" y="507" text-anchor="end" fill="#644c31" font-size="22">T1 releases the lock at commit.</text>
   </g>
 
-  <!-- Transaction completion is the portable lock-release boundary. -->
-  <g id="t1-releases-lock">
-    <rect x="40" y="450" width="370" height="92" rx="10" fill="#eef5ff" stroke="#356da8" stroke-width="2"/>
-    <text x="225" y="482" text-anchor="middle" class="heading" font-size="17">T1 commits or rolls back</text>
-    <text x="225" y="512" text-anchor="middle" class="body" font-size="15">The transaction ends.</text>
-
-    <rect x="515" y="450" width="370" height="92" rx="10" fill="#edf8f0" stroke="#43804c" stroke-width="3"/>
-    <text x="700" y="482" text-anchor="middle" class="heading" font-size="17">The database releases T1’s lock</text>
-    <text x="700" y="512" text-anchor="middle" class="body" font-size="15">A waiting contender may now proceed.</text>
-
-    <rect x="990" y="450" width="370" height="92" rx="10" fill="#f4f0fa" stroke="#7651a5" stroke-width="2"/>
-    <text x="1175" y="482" text-anchor="middle" class="heading" font-size="17">T2 waits or reaches a timeout</text>
-    <text x="1175" y="512" text-anchor="middle" class="muted" font-size="15">The configured timeout is only a hint.</text>
-
-    <path d="M416 496H495" fill="none" stroke="#356da8" stroke-width="4"/>
-    <polygon points="495,486 515,496 495,506" fill="#356da8"/>
+  <!-- Solid messages request work; dashed replies return the lock, data, or commit result. -->
+  <g id="t1-locks-and-reads">
+    <text x="373" y="238" class="message">Request write lock</text>
+    <path class="t1" d="M146 252H595"/>
+    <text x="373" y="299" class="confirm">Lock granted · stock 8</text>
+    <path class="t1 reply" d="M592 313H150"/>
+  </g>
+  <g id="t2-requests-same-lock">
+    <text x="828" y="360" class="message">Request the same write lock</text>
+    <path class="t2" d="M1054 374H612"/>
   </g>
 
-  <!-- A single routing junction fans out to the three outcomes without crossing any label. -->
-  <g id="contender-outcomes">
-    <text x="700" y="580" text-anchor="middle" class="heading" font-size="19">The pending T2 request has three important outcomes</text>
-    <!-- The branch routes above and to the right of the heading so no connector crosses its text. -->
-    <path d="M700 542V550H965V600H225V616" fill="none" stroke="#66727d" stroke-width="4"/>
-    <path d="M965 600H700V616" fill="none" stroke="#66727d" stroke-width="4"/>
-    <path d="M965 600H1175V616" fill="none" stroke="#66727d" stroke-width="4"/>
-    <polygon points="214,616 225,630 236,616" fill="#66727d"/>
-    <polygon points="689,616 700,630 711,616" fill="#66727d"/>
-    <polygon points="1164,616 1175,630 1186,616" fill="#66727d"/>
-
-    <rect x="40" y="638" width="370" height="112" rx="11" fill="#edf8f0" stroke="#43804c" stroke-width="3"/>
-    <text x="225" y="673" text-anchor="middle" class="heading" font-size="18">Lock acquired</text>
-    <text x="225" y="704" text-anchor="middle" class="body" font-size="15">T2 rereads protected current state</text>
-    <text x="225" y="730" text-anchor="middle" class="body" font-size="15">and continues inside its transaction.</text>
-
-    <rect x="515" y="638" width="370" height="112" rx="11" fill="#fff9e8" stroke="#a87916" stroke-width="3"/>
-    <text x="700" y="673" text-anchor="middle" class="heading" font-size="18">LockTimeoutException</text>
-    <text x="700" y="704" text-anchor="middle" class="body" font-size="15">The database caused statement-level rollback;</text>
-    <text x="700" y="730" text-anchor="middle" class="body" font-size="15">JPA does not mark the transaction for rollback.</text>
-
-    <rect x="990" y="638" width="370" height="112" rx="11" fill="#fff0f0" stroke="#b33a3a" stroke-width="3"/>
-    <text x="1175" y="673" text-anchor="middle" class="heading" font-size="18">PessimisticLockException</text>
-    <text x="1175" y="704" text-anchor="middle" class="body" font-size="15">The database caused transaction-level rollback;</text>
-    <text x="1175" y="730" text-anchor="middle" class="body" font-size="15">the transaction is marked for rollback.</text>
+  <!-- T1's stock change remains under its lock until commit. -->
+  <g id="t1-writes-and-commits">
+    <text x="373" y="423" class="message">Write stock 8 − 2 = 6</text>
+    <path class="t1" d="M146 437H588"/>
+    <text x="373" y="481" class="message">Commit</text>
+    <path class="t1" d="M146 495H588"/>
+    <text x="373" y="539" class="confirm">Committed 6 units · lock released</text>
+    <path class="t1 reply" d="M599 553H150"/>
   </g>
 
-  <!-- Final warning fills the lower band with the operational rule most likely to prevent deadlocks. -->
-  <g id="operational-rule">
-    <rect x="40" y="784" width="1320" height="48" rx="10" fill="#f7f9fb" stroke="#9aa6b2" stroke-width="2"/>
-    <text x="700" y="814" text-anchor="middle" class="body" font-size="16">Keep transactions short and acquire multiple locks in one consistent order; never hold a database lock across user or network waiting.</text>
+  <!-- The blocked read resumes only after the previous commit makes six units available. -->
+  <g id="t2-locks-writes-and-commits">
+    <text x="828" y="600" class="confirm">Lock granted · stock 6</text>
+    <path class="t2 reply" d="M608 614H1050"/>
+    <text x="828" y="659" class="message">Write stock 6 − 1 = 5</text>
+    <path class="t2" d="M1054 673H612"/>
+    <text x="828" y="712" class="message">Commit</text>
+    <path class="t2" d="M1054 726H612"/>
+    <text x="828" y="766" class="confirm">Committed 5 units · lock released</text>
+    <path class="t2 reply" d="M601 780H1050"/>
+  </g>
+
+  <!-- This separate panel branches from the amber waiting interval, outside the successful timeline. -->
+  <g id="failed-lock-request">
+    <rect x="44" y="808" width="1112" height="171" rx="12" fill="#fff8ec" stroke="#d6b77f" stroke-width="2"/>
+    <text x="68" y="837" class="alternative">If T2’s lock request fails</text>
+    <path d="M68 847H1132 M567 856V904 M68 916H1132" fill="none" stroke="#ddc9a5" stroke-width="2"/>
+    <text x="68" y="872" class="exception">LockTimeoutException</text>
+    <text x="68" y="900" class="scope">JPA leaves T2’s rollback-only flag unchanged.</text>
+    <text x="589" y="872" class="exception">PessimisticLockException</text>
+    <text x="589" y="900" class="scope">JPA marks T2 for rollback. Retry in a new transaction.</text>
+    <text x="68" y="938" class="scope">After a lock timeout, PostgreSQL requires a rollback before further SQL can run.</text>
+    <text x="68" y="965" class="scope">MySQL InnoDB rolls back only the waiting statement by default.</text>
   </g>
 </svg>

@@ -9,7 +9,7 @@ Create an article that starts with the core mental model and then expands into t
 Requirements:
 
 - Follow the shared order: title, one standalone upward navigation line without a list marker, then teaching content, separated by blank lines with no other intervening content. Omit `# Front` and `# Back`; end with `# Sources`. Do not generate HTML comments in article prose, including mode metadata comments. Fenced code examples and XML comments in separate SVG assets are unaffected.
-- There is no character limit, but every section must contribute to understanding or prevent a material misconception.
+- Articles have no default character limit. A requested limit applies to the Markdown between the back link and the final `# Sources` heading, including the contents list, headings, code, image references, and review questions and answers.
 - Include at least **two** local SVGs or images with different teaching purposes, such as structure plus behavior, or before-state plus after-state.
 - If the article teaches a step-by-step process, give each process step a heading and link that step's own local `.svg` from the sibling `images/` directory immediately below its heading.
 - Begin the teaching content immediately after the navigation line with the direct answer and a short roadmap of the explanation. For a versioned feature, the first nonblank line after navigation must follow the shared bold feature-and-release rule and pass `--require-version-lead`.
@@ -94,10 +94,10 @@ Number the questions from 1. Leave each prompt visible and nest a closed `<detai
 
 During final review, match each teaching heading to a question that a reader could answer from that section. The validator checks section numbering, contents links, and the minimum number of review prompts. Several questions on the same section can pass a count while leaving another section untested.
 
-Before finishing, run:
+For a request such as “under 5K,” “less than 10k,” or “under 15k chars,” pass the requested limit to the validator. Each `k` means 1,000 characters. “Under 10k” allows up to 9,999 teaching-body characters. Omit the option for an article without a requested limit.
 
 ```bash
-python3 scripts/check_anki_card.py --mode complex path/to/card.md
+python3 scripts/check_anki_card.py --mode complex --under-chars 10k path/to/card.md
 ```
 
 The validator also confirms the minimum visual count and checks SVG presence in both main-section steps and `### Step …` subsections. It reports orphaned level-three steps and step headings at deeper levels, including when their labels are wrapped in `**` or `__`. A fenced image example or an image in a later step, peer section, or parent section does not satisfy a step's diagram requirement. Manually confirm that every step diagram actually explains that step and sits immediately under its heading.

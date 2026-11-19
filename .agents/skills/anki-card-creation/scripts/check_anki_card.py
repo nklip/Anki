@@ -307,6 +307,7 @@ def validate_text(
     *,
     check_local_files: bool = True,
     require_version_lead: bool = False,
+    under_chars: int | None = None,
 ) -> list[str]:
     errors: list[str] = []
     structural_text, blocks, fence_errors = scan_fenced_code(text)
@@ -463,6 +464,11 @@ def validate_text(
         errors.append(
             f"simple mode allows at most {SIMPLE_CHARACTER_LIMIT} characters "
             f"in the teaching body; found {character_count}"
+        )
+    if under_chars is not None and character_count >= under_chars:
+        errors.append(
+            f"the teaching body must be under {under_chars} characters "
+            f"(found {character_count})"
         )
 
     images = IMAGE_RE.findall(structural_text)
@@ -806,12 +812,23 @@ Increment the counter in one atomic operation."""
     print("Self-test passed")
 
 
+def parse_character_limit(value: str) -> int:
+    match = re.fullmatch(r"([0-9]+)([kK]?)", value)
+    if not match or int(match[1]) == 0:
+        raise argparse.ArgumentTypeError("use a positive character limit such as 5000 or 10k")
+    return int(match[1]) * (1000 if match[2] else 1)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("card", nargs="?", type=Path, help="Markdown card to validate")
     parser.add_argument(
         "--mode", choices=("simple", "complex"),
         help="required for card validation; select the intended size and visual requirements",
+    )
+    parser.add_argument(
+        "--under-chars", type=parse_character_limit, metavar="N",
+        help="require fewer than N teaching-body characters (e.g. 5K, 10k, or 15000)",
     )
     parser.add_argument(
         "--require-version-lead",
@@ -842,6 +859,7 @@ def main() -> int:
         args.card,
         mode,
         require_version_lead=args.require_version_lead,
+        under_chars=args.under_chars,
     )
     if errors:
         print(f"{args.card}: validation failed", file=sys.stderr)
@@ -851,7 +869,7 @@ def main() -> int:
 
     images = len(IMAGE_RE.findall(mask_fenced_code(text)))
     counted = len(countable_text(text))
-    budget = f"{counted} counted" if mode == "simple" else f"{len(text)}"
+    budget = f"{counted} counted" if mode == "simple" else f"{counted} teaching-body"
     print(f"{args.card}: OK ({mode}, {budget} characters, {images} visual(s))")
     return 0
 

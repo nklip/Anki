@@ -16,6 +16,7 @@ Every card lives in its own folder as `Readme.md`, with its diagrams in a siblin
  * [Data structures. Ring buffer](./Data%20structures.%20Ring%20buffer/Readme.md) - fixed-array slot reuse, wraparound, queue operations, and full/empty handling
  * [Data structures. Trie](./Data%20structures.%20Trie/Readme.md) - what a trie is, word endings and prefix lookup, time and space complexity, and practical uses
  * [Design Patterns](./Design%20Patterns/Readme.md) - concise explanations of nine patterns and terms, including Decorator versus Wrapper
+ * [Docker. Best practices](./Docker.%20Best%20practices/Readme.md) - choosing base images, separating build and runtime stages, reusing cached work, and testing rebuilt images
  * [Encoded vs Encrypted](./Encoded%20vs%20Encrypted/Readme.md) - Base64 versus confidentiality, symmetric and asymmetric encryption, and what digital signatures verify
  * [Fundamental Principles of OOP](./Fundamental%20Principles%20of%20OOP/Readme.md) - encapsulation, abstraction, inheritance, and Java's forms of polymorphism: runtime dispatch, overloading, generics, and implicit conversions, with examples and teaching diagrams
  * [gRPC](./gRPC/Readme.md) - trace a payment call, compare gRPC with a JSON web API, and see where HTTPS and HTTP versions fit

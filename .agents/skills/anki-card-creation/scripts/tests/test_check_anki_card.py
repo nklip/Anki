@@ -401,7 +401,7 @@ class CardValidationTests(unittest.TestCase):
         self.assertEqual([], self.errors(text, "simple"))
         self.assert_error(self.errors(text, "complex"), "requires at least 2", "found 1")
 
-    def test_only_explicit_simple_mode_has_a_character_limit(self) -> None:
+    def test_only_simple_mode_has_a_default_character_limit(self) -> None:
         text = self.card("x" * (validator.SIMPLE_CHARACTER_LIMIT + 1))
         self.assert_error(self.errors(text, "simple"), f"allows at most {validator.SIMPLE_CHARACTER_LIMIT}")
         self.assertEqual([], self.errors(text, "complex"))
@@ -624,6 +624,56 @@ class CardValidationTests(unittest.TestCase):
                 )
                 self.assertEqual(0, result.returncode, result.stderr)
                 self.assertIn(f"OK ({mode},", result.stdout)
+
+    def test_cli_article_character_limit_and_uncapped_report(self) -> None:
+        article = self.article_example()
+        body = article.split(self.navigation + "\n\n", 1)[1].rsplit("\n\n# Sources", 1)[0]
+        # Size the complete Markdown body by extending an answer in the review.
+        answer = "The saved value is one."
+        for count, limit, expected_status in (
+            (4_999, "5K", 0),
+            (5_000, "5K", 1),
+            (9_999, "10000", 0),
+            (9_999, "10K", 0),
+            (10_000, "10k", 1),
+            (10_001, "10000", 1),
+            (14_999, "15k", 0),
+            (15_000, "15k", 1),
+            (50_001, None, 0),
+        ):
+            with self.subTest(count=count, limit=limit):
+                text = article.replace(answer, answer + "界" * (count - len(body)))
+                self.card_path.write_text(text, encoding="utf-8")
+                flags = ["--under-chars", limit] if limit else []
+                result = subprocess.run(
+                    [sys.executable, str(SCRIPT), "--mode", "complex", *flags, str(self.card_path)],
+                    capture_output=True, text=True, check=False,
+                )
+                self.assertEqual(expected_status, result.returncode, result.stderr)
+                if expected_status == 0:
+                    self.assertIn(f"{count} teaching-body characters", result.stdout)
+                else:
+                    self.assertIn(str(count), result.stderr)
+
+    def test_cli_looser_requested_limit_preserves_simple_cap(self) -> None:
+        self.card_path.write_text(self.simple_card("x" * 3500), encoding="utf-8")
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--mode", "simple", "--under-chars", "10k", str(self.card_path)],
+            capture_output=True, text=True, check=False,
+        )
+        self.assertEqual(1, result.returncode, result.stderr)
+        self.assertIn("allows at most 3500", result.stderr)
+
+    def test_cli_rejects_malformed_character_limits(self) -> None:
+        self.card_path.write_text(self.article_example(), encoding="utf-8")
+        for limit in ("0", "-1", "1.5k", "10kb"):
+            with self.subTest(limit=limit):
+                result = subprocess.run(
+                    [sys.executable, str(SCRIPT), "--mode", "complex", "--under-chars", limit, str(self.card_path)],
+                    capture_output=True, text=True, check=False,
+                )
+                self.assertEqual(2, result.returncode, result.stderr)
+                self.assertIn("--under-chars", result.stderr)
 
     def test_cli_requires_mode_and_rejects_auto(self) -> None:
         self.card_path.write_text(self.card(), encoding="utf-8")

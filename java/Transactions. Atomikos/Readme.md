@@ -2,83 +2,64 @@
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-**Atomikos is an embeddable Java transaction manager that coordinates one transaction across multiple resources**, such as two databases. TransactionsEssentials needs no application server.
+**Atomikos is a Java transaction manager that runs inside your application.** With Atomikos, saving an order in one database and reserving the item in another can be one transaction. A **commit** makes both changes permanent. A **rollback** discards the pending changes.
 
-## The problem it solves
+## Why does checkout need a coordinator?
 
-A **transaction** groups work into one outcome: **commit** makes changes permanent; **rollback** discards uncommitted changes. A local transaction belongs to one database; a **global transaction** coordinates multiple resources.
+If a shop commits a book order before checking stock, it can accept an order it cannot fill. In one database, a **local transaction** can cover both writes. Across two databases, Atomikos coordinates a **global transaction** so the order stays pending while checkout reserves the book.
 
-Checkout spans an order database and a stock database. Separate commits could save the order even if stock reservation fails.
+## What happens when the book is sold out?
 
-The figure previews two-phase commit: arrows show coordination; numbered panels show its phases.
+This example uses **Spring Boot 4.2.0** with `com.atomikos:transactions-spring-boot4-starter:6.0.1`. The starter connects Spring’s transaction manager to Atomikos through the **Java Transaction API (JTA)**, now called Jakarta Transactions. Here, `ordersJdbc` and `stockJdbc` are Spring `JdbcTemplate` objects, one per database. Each runs SQL through an Atomikos-managed **XA** (eXtended Architecture) connection so its database can join the transaction.
 
-![atomikos-two-databases.svg](images/atomikos-two-databases.svg)
-
-## How it works
-
-- **JTA (Java Transaction API, now Jakarta Transactions)** defines transaction-management interfaces; Atomikos implements them.
-- **XA (eXtended Architecture)** is the standard interface for coordinating compatible resources.
-- **Two-phase commit (2PC)** has two phases: **prepare** (promise to commit; keep changes pending), then **complete** (commit if all are ready; roll back if preparation fails).
-
-Recovery can finish work interrupted by a crash. **A timeout does not prove rollback.** At JTA `commit()`, `HeuristicMixedException` means some participants committed and others rolled back.
-
-## Spring Boot example
-
-**Spring Boot 3.4 / Atomikos 6.x** service fragment; schema and application configuration omitted. Use `com.atomikos:transactions-spring-boot3.4-starter` at a compatible version. Configure:
-
-- An Atomikos-backed Spring `JtaTransactionManager` named `transactionManager`, with annotation-driven transactions enabled.
-- Two `JdbcTemplate` beans (Spring SQL helpers), `ordersJdbc` and `stockJdbc`, backed by XA-configured `AtomikosDataSourceBean` pools with distinct resource names. Both join the same global transaction.
+By default, Spring wraps the service in a **proxy**. When another component calls `checkout` through that wrapper, Spring sees `@Transactional` and starts or joins one transaction for both writes.
 
 ```java
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+@Transactional
+public void checkout(long orderId, long productId) {
+    ordersJdbc.update("INSERT INTO orders(id, product_id) VALUES (?, ?)",
+            orderId, productId);
 
-@Service
-public class CheckoutService {
-    private final JdbcTemplate orders;
-    private final JdbcTemplate stock;
-
-    public CheckoutService(
-            @Qualifier("ordersJdbc") JdbcTemplate orders,
-            @Qualifier("stockJdbc") JdbcTemplate stock) {
-        this.orders = orders;
-        this.stock = stock;
-    }
-
-    @Transactional(transactionManager = "transactionManager")
-    public void checkout(long orderId, long productId) {
-        orders.update("INSERT INTO orders(id, product_id) VALUES (?, ?)",
-                orderId, productId);
-        int changed = stock.update(
-                "UPDATE inventory SET available = available - 1 "
-                + "WHERE product_id = ? AND available > 0", productId);
-        if (changed != 1) {
-            throw new IllegalStateException("Stock unavailable");
-        }
+    int reserved = stockJdbc.update("""
+            UPDATE inventory SET available = available - 1
+            WHERE product_id = ? AND available > 0
+            """, productId);
+    if (reserved != 1) {
+        throw new IllegalStateException("Stock unavailable");
     }
 }
 ```
 
-Call through an injected `CheckoutService` from another bean so Spring's proxy intercepts it. The uncaught runtime exception triggers rollback, including the order insert. On success, Atomikos coordinates commit of both updates.
+For a sold-out book, the stock update changes zero rows and `checkout` throws a runtime exception. By default, Spring rolls back when that exception leaves the method. **The order insert is undone, and stock stays at zero.**
 
-## When to use it
+A call to `this.checkout(...)` inside the same service bypasses the proxy, so Spring starts no transaction for that call. If no transaction is already active and auto-commit is on, the order stays saved when the stock check fails.
 
-Use it when multiple XA-capable resources need one global transaction. XA message brokers can join it; arbitrary external calls do not join automatically. If **one local database transaction** covers the work, it is usually enough.
+Rollback covers only participants in the transaction. A charge made through an ordinary payment API still stands, and a sent confirmation email stays sent.
+
+## How do both databases commit?
+
+When both writes succeed, Spring asks Atomikos to commit. The arrows show which databases participate. The boxes below them show **two-phase commit (2PC)**.
+
+![atomikos-two-databases.svg](images/atomikos-two-databases.svg)
+
+1. **Prepare.** Atomikos asks each database whether it can commit its pending change. A “yes” is a promise to carry out the final decision. The change is still pending.
+2. **Complete.** If both are ready, Atomikos tells both to commit. The order is saved and one fewer book is available. If either database cannot prepare, Atomikos calls for rollback.
+
+### What if the application crashes during commit?
+
+Suppose Atomikos records the commit decision, but the application crashes before the stock database receives it. When the application restarts, Atomikos reads its transaction log and can resend the decision once it can reach the stock database.
+
+The log directory (`com.atomikos.icatch.log_base_dir`) defaults to the working directory. In a container, keep the log on a persistent volume so a replacement container can read it.
 
 # Sources
 
-- [Atomikos — TransactionsEssentials: embedded JTA/XA transaction management](https://www.atomikos.com/Main/TransactionsEssentials)
-- [Atomikos — What is XA?](https://www.atomikos.com/Documentation/WhatIsXa)
-- [Jakarta Transactions 2.0 — §2.4 XA-capable messaging, §3.3.1 required resource enlistment, and §3.4.8 recovery](https://jakarta.ee/specifications/transactions/2.0/jakarta-transactions-spec-2.0.html)
-- [Jakarta Transactions API — `UserTransaction.commit()` and `HeuristicMixedException`](https://jakarta.ee/specifications/transactions/2.0/apidocs/jakarta/transaction/usertransaction)
-- [Atomikos — Mixed heuristic outcomes: some participants commit, others roll back](https://www.atomikos.com/Documentation/HeuristicExceptions)
-- [Atomikos — When not to use JTA/XA](https://www.atomikos.com/Documentation/WhenNotToUseJtaXa)
-- [Atomikos — Spring Boot integration and version-specific starters](https://www.atomikos.com/Documentation/SpringBootIntegration)
-- [Atomikos — XA-aware JDBC pools and transaction participation](https://www.atomikos.com/Documentation/ConfiguringJdbc)
-- [Atomikos — JMS connection factories and XA participation](https://www.atomikos.com/Documentation/ConfiguringJms)
-- [Atomikos — Known Problems: duplicate `uniqueResourceName` values and recovery conflicts](https://www.atomikos.com/Documentation/KnownProblems)
-- [Spring Framework 6.2 — `@Transactional`, manager selection, rollback rules, and proxies](https://docs.spring.io/spring-framework/reference/6.2/data-access/transaction/declarative/annotations.html)
-- [Spring Framework — `JtaTransactionManager`](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/transaction/jta/JtaTransactionManager.html)
-- [Spring Framework — `DataSourceUtils` and `JdbcTemplate` transaction participation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/jdbc/datasource/DataSourceUtils.html)
+- [Atomikos TransactionsEssentials — running a transaction manager inside a Java application](https://www.atomikos.com/Main/TransactionsEssentials)
+- [Atomikos — XA and two-phase commit](https://www.atomikos.com/Documentation/WhatIsXa)
+- [Jakarta Transactions — resource participation and crash recovery](https://jakarta.ee/specifications/transactions/2.0/jakarta-transactions-spec-2.0.html)
+- [Atomikos — configuring database connections for XA](https://www.atomikos.com/Documentation/ConfiguringJdbc)
+- [Spring Boot 4.2.0 — managed dependency versions](https://repo.maven.apache.org/maven2/org/springframework/boot/spring-boot-dependencies/4.2.0/spring-boot-dependencies-4.2.0.pom)
+- [Atomikos 6.0.1 — Spring Boot 4 starter on Maven Central](https://central.sonatype.com/artifact/com.atomikos/transactions-spring-boot4-starter/6.0.1)
+- [Spring Framework 7.1 — transactional method calls and default rollback rules](https://docs.spring.io/spring-framework/reference/7.1/data-access/transaction/declarative/annotations.html)
+- [Spring Framework 7.1 — the row count returned by JdbcTemplate.update](https://docs.spring.io/spring-framework/docs/7.1.0/javadoc-api/org/springframework/jdbc/core/JdbcTemplate.html#update(java.lang.String,java.lang.Object...))
+- [Atomikos — transaction log directory and durable storage](https://www.atomikos.com/Documentation/JtaProperties)
+- [Atomikos — how the coordinator records the decision before sending commit requests](https://github.com/atomikos/transactions-essentials/blob/84806035261eacd31968a3009ff08c5a60c79726/public/transactions/src/main/java/com/atomikos/icatch/imp/CoordinatorStateHandler.java#L340-L385)

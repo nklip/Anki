@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="title description">
+  <title id="title">What survives a container replacement?</title>
+  <desc id="description">The original orders container saves order #42 in a separate database and writes receipt.tmp in its own writable layer. Removing that container deletes its local file. The replacement container has a fresh writable layer and can read order #42 from the same database.</desc>
+
+  <!-- Palette and type hierarchy shared by the two container states. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #253b4c; }
+      .title { font-size: 52px; font-weight: bold; fill: #172b3a; }
+      .subtitle { font-size: 32px; }
+      .stage { font-size: 30px; font-weight: bold; }
+      .heading { font-size: 44px; font-weight: bold; }
+      .layer { font-size: 32px; }
+      .file { font-size: 33px; font-family: Menlo, Consolas, monospace; }
+      .outcome { font-size: 33px; }
+      .action { font-size: 34px; font-weight: bold; }
+      .blue { fill: #175b8e; }
+      .green { fill: #205d40; }
+    </style>
+  </defs>
+
+  <!-- The title introduces the example; the two panels read left to right. -->
+  <rect width="1200" height="1000" fill="#f8fafc"/>
+  <g id="introduction">
+    <text class="title" x="60" y="94">What survives a container replacement?</text>
+    <text class="subtitle" x="60" y="151">A purchase creates an order and a temporary receipt file.</text>
+  </g>
+
+  <!-- The paper and filename sit inside the original container's writable layer. -->
+  <g id="original-container">
+    <rect x="60" y="218" width="482" height="337" rx="26" fill="#eaf3fb" stroke="#6290b5" stroke-width="3"/>
+    <text class="stage blue" x="92" y="280">Before removal</text>
+    <text class="heading" x="92" y="339">Original container</text>
+    <rect x="92" y="375" width="418" height="145" rx="15" fill="#ffffff" stroke="#a5bfd4" stroke-width="2"/>
+    <text class="layer" x="116" y="425">Writable layer</text>
+    <g id="receipt-file" fill="none" stroke="#175b8e" stroke-width="3.5" stroke-linejoin="round">
+      <path d="M119 448 H145 L159 462 V489 H119 Z"/>
+      <path d="M145 448 V462 H159 M127 471 H148 M127 480 H145"/>
+    </g>
+    <text class="file" x="177" y="483">receipt.tmp</text>
+  </g>
+
+  <!-- Tips meet the outer border stroke. Shafts stop just inside each triangular head. -->
+  <g id="replacement-arrow" fill="#526779">
+    <path data-connector="true" d="M543.5 385 H634.5" fill="none" stroke="#526779" stroke-width="5"/>
+    <polygon points="632.5,373 656.5,385 632.5,397"/>
+  </g>
+
+  <!-- The empty-file outline records what changed in the replacement's local layer. -->
+  <g id="replacement-container">
+    <rect x="658" y="218" width="482" height="337" rx="26" fill="#eaf6ee" stroke="#6f9a7b" stroke-width="3"/>
+    <text class="stage green" x="690" y="280">After replacement</text>
+    <text class="heading" x="690" y="339">New container</text>
+    <rect x="690" y="375" width="418" height="145" rx="15" fill="#ffffff" stroke="#adc9b6" stroke-width="2"/>
+    <text class="layer" x="714" y="425">Fresh writable layer</text>
+    <g id="removed-receipt" fill="none" stroke="#526779" stroke-width="3.5" stroke-linejoin="round">
+      <path d="M717 448 H743 L757 462 V489 H717 Z" stroke-dasharray="6 5"/>
+      <path d="M728 462 L746 480 M746 462 L728 480"/>
+    </g>
+    <text class="outcome" x="775" y="483">Receipt file is gone</text>
+  </g>
+
+  <!-- Arrows show the write to the database and the data returned on a read. -->
+  <g id="order-data-flow">
+    <path id="save-order-shaft" d="M153 556.5 V722.5" fill="none" stroke="#175b8e" stroke-width="6"/>
+    <polygon points="140,720.5 153,746.5 166,720.5" fill="#175b8e"/>
+    <text class="action blue" x="182" y="663">Saves order #42</text>
+    <path id="read-order-shaft" d="M1047 746.5 V580.5" fill="none" stroke="#205d40" stroke-width="6"/>
+    <polygon points="1034,582.5 1047,556.5 1060,582.5" fill="#205d40"/>
+    <text class="action green" text-anchor="end" x="1018" y="663">Reads order #42</text>
+  </g>
+
+  <!-- One database spans both states; the cylinder is distinct from the container panels. -->
+  <g id="database">
+    <rect x="60" y="748" width="1080" height="183" rx="26" fill="#ffffff" stroke="#60798b" stroke-width="3"/>
+    <g id="database-cylinder" stroke="#486578" stroke-width="4">
+      <path d="M100 806 V867 C100 893 212 893 212 867 V806 Z" fill="#e1ebf1"/>
+      <ellipse cx="156" cy="806" rx="56" ry="17" fill="#f2f7fa"/>
+      <path d="M100 837 C100 861 212 861 212 837" fill="none"/>
+    </g>
+    <text class="heading" x="255" y="829">Separate orders database</text>
+    <text class="subtitle" x="255" y="882">Order #42 stays here when the old container is removed.</text>
+  </g>
+</svg>

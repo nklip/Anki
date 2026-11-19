@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="title description">
+  <title id="title">Pessimistic lock scope for a catalog and its product links</title>
+  <desc id="description">The catalog_product join table contains pairs (7, 42), (7, 43), and (9, 42). Each catalog_id refers to catalog.id and each product_id refers to product.id. Catalogs 7 and 9 both list product 42, which has eight units in stock. When catalog 7 is locked with PESSIMISTIC_WRITE, NORMAL covers its catalog row. EXTENDED also covers its two existing join rows. Protecting the stock count requires locking the product itself.</desc>
+
+  <!-- Blue marks the selected catalog row. Orange marks the existing links added by extended scope. -->
+  <style>
+    text { font-family: Inter, Arial, sans-serif; fill: #17212b; }
+    .title { font-size: 44px; font-weight: 700; }
+    .section { font-size: 32px; font-weight: 700; }
+    .body { font-size: 24px; }
+    .muted { font-size: 22px; fill: #46596b; }
+    .table-name { font-family: Consolas, Menlo, monospace; font-size: 30px; font-weight: 700; fill: #fff; }
+    .field { font-family: Consolas, Menlo, monospace; font-size: 24px; font-weight: 700; }
+    .key { font-size: 20px; fill: #46596b; }
+    .value { font-size: 28px; }
+    .mode { font-family: Consolas, Menlo, monospace; font-size: 26px; font-weight: 700; }
+    .rule { stroke: #c4ced8; stroke-width: 2; fill: none; }
+  </style>
+  <rect width="1200" height="1000" fill="#fff"/>
+
+  <!-- The introduction explains why the same IDs occur in multiple join rows. -->
+  <g id="introduction">
+    <text x="48" y="76" class="title">Pessimistic locking across linked tables</text>
+    <text x="48" y="125" class="body">A catalog can list several products. A product can appear in several catalogs.</text>
+  </g>
+
+  <!-- The ID columns face the join table so each arrow points directly to the referenced key. -->
+  <g id="catalog-table">
+    <rect x="48" y="178" width="294" height="60" fill="#354b61"/>
+    <text x="195" y="218" text-anchor="middle" class="table-name">catalog</text>
+    <rect x="48" y="238" width="294" height="84" fill="#f0f3f6"/>
+    <rect x="48" y="322" width="294" height="66" fill="#dceafa"/>
+    <rect x="48" y="388" width="294" height="66" fill="#fff"/>
+    <path class="rule" d="M204 238V454 M48 322H342 M48 388H342"/>
+    <rect x="48" y="178" width="294" height="276" fill="none" stroke="#63778a" stroke-width="2"/>
+    <text x="126" y="279" text-anchor="middle" class="field">name</text>
+    <text x="273" y="273" text-anchor="middle" class="field">id</text>
+    <text x="273" y="302" text-anchor="middle" class="key">primary key</text>
+    <text x="126" y="365" text-anchor="middle" class="value">Summer</text>
+    <text x="273" y="365" text-anchor="middle" class="value">7</text>
+    <text x="126" y="431" text-anchor="middle" class="value">Outlet</text>
+    <text x="273" y="431" text-anchor="middle" class="value">9</text>
+  </g>
+
+  <!-- The pair of IDs uniquely identifies one membership in this example schema. -->
+  <g id="catalog-product-table">
+    <rect x="412" y="178" width="376" height="60" fill="#354b61"/>
+    <text x="600" y="218" text-anchor="middle" class="table-name">catalog_product</text>
+    <rect x="412" y="238" width="376" height="84" fill="#f0f3f6"/>
+    <rect x="412" y="322" width="376" height="132" fill="#ffead0"/>
+    <rect x="412" y="454" width="376" height="66" fill="#fff"/>
+    <path class="rule" d="M600 238V520 M412 322H788 M412 388H788 M412 454H788"/>
+    <rect x="412" y="178" width="376" height="342" fill="none" stroke="#63778a" stroke-width="2"/>
+    <text x="506" y="273" text-anchor="middle" class="field">catalog_id</text>
+    <text x="694" y="273" text-anchor="middle" class="field">product_id</text>
+    <text x="506" y="302" text-anchor="middle" class="key">foreign key</text>
+    <text x="694" y="302" text-anchor="middle" class="key">foreign key</text>
+    <text x="506" y="365" text-anchor="middle" class="value">7</text>
+    <text x="694" y="365" text-anchor="middle" class="value">42</text>
+    <text x="506" y="431" text-anchor="middle" class="value">7</text>
+    <text x="694" y="431" text-anchor="middle" class="value">43</text>
+    <text x="506" y="497" text-anchor="middle" class="value">9</text>
+    <text x="694" y="497" text-anchor="middle" class="value">42</text>
+  </g>
+
+  <!-- Stock belongs to the product row shared by all catalogs that list the product. -->
+  <g id="product-table">
+    <rect x="858" y="178" width="294" height="60" fill="#354b61"/>
+    <text x="1005" y="218" text-anchor="middle" class="table-name">product</text>
+    <rect x="858" y="238" width="294" height="84" fill="#f0f3f6"/>
+    <rect x="858" y="322" width="294" height="132" fill="#fff"/>
+    <path class="rule" d="M996 238V454 M858 322H1152 M858 388H1152"/>
+    <rect x="858" y="178" width="294" height="276" fill="none" stroke="#63778a" stroke-width="2"/>
+    <text x="927" y="273" text-anchor="middle" class="field">id</text>
+    <text x="927" y="302" text-anchor="middle" class="key">primary key</text>
+    <text x="1074" y="279" text-anchor="middle" class="field">stock</text>
+    <text x="927" y="365" text-anchor="middle" class="value">42</text>
+    <text x="1074" y="365" text-anchor="middle" class="value">8</text>
+    <text x="927" y="431" text-anchor="middle" class="value">43</text>
+    <text x="1074" y="431" text-anchor="middle" class="value">3</text>
+  </g>
+
+  <!-- Each head points from a foreign key to its referenced key at the outside table border. -->
+  <g id="foreign-key-arrows" fill="#50677c" stroke="none">
+    <path data-connector="true" d="M411 266H361" fill="none" stroke="#50677c" stroke-width="4"/>
+    <polygon points="361,257 343,266 361,275"/>
+    <path data-connector="true" d="M789 266H839" fill="none" stroke="#50677c" stroke-width="4"/>
+    <polygon points="839,257 857,266 839,275"/>
+  </g>
+
+  <!-- Reading the arrows and keys makes the many-to-many example usable without SQL experience. -->
+  <g id="read-the-keys">
+    <text x="48" y="574" class="muted">A primary key identifies a row. Each arrow points from a foreign key to the ID it references.</text>
+    <text x="48" y="608" class="muted">In the join table, the two IDs together form the primary key.</text>
+  </g>
+
+  <!-- Scope labels repeat the row colors and spell out the IDs so color alone is never required. -->
+  <g id="catalog-lock-scope">
+    <text x="48" y="687" class="section">Which rows does PESSIMISTIC_WRITE lock for catalog 7?</text>
+    <rect x="48" y="719" width="211" height="62" rx="8" fill="#dceafa"/>
+    <text x="153" y="759" text-anchor="middle" class="mode">NORMAL</text>
+    <text x="287" y="758" class="body">Locks the Summer catalog row (ID 7).</text>
+    <rect x="48" y="795" width="211" height="62" rx="8" fill="#ffead0"/>
+    <text x="153" y="835" text-anchor="middle" class="mode">EXTENDED</text>
+    <text x="287" y="834" class="body">Also locks its two existing links, (7, 42) and (7, 43).</text>
+    <rect x="48" y="890" width="1104" height="75" rx="10" fill="#f0f3f6"/>
+    <text x="72" y="937" class="body">To protect the 8 units in stock, lock the row for product 42 itself.</text>
+  </g>
+</svg>

@@ -15,7 +15,9 @@ Create a self-contained Markdown card that teaches someone who does not already 
 - When revising, follow the user's selected mode or the established mode in the subject index or task context. If none is recorded, choose from the lesson's scope: one focused idea is simple; comprehensive treatment is complex. Both modes use the same Markdown structure, so the absence of Front/Back headings does not identify a mode. Do not add mode metadata to the document.
 - Pass the selected mode explicitly to the validator: `--mode simple` or `--mode complex`. When revising a legacy card with Front/Back sections, convert the requested file to the shared structure while preserving its teaching content.
 
-Do not silently relax simple mode's 3,500-character limit. It counts the teaching body, excluding the opening title, navigation line, and final `# Sources` section. Narrow a simple-mode card to its core lesson instead of changing its mode merely to exceed the limit.
+In both modes, character limits count the teaching body by default. Exclude the opening title, the back link, and the entire final `# Sources` section. Use a whole-file count only when the user explicitly asks for one.
+
+Simple cards allow up to 3,500 teaching-body characters. Narrow a simple card to its core lesson if needed. Articles have no default cap. When the user asks for an article “under 10k chars,” pass `--under-chars 10k` during final validation and use the reported teaching-body count. Substitute the requested limit for other sizes.
 
 ## Research before drafting
 
@@ -60,7 +62,7 @@ Immediately after the level-one title, add exactly one standalone upward navigat
 
 Separate the title, navigation line, and following content with blank lines; allow no other content between the title and navigation line. In both modes, the teaching content follows the navigation line directly. Do not add `# Front`, `# Back`, or equivalent boundary sections. A simple card is a short explanation in the same layout as an article, without a separate question-and-answer wrapper.
 
-Add or update the navigation link whenever creating or revising a card. Neither mode may contain HTML comments in Markdown prose, including mode metadata. Fenced code examples and XML comments in separate SVG assets are unaffected. The navigation line does not count toward the simple-mode character limit.
+Add or update the navigation link whenever creating or revising a card. Neither mode may contain HTML comments in Markdown prose, including mode metadata. Fenced code examples and XML comments in separate SVG assets are unaffected.
 
 Use this shared order, adapting the navigation label and target to the card's location. This simple-mode example is for a card one directory below `system design/Readme.md`. For the numbered article template, see [complex mode](references/complex-mode.md).
 
@@ -115,7 +117,7 @@ Place each visual immediately after the paragraph or heading that introduces wha
 
 ## Final validation
 
-Run the validator from this skill directory with the selected `--mode simple` or `--mode complex`. Mode selection is explicit. Heading recognition accepts LF and CRLF line endings. HTML comments outside fenced code are invalid in both modes, including mode metadata. Fenced code examples do not count as headings, navigation, comments, sources, or teaching visuals; their text still counts toward the simple-mode teaching-body budget. Local navigation checks verify the exact case of each path component and the existence of the README fragment, including heading anchors and explicit HTML anchors:
+Run the validator from this skill directory with the selected `--mode simple` or `--mode complex`. Mode selection is explicit. Heading recognition accepts LF and CRLF line endings. HTML comments outside fenced code are invalid in both modes, including mode metadata. Fenced code examples do not count as headings, navigation, comments, sources, or teaching visuals. Their text counts toward the teaching-body budget in both modes. Local navigation checks verify the exact case of each path component and the existence of the README fragment, including heading anchors and explicit HTML anchors:
 
 ```bash
 python3 scripts/check_anki_card.py --mode simple path/to/card.md

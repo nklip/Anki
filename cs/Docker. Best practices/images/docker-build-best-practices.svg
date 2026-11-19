@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="title description">
+  <title id="title">Only the JAR enters the runtime image</title>
+  <desc id="description">A two-stage Docker build for the orders service. In the first stage, Maven uses the Java 25 Development Kit to compile the project, run its tests, and package target/app.jar. Docker copies this file to /app/app.jar in a fresh Java runtime image. When a container starts, Java runs the JAR.</desc>
+
+  <!-- Shared type hierarchy and colors for the two Dockerfile stages. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #253b4c; text-anchor: start; }
+      .title { font-size: 52px; font-weight: bold; fill: #172b3a; }
+      .subtitle { font-size: 30px; }
+      .stage { font-size: 42px; font-weight: bold; }
+      .build { fill: #175b8e; }
+      .runtime { fill: #205d40; }
+      .heading { font-size: 33px; font-weight: bold; }
+      .body { font-size: 28px; }
+      .code { font-family: Menlo, Consolas, monospace; font-size: 29px; }
+    </style>
+  </defs>
+
+  <!-- Title names the file that crosses the build boundary. -->
+  <rect width="1200" height="1000" fill="#f8fafc"/>
+  <g id="heading">
+    <text class="title" x="60" y="89">Only the JAR enters the runtime image</text>
+    <text class="subtitle" x="62" y="143">A two-stage Docker build for the Java 25 orders service</text>
+  </g>
+
+  <!-- Both project inputs and Maven's output belong to the blue build stage. -->
+  <g id="build-stage">
+    <rect x="60" y="188" width="1080" height="350" rx="22" fill="#eaf3fb" stroke="#8eb5d2" stroke-width="3"/>
+    <text class="stage build" x="98" y="258">Build stage</text>
+    <text class="body" x="100" y="305">Maven builds with the Java Development Kit (JDK).</text>
+
+    <rect x="100" y="345" width="420" height="156" rx="13" fill="#ffffff" stroke="#b4ccde" stroke-width="2"/>
+    <text class="heading" x="126" y="392">Project files</text>
+    <text class="body" x="126" y="438">Source code and tests</text>
+    <text class="body" x="126" y="478">Maven wrapper and pom.xml</text>
+
+    <rect x="656" y="345" width="444" height="156" rx="13" fill="#ffffff" stroke="#b4ccde" stroke-width="2"/>
+    <text class="heading" x="682" y="392">Compile and test</text>
+    <text class="body" x="682" y="438">Maven packages the app as</text>
+    <text class="code build" x="682" y="479">target/app.jar</text>
+  </g>
+
+  <!-- Shaft ends inside its own head. The tip meets the output box. -->
+  <g id="project-to-build">
+    <path data-connector="true" d="M520 423 H635" fill="none" stroke="#175b8e" stroke-width="6"/>
+    <polygon points="632,411 655,423 632,435" fill="#175b8e"/>
+  </g>
+
+  <!-- File transfer into the fresh stage. Keep labels to the left of the arrow. -->
+  <g id="copy-artifact">
+    <text class="heading" x="100" y="596">Docker copies the Java archive (JAR)</text>
+    <text class="code" x="100" y="640">COPY --from=build</text>
+    <path data-connector="true" d="M878 540 V652" fill="none" stroke="#205d40" stroke-width="6"/>
+    <polygon points="865,649 891,649 878,673.5" fill="#205d40"/>
+  </g>
+
+  <!-- Runtime base supplies Java; the executable JAR comes from the first stage. -->
+  <g id="runtime-stage">
+    <rect x="60" y="675" width="1080" height="276" rx="22" fill="#eaf6ee" stroke="#8db89e" stroke-width="3"/>
+    <text class="stage runtime" x="98" y="746">Runtime stage</text>
+    <text class="body" x="100" y="796">A fresh base image supplies the Java 25 runtime.</text>
+    <text class="body" x="100" y="843">When a container starts, it runs the copied JAR.</text>
+    <rect x="100" y="867" width="490" height="59" rx="9" fill="#ffffff" stroke="#acd0b9" stroke-width="2"/>
+    <text class="code runtime" x="122" y="906">java -jar /app/app.jar</text>
+  </g>
+</svg>

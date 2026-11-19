@@ -2,55 +2,56 @@
 
 <sub>[Back to Computer Science](../Readme.md#content)</sub>
 
-**A trie (prefix tree) is a tree data structure that stores strings, such as words, along character paths.** Words with the same beginning share nodes, supporting exact-word and prefix lookups.
+**A trie (prefix tree) groups strings, such as words, by their first character, then their second, and so on.**
 
-## How it works
+For example, `tree`, `true`, and `try` all start with `tr`. That shared beginning is a **prefix**. When you type `tr` into a search box, autocomplete can go straight to the part of the tree containing those words.
 
-A **prefix** is an initial sequence of characters, such as `tr` in `tree`. The **root** is the starting node and represents the empty prefix. In a basic character trie, each downward step adds one character; paths branch when the next character differs.
+## Follow one word
 
-`tree`, `true`, and `try` share `root → t → tr`, then branch. Boxes show the whole prefix reached so far. Solid teal outlines mark stored words; black outlines mean prefix only. Numbers are optional example search frequencies.
+Each box in the diagram is a **node**. Start at the top box, the **root**. It is empty because you have read no letters yet. Follow one downward arrow per letter. Each label shows the letters read so far.
+
+To find `true`, trace `root → t → tr → tru → true`. At `tr`, the next letter `u` tells you to take the arrow to `tru`. The thick teal outline around `true` marks a stored word. The number 35 shows how often it was searched for in this example.
 
 ![trie-structure.svg](images/trie-structure.svg)
 
-## The lookup contrast
+## What happens when a search reaches `tr`?
 
-The `tr` node already exists, but its word-ending marker is off:
-
-| Question | Result |
+| What are you looking for? | What happens at `tr`? |
 | --- | --- |
-| Is `tr` a stored word? | **No:** its node has no word-ending marker. |
-| Does any stored word start with `tr`? | **Yes:** the prefix path exists and leads to stored words. |
-| Which stored words start with `tr`? | `tree`, `true`, `try`: explore only the subtree below `tr`. |
+| The exact word `true` | Two letters remain. Follow `u`, then `e`. The marked ending confirms a match. |
+| The exact word `tr` | All letters match, but the thin black outline means no word ends here. The exact lookup fails. |
+| The exact word `trap` | The next letter is `a`. No arrow from `tr` adds `a`, so the search stops immediately. |
+| All words starting with `tr` | Collect the marked words along the branches from here. You find `tree`, `true`, and `try`. You can skip the branches for `toy` and `win`. |
 
-**Prediction: what changes when we add `tr` as a stored word?** Its existing node gains a word-ending marker, shown by a teal outline. **No new nodes are needed.** Its children stay: a stored word can also be a prefix of longer words.
+## Add a word to an existing path
+
+To insert a word, follow its letters, adding a node wherever the next step is missing. Then mark the last node as a word ending. For `tr`, the whole path already exists. Only the outline of `tr` changes in the diagram.
 
 ![trie-after-tr-added.svg](images/trie-after-tr-added.svg)
 
-## Time Complexity
+Now an exact lookup for `tr` succeeds. Ask for all words starting with `tr` and you get four matches. Include `tr` itself, then keep going to find `tree`, `true`, and `try`. A word can end at a node that still has branches.
 
-For a fixed alphabet and constant-time child access:
+## Time and space complexity
 
-- **Insert, exact lookup, or delete:** **O(L)** for a word of `L` characters.
-- **Reach a prefix:** **O(P)** for `P` characters.
-- **List matches:** **O(P + V + C)**, where `V` is the number of nodes visited in that subtree and `C` is the number of characters returned. Finding the prefix alone does not list its matches.
+Assume a fixed alphabet and that choosing the next letter takes constant time.
 
-## Space Complexity
+- **Looking up, inserting, or deleting a word** takes **O(L)** time in the worst case, where `L` is the word length. A lookup for `true` follows just four arrows, however many other words are stored.
+- **Finding a prefix** takes **O(P)** time for `P` letters. To list all matches, add the work of visiting each node below that prefix and writing each letter of the returned words.
+- **Memory** depends on how many prefixes are distinct. Each new letter needs at most one new node. For `S` total letters across the stored words, that gives at most `S + 1` nodes including the root, or **O(S)** space. Reserving a link for every possible next letter at every node can leave many slots empty.
 
-Let `S` be the total characters in all stored words. There are at most `S + 1` nodes, including the root: **O(S)** worst-case space for a fixed alphabet. Shared prefixes reduce the node count. An array of child pointers at every node can still use substantial memory.
+## Where tries are used
 
-## Where it is used
+- **Autocomplete** can use search counts to rank matches. In the first diagram, `true` (35 searches) would appear ahead of `try` (29) and `tree` (10).
+- **A spell checker** can use exact lookup to see whether its dictionary contains a word. Suggesting a correction takes additional matching logic.
+- **Internet Protocol (IP) routing** uses trie variants to follow address bits and select the most specific matching network route.
 
-- **Autocomplete:** typing `tr` can suggest `tree`, `true`, and `try`.
-- **Dictionary lookup and spell checking:** check whether a complete word is stored. Suggesting typo corrections needs extra matching logic.
-- **Internet Protocol (IP) routing:** trie variants follow address bits to select the most specific matching network route.
-
-Java SE 26 has no standard Collections trie. Apache Commons Collections provides `PatriciaTrie` for string prefix queries.
+In Java, Apache Commons Collections provides `PatriciaTrie` for string prefix queries. Java SE 26's standard Collections Framework has no built-in trie.
 
 # Sources
 
-- [Princeton Algorithms — Tries: prefix matching, word boundaries, and applications](https://algs4.cs.princeton.edu/52trie/)
-- [Princeton Algorithms — TrieST implementation and operation costs](https://algs4.cs.princeton.edu/code/edu/princeton/cs/algs4/TrieST.java.html)
+- [Stanford CS106B — Letter tries, word endings, and lookup costs (slides 9–11)](https://web.stanford.edu/class/archive/cs/cs106b/cs106b.1212/lectures/28-lexicon/slides)
+- [Sedgewick and Wayne, Algorithms — TrieST implementation](https://github.com/kevin-wayne/algs4/blob/master/src/main/java/edu/princeton/cs/algs4/TrieST.java)
 - [Linux Kernel documentation — LC-trie and longest-prefix route lookup](https://docs.kernel.org/networking/fib_trie.html)
-- [Java SE 26 — Collections Framework](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/doc-files/coll-index.html)
+- [Java SE 26 — Outline of the Collections Framework](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/doc-files/coll-reference.html)
 - [Apache Commons Collections — PatriciaTrie](https://commons.apache.org/proper/commons-collections/apidocs/org/apache/commons/collections4/trie/PatriciaTrie.html)
 - [Repository chapter 13 — Search Autocomplete, trie diagram](../../system%20design/13.%20Search%20Autocomplete/Readme.md)

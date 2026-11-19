@@ -4,7 +4,7 @@
 
 Java study materials covering language features, collections, concurrency, the JVM, garbage collection, persistence, and application development.
 
-The 71 topics stored here include **35 simple Anki cards** with Front and Back sections and **36 articles** for longer explanations. The index also links to the language-independent Inversion of Control article in Computer Science. The Format column identifies each one.
+The 70 topics stored here include **35 simple Anki cards** and **35 articles** for longer explanations. The Format column identifies each one.
 
 Every topic lives in its own folder as `Readme.md`, with its teaching diagrams in a sibling `images/` directory. Diagrams used by several topics are copied into each topic's own `images/` directory.
 
@@ -114,10 +114,8 @@ Every topic lives in its own folder as `Readme.md`, with its teaching diagrams i
 | [Optimistic vs Pessimistic Locking](./Optimistic%20vs%20Pessimistic%20Locking/Readme.md) | Article |
 | [Transactions. Atomikos](./Transactions.%20Atomikos/Readme.md) | Simple card |
 
-### Spring and deployment
+### Spring
 
 | Topic | Format |
 | --- | --- |
-| [Docker. Best practices](./Docker.%20Best%20practices/Readme.md) | Article |
-| [Inversion of Control](../cs/Inversion%20of%20Control/Readme.md) | Article (Computer Science) |
 | [Spring. Scopes](./Spring.%20Scopes/Readme.md) | Article |

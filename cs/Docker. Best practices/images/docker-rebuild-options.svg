@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="title description">
+  <title id="title">What does each rebuild flag do?</title>
+  <desc id="description">The pull option asks the image registry which base image the Dockerfile tag currently selects. The no-cache option reruns Dockerfile steps even if their layers are cached. Using both checks the base and reruns the steps. A digest identifies exact base image content until you change the digest.</desc>
+
+  <!-- Typography and colors match the other Docker build diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; text-anchor: start; fill: #253b4c; }
+      .title { font-size: 56px; font-weight: bold; fill: #172b3a; }
+      .intro { font-size: 36px; }
+      .flag { font-family: Menlo, Consolas, monospace; font-size: 50px; font-weight: bold; }
+      .label { font-size: 42px; font-weight: bold; }
+      .body { font-size: 36px; }
+      .command { font-family: Menlo, Consolas, monospace; font-size: 43px; fill: #172b3a; }
+      .blue { fill: #175b8e; }
+      .green { fill: #205d40; }
+    </style>
+  </defs>
+
+  <!-- The two parallel panels correspond to the two parts of the build. -->
+  <rect width="1200" height="1000" fill="#f8fafc"/>
+  <g id="heading">
+    <text class="title" x="60" y="94">What does each rebuild flag do?</text>
+    <text class="intro" x="60" y="158">Docker builds on a base image, then applies Dockerfile steps.</text>
+  </g>
+
+  <!-- The registry resolves a mutable tag to a base image. -->
+  <g id="base-image">
+    <rect x="60" y="211" width="520" height="347" rx="22" fill="#eaf3fb" stroke="#8eb5d2" stroke-width="3"/>
+    <text class="flag blue" x="98" y="294">--pull</text>
+    <text class="label" x="98" y="373">Base image</text>
+    <text class="body" x="98" y="435">
+      <tspan x="98">Look up the FROM tag</tspan>
+      <tspan x="98" dy="46">in the registry and use</tspan>
+      <tspan x="98" dy="46">the image it points to.</tspan>
+    </text>
+  </g>
+
+  <!-- Cached instruction results are separate from the base image lookup. -->
+  <g id="dockerfile-steps">
+    <rect x="620" y="211" width="520" height="347" rx="22" fill="#eaf6ee" stroke="#8db89e" stroke-width="3"/>
+    <text class="flag green" x="658" y="294">--no-cache</text>
+    <text class="label" x="658" y="373">Dockerfile steps</text>
+    <text class="body" x="658" y="435">
+      <tspan x="658">Run the steps again,</tspan>
+      <tspan x="658" dy="46">even when the builder</tspan>
+      <tspan x="658" dy="46">has cached their layers.</tspan>
+    </text>
+  </g>
+
+  <!-- Each arrow ends at the outer stroke of the combined command panel. -->
+  <g id="combined-effects">
+    <path data-connector="true" d="M320 559.5 V602" fill="none" stroke="#175b8e" stroke-width="6"/>
+    <polygon points="307,600 333,600 320,624.5" fill="#175b8e"/>
+    <path data-connector="true" d="M880 559.5 V602" fill="none" stroke="#205d40" stroke-width="6"/>
+    <polygon points="867,600 893,600 880,624.5" fill="#205d40"/>
+  </g>
+
+  <!-- The terminal command combines the two independently selectable effects. -->
+  <g id="build-command">
+    <rect x="60" y="626" width="1080" height="166" rx="22" fill="#ffffff" stroke="#7890a3" stroke-width="3"/>
+    <text class="label" x="98" y="691">To do both in one build</text>
+    <text class="command" x="98" y="756">docker build --pull --no-cache .</text>
+  </g>
+
+  <!-- A digest selects fixed content even when the publisher moves a tag. -->
+  <g id="digest-pin">
+    <text class="label" x="60" y="875">What if FROM pins a digest?</text>
+    <text class="body" x="60" y="936">The base image stays the same until you update that digest.</text>
+  </g>
+</svg>
