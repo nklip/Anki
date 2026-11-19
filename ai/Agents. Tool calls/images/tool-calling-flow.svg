@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1431.818182" viewBox="0 0 1100 1050" role="img" aria-labelledby="title desc">
+<title id="title">A tool call in five steps</title>
+<desc id="desc">A sequence between two participants: the runtime, which is application code, and the model, which can request a tool or answer the question. Step 1: the runtime sends the question When does the meeting start and the definition of a read_file tool to the model. Step 2: the model replies with tool call R7, read_file with path notes.txt; this is only a request and nothing has run yet. Step 3: the runtime checks that the input is valid and the file is allowed, then the read_file code opens notes.txt and returns Meeting starts at 10:00; the model takes no part in this step. Step 4: the runtime returns result R7 to the model with the question and the matching tool call in context. Step 5: the model replies with the final answer, The meeting starts at 10:00, or with another tool call if more work is needed.</desc>
+<!-- Structure follows the five-step sequence in OpenAI's function-calling guide, redrawn in this folder's style with the article's notes.txt example. -->
+<!-- Shared native text and typography. Shafts end inside separate arrowhead bases. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1100" height="1050" fill="#ffffff"/>
+<text x="30" y="44" font-size="29" font-weight="700" text-anchor="start" fill="#172033">A tool call in five steps</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">Read from top to bottom. Each arrow points to the receiver of a message.</text>
+
+<!-- Lifelines sit under everything else; the step 3 card deliberately covers the runtime lifeline. -->
+<g id="lifelines">
+<line x1="150" y1="164" x2="150" y2="1030" stroke="#e2e8f0" stroke-width="6"/>
+<line x1="950" y1="164" x2="950" y2="1030" stroke="#e2e8f0" stroke-width="6"/>
+</g>
+
+<!-- Participants. -->
+<g id="participant-runtime">
+<rect x="30" y="104" width="240" height="60" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="150" y="130" font-size="23" font-weight="700" text-anchor="middle" fill="#172033">Runtime</text>
+<text x="150" y="153" font-size="18" font-weight="400" text-anchor="middle" fill="#64748b">application code</text>
+</g>
+<g id="participant-model">
+<rect x="830" y="104" width="240" height="60" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="950" y="130" font-size="23" font-weight="700" text-anchor="middle" fill="#172033">Model</text>
+<text x="950" y="153" font-size="18" font-weight="400" text-anchor="middle" fill="#64748b">requests tools or replies</text>
+</g>
+
+<!-- Activation bars: one pair per message row, centered on that row's arrow. -->
+<g id="activation-bars" stroke="#475569" stroke-width="8" stroke-linecap="round">
+<line x1="150" y1="237" x2="150" y2="293"/>
+<line x1="950" y1="237" x2="950" y2="293"/>
+<line x1="150" y1="402" x2="150" y2="458"/>
+<line x1="950" y1="402" x2="950" y2="458"/>
+<line x1="150" y1="753" x2="150" y2="809"/>
+<line x1="950" y1="753" x2="950" y2="809"/>
+<line x1="150" y1="918" x2="150" y2="974"/>
+<line x1="950" y1="918" x2="950" y2="974"/>
+</g>
+
+<!-- Step 1: runtime to model. The plain segment leaves the sender; the arrowhead tip stops short of the receiver's bar. -->
+<g id="step-1-request">
+<path data-connector="true" d="M 156,265 L 310,265" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<path data-connector="true" d="M 790,265 L 933,265" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="944,265 932,271 932,259" fill="#64748b"/>
+<rect x="310" y="190" width="480" height="150" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="344" y="224" font-size="21" font-weight="700" text-anchor="start" fill="#172033">Runtime sends a question and a definition</text>
+<rect x="330" y="240" width="440" height="38" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="344" y="265" font-size="16" font-weight="700" text-anchor="start" fill="#64748b">Definition</text>
+<text x="440" y="265" font-size="18" font-weight="400" text-anchor="start" fill="#172033">read_file(path): reads a text file</text>
+<rect x="330" y="286" width="440" height="38" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="344" y="311" font-size="16" font-weight="700" text-anchor="start" fill="#64748b">Question</text>
+<text x="440" y="311" font-size="18" font-weight="400" text-anchor="start" fill="#172033">“When does the meeting start?”</text>
+<circle cx="310" cy="190" r="18" fill="#172033"/>
+<text x="310" y="197" font-size="19" font-weight="700" text-anchor="middle" fill="#ffffff">1</text>
+</g>
+
+<!-- Step 2: model to runtime. -->
+<g id="step-2-tool-call">
+<path data-connector="true" d="M 944,430 L 790,430" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<path data-connector="true" d="M 310,430 L 167,430" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="156,430 168,424 168,436" fill="#64748b"/>
+<rect x="310" y="364" width="480" height="132" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="344" y="398" font-size="21" font-weight="700" text-anchor="start" fill="#172033">Model replies with a tool call</text>
+<rect x="330" y="414" width="440" height="38" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="344" y="439" font-size="16" font-weight="700" text-anchor="start" fill="#64748b">Call R7</text>
+<text x="440" y="439" font-size="18" font-weight="400" text-anchor="start" fill="#172033">read_file, path: "notes.txt"</text>
+<text x="344" y="479" font-size="18" font-weight="400" text-anchor="start" fill="#64748b">Only a request. Nothing has run yet.</text>
+<circle cx="310" cy="364" r="18" fill="#172033"/>
+<text x="310" y="371" font-size="19" font-weight="700" text-anchor="middle" fill="#ffffff">2</text>
+</g>
+
+<!-- Step 3: runtime side only. The heavier blue frame marks execution; the title names it too. -->
+<g id="step-3-execute">
+<rect x="30" y="520" width="760" height="162" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+<text x="64" y="554" font-size="21" font-weight="700" text-anchor="start" fill="#172033">Runtime checks the call, then runs the tool</text>
+<rect x="50" y="570" width="216" height="96" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+<text x="64" y="597" font-size="18" font-weight="700" text-anchor="start" fill="#172033">Check</text>
+<text x="64" y="623" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Is the input valid?</text>
+<text x="64" y="647" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Is this file allowed?</text>
+<rect x="302" y="570" width="216" height="96" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+<text x="316" y="597" font-size="18" font-weight="700" text-anchor="start" fill="#172033">Run the tool</text>
+<text x="316" y="623" font-size="18" font-weight="400" text-anchor="start" fill="#172033">The read_file code</text>
+<text x="316" y="647" font-size="18" font-weight="400" text-anchor="start" fill="#172033">opens notes.txt.</text>
+<rect x="554" y="570" width="216" height="96" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+<text x="568" y="597" font-size="18" font-weight="700" text-anchor="start" fill="#172033">Result</text>
+<text x="568" y="623" font-size="18" font-weight="400" text-anchor="start" fill="#172033">“Meeting starts</text>
+<text x="568" y="647" font-size="18" font-weight="400" text-anchor="start" fill="#172033">at 10:00.”</text>
+<path data-connector="true" d="M 266,618 L 291,618" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="302,618 290,624 290,612" fill="#64748b"/>
+<path data-connector="true" d="M 518,618 L 543,618" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="554,618 542,624 542,612" fill="#64748b"/>
+<circle cx="30" cy="520" r="18" fill="#172033"/>
+<text x="30" y="527" font-size="19" font-weight="700" text-anchor="middle" fill="#ffffff">3</text>
+<!-- Note in the gap beside the model lifeline: the model is idle while code runs. -->
+<text x="806" y="591" font-size="18" font-weight="400" text-anchor="start" fill="#64748b">The model</text>
+<text x="806" y="615" font-size="18" font-weight="400" text-anchor="start" fill="#64748b">takes no part</text>
+<text x="806" y="639" font-size="18" font-weight="400" text-anchor="start" fill="#64748b">in this step.</text>
+</g>
+
+<!-- Step 4: runtime to model. -->
+<g id="step-4-result">
+<path data-connector="true" d="M 156,781 L 310,781" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<path data-connector="true" d="M 790,781 L 933,781" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="944,781 932,787 932,775" fill="#64748b"/>
+<rect x="310" y="706" width="480" height="150" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="344" y="740" font-size="21" font-weight="700" text-anchor="start" fill="#172033">Runtime sends the result back</text>
+<rect x="330" y="756" width="440" height="38" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="344" y="781" font-size="16" font-weight="700" text-anchor="start" fill="#64748b">Context</text>
+<text x="440" y="781" font-size="18" font-weight="400" text-anchor="start" fill="#172033">question + prior tool call</text>
+<rect x="330" y="802" width="440" height="38" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="344" y="827" font-size="16" font-weight="700" text-anchor="start" fill="#64748b">Result R7</text>
+<text x="440" y="827" font-size="18" font-weight="400" text-anchor="start" fill="#172033">“Meeting starts at 10:00.”</text>
+<circle cx="310" cy="706" r="18" fill="#172033"/>
+<text x="310" y="713" font-size="19" font-weight="700" text-anchor="middle" fill="#ffffff">4</text>
+</g>
+
+<!-- Step 5: model to runtime. -->
+<g id="step-5-answer">
+<path data-connector="true" d="M 944,946 L 790,946" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<path data-connector="true" d="M 310,946 L 167,946" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="156,946 168,940 168,952" fill="#64748b"/>
+<rect x="310" y="880" width="480" height="132" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="344" y="914" font-size="21" font-weight="700" text-anchor="start" fill="#172033">Model replies with the final answer</text>
+<rect x="330" y="930" width="440" height="38" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="344" y="955" font-size="16" font-weight="700" text-anchor="start" fill="#64748b">Answer</text>
+<text x="440" y="955" font-size="18" font-weight="400" text-anchor="start" fill="#172033">“The meeting starts at 10:00.”</text>
+<text x="344" y="995" font-size="18" font-weight="400" text-anchor="start" fill="#64748b">Or another tool call, if more work is needed.</text>
+<circle cx="310" cy="880" r="18" fill="#172033"/>
+<text x="310" y="887" font-size="19" font-weight="700" text-anchor="middle" fill="#ffffff">5</text>
+</g>
+</svg>

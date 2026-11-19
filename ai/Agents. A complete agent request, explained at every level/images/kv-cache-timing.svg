@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="886.363636" viewBox="0 0 1100 650" role="img" aria-labelledby="title desc">
+<title id="title">KV caching and the difference between selection and processing</title>
+<desc id="desc">Processing input tokens P and Q creates cached key-value pairs. Selecting R does not cache R. A subsequent forward computation processes R, appends its keys and values, and produces scores for token S. Key-value storage is maintained per attention layer.</desc>
+<!-- Shared native text and typography. Shafts end inside separate arrowhead bases. -->
+<defs><style>text { font-family: Arial, Helvetica, sans-serif; }</style></defs>
+<rect width="1100" height="650" fill="#ffffff"/>
+<text x="30" y="44" font-size="29" font-weight="700" text-anchor="start" fill="#172033">A chosen token enters the KV cache only when the model processes it</text>
+<text x="30" y="78" font-size="20" font-weight="400" text-anchor="start" fill="#64748b">KV cache = saved key and value vectors from processed positions, reused by attention in each model block.</text>
+<!-- Process prompt; preserve reading order and text clearance. -->
+<g id="process-prompt">
+<rect x="30" y="133" width="215" height="245" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="44" y="172" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Process prompt</text>
+<text x="44" y="213" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Input tokens: P, Q</text>
+<text x="44" y="247" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Compute their K and V.</text>
+<text x="44" y="281" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Cache now: P, Q</text>
+<text x="44" y="315" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Score next candidates.</text>
+</g>
+<!-- Select R; preserve reading order and text clearance. -->
+<g id="select-r">
+<rect x="305" y="133" width="215" height="245" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="319" y="172" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Select R</text>
+<text x="319" y="213" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Choose token R</text>
+<text x="319" y="247" font-size="18" font-weight="400" text-anchor="start" fill="#172033">from the scores.</text>
+<text x="319" y="281" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Cache still: P, Q</text>
+<text x="319" y="315" font-size="18" font-weight="400" text-anchor="start" fill="#172033">R is not processed yet.</text>
+</g>
+<!-- Process R; preserve reading order and text clearance. -->
+<g id="process-r">
+<rect x="580" y="133" width="215" height="245" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+<text x="594" y="172" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Process R</text>
+<text x="594" y="213" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Feed R into the model.</text>
+<text x="594" y="247" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Reuse P and Q’s K/V.</text>
+<text x="594" y="281" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Compute R’s K/V.</text>
+<text x="594" y="315" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Cache now: P, Q, R</text>
+</g>
+<!-- Select S; preserve reading order and text clearance. -->
+<g id="select-s">
+<rect x="855" y="133" width="215" height="245" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="869" y="172" font-size="23" font-weight="700" text-anchor="start" fill="#172033">Select S</text>
+<text x="869" y="213" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Scores from R’s state</text>
+<text x="869" y="247" font-size="18" font-weight="400" text-anchor="start" fill="#172033">select the next token S.</text>
+<text x="869" y="281" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Cache still: P, Q, R</text>
+<text x="869" y="315" font-size="18" font-weight="400" text-anchor="start" fill="#172033">Repeat if continuing.</text>
+</g>
+<path data-connector="true" d="M 245,255 L 294,255" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="305,255 293,261 293,249" fill="#64748b"/>
+<path data-connector="true" d="M 520,255 L 569,255" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="580,255 568,261 568,249" fill="#64748b"/>
+<path data-connector="true" d="M 795,255 L 844,255" fill="none" stroke="#64748b" stroke-width="2.5"/>
+<polygon points="855,255 843,261 843,249" fill="#64748b"/>
+<!-- Key value meaning; preserve reading order and text clearance. -->
+<g id="key-value-meaning">
+<rect x="30" y="429" width="500" height="143" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="50" y="467" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Key (K)</text>
+<text x="50" y="508" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Numbers used to score relevance</text>
+<text x="50" y="540" font-size="20" font-weight="400" text-anchor="start" fill="#172033">when attention compares positions.</text>
+<rect x="570" y="429" width="500" height="143" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+<text x="590" y="467" font-size="24" font-weight="700" text-anchor="start" fill="#172033">Value (V)</text>
+<text x="590" y="508" font-size="20" font-weight="400" text-anchor="start" fill="#172033">Content numbers that attention combines</text>
+<text x="590" y="540" font-size="20" font-weight="400" text-anchor="start" fill="#172033">according to those relevance scores.</text>
+</g>
+<text x="30" y="616" font-size="21" font-weight="700" text-anchor="start" fill="#172033">A cache saves repeated calculation. It does not update learned weights or run an external tool.</text>
+</svg>
