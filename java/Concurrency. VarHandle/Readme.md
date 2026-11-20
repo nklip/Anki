@@ -4,26 +4,22 @@
 
 **Variable Handles (`VarHandle`) were introduced in JDK 9 with JEP 193.**
 
-A `VarHandle` is an immutable, strongly typed handle to a variable—or a family of variables such as array elements. The handle identifies **what can be accessed**; each operation selects **how it is accessed**: plain, opaque, acquire/release, volatile, or atomic read-modify-write.
+**A `VarHandle` is a typed reference to a variable**, such as an instance field, static field, or array element. An **access mode** specifies how a read, write, or update behaves.
 
-Use it for **fine-grained ordering or atomic access to existing fields and array elements**, especially inside concurrent data structures and runtime libraries. It is not automatically faster than `AtomicInteger` or `synchronized`; choose it for the required semantics and measure performance in the actual workload.
+- The **variable type** is the stored type, such as `int`.
+- **Coordinate types** describe the arguments that locate a variable. Pass the object for an instance field, the array and index for an element, and no coordinates for a static field.
 
-The core concepts are locating the target variable, choosing memory ordering, and performing atomic updates such as compare-and-set (CAS).
+The goal of VarHandle is to define a standard for invoking equivalents of `java.util.concurrent.atomic` and `sun.misc.Unsafe` operations on fields and array elements.
 
-## Variable type and coordinates
+1. [What a handle identifies](#1-what-a-handle-identifies)
+2. [How to enforce a limit](#2-how-to-enforce-a-limit)
+3. [How a ready flag publishes data](#3-how-a-ready-flag-publishes-data)
+4. [When to use a VarHandle](#4-when-to-use-a-varhandle)
+5. [Check your understanding](#5-check-your-understanding)
 
-Every handle has:
+## 1. What a handle identifies
 
-- one **variable type**: the type stored at the target; and
-- zero or more **coordinate types**: the values needed to locate one target variable.
-
-| Target | Variable type | Coordinates |
-|---|---|---|
-| Instance field `Counter.value` | `int` | `Counter` receiver |
-| Static field | field type | none |
-| `String[]` element | `String` | `String[]` and `int` index |
-
-For an instance field, create the handle with an appropriately privileged `MethodHandles.Lookup`:
+Each `Counter` has its own `int value`. All threads can share the immutable `static final` handle `VALUE`. Its `getAndAdd(this, 1)` adds 1 to **this counter** and returns its old value.
 
 ```java
 import java.lang.invoke.MethodHandles;
@@ -31,67 +27,65 @@ import java.lang.invoke.VarHandle;
 
 final class Counter {
     private int value;
-
     private static final VarHandle VALUE;
 
     static {
         try {
             VALUE = MethodHandles.lookup().findVarHandle(
                     Counter.class, "value", int.class);
-        } catch (ReflectiveOperationException exception) {
-            throw new ExceptionInInitializerError(exception);
+        } catch (ReflectiveOperationException e) {
+            throw new ExceptionInInitializerError(e);
         }
     }
 
-    int getVolatile() {
-        return (int) VALUE.getVolatile(this);
-    }
-
-    void setRelease(int next) {
-        VALUE.setRelease(this, next);
-    }
-
-    boolean compareAndSet(int expected, int update) {
-        return VALUE.compareAndSet(this, expected, update);
+    int incrementAndGet() {
+        int previous = (int) VALUE.getAndAdd(this, 1);
+        return previous + 1;
     }
 }
 ```
 
-`VALUE` has variable type `int` and coordinate type `Counter`. Thus `this` is the first argument to each access operation. Access checking happens when `findVarHandle()` creates the handle, so keep a handle private unless callers should receive that access capability.
+The lookup checks field access once. The cast `(int)` gives the result type. `javac` accepts `1L`, but passing a `long` to this `int` handle throws `WrongMethodTypeException` at run time.
 
-An array-element handle uses the array and index as coordinates. These statements belong inside a method, with the imports above:
+For array elements, `MethodHandles.arrayElementVarHandle(int[].class)` works on any `int[]`.
+
+Use `findStaticVarHandle` for static fields. Here `findVarHandle` on a static field would throw `IllegalAccessException`, wrapped by the initializer in `ExceptionInInitializerError`.
+
+## 2. How to enforce a limit
+
+With 7 reservations and a limit of 8, both threads see a free place. **`getAndAdd` adds unconditionally**, so two calls take the count to 9. **Compare-and-set (CAS)** checks for an expected value and writes only on a match, in one atomic step.
+
+Both call `VALUE.compareAndSet(this, 7, 8)` on the same counter. The diagram's `target` is `this`, the object coordinate. One call writes 8 and returns `true`. The other finds 8, writes nothing, and returns `false`.
+
+![concurrency-varhandle-cas-workflow.svg](images/concurrency-varhandle-cas-workflow.svg)
+
+`Counter.tryReserve` adds a limit check after the diagram's step 1, the read. If the counter is full, it returns `false`.
 
 ```java
-VarHandle element =
-        MethodHandles.arrayElementVarHandle(String[].class);
-
-String[] values = new String[10];
-element.setRelease(values, 3, "ready");
-String value = (String) element.getAcquire(values, 3);
+boolean tryReserve(int limit) {
+    while (true) {
+        int current = (int) VALUE.getVolatile(this);
+        if (current >= limit) {
+            return false;
+        }
+        if (VALUE.compareAndSet(this, current, current + 1)) {
+            return true;
+        }
+    }
+}
 ```
 
-Array type, null, and bounds checks still apply. Access methods are **signature-polymorphic**: one method name accepts different call signatures, checked against the handle at invocation time. Incompatible coordinate, value, or return types can cause `WrongMethodTypeException` or `ClassCastException`.
+`getVolatile` and CAS use volatile reads. A successful CAS also uses a volatile write. See [section 3](#3-how-a-ready-flag-publishes-data).
 
-## Access modes choose the memory semantics
+`compareAndExchange` makes the same update and returns the **witnessed value** it read. Here the winner gets 7 and the other caller gets 8.
 
-Read the top row from weaker to stronger ordering, then use the lower flow to see release/acquire publication.
+For references, CAS checks whether the current and expected values refer to the same object. For `float` and `double`, it compares raw bits, so `+0.0` and `-0.0` differ.
+
+## 3. How a ready flag publishes data
+
+Give both threads the same `Publication` before starting them. Follow the lower half of the diagram. The **producer** writes 42 to `payload`, then sets `ready` to 1 once (release). If the **consumer** reads that 1 (acquire), it must see 42 in `payload`. A 0 means it can retry.
 
 ![concurrency-varhandle-access-modes.svg](images/concurrency-varhandle-access-modes.svg)
-
-| Mode | Main guarantee | Typical use |
-|---|---|---|
-| `get` / `set` | Ordinary non-volatile field semantics; no cross-thread ordering | Thread confinement or synchronization supplied elsewhere |
-| `getOpaque` / `setOpaque` | Atomic access and a consistent order for the same variable; no ordering guarantee for other variables | Specialized polling or progress state |
-| `getAcquire` / `setRelease` | Earlier producer accesses stay before the release; later consumer accesses stay after a matching acquire | One-way publication |
-| `getVolatile` / `setVolatile` | Volatile semantics plus a total order among volatile operations | Strong, straightforward visibility and ordering |
-
-Plain `get()` and `set()` are guaranteed bitwise atomic for references and primitive values up to 32 bits. Unless a handle's factory documents otherwise, they are also atomic for `long` and `double` on 64-bit platforms; the VarHandle API allows non-atomic plain access to those types on 32-bit platforms. Other supported read/write modes provide atomic access for references and all primitive types.
-
-Opaque access alone does **not** publish changes to other variables. For that, use a suitable release/acquire or stronger protocol.
-
-### Release/acquire publication
-
-This is a one-shot example: one producer calls `publish()` once, and consumers use the same safely shared `Publication` instance. Here the flag is never reset, and the payload is not changed again.
 
 ```java
 import java.lang.invoke.MethodHandles;
@@ -99,16 +93,15 @@ import java.lang.invoke.VarHandle;
 
 final class Publication {
     private int payload;
-    private int ready;
-
+    private int ready;  // starts at 0
     private static final VarHandle READY;
 
     static {
         try {
             READY = MethodHandles.lookup().findVarHandle(
                     Publication.class, "ready", int.class);
-        } catch (ReflectiveOperationException exception) {
-            throw new ExceptionInInitializerError(exception);
+        } catch (ReflectiveOperationException e) {
+            throw new ExceptionInInitializerError(e);
         }
     }
 
@@ -117,120 +110,92 @@ final class Publication {
         READY.setRelease(this, 1);
     }
 
-    int consume() {
-        if ((int) READY.getAcquire(this) != 1) {
-            return -1;
+    int tryRead() {
+        if ((int) READY.getAcquire(this) == 1) {
+            return payload;
         }
-        return payload;
+        return -1;  // not ready yet
     }
 }
 ```
 
-If `getAcquire()` observes the `1` published by `setRelease()`, the producer's earlier `payload = 42` is ordered before the consumer's later read of `payload`.
+The diagram's top row compares four **access modes**.
 
-The operation overrides the field declaration's ordering. `HANDLE.get(receiver)` is a plain access even if the field is declared `volatile`; `HANDLE.getVolatile(receiver)` has volatile semantics even when the field is not declared `volatile`. Mixing modes is valid only when the whole protocol remains correct.
+- **Plain** (`get` / `set`) adds no cross-thread ordering.
+- **Opaque** (`getOpaque` / `setOpaque`) orders updates to the flag alone.
+- **Acquire/release** makes the payload visible when the consumer sees the producer's release.
+- **Volatile** also places all volatile operations in a single order.
 
-## Compare-and-set is one atomic conditional update
+The handle method sets the ordering. Even on a `volatile` field, `get` is plain. On an ordinary field, `getVolatile` is volatile.
 
-The diagram first shows success versus failure, then the retry loop used when the new value depends on the current value.
+## 4. When to use a VarHandle
 
-![concurrency-varhandle-cas-workflow.svg](images/concurrency-varhandle-cas-workflow.svg)
-
-For the `int` field in `Counter`, `compareAndSet(target, expected, update)` compares the current value with `expected` using `==` and writes `update` only if they match. The comparison and conditional write form **one indivisible operation**. It returns `true` on success or `false` on failure.
-
-For references, comparison uses identity, not `equals()`. For `float` and `double` fields or array elements, it compares **raw bits**: `+0.0` and `-0.0` differ, and NaN (not-a-number) values must have matching bit patterns. Thus the comparison is not ordinary floating-point `==`.
-
-`compareAndSet()` reads with volatile semantics and writes with volatile semantics on success. A failed CAS performs no write.
-
-Use a retry loop when another thread may change the value between the read and the attempted update. Add this method inside `Counter`:
-
-```java
-int incrementAndGet() {
-    int current;
-    int next;
-
-    do {
-        current = (int) VALUE.getVolatile(this);
-        next = current + 1;
-    } while (!VALUE.compareAndSet(this, current, next));
-
-    return next;
-}
-```
-
-If the CAS fails, the loop rereads and recalculates instead of overwriting the winning thread's update.
-
-For supported numeric types, the built-in atomic operation is shorter. An alternative body for `Counter.incrementAndGet()` is:
-
-```java
-int previous = (int) VALUE.getAndAdd(this, 1);
-return previous + 1;
-```
-
-`compareAndExchange()` performs the same conditional exchange but returns the value it actually witnessed, which can avoid a separate reread. Weak compare-and-set variants may fail spuriously even when the value appears to match, so they normally belong in retry loops with a deliberately selected ordering variant.
-
-## Supported operations and fences
-
-Not every handle supports every mode:
-
-- a handle to a `final` field is read-only;
-- numeric updates such as `getAndAdd()` require a supported numeric variable type;
-- bitwise updates require a supported integral or boolean type;
-- unsupported operations throw `UnsupportedOperationException`.
-
-Check a mode when building generic low-level code. For example, inside a `Counter` method:
-
-```java
-boolean supported = VALUE.isAccessModeSupported(
-        VarHandle.AccessMode.GET_AND_ADD);
-```
-
-Static methods such as `VarHandle.acquireFence()`, `releaseFence()`, and `fullFence()` constrain reordering without accessing a variable. They are advanced primitives; a correctly paired access mode is usually clearer because the synchronization point remains visible in the code.
-
-## Choosing the right abstraction
-
-| Need | Prefer |
+| Need | Tool |
 |---|---|
-| Simple visibility for one declared field | `volatile` |
-| Convenient atomic counter or reference | `AtomicInteger`, `AtomicReference`, etc. |
-| Ordered or atomic access to an existing field or array element | `VarHandle` |
-| Several operations or fields protected as one invariant | `synchronized` or `Lock` |
+| A shared flag | Declare the field `volatile`. |
+| A standalone counter | `AtomicInteger.incrementAndGet()` |
+| Atomic or ordered access to an existing field or array element | Use a `VarHandle`. Writing through a handle to a `final` field throws `UnsupportedOperationException`. |
+| One change spanning several fields | Use the same `synchronized` lock for updates and reads. |
 
-`VarHandle` is useful in concurrent collections, queues, state machines, runtime libraries, and atomic array algorithms. It is a safe standard replacement for many on-heap `sun.misc.Unsafe` memory-access operations, but it is **not** a transaction over multiple variables. Prefer higher-level concurrency utilities in ordinary application code when they express the intent directly.
+Using a `VarHandle` gives no automatic speed advantage over `AtomicInteger` or `synchronized`.
 
-## Where VarHandle is used in production software
+The last example uses the **existing field** approach. One shared handle updates each object's `int refCount`. A separate `AtomicInteger` per object would take space and add a reference to follow.
 
-These are concrete implementations in released software. The examples use OpenJDK 25 and Elasticsearch 9. Implementation choices can change between releases.
+### Where libraries use VarHandle
 
-| System or library | Component and actual use | Why it matters |
+| Where | Operation and target | Purpose |
 |---|---|---|
-| **OpenJDK 25.0.4.1** | `ConcurrentLinkedQueue.offer()` uses `NEXT.compareAndSet(...)` to attach a new linked-list node. | Concurrent producers can append without overwriting another producer's link. |
-| **OpenJDK 25.0.4.1** | `CompletableFuture.completeValue()` uses `RESULT.compareAndSet(this, null, ...)` to record completion. | Only one competing attempt can change the result from incomplete to completed. |
-| **LMAX Disruptor 4.0.0** — event-processing library | `MultiProducerSequencer` uses an `int[]` element handle: `setRelease` publishes a slot's availability; `getAcquire` checks it. | Consumers can observe that a producer has finished writing an event into the ring buffer, an array reused in a cycle. |
-| **Elasticsearch 9.5.3** — search and analytics system | `AbstractRefCounted.tryIncRef()` retries `weakCompareAndSet` to increment a positive reference count; `decRef()` uses `getAndAdd(this, -1)` to decrement it. | The count tracks outstanding resource references. Releasing the last reference changes the count from 1 to 0 and triggers `closeInternal()` for cleanup. |
+| OpenJDK · `ConcurrentLinkedQueue.offer` | `compareAndSet` on a node's `next` link | Append only if the link is empty. When two producers race, one links its item and the other retries. |
+| OpenJDK · `CompletableFuture.completeValue` | `compareAndSet` on `result` | Fill the result only while it is `null`. Only one competing completion wins. |
+| OpenJDK · `AtomicReferenceArray` | `arrayElementVarHandle(Object[].class)`, the factory from §1 | `getAndSet` uses this handle to replace one element and return its old reference atomically. |
+| LMAX Disruptor · event-processing library | `setRelease` and `getAcquire` on a slot's availability flag | Publish an event in a ring buffer, an array whose slots are reused. A consumer that sees the matching flag can read the event written there. |
+| Elasticsearch · `AbstractRefCounted.decRef` | `getAndAdd(this, -1)` on `refCount` | Release a reference. The caller that gets back 1 reduced the count to 0 and closes the resource. |
 
-These examples connect directly to the CAS, publication, and atomic-add operations above. They are implementation details inside these systems and libraries; application code can use their public APIs without constructing a handle itself.
+## 5. Check your understanding
 
-## Memory aid
+1. Two counters share the same `VALUE` handle. Which one gets incremented?
 
-**Handle = target type + coordinates.**
+   <details>
+   <summary>Answer</summary>
 
-**Access mode = ordering and atomicity for this operation.**
+   The object passed as the coordinate. Inside `incrementAndGet()`, that is `this`.
 
-**CAS = compare and conditionally replace one variable atomically.**
+   </details>
+
+2. Two callers see 7 reservations. Why does only one `tryReserve(8)` succeed?
+
+   <details>
+   <summary>Answer</summary>
+
+   Only one CAS changes 7 to 8. The other caller rereads 8 and stops at the limit.
+
+   </details>
+
+3. If `getOpaque` reads 1, must the consumer see 42 in `payload`?
+
+   <details>
+   <summary>Answer</summary>
+
+   No. Opaque ordering covers only the flag. An acquire read that sees the release of 1 also makes `payload` visible.
+
+   </details>
+
+4. Why use one lock for both the debit and the credit in a transfer?
+
+   <details>
+   <summary>Answer</summary>
+
+   Each update affects one balance. Readers using the same lock see the whole transfer.
+
+   </details>
 
 # Sources
 
-- [JEP 193 — Variable Handles](https://openjdk.org/jeps/193)
-- [Oracle JDK 9 release notes — JEP 193](https://docs.oracle.com/javase/9/whatsnew/)
-- [Java SE 25 API — `VarHandle`](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/invoke/VarHandle.html)
-- [Java SE 25 API — `MethodHandles.Lookup.findVarHandle()`](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/invoke/MethodHandles.Lookup.html#findVarHandle(java.lang.Class,java.lang.String,java.lang.Class))
-- [Java SE 25 API — `MethodHandles.arrayElementVarHandle()`](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/invoke/MethodHandles.html#arrayElementVarHandle(java.lang.Class))
-- [JEP 471 — Deprecate the Memory-Access Methods in `sun.misc.Unsafe` for Removal](https://openjdk.org/jeps/471)
-- [Doug Lea — Using JDK 9 Memory Order Modes](https://gee.cs.oswego.edu/dl/html/j9mm.html)
-- [OpenJDK 25.0.4.1 (`jdk-25.0.4.1-ga`) — `ConcurrentLinkedQueue` source](https://github.com/openjdk/jdk25u/blob/jdk-25.0.4.1-ga/src/java.base/share/classes/java/util/concurrent/ConcurrentLinkedQueue.java#L354)
-- [OpenJDK 25.0.4.1 (`jdk-25.0.4.1-ga`) — `CompletableFuture` source](https://github.com/openjdk/jdk25u/blob/jdk-25.0.4.1-ga/src/java.base/share/classes/java/util/concurrent/CompletableFuture.java#L305)
-- [Oracle — JDK 25 release history](https://www.oracle.com/java/technologies/javase/25all-relnotes.html)
-- [LMAX Disruptor 4.0.0 — `MultiProducerSequencer` source](https://github.com/LMAX-Exchange/disruptor/blob/4.0.0/src/main/java/com/lmax/disruptor/MultiProducerSequencer.java)
-- [Elasticsearch 9.5.3 — `AbstractRefCounted` source](https://github.com/elastic/elasticsearch/blob/v9.5.3/libs/core/src/main/java/org/elasticsearch/core/AbstractRefCounted.java#L25)
-- [Elastic — Elasticsearch release notes](https://www.elastic.co/docs/release-notes/elasticsearch)
+- [OpenJDK — JEP 193, Variable Handles](https://openjdk.org/jeps/193)
+- [Java SE 25 — VarHandle access modes](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/invoke/VarHandle.html)
+- [Java SE 25 — MethodHandles.Lookup.findVarHandle](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/invoke/MethodHandles.Lookup.html#findVarHandle(java.lang.Class,java.lang.String,java.lang.Class))
+- [Java SE 25 — MethodHandles.arrayElementVarHandle](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/invoke/MethodHandles.html#arrayElementVarHandle(java.lang.Class))
+- [Java Language Specification §17.1 — Synchronization](https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.1)
+- OpenJDK 25.0.4.1 — [ConcurrentLinkedQueue.offer](https://github.com/openjdk/jdk25u/blob/jdk-25.0.4.1-ga/src/java.base/share/classes/java/util/concurrent/ConcurrentLinkedQueue.java#L361), [CompletableFuture.completeValue](https://github.com/openjdk/jdk25u/blob/jdk-25.0.4.1-ga/src/java.base/share/classes/java/util/concurrent/CompletableFuture.java#L305), [AtomicReferenceArray.getAndSet](https://github.com/openjdk/jdk25u/blob/jdk-25.0.4.1-ga/src/java.base/share/classes/java/util/concurrent/atomic/AtomicReferenceArray.java#L140)
+- [LMAX Disruptor 4.0.0 — MultiProducerSequencer](https://github.com/LMAX-Exchange/disruptor/blob/4.0.0/src/main/java/com/lmax/disruptor/MultiProducerSequencer.java)
+- [Elasticsearch 9.5.3 — AbstractRefCounted.decRef](https://github.com/elastic/elasticsearch/blob/v9.5.3/libs/core/src/main/java/org/elasticsearch/core/AbstractRefCounted.java#L71)

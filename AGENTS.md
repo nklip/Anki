@@ -40,7 +40,7 @@ Use this skill when creating or revising Anki-ready Markdown cards in this repos
 - Use local teaching visuals from the card's sibling `images/` directory and link them with relative paths.
 - Do not use this skill for exporting `.apkg` decks or other Anki package formats.
 
-Validate from the repository root with an explicit mode. The shared document layout does not identify simple versus article mode, so the validator requires `--mode simple` or `--mode complex` and does not infer the mode from headings or length. Both modes count only the teaching body by default, excluding the opening title, back link, and final Sources section. For an article requested under 10k characters, pass `--under-chars 10k`.
+Validate from the repository root with an explicit mode. The shared document layout does not identify simple versus article mode, so the validator requires `--mode simple` or `--mode complex` and does not infer the mode from headings or length. In both modes, all requested character counts and limits apply only to the teaching body, excluding the opening title, back link, and final Sources section. For an article requested under 10k characters, pass `--under-chars 10k`.
 
 ```bash
 python3 .agents/skills/anki-card-creation/scripts/check_anki_card.py --mode simple path/to/card.md

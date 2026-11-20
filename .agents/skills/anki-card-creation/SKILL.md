@@ -15,7 +15,7 @@ Create a self-contained Markdown card that teaches someone who does not already 
 - When revising, follow the user's selected mode or the established mode in the subject index or task context. If none is recorded, choose from the lesson's scope: one focused idea is simple; comprehensive treatment is complex. Both modes use the same Markdown structure, so the absence of Front/Back headings does not identify a mode. Do not add mode metadata to the document.
 - Pass the selected mode explicitly to the validator: `--mode simple` or `--mode complex`. When revising a legacy card with Front/Back sections, convert the requested file to the shared structure while preserving its teaching content.
 
-In both modes, character limits count the teaching body by default. Exclude the opening title, the back link, and the entire final `# Sources` section. Use a whole-file count only when the user explicitly asks for one.
+In both modes, every requested character count, target, or limit refers to the **teaching body**. Count the Markdown between the back link and the final `# Sources` heading. Use that count when drafting, trimming, validating, and reporting length. The opening title, back link, and entire Sources section are outside the budget, so the complete file may exceed the requested limit.
 
 Simple cards allow up to 3,500 teaching-body characters. Narrow a simple card to its core lesson if needed. Articles have no default cap. When the user asks for an article “under 10k chars,” pass `--under-chars 10k` during final validation and use the reported teaching-body count. Substitute the requested limit for other sizes.
 

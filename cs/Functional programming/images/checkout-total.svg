@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1250" viewBox="0 0 1500 1250" role="img" aria-labelledby="title desc">
+  <title id="title">How three Java checkouts reach $23</title>
+  <desc id="desc">Two books cost 8 and 12 dollars, with 3 dollars for delivery. In the functional diagram, subtotal returns 20 to addDelivery, which also receives the fee and returns 23. The imperative trace shows the same total variable immediately before and after each addition. In the object-oriented diagram, two addBook calls change the cart's private list from empty to [8] to [8, 12]. Calling total(3) returns 23 and leaves the list intact.</desc>
+
+  <!-- Shared type and connectors. Arrow tips extend six units past the shaft endpoint. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #19313d; text-anchor: start; }
+      .title { font-size: 60px; font-weight: 700; }
+      .intro { font-size: 38px; }
+      .heading { font-size: 45px; font-weight: 700; }
+      .guide { font-size: 36px; }
+      .label { font-size: 33px; }
+      .strong { font-size: 37px; font-weight: 700; }
+      .code { font-family: Menlo, Consolas, monospace; font-size: 32px; }
+      .amount { font-size: 39px; font-weight: 700; }
+      .center { text-anchor: middle; }
+      .green { fill: #105b4c; }
+      .blue { fill: #264d71; }
+      .brown { fill: #77471d; }
+      .arrow { fill: none; stroke: #405963; stroke-width: 4; marker-end: url(#head); }
+      .return { stroke-dasharray: 10 6; }
+    </style>
+    <marker id="head" markerWidth="19" markerHeight="18" viewBox="0 0 19 18" refX="13" refY="9" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0 0 L19 9 L0 18 Z" fill="#405963"/>
+    </marker>
+  </defs>
+
+  <!-- The same numbers apply to every execution trace. -->
+  <rect width="1500" height="1250" fill="#fcfcf9"/>
+  <text x="54" y="75" class="title">How three Java checkouts reach $23</text>
+  <text x="57" y="132" class="intro">Two books cost $8 and $12. Delivery adds $3.</text>
+
+  <!-- Two inputs converge at addDelivery. Only subtotal receives the list of prices. -->
+  <g id="functional-data-flow">
+    <rect x="45" y="166" width="1410" height="295" rx="22" fill="#e6f3ed"/>
+    <text x="83" y="225" class="heading green">Functional</text>
+    <text x="534" y="222" class="guide">Follow the values passed between functions.</text>
+
+    <text x="173" y="312" class="label center">Book prices</text>
+    <text x="173" y="368" class="amount center">[8, 12]</text>
+
+    <rect x="338" y="284" width="335" height="105" rx="16" fill="#ffffff" stroke="#73a495" stroke-width="2"/>
+    <text x="505" y="329" class="strong center green">subtotal</text>
+    <text x="505" y="371" class="label center">0 + 8 + 12</text>
+
+    <text x="795" y="315" class="strong center green">$20</text>
+    <text x="1082" y="265" class="label center">Delivery fee $3</text>
+    <rect x="917" y="310" width="330" height="79" rx="16" fill="#ffffff" stroke="#73a495" stroke-width="2"/>
+    <text x="1082" y="362" class="strong center green">addDelivery</text>
+    <text x="1372" y="363" class="amount center">$23</text>
+    <path class="arrow" d="M261 347 H331"/>
+    <path class="arrow" d="M674 347 H910"/>
+    <path class="arrow" d="M1082 283 V303"/>
+    <path class="arrow" d="M1248 347 H1304"/>
+    <text x="83" y="435" class="label">The $20 subtotal becomes an input. The list still holds [8, 12].</text>
+  </g>
+
+  <!-- Each table column is one moment in the life of the same total variable. -->
+  <g id="imperative-variable-trace">
+    <rect x="45" y="482" width="1410" height="308" rx="22" fill="#e9f1f7"/>
+    <text x="83" y="540" class="heading blue">Imperative</text>
+    <text x="534" y="537" class="guide">Track one variable before and after each step.</text>
+
+    <rect x="79" y="565" width="1339" height="197" rx="12" fill="#ffffff"/>
+    <path d="M79 624 H1418 M79 694 H1418" fill="none" stroke="#c2d0db" stroke-width="2"/>
+    <path d="M348 565 V762 M665 565 V762 M1002 565 V762" fill="none" stroke="#c2d0db" stroke-width="2"/>
+    <text x="101" y="607" class="label">Step</text>
+    <text x="505" y="607" class="strong center blue">First book</text>
+    <text x="833" y="607" class="strong center blue">Second book</text>
+    <text x="1210" y="607" class="strong center blue">Delivery</text>
+
+    <text x="101" y="669" class="label">Instruction</text>
+    <text x="505" y="669" class="code center">total += price</text>
+    <text x="833" y="669" class="code center">total += price</text>
+    <text x="1210" y="669" class="code center">total += fee</text>
+
+    <text x="101" y="739" class="label">Value of total</text>
+    <text x="505" y="739" class="amount center">0 + 8 = 8</text>
+    <text x="833" y="739" class="amount center">8 + 12 = 20</text>
+    <text x="1210" y="739" class="amount center">20 + 3 = 23</text>
+  </g>
+
+  <!-- Calls reach the object boundary. The dashed return carries the result back to the caller. -->
+  <g id="cart-calls-and-state">
+    <rect x="45" y="811" width="1410" height="408" rx="22" fill="#f8efe2"/>
+    <text x="83" y="871" class="heading brown">Object-oriented</text>
+    <text x="534" y="868" class="guide">Follow calls into a cart that owns its prices.</text>
+
+    <rect x="704" y="900" width="713" height="284" rx="16" fill="#fffdf8" stroke="#bc976a" stroke-width="3"/>
+    <text x="98" y="950" class="strong brown">Caller</text>
+    <text x="742" y="949" class="strong brown">Inside the Cart object</text>
+
+    <text x="98" y="1007" class="code">cart.addBook(8)</text>
+    <path class="arrow" d="M451 996 H696"/>
+    <text x="742" y="1007" class="label">Private list grows from [] to [8].</text>
+
+    <text x="98" y="1056" class="code">cart.addBook(12)</text>
+    <path class="arrow" d="M451 1045 H696"/>
+    <text x="742" y="1056" class="label">List grows from [8] to [8, 12].</text>
+
+    <text x="98" y="1105" class="code">cart.total(3)</text>
+    <path class="arrow" d="M451 1094 H696"/>
+    <text x="742" y="1105" class="label">Method adds 8 + 12 + 3.</text>
+
+    <text x="98" y="1162" class="strong brown">Receives $23</text>
+    <path class="arrow return" d="M702 1150 H457"/>
+    <text x="742" y="1162" class="label">Returns 23. List stays [8, 12].</text>
+  </g>
+</svg>

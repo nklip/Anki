@@ -133,7 +133,7 @@ The delivery rows describe one published copy in one queue. For at-least-once de
 
 If checkout saves order 42 and crashes before sending `E17`, RabbitMQ has nothing to deliver. Sending first creates the opposite risk. The warehouse could receive an event for an order whose database transaction later fails.
 
-A [transactional outbox](../Patterns.%20Transactional%20Outbox/Readme.md#how-it-works) saves the order and an outgoing event in the same database transaction. A separate program called a **relay** reads committed outbox entries, publishes them, and records which sends succeeded after checking returns and confirms. If it crashes after publication but before recording success, it can send `E17` again. The worker’s uniqueness rule handles that case.
+A [transactional outbox](../Patterns.%20Transactional%20Outbox/Readme.md#2-how-the-transactional-outbox-works) saves the order and an outgoing event in the same database transaction. A separate program called a **relay** reads committed outbox entries, publishes them, and records which sends succeeded after checking returns and confirms. If it crashes after publication but before recording success, it can send `E17` again. The worker’s uniqueness rule handles that case.
 
 ## 6. Queue types and broker failures
 
