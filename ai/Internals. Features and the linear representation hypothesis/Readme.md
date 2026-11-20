@@ -13,7 +13,6 @@ Picture those numbers as coordinates on a graph. If changing a verb from present
 5. [How can a probe test for past tense?](#5-how-can-a-probe-test-for-past-tense)
 6. [How can an intervention test influence?](#6-how-can-an-intervention-test-influence)
 7. [How far does the evidence reach?](#7-how-far-does-the-evidence-reach)
-8. [Check your understanding](#8-check-your-understanding)
 
 ## 1. Where do the numbers come from?
 
@@ -83,7 +82,7 @@ In a study of **Llama 2 7B**, researchers compared the vectors the model uses to
 
 Other researchers found **circular patterns** for days of the week and months of the year in language models. Imagine placing Monday through Sunday in order along a line. Sunday ends up farthest from Monday, even though Monday comes next. Arranging the seven days around a ring keeps every day next to its successor, including Sunday and Monday. The shape to look for depends on the property, the model, and the task.
 
-## 8. Check your understanding
+## Check your understanding
 
 1. You run two sentences through the same model and copy the vector at the same layer and token position. Which numbers can differ between runs, and why?
 

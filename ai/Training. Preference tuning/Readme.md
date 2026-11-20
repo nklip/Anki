@@ -11,7 +11,6 @@ Suppose you ask for a polite rewrite of “Send the file.” You might accept se
 3. [How does RLHF use a reward model?](#3-how-does-rlhf-use-a-reward-model)
 4. [How does DPO learn directly from a pair?](#4-how-does-dpo-learn-directly-from-a-pair)
 5. [How can we tell whether answers improved?](#5-how-can-we-tell-whether-answers-improved)
-6. [Check your understanding](#6-check-your-understanding)
 
 ## 1. What does a comparison add to training?
 
@@ -69,7 +68,7 @@ A reward score estimates a preference. A score of `8` does not mean “80% likel
 
 Test the assistant model on requests **held out of training**. For a polite rewrite of “Return the keys,” check both whether the reply sounds polite and whether it still asks for the keys back. For a factual question, check the claims against a reliable source.
 
-## 6. Check your understanding
+## Check your understanding
 
 1. You have a prompt and one expert-written reply for supervised fine-tuning. What would you add to make a preference pair?
 

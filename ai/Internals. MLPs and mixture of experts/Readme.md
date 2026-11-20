@@ -13,7 +13,6 @@ This article follows one small update from input to output. Then it shows how a 
 5. [How does a gate change the calculation?](#5-how-does-a-gate-change-the-calculation)
 6. [How does a mixture of experts choose what to run?](#6-how-does-a-mixture-of-experts-choose-what-to-run)
 7. [Why count both total and active parameters?](#7-why-count-both-total-and-active-parameters)
-8. [Check your understanding](#8-check-your-understanding)
 
 ## 1. Where does the MLP get its input?
 
@@ -82,7 +81,7 @@ In **Mixtral 8×7B**, each layer has eight feed-forward experts and selects two 
 
 The total helps explain how much weight data must be stored. The active count helps explain the computation for one token. Actual time also depends on work such as routing tokens and moving data between devices.
 
-## 8. Check your understanding
+## Check your understanding
 
 1. In “river bank” and “savings bank,” the MLP processes the `bank` position on its own. How can the earlier word still affect its update?
 

@@ -228,7 +228,7 @@ Configure application ID, serialization, keys, state retention, internal-topic r
 
 Recovery depends on retained input or changelogs. Stopping the application stops its processing and timers while input may accumulate. More instances cannot split one **hot key**, a key responsible for disproportionate traffic, across tasks without changing the computation's partitioning.
 
-## 7. Check your understanding
+## Check your understanding
 
 Try answering before expanding each answer.
 

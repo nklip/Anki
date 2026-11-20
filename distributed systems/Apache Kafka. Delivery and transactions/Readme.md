@@ -12,7 +12,6 @@
 6. [Kafka transactions](#6-kafka-transactions)
 7. [Starting and handling a transaction in Spring Boot](#7-starting-and-handling-a-transaction-in-spring-boot)
 8. [Choosing the required guarantee](#8-choosing-the-required-guarantee)
-9. [Check your understanding](#9-check-your-understanding)
 
 ## 1. Essential vocabulary
 
@@ -337,7 +336,7 @@ For a Kafka listener that consumes and produces, prefer the container's transact
 
 For independent business events, a useful baseline is **idempotent publishing, replication acknowledgments, `at-least-once` processing, and duplicate-safe business effects**. Add Kafka transactions when there is a concrete need for atomic Kafka outputs or output-plus-offset commits. Their benefit is that atomic boundary; their costs include coordinator and marker work, transaction-ID management, failure recovery, and possible delays for `read_committed` readers while transactions remain unresolved. Keep transactions short and measure the tradeoff with the real workload; no fixed throughput penalty applies to every deployment.
 
-## 9. Check your understanding
+## Check your understanding
 
 Try answering each question before expanding its answer.
 

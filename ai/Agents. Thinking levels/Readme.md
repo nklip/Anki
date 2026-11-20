@@ -14,7 +14,6 @@ Consider two requests that both end with “11:00.” One asks the model to copy
 6. [How an output limit can cut off an answer](#6-how-an-output-limit-can-cut-off-an-answer)
 7. [Which setting to change](#7-which-setting-to-change)
 8. [How to tell whether more effort is worthwhile](#8-how-to-tell-whether-more-effort-is-worthwhile)
-9. [Check your understanding](#9-check-your-understanding)
 
 ## 1. Where effort fits in an agent run
 
@@ -89,7 +88,7 @@ In this invented test, both settings get the same model, prompts, tools, and 20 
 
 **Latency** is the time the user waits. **Monetary cost** depends on billable usage and the applicable prices. Both OpenAI and Anthropic count generated reasoning tokens as output usage, including work the user never sees. Repeat the comparison with representative tasks to see whether the extra correct answers are worth the time and cost for your use case.
 
-## 9. Check your understanding
+## Check your understanding
 
 1. The scheduling agent has permission to read Mira’s calendar but has not looked it up yet. What has to happen before the model can use those entries?
 

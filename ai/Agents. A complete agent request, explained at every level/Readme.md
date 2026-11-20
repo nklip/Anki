@@ -16,7 +16,6 @@ Suppose you ask, “Fix `total_items` in `marbles.py` to count marbles in equal-
 8. [Who runs the tests and returns the failures?](#8-who-runs-the-tests-and-returns-the-failures)
 9. [How does the agent fix and retest the file?](#9-how-does-the-agent-fix-and-retest-the-file)
 10. [What can the agent report to the user?](#10-what-can-the-agent-report-to-the-user)
-11. [Check your understanding](#11-check-your-understanding)
 
 ## 1. Who does what during the repair?
 
@@ -123,7 +122,7 @@ Read the diagram from the recorded evidence to the reply. The successful write s
 
 The runtime delivers that reply and ends the run. If the test tool had stopped before either test ran, the agent could still report the saved edit and say that the tests were unverified. Even in the successful run, the two results establish what happened for those two inputs. A claim about every possible input would need more evidence.
 
-## 11. Check your understanding
+## Check your understanding
 
 1. The model has proposed the right one-line fix. Which part of the agent can actually make that change to the project?
 

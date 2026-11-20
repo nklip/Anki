@@ -13,7 +13,6 @@ Suppose a shop asks an agent to change the weekday opening time to `11:00` every
 5. [How can a later session use saved notes?](#5-how-can-a-later-session-use-saved-notes)
 6. [What does a subagent need in a handoff?](#6-what-does-a-subagent-need-in-a-handoff)
 7. [When can two calls reuse computation?](#7-when-can-two-calls-reuse-computation)
-8. [Check your understanding](#8-check-your-understanding)
 
 ## 1. Why prepare context more than once?
 
@@ -86,7 +85,7 @@ A **prefix** is the beginning of an input. With **prompt caching**, the service 
 
 A change near the beginning, even a rewording with the same meaning, breaks the match from the first difference onward. [Inference. Prompt caching across requests](../Inference.%20Prompt%20caching%20across%20requests/Readme.md) shows how much of the original prefix can still be reused. If the shop changes its instructions, send the new instructions. Cached input still occupies space in the window, and a cache hit cannot supply a missing weekend rule or tell the agent whether a file has changed.
 
-## 8. Check your understanding
+## Check your understanding
 
 1. An edit tool reports that it wrote the homepage successfully. What does the next call need before the agent can say the whole site is done?
 

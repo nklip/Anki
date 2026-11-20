@@ -14,7 +14,6 @@ The article first shows why one server runs out and what the words *partition* a
 6. [What sharding costs](#6-what-sharding-costs)
 7. [PostgreSQL: partitioning on one server](#7-postgresql-partitioning-on-one-server)
 8. [PostgreSQL: sharding across servers](#8-postgresql-sharding-across-servers)
-9. [Check your understanding](#9-check-your-understanding)
 
 Every example uses PostgreSQL, in four setups that §7 and §8 cover in depth: its built-in **declarative partitioning**, which splits a table on one server; the **`postgres_fdw`** extension, which lets one PostgreSQL server use tables stored on another; the **Citus** extension, which spreads tables over a group of PostgreSQL servers; and **application-level sharding**, where the application itself picks the server, as Notion did. PostgreSQL behaviour follows version 18, the current release when this was written in September 2026; version 19 was then in beta. Citus follows release 14. Customer IDs, order IDs, shard IDs and hash placements in the diagrams are teaching examples.
 
@@ -380,7 +379,7 @@ It is [§4](#fixed-partitions)'s fixed-partition scheme built by hand. The price
 
 Start at the top row when the problem is one very large table: pruning and cheap partition removal help on a single machine. Move down only when one server's storage or write capacity is the real limit.
 
-## 9. Check your understanding
+## Check your understanding
 
 1. Two hot standbys were added to a PostgreSQL primary, yet writes still saturate the primary. Why, and what would help?
 

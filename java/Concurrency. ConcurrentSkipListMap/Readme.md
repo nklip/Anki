@@ -297,7 +297,7 @@ A performance choice should be measured with the application's key comparisons, 
 
 The logarithmic bound is about key-based operations. `containsValue` scans mappings and takes O(n) time. Visiting every entry in a range also requires work proportional to the number visited. The JDK documentation notes that ascending views and iteration are faster than descending ones.
 
-## 9. Check your understanding
+## Check your understanding
 
 1. Why do several increasingly sparse shortcut levels help, and why is the O(log n) bound expected rather than guaranteed for every search?
 

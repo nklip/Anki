@@ -22,15 +22,14 @@ SPEC.loader.exec_module(validator)
 
 ARTICLE_CONTENTS = (
     "1. [Stored state](#1-stored-state)\n"
-    "2. [What survives?](#2-what-survives)\n"
-    "3. [Check your understanding](#3-check-your-understanding)"
+    "2. [What survives?](#2-what-survives)"
 )
 ARTICLE_SECTIONS = (
     "## 1. **Stored `state`**\n\nThe old value is zero.\n\n"
     "### A second update\n\nAn update changes it to one.\n\n"
     "## 2. What survives?\n\nA saved update survives a restart."
 )
-ARTICLE_REVIEW = "## 3. Check your understanding"
+ARTICLE_REVIEW = "## Check your understanding"
 FIRST_ITEM = (
     "1. Predict the value after an update.\n\n"
     "   <details>\n   <summary>Answer</summary>\n\n"
@@ -93,13 +92,12 @@ class CardValidationTests(unittest.TestCase):
             sections.append((len(lines) + 1, "Stored state"))
             lines.extend(["", "## Stored state", "", "The new value replaces the old one."])
         review = "\n\n".join(self.review_item(i, title) for i, (_, title) in enumerate(sections, 1))
-        sections.append((len(lines) + 1, "Check your understanding"))
-        lines.extend(["", "## Check your understanding", "", review])
         contents = []
         for number, (index, title) in enumerate(sections, 1):
             lines[index] = f"## {number}. {title}"
             anchor, = validator.markdown_anchors(lines[index])
             contents.append(f"{number}. [{title}](#{anchor})")
+        lines.extend(["", ARTICLE_REVIEW, "", review])
         return self.simple_card("\n".join(contents + [""] + lines))
 
     def errors(self, text: str, mode: str = "complex", **options: bool) -> list[str]:
@@ -164,31 +162,50 @@ class CardValidationTests(unittest.TestCase):
         for original, replacement in (
             ("## 1. ", "## "), ("## 1. ", "## 0. "),
             ("## 2. ", "## 1. "), ("## 2. ", "## 4. "),
-            ("## 3. ", "## 4. "),
         ):
             with self.subTest(original=original, replacement=replacement):
                 self.assertTrue(self.errors(article.replace(original, replacement)))
 
     def test_article_requires_the_final_check_your_understanding_section(self) -> None:
         article = self.article_example()
-        renamed = article.replace("Check your understanding", "Summary").replace(
-            "check-your-understanding", "summary"
-        )
-        after_review = article.replace(
-            ARTICLE_CONTENTS, ARTICLE_CONTENTS + "\n4. [Appendix](#4-appendix)"
-        ).replace("# Sources", "## 4. Appendix\n\nA further example.\n\n# Sources")
-        for text in (renamed, after_review):
-            self.assertTrue(self.errors(text))
+        review = "\n\n".join((ARTICLE_REVIEW, FIRST_ITEM, SECOND_ITEM))
+        variants = {
+            "missing": article.replace(review, ""),
+            "after sources": article.replace(review, "") + "\n" + review,
+            "duplicate": article + "\n" + review,
+            "intervening section": article.replace("# Sources", "## 3. Appendix\n\n# Sources"),
+            "intervening chapter": article.replace("# Sources", "# Appendix\n\n# Sources"),
+        }
+        for name, text in variants.items():
+            with self.subTest(name=name):
+                self.assert_error(self.errors(text), "Check your understanding", "before", "# Sources")
+
+    def test_article_review_heading_is_unnumbered(self) -> None:
+        numbered = self.article_example().replace(ARTICLE_REVIEW, "## 3. Check your understanding")
+        self.assert_error(self.errors(numbered), "unnumbered heading")
+
+    def test_article_omits_review_from_numbered_lists(self) -> None:
+        article = self.article_example()
+        review_link = "[Check your understanding](#check-your-understanding)"
+        variants = {
+            "contents": article.replace(ARTICLE_CONTENTS, ARTICLE_CONTENTS + "\n3. " + review_link),
+            "separate list": article.replace("The old value is zero.", "1) Check your understanding"),
+        }
+        for name, text in variants.items():
+            with self.subTest(name=name):
+                self.assert_error(self.errors(text), "Check your understanding", "numbered lists")
+        literal = article.replace("The old value is zero.", f"```markdown\n1. {review_link}\n```")
+        self.assertEqual([], self.errors(literal))
 
     def test_article_contents_links_match_sections_in_order(self) -> None:
         article = self.article_example()
-        first, second, review = ARTICLE_CONTENTS.splitlines()
+        first, second = ARTICLE_CONTENTS.splitlines()
         variants = {
             "absent": "",
-            "unordered": "\n".join("- " + line[3:] for line in (first, second, review)),
+            "unordered": "\n".join("- " + line[3:] for line in (first, second)),
             "skipped number": ARTICLE_CONTENTS.replace("2. [", "4. ["),
-            "order": "\n".join((second.replace("2. ", "1. "), first.replace("1. ", "2. "), review)),
-            "missing review": first + "\n" + second,
+            "order": "\n".join((second.replace("2. ", "1. "), first.replace("1. ", "2. "))),
+            "missing teaching section": first,
             "wrong label": ARTICLE_CONTENTS.replace("[Stored state]", "[Recovery]"),
             "unnumbered fragment": ARTICLE_CONTENTS.replace("#1-stored-state", "#stored-state"),
             "different local heading": ARTICLE_CONTENTS.replace("#1-stored-state", "#2-what-survives"),

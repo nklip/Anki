@@ -18,11 +18,11 @@ Requirements:
 
 ## Numbered sections and lists
 
-After the introduction, add an ordered contents list with one link per `##` heading, including the final review. Use the section title as the link text and the numbered heading's actual Markdown anchor as the target. Number the headings consecutively from 1. Keep the opening title, nested `###` subsections, and final `# Sources` outside this sequence. Follow the layout in [Training. Supervised fine-tuning](../../../../ai/Training.%20Supervised%20fine-tuning/Readme.md).
+After the introduction, add an ordered contents list with one link per numbered `##` teaching section. Number these headings consecutively from 1. Use each section title as the link text and its numbered heading's Markdown anchor as the target. Keep the opening title, nested `###` subsections, `## Check your understanding`, and `# Sources` outside the numbered outline.
 
-Within a section, use a numbered list when the reader should follow stages, actions, or diagram elements in order. Start each list at 1. For example, the fine-tuning article walks the reader through one diagram with three short bold labels, **Predict**, **Score**, and **Adjust**. Use paragraphs for a continuous explanation.
+Within a section, use a numbered list when the reader should follow stages, actions, or diagram elements in order. Start each list at 1. For example, the [fine-tuning article](../../../../ai/Training.%20Supervised%20fine-tuning/Readme.md) walks the reader through one diagram with three short bold labels, **Predict**, **Score**, and **Adjust**. Use paragraphs for a continuous explanation.
 
-For example, a two-section article has two contents entries for the lesson and a third for the review.
+An article with two teaching sections has two contents entries.
 
 ```markdown
 # How a queue works
@@ -33,7 +33,6 @@ A queue serves items in arrival order. Follow two tickets as they enter and leav
 
 1. [Where tickets enter](#1-where-tickets-enter)
 2. [Which ticket leaves first](#2-which-ticket-leaves-first)
-3. [Check your understanding](#3-check-your-understanding)
 
 ## 1. Where tickets enter
 
@@ -47,7 +46,7 @@ The next ticket leaves from the front. Once A leaves, B moves to the front.
 
 ![queue-departure.svg](images/queue-departure.svg)
 
-## 3. Check your understanding
+## Check your understanding
 
 1. A and B are waiting. Where does a new ticket C go?
 
@@ -88,9 +87,9 @@ Keep closely related details together. Do not hide the main flow beneath tuning 
 
 ## Review questions
 
-End every article with `## N. Check your understanding` immediately before `# Sources`. Write at least one distinct question for each preceding `##` teaching section, in section order. Ask about the idea or decision that section taught. Add more questions where a section teaches several important ideas. A subsection's material can be tested through its parent.
+Place the unnumbered `## Check your understanding` section immediately before `# Sources` in every article. Omit it from numbered lists, including the contents. Write at least one distinct question for each preceding `##` teaching section, in section order. Ask about the idea or decision that section taught. Add more questions where a section teaches several important ideas. A subsection's material can be tested through its parent.
 
-Number the questions from 1. Leave each prompt visible and nest a closed `<details>` block beneath it with the exact label `<summary>Answer</summary>`. Indent the block to the start of the question text and keep the blank lines shown in the queue example. Favor questions that ask the reader to apply the lesson, with a short answer explaining why. When revising a `Self-check` section, carry its questions and answers into the numbered review and fill gaps in coverage.
+Number the questions from 1. Leave each prompt visible and nest a closed `<details>` block beneath it with the exact label `<summary>Answer</summary>`. Indent the block to the start of the question text and keep the blank lines shown in the queue example. Favor questions that ask the reader to apply the lesson, with a short answer explaining why. When revising a `Self-check` section, carry its questions and answers into the review and fill gaps in coverage.
 
 During final review, match each teaching heading to a question that a reader could answer from that section. The validator checks section numbering, contents links, and the minimum number of review prompts. Several questions on the same section can pass a count while leaving another section untested.
 

@@ -14,7 +14,6 @@ Imagine asking, “Change the meeting time in `notes.txt` from 10:00 to 11:00, t
 6. [When should the loop stop?](#6-when-should-the-loop-stop)
 7. [When is a retry useful?](#7-when-is-a-retry-useful)
 8. [How does an agent differ from a fixed workflow?](#8-how-does-an-agent-differ-from-a-fixed-workflow)
-9. [Check your understanding](#9-check-your-understanding)
 
 ## 1. How does an agent loop work?
 
@@ -87,7 +86,7 @@ A **fixed workflow** follows paths written in code. In a **model-directed agent 
 
 Use “file not found” to compare the two rows. If code says “try the backup folder whenever this path is missing,” the fallback is part of a fixed workflow. If the model reads the error, considers the available tools, and chooses to search for the file, that decision is model-directed. In both cases the runtime enforces file permissions, and completing the task still requires checking the saved meeting time.
 
-## 9. Check your understanding
+## Check your understanding
 
 1. A model replies, “I’ll edit `notes.txt`.” Has the file changed yet? Who actually performs the edit?
 

@@ -11,7 +11,6 @@ The service records the message ID in the **same database transaction** as the c
 3. [What survives a crash](#3-what-survives-a-crash)
 4. [Saving the request for later](#4-saving-the-request-for-later)
 5. [Sending an event after the award](#5-sending-an-event-after-the-award)
-6. [Check your understanding](#6-check-your-understanding)
 
 ## 1. Why one award can be counted twice
 
@@ -87,7 +86,7 @@ The inbox protects changes in the loyalty database. A rollback there cannot undo
 
 See [Transactional Outbox](../Patterns.%20Transactional%20Outbox/Readme.md).
 
-## 6. Check your understanding
+## Check your understanding
 
 1. The account shows 110 points. Why might the broker still deliver the award again?
 

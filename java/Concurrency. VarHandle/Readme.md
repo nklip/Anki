@@ -15,7 +15,6 @@ The goal of VarHandle is to define a standard for invoking equivalents of `java.
 2. [How to enforce a limit](#2-how-to-enforce-a-limit)
 3. [How a ready flag publishes data](#3-how-a-ready-flag-publishes-data)
 4. [When to use a VarHandle](#4-when-to-use-a-varhandle)
-5. [Check your understanding](#5-check-your-understanding)
 
 ## 1. What a handle identifies
 
@@ -151,7 +150,7 @@ The last example uses the **existing field** approach. One shared handle updates
 | LMAX Disruptor · event-processing library | `setRelease` and `getAcquire` on a slot's availability flag | Publish an event in a ring buffer, an array whose slots are reused. A consumer that sees the matching flag can read the event written there. |
 | Elasticsearch · `AbstractRefCounted.decRef` | `getAndAdd(this, -1)` on `refCount` | Release a reference. The caller that gets back 1 reduced the count to 0 and closes the resource. |
 
-## 5. Check your understanding
+## Check your understanding
 
 1. Two counters share the same `VALUE` handle. Which one gets incremented?
 

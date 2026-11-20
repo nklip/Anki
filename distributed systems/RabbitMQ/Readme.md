@@ -16,7 +16,6 @@ Follow that order from checkout to the warehouse, then see what happens if a wor
 8. [RabbitMQ versus Apache Kafka](#8-rabbitmq-versus-apache-kafka)
 9. [Where RabbitMQ fits](#9-where-rabbitmq-fits)
 10. [Real production examples](#10-real-production-examples)
-11. [Check your understanding](#11-check-your-understanding)
 
 ## 1. Why put a queue between checkout and the warehouse?
 
@@ -244,7 +243,7 @@ McGraw-Hill’s 2021 report illustrates the same task-queue pattern with **Amazo
 
 After the redesign, Watchdog monitored SQS for pending work, and consumers inside the Spark clusters took job IDs from the queues. The same test finished all 2,030 reports within four hours with at most five clusters. The team wanted to remove completed tasks and chose SQS over the Kafka model it considered at the time. It also identified the risk of saving a job in the database separately from sending its ID to the queue, the same gap checkout faces with `E17`.
 
-## 11. Check your understanding
+## Check your understanding
 
 1. Checkout accepts 500 orders each second and the warehouse finishes 300. What does the customer gain from the queue, and what happens to the backlog?
 

@@ -14,7 +14,6 @@ Take the sentence “The cat sleeps.” Cover everything after “The.” You mi
 4. [How is a next-token prediction scored?](#4-how-is-a-next-token-prediction-scored)
 5. [How can prediction teach skills that carry over?](#5-how-can-prediction-teach-skills-that-carry-over)
 6. [Why does the training material matter?](#6-why-does-the-training-material-matter)
-7. [Check your understanding](#7-check-your-understanding)
 
 ## 1. What does pretraining give a model?
 
@@ -82,7 +81,7 @@ Every passage supplies practice. Choosing which passages to include changes what
 
 **Continued pretraining** means starting from existing weights and training them further on more material, such as a collection of repair manuals. Pasting one manual into a chat gives the model information it can use for that conversation. Training on the manuals updates the weights used for future predictions.
 
-## 7. Check your understanding
+## Check your understanding
 
 1. A base model completes “The capital of France is …” correctly. Which later training stage could show it how to answer a request in exactly one word?
 

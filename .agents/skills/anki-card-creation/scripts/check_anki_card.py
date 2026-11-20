@@ -26,6 +26,7 @@ NAVIGATION_RE = re.compile(
 STEP_LABEL_RE = re.compile(r"^(?:\*\*|__)?Step[ \t]+\d+\b")
 SECTION_NUMBER_RE = re.compile(r"^([0-9]+)\.[ \t]+")
 CONTENTS_ITEM_RE = re.compile(r" {0,3}([0-9]+)\.[ \t]+\[(.+)\]\(#([^\s)]+)\)[ \t]*")
+REVIEW_TITLE = "Check your understanding"
 REVIEW_ITEM_RE = re.compile(r"^( {0,3})([0-9]+)\.[ \t]+(?=\S)", re.MULTILINE)
 DETAILS_BLOCK_RE = re.compile(
     r"^[ \t]*<details\b[^>\r\n]*>[ \t]*\r?\n.*?(?:^[ \t]*</details>[ \t]*\r?$|\Z)",
@@ -163,25 +164,41 @@ def article_section_errors(article: str, headings: list[re.Match[str]]) -> list[
     sections = []
     expected = []
     reviews = []
+    last_main_heading = None
     for section in headings:
-        if section.start() >= len(article):
-            break
         label = heading_label(section)
         fragment = add_heading_anchor(label, generated)
+        in_article = section.start() < len(article)
+        if in_article and len(section[1]) <= 2:
+            last_main_heading = section
         if section[1] != "##":
+            continue
+        title = plain_heading(SECTION_NUMBER_RE.sub("", label))
+        prefix = SECTION_NUMBER_RE.match(label)
+        if title == REVIEW_TITLE:
+            reviews.append(section)
+            if prefix:
+                errors.append(f"use the unnumbered heading '## {REVIEW_TITLE}'")
+            continue
+        if not in_article:
             continue
         sections.append(section)
         number = len(sections)
-        prefix = SECTION_NUMBER_RE.match(label)
         if not prefix or prefix[1] != str(number):
             errors.append(f"article section {label!r} must start with '## {number}. '")
-        title = plain_heading(SECTION_NUMBER_RE.sub("", label))
         expected.append((str(number), title, fragment))
-        if title == "Check your understanding":
-            reviews.append(section)
 
+    if len(reviews) != 1 or reviews[0] != last_main_heading:
+        errors.append(f"place exactly one '## {REVIEW_TITLE}' section immediately before '# Sources'")
+    else:
+        errors.extend(review_question_errors(article[reviews[0].end():], len(sections)))
     if not sections:
-        return ["article mode requires numbered ## teaching sections and Check your understanding"]
+        errors.append("include a numbered ## teaching section before Check your understanding")
+        return errors
+
+    list_items = re.findall(r"^ {0,3}[0-9]+[.)][ \t]+([^\r\n]+)", article, re.MULTILINE)
+    if any(plain_heading(item).strip() == REVIEW_TITLE for item in list_items):
+        errors.append(f"omit '{REVIEW_TITLE}' from numbered lists, including the contents")
     intro = article[:sections[0].start()]
     links = (CONTENTS_ITEM_RE.fullmatch(line) for line in intro.splitlines() if line.strip())
     for is_link_list, group in groupby(links, key=bool):
@@ -191,14 +208,7 @@ def article_section_errors(article: str, headings: list[re.Match[str]]) -> list[
                 break
     else:
         errors.append("include a numbered contents list before the first ## section with "
-                      "one matching title and anchor per section, in order")
-
-    if reviews != [sections[-1]]:
-        errors.append("use exactly one 'Check your understanding' as the final numbered ## section")
-    elif len(sections) == 1:
-        errors.append("include a ## teaching section before Check your understanding")
-    else:
-        errors.extend(review_question_errors(article[reviews[0].end():], len(sections) - 1))
+                      "one matching title and anchor per teaching section, in order")
     return errors
 
 
@@ -559,8 +569,7 @@ counter.incrementAndGet();
 - [Java API](https://example.com/api)
 """
     process_contents = """1. [Step 1 — Read](#1-step-1--read)
-2. [Step 2 — Write](#2-step-2--write)
-3. [Check your understanding](#3-check-your-understanding)"""
+2. [Step 2 — Write](#2-step-2--write)"""
     process_sections = """## 1. Step 1 — Read
 
 ![read.svg](images/read.svg)
@@ -572,7 +581,7 @@ Read the current count with `get()`.
 ![write.svg](images/write.svg)
 
 Increment the counter in one atomic operation."""
-    review = """## 3. Check your understanding
+    review = """## Check your understanding
 
 1. Can another thread change the value after your read?
 
@@ -762,13 +771,10 @@ Increment the counter in one atomic operation."""
         require_version_lead=True,
     ))
 
-    grouped_contents = """1. [Working with a counter](#1-working-with-a-counter)
-2. [Check your understanding](#2-check-your-understanding)"""
+    grouped_contents = "1. [Working with a counter](#1-working-with-a-counter)"
     nested_process_card = complex_card.replace(process_contents, grouped_contents).replace(
         "## 1. Step 1", "## 1. Working with a counter\n\n### Step 1"
-    ).replace("## 2. Step 2", "### Step 2").replace(
-        "## 3. Check your understanding", "## 2. Check your understanding"
-    )
+    ).replace("## 2. Step 2", "### Step 2")
     assert not validate_text(
         nested_process_card, Path("card.md"), "complex", check_local_files=False
     )

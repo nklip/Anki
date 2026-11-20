@@ -10,7 +10,6 @@ When you ask “Name the capital of France,” a language model scores possible 
 2. [How does a follow-up question get its context?](#2-how-does-a-follow-up-question-get-its-context)
 3. [Four ways to look at the same request](#3-four-ways-to-look-at-the-same-request)
 4. [What do inference engineers measure?](#4-what-do-inference-engineers-measure)
-5. [Check your understanding](#5-check-your-understanding)
 
 ## 1. How does the model build a reply?
 
@@ -50,7 +49,7 @@ Read the rows from top to bottom. The first asks about one token, and the last a
 
 Engineers also measure how much computing time and memory a request uses, how many requests the service can finish per second, and how often requests fail under load. A cache illustrates the trade-off. Keeping earlier calculations in memory costs space, but it can save computing time. When many users send requests at once, engineers can also spread the work across more machines.
 
-## 5. Check your understanding
+## Check your understanding
 
 1. The rule has just chosen `Paris`. What does the model use to score the next token, and why does the period appear in the reply while the end marker does not?
 

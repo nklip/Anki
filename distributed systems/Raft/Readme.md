@@ -16,7 +16,6 @@ The article builds the replicated log and its vocabulary first, then Raft's two 
 6. [Changing members and compacting the log](#6-changing-members-and-compacting-the-log)
 7. [Clients and reads](#7-clients-and-reads)
 8. [Limits and where Raft runs](#8-limits-and-where-raft-runs)
-9. [Check your understanding](#9-check-your-understanding)
 
 The baseline is the extended paper *In Search of an Understandable Consensus Algorithm* (2014); Diego Ongaro's dissertation *Consensus: Bridging Theory and Practice* (2014) supersedes it in places, marked where it does. Examples use three servers for small pictures and five where majority arithmetic matters.
 
@@ -220,7 +219,7 @@ etcd, Consul, ClickHouse Keeper and KRaft each run **one cluster-wide group**, a
 
 The algorithm does not change — each group runs its own elections, commit rule and repair. What changes is that one server leads some groups while following others, so the write path is no longer one machine. The [Digital Wallet](../../system%20design/27.%20Digital%20Wallet/Readme.md) design uses exactly this: one group per account partition, behind a Saga coordinator.
 
-## 9. Check your understanding
+## Check your understanding
 
 1. Three of the five servers in a cluster are down. What can it still do?
 

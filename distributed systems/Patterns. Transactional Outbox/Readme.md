@@ -12,7 +12,6 @@ Checkout accepts order `42` for one book. Inventory must reserve one copy even i
 4. [How inventory reserves one book](#4-how-inventory-reserves-one-book)
 5. [Why billing flushes before charging](#5-why-billing-flushes-before-charging)
 6. [Boundaries and summary](#6-boundaries-and-summary)
-7. [Check your understanding](#7-check-your-understanding)
 
 ## 1. Why two writes can disagree
 
@@ -111,7 +110,7 @@ If worker 1 rolls back after charging, its receipt disappears and worker 2's ins
 2. **Publish after commit.** Retry with the original event ID until the broker acknowledges the send.
 3. **Apply once.** Commit the receipt and local change before the Kafka offset. For one charge per event, reuse the event ID as the payment key.
 
-## 7. Check your understanding
+## Check your understanding
 
 1. Checkout publishes before saving the order. What can go wrong?
 

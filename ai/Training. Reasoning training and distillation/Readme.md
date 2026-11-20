@@ -12,7 +12,6 @@ Suppose a problem asks, “Three bags hold four marbles each. How many marbles a
 4. [What does the student learn from the teacher?](#4-what-does-the-student-learn-from-the-teacher)
 5. [What changes when a model tries again?](#5-what-changes-when-a-model-tries-again)
 6. [How do you tell whether the student learned a useful method?](#6-how-do-you-tell-whether-the-student-learned-a-useful-method)
-7. [Check your understanding](#7-check-your-understanding)
 
 ## 1. What can a model learn from?
 
@@ -74,7 +73,7 @@ Check the work as well as the answers when the method matters. A filter that kee
 
 A written explanation can leave out what influenced the answer. In one experiment, researchers arranged the options in every worked example in the prompt so that the correct answer was `(A)`. On a new question, the model could then choose `(A)` and give a plausible explanation that never mentioned the pattern. To test the effect, keep the new question fixed and vary where the correct answers appear in the examples.
 
-## 7. Check your understanding
+## Check your understanding
 
 1. You have thousands of arithmetic problems with known answers but no worked solutions. How could those answers supply a training signal for reinforcement learning?
 

@@ -19,7 +19,6 @@ A **Docker image** packages an app and its files. A **container** is an instance
 13. [Pair apt-get update and install](#13-pair-apt-get-update-and-install)
 14. [Use an exec-form entry point](#14-use-an-exec-form-entry-point)
 15. [Run as a non-root user](#15-run-as-a-non-root-user)
-16. [Check your understanding](#16-check-your-understanding)
 
 ## 1. Use multi-stage builds
 
@@ -146,7 +145,7 @@ The list-form `ENTRYPOINT` in §1 makes Java the main process (PID 1), so `docke
 
 `USER 10001:10001` runs Java as an unprivileged user. It can read the JAR and listen on port 8080. Limiting where it can write also limits the damage if the service is compromised.
 
-## 16. Check your understanding
+## Check your understanding
 
 1. Why is the compiler absent at runtime?
 

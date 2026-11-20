@@ -12,7 +12,6 @@ Take “The cat sat” and suppose each word is one **token**, a piece of text t
 4. [Which positions can a token use?](#4-which-positions-can-a-token-use)
 5. [How do scores become a mixture?](#5-how-do-scores-become-a-mixture)
 6. [How do several heads update one position?](#6-how-do-several-heads-update-one-position)
-7. [Check your understanding](#7-check-your-understanding)
 
 ## 1. What does attention change?
 
@@ -77,7 +76,7 @@ Each block has its own attention output projection for updating token vectors. A
 
 Training determines what each head picks up. In a design called **grouped-query attention**, several query heads share keys and values. Their different queries can still give the same sources different weights.
 
-## 7. Check your understanding
+## Check your understanding
 
 1. Compare `The cat sat` with `A cat sat`. Inside the first block, which operation lets the change in the first word reach the vector at `cat`?
 

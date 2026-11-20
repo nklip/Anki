@@ -16,7 +16,6 @@ Let's see what happens without either of them and why locking could be necessary
 5. [Handling a conflict or timeout](#5-handling-a-conflict-or-timeout)
 6. [Which rows a pessimistic lock covers](#6-which-rows-a-pessimistic-lock-covers)
 7. [Alternatives to JPA entity locking](#7-alternatives-to-jpa-entity-locking)
-8. [Check your understanding](#8-check-your-understanding)
 
 ## 1. How a sale gets lost
 
@@ -228,7 +227,7 @@ Suppose two warehouses each have one unit and the shop must keep **at least one 
 
 Serializable isolation is practical when the decision depends on several rows and each participating operation can be retried. Run every reservation that affects this rule in a **serializable transaction**. Read the total, check that one unit would remain, then update the chosen warehouse in that same transaction. PostgreSQL allows only outcomes consistent with the transactions running one at a time. If it reports a serialization failure, retry the **whole transaction**, including the read and the decision. After the first sale commits, the retry sees one unit and declines the second sale.
 
-## 8. Check your understanding
+## Check your understanding
 
 1. Both checkouts start with eight units. How can the database show seven after three units were sold?
 

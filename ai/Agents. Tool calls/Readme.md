@@ -11,7 +11,6 @@ Suppose you ask, “When does the meeting start?” The time is in a file called
 3. [What the runtime checks before opening a file](#3-what-the-runtime-checks-before-opening-a-file)
 4. [How results stay matched to their requests](#4-how-results-stay-matched-to-their-requests)
 5. [Where the Model Context Protocol fits](#5-where-the-model-context-protocol-fits)
-6. [Check your understanding](#6-check-your-understanding)
 
 ## 1. Who asks for a tool and who runs it
 
@@ -58,7 +57,7 @@ Follow the two exchanges between the host and server on the left of the diagram.
 - **Tool discovery.** The client sends `tools/list`. The server returns tool definitions. The host can now show the model that `read_file` is available.
 - **Tool invocation.** Once the model asks for `notes.txt` and the host allows the request, the client sends `tools/call` with the tool name and arguments. The server checks access, runs the tool, and returns the text. The host passes the result back to the model as it did in the direct lookup.
 
-## 6. Check your understanding
+## Check your understanding
 
 1. The model has returned a request to read `notes.txt`. Has the file been opened yet? Who can open it in the direct lookup?
 

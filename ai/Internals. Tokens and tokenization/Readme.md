@@ -12,7 +12,6 @@ Take `two cats!`. You see two words and an exclamation mark. A tokenizer might u
 4. [Why one character can span two tokens](#4-why-one-character-can-span-two-tokens)
 5. [How a chat marks who said what](#5-how-a-chat-marks-who-said-what)
 6. [How to count tokens and leave room for a reply](#6-how-to-count-tokens-and-leave-room-for-a-reply)
-7. [Check your understanding](#7-check-your-understanding)
 
 ## 1. Where tokenization fits in a model response
 
@@ -78,7 +77,7 @@ If the formatted input alone exceeds the window, a service can reject the reques
 
 Counting letters is a different task. In our toy example, the letters `c`, `a`, and `t` all sit inside the single `[space]cat` token. To spell the word or count its letters, you have to look *inside* the piece. Counting token positions tells you how much context the text occupies.
 
-## 7. Check your understanding
+## Check your understanding
 
 1. The tokenizer has finished encoding a prompt. What does it pass to the model, and what does the model look up first?
 

@@ -13,7 +13,6 @@ A two-number example shows how different signals can look identical. A sentence 
 5. [What one neuron can tell us](#5-what-one-neuron-can-tell-us)
 6. [How a sparse autoencoder finds candidate features](#6-how-a-sparse-autoencoder-finds-candidate-features)
 7. [How to test whether a circuit affects an answer](#7-how-to-test-whether-a-circuit-affects-an-answer)
-8. [Check your understanding](#8-check-your-understanding)
 
 ## 1. What researchers can observe inside a model
 
@@ -97,7 +96,7 @@ A shift toward Ben that is larger than the control shift supports the hypothesis
 
 Wang and colleagues used related experiments to identify a circuit in GPT-2 small that helps predict the recipient in sentences of this kind. Ameisen and colleagues tested a different prediction about Michael Jordan’s sport. Suppressing a group of features associated with his name changed the model’s score for “basketball.”
 
-## 8. Check your understanding
+## Check your understanding
 
 1. A model scores “Anna” above “Ben.” What can you record inside the model to investigate that preference, and what would still need testing?
 

@@ -10,7 +10,6 @@ A shop saves your order, but the charge fails. Who puts the item back in stock? 
 2. [How AT puts an item back](#2-how-at-puts-an-item-back)
 3. [How the services find the same checkout](#3-how-the-services-find-the-same-checkout)
 4. [Choosing a transaction mode](#4-choosing-a-transaction-mode)
-5. [Check your understanding](#5-check-your-understanding)
 
 ## 1. One checkout, three databases
 
@@ -63,7 +62,7 @@ What can a participant do if checkout fails after its part succeeds?
 | **Saga** | The service charges $20. If checkout fails later, it issues a refund. The refund is a [**compensation**](../Transactions.%20Saga/Readme.md#saga-and-tcc), a new action that corrects an earlier one. | A long workflow has meaningful compensations, and customers can tolerate seeing the charge before the refund. |
 | **XA** | Under the X/Open XA standard, the database **prepares** the debit, promising it can commit later. It waits for the coordinator to request commit or rollback. | Databases and drivers support XA, and other work can [wait for locks held by prepared branches](../Transactions.%20Two-phase%20commit/Readme.md#why-a-prepared-transaction-can-block). |
 
-## 5. Check your understanding
+## Check your understanding
 
 1. The account service rejects the debit. Why can the unpaid order still exist?
 

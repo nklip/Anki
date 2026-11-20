@@ -10,7 +10,6 @@ Suppose you type “What is 18 × 22? Use the calculator.” You see one answer 
 2. [What does the model see on each call?](#2-what-does-the-model-see-on-each-call)
 3. [Who does the arithmetic?](#3-who-does-the-arithmetic)
 4. [Where does information go between turns?](#4-where-does-information-go-between-turns)
-5. [Check your understanding](#5-check-your-understanding)
 
 ## 1. When does an assistant use an agent?
 
@@ -60,7 +59,7 @@ Suppose your next message is “Double that.” To know what *that* refers to, t
 
 A long chat may contain more text than the model can take in at once. The application can select recent messages, summarize older ones, or retrieve a relevant record. An answer can therefore remain in saved history even when the model cannot see it on the current call. The same distinction explains how an assistant can use your name next week if the application saves it and supplies it again.
 
-## 5. Check your understanding
+## Check your understanding
 
 1. Two assistants use the same model and test runner. One always runs the tests and summarizes them. The other can inspect a file or run another test depending on what failed. Which one is acting as an agent, and what tells you?
 

@@ -12,7 +12,6 @@ Suppose the database confirms a transfer of `20` from account A to account B. Po
 4. [Why pay for a second write?](#4-why-pay-for-a-second-write)
 5. [Which failures does the promise cover?](#5-which-failures-does-the-promise-cover)
 6. [What changes in other engines?](#6-what-changes-in-other-engines)
-7. [Check your understanding](#7-check-your-understanding)
 
 ## 1. What the database keeps in memory and on storage
 
@@ -101,7 +100,7 @@ The cost is the extra log data and the work of replaying it after a crash. More 
 | SQLite in WAL mode | A reader can fetch the newest page visible to it directly from WAL, falling back to the main database file. A checkpoint copies pages back. With `synchronous=FULL`, SQLite syncs WAL at commit. With `NORMAL`, a power failure can lose recent commits. |
 | RocksDB | Recovery uses WAL to rebuild an in-memory table (the **memtable**) whose newest entries have yet to reach sorted table files. By default, a write survives a process crash, but a machine failure can lose recent writes still in the operating system’s cache. |
 
-## 7. Check your understanding
+## Check your understanding
 
 1. Power fails after PostgreSQL writes the page containing A’s debit, but before the transfer commits. What balances can a new query see after restart?
 

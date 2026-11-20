@@ -13,7 +13,6 @@ A **token** can be a word, part of a word, punctuation, or a special marker. Sup
 5. [Which tokens survive top-k and top-p?](#5-which-tokens-survive-top-k-and-top-p)
 6. [What makes generation stop?](#6-what-makes-generation-stop)
 7. [When can a seed repeat a result?](#7-when-can-a-seed-repeat-a-result)
-8. [Check your understanding](#8-check-your-understanding)
 
 ## 1. Where does decoding fit?
 
@@ -93,7 +92,7 @@ In the diagram, seed A gives a first draw of `0.80` both times. With the same pr
 
 To repeat a whole reply reliably, keep the model version, prompt, and decoding settings fixed and use a setup that can repeat the same calculations. Software or hardware differences can change the scores. Even greedy decoding can differ if two scores are close enough to swap order. Once a choice differs, the two runs have different text to continue.
 
-## 8. Check your understanding
+## Check your understanding
 
 1. The model has scored `cat`, `dog`, and `fox` after “I saw a.” What still has to happen before it can score what follows “I saw a dog”?
 

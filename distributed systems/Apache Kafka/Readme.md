@@ -14,7 +14,6 @@ Start with the log and its readers, then explore storage guarantees, choose a de
 4. [Placement: Kafka, Redis, databases](#4-placement-kafka-redis-databases)
 5. [Patterns](#5-patterns)
 6. [When Kafka is the wrong tool](#6-when-kafka-is-the-wrong-tool)
-7. [Check your understanding](#7-check-your-understanding)
 
 The article uses Apache Kafka 4.3 documentation and the standard `KafkaConsumer` subscription model. Its partition-assignment rules apply to consumer groups using either the classic or newer consumer protocol. **Share groups** use a different consumption model and are discussed separately. Topic names, event fields, and configuration examples are design choices, not universal defaults.
 
@@ -457,7 +456,7 @@ Kafka transactions can commit Kafka output records and consumed offsets together
 
 If the destination cannot detect duplicates, the broker cannot promise an exactly-once external effect. See [database writes and service calls](../Apache%20Kafka.%20Delivery%20and%20transactions/Readme.md#database-writes-and-service-calls).
 
-## 7. Check your understanding
+## Check your understanding
 
 Try answering each question before expanding its answer.
 

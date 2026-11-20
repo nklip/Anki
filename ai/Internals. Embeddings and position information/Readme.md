@@ -11,7 +11,6 @@ Consider the word `bank` in “river bank” and “savings bank.” Suppose the
 3. [How adding a position vector records order](#3-how-adding-a-position-vector-records-order)
 4. [How rotary position embeddings encode a gap](#4-how-rotary-position-embeddings-encode-a-gap)
 5. [How retrieval embeddings find a passage](#5-how-retrieval-embeddings-find-a-passage)
-6. [Check your understanding](#6-check-your-understanding)
 
 ## 1. How a token ID selects a vector
 
@@ -71,7 +70,7 @@ Imagine asking a help desk, “How do I reset my password?” A search system ca
 
 For that comparison to work, use a model trained to represent questions and passages in the same search space, or two models trained to work together. A generator’s hidden state and a search vector can have the same number of entries and still represent different things.
 
-## 6. Check your understanding
+## Check your understanding
 
 1. Suppose `bank` has token ID `17` and is the fifth token in a sentence. Which number selects its embedding-table row? What does the other number tell you?
 

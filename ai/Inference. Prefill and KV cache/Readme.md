@@ -12,7 +12,6 @@ Suppose the prompt is “The cat sat” and the reply begins “on the mat.” F
 4. [How does the model produce the next token?](#4-how-does-the-model-produce-the-next-token)
 5. [How much memory does the cache use?](#5-how-much-memory-does-the-cache-use)
 6. [Why is the first wait different from the gaps that follow?](#6-why-is-the-first-wait-different-from-the-gaps-that-follow)
-7. [Check your understanding](#7-check-your-understanding)
 
 ## 1. Where does prefill fit in a reply?
 
@@ -87,7 +86,7 @@ Imagine watching a reply stream onto your screen, one token at a time. The timel
 
 To see how engineers use these timings to understand a slow reply, revisit [Inference. What happens when a model answers](../Inference.%20What%20happens%20when%20a%20model%20answers/Readme.md#4-what-do-inference-engineers-measure). A server can shorten the first wait when two prompts have the same beginning, as explained in [Inference. Prompt caching across requests](../Inference.%20Prompt%20caching%20across%20requests/Readme.md).
 
-## 7. Check your understanding
+## Check your understanding
 
 1. After prefill, a rule picks the highest-scoring token, `D`. The model then processes `D` to score the next token. Which part illustrates a decoding strategy, and which part begins the decoding phase?
 

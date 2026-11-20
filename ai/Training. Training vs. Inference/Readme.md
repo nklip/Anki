@@ -13,7 +13,6 @@ Suppose two identical notebooks cost 6 coins. A model predicts 4. Follow what ha
 5. [What happens when we ask for a new prediction?](#5-what-happens-when-we-ask-for-a-new-prediction)
 6. [What do the forward pass, backward pass, and optimizer do?](#6-what-do-the-forward-pass-backward-pass-and-optimizer-do)
 7. [What changes when a language model answers?](#7-what-changes-when-a-language-model-answers)
-8. [Check your understanding](#8-check-your-understanding)
 
 ## 1. What is a weight?
 
@@ -121,7 +120,7 @@ During **generation**, the model gets a prompt, such as “The cat sat on the.�
 
 The text available for a prediction is its **context**. Suppose you add “Answer in French” or supply a tool result. The input changes, so the intermediate numbers computed from it, called **activations**, can change as well. The model can now produce a different answer with its existing weights. Giving examples in the prompt to guide the reply is **in-context learning**. Updating trainable parameters through additional training is **fine-tuning**.
 
-## 8. Check your understanding
+## Check your understanding
 
 1. A model with `w = 2` quotes 4 coins for two notebooks and 6 coins for three. What changed between the two quotes?
 

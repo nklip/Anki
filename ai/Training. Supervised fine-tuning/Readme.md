@@ -11,7 +11,6 @@ For example, pair the request “Rewrite ‘Send the file’ politely” with th
 3. [What does the model see, and which tokens count toward the loss?](#3-what-does-the-model-see-and-which-tokens-count-toward-the-loss)
 4. [How does a demonstration teach tool use?](#4-how-does-a-demonstration-teach-tool-use)
 5. [How can we tell whether SFT helped?](#5-how-can-we-tell-whether-sft-helped)
-6. [Check your understanding](#6-check-your-understanding)
 
 ## 1. Where does SFT fit in training?
 
@@ -66,7 +65,7 @@ A lower training loss means the recorded replies became more likely on average. 
 
 For example, ask both models to rewrite “Return the key by noon” politely. “Please return the key when you can” sounds polite but loses the deadline. “Could you please return the key by noon?” satisfies both requirements. Checking tone *and* meaning lets you recognize a good rewrite even when its wording differs from your example.
 
-## 6. Check your understanding
+## Check your understanding
 
 1. You have a request and one example of a good reply. How could you use them for SFT? What extra information would you collect for preference tuning?
 

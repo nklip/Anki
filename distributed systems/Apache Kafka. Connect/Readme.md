@@ -18,7 +18,6 @@ The sections go from why Connect exists and how it is built, through one change'
 8. [Pattern: transactional outbox with Connect as the relay](#8-pattern-transactional-outbox-with-connect-as-the-relay)
 9. [When to use Connect, and when not to](#9-when-to-use-connect-and-when-not-to)
 10. [Before you run a pipeline in production](#10-before-you-run-a-pipeline-in-production)
-11. [Check your understanding](#11-check-your-understanding)
 
 ## 1. Why Connect exists
 
@@ -273,7 +272,7 @@ By default (`errors.tolerance=none`), any error in a converter or an SMT fails t
 
 **Keep enough history to recover.** A source can resume only while the external system still has the changes it needs, such as the WAL. A sink can replay only the records that Kafka still retains. An outage that lasts longer than either retention needs a new snapshot or a rebuild of the destination.
 
-## 11. Check your understanding
+## Check your understanding
 
 1. Product changes must reach search continuously. What does Connect save you from building, and where does that work run? Could an SMT count orders per five minutes?
 

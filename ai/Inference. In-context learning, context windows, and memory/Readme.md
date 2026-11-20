@@ -13,7 +13,6 @@ Suppose you ask, “How do I build this project?” The chat application might s
 5. [How does a saved note help on a later call?](#5-how-does-a-saved-note-help-on-a-later-call)
 6. [How does retrieval help answer a question?](#6-how-does-retrieval-help-answer-a-question)
 7. [How does a summary make room?](#7-how-does-a-summary-make-room)
-8. [Check your understanding](#8-check-your-understanding)
 
 ## 1. What goes into one model call?
 
@@ -97,7 +96,7 @@ The diagram shows a few lines from a 2,500-token conversation and a few lines fr
 
 The summary leaves out “Call Dana before the release.” If the next question is “Who needs a call?”, the summary alone cannot supply Dana’s name. If the application kept the original history or a separate reminder, it can retrieve the missing detail and include it in the new input. For how a model can request that lookup, see [Agents. Tool calls](../Agents.%20Tool%20calls/Readme.md).
 
-## 8. Check your understanding
+## Check your understanding
 
 1. Two people type “How do I build this project?” Only one request includes the note “This project uses Maven.” Why does that request give the model a stronger basis for suggesting a Maven command?
 

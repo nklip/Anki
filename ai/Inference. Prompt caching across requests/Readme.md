@@ -13,7 +13,6 @@ Imagine a museum app that sends the same visitor guide with every question. One 
 5. [How much of a match can the system reuse?](#5-how-much-of-a-match-can-the-system-reuse)
 6. [Why can a matching prompt miss later?](#6-why-can-a-matching-prompt-miss-later)
 7. [How do you measure what caching saved?](#7-how-do-you-measure-what-caching-saved)
-8. [Check your understanding](#8-check-your-understanding)
 
 ## 1. What work can two requests share?
 
@@ -92,7 +91,7 @@ Start with the three measurements in the diagram. Each answers a different quest
 
 The museum app sent the full guide on both calls. For how an app selects what to send, see [Inference. In-context learning, context windows, and memory](../Inference.%20In-context%20learning%2C%20context%20windows%2C%20and%20memory/Readme.md).
 
-## 8. Check your understanding
+## Check your understanding
 
 1. The first visitor asked about opening time. The second asks about lockers. If the system saved the work on the instruction and guide, what can the model reuse, and what work does it still do?
 

@@ -11,7 +11,6 @@ A transformer updates those vectors as it processes the text. In the Llama-style
 3. [Which vector gets normalized in a pre-norm block?](#3-which-vector-gets-normalized-in-a-pre-norm-block)
 4. [How does LayerNorm center and rescale a vector?](#4-how-does-layernorm-center-and-rescale-a-vector)
 5. [How does RMSNorm measure size?](#5-how-does-rmsnorm-measure-size)
-6. [Check your understanding](#6-check-your-understanding)
 
 ## 1. What travels through a transformer block?
 
@@ -72,7 +71,7 @@ Skipping the centering step saves work. In their experiments, Zhang and Sennrich
 
 Compare the methods on **the same input**, before learned adjustments. For `[3, 4]`, LayerNorm first subtracts 3.5, giving `[−0.5, 0.5]`, then divides by 0.5 to give `[−1, 1]`. RMSNorm divides the original pair by its RMS and gives approximately `[0.85, 1.13]`. Both calculations use only the coordinates of this one token position. These values are working numbers for the next calculation. Next-token probabilities come later, after the model produces vocabulary scores.
 
-## 6. Check your understanding
+## Check your understanding
 
 1. If “The cat” occupies two token positions, how many running vectors leave a block? Which component can bring information from `The` into the vector at `cat`?
 

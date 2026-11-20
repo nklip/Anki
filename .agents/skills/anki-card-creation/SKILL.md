@@ -11,7 +11,7 @@ Create a self-contained Markdown card that teaches someone who does not already 
 
 - Default new cards to **simple mode**. Read [references/simple-mode.md](references/simple-mode.md).
 - Use **complex mode**, also called **article mode**, when the user requests either name or explicitly asks for comprehensive, multi-stage, or step-by-step treatment. Read [references/complex-mode.md](references/complex-mode.md). Both names select the same mode.
-- In article mode, link the numbered `##` sections from an ordered contents list. End the teaching body with [Check your understanding](references/complex-mode.md#review-questions), with at least one question about each preceding `##` section.
+- In article mode, number and list only the teaching sections in the ordered contents. Place the unnumbered `## Check your understanding` section immediately before `# Sources`. Include at least one [review question](references/complex-mode.md#review-questions) per teaching section.
 - When revising, follow the user's selected mode or the established mode in the subject index or task context. If none is recorded, choose from the lesson's scope: one focused idea is simple; comprehensive treatment is complex. Both modes use the same Markdown structure, so the absence of Front/Back headings does not identify a mode. Do not add mode metadata to the document.
 - Pass the selected mode explicitly to the validator: `--mode simple` or `--mode complex`. When revising a legacy card with Front/Back sections, convert the requested file to the shared structure while preserving its teaching content.
 

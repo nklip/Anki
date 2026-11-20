@@ -12,7 +12,6 @@ A **token** is a piece of text, such as a word, part of a word, or punctuation. 
 4. [Update each position using context](#4-update-each-position-using-context)
 5. [Score the possible next tokens](#5-score-the-possible-next-tokens)
 6. [How does decoding choose the next token?](#6-how-does-decoding-choose-the-next-token)
-7. [Check your understanding](#7-check-your-understanding)
 
 ## 1. What goes into one forward pass?
 
@@ -85,7 +84,7 @@ Back in “The cat,” suppose decoding selects `sat`. Its ID is appended, and t
 
 A **key–value (KV) cache** stores numbers that attention has already computed. When the model processes `sat`, it can reuse the stored keys and values for `The` and `cat`. Follow one token through this process in [Inference. Prefill and KV cache](../Inference.%20Prefill%20and%20KV%20cache/Readme.md).
 
-## 7. Check your understanding
+## Check your understanding
 
 1. The model has finished a forward pass on “The cat,” but the application has not selected anything yet. What is available at the last position, and what still has to happen?
 

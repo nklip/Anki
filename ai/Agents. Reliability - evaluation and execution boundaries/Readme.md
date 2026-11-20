@@ -15,7 +15,6 @@ A reliable agent needs two checks at different times. **Before an action**, the 
 7. [Why instructions inside a task description have no authority](#7-why-instructions-inside-a-task-description-have-no-authority)
 8. [How software enforces permissions](#8-how-software-enforces-permissions)
 9. [What a sandbox can protect](#9-what-a-sandbox-can-protect)
-10. [Check your understanding](#10-check-your-understanding)
 
 ## 1. Where the outcome check belongs
 
@@ -110,7 +109,7 @@ The **filesystem limit** determines which files the program can read or change. 
 
 Test these properties separately. On a test copy, check that unrelated files and destinations are inaccessible. Then run an allowed task and grade what it saved. Include ordinary failure cases such as a missing target list or a lost reply so the evaluation also covers what the user hears when the job cannot be completed.
 
-## 10. Check your understanding
+## Check your understanding
 
 1. The task tool returns “Saved.” What should the runtime do before telling the user that exactly one task was added?
 
