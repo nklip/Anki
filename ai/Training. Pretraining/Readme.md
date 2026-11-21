@@ -101,7 +101,18 @@ Every passage supplies practice. Choosing which passages to include changes what
 
    </details>
 
-3. In `The cat sleeps.`, why is `cat` the target after `The`, and when may the model use `cat` as input?
+3. The model gave `cat` only a 1% chance after `The`, so the loss for that prediction was high. What does **backpropagation** tell the optimizer?
+
+   <details>
+   <summary>Answer</summary>
+
+   **Backpropagation calculates how sensitive the loss is to each trainable weight.** During the forward pass, the model uses its weights to make predictions. Training then averages the losses for a batch of tokens. Backpropagation starts at that average and follows the calculations backward, layer by layer. The **chain rule** connects how a weight affects a layer’s output with how that output affects the loss.
+
+   The result for each weight is a **gradient**. For example, a gradient of `−2` tells us that increasing just that weight by `0.01` should lower the batch loss by about `0.02`. The optimizer uses these gradients to update the weights. Its **learning rate** controls how large a step it takes.
+
+   </details>
+
+4. In `The cat sleeps.`, why is `cat` the target after `The`, and when may the model use `cat` as input?
 
    <details>
    <summary>Answer</summary>
@@ -110,7 +121,24 @@ Every passage supplies practice. Choosing which passages to include changes what
 
    </details>
 
-4. Two predictions both rank `dog` first. One gives `cat` a probability of `10%` and the other gives it `30%`. The recorded next token is `cat`. Which prediction has the lower loss?
+5. In “The cat sleeps,” what does **loss** measure when the model has read `The` and the next token is `cat`?
+
+   <details>
+   <summary>Answer</summary>
+
+   **Loss measures how surprising the actual next token was to the model.** The more probability the model assigned to `cat` after `The`, the smaller the loss. For one token, the cross-entropy loss is `−ln(p)`, where `ln` is the natural logarithm and `p` is the probability the model assigned to that token.
+
+   | Probability assigned to `cat` | Loss (rounded) |
+   |---|---:|
+   | 90% | 0.11 |
+   | 50% | 0.69 |
+   | 1% | 4.61 |
+
+   Even if `cat` is the model’s top guess at both 50% and 90%, it earns a lower loss at 90%. Training adjusts the weights to reduce the average loss across many token predictions.
+
+   </details>
+
+6. Two predictions both rank `dog` first. One gives `cat` a probability of `10%` and the other gives it `30%`. The recorded next token is `cat`. Which prediction has the lower loss?
 
    <details>
    <summary>Answer</summary>
@@ -119,7 +147,7 @@ Every passage supplies practice. Choosing which passages to include changes what
 
    </details>
 
-5. A model completes a sentence that appears word for word in its training data. Does that show it can use the same grammar pattern in a new sentence?
+7. A model completes a sentence that appears word for word in its training data. Does that show it can use the same grammar pattern in a new sentence?
 
    <details>
    <summary>Answer</summary>
@@ -128,7 +156,7 @@ Every passage supplies practice. Choosing which passages to include changes what
 
    </details>
 
-6. A repair manual appears on a thousand copied pages. One copy lands in the test set. How would you prepare the collection for training and evaluation?
+8. A repair manual appears on a thousand copied pages. One copy lands in the test set. How would you prepare the collection for training and evaluation?
 
    <details>
    <summary>Answer</summary>
@@ -142,6 +170,7 @@ Every passage supplies practice. Choosing which passages to include changes what
 - [Hugging Face, *How do Transformers work?*](https://huggingface.co/learn/llm-course/chapter1/4)
 - [Hugging Face, *Causal language modeling*](https://huggingface.co/docs/transformers/tasks/language_modeling)
 - [PyTorch, *Optimizing Model Parameters*](https://docs.pytorch.org/tutorials/beginner/basics/optimization_tutorial.html)
+- [PyTorch, *Automatic Differentiation with torch.autograd*](https://docs.pytorch.org/tutorials/beginner/basics/autogradqs_tutorial.html)
 - [PyTorch, *CrossEntropyLoss*](https://docs.pytorch.org/docs/2.15/generated/torch.nn.CrossEntropyLoss.html)
 - [Ouyang et al., *Training language models to follow instructions with human feedback*](https://arxiv.org/abs/2203.02155)
 - [Brown et al., *Language Models are Few-Shot Learners*](https://arxiv.org/abs/2005.14165)
