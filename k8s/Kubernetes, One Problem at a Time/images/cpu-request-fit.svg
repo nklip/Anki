@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="667" viewBox="0 0 800 667" role="img" aria-labelledby="title desc">
+  <title id="title">The shop Pod's CPU request fits on this worker</title>
+  <desc id="desc">Two bars show the same worker before and after the shop Pod is placed. Of the 2 CPUs available to Pods, other Pods already request 1.5. The shop requests 500m, or half a CPU. If the worker also meets the 256Mi memory request and the other placement requirements, the shop can fill the remaining half. The requests then total 2 CPUs.</desc>
+  <!-- Colors distinguish existing requests, room for new requests, and the incoming shop Pod. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 20px; fill: #52677b; }
+      .heading { font-size: 24px; font-weight: 700; }
+      .value { font-size: 22px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .small { font-size: 18px; }
+    </style>
+  </defs>
+  <!-- The top and bottom bars use the same 688-pixel width for two CPUs. -->
+  <rect width="800" height="667" fill="#fff"/>
+  <text x="32" y="51" class="title">Will the shop Pod fit on this worker?</text>
+  <text x="32" y="85" class="subtitle">The scheduler counts CPU requests before it places the Pod.</text>
+
+  <!-- The unrequested quarter lines up with the incoming request and its final position. -->
+  <g id="worker-before">
+    <rect x="32" y="114" width="736" height="175" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+    <text x="56" y="152" class="heading">Before placement</text>
+    <text x="56" y="181" class="body">This worker has 2 CPUs available to Pods.</text>
+    <rect x="56" y="203" width="516" height="64" fill="#c3d9f7"/>
+    <rect x="572" y="203" width="172" height="64" fill="#fff" stroke="#8094a6" stroke-width="1.5" stroke-dasharray="6 4"/>
+    <text x="314" y="230" text-anchor="middle" class="value">1.5 CPUs</text>
+    <text x="314" y="253" text-anchor="middle" class="small">requested by other Pods</text>
+    <text x="658" y="230" text-anchor="middle" class="value">0.5 CPU</text>
+    <text x="658" y="253" text-anchor="middle" class="small">still available</text>
+  </g>
+
+  <!-- The incoming request has the same width and center as one quarter of the worker bar. -->
+  <g id="shop-request">
+    <text x="56" y="339" class="heading">The shop Pod asks for half a CPU</text>
+    <text x="56" y="373" class="body">Assume its 256Mi memory request and</text>
+    <text x="56" y="401" class="body">other requirements also fit this worker.</text>
+    <rect x="572" y="322" width="172" height="79" rx="8" fill="#d9f3e2" stroke="#86b89a" stroke-width="1.5"/>
+    <text x="658" y="354" text-anchor="middle" class="value">500m CPU</text>
+    <text x="658" y="382" text-anchor="middle" class="body">= 0.5 CPU</text>
+  </g>
+
+  <!-- The worker's total capacity and its existing requests stay fixed; the shop fills the open portion. -->
+  <g id="worker-after">
+    <rect x="32" y="437" width="736" height="198" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+    <text x="56" y="478" class="heading">After placement on the same worker</text>
+    <rect x="56" y="507" width="516" height="64" fill="#c3d9f7"/>
+    <rect x="572" y="507" width="172" height="64" fill="#d9f3e2" stroke="#86b89a" stroke-width="1.5"/>
+    <text x="314" y="534" text-anchor="middle" class="value">1.5 CPUs</text>
+    <text x="314" y="557" text-anchor="middle" class="small">requested by other Pods</text>
+    <text x="658" y="534" text-anchor="middle" class="value">0.5 CPU</text>
+    <text x="658" y="557" text-anchor="middle" class="small">shop Pod</text>
+    <text x="56" y="608" class="body">Together the Pods now request all 2 CPUs.</text>
+  </g>
+  <!-- The arrow carries the shop request across the outer panel edge to the top of its final bar segment. -->
+  <path id="placement-shaft" data-connector="true" d="M658 402 V498" fill="none" stroke="#52677b" stroke-width="2.5"/>
+  <polygon id="placement-head" points="651,496 665,496 658,506" fill="#52677b"/>
+</svg>

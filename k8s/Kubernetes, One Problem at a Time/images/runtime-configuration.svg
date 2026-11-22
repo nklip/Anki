@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="960" height="487" viewBox="0 0 960 487" role="img" aria-labelledby="title desc">
-  <title id="title">Reuse one image; configure the running app</title>
-  <desc id="desc">An immutable container image contains the application code without an embedded password. Starting a container creates a running application. At runtime, a ConfigMap supplies non-confidential LOG_LEVEL=info and a Secret supplies the placeholder DB_PASSWORD=&lt;value&gt; through environment variables or files. The running application does receive the secret. Restrict access to Secrets; base64 encoding is not encryption.</desc>
+  <title id="title">The same shop image can use different databases</title>
+  <desc id="desc">The test shop runs the same container image as the live shop. The test ConfigMap supplies DB_HOST=test-db and LOG_LEVEL=info. A Secret supplies DB_PASSWORD. The running app receives those values as environment variables or files. Base64 represents bytes as text that anyone who can read it can decode.</desc>
   <!-- Shared styles keep text editable and colors consistent with adjacent Kubernetes diagrams. -->
   <defs><style>
     text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
@@ -14,8 +14,8 @@
   </style></defs>
   <!-- White canvas and top-to-bottom lesson heading. -->
   <rect width="960" height="487" fill="#ffffff"/>
-  <text x="32" y="43" class="title" text-anchor="start">Reuse one image; configure the running app</text>
-  <text x="32" y="75" class="subtitle" text-anchor="start">Build once; supply environment-specific values when the application runs.</text>
+  <text x="32" y="43" class="title" text-anchor="start">The same shop image can use different databases</text>
+  <text x="32" y="75" class="subtitle" text-anchor="start">The test shop gets its database host and password when it runs.</text>
   <!-- Build artifact and running process are distinct boxes: the running app receives the secret. -->
   <rect id="immutable-image" x="32" y="112" width="244" height="126" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
   <text x="154" y="147" class="heading" text-anchor="middle">Immutable image</text>
@@ -31,9 +31,10 @@
   <text x="438" y="206" class="small" text-anchor="middle">same image</text>
   <!-- Runtime sources enter the running application; neither arrow points into the image. -->
   <rect id="configmap" x="32" y="303" width="300" height="116" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
-  <text x="182" y="338" class="heading" text-anchor="middle">ConfigMap</text>
-  <text x="182" y="371" class="body" text-anchor="middle">LOG_LEVEL=info</text>
-  <text x="182" y="400" class="body" text-anchor="middle">Non-confidential settings</text>
+  <text x="182" y="329" class="heading" text-anchor="middle">ConfigMap</text>
+  <text x="182" y="355" class="body" text-anchor="middle">DB_HOST=test-db</text>
+  <text x="182" y="379" class="body" text-anchor="middle">LOG_LEVEL=info</text>
+  <text x="182" y="404" class="small" text-anchor="middle">Non-confidential settings</text>
   <rect id="secret" x="600" y="303" width="328" height="116" rx="12" fill="#fff7ed" stroke="#d9ab72" stroke-width="1.5"/>
   <text x="764" y="338" class="heading" text-anchor="middle">Secret</text>
   <text x="764" y="371" class="body" text-anchor="middle">DB_PASSWORD=&lt;value&gt;</text>
@@ -45,5 +46,5 @@
   <polygon id="secret-to-app-head" points="764,238 758,248 770,248" fill="#52677b"/>
   <text x="790" y="278" class="small" text-anchor="start">env / files</text>
   <!-- Security note explains the encoding limit without presenting a real password. -->
-  <text x="32" y="462" class="body" text-anchor="start">Base64 is not encryption. Secret values still need access controls.</text>
+  <text x="32" y="462" class="body" text-anchor="start">Base64 represents bytes as text. Anyone who can read that text can decode the password.</text>
 </svg>

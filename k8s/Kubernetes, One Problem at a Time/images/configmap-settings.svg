@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="667" viewBox="0 0 800 667" role="img" aria-labelledby="title desc">
+  <title id="title">A ConfigMap supplies the test shop's settings</title>
+  <desc id="desc">The ConfigMap named test-shop-settings stores DB_HOST as test-db and LOG_LEVEL as info. The test Pod references it using envFrom. When the shop container starts, the application reads its environment variables to select the test database and use info-level logging.</desc>
+  <!-- Shared palette and type sizes match the other shop diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 29px; font-weight: 700; }
+      .heading { font-size: 24px; font-weight: 700; }
+      .subheading { font-size: 19px; font-weight: 700; }
+      .body { font-size: 20px; }
+      .note { font-size: 18px; fill: #52677b; }
+      .code { font-family: Menlo, Consolas, monospace; font-size: 20px; }
+    </style>
+  </defs>
+  <!-- The setup flows downward from stored settings to the consuming container. -->
+  <rect width="800" height="667" fill="#ffffff"/>
+  <text x="32" y="48" class="title">A ConfigMap supplies the test shop's settings</text>
+  <text x="32" y="81" class="note">The test shop can run the same image as the live shop.</text>
+
+  <!-- Key and value columns preserve the row order used by the container below. -->
+  <g id="configmap">
+    <rect x="32" y="105" width="736" height="180" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
+    <text x="56" y="144" class="heading">ConfigMap</text>
+    <text x="217" y="144" class="code">test-shop-settings</text>
+    <text x="56" y="183" class="subheading">Key</text>
+    <text x="420" y="183" class="subheading">Value for the test shop</text>
+    <path d="M56 193 H744" fill="none" stroke="#c6d9ef" stroke-width="1.5"/>
+    <text x="56" y="224" class="code">DB_HOST</text>
+    <text x="420" y="224" class="code">test-db</text>
+    <text x="56" y="259" class="code">LOG_LEVEL</text>
+    <text x="420" y="259" class="code">info</text>
+  </g>
+
+  <!-- Leave the flow label to the right of the shaft; the tip meets the Pod boundary. -->
+  <g id="environment-binding">
+    <path id="settings-shaft" data-connector="true" d="M78 286 V362" stroke="#52677b" stroke-width="2.5" fill="none"/>
+    <polygon id="settings-head" points="78,374.25 71,360 85,360" fill="#52677b"/>
+    <text x="105" y="326" class="body">The Pod uses <tspan class="code">envFrom</tspan> to select this ConfigMap.</text>
+    <text x="105" y="353" class="note">Kubernetes sets both variables when the container starts.</text>
+  </g>
+
+  <!-- A container inside the Pod maps each environment variable to an app behavior. -->
+  <g id="test-shop-pod">
+    <rect x="32" y="375" width="736" height="260" rx="12" fill="#f8fafc" stroke="#a6b8c8" stroke-width="1.5"/>
+    <text x="56" y="414" class="heading">Test shop Pod</text>
+    <rect x="56" y="433" width="688" height="177" rx="10" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
+    <text x="78" y="469" class="heading">Shop container</text>
+    <text x="78" y="506" class="subheading">Environment at startup</text>
+    <text x="420" y="506" class="subheading">How the app uses it</text>
+    <path d="M78 517 H722" fill="none" stroke="#bddac5" stroke-width="1.5"/>
+    <text x="78" y="549" class="code">DB_HOST=test-db</text>
+    <text x="420" y="549" class="body">Connects to the test database</text>
+    <text x="78" y="585" class="code">LOG_LEVEL=info</text>
+    <text x="420" y="585" class="body">Uses info-level logging</text>
+  </g>
+</svg>
