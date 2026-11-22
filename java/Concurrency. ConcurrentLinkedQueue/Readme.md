@@ -1,372 +1,280 @@
-# ConcurrentLinkedQueue
+# Concurrency. ConcurrentLinkedQueue
 
 <sub>[Back to Java](../Readme.md#content)</sub>
 
-**`ConcurrentLinkedQueue` was introduced in Java 5 (JDK 1.5) as an unbounded, thread-safe, non-blocking first-in, first-out (FIFO) queue.**
+**Java 5 introduced `ConcurrentLinkedQueue`, an unbounded, thread-safe first-in, first-out (FIFO) queue.**
 
-Use it when many threads must add and remove elements concurrently, and retrieval should return without waiting for more work. It does **not** enforce a capacity or provide **backpressure**: a way to slow or reject incoming work when consumers cannot keep up. The first diagram explains its linked-node model; the second shows where `offer()` and `poll()` logically take effect.
+A print worker calls `poll()` to claim the oldest waiting job. If the queue is empty, the worker gets `null` and can do something else. Even with a million jobs waiting, claiming the next one usually takes only a few steps. Cancelling a particular job by name might require inspecting all million.
 
-## Mental model
+1. [Taking the next job](#1-taking-the-next-job)
+2. [How concurrent offers and polls work](#2-how-concurrent-offers-and-polls-work)
+3. [Time complexity of the main methods](#3-time-complexity-of-the-main-methods)
+4. [Checking, claiming, and iterating](#4-checking-claiming-and-iterating)
+5. [What a worker sees after a handoff](#5-what-a-worker-sees-after-a-handoff)
+6. [Choosing a queue for a worker](#6-choosing-a-queue-for-a-worker)
 
-`ConcurrentLinkedQueue<E>` is a shared line. **Producers** add elements; **consumers** retrieve them:
+## 1. Taking the next job
 
-- `offer(e)` appends `e` at the **tail**.
-- `poll()` removes and returns the **head**, or returns `null` when empty.
-- `peek()` returns the head without removing it, or returns `null` when empty.
-- Producers and consumers coordinate without one lock around the whole queue.
-
-| Property | Meaning |
-|---|---|
-| Order | FIFO: the longest-waiting element is removed first |
-| Capacity | Unbounded; producers can outrun consumers |
-| Empty retrieval | `poll()` returns `null` immediately |
-| `null` elements | Forbidden, so `null` unambiguously means “empty” |
-| Progress | Non-blocking/lock-free algorithm; not wait-free |
-| Iterator | Weakly consistent, not a frozen snapshot |
-| `size()` | Traverses the queue; possibly inaccurate during changes |
-
-This complete example uses the basic API:
+A **producer** adds a job at the back, or **tail**. The print worker is the **consumer**. It removes the oldest waiting job from the front, or **head**. Try predicting each output before reading the comment.
 
 ```java
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public final class ConcurrentLinkedQueueBasics {
+class PrintQueue {
     public static void main(String[] args) {
-        ConcurrentLinkedQueue<String> queue =
-                new ConcurrentLinkedQueue<>();
-
-        queue.offer("A");
-        queue.offer("B");
-
-        System.out.println(queue.peek()); // A; A remains queued
-        System.out.println(queue.poll()); // A
-        System.out.println(queue.poll()); // B
-        System.out.println(queue.poll()); // null; no waiting
+        var jobs = new ConcurrentLinkedQueue<String>();
+        jobs.offer("A");
+        jobs.offer("B");
+        System.out.println(jobs.peek()); // A (still queued)
+        System.out.println(jobs.poll()); // A
+        System.out.println(jobs.poll()); // B
+        System.out.println(jobs.poll()); // null
     }
 }
 ```
 
-Because the queue is unbounded, `offer(e)` returns `true`; `offer(null)` throws `NullPointerException`.
+`poll()` returns `null` when it finds the queue empty. That result does not mean the producers have finished. A worker that stops on the first `null` can miss a job offered a moment later. Storing `null` would make the result ambiguous, so `offer(null)` throws `NullPointerException`. Because the queue is **unbounded**, there is no capacity limit that makes `offer(job)` or `add(job)` return `false`. Both return `true` for a non-null job.
 
-## Linked-node organization
+### Queue properties at a glance
 
-Each **node** holds an element reference in `item` and a link to another node in `next`. A **live** node still contains an element. In the OpenJDK implementation, these fields are `volatile`: writes provide visibility to subsequent reads in other threads. This does not make a sequence such as “check, then update” atomic.
+| Property | What to remember |
+|---|---|
+| Order | FIFO. The next successful poll claims the oldest waiting job. |
+| Capacity | Unbounded. A growing backlog consumes heap space. |
+| Empty retrieval | `poll()` and `peek()` return `null` without waiting for a producer. |
+| Null elements | Inserting `null` throws `NullPointerException`. |
+| Progress | Non-blocking. Operations can finish even if another worker pauses. |
+| Iterator | Weakly consistent. A walk can see concurrent changes and leaves the jobs available to workers. |
+| `size()` | Counts waiting jobs by traversing the queue. Concurrent changes can make the count inaccurate. |
 
-Updates use **compare-and-set (CAS)**, an atomic “replace only if the expected value is still present” operation, explained below. In the diagram, follow `next` from left to right. The gray node has no live element, so retrieval skips it; the blue nodes contain A, B, and C.
+## 2. How concurrent offers and polls work
+
+The Java API promises FIFO retrieval. The diagrams show how OpenJDK 26 implements it. The node fields and traversal hints are internal details that can change across implementations.
+
+Each **node** holds a job reference in `item` and a link to the next node in `next`. The internal `head` and `tail` references are **traversal hints** that tell a thread where to start looking. In the diagram, `head` points to the node labeled “consumed / skipped”. Follow its `next` arrow to A, the oldest **live** job. C is the last node because its `next` link is empty.
 
 ![concurrentlinkedqueue-structure.svg](images/concurrentlinkedqueue-structure.svg)
 
-Conceptually, live elements occupy a singly linked chain. The tail side is at C; the final `null` means there is no next node:
+### Claiming a job with compare-and-set
 
-```text
-head side → A → B → C → null
-           ↑       ↑
-         poll()  offer() appends after C
-```
+The four fields `item`, `next`, `head`, and `tail` are `volatile`. A volatile write is visible to a subsequent volatile read of that field. A separate check and update are still two steps. Two workers can both read A before either clears it. To claim A, each uses **compare-and-set (CAS)**, which checks and changes the field in one indivisible operation. CAS compares reference identity (`==`), so it requires the very same object. A value search such as `remove(x)` calls `equals()` and can match a different, equal object.
 
-In the current OpenJDK implementation, a node is approximately:
+Only one worker can change A’s `item` to `null`. This is **logical removal**, shown in the panel of that name. A is out of the queue immediately, even if its node stays linked. The other worker can skip that node and claim B. If it reaches the end without finding a live job, it returns `null`.
 
-```java
-// Conceptual fragment based on the OpenJDK implementation.
-final class Node<E> {
-    volatile E item;
-    volatile Node<E> next;
-}
-```
+### Why the head and tail hints can lag
 
-The queue also has volatile `head` and `tail` references. These references are **traversal hints**:
+Look at **“Why head and tail are hints”** in the same diagram. Letting `head` and `tail` lag saves CAS operations on these shared references. Every live job remains reachable from `head`. A worker starting at a cleared node follows the links to the first live job. Likewise, if `tail` still points to B after C has been linked, a producer can follow B’s link to C.
 
-- `head` may point to a node whose element has already been removed.
-- `tail` may lag behind the actual final node.
-- Operations follow `next` links and can help advance stale hints.
-- A live element remains reachable even while hints are being updated.
+### When an offer or poll takes effect
 
-Allowing a hint to lag avoids an extra contested update on every operation. These details explain the current OpenJDK implementation; they are not public fields or application-level API promises.
-
-## Why compare-and-set is needed
-
-CAS performs the comparison and update as one indivisible operation. For these object references, the comparison checks reference identity, not `equals()`:
-
-```text
-if current value == expected value:
-    replace it with the new value and succeed
-else:
-    leave it unchanged and fail
-```
-
-A failed CAS on a link or item means the expected value is no longer present. The operation rereads the structure and retries; the queue is not corrupted. Best-effort updates of the `head` and `tail` hints are separate: their failure does not undo an already completed insertion or logical removal.
-
-## How `offer()` and `poll()` take effect
-
-A **linearization point** is the single logical instant when an operation takes effect within its method call. Read each diagram panel from top to bottom: a node is found, its link or item is changed atomically, and a hint may be advanced before the method returns.
+Read steps 1–3 down each panel of the next diagram. In **“offer(C): append at the tail side”**, the producer finds B, links C, then may advance `tail`. In **“poll(): remove from the head side”**, the worker finds A, clears its `item`, then may advance `head` before returning A. Step 2 in each panel is the **linearization point**, the instant the successful insertion or removal takes effect. Finish with the bottom panel, **“What if the link or item CAS fails?”** Another thread won that race, so the caller reads the current state and tries again.
 
 ![concurrentlinkedqueue-offer-poll.svg](images/concurrentlinkedqueue-offer-poll.svg)
 
-In the current OpenJDK implementation, `offer(element)`:
+If `offer(A)` finishes before `offer(B)` begins, job A goes first. If the calls overlap, the first job linked gets the earlier place. Even when A is claimed first, B can finish printing first if the worker holding A pauses.
 
-1. Rejects `null` and creates a node.
-2. Follows links from the `tail` hint to the actual last node.
-3. CASes that node's `next` from `null` to the new node.
-4. May then try to move the `tail` hint.
+### Progress guarantees
 
-The successful `next` CAS is the insertion's linearization point. A later failure to move `tail` does not undo the insertion.
+The Java API describes the queue algorithm as **non-blocking**, the term the Michael–Scott paper uses for system-wide progress. In modern terminology, `offer(e)` and `poll()` are **lock-free** members of the non-blocking family. They use no queue lock. As long as callers keep taking steps, some call finishes, even if one worker repeatedly loses a CAS race. A **wait-free** algorithm would also bound each caller’s own steps. Neither guarantee sets a wall-clock deadline. The scheduler can pause a worker, and garbage collection can pause the application. For a diagram showing why every wait-free algorithm is also lock-free, see [How the progress guarantees relate](../Concurrency.%20Progress%20Guarantees/Readme.md#how-the-guarantees-relate).
 
-`poll()`:
+## 3. Time complexity of the main methods
 
-1. Starts near `head` and skips nodes whose `item` is already `null`.
-2. Finds the first live item.
-3. CASes that `item` from the element to `null`.
-4. May advance `head` past obsolete nodes, then returns the removed element.
+The Java API explicitly documents an O(n) traversal for `size()` and warns that concurrent changes can make the result inaccurate. The other time estimates below describe the OpenJDK 26 implementation. For example, the API specifies what `poll()` returns, while its usual O(1) cost follows from where that implementation starts looking.
 
-The successful `item` CAS is the removal's linearization point. Setting `item` to `null` is **logical removal**; physical cleanup may happen later. Logical removal happens before the caller receives the return value. Another consumer can already move on to the next element during that gap.
+Ask **how many links the method must follow**. Here *n* counts reachable nodes on an otherwise quiet queue, including nodes whose items have been cleared. O(1) means work bounded independently of queue length. O(n) means work growing at most linearly with *n*.
 
-If traversal finds no live item before reaching the end, `poll()` returns `null` without waiting for a producer. This empty result does not require a successful item CAS.
+| Method | Time | Why |
+|---|---|---|
+| `offer(e)`, `add(e)` | Usually O(1) | Start at the tail hint, find the final link, and attach one new node. A lagging hint can require extra hops. |
+| `poll()`, `remove()` | Usually O(1) | Start at the head hint, skip cleared items, and claim the first live one. A long run of cleared nodes at the front can take O(n) to cross. On empty, `poll()` returns `null` and `remove()` throws `NoSuchElementException`. |
+| `peek()`, `element()`, `isEmpty()` | Usually O(1) | Skip cleared nodes and stop at the first live item or the end. On empty, `peek()` returns `null`, `element()` throws `NoSuchElementException`, and `isEmpty()` returns `true` without counting the queue. |
+| `size()` | O(n) | Walk the chain and count live items. The queue keeps no running count. |
+| `contains(x)`, `remove(x)` | Up to O(n) with constant-time equality | Compare live items using `x.equals(item)` until a match or the end. A match at the front can be cheap. `remove(x)` also claims one match. For expensive comparisons, add their total cost to the walk. |
+| Full iteration, `forEach(action)`, `toArray()` | O(n) for the traversal | Follow the links and skip cleared items. Add any work the loop body or action does. The array needs one result slot per copied reference. |
+| `addAll(batch)` | Usually O(m) for *m* incoming items | Build a chain from the input, then link it at the tail. This assumes a linear pass over the input and a nearby tail hint. |
 
-## FIFO during concurrent offers
+The usual O(1) rows describe a short path at either end. Crossing *k* extra links costs O(k + 1) even without competition. Concurrent changes can also force retries or restarts. The starting queue size alone cannot bound the work of a competing caller.
 
-FIFO applies to the queue's established insertion order, not to which method call happened to start first.
+A worker calling `remove()` can usually claim the first of a million jobs in a few steps. `remove("missing")` must check every waiting job on a stable queue. Even draining the queue can get expensive if a lone worker checks `size()` before every `poll()`. With four jobs it counts 4 + 3 + 2 + 1 live items. For an initial backlog of *j* jobs, counting alone takes quadratic time, O(j²).
 
-```text
-Producer A starts offer(A)
-Producer B starts offer(B)
+## 4. Checking, claiming, and iterating
 
-If B successfully links first, the queue order is B, then A.
-poll() still removes them in that established FIFO order.
-```
+### The check-then-act race
 
-Concurrent operations appear to take effect at their linearization points. Overlapping calls may be ordered either way when both results are legal.
-
-## What “lock-free” does—and does not—mean
-
-`ConcurrentLinkedQueue` is based on the Michael–Scott non-blocking queue algorithm. Under contention, one thread can lose a CAS because another operation changed the state. The loser retries, while the successful change demonstrates system-wide progress.
-
-Lock-free does **not** mean:
-
-- every individual thread finishes within a fixed number of steps;
-- retries or starvation are impossible;
-- allocation, scheduling, or garbage collection cannot pause a thread;
-- `poll()` waits until an element appears.
-
-It is lock-free, but not wait-free. “Non-blocking algorithm” is a progress property, not a promise that every call has zero latency.
-
-## Empty means “nothing available now”
-
-This check-then-act code is racy:
+Suppose each print job is a `Runnable`, and calling its `run()` method prints it. This worker fragment contains a **check-then-act race**. The queue can change between the check and the action.
 
 ```java
-// Conceptual fragment: another consumer can win after isEmpty().
-if (!queue.isEmpty()) {
-    return queue.poll(); // can still return null
+if (!jobs.isEmpty()) {
+    jobs.poll().run(); // poll() can return null here
 }
 ```
 
-For example, with only A queued, these calls can interleave:
+Start with just job A in the queue.
 
-| Order | Consumer 1 | Consumer 2 | Queue afterward |
+| Order | Worker 1 | Worker 2 | Queue afterward |
 |---|---|---|---|
-| 1 | `isEmpty()` returns `false` | — | A |
-| 2 | — | `poll()` returns A | Empty |
-| 3 | `poll()` returns `null` | — | Empty |
+| 1 | `isEmpty()` returns `false`. | | A |
+| 2 | | `poll()` claims A. | Empty |
+| 3 | `poll()` returns `null`. Calling `run()` on it throws `NullPointerException`. | | Empty |
 
-The first observation never reserved A for Consumer 1.
-
-Use the atomic queue operation directly and handle its result:
+Each queue call is thread-safe. The first call reserves nothing for the next one. Checking `peek()` first has the same race. To fix the worker, claim once and test the reference that **this call** returned.
 
 ```java
-// Conceptual fragment.
-var task = queue.poll();
-if (task != null) {
-    process(task);
+Runnable job = jobs.poll();
+if (job != null) {
+    job.run();
 }
 ```
 
-The same rule applies to `peek()` followed by `poll()`: another consumer can remove the observed head between the calls.
+For another example of this race, where two callers try to reserve the same seat, see [Check-Then-Act in Java](../Concurrency.%20Check-Then-Act/Readme.md).
 
-A `null` result also does not mean that producers have finished. A producer may enqueue work immediately afterward.
+### Why iterating can print a job twice
 
-## Weakly consistent iteration
+An iterator is **weakly consistent**. It can run while the queue changes and visits continuously present entries once in FIFO order. It may also reflect some changes, without throwing `ConcurrentModificationException`. Iteration is useful for a status screen. If a worker instead executes `for (Runnable job : jobs) { job.run(); }`, printing A leaves A queued. A second worker can then poll A and print the same job again. Workers that execute jobs should claim them with `poll()`.
 
-An iterator can run while the queue changes. It:
+### Snapshots and bulk operations
 
-- does not throw `ConcurrentModificationException` merely because of concurrent modification;
-- returns elements in queue order among the elements it observes;
-- returns exactly once each element that remained in the queue from iterator creation onward;
-- may also reflect some later insertions or removals;
-- is not a frozen snapshot of one instant.
+`toArray()` can collect references seen at different instants. For an exact copy of queue membership, coordinate the copy with every thread that can change the queue. Even then, the array holds references to the same jobs. A mutable job’s fields can still change after the copy. Bulk operations such as `addAll` and `removeIf` have no general API guarantee that an observer sees the whole change at once.
 
-```java
-// Conceptual fragment: concurrent offer/poll calls may overlap this loop.
-for (String value : queue) {
-    System.out.println(value); // inspect; do not claim work
-}
-```
+## 5. What a worker sees after a handoff
 
-This loop **does not remove or reserve elements**. Processing work this way can duplicate a consumer's work: a consumer may also obtain the same element through `poll()`. Use `poll()` to claim an element for consumption.
-
-Copying with `toArray()` gives a separate array, but its elements may have been observed at different times during the copy. That is not a guaranteed snapshot of one instant.
-
-For an exact snapshot of queue membership and order, coordinate **all queue mutations** while copying, for example through an external lock shared by every mutator and the snapshot operation. Locking only the copying thread does not stop ordinary queue operations. The copy also retains references to the same objects; it does not freeze their fields.
-
-## `size()` is not coordination
-
-`size()` traverses the linked nodes, so it is O(n): its work grows with the queue's length instead of reading a maintained count. If the queue changes during traversal, the result can be inaccurate and can become stale immediately.
-
-Do not use it to implement a capacity limit:
-
-```java
-// Wrong: several producers can all observe the same old size.
-if (queue.size() < limit) {
-    queue.offer(task);
-}
-```
-
-Use a bounded `BlockingQueue` or another explicit admission-control mechanism when capacity matters. Even `isEmpty()` is only an observation; use `poll()` for “try to remove now.”
-
-## Safe handoff and memory visibility
-
-**Publication** here means making an object available to another thread through the queue. The **happens-before** guarantee ensures that a consumer accessing or removing that element can see the producer's earlier writes:
-
-```text
-producer actions before queue.offer(message)
-                    happen-before
-consumer actions after accessing/removing that message
-```
-
-This complete example uses an ordinary, non-`volatile` field. The consumer makes one retrieval attempt:
+The main thread produces a job and sets its ordinary `int` field to `12` before offering it. The worker keeps polling until it claims the job. What value will it print?
 
 ```java
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public final class ConcurrentLinkedQueueHandoff {
-    static final class Message {
-        int answer;
+class JobHandoff {
+    static class Job {
+        int pages;
     }
 
     public static void main(String[] args) throws InterruptedException {
-        ConcurrentLinkedQueue<Message> queue = new ConcurrentLinkedQueue<>();
-
-        Thread producer = new Thread(() -> {
-            Message message = new Message();
-            message.answer = 42;
-            queue.offer(message);
-        });
-
-        Thread consumer = new Thread(() -> {
-            Message message = queue.poll();
-            if (message == null) {
-                System.out.println("Nothing available yet");
-            } else {
-                System.out.println(message.answer); // 42, never the default 0
+        var jobs = new ConcurrentLinkedQueue<Job>();
+        Thread worker = new Thread(() -> {
+            Job job;
+            while ((job = jobs.poll()) == null) {
+                Thread.onSpinWait();
             }
+            System.out.println(job.pages);
         });
-
-        producer.start();
-        consumer.start();
-        producer.join();
-        consumer.join();
+        worker.start();
+        Job job = new Job();
+        job.pages = 12;
+        jobs.offer(job);
+        worker.join();
     }
 }
 ```
 
-The output is either `Nothing available yet` or `42`, depending on when the consumer polls. Starting the producer first does not ensure it has already offered the message. If the consumer retrieves it, the queue handoff guarantees visibility of `answer = 42`. The `join()` calls let `main` wait for both threads; the consumer does not wait for the producer. If the consumer runs too early, this one-attempt example leaves the later message queued.
+The worker **prints `12`**. The queue provides **safe publication** of the job by making the producer’s earlier writes visible to the worker. The write to `pages` before `offer(job)` **happens-before** the worker’s read of `pages` after retrieving that job. A producer write of `13` after insertion could race with the worker’s read. Use immutable jobs or coordinate later updates separately.
 
-The queue safely transfers the **reference**, but it does not protect later shared changes to the object. If the producer adds `message.answer = 43` after `queue.offer(message)`, that later write is outside the handoff guarantee and can race with the consumer's read. Do not rely on the consumer seeing `43`. Prefer immutable messages, or coordinate later shared changes separately.
+`Thread.onSpinWait()` tells the runtime that the worker is busy-waiting. Spinning keeps this example short but consumes CPU time, so use `BlockingQueue.take()` for a worker that should sleep until its next job arrives. At the end of the example, `worker.join()` makes the main thread wait for the worker to finish.
 
-## Bulk and search operations
+## 6. Choosing a queue for a worker
 
-`addAll`, `removeIf`, `forEach`, and similar multi-element operations are not guaranteed to be one atomic transaction. A concurrent traversal can observe only part of a bulk change.
+Use `ConcurrentLinkedQueue` when workers have other things to do after an empty poll and the application can tolerate the backlog. Each waiting job occupies memory. If producers continually outpace the workers, the backlog can exhaust the heap. When the JVM can no longer allocate a queue node, it throws `OutOfMemoryError`.
 
-Operations such as `contains`, `remove(Object)`, and `size` traverse nodes. They are useful occasionally, but frequent arbitrary search/removal is not the queue's strength; its core use is tail insertion plus head removal.
+If an idle worker should sleep until a job arrives, use a `BlockingQueue` and call `take()`. If it should wait only up to a deadline, `poll(timeout, unit)` returns `null` when that wait expires without a job.
 
-## When to choose it
+If the application can buffer just 100 jobs, both `new ArrayBlockingQueue<>(100)` and `new LinkedBlockingQueue<>(100)` enforce that capacity during insertion. A separate `size() < 100` check on a `ConcurrentLinkedQueue` lets two producers see 99 and both insert. On either bounded queue, `put(job)` waits for space and `offer(job)` returns `false` when full. Slowing producers in response to limited capacity is **backpressure**. For a worked example of how quickly a 100-job queue fills, see [ArrayBlockingQueue vs LinkedBlockingQueue](../Concurrency.%20ArrayBlockingQueue%20vs%20LinkedBlockingQueue/Readme.md#capacity-is-an-application-decision).
 
-Choose `ConcurrentLinkedQueue` when:
-
-- many threads share a FIFO queue;
-- producers and consumers should not wait inside the queue;
-- `poll()` returning `null` is a useful “nothing available now” result;
-- unbounded growth is acceptable and controlled elsewhere.
-
-Choose something else when:
-
-| Requirement | Better fit |
-|---|---|
-| Consumer should wait for work | `BlockingQueue`, using `take()` or timed `poll()` |
-| Bounded capacity/backpressure | `ArrayBlockingQueue` or bounded `LinkedBlockingQueue` |
-| Non-blocking access at both ends | `ConcurrentLinkedDeque` |
-| Exact snapshot of queue membership | Coordinate all mutations while copying |
-
-An unbounded thread-safe queue can still exhaust memory if producers continually outpace consumers. Thread safety is not backpressure.
+If threads need to add and remove at both ends, `ConcurrentLinkedDeque` supplies those operations.
 
 ## Check your understanding
 
-1. Only A is queued. Consumer 1 sees `isEmpty() == false`; Consumer 2 then polls A. What does Consumer 1's `poll()` return?
+1. You offer A and B, peek twice, then poll three times. Which five values come back?
 
    <details>
    <summary>Answer</summary>
 
-   `null`, assuming no new insertion. The earlier check did not reserve A.
+   A, A, A, B, and `null`. Looking leaves A in place. Each successful poll claims one occurrence. The empty result says only that no job was available at that instant.
 
    </details>
 
-2. Two producers overlap. Producer A starts first, but Producer B links its node first. Which element is ahead?
+2. One producer starts offering job A. A second producer starts later and links job B first. Both workers see job B. Which job is ahead, and what happens to the worker that loses the race for it?
 
    <details>
    <summary>Answer</summary>
 
-   B. FIFO follows the established insertion order of overlapping offers.
+   B is ahead because its link took effect first. Only one worker can clear B’s item. The other looks for the next live job and can return `null` if it reaches the end. A worker can lose repeatedly while the queue as a whole makes progress.
 
    </details>
 
-3. Does a `for` loop over the queue remove or reserve the elements it visits?
+3. One worker keeps losing CAS races while other workers finish their calls. Is that possible in a lock-free queue? What extra guarantee would wait-free give?
 
    <details>
    <summary>Answer</summary>
 
-   Neither. Iteration observes elements; `poll()` removes an element for consumption.
+   Yes. The successful workers demonstrate system-wide progress. Wait-free would guarantee that each worker that keeps taking steps finishes its own call within a bounded number of those steps.
 
    </details>
 
-4. Why can't `if (queue.size() < limit) queue.offer(task)` enforce a capacity limit?
+4. The queue grows from ten to a million jobs. Which of `peek()`, `size()`, and `remove("missing")` would you expect to slow down most? How does `remove()` differ?
 
    <details>
    <summary>Answer</summary>
 
-   The size observation and insertion are separate operations. Several producers can pass the check, and the count can already be stale.
+   Counting and searching for an absent value each require a full pass. Peeking and removing the head usually touch a few nodes. Cleared nodes can add hops, and competing callers can force retries.
 
    </details>
 
-5. Does lock-free guarantee that each individual thread finishes within a bounded number of steps?
+5. A worker enters the branch in `if (!queue.isEmpty()) return queue.poll();`. How could that branch return `null`? How would you safely claim and run a job?
 
    <details>
    <summary>Answer</summary>
 
-   No. Lock-free guarantees system-wide progress; wait-free would guarantee bounded completion for each operation. A particular thread can keep losing retries here.
+   Another worker can remove the last job between the check and the poll. This is a check-then-act race. Call `poll()` once, save its result, and run the returned job only if that reference is non-null.
 
    </details>
 
-6. In the handoff example, can a consumer that retrieves the message print `0`? Is an added write of `43` after `offer()` covered by the same guarantee?
+6. One worker prints jobs in a for-each loop. Another prints jobs by polling the same queue. Could a job submitted just once be printed twice?
 
    <details>
    <summary>Answer</summary>
 
-   It must print `42` in the original example. The prior write is visible through the handoff; a later unsynchronized write of `43` is outside that guarantee.
+   Yes. The loop can visit and print A while its queue entry is still live. The other worker can then claim A with `poll()` and print it again. Have both workers poll to claim each entry before printing.
 
    </details>
 
-7. Does copying a queue while it changes guarantee a snapshot of one instant?
+7. A status screen sees A and then B in one traversal. Must there have been an instant when both jobs were waiting together?
 
    <details>
    <summary>Answer</summary>
 
-   No. A copy can combine observations made at different times; an exact membership snapshot requires coordinated mutations.
+   No. Suppose A and X are waiting. The monitor observes A and pauses at X. A worker removes A. A producer appends B after X. The monitor can then reach B, even though A had already left. The same issue applies to an array copy.
+
+   </details>
+
+8. In the handoff example, could the worker print the default value `0`? What if the producer changes `pages` to `13` after offering the job?
+
+   <details>
+   <summary>Answer</summary>
+
+   The worker prints `12` in the example. The queue publishes the write made before insertion. A later unsynchronized write has no such guarantee, so the worker cannot rely on seeing `13`.
+
+   </details>
+
+9. Two producers see 99 waiting jobs and each adds one. How can the application enforce a limit of 100 and also let an idle worker sleep?
+
+   <details>
+   <summary>Answer</summary>
+
+   Use an `ArrayBlockingQueue` with capacity 100. Its insertion operation enforces the limit, so at most one of those two jobs fits before a removal. A producer can wait with `put()` or handle a failed `offer()`. An idle worker can wait with `take()`.
 
    </details>
 
 # Sources
 
-- [Java SE 26 `ConcurrentLinkedQueue` API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/ConcurrentLinkedQueue.html)
-- [OpenJDK `ConcurrentLinkedQueue.java` source](https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/util/concurrent/ConcurrentLinkedQueue.java)
-- [Java SE 26 `java.util.concurrent` package summary — memory consistency](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/package-summary.html#MemoryVisibility)
-- [Java SE 26 `BlockingQueue` API](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/BlockingQueue.html)
+- [Java SE 26 — ConcurrentLinkedQueue contract and memory consistency](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/ConcurrentLinkedQueue.html)
+- [Java SE 26 — Queue and the meaning of an empty poll](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/Queue.html)
+- [Java SE 26 — java.util.concurrent package and memory consistency](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/package-summary.html#MemoryVisibility)
+- [OpenJDK 26 — ConcurrentLinkedQueue implementation at the release tag](https://raw.githubusercontent.com/openjdk/jdk/jdk-26-ga/src/java.base/share/classes/java/util/concurrent/ConcurrentLinkedQueue.java)
+- [Java SE 26 — AbstractQueue and its exception-throwing methods](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/AbstractQueue.html)
+- [Java SE 26 — BlockingQueue waiting and timed operations](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/BlockingQueue.html)
+- [Java SE 26 — ArrayBlockingQueue capacity and waiting operations](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/ArrayBlockingQueue.html)
+- [Java SE 26 — LinkedBlockingQueue capacity](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/LinkedBlockingQueue.html)
+- [Java SE 26 — ConcurrentLinkedDeque and access at both ends](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/util/concurrent/ConcurrentLinkedDeque.html)
+- [Java SE 26 — Thread.onSpinWait](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/Thread.html#onSpinWait())
+- [Java SE 26 — OutOfMemoryError](https://docs.oracle.com/en/java/javase/26/docs/api/java.base/java/lang/OutOfMemoryError.html)
+- [Michael and Scott — Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms (1996), §§1 and 3.3](https://www.cs.rochester.edu/~scott/papers/1996_PODC_queues.pdf)
 - [Michael and Scott — non-blocking concurrent queue algorithm](https://www.cs.rochester.edu/research/synchronization/pseudocode/queues.html)
