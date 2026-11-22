@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="667" viewBox="0 0 800 667"
+     role="img" aria-labelledby="title desc">
+  <title id="title">DES uses the same secret key to encrypt and decrypt</title>
+  <desc id="desc">Follow one eight-byte block from top to bottom. Encryption changes the message
+    ROOM 204 into eight encrypted bytes. Decryption with the same key recovers ROOM 204, including the space.</desc>
+
+  <!-- Shared typography and two data states. Both plaintext panels use the same styling. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #163646; }
+      .title { font-size: 40px; font-weight: 700; }
+      .intro { font-size: 25px; }
+      .label { font-size: 24px; font-weight: 700; }
+      .value { font-family: Menlo, Consolas, monospace; font-size: 35px; }
+      .plain { fill: #e9f6f2; stroke: #719e92; stroke-width: 2; }
+      .cipher { fill: #eaf0fc; stroke: #849ac4; stroke-width: 2; }
+      .action { font-size: 26px; font-weight: 700; }
+      .shaft { stroke: #375868; stroke-width: 4; }
+      .head { fill: #375868; }
+    </style>
+  </defs>
+
+  <!-- Title and block size frame the single-block example. -->
+  <rect width="800" height="667" fill="#ffffff"/>
+  <text class="title" x="44" y="67">DES uses one key both ways</text>
+  <text class="intro" x="45" y="112">Follow one block of 8 bytes from top to bottom.</text>
+
+  <!-- Input block. The space between ROOM and 204 occupies one byte. -->
+  <g id="plaintext">
+    <rect class="plain" x="44" y="150" width="712" height="102" rx="12"/>
+    <text class="label" x="70" y="188">Plaintext</text>
+    <text class="value" x="70" y="229">ROOM 204</text>
+  </g>
+
+  <!-- Each shaft ends just inside its own triangle, with the tip meeting the next panel. -->
+  <g id="encryption">
+    <path class="shaft" d="M88 253 V308"/>
+    <path class="head" d="M78 306 H98 L88 321 Z"/>
+    <text class="action" x="119" y="295">Encrypt with the secret key</text>
+  </g>
+
+  <!-- Single DES block, ASCII input, example key 133457799BBCDFF1 (hex). -->
+  <g id="ciphertext">
+    <rect class="cipher" x="44" y="322" width="712" height="128" rx="12"/>
+    <text class="label" x="70" y="359">Ciphertext</text>
+    <text class="value" x="70" y="401">A1 9B D1 D1 78 2D 28 59</text>
+    <text class="intro" x="70" y="434">Each pair represents one encrypted byte.</text>
+  </g>
+
+  <!-- Repeat the connector geometry to show the inverse operation. -->
+  <g id="decryption">
+    <path class="shaft" d="M88 451 V506"/>
+    <path class="head" d="M78 504 H98 L88 519 Z"/>
+    <text class="action" x="119" y="493">Decrypt with the same secret key</text>
+  </g>
+
+  <!-- Repeating the original value makes the result of decryption visible. -->
+  <g id="recovered-plaintext">
+    <rect class="plain" x="44" y="520" width="712" height="102" rx="12"/>
+    <text class="label" x="70" y="558">Recovered plaintext</text>
+    <text class="value" x="70" y="599">ROOM 204</text>
+  </g>
+</svg>
