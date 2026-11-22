@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="964" height="316" viewBox="0 0 964 316"
+     role="img" aria-labelledby="title description">
+  <title id="title">Where a Linux process reads input and sends output</title>
+  <desc id="description">In a terminal, a program usually reads typed input through standard input
+    (0). It sends results through standard output (1) and diagnostics through standard error (2).
+    Both outputs normally appear in the terminal. The gray numbers 3 and up can identify other
+    open files for reading or writing and have no default destination.</desc>
+
+  <!-- Shared label styles and the two staggered rows of keyboard keys. -->
+  <defs>
+    <style>
+      text { font-family: "Trebuchet MS", Arial, sans-serif; font-weight: bold; text-anchor: middle; fill: #1a1a1a; }
+      .label { font-size: 18px; stroke: #1a1a1a; stroke-width: 0.18; }
+      .number { font-family: Arial, sans-serif; font-size: 32px; }
+      .light { fill: #fff; }
+      .port { stroke: #1a1a1a; stroke-width: 11; }
+    </style>
+    <path id="seven-keys" d="M0 0h8v5H0z M15 0h8v5h-8z M30 0h8v5h-8z M45 0h8v5h-8z
+                             M60 0h8v5h-8z M75 0h8v5h-8z M90 0h8v5h-8z"/>
+    <path id="six-keys" d="M0 0h8v5H0z M15 0h8v5h-8z M30 0h8v5h-8z M45 0h8v5h-8z
+                           M60 0h8v5h-8z M77 0h8v5h-8z"/>
+  </defs>
+  <rect width="964" height="316" fill="white"/>
+
+  <!-- The process frame runs behind the numbered ports. -->
+  <g id="process">
+    <rect x="251" y="14.5" width="307.5" height="227" rx="42" fill="white"
+          stroke="#1a1a1a" stroke-width="11"/>
+    <text x="0" y="0" transform="translate(405 130) scale(1.09 1)" font-size="32"
+          stroke="#1a1a1a" stroke-width=".4">PROCESS</text>
+    <g class="port">
+      <ellipse cx="251" cy="128" rx="29.6" ry="27.7" fill="#0ca789"/>
+      <ellipse cx="559" cy="80.4" rx="29.6" ry="27.8" fill="#2d9bf0"/>
+      <ellipse cx="559" cy="169.6" rx="29.6" ry="27.8" fill="#fef445"/>
+      <g fill="#e6e6e6">
+        <ellipse cx="336" cy="236.3" rx="29.6" ry="27.8"/>
+        <ellipse cx="389" cy="236.3" rx="29.6" ry="27.8"/>
+        <ellipse cx="444.2" cy="236.3" rx="29.6" ry="27.8"/>
+      </g>
+    </g>
+    <g class="number">
+      <text class="light" x="251" y="139">0</text>
+      <text class="light" x="559" y="92">1</text>
+      <text x="559" y="181">2</text>
+      <text x="336" y="248">3</text>
+      <text x="389" y="248">4</text>
+      <text x="444" y="248">…</text>
+    </g>
+  </g>
+
+  <!-- Each solid arrow is one outline so the shaft and triangular nose join cleanly. -->
+  <g id="stream-arrows" fill="#000">
+    <path id="stdin-arrow" d="M9.8 121l155.4-.6v-14.6l40.3 19.8-40.3 20.6v-14.7l-155.4.8z"/>
+    <path id="stdout-arrow" d="M601.6 77l152.9-.6V61.6L794.3 82l-39.8 19.8V87.4l-152.9.8z"/>
+    <path id="stderr-arrow" d="M601.6 167l152.9 1.1v-14.4l39.8 20.2-39.8 20v-14.5l-152.9-1.1z"/>
+    <path id="other-files-arrow" d="M519.4 259.6l40.1-20.1v14.4h191.7v-14.3l40.1 20-40.1 20.1v-14.4H559.5v14.4z"/>
+  </g>
+
+  <!-- The keyboard cable ends below the input shaft; white keys are holes in the black silhouette. -->
+  <g id="keyboard">
+    <path d="M88 141c4 3 4 7-.5 10.6-4 3-4.4 9.1.3 14.3 3.4 4 4.6 8.1 4.6 12.7v12.2"
+          fill="none" stroke="#000" stroke-width="5"/>
+    <rect x="32.5" y="189" width="120" height="60"/>
+    <g fill="white">
+      <use href="#seven-keys" x="42.2" y="199.1"/>
+      <use href="#six-keys" x="50" y="209.2"/>
+      <use href="#seven-keys" x="42.2" y="219.2"/>
+      <path d="M47.4 231.5h7v5h-7z M62.5 231.5h7v5h-7z M77.5 231.5h7v5h-7z
+               M92.6 231.5h25v5h-25z M125.2 231.5h7v5h-7z M137.4 231.5h5v5h-5z"/>
+    </g>
+  </g>
+
+  <!-- Display and document icons identify the usual terminal and an optional file. -->
+  <g id="terminal">
+    <rect x="809.5" y="26.6" width="131" height="85.5" rx=".8" fill="white"
+          stroke="black" stroke-width="5.2"/>
+    <rect x="859.4" y="113" width="31.2" height="19"/>
+    <rect x="836" y="129.7" width="78.2" height="5.3" rx="2.65"/>
+  </g>
+  <g id="document" fill="none" stroke="black" stroke-width="2.3" stroke-linejoin="round">
+    <path d="M858 212.9h20.9l14 13.7v30.6H858z M878.9 212.9v13.7h14"/>
+    <path d="M865.6 234.6h20.6 M865.6 241.9h20.6 M865.6 249.2h20.6" stroke-linecap="round"/>
+  </g>
+
+  <!-- Labels follow the three standard paths, then the optional descriptors along the bottom. -->
+  <g class="label">
+    <text x="87.5" y="75">stdin</text>
+    <text x="87.5" y="99">(Standard Input)</text>
+    <text x="92.7" y="278">Keyboard</text>
+    <text x="92.7" y="302">(Read Only)</text>
+    <text x="675" y="27">stdout</text>
+    <text x="675" y="51">(Standard Output)</text>
+    <text x="675" y="121.5">stderr</text>
+    <text x="675" y="145.5">(Standard Error)</text>
+    <text x="875.2" y="163.5">Terminal</text>
+    <text x="875.2" y="187.8">(Write Only)</text>
+    <text x="657.2" y="241.4">Other Files</text>
+    <text x="875.3" y="282.5">None</text>
+    <text x="958.5" y="306.8" style="text-anchor: end">(Read and/or Write)</text>
+  </g>
+</svg>
