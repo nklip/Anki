@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 840 700"
+     role="img" aria-labelledby="title description">
+  <title id="title">Will a suspicious connection get through AWS Network Firewall?</title>
+  <desc id="description">A server tries to contact an address linked to malicious software.
+    Both rows use the same firewall rule with alert logging on. In the detection row, ALERT
+    records a match and the connection continues if the rest of the policy allows it.
+    In the prevention row, DROP stops matching traffic at the firewall.</desc>
+
+  <!-- Shared type hierarchy and node geometry keep the traffic paths comparable. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #182f3b; }
+      .service { font-size: 23px; font-weight: 700; fill: #3e5968; }
+      .title { font-size: 43px; font-weight: 700; }
+      .intro { font-size: 23px; fill: #364e5b; }
+      .heading { font-size: 31px; font-weight: 700; }
+      .node { font-size: 25px; font-weight: 700; text-anchor: middle; }
+      .rule { font-family: "Courier New", monospace; font-size: 28px; font-weight: 700; text-anchor: middle; fill: #fff; }
+      .firewall { font-size: 20px; text-anchor: middle; fill: #fff; }
+      .outcome { font-size: 24px; }
+      .endpoint { fill: #fff; stroke: #8498a0; stroke-width: 2; }
+      .shaft { fill: none; stroke: #314f5b; stroke-width: 5; }
+      .head { fill: #314f5b; }
+    </style>
+  </defs>
+
+  <!-- The premise applies to both rows, which represent alternative policies. -->
+  <rect width="840" height="700" fill="#fffdf9"/>
+  <g id="premise">
+    <text class="service" x="40" y="44">AWS Network Firewall</text>
+    <text class="title" x="38" y="98">Will the connection get through?</text>
+    <text class="intro" x="40" y="139">Your server tries to reach an address linked to malicious software.</text>
+  </g>
+
+  <!-- Each arrow shaft ends just inside the base of its triangular head. -->
+  <g id="detection">
+    <rect x="24" y="166" width="792" height="242" rx="18" fill="#e9f5f3"/>
+    <text class="heading" x="49" y="212">Intrusion detection system (IDS)</text>
+
+    <rect class="endpoint" x="50" y="239" width="180" height="76" rx="10"/>
+    <rect x="299" y="234" width="235" height="86" rx="10" fill="#176861"/>
+    <rect class="endpoint" x="628" y="239" width="162" height="76" rx="10"/>
+    <g id="alert-traffic">
+      <path class="shaft" d="M231 277 H283"/>
+      <path class="head" d="M281 266 L299 277 L281 288 Z"/>
+      <path class="shaft" d="M534 277 H611"/>
+      <path class="head" d="M609 266 L627 277 L609 288 Z"/>
+    </g>
+    <text class="node" x="140" y="286">Your server</text>
+    <text class="firewall" x="416.5" y="267">Firewall rule</text>
+    <text class="rule" x="416.5" y="300">ALERT</text>
+    <text class="node" x="709" y="271">Flagged<tspan x="709" dy="27">address</tspan></text>
+    <text class="outcome" x="49" y="358">With alert logging on, the firewall records the match.</text>
+    <text class="outcome" x="49" y="388">Traffic continues if the rest of the policy allows it.</text>
+  </g>
+
+  <!-- The second path ends at the firewall. The gap and dashed destination
+       distinguish a blocked connection even without the panel colors. -->
+  <g id="prevention">
+    <rect x="24" y="429" width="792" height="242" rx="18" fill="#faece3"/>
+    <text class="heading" x="49" y="475">Intrusion prevention system (IPS)</text>
+
+    <rect class="endpoint" x="50" y="502" width="180" height="76" rx="10"/>
+    <rect x="299" y="497" width="235" height="86" rx="10" fill="#934121"/>
+    <rect x="628" y="502" width="162" height="76" rx="10" fill="#fffaf5" stroke="#a5968f"
+          stroke-width="2" stroke-dasharray="7 5"/>
+    <g id="drop-traffic">
+      <path class="shaft" d="M231 540 H283"/>
+      <path class="head" d="M281 529 L299 540 L281 551 Z"/>
+    </g>
+    <circle cx="581" cy="540" r="16" fill="#934121"/>
+    <path d="M574 533 L588 547 M588 533 L574 547" fill="none" stroke="#fff" stroke-width="4"/>
+    <text class="node" x="140" y="549">Your server</text>
+    <text class="firewall" x="416.5" y="530">Firewall rule</text>
+    <text class="rule" x="416.5" y="563">DROP</text>
+    <text class="node" x="709" y="534" style="fill:#685c57">Flagged<tspan x="709" dy="27">address</tspan></text>
+    <text class="outcome" x="49" y="621">The firewall blocks the traffic as soon as the rule matches,</text>
+    <text class="outcome" x="49" y="651">before the connection reaches the flagged address.</text>
+  </g>
+</svg>
