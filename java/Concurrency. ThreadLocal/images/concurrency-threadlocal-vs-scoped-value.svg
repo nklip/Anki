@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1500" height="960" viewBox="0 0 1500 960" role="img" aria-labelledby="title description">
   <title id="title">ThreadLocal versus ScopedValue lifecycle</title>
-  <desc id="description">Two vertical flows compare mutable ThreadLocal context that remains until remove with an immutable ScopedValue binding that automatically reverts when its bounded operation returns or throws.</desc>
+  <desc id="description">On the left, a pooled worker stores a request ID. Whether the work returns or throws, that worker removes its entry in the handler's finally block before the next task starts. On the right, a ScopedValue binding reverts automatically when its operation returns or throws.</desc>
 
   <!-- Shared typography and colors for the lifecycle comparison. -->
   <defs>
@@ -26,21 +26,22 @@
   <text x="385" y="172" text-anchor="middle" class="panelTitle">THREADLOCAL — mutable mapping</text>
 
   <rect x="150" y="230" width="470" height="100" rx="12" fill="#ffffff" stroke="#6f9dcc" stroke-width="3"/>
-  <text x="385" y="266" text-anchor="middle" class="nodeTitle">Install or replace the current value</text>
-  <text x="385" y="303" text-anchor="middle" class="code">CONTEXT.set(value)</text>
+  <text x="385" y="266" text-anchor="middle" class="nodeTitle">The worker stores the request ID</text>
+  <text x="385" y="303" text-anchor="middle" class="code">REQUEST_ID.set(id)</text>
 
   <rect x="150" y="370" width="470" height="115" rx="12" fill="#fff8eb" stroke="#bd7823" stroke-width="3"/>
   <text x="385" y="406" text-anchor="middle" class="nodeTitle">Any callee with the key can</text>
   <text x="385" y="440" text-anchor="middle" class="body">read the value or replace it with set()</text>
   <text x="385" y="469" text-anchor="middle" class="body">the mapping is mutable</text>
 
-  <rect x="150" y="525" width="470" height="100" rx="12" fill="#fde1dc" stroke="#c63d32" stroke-width="3"/>
-  <text x="385" y="561" text-anchor="middle" class="nodeTitle">The method or task returns</text>
-  <text x="385" y="598" text-anchor="middle" class="body">the mapping still exists</text>
+  <rect x="150" y="525" width="470" height="100" rx="12" fill="#edf8ef" stroke="#43804c" stroke-width="3"/>
+  <text x="385" y="553" text-anchor="middle" class="nodeTitle">The worker runs the handler's finally block</text>
+  <text x="385" y="582" text-anchor="middle" class="code">REQUEST_ID.remove()</text>
+  <text x="385" y="608" text-anchor="middle" class="body">whether the work returns or throws</text>
 
   <rect x="150" y="665" width="470" height="100" rx="12" fill="#dff1e2" stroke="#43804c" stroke-width="3"/>
-  <text x="385" y="701" text-anchor="middle" class="nodeTitle">Caller must clean up explicitly</text>
-  <text x="385" y="738" text-anchor="middle" class="code" fill="#315e38">CONTEXT.remove()</text>
+  <text x="385" y="701" text-anchor="middle" class="nodeTitle">The handler exits</text>
+  <text x="385" y="738" text-anchor="middle" class="body">The worker's next task starts without the old ID.</text>
 
   <!-- ScopedValue lifecycle. -->
   <rect x="770" y="125" width="690" height="680" rx="18" fill="#f1faf3" stroke="#43804c" stroke-width="4"/>
