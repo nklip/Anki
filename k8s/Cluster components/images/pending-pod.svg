@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 1200 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Why is the new Pod still Pending?</title>
+  <desc id="desc">In both examples, kubectl describe pod reports the Pod phase as Pending. With no node assigned, a FailedScheduling event reports insufficient memory. The Pod requests 2 GiB and each node can allocate only 1 GiB more. With a node assigned, the container is Waiting because its image download failed. The STATUS column in kubectl get pods shows the waiting reason, ImagePullBackOff.</desc>
+  <!-- Purple marks a control-plane decision and blue marks work on a node. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
+      .title { font-size: 51px; font-weight: 700; }
+      .intro { font-size: 32px; }
+      .question { font-size: 40px; font-weight: 700; fill: white; }
+      .hint { font-size: 30px; fill: #e3eaf5; }
+      .heading { font-size: 36px; font-weight: 700; }
+      .body { font-size: 30px; }
+      .value { font-family: Menlo, Consolas, monospace; font-size: 30px; }
+      .label { font-size: 29px; font-weight: 700; }
+      .connector { fill: none; stroke-width: 4; stroke-linejoin: round; }
+    </style>
+  </defs>
+  <!-- The opening observation applies to either branch. -->
+  <rect width="1200" height="1000" fill="#fff"/>
+  <text x="48" y="82" class="title">Why is the new Pod still Pending?</text>
+  <text x="50" y="141" class="intro">In both examples, kubectl describe pod shows Status: Pending.</text>
+  <rect id="node-question" x="120" y="207" width="960" height="151" rx="20" fill="#263e57"/>
+  <text x="600" y="272" text-anchor="middle" class="question">Does the Pod have a node assigned?</text>
+  <text x="600" y="323" text-anchor="middle" class="hint">Read the Node field in the Pod description.</text>
+  <!-- Each shaft starts at the question. Only the tips meet the example panels. -->
+  <path id="unassigned-shaft" class="connector" d="M414 358 V403 H310 V445" stroke="#6554a4"/>
+  <polygon points="310,458 300,441 320,441" fill="#6554a4"/>
+  <path id="assigned-shaft" class="connector" d="M786 358 V403 H890 V445" stroke="#35667f"/>
+  <polygon points="890,458 880,441 900,441" fill="#35667f"/>
+  <!-- Left example: an event explains why the scheduler could not place the Pod. -->
+  <g id="unassigned-example">
+    <rect x="48" y="458" width="524" height="421" rx="18" fill="#f3f0ff" stroke="#ad9cce" stroke-width="2"/>
+    <text x="78" y="525" class="heading">No node assigned</text>
+    <text x="78" y="587" class="value">Node: &lt;none&gt;</text>
+    <text x="78" y="633" class="value">Event: FailedScheduling</text>
+    <text x="78" y="690" class="body">The event says insufficient memory.</text>
+    <path d="M78 723 H542" stroke="#c9bfdf" stroke-width="2"/>
+    <text x="78" y="779" class="label">The Pod requests 2 GiB.</text>
+    <text x="78" y="820" class="body">Each node can allocate only</text>
+    <text x="78" y="856" class="body">1 GiB more to Pods.</text>
+  </g>
+  <!-- Right example: the assigned node isolates this failure to container startup. -->
+  <g id="assigned-example">
+    <rect x="628" y="458" width="524" height="421" rx="18" fill="#eef6ff" stroke="#8faeca" stroke-width="2"/>
+    <text x="658" y="525" class="heading">Assigned to worker-2</text>
+    <text x="658" y="587" class="value">State: Waiting</text>
+    <text x="658" y="633" class="value">Reason: ImagePullBackOff</text>
+    <text x="658" y="690" class="body">The container’s image pull failed.</text>
+    <path d="M658 723 H1122" stroke="#bdcfe0" stroke-width="2"/>
+    <text x="658" y="779" class="label">The node will retry.</text>
+    <text x="658" y="820" class="body">Check the image name and</text>
+    <text x="658" y="856" class="body">permission to download it.</text>
+  </g>
+  <!-- Relate the container's waiting reason to the summary shown in the Pod list. -->
+  <text x="600" y="930" text-anchor="middle" class="body">In the image-pull example, kubectl get pods shows ImagePullBackOff</text>
+  <text x="600" y="969" text-anchor="middle" class="body">in the STATUS column. The Pod is still in the Pending phase.</text>
+</svg>
