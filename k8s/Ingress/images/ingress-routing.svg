@@ -1,85 +1,80 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="798" viewBox="0 0 960 798" role="img" aria-labelledby="title desc">
-  <title id="title">Ingress routes requests; Deployments manage Pods</title>
-  <desc id="desc">A browser requests example.com. A proxy or load balancer configured by a Ingress controller routes /users to users-service and Users Pods, or /orders to orders-service and Orders Pods. Separate users and orders Deployments manage these Pods through ReplicaSets. Solid arrows show logical request routing; dashed arrows show configuration or management. Requests never pass through Deployment objects.</desc>
-  <!-- Shared typography and colors match the existing Kubernetes diagrams. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="667" viewBox="0 0 800 667"
+     role="img" aria-labelledby="title desc">
+  <title id="title">Routing a web request with Ingress</title>
+  <desc id="desc">A browser requests either example.com/users or example.com/orders.
+    The Ingress controller configures a proxy or load balancer to route requests for
+    example.com. Its rules map /users to users-service and /orders to orders-service.
+    A Pod running the matching application answers the request.</desc>
+
+  <!-- Use dashed violet for configuration and solid blue for requests. -->
   <defs>
     <style>
       text { font-family: Arial, Helvetica, sans-serif; fill: #18324b; }
-      .title { font-size: 28px; font-weight: 700; }
-      .subtitle { font-size: 18px; fill: #52677b; }
-      .heading { font-size: 21px; font-weight: 700; }
-      .body { font-size: 18px; }
-      .small { font-size: 16px; fill: #52677b; }
-      .connector { fill: none; stroke: #52677b; stroke-width: 2.5; stroke-linejoin: round; }
-      .management { fill: none; stroke: #8066a5; stroke-width: 2.5; stroke-dasharray: 7 5; }
+      .title { font-size: 35px; font-weight: 700; }
+      .heading { font-size: 28px; font-weight: 700; }
+      .body { font-size: 23px; }
+      .config-text { font-size: 23px; fill: #654387; }
+      .request-text { font-size: 23px; fill: #214f82; }
+      .panel { stroke-width: 2; }
+      .traffic { fill: none; stroke: #315e8e; stroke-width: 3; }
+      .config { fill: none; stroke: #76558e; stroke-width: 3; stroke-dasharray: 8 6; }
     </style>
   </defs>
-  <!-- Canvas and lesson; preserve the distinction between traffic and Pod management. -->
-  <rect width="960" height="798" fill="#ffffff"/>
-  <text x="32" y="43" class="title" text-anchor="start">Ingress routes requests; Deployments manage Pods</text>
-  <text x="32" y="75" class="subtitle" text-anchor="start">One hostname, two paths: example.com/users and example.com/orders.</text>
-  <!-- Configuration stays beside the traffic path; the controller applies these declarations. -->
-  <rect id="routing-configuration" x="32" y="108" width="364" height="202" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/>
-  <text x="52" y="140" class="heading" text-anchor="start">Ingress configuration</text>
-  <text x="52" y="177" class="body" text-anchor="start">Host: example.com</text>
-  <text x="52" y="212" class="body" text-anchor="start">/users → users-service</text>
-  <text x="52" y="247" class="body" text-anchor="start">/orders → orders-service</text>
-  <text x="52" y="285" class="small" text-anchor="start">The controller reads these rules.</text>
-  <rect id="browser" x="510" y="108" width="418" height="70" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
-  <text x="719" y="137" class="heading" text-anchor="middle">Browser</text>
-  <text x="719" y="164" class="body" text-anchor="middle">example.com</text>
-  <rect id="routing-proxy" x="510" y="234" width="418" height="76" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
-  <text x="719" y="265" class="heading" text-anchor="middle">Proxy / load balancer</text>
-  <text x="719" y="293" class="body" text-anchor="middle">Configured by Ingress controller</text>
-  <!-- Manual arrow shafts end inside triangle bases; noses touch only target borders. -->
-  <path id="incoming-request-shaft" class="connector" data-connector="true" d="M719 178 L719 226"/>
-  <polygon id="incoming-request-head" points="719,234 713,224 725,224" fill="#52677b"/>
-  <path id="apply-configuration-shaft" class="management" stroke-dashoffset="8" data-connector="true" d="M396 272 L502 272"/>
-  <polygon id="apply-configuration-head" points="510,272 500,266 500,278" fill="#8066a5"/>
-  <text x="453" y="250" class="small" text-anchor="middle">configures</text>
-  <!-- Solid routing branches; path labels stay beside the shafts and below the fork. -->
-  <path id="route-fork-shaft" class="connector" data-connector="true" d="M719 310 L719 340 L240 340"/>
-  <path id="users-route-shaft" class="connector" data-connector="true" d="M240 340 L240 374"/>
-  <polygon id="users-route-head" points="240,382 234,372 246,372" fill="#52677b"/>
-  <path id="orders-route-shaft" class="connector" data-connector="true" d="M719 340 L719 374"/>
-  <polygon id="orders-route-head" points="719,382 713,372 725,372" fill="#52677b"/>
-  <text x="216" y="367" class="body" text-anchor="end">/users</text>
-  <text x="743" y="367" class="body" text-anchor="start">/orders</text>
-  <!-- Users traffic ends at application Pods; the Deployment is a separate management resource. -->
-  <rect id="users-service" x="64" y="382" width="352" height="74" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
-  <text x="240" y="413" class="heading" text-anchor="middle">users-service</text>
-  <text x="240" y="440" class="body" text-anchor="middle">Service</text>
-  <path id="users-backend-shaft" class="connector" data-connector="true" d="M240 456 L240 492"/>
-  <polygon id="users-backend-head" points="240,500 234,490 246,490" fill="#52677b"/>
-  <rect id="users-pods" x="64" y="500" width="352" height="72" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
-  <text x="240" y="530" class="heading" text-anchor="middle">Users Pods</text>
-  <text x="240" y="557" class="body" text-anchor="middle">Run the users application</text>
-  <!-- Upward dashed management arrow deliberately points from Deployment to Pods, via ReplicaSet. -->
-  <rect id="users-deployment" x="64" y="644" width="352" height="72" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/>
-  <text x="240" y="674" class="heading" text-anchor="middle">users Deployment</text>
-  <text x="240" y="701" class="body" text-anchor="middle">Desired replicas and rollouts</text>
-  <path id="users-management-shaft" class="management" data-connector="true" d="M240 644 L240 580"/>
-  <polygon id="users-management-head" points="240,572 234,582 246,582" fill="#8066a5"/>
-  <text x="264" y="602" class="small" text-anchor="start">manages Pods</text>
-  <text x="264" y="626" class="small" text-anchor="start">via ReplicaSet</text>
-  <!-- Orders traffic ends at application Pods; the Deployment is a separate management resource. -->
-  <rect id="orders-service" x="543" y="382" width="352" height="74" rx="12" fill="#eff6ff" stroke="#93b4e9" stroke-width="1.5"/>
-  <text x="719" y="413" class="heading" text-anchor="middle">orders-service</text>
-  <text x="719" y="440" class="body" text-anchor="middle">Service</text>
-  <path id="orders-backend-shaft" class="connector" data-connector="true" d="M719 456 L719 492"/>
-  <polygon id="orders-backend-head" points="719,500 713,490 725,490" fill="#52677b"/>
-  <rect id="orders-pods" x="543" y="500" width="352" height="72" rx="12" fill="#f0fdf4" stroke="#86b89a" stroke-width="1.5"/>
-  <text x="719" y="530" class="heading" text-anchor="middle">Orders Pods</text>
-  <text x="719" y="557" class="body" text-anchor="middle">Run the orders application</text>
-  <!-- Upward dashed management arrow deliberately points from Deployment to Pods, via ReplicaSet. -->
-  <rect id="orders-deployment" x="543" y="644" width="352" height="72" rx="12" fill="#faf5ff" stroke="#bda7d6" stroke-width="1.5"/>
-  <text x="719" y="674" class="heading" text-anchor="middle">orders Deployment</text>
-  <text x="719" y="701" class="body" text-anchor="middle">Desired replicas and rollouts</text>
-  <path id="orders-management-shaft" class="management" data-connector="true" d="M719 644 L719 580"/>
-  <polygon id="orders-management-head" points="719,572 713,582 725,582" fill="#8066a5"/>
-  <text x="743" y="602" class="small" text-anchor="start">manages Pods</text>
-  <text x="743" y="626" class="small" text-anchor="start">via ReplicaSet</text>
-  <!-- Visible legend explains both arrow types and the abstraction used for Service forwarding. -->
-  <text x="480" y="752" class="small" text-anchor="middle">Solid arrows show logical routing; actual network hops depend on the implementation.</text>
-  <text x="480" y="778" class="small" text-anchor="middle">Dashed arrows configure routing or manage Pods. Requests do not pass through Deployments.</text>
+
+  <!-- The browser and the rule declaration have separate inputs to the proxy. -->
+  <rect width="800" height="667" fill="#fff"/>
+  <text x="28" y="48" text-anchor="start" class="title">Routing a web request with Ingress</text>
+  <g id="browser">
+    <rect x="28" y="80" width="354" height="158" rx="12" fill="#eff6ff" stroke="#94b3d8" class="panel"/>
+    <text x="50" y="122" text-anchor="start" class="heading">Browser</text>
+    <text x="50" y="157" text-anchor="start" class="body">Sends one request to</text>
+    <text x="50" y="189" text-anchor="start" class="body">example.com/users</text>
+    <text x="50" y="221" text-anchor="start" class="body">or example.com/orders</text>
+  </g>
+  <g id="ingress-rules">
+    <rect x="402" y="80" width="370" height="158" rx="12" fill="#faf5ff" stroke="#b9a2cf" class="panel"/>
+    <text x="424" y="122" text-anchor="start" class="heading">Ingress rules</text>
+    <text x="424" y="157" text-anchor="start" class="body">For the host example.com</text>
+    <text x="424" y="189" text-anchor="start" class="config-text">/users → users-service</text>
+    <text x="424" y="221" text-anchor="start" class="config-text">/orders → orders-service</text>
+  </g>
+
+  <!-- Both tips meet the proxy border. The shafts stop inside their triangle bases. -->
+  <g id="proxy-inputs">
+    <path id="browser-request-shaft" class="traffic" d="M104 239 V333"/>
+    <polygon points="104,343 97,330 111,330" fill="#315e8e"/>
+    <text x="122" y="296" text-anchor="start" class="request-text">Web request</text>
+    <path id="controller-configuration-shaft" class="config" d="M461 239 V333"/>
+    <polygon points="461,343 454,330 468,330" fill="#76558e"/>
+    <text x="480" y="281" text-anchor="start" class="config-text">Ingress controller</text>
+    <text x="480" y="312" text-anchor="start" class="config-text">applies the rules</text>
+  </g>
+  <g id="proxy">
+    <rect x="48" y="344" width="704" height="90" rx="12" fill="#eaf2fc" stroke="#6f95c2" class="panel"/>
+    <text x="400" y="382" text-anchor="middle" class="heading">Proxy / load balancer</text>
+    <text x="400" y="415" text-anchor="middle" class="body">Matches the request’s host and path to one Service.</text>
+  </g>
+
+  <!-- Each branch is an alternative for example.com. Grouping the Service with
+       its Pod avoids implying a mandatory hop through a Service IP address. -->
+  <g id="route-choices">
+    <path id="users-route-shaft" class="traffic" d="M111 435 V513"/>
+    <polygon points="111,523 104,510 118,510" fill="#315e8e"/>
+    <text x="130" y="487" text-anchor="start" class="request-text">Path /users</text>
+    <path id="orders-route-shaft" class="traffic" d="M485 435 V513"/>
+    <polygon points="485,523 478,510 492,510" fill="#315e8e"/>
+    <text x="504" y="487" text-anchor="start" class="request-text">Path /orders</text>
+  </g>
+  <g id="users-backend">
+    <rect x="28" y="524" width="354" height="119" rx="12" fill="#effaf3" stroke="#8db69c" class="panel"/>
+    <text x="50" y="560" text-anchor="start" class="heading">users-service</text>
+    <text x="50" y="596" text-anchor="start" class="body">A Pod running the users app</text>
+    <text x="50" y="626" text-anchor="start" class="body">answers the request.</text>
+  </g>
+  <g id="orders-backend">
+    <rect x="402" y="524" width="370" height="119" rx="12" fill="#effaf3" stroke="#8db69c" class="panel"/>
+    <text x="424" y="560" text-anchor="start" class="heading">orders-service</text>
+    <text x="424" y="596" text-anchor="start" class="body">A Pod running the orders app</text>
+    <text x="424" y="626" text-anchor="start" class="body">answers the request.</text>
+  </g>
 </svg>
