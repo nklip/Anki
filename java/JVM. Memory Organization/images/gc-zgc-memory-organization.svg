@@ -1,14 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1040" viewBox="0 0 1500 1040" role="img" aria-labelledby="title description">
   <title id="title">ZGC memory organization in JDK 24 and later</title>
-  <desc id="description">A three-step learning diagram. First, it shows young and old logical generations built from ZPages, including allocation, survival, relocation, promotion, and remembered sets. Second, it explains promotion and old-to-young reference tracking. Third, it distinguishes reserved virtual address space, the maximum usable heap, and currently committed physical memory.</desc>
+  <desc id="description">Young and old generations contain heap pages. A young page may age in place or have its survivors copied to another page. During a young collection, a remembered-set entry identifies an old object's field so the collector can inspect its reference. Reserved address space, maximum heap and committed heap are different measures.</desc>
 
   <!--
     Layout map for quick maintenance:
     1. Heap structure: y=104..786; generation panels: y=160..615.
     2. Cross-generation paths: y=635..761.
     3. Address-space and commitment model: y=810..986.
-    Arrowheads are explicit polygons. Their tips stop before target boundaries so
-    a future edit can move a target without hidden marker geometry or clipping.
+    Arrowheads are explicit polygons with horizontal approaches to the targets.
   -->
   <defs>
     <style>
@@ -24,7 +23,7 @@
   <!-- Background and document title -->
   <rect id="background" width="1500" height="1040" fill="#ffffff"/>
   <text id="diagram-title" x="750" y="49" text-anchor="middle" class="heading" font-size="36">ZGC memory organization</text>
-  <text id="diagram-subtitle" x="750" y="80" text-anchor="middle" class="muted" font-size="18">JDK 24+: generational-only, region-based, and dynamically sized</text>
+  <text id="diagram-subtitle" x="750" y="80" text-anchor="middle" class="muted" font-size="18">Since JDK 24, ZGC always manages young and old generations.</text>
 
   <!-- STEP 1: The logical heap and the two generations -->
   <g id="step-1-heap-structure">
@@ -32,8 +31,7 @@
     <circle cx="60" cy="132" r="17" fill="#34495e"/>
     <text x="60" y="138" text-anchor="middle" class="sans" font-size="17" font-weight="700" fill="#ffffff">1</text>
     <text x="90" y="139" class="heading" font-size="22">Heap structure</text>
-    <text x="258" y="139" class="muted" font-size="17">A ZPage is a logical heap page; pages can change role and location as the workload changes.</text>
-    <text x="1438" y="139" text-anchor="end" class="muted" font-size="15">read left → right</text>
+    <text x="350" y="139" class="muted" font-size="17">A ZPage is one region of the ZGC heap. These examples show different page contents.</text>
 
     <!-- Young generation: three common page states and a compact relocation example -->
     <g id="young-generation">
@@ -46,9 +44,7 @@
       <!-- Allocation page -->
       <g id="young-allocation-page">
         <rect x="84" y="238" width="236" height="140" rx="6" class="card" stroke="#2f6fad"/>
-        <circle cx="108" cy="264" r="14" fill="#2f6fad"/>
-        <text x="108" y="270" text-anchor="middle" class="sans" font-size="15" font-weight="700" fill="#ffffff">1</text>
-        <text x="132" y="270" class="heading" font-size="18">Allocation page</text>
+        <text x="104" y="270" class="heading" font-size="18">Allocation page</text>
         <g fill="#6b9dd1" stroke="#2f6fad" stroke-width="1">
           <rect x="104" y="287" width="38" height="27"/>
           <rect x="148" y="287" width="53" height="27"/>
@@ -61,16 +57,10 @@
         <text x="104" y="365" class="muted" font-size="15">allocate into free space</text>
       </g>
 
-      <!-- Order arrow: the head ends seven pixels before the next card. -->
-      <path d="M327 307H336" fill="none" stroke="#53606b" stroke-width="3"/>
-      <polygon points="336,300 344,307 336,314" fill="#53606b"/>
-
-      <!-- Survivor page -->
+      <!-- A sparse young page contains gaps where objects have died. -->
       <g id="young-survivor-page">
         <rect x="350" y="238" width="236" height="140" rx="6" class="card" stroke="#2f6fad"/>
-        <circle cx="374" cy="264" r="14" fill="#2f6fad"/>
-        <text x="374" y="270" text-anchor="middle" class="sans" font-size="15" font-weight="700" fill="#ffffff">2</text>
-        <text x="398" y="270" class="heading" font-size="18">Survivor page</text>
+        <text x="370" y="270" class="heading" font-size="18">Sparse page</text>
         <g fill="#66a56f" stroke="#3c7c50" stroke-width="1">
           <rect x="370" y="287" width="42" height="27"/>
           <rect x="418" y="287" width="58" height="27"/>
@@ -82,19 +72,13 @@
           <rect x="431" y="320" width="59" height="27"/>
           <rect x="496" y="320" width="70" height="27"/>
         </g>
-        <text x="370" y="365" class="muted" font-size="15">survive; dead space appears</text>
+        <text x="370" y="365" class="muted" font-size="15">a mix of live and dead objects</text>
       </g>
-
-      <!-- Order arrow: page density informs the next GC decision. -->
-      <path d="M593 307H602" fill="none" stroke="#53606b" stroke-width="3"/>
-      <polygon points="602,300 610,307 602,314" fill="#53606b"/>
 
       <!-- Dense page -->
       <g id="young-dense-page">
         <rect x="616" y="238" width="244" height="140" rx="6" class="card" stroke="#2f6fad"/>
-        <circle cx="640" cy="264" r="14" fill="#2f6fad"/>
-        <text x="640" y="270" text-anchor="middle" class="sans" font-size="15" font-weight="700" fill="#ffffff">3</text>
-        <text x="664" y="270" class="heading" font-size="18">Dense page</text>
+        <text x="636" y="270" class="heading" font-size="18">Dense page</text>
         <g fill="#66a56f" stroke="#3c7c50" stroke-width="1">
           <rect x="636" y="287" width="44" height="27"/>
           <rect x="686" y="287" width="61" height="27"/>
@@ -103,11 +87,11 @@
           <rect x="700" y="320" width="57" height="27"/>
           <rect x="763" y="320" width="77" height="27"/>
         </g>
-        <text x="636" y="365" class="muted" font-size="15">age in place or be promoted</text>
+        <text x="636" y="365" class="muted" font-size="15">survivors can age in place</text>
       </g>
 
       <!-- Relocation compacts live objects from a sparse page. -->
-      <text x="84" y="410" class="heading" font-size="18">When a page is sparse, relocate its live objects</text>
+      <text x="84" y="410" class="heading" font-size="18">A sparse page can be selected for relocation</text>
       <g id="sparse-selected-page">
         <rect x="84" y="425" width="300" height="130" rx="6" fill="#ffffff" stroke="#66717b" stroke-width="2"/>
         <text x="104" y="451" class="heading" font-size="16">Selected source page</text>
@@ -125,12 +109,12 @@
 
       <!-- Relocation arrow: shaft and label occupy the gap, never either card's text. -->
       <text x="449" y="475" text-anchor="middle" class="muted" font-size="14">copy live</text>
-      <path d="M397 495H494" fill="none" stroke="#53606b" stroke-width="3"/>
-      <polygon points="494,486 505,495 494,504" fill="#53606b"/>
+      <path id="relocation-arrow" d="M384 495H502" fill="none" stroke="#53606b" stroke-width="3"/>
+      <polygon points="499,486 514,495 499,504" fill="#53606b"/>
 
       <g id="relocation-target-page">
         <rect x="515" y="425" width="345" height="130" rx="6" fill="#ffffff" stroke="#66717b" stroke-width="2"/>
-        <text x="535" y="451" class="heading" font-size="16">Target / reusable page</text>
+        <text x="535" y="451" class="heading" font-size="16">Destination page</text>
         <g fill="#66a56f" stroke="#3c7c50" stroke-width="1">
           <rect x="535" y="466" width="54" height="30"/>
           <rect x="595" y="466" width="81" height="30"/>
@@ -138,9 +122,9 @@
         </g>
         <rect x="730" y="466" width="110" height="30" fill="#f4f5f6" stroke="#9ba4ac" stroke-dasharray="5 4"/>
         <rect x="535" y="502" width="305" height="30" fill="#f4f5f6" stroke="#9ba4ac" stroke-dasharray="5 4"/>
-        <text x="535" y="548" class="muted" font-size="14">source page is released for reuse</text>
+        <text x="535" y="548" class="muted" font-size="14">free space remains for other objects</text>
       </g>
-      <text x="84" y="592" class="body" font-size="15">Young outcome: age in place, relocate, or promote long-lived survivors.</text>
+      <text x="84" y="592" class="body" font-size="15">Once the live objects have moved, ZGC can reuse the whole source page.</text>
     </g>
 
     <!-- Old generation: promoted and long-lived pages plus remembered-set bookkeeping -->
@@ -188,12 +172,13 @@
         <rect x="1208" y="501" width="188" height="30" fill="#f5eef8" stroke="#744b91"/>
         <text x="1055" y="521" text-anchor="middle" class="body" font-size="14" fill="#4b2f5d">active bitmap</text>
         <text x="1302" y="521" text-anchor="middle" class="body" font-size="14" fill="#4b2f5d">GC bitmap</text>
-        <!-- Bitmap-swap arrow; head remains clear of the GC bitmap rectangle. -->
-        <path d="M1159 516H1184" fill="none" stroke="#744b91" stroke-width="3"/>
-        <polygon points="1184,508 1195,516 1184,524" fill="#744b91"/>
+        <!-- The bitmaps exchange roles. The two heads meet their respective borders. -->
+        <path id="bitmap-swap-arrow" d="M1163 516H1196" fill="none" stroke="#744b91" stroke-width="3"/>
+        <polygon points="1165,508 1150.5,516 1165,524" fill="#744b91"/>
+        <polygon points="1193,508 1207.5,516 1193,524" fill="#744b91"/>
         <text x="960" y="555" class="muted" font-size="14">bitmaps swap when a young collection starts</text>
       </g>
-      <text x="940" y="600" class="body" font-size="15">Old outcome: retain, then mark and compact concurrently.</text>
+      <text x="940" y="600" class="body" font-size="15">ZGC marks live objects and relocates selected ones concurrently.</text>
     </g>
 
     <!-- STEP 2: A shared strip makes both cross-generation relationships explicit. -->
@@ -202,31 +187,31 @@
       <circle cx="82" cy="662" r="17" fill="#744b91"/>
       <text x="82" y="668" text-anchor="middle" class="sans" font-size="17" font-weight="700" fill="#ffffff">2</text>
       <text x="112" y="669" class="heading" font-size="21">Cross-generation paths</text>
-      <text x="370" y="669" class="muted" font-size="16">Promotion moves survivors to old; remembered entries expose old → young links.</text>
+      <text x="490" y="669" class="muted" font-size="16">Promotion changes an object’s generation. A reference can also connect the two generations.</text>
 
-      <!-- Promotion flow -->
-      <text x="82" y="718" class="heading" font-size="16" fill="#2f6fad">Promotion</text>
-      <rect x="195" y="691" width="205" height="42" rx="6" fill="#edf5ff" stroke="#2f6fad" stroke-width="2"/>
-      <text x="297" y="718" text-anchor="middle" class="body" font-size="15">surviving young object</text>
-      <path d="M412 712H450" fill="none" stroke="#a65f22" stroke-width="3"/>
-      <polygon points="450,703 461,712 450,721" fill="#a65f22"/>
-      <rect x="470" y="691" width="180" height="42" rx="6" fill="#fff4e9" stroke="#a65f22" stroke-width="2"/>
-      <text x="560" y="718" text-anchor="middle" class="body" font-size="15">old object</text>
-      <text x="195" y="750" class="muted" font-size="13">objects that remain live long enough</text>
+      <!-- The arrow marks a change in generation, which can happen in place. -->
+      <rect x="82" y="691" width="211" height="42" rx="6" fill="#edf5ff" stroke="#2f6fad" stroke-width="2"/>
+      <text x="187" y="718" text-anchor="middle" class="body" font-size="16">Young survivor</text>
+      <path id="promotion-arrow" d="M294 712H361" fill="none" stroke="#a65f22" stroke-width="3"/>
+      <polygon points="358,704 371,712 358,720" fill="#a65f22"/>
+      <rect x="372" y="691" width="176" height="42" rx="6" fill="#fff4e9" stroke="#a65f22" stroke-width="2"/>
+      <text x="460" y="718" text-anchor="middle" class="body" font-size="16">Old object</text>
+      <text x="82" y="750" class="muted" font-size="15">A page can be promoted in place.</text>
 
-      <!-- Old-to-young reference flow -->
-      <text x="748" y="718" class="heading" font-size="16" fill="#744b91">Old → young</text>
-      <rect x="865" y="691" width="115" height="42" rx="6" fill="#fff4e9" stroke="#a65f22" stroke-width="2"/>
-      <text x="922" y="718" text-anchor="middle" class="body" font-size="15">old field</text>
-      <path d="M992 712H1018" fill="none" stroke="#744b91" stroke-width="3"/>
-      <polygon points="1018,703 1029,712 1018,721" fill="#744b91"/>
-      <rect x="1038" y="691" width="175" height="42" rx="6" fill="#f5eef8" stroke="#744b91" stroke-width="2"/>
-      <text x="1125" y="718" text-anchor="middle" class="body" font-size="15">remembered entry</text>
-      <path d="M1225 712H1251" fill="none" stroke="#744b91" stroke-width="3"/>
-      <polygon points="1251,703 1262,712 1251,721" fill="#744b91"/>
-      <rect x="1271" y="691" width="135" height="42" rx="6" fill="#edf5ff" stroke="#2f6fad" stroke-width="2"/>
-      <text x="1338" y="718" text-anchor="middle" class="body" font-size="15">young object</text>
-      <text x="865" y="750" class="muted" font-size="13">record the field location; follow it during young GC</text>
+      <!-- The dashed lookup identifies a field location. Only the solid arrow represents
+           the Java reference stored in that field. Both heads end on the node borders. -->
+      <rect x="614" y="691" width="185" height="42" rx="6" fill="#f5eef8" stroke="#744b91" stroke-width="2"/>
+      <text x="706" y="718" text-anchor="middle" class="body" font-size="16">Remembered entry</text>
+      <path id="metadata-lookup-arrow" d="M800 712H891" fill="none" stroke="#744b91" stroke-width="3" stroke-dasharray="6 4"/>
+      <polygon points="888,704 901,712 888,720" fill="#744b91"/>
+      <rect x="902" y="691" width="193" height="42" rx="6" fill="#fff4e9" stroke="#a65f22" stroke-width="2"/>
+      <text x="998" y="718" text-anchor="middle" class="body" font-size="16">Field in old object</text>
+      <path id="object-reference-arrow" d="M1096 712H1211" fill="none" stroke="#356da8" stroke-width="3"/>
+      <polygon points="1208,704 1221,712 1208,720" fill="#356da8"/>
+      <rect x="1222" y="691" width="180" height="42" rx="6" fill="#edf5ff" stroke="#2f6fad" stroke-width="2"/>
+      <text x="1312" y="718" text-anchor="middle" class="body" font-size="16">Young object</text>
+      <text x="850" y="750" text-anchor="middle" class="muted" font-size="15">locates field</text>
+      <text x="1158" y="750" text-anchor="middle" class="muted" font-size="15">points to object</text>
     </g>
   </g>
 
@@ -235,8 +220,8 @@
     <rect x="32" y="810" width="1436" height="176" rx="10" fill="#fafafa" stroke="#67727c" stroke-width="2"/>
     <circle cx="60" cy="840" r="17" fill="#34495e"/>
     <text x="60" y="846" text-anchor="middle" class="sans" font-size="17" font-weight="700" fill="#ffffff">3</text>
-    <text x="90" y="847" class="heading" font-size="21">Reserved is not committed</text>
-    <text x="370" y="847" class="muted" font-size="16">ZGC may reserve more virtual addresses than -Xmx and adds physical backing page by page.</text>
+    <text x="90" y="847" class="heading" font-size="21">Heap capacity</text>
+    <text x="350" y="847" class="muted" font-size="16">ZGC can reserve more address space than its heap limit. Committed capacity is available for the JVM to use.</text>
 
     <text x="66" y="885" class="heading" font-size="15">Reserved virtual range</text>
     <rect x="410" y="865" width="1020" height="28" fill="#f1f3f4" stroke="#58636d" stroke-width="2"/>
@@ -246,7 +231,7 @@
     <rect x="525" y="907" width="790" height="28" fill="#e8f1fb" stroke="#2f6fad" stroke-width="2"/>
     <text x="920" y="926" text-anchor="middle" class="body" font-size="14">maximum usable heap capacity</text>
 
-    <text x="66" y="969" class="heading" font-size="15">Committed physical memory</text>
+    <text x="66" y="969" class="heading" font-size="15">Committed heap</text>
     <rect x="525" y="949" width="790" height="28" fill="#ffffff" stroke="#8d969e" stroke-width="2" stroke-dasharray="6 4"/>
     <rect x="525" y="949" width="170" height="28" fill="#bcd4ee" stroke="#2f6fad"/>
     <rect x="755" y="949" width="210" height="28" fill="#efc89f" stroke="#a65f22"/>
@@ -254,7 +239,7 @@
     <text x="610" y="968" text-anchor="middle" class="body" font-size="13">committed page</text>
     <text x="860" y="968" text-anchor="middle" class="body" font-size="13">committed page</text>
     <text x="1140" y="968" text-anchor="middle" class="body" font-size="13">committed page</text>
-    <text x="1327" y="968" class="muted" font-size="13">gaps = not backed</text>
+    <text x="1327" y="968" class="muted" font-size="13">uncommitted gaps</text>
   </g>
 
   <!-- Legend: colors describe object state, not fixed page positions. -->

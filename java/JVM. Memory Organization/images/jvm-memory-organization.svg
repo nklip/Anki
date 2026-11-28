@@ -1,125 +1,57 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="980" viewBox="0 0 1500 980" role="img" aria-labelledby="title description">
-  <title id="title">Modern HotSpot JVM memory organization</title>
-  <desc id="description">A JVM process contains a shared garbage-collected heap, native Metaspace, code cache, platform-thread stacks, direct and native memory, and GC structures. Stack references point to heap objects, while virtual-thread stack chunks are stored in the heap.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1000" viewBox="0 0 960 800" role="img" aria-labelledby="title description">
+  <title id="title">What does -Xmx limit?</title>
+  <desc id="description">Within a single HotSpot process, -Xmx caps the shared Java heap. A Box instance and the Class object for its type both live there. Outside the heap, the same process also holds class metadata, compiled code, native platform-thread stacks, and other native allocations.</desc>
 
-  <!-- Background and title -->
-  <rect width="1500" height="980" fill="white"/>
-  <text x="750" y="53" text-anchor="middle" font-family="sans-serif" font-size="38" font-weight="bold" fill="#111">Modern HotSpot JVM memory organization</text>
-  <text x="750" y="89" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#444">Logical areas inside one JVM process — exact physical layout depends on the JVM, OS, and collector</text>
+  <!-- Shared type scale and colors match the Box reference diagrams. -->
+  <defs>
+    <style>
+      text { font-family: Arial, Helvetica, sans-serif; fill: #172b3a; }
+      .title { font-size: 47px; font-weight: 700; }
+      .heading { font-size: 30px; font-weight: 700; }
+      .label { font-size: 26px; font-weight: 700; }
+      .body { font-size: 24px; }
+      .code { font: bold 30px Menlo, Consolas, monospace; }
+      .heap { fill: #315e38; }
+    </style>
+  </defs>
 
-  <!-- JVM process boundary -->
-  <rect x="35" y="120" width="1430" height="800" rx="11" fill="#fafafa" stroke="#555" stroke-width="3"/>
-  <text x="65" y="155" font-family="sans-serif" font-size="20" font-weight="bold" fill="#333">JVM process address space</text>
+  <!-- A single outer border encloses both parts of the process. -->
+  <rect width="960" height="800" fill="#ffffff"/>
+  <text x="40" y="69" class="title">What does -Xmx limit?</text>
+  <text x="42" y="115" class="body">A HotSpot process needs memory for objects and for the JVM itself.</text>
+  <rect x="40" y="145" width="880" height="624" rx="18" fill="#fafbfc" stroke="#81939f" stroke-width="2"/>
+  <text x="66" y="189" class="heading">One HotSpot process</text>
 
-  <!-- Java heap -->
-  <rect x="70" y="180" width="755" height="440" rx="9" fill="#eef5fc" stroke="#356da8" stroke-width="3"/>
-  <rect x="70" y="180" width="755" height="62" rx="9" fill="#356da8"/>
-  <rect x="70" y="228" width="755" height="14" fill="#356da8"/>
-  <text x="447" y="220" text-anchor="middle" font-family="sans-serif" font-size="27" font-weight="bold" fill="white">JAVA HEAP · shared · GC managed</text>
-  <text x="447" y="275" text-anchor="middle" font-family="sans-serif" font-size="17" fill="#234f7c">objects, arrays, Class mirrors, strings, collection storage</text>
+  <!-- Both examples inside this boundary are Java heap objects. -->
+  <g id="heap">
+    <rect x="66" y="214" width="828" height="208" rx="12" fill="#f0f7f0" stroke="#53835b" stroke-width="2"/>
+    <text x="91" y="259" class="heading heap">Java heap</text>
+    <text x="865" y="259" text-anchor="end" class="label heap">Maximum size set by -Xmx</text>
+    <line x1="91" y1="278" x2="868" y2="278" stroke="#bdd0be" stroke-width="2"/>
+    <line x1="465" y1="300" x2="465" y2="398" stroke="#bdd0be" stroke-width="2"/>
+    <text x="91" y="334" class="code">new Box()</text>
+    <text x="91" y="376" class="body">An instance with a count field</text>
+    <text x="492" y="334" class="code">Box.class</text>
+    <text x="492" y="376" class="body">A Class object for the Box type</text>
+  </g>
 
-  <!-- Heap objects -->
-  <rect x="105" y="310" width="170" height="92" rx="7" fill="#d7ebd9" stroke="#43804c" stroke-width="2"/>
-  <text x="190" y="345" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#315e38">Customer</text>
-  <text x="190" y="375" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#333">name reference</text>
+  <!-- Native allocations are siblings of the heap within the process boundary. -->
+  <g id="native-memory">
+    <text x="66" y="481" class="heading">Outside the Java heap</text>
+    <rect x="66" y="504" width="398" height="101" rx="12" fill="#fff4e5" stroke="#c99855" stroke-width="2"/>
+    <text x="87" y="545" class="label">Metaspace</text>
+    <text x="87" y="580" class="body">Field and method descriptions</text>
 
-  <rect x="320" y="310" width="155" height="92" rx="7" fill="#d7ebd9" stroke="#43804c" stroke-width="2"/>
-  <text x="397" y="345" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#315e38">String</text>
-  <text x="397" y="375" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#333">"Ana"</text>
+    <rect x="482" y="504" width="412" height="101" rx="12" fill="#f6f0fa" stroke="#a18bb5" stroke-width="2"/>
+    <text x="503" y="545" class="label">Code cache</text>
+    <text x="503" y="580" class="body">Compiled machine instructions</text>
 
-  <rect x="535" y="310" width="230" height="92" rx="7" fill="#e9def7" stroke="#7651a5" stroke-width="2"/>
-  <text x="650" y="345" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#56357e">Class&lt;Customer&gt;</text>
-  <text x="650" y="375" text-anchor="middle" font-family="sans-serif" font-size="15" fill="#333">heap mirror object</text>
+    <rect x="66" y="626" width="398" height="105" rx="12" fill="#edf4fa" stroke="#90aec7" stroke-width="2"/>
+    <text x="87" y="667" class="label">Platform-thread stacks</text>
+    <text x="87" y="702" class="body">Native space for active calls</text>
 
-  <!-- Object arrows with separate heads -->
-  <path d="M275 356H297" fill="none" stroke="#43804c" stroke-width="4"/>
-  <polygon points="312,356 295,348 295,364" fill="#43804c"/>
-  <text x="292" y="337" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#315e38">name</text>
-
-  <!-- Collector-dependent heap layout -->
-  <rect x="105" y="445" width="340" height="130" rx="7" fill="white" stroke="#7ba4cc" stroke-width="2"/>
-  <text x="275" y="478" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#234f7c">Collector-dependent layout</text>
-  <rect x="130" y="500" width="85" height="45" fill="#f7d7d3" stroke="#b34a42"/>
-  <rect x="225" y="500" width="85" height="45" fill="#fff0c9" stroke="#b88b22"/>
-  <rect x="320" y="500" width="100" height="45" fill="#dceafa" stroke="#356da8"/>
-  <text x="172" y="528" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#7a2826">young</text>
-  <text x="267" y="528" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#6b500f">survivor</text>
-  <text x="370" y="528" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#234f7c">old</text>
-  <text x="275" y="565" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#555">conceptual roles, not one universal shape</text>
-
-  <!-- Virtual thread stack chunks live in heap -->
-  <rect x="485" y="445" width="300" height="130" rx="7" fill="#f4eff8" stroke="#7651a5" stroke-width="2"/>
-  <text x="635" y="478" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#56357e">Virtual-thread stack chunks</text>
-  <rect x="520" y="500" width="70" height="42" rx="3" fill="white" stroke="#7651a5"/>
-  <rect x="600" y="500" width="70" height="42" rx="3" fill="white" stroke="#7651a5"/>
-  <rect x="680" y="500" width="70" height="42" rx="3" fill="white" stroke="#7651a5"/>
-  <text x="555" y="526" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#56357e">frame</text>
-  <text x="635" y="526" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#56357e">frame</text>
-  <text x="715" y="526" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#56357e">frame</text>
-  <text x="635" y="565" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#555">grow and shrink in the GC-managed heap</text>
-
-  <!-- Metaspace -->
-  <rect x="865" y="180" width="550" height="220" rx="9" fill="#fff8eb" stroke="#bd7823" stroke-width="3"/>
-  <rect x="865" y="180" width="550" height="58" rx="9" fill="#bd7823"/>
-  <rect x="865" y="224" width="550" height="14" fill="#bd7823"/>
-  <text x="1140" y="217" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="bold" fill="white">HOTSPOT METASPACE · native memory</text>
-  <text x="895" y="273" font-family="sans-serif" font-size="17" font-weight="bold" fill="#7b4d16">Per-class-loader metadata arenas</text>
-  <text x="895" y="307" font-family="sans-serif" font-size="16" fill="#333">• internal class and method metadata</text>
-  <text x="895" y="337" font-family="sans-serif" font-size="16" fill="#333">• runtime constant-pool metadata</text>
-  <text x="895" y="367" font-family="sans-serif" font-size="16" fill="#333">• optional compressed class space</text>
-
-  <!-- Class mirror to metadata relationship. The label sits above a separate connector lane. -->
-  <text x="795" y="299" text-anchor="end" font-family="sans-serif" font-size="13" fill="#7b4d16">metadata link</text>
-  <path d="M765 320H805C830 320 832 300 847 300" fill="none" stroke="#bd7823" stroke-width="4"/>
-  <polygon points="858,300 845,293 845,307" fill="#bd7823"/>
-
-  <!-- Code cache and other native memory -->
-  <rect x="865" y="430" width="260" height="180" rx="8" fill="#f4eff8" stroke="#7651a5" stroke-width="3"/>
-  <text x="995" y="469" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="bold" fill="#56357e">CODE CACHE</text>
-  <text x="995" y="505" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">JIT-compiled methods</text>
-  <text x="995" y="535" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">stubs and adapters</text>
-  <text x="995" y="576" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">native executable memory</text>
-
-  <rect x="1155" y="430" width="260" height="180" rx="8" fill="#f2f2f2" stroke="#777" stroke-width="3"/>
-  <text x="1285" y="469" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="bold" fill="#333">OFF-HEAP / NATIVE</text>
-  <text x="1285" y="505" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">direct and mapped memory</text>
-  <text x="1285" y="535" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#333">JNI and native libraries</text>
-  <text x="1285" y="576" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#555">not limited by -Xmx</text>
-
-  <!-- Platform-thread stacks -->
-  <rect x="70" y="670" width="395" height="190" rx="8" fill="#fff5f4" stroke="#b34a42" stroke-width="3"/>
-  <text x="267" y="708" text-anchor="middle" font-family="sans-serif" font-size="21" font-weight="bold" fill="#7a2826">PLATFORM THREAD 1 STACK</text>
-  <rect x="105" y="735" width="325" height="42" rx="3" fill="white" stroke="#b34a42"/>
-  <rect x="105" y="787" width="325" height="42" rx="3" fill="white" stroke="#b34a42"/>
-  <text x="125" y="762" font-family="monospace" font-size="15" fill="#333">place(): customerRef →</text>
-  <text x="125" y="814" font-family="monospace" font-size="15" fill="#333">main(): serviceRef →</text>
-  <text x="267" y="850" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#555">private frames · commonly sized with -Xss</text>
-
-  <rect x="500" y="670" width="395" height="190" rx="8" fill="#fff5f4" stroke="#b34a42" stroke-width="3"/>
-  <text x="697" y="708" text-anchor="middle" font-family="sans-serif" font-size="21" font-weight="bold" fill="#7a2826">PLATFORM THREAD 2 STACK</text>
-  <rect x="535" y="735" width="325" height="42" rx="3" fill="white" stroke="#b34a42"/>
-  <rect x="535" y="787" width="325" height="42" rx="3" fill="white" stroke="#b34a42"/>
-  <text x="555" y="762" font-family="monospace" font-size="15" fill="#333">run(): taskRef →</text>
-  <text x="555" y="814" font-family="monospace" font-size="15" fill="#333">carrier frames...</text>
-  <text x="697" y="850" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#555">each platform thread uses native resources</text>
-
-  <!-- Stack references to heap objects. Captions occupy the middle of the gap; shafts use the upper lane. -->
-  <path d="M430 756C470 756 470 632 430 632H92C82 632 82 445 104 424" fill="none" stroke="#b34a42" stroke-width="4"/>
-  <polygon points="125,402 102,414 115,431" fill="#b34a42"/>
-  <text x="300" y="658" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#7a2826">GC-root reference to Customer</text>
-
-  <path d="M860 756C910 756 910 632 860 632H770C750 632 738 608 728 590" fill="none" stroke="#7651a5" stroke-width="4"/>
-  <polygon points="713,582 728,598 735,578" fill="#7651a5"/>
-  <text x="800" y="658" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#56357e">carrier runs virtual thread</text>
-
-  <!-- JVM and GC native structures -->
-  <rect x="930" y="670" width="485" height="190" rx="8" fill="#edf8ef" stroke="#43804c" stroke-width="3"/>
-  <text x="1172" y="708" text-anchor="middle" font-family="sans-serif" font-size="21" font-weight="bold" fill="#315e38">JVM + GC NATIVE STRUCTURES</text>
-  <text x="965" y="748" font-family="sans-serif" font-size="16" fill="#333">• mark bitmaps and remembered sets</text>
-  <text x="965" y="780" font-family="sans-serif" font-size="16" fill="#333">• compiler, symbol, and runtime structures</text>
-  <text x="965" y="812" font-family="sans-serif" font-size="16" fill="#333">• GC workers, buffers, and native bookkeeping</text>
-  <text x="1172" y="846" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#555">collector and workload dependent</text>
-
-  <!-- Footer -->
-  <text x="750" y="955" text-anchor="middle" font-family="sans-serif" font-size="20" font-weight="bold" fill="#222">-Xmx limits the Java heap, not the whole process.</text>
+    <rect x="482" y="626" width="412" height="105" rx="12" fill="#f1f4f6" stroke="#9eabb4" stroke-width="2"/>
+    <text x="503" y="667" class="label">Other native memory</text>
+    <text x="503" y="702" class="body">GC data and direct-buffer storage</text>
+  </g>
 </svg>
